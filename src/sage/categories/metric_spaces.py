@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Metric Spaces
 """
@@ -16,6 +17,7 @@ from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
 from sage.categories.with_realizations import WithRealizationsCategory
 from sage.categories.homsets import HomsetsCategory
+
 
 class MetricSpacesCategory(RegressiveCovariantConstructionCategory):
 
@@ -71,6 +73,7 @@ class MetricSpacesCategory(RegressiveCovariantConstructionCategory):
             Join of Category of topological groups and Category of metric spaces
         """
         return "metric {}".format(self.base_category()._repr_object_names())
+
 
 class MetricSpaces(MetricSpacesCategory):
     r"""
@@ -224,7 +227,7 @@ class MetricSpaces(MetricSpacesCategory):
 
     class Homsets(HomsetsCategory):
         """
-        The category of homsets of metric spaces
+        The category of homsets of metric spaces.
 
         It consists of the metric maps, that is, the Lipschitz functions
         with Lipschitz constant 1.

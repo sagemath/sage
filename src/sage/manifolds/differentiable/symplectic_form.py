@@ -14,7 +14,6 @@ REFERENCES:
 
 - [AM1990]_
 - [RS2012]_
-
 """
 # *****************************************************************************
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -103,7 +102,6 @@ class SymplecticForm(DiffForm):
 
         sage: diff(omega).display()
         domega = 0
-
     """
 
     _name: str
@@ -130,7 +128,6 @@ class SymplecticForm(DiffForm):
             sage: omega
             Symplectic form omega on the 2-sphere S^2 of radius 1 smoothly
              embedded in the Euclidean space E^3
-
         """
         try:
             vector_field_module = manifold.vector_field_module()
@@ -240,11 +237,9 @@ class SymplecticForm(DiffForm):
         - ``subdomain`` -- open subset `U` of the symplectic form's domain
         - ``dest_map`` -- (default: ``None``) smooth destination map
           `\Phi:\ U \to V`, where `V` is a subdomain of the symplectic form's domain
-          If None, the restriction of the initial vector field module is used.
+          If ``None``, the restriction of the initial vector field module is used.
 
-        OUTPUT:
-
-        - the restricted symplectic form.
+        OUTPUT: the restricted symplectic form
 
         EXAMPLES::
 
@@ -556,7 +551,7 @@ class SymplecticForm(DiffForm):
 
         INPUT:
 
-        - ``pform``: a `p`-form `A`; must be an instance of
+        - ``pform`` -- a `p`-form `A`; must be an instance of
           :class:`~sage.manifolds.differentiable.scalarfield.DiffScalarField`
           for `p=0` and of
           :class:`~sage.manifolds.differentiable.diff_form.DiffForm` or
@@ -658,7 +653,7 @@ class SymplecticFormParal(SymplecticForm, DiffFormParal):
 
     Standard symplectic form on `\RR^2`::
 
-        sage: M.<q, p> = EuclideanSpace(name="R2", latex_name=r"\mathbb{R}^2")
+        sage: M.<q, p> = EuclideanSpace(name='R2', latex_name=r"\mathbb{R}^2")
         sage: omega = M.symplectic_form(name='omega', latex_name=r'\omega')
         sage: omega
         Symplectic form omega on the Euclidean plane R2
@@ -684,7 +679,6 @@ class SymplecticFormParal(SymplecticForm, DiffFormParal):
             sage: omega = SymplecticFormParal(M, name='omega', latex_name=r'\omega')
             sage: omega
             Symplectic form omega on the Euclidean plane E^2
-
         """
         try:
             vector_field_module = manifold.vector_field_module()
@@ -730,8 +724,8 @@ class SymplecticFormParal(SymplecticForm, DiffFormParal):
 
         INPUT:
 
-        - ``del_restrictions`` -- (default: True) determines whether the
-          restrictions of ``self`` to subdomains are deleted.
+        - ``del_restrictions`` -- boolean (default: ``True``); determines whether the
+          restrictions of ``self`` to subdomains are deleted
 
         TESTS::
 
@@ -763,12 +757,10 @@ class SymplecticFormParal(SymplecticForm, DiffFormParal):
 
         - ``subdomain`` -- open subset `U` of the symplectic form's domain
         - ``dest_map`` -- (default: ``None``) smooth destination map
-          `\Phi:\ U \rightarrow V`, where `V` is a subdomain of the symplectic form's domain
-          If None, the restriction of the initial vector field module is used.
+          `\Phi:\ U \rightarrow V`, where `V` is a subdomain of the symplectic form's domain.
+          If ``None``, the restriction of the initial vector field module is used.
 
-        OUTPUT:
-
-        - the restricted symplectic form.
+        OUTPUT: the restricted symplectic form
 
         EXAMPLES:
 
@@ -891,7 +883,7 @@ class SymplecticFormParal(SymplecticForm, DiffFormParal):
                         self_matrix = matrix(
                             [
                                 [
-                                    self.comp(frame)[i, j, chart].expr(method="SR")
+                                    self.comp(frame)[i, j, chart].expr(method='SR')
                                     for j in fmodule.irange()
                                 ]
                                 for i in fmodule.irange()

@@ -69,15 +69,15 @@ def Sp(n, R, var='a', invariant_form=None):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
 
     - ``R`` -- ring or an integer; if an integer is specified, the
       corresponding finite field is used
 
-    - ``var`` -- (optional, default: ``'a'``) variable used to
+    - ``var`` -- (default: ``'a'``) variable used to
       represent generator of the finite field, if needed
 
-    - ``invariant_form`` --  (optional) instances being accepted by
+    - ``invariant_form`` -- (optional) instances being accepted by
       the matrix-constructor which define a `n \times n` square matrix
       over ``R`` describing the alternating form to be kept invariant
       by the symplectic group
@@ -211,7 +211,7 @@ class SymplecticMatrixGroup_generic(NamedMatrixGroup_generic):
         """
         Return the quadratic form preserved by the symplectic group.
 
-        OUTPUT: A matrix.
+        OUTPUT: a matrix
 
         EXAMPLES::
 

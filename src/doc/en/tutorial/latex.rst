@@ -49,7 +49,7 @@ output of the entered commands automatically. You can start this
 automatic rendering by executing ``%display latex`` (and stop by executing
 ``%display plain``).
 
-.. ONLY:: html
+.. ONLY:: html and feature_jupyter_sphinx
 
     Thus, in the Jupyter notebook, you get
 

@@ -77,8 +77,6 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.rings.integer_ring import ZZ
-from sage.structure.element cimport MultiplicativeGroupElement, Matrix
-from sage.structure.element import is_Matrix
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport richcmp
 
@@ -89,15 +87,15 @@ except ImportError:
     MatrixGroupElement_gap = ()
 
 
-cpdef is_MatrixGroupElement(x) noexcept:
+cpdef is_MatrixGroupElement(x):
     """
-    Test whether ``x`` is a matrix group element
+    Test whether ``x`` is a matrix group element.
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT: Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -129,10 +127,10 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
 
     - ``parent`` -- the parent
 
-    - ``check`` -- bool (default: ``True``); if ``True``, then
+    - ``check`` -- boolean (default: ``True``); if ``True``, then
       do some type checking
 
-    - ``convert`` -- bool (default: ``True``); if ``True``, then
+    - ``convert`` -- boolean (default: ``True``); if ``True``, then
       convert ``M`` to the right matrix space
 
     EXAMPLES::
@@ -156,7 +154,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         if convert:
             M = parent.matrix_space()(M)
         if check:
-            if not is_Matrix(M):
+            if not isinstance(M, Matrix):
                 raise TypeError('M must be a matrix')
             if M.parent() is not parent.matrix_space():
                 raise TypeError('M must be a in the matrix space of the group')
@@ -222,7 +220,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         """
         return self._matrix._latex_()
 
-    cpdef _act_on_(self, x, bint self_on_left) noexcept:
+    cpdef _act_on_(self, x, bint self_on_left):
         """
         EXAMPLES::
 
@@ -245,7 +243,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
             except TypeError:
                 return None
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -266,7 +264,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         cdef MatrixGroupElement_generic y = <MatrixGroupElement_generic>other
         return richcmp(x._matrix, y._matrix, op)
 
-    cpdef list list(self) noexcept:
+    cpdef list list(self):
         """
         Return list representation of this matrix.
 
@@ -327,7 +325,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         """
         return self.matrix()
 
-    cpdef _mul_(self, other) noexcept:
+    cpdef _mul_(self, other):
         """
         Return the product of ``self`` and`` other``, which must
         have identical parents.
@@ -370,9 +368,9 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
 
     def __invert__(self):
         """
-        Return the inverse group element
+        Return the inverse group element.
 
-        OUTPUT: A matrix group element.
+        OUTPUT: a matrix group element
 
         EXAMPLES::
 

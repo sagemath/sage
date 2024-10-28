@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Monoids
 """
@@ -5,14 +6,19 @@ Monoids
 from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_method
 
-def is_Monoid(x):
+
+def is_Monoid(x) -> bool:
     r"""
-    Returns True if ``x`` is of type ``Monoid_class``.
+    Return ``True`` if ``x`` is of type ``Monoid_class``.
 
     EXAMPLES::
 
         sage: from sage.monoids.monoid import is_Monoid
         sage: is_Monoid(0)
+        doctest:warning...
+        DeprecationWarning: the function is_Monoid is deprecated;
+        use 'isinstance(..., Monoid_class)' instead
+        See https://github.com/sagemath/sage/issues/37897 for details.
         False
         sage: is_Monoid(ZZ)   # The technical math meaning of monoid has
         ....:                 # no bearing whatsoever on the result: it's
@@ -25,7 +31,10 @@ def is_Monoid(x):
         sage: is_Monoid(F)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37897, "the function is_Monoid is deprecated; use 'isinstance(..., Monoid_class)' instead")
     return isinstance(x, Monoid_class)
+
 
 class Monoid_class(Parent):
     def __init__(self, names):

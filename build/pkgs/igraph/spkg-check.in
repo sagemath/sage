@@ -1,2 +1,3 @@
 cd src
-$MAKE check
+cd build
+sdh_make_check

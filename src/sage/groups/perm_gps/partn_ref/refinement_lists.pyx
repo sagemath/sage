@@ -4,7 +4,6 @@ Partition backtrack functions for lists -- a simple example of using partn_ref
 EXAMPLES::
 
     sage: import sage.groups.perm_gps.partn_ref.refinement_lists
-
 """
 
 #*****************************************************************************
@@ -27,14 +26,13 @@ from sage.groups.perm_gps.partn_ref.double_coset cimport double_coset, int_cmp
 def is_isomorphic(self, other):
     r"""
     Return the bijection as a permutation if two lists are isomorphic, return
-    False otherwise.
+    ``False`` otherwise.
 
     EXAMPLES::
 
         sage: from sage.groups.perm_gps.partn_ref.refinement_lists import is_isomorphic
         sage: is_isomorphic([0,0,1],[1,0,0])
         [1, 2, 0]
-
     """
     cdef int i, n = len(self)
     cdef PartitionStack *part
@@ -61,6 +59,7 @@ def is_isomorphic(self, other):
         output_py = False
     sig_free(output)
     return output_py
+
 
 cdef bint all_list_children_are_equivalent(PartitionStack *PS, void *S) noexcept:
     return 0

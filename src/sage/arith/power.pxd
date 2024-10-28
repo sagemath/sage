@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 from cpython.number cimport PyNumber_TrueDivide
 from sage.structure.element cimport Element
 
@@ -7,12 +8,12 @@ ctypedef fused ulong_or_object:
     object
 
 
-cpdef generic_power(a, n) noexcept
-cdef generic_power_long(a, long n) noexcept
-cdef generic_power_pos(a, ulong_or_object n) noexcept  # n > 0
+cpdef generic_power(a, n)
+cdef generic_power_long(a, long n)
+cdef generic_power_pos(a, ulong_or_object n)  # n > 0
 
 
-cdef inline invert(a) noexcept:
+cdef inline invert(a):
     """
     Return ``a^(-1)``.
     """
@@ -21,7 +22,7 @@ cdef inline invert(a) noexcept:
     return PyNumber_TrueDivide(type(a)(1), a)
 
 
-cdef inline one(a) noexcept:
+cdef inline one(a):
     """
     Return ``a^0``.
     """

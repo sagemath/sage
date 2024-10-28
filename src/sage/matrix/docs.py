@@ -278,7 +278,6 @@ We can also count backwards to flip the matrix upside down::
     [  6   8   3   4]
 
 
-
 We save and load a matrix::
 
     sage: A = matrix(Integers(8),3,range(9))
@@ -371,7 +370,7 @@ are named
        * __dealloc__   -- use sig_free (only needed if allocate memory)
        * set_unsafe(self, size_t i, size_t j, x) -- doesn't do bounds or any other checks; assumes x is in self._base_ring
        * get_unsafe(self, size_t i, size_t j) -- doesn't do checks
-       * __richcmp__    -- always the same (I don't know why its needed -- bug in PYREX).
+       * __richcmp__    -- always the same (I don't know why its needed -- bug in PYREX)
 
     Note that the __init__ function must construct the all zero matrix if ``entries == None``.
 
@@ -416,7 +415,7 @@ are named
        * Other functions, e.g., transpose, for which knowing the
          specific representation can be helpful.
 
-    .. note::
+    .. NOTE::
 
        - For caching, use self.fetch and self.cache.
 

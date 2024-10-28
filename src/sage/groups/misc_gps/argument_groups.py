@@ -61,7 +61,7 @@ class AbstractArgument(MultiplicativeGroupElement):
 
     - ``element`` -- an element of parent's base
 
-    - ``normalize`` -- a boolean (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
     """
 
     def __init__(self, parent, element, normalize=True):
@@ -108,15 +108,13 @@ class AbstractArgument(MultiplicativeGroupElement):
     @staticmethod
     def _normalize_(element):
         r"""
-        Normalizes the given element.
+        Normalize the given element.
 
         INPUT:
 
         - ``element`` -- an element of the parent's base
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         TESTS::
 
@@ -151,9 +149,7 @@ class AbstractArgument(MultiplicativeGroupElement):
           The output will be an element of ``R``. If ``None``,
           then the symbolic ring is used.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -285,7 +281,7 @@ class AbstractArgument(MultiplicativeGroupElement):
 
     def __abs__(self):
         r"""
-        Return the absolute value of this argument which equals `1`
+        Return the absolute value of this argument which equals `1`.
 
         TESTS::
 
@@ -337,9 +333,7 @@ class AbstractArgumentGroup(UniqueRepresentation, Parent):
         - ``category`` -- a category or ``None`` (in which case the output
           equals ``category``)
 
-        OUTPUT:
-
-        A category.
+        OUTPUT: a category
 
         EXAMPLES::
 
@@ -402,21 +396,19 @@ class UnitCirclePoint(AbstractArgument):
 
     - ``exponent`` -- a number (of a subset of the reals)
 
-    - ``normalize`` -- a boolean (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
     """
 
     @staticmethod
     def _normalize_(exponent):
         r"""
-        Normalizes the given exponent so that it is in `[0,1)`.
+        Normalize the given exponent so that it is in `[0,1)`.
 
         INPUT:
 
         - ``exponent`` -- an element of the parent's base
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         TESTS::
 
@@ -463,9 +455,7 @@ class UnitCirclePoint(AbstractArgument):
           The output will be an element of ``R``. If ``None``,
           then the symbolic ring is used.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -681,9 +671,7 @@ class UnitCircleGroup(AbstractArgumentGroup):
 
         - ``kwds`` -- are passed on to element
 
-        OUTPUT:
-
-        A :class:`UnitCirclePoint`.
+        OUTPUT: a :class:`UnitCirclePoint`
 
         TESTS::
 
@@ -794,11 +782,9 @@ class UnitCircleGroup(AbstractArgumentGroup):
 
         INPUT:
 
-        - ``exponent`` -- the element data.
+        - ``exponent`` -- the element data
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         EXAMPLES::
 
@@ -826,11 +812,9 @@ class UnitCircleGroup(AbstractArgumentGroup):
 
         INPUT:
 
-        - ``R`` -- a parent.
+        - ``R`` -- a parent
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -1059,7 +1043,7 @@ class ArgumentByElement(AbstractArgument):
 
     - ``element`` -- a nonzero element of the parent's base
 
-    - ``normalize`` -- a boolean (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
     """
 
     def __init__(self, parent, element, normalize=True):
@@ -1080,7 +1064,7 @@ class ArgumentByElement(AbstractArgument):
     @staticmethod
     def _normalize_(element):
         r"""
-        Normalizes the given element.
+        Normalize the given element.
 
         This is the identity for :class:`ArgumentByElement`.
 
@@ -1088,9 +1072,7 @@ class ArgumentByElement(AbstractArgument):
 
         - ``element`` -- an element of the parent's base
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         TESTS::
 
@@ -1123,9 +1105,7 @@ class ArgumentByElement(AbstractArgument):
           The output will be an element of ``R``. If ``None``,
           then the symbolic ring is used.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -1275,9 +1255,7 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
 
         - ``kwds`` -- are passed on to element
 
-        OUTPUT:
-
-        A :class:`ArgumentByElement`.
+        OUTPUT: a :class:`ArgumentByElement`
 
         TESTS::
 
@@ -1343,11 +1321,9 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
 
         INPUT:
 
-        - ``element`` -- the element data.
+        - ``element`` -- the element data
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         EXAMPLES::
 
@@ -1377,11 +1353,9 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
 
         INPUT:
 
-        - ``R`` -- a parent.
+        - ``R`` -- a parent
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -1406,7 +1380,7 @@ class Sign(AbstractArgument):
 
     - ``element`` -- a nonzero element of the parent's base
 
-    - ``normalize`` -- a boolean (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
     """
 
     def __init__(self, parent, element, normalize=True):
@@ -1428,7 +1402,7 @@ class Sign(AbstractArgument):
     @staticmethod
     def _normalize_(element):
         r"""
-        Normalizes the given element.
+        Normalize the given element.
 
         This is the identity for :class:`Sign`.
 
@@ -1436,9 +1410,7 @@ class Sign(AbstractArgument):
 
         - ``element`` -- an element of the parent's base
 
-        OUTPUT:
-
-        An element.
+        OUTPUT: an element
 
         TESTS::
 
@@ -1689,9 +1661,7 @@ class SignGroup(AbstractArgumentGroup):
 
         - ``data`` -- an object
 
-        OUTPUT:
-
-        A :class:`Sign`.
+        OUTPUT: a :class:`Sign`
 
         TESTS::
 
@@ -1727,7 +1697,7 @@ class ArgumentGroupFactory(UniqueFactory):
       The factory will analyze ``data`` and interpret it as
       ``specification`` or ``domain``.
 
-    - ``specification`` -- a string
+    - ``specification`` -- string
 
       The following is possible:
 
@@ -1743,12 +1713,12 @@ class ArgumentGroupFactory(UniqueFactory):
         a string representing a SageMath parent which is interpreted as
         ``domain``
 
-    - ``domain`` -- a SageMath parent representing a subset of the complex plane.
-      An instance of :class:`ArgumentByElementGroup` will be created with the given
-      ``domain``.
+    - ``domain`` -- a SageMath parent representing a subset of the complex plane;
+      an instance of :class:`ArgumentByElementGroup` will be created with the given
+      ``domain``
 
-    - ``exponents`` -- a SageMath parent representing a subset of the reals.
-      An instance of :class`UnitCircleGroup` will be created with the given
+    - ``exponents`` -- a SageMath parent representing a subset of the reals;
+      an instance of :class`UnitCircleGroup` will be created with the given
       ``exponents``
 
     Exactly one of ``data``, ``specification``, ``exponents`` has to be provided.

@@ -7,7 +7,7 @@ possibly with other parameters. The conversion methods amount to specific
 invertible rational change-of-variables involving `x` and `y`.
 
 These polynomial are called triangles because their supports, the sets
-of exponents where their coefficients can be non-zero, have a triangular shape.
+of exponents where their coefficients can be nonzero, have a triangular shape.
 
 The M-triangle class is motivated by the generating series of Möbius numbers
 for graded posets. A typical example is::
@@ -46,10 +46,12 @@ The Gamma-triangles are related to the H-triangles by an
 analog of the relationship between gamma-vectors and h-vectors of flag
 simplicial complexes.
 """
-from sage.matrix.constructor import matrix
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.sage_object import SageObject
+
+lazy_import('sage.matrix.constructor', 'matrix')
 
 
 def _matrix_display(self, variables=None):
@@ -58,7 +60,7 @@ def _matrix_display(self, variables=None):
 
     INPUT:
 
-    - ``variables`` -- optional choice of 2 variables
+    - ``variables`` -- (optional) choice of 2 variables
 
     OUPUT:
 
@@ -379,16 +381,14 @@ class M_triangle(Triangle):
         A = self._poly.parent()
 
         dict_dual = {(n - dy, n - dx): coeff
-                     for (dx, dy), coeff in self._poly.dict().items()}
+                     for (dx, dy), coeff in self._poly.monomial_coefficients().items()}
         return M_triangle(A(dict_dual), variables=(x, y))
 
     def transmute(self):
         """
         Return the image of ``self`` by an involution.
 
-        OUTPUT:
-
-        another M-triangle
+        OUTPUT: another M-triangle
 
         The involution is defined by converting to an H-triangle,
         transposing the matrix, and then converting back to an M-triangle.
@@ -464,9 +464,7 @@ class H_triangle(Triangle):
         """
         Return the transposed H-triangle.
 
-        OUTPUT:
-
-        another H-triangle
+        OUTPUT: another H-triangle
 
         This operation is an involution.  When seen as a matrix, it
         performs a symmetry with respect to the northwest-southeast
@@ -486,7 +484,7 @@ class H_triangle(Triangle):
         A = self._poly.parent()
 
         dict_dual = {(n - dy, n - dx): coeff
-                     for (dx, dy), coeff in self._poly.dict().items()}
+                     for (dx, dy), coeff in self._poly.monomial_coefficients().items()}
         return H_triangle(A(dict_dual), variables=(x, y))
 
     def m(self):

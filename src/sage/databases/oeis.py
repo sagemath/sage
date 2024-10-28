@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 The On-Line Encyclopedia of Integer Sequences (OEIS)
 
@@ -111,7 +110,7 @@ primes ?
     sage: b.formulas()[0]
     'E.g.f.: exp(exp(x) - 1).'
     sage: [i for i in b.comments() if 'prime' in i][-1]
-    'Number n is prime if ...'
+    'When n is prime, ...'
     sage: [n for n in range(2, 20) if (b(n)-2) % n == 0]
     [2, 3, 5, 7, 11, 13, 17, 19]
 
@@ -130,7 +129,6 @@ AUTHORS:
 - Moritz Firsching (2016): modifies handling of dead sequence, see :issue:`17330`
 - Thierry Monteil (2019): refactorization (unique representation :issue:`28480`,
   laziness :issue:`28627`)
-
 """
 
 # ****************************************************************************
@@ -169,11 +167,9 @@ def _fetch(url):
 
     INPUT:
 
-    - ``url`` -- a string corresponding to the URL to be fetched.
+    - ``url`` -- string corresponding to the URL to be fetched
 
-    OUTPUT:
-
-    - a string representing the fetched web page.
+    OUTPUT: string representing the fetched web page
 
     TESTS::
 
@@ -200,11 +196,9 @@ def _urls(html_string):
 
     INPUT:
 
-    - ``html_string`` -- a string representing some HTML code.
+    - ``html_string`` -- string representing some HTML code
 
-    OUTPUT:
-
-    - a list of (string) URLs contained in ``html_string``.
+    OUTPUT: list of (string) URLs contained in ``html_string``
 
     EXAMPLES::
 
@@ -400,18 +394,15 @@ class OEIS:
 
     def find_by_id(self, ident, fetch=False):
         r"""
-
         INPUT:
 
-        - ``ident`` -- a string representing the A-number of the sequence
-          or an integer representing its number.
+        - ``ident`` -- string representing the A-number of the sequence
+          or an integer representing its number
 
-        - ``fetch`` -- (bool, default: ``False``) whether to force fetching the
-          content of the sequence on the internet.
+        - ``fetch`` -- boolean (default: ``False``); whether to force fetching the
+          content of the sequence on the internet
 
-        OUTPUT:
-
-        - The OEIS sequence whose A-number or number corresponds to ``ident``.
+        OUTPUT: the OEIS sequence whose A-number or number corresponds to ``ident``
 
         EXAMPLES::
 
@@ -428,15 +419,12 @@ class OEIS:
 
     def find_by_entry(self, entry):
         r"""
-
         INPUT:
 
-        - ``entry`` -- a string corresponding to an entry in the internal format
-          of the OEIS.
+        - ``entry`` -- string corresponding to an entry in the internal format
+          of the OEIS
 
-        OUTPUT:
-
-        - The corresponding OEIS sequence.
+        OUTPUT: the corresponding OEIS sequence
 
         EXAMPLES::
 
@@ -456,7 +444,7 @@ class OEIS:
 
         INPUT:
 
-        - ``description`` -- (string) the description the searched sequences.
+        - ``description`` -- string; the description the searched sequences
 
         - ``max_results`` -- (integer, default: 3) the maximum number of results
           we want. In any case, the on-line encyclopedia will not return more
@@ -500,7 +488,8 @@ class OEIS:
                    'start': str(first_result)}
         url = oeis_url + "search?" + urlencode(options)
         sequence_list = _fetch(url).split('\n\n')[2:-1]
-        return FancyTuple([self.find_by_entry(entry=_) for _ in sequence_list])
+        T = [self.find_by_entry(entry=s) for s in sequence_list]
+        return FancyTuple([s for s in T if not s.is_dead()])
 
     def find_by_subsequence(self, subsequence, max_results=3, first_result=0):
         r"""
@@ -508,20 +497,20 @@ class OEIS:
 
         INPUT:
 
-        - ``subsequence`` -- a list or tuple of integers.
+        - ``subsequence`` -- list or tuple of integers
 
-        - ``max_results`` -- (integer, default: 3), the maximum of results requested.
+        - ``max_results`` -- integer (default: 3); the maximum of results requested
 
-        - ``first_result`` -- (integer, default: 0) allow to skip the
+        - ``first_result`` -- integer (default: 0); allow to skip the
           ``first_result`` first results in the search, to go further.
           This is useful if you are looking for a sequence that may appear
           after the 100 first found sequences.
 
         OUTPUT:
 
-        - a tuple (with fancy formatting) of at most ``max_results`` OEIS
-          sequences. Those sequences can be used without the need to fetch the
-          database again.
+        A tuple (with fancy formatting) of at most ``max_results`` OEIS
+        sequences. Those sequences can be used without the need to fetch the
+        database again.
 
         EXAMPLES::
 
@@ -553,14 +542,12 @@ class OEIS:
 
         INPUT:
 
-        - ``ident`` -- a string representing the A-number of the sequence.
+        - ``ident`` -- string representing the A-number of the sequence
 
-        - ``keywords`` -- a string corresponding to the keyword field of the
-          sequence.
+        - ``keywords`` -- string corresponding to the keyword field of the
+          sequence
 
-        OUTPUT:
-
-        - a string representing the entry of the sequence.
+        OUTPUT: string representing the entry of the sequence
 
         TESTS::
 
@@ -571,7 +558,6 @@ class OEIS:
             sage: s = oeis.find_by_entry(entry=oeis._imaginary_entry(ident='A999998', keywords=keywords))
             sage: ','.join(s.keywords()) == keywords
             True
-
         """
         return ('%I ' + ident + ' M9999 N9999\n'
                 '%S ' + ident + ' 1,1,1,1,2,1,1,1,\n'
@@ -613,14 +599,12 @@ class OEIS:
 
         INPUT:
 
-        - ``ident`` -- a string representing the A-number of the sequence.
+        - ``ident`` -- string representing the A-number of the sequence
 
-        - ``keywords`` -- string (default: 'sign,easy'), a list of words
-          separated by commas.
+        - ``keywords`` -- string (default: ``'sign,easy'``); a list of words
+          separated by commas
 
-        OUTPUT:
-
-        - OEIS sequence.
+        OUTPUT: OEIS sequence
 
         TESTS::
 
@@ -690,8 +674,8 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``ident`` -- a string representing the A-number of the sequence or an
-          integer representing its number.
+        - ``ident`` -- string representing the A-number of the sequence or an
+          integer representing its number
 
         TESTS::
 
@@ -729,6 +713,10 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         This method allows to handle the ``_fields`` dictionary in a lazy way.
 
+        INPUT:
+
+        - ``warn`` -- ignored
+
         TESTS::
 
             sage: s = oeis._imaginary_sequence()
@@ -742,7 +730,6 @@ class OEISSequence(SageObject, UniqueRepresentation):
             for line in self.raw_entry().splitlines():
                 fields[line[1]].append(line[11:])
             self._fields = fields
-            self.is_dead(warn_only=warn)
             return self._fields[key]
 
     def id(self, format='A'):
@@ -752,7 +739,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``format`` -- (string, default: 'A').
+        - ``format`` -- string (default: ``'A'``)
 
         OUTPUT:
 
@@ -789,9 +776,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         This method allows unique representation of OEIS sequences.
 
-        OUTPUT:
-
-        - Python `int`.
+        OUTPUT: Python integer
 
         EXAMPLES::
 
@@ -823,9 +808,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         The raw entry is fetched online if needed.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -854,9 +837,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         r"""
         Return the name of the sequence ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -918,9 +899,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         from 1) whose absolute value is greater than 1. This is set to 1 if all
         the terms are 0 or +-1.
 
-        OUTPUT:
-
-        - tuple of two elements.
+        OUTPUT: tuple of two elements
 
         EXAMPLES::
 
@@ -945,9 +924,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         r"""
         Return the author of the sequence in the encyclopedia.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -969,9 +946,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         r"""
         Return the keywords associated to the sequence ``self``.
 
-        OUTPUT:
-
-        - tuple of strings.
+        OUTPUT: tuple of strings
 
         EXAMPLES::
 
@@ -1103,25 +1078,18 @@ class OEISSequence(SageObject, UniqueRepresentation):
             from sage.rings.integer_ring import ZZ
             return Sequence(self.first_terms(), ZZ)
 
-    def is_dead(self, warn_only=False):
+    def is_dead(self, warn_only=False) -> bool:
         r"""
-        Tell whether the sequence is dead (i.e. erroneous).
+        Tell whether the sequence is dead.
 
         INPUT:
 
-        - warn_only -- (bool, default: ``False``), whether to warn when the
-          sequence is dead instead of returning a boolean.
+        - ``warn_only`` -- ignored
 
         EXAMPLES:
 
-        A warning is triggered if any field of a dead sequence is accessed,
-        unless :meth:`is_dead` is called before::
-
             sage: s = oeis(17)                      # optional -- internet
             sage: s                                 # optional -- internet
-            doctest:warning
-            ...
-            RuntimeWarning: This sequence is dead: "A000017: Erroneous version of A032522."
             A000017: Erroneous version of A032522.
 
         TESTS::
@@ -1135,20 +1103,12 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
             sage: u = oeis._imaginary_sequence(ident='A999994', keywords='dead')
             sage: u
-            doctest:warning
-            ...
-            RuntimeWarning: This sequence is dead: "A999994: The characteristic sequence of 42 plus one, starting from 38."
             A999994: The characteristic sequence of 42 plus one, starting from 38.
 
             sage: u.is_dead()
             True
         """
-        if warn_only:
-            if 'dead' in self.keywords(warn_only):
-                from warnings import warn
-                warn('This sequence is dead: "{}: {}"'.format(self.id(), self.name()), RuntimeWarning)
-        else:
-            return 'dead' in self.keywords(warn_only)
+        return 'dead' in self.keywords()
 
     def is_finite(self):
         r"""
@@ -1192,7 +1152,6 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s = oeis._imaginary_sequence(ident='A999993', keywords='nonn,finit')
             sage: s.is_finite()
             True
-
         """
         if 'finit' in self.keywords() or 'full' in self.keywords():
             return True
@@ -1250,13 +1209,11 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``number`` -- (integer or ``None``, default: ``None``) the number of
+        - ``number`` -- integer or ``None`` (default); the number of
           terms returned (if less than the number of available terms). When set
-          to None, returns all the known terms.
+          to ``None``, returns all the known terms.
 
-        OUTPUT:
-
-        - tuple of integers.
+        OUTPUT: tuple of integers
 
         EXAMPLES::
 
@@ -1269,9 +1226,6 @@ class OEISSequence(SageObject, UniqueRepresentation):
         Handle dead sequences, see :issue:`17330` ::
 
             sage: oeis(5000).first_terms(12)            # optional -- internet
-            doctest:warning
-            ...
-            RuntimeWarning: This sequence is dead: "A005000: Erroneous version of A006505."
             (1, 0, 0, 1, 1, 1, 11, 36, 92, 491, 2537)
 
         TESTS::
@@ -1289,9 +1243,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         r"""
         Print the sequence number and a short summary of this sequence.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1313,11 +1265,9 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``k`` -- integer.
+        - ``k`` -- integer
 
-        OUTPUT:
-
-        - integer.
+        OUTPUT: integer
 
         .. NOTE::
 
@@ -1370,18 +1320,16 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
     def __getitem__(self, i):
         r"""
-        Return the ``i``th element of sequence ``self``, viewed as a tuple.
+        Return the `i`-th element of sequence ``self``, viewed as a tuple.
 
         The first element appearing in the sequence ``self``corresponds to
         ``self[0]``. Do not confuse with calling ``self(k)``.
 
         INPUT:
 
-        - ``i`` -- integer.
+        - ``i`` -- integer
 
-        OUTPUT:
-
-        - integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1411,9 +1359,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         those first terms are exhausted and the real associated sequence
         still have terms to produce.
 
-        OUTPUT:
-
-        - integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1514,12 +1460,12 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``browse`` -- an integer, a list of integers, or the word 'all'
-          (default: ``None``): which links to open in a web browser.
+        - ``browse`` -- integer; a list of integers, or the word 'all'
+          (default: ``None``) which links to open in a web browser
 
-        - ``format`` -- string (default: 'guess'): how to display the links.
+        - ``format`` -- string (default: ``'guess'``); how to display the links
 
-        OUTPUT: Tuple of strings (with fancy formatting):
+        OUTPUT: tuple of strings (with fancy formatting):
 
         - if ``format`` is ``url``, returns a tuple of absolute links without description.
         - if ``format`` is ``html``, returns nothing but prints a tuple of clickable absolute links in their context.
@@ -1550,7 +1496,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s.links(format='url')[3]
             'https://oeis.org/A000024'
 
-            sage: HTML = s.links(format="html");  HTML
+            sage: HTML = s.links(format='html');  HTML
             0: Wikipedia, <a href="https://en.wikipedia.org/wiki/42_(number)">42 (number)</a>
             1: See. also <a href="https://github.com/sagemath/sage/issues/42">github issue #42</a>
             ...
@@ -1559,13 +1505,14 @@ class OEISSequence(SageObject, UniqueRepresentation):
         """
         def url_absolute(s):
             return re.sub(r'\"\/', '\"' + oeis_url, s)
+
         if browse is None:
             if format == 'guess':
                 return self.links(format='url')
             elif format == 'raw':
                 return FancyTuple(self._field('H'))
             elif format == 'html':
-                return HtmlFragment(FancyTuple([url_absolute(_) for _ in self._field('H')]))
+                return HtmlFragment(FancyTuple([url_absolute(f) for f in self._field('H')]))
             elif format == 'url':
                 url_list = flatten([_urls(url_absolute(string)) for string in self._field('H')])
                 return FancyTuple(url_list)
@@ -1602,7 +1549,6 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s = oeis._imaginary_sequence()
             sage: s.formulas()
             0: For n big enough, s(n+1) - s(n) = 0.
-
         """
         return FancyTuple(self._field('F'))
 
@@ -1613,12 +1559,12 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``fetch`` -- boolean (default: ``False``).
+        - ``fetch`` -- boolean (default: ``False``)
 
         OUTPUT:
 
         - if ``fetch`` is ``False``, return a list of OEIS IDs (strings).
-        - if ``fetch`` if ``True``, return a tuple of OEIS sequences.
+        - if ``fetch`` is ``True``, return a tuple of OEIS sequences.
 
         EXAMPLES::
 
@@ -1648,9 +1594,9 @@ class OEISSequence(SageObject, UniqueRepresentation):
         """
         ref_list = re.findall('A[0-9]{6}', " ".join(self._field('Y')))
         if fetch:
-            return FancyTuple([oeis.find_by_id(_) for _ in ref_list])
-        else:
-            return tuple(ref_list)
+            T = [oeis.find_by_id(r) for r in ref_list]
+            return FancyTuple([s for s in T if not s.is_dead()])
+        return tuple(ref_list)
 
     def extensions_or_errors(self):
         r"""
@@ -1676,7 +1622,6 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: s = oeis._imaginary_sequence()
             sage: s.extensions_or_errors()
             0: This sequence does not contain errors.
-
         """
         return FancyTuple(self._field('E'))
 
@@ -1742,9 +1687,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         r"""
         Return the URL of the page associated to the sequence ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1845,15 +1788,15 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``language`` -- string (default: 'all'), the chosen language.
+        - ``language`` -- string (default: ``'all'``); the chosen language.
           Possible values are 'all' for the full list, or
           any language name, for example 'sage', 'maple', 'mathematica', etc.
 
         Some further optional input is specific to sage code treatment:
 
-        - ``preparsing`` -- boolean (default: ``True``) whether to preparse
+        - ``preparsing`` -- boolean (default: ``True``); whether to preparse
           sage code
-        - ``keep_comments`` -- boolean (default: ``False``) whether to keep
+        - ``keep_comments`` -- boolean (default: ``False``); whether to keep
           comments in sage code
 
         OUTPUT:
@@ -2010,13 +1953,9 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
             sage: s = oeis.find_by_id('A000154')        # optional -- internet
             sage: s.test_compile_sage_code()            # optional -- internet
-            doctest:warning
-            ...
-            RuntimeWarning: This sequence is dead: ...
             True
         """
         if self.is_dead():
-            self.is_dead(warn_only=True)
             return True
         filt = self.programs(language='sage')
         if filt:
@@ -2091,7 +2030,7 @@ class FancyTuple(tuple):
     def __getitem__(self, x):
         r"""
         If ``x`` is a slice return the corresponding sub FancyTuple,
-        else return the `̀`x``-th item of ``self``.
+        else return the ``x``-th item of ``self``.
 
         TESTS::
 

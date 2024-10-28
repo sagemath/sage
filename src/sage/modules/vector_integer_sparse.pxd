@@ -19,7 +19,7 @@ cdef Py_ssize_t mpz_binary_search0(mpz_t* v, Py_ssize_t n, mpz_t x) noexcept
 cdef Py_ssize_t mpz_binary_search(mpz_t* v, Py_ssize_t n, mpz_t x, Py_ssize_t* ins) noexcept
 cdef int mpz_vector_get_entry(mpz_t ans, mpz_vector* v, Py_ssize_t n) except -1
 cdef bint mpz_vector_is_entry_zero_unsafe(mpz_vector* v, Py_ssize_t n) noexcept
-cdef object mpz_vector_to_list(mpz_vector* v) noexcept
+cdef object mpz_vector_to_list(mpz_vector* v)
 cdef int mpz_vector_set_entry(mpz_vector* v, Py_ssize_t n, mpz_t x) except -1
 cdef int mpz_vector_set_entry_str(mpz_vector* v, Py_ssize_t n, char *x_str) except -1
 cdef int add_mpz_vector_init(mpz_vector* sum, mpz_vector* v, mpz_vector* w, mpz_t multiple) except -1

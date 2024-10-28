@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of ``rubiks``
 """
@@ -37,7 +38,7 @@ class cu2(Executable):
             True
         """
         Executable.__init__(self, "cu2", executable=RUBIKS_BINS_PREFIX + "cu2",
-                            spkg="rubiks")
+                            spkg='rubiks')
 
 
 class size222(Executable):
@@ -59,7 +60,7 @@ class size222(Executable):
             True
         """
         Executable.__init__(self, "size222", executable=RUBIKS_BINS_PREFIX + "size222",
-                            spkg="rubiks")
+                            spkg='rubiks')
 
 
 class optimal(Executable):
@@ -81,7 +82,7 @@ class optimal(Executable):
             True
         """
         Executable.__init__(self, "optimal", executable=RUBIKS_BINS_PREFIX + "optimal",
-                            spkg="rubiks")
+                            spkg='rubiks')
 
 
 class mcube(Executable):
@@ -103,7 +104,7 @@ class mcube(Executable):
             True
         """
         Executable.__init__(self, "mcube", executable=RUBIKS_BINS_PREFIX + "mcube",
-                            spkg="rubiks")
+                            spkg='rubiks')
 
 
 class dikcube(Executable):
@@ -125,7 +126,7 @@ class dikcube(Executable):
             True
         """
         Executable.__init__(self, "dikcube", executable=RUBIKS_BINS_PREFIX + "dikcube",
-                            spkg="rubiks")
+                            spkg='rubiks')
 
 
 class cubex(Executable):
@@ -147,7 +148,7 @@ class cubex(Executable):
             True
         """
         Executable.__init__(self, "cubex", executable=RUBIKS_BINS_PREFIX + "cubex",
-                            spkg="rubiks")
+                            spkg='rubiks')
 
 
 class Rubiks(JoinFeature):
@@ -172,7 +173,7 @@ class Rubiks(JoinFeature):
         """
         JoinFeature.__init__(self, "rubiks",
                              [cu2(), size222(), optimal(), mcube(), dikcube(), cubex()],
-                             spkg="rubiks")
+                             spkg='rubiks')
 
 
 def all_features():

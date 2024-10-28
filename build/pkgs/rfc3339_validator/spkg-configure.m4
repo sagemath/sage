@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([rfc3339_validator], [SAGE_PYTHON_PACKAGE_CHECK([rfc3339_validator])])

@@ -29,17 +29,17 @@ from sage.rings.ring_extension_conversion cimport backend_parent, backend_elemen
 
 
 # I don't trust the operator ==
-cdef are_equal_morphisms(f, g) noexcept:
+cdef are_equal_morphisms(f, g):
     r"""
     Return ``True`` if ``f`` and ``g`` coincide on the
     generators of the domain, ``False`` otherwise.
 
     INPUT:
 
-    - ``f`` - a ring homomorphism or ``None``; if ``None``,
+    - ``f`` -- a ring homomorphism or ``None``; if ``None``,
       we consider that ``f`` is a coercion map
 
-    - ``g`` - a ring homomorphism or ``None``
+    - ``g`` -- a ring homomorphism or ``None``
 
     TESTS::
 
@@ -108,7 +108,7 @@ cdef class RingExtensionHomomorphism(RingMap):
           the action of this morphism on one of the bases of the domain;
           if ``None``, a coercion map is used
 
-        - ``check`` -- a boolean (default: ``True``); whether to check if
+        - ``check`` -- boolean (default: ``True``); whether to check if
           the given data define a valid homomorphism
 
         TESTS::
@@ -227,7 +227,7 @@ cdef class RingExtensionHomomorphism(RingMap):
         """
         return "Ring"
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         r"""
         Return the image of ``x`` under this morphism.
 
@@ -293,7 +293,6 @@ cdef class RingExtensionHomomorphism(RingMap):
              Field in b with defining polynomial x^3 + (2 + 2*a)*x - a over its base
               Defn: b |--> 2 + 2*a*b + (2 - a)*b^2
             sage: phi.base_map()                                                        # needs sage.rings.finite_rings
-
         """
         domain = self.domain()
         codomain = self.codomain()
@@ -318,7 +317,7 @@ cdef class RingExtensionHomomorphism(RingMap):
             base_map = base_map.extend_codomain(self.codomain())
         return base_map
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         r"""
         Compare this element with ``other`` according to
         the rich comparison operator ``op``.
@@ -494,7 +493,7 @@ cdef class RingExtensionHomomorphism(RingMap):
         else:
             return backend
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper function for copying and pickling.
 
@@ -512,7 +511,7 @@ cdef class RingExtensionHomomorphism(RingMap):
         self._backend = _slots['_backend']
         RingMap._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper function for copying and pickling.
 
@@ -598,7 +597,7 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
         """
         return ""
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         r"""
         Return the image of ``x`` under this morphism.
 
@@ -634,7 +633,6 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
         sage: type(f)
         <class 'sage.rings.ring_extension_morphism.RingExtensionBackendReverseIsomorphism'>
         sage: TestSuite(f).run()
-
     """
     def __init__(self, parent):
         r"""
@@ -688,7 +686,7 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
         """
         return ""
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         r"""
         Return the image of ``x`` under this morphism.
 
@@ -717,7 +715,6 @@ cdef class MapFreeModuleToRelativeRing(Map):
         sage: V, i, j = K.free_module()                                                 # needs sage.rings.finite_rings
         sage: type(i)                                                                   # needs sage.rings.finite_rings
         <class 'sage.rings.ring_extension_morphism.MapFreeModuleToRelativeRing'>
-
     """
     def __init__(self, E, K):
         r"""
@@ -740,7 +737,7 @@ cdef class MapFreeModuleToRelativeRing(Map):
         """
         self._degree = E.degree(K)
         self._basis = [ (<RingExtensionElement>x)._backend for x in E.basis_over(K) ]
-        self._f = backend_morphism(E.defining_morphism(K), forget="codomain")
+        self._f = backend_morphism(E.defining_morphism(K), forget='codomain')
         domain = K ** self._degree
         parent = domain.Hom(E)
         Map.__init__(self, parent)
@@ -771,7 +768,7 @@ cdef class MapFreeModuleToRelativeRing(Map):
         """
         return True
 
-    cpdef Element _call_(self, v) noexcept:
+    cpdef Element _call_(self, v):
         r"""
         Return the image of ``x`` under this morphism.
 
@@ -804,7 +801,6 @@ cdef class MapRelativeRingToFreeModule(Map):
         sage: V, i, j = K.free_module()                                                 # needs sage.rings.finite_rings
         sage: type(j)                                                                   # needs sage.rings.finite_rings
         <class 'sage.rings.ring_extension_morphism.MapRelativeRingToFreeModule'>
-
     """
     def __init__(self, E, K):
         r"""
@@ -829,7 +825,7 @@ cdef class MapRelativeRingToFreeModule(Map):
 
         self._degree = (<RingExtensionWithBasis>E)._degree_over(K)
         self._basis = [ (<RingExtensionElement>x)._backend for x in E.basis_over(K) ]
-        f = backend_morphism(E.defining_morphism(K), forget="codomain")
+        f = backend_morphism(E.defining_morphism(K), forget='codomain')
         codomain = K ** self._degree
         Map.__init__(self, E.Hom(codomain))
 
@@ -880,7 +876,7 @@ cdef class MapRelativeRingToFreeModule(Map):
         """
         return True
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         r"""
         Return the image of ``x`` under this morphism.
 
@@ -898,7 +894,7 @@ cdef class MapRelativeRingToFreeModule(Map):
         coeffs = self.backend_coefficients(x)
         return self.codomain()(coeffs)
 
-    cdef list backend_coefficients(self, RingExtensionElement x) noexcept:
+    cdef list backend_coefficients(self, RingExtensionElement x):
         r"""
         Return the coordinates of the image of ``x``
         as elements of the backend ring.

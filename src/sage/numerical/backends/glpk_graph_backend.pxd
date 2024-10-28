@@ -27,22 +27,22 @@ ctypedef struct c_a_data:
 
 cdef class GLPKGraphBackend():
     cdef glp_graph * graph
-    cpdef add_vertex(self, name = ?) noexcept
-    cpdef list add_vertices(self, vertices) noexcept
-    cpdef __add_vertices_sage(self, g) noexcept
-    cpdef dict get_vertex(self, vertex) noexcept
-    cpdef dict get_vertices(self, verts) noexcept
-    cpdef set_vertex_demand(self, vertex, param) noexcept
-    cpdef set_vertices_demand(self, list pairs) noexcept
-    cpdef list vertices(self) noexcept
-    cpdef add_edge(self, u, v, dict params = ?) noexcept
-    cpdef __add_edges_sage(self, g) noexcept
-    cpdef list add_edges(self, edges) noexcept
-    cpdef delete_edge(self, u, v, dict params = ?) noexcept
-    cpdef tuple get_edge(self, u, v) noexcept
-    cpdef list edges(self) noexcept
-    cpdef delete_vertex(self, vert) noexcept
-    cpdef delete_vertices(self, list verts) noexcept
+    cpdef add_vertex(self, name=?)
+    cpdef list add_vertices(self, vertices)
+    cpdef __add_vertices_sage(self, g)
+    cpdef dict get_vertex(self, vertex)
+    cpdef dict get_vertices(self, verts)
+    cpdef set_vertex_demand(self, vertex, param)
+    cpdef set_vertices_demand(self, list pairs)
+    cpdef list vertices(self)
+    cpdef add_edge(self, u, v, dict params=?)
+    cpdef __add_edges_sage(self, g)
+    cpdef list add_edges(self, edges)
+    cpdef delete_edge(self, u, v, dict params=?)
+    cpdef tuple get_edge(self, u, v)
+    cpdef list edges(self)
+    cpdef delete_vertex(self, vert)
+    cpdef delete_vertices(self, list verts)
     cpdef int _find_vertex(self, vert) noexcept
     cpdef int write_graph(self, fname) noexcept
     cpdef int write_ccdata(self, fname) noexcept

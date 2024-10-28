@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([biopython], [SAGE_PYTHON_PACKAGE_CHECK([biopython])])

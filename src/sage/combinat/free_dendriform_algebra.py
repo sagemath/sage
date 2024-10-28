@@ -87,7 +87,8 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
         sage: F = algebras.FreeDendriform(ZZ, 'xyz')
         sage: x,y,z = F.gens()
         sage: (x * y) * z
-        B[x[., y[., z[., .]]]] + B[x[., z[y[., .], .]]] + B[y[x[., .], z[., .]]] + B[z[x[., y[., .]], .]] + B[z[y[x[., .], .], .]]
+        B[x[., y[., z[., .]]]] + B[x[., z[y[., .], .]]] + B[y[x[., .], z[., .]]]
+         + B[z[x[., y[., .]], .]] + B[z[y[x[., .], .], .]]
 
     The free dendriform algebra is associative::
 
@@ -114,7 +115,8 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
         sage: w = F1.gen(0); w
         B[[., .]]
         sage: w * w * w
-        B[[., [., [., .]]]] + B[[., [[., .], .]]] + B[[[., .], [., .]]] + B[[[., [., .]], .]] + B[[[[., .], .], .]]
+        B[[., [., [., .]]]] + B[[., [[., .], .]]] + B[[[., .], [., .]]]
+         + B[[[., [., .]], .]] + B[[[[., .], .], .]]
 
     The set `E` can be infinite::
 
@@ -178,7 +180,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
         cat = HopfAlgebras(R).WithBasis().Graded().Connected()
         CombinatorialFreeModule.__init__(self, R, Trees,
-                                         latex_prefix="",
+                                         latex_prefix='',
                                          sorting_key=key,
                                          category=cat)
 
@@ -222,11 +224,11 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
 
     def gen(self, i):
         r"""
-        Return the ``i``-th generator of the algebra.
+        Return the `i`-th generator of the algebra.
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -937,14 +939,12 @@ class DendriformFunctor(ConstructionFunctor):
                 return self
             ret = list(self.vars)
             cur_vars = set(ret)
-            for v in other.vars:
-                if v not in cur_vars:
-                    ret.append(v)
+            ret.extend(v for v in other.vars if v not in cur_vars)
             return DendriformFunctor(Alphabet(ret))
-        else:
-            return None
 
-    def _repr_(self):
+        return None
+
+    def _repr_(self) -> str:
         """
         TESTS::
 

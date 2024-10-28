@@ -72,11 +72,11 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
 
         INPUT:
 
-        - ``labels``, a list of labels.
+        - ``labels`` -- list of labels
 
         OUTPUT:
 
-        A structure with the i-th label of self replaced with the i-th
+        A structure with the `i`-th label of ``self`` replaced with the `i`-th
         label of the list.
 
         EXAMPLES::
@@ -99,7 +99,7 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
 class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
     def __init__(self, F, G, min=None, max=None, weight=None):
         """
-        Returns the composition of two species.
+        Return the composition of two species.
 
         EXAMPLES::
 
@@ -255,7 +255,7 @@ class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def weight_ring(self):
         """
-        Returns the weight ring for this species. This is determined by
+        Return the weight ring for this species. This is determined by
         asking Sage's coercion model what the result is when you multiply
         (and add) elements of the weight rings for each of the operands.
 

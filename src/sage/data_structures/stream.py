@@ -107,7 +107,7 @@ from sage.misc.cachefunc import cached_method
 lazy_import('sage.combinat.sf.sfa', ['_variables_recursive', '_raise_variables'])
 
 
-class Stream():
+class Stream:
     """
     Abstract base class for all streams.
 
@@ -133,7 +133,6 @@ class Stream():
         However, keep in mind that (trivially) this initialization
         code is not executed if ``_approximate_order`` is set to a
         value before it is accessed.
-
     """
     def __init__(self, true_order):
         """
@@ -185,7 +184,7 @@ class Stream():
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be non-zero.
+        to be nonzero.
 
         The default implementation is ``False``.
 
@@ -226,7 +225,7 @@ class Stream_inexact(Stream):
     - ``is_sparse`` -- boolean; whether the implementation of the stream is sparse
     - ``true_order`` -- boolean; if the approximate order is the actual order
 
-    If the cache is dense, it begins with the first non-zero term.
+    If the cache is dense, it begins with the first nonzero term.
     """
     def __init__(self, is_sparse, true_order):
         """
@@ -251,7 +250,7 @@ class Stream_inexact(Stream):
 
     def is_nonzero(self):
         r"""
-        Return ``True`` if and only if the cache contains a non-zero element.
+        Return ``True`` if and only if the cache contains a nonzero element.
 
         EXAMPLES::
 
@@ -319,7 +318,7 @@ class Stream_inexact(Stream):
 
         INPUT:
 
-        - ``d`` -- a dictionary that needs to be unpickled
+        - ``d`` -- dictionary that needs to be unpickled
 
         EXAMPLES::
 
@@ -441,7 +440,7 @@ class Stream_inexact(Stream):
     def order(self):
         r"""
         Return the order of ``self``, which is the minimum index ``n`` such
-        that ``self[n]`` is non-zero.
+        that ``self[n]`` is nonzero.
 
         EXAMPLES::
 
@@ -545,7 +544,6 @@ class Stream_inexact(Stream):
             True
             sage: g != f
             True
-
         """
         # TODO: more cases, in particular mixed implementations,
         # could be detected
@@ -582,7 +580,7 @@ class Stream_exact(Stream):
 
     INPUT:
 
-    - ``initial_values`` -- a list of initial values
+    - ``initial_values`` -- list of initial values
     - ``is_sparse`` -- boolean; specifies whether the stream is sparse
     - ``order`` -- integer (default: 0); determining the degree
       of the first element of ``initial_values``
@@ -607,7 +605,7 @@ class Stream_exact(Stream):
             sage: Stream_exact([])
             Traceback (most recent call last):
             ...
-            AssertionError: Stream_exact should only be used for non-zero streams
+            AssertionError: Stream_exact should only be used for nonzero streams
 
             sage: s = Stream_exact([0, 0, 1, 0, 0])
             sage: s._initial_coefficients, s._approximate_order, s._degree, s._true_order
@@ -669,7 +667,7 @@ class Stream_exact(Stream):
         # complicated otherwise
         for i, v in enumerate(initial_coefficients):
             if v:
-                # We have found the first non-zero coefficient
+                # We have found the first nonzero coefficient
                 order += i
                 initial_coefficients = initial_coefficients[i:]
                 if order + len(initial_coefficients) == self._degree:
@@ -690,7 +688,7 @@ class Stream_exact(Stream):
             order = self._degree
             self._initial_coefficients = tuple()
 
-        assert self._initial_coefficients or self._constant, "Stream_exact should only be used for non-zero streams"
+        assert self._initial_coefficients or self._constant, "Stream_exact should only be used for nonzero streams"
 
         super().__init__(True)
         self._approximate_order = order
@@ -748,7 +746,7 @@ class Stream_exact(Stream):
     def order(self):
         r"""
         Return the order of ``self``, which is the minimum index
-        ``n`` such that ``self[n]`` is non-zero.
+        ``n`` such that ``self[n]`` is nonzero.
 
         EXAMPLES::
 
@@ -808,7 +806,6 @@ class Stream_exact(Stream):
             sage: t = Stream_exact([2], order=-1, degree=5, constant=1)
             sage: s == t
             False
-
         """
         return (isinstance(other, type(self))
                 and self._degree == other._degree
@@ -821,7 +818,7 @@ class Stream_exact(Stream):
         Return whether ``self`` and ``other`` are known to be different.
 
         The argument ``other`` may be exact or inexact, but is
-        assumed to be non-zero.
+        assumed to be nonzero.
 
         INPUT:
 
@@ -882,9 +879,9 @@ class Stream_exact(Stream):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be non-zero.
+        to be nonzero.
 
-        An assumption of this class is that it is non-zero.
+        An assumption of this class is that it is nonzero.
 
         EXAMPLES::
 
@@ -943,7 +940,7 @@ class Stream_iterator(Stream_inexact):
 
             sage: from sage.data_structures.stream import Stream_iterator
             sage: f = Stream_iterator(iter(NonNegativeIntegers()), 0)
-            sage: TestSuite(f).run(skip="_test_pickling")
+            sage: TestSuite(f).run(skip='_test_pickling')
         """
         self.iterate_coefficients = lambda: iter
         super().__init__(False, true_order)
@@ -993,7 +990,7 @@ class Stream_function(Stream_inexact):
 
             sage: from sage.data_structures.stream import Stream_function
             sage: f = Stream_function(lambda n: 1, False, 1)
-            sage: TestSuite(f).run(skip="_test_pickling")
+            sage: TestSuite(f).run(skip='_test_pickling')
         """
         self.get_coefficient = function
         super().__init__(is_sparse, true_order)
@@ -1076,7 +1073,7 @@ class Stream_taylor(Stream_inexact):
 
             sage: from sage.data_structures.stream import Stream_taylor
             sage: f = Stream_taylor(polygen(QQ, 'x')^3, False)
-            sage: TestSuite(f).run(skip="_test_pickling")
+            sage: TestSuite(f).run(skip='_test_pickling')
         """
         from sage.symbolic.ring import SR
         from sage.structure.element import parent
@@ -1241,7 +1238,7 @@ class Stream_uninitialized(Stream_inexact):
 
             sage: from sage.data_structures.stream import Stream_uninitialized
             sage: C = Stream_uninitialized(0)
-            sage: TestSuite(C).run(skip="_test_pickling")
+            sage: TestSuite(C).run(skip='_test_pickling')
         """
         self._target = None
         if approximate_order is None:
@@ -1310,7 +1307,7 @@ class Stream_unary(Stream_inexact):
 
     - ``series`` -- :class:`Stream` the operator acts on
     - ``is_sparse`` -- boolean
-    - ``true_order`` -- boolean (default: ``False``) if the approximate order
+    - ``true_order`` -- boolean (default: ``False``); if the approximate order
       is the actual order
 
     EXAMPLES::
@@ -1871,7 +1868,7 @@ class Stream_cauchy_mul(Stream_binary):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be non-zero.
+        to be nonzero.
 
         EXAMPLES::
 
@@ -1945,7 +1942,7 @@ class Stream_dirichlet_convolve(Stream_binary):
             or self._right._approximate_order <= 0):
             raise ValueError("Dirichlet convolution is only defined for "
                              "coefficient streams with minimal index of "
-                             "non-zero coefficient at least 1")
+                             "nonzero coefficient at least 1")
         return self._left._approximate_order * self._right._approximate_order
 
     def get_coefficient(self, n):
@@ -2100,13 +2097,13 @@ class Stream_plethysm(Stream_binary):
 
     - ``f`` -- a :class:`Stream`
     - ``g`` -- a :class:`Stream` with positive order, unless ``f`` is
-      of :class:`Stream_exact`.
+      of :class:`Stream_exact`
     - ``p`` -- the ring of powersum symmetric functions containing ``g``
-    - ``ring`` (optional, default ``None``) -- the ring the result
+    - ``ring`` -- (default: ``None``) the ring the result
       should be in, by default ``p``
-    - ``include`` -- a list of variables to be treated as degree one
+    - ``include`` -- list of variables to be treated as degree one
       elements instead of the default degree one elements
-    - ``exclude`` -- a list of variables to be excluded from the
+    - ``exclude`` -- list of variables to be excluded from the
       default degree one elements
 
     EXAMPLES::
@@ -2180,7 +2177,6 @@ class Stream_plethysm(Stream_binary):
         sage: r2 = Stream_plethysm(f, g, True, p, include=[])                           # needs sage.modules
         sage: r_s - sum(r2[n] for n in range(2*(r_s.degree()+1)))                       # needs sage.modules
         (a2*b1^2-a2*b1)*p[2] + (a2*b111^2-a2*b111)*p[2, 2, 2] + (a2*b21^2-a2*b21)*p[4, 2]
-
     """
     def __init__(self, f, g, is_sparse, p, ring=None, include=None, exclude=None):
         r"""
@@ -2396,7 +2392,6 @@ class Stream_plethysm(Stream_binary):
             ....:                           if sum(mu.size() for mu in m) == 12})
             sage: A == B                        # long time
             True
-
         """
         # TODO: we should do lazy binary powering here
         while len(self._powers) < m:
@@ -2409,13 +2404,13 @@ class Stream_plethysm(Stream_binary):
         # integer and not a symmetric function
         if power_d:
             # _raise_variables(c, i, self._degree_one) cannot vanish
-            # because i is positive and c is non-zero
+            # because i is positive and c is nonzero
             if self._tensor_power is None:
                 terms = {mon.stretch(i):
                          _raise_variables(c, i, self._degree_one)
                          for mon, c in power_d}
             else:
-                terms = {tuple((mu.stretch(i) for mu in mon)):
+                terms = {tuple(mu.stretch(i) for mu in mon):
                          _raise_variables(c, i, self._degree_one)
                          for mon, c in power_d}
             return self._basis(self._p.element_class(self._p, terms))
@@ -2434,7 +2429,7 @@ class Stream_scalar(Stream_unary):
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``scalar`` -- a non-zero, non-one scalar
+    - ``scalar`` -- a nonzero, non-one scalar
     - ``is_sparse`` -- boolean
     """
     def __init__(self, series, scalar, is_sparse):
@@ -2515,7 +2510,7 @@ class Stream_scalar(Stream_unary):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be non-zero.
+        to be nonzero.
 
         EXAMPLES::
 
@@ -2542,7 +2537,7 @@ class Stream_rmul(Stream_scalar):
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``scalar`` -- a non-zero, non-one scalar
+    - ``scalar`` -- a nonzero, non-one scalar
 
     EXAMPLES::
 
@@ -2584,7 +2579,7 @@ class Stream_lmul(Stream_scalar):
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``scalar`` -- a non-zero, non-one scalar
+    - ``scalar`` -- a nonzero, non-one scalar
 
     EXAMPLES::
 
@@ -2691,7 +2686,7 @@ class Stream_neg(Stream_unary):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be non-zero.
+        to be nonzero.
 
         EXAMPLES::
 
@@ -2730,7 +2725,6 @@ class Stream_cauchy_invert(Stream_unary):
         sage: g = Stream_cauchy_invert(f)
         sage: [g[i] for i in range(10)]
         [-1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
     """
     def __init__(self, series, approximate_order=None):
         """
@@ -2830,9 +2824,9 @@ class Stream_cauchy_invert(Stream_unary):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be non-zero.
+        to be nonzero.
 
-        An assumption of this class is that it is non-zero.
+        An assumption of this class is that it is nonzero.
 
         EXAMPLES::
 
@@ -2875,7 +2869,7 @@ class Stream_dirichlet_invert(Stream_unary):
             sage: g[1]
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: the Dirichlet inverse only exists if the coefficient with index 1 is non-zero
+            ZeroDivisionError: the Dirichlet inverse only exists if the coefficient with index 1 is nonzero
         """
         super().__init__(series, is_sparse)
         self._zero = ZZ.zero()
@@ -2898,7 +2892,7 @@ class Stream_dirichlet_invert(Stream_unary):
         # this is the true order, but we want to check first
         if self._series._approximate_order > 1:
             raise ZeroDivisionError("the Dirichlet inverse only exists if the "
-                                    "coefficient with index 1 is non-zero")
+                                    "coefficient with index 1 is nonzero")
         self._true_order = True
         return 1
 
@@ -2954,7 +2948,7 @@ class Stream_dirichlet_invert(Stream_unary):
 
 class Stream_map_coefficients(Stream_unary):
     r"""
-    The stream with ``function`` applied to each non-zero coefficient
+    The stream with ``function`` applied to each nonzero coefficient
     of ``series``.
 
     INPUT:
@@ -2974,7 +2968,6 @@ class Stream_map_coefficients(Stream_unary):
         sage: g = Stream_map_coefficients(f, lambda n: -n, True)
         sage: [g[i] for i in range(10)]
         [0, -1, -1, -1, -1, -1, -1, -1, -1, -1]
-
     """
     def __init__(self, series, function, is_sparse, approximate_order=None, true_order=False):
         """
@@ -2985,7 +2978,7 @@ class Stream_map_coefficients(Stream_unary):
             sage: from sage.data_structures.stream import (Stream_map_coefficients, Stream_function)
             sage: f = Stream_function(lambda n: -1, True, 0)
             sage: g = Stream_map_coefficients(f, lambda n: n + 1, True)
-            sage: TestSuite(g).run(skip="_test_pickling")
+            sage: TestSuite(g).run(skip='_test_pickling')
         """
         self._function = function
         super().__init__(series, is_sparse, true_order)
@@ -3079,14 +3072,14 @@ class Stream_map_coefficients(Stream_unary):
 
 class Stream_shift(Stream):
     """
-    Operator for shifting a non-zero, non-exact stream.
+    Operator for shifting a nonzero, non-exact stream.
 
     Instances of this class share the cache with its input stream.
 
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``shift`` -- an integer
+    - ``shift`` -- integer
     """
     def __init__(self, series, shift):
         """
@@ -3098,7 +3091,7 @@ class Stream_shift(Stream):
             sage: from sage.data_structures.stream import Stream_function
             sage: h = Stream_function(lambda n: n, True, -5)
             sage: M = Stream_shift(h, 2)
-            sage: TestSuite(M).run(skip="_test_pickling")
+            sage: TestSuite(M).run(skip='_test_pickling')
         """
         self._series = series
         self._shift = shift
@@ -3125,7 +3118,7 @@ class Stream_shift(Stream):
     def order(self):
         r"""
         Return the order of ``self``, which is the minimum index
-        ``n`` such that ``self[n]`` is non-zero.
+        ``n`` such that ``self[n]`` is nonzero.
 
         EXAMPLES::
 
@@ -3195,9 +3188,9 @@ class Stream_shift(Stream):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be non-zero.
+        to be nonzero.
 
-        An assumption of this class is that it is non-zero.
+        An assumption of this class is that it is nonzero.
 
         EXAMPLES::
 
@@ -3226,7 +3219,7 @@ class Stream_shift(Stream):
 
 class Stream_truncated(Stream_unary):
     """
-    Operator for shifting a non-zero, non-exact stream that has
+    Operator for shifting a nonzero, non-exact stream that has
     been shifted below its minimal valuation.
 
     Instances of this class share the cache with its input stream.
@@ -3234,8 +3227,8 @@ class Stream_truncated(Stream_unary):
     INPUT:
 
     - ``series`` -- a :class:`Stream_inexact`
-    - ``shift`` -- an integer
-    - ``minimal_valuation`` -- an integer; this is also the approximate order
+    - ``shift`` -- integer
+    - ``minimal_valuation`` -- integer; this is also the approximate order
     """
     def __init__(self, series, shift, minimal_valuation):
         """
@@ -3246,9 +3239,9 @@ class Stream_truncated(Stream_unary):
             sage: from sage.data_structures.stream import Stream_function, Stream_truncated
             sage: def fun(n): return 1 if ZZ(n).is_power_of(2) else 0
             sage: s = Stream_truncated(Stream_function(fun, True, 0), -5, 0)
-            sage: TestSuite(s).run(skip="_test_pickling")
+            sage: TestSuite(s).run(skip='_test_pickling')
             sage: s = Stream_truncated(Stream_function(fun, False, 0), -5, 0)
-            sage: TestSuite(s).run(skip="_test_pickling")
+            sage: TestSuite(s).run(skip='_test_pickling')
 
         Verify that we have used the cache to see if we can get the
         true order at initialization::
@@ -3386,7 +3379,7 @@ class Stream_truncated(Stream_unary):
     def order(self):
         """
         Return the order of ``self``, which is the minimum index ``n`` such
-        that ``self[n]`` is non-zero.
+        that ``self[n]`` is nonzero.
 
         EXAMPLES::
 
@@ -3432,7 +3425,7 @@ class Stream_truncated(Stream_unary):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be non-zero.
+        to be nonzero.
 
         EXAMPLES::
 
@@ -3479,7 +3472,7 @@ class Stream_derivative(Stream_unary):
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``shift`` -- a positive integer
+    - ``shift`` -- positive integer
     - ``is_sparse`` -- boolean
     """
     def __init__(self, series, shift, is_sparse):
@@ -3586,7 +3579,7 @@ class Stream_derivative(Stream_unary):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be non-zero.
+        to be nonzero.
 
         EXAMPLES::
 
@@ -3607,7 +3600,7 @@ class Stream_integral(Stream_unary):
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``integration_constants`` -- a list of integration constants
+    - ``integration_constants`` -- list of integration constants
     - ``is_sparse`` -- boolean
     """
     def __init__(self, series, integration_constants, is_sparse):
@@ -3714,7 +3707,7 @@ class Stream_integral(Stream_unary):
     def is_nonzero(self):
         r"""
         Return ``True`` if and only if this stream is known
-        to be non-zero.
+        to be nonzero.
 
         EXAMPLES::
 

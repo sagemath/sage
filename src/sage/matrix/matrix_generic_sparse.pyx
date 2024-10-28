@@ -47,7 +47,8 @@ EXAMPLES::
     [  5   x x^2]
     [x^3 x^4 x^5]
     sage: parent(d)
-    Full MatrixSpace of 2 by 3 dense matrices over Univariate Polynomial Ring in x over Rational Field
+    Full MatrixSpace of 2 by 3 dense matrices
+     over Univariate Polynomial Ring in x over Rational Field
     sage: c.sparse_matrix() is c
     True
     sage: c.is_sparse()
@@ -97,7 +98,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
 
         The datastructure can potentially be optimized. Firstly, as noticed in
         :issue:`17663`, we lose time in using 2-tuples to store indices.
-        Secondly, there is no fast way to access non-zero elements in a given
+        Secondly, there is no fast way to access nonzero elements in a given
         row/column.
     """
     def __cinit__(self):
@@ -116,7 +117,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
 
         TESTS::
@@ -168,7 +169,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
 
     def __bool__(self):
         r"""
-        Test whether this matrix is non-zero.
+        Test whether this matrix is nonzero.
 
         TESTS::
 
@@ -187,7 +188,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         """
         return bool(self._entries)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
         if not value:
             try:
                 del self._entries[(i,j)]
@@ -196,7 +197,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         else:
             self._entries[(i,j)] = value
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._entries.get((i,j), self._zero)
 
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
@@ -247,7 +248,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
     # x  * _dict -- copy of the sparse dictionary of underlying elements
     ########################################################################
 
-    cpdef _add_(self, _other) noexcept:
+    cpdef _add_(self, _other):
         """
         EXAMPLES::
 
@@ -287,7 +288,6 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
             True
             sage: (A+D).__class__ == D.__class__
             True
-
         """
         # Compute the sum of two sparse matrices.
         # This is complicated because of how we represent sparse matrices.
@@ -343,10 +343,9 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
             A.subdivide(*self.subdivisions())
         return A
 
-
     def _list(self):
         """
-        Return all entries of self as a list of numbers of rows times
+        Return all entries of ``self`` as a list of numbers of rows times
         number of columns entries.
         """
         cdef Py_ssize_t i,j
@@ -360,7 +359,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
 
     def _dict(self):
         """
-        Return the underlying dictionary of self.
+        Return the underlying dictionary of ``self``.
 
         This is used in comparisons.
 
@@ -425,10 +424,9 @@ def Matrix_sparse_from_rows(X):
     """
     INPUT:
 
-    -  ``X`` - nonempty list of SparseVector rows
+    - ``X`` -- nonempty list of ``SparseVector`` rows
 
-
-    OUTPUT: Sparse_matrix with those rows.
+    OUTPUT: ``Sparse_matrix`` with those rows
 
     EXAMPLES::
 

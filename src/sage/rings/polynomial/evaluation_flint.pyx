@@ -36,7 +36,7 @@ from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.flint.fmpz_poly_sage cimport *
 
 
-cdef fmpz_poly_evaluation_mpfr(mpfr_t res, const fmpz_poly_t poly, const mpfr_t a) noexcept:
+cdef fmpz_poly_evaluation_mpfr(mpfr_t res, const fmpz_poly_t poly, const mpfr_t a):
     cdef mpz_t c
     cdef long i
 
@@ -51,7 +51,7 @@ cdef fmpz_poly_evaluation_mpfr(mpfr_t res, const fmpz_poly_t poly, const mpfr_t 
 
     mpz_clear(c)
 
-cdef fmpz_poly_evaluation_mpfi(mpfi_t res, const fmpz_poly_t poly, const mpfi_t a) noexcept:
+cdef fmpz_poly_evaluation_mpfi(mpfi_t res, const fmpz_poly_t poly, const mpfi_t a):
     cdef mpz_t c
     cdef long i
 

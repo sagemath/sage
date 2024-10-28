@@ -82,14 +82,14 @@ class QuotientModuleWithBasis(CombinatorialFreeModule):
         category = default_category.or_subcategory(category, join=True)
         return super().__classcall__(cls, submodule, category)
 
-    def __init__(self, submodule, category):
+    def __init__(self, submodule, category, *args, **opts):
         r"""
         Initialize this quotient of a module with basis by a submodule.
 
         TESTS::
 
             sage: from sage.modules.with_basis.subquotient import QuotientModuleWithBasis
-            sage: X = CombinatorialFreeModule(QQ, range(3), prefix="x"); x = X.basis()
+            sage: X = CombinatorialFreeModule(QQ, range(3), prefix='x'); x = X.basis()
             sage: I = X.submodule( (x[0]-x[1], x[1]-x[2]) )
             sage: Y = QuotientModuleWithBasis(I)
             sage: Y.print_options(prefix='y')
@@ -107,7 +107,7 @@ class QuotientModuleWithBasis(CombinatorialFreeModule):
         indices = embedding.cokernel_basis_indices()
         CombinatorialFreeModule.__init__(self,
                                          submodule.base_ring(), indices,
-                                         category=category)
+                                         category=category, *args, **opts)
 
     def ambient(self):
         r"""
@@ -115,7 +115,7 @@ class QuotientModuleWithBasis(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: X = CombinatorialFreeModule(QQ, range(3), prefix="x"); x = X.basis()
+            sage: X = CombinatorialFreeModule(QQ, range(3), prefix='x'); x = X.basis()
             sage: Y = X.quotient_module((x[0]-x[1], x[1]-x[2]))
             sage: Y.ambient() is X
             True
@@ -132,7 +132,7 @@ class QuotientModuleWithBasis(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: X = CombinatorialFreeModule(QQ, range(3), prefix="x"); x = X.basis()
+            sage: X = CombinatorialFreeModule(QQ, range(3), prefix='x'); x = X.basis()
             sage: Y = X.quotient_module((x[0]-x[1], x[1]-x[2]));         y = Y.basis()
             sage: Y.lift(y[2])
             x[2]
@@ -150,7 +150,7 @@ class QuotientModuleWithBasis(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: X = CombinatorialFreeModule(QQ, range(3), prefix="x"); x = X.basis()
+            sage: X = CombinatorialFreeModule(QQ, range(3), prefix='x'); x = X.basis()
             sage: Y = X.quotient_module((x[0]-x[1], x[1]-x[2]));         y = Y.basis()
             sage: Y.print_options(prefix='y')
             sage: Y.retract(x[0])
@@ -219,9 +219,9 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
         if category is None and ambient.category().is_subcategory(Mod.Filtered()):
             default_category = default_category.Filtered()
         category = default_category.or_subcategory(category, join=True)
-        return super().__classcall__(cls,
-                    basis, tuple(support_order), ambient, unitriangular, category,
-                    *args, **opts)
+        return super().__classcall__(cls, basis, tuple(support_order),
+                                     ambient, unitriangular, category,
+                                     *args, **opts)
 
     def __init__(self, basis, support_order, ambient, unitriangular, category,
                  *args, **opts):
@@ -231,7 +231,7 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
         TESTS::
 
             sage: from sage.modules.with_basis.subquotient import SubmoduleWithBasis
-            sage: X = CombinatorialFreeModule(QQ, range(3), prefix="x"); x = X.basis()
+            sage: X = CombinatorialFreeModule(QQ, range(3), prefix='x'); x = X.basis()
             sage: ybas = (x[0]-x[1], x[1]-x[2])
             sage: Y = SubmoduleWithBasis(ybas, [0, 1, 2], X)
             sage: Y.print_options(prefix='y')
@@ -287,7 +287,7 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: X = CombinatorialFreeModule(QQ, range(3), prefix="x");             x = X.basis()
+            sage: X = CombinatorialFreeModule(QQ, range(3), prefix='x');             x = X.basis()
             sage: Y = X.submodule((x[0]-x[1], x[1]-x[2]), already_echelonized=True); y = Y.basis()
             sage: Y.lift
             Generic morphism:
@@ -300,10 +300,10 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
         """
         return self.module_morphism(self.lift_on_basis,
                                     codomain=self._ambient,
-                                    triangular="lower",
+                                    triangular='lower',
                                     unitriangular=self._unitriangular,
                                     key=self._support_key,
-                                    inverse_on_support="compute")
+                                    inverse_on_support='compute')
 
     @lazy_attribute
     def reduce(self):
@@ -315,7 +315,7 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: X = CombinatorialFreeModule(QQ, range(3), prefix="x"); x = X.basis()
+            sage: X = CombinatorialFreeModule(QQ, range(3), prefix='x'); x = X.basis()
             sage: Y = X.submodule((x[0]-x[1], x[1]-x[2]), already_echelonized=True)
             sage: Y.reduce
             Generic endomorphism of Free module generated by {0, 1, 2} over Rational Field
@@ -338,7 +338,7 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: X = CombinatorialFreeModule(QQ, range(3), prefix="x"); x = X.basis()
+            sage: X = CombinatorialFreeModule(QQ, range(3), prefix='x'); x = X.basis()
             sage: Y = X.submodule((x[0]-x[1], x[1]-x[2]), already_echelonized=True)
             sage: Y.print_options(prefix='y')
             sage: Y.retract
@@ -394,21 +394,19 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
             sage: H.is_submodule(G)
             False
 
-        TESTS::
+        Different ambient spaces::
 
             sage: X = CombinatorialFreeModule(QQ, range(4)); x = X.basis()
             sage: F = X.submodule([x[0]-x[1], x[1]-x[2], x[2]-x[3]])
             sage: Y = CombinatorialFreeModule(QQ, range(6)); y = Y.basis()
             sage: G = Y.submodule([y[0]-y[1], y[1]-y[2], y[2]-y[3]])
             sage: F.is_submodule(G)
-            Traceback (most recent call last):
-            ...
-            ValueError: other (=...) should be a submodule of the same ambient space
+            False
         """
         if other is self._ambient:
             return True
         if not (isinstance(self, SubmoduleWithBasis) and self.ambient() is other.ambient()):
-            raise ValueError("other (=%s) should be a submodule of the same ambient space" % other)
+            return False  # different ambient spaces
         if self not in ModulesWithBasis.FiniteDimensional:
             raise NotImplementedError("only implemented for finite dimensional submodules")
         if self.dimension() > other.dimension():  # quick dimension check
@@ -663,7 +661,7 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``gens`` -- a list or family of elements of ``self``
+        - ``gens`` -- list or family of elements of ``self``
 
         For additional optional arguments, see
         :meth:`ModulesWithBasis.ParentMethods.submodule`.

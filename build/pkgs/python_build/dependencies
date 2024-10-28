@@ -1,4 +1,4 @@
- pyparsing tomli packaging | $(PYTHON_TOOLCHAIN) $(PYTHON)
+tomli packaging pyproject_hooks importlib_metadata | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

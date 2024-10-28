@@ -84,8 +84,8 @@ Modes of operation (provide at most one):
    -x, --check-only: exclusively run the test suite;
        this may assume that:
         * the package has been installed already and/or that
-        * the temporary build directory has not been deleted
-   -e, --erase-build-directory-only: erase (delete) the temporary
+        * the build directory has not been deleted
+   -e, --erase-build-directory-only: erase (delete) the
        build directory only
    --info: print information on the package only
    --help: print this help only
@@ -103,7 +103,7 @@ Other options:
        exit with an error on test suite failures
    -w: after installing, run the test suite for the package;
        print a warning on test suite failures
-   -s: save (do not delete) the temporary build directory,
+   -s: save (do not delete) the build directory,
        even when the installation was successful
 EOF
 }
@@ -143,22 +143,10 @@ cat >&2 <<MESSAGE
 MESSAGE
 }
 
-lookup_param()
+exit_with_error_msg()
 {
-    local param=$1
-    local file=$2
-    # Ignore errors if the file does not exist
-    sed -n "s/^${param} *= *//p" $file 2>/dev/null
-}
-
-write_to_tty()
-{
-    # Try writing to terminal.  Suppress the possible error message
-    if ! ( cat > /dev/tty ) 2> /dev/null ; then
-        # Fall back to writing to stdout
-        cat
-        return 1
-    fi
+    error_msg "$@"
+    exit 1
 }
 
 # Handle -n, -t, -q options for recursive make
@@ -185,20 +173,9 @@ fi
 # Since this is sourced, it returns a non-zero value on errors rather
 # than exiting.  Using dot suggested by W. Cheung.
 . sage-env-config
-. sage-env
-
-if [ $? -ne 0 ]; then
-    error_msg "Error setting environment variables by sourcing sage-env"
-    exit 1
-fi
-
+. sage-env || exit_with_error_msg "Error setting environment variables by sourcing sage-env"
 . sage-build-env-config
-. sage-build-env
-
-if [ $? -ne 0 ]; then
-    error_msg "Error setting environment variables by sourcing sage-build-env"
-    exit 1
-fi
+. sage-build-env || exit_with_error_msg "Error setting environment variables by sourcing sage-build-env"
 
 # Remove '.' from PYTHONPATH, to avoid trouble with setuptools / easy_install
 # (cf. #10192, #10176):
@@ -298,7 +275,7 @@ if echo "$PKG_SRC" | grep / >/dev/null; then
     exit 1
 fi
 PKG_NAME="$PKG_SRC"
-PKG_BASE=`echo "$PKG_NAME" | sed 's/-.*//'` # strip version number
+export PKG_BASE=`echo "$PKG_NAME" | sed 's/-.*//'` # strip version number
 
 case $# in
     1)
@@ -325,23 +302,20 @@ export SAGE_SPKG_WHEELS="$SAGE_INST_LOCAL/var/lib/sage/wheels"
 # PKG_SRC should look like "package-VERSION" or just "package".
 # VERSION, if provided, must match the version in build/pkgs.
 PKG_VER="${PKG_NAME#${PKG_BASE}}"
-PKG_VER="${PKG_VER#-}"
-PKG_SCRIPTS="$SAGE_ROOT/build/pkgs/$PKG_BASE"
-LOCAL_PKG_VER=`cat $PKG_SCRIPTS/package-version.txt 2>/dev/null || echo none`
-PKG_VER="$LOCAL_PKG_VER"
+export PKG_VER="${PKG_VER#-}"
+eval $(sage-package properties --format=shell $PKG_BASE)
+eval PKG_SCRIPTS=\$path_$PKG_BASE \
+     PKG_TYPE=\$type_$PKG_BASE \
+     PKG_SRC_TYPE=\$source_$PKG_BASE \
+     LOCAL_PKG_VER=\$version_with_patchlevel_$PKG_BASE
 if [ -n "$PKG_VER" -a "$PKG_VER" != "$LOCAL_PKG_VER" ]; then
     echo >&2 "Error: Selecting a different version of a package is no longer supported"
     exit 1
 fi
 if [ -z "$PKG_VER" ]; then
-    PKG_NAME="${PKG_BASE}"
+    export PKG_NAME="${PKG_BASE}"
 else
-    PKG_NAME="${PKG_BASE}-${PKG_VER}"
-fi
-PKG_BASE_VER=`echo $PKG_VER | sed 's/\.p[0-9][0-9]*$//'`
-if [ -f "$PKG_SCRIPTS/checksums.ini" ]; then
-    # Normal/wheel package
-    PKG_NAME_UPSTREAM=`lookup_param tarball "$PKG_SCRIPTS/checksums.ini"`
+    export PKG_NAME="${PKG_BASE}-${PKG_VER}"
 fi
 
 # Set the $SAGE_DESTDIR variable to be passed to the spkg-install
@@ -355,52 +329,27 @@ export SAGE_DESTDIR="${SAGE_BUILD_DIR}/${PKG_NAME}/inst"
 # end of spkg-install.
 export SAGE_DESTDIR_LOCAL="${SAGE_DESTDIR}${SAGE_INST_LOCAL}"
 
-INSTALLED_SCRIPTS="prerm piprm postrm"
-WRAPPED_SCRIPTS="build install check preinst postinst $INSTALLED_SCRIPTS"
+INSTALLED_SCRIPTS_DEST="$SAGE_SPKG_SCRIPTS/$PKG_BASE"
+INSTALLED_SCRIPTS="prerm piprm postrm check"
+WRAPPED_SCRIPTS="build install preinst pipinst postinst $INSTALLED_SCRIPTS"
 
 
 warning_for_experimental_packages() { ############################
-if [ x`cat "$PKG_SCRIPTS/type"` = x"experimental" ]; then
-    if [ $YES != 1 -a -n "$PKG_NAME_UPSTREAM" ]; then
-        # We use /dev/tty here because our output may be redirected
-        # to a logfile, or line-buffered.
-        write_to_tty <<EOF
-=========================== WARNING ===========================
-You are about to download and install the experimental package
-$PKG_NAME.  This probably won't work at all for you! There
-is no guarantee that it will build correctly, or behave as
-expected. Use at your own risk!
-===============================================================
-EOF
-        if [ $? -ne 0 ]; then
-            echo "Terminal not available for prompting.  Use 'sage -i -y $PKG_BASE'"
-            echo "to install experimental packages in non-interactive mode."
-            YES=-1
-        fi
-        if [ $YES != -1 ]; then
-            read -p "Are you sure you want to continue [Y/n]? " answer < /dev/tty > /dev/tty 2>&1
-        else
-            answer=n
-        fi
-        case "$answer" in
-            n*|N*) exit 1;;
-        esac
-        # Confirm the user's input.  (This gives important
-        # feedback to the user when output is redirected to a logfile.)
-        echo > /dev/tty "OK, installing $PKG_NAME now..."
-    fi
-fi
+case "$PKG_TYPE:$PKG_SRC_TYPE" in
+  experimental:normal|experimental:wheel)
+    if [ $YES != 1 ]; then
+        echo "Error: The package $PKG_NAME is marked as experimental."
+        echo "Use 'sage -i -y $PKG_BASE' to force installation of this package"
+        echo "or use the configure option --enable-experimental-packages"
+        exit 1
+    fi;;
+esac
 } ############################## warning_for_experimental_packages
 
 ensure_pkg_src() { ###############################################
-if [ ! -f "$PKG_SRC" ]; then
-    if [ -n "$PKG_NAME_UPSTREAM" ]; then
-        # Normal or wheel package
-        PKG_SRC=$(sage-package download $SAGE_DOWNLOAD_FILE_OPTIONS $PKG_BASE)
-        if [ $? != 0 ]; then
-            error_msg "Error downloading tarball of $PKG_BASE"
-            exit 1
-        fi
+case "$PKG_SRC_TYPE" in
+    normal|wheel)
+        PKG_SRC=$(sage-package download $SAGE_DOWNLOAD_FILE_OPTIONS $PKG_BASE) || exit_with_error_msg "Error downloading tarball of $PKG_BASE"
         # Do a final check that PKG_SRC is a file with an absolute path
         cd /
         if [ ! -f "$PKG_SRC" ]; then
@@ -408,50 +357,56 @@ if [ ! -f "$PKG_SRC" ]; then
             echo >&2 "This shouldn't happen, it is a bug in the sage-spkg script."
             exit 1
         fi
-    fi
-fi
 
-# Go back to SAGE_ROOT where we have less chance of completely messing
-# up the system if we do something wrong.
-cd "$SAGE_ROOT" || exit $?
+        # Go back to SAGE_ROOT where we have less chance of completely messing
+        # up the system if we do something wrong.
+        cd "$SAGE_ROOT" || exit $?
 
-# If SAGE_SPKG_COPY_UPSTREAM is set, it should be the name of a directory
-# to which all upstream files are copied. This is used in sage-sdist.
-if [ -n "$SAGE_SPKG_COPY_UPSTREAM" -a -n "$PKG_NAME_UPSTREAM" ]; then
-    mkdir -p "$SAGE_SPKG_COPY_UPSTREAM" && cp -p "$PKG_SRC" "$SAGE_SPKG_COPY_UPSTREAM"
-    if [ $? -ne 0 ]; then
-        error_msg "Error copying upstream tarball to directory '$SAGE_SPKG_COPY_UPSTREAM'"
+        # If SAGE_SPKG_COPY_UPSTREAM is set, it should be the name of a directory
+        # to which all upstream files are copied. This is used in sage-sdist.
+        if [ -n "$SAGE_SPKG_COPY_UPSTREAM" ]; then
+            mkdir -p "$SAGE_SPKG_COPY_UPSTREAM" && cp -p "$PKG_SRC" "$SAGE_SPKG_COPY_UPSTREAM"
+            if [ $? -ne 0 ]; then
+                error_msg "Error copying upstream tarball to directory '$SAGE_SPKG_COPY_UPSTREAM'"
+                exit 1
+            fi
+        fi
+        ;;
+    none)
+        echo >&2
+        echo >&2 "Note: $PKG_BASE is a dummy package that the Sage distribution uses"
+        echo >&2 "to provide information about equivalent system packages."
+        echo >&2 "It cannot be installed using the Sage distribution."
+        echo >&2 "Please install it manually, for example using the system packages"
+        echo >&2 "recommended at the end of a run of './configure'"
+        echo >&2 "See below for package-specific information."
+        echo >&2
+        sage-spkg-info $PKG_BASE
+        echo >&2
+        echo >&2 "Error: $PKG_BASE is a dummy package and "
+        echo >&2 "cannot be installed using the Sage distribution."
         exit 1
-    fi
-fi
+        ;;
+esac
 } ################################################# ensure_pkg_src
 
 setup_directories() { ############################################
 
 for dir in "$SAGE_SPKG_INST" "$SAGE_SPKG_SCRIPTS" "$SAGE_BUILD_DIR"; do
-    mkdir -p "$dir"
-    if [ $? -ne 0 ]; then
-        error_msg "Error creating directory $dir"
-        exit 1
-    fi
+    mkdir -p "$dir" || exit_with_error_msg "Error creating directory $dir"
 done
 
 # Issue #5852: check write permissions
 if [ ! -w "$SAGE_BUILD_DIR" ]; then
-    error_msg "Error: no write access to build directory $SAGE_BUILD_DIR"
-    exit 1
+    exit_with_error_msg "Error: no write access to build directory $SAGE_BUILD_DIR"
 fi
 if [ ! -d "$SAGE_INST_LOCAL" ]; then
     # If you just unpack Sage and run "sage -p <pkg>" then local does not yet exist
     mkdir "$SAGE_INST_LOCAL"
 fi
 if [ ! -w "$SAGE_INST_LOCAL" ]; then
-    error_msg "Error: no write access to installation directory $SAGE_INST_LOCAL"
-    exit 1
+    exit_with_error_msg "Error: no write access to installation directory $SAGE_INST_LOCAL"
 fi
-
-echo "$PKG_NAME"
-echo "===================================================="
 
 # Make absolutely sure that we are in the build directory before doing
 # a scary "rm -rf" below.
@@ -463,34 +418,29 @@ if [ "x$SAGE_KEEP_BUILT_SPKGS" != "xyes" ]; then
 else
     if [ -e "$PKG_NAME" ]; then
         echo "Moving old directory $PKG_NAME to $SAGE_BUILD_DIR/old..."
-        mkdir -p old
-        if [ $? -ne 0 ]; then
-            error_msg "Error creating directory $SAGE_BUILD_DIR/old"
-            exit 1
-        fi
+        mkdir -p old || exit_with_error_msg "Error creating directory $SAGE_BUILD_DIR/old"
         rm -rf old/"$PKG_NAME"
         mv "$PKG_NAME" old/
     fi
 fi
 
 if [ -e "$PKG_NAME" ]; then
-    error_msg "Error (re)moving $PKG_NAME"
-    exit 1
+    exit_with_error_msg "Error (re)moving $PKG_NAME"
 fi
 } ############################################## setup_directories
 
 extract_the_package() { ##########################################
 
 cd "$SAGE_BUILD_DIR" || exit $?
-echo "Setting up build directory for $PKG_NAME"
-if [ -z "$PKG_NAME_UPSTREAM" ]; then
-    # Not a normal or wheel package.
+echo "Setting up build directory $SAGE_BUILD_DIR/$PKG_NAME"
+case "$PKG_SRC_TYPE" in
+  script)
     # Transplant the 'src' symlink, copy scripts.
     mkdir -p "$PKG_NAME"
     if [ -d "$PKG_SCRIPTS"/src ]; then
         ln -s $(cd "$PKG_SCRIPTS"/src && pwd -P) "$PKG_NAME"/src
     fi
-    for a in build install check preinst postinst; do  # replace by use of $WRAPPED_SCRIPTS later
+    for a in $WRAPPED_SCRIPTS; do
         if [ -r "$PKG_SCRIPTS"/spkg-$a.in ]; then
             cp "$PKG_SCRIPTS"/spkg-$a.in "$PKG_NAME"/
         elif [ -x "$PKG_SCRIPTS"/spkg-$a ]; then
@@ -498,8 +448,9 @@ if [ -z "$PKG_NAME_UPSTREAM" ]; then
         fi
     done
     cd "$PKG_NAME" || exit $?
-else
-    # Normal or wheel package, copy whole directory, resolving symlinks
+    ;;
+  normal|wheel)
+    # Copy whole directory, resolving symlinks
     cp -RLp "$PKG_SCRIPTS" "$PKG_NAME"
     cd "$PKG_NAME" || exit $?
     case "$PKG_SRC" in
@@ -515,21 +466,17 @@ else
         ;;
     *)
         # Source tarball
-        sage-uncompress-spkg -d src "$PKG_SRC"
-        if [ $? -ne 0 ]; then
-            error_msg "Error: failed to extract $PKG_SRC"
-            exit 1
-        fi
-        echo "Finished extraction"
+        sage-uncompress-spkg -d src "$PKG_SRC" || exit_with_error_msg "Error: failed to extract $PKG_SRC"
         cd src
-        if ! sage-apply-patches; then
-            error_msg "Error applying patches"
-            exit 1
-        fi
+        sage-apply-patches || exit_with_error_msg "Error applying patches"
         cd ..
         ;;
     esac
-fi
+    ;;
+  *)
+    error_msg "Unhandled source type $PKG_SRC_TYPE"
+    ;;
+esac
 if [ "$SAGE_KEEP_BUILT_SPKGS" = "yes" ]; then
     touch .keep
 fi
@@ -544,6 +491,7 @@ prepare_for_installation() { #####################################
 write_script_wrapper() {
     local script="$1"
     local script_dir="$2"
+    local fallback_script_dir="$3"
 
     trap "echo >&2 Error: Unexpected error writing wrapper script for $script; exit \$_" ERR
 
@@ -584,6 +532,14 @@ if [ \$? -ne 0 ]; then
     exit 1
 fi
 
+__EOF__
+    if [ -n "$fallback_script_dir" ]; then
+        cat >> "$tmpscript" <<__EOF__
+cd "\$SAGE_PKG_DIR" 2>/dev/null || cd "$fallback_script_dir"
+
+__EOF__
+    else
+        cat >> "$tmpscript" <<__EOF__
 cd "\$SAGE_PKG_DIR"
 if [ \$? -ne 0 ]; then
     echo >&2 "Error: could not cd to the package build directory \$SAGE_PKG_DIR"
@@ -591,7 +547,7 @@ if [ \$? -ne 0 ]; then
 fi
 
 __EOF__
-
+    fi
     cat "$script.in" >> "$tmpscript"
     mv "$tmpscript" "$script"
     chmod +x "$script"
@@ -607,45 +563,59 @@ touch spkg-piprm.in
 # or sdh_store_and_pip_install_wheel.
 touch spkg-pipinst.in
 
-for script in $WRAPPED_SCRIPTS pipinst; do  # pipinst can be added to WRAPPED_SCRIPTS later
+for script in $WRAPPED_SCRIPTS; do
     # 'Installed' scripts are not run immediately out of the package build
-    # directory, and may be run later, so set their root directory to
-    # $SAGE_ROOT
-    if echo "$INSTALLED_SCRIPTS" | grep -w "$script" > /dev/null; then
-        script_dir="$SAGE_ROOT"
-    else
-        script_dir="$(pwd)"
-    fi
+    # directory, and may be run later.
+    # For the installed *rm scripts, set their root directory to $SAGE_ROOT.
+    # For the installed check scripts, some need the temporary build directory,
+    # others are OK with $PKG_SCRIPTS. So try to run out of the temporary
+    # build directory but fall back to the latter.
+    case $script in
+        check) script_dir="$(pwd)"
+               fallback_script_dir="$PKG_SCRIPTS"
+               ;;
+        *rm)   script_dir="\$SAGE_ROOT"
+               fallback_script_dir=
+               ;;
+        *)     script_dir="$(pwd)"
+               fallback_script_dir=
+               ;;
+    esac
 
     script="spkg-$script"
 
     if [ -f "$script.in" ]; then
-            write_script_wrapper "$(pwd)/$script" "$script_dir"
+        write_script_wrapper "$(pwd)/$script" "$script_dir" "$fallback_script_dir"
     fi
 done
 } ####################################### prepare_for_installation
 
 actually_build_and_install() { ###################################
 
-echo "****************************************************"
-echo "Host system:"
-uname -a
-echo "****************************************************"
-echo "C compiler: $CC"
-echo "C compiler version:"
-$CC -v
-echo "****************************************************"
+case "$PKG_SRC" in
+    *.whl)
+        # Silence is golden.
+        ;;
+    *)
+        echo "Host system: $(uname -a)"
+        echo "C compiler: $CC$($CC -v 2>&1 | while read -r line; do echo -n ", $line"; done)"
+        ;;
+esac
 
 # Poison the proxy variable to forbid downloads in spkg-install
 # for normal packages
-if [ -n "$PKG_NAME_UPSTREAM" ]; then
-    # Normal/wheel package
+case $PKG_SRC_TYPE in
+  normal|wheel)
     export http_proxy=http://192.0.2.0:5187/
     export https_proxy=$http_proxy
     export ftp_proxy=$http_proxy
     export rsync_proxy=$http_proxy
-fi
+    ;;
+esac
 
+# Make sage-logger show the full logs
+unset SAGE_SILENT_BUILD
+unset V
 
 # First uninstall the previous version of this package, if any
 if [ "$KEEP_EXISTING" != "yes" ]; then
@@ -657,33 +627,16 @@ fi
 
 # Run the pre-install script, if any
 if [ -f spkg-preinst ]; then
-    echo "Running pre-install script for $PKG_NAME."
-    time $SAGE_SUDO ./spkg-preinst
-    if [ $? -ne 0 ]; then
-        error_msg "Error running the preinst script for $PKG_NAME."
-        exit 1
-    fi
+    sage-logger -P spkg-preinst "$SAGE_SUDO ./spkg-preinst" || exit_with_error_msg "Error running the preinst script for $PKG_NAME."
 fi
 
 if [ -f spkg-build ]; then
     # Package has both spkg-build and spkg-install; execute the latter with SAGE_SUDO
-    time ./spkg-build
-    if [ $? -ne 0 ]; then
-        error_msg "Error building package $PKG_NAME" "make"
-        exit 1
-    fi
-    time $SAGE_SUDO ./spkg-install
-    if [ $? -ne 0 ]; then
-        error_msg "Error installing package $PKG_NAME" "make"
-        exit 1
-    fi
+    sage-logger -P spkg-build "./spkg-build" || exit_with_error_msg "Error building package $PKG_NAME" "make"
+    sage-logger -P spkg-install "$SAGE_SUDO ./spkg-install" || exit_with_error_msg "Error installing package $PKG_NAME" "make"
 else
     # Package only has spkg-install
-    time ./spkg-install
-    if [ $? -ne 0 ]; then
-        error_msg "Error installing package $PKG_NAME" "make"
-        exit 1
-    fi
+    sage-logger -P spkg-install "./spkg-install" || exit_with_error_msg "Error installing package $PKG_NAME" "make"
 fi
 } ##################################### actually_build_and_install
 
@@ -701,21 +654,13 @@ if [ -d "$SAGE_DESTDIR" ]; then
     # any trailing slash is removed; https://github.com/sagemath/sage/issues/26013
     PREFIX="${SAGE_DESTDIR_LOCAL%/}"
 
-    rm -f "$PREFIX"/lib/*.la
-    if [ $? -ne 0 ]; then
-        error_msg "Error deleting unnecessary libtool archive files"
-        exit 1
-    fi
+    rm -f "$PREFIX"/lib/*.la || exit_with_error_msg "Error deleting unnecessary libtool archive files"
 
     # Generate installed file manifest
     FILE_LIST="$(cd "$PREFIX" && find . -type f -o -type l | sed 's|^\./||' | sort)"
 
     # Copy files into $SAGE_INST_LOCAL
-    $SAGE_SUDO cp -Rp "$PREFIX/." "$SAGE_INST_LOCAL"
-    if [ $? -ne 0 ]; then
-        error_msg "Error moving files for $PKG_NAME."
-        exit 1
-    fi
+    $SAGE_SUDO cp -Rp "$PREFIX/." "$SAGE_INST_LOCAL" || exit_with_error_msg "Error moving files for $PKG_NAME."
 
     # Remove the $SAGE_DESTDIR entirely once all files have been moved to their
     # final location.
@@ -735,29 +680,19 @@ install_scripts() { ##############################################
 # Some spkg scripts, if they exist, should also be installed to
 # $SAGE_SPKG_SCRIPTS; they are not included in the package's manifest, but are
 # removed by sage-spkg-uninstall
-INSTALLED_SCRIPTS_DEST="$SAGE_SPKG_SCRIPTS/$PKG_BASE"
 
-if [ ! -f $INSTALLED_SCRIPTS_DEST/spkg-requirements.txt ]; then
+if [ ! -f "$INSTALLED_SCRIPTS_DEST"/spkg-requirements.txt ]; then
     # No packages to uninstall with pip, so remove the prepared uninstall script
     # and the prepared deferred installation script
     rm -f spkg-piprm spkg-piprm.in spkg-pipinst spkg-pipinst.in
 fi
 
-for script in $INSTALLED_SCRIPTS pipinst; do  # pipinst can be added to WRAPPED_SCRIPTS later
+for script in $INSTALLED_SCRIPTS; do
     script="spkg-$script"
 
     if [ -f "$script" ]; then
-        mkdir -p "$INSTALLED_SCRIPTS_DEST"
-        if [ $? -ne 0 ]; then
-            error_msg "Error creating the spkg scripts directory $INSTALLED_SCRIPTS_DEST."
-            exit 1
-        fi
-
-        cp -a "$script" "$INSTALLED_SCRIPTS_DEST"
-        if [ $? -ne 0 ]; then
-            error_msg "Error copying the $script script to $INSTALLED_SCRIPTS_DEST."
-            exit 1
-        fi
+        mkdir -p "$INSTALLED_SCRIPTS_DEST" || exit_with_error_msg "Error creating the spkg scripts directory $INSTALLED_SCRIPTS_DEST."
+        cp -a "$script" "$INSTALLED_SCRIPTS_DEST" || exit_with_error_msg "Error copying the $script script to $INSTALLED_SCRIPTS_DEST."
     fi
 done
 } ################################################ install_scripts
@@ -766,20 +701,10 @@ post_install() { #################################################
 # Run the post-install script, if any
 # But first complete the delayed installation of wheels.
 if [ -f spkg-pipinst ]; then
-    echo "Running pip-install script for $PKG_NAME."
-    $SAGE_SUDO ./spkg-pipinst
-    if [ $? -ne 0 ]; then
-        error_msg "Error running the pipinst script for $PKG_NAME."
-        exit 1
-    fi
+    sage-logger -P spkg-pipinst "$SAGE_SUDO ./spkg-pipinst" || exit_with_error_msg "Error running the pipinst script for $PKG_NAME."
 fi
 if [ -f spkg-postinst ]; then
-    echo "Running post-install script for $PKG_NAME."
-    time $SAGE_SUDO ./spkg-postinst
-    if [ $? -ne 0 ]; then
-        error_msg "Error running the postinst script for $PKG_NAME."
-        exit 1
-    fi
+    sage-logger -P spkg-postinst "$SAGE_SUDO ./spkg-postinst" || exit_with_error_msg "Error running the postinst script for $PKG_NAME."
 fi
 } ################################################### post_install
 
@@ -788,11 +713,14 @@ run_test_suite() { ###############################################
 # SAGE_INST_LOCAL.  It might make more sense to run the tests before, but the
 # spkg-check scripts were written before use of DESTDIR installs, and so
 # fail in many cases.  This might be good to change later.
+    if ! cd "$SAGE_BUILD_DIR/$PKG_NAME" 2>/dev/null; then
+        cd "$PKG_SCRIPTS" || exit $?
+    fi
 
-if [ "$SAGE_CHECK" = "yes" -o "$SAGE_CHECK" = "warn" ]; then
-    if [ -f spkg-check ]; then
+    if [ -f "$INSTALLED_SCRIPTS_DEST"/spkg-check ]; then
         echo "Running the test suite for $PKG_NAME..."
-        time ./spkg-check
+        export PKG_BASE
+        sage-logger -P spkg-check "$INSTALLED_SCRIPTS_DEST"/spkg-check
         if [ $? -ne 0 ]; then
             TEST_SUITE_RESULT="failed"
             if [ "$SAGE_CHECK" = "warn" ]; then
@@ -800,18 +728,21 @@ if [ "$SAGE_CHECK" = "yes" -o "$SAGE_CHECK" = "warn" ]; then
                 # with SAGE_ROOT/build/make/install (see #32781)
                 error_msg "Warning: Failures testing package $PKG_NAME (ignored)" "make check"
             else
-                error_msg "Error testing package $PKG_NAME" "make check"
-                exit 1
+                exit_with_error_msg "Error testing package $PKG_NAME" "make check"
             fi
         else
             TEST_SUITE_RESULT="passed"
             echo "Passed the test suite for $PKG_NAME."
         fi
+    elif [ -f "$PKG_SCRIPTS"/spkg-check.in -o -f "$PKG_SCRIPTS"/spkg-check ]; then
+        echo "The test suite for $PKG_NAME cannot be run because the script"
+        echo "$INSTALLED_SCRIPTS_DEST/spkg-check"
+        echo "is missing. Install/re-install package $PKG_NAME to run the test suite."
+        exit 1
     else
         echo "Package $PKG_NAME has no test suite."
         TEST_SUITE_RESULT="not available"
     fi
-fi
 } ################################################# run_test_suite
 
 write_installation_record() { ####################################
@@ -844,8 +775,7 @@ __EOF__
 } ###################################### write_installation_record
 
 delete_the_temporary_build_directory() { #########################
-    echo "Deleting temporary build directory"
-    echo "$SAGE_BUILD_DIR/$PKG_NAME"
+    echo "Deleting build directory $SAGE_BUILD_DIR/$PKG_NAME"
     # On Solaris, the current working directory cannot be deleted,
     # so we "cd" out of $SAGE_BUILD_DIR/$PKG_NAME. See #12637.
     cd "$SAGE_BUILD_DIR"
@@ -856,8 +786,7 @@ delete_the_temporary_build_directory_if_required() { #############
 if [ ! -e "$SAGE_BUILD_DIR/$PKG_NAME/.keep" ]; then
     delete_the_temporary_build_directory
 else
-    echo "You can safely delete the temporary build directory"
-    echo "$SAGE_BUILD_DIR/$PKG_NAME"
+    echo "You can safely delete the build directory $SAGE_BUILD_DIR/$PKG_NAME"
 fi
 } ############### delete_the_temporary_build_directory_if_required
 
@@ -889,21 +818,21 @@ if [ $INSTALL = 1 ]; then
     extract_the_package
     prepare_for_installation
     actually_build_and_install
-else
-    cd "$SAGE_BUILD_DIR/$PKG_NAME" || exit $?
 fi
 
 if [ $POST_INSTALL = 1 ]; then
+    cd "$SAGE_BUILD_DIR/$PKG_NAME" || exit $?
     unload_destdir
     install_scripts
     post_install
 fi
 
-run_test_suite
+if [ "$SAGE_CHECK" = "yes" -o "$SAGE_CHECK" = "warn" ]; then
+    run_test_suite
+fi
 
 if [ $POST_INSTALL = 1 ]; then
     write_installation_record
-    echo "Successfully installed $PKG_NAME"
     delete_the_temporary_build_directory_if_required
     echo "Finished installing $PKG_NAME"
 fi

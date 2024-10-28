@@ -30,6 +30,6 @@ cdef class InteractiveLPBackend(GenericBackend):
                            coefficients=*) \
                            except -1
 
-    cpdef dictionary(self) noexcept
+    cpdef dictionary(self)
 
-    cpdef interactive_lp_problem(self) noexcept
+    cpdef interactive_lp_problem(self)

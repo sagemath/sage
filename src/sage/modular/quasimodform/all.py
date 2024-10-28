@@ -1,2 +1,2 @@
 # Quasimodular forms rings
-from .ring import QuasiModularForms
+from sage.modular.quasimodform.ring import QuasiModularForms

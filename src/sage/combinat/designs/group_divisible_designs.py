@@ -57,23 +57,22 @@ def group_divisible_design(v, K, G, existence=False, check=False):
 
     INPUT:
 
-    - ``v`` (integer)
+    - ``v`` -- integer
 
-    - ``K,G`` (sets of integers)
+    - ``K``, ``G`` -- sets of integers
 
-    - ``existence`` (boolean) -- instead of building the design, return:
+    - ``existence`` -- boolean; instead of building the design, return:
 
         - ``True`` -- meaning that Sage knows how to build the design
 
         - ``Unknown`` -- meaning that Sage does not know how to build the
-          design, but that the design may exist (see :mod:`sage.misc.unknown`).
+          design, but that the design may exist (see :mod:`sage.misc.unknown`)
 
-        - ``False`` -- meaning that the design does not exist.
+        - ``False`` -- meaning that the design does not exist
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to ``True``
-      by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     .. NOTE::
 
@@ -139,21 +138,20 @@ def GDD_4_2(q, existence=False, check=True):
 
     INPUT:
 
-    - ``q`` (integer)
+    - ``q`` -- integer
 
-    - ``existence`` (boolean) -- instead of building the design, return:
+    - ``existence`` -- boolean; instead of building the design, return:
 
         - ``True`` -- meaning that Sage knows how to build the design
 
         - ``Unknown`` -- meaning that Sage does not know how to build the
-          design, but that the design may exist (see :mod:`sage.misc.unknown`).
+          design, but that the design may exist (see :mod:`sage.misc.unknown`)
 
-        - ``False`` -- meaning that the design does not exist.
+        - ``False`` -- meaning that the design does not exist
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to ``True``
-      by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES::
 
@@ -201,7 +199,7 @@ def GDD_4_2(q, existence=False, check=True):
 
 class GroupDivisibleDesign(IncidenceStructure):
     r"""
-    Group Divisible Design (GDD)
+    Group Divisible Design (GDD).
 
     Let `K` and `G` be sets of positive integers and let `\lambda` be a positive
     integer. A Group Divisible Design of index `\lambda` and order `v` is a
@@ -222,23 +220,23 @@ class GroupDivisibleDesign(IncidenceStructure):
     INPUT:
 
     - ``points`` -- the underlying set. If ``points`` is an integer `v`, then
-      the set is considered to be `\{0, ..., v-1\}`.
+      the set is considered to be `\{0, ..., v-1\}`
 
     - ``groups`` -- the groups of the design. Set to ``None`` for an automatic
-      guess (this triggers ``check=True`` and can thus cost some time).
+      guess (this triggers ``check=True`` and can thus cost some time)
 
     - ``blocks`` -- collection of blocks
 
     - ``G`` -- list of integers of which the sizes of the groups must be
-      elements. Set to ``None`` (automatic guess) by default.
+      elements. Set to ``None`` (automatic guess) by default
 
     - ``K`` -- list of integers of which the sizes of the blocks must be
-      elements. Set to ``None`` (automatic guess) by default.
+      elements. Set to ``None`` (automatic guess) by default
 
-    - ``lambd`` (integer) -- value of `\lambda`, set to `1` by default.
+    - ``lambd`` -- integer (default: `1`); value of `\lambda`
 
-    - ``check`` (boolean) -- whether to check that the design is indeed a `GDD`
-      with the right parameters. Set to ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that the design is indeed a `GDD`
+      with the right parameters
 
     - ``copy`` -- (use with caution) if set to ``False`` then ``blocks`` must be
       a list of lists of integers. The list will not be copied but will be
@@ -264,7 +262,7 @@ class GroupDivisibleDesign(IncidenceStructure):
     def __init__(self, points, groups, blocks, G=None, K=None, lambd=1,
                  check=True, copy=True, **kwds):
         r"""
-        Constructor function
+        Constructor function.
 
         EXAMPLES::
 

@@ -8,7 +8,7 @@ The sagerc shell script
 
 The *bash shell script* :file:`$DOT_SAGE/sagerc` (with the default
 value of :envvar:`DOT_SAGE`, this is :file:`~/.sage/sagerc`) is read
-by :file:`$SAGE_ROOT/spkg/bin/sage-env` after Sage has set its
+by :sage_root:`src/bin/sage-env` after Sage has set its
 environment variables.
 It can be used to override some of the environment variables determined
 by Sage, or it can contain other shell commands like creating

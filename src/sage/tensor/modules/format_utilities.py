@@ -8,7 +8,6 @@ AUTHORS:
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
 - Joris Vankerschaver (2010): for the function :func:`is_atomic()`
 - Michael Jung (2020): extended usage of :func:`is_atomic()`
-
 """
 
 #******************************************************************************
@@ -71,7 +70,6 @@ def is_atomic(expr, sep=['+', '-']):
         False
         sage: is_atomic("(a mod b)", sep=['mod'])
         True
-
     """
     if not isinstance(expr, str):
         raise TypeError("The argument must be a string")
@@ -126,7 +124,6 @@ def is_atomic_wedge_txt(expression):
         False
         sage: is_atomic_wedge_txt(r"(a∧b∧c)")
         True
-
     """
     return is_atomic(expression, sep=['∧'])
 
@@ -172,7 +169,6 @@ def is_atomic_wedge_latex(expression):
         True
         sage: is_atomic_wedge_latex(r"\omega\wedge(\theta+a)")
         False
-
     """
     return is_atomic(expression, sep=['\\wedge'])
 
@@ -195,7 +191,6 @@ def format_mul_txt(name1, operator, name2):
         '(a+b)*(c+d)'
         sage: format_mul_txt(None, '*', 'b')
         sage: format_mul_txt('a', '*', None)
-
     """
     if name1 is None or name2 is None:
         return None
@@ -224,7 +219,6 @@ def format_mul_latex(name1, operator, name2):
         '\\left(a+b\\right)*\\left(c+d\\right)'
         sage: format_mul_latex(None, '*', 'b')
         sage: format_mul_latex('a', '*', None)
-
     """
     if name1 is None or name2 is None:
         return None
@@ -249,7 +243,6 @@ def format_unop_txt(operator, name):
         sage: format_unop_txt('-', '(a+b)')
         '-(a+b)'
         sage: format_unop_txt('-', None)
-
     """
     if name is None:
         return None
@@ -273,7 +266,6 @@ def format_unop_latex(operator, name):
         sage: format_unop_latex('-', '(a+b)')
         '-(a+b)'
         sage: format_unop_latex('-', None)
-
     """
     if name is None:
         return None
@@ -300,7 +292,6 @@ class FormattedExpansion(SageObject):
         x/2
         sage: latex(f)
         \frac{x}{2}
-
     """
     def __init__(self, txt=None, latex=None):
         r"""
@@ -310,7 +301,6 @@ class FormattedExpansion(SageObject):
             sage: f = FormattedExpansion('v', r'\tilde v')
             sage: f
             v
-
         """
         self._txt = txt
         self._latex = latex
@@ -325,7 +315,6 @@ class FormattedExpansion(SageObject):
             sage: f = FormattedExpansion('v', r'\tilde v')
             sage: f._repr_()
             'v'
-
         """
         return self._txt
 
@@ -339,6 +328,5 @@ class FormattedExpansion(SageObject):
             sage: f = FormattedExpansion('v', r'\tilde v')
             sage: f._latex_()
             '\\tilde v'
-
         """
         return self._latex

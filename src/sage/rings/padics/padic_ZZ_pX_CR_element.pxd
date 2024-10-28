@@ -19,14 +19,14 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
     cdef int _set_from_ZZ_pX_part1(self, ZZ_pX_c* poly) except -1
     cdef int _set_from_ZZ_pX_part2(self, ZZ_pX_c* poly) except -1
 
-    cdef pAdicZZpXCRElement _new_c(self, long relprec) noexcept
+    cdef pAdicZZpXCRElement _new_c(self, long relprec)
     cdef int _internal_lshift(self, long shift) except -1
     cdef int _normalize(self) except -1
-    cdef pAdicZZpXCRElement _lshift_c(self, long n) noexcept
-    cdef pAdicZZpXCRElement _rshift_c(self, long n) noexcept
-    cpdef pAdicZZpXCRElement unit_part(self) noexcept
-    cpdef ntl_ZZ_pX _ntl_rep_unnormalized(self) noexcept
-    cpdef _ntl_rep_abs(self) noexcept
-    cpdef ntl_ZZ_pX _ntl_rep(self) noexcept
+    cdef pAdicZZpXCRElement _lshift_c(self, long n)
+    cdef pAdicZZpXCRElement _rshift_c(self, long n)
+    cpdef pAdicZZpXCRElement unit_part(self)
+    cpdef ntl_ZZ_pX _ntl_rep_unnormalized(self)
+    cpdef _ntl_rep_abs(self)
+    cpdef ntl_ZZ_pX _ntl_rep(self)
 
-    cpdef pAdicZZpXCRElement lift_to_precision(self, absprec=*) noexcept
+    cpdef pAdicZZpXCRElement lift_to_precision(self, absprec=*)

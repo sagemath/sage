@@ -1,0 +1,30 @@
+From 20caba1b549fe46b483f120f8eec6ec4e9f4572d Mon Sep 17 00:00:00 2001
+From: "Benjamin A. Beasley" <code@musicinmybrain.net>
+Date: Thu, 25 Jan 2024 08:29:17 -0500
+Subject: [PATCH] Temporary GCC 14 workaround
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fixes https://github.com/linbox-team/givaro/issues/226 “GCC 14: No match
+for operator= for Givaro::ZRing<Givaro::Integer>”
+
+Recommended in
+https://github.com/linbox-team/givaro/issues/226#issuecomment-1908853755
+---
+ src/kernel/integer/random-integer.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/src/kernel/integer/random-integer.h b/src/kernel/integer/random-integer.h
+index f9361d33..ea189a36 100644
+--- a/src/kernel/integer/random-integer.h
++++ b/src/kernel/integer/random-integer.h
+@@ -87,7 +87,6 @@ namespace Givaro
+             if (this != &R) {
+                 _bits = R._bits;
+                 _integer = R._integer;
+-                const_cast<Integer_Domain&>(_ring)=R._ring;
+             }
+             return *this;
+         }
+-- 

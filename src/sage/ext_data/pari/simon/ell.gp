@@ -878,7 +878,7 @@ if( DEBUGLEVEL_ell >= 4, print("    end of nflocallysoluble"));
     p4 = Delta
 
   Note that the case of 4 real roots can only occur if both s and t
-  are non-zero, otherwise the Sturm sequence is shorter than this one.
+  are nonzero, otherwise the Sturm sequence is shorter than this one.
   By Sturm's theorem, the number of roots equals
 
     (sign changes in [1, -4, -2*s, t, Delta]) -

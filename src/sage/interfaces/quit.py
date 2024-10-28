@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Quitting interfaces
 """
@@ -24,7 +25,6 @@ def sage_spawned_process_file():
         sage: from sage.interfaces.quit import sage_spawned_process_file
         sage: len(sage_spawned_process_file()) > 1
         True
-
     """
     # This is the old value of SAGE_TMP. Until sage-cleaner is
     # completely removed, we need to leave these spawned_processes
@@ -88,7 +88,7 @@ def kill_spawned_jobs(verbose=False):
     """
     INPUT:
 
-    - ``verbose`` -- bool (default: ``False``); if ``True``, display a
+    - ``verbose`` -- boolean (default: ``False``); if ``True``, display a
       message each time a process is sent a kill signal
 
     EXAMPLES::
@@ -124,7 +124,7 @@ def kill_spawned_jobs(verbose=False):
 
 def is_running(pid):
     """
-    Return True if and only if there is a process with id pid running.
+    Return ``True`` if and only if there is a process with id pid running.
     """
     try:
         os.kill(int(pid), 0)

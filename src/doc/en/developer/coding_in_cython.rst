@@ -191,3 +191,23 @@ original object. As an example, the following code snippet is the
 
 .. _python pickling documentation: http://docs.python.org/library/pickle.html#pickle-protocol
 
+Deprecation
+===========
+
+When making a **backward-incompatible** modification in Sage, the old code should
+keep working and display a message indicating how it should be updated/written
+in the future. We call this a *deprecation*.
+
+.. NOTE::
+
+    Deprecated code can only be removed one year after the first
+    stable release in which it appeared.
+
+Each deprecation warning contains the number of the GitHub PR that defines
+it. We use 666 in the example below.
+
+.. CODE-BLOCK:: cython
+
+      from sage.misc.superseded import deprecation_cython
+      deprecation_cython(666, "Do not use your computer to compute 1+1. Use your brain.")
+

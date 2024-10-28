@@ -28,6 +28,7 @@ from sage.rings.rational_field import QQ
 
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 
 from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
@@ -39,8 +40,9 @@ from sage.categories.regular_supercrystals import RegularSuperCrystals
 from sage.categories.sets_cat import Sets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.combination import Combinations
+
+lazy_import('sage.combinat.root_system.cartan_type', 'CartanType')
 
 
 class ShiftedPrimedTableau(ClonableArray,
@@ -282,7 +284,7 @@ class ShiftedPrimedTableau(ClonableArray,
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -309,7 +311,7 @@ class ShiftedPrimedTableau(ClonableArray,
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -357,7 +359,7 @@ class ShiftedPrimedTableau(ClonableArray,
             sage: ShiftedPrimedTableau([['2p',3],[2,2]], skew=[2])._repr_list()
             "[(None, None, 2', 3), (2, 2)]"
         """
-        return repr([row for row in self])
+        return repr(list(self))
 
     def _repr_tab(self):
         """
@@ -936,9 +938,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
 
         - ``ind`` -- element in the index set of the crystal
 
-        OUTPUT:
-
-        Primed tableau or ``None``.
+        OUTPUT: primed tableau or ``None``
 
         EXAMPLES::
 
@@ -1131,9 +1131,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
 
         - ``ind`` -- an element in the index set of the crystal
 
-        OUTPUT:
-
-        Primed tableau or ``None``.
+        OUTPUT: primed tableau or ``None``
 
         EXAMPLES::
 
@@ -1361,7 +1359,7 @@ class PrimedEntry(SageObject):
 
     INPUT:
 
-    - ``entry`` -- a half integer or a string of an integer
+    - ``entry`` -- half integer or string of an integer
       possibly ending in ``p`` or ``'``
     - ``double`` -- the doubled value
     """
@@ -1535,7 +1533,7 @@ class PrimedEntry(SageObject):
 
     def is_unprimed(self):
         """
-        Checks if ``self`` is an unprimed element.
+        Check if ``self`` is an unprimed element.
 
         TESTS::
 
@@ -1548,7 +1546,7 @@ class PrimedEntry(SageObject):
 
     def is_primed(self):
         """
-        Checks if ``self`` is a primed element.
+        Check if ``self`` is a primed element.
 
         TESTS::
 
@@ -1646,7 +1644,7 @@ class PrimedEntry(SageObject):
 
 class ShiftedPrimedTableaux(UniqueRepresentation, Parent):
     r"""
-    Returns the combinatorial class of shifted primed tableaux subject
+    Return the combinatorial class of shifted primed tableaux subject
     to the constraints given by the arguments.
 
     A primed tableau is a tableau of shifted shape on the alphabet
@@ -1871,9 +1869,7 @@ class ShiftedPrimedTableaux(UniqueRepresentation, Parent):
 
         - ``T`` -- data which can be interpreted as a primed tableau
 
-        OUTPUT:
-
-        - the corresponding primed tableau object
+        OUTPUT: the corresponding primed tableau object
 
         EXAMPLES::
 
@@ -2720,9 +2716,11 @@ def _add_strip(sub_tab, full_tab, length):
             if sub_tab and len(sub_tab) < len(full_tab):
                 plat_list.append(min(sub_tab[-1] + primed_strip[-2] - 1,
                                      full_tab[len(sub_tab)]))
-            for row in reversed(range(1, len(sub_tab))):
-                plat_list.append(min(sub_tab[row-1]+primed_strip[row-1]-1, full_tab[row])
-                                 - sub_tab[row] - primed_strip[row])
+            plat_list.extend(
+                min(sub_tab[row-1] + primed_strip[row-1] - 1, full_tab[row])
+                - sub_tab[row] - primed_strip[row]
+                for row in reversed(range(1, len(sub_tab))))
+
             if sub_tab:
                 plat_list.append(full_tab[0] - sub_tab[0] - primed_strip[0])
             else:

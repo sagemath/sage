@@ -32,7 +32,7 @@ Except for affine hull and affine hull projection.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.element import coerce_binop, is_Vector, is_Matrix
+from sage.structure.element import coerce_binop, Vector, Matrix
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -41,6 +41,7 @@ from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 
 from .base4 import Polyhedron_base4
+
 
 class Polyhedron_base5(Polyhedron_base4):
     """
@@ -579,12 +580,10 @@ class Polyhedron_base5(Polyhedron_base4):
 
         INPUT:
 
-        - ``cut_frac`` -- integer, how deeply to cut into the edge.
-          Default is `\frac{1}{3}`.
+        - ``cut_frac`` -- integer; how deeply to cut into the edge
+          Default is `\frac{1}{3}`
 
-        OUTPUT:
-
-        A Polyhedron object, truncated as described above.
+        OUTPUT: a Polyhedron object, truncated as described above
 
         EXAMPLES::
 
@@ -684,9 +683,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         - ``other`` -- a :class:`~sage.geometry.polyhedron.base.Polyhedron_base`
 
-        OUTPUT:
-
-        The Minkowski sum of ``self`` and ``other``
+        OUTPUT: the Minkowski sum of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -846,7 +843,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
     def __sub__(self, other):
         r"""
-        Implement minus binary operation
+        Implement minus binary operation.
 
         Polyhedra are not a ring with respect to dilatation and
         Minkowski sum, for example `X\oplus(-1)*Y \not= X\ominus Y`.
@@ -991,9 +988,9 @@ class Polyhedron_base5(Polyhedron_base4):
 
         if self.n_vertices() + self.n_rays() < 40 and self.n_facets() < 40:
             # Check that the product preserves the backend, where possible.
-            P = polytopes.simplex(backend="cdd")
+            P = polytopes.simplex(backend='cdd')
             tester.assertEqual((self*P).backend(), self.backend())
-            Q = polytopes.simplex(backend="ppl")
+            Q = polytopes.simplex(backend='ppl')
             tester.assertEqual((self*Q).backend(), self.backend())
 
             # And that it changes the backend correctly where necessary.
@@ -1292,9 +1289,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         - ``other`` -- a :class:`Polyhedron`
 
-        OUTPUT:
-
-        The convex hull.
+        OUTPUT: the convex hull
 
         EXAMPLES::
 
@@ -1320,9 +1315,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         - ``other`` -- a :class:`Polyhedron`
 
-        OUTPUT:
-
-        The intersection.
+        OUTPUT: the intersection
 
         Note that the intersection of two `\ZZ`-polyhedra might not be
         a `\ZZ`-polyhedron. In this case, a `\QQ`-polyhedron is
@@ -1441,9 +1434,9 @@ class Polyhedron_base5(Polyhedron_base4):
         """
         if isinstance(actor, Polyhedron_base5):
             return self.product(actor)
-        elif is_Vector(actor):
+        elif isinstance(actor, Vector):
             return self.translation(actor)
-        elif is_Matrix(actor):
+        elif isinstance(actor, Matrix):
             if self_on_left:
                 raise ValueError("matrices should act on the left")
             else:
@@ -1460,9 +1453,7 @@ class Polyhedron_base5(Polyhedron_base4):
         - ``displacement`` -- a displacement vector or a list/tuple of
           coordinates that determines a displacement vector
 
-        OUTPUT:
-
-        The translated polyhedron.
+        OUTPUT: the translated polyhedron
 
         EXAMPLES::
 
@@ -1503,7 +1494,7 @@ class Polyhedron_base5(Polyhedron_base4):
         - ``displacement`` -- a displacement vector or a list/tuple of
           coordinates that determines a displacement vector
 
-        OUTPUT: Tuple of consisting of new Vrepresentation, Hrepresentation and parent.
+        OUTPUT: tuple of consisting of new Vrepresentation, Hrepresentation and parent
 
         .. SEEALSO::
 
@@ -1542,7 +1533,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         INPUT:
 
-        - ``scalar`` -- A scalar, not necessarily in :meth:`base_ring`
+        - ``scalar`` -- a scalar, not necessarily in :meth:`base_ring`
 
         OUTPUT:
 
@@ -1933,9 +1924,7 @@ class Polyhedron_base5(Polyhedron_base4):
           vertex (according to the normal vector of the cutting hyperplane).
           Default is `\frac{1}{3}`.
 
-        OUTPUT:
-
-        A Polyhedron object, truncated as described above.
+        OUTPUT: a Polyhedron object, truncated as described above
 
         EXAMPLES::
 
@@ -2089,9 +2078,7 @@ class Polyhedron_base5(Polyhedron_base4):
           new vertex close to the face and a large value further away. Default
           is `1`. If the given value is too large, an error is returned.
 
-        OUTPUT:
-
-        A Polyhedron object
+        OUTPUT: a Polyhedron object
 
         EXAMPLES::
 
@@ -2421,7 +2408,8 @@ class Polyhedron_base5(Polyhedron_base4):
         if `v` is a vertex.
 
         INPUT:
-            - ``v`` -- a vertex of ``self`` or a point outside it
+
+        - ``v`` -- a vertex of ``self`` or a point outside it
 
         EXAMPLES::
 
@@ -2465,7 +2453,7 @@ class Polyhedron_base5(Polyhedron_base4):
         if tester is None:
             tester = self._tester(**options)
 
-        if self.backend() == 'normaliz' and not self.base_ring() in (ZZ, QQ):
+        if self.backend() == 'normaliz' and self.base_ring() not in (ZZ, QQ):
             # Speeds up the doctest for significantly.
             self = self.change_ring(self._internal_base_ring)
 

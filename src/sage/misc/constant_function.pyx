@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Constant functions
 """
@@ -83,7 +84,6 @@ cdef class ConstantFunction(SageObject):
 
             sage: loads(dumps(ConstantFunction(5))) == ConstantFunction(5) # indirect doctest
             True
-
         """
         return ConstantFunction, (self._value,)
 

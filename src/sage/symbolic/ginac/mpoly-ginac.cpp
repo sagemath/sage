@@ -51,8 +51,6 @@
 
 namespace GiNaC {
 
-#ifndef PYNAC_HAVE_LIBGIAC
-
 // If comparing expressions (ex::compare()) is fast, you can set this to 1.
 // Some routines like quo(), rem() and gcd() will then return a quick answer
 // when they are called with two identical arguments.
@@ -546,8 +544,6 @@ ex sqrfree(const ex &a, const lst &l)
 }
 #endif
 
-
-#endif // HAVE_LIBGIAC
 
 } // namespace GiNaC
 

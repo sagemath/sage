@@ -103,7 +103,7 @@ class SuffixTrie(SageObject):
         Process a letter. That is, modify the current suffix trie producing
         the suffix trie for ``self.word() + letter``.
 
-        .. note::
+        .. NOTE::
 
            ``letter`` must occur within the alphabet of the word.
 
@@ -136,14 +136,14 @@ class SuffixTrie(SageObject):
             self._suffix_link[old_s] = self._transition_function[(r, letter)]
         # update the active state
         self._active_state = \
-                self._transition_function[(self._active_state, letter)]
+            self._transition_function[(self._active_state, letter)]
 
     def process_letter(self, letter):
         r"""
         Modify ``self`` to produce the suffix trie for ``self.word() +
         letter``.
 
-        .. note::
+        .. NOTE::
 
            ``letter`` must occur within the alphabet of the word.
 
@@ -177,7 +177,7 @@ class SuffixTrie(SageObject):
     # functionality to the class.
     #####
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -189,12 +189,12 @@ class SuffixTrie(SageObject):
 
     def node_to_word(self, state=0):
         r"""
-        Returns the word obtained by reading the edge labels from 0 to
+        Return the word obtained by reading the edge labels from 0 to
         ``state``.
 
         INPUT:
 
-        - ``state`` - (default: 0) a state
+        - ``state`` -- (default: 0) a state
 
         EXAMPLES::
 
@@ -213,18 +213,18 @@ class SuffixTrie(SageObject):
 
         # Starting from the active state,
         # read labels along the unique path to the root.
-        (u,letter) = tf_inv[state]
+        u, letter = tf_inv[state]
         w = letter
         s = u
         while s != 0:
-            (u,letter) = tf_inv[s]
+            u, letter = tf_inv[s]
             w = letter * w
             s = u
         return w
 
     def word(self):
         r"""
-        Returns the word whose suffix tree this is.
+        Return the word whose suffix tree this is.
 
         EXAMPLES::
 
@@ -238,10 +238,10 @@ class SuffixTrie(SageObject):
         """
         return self.node_to_word(self._active_state)
 
-    def __eq__(self,other):
+    def __eq__(self, other) -> bool:
         r"""
-        If self and other have the same transition function, the same
-        suffix link, and the same word, then they are equal.
+        If ``self`` and ``other`` have the same transition function,
+        the same suffix link, and the same word, then they are equal.
 
         TESTS::
 
@@ -259,7 +259,7 @@ class SuffixTrie(SageObject):
             sage: t == s
             True
         """
-        if not isinstance(other,SuffixTrie):
+        if not isinstance(other, SuffixTrie):
             return False
         return self._transition_function == other._transition_function \
             and self._suffix_link == other._suffix_link \
@@ -267,13 +267,13 @@ class SuffixTrie(SageObject):
 
     def transition_function(self, node, word):
         r"""
-        Returns the state reached by beginning at ``node`` and following the
+        Return the state reached by beginning at ``node`` and following the
         arrows in the transition graph labelled by the letters of ``word``.
 
         INPUT:
 
-        - ``node`` - a node
-        - ``word`` - a word
+        - ``node`` -- a node
+        - ``word`` -- a word
 
         EXAMPLES::
 
@@ -281,7 +281,7 @@ class SuffixTrie(SageObject):
             sage: w = Words([0,1])([0,1,0,1,1])
             sage: t = SuffixTrie(w)
             sage: all(t.transition_function(u, letter) == v
-            ....:     for ((u, letter), v) in t._transition_function.items())
+            ....:     for (u, letter), v in t._transition_function.items())
             True
         """
         if node == -1:
@@ -316,12 +316,13 @@ class SuffixTrie(SageObject):
 
     def suffix_link(self, state):
         r"""
-        Evaluates the suffix link map of the suffix trie on ``state``.
+        Evaluate the suffix link map of the suffix trie on ``state``.
+
         Note that the suffix link map is not defined on -1.
 
         INPUT:
 
-        - ``state`` - a state
+        - ``state`` -- a state
 
         EXAMPLES::
 
@@ -351,7 +352,7 @@ class SuffixTrie(SageObject):
             ...
             TypeError: 17 is not a state
         """
-        if not isinstance(state, (int,Integer)):
+        if not isinstance(state, (int, Integer)):
             raise TypeError("%s is not an integer" % state)
         if state == -1:
             raise TypeError("suffix link is not defined for -1")
@@ -361,8 +362,10 @@ class SuffixTrie(SageObject):
 
     def active_state(self):
         r"""
-        Returns the active state of the suffix trie. This is the state
-        corresponding to the word as a suffix of itself.
+        Return the active state of the suffix trie.
+
+        This is the state corresponding to the word as a suffix of
+        itself.
 
         EXAMPLES::
 
@@ -383,10 +386,11 @@ class SuffixTrie(SageObject):
 
     def final_states(self):
         r"""
-        Returns the set of final states of the suffix trie. These are the
-        states corresponding to the suffixes of ``self.word()``. They are
-        obtained be repeatedly following the suffix link from the active
-        state until we reach 0.
+        Return the set of final states of the suffix trie.
+
+        These are the states corresponding to the suffixes of
+        ``self.word()``. They are obtained be repeatedly following the
+        suffix link from the active state until we reach 0.
 
         EXAMPLES::
 
@@ -403,7 +407,7 @@ class SuffixTrie(SageObject):
             F.append(s)
         return Set(F)
 
-    def has_suffix(self,word):
+    def has_suffix(self, word) -> bool:
         r"""
         Return ``True`` if and only if ``word`` is a suffix of ``self.word()``.
 
@@ -423,16 +427,16 @@ class SuffixTrie(SageObject):
         q = self._active_state
         if q == s:
             return True
-        else:
-            while q != 0:
-                q = self._suffix_link[q]
-                if q == s:
-                    return True
+
+        while q != 0:
+            q = self._suffix_link[q]
+            if q == s:
+                return True
         return False
 
     def to_digraph(self):
         r"""
-        Returns a ``DiGraph`` object of the transition graph of the suffix
+        Return a ``DiGraph`` object of the transition graph of the suffix
         trie.
 
         EXAMPLES::
@@ -451,14 +455,14 @@ class SuffixTrie(SageObject):
             [0 0 0 0 0 0]
         """
         dag = {}
-        for ((u, letter), v) in self._transition_function.items():
+        for (u, letter), v in self._transition_function.items():
             dag.setdefault(u, {})[v] = letter
         return DiGraph(dag)
 
     def plot(self, layout='tree', tree_root=0, tree_orientation='up',
-            vertex_colors=None, edge_labels=True, *args, **kwds):
+             vertex_colors=None, edge_labels=True, *args, **kwds):
         r"""
-        Returns a Graphics object corresponding to the transition graph of
+        Return a Graphics object corresponding to the transition graph of
         the suffix trie.
 
         EXAMPLES::
@@ -474,20 +478,20 @@ class SuffixTrie(SageObject):
             <class 'sage.plot.graphics.Graphics'>
         """
         tree = self.to_digraph()
-        for (u,v,label) in tree.edge_iterator():
+        for u, v, label in tree.edge_iterator():
             tree.set_edge_label(u, v, label.string_rep())
         if vertex_colors is None:
             suffix_nodes = self.final_states()
             non_suffix_nodes = list(set(self.states()) - set(suffix_nodes))
-            vertex_colors = {'#fec7b8':suffix_nodes,'#ffffff':non_suffix_nodes}
+            vertex_colors = {'#fec7b8': suffix_nodes, '#ffffff': non_suffix_nodes}
         return tree.plot(layout=layout, tree_root=tree_root,
-                tree_orientation=tree_orientation,
-                vertex_colors=vertex_colors, edge_labels=edge_labels,
-                *args, **kwds)
+                         tree_orientation=tree_orientation,
+                         vertex_colors=vertex_colors, edge_labels=edge_labels,
+                         *args, **kwds)
 
     def show(self, *args, **kwds):
         r"""
-        Displays the output of ``self.plot()``.
+        Display the output of :meth:`plot`.
 
         EXAMPLES::
 
@@ -581,9 +585,9 @@ class ImplicitSuffixTree(SageObject):
             Implicit Suffix Tree of the word: cacao
         """
         # For constructing the suffix tree.
-        self._transition_function = {0:{}}
-        self._suffix_link = {0:-1}
-        self._active_state = (0,(1,1))
+        self._transition_function = {0: {}}
+        self._suffix_link = {0: -1}
+        self._active_state = (0, (1, 1))
         self._letters = []
         for letter in word:
             self._letters.append(letter)
@@ -598,7 +602,7 @@ class ImplicitSuffixTree(SageObject):
 
         This corresponds to the algorithm "update" in [Ukko1995]_.
 
-        .. note::
+        .. NOTE::
 
            This function is a helper and does not update ``self._data`` and
            ``self._word``.
@@ -631,34 +635,38 @@ class ImplicitSuffixTree(SageObject):
             sage: s
             Implicit Suffix Tree of the word: 01011
         """
-        (s,(k,i)) = self._active_state
+        s, (k, i) = self._active_state
         old_r = 0
-        (end_state, r) = self._test_and_split(s,(k,i-1),letter)
+        end_state, r = self._test_and_split(s, (k, i-1), letter)
         while not end_state:
             # adjoin a new state rr and create a transition from r to rr
             rr = len(self._transition_function)
             self._transition_function[rr] = {}
-            self._transition_function[r][(i,None)] = rr
+            self._transition_function[r][(i, None)] = rr
             # update the suffix link, if necessary
             if old_r != 0:
                 self._suffix_link[old_r] = r
             old_r = r
             # follow the suffix link to the next state
-            (s, k) = self._canonize(self._suffix_link[s], (k,i-1))
-            (end_state, r) = self._test_and_split(s, (k,i-1), letter)
+            s, k = self._canonize(self._suffix_link[s], (k, i-1))
+            end_state, r = self._test_and_split(s, (k, i-1), letter)
         # update the suffix link, if necessary
         if old_r != 0:
             self._suffix_link[old_r] = s
         # set the active state
-        (s,k) = self._canonize(s,(k,i))
+        s, k = self._canonize(s, (k, i))
         self._active_state = (s, (k, i+1))
         return
 
     def _test_and_split(self, s, k_p, letter):
         r"""
-        Helper function for _process_letter. Tests to see whether an edge
-        needs to be split. Returns ``(True, state)``, where ``state`` is the
-        next state to process (either a newly created state or the original s).
+        Helper function for :meth:`_process_letter`. Test to see
+        whether an edge needs to be split.
+
+        OUTPUT:
+
+        ``(True, state)``, where ``state`` is the next state to
+        process (either a newly created state or the original ``s``).
 
         TESTS::
 
@@ -669,15 +677,15 @@ class ImplicitSuffixTree(SageObject):
             sage: t._test_and_split(0, (4,5), w.parent().alphabet().rank("o"))
             (False, 3)
         """
-        (k, p) = k_p
+        k, p = k_p
         if k <= p:
             # find the transition from s that begins with k-th letter
-            ((kk,pp), ss) = self._find_transition(s, self._letters[k-1])
+            (kk, pp), ss = self._find_transition(s, self._letters[k - 1])
             if letter == self._letters[kk + p - k]:
                 return (True, s)
             else:
                 # replace transition above by transitions
-                del self._transition_function[s][(kk,pp)]
+                del self._transition_function[s][(kk, pp)]
                 r = len(self._transition_function)
                 self._transition_function[r] = {}
                 self._transition_function[s][(kk, kk+p-k)] = r
@@ -692,7 +700,7 @@ class ImplicitSuffixTree(SageObject):
 
     def _canonize(self, s, k_p):
         r"""
-        Given an implicit or explicit reference pair for a node, returns
+        Given an implicit or explicit reference pair for a node, return
         the canonical reference pair.
 
         Recall that a node r is referenced as (s, (k,p)), where s is an
@@ -709,22 +717,23 @@ class ImplicitSuffixTree(SageObject):
             sage: t._canonize(0,(2,5))
             (5, 3)
         """
-        (k, p) = k_p
+        k, p = k_p
         if p < k:
             return (s, k)
         else:
-            ((kk,pp), ss) = self._find_transition(s, self._letters[k-1])
+            (kk, pp), ss = self._find_transition(s, self._letters[k - 1])
             while pp is not None and pp - kk <= p - k:
                 k = k + pp - kk + 1
                 s = ss
                 if k <= p:
-                    ((kk,pp), ss) = self._find_transition(s, self._letters[k-1])
+                    (kk, pp), ss = self._find_transition(s, self._letters[k-1])
             return (s, k)
 
     def _find_transition(self, state, letter):
         r"""
-        Returns the transition from state that begins with letter. Returns
-        ``None`` if no such transition exists.
+        Return the transition from state that begins with letter.
+
+        This returns ``None`` if no such transition exists.
 
         The transitions are stored as a dictionary of dictionaries: keyed
         by the nodes, with the corresponding dictionary keyed by pairs
@@ -754,12 +763,12 @@ class ImplicitSuffixTree(SageObject):
         """
         if state == -1:
             return ((0, 0), 0)
-        else:
-            if state in self._transition_function:
-                for ((k,p),s) in self._transition_function[state].items():
-                    if self._letters[k-1] == letter:
-                        return ((k,p), s)
-            return None
+
+        if state in self._transition_function:
+            for (k, p), s in self._transition_function[state].items():
+                if self._letters[k - 1] == letter:
+                    return ((k, p), s)
+        return None
 
     #####
     # The following are not necessary for constructing the implicit suffix
@@ -770,7 +779,7 @@ class ImplicitSuffixTree(SageObject):
     # Visualization
     #####
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -782,7 +791,7 @@ class ImplicitSuffixTree(SageObject):
 
     def word(self):
         r"""
-        Returns the word whose implicit suffix tree this is.
+        Return the word whose implicit suffix tree this is.
 
         TESTS::
 
@@ -792,9 +801,10 @@ class ImplicitSuffixTree(SageObject):
         """
         return self._word
 
-    def transition_function_dictionary(self):
+    def transition_function_dictionary(self) -> dict:
         r"""
-        Returns the transition function as a dictionary of dictionaries.
+        Return the transition function as a dictionary of dictionaries.
+
         The format is consistent with the input format for ``DiGraph``.
 
         EXAMPLES::
@@ -813,19 +823,18 @@ class ImplicitSuffixTree(SageObject):
             {0: {1: (0, None), 2: (1, None)}}
         """
         d = {}
-        for (u,v,(i,j)) in self.edge_iterator():
-            d.setdefault(u, {})[v] = (i,j)
+        for u, v, (i, j) in self.edge_iterator():
+            d.setdefault(u, {})[v] = (i, j)
         return d
 
     def to_digraph(self, word_labels=False):
         r"""
-        Returns a ``DiGraph`` object of the transition graph of the suffix tree.
+        Return a ``DiGraph`` object of the transition graph of the suffix tree.
 
         INPUT:
 
-        -  ``word_labels`` - boolean (default: ``False``) if ``False``, labels
-           the edges by pairs `(i, j)`; if ``True``, labels the edges by
-           ``word[i:j]``.
+        - ``word_labels`` -- boolean (default: ``False``); if ``False``, labels
+          the edges by pairs `(i, j)`. If ``True``, labels the edges by ``word[i:j]``
 
         EXAMPLES::
 
@@ -840,30 +849,29 @@ class ImplicitSuffixTree(SageObject):
             return DiGraph(d)
         d = self.transition_function_dictionary()
         for u in d:
-            for (v, (i, j)) in d[u].items():
+            for v, (i, j) in d[u].items():
                 if word_labels:
                     d[u][v] = self._word[i:j]
                 elif j is None:
-                    d[u][v] = (i,len(self._letters))
+                    d[u][v] = (i, len(self._letters))
         return DiGraph(d)
 
     def plot(self, word_labels=False, layout='tree', tree_root=0,
-            tree_orientation='up', vertex_colors=None, edge_labels=True,
-            *args, **kwds):
+             tree_orientation='up', vertex_colors=None, edge_labels=True,
+             *args, **kwds):
         r"""
-        Returns a Graphics object corresponding to the transition graph of
+        Return a Graphics object corresponding to the transition graph of
         the suffix tree.
 
         INPUT:
 
-        -  ``word_labels`` - boolean (default: ``False``) if ``False``, labels
-           the edges by pairs `(i, j)`; if ``True``, labels the edges by
-           ``word[i:j]``.
-        -  ``layout`` - (default: ``'tree'``)
-        -  ``tree_root`` - (default: 0)
-        -  ``tree_orientation`` - (default: ``'up'``)
-        -  ``vertex_colors`` - (default: ``None``)
-        -  ``edge_labels`` - (default: ``True``)
+        - ``word_labels`` -- boolean (default: ``False``); if ``False``, labels
+          the edges by pairs `(i, j)`; if ``True``, labels the edges by ``word[i:j]``
+        - ``layout`` -- (default: ``'tree'``)
+        - ``tree_root`` -- (default: 0)
+        - ``tree_orientation`` -- (default: ``'up'``)
+        - ``vertex_colors`` -- (default: ``None``)
+        - ``edge_labels`` -- (default: ``True``)
 
         EXAMPLES::
 
@@ -883,24 +891,23 @@ class ImplicitSuffixTree(SageObject):
         """
         tree = self.to_digraph(word_labels=word_labels)
         if word_labels:
-            for (u,v,label) in tree.edge_iterator():
+            for u, v, label in tree.edge_iterator():
                 tree.set_edge_label(u, v, label.string_rep())
         if vertex_colors is None:
-            vertex_colors = {'#fec7b8':tree.vertices(sort=True)}
+            vertex_colors = {'#fec7b8': tree.vertices(sort=True)}
         return tree.plot(layout=layout, tree_root=tree_root,
-                tree_orientation=tree_orientation,
-                vertex_colors=vertex_colors, edge_labels=edge_labels,
-                *args, **kwds)
+                         tree_orientation=tree_orientation,
+                         vertex_colors=vertex_colors, edge_labels=edge_labels,
+                         *args, **kwds)
 
     def show(self, word_labels=None, *args, **kwds):
         r"""
-        Displays the output of ``self.plot()``.
+        Display the output of :meth:`plot`.
 
         INPUT:
 
-        -  ``word_labels`` - (default: ``None``) if ``False``, labels the
-           edges by pairs `(i, j)`; if ``True``, labels the edges by
-           ``word[i:j]``.
+        - ``word_labels`` -- (default: ``None``) if ``False``, labels the edges
+          by pairs `(i, j)`; if ``True``, labels the edges by ``word[i:j]``
 
         EXAMPLES::
 
@@ -917,10 +924,10 @@ class ImplicitSuffixTree(SageObject):
     # Various methods
     #####
 
-    def __eq__(self,other):
+    def __eq__(self, other) -> bool:
         r"""
-        If self and other have the same transition function and the
-        same word, then they are equal.
+        If ``self`` and ``other`` have the same transition function
+        and the same word, then they are equal.
 
         TESTS::
 
@@ -930,22 +937,25 @@ class ImplicitSuffixTree(SageObject):
             sage: ImplicitSuffixTree(w) == ImplicitSuffixTree(u)
             True
         """
-        if not isinstance(other,ImplicitSuffixTree):
+        if not isinstance(other, ImplicitSuffixTree):
             return False
         return self._transition_function == other._transition_function \
             and self._letters == other._letters
 
     def transition_function(self, word, node=0):
         r"""
-        Returns the node obtained by starting from ``node`` and following the
-        edges labelled by the letters of ``word``. Returns ``("explicit",
-        end_node)`` if we end at ``end_node``, or ``("implicit", edge, d)``
-        if we end `d` spots along an edge.
+        Return the node obtained by starting from ``node`` and following the
+        edges labelled by the letters of ``word``.
+
+        OUTPUT:
+
+        ``("explicit", end_node)`` if we end at ``end_node``, or
+        ``("implicit", edge, d)`` if we end `d` spots along an edge.
 
         INPUT:
 
-        - ``word`` - a word
-        - ``node`` - (default: 0) starting node
+        - ``word`` -- a word
+        - ``node`` -- (default: 0) starting node
 
         EXAMPLES::
 
@@ -963,31 +973,31 @@ class ImplicitSuffixTree(SageObject):
         """
         if word.is_empty():
             return "explicit", node
-        ((k,p),s) = self._find_transition(node, word[0])
+        (k, p), s = self._find_transition(node, word[0])
         if p is None:
             # test that word is a prefix of self._letters[k-1:]
             if word == self._word[k-1:(k-1)+word.length()]:
                 if word.length() == len(self._letters) - k + 1:
                     return "explicit", s
                 else:
-                    edge = (node,s)
+                    edge = (node, s)
                     return "implicit", edge, word.length()
         else:
             # find longest common prefix
-            m = min(p-k+1,word.length())
+            m = min(p-k+1, word.length())
             i = 0
             while i < m and self._word[k-1+i] == word[i]:
                 i += 1
             if i == p-k+1:
-                return self.transition_function(word[p-k+1:],s)
+                return self.transition_function(word[p-k+1:], s)
             else:
-                edge = (node,s)
+                edge = (node, s)
                 return "implicit", edge, i
             return "explicit", node
 
-    def states(self):
+    def states(self) -> list:
         r"""
-        Returns the states (explicit nodes) of the suffix tree.
+        Return the states (explicit nodes) of the suffix tree.
 
         EXAMPLES::
 
@@ -1001,7 +1011,8 @@ class ImplicitSuffixTree(SageObject):
 
     def suffix_link(self, state):
         r"""
-        Evaluates the suffix link map of the implicit suffix tree on ``state``.
+        Evaluate the suffix link map of the implicit suffix tree on ``state``.
+
         Note that the suffix link is not defined for all states.
 
         The suffix link of a state `x'` that corresponds to the suffix `x` is
@@ -1010,7 +1021,7 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        - ``state`` - a state
+        - ``state`` -- a state
 
         EXAMPLES::
 
@@ -1030,12 +1041,11 @@ class ImplicitSuffixTree(SageObject):
         """
         if state in self._suffix_link:
             return self._suffix_link[state]
-        else:
-            raise TypeError("there is no suffix link from %s" % state)
+        raise TypeError("there is no suffix link from %s" % state)
 
     def active_state(self):
         r"""
-        Returns the active state of the suffix tree.
+        Return the active state of the suffix tree.
 
         EXAMPLES::
 
@@ -1049,7 +1059,7 @@ class ImplicitSuffixTree(SageObject):
 
     def process_letter(self, letter):
         r"""
-        Modifies the current implicit suffix tree producing the implicit
+        Modify the current implicit suffix tree producing the implicit
         suffix tree for ``self.word() + letter``.
 
         EXAMPLES::
@@ -1075,10 +1085,12 @@ class ImplicitSuffixTree(SageObject):
 
     def to_explicit_suffix_tree(self):
         r"""
-        Converts self to an explicit suffix tree. It is obtained by
-        processing an end of string letter as if it were a regular
-        letter, except that no new leaf nodes are created (thus, the only
-        thing that happens is that some implicit nodes become explicit).
+        Convert ``self`` to an explicit suffix tree.
+
+        It is obtained by processing an end of string letter as if it
+        were a regular letter, except that no new leaf nodes are
+        created (thus, the only thing that happens is that some
+        implicit nodes become explicit).
 
         EXAMPLES::
 
@@ -1096,20 +1108,21 @@ class ImplicitSuffixTree(SageObject):
         # append a new unique symbol to the word and process the new letter
         end_of_string = object()
         self._letters.append(end_of_string)
-        (s,(k,i)) = self._active_state
-        (end_state, r) = self._test_and_split(s,(k,i-1), end_of_string)
+        s, (k, i) = self._active_state
+        end_state, r = self._test_and_split(s, (k, i-1), end_of_string)
         while not end_state:
-            (s, k) = self._canonize(self._suffix_link[s], (k,i-1))
-            (end_state, r) = self._test_and_split(s, (k,i-1), end_of_string)
+            s, k = self._canonize(self._suffix_link[s], (k, i-1))
+            end_state, r = self._test_and_split(s, (k, i-1), end_of_string)
         # remove the end of string symbol from the word
         self._letters.pop()
         return
 
     def edge_iterator(self):
         r"""
-        Returns an iterator over the edges of the suffix tree. The
-        edge from `u` to `v` labelled by `(i,j)` is returned as the tuple
-        `(u,v,(i,j))`.
+        Return an iterator over the edges of the suffix tree.
+
+        The edge from `u` to `v` labelled by `(i,j)` is yielded as
+        the tuple `(u,v,(i,j))`.
 
         EXAMPLES::
 
@@ -1124,23 +1137,23 @@ class ImplicitSuffixTree(SageObject):
         queue = [0]
         while queue:
             v = queue.pop()
-            for ((i,j),u) in self._transition_function[v].items():
-                yield (v,u,(i-1,j))
+            for (i, j), u in self._transition_function[v].items():
+                yield (v, u, (i - 1, j))
                 queue.append(u)
 
-    def number_of_factors(self,n=None):
+    def number_of_factors(self, n=None):
         r"""
         Count the number of distinct factors of ``self.word()``.
 
         INPUT:
 
-        -  ``n`` - an integer, or ``None``.
+        - ``n`` -- integer or ``None``
 
         OUTPUT:
 
-        -  If ``n`` is an integer, returns the number of distinct factors
-           of length ``n``. If ``n`` is ``None``, returns the total number of
-           distinct factors.
+        If ``n`` is an integer, returns the number of distinct factors
+        of length ``n``. If ``n`` is ``None``, returns the total number of
+        distinct factors.
 
         EXAMPLES::
 
@@ -1189,7 +1202,7 @@ class ImplicitSuffixTree(SageObject):
         if n is None:
             length_word = self.word().length()
             num_factors = 1  # empty word
-            for (u, v, (i, j)) in self.edge_iterator():
+            for u, v, (i, j) in self.edge_iterator():
                 if j is None:
                     num_factors += length_word - i
                 else:
@@ -1198,12 +1211,12 @@ class ImplicitSuffixTree(SageObject):
             num_factors = 0
             queue = [(0, 0)]
             while queue:
-                (v, l) = queue.pop()
+                v, l = queue.pop()
                 if l == n:
                     num_factors += 1
                 if l < n:
-                    if self._transition_function[v] != {}:
-                        for ((i, j), u) in self._transition_function[v].items():
+                    if self._transition_function[v]:
+                        for (i, j), u in self._transition_function[v].items():
                             if j is None:
                                 j = self.word().length()
                             if j - i >= n - l:
@@ -1220,13 +1233,13 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        -  ``n`` - an integer, or ``None``.
+        - ``n`` -- integer or ``None``
 
         OUTPUT:
 
-        -  If ``n`` is an integer, returns an iterator over all distinct
-           factors of length ``n``. If ``n`` is ``None``, returns an iterator
-           generating all distinct factors.
+        If ``n`` is an integer, returns an iterator over all distinct
+        factors of length ``n``. If ``n`` is ``None``, returns an iterator
+        generating all distinct factors.
 
         EXAMPLES::
 
@@ -1256,27 +1269,27 @@ class ImplicitSuffixTree(SageObject):
             queue = [(0, 0, -1, 0)]
             yield w[0:0]
             while queue:
-                (v,i,j,l) = queue.pop()
-                for k in range(i,j+1):
+                v, i, j, l = queue.pop()
+                for k in range(i, j+1):
                     yield w[j-l:k]
-                for ((i,j),u) in self._transition_function[v].items():
+                for (i, j), u in self._transition_function[v].items():
                     if j is None:
                         j = wlen
-                    queue.append((u,i,j, l+j-i+1))
+                    queue.append((u, i, j, l+j-i+1))
         elif isinstance(n, (int, Integer)):
             queue = [(0, 0, -1, 0)]
             while queue:
-                (v,i,j,l) = queue.pop()
+                v, i, j, l = queue.pop()
                 if l == n:
                     yield w[j-l:j]
                 if l < n:
-                    for ((i,j),u) in self._transition_function[v].items():
+                    for (i, j), u in self._transition_function[v].items():
                         if j is None:
                             j = wlen
                         if j - i >= n - l:
                             yield w[i-l-1:i-l+n-1]
                         else:
-                            queue.append((u,i,j, l+j-i+1))
+                            queue.append((u, i, j, l+j-i+1))
         else:
             raise TypeError("not an integer or None: %s" % n)
 
@@ -1319,7 +1332,7 @@ class ImplicitSuffixTree(SageObject):
         w = self.word()
         while i < len(w):
             l = 0
-            ((x, y), successor) = self._find_transition(0, w[i])
+            (x, y), successor = self._find_transition(0, w[i])
             x = x-1
             while x < i+l:
                 if y is None:
@@ -1329,7 +1342,7 @@ class ImplicitSuffixTree(SageObject):
                 if i+l >= len(w):
                     l = len(w)-i
                     break
-                ((x, y), successor) = self._find_transition(successor, w[i+l])
+                (x, y), successor = self._find_transition(successor, w[i+l])
                 x = x-1
             i += max(1, l)
             iB.append(i)
@@ -1407,14 +1420,15 @@ class ImplicitSuffixTree(SageObject):
             sage: T.suffix_walk((7, 3), 1)
             ('implicit', (9, 4), 1)
         """
+        start, end = edge
         # Select the transition that corresponds to edge
-        for (i, j) in self._transition_function[edge[0]]:
-            if self._transition_function[edge[0]][(i, j)] == edge[1]:
-                break
+        ij = next(ij for ij, target in self._transition_function[start].items()
+                  if target == end)
+
         # self.word()[i-1:j] is the word on the edges
-        i -= 1
-        parent = self.suffix_link(edge[0])
-        return self._count_and_skip(parent, i, i+l)
+        i = ij[0] - 1
+        parent = self.suffix_link(start)
+        return self._count_and_skip(parent, i, i + l)
 
     def leftmost_covering_set(self):
         r"""
@@ -1451,15 +1465,15 @@ class ImplicitSuffixTree(SageObject):
 
         def condition1_square_pairs(i):
             r"""
-            Computes the squares that have their center (the last letter of the
+            Compute the squares that have their center (the last letter of the
             first  occurrence of ``w`` in ``ww``) in the `i`-th block of the
             LZ-decomposition and that start in the `i`-th block and end in the
             `(i+1)`-th.
             """
             for k in range(1, B[i+1]-B[i]+1):
                 q = B[i+1]-k
-                k1 = w.longest_forward_extension(B[i+1],q) if B[i+1] < len(w) else 0
-                k2 = w.longest_backward_extension(B[i+1]-1,q-1) if q > 0 else 0
+                k1 = w.longest_forward_extension(B[i+1], q) if B[i+1] < len(w) else 0
+                k2 = w.longest_backward_extension(B[i+1]-1, q-1) if q > 0 else 0
                 start = max(q-k2, q-k+1)
                 if k1+k2 >= k and k1 > 0 and start >= B[i]:
                     yield (start, 2*k)
@@ -1481,13 +1495,13 @@ class ImplicitSuffixTree(SageObject):
                 k2 = w.longest_backward_extension(B[i]-1, q-1) if B[i] > 0 else 0
                 start = max(B[i]-k2, B[i]-k+1)
                 if k1+k2 >= k and k1 > 0 and start+k <= B[i+1] and k2 > 0:
-                    yield (start,2*k)
+                    yield (start, 2*k)
 
         w = self.word()
         B = self.LZ_decomposition()
         P = [[] for _ in w]
-        for i in range(len(B)-1):
-            for (i,l) in chain(condition2_square_pairs(i), condition1_square_pairs(i)):
+        for i in range(len(B) - 1):
+            for i, l in chain(condition2_square_pairs(i), condition1_square_pairs(i)):
                 P[i].append(l)
         for l in P:
             l.reverse()
@@ -1499,9 +1513,10 @@ class ImplicitSuffixTree(SageObject):
 
     def uncompactify(self):
         r"""
-        Returns the tree obtained from self by splitting edges so that they
-        are labelled by exactly one letter. The resulting tree is
-        isomorphic to the suffix trie.
+        Return the tree obtained from ``self`` by splitting edges so that they
+        are labelled by exactly one letter.
+
+        The resulting tree is isomorphic to the suffix trie.
 
         EXAMPLES::
 
@@ -1516,21 +1531,21 @@ class ImplicitSuffixTree(SageObject):
         newtree = DiGraph()
         newtree.add_vertices(range(tree.order()))
         new_node = tree.order() + 1
-        for (u,v,label) in tree.edge_iterator():
+        for u, v, label in tree.edge_iterator():
             if len(label) == 1:
-                newtree.add_edge(u,v)
+                newtree.add_edge(u, v)
             else:
-                newtree.add_edge(u,new_node,label[0])
+                newtree.add_edge(u, new_node, label[0])
                 for w in label[1:-1]:
-                    newtree.add_edge(new_node,new_node+1,w)
+                    newtree.add_edge(new_node, new_node+1, w)
                     new_node += 1
-                newtree.add_edge(new_node,v,label[-1])
+                newtree.add_edge(new_node, v, label[-1])
                 new_node += 1
         return newtree
 
     def trie_type_dict(self):
         r"""
-        Returns a dictionary in a format compatible with that of the suffix
+        Return a dictionary in a format compatible with that of the suffix
         trie transition function.
 
         EXAMPLES::
@@ -1546,17 +1561,17 @@ class ImplicitSuffixTree(SageObject):
         """
         d = {}
         new_node = len(self._transition_function)
-        for (u, dd) in self._transition_function.items():
-            for (sl, v) in dd.items():
+        for u, dd in self._transition_function.items():
+            for sl, v in dd.items():
                 w = self._word[sl[0]-1:sl[1]]
                 if w.length() == 1:
-                    d[u,w] = v
+                    d[u, w] = v
                 else:
-                    d[u,w[0:1]] = new_node
-                    for i in range(1,w.length()-1):
+                    d[u, w[0:1]] = new_node
+                    for i in range(1, w.length()-1):
                         d[new_node, w[i:i+1]] = new_node + 1
                         new_node += 1
-                    d[new_node,w[-1:]] = v
+                    d[new_node, w[-1:]] = v
                     new_node += 1
         return d
 
@@ -1608,7 +1623,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
         We skip the ``_test_and_split`` test because it is not a test meant
         for the ``TestSuite``::
 
-            sage: TestSuite(DST).run(skip="_test_and_split")
+            sage: TestSuite(DST).run(skip='_test_and_split')
 
         Test that we do not allow ``'$'`` to appear in the word::
 
@@ -1639,13 +1654,15 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
         """
         w = self.word()
         if len(w) > 40:
-            w = str(w[:40])+'...'
-        return "Decorated suffix tree of : {}".format(w)
+            w = str(w[:40]) + '...'
+        return f"Decorated suffix tree of : {w}"
 
     def _partial_labeling(self):
         r"""
         Make a depth-first search in the suffix tree and mark some squares of a
-        leftmost covering set of the tree. Used by ``self._complete_labeling``.
+        leftmost covering set of the tree.
+
+        This is used by :meth:`_complete_labeling`.
 
         EXAMPLES::
 
@@ -1666,17 +1683,18 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
 
             - ``node`` -- a node of ``self``
             - ``parent`` -- the parent of a node in ``self``
-            - ``head`` -- a tuple indicating the head of the list ``P(node)``
+            - ``head`` -- tuple indicating the head of the list ``P(node)``
 
             OUTPUT: ``(i, pos)``, the new head of ``P(node)``
             """
             i, pos = head
+            pano = (parent, node)
             while pos < len(P[i]) and P[i][pos] > string_depth[parent]:
                 label = P[i][pos] - string_depth[parent]
-                if (parent, node) in labeling:
-                    labeling[(parent, node)].append(label)
+                if pano in labeling:
+                    labeling[pano].append(label)
                 else:
-                    labeling[(parent, node)] = [label]
+                    labeling[pano] = [label]
                 pos += 1
             return (i, pos)
 
@@ -1703,11 +1721,11 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
             if current_node in D:
                 node_list = (n, 0)
                 for child in D[current_node]:
-                    (i, j) = D[current_node][child]
+                    i, j = D[current_node][child]
                     if j is None:
                         j = n
-                    string_depth[child] = string_depth[current_node]+j-i
-                    child_list = treat_node(child,current_node)
+                    string_depth[child] = string_depth[current_node] + j - i
+                    child_list = treat_node(child, current_node)
                     if child_list[0] < node_list[0]:
                         node_list = child_list
             else:  # The node is a child
@@ -1719,13 +1737,13 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
         D = self.transition_function_dictionary()
         string_depth = {0: 0}
         n = len(self.word())
-        labeling = dict()
+        labeling = {}
         treat_node(0, None)
         return labeling
 
     def _complete_labeling(self):
         r"""
-        Returns a dictionary of edges of ``self``, with marked points for the end
+        Return a dictionary of edges of ``self``, with marked points for the end
         of each distinct squares that can be found in ``self.word()``.
 
         EXAMPLES::
@@ -1759,7 +1777,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
             successful = False
             if final_state[0] == 'explicit':
                 parent = final_state[1]
-                transition = self._find_transition(parent,self._letters[start])
+                transition = self._find_transition(parent, self._letters[start])
                 if transition is not None:
                     child = transition[1]
                     successful = True
@@ -1782,14 +1800,16 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
 
         def treat_node(current_node, i, j):
             r"""
-            Execute a depth-first search on self and start a suffix walk for
-            labeled points on each edges of T. The function is recursive, call
-            treat_node(0,0,0) to initiate the search.
+            Execute a depth-first search on ``self`` and start a suffix walk
+            for labeled points on each edges of T.
+
+            The function is recursive, call
+            ``treat_node(0,0,0)`` to initiate the search.
 
             INPUT:
 
-            - ``current_node`` - The node to treat
-            - ``(i, j)`` - Pair of index such that the path from 0 to
+            - ``current_node`` -- the node to treat
+            - ``(i, j)`` -- pair of index such that the path from 0 to
               ``current_node`` reads ``self.word()[i:j]``
             """
 
@@ -1804,12 +1824,12 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
                             walk_chain(current_node, child, l, square_start)
 
         prelabeling = self._partial_labeling()
-        labeling = dict()
+        labeling = {}
         D = self.transition_function_dictionary()
         treat_node(0, 0, 0)
         return labeling
 
-    def square_vocabulary(self, output="pair"):
+    def square_vocabulary(self, output='pair'):
         r"""
         Return the list of distinct squares of ``self.word``.
 
@@ -1820,7 +1840,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
 
         INPUT:
 
-        - ``output`` -- (default: ``"pair"``) either ``"pair"`` or ``"word"``
+        - ``output`` -- (default: ``'pair'``) either ``'pair'`` or ``'word'``
 
         EXAMPLES::
 
@@ -1829,7 +1849,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
             sage: sorted(DecoratedSuffixTree(w).square_vocabulary())
             [(0, 0), (0, 2), (2, 2)]
             sage: w = Word('00110011010')
-            sage: sorted(DecoratedSuffixTree(w).square_vocabulary(output="word"))
+            sage: sorted(DecoratedSuffixTree(w).square_vocabulary(output='word'))
             [word: , word: 00, word: 00110011, word: 01100110, word: 1010, word: 11]
         """
         def treat_node(current_node, i, j):
@@ -1844,14 +1864,13 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
                             pair = (square_start, edge_label[0]+l-square_start)
                             squares.append(pair)
 
-        if output != "pair" and output != "word":
-            raise ValueError("``output`` should be 'pair' or 'word'; got {}".format(
-                            output))
+        if output not in ["pair", "word"]:
+            msg = f"output should be 'pair' or 'word'; got {output}"
+            raise ValueError(msg)
         D = self.transition_function_dictionary()
         Q = self.labeling
         squares = [(0, 0)]
         treat_node(0, 0, 0)
         if output == "pair":
             return squares
-        else:
-            return [self.word()[i:i+l] for (i, l) in squares]
+        return [self.word()[i:i + l] for i, l in squares]

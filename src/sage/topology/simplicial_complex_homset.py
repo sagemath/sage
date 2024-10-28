@@ -39,7 +39,6 @@ TESTS::
     sage: H = Hom(S,T)
     sage: loads(dumps(H)) == H
     True
-
 """
 
 # ****************************************************************************
@@ -77,8 +76,14 @@ def is_SimplicialComplexHomset(x) -> bool:
          in Category of finite simplicial complexes
         sage: from sage.topology.simplicial_complex_homset import is_SimplicialComplexHomset
         sage: is_SimplicialComplexHomset(H)
+        doctest:warning...
+        DeprecationWarning: the function is_SimplicialComplexHomset is deprecated;
+        use 'isinstance(..., SimplicialComplexHomset)' instead
+        See https://github.com/sagemath/sage/issues/37922 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37922, "the function is_SimplicialComplexHomset is deprecated; use 'isinstance(..., SimplicialComplexHomset)' instead")
     return isinstance(x, SimplicialComplexHomset)
 
 
@@ -87,7 +92,7 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
         """
         INPUT:
 
-        - ``f`` -- a dictionary with keys exactly the vertices of the domain
+        - ``f`` -- dictionary with keys exactly the vertices of the domain
           and values vertices of the codomain
 
         EXAMPLES::

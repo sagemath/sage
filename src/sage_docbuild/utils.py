@@ -111,7 +111,7 @@ def build_many(target, args, processes=None):
 
     * When PARI is built with multi-threading support, forking a Sage
       process from a thread leaves the main Pari interface instance broken
-      (see :trac:`26608#comment:38`).
+      (see :issue:`26608#comment:38`).
 
     In the future this may be replaced by a generalized version of the more
     robust parallel processing implementation from ``sage.doctest.forker``.

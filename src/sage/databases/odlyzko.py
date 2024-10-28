@@ -13,7 +13,6 @@ AUTHORS:
 - William Stein: initial version
 - Jeroen Demeyer (2015-01-20): converted ``database_odlyzko_zeta`` to new-style
   package
-
 """
 
 #*****************************************************************************
@@ -31,6 +30,7 @@ import os
 
 from sage.misc.persist import load
 from sage.env import SAGE_SHARE
+
 
 def zeta_zeros():
     r"""

@@ -1,4 +1,4 @@
-from .matrix_dense cimport Matrix_dense
+from sage.matrix.matrix_dense cimport Matrix_dense
 from sage.libs.m4ri cimport *
 
 cdef class Matrix_mod2_dense(Matrix_dense):
@@ -6,8 +6,8 @@ cdef class Matrix_mod2_dense(Matrix_dense):
     cdef object _one
     cdef object _zero
 
-    cpdef Matrix_mod2_dense _multiply_m4rm(Matrix_mod2_dense self, Matrix_mod2_dense right, int k) noexcept
-    cpdef Matrix_mod2_dense _multiply_strassen(Matrix_mod2_dense self, Matrix_mod2_dense right, int cutoff) noexcept
+    cpdef Matrix_mod2_dense _multiply_m4rm(Matrix_mod2_dense self, Matrix_mod2_dense right, int k)
+    cpdef Matrix_mod2_dense _multiply_strassen(Matrix_mod2_dense self, Matrix_mod2_dense right, int cutoff)
 
     # For conversion to other systems
-    cpdef _export_as_string(self) noexcept
+    cpdef _export_as_string(self)

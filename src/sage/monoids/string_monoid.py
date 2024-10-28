@@ -8,20 +8,21 @@ AUTHORS:
 Sage supports a wide range of specific free string monoids.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from .free_monoid import FreeMonoid
 from .string_monoid_element import StringMonoidElement
 from .string_ops import strip_encoding
+
 
 class StringMonoid_class(FreeMonoid):
     r"""
@@ -34,10 +35,10 @@ class StringMonoid_class(FreeMonoid):
 
         INPUT:
 
-        - ``n`` -- Integer
+        - ``n`` -- integer
 
-        - ``alphabet`` -- String or tuple whose characters or elements denote
-          the generators.
+        - ``alphabet`` -- string or tuple whose characters or elements denote
+          the generators
 
         EXAMPLES::
 
@@ -108,12 +109,13 @@ class StringMonoid_class(FreeMonoid):
         n = self.ngens()
         if i < 0 or not i < n:
             raise IndexError(
-                "Argument i (= %s) must be between 0 and %s." % (i, n-1))
+                f"Argument i (= {i}) must be between 0 and {n-1}.")
         return StringMonoidElement(self, [int(i)])
 
-#*****************************************************************************
+
+# ****************************************************************************
 # Specific global string monoids
-#*****************************************************************************
+# ****************************************************************************
 
 class BinaryStringMonoid(StringMonoid_class):
     r"""
@@ -166,7 +168,7 @@ class BinaryStringMonoid(StringMonoid_class):
         Return ``x`` coerced into this free monoid.
 
         One can create a free binary string monoid element from a
-        Python string of 0's and 1's or list of integers.
+        Python string of 0s and 1s or list of integers.
 
         NOTE: Due to the ambiguity of the second generator '1' with
         the identity element '' of the monoid, the syntax S(1) is not
@@ -182,7 +184,7 @@ class BinaryStringMonoid(StringMonoid_class):
             sage: S.gen(1)
             1
         """
-        ## There should really some careful type checking here...
+        # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
         elif isinstance(x, list):
@@ -276,7 +278,7 @@ class OctalStringMonoid(StringMonoid_class):
             sage: x[0] * x[3]^3 * x[5]^4 * x[6]
             033355556
         """
-        StringMonoid_class.__init__(self, 8, [ str(i) for i in range(8) ])
+        StringMonoid_class.__init__(self, 8, [str(i) for i in range(8)])
 
     def __repr__(self):
         return "Free octal string monoid"
@@ -286,7 +288,7 @@ class OctalStringMonoid(StringMonoid_class):
         Return ``x`` coerced into this free monoid.
 
         One can create a free octal string monoid element from a
-        Python string of 0's to 7's or list of integers.
+        Python string of 0s to 7s or list of integers.
 
         EXAMPLES::
 
@@ -300,7 +302,7 @@ class OctalStringMonoid(StringMonoid_class):
             sage: S([ i for i in range(8) ])
             01234567
         """
-        ## There should really some careful type checking here...
+        # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
         elif isinstance(x, list):
@@ -344,7 +346,7 @@ class HexadecimalStringMonoid(StringMonoid_class):
             0aaaf
         """
         alph = '0123456789abcdef'
-        StringMonoid_class.__init__(self, 16, [ alph[i] for i in range(16) ])
+        StringMonoid_class.__init__(self, 16, [alph[i] for i in range(16)])
 
     def __repr__(self):
         return "Free hexadecimal string monoid"
@@ -368,7 +370,7 @@ class HexadecimalStringMonoid(StringMonoid_class):
             sage: S([ i for i in range(16) ])
             0123456789abcdef
         """
-        ## There should really some careful type checking here...
+        # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
         elif isinstance(x, list):
@@ -453,7 +455,7 @@ class Radix64StringMonoid(StringMonoid_class):
             /
         """
         alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-        StringMonoid_class.__init__(self, 64, [ alph[i] for i in range(64) ])
+        StringMonoid_class.__init__(self, 64, [alph[i] for i in range(64)])
 
     def __repr__(self):
         return "Free radix 64 string monoid"
@@ -480,7 +482,7 @@ class Radix64StringMonoid(StringMonoid_class):
             sage: S([ i for i in range(64) ])
             ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
         """
-        ## There should really some careful type checking here...
+        # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
         elif isinstance(x, list):
@@ -560,7 +562,7 @@ class AlphabeticStringMonoid(StringMonoid_class):
             "W": RR(0.023), "X": RR(0.001),
             "Y": RR(0.020), "Z": RR(0.001)}
         alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        StringMonoid_class.__init__(self, 26, [ alph[i] for i in range(26) ])
+        StringMonoid_class.__init__(self, 26, [alph[i] for i in range(26)])
 
     def __repr__(self):
         return "Free alphabetic string monoid on A-Z"
@@ -584,7 +586,7 @@ class AlphabeticStringMonoid(StringMonoid_class):
             sage: S([ i for i in range(26) ])
             ABCDEFGHIJKLMNOPQRSTUVWXYZ
         """
-        ## There should really some careful type checking here...
+        # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
         elif isinstance(x, list):
@@ -594,7 +596,7 @@ class AlphabeticStringMonoid(StringMonoid_class):
         else:
             raise TypeError("Argument x (= %s) is of the wrong type." % x)
 
-    def characteristic_frequency(self, table_name="beker_piper"):
+    def characteristic_frequency(self, table_name='beker_piper'):
         r"""
         Return a table of the characteristic frequency probability
         distribution of the English alphabet. In written English, various
@@ -628,15 +630,15 @@ class AlphabeticStringMonoid(StringMonoid_class):
 
         INPUT:
 
-        - ``table_name`` -- (default ``"beker_piper"``) the table of
+        - ``table_name`` -- (default: ``'beker_piper'``) the table of
           characteristic frequency probability distribution to use. The
           following tables are supported:
 
-          - ``"beker_piper"`` -- the table of characteristic frequency
+          - ``'beker_piper'`` -- the table of characteristic frequency
             probability distribution by Beker and Piper [BP1982]_. This is
             the default table to use.
 
-          - ``"lewand"`` -- the table of characteristic frequency
+          - ``'lewand'`` -- the table of characteristic frequency
             probability distribution by Lewand as described on page 36
             of [Lew2000]_.
 
@@ -652,7 +654,7 @@ class AlphabeticStringMonoid(StringMonoid_class):
         Beker and Piper [BP1982]_::
 
             sage: A = AlphabeticStrings()
-            sage: table = A.characteristic_frequency(table_name="beker_piper")
+            sage: table = A.characteristic_frequency(table_name='beker_piper')
             sage: sorted(table.items())
             <BLANKLINE>
             [('A', 0.0820000000000000),
@@ -685,7 +687,7 @@ class AlphabeticStringMonoid(StringMonoid_class):
         The characteristic frequency probability distribution table
         of Lewand [Lew2000]_::
 
-            sage: table = A.characteristic_frequency(table_name="lewand")
+            sage: table = A.characteristic_frequency(table_name='lewand')
             sage: sorted(table.items())
             <BLANKLINE>
             [('A', 0.0816700000000000),
@@ -765,7 +767,7 @@ class AlphabeticStringMonoid(StringMonoid_class):
             Traceback (most recent call last):
             ...
             ValueError: Table name must be either 'beker_piper' or 'lewand'.
-            sage: table = A.characteristic_frequency(table_name="none")
+            sage: table = A.characteristic_frequency(table_name='none')
             Traceback (most recent call last):
             ...
             ValueError: Table name must be either 'beker_piper' or 'lewand'.

@@ -241,7 +241,6 @@ The LFSR sequence is then
    \end{array}
 
 
-
 The sequence of :math:`0,1`'s is periodic with period
 :math:`P=2^4-1=15` and satisfies Golomb's three randomness
 conditions. However, this sequence of period 15 can be "cracked"

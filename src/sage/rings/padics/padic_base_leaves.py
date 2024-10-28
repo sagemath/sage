@@ -98,7 +98,7 @@ when cast into the ring.::
     sage: type((a * b) / 5^3)
     <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
 
-The fixed modulus type is the leanest of the p-adic rings: it is
+The fixed modulus type is the leanest of the `p`-adic rings: it is
 basically just a wrapper around `\ZZ / p^n \ZZ`
 providing a unified interface with the rest of the `p`-adics.  This is
 the type you should use if your primary interest is in speed (though
@@ -174,7 +174,6 @@ TESTS::
     sage: repr(R(2777))[3:]
     '0&0&0&0&0&0&0&0&0&0&4&2&1&0&2'
     sage: TestSuite(R).run()                                                            # needs sage.geometry.polyhedron
-
 """
 
 #*****************************************************************************
@@ -220,8 +219,8 @@ class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGener
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
@@ -318,8 +317,8 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
@@ -405,6 +404,7 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
 
+
 class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric):
     r"""
     An implementation of the `p`-adic integers with floating point
@@ -418,8 +418,8 @@ class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
@@ -500,20 +500,21 @@ class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
 
+
 class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
     r"""
     An implementation of the `p`-adic integers using fixed modulus.
     """
     def __init__(self, p, prec, print_mode, names):
         """
-        Initialization
+        Initialization.
 
         INPUT:
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
@@ -606,6 +607,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
 
+
 class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGeneric):
     r"""
     An implementation of `p`-adic fields with capped relative precision.
@@ -614,7 +616,6 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
 
         sage: K = Qp(17, 1000000)  # indirect doctest
         sage: K = Qp(101)  # indirect doctest
-
     """
 
     def __init__(self, p, prec, print_mode, names):
@@ -625,8 +626,8 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
@@ -650,7 +651,7 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
 
             sage: R = Qp(3, 2)
             sage: TestSuite(R).run(elements=[R.random_element() for i in range(3^9)],  # long time, needs sage.geometry.polyhedron
-            ....:                  skip="_test_metric_function")
+            ....:                  skip='_test_metric_function')
             sage: R._test_metric_function(elements=[R.random_element() for i in range(3^3)])
 
             sage: R = Qp(next_prime(10^60))
@@ -686,7 +687,6 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
             True
             sage: K.has_coerce_map_from(Zp(17,40))
             True
-
         """
         #if isinstance(R, pAdicRingRelaxed) or isinstance(R, pAdicFieldRelaxed) and R.prime() == self.prime():
         #    return True
@@ -743,6 +743,7 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
         else:
             raise NotImplementedError("Don't know %s algorithm" % algorithm)
 
+
 class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGeneric):
     r"""
     An implementation of the `p`-adic rationals with floating point
@@ -756,8 +757,8 @@ class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGene
 
         - ``p`` -- prime
         - ``prec`` -- precision cap
-        - ``print_mode`` -- dictionary with print options.
-        - ``names`` -- how to print the prime.
+        - ``print_mode`` -- dictionary with print options
+        - ``names`` -- how to print the prime
 
         EXAMPLES::
 
@@ -843,6 +844,7 @@ class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGene
 
 # Lattice precision
 ###################
+
 
 class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
     """
@@ -942,7 +944,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
 
         INPUT:
 
-        - ``prec`` -- an integer or ``None`` (the default): the
+        - ``prec`` -- integer or ``None`` (default); the
           absolute precision of the generated random element
 
         EXAMPLES::
@@ -961,8 +963,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
                 prec = self._prec_cap_absolute
             x = ZZ.random_element(p**prec)
             relcap = x.valuation(p) + self._prec_cap_relative
-            if relcap < prec:
-                prec = relcap
+            prec = min(relcap, prec)
             return self._element_class(self, x, prec=prec)
         else:
             if prec is None:
@@ -974,6 +975,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
             if prec is None and v > 0:
                 x += p**cap * ZZ.random_element(p**v)
             return self._element_class(self, x, prec=prec)
+
 
 class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
     """
@@ -1073,10 +1075,10 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
 
         INPUT:
 
-        - ``prec`` -- an integer or ``None`` (the default): the
+        - ``prec`` -- integer or ``None`` (default); the
           absolute precision of the generated random element
 
-        - ``integral`` -- a boolean (default: ``False``); if ``True``,
+        - ``integral`` -- boolean (default: ``False``); if ``True``,
           return an element in the ring of integers
 
         EXAMPLES::
@@ -1108,12 +1110,12 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
         p = self.prime()
         x = ZZ.random_element(p**prec)
         relcap = x.valuation(p) + self._prec_cap_relative
-        if relcap < prec:
-            prec = relcap
+        prec = min(relcap, prec)
         return self._element_class(self, x*(p**val), prec=prec)
 
 # Relaxed
 #########
+
 
 class pAdicRingRelaxed(pAdicRelaxedGeneric, pAdicRingBaseGeneric):
     r"""
@@ -1152,6 +1154,7 @@ class pAdicRingRelaxed(pAdicRelaxedGeneric, pAdicRingBaseGeneric):
         pAdicRingBaseGeneric.__init__(self, p, self._default_prec, print_mode, names, padic_relaxed_element.pAdicRelaxedElement)
         self._element_class_module = padic_relaxed_element
         self._element_class_prefix = "pAdicRelaxedElement_"
+
 
 class pAdicFieldRelaxed(pAdicRelaxedGeneric, pAdicFieldBaseGeneric):
     r"""

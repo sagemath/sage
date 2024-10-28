@@ -41,9 +41,7 @@ class UnitaryMatrixGroup_gap(UnitaryMatrixGroup_generic, NamedMatrixGroup_gap, F
         """
         Return the hermitian form preserved by the unitary group.
 
-        OUTPUT:
-
-        A square matrix describing the bilinear form
+        OUTPUT: a square matrix describing the bilinear form
 
         EXAMPLES::
 

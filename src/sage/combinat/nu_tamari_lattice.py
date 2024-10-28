@@ -76,11 +76,9 @@ def NuTamariLattice(nu):
 
     INPUT:
 
-    - `\nu` -- a list of 0s and 1s or a string of 0s and 1s.
+    - `\nu` -- list of 0s and 1s or a string of 0s and 1s
 
-    OUTPUT:
-
-    a finite lattice
+    OUTPUT: a finite lattice
 
     The elements of the lattice are
     :func:`\nu-Dyck paths<sage.combinat.nu_dyck_word.NuDyckWord>` weakly above
@@ -133,13 +131,11 @@ def delta_swap(p, k, delta):
 
     - ``p`` -- a `\nu`-Dyck word
 
-    - ``k`` -- an integer between `0` and ``p.length()-1``
+    - ``k`` -- integer between `0` and ``p.length()-1``
 
-    - ``delta`` -- a list of nonnegative integers of length ``p.height()``
+    - ``delta`` -- list of nonnegative integers of length ``p.height()``
 
-    OUTPUT:
-
-    - a `\nu`-Dyck word
+    OUTPUT: a `\nu`-Dyck word
 
     EXAMPLES::
 
@@ -173,13 +169,13 @@ def delta_swap(p, k, delta):
         raise ValueError("the index is greater than the length of the path")
     # if delta is None:
     #     delta = [len(_) for _ in str(p._nu).split(sep='1')[1:]]
-    if k == 0 or p[k-1] == 1:
+    if k == 0 or p[k - 1] == 1:
         raise ValueError("there is no such covering move")
     found = False
     i = p[:k].count(1)
     j = k
     alt = 0
-    while not found and j <= p.length()-1:
+    while not found and j <= p.length() - 1:
         if p[j]:
             alt += delta[i]
             i += 1
@@ -188,8 +184,9 @@ def delta_swap(p, k, delta):
         if alt == 0:
             found = True
         j += 1
-    q = p[:k-1] + p[k:j] + [p[k-1]] + p[j:]
+    q = p[:k - 1] + p[k:j] + [p[k - 1]] + p[j:]
     return NuDyckWord(q, p._nu)
+
 
 def AltNuTamariLattice(nu, delta=None):
     r"""
@@ -208,13 +205,11 @@ def AltNuTamariLattice(nu, delta=None):
 
     INPUT:
 
-    - `\nu` -- a list of 0s and 1s or a string of 0s and 1s.
+    - `\nu` -- list of 0s and 1s or a string of 0s and 1s
 
-    - `\delta` -- a list of nonnegative integers.
+    - `\delta` -- list of nonnegative integers
 
-    OUTPUT:
-
-    - a finite lattice
+    OUTPUT: a finite lattice
 
     EXAMPLES::
 
@@ -253,17 +248,17 @@ def AltNuTamariLattice(nu, delta=None):
 
     - [CC2023]_
     """
-    if not( (isinstance(nu, (list, tuple)) and all(x in [0, 1] for x in nu)) or
-            (isinstance(nu, str) and all(x in ['0', '1'] for x in nu)) ):
+    if not ((isinstance(nu, (list, tuple)) and all(x in [0, 1] for x in nu)) or
+            (isinstance(nu, str) and all(x in ['0', '1'] for x in nu))):
         raise ValueError("nu must be a list or a string of 0s and 1s")
     nu = [int(a) for a in nu]
     # transforms nu in a sequence of 0s and 1s if it is a list
-    nu = ''.join([str(a) for a in nu])
+    nu = ''.join(str(a) for a in nu)
     # produces delta if delta is None, and check that delta is valid otherwise
     deltamax = [len(a) for a in nu.split(sep='1')[1:]]
     if delta is None:
         delta = deltamax
-    elif len(delta) != len(deltamax) or any([delta[i] > deltamax[i] for i in range(len(delta))]):
+    elif len(delta) != len(deltamax) or any(delta[i] > deltamax[i] for i in range(len(delta))):
         raise ValueError("delta is not a valid increment vector")
 
     def covers(p):

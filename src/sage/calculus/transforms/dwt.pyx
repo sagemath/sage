@@ -8,7 +8,6 @@ AUTHOR:
 
 - Josh Kantor (2006-10-07)  - initial version
 - David Joyner (2006-10-09) - minor changes to docstrings and examples.
-
 """
 
 # ****************************************************************************
@@ -29,7 +28,7 @@ def WaveletTransform(n, wavelet_type, wavelet_k):
 
     INPUT:
 
-    - ``n`` --  a power of 2
+    - ``n`` -- a power of 2
     - ``T`` -- the data in the GSLDoubleArray must be real
     - ``wavelet_type`` -- the name of the type of wavelet, valid choices are:
 

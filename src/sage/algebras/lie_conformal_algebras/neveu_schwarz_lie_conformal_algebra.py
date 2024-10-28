@@ -27,6 +27,7 @@ AUTHORS:
 
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
 
+
 class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
     """
     The Neveu-Schwarz super Lie conformal algebra.
@@ -34,7 +35,7 @@ class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
     INPUT:
 
     - ``R`` -- a commutative Ring; the base ring of this Lie
-      conformal algebra.
+      conformal algebra
 
     EXAMPLES::
 
@@ -51,7 +52,7 @@ class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
     """
     def __init__(self, R):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 

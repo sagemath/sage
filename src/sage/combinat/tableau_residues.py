@@ -244,7 +244,7 @@ class ResidueSequence(ClonableArray,
         The ``multicharge`` is the optional argument which, if omitted,
         defaults to ``(0,)``. On the other hand, the ``residue`` must
         always be specified so, below, we check to see whether or note
-        ``residues`` is `None` and adjust accordingly in this case.
+        ``residues`` is ``None`` and adjust accordingly in this case.
 
         EXAMPLES::
 
@@ -269,7 +269,7 @@ class ResidueSequence(ClonableArray,
 
     def check(self):
         r"""
-        Raise a :class:`ValueError` if ``self`` is not a residue sequence.
+        Raise a :exc:`ValueError` if ``self`` is not a residue sequence.
 
         EXAMPLES::
 
@@ -340,7 +340,7 @@ class ResidueSequence(ClonableArray,
         except (IndexError, KeyError):
             raise IndexError('k must be in the range 1, 2, ..., {}'.format(len(self)))
 
-    def residues(self):
+    def residues(self) -> list:
         r"""
         Return a list of the residue sequence.
 
@@ -350,7 +350,7 @@ class ResidueSequence(ClonableArray,
             sage: ResidueSequence(3,(0,0,1),[0,0,1,1,2,2,3,3]).residues()
             [0, 0, 1, 1, 2, 2, 0, 0]
         """
-        return [r for r in self]
+        return list(self)
 
     def restrict(self, m):
         r"""
@@ -433,11 +433,11 @@ class ResidueSequence(ClonableArray,
     def swap_residues(self, i, j):
         r"""
         Return the *new* residue sequence obtained by swapping the residues
-        for ``i`` and `j``.
+        for ``i`` and ``j``.
 
         INPUT:
 
-        - ``i`` and ``j`` -- two integers between `1` and the length of
+        - ``i``, ``j`` -- two integers between `1` and the length of
           the residue sequence
 
         If residue sequence ``self`` is of the form `(r_1, \ldots, r_n)`, and
@@ -718,7 +718,7 @@ class ResidueSequences(UniqueRepresentation, Parent):
             sage: ResidueSequences(e=0, multicharge=(0,1,2)) == ResidueSequences(e=3, multicharge=(0,1,2))
             False
 
-        The TestSuite fails ``_test_pickling` because ``__getitem__`` does
+        The TestSuite fails ``_test_pickling`` because ``__getitem__`` does
         not support slices, so we skip this::
 
             sage: R = ResidueSequences(e=0, multicharge=(0,1,2))
@@ -792,8 +792,8 @@ class ResidueSequences(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``r`` and ``c`` -- the row and column indices in level one
-        - ``k``, ``r`` and ``c`` -- the component, row and column indices
+        - ``r``, ``c`` -- the row and column indices in level one
+        - ``k``, ``r``, ``c`` -- the component, row and column indices
           in higher levels
 
         EXAMPLES::

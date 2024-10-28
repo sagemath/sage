@@ -10,7 +10,7 @@ Comprehensive Module List
 
     and copy pasting the result back there.
 
-.. TODO:: See :trac:`17421` for desirable improvements.
+.. TODO:: See :issue:`17421` for desirable improvements.
 
 .. toctree::
     :maxdepth: 1

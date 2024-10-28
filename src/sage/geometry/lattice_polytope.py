@@ -29,7 +29,7 @@ terms at http://hep.itp.tuwien.ac.at/~kreuzer/CY/. Moreover, PALP is
 included standard with Sage.
 
 PALP is described in the paper :arxiv:`math.SC/0204356`. Its distribution
-also contains the application nef.x, which was created by Erwin
+also contains the application ``nef.x``, which was created by Erwin
 Riegler and computes nef-partitions and Hodge data for toric
 complete intersections.
 
@@ -41,15 +41,15 @@ debugging and tuning of this module.
 Robert Bradshaw helped Andrey Novoseltsev to realize plot3d
 function.
 
-.. note::
+.. NOTE::
 
    IMPORTANT: PALP requires some parameters to be determined during
    compilation time, i.e., the maximum dimension of polytopes, the
    maximum number of points, etc. These limitations may lead to errors
    during calls to different functions of these module.  Currently, a
-   ValueError exception will be raised if the output of poly.x or
-   nef.x is empty or contains the exclamation mark. The error message
-   will contain the exact command that caused an error, the
+   :exc:`ValueError` exception will be raised if the output of ``poly.x``
+   or ``nef.x`` is empty or contains the exclamation mark. The error
+   message will contain the exact command that caused an error, the
    description and vertices of the polytope, and the obtained output.
 
 Data obtained from PALP and some other data is cached and most
@@ -121,32 +121,31 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.combinat.posets.posets', 'FinitePoset')
 from sage.arith.misc import GCD as gcd
-from sage.combinat.posets.posets import FinitePoset
 from sage.features.databases import DatabaseReflexivePolytopes
 from sage.geometry.cone import _ambient_space_point, integral_length
-from sage.geometry.hasse_diagram import lattice_from_incidences
+lazy_import('sage.geometry.hasse_diagram', 'lattice_from_incidences')
 from sage.geometry.point_collection import (PointCollection,
-                                            is_PointCollection,
                                             read_palp_point_collection)
-from sage.geometry.toric_lattice import ToricLattice, is_ToricLattice
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+from sage.geometry.toric_lattice import ToricLattice, ToricLattice_generic
+lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 
-from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
 from sage.features.palp import PalpExecutable
 lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Linear_Expression'],
-                    feature=PythonModule("ppl", spkg="pplpy", type="standard"))
+                    feature=PythonModule("ppl", spkg='pplpy', type='standard'))
 lazy_import('ppl', 'point', as_='PPL_point',
-                    feature=PythonModule("ppl", spkg="pplpy", type="standard"))
+                    feature=PythonModule("ppl", spkg='pplpy', type='standard'))
 
 from sage.matrix.constructor import matrix
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.temporary_file import tmp_filename
 from sage.modules.free_module_element import vector
-from sage.numerical.mip import MixedIntegerLinearProgram
+lazy_import('sage.numerical.mip', 'MixedIntegerLinearProgram')
 lazy_import("sage.plot.plot3d.index_face_set", "IndexFaceSet")
 lazy_import("sage.plot.plot3d.all", ["line3d", "point3d"])
 lazy_import("sage.plot.plot3d.shapes2", "text3d")
@@ -221,23 +220,20 @@ def LatticePolytope(data, compute_vertices=True, n=0, lattice=None):
           :func:`~sage.geometry.point_collection.read_palp_point_collection`
           for the file format;
 
-    - ``compute_vertices`` -- boolean (default: ``True``). If ``True``, the
-       convex hull of the given points will be computed for
-       determining vertices. Otherwise, the given points must be
-       vertices;
+    - ``compute_vertices`` -- boolean (default: ``True``); if ``True``, the
+      convex hull of the given points will be computed for determining
+      vertices. Otherwise, the given points must be vertices.
 
-    - ``n`` -- an integer (default: 0) if ``data`` is a name of a file,
-       that contains data blocks for several polytopes, the ``n``-th block
-       will be used;
+    - ``n`` -- integer (default: 0); if ``data`` is a name of a file,
+      that contains data blocks for several polytopes, the ``n``-th block
+      will be used
 
     - ``lattice`` -- the ambient lattice of the polytope. If not given, a
       suitable lattice will be determined automatically, most likely the
       :class:`toric lattice <sage.geometry.toric_lattice.ToricLatticeFactory>`
       `M` of the appropriate dimension.
 
-    OUTPUT:
-
-    - a :class:`lattice polytope <LatticePolytopeClass>`.
+    OUTPUT: a :class:`lattice polytope <LatticePolytopeClass>`
 
     EXAMPLES::
 
@@ -318,7 +314,7 @@ def LatticePolytope(data, compute_vertices=True, n=0, lattice=None):
     if isinstance(data, LatticePolytopeClass):
         data = data._vertices
         compute_vertices = False
-    if (is_PointCollection(data) and
+    if (isinstance(data, PointCollection) and
         (lattice is None or lattice is data.module())):
         return LatticePolytopeClass(data, compute_vertices)
     if isinstance(data, str):
@@ -328,7 +324,7 @@ def LatticePolytope(data, compute_vertices=True, n=0, lattice=None):
         f.close()
     if isinstance(data, (IOBase, StringIO)):
         data = read_palp_point_collection(data)
-    if not is_PointCollection(data) and not isinstance(data, (list, tuple)):
+    if not isinstance(data, PointCollection) and not isinstance(data, (list, tuple)):
         try:
             data = list(data)
         except TypeError:
@@ -338,7 +334,7 @@ def LatticePolytope(data, compute_vertices=True, n=0, lattice=None):
             raise ValueError("lattice must be given explicitly for "
                              "empty polytopes!")
         try:
-            if is_ToricLattice(data[0].parent()):
+            if isinstance(data[0].parent(), ToricLattice_generic):
                 lattice = data[0].parent()
         except AttributeError:
             pass
@@ -419,6 +415,7 @@ def ReflexivePolytope(dim, n):
 # Sequences of reflexive polytopes
 _rp = [None] * 4
 
+
 def ReflexivePolytopes(dim):
     r"""
     Return the sequence of all 2- or 3-dimensional reflexive polytopes.
@@ -429,9 +426,11 @@ def ReflexivePolytopes(dim):
        future use, so repetitive calls will return the same object in
        memory.
 
-    :param dim: dimension of required reflexive polytopes
-    :type dim: 2 or 3
-    :rtype: list of lattice polytopes
+    INPUT:
+
+    - ``dim`` -- integer (2 or 3); dimension of required reflexive polytopes
+
+    OUTPUT: list of lattice polytopes
 
     EXAMPLES:
 
@@ -471,7 +470,7 @@ def is_LatticePolytope(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
     OUTPUT:
 
@@ -482,6 +481,9 @@ def is_LatticePolytope(x):
 
         sage: from sage.geometry.lattice_polytope import is_LatticePolytope
         sage: is_LatticePolytope(1)
+        doctest:warning...
+        DeprecationWarning: is_LatticePolytope is deprecated, use isinstance instead
+        See https://github.com/sagemath/sage/issues/34307 for details.
         False
         sage: p = LatticePolytope([(1,0), (0,1), (-1,-1)])
         sage: p                                                                         # needs palp
@@ -489,7 +491,10 @@ def is_LatticePolytope(x):
         sage: is_LatticePolytope(p)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34307, "is_LatticePolytope is deprecated, use isinstance instead")
     return isinstance(x, LatticePolytopeClass)
+
 
 @richcmp_method
 class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.LatticePolytope):
@@ -508,24 +513,22 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
     The input can be either:
 
-    - ``points`` -- :class:`~sage.geometry.point_collection.PointCollection`;
+    - ``points`` -- :class:`~sage.geometry.point_collection.PointCollection`
 
-    - ``compute_vertices`` -- boolean.
+    - ``compute_vertices`` -- boolean
 
     or (these parameters must be given as keywords):
 
     - ``ambient`` -- ambient structure, this polytope *must be a face of*
-      ``ambient``;
+      ``ambient``
 
     - ``ambient_vertex_indices`` -- increasing list or tuple of integers,
-      indices of vertices of ``ambient`` generating this polytope;
+      indices of vertices of ``ambient`` generating this polytope
 
     - ``ambient_facet_indices`` -- increasing list or tuple of integers,
-      indices of facets of ``ambient`` generating this polytope.
+      indices of facets of ``ambient`` generating this polytope
 
-    OUTPUT:
-
-    - lattice polytope.
+    OUTPUT: lattice polytope
 
     .. NOTE::
 
@@ -546,7 +549,6 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: LatticePolytope([(1,2,3), (4,5,6)]) # indirect test
             1-d lattice polytope in 3-d lattice M
             sage: TestSuite(_).run()
-
         """
         if ambient is None:
             self._ambient = self
@@ -617,7 +619,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        - ``other`` -- anything.
+        - ``other`` -- anything
 
         .. NOTE::
 
@@ -681,9 +683,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return the hash of ``self``.
 
-        OUTPUT:
-
-        - an integer.
+        OUTPUT: integer
 
         TESTS::
 
@@ -718,7 +718,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
     def __setstate__(self, state):
         r"""
-        Restores the state of pickled polytope.
+        Restore the state of pickled polytope.
 
         TESTS::
 
@@ -905,7 +905,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        - ``data`` - point or matrix of points (as columns) in the affine
+        - ``data`` -- point or matrix of points (as columns) in the affine
           subspace spanned by this polytope
 
         OUTPUT:
@@ -929,13 +929,13 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             return data
         self._compute_embedding()
         M = self.lattice()
-        if is_PointCollection(data):
+        if isinstance(data, PointCollection):
             r = [M(self._embedding_matrix * point + self._shift_vector)
                  for point in data]
             for point in r:
                 point.set_immutable()
             return PointCollection(r, M)
-        elif is_Matrix(data):
+        elif isinstance(data, Matrix):
             r = self._embedding_matrix * data
             for i, col in enumerate(r.columns(copy=False)):
                 r.set_column(i, col + self._shift_vector)
@@ -946,11 +946,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
     def _latex_(self):
         r"""
-        Return the latex representation of self.
+        Return the latex representation of ``self``.
 
-        OUTPUT:
-
-        - string
+        OUTPUT: string
 
         EXAMPLES:
 
@@ -977,7 +975,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         Returns the output of ``command`` as a string.
 
-        .. note::
+        .. NOTE::
 
           PALP cannot be called for polytopes that do not span the ambient space.
           If you specify ``reduce_dimension=True`` argument, PALP will be
@@ -989,7 +987,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: o = lattice_polytope.cross_polytope(3)
             sage: o._palp("poly.x -f")                                                  # needs palp
             'M:7 6 N:27 8 Pic:17 Cor:0\n'
-            sage: print(o._palp("nef.x -f -N -p")) # random time information            # needs palp
+            sage: print(o._palp("nef.x -f -N -p"))  # random time information           # needs palp
             M:27 8 N:7 6  codim=2 #part=5
             H:[0] P:0 V:2 4 5       0sec  0cpu
             H:[0] P:2 V:3 4 5       0sec  0cpu
@@ -1036,9 +1034,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return the Parma Polyhedra Library (PPL) representation of ``self``.
 
-        OUTPUT:
-
-        - :class:`~ppl.polyhedron.C_Polyhedron`
+        OUTPUT: :class:`~ppl.polyhedron.C_Polyhedron`
 
         EXAMPLES::
 
@@ -1098,12 +1094,12 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         self._compute_embedding()
         if data is self._vertices:
             return self._sublattice_polytope._vertices
-        if is_PointCollection(data):
+        if isinstance(data, PointCollection):
             r = [self._pullback(point) for point in data]
             for point in r:
                 point.set_immutable()
             return PointCollection(r, self._sublattice)
-        if is_Matrix(data):
+        if isinstance(data, Matrix):
             r = matrix([self._pullback(col)
                     for col in data.columns(copy=False)]).transpose()
             return r
@@ -1224,17 +1220,15 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        - ``data`` -- a string or a file.
+        - ``data`` -- string or file
 
-        OUTPUT:
-
-        - none.
+        OUTPUT: none
 
         TESTS::
 
             sage: o = lattice_polytope.cross_polytope(3)
             sage: s = o.nef_x("-p -N -Lv")                                              # needs palp
-            sage: print(s) # random time values                                         # needs palp
+            sage: print(s)  # random time values                                        # needs palp
             M:27 8 N:7 6  codim=2 #part=5
             3 6 Vertices in N-lattice:
                 1    0    0   -1    0    0
@@ -1309,9 +1303,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        - a string.
+        OUTPUT: string
 
         TESTS::
 
@@ -1329,7 +1321,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                         parts.insert(-1, "#%d" % self.index())
             except ValueError:
                 pass
-            if is_ToricLattice(self.lattice()):
+            if isinstance(self.lattice(), ToricLattice_generic):
                 parts.append(str(self.lattice()))
             else:
                 parts.append("%d-d lattice" % self.lattice_dim())
@@ -1337,7 +1329,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             parts.extend(["face of", str(self.ambient())])
         return " ".join(parts)
 
-    def _sort_faces(self,  faces):
+    def _sort_faces(self, faces):
         r"""
         Return sorted (if necessary) ``faces`` as a tuple.
 
@@ -1348,11 +1340,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         INPUT:
 
         - ``faces`` -- iterable of :class:`lattice polytopes
-          <LatticePolytopeClass>`.
+          <LatticePolytopeClass>`
 
-        OUTPUT:
-
-        - :class:`tuple` of :class:`lattice polytopes <LatticePolytopeClass>`.
+        OUTPUT: :class:`tuple` of :class:`lattice polytopes <LatticePolytopeClass>`
 
         TESTS::
 
@@ -1396,9 +1386,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         * `F_1` and `F_2` are facets of some face of dimension `d+1`, unless
           `d` is the dimension of the ambient structure.
 
-        OUTPUT:
-
-        - :class:`tuple` of :class:`lattice polytopes <LatticePolytopeClass>`.
+        OUTPUT: :class:`tuple` of :class:`lattice polytopes <LatticePolytopeClass>`
 
         EXAMPLES::
 
@@ -1416,7 +1404,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         adjacent = set()
         for superface in self.facet_of():
             for facet in self.facets():
-                adjacent.update(L.open_interval(facet,  superface))
+                adjacent.update(L.open_interval(facet, superface))
         adjacent.discard(self)
         return self._sort_faces(adjacent)
 
@@ -1424,7 +1412,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return a*P+b, where P is this lattice polytope.
 
-        .. note::
+        .. NOTE::
 
           #. While ``a`` and ``b`` may be rational, the final result must be a
              lattice polytope, i.e. all vertices must be integral.
@@ -1436,9 +1424,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        - ``a`` - (default: 1) rational scalar or matrix
+        - ``a`` -- (default: 1) rational scalar or matrix
 
-        - ``b`` - (default: 0) rational scalar or vector, scalars are
+        - ``b`` -- (default: 0) rational scalar or vector, scalars are
           interpreted as vectors with the same components
 
         EXAMPLES::
@@ -1517,9 +1505,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return the ambient structure of ``self``.
 
-        OUTPUT:
-
-        - lattice polytope containing ``self`` as a face.
+        OUTPUT: lattice polytope containing ``self`` as a face
 
         EXAMPLES::
 
@@ -1544,9 +1530,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return indices of facets of the ambient polytope containing ``self``.
 
-        OUTPUT:
-
-        - increasing :class:`tuple` of integers.
+        OUTPUT: increasing :class:`tuple` of integers
 
         EXAMPLES:
 
@@ -1638,9 +1622,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return indices of vertices of the ambient structure generating ``self``.
 
-        OUTPUT:
-
-        - increasing :class:`tuple` of integers.
+        OUTPUT: increasing :class:`tuple` of integers
 
         EXAMPLES::
 
@@ -1658,9 +1640,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return indices of (relative) boundary lattice points of this polytope.
 
-        OUTPUT:
-
-        - increasing :class:`tuple` of integers.
+        OUTPUT: increasing :class:`tuple` of integers
 
         EXAMPLES:
 
@@ -1700,9 +1680,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return (relative) boundary lattice points of this polytope.
 
-        OUTPUT:
-
-        - a :class:`point collection <PointCollection>`.
+        OUTPUT: a :class:`point collection <PointCollection>`
 
         EXAMPLES:
 
@@ -1791,9 +1769,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         Return the matrix of distances for this polytope or distances for
         the given point.
 
-        The matrix of distances m gives distances m[i,j] between the i-th
-        facet (which is also the i-th vertex of the polar polytope in the
-        reflexive case) and j-th point of this polytope.
+        The matrix of distances m gives distances m[i,j] between the `i`-th
+        facet (which is also the `i`-th vertex of the polar polytope in the
+        reflexive case) and `j`-th point of this polytope.
 
         If point is specified, integral distances from the point to all
         facets of this polytope will be computed.
@@ -1861,9 +1839,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         This duality extends the correspondence between vertices and facets.
 
-        OUTPUT:
-
-        - a :class:`lattice polytope <LatticePolytopeClass>`.
+        OUTPUT: a :class:`lattice polytope <LatticePolytopeClass>`
 
         EXAMPLES::
 
@@ -1913,9 +1889,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return edges (faces of dimension 1) of ``self``.
 
-        OUTPUT:
-
-        - :class:`tuple` of :class:`lattice polytopes <LatticePolytopeClass>`.
+        OUTPUT: :class:`tuple` of :class:`lattice polytopes <LatticePolytopeClass>`
 
         EXAMPLES::
 
@@ -2092,7 +2066,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                 faces.append(self)
                 for face in dfaces:
                     L.add_edge(face_to_index[face], next_index)
-            D = {i:f for i,f in enumerate(faces)}
+            D = dict(enumerate(faces))
             L.relabel(D)
             return FinitePoset(L, faces, key=id(self))
 
@@ -2102,9 +2076,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        - ``dim`` -- integer, dimension of the requested faces;
+        - ``dim`` -- integer; dimension of the requested faces
 
-        - ``codim`` -- integer, codimension of the requested faces.
+        - ``codim`` -- integer; codimension of the requested faces
 
         .. NOTE::
 
@@ -2187,7 +2161,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
     def facet_constant(self, i):
         r"""
-        Return the constant in the ``i``-th facet inequality of this polytope.
+        Return the constant in the `i`-th facet inequality of this polytope.
 
         This is equivalent to ``facet_constants()[i]``.
 
@@ -2195,9 +2169,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         - ``i`` -- integer; the index of the facet
 
-        OUTPUT:
-
-        - integer -- the constant in the ``i``-th facet inequality.
+        OUTPUT: integer; the constant in the `i`-th facet inequality
 
         .. SEEALSO::
 
@@ -2223,9 +2195,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         Facet inequalities have form `n \cdot x + c \geq 0` where `n` is the
         inner normal and `c` is a constant.
 
-        OUTPUT:
-
-        - an integer vector
+        OUTPUT: integer vector
 
         .. SEEALSO::
 
@@ -2280,9 +2250,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         - ``i`` -- integer; the index of the facet
 
-        OUTPUT:
-
-        - a vector
+        OUTPUT: a vector
 
         .. SEEALSO::
 
@@ -2387,9 +2355,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return elements of the ambient face lattice having ``self`` as a facet.
 
-        OUTPUT:
-
-        - :class:`tuple` of :class:`lattice polytopes <LatticePolytopeClass>`.
+        OUTPUT: :class:`tuple` of :class:`lattice polytopes <LatticePolytopeClass>`
 
         EXAMPLES::
 
@@ -2411,9 +2377,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return facets (faces of codimension 1) of ``self``.
 
-        OUTPUT:
-
-        - :class:`tuple` of :class:`lattice polytopes <LatticePolytopeClass>`.
+        OUTPUT: :class:`tuple` of :class:`lattice polytopes <LatticePolytopeClass>`
 
         EXAMPLES::
 
@@ -2489,7 +2453,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         3-dimensional reflexive polytopes. Databases are stored in the
         directory of the package.
 
-        .. note::
+        .. NOTE::
 
            The first call to this function for each dimension can take
            a few seconds while the dictionary of all polytopes is
@@ -2553,9 +2517,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return indices of (relative) interior lattice points of this polytope.
 
-        OUTPUT:
-
-        - increasing :class:`tuple` of integers.
+        OUTPUT: increasing :class:`tuple` of integers
 
         EXAMPLES:
 
@@ -2595,9 +2557,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return (relative) boundary lattice points of this polytope.
 
-        OUTPUT:
-
-        - a :class:`point collection <PointCollection>`.
+        OUTPUT: a :class:`point collection <PointCollection>`
 
         EXAMPLES:
 
@@ -2620,7 +2580,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
     @cached_method
     def is_reflexive(self):
         r"""
-        Return True if this polytope is reflexive.
+        Return ``True`` if this polytope is reflexive.
 
         EXAMPLES: The 3-dimensional octahedron is reflexive (and 4319 other
         3-polytopes)::
@@ -2649,9 +2609,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return the ambient lattice of ``self``.
 
-        OUTPUT:
-
-        - a lattice.
+        OUTPUT: a lattice
 
         EXAMPLES::
 
@@ -2666,9 +2624,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         An alias is :meth:`ambient_dim`.
 
-        OUTPUT:
-
-        - integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2690,7 +2646,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        - ``base_field`` -- (default: the rationals) a field.
+        - ``base_field`` -- (default: the rationals) a field
 
         EXAMPLES::
 
@@ -2706,9 +2662,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         r"""
         Return a maximal set of linearly independent vertices.
 
-        OUTPUT:
-
-        A tuple of vertex indices.
+        OUTPUT: a tuple of vertex indices
 
         EXAMPLES::
 
@@ -2731,25 +2685,23 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        - ``keep_symmetric`` -- (default: ``False``) if ``True``, "-s" option
+        - ``keep_symmetric`` -- boolean (default: ``False``); if ``True``, "-s" option
           will be passed to ``nef.x`` in order to keep symmetric partitions,
-          i.e. partitions related by lattice automorphisms preserving ``self``;
+          i.e. partitions related by lattice automorphisms preserving ``self``
 
-        - ``keep_products`` -- (default: ``True``) if ``True``, "-D" option
+        - ``keep_products`` -- boolean (default: ``True``); if ``True``, "-D" option
           will be passed to ``nef.x`` in order to keep product partitions,
-          with corresponding complete intersections being direct products;
+          with corresponding complete intersections being direct products
 
-        - ``keep_projections`` -- (default: ``True``) if ``True``, "-P" option
+        - ``keep_projections`` -- boolean (default: ``True``); if ``True``, "-P" option
           will be passed to ``nef.x`` in order to keep projection partitions,
-          i.e. partitions with one of the parts consisting of a single vertex;
+          i.e. partitions with one of the parts consisting of a single vertex
 
-        - ``hodge_numbers`` -- (default: ``False``) if ``False``, "-p" option
+        - ``hodge_numbers`` -- boolean (default: ``False``); if ``False``, "-p" option
           will be passed to ``nef.x`` in order to skip Hodge numbers
-          computation, which takes a lot of time.
+          computation, which takes a lot of time
 
-        OUTPUT:
-
-        - a sequence of :class:`nef-partitions <NefPartition>`.
+        OUTPUT: a sequence of :class:`nef-partitions <NefPartition>`
 
         Type ``NefPartition?`` for definitions and notation.
 
@@ -2879,17 +2831,15 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
     def nef_x(self, keys):
         r"""
-        Run nef.x with given ``keys`` on vertices of this
+        Run ``nef.x`` with given ``keys`` on vertices of this
         polytope.
 
         INPUT:
 
+        - ``keys`` -- string of options passed to ``nef.x``; the
+          key "-f" is added automatically
 
-        -  ``keys`` - a string of options passed to nef.x. The
-           key "-f" is added automatically.
-
-
-        OUTPUT: the output of nef.x as a string.
+        OUTPUT: the output of ``nef.x`` as a string
 
         EXAMPLES: This call is used internally for computing
         nef-partitions::
@@ -2933,7 +2883,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         return len(self.facet_normals()) if self.dim() > 0 else 0
 
     @cached_method
-    def normal_form(self, algorithm="palp_native", permutation=False):
+    def normal_form(self, algorithm='palp_native', permutation=False):
         r"""
         Return the normal form of vertices of ``self``.
 
@@ -2944,21 +2894,21 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         The original algorithm was presented in [KS1998]_ and implemented
         in PALP. A modified version of the PALP algorithm is discussed in
-        [GK2013]_ and available here as ``"palp_modified"``.
+        [GK2013]_ and available here as ``'palp_modified'``.
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``"palp_native"``) The algorithm which is used
+        - ``algorithm`` -- (default: ``'palp_native'``) the algorithm which is used
           to compute the normal form. Options are:
 
-          * ``"palp"`` -- Run external PALP code, usually the fastest option
+          * ``'palp'`` -- run external PALP code, usually the fastest option
             when it works; but reproducible crashes have been observed in dimension
             5 and higher.
 
-          * ``"palp_native"`` -- The original PALP algorithm implemented
+          * ``'palp_native'`` -- the original PALP algorithm implemented
             in sage. Currently competitive with PALP in many cases.
 
-          * ``"palp_modified"`` -- A modified version of the PALP
+          * ``'palp_modified'`` -- a modified version of the PALP
             algorithm which determines the maximal vertex-facet
             pairing matrix first and then computes its
             automorphisms, while the PALP algorithm does both things
@@ -3021,7 +2971,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         We can perform the same examples using other algorithms::
 
             sage: o = lattice_polytope.cross_polytope(2)
-            sage: o.normal_form(algorithm="palp_native")                                # needs sage.groups
+            sage: o.normal_form(algorithm='palp_native')                                # needs sage.groups
             M( 1,  0),
             M( 0,  1),
             M( 0, -1),
@@ -3029,7 +2979,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             in 2-d lattice M
 
             sage: o = lattice_polytope.cross_polytope(2)
-            sage: o.normal_form(algorithm="palp_modified")                              # needs sage.groups
+            sage: o.normal_form(algorithm='palp_modified')                              # needs sage.groups
             M( 1,  0),
             M( 0,  1),
             M( 0, -1),
@@ -3037,10 +2987,10 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             in 2-d lattice M
 
         The following examples demonstrate the speed of the available algorithms.
-        In low dimensions, the default algorithm, ``"palp_native"``, is the fastest.
-        As the dimension increases, ``"palp"`` is relatively faster than ``"palp_native"``.
-        ``"palp_native"`` is usually much faster than ``"palp_modified"``.
-        In some cases when the polytope has high symmetry, however, ``"palp_native"`` is slower::
+        In low dimensions, the default algorithm, ``'palp_native'``, is the fastest.
+        As the dimension increases, ``'palp'`` is relatively faster than ``'palp_native'``.
+        ``'palp_native'`` is usually much faster than ``'palp_modified'``.
+        In some cases when the polytope has high symmetry, however, ``'palp_native'`` is slower::
 
             sage: # not tested
             sage: o = lattice_polytope.cross_polytope(2)
@@ -3072,11 +3022,11 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: %timeit o.normal_form.clear_cache(); o.normal_form("palp_modified")
             10 loops, best of 3: 0.858 s per loop
 
-        Note that the algorithm ``"palp"`` may crash for higher dimensions because of
+        Note that the algorithm ``'palp'`` may crash for higher dimensions because of
         the overflow errors as mentioned in :issue:`13525#comment:9`.
-        Then use ``"palp_native"`` instead, which is usually faster than ``"palp_modified"``.
-        Below is an example where ``"palp"`` fails and
-        ``"palp_native"`` is much faster than ``"palp_modified"``::
+        Then use ``'palp_native'`` instead, which is usually faster than ``'palp_modified'``.
+        Below is an example where ``'palp'`` fails and
+        ``'palp_native'`` is much faster than ``'palp_modified'``::
 
             sage: P = LatticePolytope([[-3, -3, -6, -6, -1], [3, 3, 6, 6, 1], [-3, -3, -6, -6, 1],
             ....:                      [-3, -3, -3, -6, 0], [-3, -3, -3, 0, 0], [-3, -3, 0, 0, 0],
@@ -3091,13 +3041,13 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             ....:                      [0, 0, 3, 6, 1], [0, 0, 6, 6, 0], [0, 3, 0, 0, -1],
             ....:                      [3, 0, 3, 0, 0], [0, 3, 0, 0, 1], [0, 3, 3, 0, 0],
             ....:                      [0, 3, 3, 6, 0], [0, 3, 6, 6, 0], [3, 0,0, 0, -1], [3, 0, 0, 0, 1]])
-            sage: P.normal_form(algorithm="palp")  # not tested
+            sage: P.normal_form(algorithm='palp')  # not tested
             Traceback (most recent call last):
             ...
             RuntimeError: Error executing ... for a polytope sequence!
             Output:
             b'*** stack smashing detected ***: terminated\nAborted\n'
-            sage: P.normal_form(algorithm="palp_native")                                # needs sage.groups
+            sage: P.normal_form(algorithm='palp_native')                                # needs sage.groups
             M(  6,  0,  0,  0,  0),
             M( -6,  0,  0,  0,  0),
             M(  0,  1,  0,  0,  0),
@@ -3139,7 +3089,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M( 12, -1, -9, -6,  6),
             M( 12, -1, -6, -3,  3)
             in 5-d lattice M
-            sage: P.normal_form(algorithm="palp_modified")  # not tested (22s; MemoryError on 32 bit), needs sage.groups
+            sage: P.normal_form(algorithm='palp_modified')      # not tested (22s; MemoryError on 32 bit), needs sage.groups
             M(  6,  0,  0,  0,  0),
             M( -6,  0,  0,  0,  0),
             M(  0,  1,  0,  0,  0),
@@ -3227,12 +3177,11 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        -   ``permutation`` -- boolean (default: ``False``); whether to return the permutation of
-            the order of the vertices that was applied to obtain this matrix.
+        - ``permutation`` -- boolean (default: ``False``); whether to return
+          the permutation of the order of the vertices that was applied to
+          obtain this matrix
 
-        OUTPUT:
-
-        A matrix or a tuple of a matrix and a permutation.
+        OUTPUT: a matrix or a tuple of a matrix and a permutation
 
         EXAMPLES::
 
@@ -3282,10 +3231,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             of the order of the vertices that was applied to obtain this
             matrix.
 
-        OUTPUT:
-
-        A matrix or a tuple of a matrix and a permutation.
-
+        OUTPUT: a matrix or a tuple of a matrix and a permutation
 
         EXAMPLES::
 
@@ -3332,9 +3278,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-        - ``check`` -- Boolean (default: ``False``), whether to return
+        - ``check`` -- boolean (default: ``False``); whether to return
           the permutations leaving the maximal vertex-facet pairing
-          matrix invariant.
+          matrix invariant
 
         OUTPUT:
 
@@ -3430,11 +3376,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
     @cached_method
     def origin(self):
         r"""
-        Return the index of the origin in the list of points of self.
+        Return the index of the origin in the list of points of ``self``.
 
-        OUTPUT:
-
-        - integer if the origin belongs to this polytope, ``None`` otherwise.
+        OUTPUT: integer if the origin belongs to this polytope, ``None`` otherwise
 
         EXAMPLES::
 
@@ -3501,55 +3445,54 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         Most of the parameters are self-explanatory:
 
-        -  ``show_facets`` - (default:True)
+        - ``show_facets`` -- (default: ``True``)
 
-        -  ``facet_opacity`` - (default:0.5)
+        - ``facet_opacity`` -- (default:0.5)
 
-        -  ``facet_color`` - (default:(0,1,0))
+        - ``facet_color`` -- (default:(0,1,0))
 
-        -  ``facet_colors`` - (default:None) if specified, must be a list of
-           colors for each facet separately, used instead of ``facet_color``
+        - ``facet_colors`` -- (default:None) if specified, must be a list of
+          colors for each facet separately, used instead of ``facet_color``
 
-        -  ``show_edges`` - (default:True) whether to draw
-           edges as lines
+        - ``show_edges`` -- boolean (default: ``True``); whether to draw
+          edges as lines
 
-        -  ``edge_thickness`` - (default:3)
+        - ``edge_thickness`` -- (default:3)
 
-        -  ``edge_color`` - (default:(0.5,0.5,0.5))
+        - ``edge_color`` -- (default:(0.5,0.5,0.5))
 
-        -  ``show_vertices`` - (default:True) whether to draw
-           vertices as balls
+        - ``show_vertices`` -- boolean (default: ``True``); whether to draw
+          vertices as balls
 
-        -  ``vertex_size`` - (default:10)
+        - ``vertex_size`` -- (default:10)
 
-        -  ``vertex_color`` - (default:(1,0,0))
+        - ``vertex_color`` -- (default:(1,0,0))
 
-        -  ``show_points`` - (default:True) whether to draw
-           other points as balls
+        - ``show_points`` -- boolean (default: ``True``); whether to draw
+          other points as balls
 
-        -  ``point_size`` - (default:10)
+        - ``point_size`` -- (default:10)
 
-        -  ``point_color`` - (default:(0,0,1))
+        - ``point_color`` -- (default:(0,0,1))
 
-        -  ``show_vindices`` - (default:same as
-           show_vertices) whether to show indices of vertices
+        - ``show_vindices`` -- (default: same as
+          ``show_vertices``) whether to show indices of vertices
 
-        -  ``vindex_color`` - (default:(0,0,0)) color for
-           vertex labels
+        - ``vindex_color`` -- (default:(0,0,0)) color for
+          vertex labels
 
-        -  ``vlabels`` - (default:None) if specified, must be a list of labels
-           for each vertex, default labels are vertex indices
+        - ``vlabels`` -- (default:None) if specified, must be a list of labels
+          for each vertex, default labels are vertex indices
 
-        -  ``show_pindices`` - (default:same as show_points)
-           whether to show indices of other points
+        - ``show_pindices`` -- (default: same as ``show_points``)
+          whether to show indices of other points
 
-        -  ``pindex_color`` - (default:(0,0,0)) color for
-           point labels
+        - ``pindex_color`` -- (default:(0,0,0)) color for
+          point labels
 
-        -  ``index_shift`` - (default:1.1)) if 1, labels are
-           placed exactly at the corresponding points. Otherwise the label
-           position is computed as a multiple of the point position vector.
-
+        - ``index_shift`` -- (default:1.1)) if 1, labels are
+          placed exactly at the corresponding points. Otherwise the label
+          position is computed as a multiple of the point position vector.
 
         EXAMPLES: The default plot of a cube::
 
@@ -3674,8 +3617,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
     def point(self, i):
         r"""
-        Return the i-th point of this polytope, i.e. the i-th column of the
-        matrix returned by points().
+        Return the `i`-th point of this polytope, i.e. the `i`-th column of the
+        matrix returned by ``points()``.
 
         EXAMPLES: First few points are actually vertices::
 
@@ -3715,9 +3658,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         - any arguments given will be passed on to the returned object.
 
-        OUTPUT:
-
-        - a :class:`point collection <PointCollection>`.
+        OUTPUT: a :class:`point collection <PointCollection>`
 
         EXAMPLES:
 
@@ -3890,19 +3831,19 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
     def poly_x(self, keys, reduce_dimension=False):
         r"""
-        Run poly.x with given ``keys`` on vertices of this
+        Run ``poly.x`` with given ``keys`` on vertices of this
         polytope.
 
         INPUT:
 
-        -  ``keys`` - a string of options passed to poly.x. The
-           key "f" is added automatically.
+        - ``keys`` -- string of options passed to ``poly.x``. The
+          key "f" is added automatically
 
-        -  ``reduce_dimension`` - (default: False) if ``True`` and this
-           polytope is not full-dimensional, poly.x will be called for the
-           vertices of this polytope in some basis of the spanned affine space.
+        - ``reduce_dimension`` -- boolean (default: ``False``); if ``True`` and this
+          polytope is not full-dimensional, ``poly.x`` will be called for the
+          vertices of this polytope in some basis of the spanned affine space
 
-        OUTPUT: the output of poly.x as a string.
+        OUTPUT: the output of ``poly.x`` as a string
 
         EXAMPLES: This call is used for determining if a polytope is
         reflexive or not::
@@ -3933,7 +3874,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             Output:
             Please increase POLY_Dmax to at least 7
 
-        You cannot call poly.x for polytopes that don't span the space (if you
+        You cannot call ``poly.x`` for polytopes that don't span the space (if you
         could, it would crush anyway)::
 
             sage: p = LatticePolytope([(1,0,0), (0,1,0), (-1,0,0), (0,-1,0)])
@@ -4031,12 +3972,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         INPUT:
 
-
-        -  ``normal`` - a 3-dimensional vector (can be given as
-           a list), which should be perpendicular to the screen. If not given,
-           will be selected randomly (new each time and it may be far from
-           "nice").
-
+        - ``normal`` -- a 3-dimensional vector (can be given as a list), which
+          should be perpendicular to the screen. If not given, will be selected
+          randomly (new each time and it may be far from "nice").
 
         EXAMPLES: Show a pretty picture of the octahedron::
 
@@ -4088,8 +4026,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
     def vertex(self, i):
         r"""
-        Return the i-th vertex of this polytope, i.e. the i-th column of
-        the matrix returned by vertices().
+        Return the `i`-th vertex of this polytope, i.e. the `i`-th column of
+        the matrix returned by ``vertices()``.
 
         EXAMPLES: Note that numeration starts with zero::
 
@@ -4144,9 +4082,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
         - any arguments given will be passed on to the returned object.
 
-        OUTPUT:
-
-        - a :class:`point collection <PointCollection>`.
+        OUTPUT: a :class:`point collection <PointCollection>`
 
         EXAMPLES:
 
@@ -4185,7 +4121,7 @@ def is_NefPartition(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
     OUTPUT:
 
@@ -4194,15 +4130,19 @@ def is_NefPartition(x):
 
     EXAMPLES::
 
-        sage: from sage.geometry.lattice_polytope import is_NefPartition
-        sage: is_NefPartition(1)
+        sage: from sage.geometry.lattice_polytope import NefPartition
+        sage: isinstance(1, NefPartition)
         False
         sage: o = lattice_polytope.cross_polytope(3)
         sage: np = o.nef_partitions()[0]; np                                            # needs palp
         Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
-        sage: is_NefPartition(np)                                                       # needs palp
+        sage: isinstance(np, NefPartition)                                                       # needs palp
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38126,
+                "The function is_NefPartition is deprecated; "
+                "use 'isinstance(..., NefPartition)' instead.")
     return isinstance(x, NefPartition)
 
 
@@ -4212,7 +4152,7 @@ class NefPartition(SageObject, Hashable):
 
     INPUT:
 
-    - ``data`` -- a list of integers, the `i`-th element of this list must be
+    - ``data`` -- list of integers, the `i`-th element of this list must be
       the part of the `i`-th vertex of ``Delta_polar`` in this nef-partition;
 
     - ``Delta_polar`` -- a :class:`lattice polytope
@@ -4223,9 +4163,7 @@ class NefPartition(SageObject, Hashable):
       input is correct, you can speed up construction via ``check=False``
       option.
 
-    OUTPUT:
-
-    - a nef-partition of ``Delta_polar``.
+    OUTPUT: a nef-partition of ``Delta_polar``
 
     Let `M` and `N` be dual lattices. Let `\Delta \subset M_\RR` be a reflexive
     polytope with polar `\Delta^\circ \subset N_\RR`. Let `X_\Delta` be the
@@ -4289,10 +4227,10 @@ class NefPartition(SageObject, Hashable):
 
     It is very easy to create a nef-partition for the octahedron, since for
     this polytope any decomposition of vertices is a nef-partition. We create a
-    3-part nef-partition with the 0-th and 1-st vertices belonging to the 0-th
-    part (recall that numeration in Sage starts with 0), the 2-nd and 5-th
-    vertices belonging to the 1-st part, and 3-rd and 4-th vertices belonging
-    to the 2-nd part::
+    3-part nef-partition with the 0th and 1st vertices belonging to the 0th
+    part (recall that numeration in Sage starts with 0), the 2nd and 5th
+    vertices belonging to the 1st part, and 3rd and 4th vertices belonging
+    to the 2nd part::
 
         sage: o = lattice_polytope.cross_polytope(3)
         sage: np = NefPartition([0,0,1,2,2,1], o)
@@ -4373,7 +4311,7 @@ class NefPartition(SageObject, Hashable):
 
         INPUT:
 
-        - ``other`` -- anything.
+        - ``other`` -- anything
 
         OUTPUT:
 
@@ -4403,7 +4341,7 @@ class NefPartition(SageObject, Hashable):
             sage: np == 0
             False
         """
-        return (is_NefPartition(other)
+        return (isinstance(other, NefPartition)
                 and self._Delta_polar == other._Delta_polar
                 and self._vertex_to_part == other._vertex_to_part)
 
@@ -4411,9 +4349,7 @@ class NefPartition(SageObject, Hashable):
         r"""
         Return the hash of ``self``.
 
-        OUTPUT:
-
-        - an integer.
+        OUTPUT: integer
 
         TESTS::
 
@@ -4434,7 +4370,7 @@ class NefPartition(SageObject, Hashable):
 
         INPUT:
 
-        - ``other`` -- anything.
+        - ``other`` -- anything
 
         OUTPUT:
 
@@ -4470,9 +4406,7 @@ class NefPartition(SageObject, Hashable):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT:
-
-        - a string.
+        OUTPUT: string
 
         TESTS::
 
@@ -4500,9 +4434,7 @@ class NefPartition(SageObject, Hashable):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        - a string.
+        OUTPUT: string
 
         TESTS::
 
@@ -4557,11 +4489,9 @@ class NefPartition(SageObject, Hashable):
 
         INPUT:
 
-        - ``i`` -- an integer. If not given, `\Delta` will be returned.
+        - ``i`` -- integer; if not given, `\Delta` will be returned
 
-        OUTPUT:
-
-        - a :class:`lattice polytope <LatticePolytopeClass>`.
+        OUTPUT: a :class:`lattice polytope <LatticePolytopeClass>`
 
         See :class:`nef-partition <NefPartition>` class documentation for
         definitions and notation.
@@ -4599,9 +4529,7 @@ class NefPartition(SageObject, Hashable):
         r"""
         Return the polytope `\Delta^\circ` corresponding to ``self``.
 
-        OUTPUT:
-
-        - a :class:`lattice polytope <LatticePolytopeClass>`.
+        OUTPUT: a :class:`lattice polytope <LatticePolytopeClass>`
 
         See :class:`nef-partition <NefPartition>` class documentation for
         definitions and notation.
@@ -4620,9 +4548,7 @@ class NefPartition(SageObject, Hashable):
         r"""
         Return the polytopes `\Delta_i` corresponding to ``self``.
 
-        OUTPUT:
-
-        - a tuple of :class:`lattice polytopes <LatticePolytopeClass>`.
+        OUTPUT: a tuple of :class:`lattice polytopes <LatticePolytopeClass>`
 
         See :class:`nef-partition <NefPartition>` class documentation for
         definitions and notation.
@@ -4671,9 +4597,7 @@ class NefPartition(SageObject, Hashable):
         r"""
         Return the dual nef-partition.
 
-        OUTPUT:
-
-        - a :class:`nef-partition <NefPartition>`.
+        OUTPUT: a :class:`nef-partition <NefPartition>`
 
         See the class documentation for the definition.
 
@@ -4725,9 +4649,7 @@ class NefPartition(SageObject, Hashable):
         r"""
         Return Hodge numbers corresponding to ``self``.
 
-        OUTPUT:
-
-        - a tuple of integers (produced by ``nef.x`` program from PALP).
+        OUTPUT: a tuple of integers (produced by ``nef.x`` program from PALP)
 
         EXAMPLES:
 
@@ -4757,11 +4679,9 @@ class NefPartition(SageObject, Hashable):
 
         INPUT:
 
-        - ``i`` -- an integer. If not given, `\nabla` will be returned.
+        - ``i`` -- integer; if not given, `\nabla` will be returned
 
-        OUTPUT:
-
-        - a :class:`lattice polytope <LatticePolytopeClass>`.
+        OUTPUT: a :class:`lattice polytope <LatticePolytopeClass>`
 
         See :class:`nef-partition <NefPartition>` class documentation for
         definitions and notation.
@@ -4804,9 +4724,7 @@ class NefPartition(SageObject, Hashable):
         r"""
         Return the polytope `\nabla^\circ` corresponding to ``self``.
 
-        OUTPUT:
-
-        - a :class:`lattice polytope <LatticePolytopeClass>`.
+        OUTPUT: a :class:`lattice polytope <LatticePolytopeClass>`
 
         See :class:`nef-partition <NefPartition>` class documentation for
         definitions and notation.
@@ -4835,9 +4753,7 @@ class NefPartition(SageObject, Hashable):
         r"""
         Return the polytopes `\nabla_i` corresponding to ``self``.
 
-        OUTPUT:
-
-        - a tuple of :class:`lattice polytopes <LatticePolytopeClass>`.
+        OUTPUT: a tuple of :class:`lattice polytopes <LatticePolytopeClass>`
 
         See :class:`nef-partition <NefPartition>` class documentation for
         definitions and notation.
@@ -4880,9 +4796,7 @@ class NefPartition(SageObject, Hashable):
         r"""
         Return the number of parts in ``self``.
 
-        OUTPUT:
-
-        - an integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -4900,9 +4814,9 @@ class NefPartition(SageObject, Hashable):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
-        - ``all_points`` -- (default: False) whether to list all lattice points
+        - ``all_points`` -- boolean (default: ``False``); whether to list all lattice points
           or just vertices
 
         OUTPUT:
@@ -4936,7 +4850,7 @@ class NefPartition(SageObject, Hashable):
 
         INPUT:
 
-        - ``all_points`` -- (default: False) whether to list all lattice points
+        - ``all_points`` -- boolean (default: ``False``); whether to list all lattice points
           or just vertices
 
         OUTPUT:
@@ -4977,7 +4891,7 @@ class NefPartition(SageObject, Hashable):
 
         INPUT:
 
-        - ``i`` -- an integer.
+        - ``i`` -- integer
 
         OUTPUT:
 
@@ -5006,7 +4920,7 @@ class NefPartition(SageObject, Hashable):
 
         INPUT:
 
-        - ``i`` -- an integer.
+        - ``i`` -- integer
 
         OUTPUT:
 
@@ -5018,7 +4932,7 @@ class NefPartition(SageObject, Hashable):
             Since a nef-partition induces a partition on the set of boundary
             lattice points of `\Delta^\circ`, the value of `j` is well-defined
             for all `i` but the one that corresponds to the origin, in which
-            case this method will raise a :class:`ValueError` exception.
+            case this method will raise a :exc:`ValueError` exception.
             (The origin always belongs to all `\nabla_j`.)
 
         See :class:`nef-partition <NefPartition>` class documentation for
@@ -5070,6 +4984,7 @@ class NefPartition(SageObject, Hashable):
 
 _palp_dimension = None
 
+
 def _palp(command, polytopes, reduce_dimension=False):
     r"""
     Run ``command`` on vertices of given
@@ -5078,7 +4993,7 @@ def _palp(command, polytopes, reduce_dimension=False):
     Returns the name of the file containing the output of
     ``command``. You should delete it after using.
 
-    .. note::
+    .. NOTE::
 
       PALP cannot be called for polytopes that do not span the ambient space.
       If you specify ``reduce_dimension=True`` argument, PALP will be
@@ -5165,12 +5080,12 @@ def _palp_canonical_order(V, PM_max, permutations):
 
     INPUT:
 
-    - ``V`` -- :class:`point collection <PointCollection>`. The vertices.
+    - ``V`` -- :class:`point collection <PointCollection>`. The vertices
 
     - ``PM_max`` -- the maximal vertex-facet pairing matrix
 
     - ``permutations`` -- the permutations of the vertices yielding
-        ``PM_max``.
+        ``PM_max``
 
     OUTPUT:
 
@@ -5211,11 +5126,9 @@ def _palp_convert_permutation(permutation):
 
     INPUT:
 
-    - ``permutation`` -- A string specifying a PALP style permutation.
+    - ``permutation`` -- string specifying a PALP style permutation
 
-    OUTPUT:
-
-    A :class:`permutation group element <sage.groups.perm_gps.permgroup_element.PermutationGroupElement>`.
+    OUTPUT: a :class:`permutation group element <sage.groups.perm_gps.permgroup_element.PermutationGroupElement>`
 
     EXAMPLES::
 
@@ -5252,19 +5165,21 @@ def _read_nef_x_partitions(data):
     Read all nef-partitions for one polytope from a string or an open
     file.
 
-    ``data`` should be an output of nef.x.
+    INPUT:
+
+    - ``data`` -- should be an output of ``nef.x``
 
     Returns the sequence of nef-partitions. Each nef-partition is given
     as a sequence of integers.
 
     If there are no nef-partitions, returns the empty sequence. If the
-    string is empty or EOF is reached, raises ValueError.
+    string is empty or EOF is reached, raises :exc:`ValueError`.
 
     TESTS::
 
         sage: o = lattice_polytope.cross_polytope(3)
         sage: s = o.nef_x("-N -p")                                                      # needs palp
-        sage: print(s) # random                                                         # needs palp
+        sage: print(s)  # random                                                        # needs palp
         M:27 8 N:7 6  codim=2 #part=5
          P:0 V:2 4 5       0sec  0cpu
          P:2 V:3 4 5       0sec  0cpu
@@ -5311,17 +5226,15 @@ def _read_poly_x_incidences(data, dim):
 
     INPUT:
 
-    -  ``data`` - an opened file with incidence
-       information. The first line will be skipped, each consecutive line
-       contains incidence information for all faces of one dimension, the
-       first word of each line is a comment and is dropped.
+    - ``data`` -- an opened file with incidence
+      information. The first line will be skipped, each consecutive line
+      contains incidence information for all faces of one dimension, the
+      first word of each line is a comment and is dropped.
 
-    -  ``dim`` - dimension of the polytope.
+    - ``dim`` -- dimension of the polytope
 
-    OUTPUT:
-
-    a sequence F, such that F[d][i] is a sequence of vertices
-    or facets corresponding to the i-th d-dimensional face.
+    OUTPUT: a sequence F, such that F[d][i] is a sequence of vertices
+    or facets corresponding to the `i`-th d-dimensional face
 
     TESTS::
 
@@ -5373,7 +5286,9 @@ def all_cached_data(polytopes):
     polytopes in the given sequence should be constructed as the polar
     polytope to another one.
 
-    INPUT: a sequence of lattice polytopes.
+    INPUT:
+
+    - ``polytopes`` -- a sequence of lattice polytopes
 
     EXAMPLES: This function has no output, it is just a fast way to
     work with long sequences of polytopes. Of course, you can use short
@@ -5404,7 +5319,9 @@ def all_nef_partitions(polytopes, keep_symmetric=False):
     ``all_polars`` on the sequence of
     ``polytopes`` before using this function.
 
-    INPUT: a sequence of lattice polytopes.
+    INPUT:
+
+    - ``polytopes`` -- a sequence of lattice polytopes
 
     EXAMPLES: This function has no output, it is just a fast way to
     work with long sequences of polytopes. Of course, you can use short
@@ -5453,7 +5370,9 @@ def all_points(polytopes):
     ``LatticePolytope`` during the first run. So it is recommended to
     use this functions if you work with big sets of data.
 
-    INPUT: a sequence of lattice polytopes.
+    INPUT:
+
+    - ``polytopes`` -- a sequence of lattice polytopes
 
     EXAMPLES: This function has no output, it is just a fast way to
     work with long sequences of polytopes. Of course, you can use short
@@ -5506,7 +5425,9 @@ def all_polars(polytopes):
     ``LatticePolytope`` during the first run. So it is recommended to
     use this functions if you work with big sets of data.
 
-    INPUT: a sequence of lattice polytopes.
+    INPUT:
+
+    - ``polytopes`` -- a sequence of lattice polytopes
 
     EXAMPLES: This function has no output, it is just a fast way to
     work with long sequences of polytopes. Of course, you can use short
@@ -5533,20 +5454,17 @@ def convex_hull(points):
     r"""
     Compute the convex hull of the given points.
 
-    .. note::
+    .. NOTE::
 
        ``points`` might not span the space. Also, it fails for large
        numbers of vertices in dimensions 4 or greater
 
     INPUT:
 
-    -  ``points`` - a list that can be converted into
-       vectors of the same dimension over ZZ.
+    - ``points`` -- list that can be converted into
+      vectors of the same dimension over `\ZZ`
 
-    OUTPUT:
-
-    list of vertices of the convex hull of the given points (as
-    vectors).
+    OUTPUT: list of vertices of the convex hull of the given points (as vectors)
 
     EXAMPLES: Let's compute the convex hull of several points on a line
     in the plane::
@@ -5583,11 +5501,9 @@ def cross_polytope(dim):
 
     INPUT:
 
-    - ``dim`` -- an integer.
+    - ``dim`` -- integer
 
-    OUTPUT:
-
-    - a :class:`lattice polytope <LatticePolytopeClass>`.
+    OUTPUT: a :class:`lattice polytope <LatticePolytopeClass>`
 
     EXAMPLES::
 
@@ -5613,17 +5529,17 @@ def minkowski_sum(points1, points2):
     r"""
     Compute the Minkowski sum of two convex polytopes.
 
-    .. note::
+    .. NOTE::
 
        Polytopes might not be of maximal dimension.
 
     INPUT:
 
-    -  ``points1, points2`` - lists of objects that can be
-       converted into vectors of the same dimension, treated as vertices
-       of two polytopes.
+    - ``points1``, ``points2`` -- lists of objects that can be
+      converted into vectors of the same dimension, treated as vertices
+      of two polytopes.
 
-    OUTPUT: list of vertices of the Minkowski sum, given as vectors.
+    OUTPUT: list of vertices of the Minkowski sum, given as vectors
 
     EXAMPLES: Let's compute the Minkowski sum of two line segments::
 
@@ -5645,12 +5561,9 @@ def positive_integer_relations(points):
 
     INPUT:
 
-    - ``points`` - lattice points given as columns of a
-      matrix
+    - ``points`` -- lattice points given as columns of a matrix
 
-    OUTPUT:
-
-    matrix of relations between given points with non-negative
+    OUTPUT: matrix of relations between given points with nonnegative
     integer coefficients
 
     EXAMPLES: This is a 3-dimensional reflexive polytope::
@@ -5676,7 +5589,7 @@ def positive_integer_relations(points):
 
     However, the above relations may contain negative and rational
     numbers. This function transforms them in such a way, that all
-    coefficients are non-negative integers::
+    coefficients are nonnegative integers::
 
         sage: points = p.points().column_matrix()
         sage: lattice_polytope.positive_integer_relations(points)                       # needs palp
@@ -5700,8 +5613,8 @@ def positive_integer_relations(points):
     a = nonpivot_relations.stack(a).transpose()
     new_relations = []
     for i in range(n_nonpivots):
-        # Find a non-negative linear combination of relations,
-        # such that all components are non-negative and the i-th one is 1
+        # Find a nonnegative linear combination of relations,
+        # such that all components are nonnegative and the `i`-th one is 1
         MIP = MixedIntegerLinearProgram(maximization=False, base_ring=QQ)
         w = MIP.new_variable(integer=False, nonnegative=True)
         b = vector([0] * i + [1] + [0] * (n_nonpivots - i - 1))
@@ -5734,16 +5647,14 @@ def read_all_polytopes(file_name):
 
     INPUT:
 
-    - ``file_name`` -- a string with the name of a file with VERTICES of
-      polytopes.
+    - ``file_name`` -- string with the name of a file with VERTICES of
+      polytopes
 
-    OUTPUT:
-
-    - a sequence of polytopes.
+    OUTPUT: a sequence of polytopes
 
     EXAMPLES:
 
-    We use poly.x to compute two polar polytopes and read them::
+    We use ``poly.x`` to compute two polar polytopes and read them::
 
         sage: # needs palp
         sage: d = lattice_polytope.cross_polytope(2)
@@ -5793,16 +5704,14 @@ def read_palp_matrix(data, permutation=False):
 
     INPUT:
 
-    - ``data`` -- Either a string containing the filename or the file itself
-                  containing the output by PALP.
+    - ``data`` -- either a string containing the filename or the file itself
+      containing the output by PALP
 
-    - ``permutation`` -- (default: ``False``) If ``True``, try to retrieve
+    - ``permutation`` -- boolean (default: ``False``); if ``True``, try to retrieve
       the permutation output by PALP. This parameter makes sense only
       when PALP computed the normal form of a lattice polytope.
 
-    OUTPUT:
-
-    A matrix or a tuple of a matrix and a permutation.
+    OUTPUT: a matrix or a tuple of a matrix and a permutation
 
     EXAMPLES::
 
@@ -5849,11 +5758,9 @@ def set_palp_dimension(d):
 
     INPUT:
 
-    - ``d`` -- an integer from the list [4,5,6,11] or ``None``.
+    - ``d`` -- integer from the list ``[4,5,6,11]`` or ``None``
 
-    OUTPUT:
-
-    - none.
+    OUTPUT: none
 
     PALP has many hard-coded limits, which must be specified before
     compilation, one of them is dimension. Sage includes several versions with
@@ -5895,16 +5802,14 @@ def skip_palp_matrix(data, n=1):
 
     INPUT:
 
+    - ``data`` -- opened file with blocks of matrix data in
+      the following format: A block consisting of m+1 lines has the
+      number m as the first element of its first line.
 
-    -  ``data`` - opened file with blocks of matrix data in
-       the following format: A block consisting of m+1 lines has the
-       number m as the first element of its first line.
+    - ``n`` -- (default: 1) integer, specifies how many
+      blocks should be skipped
 
-    -  ``n`` - (default: 1) integer, specifies how many
-       blocks should be skipped
-
-
-    If EOF is reached during the process, raises ValueError exception.
+    If EOF is reached during the process, raises :exc:`ValueError` exception.
 
     EXAMPLES: We create a file with vertices of the square and the cube,
     but read only the second set::
@@ -5947,25 +5852,22 @@ def skip_palp_matrix(data, n=1):
                 raise ValueError("There are not enough data to skip!")
 
 
-def write_palp_matrix(m, ofile=None, comment="", format=None):
+def write_palp_matrix(m, ofile=None, comment='', format=None):
     r"""
     Write ``m`` into ``ofile`` in PALP format.
 
     INPUT:
 
     - ``m`` -- a matrix over integers or a
-      :class:`point collection <PointCollection>`.
+      :class:`point collection <PointCollection>`
 
-    - ``ofile`` -- a file opened for writing (default: stdout)
+    - ``ofile`` -- a file opened for writing (default: ``stdout``)
 
-    - ``comment`` -- a string (default: empty) see output description
+    - ``comment`` -- string (default: empty); see output description
 
-    - ``format`` -- a format string used to print matrix entries.
+    - ``format`` -- a format string used to print matrix entries
 
-
-    OUTPUT:
-
-    - nothing is returned, output written to ``ofile`` has the format
+    OUTPUT: nothing is returned, output written to ``ofile`` has the format
 
       * First line: number_of_rows number_of_columns comment
       * Next number_of_rows lines: rows of the matrix.
@@ -5978,13 +5880,13 @@ def write_palp_matrix(m, ofile=None, comment="", format=None):
          1  0  0 -1  0  0
          0  1  0  0 -1  0
          0  0  1  0  0 -1
-        sage: lattice_polytope.write_palp_matrix(o.vertices(), format="%4d")
+        sage: lattice_polytope.write_palp_matrix(o.vertices(), format='%4d')
         3 6
            1    0    0   -1    0    0
            0    1    0    0   -1    0
            0    0    1    0    0   -1
     """
-    if is_PointCollection(m):
+    if isinstance(m, PointCollection):
         m = m.column_matrix()
     if format is None:
         n = max(len(str(m[i,j]))

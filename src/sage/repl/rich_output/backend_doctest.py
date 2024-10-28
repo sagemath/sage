@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 """
 The backend used for doctests
 
@@ -34,9 +34,7 @@ class BackendDoctest(BackendBase):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -49,7 +47,7 @@ class BackendDoctest(BackendBase):
 
     def default_preferences(self):
         """
-        Return the backend's display preferences
+        Return the backend's display preferences.
 
         Matches the IPython command line display preferences to keep
         the differences between that and the doctests to a minimum.
@@ -83,8 +81,8 @@ class BackendDoctest(BackendBase):
 
         INPUT:
 
-        None of the optional keyword arguments are used in the doctest
-        backend.
+        - ``**kwds`` -- none of the optional keyword arguments are used in the
+          doctest backend
 
         EXAMPLES::
 
@@ -98,7 +96,7 @@ class BackendDoctest(BackendBase):
 
     def uninstall(self):
         """
-        Switch away from the doctest backend
+        Switch away from the doctest backend.
 
         This method is being called from within
         :meth:`~sage.repl.rich_output.display_manager.DisplayManager.switch_backend`. You
@@ -115,7 +113,7 @@ class BackendDoctest(BackendBase):
 
     def supported_output(self):
         """
-        Return the supported output types
+        Return the supported output types.
 
         OUTPUT:
 
@@ -145,7 +143,7 @@ class BackendDoctest(BackendBase):
 
     def displayhook(self, plain_text, rich_output):
         """
-        Display object from displayhook
+        Display object from displayhook.
 
         INPUT:
 
@@ -183,7 +181,7 @@ class BackendDoctest(BackendBase):
 
     def display_immediately(self, plain_text, rich_output):
         """
-        Display object immediately
+        Display object immediately.
 
         INPUT:
 
@@ -214,16 +212,14 @@ class BackendDoctest(BackendBase):
 
     def validate(self, rich_output):
         """
-        Perform checks on ``rich_output``
+        Perform checks on ``rich_output``.
 
         INPUT:
 
         - ``rich_output`` -- instance of a subclass of
-          :class:`~sage.repl.rich_output.output_basic.OutputBase`.
+          :class:`~sage.repl.rich_output.output_basic.OutputBase`
 
-        OUTPUT:
-
-        An assertion is triggered if ``rich_output`` is invalid.
+        OUTPUT: an assertion is triggered if ``rich_output`` is invalid
 
         EXAMPLES::
 

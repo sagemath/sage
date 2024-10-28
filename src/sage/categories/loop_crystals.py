@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.graphs sage.combinat
 r"""
 Loop Crystals
@@ -127,6 +128,8 @@ class LoopCrystals(Category_singleton):
             return G
 
 # TODO: Should we make "regular" an axiom?
+
+
 class RegularLoopCrystals(Category_singleton):
     r"""
     The category of regular `U_q'(\mathfrak{g})`-crystals, where
@@ -163,6 +166,7 @@ class RegularLoopCrystals(Category_singleton):
             I0 = CT.index_set()
             La = CT.root_system().ambient_space().fundamental_weights()
             return sum(La[i] * (self.phi(i) - self.epsilon(i)) for i in I0)
+
 
 class KirillovReshetikhinCrystals(Category_singleton):
     """
@@ -818,7 +822,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
 
                 - ``q`` -- (default: ``None``) a variable or ``None``;
                   if ``None``, a variable `q` is set in the code
-                - ``group_components`` -- (default: ``True``) boolean; if
+                - ``group_components`` -- boolean (default: ``True``); if
                   ``True``, then the terms are grouped by classical component
 
                 The one-dimensional configuration sum is the sum of the
@@ -912,15 +916,15 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 - ``algorithm`` -- (default: ``None``) use one of the
                   following algorithms to determine the energy function:
 
-                  * ``'definition'`` - use the definition of the energy
+                  * ``'definition'`` -- use the definition of the energy
                     function;
-                  * ``'grading'`` - use the affine grading;
+                  * ``'grading'`` -- use the affine grading;
 
                   if not specified, then this uses ``'grading'`` if all
                   factors are perfect of the same level and otherwise
                   this uses ``'definition'``
 
-                OUTPUT: an integer
+                OUTPUT: integer
 
                 EXAMPLES::
 
@@ -1017,7 +1021,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 :meth:`e_string_to_ground_state`) and counting the number
                 of affine Kashiwara operators `e_0` applied on the way.
 
-                OUTPUT: an integer
+                OUTPUT: integer
 
                 EXAMPLES::
 

@@ -26,7 +26,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
     cpdef int number_of_variables(self) noexcept
     cdef int _check_redundant
     cdef list _constraints
-    cpdef sum(self, L) noexcept
+    cpdef sum(self, L)
 
 
 cdef class MIPVariable(FiniteFamily):
@@ -35,5 +35,5 @@ cdef class MIPVariable(FiniteFamily):
     cdef str _name
     cdef object _lower_bound
     cdef object _upper_bound
-    cdef _matrix_rmul_impl(self, m) noexcept
-    cdef _matrix_lmul_impl(self, m) noexcept
+    cdef _matrix_rmul_impl(self, m)
+    cdef _matrix_lmul_impl(self, m)

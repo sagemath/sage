@@ -72,16 +72,13 @@ Here is another approach using GAP:
 
 ::
 
-    sage: R = gap.new("PolynomialRing(GF(97), 4)"); R
-    PolynomialRing( GF(97), ["x_1", "x_2", "x_3", "x_4"] )
+    sage: R = libgap.PolynomialRing(GF(97), 4); R
+    GF(97)[x_1,x_2,x_3,x_4]
     sage: I = R.IndeterminatesOfPolynomialRing(); I
     [ x_1, x_2, x_3, x_4 ]
-    sage: vars = (I.name(), I.name(), I.name(), I.name())
-    sage: _ = gap.eval(
-    ....:     "x_0 := %s[1];; x_1 := %s[2];; x_2 := %s[3];;x_3 := %s[4];;"
-    ....:     % vars)
-    sage: f = gap.new("x_1*x_2+x_3"); f
-    x_2*x_3+x_4
+    sage: x1, x2, x3, x4 = I
+    sage: f = x1*x2 + x3; f
+    x_1*x_2+x_3
     sage: f.Value(I,[1,1,1,1])
     Z(97)^34
 

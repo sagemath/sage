@@ -1,1 +1,1 @@
-python-tinycss2
+python3-tinycss2

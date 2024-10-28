@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Additive groups
 """
@@ -14,6 +15,7 @@ from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.additive_monoids import AdditiveMonoids
 from sage.cpython.getattr import raw_getattr
 Groups = LazyImport('sage.categories.groups', 'Groups', at_startup=True)
+
 
 class AdditiveGroups(CategoryWithAxiom_singleton):
     r"""

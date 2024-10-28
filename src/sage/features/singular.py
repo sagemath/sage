@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of ``singular`` and the SageMath interfaces to it
 """

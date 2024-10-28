@@ -270,6 +270,13 @@ class EllipticCurveHom(Morphism):
         if lx != rx:
             return richcmp_not_equal(lx, rx, op)
 
+        # Check the Weierstraß scaling factor, too (should be fast)
+
+        if op == op_EQ or op == op_NE:
+            lx, rx = self.scaling_factor(), other.scaling_factor()
+            if lx != rx:
+                return richcmp_not_equal(lx, rx, op)
+
         # Do self or other have specialized comparison methods?
 
         ret = self._comparison_impl(self, other, op)
@@ -561,8 +568,8 @@ class EllipticCurveHom(Morphism):
 
         INPUT:
 
-        - ``prec`` -- (default: 20), the precision with which the
-          computations in the formal group are carried out.
+        - ``prec`` -- (default: 20) the precision with which the
+          computations in the formal group are carried out
 
         EXAMPLES::
 
@@ -1118,10 +1125,8 @@ class EllipticCurveHom(Morphism):
         imP = self._eval(P)
         imQ = self._eval(Q)
 
-        from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
-        H = AdditiveAbelianGroupWrapper(R.parent(), [R,S], [n,n])
-        vecP = H.discrete_log(imP)
-        vecQ = H.discrete_log(imQ)
+        vecP = imP.log([R, S])
+        vecQ = imQ.log([R, S])
 
         from sage.matrix.constructor import matrix
         from sage.rings.finite_rings.integer_mod_ring import Zmod
@@ -1176,6 +1181,12 @@ def compare_via_evaluation(left, right):
     F = E.base_ring()
 
     if isinstance(F, finite_field_base.FiniteField):
+        # check at a random rational point first
+        P = E.random_point()
+        if left(P) != right(P):
+            return False
+
+        # then extend to a field with enough points to conclude
         q = F.cardinality()
         d = left.degree()
         e = integer_floor(1 + 2 * (2*d.sqrt() + 1).log(q))  # from Hasse bound
@@ -1183,6 +1194,7 @@ def compare_via_evaluation(left, right):
         EE = E.base_extend(F.extension(e, 'U'))  # named extension is faster
         Ps = EE.gens()
         return all(left._eval(P) == right._eval(P) for P in Ps)
+
     elif isinstance(F, number_field_base.NumberField):
         for _ in range(100):
             P = E.lift_x(F.random_element(), extend=True)
@@ -1190,6 +1202,7 @@ def compare_via_evaluation(left, right):
                 return left._eval(P) == right._eval(P)
         else:
             assert False, "couldn't find a point of infinite order"
+
     else:
         raise NotImplementedError('not implemented for this base field')
 

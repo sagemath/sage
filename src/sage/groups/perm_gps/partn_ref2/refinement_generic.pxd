@@ -23,7 +23,7 @@ cdef extern from *:
 
 cdef tuple PS_refinement(PartitionStack * part, long *refine_vals, long *best, 
                          int begin, int end,
-                         bint * cand_initialized, bint *changed_partition) noexcept
+                         bint * cand_initialized, bint *changed_partition)
 
 cdef class _BestValStore:
     cdef int default_data_length
@@ -39,7 +39,7 @@ cdef class LabelledBranching:
     cdef GapElement group, ClosureGroup
     cdef Parent sym_gp
     cdef bint has_empty_intersection(self, PartitionStack * part) noexcept
-    cpdef add_gen(self, GapElement_Permutation gen) noexcept
+    cpdef add_gen(self, GapElement_Permutation gen)
 
 cdef class PartitionRefinement_generic:
     cdef PartitionStack * _part
@@ -65,7 +65,7 @@ cdef class PartitionRefinement_generic:
      # methods which have to be implemented in derived classes
     cdef bint _inner_min_(self, int pos, bint* inner_group_changed) noexcept
     cdef bint _refine(self, bint *part_changed, bint inner_group_changed, bint first_step) noexcept
-    cdef tuple _store_state_(self) noexcept
+    cdef tuple _store_state_(self)
     cdef void _restore_state_(self, tuple act_state) noexcept
     cdef void _store_best_(self) noexcept
     cdef bint _minimization_allowed_on_col(self, int pos) noexcept

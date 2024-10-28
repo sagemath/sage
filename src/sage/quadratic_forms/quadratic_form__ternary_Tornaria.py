@@ -53,7 +53,6 @@ def disc(self):
         4
         sage: DiagonalQuadraticForm(ZZ, [1,1,1,1]).disc()
         16
-
     """
     if is_odd(self.dim()):
         # This is not so good for characteristic 2.
@@ -129,7 +128,6 @@ def adjoint(self):
         [ 39 2 8 ]
         [ * 19 4 ]
         [ * * 8 ]
-
     """
     from sage.quadratic_forms.quadratic_form import QuadraticForm as QuadraticForm
 

@@ -162,7 +162,7 @@ class AbstractSingleCrystalElement(Element):
 
         INPUT:
 
-        - ``i`` -- An element of the index set
+        - ``i`` -- an element of the index set
 
         EXAMPLES::
 
@@ -181,7 +181,7 @@ class AbstractSingleCrystalElement(Element):
 
         INPUT:
 
-        - ``i`` -- An element of the index set
+        - ``i`` -- an element of the index set
 
         EXAMPLES::
 
@@ -216,9 +216,9 @@ class TCrystal(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``cartan_type`` -- A Cartan type
+    - ``cartan_type`` -- a Cartan type
 
-    - ``weight`` -- An element of the weight lattice of type ``cartan_type``
+    - ``weight`` -- an element of the weight lattice of type ``cartan_type``
 
     EXAMPLES::
 
@@ -300,7 +300,7 @@ class TCrystal(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``weight`` -- An element of the weight lattice
+        - ``weight`` -- an element of the weight lattice
 
         EXAMPLES::
 
@@ -387,7 +387,7 @@ class TCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -406,7 +406,7 @@ class TCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -474,7 +474,7 @@ class RCrystal(UniqueRepresentation, Parent):
 
     - ``cartan_type`` -- a Cartan type
     - ``weight`` -- an element of the weight lattice of type ``cartan_type``
-    - ``dual`` -- (default: ``False``) boolean
+    - ``dual`` -- boolean (default: ``False``)
 
     EXAMPLES:
 
@@ -563,7 +563,7 @@ class RCrystal(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``weight`` -- An element of the weight lattice
+        - ``weight`` -- an element of the weight lattice
 
         EXAMPLES::
 
@@ -658,7 +658,7 @@ class RCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -686,7 +686,7 @@ class RCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -827,7 +827,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``m`` -- An integer
+        - ``m`` -- integer
 
         EXAMPLES::
 
@@ -952,7 +952,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -974,7 +974,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -996,7 +996,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -1019,7 +1019,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -1208,7 +1208,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -1225,7 +1225,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 

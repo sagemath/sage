@@ -26,7 +26,6 @@ REFERENCES:
 
 - Chap. 23 of R. Godement : *Algebra* [God1968]_
 - Chap. 15 of S. Lang : *Algebra* [Lan2002]_
-
 """
 #******************************************************************************
 #       Copyright (C) 2017 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -39,6 +38,7 @@ REFERENCES:
 
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 from sage.tensor.modules.comp import Components, CompFullyAntiSym
+
 
 class AlternatingContrTensor(FreeModuleTensor):
     r"""
@@ -177,7 +177,6 @@ class AlternatingContrTensor(FreeModuleTensor):
          module M over the Integer Ring
         sage: s.display(e)
         b∧b = 0
-
     """
     def __init__(self, fmodule, degree, name=None, latex_name=None):
         r"""
@@ -190,7 +189,7 @@ class AlternatingContrTensor(FreeModuleTensor):
             sage: e = M.basis('e')
             sage: a = AlternatingContrTensor(M, 2, name='a')
             sage: a[e,0,1] = 2
-            sage: TestSuite(a).run(skip="_test_category") # see below
+            sage: TestSuite(a).run(skip='_test_category') # see below
 
         In the above test suite, _test_category fails because a is not an
         instance of a.parent().category().element_class. Actually alternating
@@ -200,7 +199,6 @@ class AlternatingContrTensor(FreeModuleTensor):
             sage: a1 = M.exterior_power(2).element_class(M, 2, name='a')
             sage: a1[e,0,1] = 2
             sage: TestSuite(a1).run()
-
         """
         FreeModuleTensor.__init__(self, fmodule, (degree,0), name=name,
                                   latex_name=latex_name,
@@ -252,7 +250,6 @@ class AlternatingContrTensor(FreeModuleTensor):
              module M over the Integer Ring
             sage: a._new_instance().parent() is a.parent()
             True
-
         """
         return self.__class__(self._fmodule, self._tensor_rank)
 
@@ -285,7 +282,6 @@ class AlternatingContrTensor(FreeModuleTensor):
             sage: a._new_comp(e)
             1-index components w.r.t. Basis (e_0,e_1,e_2) on the Rank-3 free
              module M over the Integer Ring
-
         """
         fmodule = self._fmodule  # the base free module
         if self._tensor_rank == 1:
@@ -307,7 +303,6 @@ class AlternatingContrTensor(FreeModuleTensor):
             sage: a = M.alternating_contravariant_tensor(2, name='a')
             sage: a.degree()
             2
-
         """
         return self._tensor_rank
 
@@ -393,7 +388,6 @@ class AlternatingContrTensor(FreeModuleTensor):
 
             sage: a.display(format_spec=10)  # 10 bits of precision
             a = 0.33 e_1∧e_2 + 2.5 e_1∧e_3 + 4.0 e_2∧e_3
-
         """
         from sage.misc.latex import latex
         from sage.typeset.unicode_characters import unicode_wedge
@@ -533,7 +527,6 @@ class AlternatingContrTensor(FreeModuleTensor):
             True
             sage: d.wedge(c) == c.wedge(d)
             True
-
         """
         from sage.typeset.unicode_characters import unicode_wedge
         from .format_utilities import is_atomic
@@ -713,7 +706,6 @@ class AlternatingContrTensor(FreeModuleTensor):
             -240
             sage: c == a.contract(0, 1, 2, 3, b, 0, 1, 2, 3)
             True
-
         """
         from .format_utilities import is_atomic
         from .free_module_alt_form import FreeModuleAltForm

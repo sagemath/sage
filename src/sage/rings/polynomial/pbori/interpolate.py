@@ -89,7 +89,7 @@ def lex_groebner_basis_points(points, variables):
 def lex_groebner_basis_for_polynomial_via_variety(p):
     variables = p.vars_as_monomial()
     return lex_groebner_basis_points(p.zeros_in(variables.divisors()),
-        variables)
+                                     variables)
 
 
 if __name__ == '__main__':

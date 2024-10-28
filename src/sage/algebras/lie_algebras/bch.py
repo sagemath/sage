@@ -19,7 +19,7 @@ AUTHORS:
 from sage.algebras.lie_algebras.lie_algebra import LieAlgebra
 from sage.arith.misc import bernoulli
 from sage.categories.lie_algebras import LieAlgebras
-from sage.combinat.integer_vector import IntegerListsLex
+from sage.combinat.integer_lists import IntegerListsLex
 from sage.arith.misc import factorial
 from sage.rings.rational_field import QQ
 from sage.structure.element import canonical_coercion

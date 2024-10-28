@@ -13,10 +13,8 @@ make
 guile
 gc
 libffi
-gcc-[0-9]      # So that slackpkg pattern matching does not pull in all gcc-* packages
-gcc-11           # on slackware-current
-gcc-g++
-gcc-g++-11       # on slackware-current
+gcc-13
+gcc-g++-13
 # dependencies of gcc
 libmpc
 glibc
@@ -24,8 +22,7 @@ kernel-headers
 perl
 m4
 bc
-python-2.7       # on slackware-14.2
-python3          # on slackware-current
+python3
 flex
 # for https upstream_url downloads
 ca-certificates

@@ -18,8 +18,6 @@ import multiprocessing.pool
 # PEP 517 builds do not have . in sys.path
 sys.path.insert(0, os.path.dirname(__file__))
 
-import sage.misc.lazy_import_cache
-
 from sage.misc.package import is_package_installed_and_updated
 from sage_setup.command.sage_build_ext_minimal import sage_build_ext_minimal
 from sage_setup.command.sage_install import sage_develop, sage_install
@@ -66,15 +64,6 @@ else:
     sdist = False
 
 # ########################################################
-# ## Testing related stuff
-# ########################################################
-
-# Remove (potentially invalid) star import caches
-if os.path.exists(sage.misc.lazy_import_cache.get_cache_file()):
-    os.unlink(sage.misc.lazy_import_cache.get_cache_file())
-
-
-# ########################################################
 # ## Discovering Sources
 # ########################################################
 if sdist:
@@ -85,17 +74,12 @@ else:
     from sage_setup.autogen import autogen_all
     autogen_all()
 
-    log.info("Discovering Python/Cython source code....")
-    t = time.time()
+    log.info("Discovering Python/Cython source code...")
 
-    # Exclude a few files if the corresponding distribution is not loaded
     optional_packages = ['mcqd', 'bliss', 'tdlib',
                          'coxeter3', 'sirocco', 'meataxe']
-    not_installed_packages = [package for package in optional_packages
-                              if not is_package_installed_and_updated(package)]
-
     distributions_to_exclude = [f"sagemath-{pkg}"
-                                for pkg in not_installed_packages]
+                                for pkg in optional_packages]
     files_to_exclude = filter_cython_sources(SAGE_SRC, distributions_to_exclude)
 
     log.debug(f"files_to_exclude = {files_to_exclude}")
@@ -103,13 +87,19 @@ else:
     python_packages = find_namespace_packages(where=SAGE_SRC, include=['sage', 'sage.*'])
     log.debug(f"python_packages = {python_packages}")
 
-    log.info(f"Discovered Python/Cython sources, time: {(time.time() - t):.2f} seconds.")
+    log.info(f"Discovering Python/Cython source code... done")
 
     # from sage_build_cython:
     import Cython.Compiler.Options
     Cython.Compiler.Options.embed_pos_in_docstring = True
     gdb_debug = os.environ.get('SAGE_DEBUG', None) != 'no'
 
+    aliases = cython_aliases()
+    log.debug(f"aliases = {aliases}")
+    include_path = sage_include_directories(use_sources=True) + ['.']
+    log.debug(f"include_path = {include_path}")
+    nthreads = sage_build_ext_minimal.get_default_number_build_jobs()
+    log.info(f"Cythonizing with {nthreads} threads...")
     try:
         from Cython.Build import cythonize
         from sage.env import cython_aliases, sage_include_directories
@@ -118,16 +108,17 @@ else:
             extensions = cythonize(
                 ["sage/**/*.pyx"],
                 exclude=files_to_exclude,
-                include_path=sage_include_directories(use_sources=True) + ['.'],
+                include_path=include_path,
                 compile_time_env=compile_time_env_variables(),
                 compiler_directives=compiler_directives(False),
-                aliases=cython_aliases(),
+                aliases=aliases,
                 create_extension=create_extension,
                 gdb_debug=gdb_debug,
-                nthreads=4)
+                nthreads=nthreads)
     except Exception as exception:
         log.warn(f"Exception while cythonizing source files: {repr(exception)}")
         raise
+    log.info(f"Cythonizing with {nthreads} threads... done")
 
 # ########################################################
 # ## Distutils

@@ -25,9 +25,11 @@ def _alg_key(self, algorithm=None, recompute=False):
     r"""
     Return a key for use in cached_method calls.
 
-    If recompute is false, will cache using ``None`` as the key, so no recomputation will be done.
+    If recompute is false, will cache using ``None`` as the key, so no
+    recomputation will be done.
 
-    If recompute is true, will cache by algorithm, yielding a recomputation for each different algorithm.
+    If recompute is true, will cache by algorithm, yielding a recomputation
+    for each different algorithm.
 
     EXAMPLES::
 
@@ -35,7 +37,7 @@ def _alg_key(self, algorithm=None, recompute=False):
         sage: R.<x> = ZZ[]
         sage: K.<a> = NumberField(x^3 + 2*x + 2)                                        # needs sage.rings.number_field
         sage: G = K.galois_group()                                                      # needs sage.rings.number_field
-        sage: _alg_key(G, algorithm="pari", recompute=True)                             # needs sage.rings.number_field
+        sage: _alg_key(G, algorithm='pari', recompute=True)                             # needs sage.rings.number_field
         'pari'
     """
     if recompute:
@@ -45,15 +47,16 @@ def _alg_key(self, algorithm=None, recompute=False):
 
 class _GMixin:
     r"""
-    This class provides some methods for Galois groups to be used for both permutation groups
-    and abelian groups, subgroups and full Galois groups.
+    This class provides some methods for Galois groups to be used for both
+    permutation groups and abelian groups, subgroups and full Galois groups.
 
-    It is just intended to provide common functionality between various different Galois group classes.
+    It is just intended to provide common functionality between various
+    different Galois group classes.
     """
     @lazy_attribute
     def _default_algorithm(self):
         """
-        A string, the default algorithm used for computing the Galois group
+        A string, the default algorithm used for computing the Galois group.
 
         EXAMPLES::
 
@@ -90,7 +93,7 @@ class _GMixin:
 
     def _get_algorithm(self, algorithm):
         r"""
-        Allows overriding the default algorithm specified at object creation.
+        Allow overriding the default algorithm specified at object creation.
 
         EXAMPLES::
 
@@ -177,7 +180,7 @@ class _GaloisMixin(_GMixin):
 
     def _repr_(self):
         """
-        String representation of this Galois group
+        String representation of this Galois group.
 
         EXAMPLES::
 
@@ -309,13 +312,14 @@ class _SubGaloisMixin(_GMixin):
 
         INPUT:
 
-        - ``name`` -- a variable name for the new field.
+        - ``name`` -- a variable name for the new field
 
         - ``polred`` -- whether to optimize the generator of the newly created field
-            for a simpler polynomial, using pari's polredbest.
-            Defaults to ``True`` when the degree of the fixed field is at most 8.
+            for a simpler polynomial, using Pari's :pari:`polredbest`;
+            defaults to ``True`` when the degree of the fixed field is at most 8
 
-        - ``threshold`` -- positive number; polred only performed if the cost is at most this threshold
+        - ``threshold`` -- positive number; polred only performed if the cost
+          is at most this threshold
 
         EXAMPLES::
 
@@ -377,7 +381,7 @@ class GaloisGroup_ab(_GaloisMixin, AbelianGroup_class):
     @lazy_attribute
     def _gcdata(self):
         r"""
-        Return the Galois closure (ie, the finite field itself) together with the identity
+        Return the Galois closure (i.e., the finite field itself) together with the identity.
 
         EXAMPLES::
 

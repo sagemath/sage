@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Tensor Product Functorial Construction
 
@@ -54,8 +55,6 @@ class TensorProductFunctor(CovariantFunctorialConstruction):
 
 
 tensor = TensorProductFunctor()
-
-
 """
 The tensor product functorial construction
 
@@ -70,7 +69,7 @@ EXAMPLES::
 
 class TensorProductsCategory(CovariantConstructionCategory):
     r"""
-    An abstract base class for all TensorProducts's categories
+    An abstract base class for all TensorProducts's categories.
 
     TESTS::
 
@@ -87,7 +86,7 @@ class TensorProductsCategory(CovariantConstructionCategory):
 
     def TensorProducts(self):
         """
-        Returns the category of tensor products of objects of ``self``
+        Return the category of tensor products of objects of ``self``.
 
         By associativity of tensor products, this is ``self`` (a tensor
         product of tensor products of `Cat`'s is a tensor product of `Cat`'s)

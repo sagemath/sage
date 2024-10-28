@@ -311,7 +311,7 @@ def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
     decoded_factors = []
     for factor in factors_denominator:
         factor = L(factor)
-        D = factor.dict()
+        D = factor.monomial_coefficients()
         if not D:
             raise ZeroDivisionError('Denominator contains a factor 0.')
         elif len(D) == 1:
@@ -331,7 +331,7 @@ def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
     numerator = L(numerator) / prod(to_numerator)
 
     result_numerator, result_factors_denominator = \
-        _Omega_(numerator.dict(), decoded_factors)
+        _Omega_(numerator.monomial_coefficients(), decoded_factors)
     if result_numerator == 0:
         return Factorization([], unit=result_numerator)
 
@@ -350,7 +350,7 @@ def _simplify_(numerator, terms):
 
     - ``numerator`` -- a Laurent polynomial
 
-    - ``terms`` -- a tuple or other iterable of Laurent polynomials
+    - ``terms`` -- tuple or other iterable of Laurent polynomials
 
       The denominator is the product of factors `1 - t` for each
       `t` in ``terms``.
@@ -394,10 +394,10 @@ def _Omega_(A, decoded_factors):
 
     INPUT:
 
-    - ``A`` -- a dictionary mapping `a` to `c` representing a summand
+    - ``A`` -- dictionary mapping `a` to `c` representing a summand
       `c\mu^a` of the numerator
 
-    - ``decoded_factors`` -- a tuple or list of pairs `(z, e)` representing
+    - ``decoded_factors`` -- tuple or list of pairs `(z, e)` representing
       a factor `1 - z \mu^e`
 
     OUTPUT:
@@ -482,9 +482,9 @@ def Omega_ge(a, exponents):
 
     INPUT:
 
-    - ``a`` -- an integer
+    - ``a`` -- integer
 
-    - ``exponents`` -- a tuple of integers
+    - ``exponents`` -- tuple of integers
 
     OUTPUT:
 
@@ -589,7 +589,7 @@ def Omega_ge(a, exponents):
         It is assumed that ``var`` only occurs with exponents
         divisible by ``exponent``.
         """
-        p = tuple(var.dict().popitem()[0]).index(1)  # var is the p-th generator
+        p = tuple(var.monomial_coefficients().popitem()[0]).index(1)  # var is the p-th generator
 
         def subs_e(e):
             e = list(e)
@@ -597,7 +597,8 @@ def Omega_ge(a, exponents):
             e[p] = e[p] // exponent
             return tuple(e)
         parent = expression.parent()
-        result = parent({subs_e(e): c for e, c in expression.dict().items()})
+        result = parent({subs_e(e): c
+                         for e, c in expression.monomial_coefficients().items()})
         return result
 
     def de_power(expression):
@@ -638,9 +639,9 @@ def _Omega_numerator_(a, x, y, t):
 
     INPUT:
 
-    - ``a`` -- an integer
+    - ``a`` -- integer
 
-    - ``x`` and ``y`` -- a tuple of tuples of Laurent polynomials
+    - ``x``, ``y`` -- tuple of tuples of Laurent polynomials
 
       The
       flattened ``x`` contains `x_1,...,x_n`, the flattened ``y`` the
@@ -650,9 +651,7 @@ def _Omega_numerator_(a, x, y, t):
 
     - ``t`` -- a temporary Laurent polynomial variable used for substituting
 
-    OUTPUT:
-
-    A Laurent polynomial
+    OUTPUT: a Laurent polynomial
 
     The output is normalized such that the corresponding denominator
     (:func:`_Omega_factors_denominator_`) has constant term `1`.
@@ -755,9 +754,9 @@ def _Omega_numerator_P_(a, x, y, t):
 
     INPUT:
 
-    - ``a`` -- an integer
+    - ``a`` -- integer
 
-    - ``x`` and ``y`` -- a tuple of Laurent polynomials
+    - ``x``, ``y`` -- tuple of Laurent polynomials
 
       The tuple ``x`` here is the flattened ``x`` of :func:`_Omega_numerator_`
       but without its last entry.
@@ -767,9 +766,7 @@ def _Omega_numerator_P_(a, x, y, t):
       In the (final) result, ``t`` has to be substituted by the last
       entry of the flattened ``x`` of :func:`_Omega_numerator_`.
 
-    OUTPUT:
-
-    A Laurent polynomial
+    OUTPUT: a Laurent polynomial
 
     TESTS::
 
@@ -839,7 +836,7 @@ def _Omega_factors_denominator_(x, y):
 
     INPUT:
 
-    - ``x`` and ``y`` -- a tuple of tuples of Laurent polynomials
+    - ``x``, ``y`` -- tuple of tuples of Laurent polynomials
 
       The
       flattened ``x`` contains `x_1,...,x_n`, the flattened ``y`` the
@@ -958,9 +955,7 @@ def homogeneous_symmetric_function(j, x):
 
     - ``x`` -- an iterable of variables
 
-    OUTPUT:
-
-    A polynomial of the common parent of all entries of ``x``
+    OUTPUT: a polynomial of the common parent of all entries of ``x``
 
     EXAMPLES::
 

@@ -1,4 +1,4 @@
-# sage.doctest: needs sage.groups sage.modules
+# sage.doctest: needs sage.graphs sage.groups sage.modules
 """
 Weyl Groups
 
@@ -78,8 +78,8 @@ def WeylGroup(x, prefix=None, implementation='matrix'):
 
     - ``implementation`` -- one of the following:
 
-      * ``'matrix'`` - as matrices acting on a root system
-      * ``"permutation"`` - as a permutation group acting on the roots
+      * ``'matrix'`` -- as matrices acting on a root system
+      * ``'permutation'`` -- as a permutation group acting on the roots
 
     EXAMPLES:
 
@@ -122,7 +122,7 @@ def WeylGroup(x, prefix=None, implementation='matrix'):
 
     ::
 
-        sage: W=WeylGroup("C3",prefix="s")
+        sage: W=WeylGroup("C3",prefix='s')
         sage: [s1,s2,s3]=W.simple_reflections() # lets Sage parse its own output
         sage: s2*s1*s2*s3
         s1*s2*s3*s1
@@ -346,7 +346,6 @@ class WeylGroup_gens(UniqueRepresentation,
             True
             sage: type(w) == W.element_class
             True
-
         """
         return self.domain().simple_reflections().map(self.from_morphism)
 
@@ -368,13 +367,13 @@ class WeylGroup_gens(UniqueRepresentation,
 
         EXAMPLES::
 
-            sage: W = WeylGroup("B2", prefix="s")
+            sage: W = WeylGroup("B2", prefix='s')
             sage: refdict = W.reflections(); refdict
             Finite family {(1, -1): s1, (0, 1): s2, (1, 1): s2*s1*s2, (1, 0): s1*s2*s1}
             sage: [r+refdict[r].action(r) for r in refdict.keys()]
             [(0, 0), (0, 0), (0, 0), (0, 0)]
 
-            sage: W = WeylGroup(['A',2,1], prefix="s")
+            sage: W = WeylGroup(['A',2,1], prefix='s')
             sage: W.reflections()
             Lazy family (real root to reflection(i))_{i in
                         Positive real roots of type ['A', 2, 1]}
@@ -476,7 +475,7 @@ class WeylGroup_gens(UniqueRepresentation,
 
     def simple_reflection(self, i):
         """
-        Return the `i^{th}` simple reflection.
+        Return the `i`-th simple reflection.
 
         EXAMPLES::
 
@@ -575,7 +574,7 @@ class WeylGroup_gens(UniqueRepresentation,
 
 class ClassicalWeylSubgroup(WeylGroup_gens):
     """
-    A class for Classical Weyl Subgroup of an affine Weyl Group
+    A class for Classical Weyl Subgroup of an affine Weyl Group.
 
     EXAMPLES::
 
@@ -656,7 +655,7 @@ class ClassicalWeylSubgroup(WeylGroup_gens):
                                            type=False)
         return "Parabolic Subgroup of the Weyl Group of type %s (as a matrix group acting on the %s)" % (self.domain().cartan_type(), domain)
 
-    def weyl_group(self, prefix="hereditary"):
+    def weyl_group(self, prefix='hereditary'):
         """
         Return the Weyl group associated to the parabolic subgroup.
 
@@ -675,7 +674,7 @@ class ClassicalWeylSubgroup(WeylGroup_gens):
 
     def _test_is_finite(self, **options):
         """
-        Tests some internal invariants
+        Test some internal invariants.
 
         EXAMPLES::
 
@@ -736,7 +735,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
         """
         EXAMPLES::
 
-            sage: W = WeylGroup(['A',2,1], prefix="s")
+            sage: W = WeylGroup(['A',2,1], prefix='s')
             sage: [s0,s1,s2] = W.simple_reflections()
             sage: s0*s1
             s0*s1
@@ -764,7 +763,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['A',2,1], prefix="s")
+            sage: W = WeylGroup(['A',2,1], prefix='s')
             sage: [s0,s1,s2] = W.simple_reflections()
             sage: latex(s0*s1)  # indirect doctest
             s_{0}s_{1}
@@ -824,7 +823,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
 
     def action(self, v):
         """
-        Return the action of self on the vector v.
+        Return the action of ``self`` on the vector `v`.
 
         EXAMPLES::
 
@@ -856,12 +855,12 @@ class WeylGroupElement(MatrixGroupElement_gap):
     # Descents
     # #######################################################################
 
-    def has_descent(self, i, positive=False, side="right") -> bool:
+    def has_descent(self, i, positive=False, side='right') -> bool:
         """
         Test if ``self`` has a descent at position ``i``.
 
         An element `w` has a descent in position `i` if `w` is
-        on the strict negative side of the `i^{th}` simple reflection
+        on the strict negative side of the `i`-th simple reflection
         hyperplane.
 
         If ``positive`` is ``True``, tests if it is on the strict
@@ -946,7 +945,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
             sage: [(s[3]*s[2]).has_left_descent(i) for i in W.domain().index_set()]
             [False, False, True]
         """
-        return self.has_descent(i, side="left")
+        return self.has_descent(i, side='left')
 
     def has_right_descent(self, i):
         """
@@ -967,9 +966,9 @@ class WeylGroupElement(MatrixGroupElement_gap):
             sage: [(s[3]*s[2]).has_right_descent(i) for i in W.domain().index_set()]
             [False, True, False]
         """
-        return self.has_descent(i, side="right")
+        return self.has_descent(i, side='right')
 
-    def apply_simple_reflection(self, i, side="right"):
+    def apply_simple_reflection(self, i, side='right'):
         s = self.parent().simple_reflections()
         if side == "right":
             return self * s[i]
@@ -1015,8 +1014,8 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W1 = WeylGroup(['B',2], implementation="permutation")
-            sage: W2 = WeylGroup(CartanType(['B',2]), implementation="permutation")
+            sage: W1 = WeylGroup(['B',2], implementation='permutation')
+            sage: W2 = WeylGroup(CartanType(['B',2]), implementation='permutation')
             sage: W1 is W2
             True
         """
@@ -1028,7 +1027,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['F',4], implementation="permutation")
+            sage: W = WeylGroup(['F',4], implementation='permutation')
             sage: TestSuite(W).run()
         """
         self._cartan_type = cartan_type
@@ -1046,20 +1045,20 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
         cat = (cat, PermutationGroups().Finite())
         PermutationGroup_generic.__init__(self, gens=p, canonicalize=False, category=cat)
 
-    def iteration(self, algorithm="breadth", tracking_words=True):
+    def iteration(self, algorithm='breadth', tracking_words=True):
         r"""
         Return an iterator going through all elements in ``self``.
 
         INPUT:
 
-        - ``algorithm`` (default: ``'breadth'``) -- must be one of
+        - ``algorithm`` -- (default: ``'breadth'``) must be one of
           the following:
 
-          * ``'breadth'`` - iterate over in a linear extension of the
+          * ``'breadth'`` -- iterate over in a linear extension of the
             weak order
-          * ``'depth'`` - iterate by a depth-first-search
+          * ``'depth'`` -- iterate by a depth-first-search
 
-        - ``tracking_words`` (default: ``True``) -- whether or not to keep
+        - ``tracking_words`` -- boolean (default: ``True``); whether or not to keep
           track of the reduced words and store them in ``_reduced_word``
 
         .. NOTE::
@@ -1069,7 +1068,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(["B",2], implementation="permutation")
+            sage: W = WeylGroup(["B",2], implementation='permutation')
 
             sage: for w in W.iteration("breadth",True):
             ....:     print("%s %s"%(w, w._reduced_word))
@@ -1091,8 +1090,18 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
             (1,7,5,3)(2,4,6,8)
             (2,8)(3,7)(4,6)
             (1,5)(2,6)(3,7)(4,8)
+
+        TESTS::
+
+            sage: W = WeylGroup(["A",0], implementation='permutation')
+            sage: list(W)
+            [()]
+            sage: W[0]
+            ()
         """
         from sage.combinat.root_system.reflection_group_c import Iterator
+        if self.rank() == 0:
+            return iter([self.one()])
         return iter(Iterator(self, N=self.number_of_reflections(),
                              algorithm=algorithm, tracking_words=tracking_words))
 
@@ -1104,7 +1113,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(["B",2], implementation="permutation")
+            sage: W = WeylGroup(["B",2], implementation='permutation')
             sage: for w in W: print("%s %s"%(w, w._reduced_word))
             () []
             (1,3)(2,6)(5,7) [1]
@@ -1115,7 +1124,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
             (1,7)(3,5)(4,8) [0, 1, 0]
             (1,5)(2,6)(3,7)(4,8) [0, 1, 0, 1]
         """
-        return self.iteration(algorithm="breadth", tracking_words=True)
+        return self.iteration(algorithm='breadth', tracking_words=True)
 
     def _coerce_map_from_(self, P):
         """
@@ -1124,7 +1133,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(["B",4], implementation="permutation")
+            sage: W = WeylGroup(["B",4], implementation='permutation')
             sage: W2 = WeylGroup(["B",4])
             sage: W._coerce_map_from_(W2)
             True
@@ -1134,7 +1143,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
             sage: W4 = CoxeterGroup(["B",4])
             sage: W.has_coerce_map_from(W4)
             False
-            sage: W5 = WeylGroup(["C",4], implementation="permutation")
+            sage: W5 = WeylGroup(["C",4], implementation='permutation')
             sage: W.has_coerce_map_from(W5)
             False
         """
@@ -1147,7 +1156,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['A',4], implementation="permutation")
+            sage: W = WeylGroup(['A',4], implementation='permutation')
             sage: W.rank()
             4
         """
@@ -1159,7 +1168,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['A',4], implementation="permutation")
+            sage: W = WeylGroup(['A',4], implementation='permutation')
             sage: W.simple_reflection(1)
             (1,11)(2,5)(6,8)(9,10)(12,15)(16,18)(19,20)
             sage: W.simple_reflections()
@@ -1177,7 +1186,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['A',4], implementation="permutation")
+            sage: W = WeylGroup(['A',4], implementation='permutation')
             sage: W.simple_roots()
             Finite family {1: (1, 0, 0, 0), 2: (0, 1, 0, 0),
                            3: (0, 0, 1, 0), 4: (0, 0, 0, 1)}
@@ -1197,7 +1206,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['A',4], implementation="permutation")
+            sage: W = WeylGroup(['A',4], implementation='permutation')
             sage: W.index_set()
             (1, 2, 3, 4)
         """
@@ -1210,7 +1219,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['A',3], implementation="permutation")
+            sage: W = WeylGroup(['A',3], implementation='permutation')
             sage: W.reflection_index_set()
             (1, 2, 3, 4, 5, 6)
         """
@@ -1222,7 +1231,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['A',4], implementation="permutation")
+            sage: W = WeylGroup(['A',4], implementation='permutation')
             sage: W.cartan_type()
             ['A', 4]
         """
@@ -1235,7 +1244,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['G',2], implementation="permutation")
+            sage: W = WeylGroup(['G',2], implementation='permutation')
             sage: W.roots()
             ((1, 0),
              (0, 1),
@@ -1263,7 +1272,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['C',3], implementation="permutation")
+            sage: W = WeylGroup(['C',3], implementation='permutation')
             sage: W.positive_roots()
             ((1, 0, 0),
              (0, 1, 0),
@@ -1284,7 +1293,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['D',4], implementation="permutation")
+            sage: W = WeylGroup(['D',4], implementation='permutation')
             sage: W.number_of_reflections()
             12
         """
@@ -1297,7 +1306,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['B',2], implementation="permutation")
+            sage: W = WeylGroup(['B',2], implementation='permutation')
             sage: W.distinguished_reflections()
             Finite family {1: (1,5)(2,4)(6,8), 2: (1,3)(2,6)(5,7),
                            3: (2,8)(3,7)(4,6), 4: (1,7)(3,5)(4,8)}
@@ -1322,7 +1331,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
 
         EXAMPLES::
 
-            sage: W = WeylGroup(['A',3], implementation="permutation")
+            sage: W = WeylGroup(['A',3], implementation='permutation')
             sage: [W.simple_root_index(i) for i in W.index_set()]
             [0, 1, 2]
         """
@@ -1333,11 +1342,11 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
             """
             EXAMPLES::
 
-                sage: W = WeylGroup(['A',3], prefix="s", implementation="permutation")
+                sage: W = WeylGroup(['A',3], prefix='s', implementation='permutation')
                 sage: [s1,s2,s3] = W.simple_reflections()
                 sage: s1*s2
                 s1*s2
-                sage: W = WeylGroup(['A',3], implementation="permutation")
+                sage: W = WeylGroup(['A',3], implementation='permutation')
                 sage: [s1,s2,s3] = W.simple_reflections()
                 sage: s1*s2
                 (1,10,2)(3,5,6)(4,8,7)(9,11,12)
@@ -1354,11 +1363,11 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
             """
             EXAMPLES::
 
-                sage: W = WeylGroup(['A',3], prefix="s", implementation="permutation")
+                sage: W = WeylGroup(['A',3], prefix='s', implementation='permutation')
                 sage: [s1,s2,s3] = W.simple_reflections()
                 sage: s1*s2
                 s1*s2
-                sage: W = WeylGroup(['A',3], implementation="permutation")
+                sage: W = WeylGroup(['A',3], implementation='permutation')
                 sage: [s1,s2,s3] = W.simple_reflections()
                 sage: s1*s2
                 (1,10,2)(3,5,6)(4,8,7)(9,11,12)

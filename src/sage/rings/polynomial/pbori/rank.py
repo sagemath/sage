@@ -18,7 +18,7 @@ def rank(data):
     def do_rank(v):
         if v in res:
             return res[v]
-        my_res = res[v] = max([do_rank(p) + 1 for p in parents[v]] + [0])
+        my_res = res[v] = max((do_rank(p) + 1 for p in parents[v]), default=0)
         return my_res
     for v in parents:
         do_rank(v)

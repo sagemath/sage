@@ -189,11 +189,11 @@ class NonDecreasingParkingFunction(Element):
 
     def __getitem__(self, n):
         """
-        Return the `n^{th}` item in the underlying list.
+        Return the `n`-th item in the underlying list.
 
-        .. note::
+        .. NOTE::
 
-           Note that this is different than the image of ``n`` under
+           Note that this is different than the image of `n` under
            function.  It is "off by one".
 
         EXAMPLES::
@@ -410,7 +410,7 @@ class NonDecreasingParkingFunctions_all(UniqueRepresentation, Parent):
 
     def __iter__(self):
         """
-        An iterator
+        An iterator.
 
         TESTS::
 
@@ -478,7 +478,7 @@ class NonDecreasingParkingFunctions_n(UniqueRepresentation, Parent):
         """
         n = Integer(n)
         if n < 0:
-            raise ValueError('%s is not a non-negative integer' % n)
+            raise ValueError('%s is not a nonnegative integer' % n)
         self.n = n
         Parent.__init__(self, category=Monoids().Enumerated().Finite())
 

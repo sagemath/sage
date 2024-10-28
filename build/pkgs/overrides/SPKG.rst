@@ -1,10 +1,10 @@
-overrides: A decorator to automatically detect mismatch when overriding a method.
-=================================================================================
+overrides: Decorator to automatically detect mismatch when overriding a method
+==============================================================================
 
 Description
 -----------
 
-A decorator to automatically detect mismatch when overriding a method.
+Decorator to automatically detect mismatch when overriding a method
 
 License
 -------

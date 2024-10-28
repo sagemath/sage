@@ -10,7 +10,7 @@ can be identified with the set of morphisms `Spec(K) \to X`. In Sage
 the rational points are implemented by such scheme morphisms. This is
 done by :class:`SchemeHomset_points` and its subclasses.
 
-.. note::
+.. NOTE::
 
     You should not create the Hom-sets manually. Instead, use the
     :meth:`~sage.structure.parent.Hom` method that is inherited by all
@@ -37,20 +37,21 @@ AUTHORS:
 #                   http://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfr import RR
-from sage.rings.cc import CC
-from sage.schemes.generic.homset import SchemeHomset_points, SchemeHomset_generic
+from copy import copy
 
-from sage.misc.verbose import verbose
-
-from sage.rings.rational_field import is_RationalField
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
+from sage.misc.lazy_import import lazy_import
+from sage.misc.verbose import verbose
 from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import RationalField
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
-from copy import copy
+from sage.schemes.generic.homset import SchemeHomset_points, SchemeHomset_generic
+
+lazy_import('sage.rings.cc', 'CC')
+lazy_import('sage.rings.real_mpfr', 'RR')
 
 
 # *******************************************************************
@@ -79,30 +80,26 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
         basis calculation. For schemes or subschemes with dimension greater than 1
         points are determined through enumeration up to the specified bound.
 
-        INPUT:
+        INPUT: keyword arguments:
 
-        kwds:
+        - ``bound`` -- real number (default: 0); the bound for the coordinates
+          for subschemes with dimension at least 1
 
-        - ``bound`` - real number (optional, default: 0). The bound for the coordinates for
-          subschemes with dimension at least 1.
+        - ``precision`` -- integer (default: 53); the precision to use to
+          compute the elements of bounded height for number fields
 
-        - ``precision`` - integer (optional, default: 53). The precision to use to
-          compute the elements of bounded height for number fields.
+        - ``point_tolerance`` -- positive real number (default: `10^{-10}`);
+          for numerically inexact fields, two points are considered the same
+          if their coordinates are within tolerance
 
-        - ``point_tolerance`` - positive real number (optional, default: `10^{-10}`).
-          For numerically inexact fields, two points are considered the same
-          if their coordinates are within tolerance.
+        - ``zero_tolerance`` -- positive real number (default: `10^{-10}`);
+          for numerically inexact fields, points are on the subscheme if they
+          satisfy the equations to within tolerance
 
-        - ``zero_tolerance`` - positive real number (optional, default: `10^{-10}`).
-          For numerically inexact fields, points are on the subscheme if they
-          satisfy the equations to within tolerance.
+        - ``tolerance`` -- a rational number in (0,1] used in Doyle-Krumm
+          algorithm-4 for enumeration over number fields
 
-        - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
-          for enumeration over number fields.
-
-        OUTPUT:
-
-        - a list of rational points of a projective scheme
+        OUTPUT: list of rational points of a projective scheme
 
         .. WARNING::
 
@@ -169,9 +166,9 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             the numerical fields are inexact;points may be computed partially or incorrectly.
             6
         """
-        from sage.schemes.projective.projective_space import is_ProjectiveSpace
+        from sage.schemes.projective.projective_space import ProjectiveSpace_ring
         X = self.codomain()
-        if not is_ProjectiveSpace(X) and X.base_ring() in Fields():
+        if not isinstance(X, ProjectiveSpace_ring) and X.base_ring() in Fields():
             if hasattr(X.base_ring(), 'precision'):
                 numerical = True
                 verbose("Warning: computations in the numerical fields are inexact;points may be computed partially or incorrectly.", level=0)
@@ -274,7 +271,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
         B = kwds.pop('bound', 0)
         tol = kwds.pop('tolerance', 1e-2)
         prec = kwds.pop('precision', 53)
-        if is_RationalField(R):
+        if isinstance(R, RationalField):
             if not B > 0:
                 raise TypeError("a positive bound B (= %s) must be specified" % B)
             if isinstance(X, AlgebraicScheme_subscheme): # sieve should only be called for subschemes
@@ -305,19 +302,19 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
 
         INPUT:
 
-        ``F`` - numerical ring
+        - ``F`` -- numerical ring
 
         kwds:
 
-        - ``point_tolerance`` - positive real number (optional, default: `10^{-10}`).
+        - ``point_tolerance`` -- positive real number (default: `10^{-10}`).
           For numerically inexact fields, two points are considered the same
           if their coordinates are within tolerance.
 
-        - ``zero_tolerance`` - positive real number (optional, default: `10^{-10}`).
+        - ``zero_tolerance`` -- positive real number (default: `10^{-10}`).
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
-        OUTPUT: A list of points in the ambient space.
+        OUTPUT: list of points in the ambient space
 
         .. WARNING::
 
@@ -377,7 +374,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             ...
             TypeError: F must be a numerical field
         """
-        from sage.schemes.projective.projective_space import is_ProjectiveSpace
+        from sage.schemes.projective.projective_space import ProjectiveSpace_ring
         if F is None:
             F = CC
         if F not in Fields() or not hasattr(F, 'precision'):
@@ -387,7 +384,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             raise TypeError('base ring must be a number field')
 
         PP = X.ambient_space().change_ring(F)
-        if not is_ProjectiveSpace(X) and X.base_ring() in Fields():
+        if not isinstance(X, ProjectiveSpace_ring) and X.base_ring() in Fields():
             #Then it must be a subscheme
             dim_ideal = X.defining_ideal().dimension()
             if dim_ideal < 1: # no points
@@ -486,8 +483,7 @@ class SchemeHomset_points_projective_ring(SchemeHomset_points):
 
         INPUT:
 
-        - ``B`` -- integer (optional, default=0). The bound for the
-          coordinates.
+        - ``B`` -- integer (default: 0); the bound for the coordinates
 
         EXAMPLES::
 
@@ -623,12 +619,9 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
         INPUT:
 
-        - ``v`` -- anything that determines a scheme morphism in the
-          Hom-set.
+        - ``v`` -- anything that determines a scheme morphism in the Hom-set
 
-        OUTPUT:
-
-        The scheme morphism determined by ``v``.
+        OUTPUT: the scheme morphism determined by ``v``
 
         EXAMPLES::
 
@@ -653,9 +646,7 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
         """
         Return a string representation of this homset.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -676,7 +667,7 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
         INPUT:
 
-        - ``R`` -- a ring.
+        - ``R`` -- a ring
 
         EXAMPLES::
 

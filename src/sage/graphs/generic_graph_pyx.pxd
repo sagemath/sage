@@ -8,7 +8,7 @@ ctypedef fused dimension_t:
     D_TWO
     D_THREE
 
-cdef run_spring(int, dimension_t, double*, int*, int, int, bint) noexcept
+cdef run_spring(int, dimension_t, double*, int*, int, int, bint)
 
 cdef class GenericGraph_pyx(SageObject):
     pass

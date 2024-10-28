@@ -61,15 +61,15 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
         INPUT:
 
         - ``self`` -- a homogeneous basis of symmetric functions
-        - ``scalar`` -- optional input which specifies a function ``zee``
+        - ``scalar`` -- (optional) input which specifies a function ``zee``
           on partitions. The function ``zee`` determines the scalar
           product on the power sum basis with normalization
           `\langle p_\mu, p_\mu \rangle = \mathrm{zee}(mu)`.
           (default: uses standard ``zee`` function)
         - ``scalar_name`` -- specifies the name of the scalar function
           (optional)
-        - ``prefix`` -- optional input, specifies the prefix to be
-          used to display the basis.
+        - ``prefix`` -- (optional) input which specifies the prefix to be
+          used to display the basis
 
         OUTPUT:
 
@@ -107,11 +107,9 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
         INPUT:
 
         - ``self`` -- a homogeneous basis of symmetric functions
-        - ``i`` -- a nonnegative integer
+        - ``i`` -- nonnegative integer
 
-        OUTPUT:
-
-        - the sum `\sum_{r=0}^i h_r \otimes h_{i-r}`
+        OUTPUT: the sum `\sum_{r=0}^i h_r \otimes h_{i-r}`
 
         EXAMPLES::
 
@@ -164,9 +162,7 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
             :meth:`omega_involution()` is a synonym for the :meth:`omega()`
             method.
 
-            OUTPUT:
-
-            - the image of ``self`` under the omega automorphism
+            OUTPUT: the image of ``self`` under the omega automorphism
 
             EXAMPLES::
 
@@ -191,7 +187,7 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
 
@@ -253,12 +249,12 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
 
             INPUT:
 
-            - ``n`` (default: ``infinity``) -- a nonnegative integer or
+            - ``n`` -- (default: ``infinity``) a nonnegative integer or
               ``infinity``, specifying whether to compute the principal
               specialization of order ``n`` or the stable principal
               specialization.
 
-            - ``q`` (default: ``None``) -- the value to use for `q`; the
+            - ``q`` -- (default: ``None``) the value to use for `q`; the
               default is to create a ring of polynomials in ``q``
               (or a field of rational functions in ``q``) over the
               given coefficient ring.
@@ -289,7 +285,6 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
                 sage: x = h.zero()
                 sage: s = x.principal_specialization(3); s
                 0
-
             """
             from sage.combinat.q_analogues import q_binomial
 
@@ -363,12 +358,12 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
 
             INPUT:
 
-            - ``t`` (default: ``None``) -- the value to use for `t`;
-              the default is to create a ring of polynomials in ``t``.
+            - ``t`` -- (default: ``None``) the value to use for `t`;
+              the default is to create a ring of polynomials in ``t``
 
-            - ``q`` (default: `1`) -- the value to use for `q`.  If
+            - ``q`` -- (default: `1`) the value to use for `q`;  if
               ``q`` is ``None``, then a ring (or fraction field) of
-              polynomials in ``q`` is created.
+              polynomials in ``q`` is created
 
             EXAMPLES::
 
@@ -393,7 +388,6 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
                 sage: x = h.zero()
                 sage: s = x.exponential_specialization(); s
                 0
-
             """
             from sage.combinat.q_analogues import q_factorial
 
@@ -441,4 +435,6 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.homogeneous', 'SymmetricFunctionAlgebraElement_homogeneous',  SymmetricFunctionAlgebra_homogeneous.Element)
+register_unpickle_override('sage.combinat.sf.homogeneous',
+                           'SymmetricFunctionAlgebraElement_homogeneous',
+                           SymmetricFunctionAlgebra_homogeneous.Element)

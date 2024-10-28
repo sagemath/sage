@@ -52,7 +52,7 @@ Functionality and Examples
 
 The interface to GAP3 offers the following functionality.
 
-#.  ``gap3(expr)`` - Evaluation of arbitrary GAP3 expressions, with the
+#.  ``gap3(expr)`` -- evaluation of arbitrary GAP3 expressions, with the
     result returned as a Sage object wrapping the corresponding GAP3 element::
 
         sage: # optional - gap3
@@ -296,9 +296,9 @@ class Gap3(Gap_generic):
 
         INPUT:
 
-        -  command - string (default "gap3"); points to the gap3
-           executable on your system; by default, it is assumed the
-           executable is in your path.
+        - command -- string (default: ``'gap3'``); points to the gap3
+          executable on your system. By default, it is assumed the
+          executable is in your path.
 
         EXAMPLES::
 
@@ -624,13 +624,11 @@ class Gap3(Gap_generic):
     @cached_method
     def _tab_completion(self):
         """
-        Return additional tab completion entries
+        Return additional tab completion entries.
 
-        Currently this is empty
+        Currently this is empty.
 
-        OUTPUT:
-
-        List of strings
+        OUTPUT: list of strings
 
         EXAMPLES::
 
@@ -645,7 +643,7 @@ gap3 = Gap3()
 
 class GAP3Element(GapElement_generic):
     r"""
-    A GAP3 element
+    A GAP3 element.
 
     .. NOTE::
 
@@ -658,11 +656,11 @@ class GAP3Element(GapElement_generic):
 
     - ``value`` -- the GAP3 command as a string
 
-    - ``is_name`` -- bool (default: False); if True, then ``value`` is
+    - ``is_name`` -- boolean (default: ``False``); if ``True``, then ``value`` is
       the variable name for the object
 
-    - ``name`` -- str (default: ``None``); the variable name to use for the
-      object. If ``None``, then a variable name is generated.
+    - ``name`` -- string (default: ``None``); the variable name to use for the
+      object. If ``None``, then a variable name is generated
 
     .. NOTE::
 
@@ -752,7 +750,8 @@ class GAP3Element(GapElement_generic):
         r"""
         EXAMPLES::
 
-            sage: s = gap("[[1,2], [3/4, 5/6]]")
+            sage: # optional - gap3
+            sage: s = gap3("[[1,2], [3/4, 5/6]]")
             sage: s._latex_()
             '\\left(\\begin{array}{rr} 1&2\\\\ 3/4&\\frac{5}{6}\\\\ \\end{array}\\right)'
             sage: latex(s)
@@ -770,7 +769,7 @@ class GAP3Element(GapElement_generic):
 
 class GAP3Record(GAP3Element):
     r"""
-    A GAP3 record
+    A GAP3 record.
 
     .. NOTE::
 
@@ -787,9 +786,7 @@ class GAP3Record(GAP3Element):
         Return a list of the fields for the record. (Record fields are akin
         to object attributes in Sage.)
 
-        OUTPUT:
-
-        - list of strings - the field records
+        OUTPUT: list of strings -- the field records
 
         EXAMPLES::
 
@@ -812,9 +809,7 @@ class GAP3Record(GAP3Element):
         r"""
         Return a list of the GAP3 operations for the record.
 
-        OUTPUT:
-
-        - list of strings - operations of the record
+        OUTPUT: list of strings -- operations of the record
 
         EXAMPLES::
 
@@ -863,7 +858,7 @@ class GAP3Record(GAP3Element):
 
     def _tab_completion(self):
         r"""
-        Defines the list of methods and attributes that will appear for tab
+        Define the list of methods and attributes that will appear for tab
         completion.
 
         OUTPUT:

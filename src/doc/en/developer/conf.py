@@ -13,12 +13,23 @@
 from sage_docbuild.conf import release
 from sage_docbuild.conf import *  # NOQA
 
+
+for tag in feature_tags():
+    tags.add(tag)
+
+
 # Add any paths that contain custom static files (such as style sheets),
 # relative to this directory to html_static_path. They are copied after the
 # builtin static files, so a file named "default.css" will overwrite the
 # builtin "default.css". html_common_static_path imported from sage_docbuild.conf
 # contains common paths.
 html_static_path = [] + html_common_static_path
+
+# Add small view/edit buttons.
+html_theme_options.update({
+  'source_view_link': os.path.join(source_repository, 'blob/develop/src/doc/en/developer', '{filename}'),
+  'source_edit_link': os.path.join(source_repository, 'edit/develop/src/doc/en/developer', '{filename}'),
+})
 
 # General information about the project.
 project = "Developer Guide"

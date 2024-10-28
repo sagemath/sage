@@ -91,7 +91,6 @@ def _make_wrapper(backend, attr):
     return m
 
 class LoggingBackend(GenericBackend):
-
     """
     See :class:`LoggingBackendFactory` for documentation.
 
@@ -225,7 +224,6 @@ r'''
             Traceback (most recent call last):
             ...
             NotImplementedError
-
         """
         p = cls()                         # fresh instance of the backend
         if tester is None:
@@ -336,7 +334,6 @@ def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_me
         |            Traceback (most recent call last):
         |            ...
         |            NotImplementedError
-        |
         |        ...
         |        p = cls()                         # fresh instance of the backend
         |        if tester is None:
@@ -351,7 +348,6 @@ def LoggingBackendFactory(solver=None, printing=True, doctest_file=None, test_me
 
     If ``test_method_file`` is not provided, a default output file name
     will be computed from ``test_method``.
-
     """
 
     if test_method is not None:

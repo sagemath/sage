@@ -24,7 +24,7 @@ from sage.misc.prandom import randint
 
 def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
     r"""
-    Returns a random graph on `n` nodes. Each edge is inserted independently
+    Return a random graph on `n` nodes. Each edge is inserted independently
     with probability `p`.
 
     INPUT:
@@ -36,13 +36,13 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
 
-    - ``fast`` -- boolean set to True (default) to use the algorithm with
+    - ``fast`` -- boolean (default: ``True``) to use the algorithm with
       time complexity in `O(n+m)` proposed in [BB2005a]_. It is designed
       for generating large sparse graphs. It is faster than other algorithms for
       *LARGE* instances (try it to know whether it is useful for you).
 
-    - ``algorithm`` -- By default (``algorithm='Sage'``), this function uses the
-      algorithm implemented in ```sage.graphs.graph_generators_pyx.pyx``. When
+    - ``algorithm`` -- (default: ``'Sage'``) this function uses the
+      algorithm implemented in ``sage.graphs.graph_generators_pyx.pyx``. When
       ``algorithm='networkx'``, this function calls the NetworkX function
       ``fast_gnp_random_graph``, unless ``fast=False``, then
       ``gnp_random_graph``. Try them to know which algorithm is the best for
@@ -94,9 +94,9 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
         ...
         ValueError: 'algorithm' must be equal to 'networkx' or to 'Sage'.
         sage: set_random_seed(0)
-        sage: graphs.RandomGNP(50,.2, algorithm="Sage").size()
+        sage: graphs.RandomGNP(50,.2, algorithm='Sage').size()
         243
-        sage: graphs.RandomGNP(50,.2, algorithm="networkx").size()                      # needs networkx
+        sage: graphs.RandomGNP(50,.2, algorithm='networkx').size()                      # needs networkx
         279     # 32-bit
         209     # 64-bit
     """
@@ -188,18 +188,18 @@ def RandomBarabasiAlbert(n, m, seed=None):
 
 def RandomBipartite(n1, n2, p, set_position=False, seed=None):
     r"""
-    Returns a bipartite graph with `n1+n2` vertices such that any edge
+    Return a bipartite graph with `n1+n2` vertices such that any edge
     from `[n1]` to `[n2]` exists with probability `p`.
 
     INPUT:
 
-    - ``n1, n2`` -- Cardinalities of the two sets
+    - ``n1``, ``n2`` -- cardinalities of the two sets
 
-    - ``p`` -- Probability for an edge to exist
+    - ``p`` -- probability for an edge to exist
 
-    - ``set_position`` -- boolean (default ``False``); if set to ``True``, we
+    - ``set_position`` -- boolean (default: ``False``); if set to ``True``, we
       assign positions to the vertices so that the set of cardinality `n1` is
-      on the line `y=1` and the set of cardinality `n2` is on the line `y=0`.
+      on the line `y=1` and the set of cardinality `n2` is on the line `y=0`
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
@@ -236,7 +236,6 @@ def RandomBipartite(n1, n2, p, set_position=False, seed=None):
         sage: graphs.RandomBipartite(2, 2, .1, set_position=True).get_pos()
         {(0, 0): (0, 1), (0, 1): (2.0, 1.0), (1, 0): (0, 0), (1, 1): (2.0, 0.0)}
         sage: graphs.RandomBipartite(2, 2, .1, set_position=False).get_pos()
-
     """
     if not (p >= 0 and p <= 1):
         raise ValueError("parameter p is a probability, and so should be a real value between 0 and 1")
@@ -288,11 +287,11 @@ def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None):
 
     INPUT:
 
-    - ``n1, n2`` -- number of vertices in each side
+    - ``n1``, ``n2`` -- number of vertices in each side
 
-    - ``d1`` -- degree of the vertices in the set of cardinality `n1`.
+    - ``d1`` -- degree of the vertices in the set of cardinality `n1`
 
-    - ``set_position`` -- boolean (default ``False``); if set to ``True``, we
+    - ``set_position`` -- boolean (default: ``False``); if set to ``True``, we
       assign positions to the vertices so that the set of cardinality `n1` is
       on the line `y=1` and the set of cardinality `n2` is on the line `y=0`.
 
@@ -450,16 +449,16 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None):
 
     INPUT:
 
-    - ``m`` -- integer; number of blocks (at least one).
+    - ``m`` -- integer; number of blocks (at least one)
 
-    - ``k`` -- integer; minimum number of vertices of a block (at least two).
+    - ``k`` -- integer; minimum number of vertices of a block (at least two)
 
-    - ``kmax`` -- integer (default: ``None``) By default, each block has `k`
+    - ``kmax`` -- integer (default: ``None``); by default, each block has `k`
       vertices. When the parameter `kmax` is specified (with `kmax \geq k`), the
       number of vertices of each block is randomly chosen between `k` and
       `kmax`.
 
-    - ``incidence_structure`` -- boolean (default: ``False``) when set to
+    - ``incidence_structure`` -- boolean (default: ``False``); when set to
       ``True``, the incidence structure of the graphs is returned instead of the
       graph itself, that is the list of the lists of vertices in each
       block. This is useful for the creation of some hypergraphs.
@@ -613,7 +612,7 @@ def RandomBoundedToleranceGraph(n, seed=None):
 
     INPUT:
 
-    - ``n`` -- number of vertices of the random graph.
+    - ``n`` -- number of vertices of the random graph
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
@@ -660,15 +659,15 @@ def RandomBoundedToleranceGraph(n, seed=None):
 
 
 def RandomGNM(n, m, dense=False, seed=None):
-    """
-    Returns a graph randomly picked out of all graphs on n vertices
-    with m edges.
+    r"""
+    Return a graph randomly picked out of all graphs on `n` vertices with `m`
+    edges.
 
     INPUT:
 
-    - ``n`` -- number of vertices.
+    - ``n`` -- number of vertices
 
-    - ``m`` -- number of edges.
+    - ``m`` -- number of edges
 
     - ``dense`` -- whether to use NetworkX's
       :func:`dense_gnm_random_graph` or :func:`gnm_random_graph`
@@ -683,7 +682,7 @@ def RandomGNM(n, m, dense=False, seed=None):
         sage: graphs.RandomGNM(5, 10).edges(sort=True, labels=False)                    # needs networkx
         [(0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)]
 
-    We plot a random graph on 12 nodes with m = 12::
+    We plot a random graph on 12 nodes and 12 edges::
 
         sage: gnm = graphs.RandomGNM(12, 12)                                            # needs networkx
         sage: gnm.show()                        # long time                             # needs networkx sage.plot
@@ -825,7 +824,7 @@ def RandomHolmeKim(n, m, p, seed=None):
 
 def RandomIntervalGraph(n, seed=None):
     r"""
-    Returns a random interval graph.
+    Return a random interval graph.
 
     An interval graph is built from a list `(a_i,b_i)_{1\leq i \leq n}`
     of intervals : to each interval of the list is associated one
@@ -845,6 +844,11 @@ def RandomIntervalGraph(n, seed=None):
         used to create the graph are saved with the graph and can
         be recovered using ``get_vertex()`` or ``get_vertices()``.
 
+    .. SEEALSO::
+
+        - :meth:`sage.graphs.generators.intersection.IntervalGraph`
+        - :meth:`sage.graphs.generators.random.RandomProperIntervalGraph`
+
     INPUT:
 
     - ``n`` -- integer; the number of vertices in the random graph
@@ -863,18 +867,207 @@ def RandomIntervalGraph(n, seed=None):
     """
     if seed is not None:
         set_random_seed(seed)
-    from sage.misc.prandom import random
     from sage.graphs.generators.intersection import IntervalGraph
 
     intervals = [tuple(sorted((random(), random()))) for i in range(n)]
     return IntervalGraph(intervals, True)
 
 
+def RandomProperIntervalGraph(n, seed=None):
+    r"""
+    Return a random proper interval graph.
+
+    An interval graph is built from a list `(a_i,b_i)_{1\leq i \leq n}` of
+    intervals : to each interval of the list is associated one vertex, two
+    vertices being adjacent if the two corresponding (closed) intervals
+    intersect. An interval graph is proper if no interval of the list properly
+    contains another interval.
+    Observe that proper interval graphs coincide with unit interval graphs.
+    See the :wikipedia:`Interval_graph` for more details.
+
+    This method implements the random proper interval graph generator proposed
+    in [SYKU2010]_ which outputs graphs with uniform probability. The time
+    complexity of this generator is in `O(n^3)`.
+
+    .. NOTE::
+
+        The vertices are named 0, 1, 2, and so on. The intervals
+        used to create the graph are saved with the graph and can
+        be recovered using ``get_vertex()`` or ``get_vertices()``.
+
+    .. SEEALSO::
+
+        - :meth:`sage.graphs.generators.intersection.IntervalGraph`
+        - :meth:`sage.graphs.generators.random.RandomIntervalGraph`
+
+    INPUT:
+
+    - ``n`` -- positive integer; the number of vertices of the graph
+
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
+
+    EXAMPLES::
+
+        sage: from sage.graphs.generators.random import RandomProperIntervalGraph
+        sage: G = RandomProperIntervalGraph(10)
+        sage: G.is_interval()
+        True
+
+    TESTS::
+
+        sage: from sage.graphs.generators.random import RandomProperIntervalGraph
+        sage: RandomProperIntervalGraph(0)
+        Graph on 0 vertices
+        sage: RandomProperIntervalGraph(1)
+        Graph on 1 vertex
+        sage: RandomProperIntervalGraph(-1)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter n must be >= 0
+    """
+    if seed is not None:
+        set_random_seed(seed)
+    if n < 0:
+        raise ValueError('parameter n must be >= 0')
+    if not n:
+        return Graph()
+
+    from sage.graphs.generators.intersection import IntervalGraph
+
+    if n == 1:
+        return IntervalGraph([[0, 1]])
+
+    from sage.combinat.combinat import catalan_number
+    from sage.functions.other import binomial
+
+    # let np = n' = n - 1
+    np = n - 1
+
+    # Choose case 1 with probability C(n') / (C(n') + binomial(n', n' // 2))
+    cnp = catalan_number(np)
+    if random() < cnp / (cnp + binomial(np, np // 2)):
+        # Case 1: Generate a balanced nonnegative string (that can be
+        # reversible) of length 2n' as follows. We generate the sequence of '['
+        # and ']' from left to right. Assume we have already chosen k symbols
+        # x_1x_2...x_k, with k < 2n'. The next symbol x_{k+1} is '[' with
+        # probability (h_x(k) + 2) (r - h_x(k) + 1) / (2 (r + 1) (h_x(k) + 1))
+        # where r = 2n' - k - 1 and
+        # h_x(k) = 0 if k == 0, h_x(k - 1) + 1 if x_i == 0 else h_x(k - 1) - 1.
+        #
+        # Since the i-th interval starts at the i-th symbol [ and ends at the
+        # i-th symbol ], we directly build the intervals
+        intervals = [[0, 2*n] for _ in range(n)]
+        L = 1  # next starting interval
+        R = 0  # next ending interval
+        hx = [0]
+        r = 2 * np - 1
+        for k in range(2 * np):
+            # Choose symbol x_{k+1}
+            if random() < ((hx[k] + 2) * (r - hx[k] + 1)) / (2 * (r + 1) * (hx[k] + 1)):
+                # We have choosen symbol [, so we start an interval
+                hx.append(hx[k] + 1)
+                intervals[L][0] = k + 1
+                L += 1
+            else:
+                # We have choosen symbol ], so we end an interval
+                hx.append(hx[k] - 1)
+                intervals[R][1] = k + 1
+                R += 1
+            r -= 1
+        # Add the last symbol, ], to get a sequence of length 2*n
+        intervals[R][1] = k + 2
+
+        # Finally return the interval graph
+        return IntervalGraph(intervals)
+
+    # Otherwise, generate a balanced nonnegative reversible string of length
+    # 2n'. This case happens with small probability and is way more complex.
+    # The string is of the form x_1x_2...x_ny_n..y_2y_1, where y_i is ] if x_i
+    # is [, and [ otherwise.
+
+    from sage.misc.cachefunc import cached_function
+
+    @cached_function
+    def compute_C(n, h):
+        """
+        Return C(n, h) as defined below.
+
+        Recall that the Catalan number is C(n) = binomial(2n, n) / (n + 1)
+        and let C(n, h) = 0 if h > n. The following equations hold for each
+        integers i and k with 0 <= i <= k.
+
+        1. C(2k, 2i + 1) = 0, C(2k + 1, 2i) = 0,
+        2. C(2k, 0) = C(k), C(k, k) = 1, and
+        3. C(k, i) = C(k - 1, i - 1) + C(k - 1, i + 1).
+        """
+        if h > n:
+            return 0
+        if n % 2 != h % 2:
+            # C(2k, 2i + 1) = 0 and C(2k + 1, 2i) = 0
+            # i.e., if n and h have different parity
+            return 0
+        if n == h:
+            return 1
+        if not h and not n % 2:
+            # C(2k, 0) = C(k)
+            return catalan_number(n // 2)
+        # Otherwise, C(k, i) = C(k - 1, i - 1) + C(k - 1, i + 1)
+        return compute_C(n - 1, h - 1) + compute_C(n - 1, h + 1)
+
+    # We first fill an array hx of length n, backward, and then use it to choose
+    # the symbols x_1x_2...x_n (and so symbols y_n...y_2y_1).
+    hx = [0] * n
+    hx[1] = 1
+    # Set hx[np] = h with probability C(np, h) / binomial(np, np // 2)
+    number = randint(0, binomial(np, np // 2))
+    total = 0
+    for h in range(np + 1):
+        total += compute_C(np, h)
+        if number < total:
+            break
+    hx[np] = h
+
+    x = [']']
+    y = ['[']
+    for i in range(np - 1, 0, -1):
+        # Choose symbol x_i
+        if random() < (hx[i + 1] + 2) * (i - hx[i + 1] + 1) / (2 * (i + 1) * (hx[i + 1] + 1)):
+            hx[i] = hx[i + 1] + 1
+            x.append(']')
+            y.append('[')
+        else:
+            hx[i] = hx[i + 1] - 1
+            x.append('[')
+            y.append(']')
+    x.append('[')
+    x.reverse()
+    y.append(']')
+    x.extend(y)
+
+    # We now turn the sequence of symbols to proper intervals.
+    # The i-th intervals starts from the index of the i-th symbol [ in
+    # symbols and ends at the position of the i-th symbol ].
+    intervals = [[0, 2 * n] for _ in range(n)]
+    L = 0  # next starting interval
+    R = 0  # next ending interval
+    for pos, symbol in enumerate(x):
+        if symbol == '[':
+            intervals[L][0] = pos
+            L += 1
+        else:
+            intervals[R][1] = pos
+            R += 1
+
+    # We finally return the resulting interval graph
+    return IntervalGraph(intervals)
+
+
 # Random Chordal Graphs
 
 def growing_subtrees(T, k):
     r"""
-    Return a list of the vertex sets of ``n`` randomly chosen subtrees of ``T``.
+    Return a list of the vertex sets of `n` randomly chosen subtrees of `T`.
 
     For a tree of order `n`, the collection contains `n` subtrees with maximum
     order `k` and average order `\frac{k + 1}{2}`.
@@ -929,7 +1122,7 @@ def growing_subtrees(T, k):
 
 def connecting_nodes(T, l):
     r"""
-    Return a list of the vertex sets of ``n`` randomly chosen subtrees of ``T``.
+    Return a list of the vertex sets of `n` randomly chosen subtrees of `T`.
 
     This method is part of
     :meth:`~sage.graphs.generators.random.RandomChordalGraph`.
@@ -1028,7 +1221,7 @@ def connecting_nodes(T, l):
 
 def pruned_tree(T, f, s):
     r"""
-    Return a list of the vertex sets of ``n`` randomly chosen subtrees of ``T``.
+    Return a list of the vertex sets of `n` randomly chosen subtrees of `T`.
 
     This method is part of
     :meth:`~sage.graphs.generators.random.RandomChordalGraph`.
@@ -1050,7 +1243,7 @@ def pruned_tree(T, f, s):
     - ``T`` -- a tree
 
     - ``f`` -- a rational number; the edge deletion fraction. This value must be
-      chosen in `[0..1]`.
+      chosen in `[0..1]`
 
     - ``s`` -- a real number between 0 and 1; selection barrier for the size of
       trees
@@ -1107,7 +1300,7 @@ def pruned_tree(T, f, s):
     return S
 
 
-def RandomChordalGraph(n, algorithm="growing", k=None, l=None, f=None, s=None, seed=None):
+def RandomChordalGraph(n, algorithm='growing', k=None, l=None, f=None, s=None, seed=None):
     r"""
     Return a random chordal graph of order ``n``.
 
@@ -1127,23 +1320,23 @@ def RandomChordalGraph(n, algorithm="growing", k=None, l=None, f=None, s=None, s
 
     - ``n`` -- integer; the number of nodes of the graph
 
-    - ``algorithm`` -- string (default: ``"growing"``); the choice of the
+    - ``algorithm`` -- string (default: ``'growing'``); the choice of the
       algorithm for randomly selecting `n` subtrees of a random tree of order
       `n`. Possible choices are:
 
-      - ``"growing"`` -- for each subtree `T_i`, the algorithm picks a size
+      - ``'growing'`` -- for each subtree `T_i`, the algorithm picks a size
         `k_i` randomly from `[1,k]`. Then a random node of `T` is chosen as the
         first node of `T_i`. In each of the subsequent `k_i - 1` iterations, it
         picks a random node in the neighborhood of `T_i` and adds it to `T_i`.
 
-      - ``"connecting"`` -- for each subtree `T_i`, it first selects `k_i` nodes
+      - ``'connecting'`` -- for each subtree `T_i`, it first selects `k_i` nodes
         of `T`, where `k_i` is a random integer from a Poisson distribution with
         mean `l`. `T_i` is then generated to be the minimal subtree containing
         the selected `k_i` nodes. This implies that a subtree will most likely
         have many more nodes than those selected initially, and this must be
         taken into consideration when choosing `l`.
 
-      - ``"pruned"`` -- for each subtree `T_i`, it randomly selects a fraction
+      - ``'pruned'`` -- for each subtree `T_i`, it randomly selects a fraction
         `f` of the edges on the tree and removes them. The number of edges to
         delete, say `l`, is calculated as `\lfloor (n - 1) f \rfloor`, which will
         leave `l + 1` subtrees in total. Then, it determines the sizes of the `l
@@ -1178,13 +1371,13 @@ def RandomChordalGraph(n, algorithm="growing", k=None, l=None, f=None, s=None, s
     EXAMPLES::
 
         sage: from sage.graphs.generators.random import RandomChordalGraph
-        sage: T = RandomChordalGraph(20, algorithm="growing", k=5)
+        sage: T = RandomChordalGraph(20, algorithm='growing', k=5)
         sage: T.is_chordal()
         True
-        sage: T = RandomChordalGraph(20, algorithm="connecting", l=3)                   # needs numpy
+        sage: T = RandomChordalGraph(20, algorithm='connecting', l=3)                   # needs numpy
         sage: T.is_chordal()                                                            # needs numpy
         True
-        sage: T = RandomChordalGraph(20, algorithm="pruned", f=1/3, s=.5)
+        sage: T = RandomChordalGraph(20, algorithm='pruned', f=1/3, s=.5)
         sage: T.is_chordal()
         True
 
@@ -1197,28 +1390,28 @@ def RandomChordalGraph(n, algorithm="growing", k=None, l=None, f=None, s=None, s
         Traceback (most recent call last):
         ...
         NotImplementedError: unknown algorithm 'Carmen Cru'
-        sage: RandomChordalGraph(3, algorithm="growing", k=0)
+        sage: RandomChordalGraph(3, algorithm='growing', k=0)
         Traceback (most recent call last):
         ...
         ValueError: parameter k must be >= 1
-        sage: RandomChordalGraph(3, algorithm="connecting", l=0)
+        sage: RandomChordalGraph(3, algorithm='connecting', l=0)
         Traceback (most recent call last):
         ...
         ValueError: parameter l must be > 0
-        sage: RandomChordalGraph(3, algorithm="pruned", f=2)
+        sage: RandomChordalGraph(3, algorithm='pruned', f=2)
         Traceback (most recent call last):
         ...
         ValueError: parameter f must be 0 <= f <= 1
-        sage: RandomChordalGraph(3, algorithm="pruned", s=1)
+        sage: RandomChordalGraph(3, algorithm='pruned', s=1)
         Traceback (most recent call last):
         ...
         ValueError: parameter s must be 0 < s < 1
 
     .. SEEALSO::
 
-        - :meth:`~sage.graphs.graph_generators.growing_subtrees`
-        - :meth:`~sage.graphs.graph_generators.connecting_nodes`
-        - :meth:`~sage.graphs.graph_generators.pruned_tree`
+        - :meth:`~sage.graphs.generators.random.growing_subtrees`
+        - :meth:`~sage.graphs.generators.random.connecting_nodes`
+        - :meth:`~sage.graphs.generators.random.pruned_tree`
         - :wikipedia:`Chordal_graph`
         - :meth:`~sage.graphs.generic_graph.GenericGraph.is_chordal`
         - :meth:`~sage.graphs.graph_generators.GraphGenerators.IntersectionGraph`
@@ -1280,26 +1473,23 @@ def RandomChordalGraph(n, algorithm="growing", k=None, l=None, f=None, s=None, s
 
 
 def RandomLobster(n, p, q, seed=None):
-    """
-    Returns a random lobster.
+    r"""
+    Return a random lobster.
 
     A lobster is a tree that reduces to a caterpillar when pruning all
     leaf vertices. A caterpillar is a tree that reduces to a path when
-    pruning all leaf vertices (q=0).
+    pruning all leaf vertices (`q=0`).
 
     INPUT:
 
-    - ``n`` - expected number of vertices in the backbone
+    - ``n`` -- expected number of vertices in the backbone
 
-    - ``p`` - probability of adding an edge to the
-      backbone
+    - ``p`` -- probability of adding an edge to the backbone
 
-    - ``q`` - probability of adding an edge (claw) to the
-      arms
+    - ``q`` -- probability of adding an edge (claw) to the arms
 
-    - ``seed`` - a ``random.Random`` seed or a Python ``int`` for the random
-      number generator (default: ``None``).
-
+    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
+      number generator (default: ``None``)
 
     EXAMPLES:
 
@@ -1333,22 +1523,22 @@ def RandomLobster(n, p, q, seed=None):
 
 def RandomTree(n, seed=None):
     r"""
-    Returns a random tree on `n` nodes numbered `0` through `n-1`.
+    Return a random tree on `n` nodes numbered `0` through `n-1`.
 
     By Cayley's theorem, there are `n^{n-2}` trees with vertex
-    set `\{0,1,...,n-1\}`. This constructor chooses one of these uniformly
+    set `\{0,1,\dots,n-1\}`. This constructor chooses one of these uniformly
     at random.
 
     ALGORITHM:
 
     The algorithm works by generating an `(n-2)`-long
     random sequence of numbers chosen independently and uniformly
-    from `\{0,1,\ldots,n-1\}` and then applies an inverse
+    from `\{0,1,\dots,n-1\}` and then applies an inverse
     Prufer transformation.
 
     INPUT:
 
-    -  ``n`` -- number of vertices in the tree
+    - ``n`` -- number of vertices in the tree
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
@@ -1432,7 +1622,6 @@ def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
-
 
     EXAMPLES:
 
@@ -1703,7 +1892,7 @@ def RandomShell(constructor, seed=None):
 
     INPUT:
 
-    - ``constructor`` -- a list of 3-tuples `(n, m, d)`, each representing a
+    - ``constructor`` -- list of 3-tuples `(n, m, d)`, each representing a
       shell, where:
 
       - ``n`` -- the number of vertices in the shell
@@ -1733,16 +1922,19 @@ def RandomToleranceGraph(n, seed=None):
     Return a random tolerance graph.
 
     The random tolerance graph is built from a random tolerance representation
-    by using the function `ToleranceGraph`. This representation is a list
-    `((l_0,r_0,t_0), (l_1,r_1,t_1), ..., (l_k,r_k,t_k))` where `k = n-1` and
-    `I_i = (l_i,r_i)` denotes a random interval and `t_i` a random positive
-    value. The width of the representation is limited to `n^2 * 2^n`.
+    by using the function
+    :meth:`~sage.graphs.generators.intersection.ToleranceGraph`. This
+    representation is a list `((l_0,r_0,t_0), (l_1,r_1,t_1), ...,
+    (l_k,r_k,t_k))` where `k = n-1` and `I_i = (l_i,r_i)` denotes a random
+    interval and `t_i` a random positive value. The width of the representation
+    is limited to `n^2 * 2^n`.
 
     .. NOTE::
 
-        The vertices are named 0, 1, ..., n-1. The tolerance representation used
-        to create the graph is saved with the graph and can be recovered using
-        ``get_vertex()`` or ``get_vertices()``.
+        The vertices are named `0, 1, \cdots, n-1`. The tolerance representation
+        used to create the graph is saved with the graph and can be recovered
+        using :meth:`~sage.graphs.generic_graph.GenericGraph.get_vertex` or
+        :meth:`~sage.graphs.generic_graph.GenericGraph.get_vertices`.
 
     INPUT:
 
@@ -1798,9 +1990,9 @@ def _auxiliary_random_forest_word(n, k):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
-    - ``k`` -- an integer
+    - ``k`` -- integer
 
     OUTPUT:
 
@@ -1896,10 +2088,10 @@ def _contour_and_graph_from_words(pendant_word, forest_word):
 
     - ``seq`` is a sequence of pairs (label, integer) representing the
       contour walk along the `k`-gonal forest associated with the words
-      ``pendant_word`` and ``forest_word``.
+      ``pendant_word`` and ``forest_word``
 
-    - ``G`` is the `k`-gonal forest associated with the words ``pendant_word``
-      and ``forest_word``.
+    - ``G`` -- the `k`-gonal forest associated with the words ``pendant_word``
+      and ``forest_word``
 
     The underlying bijection from words to `k`-gonal forests is described in
     Section 5.1 of [PS2006]_. The ``pendant_word`` corresponds to the factor
@@ -2035,8 +2227,8 @@ def RandomTriangulation(n, set_position=False, k=3, seed=None):
 
     - ``k`` -- the size of the outer face
 
-    - ``set_position`` -- boolean (default ``False``); if set to ``True``, this
-      will compute coordinates for a planar drawing of the graph.
+    - ``set_position`` -- boolean (default: ``False``); if set to ``True``, this
+      will compute coordinates for a planar drawing of the graph
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
@@ -2160,7 +2352,7 @@ def RandomTriangulation(n, set_position=False, k=3, seed=None):
     assert graph.num_edges() == 3*n - 3 - k
     assert graph.num_verts() == n
     if set_position:
-        graph.layout(layout="planar", save_pos=True)
+        graph.layout(layout='planar', save_pos=True)
     return graph
 
 
@@ -2184,13 +2376,11 @@ def blossoming_contour(t, shift=0, seed=None):
 
     INPUT:
 
-    - `t` -- a binary tree (non-empty)
+    - ``t`` -- a binary tree (non-empty)
 
-    - ``shift`` -- an integer (default `0`), used as a starting index
+    - ``shift`` -- integer (default: `0`); used as a starting index
 
-    OUTPUT:
-
-    contour word of a random blossoming of `t`
+    OUTPUT: contour word of a random blossoming of `t`
 
     EXAMPLES::
 
@@ -2263,7 +2453,7 @@ def RandomBicubicPlanar(n, seed=None):
 
     INPUT:
 
-    `n` -- an integer (at least `1`)
+    - ``n`` -- integer (at least `1`)
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
@@ -2352,17 +2542,17 @@ def RandomBicubicPlanar(n, seed=None):
     Z3 = Zmod(3)
     colour = Z3.zero()
     not_touched = [i for i, v in enumerate(w) if v[0] in ['x', 'xb']]
-    for i, v in enumerate(w):
+    for i, wi in enumerate(w):
         # internal edges
-        if v[0] == 'i':
+        if wi[0] == 'i':
             colour += 1
             if w[i + 1][0] == 'n':
-                G.add_edge((w[i], w[i + 1], colour))
-        elif v[0] == 'n':
+                G.add_edge((wi, w[i + 1], colour))
+        elif wi[0] == 'n':
             colour += 2
-        elif v[0] == 'x':
+        elif wi[0] == 'x':
             pile.append(i)
-        elif v[0] == 'xb' and i in not_touched:
+        elif wi[0] == 'xb' and i in not_touched:
             if pile:
                 j = pile.pop()
                 G.add_edge((w[i + 1], w[j - 1], colour))
@@ -2392,7 +2582,7 @@ def RandomUnitDiskGraph(n, radius=.1, side=1, seed=None):
 
     - ``n`` -- number of nodes
 
-    - ``radius`` -- float (default: ``0.1``); two vertices at distance less than
+    - ``radius`` -- float (default: `0.1`); two vertices at distance less than
       ``radius`` are connected by an edge
 
     - ``side`` -- float (default: ``1``); indicate the side of the area in which

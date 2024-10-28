@@ -15,19 +15,20 @@ from grayskull.strategy.pypi import extract_requirements, normalize_requirements
 
 # Get source directory from command line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("sourcedir", help="Source directory")
+parser.add_argument(
+    "sourcedir", help="Source directory", nargs="?", default=".", type=Path
+)
 options = parser.parse_args()
 
 platforms = {
     "linux-64": "linux",
     "linux-aarch64": "linux-aarch64",
-    "osx-64": "macos",
-    "osx-arm64": "macos-arm64",
-    #"win-64": "win",
+    "osx-64": "macos-x86_64",
+    "osx-arm64": "macos",
+    # "win-64": "win",
 }
 pythons = ["3.9", "3.10", "3.11"]
 tags = ["", "-dev"]
-sources = ["src"]
 
 
 def write_env_file(env_file: Path, dependencies: list[str]) -> None:
@@ -65,32 +66,40 @@ def update_conda(source_dir: Path) -> None:
                     pinned_dependencies = pinned_dependencies.union(dev_dependencies)
                 pinned_dependencies = sorted(pinned_dependencies)
 
-                for src in sources:
-                    env_file = source_dir / src / f"environment{tag}-{python}.yml"
-                    write_env_file(env_file, pinned_dependencies)
-                    lock_file = (
-                        source_dir / src / f"environment{tag}-{python}-{platform_value}"
-                    )
-                    print(
-                        f"Updating lock file for {env_file} at {lock_file}", flush=True
-                    )
-                    subprocess.run(
-                        [
-                            "conda-lock",
-                            "--channel",
-                            "conda-forge",
-                            "--kind",
-                            "env",
-                            "--platform",
-                            platform_key,
-                            "--file",
-                            str(env_file),
-                            "--lockfile",
-                            str(lock_file),
-                            "--filename-template",
-                            str(lock_file),
-                        ]
-                    )
+                env_file = source_dir / f"environment{tag}-{python}.yml"
+                write_env_file(env_file, pinned_dependencies)
+                lock_file = (
+                    source_dir / f"environment{tag}-{python}-{platform_value}"
+                )
+                lock_file_gen = source_dir / f"environment{tag}-{python}-{platform_value}.yml"
+                print(
+                    f"Updating lock file for {env_file} at {lock_file_gen}", flush=True
+                )
+                subprocess.run(
+                    [
+                        "conda-lock",
+                        "--mamba",
+                        "--channel",
+                        "conda-forge",
+                        "--kind",
+                        "env",
+                        "--platform",
+                        platform_key,
+                        "--file",
+                        str(env_file),
+                        "--lockfile",
+                        str(lock_file),
+                        "--filename-template",
+                        str(lock_file),
+                    ],
+                    check=True,
+                )
+                
+                # Add conda env name to lock file at beginning
+                with open(lock_file_gen, "r+") as f:
+                    content = f.read()
+                    f.seek(0, 0)
+                    f.write(f"name: sage{tag}\n{content}")
 
 
 def get_dependencies(pyproject_toml: Path) -> list[str]:
@@ -151,4 +160,4 @@ def get_dev_dependencies(pyproject_toml: Path) -> list[str]:
     return dev_dependencies
 
 
-update_conda(Path(options.sourcedir))
+update_conda(options.sourcedir)

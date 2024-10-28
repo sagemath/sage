@@ -124,16 +124,17 @@ def matrix_integer_sparse_rational_reconstruction(Matrix_integer_sparse A, Integ
 
 def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, proof=None):
     """
-    Returns reduced row-echelon form using a multi-modular
-    algorithm.  Does not change self.
+    Return reduced row-echelon form using a multi-modular
+    algorithm.  Does not change ``self``.
 
     REFERENCE: Chapter 7 of Stein's "Explicitly Computing Modular Forms".
 
     INPUT:
 
-    - height_guess -- integer or None
-    - proof -- boolean or None (default: None, see proof.linear_algebra or
-      sage.structure.proof). Note that the global Sage default is proof=True
+    - ``height_guess`` -- integer or ``None``
+    - ``proof`` -- boolean or ``None`` (default: ``None``, see
+      ``proof.linear_algebra`` or ``sage.structure.proof``). Note that the
+      global Sage default is proof=True
 
     OUTPUT: a pair consisting of a matrix in echelon form and a tuple of pivot
     positions.

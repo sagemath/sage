@@ -17,10 +17,6 @@ work fine on any system that uses 53-bit doubles. On other systems,
 it will still work for computations less than 16 or so digits (though
 the current version might die on start-up).
 
-
-
-
-
 NOTES:
 
 1. getline conflicts with a system-wide function name on

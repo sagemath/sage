@@ -1,3 +1,3 @@
 from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 
-cpdef hessenbergize_cdvf(Matrix_generic_dense) noexcept
+cpdef hessenbergize_cdvf(Matrix_generic_dense)

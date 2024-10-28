@@ -51,12 +51,3 @@ Special Update/Build Instructions
    (Instead, we should perhaps use ``--enable-static --enable-shared``
    to
    go safe.)
-
-Patches
-~~~~~~~
-
--  All patches below are currently used by spkg-src
--  src/01-zlib.patch: don't build the included zlib library.
-
-   The numbering reflect the order in which they have been created from
-   glpk pristine's sources

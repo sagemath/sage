@@ -4,7 +4,7 @@ pytest: Simple powerful testing with Python
 Description
 -----------
 
-pytest: simple powerful testing with Python
+Simple powerful testing with Python
 
 License
 -------

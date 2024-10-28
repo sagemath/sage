@@ -33,7 +33,6 @@ from sage.misc.randstate cimport current_randstate, randstate
 from sage.stats.time_series cimport TimeSeries
 
 
-
 cdef double random_normal(double mean, double std, randstate rstate) noexcept:
     r"""
     Return a floating point number chosen from the normal distribution
@@ -79,9 +78,7 @@ cdef class Distribution:
 
         - ``n`` -- ``None`` or a positive integer
 
-        OUTPUT:
-
-        - a single sample if `n` is 1; otherwise many samples
+        OUTPUT: a single sample if `n` is 1; otherwise many samples
 
         EXAMPLES:
 
@@ -103,9 +100,7 @@ cdef class Distribution:
 
         - ``x`` -- object
 
-        OUTPUT:
-
-        - float
+        OUTPUT: float
 
         EXAMPLES:
 
@@ -127,9 +122,7 @@ cdef class Distribution:
 
         - ``args`` and ``kwds``, passed to the Sage :func:`plot` function
 
-        OUTPUT:
-
-        - a :class:`Graphics` object
+        OUTPUT: a :class:`Graphics` object
 
         EXAMPLES::
 
@@ -166,12 +159,12 @@ cdef class GaussianMixtureDistribution(Distribution):
         r"""
         INPUT:
 
-        - ``B`` -- a list of triples ``(c_i, mean_i, std_i)``, where
+        - ``B`` -- list of triples ``(c_i, mean_i, std_i)``, where
           the ``c_i`` and ``std_i`` are positive and the sum of the
-          ``c_i`` is `1`.
+          ``c_i`` is `1`
 
         - ``eps`` -- positive real number; any standard deviation in B
-          less than eps is replaced by eps.
+          less than eps is replaced by eps
 
         - ``normalize`` -- if ``True``, ensure that the ``c_i`` are nonnegative
 
@@ -210,9 +203,7 @@ cdef class GaussianMixtureDistribution(Distribution):
 
         - ``i`` -- integer
 
-        OUTPUT:
-
-        - triple of floats
+        OUTPUT: triple of floats
 
         EXAMPLES::
 
@@ -283,7 +274,7 @@ cdef class GaussianMixtureDistribution(Distribution):
         """
         return self.c0._length
 
-    cpdef is_fixed(self, i=None) noexcept:
+    cpdef is_fixed(self, i=None):
         r"""
         Return whether or not this :class:`GaussianMixtureDistribution` is
         fixed when using Baum-Welch to update the corresponding HMM.
@@ -362,7 +353,6 @@ cdef class GaussianMixtureDistribution(Distribution):
             True
             sage: P.unfix(); P.is_fixed()
             False
-
         """
         cdef int j
         if i is None:
@@ -370,7 +360,6 @@ cdef class GaussianMixtureDistribution(Distribution):
                 self.fixed[j] = 0
         else:
             self.fixed[i] = 0
-
 
     def __repr__(self):
         r"""
@@ -471,9 +460,7 @@ cdef class GaussianMixtureDistribution(Distribution):
 
         - ``x`` -- float
 
-        OUTPUT:
-
-        - float
+        OUTPUT: float
 
         EXAMPLES::
 
@@ -505,9 +492,7 @@ cdef class GaussianMixtureDistribution(Distribution):
         - ``x`` -- float
         - ``m`` -- integer
 
-        OUTPUT:
-
-        - float
+        OUTPUT: float
 
         EXAMPLES::
 
@@ -524,6 +509,7 @@ cdef class GaussianMixtureDistribution(Distribution):
             raise IndexError("index out of range")
         mu = self.param._values[3*m+1]
         return self.c0._values[m]*exp((x-mu)*(x-mu)*self.c1._values[m])
+
 
 def unpickle_gaussian_mixture_distribution_v1(TimeSeries c0, TimeSeries c1,
                                               TimeSeries param, IntList fixed):

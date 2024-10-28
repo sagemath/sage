@@ -25,13 +25,13 @@
 
   Ce fichier gp contient des fonctions pour calculer
   le resultant de trois polynomes p1, p2, p3 homogenes
-  en trois variables (toujours x,y,z), ainsi que 
+  en trois variables (toujours x,y,z), ainsi que
   le discriminant d'un polynome homogene en ces trois variables.
   L'algorithme utilise est celui du sous-resultant.
 
 
   exemple d'utilisation :
- 
+
   ? p1=x^2-3*z^2+y*z;p2=x-y+15*z;p3=y^2*x+z^3-x*y*z+x^2*z;
   ? resultant3([p1,p2,p3])
   %2 = 521784
@@ -189,7 +189,7 @@ my(vdt,vdx,prodd,s,denom,nume,lp,p0,q0,r0,dd,cq,rm,res,delta);
   );
 
 \\ cas particulier ou vp[3] est constant
-  if( vdt[3]==0, 
+  if( vdt[3]==0,
     return(vp[3]^(vdt[1]*vdt[2])*s));
 
 \\ on fait un echange pour que vp[1] contienne le monome x^vdt[1]
@@ -224,7 +224,7 @@ my(vdt,vdx,prodd,s,denom,nume,lp,p0,q0,r0,dd,cq,rm,res,delta);
   if( nume == 0, return(0));
   dd = vecmax(vdx)+1;
   while( vdx[3],
- 
+
 if(DEBUGLEVEL_res, print("vp = "vp));
 if(DEBUGLEVEL_res, print("vdx = "vdx));
 if(DEBUGLEVEL_res, print("vdt = "vdt));
@@ -250,7 +250,7 @@ if(DEBUGLEVEL_res, print([nume,denom]));
       nume *= myresultant2(subst(subst(p0,'y,'x),'z,'y),subst(subst(q0,'y,'x),'z,'y));
       next
     );
-  
+
 \\ on enleve le contenu
     cq = mycontent(vp[2]);
     if( cq != 1,
@@ -269,7 +269,7 @@ if(DEBUGLEVEL_res, print([nume,denom]));
 
     rm = pollead(vp[3],'x);             \\ le coefficient dominant de vp[3].
     res = resultantcomp([vp[1],vp[3]-rm*'x^vdx[3],rm]);
-    if( res == 0, error("sorry, case not implemented")); \\ ce cas est-il possible ? 
+    if( res == 0, error("sorry, case not implemented")); \\ ce cas est-il possible ?
     if(vdt[1]%2 && vdt[3]%2 && degreetot(rm)%2, res *= -1);
 
 \\ on baisse le degre de vp[2] en retranchant des multiples de vp[3].
@@ -304,9 +304,3 @@ my(dp,normal,re);
   if( re == 'x, return(0));
 return(re/normal);
 }
-
-
-
-
-
-

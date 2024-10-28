@@ -121,7 +121,6 @@ AUTHORS:
 
 - Paul Scurek (2013-08-08): added
   :meth:`~sage.logic.boolformula.BooleanFormula.implies()`
-
 """
 # *****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein.gmail.com>
@@ -156,12 +155,12 @@ class BooleanFormula:
 
     - ``self`` -- calling object
 
-    - ``exp`` -- a string; this contains the boolean expression
+    - ``exp`` -- string; this contains the boolean expression
       to be manipulated
 
-    - ``tree`` -- a list; this contains the parse tree of the expression.
+    - ``tree`` -- list; this contains the parse tree of the expression
 
-    - ``vo`` -- a list; this contains the variables in the expression, in the
+    - ``vo`` -- list; this contains the variables in the expression, in the
       order that they appear; each variable only occurs once in the list
     """
     __expression = ""
@@ -189,10 +188,6 @@ class BooleanFormula:
         r"""
         Return a string representation of this statement.
 
-        OUTPUT:
-
-        A string representation of calling statement
-
         EXAMPLES::
 
             sage: import sage.logic.propcalc as propcalc
@@ -205,9 +200,7 @@ class BooleanFormula:
         r"""
         Return a LaTeX representation of this statement.
 
-        OUTPUT:
-
-        A string containing the latex code for the statement
+        OUTPUT: string containing the latex code for the statement
 
         EXAMPLES::
 
@@ -229,9 +222,7 @@ class BooleanFormula:
         r"""
         Convert the calling boolean formula into polish notation.
 
-        OUTPUT:
-
-        A string representation of the formula in polish notation.
+        OUTPUT: string representation of the formula in polish notation
 
         EXAMPLES:
 
@@ -256,9 +247,7 @@ class BooleanFormula:
         r"""
         Return the parse tree of this boolean expression.
 
-        OUTPUT:
-
-        The parse tree as a nested list
+        OUTPUT: the parse tree as a nested list
 
         EXAMPLES:
 
@@ -289,9 +278,7 @@ class BooleanFormula:
         r"""
         Return a full syntax parse tree of the calling formula.
 
-        OUTPUT:
-
-        The full syntax parse tree as a nested list
+        OUTPUT: the full syntax parse tree as a nested list
 
         EXAMPLES:
 
@@ -328,7 +315,7 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``other`` -- a boolean formula; this is the statement
+        - ``other`` -- boolean formula; this is the statement
           on the right side of the operator
 
         OUTPUT:
@@ -353,12 +340,10 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``other`` -- a boolean formula; this is the formula on
+        - ``other`` -- boolean formula; this is the formula on
           the right side of the operator
 
-        OUTPUT:
-
-        A boolean formula of the form ``self & other``.
+        OUTPUT: a boolean formula of the form ``self & other``
 
         EXAMPLES:
 
@@ -378,12 +363,10 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``other`` -- a boolean formula; this is the formula on
+        - ``other`` -- boolean formula; this is the formula on
           the right side of the operator
 
-        OUTPUT:
-
-        A boolean formula of the form ``self ^ other``.
+        OUTPUT: a boolean formula of the form ``self ^ other``
 
         EXAMPLES:
 
@@ -403,12 +386,10 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``other`` -- a boolean formula; this is the formula on
+        - ``other`` -- boolean formula; this is the formula on
           the right side of the operator
 
-        OUTPUT:
-
-        A boolean formula of the form ``self ^ other``.
+        OUTPUT: a boolean formula of the form ``self ^ other``
 
         EXAMPLES:
 
@@ -433,9 +414,7 @@ class BooleanFormula:
         r"""
         Overload the ``~`` operator to 'not' a statement.
 
-        OUTPUT:
-
-        A boolean formula of the form ``~self``.
+        OUTPUT: a boolean formula of the form ``~self``
 
         EXAMPLES:
 
@@ -456,7 +435,7 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``other`` -- a boolean formula; this is the formula
+        - ``other`` -- boolean formula; this is the formula
           on the right side of the operator
 
         OUTPUT:
@@ -481,7 +460,7 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``other`` -- a boolean formula; this is the formula
+        - ``other`` -- boolean formula; this is the formula
           on the right side of the operator
 
         OUTPUT:
@@ -506,12 +485,10 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``other`` -- a boolean formula; this is the formula
+        - ``other`` -- boolean formula; this is the formula
           on the right side of the comparator
 
-        OUTPUT:
-
-        A boolean value to be determined as follows:
+        OUTPUT: a boolean value to be determined as follows:
 
         - ``True`` if ``self`` and ``other`` are logically equivalent
 
@@ -547,9 +524,7 @@ class BooleanFormula:
         - ``end`` -- (default: -1) an integer; this is the last
           row of the truth table to be created
 
-        OUTPUT:
-
-        The truth table as a 2-D array
+        OUTPUT: the truth table as a 2-D array
 
         EXAMPLES:
 
@@ -590,15 +565,12 @@ class BooleanFormula:
             exponential time function requiring `O(2^n)` time, where
             `n` is the number of variables in the expression.
         """
-        max = 2 ** len(self.__vars_order)
+        maximum = 2 ** len(self.__vars_order)
         if end < 0:
-            end = max
-        if end > max:
-            end = max
-        if start < 0:
-            start = 0
-        if start > max:
-            start = max
+            end = maximum
+        end = min(end, maximum)
+        start = max(start, 0)
+        start = min(start, maximum)
         keys, table = [], []
         vars = {}
         for var in self.__vars_order:
@@ -625,12 +597,10 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``var_values`` -- a dictionary; this contains the
-          pairs of variables and their boolean values.
+        - ``var_values`` -- dictionary; this contains the
+          pairs of variables and their boolean values
 
-        OUTPUT:
-
-        The result of the evaluation as a boolean.
+        OUTPUT: the result of the evaluation as a boolean
 
         EXAMPLES:
 
@@ -649,9 +619,7 @@ class BooleanFormula:
         r"""
         Determine if the formula is ``True`` for some assignment of values.
 
-        OUTPUT:
-
-        A boolean value to be determined as follows:
+        OUTPUT: a boolean value to be determined as follows:
 
         - ``True`` if there is an assignment of values that makes the
           formula ``True``.
@@ -679,9 +647,7 @@ class BooleanFormula:
         r"""
         Determine if the formula is always ``True``.
 
-        OUTPUT:
-
-        A boolean value to be determined as follows:
+        OUTPUT: a boolean value to be determined as follows:
 
         - ``True`` if the formula is a tautology.
 
@@ -710,9 +676,7 @@ class BooleanFormula:
         r"""
         Determine if the formula is always ``False``.
 
-        OUTPUT:
-
-        A boolean value to be determined as follows:
+        OUTPUT: a boolean value to be determined as follows:
 
         - ``True`` if the formula is a contradiction.
 
@@ -749,14 +713,12 @@ class BooleanFormula:
 
         - ``*hypotheses`` -- instances of :class:`BooleanFormula`
 
-        OUTPUT:
+        OUTPUT: a boolean value to be determined as follows:
 
-        A boolean value to be determined as follows:
-
-        - ``True`` - if ``self`` (the desired conclusion) is a logical consequence
+        - ``True`` -- if ``self`` (the desired conclusion) is a logical consequence
           of the set of hypotheses
 
-        - ``False`` - if ``self`` (the desired conclusion) is not a logical consequence
+        - ``False`` -- if ``self`` (the desired conclusion) is not a logical consequence
           of the set of hypotheses
 
         EXAMPLES::
@@ -833,13 +795,11 @@ class BooleanFormula:
 
         - ``other`` -- instance of :class:`BooleanFormula`
 
-        OUTPUT:
+        OUTPUT: a boolean value to be determined as follows:
 
-        A boolean value to be determined as follows:
+        - ``True`` -- if ``self`` implies ``other``
 
-        - ``True`` - if ``self`` implies ``other``
-
-        - ``False`` - if ``self does not imply ``other``
+        - ``False`` -- if ``self does not imply ``other``
 
         EXAMPLES:
 
@@ -877,15 +837,13 @@ class BooleanFormula:
 
         - ``self`` -- calling object
 
-        - ``other`` -- instance of BooleanFormula class.
+        - ``other`` -- instance of BooleanFormula class
 
-        OUTPUT:
+        OUTPUT: a boolean value to be determined as follows:
 
-        A boolean value to be determined as follows:
+        ``True`` -- if the two formulas are logically equivalent
 
-        True - if the two formulas are logically equivalent
-
-        False - if the two formulas are not logically equivalent
+        ``False`` -- if the two formulas are not logically equivalent
 
         EXAMPLES:
 
@@ -907,9 +865,7 @@ class BooleanFormula:
         r"""
         Convert boolean formula to conjunctive normal form.
 
-        OUTPUT:
-
-        An instance of :class:`BooleanFormula` in conjunctive normal form.
+        OUTPUT: an instance of :class:`BooleanFormula` in conjunctive normal form
 
         EXAMPLES:
 
@@ -961,9 +917,7 @@ class BooleanFormula:
         r"""
         Convert boolean formula to conjunctive normal form.
 
-        OUTPUT:
-
-        An instance of :class:`BooleanFormula` in conjunctive normal form.
+        OUTPUT: an instance of :class:`BooleanFormula` in conjunctive normal form
 
         EXAMPLES:
 
@@ -996,9 +950,7 @@ class BooleanFormula:
         r"""
         Return the satformat representation of a boolean formula.
 
-        OUTPUT:
-
-        The satformat of the formula as a string.
+        OUTPUT: the satformat of the formula as a string
 
         EXAMPLES:
 
@@ -1063,11 +1015,7 @@ class BooleanFormula:
 #        This function uses the propcalc package to simplify an expression to
 #        its minimal form.
 #
-#        INPUT:
-#             self -- the calling object.
-#
-#        OUTPUT:
-#            A simplified expression.
+#        OUTPUT: a simplified expression
 #
 #        EXAMPLES::
 
@@ -1133,13 +1081,11 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``tree`` -- a list; this is a branch of a
+        - ``tree`` -- list; this is a branch of a
           parse tree and can only contain the '&', '|'
           and '~' operators along with variables
 
-        OUTPUT:
-
-        A 3-tuple.
+        OUTPUT: a 3-tuple
 
         EXAMPLES:
 
@@ -1185,12 +1131,10 @@ class BooleanFormula:
         - ``other`` -- instance of :class:`BooleanFormula`; this
           is the formula on the right of the operator
 
-        - ``op`` -- a string; this is the operator used to
+        - ``op`` -- string; this is the operator used to
           combine the two formulas
 
-        OUTPUT:
-
-        The result as an instance of :class:`BooleanFormula`.
+        OUTPUT: the result as an instance of :class:`BooleanFormula`
 
         EXAMPLES:
 
@@ -1215,15 +1159,13 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``x`` -- an integer; this is the number from
+        - ``x`` -- integer; this is the number from
           which to take the bit
 
-        - ``c`` -- an integer; this is the but number to
+        - ``c`` -- integer; this is the but number to
           be taken, where 0 is the low order bit
 
-        OUTPUT:
-
-        A boolean to be determined as follows:
+        OUTPUT: a boolean to be determined as follows:
 
         - ``True`` if bit ``c`` of ``x`` is 1.
 
@@ -1278,7 +1220,7 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``tree`` -- a list; this represents a branch
+        - ``tree`` -- list; this represents a branch
           of a parse tree
 
         OUTPUT:
@@ -1327,9 +1269,7 @@ class BooleanFormula:
         - ``tree`` a list; this represents a branch
           of a parse tree
 
-        OUTPUT:
-
-        A new list.
+        OUTPUT: a new list
 
         EXAMPLES:
 
@@ -1366,12 +1306,10 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``tree`` -- a list; this represents a branch of
+        - ``tree`` -- list; this represents a branch of
           a parse tree
 
-        OUTPUT:
-
-        A new list.
+        OUTPUT: a new list
 
         EXAMPLES:
 
@@ -1406,12 +1344,10 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``tree`` -- a list; this represents a branch
+        - ``tree`` -- list; this represents a branch
           of a parse tree
 
-        OUTPUT:
-
-        A new list.
+        OUTPUT: a new list
 
         EXAMPLES:
 
@@ -1476,12 +1412,10 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``str`` -- a string; this contains a logical
+        - ``str`` -- string; this contains a logical
           expression
 
-        OUTPUT:
-
-        The next operator as a string.
+        OUTPUT: the next operator as a string
 
         EXAMPLES:
 

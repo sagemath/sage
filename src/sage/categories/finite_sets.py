@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite sets
 """
@@ -11,6 +12,7 @@ Finite sets
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.subquotients import SubquotientsCategory
+
 
 class FiniteSets(CategoryWithAxiom):
     r"""

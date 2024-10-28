@@ -1,4 +1,4 @@
-# Let GLPK use Sage's GMP/MPIR (cf. comments in SPKG.txt and spkg-install):
+# Let GLPK use Sage's GMP (cf. comments in spkg-install.in):
 CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"
 LDFLAGS="-L$SAGE_LOCAL/lib $LDFLAGS"
 

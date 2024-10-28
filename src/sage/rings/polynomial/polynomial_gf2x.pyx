@@ -70,7 +70,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
             pass
         Polynomial_template.__init__(self, parent, x, check, is_gen, construct)
 
-    cdef get_unsafe(self, Py_ssize_t i) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i):
         """
         Return the `i`-th coefficient of ``self``.
 
@@ -256,6 +256,12 @@ cdef class Polynomial_GF2X(Polynomial_template):
         verbose("Res %5.3f s"%cputime(t),level=1)
         return res
 
+    # Other polynomials have compose_mod as methods following the naming of
+    # NTL/Flint bindings but the above method predates these. We expose
+    # compose_mod here so all polynomial ring elements which support this can
+    # use either name
+    compose_mod = modular_composition
+
     @cached_method
     def is_irreducible(self):
         r"""
@@ -277,7 +283,6 @@ cdef class Polynomial_GF2X(Polynomial_template):
             False
             sage: f.is_irreducible.cache
             False
-
         """
         return 0 != GF2X_IterIrredTest(self.x)
 
@@ -310,6 +315,7 @@ def GF2X_BuildIrred_list(n):
     GF2X_BuildIrred(f, int(n))
     return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in range(n + 1)]
 
+
 def GF2X_BuildSparseIrred_list(n):
     """
     Return the list of coefficients of an irreducible polynomial of
@@ -329,6 +335,7 @@ def GF2X_BuildSparseIrred_list(n):
     GF2 = FiniteField(2)
     GF2X_BuildSparseIrred(f, int(n))
     return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in range(n + 1)]
+
 
 def GF2X_BuildRandomIrred_list(n):
     """

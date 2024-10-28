@@ -4,7 +4,6 @@ Interacts included with sage
 AUTHORS:
 
 - Harald Schilly (2011-01-16): initial version (#9623) partially based on work by Lauri Ruotsalainen
-
 """
 
 # ****************************************************************************
@@ -17,9 +16,10 @@ AUTHORS:
 # ****************************************************************************
 from sage.misc.lazy_import import lazy_import
 
-from . import calculus
-from . import geometry
-from . import statistics
-from . import fractals
-from . import algebra
+from sage.interacts import calculus
+from sage.interacts import geometry
+from sage.interacts import statistics
+from sage.interacts import fractals
+from sage.interacts import algebra
 lazy_import('sage.interacts.library', 'demo')
+del lazy_import

@@ -7,12 +7,10 @@ tasks:
   - name: Setup
     # Create conda environment, then configure and build sage
     init: >-
-      && mamba env create --file src/environment-dev-3.11-linux.yml --prefix venv
+      && mamba env create --file environment-dev-3.11-linux.yml --prefix venv
       && conda config --append envs_dirs $(pwd)
       && conda activate $(pwd)/venv
       && ./bootstrap
-      && ./configure --enable-build-as-root --with-python=$CONDA_PREFIX/bin/python --prefix=$CONDA_PREFIX
-      && pip install --no-build-isolation -v -v -e ./pkgs/sage-conf ./pkgs/sage-setup
       && pip install --no-build-isolation -v -v -e ./src
     # Activate conda environment, set up Trac remote
     # RestructuredText extension recommends python extension, although we have already installed it

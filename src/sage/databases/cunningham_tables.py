@@ -13,7 +13,6 @@ the command ::
 AUTHORS:
 
 - Yann Laigle-Chapuy (2009-10-18): initial version
-
 """
 
 import os

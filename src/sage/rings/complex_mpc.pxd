@@ -6,9 +6,9 @@ from sage.rings.ring cimport Field
 cdef class MPComplexNumber(sage.structure.element.FieldElement):
     cdef mpc_t value
     cdef char init
-    cdef MPComplexNumber _new(self) noexcept
-    cpdef _add_(self, other) noexcept
-    cpdef _mul_(self, other) noexcept
+    cdef MPComplexNumber _new(self)
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
 
 cdef class MPComplexField_class(Field):
     cdef readonly int _prec
@@ -16,5 +16,5 @@ cdef class MPComplexField_class(Field):
     cdef object __rnd_str
     cdef object __real_field
     cdef object __imag_field
-    cdef MPComplexNumber _new(self) noexcept
-    cpdef _an_element_(self) noexcept
+    cdef MPComplexNumber _new(self)
+    cpdef _an_element_(self)

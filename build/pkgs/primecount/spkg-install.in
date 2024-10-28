@@ -1,3 +1,7 @@
+if [ "$UNAME" = "Darwin" ]; then
+    LDFLAGS="${LDFLAGS} -Wl,-rpath,${SAGE_LOCAL}/lib"
+    export LDFLAGS
+fi
 cd src
 
 # Issue #33054: primecount needs "-std=gnu++..."

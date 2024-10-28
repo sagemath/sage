@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Lie Groups
 """
@@ -14,6 +15,7 @@ from sage.categories.category_types import Category_over_base_ring
 from sage.categories.groups import Groups
 from sage.categories.manifolds import Manifolds
 
+
 class LieGroups(Category_over_base_ring):
     r"""
     The category of Lie groups.
@@ -28,7 +30,7 @@ class LieGroups(Category_over_base_ring):
 
     TESTS::
 
-        sage: TestSuite(C).run(skip="_test_category_over_bases")
+        sage: TestSuite(C).run(skip='_test_category_over_bases')
     """
     @cached_method
     def super_categories(self):

@@ -42,14 +42,15 @@ EXAMPLES::
 #*******************************************************************************
 
 from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
 from sage.misc.repr import repr_lincomb
 from sage.misc.search import search
 from sage.rings.integer_ring import ZZ
+from sage.schemes.affine.affine_space import AffineSpace_generic
+from sage.schemes.projective.projective_space import ProjectiveSpace_ring
 from sage.structure.formal_sum import FormalSum
 
-from .morphism import is_SchemeMorphism
-from sage.schemes.affine.affine_space import is_AffineSpace
-from sage.schemes.projective.projective_space import is_ProjectiveSpace
+lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 
 
 def CurvePointToIdeal(C,P):
@@ -72,7 +73,7 @@ def CurvePointToIdeal(C,P):
     m = n-1
     while m > 0 and P[m] == 0:
         m += -1
-    if is_ProjectiveSpace(A):
+    if isinstance(A, ProjectiveSpace_ring):
         a_m = P[m]
         x_m = x[m]
         for i in range(m):
@@ -81,7 +82,7 @@ def CurvePointToIdeal(C,P):
                 polys.append(x[i])
             else:
                 polys.append(a_m*x[i]-ai*x_m)
-    elif is_AffineSpace(A):
+    elif isinstance(A, AffineSpace_generic):
         for i in range(m+1):
             ai = P[i]
             if ai == 0:
@@ -95,15 +96,13 @@ def CurvePointToIdeal(C,P):
 
 def is_Divisor(x):
     r"""
-    Test whether ``x`` is an instance of :class:`Divisor_generic`
+    Test whether ``x`` is an instance of :class:`Divisor_generic`.
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT:
-
-    ``True`` or ``False``.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -111,16 +110,47 @@ def is_Divisor(x):
         sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
         sage: C = Curve(y^2 - x^9 - x)
         sage: is_Divisor(C.divisor([]))
+        doctest:warning...
+        DeprecationWarning: The function is_Divisor is deprecated;
+        use 'isinstance(..., Divisor_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38277 for details.
         True
         sage: is_Divisor("Ceci n'est pas un diviseur")
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38277,
+                "The function is_Divisor is deprecated; "
+                "use 'isinstance(..., Divisor_generic)' instead.")
     return isinstance(x, Divisor_generic)
 
 
 class Divisor_generic(FormalSum):
     r"""
     A Divisor.
+
+    TESTS::
+
+        sage: E = EllipticCurve([1, 2])
+        sage: P = E(-1, 0)
+        sage: Q = E(1, 2)
+        sage: Pd = E.divisor(P)
+        sage: Qd = E.divisor(Q)
+        sage: Pd + Qd == Qd + Pd
+        True
+        sage: Pd != Qd
+        True
+        sage: C = EllipticCurve([2, 1])
+        sage: R = C(1, 2)
+        sage: Rd = C.divisor(R)
+        sage: Qd == Rd
+        False
+        sage: Rd == Qd
+        False
+        sage: Qd == (2 * (Qd * 1/2))
+        True
+        sage: Qd == 1/2 * Qd
+        False
     """
 
     def __init__(self, v, parent, check=True, reduce=True):
@@ -131,16 +161,15 @@ class Divisor_generic(FormalSum):
 
         INPUT:
 
-        - ``v`` -- object. Usually a list of pairs
-          ``(coefficient,divisor)``.
+        - ``v`` -- object; usually a list of pairs ``(coefficient,divisor)``
 
         - ``parent`` -- FormalSums(R) module (default: FormalSums(ZZ))
 
-        - ``check`` -- bool (default: True). Whether to coerce
+        - ``check`` -- boolean (default: ``True``); whether to coerce
           coefficients into base ring. Setting it to ``False`` can
           speed up construction.
 
-        - ``reduce`` -- reduce (default: True). Whether to combine
+        - ``reduce`` -- reduce (default: ``True``); whether to combine
           common terms. Setting it to ``False`` can speed up
           construction.
 
@@ -164,9 +193,7 @@ class Divisor_generic(FormalSum):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         TESTS::
 
@@ -194,9 +221,7 @@ class Divisor_generic(FormalSum):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        - string.
+        OUTPUT: string
 
         TESTS::
 
@@ -241,14 +266,12 @@ class Divisor_curve(Divisor_generic):
     For any curve `C`, use ``C.divisor(v)`` to
     construct a divisor on `C`. Here `v` can be either
 
+    - a rational point on `C`
 
-    -  a rational point on `C`
+    - a list of rational points
 
-    -  a list of rational points
-
-    -  a list of 2-tuples `(c,P)`, where `c` is an
-       integer and `P` is a rational point.
-
+    - a list of 2-tuples `(c,P)`, where `c` is an
+      integer and `P` is a rational point
 
     TODO: Divisors shouldn't be restricted to rational points. The
     problem is that the divisor group is the formal sum of the group of
@@ -279,12 +302,11 @@ class Divisor_curve(Divisor_generic):
 
         INPUT:
 
-        - ``v`` -- a list of pairs ``(c, P)``, where ``c`` is an
-           integer and ``P`` is a point on a curve. The P's must all
-           lie on the same curve.
+        - ``v`` -- list of pairs ``(c, P)``, where ``c`` is an
+          integer and ``P`` is a point on a curve. The P's must all
+          lie on the same curve.
 
-
-        - To create the divisor 0 use ``[(0, P)]``, so as to give the curve.
+        To create the divisor 0 use ``[(0, P)]``, so as to give the curve.
 
         EXAMPLES::
 
@@ -335,7 +357,7 @@ class Divisor_curve(Divisor_generic):
                 else:
                     n = ZZ(1)
                     I = t
-                if is_SchemeMorphism(I):
+                if isinstance(I, SchemeMorphism):
                     I = CurvePointToIdeal(C,I)
                 else:
                     know_points = False
@@ -351,9 +373,7 @@ class Divisor_curve(Divisor_generic):
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -363,14 +383,15 @@ class Divisor_curve(Divisor_generic):
         """
         return repr_lincomb([(tuple(I.gens()), c) for c, I in self])
 
-    def support(self):
+    def support(self) -> list:
         """
         Return the support of this divisor, which is the set of points that
         occur in this divisor with nonzero coefficients.
 
         EXAMPLES::
 
-            sage: x,y = AffineSpace(2, GF(5), names='xy').gens()
+            sage: A = AffineSpace(2, GF(5), names='xy')
+            sage: x, y = A.gens()
             sage: C = Curve(y^2 - x^9 - x)
             sage: pts = C.rational_points(); pts
             [(0, 0), (2, 2), (2, 3), (3, 1), (3, 4)]

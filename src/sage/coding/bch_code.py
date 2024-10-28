@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 BCH code
 
@@ -34,6 +34,7 @@ from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Zmod
 from .cyclic_code import CyclicCode
 from .grs_code import GeneralizedReedSolomonCode
 from .decoder import Decoder
+
 
 class BCHCode(CyclicCode):
     r"""
@@ -140,7 +141,7 @@ class BCHCode(CyclicCode):
 
     def __eq__(self, other):
         r"""
-        Tests equality between BCH Code objects.
+        Test equality between BCH Code objects.
 
         EXAMPLES::
 
@@ -262,15 +263,15 @@ class BCHUnderlyingGRSDecoder(Decoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this decoder.
+    - ``code`` -- the associated code of this decoder
 
-    - ``grs_decoder`` -- The string name of the decoder to use over the
+    - ``grs_decoder`` -- the string name of the decoder to use over the
       underlying GRS code
 
-    - ``**kwargs`` -- All extra arguments are forwarded to the GRS decoder
+    - ``**kwargs`` -- all extra arguments are forwarded to the GRS decoder
     """
 
-    def __init__(self, code, grs_decoder="KeyEquationSyndrome", **kwargs):
+    def __init__(self, code, grs_decoder='KeyEquationSyndrome', **kwargs):
         r"""
 
         EXAMPLES::

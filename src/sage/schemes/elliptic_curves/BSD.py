@@ -1,11 +1,13 @@
 "Birch and Swinnerton-Dyer formulas"
 
 from sage.arith.misc import prime_divisors
+from sage.misc.lazy_import import lazy_import
+from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.infinity import Infinity
-from sage.rings.number_field.number_field import QuadraticField
-from sage.functions.other import ceil
+
+lazy_import("sage.functions.other", "ceil")
+lazy_import("sage.rings.number_field.number_field", "QuadraticField")
 
 
 class BSD_data:
@@ -93,6 +95,7 @@ def simon_two_descent_work(E, two_tor_rk):
         ...
         DeprecationWarning: Use E.rank(algorithm="pari") instead, as this script has been ported over to pari.
         See https://github.com/sagemath/sage/issues/35621 for details.
+        ...
         (0, 0, 0, 0, [])
         sage: E = EllipticCurve('37a')
         sage: simon_two_descent_work(E, E.two_torsion_rank())
@@ -146,6 +149,7 @@ def mwrank_two_descent_work(E, two_tor_rk):
     sha2_upper_bd = MWRC.selmer_rank() - two_tor_rk - rank_lower_bd
     return rank_lower_bd, rank_upper_bd, sha2_lower_bd, sha2_upper_bd, gens
 
+
 def pari_two_descent_work(E):
     r"""
     Prepare the output from pari by two-isogeny.
@@ -154,7 +158,7 @@ def pari_two_descent_work(E):
 
     - ``E`` -- an elliptic curve
 
-    OUTPUT: A tuple of 5 elements with the first 4 being integers.
+    OUTPUT: a tuple of 5 elements with the first 4 being integers
 
     - a lower bound on the rank
 
@@ -181,7 +185,6 @@ def pari_two_descent_work(E):
         sage: E = EllipticCurve('66b3')
         sage: pari_two_descent_work(E)
         (0, 0, 2, 2, [])
-
     """
     ep = E.pari_curve()
     lower, rank_upper_bd, s, pts = ep.ellrank()
@@ -302,24 +305,24 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     - ``E`` -- an elliptic curve
 
-    - ``verbosity`` -- int, how much information about the proof to print.
+    - ``verbosity`` -- integer; how much information about the proof to print
 
       - 0: print nothing
       - 1: print sketch of proof
       - 2: print information about remaining primes
 
-    - ``two_desc`` -- string (default ``'mwrank'``), what to use for the
-      two-descent. Options are ``'mwrank', 'pari', 'sage'``
+    - ``two_desc`` -- string (default: ``'mwrank'``); what to use for the
+      two-descent. Options are ``'mwrank', 'pari', 'sage'``.
 
-    - ``proof`` -- bool or None (default: None, see
-      proof.elliptic_curve or sage.structure.proof). If False, this
+    - ``proof`` -- boolean or ``None`` (default: None, see
+      proof.elliptic_curve or sage.structure.proof). If ``False``, this
       function just immediately returns the empty list.
 
     - ``secs_hi`` -- maximum number of seconds to try to compute the
       Heegner index before switching over to trying to compute the
       Heegner index bound. (Rank 0 only!)
 
-    - ``return_BSD`` -- bool (default: False) whether to return an object
+    - ``return_BSD`` -- boolean (default: ``False``); whether to return an object
       which contains information to reconstruct a proof
 
     .. NOTE::
@@ -496,7 +499,6 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         p = 2: True by 2-descent
         True for p not in {2} by Kolyvagin.
         []
-
     """
     if proof is None:
         from sage.structure.proof.proof import get_flag
@@ -872,8 +874,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     # Try harder to compute the Heegner index, where it matters
     if heegner_index is None:
-        if max_height < 18:
-            max_height = 18
+        max_height = max(max_height, 18)
         for D in BSD.heegner_index_upper_bound:
             M = BSD.heegner_index_upper_bound[D]
             for p in kolyvagin_primes:

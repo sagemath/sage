@@ -34,7 +34,7 @@ from sage.numerical.linear_functions cimport LinearFunction, is_LinearFunction
 
 cdef class LinearTensor(ModuleElement):
     r"""
-    A linear function tensored with a free module
+    A linear function tensored with a free module.
 
     .. warning::
 
@@ -56,9 +56,9 @@ cdef class LinearTensor(ModuleElement):
         INPUT:
 
         - ``parent`` -- the parent
-          :class:`~sage.numerical.linear_tensor.LinearTensorParent_class`.
+          :class:`~sage.numerical.linear_tensor.LinearTensorParent_class`
 
-        - ``f`` -- A linear function tensored by a free module is
+        - ``f`` -- a linear function tensored by a free module is
           represented as a dictionary. The values are the coefficient
           (free module elements) of the variable represented by the
           keys. The key ``-1`` corresponds to the constant term.
@@ -169,7 +169,7 @@ cdef class LinearTensor(ModuleElement):
             ...
             ValueError: x is from a different linear functions module
         """
-        if is_LinearFunction(x):
+        if isinstance(x, LinearFunction):
             if self.parent().linear_functions() != x.parent():
                 raise ValueError('x is from a different linear functions module')
             if len((<LinearFunction>x)._f) != 1:
@@ -188,9 +188,7 @@ cdef class LinearTensor(ModuleElement):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -226,9 +224,7 @@ cdef class LinearTensor(ModuleElement):
         """
         Return a matrix-like string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -261,17 +257,15 @@ cdef class LinearTensor(ModuleElement):
             s += ']'
         return s
 
-    cpdef _add_(self, b) noexcept:
+    cpdef _add_(self, b):
         r"""
         Return sum.
 
         INPUT:
 
-        - ``b`` -- a :class:`LinearTensor`.
+        - ``b`` -- a :class:`LinearTensor`
 
-        OUTPUT:
-
-        A :class:`LinearTensor`.
+        OUTPUT: a :class:`LinearTensor`
 
         EXAMPLES::
 
@@ -285,13 +279,11 @@ cdef class LinearTensor(ModuleElement):
             result[key] = self._f.get(key, 0) + coeff
         return self.parent()(result)
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         r"""
         Return the negative.
 
-        OUTPUT:
-
-        A :class:`LinearTensor`.
+        OUTPUT: a :class:`LinearTensor`
 
         EXAMPLES::
 
@@ -305,17 +297,15 @@ cdef class LinearTensor(ModuleElement):
             result[key] = -coeff
         return self.parent()(result)
 
-    cpdef _sub_(self, b) noexcept:
+    cpdef _sub_(self, b):
         r"""
         Return difference.
 
         INPUT:
 
-        - ``b`` -- a :class:`LinearTensor`.
+        - ``b`` -- a :class:`LinearTensor`
 
-        OUTPUT:
-
-        A :class:`LinearTensor`.
+        OUTPUT: a :class:`LinearTensor`
 
         EXAMPLES::
 
@@ -331,17 +321,15 @@ cdef class LinearTensor(ModuleElement):
             result[key] = self._f.get(key, 0) - coeff
         return self.parent()(result)
 
-    cpdef _lmul_(self, Element b) noexcept:
+    cpdef _lmul_(self, Element b):
         r"""
         Return multiplication by scalar.
 
         INPUT:
 
-        - ``b`` -- base ring element. The scalar to multiply by.
+        - ``b`` -- base ring element; the scalar to multiply by
 
-        OUTPUT:
-
-        A :class:`LinearTensor`.
+        OUTPUT: a :class:`LinearTensor`
 
         EXAMPLES::
 

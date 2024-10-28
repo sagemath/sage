@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([mathics], [SAGE_PYTHON_PACKAGE_CHECK([mathics])])

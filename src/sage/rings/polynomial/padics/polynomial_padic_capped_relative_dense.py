@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.libs.ntl
 """
-p-adic Capped Relative Dense Polynomials
+`p`-adic Capped Relative Dense Polynomials
 """
 
 # ****************************************************************************
@@ -51,7 +51,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
         Check that :issue:`13620` has been fixed::
 
             sage: f = R.zero()
-            sage: R(f.dict())
+            sage: R(f.monomial_coefficients())
             0
 
         Check that :issue:`29829` has been fixed::
@@ -482,7 +482,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
     def _mul_(self, right):
         r"""
-        Multiplies ``self`` and ``right``.
+        Multiply ``self`` and ``right``.
 
         ALGORITHM: We use an algorithm thought up by Joe Wetherell to
         find the precisions of the product.  It works as follows:
@@ -490,7 +490,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
         = \max(\deg f, \deg g) + 1` (in the actual implementation we
         use `N = 2^{\lfloor \log_2\max(\deg f, \deg g)\rfloor + 1}`).
         The valuations and absolute precisions of each coefficient
-        contribute to the absolute precision of the kth coefficient of
+        contribute to the absolute precision of the `k`-th coefficient of
         the product in the following way: for each `i + j = k`, you
         take the valuation of `a_i` plus the absolute precision of
         `b_j`, and then take the valuation of `b_j` plus the absolute
@@ -623,7 +623,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
     def rshift_coeffs(self, shift, no_list=False):
         """
-        Return a new polynomial whose coefficients are p-adically
+        Return a new polynomial whose coefficients are `p`-adically
         shifted to the right by ``shift``.
 
         .. NOTE::
@@ -668,7 +668,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
     def _unsafe_mutate(self, n, value):
         """
-        It's a really bad idea to use this function for p-adic
+        It's a really bad idea to use this function for `p`-adic
         polynomials.  There are speed issues, and it may not be
         bug-free currently.
         """
@@ -752,7 +752,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        - ``secure``  -- a boolean (default: ``False``)
+        - ``secure`` -- boolean (default: ``False``)
 
         If ``secure`` is ``True`` and the degree of this polynomial
         is not determined (because the leading coefficient is
@@ -820,9 +820,9 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        - ``self`` -- a p-adic polynomial
+        - ``self`` -- a `p`-adic polynomial
 
-        - ``n`` -- ``None`` or an integer (default ``None``).
+        - ``n`` -- ``None`` or integer (default: ``None``)
 
         OUTPUT:
 
@@ -849,9 +849,9 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        - ``self`` -- a p-adic polynomial
+        - ``self`` -- a `p`-adic polynomial
 
-        - ``n`` -- ``None`` or an integer (default ``None``).
+        - ``n`` -- ``None`` or integer (default: ``None``)
 
         OUTPUT:
 
@@ -885,9 +885,9 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        - ``self`` -- a p-adic polynomial
+        - ``self`` -- a `p`-adic polynomial
 
-        - ``n`` -- ``None`` or an integer (default ``None``).
+        - ``n`` -- ``None`` or integer (default: ``None``)
 
         OUTPUT:
 
@@ -919,14 +919,14 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        - ``self`` -- a p-adic polynomial
+        - ``self`` -- a `p`-adic polynomial
 
-        - ``val_of_var`` -- ``None`` or a rational (default ``None``).
+        - ``val_of_var`` -- ``None`` or a rational (default: ``None``)
 
         OUTPUT:
 
         If ``val_of_var`` is ``None``, returns the largest power of the
-        variable dividing self.  Otherwise, returns the valuation of
+        variable dividing ``self``.  Otherwise, returns the valuation of
         ``self`` where the variable is assigned valuation ``val_of_var``
 
         EXAMPLES::
@@ -953,8 +953,8 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        - ``degree`` (``None`` or an integer) - if specified, truncate or zero
-          pad the list of coefficients to this degree before reversing it.
+        - ``degree`` -- ``None`` or integer; if specified, truncate or zero
+          pad the list of coefficients to this degree before reversing it
 
         EXAMPLES::
 
@@ -1061,7 +1061,6 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: R.<x> = Qp(3)[]
             sage: x.quo_rem(x)
             (1 + O(3^20), 0)
-
         """
         return self._quo_rem_list(right, secure=secure)
 
@@ -1139,9 +1138,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
             If some coefficients have not enough precision an error is raised.
 
-        OUTPUT:
-
-        - a :class:`NewtonPolygon`
+        OUTPUT: a :class:`NewtonPolygon`
 
         EXAMPLES::
 
@@ -1275,11 +1272,9 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         INPUT:
 
-        - ``repetition`` -- boolean (default ``True``)
+        - ``repetition`` -- boolean (default: ``True``)
 
-        OUTPUT:
-
-        - a list of rationals
+        OUTPUT: list of rationals
 
         EXAMPLES::
 

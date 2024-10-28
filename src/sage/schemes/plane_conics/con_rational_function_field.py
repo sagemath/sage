@@ -44,7 +44,7 @@ from sage.schemes.plane_conics.con_field import ProjectiveConic_field
 from sage.arith.functions import lcm
 from sage.arith.misc import GCD as gcd
 from sage.modules.free_module_element import vector
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 
 
 class ProjectiveConic_rational_function_field(ProjectiveConic_field):
@@ -88,7 +88,7 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
     def has_rational_point(self, point=False, algorithm='default',
                            read_cache=True):
         r"""
-        Returns True if and only if the conic ``self``
+        Return ``True`` if and only if the conic ``self``
         has a point over its base field `F(t)`, which is a field of rational
         functions.
 
@@ -226,7 +226,6 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             ....:            5*t^2 + 5, 4*t + 3, 4*t^2 + t + 5])
             sage: C.has_rational_point()
             True
-
         """
         from .constructor import Conic
 
@@ -338,14 +337,14 @@ for function field of characteristic 2.")
         `K=F(t)` and coefficients `a,b,c` such that `a,b,c \in F[t]`,
         `\gcd(a,b)=\gcd(b,c)=\gcd(c,a)=1` and `abc` is square-free.
 
-        Assumes `self` is in diagonal form.
+        Assumes ``self`` is in diagonal form.
 
         OUTPUT:
 
         A tuple (coefficients, multipliers), the coefficients of the conic
         in reduced form and multipliers `\lambda, \mu, \nu \in F(t)^*` such
         that `(x,y,z) \in F(t)` is a solution of the reduced conic if and only
-        if `(\lambda x, \mu y, \nu z)` is a solution of `self`.
+        if `(\lambda x, \mu y, \nu z)` is a solution of ``self``.
 
         ALGORITHM:
 
@@ -392,7 +391,7 @@ for function field of characteristic 2.")
 
         # remove squares
         for i, x in enumerate(coeff):
-            if is_FractionField(x.parent()):
+            if isinstance(x.parent(), FractionField_generic):
                 # go to base ring of fraction field
                 x = self.base().base()(x)
 
@@ -429,14 +428,14 @@ for function field of characteristic 2.")
 
         INPUT:
 
-        - ``self`` -- conic in reduced form.
+        - ``self`` -- conic in reduced form
         - ``supports`` -- 3-tuple where ``supports[i]`` is a list of all monic
-          irreducible `p \in F[t]` that divide the `i`'th of the 3 coefficients.
+          irreducible `p \in F[t]` that divide the `i`-th of the 3 coefficients
         - ``roots`` -- 3-tuple containing lists of roots of all elements of
-          ``supports[i]``, in the same order.
-        - ``case`` -- 1 or 0, as in [HC2006]_.
+          ``supports[i]``, in the same order
+        - ``case`` -- 1 or 0, as in [HC2006]_
         - ``solution`` -- (default: 0) a solution of (5) in [HC2006]_, if
-          case = 0, 0 otherwise.
+          ``case`` = 0, 0 otherwise
 
         OUTPUT:
 
@@ -504,12 +503,12 @@ for function field of characteristic 2.")
             lastpoly = F(1)
             for n in range(B):
                 lastpoly = (lastpoly * t) % p
-                phi_p[A + 2 + n] = vector(F, d, lastpoly.dict())
+                phi_p[A + 2 + n] = vector(F, d, lastpoly.monomial_coefficients())
             lastpoly = -alpha % p
-            phi_p[A + B + 2] = vector(F, d, lastpoly.dict())
+            phi_p[A + B + 2] = vector(F, d, lastpoly.monomial_coefficients())
             for n in range(C):
                 lastpoly = (lastpoly * t) % p
-                phi_p[A + B + 3 + n] = vector(F, d, lastpoly.dict())
+                phi_p[A + B + 3 + n] = vector(F, d, lastpoly.monomial_coefficients())
             phi_p[A + B + C + 3] = vector(F, d)
             phi.append(matrix(phi_p).transpose())
         for (i, p) in enumerate(supports[1]):
@@ -526,12 +525,12 @@ for function field of characteristic 2.")
             lastpoly = F(1)
             for n in range(C):
                 lastpoly = (lastpoly * t) % p
-                phi_p[A + B + 3 + n] = vector(F, d, lastpoly.dict())
+                phi_p[A + B + 3 + n] = vector(F, d, lastpoly.monomial_coefficients())
             lastpoly = -alpha % p
-            phi_p[0] = vector(F, d, lastpoly.dict())
+            phi_p[0] = vector(F, d, lastpoly.monomial_coefficients())
             for n in range(A):
                 lastpoly = (lastpoly * t) % p
-                phi_p[1 + n] = vector(F, d, lastpoly.dict())
+                phi_p[1 + n] = vector(F, d, lastpoly.monomial_coefficients())
             phi_p[A + B + C + 3] = vector(F, d)
             phi.append(matrix(phi_p).transpose())
         for (i, p) in enumerate(supports[2]):
@@ -548,12 +547,12 @@ for function field of characteristic 2.")
             lastpoly = F(1)
             for n in range(A):
                 lastpoly = (lastpoly * t) % p
-                phi_p[1 + n] = vector(F, d, lastpoly.dict())
+                phi_p[1 + n] = vector(F, d, lastpoly.monomial_coefficients())
             lastpoly = -alpha % p
-            phi_p[A + 1] = vector(F, d, lastpoly.dict())
+            phi_p[A + 1] = vector(F, d, lastpoly.monomial_coefficients())
             for n in range(B):
                 lastpoly = (lastpoly * t) % p
-                phi_p[A + 2 + n] = vector(F, d, lastpoly.dict())
+                phi_p[A + 2 + n] = vector(F, d, lastpoly.monomial_coefficients())
             phi_p[A + B + C + 3] = vector(F, d)
             phi.append(matrix(phi_p).transpose())
         if case == 0:

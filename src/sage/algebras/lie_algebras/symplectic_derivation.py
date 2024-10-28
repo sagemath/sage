@@ -261,9 +261,9 @@ class SymplecticDerivationLieAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGener
         """
         d = self.monomial
         return (
-                 d( _Partitions([2,1]) )
-                 - self.base_ring().an_element() * d( _Partitions([5,2,2,1]) )
-                 + d( _Partitions([2*self._g-1, self._g+1, 2, 1, 1]) )
+                 d(_Partitions([2,1]))
+                 - self.base_ring().an_element() * d(_Partitions([5,2,2,1]))
+                 + d(_Partitions([2*self._g-1, self._g+1, 2, 1, 1]))
                 )
 
     def some_elements(self):
@@ -279,8 +279,8 @@ class SymplecticDerivationLieAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGener
         """
         d = self.monomial
         g = self._g
-        return [d( _Partitions([2,1]) ), d( _Partitions([g+3,g+1]) ), d( _Partitions([2,1,1])),
-                d( _Partitions([2*g-1,2*g-2]) ), d( _Partitions([2*g-2,g-1,1]) ),
+        return [d(_Partitions([2,1])), d(_Partitions([g+3,g+1])), d(_Partitions([2,1,1])),
+                d(_Partitions([2*g-1,2*g-2])), d(_Partitions([2*g-2,g-1,1])),
                 self.an_element()]
 
     class Element(LieAlgebraElement):

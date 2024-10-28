@@ -33,7 +33,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
     - ``I`` -- an ideal or a list of generators of the ideal
     - ``ambient`` -- (optional) the Lie algebra to be quotiented;
       will be deduced from ``I`` if not given
-    - ``names`` -- (optional) a string or a list of strings;
+    - ``names`` -- (optional) string or list of strings;
       names for the basis elements of the quotient. If ``names`` is a
       string, the basis will be named ``names_1``,...,``names_n``.
 
@@ -218,9 +218,14 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         index_set = [i for i in sorted_indices if i not in I_supp]
 
         if names is None:
-            amb_names = dict(zip(sorted_indices, ambient.variable_names()))
-            names = [amb_names[i] for i in index_set]
-        elif isinstance(names, str):
+            try:
+                amb_names = dict(zip(sorted_indices, ambient.variable_names()))
+                names = [amb_names[i] for i in index_set]
+            except (ValueError, KeyError):
+                # ambient has not assigned variable names
+                # or the names are for the generators rather than the basis
+                names = 'e'
+        if isinstance(names, str):
             if len(index_set) == 1:
                 names = [names]
             else:
@@ -252,7 +257,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         B = L.basis()
         sm = L.module().submodule_with_basis([I.reduce(B[i]).to_vector()
                                               for i in index_set])
-        SB = sm.basis()
+        SB = [L.from_vector(b) for b in sm.basis()]
 
         # compute and normalize structural coefficients for the quotient
         s_coeff = {}
@@ -260,7 +265,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
             for j in range(i + 1, len(index_set)):
                 ind_j = index_set[j]
 
-                brkt = I.reduce(L.bracket(SB[i], SB[j]))
+                brkt = I.reduce(SB[i].bracket(SB[j]))
                 brktvec = sm.coordinate_vector(brkt.to_vector())
                 s_coeff[(ind_i, ind_j)] = dict(zip(index_set, brktvec))
         s_coeff = LieAlgebraWithStructureCoefficients._standardize_s_coeff(
@@ -269,6 +274,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         self._ambient = L
         self._I = I
         self._sm = sm
+        self._triv_ideal = bool(I.dimension() == 0)
 
         LieAlgebraWithStructureCoefficients.__init__(
             self, L.base_ring(), s_coeff, names, index_set, category=category)
@@ -291,11 +297,26 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
             L: General linear Lie algebra of rank 2 over Rational Field
             I: Ideal ([0 0]
             [0 1])
+
+            sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
+            sage: a,b,c = L.gens()
+            sage: I = L.ideal([a + 2*b, b + 3*c])
+            sage: Q = L.quotient(I)
+            sage: Q
+            Lie algebra quotient L/I of dimension 1 over Rational Field where
+            L: An example of a finite dimensional Lie algebra with basis:
+                the 3-dimensional abelian Lie algebra over Rational Field
+            I: Ideal ((1, 0, -6), (0, 1, 3))
         """
+        try:
+            ideal_repr = self._I._repr_short()
+        except AttributeError:
+            ideal_repr = repr(tuple(self._I.gens()))
+
         return ("Lie algebra quotient L/I of dimension %s"
                 " over %s where\nL: %s\nI: Ideal %s" % (
                     self.dimension(), self.base_ring(),
-                    self.ambient(), self._I._repr_short()))
+                    self.ambient(), ideal_repr))
 
     def _repr_generator(self, i):
         r"""
@@ -406,14 +427,23 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
             sage: el.parent() == Q
             True
 
-        An element from a vector of the ambient module
+        An element from a vector of the ambient module::
 
             sage: el = Q.from_vector([1, 2, 3]); el
             -2*X - Y
             sage: el.parent() == Q
             True
+
+        Check for the trivial ideal::
+
+            sage: L.<x,y,z> = LieAlgebra(GF(3), {('x','z'): {'x':1, 'y':1}, ('y','z'): {'y':1}})
+            sage: I = L.ideal([])
+            sage: Q = L.quotient(I)
+            sage: v = Q.an_element().to_vector()
+            sage: Q.from_vector(v)
+            x + y + z
         """
-        if len(v) == self.ambient().dimension():
+        if not self._triv_ideal and len(v) == self.ambient().dimension():
             return self.retract(self.ambient().from_vector(v))
 
         return super().from_vector(v)

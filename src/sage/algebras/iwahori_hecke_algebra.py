@@ -13,7 +13,6 @@ AUTHORS:
 - Chase Meadors, Tianyuan Xu (2021):
   Implemented direct computation of products in the
   `C^{\prime}` basis using du Cloux's Coxeter3 package
-
 """
 # ****************************************************************************
 #  Copyright (C) 2013 Brant Jones <brant at math.jmu.edu>
@@ -84,7 +83,7 @@ def normalized_laurent_polynomial(R, p):
         u + v^-1 + u^-1
     """
     try:
-        return R({k: R._base(c) for k, c in p.dict().items()})
+        return R({k: R._base(c) for k, c in p.monomial_coefficients().items()})
     except (AttributeError, TypeError):
         return R(p)
 
@@ -129,11 +128,8 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
     - ``W`` -- a Coxeter group or Cartan type
     - ``q1`` -- a parameter
-
-    OPTIONAL ARGUMENTS:
-
-    - ``q2`` -- (default ``-1``) another parameter
-    - ``base_ring`` -- (default ``q1.parent()``) a ring containing ``q1``
+    - ``q2`` -- (default: ``-1``) another parameter
+    - ``base_ring`` -- (default: ``q1.parent()``) a ring containing ``q1``
       and ``q2``
 
     The Iwahori-Hecke algebra [Iwa1964]_ is a deformation of the group algebra of
@@ -721,7 +717,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
                 .. WARNING::
 
-                    If `i`` is not a reduced expression then the basis element
+                    If ``i`` is not a reduced expression then the basis element
                     indexed by the corresponding element of the algebra is
                     returned rather than the corresponding product of the
                     generators::
@@ -1241,7 +1237,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             EXAMPLES::
 
                 sage: H = IwahoriHeckeAlgebra("G2",1)
-                sage: t = H.T(prefix="t")
+                sage: t = H.T(prefix='t')
                 sage: t[1]
                 t[1]
             """
@@ -1259,7 +1255,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
         # This **must** match the name of the class in order for
         #   specialize_to() to work
-        _basis_name = None
+        _basis_name = 'B'
 
         def _repr_term(self, t):
             r"""
@@ -1357,7 +1353,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             sage: w0 = T(H.coxeter_group().long_element())
             sage: w0
             T[1,2,3,1,2,1]
-            sage: T = H.T(prefix="s")
+            sage: T = H.T(prefix='s')
             sage: T.an_element()
             s[1,2,3] + 2*s[1] + 3*s[2] + 1
 
@@ -1442,7 +1438,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 sage: U1*T1,T1*U1
                 (1, 1)
                 sage: P1.<q> = LaurentPolynomialRing(QQ)
-                sage: H1 = IwahoriHeckeAlgebra("A2", q, base_ring=P1).T(prefix="V")
+                sage: H1 = IwahoriHeckeAlgebra("A2", q, base_ring=P1).T(prefix='V')
                 sage: V1,V2 = H1.algebra_generators()
                 sage: W1,W2 = H1.inverse_generators()
                 sage: [W1,W2]
@@ -1470,7 +1466,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 result = self.product_by_generator(result, i)
             return result
 
-        def product_by_generator_on_basis(self, w, i, side="right"):
+        def product_by_generator_on_basis(self, w, i, side='right'):
             r"""
             Return the product `T_w T_i` (resp. `T_i T_w`) if ``side`` is
             ``'right'`` (resp. ``'left'``).
@@ -1499,7 +1495,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 sage: s1,s2 = H.coxeter_group().simple_reflections()
                 sage: [T.product_by_generator_on_basis(w, 1) for w in [s1,s2,s1*s2]]
                 [(q-1)*T[1] + q, T[2,1], T[1,2,1]]
-                sage: [T.product_by_generator_on_basis(w, 1, side="left") for w in [s1,s2,s1*s2]]
+                sage: [T.product_by_generator_on_basis(w, 1, side='left') for w in [s1,s2,s1*s2]]
                 [(q-1)*T[1] + q, T[1,2], (q-1)*T[1,2] + q*T[2]]
             """
             wi = w.apply_simple_reflection(i, side=side)
@@ -1511,7 +1507,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             else:
                 return self.monomial(wi)
 
-        def product_by_generator(self, x, i, side="right"):
+        def product_by_generator(self, x, i, side='right'):
             r"""
             Return `T_i \cdot x`, where `T_i` is the `i`-th generator. This is
             coded individually for use in ``x._mul_()``.
@@ -1705,11 +1701,11 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 (q-1)*T[1] + q
 
                 sage: R.<q1,q2> = QQ[]
-                sage: H = IwahoriHeckeAlgebra("A2", q1, q2=q2).T(prefix="x")
+                sage: H = IwahoriHeckeAlgebra("A2", q1, q2=q2).T(prefix='x')
                 sage: sum(H.algebra_generators())^2
                 x[2,1] + x[1,2] + (q1+q2)*x[1] + (q1+q2)*x[2] + (-2*q1*q2)
 
-                sage: H = IwahoriHeckeAlgebra("A2", q1, q2=q2).T(prefix="t")
+                sage: H = IwahoriHeckeAlgebra("A2", q1, q2=q2).T(prefix='t')
                 sage: t1,t2 = H.algebra_generators()
                 sage: (t1-t2)^3
                 (q1^2-q1*q2+q2^2)*t[1] + (-q1^2+q1*q2-q2^2)*t[2]
@@ -2515,7 +2511,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
             # Define and register coercions from the A basis to the T basis and back again
             from_A_to_T = self.module_morphism(self.to_T_basis, codomain=IHAlgebra.T(),
-                                               triangular="lower", key=sorting_key,
+                                               triangular='lower', key=sorting_key,
                                                category=self.category())
             from_A_to_T.register_as_coercion()
             from_T_to_A = ~from_A_to_T
@@ -2647,7 +2643,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
             # Define and register coercions from the B basis to the T basis and back again
             from_B_to_T = self.module_morphism(self.to_T_basis, codomain=IHAlgebra.T(),
-                                               triangular="lower", key=sorting_key,
+                                               triangular='lower', key=sorting_key,
                                                category=self.category())
             from_B_to_T.register_as_coercion()
             from_T_to_B = ~from_B_to_T

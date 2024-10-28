@@ -1,0 +1,13 @@
+/* Additional css for tabs */
+
+.tab-set {
+    margin-top: 0px;
+}
+
+.tab-set > label {
+    padding: 0.1em var(--tabs--pading-x);
+}
+
+p.with-sage-tab { 
+    margin-bottom:0.25rem
+}

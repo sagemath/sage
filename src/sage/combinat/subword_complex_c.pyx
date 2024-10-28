@@ -1,7 +1,7 @@
 # sage.doctest: needs sage.modules
 
 cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
-                  int i, side="both") noexcept:
+                  int i, side='both') noexcept:
     r"""
     Flip a facet.
 
@@ -11,11 +11,9 @@ cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
     - ``positions`` -- the positions of the elements of the facet
     - ``extended_root_conf_indices`` -- also attached to the facet ?
     - ``i`` -- the position where to flip
-    - ``side`` -- optional, can be ``'positive'``, ``'negative'`` or ``'both'`` (default)
+    - ``side`` -- string; ``'positive'``, ``'negative'``, or ``'both'`` (default)
 
-    OUTPUT:
-
-    the new position `j` that has replaced `i`
+    OUTPUT: the new position `j` that has replaced `i`
 
     EXAMPLES::
 
@@ -59,11 +57,11 @@ cpdef int _flip_c(W, set positions, list extended_root_conf_indices,
     if j != i:
         t = R[min(r, r_minus)]
         for k in range(min(i, j) + 1, max(i, j) + 1):
-            extended_root_conf_indices[k] = t.action_on_root_indices(extended_root_conf_indices[k], side="left")
+            extended_root_conf_indices[k] = t.action_on_root_indices(extended_root_conf_indices[k], side='left')
     return j
 
 
-cpdef list _construct_facets_c(tuple Q, w, int n=-1, int pos=0, int l=-1) noexcept:
+cpdef list _construct_facets_c(tuple Q, w, int n=-1, int pos=0, int l=-1):
     r"""
     Return the list of facets of the subword complex associated to the
     word `Q` and the element `w` in a Coxeter group `W`.

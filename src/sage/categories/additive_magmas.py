@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Additive magmas
 """
@@ -59,7 +60,6 @@ class AdditiveMagmas(Category_singleton):
 
         sage: C = AdditiveMagmas()
         sage: TestSuite(C).run()
-
     """
 
     def super_categories(self):
@@ -175,7 +175,7 @@ class AdditiveMagmas(Category_singleton):
 
             INPUT:
 
-             - ``x``, ``y`` -- elements of this additive magma
+            - ``x``, ``y`` -- elements of this additive magma
 
             EXAMPLES::
 
@@ -241,16 +241,16 @@ class AdditiveMagmas(Category_singleton):
 
             - ``names`` -- the type of names used:
 
-              * ``'letters'`` - lowercase ASCII letters are used
+              * ``'letters'`` -- lowercase ASCII letters are used
                 for a base 26 representation of the elements'
                 positions in the list given by
                 :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
                 padded to a common width with leading 'a's.
-              * ``'digits'`` - base 10 representation of the
+              * ``'digits'`` -- base 10 representation of the
                 elements' positions in the list given by
                 :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
                 padded to a common width with leading zeros.
-              * ``'elements'`` - the string representations
+              * ``'elements'`` -- the string representations
                 of the elements themselves.
               * a list - a list of strings, where the length
                 of the list equals the number of elements.
@@ -400,9 +400,7 @@ class AdditiveMagmas(Category_singleton):
 
             - ``self``, ``right`` -- two elements with the same parent
 
-            OUTPUT:
-
-            - an element of the same parent
+            OUTPUT: an element of the same parent
 
             EXAMPLES::
 
@@ -424,9 +422,7 @@ class AdditiveMagmas(Category_singleton):
 
             - ``other`` -- an element of the parent of ``self``
 
-            OUTPUT:
-
-            - an element of the parent of ``self``
+            OUTPUT: an element of the parent of ``self``
 
             EXAMPLES::
 
@@ -655,7 +651,7 @@ class AdditiveMagmas(Category_singleton):
 
             def _test_zero(self, **options):
                 r"""
-                Test that ``self.zero()`` is an element of self and
+                Test that ``self.zero()`` is an element of ``self`` and
                 is neutral for the addition.
 
                 INPUT:
@@ -777,7 +773,7 @@ class AdditiveMagmas(Category_singleton):
                 All parents in the category ``CommutativeAdditiveMonoids()``
                 should implement this method.
 
-                .. note:: This is currently not useful because this method is
+                .. NOTE:: This is currently not useful because this method is
                    overridden by ``Element``.
 
                 TESTS::
@@ -954,7 +950,7 @@ class AdditiveMagmas(Category_singleton):
             class ParentMethods:
                 def zero(self):
                     r"""
-                    Returns the zero of this group
+                    Return the zero of this group.
 
                     EXAMPLES::
 
@@ -975,8 +971,8 @@ class AdditiveMagmas(Category_singleton):
                     [Category of unital magmas]
 
                     sage: C.super_categories()
-                    [Category of unital algebras with basis over Rational Field,
-                     Category of additive magma algebras over Rational Field]
+                    [Category of additive magma algebras over Rational Field,
+                     Category of unital algebras with basis over Rational Field]
                 """
                 from sage.categories.magmas import Magmas
                 return [Magmas().Unital()]

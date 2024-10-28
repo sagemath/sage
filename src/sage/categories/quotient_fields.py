@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Quotient fields
 """
@@ -14,9 +15,10 @@ from sage.categories.fields import Fields
 
 from sage.structure.element import coerce_binop
 
+
 class QuotientFields(Category_singleton):
     """
-    The category of quotient fields over an integral domain
+    The category of quotient fields over an integral domain.
 
     EXAMPLES::
 
@@ -55,7 +57,7 @@ class QuotientFields(Category_singleton):
         @coerce_binop
         def gcd(self, other):
             """
-            Greatest common divisor
+            Greatest common divisor.
 
             .. NOTE::
 
@@ -139,7 +141,7 @@ class QuotientFields(Category_singleton):
         @coerce_binop
         def lcm(self, other):
             """
-            Least common multiple
+            Least common multiple.
 
             In a field, the least common multiple is not very informative, as it
             is only determined up to a unit. But in the fraction field of an
@@ -341,12 +343,10 @@ class QuotientFields(Category_singleton):
 
             INPUT:
 
-            - ``*args`` - Arbitrary arguments suitable over the base ring
-            - ``**kwds`` - Arbitrary keyword arguments suitable over the base ring
+            - ``*args`` -- arbitrary arguments suitable over the base ring
+            - ``**kwds`` -- arbitrary keyword arguments suitable over the base ring
 
-            OUTPUT:
-
-            - Factorization of ``self`` over the base ring
+            OUTPUT: factorization of ``self`` over the base ring
 
             EXAMPLES::
 
@@ -378,9 +378,7 @@ class QuotientFields(Category_singleton):
               whether to decompose prime power denominators as opposed to having
               a single term for each irreducible factor of the denominator
 
-            OUTPUT:
-
-            Partial fraction decomposition of ``self`` over the base ring.
+            OUTPUT: partial fraction decomposition of ``self`` over the base ring
 
             AUTHORS:
 
@@ -630,7 +628,7 @@ class QuotientFields(Category_singleton):
 
         def _derivative(self, var=None):
             r"""
-            Returns the derivative of this rational function with respect to the
+            Return the derivative of this rational function with respect to the
             variable ``var``.
 
             Over a ring with a working gcd implementation, the derivative of a
@@ -640,11 +638,9 @@ class QuotientFields(Category_singleton):
 
             INPUT:
 
-            - ``var`` - Variable with respect to which the derivative is computed
+            - ``var`` -- variable with respect to which the derivative is computed
 
-            OUTPUT:
-
-            - Derivative of ``self`` with respect to ``var``
+            OUTPUT: derivative of ``self`` with respect to ``var``
 
             .. SEEALSO::
 

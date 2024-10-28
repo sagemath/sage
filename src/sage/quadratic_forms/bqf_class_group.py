@@ -140,7 +140,7 @@ class BQFClassGroup(Parent, UniqueRepresentation):
         """
         self._disc = ZZ(D)
         if check:
-            if not self._disc or self._disc % 4 not in (0,1):
+            if not self._disc or self._disc % 4 not in (0, 1):
                 raise ValueError('not a discriminant')
             if self._disc > 0:
                 raise NotImplementedError('positive discriminants are not yet supported')
@@ -217,7 +217,7 @@ class BQFClassGroup(Parent, UniqueRepresentation):
         c = (b**2 - self._disc) // (4*a)
         if randrange(2):
             b = -b
-        return self(BinaryQF([a,b,c]))
+        return self(BinaryQF([a, b, c]))
 
     def __hash__(self):
         r"""
@@ -447,8 +447,8 @@ class BQFClassGroup_element(AdditiveGroupElement):
             sage: cl + (-cl) == cl.parent().zero()  # indirect doctest
             True
         """
-        a,b,c = self._form
-        F = BinaryQF([a,-b,c])
+        a, b, c = self._form
+        F = BinaryQF([a, -b, c])
         return BQFClassGroup_element(F, parent=self.parent())
 
     def _add_(self, other):
@@ -677,14 +677,14 @@ def _project_bqf(bqf, q):
     """
     q2 = q**2
     disc = bqf.discriminant()
-    if not q2.divides(disc) or disc//q2 % 4 not in (0,1):
+    if not q2.divides(disc) or disc//q2 % 4 not in (0, 1):
         raise ValueError('discriminant not divisible by q^2')
 
-    a,b,c = bqf
+    a, b, c = bqf
 
     # lucky case: q^2|c (and q|b)
     if q2.divides(c):
-        a,b,c = c,-b,a
+        a, b, c = c, -b, a
 
     # general case: neither q^2|a nor q^2|c
     elif not q2.divides(a):
@@ -704,20 +704,21 @@ def _project_bqf(bqf, q):
             assert False
 
         # find equivalent form with q^2|a (and q|b)
-        u,v = map(ZZ, (u,v))
-        assert q2.divides(bqf(u,v))
+        u, v = map(ZZ, (u, v))
+        assert q2.divides(bqf(u, v))
         if not v:
             v += q
-        g,r,s = u.xgcd(v)
+        g, r, s = u.xgcd(v)
         assert g.is_one()
-        M = matrix(ZZ, [[u,-v],[s,r]])
+        M = matrix(ZZ, [[u, -v], [s, r]])
         assert M.det().is_one()
-        a,b,c = bqf * M
+        a, b, c = bqf * M
 
     # remaining case: q^2|a (and q|b)
     assert q2.divides(a)
     assert q.divides(b)
     return BinaryQF(a//q2, b//q, c)
+
 
 class BQFClassGroupQuotientMorphism(Morphism):
     r"""
@@ -801,7 +802,7 @@ class BQFClassGroupQuotientMorphism(Morphism):
         ALGORITHM: Repeated application of :func:`_project_bqf` for the prime factors in `f`.
         """
         bqf = elt.form()
-        for q,m in self.f:
+        for q, m in self.f:
             for _ in range(m):
                 bqf = _project_bqf(bqf, q)
         return self.codomain()(bqf)

@@ -2,15 +2,15 @@
 r"""
 Cell modules
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015-2018 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.modules_with_basis import ModulesWithBasis
@@ -234,7 +234,7 @@ class CellModule(CombinatorialFreeModule):
     @cached_method
     def nonzero_bilinear_form(self):
         """
-        Return ``True`` if the bilinear form of ``self`` is non-zero.
+        Return ``True`` if the bilinear form of ``self`` is nonzero.
 
         EXAMPLES::
 
@@ -247,7 +247,7 @@ class CellModule(CombinatorialFreeModule):
         # Since the bilinear form is symmetric, it is sufficient
         #   to check on the upper triangular part
         return any(self._bilinear_form_on_basis(s, t)
-                   for i,s in enumerate(C) for t in C[i:])
+                   for i, s in enumerate(C) for t in C[i:])
 
     @cached_method
     def radical_basis(self):
@@ -289,8 +289,8 @@ class CellModule(CombinatorialFreeModule):
             Finite family {}
         """
         radical = self.submodule(self.radical_basis(),
-                                category=self.category().Subobjects(),
-                                already_echelonized=True)
+                                 category=self.category().Subobjects(),
+                                 already_echelonized=True)
         radical.rename("Radical of {}".format(self))
         return radical
 
@@ -362,7 +362,7 @@ class CellModule(CombinatorialFreeModule):
 
             if self_on_left:
                 raise NotImplementedError
-                #scalar = scalar.cellular_involution()
+                # scalar = scalar.cellular_involution()
             mc = self._monomial_coefficients
             scalar_mc = scalar.monomial_coefficients(copy=False)
             D = linear_combination([(P._action_basis(x, k)._monomial_coefficients,

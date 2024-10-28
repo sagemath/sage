@@ -1,6 +1,6 @@
 """
 This file provides the declaration for the RelaxedElement class,
-which collects common functionality for the different relaxed p-adic
+which collects common functionality for the different relaxed `p`-adic
 template classes.
 
 It is included in padic_relaxed_element.pxd and should be included
@@ -130,7 +130,7 @@ cdef class RelaxedElement_teichmuller(RelaxedElementWithDigits):
 cdef class RelaxedElement_unknown(RelaxedElementWithDigits):
     cdef RelaxedElement _definition
     cdef long _next
-    cpdef set(self, RelaxedElement definition) noexcept
+    cpdef set(self, RelaxedElement definition)
     # for pickling
     cdef long _initialvaluation
     cdef long _initialprecrel
@@ -149,11 +149,11 @@ cdef class ExpansionIter():
     cdef long current
     cdef cdigit digit
     # simple mode
-    cdef _next_simple(self) noexcept
+    cdef _next_simple(self)
     # smallest mode
     cdef cdigit carry
-    cdef _next_smallest(self) noexcept
+    cdef _next_smallest(self)
     # teichmuller mode
     cdef RelaxedElement tail
     cdef dict coefficients
-    cdef _next_teichmuller(self) noexcept
+    cdef _next_teichmuller(self)

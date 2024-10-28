@@ -34,7 +34,7 @@ def factor_using_flint(Integer n):
 
     INPUT:
 
-    - ``n`` -- a nonzero sage Integer; the number to factor.
+    - ``n`` -- a nonzero sage Integer; the number to factor
 
     OUTPUT:
 

@@ -1,1 +1,1 @@
-Cython
+python3-cython

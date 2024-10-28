@@ -23,7 +23,6 @@ or on affine curves::
 AUTHORS:
 
 - Grayson Jorgenson (2016-6): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -297,8 +296,8 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
         r"""
         Return the tangents at this point of the affine plane curve this point is on.
 
-        OUTPUT: a list of polynomials in the coordinate ring of the ambient
-        space of the curve this point is on.
+        OUTPUT: list of polynomials in the coordinate ring of the ambient
+        space of the curve this point is on
 
         EXAMPLES::
 
@@ -344,7 +343,7 @@ class AffinePlaneCurvePoint_field(AffineCurvePoint_field):
 
         INPUT:
 
-        - ``D`` -- a curve in the same ambient space as the curve this point is on.
+        - ``D`` -- a curve in the same ambient space as the curve this point is on
 
         EXAMPLES::
 
@@ -451,7 +450,7 @@ class IntegralAffineCurvePoint_finite_field(IntegralAffineCurvePoint):
 
 class IntegralAffinePlaneCurvePoint(IntegralAffineCurvePoint, AffinePlaneCurvePoint_field):
     """
-    Point of an integral affine plane curve over a finite field.
+    Point of an integral affine plane curve.
     """
     pass
 

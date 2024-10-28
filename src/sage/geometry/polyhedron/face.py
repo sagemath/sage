@@ -96,9 +96,7 @@ class PolyhedronFace(ConvexSet_closed):
     manually create :class:`PolyhedronFace` objects unless you know
     what you are doing.
 
-    OUTPUT:
-
-    A :class:`PolyhedronFace`.
+    OUTPUT: a :class:`PolyhedronFace`
 
     EXAMPLES::
 
@@ -134,16 +132,16 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``polyhedron`` -- a :class:`Polyhedron`. The ambient
-          polyhedron.
+        - ``polyhedron`` -- a :class:`Polyhedron`; the ambient
+          polyhedron
 
-        - ``V_indices`` -- list of sorted integers. The indices of the
+        - ``V_indices`` -- list of sorted integers; the indices of the
           face-spanning V-representation objects in the ambient
-          polyhedron.
+          polyhedron
 
-        - ``H_indices`` -- list of sorted integers. The indices of the
+        - ``H_indices`` -- list of sorted integers; the indices of the
           H-representation objects of the ambient polyhedron that are
-          saturated on the face.
+          saturated on the face
 
         TESTS::
 
@@ -200,9 +198,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         Return all vertices of the face.
 
-        OUTPUT:
-
-        A tuple of vertices.
+        OUTPUT: a tuple of vertices
 
         EXAMPLES::
 
@@ -222,9 +218,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         Return the number of vertices of the face.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -263,9 +257,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         Return the rays of the face.
 
-        OUTPUT:
-
-        A tuple of rays.
+        OUTPUT: a tuple of rays
 
         EXAMPLES::
 
@@ -281,9 +273,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         Return the number of rays of the face.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -318,9 +308,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         Return all lines of the face.
 
-        OUTPUT:
-
-        A tuple of lines.
+        OUTPUT: a tuple of lines
 
         EXAMPLES::
 
@@ -335,9 +323,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         Return the number of lines of the face.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -353,7 +339,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``other`` -- anything.
+        - ``other`` -- anything
 
         OUTPUT:
 
@@ -389,8 +375,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``index`` -- optional. Either an integer or ``None``
-          (default).
+        - ``index`` -- integer or ``None`` (default)
 
         OUTPUT:
 
@@ -430,8 +415,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``index`` -- optional. Either an integer or ``None``
-          (default).
+        - ``index`` -- integer or ``None`` (default)
 
         OUTPUT:
 
@@ -471,9 +455,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         See also :meth:`ambient_Hrepresentation`.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -497,9 +479,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         See also :meth:`ambient_Vrepresentation`.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -520,9 +500,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         See also :meth:`ambient_Hrepresentation`.
 
-        OUTPUT:
-
-        Tuple of indices
+        OUTPUT: tuple of indices
 
         EXAMPLES::
 
@@ -551,9 +529,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         See also :meth:`ambient_Vrepresentation`.
 
-        OUTPUT:
-
-        Tuple of indices
+        OUTPUT: tuple of indices
 
         EXAMPLES::
 
@@ -587,9 +563,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         Return the dimension of the face.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -621,9 +595,7 @@ class PolyhedronFace(ConvexSet_closed):
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        A string listing the V-representation indices of the face.
+        OUTPUT: a string listing the V-representation indices of the face
 
         EXAMPLES::
 
@@ -695,7 +667,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``base_field`` -- (default: the fraction field of the base ring) a field.
+        - ``base_field`` -- a field (default: the fraction field of the base ring)
 
         EXAMPLES::
 
@@ -714,7 +686,7 @@ class PolyhedronFace(ConvexSet_closed):
         r"""
         Return whether ``self`` is relatively open.
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -731,7 +703,7 @@ class PolyhedronFace(ConvexSet_closed):
         r"""
         Return whether ``self`` is compact.
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -750,9 +722,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         Return the face as an independent polyhedron.
 
-        OUTPUT:
-
-        A polyhedron.
+        OUTPUT: a polyhedron
 
         EXAMPLES::
 
@@ -851,13 +821,11 @@ class PolyhedronFace(ConvexSet_closed):
 
         INPUT:
 
-        - ``direction`` -- string (default: ``'outer'``), the direction in
+        - ``direction`` -- string (default: ``'outer'``); the direction in
           which to consider the normals. The other allowed option is
           ``'inner'``.
 
-        OUTPUT:
-
-        A polyhedron.
+        OUTPUT: a polyhedron
 
         EXAMPLES::
 
@@ -933,9 +901,7 @@ class PolyhedronFace(ConvexSet_closed):
         It is equal to the sum of ``self`` and the cone of feasible directions
         at any point of the relative interior of ``self``.
 
-        OUTPUT:
-
-        A polyhedron.
+        OUTPUT: a polyhedron
 
         EXAMPLES::
 
@@ -983,9 +949,7 @@ class PolyhedronFace(ConvexSet_closed):
         Return the polyhedron containing the points that sees every facet
         containing ``self``.
 
-        OUTPUT:
-
-        A polyhedron.
+        OUTPUT: a polyhedron
 
         EXAMPLES::
 
@@ -1027,6 +991,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         return parent.element_class(parent, None, [locus_ieqs, locus_eqns])
 
+
 def combinatorial_face_to_polyhedral_face(polyhedron, combinatorial_face):
     r"""
     Convert a combinatorial face to a face of a polyhedron.
@@ -1036,7 +1001,7 @@ def combinatorial_face_to_polyhedral_face(polyhedron, combinatorial_face):
     - ``polyhedron`` -- a polyhedron containing ``combinatorial_face``
     - ``combinatorial_face`` -- a :class:`CombinatorialFace`
 
-    OUTPUT: a :class:`PolyhedronFace`.
+    OUTPUT: a :class:`PolyhedronFace`
 
     EXAMPLES::
 

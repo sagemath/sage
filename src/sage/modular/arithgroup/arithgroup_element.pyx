@@ -39,12 +39,11 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
 
         - ``parent`` -- an arithmetic subgroup
 
-        - `x` -- data defining a 2x2 matrix over ZZ
-                 which lives in parent
+        - ``x`` -- data defining a 2x2 matrix over ZZ
+          which lives in ``parent``
 
         - ``check`` -- if ``True``, check that parent is an arithmetic
-                       subgroup, and that `x` defines a matrix of
-                       determinant `1`.
+          subgroup, and that `x` defines a matrix of determinant `1`
 
         We tend not to create elements of arithmetic subgroups that are not
         SL2Z, in order to avoid coercion issues (that is, the other arithmetic
@@ -78,8 +77,8 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             True
         """
         if check:
-            from .arithgroup_generic import is_ArithmeticSubgroup
-            if not is_ArithmeticSubgroup(parent):
+            from .arithgroup_generic import ArithmeticSubgroup
+            if not isinstance(parent, ArithmeticSubgroup):
                 raise TypeError("parent (= %s) must be an arithmetic subgroup" % parent)
 
             x = M2Z(x, copy=True, coerce=True)
@@ -158,10 +157,10 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         """
         return '%s' % self.__x._latex_()
 
-    cpdef _richcmp_(self, right_r, int op) noexcept:
+    cpdef _richcmp_(self, right_r, int op):
         """
-        Compare self to right, where right is guaranteed to have the same
-        parent as self.
+        Compare ``self`` to ``right``, where ``right`` is guaranteed to have
+        the same parent as ``self``.
 
         EXAMPLES::
 
@@ -204,9 +203,9 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
         """
         return True
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
-        Return self * right.
+        Return ``self * right``.
 
         EXAMPLES::
 
@@ -376,8 +375,8 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             sage: G([1, 4, 0, 1]).acton(infinity)
             +Infinity
         """
-        from sage.rings.infinity import is_Infinite, infinity
-        if is_Infinite(z):
+        from sage.rings.infinity import InfinityElement, infinity
+        if isinstance(z, InfinityElement):
             if self.c() != 0:
                 return self.a() / self.c()
             else:
