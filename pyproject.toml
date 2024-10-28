@@ -89,6 +89,8 @@ content-type = "text/markdown"
 platforms = [
     'osx-64', 'linux-64', 'linux-aarch64', 'osx-arm64'
 ]
+
+# External dependencies in the format proposed by https://peps.python.org/pep-0725
 [external]
 build-requires = [
   "virtual:compiler/c",
