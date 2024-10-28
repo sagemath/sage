@@ -111,6 +111,9 @@ foreach name, pyx : extension_data
     dependencies += [mpfi]
   elif name == 'misc_flint' or name == 'matrix_rational_sparse'
     dependencies += [flint]
+  elif name == 'change_ring' and is_windows
+    # Has some compilation errors
+    continue
   endif
 
   py.extension_module(

@@ -67,6 +67,11 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  if is_windows
+    # Uses posix API
+    continue
+  endif
+
   py.extension_module(
     name,
     sources: pyx,

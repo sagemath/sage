@@ -190,6 +190,10 @@ foreach name, pyx : extension_data_cpp
     deps += [ntl]
   elif name == 'fraction_field_FpT'
     deps += [flint]
+    if is_windows
+      # Has some compilation errors: https://github.com/flintlib/flint/issues/2101
+      continue
+    endif
   elif name == 'rational'
     deps += [gmpy2]
   endif
