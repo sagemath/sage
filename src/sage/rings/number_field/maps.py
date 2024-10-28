@@ -45,9 +45,6 @@ from sage.categories.morphism import IdentityMorphism
 
 import sage.rings.rational_field as rational_field
 
-from sage.libs.pari.all import pari
-
-
 QQ = rational_field.RationalField()
 
 IdentityMap = IdentityMorphism
@@ -307,6 +304,8 @@ class MapRelativeVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
             sage: fr(to(a0 + 2*b0)), fr(V([0, 1])), fr(V([b0, 2*b0])) # indirect doctest
             (a + 2*b0, a, 2*b0*a + b0)
         """
+        from sage.libs.pari.all import pari
+        
         K = self.codomain()
         B = K.base_field().absolute_field('a')
         # Convert v to a PARI polynomial in x with coefficients that

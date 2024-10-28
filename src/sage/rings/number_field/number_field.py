@@ -79,13 +79,10 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.superseded import deprecation
 
 
-import sage.libs.ntl.all as ntl
 import sage.rings.abc
 import sage.rings.complex_mpfr
 from sage.rings.polynomial.polynomial_element import Polynomial
 import sage.rings.real_mpfr
-import sage.rings.real_mpfi
-import sage.rings.complex_double
 import sage.rings.real_double
 import sage.rings.real_lazy
 
@@ -101,10 +98,6 @@ from sage.categories.number_fields import NumberFields
 
 from sage.rings.ring import Ring
 from sage.misc.latex import latex_variable_name
-
-from .unit_group import UnitGroup
-from .class_group import ClassGroup
-from .class_group import SClassGroup
 
 from sage.structure.element import Element
 from sage.structure.parent import Parent
@@ -205,8 +198,6 @@ import sage.rings.infinity as infinity
 from sage.rings.rational import Rational
 from sage.rings.integer import Integer
 import sage.rings.polynomial.polynomial_element as polynomial_element
-import sage.groups.abelian_gps.abelian_group
-import sage.rings.complex_interval_field
 
 from sage.structure.factory import UniqueFactory
 from . import number_field_element
@@ -216,10 +207,8 @@ from sage.libs.pari.all import pari, pari_gen
 
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfi import RIF
 from sage.rings.cif import CIF
 from sage.rings.real_double import RDF
-from sage.rings.complex_double import CDF
 from sage.rings.real_lazy import RLF, CLF
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
@@ -2051,6 +2040,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         if p == infinity.infinity:
             gen_image = self.gen_embedding()
             if gen_image is not None:
+                from sage.rings.complex_double import CDF
+
                 if gen_image in RDF:
                     return QQ.completion(p, prec, extras)
                 elif gen_image in CDF:
@@ -4608,6 +4599,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             ``proof.number_field(False)``. It can easily take 1000s of times
             longer to do computations with ``proof=True`` (the default).
         """
+        from .class_group import ClassGroup
+
         proof = proof_flag(proof)
         try:
             return self.__class_group[proof, names]
@@ -4695,6 +4688,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             Class group of order 4 with structure C4 of Number Field in a
              with defining polynomial x^2 + 14 with a = 3.741657386773942?*I
         """
+        from .class_group import SClassGroup
+        
         proof = proof_flag(proof)
         if all(P.is_principal() for P in S):
             C = self.class_group(proof=proof)
@@ -6701,10 +6696,12 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: QuadraticField(3, 'a').narrow_class_group()
             Multiplicative Abelian group isomorphic to C2
         """
+        from sage.groups.abelian_gps.abelian_group import AbelianGroup
+
         proof = proof_flag(proof)
         k = self.pari_bnf(proof)
         s = k.bnfnarrow().sage()
-        return sage.groups.abelian_gps.abelian_group.AbelianGroup(s[1])
+        return AbelianGroup(s[1])
 
     def ngens(self):
         """
@@ -6769,6 +6766,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         try:
             return (self.__polynomial_ntl, self.__denominator_ntl)
         except AttributeError:
+            import sage.libs.ntl.all as ntl
+
             self.__denominator_ntl = ntl.ZZ()
             den = self.polynomial().denominator()
             self.__denominator_ntl.set_from_sage_int(ZZ(den))
@@ -7214,6 +7213,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
              a^15 - a^12 + a^10 - a^9 - 2*a^8 + 3*a^7 + a^6 - 3*a^5 + a^4 + 4*a^3 - 3*a^2 - 2*a + 2,
              2*a^16 + a^15 - a^11 - 3*a^10 - 4*a^9 - 4*a^8 - 4*a^7 - 5*a^6 - 7*a^5 - 8*a^4 - 6*a^3 - 5*a^2 - 6*a - 7]
         """
+        from sage.rings.unit_group import UnitGroup
+
         proof = proof_flag(proof)
 
         try:
@@ -7330,6 +7331,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: U.log(u)
             (1, 1, 4, 1, 5)
         """
+        from sage.rings.unit_group import UnitGroup
+
         proof = proof_flag(proof)
 
         # process the parameter S:
@@ -9636,6 +9639,8 @@ class NumberField_absolute(NumberField_generic):
                Defn: alpha |--> 0.96 + 1.7*I]
         """
         if prec is None:
+            from sage.rings.real_mpfi import RIF
+            
             R = RIF
             C = CIF
 
@@ -10849,6 +10854,8 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             # As a consequence, a result of _an_element_() with the wrong class
             # is cached during the call to has_coerce_map_from. We reset the
             # cache afterwards.
+            from sage.rings.complex_double import CDF
+
             self._standard_embedding = not CDF.has_coerce_map_from(self) or CDF(self.gen()).imag() > 0
             self._cache_an_element = None
 
@@ -11279,6 +11286,8 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             sage: K5._log_gen(zeta15**3)
             4
         """
+        from sage.rings.complex_double import CDF
+
         X = x.parent()
         gen = self.gen()
 
@@ -12082,6 +12091,8 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
                 self._element_class = number_field_element_quadratic.NumberFieldElement_quadratic
 
         self._NumberField_generic__gen = self._element_class(self, parts)
+
+        from sage.rings.complex_double import CDF
 
         # we must set the flag _standard_embedding *before* any element creation
         # Note that in the following code, no element is built.

@@ -391,7 +391,6 @@ from sage.structure.element cimport Expression as Expression_abc
 from sage.symbolic.complexity_measures import string_length
 from sage.symbolic.function cimport SymbolicFunction
 from sage.rings.rational import Rational
-from sage.rings.real_mpfr cimport RealNumber
 from sage.misc.derivative import multi_derivative
 from sage.misc.decorators import sage_wraps
 from sage.misc.latex import latex_variable_name
@@ -13735,6 +13734,7 @@ cpdef new_Expression(parent, x):
                                      unsigned_infinity)
     from sage.structure.factorization import Factorization
     from sage.categories.sets_cat import Sets
+    from sage.rings.real_mpfr import RealNumber
 
     if isinstance(x, RealNumber):
         if x.is_NaN():
@@ -13956,8 +13956,8 @@ cpdef new_Expression_symbol(parent, name=None, latex_name=None, domain=None):
 
         e._gobj = GEx(symb)
         parent.symbols[name] = e
-        if domain is not None:
-            send_sage_domain_to_maxima(e, domain)
+        # if domain is not None:
+        #     send_sage_domain_to_maxima(e, domain)
 
     return e
 

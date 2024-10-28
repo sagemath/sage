@@ -175,7 +175,6 @@ AUTHORS:
 
 from collections import defaultdict
 from sage.structure.category_object import normalize_names
-from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer import Integer
 
 # the import below is just a redirection
@@ -648,6 +647,8 @@ class FiniteFieldFactory(UniqueFactory):
                     else:
                         self._modulus_cache[order][modulus] = modulus = R.irreducible_element(n, algorithm=modulus)
                 else:
+                    from sage.rings.polynomial.polynomial_element import Polynomial
+                    
                     if isinstance(modulus, Polynomial):
                         modulus = modulus.change_variable_name('x')
                     modulus = R(modulus).monic()

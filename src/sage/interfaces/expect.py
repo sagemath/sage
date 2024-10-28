@@ -52,7 +52,6 @@ from random import randrange
 import pexpect
 from pexpect import ExceptionPexpect
 import sage.interfaces.abc
-from sage.interfaces.sagespawn import SageSpawn
 from sage.interfaces.interface import (Interface, InterfaceElement,
             InterfaceFunction, InterfaceFunctionElement)
 
@@ -509,6 +508,8 @@ If this all works, you can then make calls like:
         os.chdir(self.__path)
         try:
             try:
+                from sage.interfaces.sagespawn import SageSpawn
+
                 self._expect = SageSpawn(cmd,
                         logfile=self.__logfile,
                         timeout=None,  # no timeout
