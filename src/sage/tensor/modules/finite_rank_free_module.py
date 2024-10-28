@@ -2717,7 +2717,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         """
         return self.dual_exterior_power(1)
 
-    def irange(self, start: Optional[int] = None) -> Generator[int, None, None]:
+    def irange(self, start: int | None = None) -> Generator[int, None, None]:
         r"""
         Single index generator, labelling the elements of a basis of ``self``.
 
