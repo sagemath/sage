@@ -173,6 +173,7 @@ from sage.categories.topological_spaces import TopologicalSpaces
 from sage.rings.real_mpfr import RR
 from sage.manifolds.differentiable.examples.euclidean import EuclideanSpace
 
+
 class Sphere(PseudoRiemannianSubmanifold):
     r"""
     Sphere smoothly embedded in Euclidean Space.

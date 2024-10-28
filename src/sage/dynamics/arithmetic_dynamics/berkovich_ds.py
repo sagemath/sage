@@ -869,7 +869,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
                     else:
                         new_poly.append(ring_of_integers(i).mod(ideal))
                 new_poly = R(new_poly)
-                fraction.append((new_poly))
+                fraction.append(new_poly)
             gcd = fraction[0].gcd(fraction[1])
             num = fraction[0].quo_rem(gcd)[0]
             dem = fraction[1].quo_rem(gcd)[0]

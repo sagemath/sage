@@ -53,6 +53,7 @@ from sage.categories.algebras import Algebras
 from .characteristic_cohomology_class import (CharacteristicCohomologyClassRing,
                                               CharacteristicCohomologyClassRingElement)
 
+
 class DeRhamCohomologyClass(AlgebraElement):
     r"""
     Define a cohomology class in the de Rham cohomology ring.
@@ -297,6 +298,7 @@ class DeRhamCohomologyClass(AlgebraElement):
             if self.representative() == other.representative():
                 return True
         raise NotImplementedError('comparison via exact forms is currently not supported')
+
 
 class DeRhamCohomologyRing(Parent, UniqueRepresentation):
     r"""

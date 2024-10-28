@@ -476,7 +476,7 @@ class LazyModuleElement(Element):
                 return lazy_list(coeffs)
 
             # flatten out the generator in the multivariate case
-            return lazy_list(chain.from_iterable((coeff.coefficients() for coeff in coeffs)))
+            return lazy_list(chain.from_iterable(coeff.coefficients() for coeff in coeffs))
 
         if isinstance(self, LazyPowerSeries) and self.parent()._arity == 1:
             from sage.misc.superseded import deprecation
@@ -486,7 +486,7 @@ class LazyModuleElement(Element):
             return list(islice(coeffs, n))
 
         # flatten out the generator in the multivariate case
-        return list(islice(chain.from_iterable((coeff.coefficients() for coeff in coeffs)), n))
+        return list(islice(chain.from_iterable(coeff.coefficients() for coeff in coeffs), n))
 
     def map_coefficients(self, f):
         r"""

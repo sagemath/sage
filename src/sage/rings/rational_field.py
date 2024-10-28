@@ -601,7 +601,8 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     def embeddings(self, K):
         r"""
-        Return list of the one embedding of `\QQ` into `K`, if it exists.
+        Return the list containing the unique embedding of `\QQ` into `K`,
+        if it exists, and an empty list otherwise.
 
         EXAMPLES::
 
@@ -612,16 +613,17 @@ class RationalField(Singleton, number_field_base.NumberField):
                From: Rational Field
                To:   Cyclotomic Field of order 5 and degree 4]
 
-        `K` must have characteristic 0::
+        The field `K` must have characteristic `0` for an embedding of `\QQ`
+        to exist::
 
             sage: QQ.embeddings(GF(3))
-            Traceback (most recent call last):
-            ...
-            ValueError: no embeddings of the rational field into K.
+            []
         """
-        if K.characteristic():
-            raise ValueError("no embeddings of the rational field into K.")
-        return [self.hom(K)]
+        if K.characteristic() == 0:
+            v = [self.hom(K)]
+        else:
+            v = []
+        return Sequence(v, check=False, universe=self.Hom(K))
 
     def automorphisms(self):
         r"""
