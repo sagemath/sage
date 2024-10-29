@@ -571,8 +571,7 @@ class FunctionField_polymod(FunctionField):
             sage: L._repr_()
             'Function field in y defined by y^5 - 2*x*y + (-x^4 - 1)/x'
         """
-        return (f"Function field in {self.variable_name()} defined by "
-                f"{self._polynomial}")
+        return f"Function field in {self.variable_name()} defined by {self._polynomial}"
 
     def _latex_(self):
         r"""
