@@ -269,7 +269,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                 gb.append(flats_gen[G]*(term)**(ranks[F] - ranks[G]))
         g_basis = PolynomialSequence(R, [gb])
         return g_basis
-    
+
     def normal_basis(self, algorithm='', *args, **kwargs):
         r"""
         Return the monomial basis of the quotient ring of this ideal.
