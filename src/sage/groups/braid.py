@@ -96,7 +96,8 @@ from sage.structure.richcmp import richcmp, rich_to_bool
 lazy_import('sage.libs.braiding',
             ['leftnormalform', 'rightnormalform', 'centralizer', 'supersummitset', 'greatestcommondivisor',
              'leastcommonmultiple', 'conjugatingbraid', 'ultrasummitset',
-             'thurston_type', 'rigidity', 'sliding_circuits'],
+             'thurston_type', 'rigidity', 'sliding_circuits', 'send_to_sss',
+             'send_to_uss', 'send_to_sc', 'trajectory', 'cyclic_slidings' ],
             feature=sage__libs__braiding())
 lazy_import('sage.knots.knot', 'Knot')
 
@@ -2238,6 +2239,95 @@ class Braid(FiniteTypeArtinGroupElement):
               * self._colored_jones_sum(N, shorter_qword))
         self._cj_with_q[N] = cj.subs({q: 1/q}) if use_inverse else cj
         return self.colored_jones_polynomial(N, variab, try_inverse)
+
+    def send_to_sss(self):
+        r"""
+        Return an element of the braid's super summit set, an the conjugating
+        braid.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: b = B([1, 2, 1, 2, 3, -1, 2, 1, 3])
+            sage: b.send_to_sss()
+            (s0*s2*s0*s1*s2*s1*s0, s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1*s1*s0*s2*s1*s0)
+
+        """
+        to_sss = send_to_sss(self)
+        B = self.parent()
+        return tuple(B._element_from_libbraiding(b) for b in to_sss)
+
+    def send_to_uss(self):
+        r"""
+        Return an element of the braid's ultra summit set, an the conjugating
+        braid.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: b = B([1, 2, 1, 2, 3, -1, 2, -1, 3])
+            sage: b.send_to_uss()
+            (s0*s1*s0*s2*s1, s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1*s1*s2*s1^2*s0)
+
+        """
+        to_uss = send_to_uss(self)
+        B = self.parent()
+        return tuple(B._element_from_libbraiding(b) for b in to_uss)
+
+    def send_to_sc(self):
+        r"""
+        Return an element of the braid's sliding circuits, an the conjugating
+        braid.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: b = B([1, 2, 1, 2, 3, -1, 2, -1, 3])
+            sage: b.send_to_sc()
+            (s0*s1*s0*s2*s1, s0^2*s1*s2)
+
+        """
+        to_sc = send_to_sc(self)
+        B = self.parent()
+        return tuple(B._element_from_libbraiding(b) for b in to_sc)
+
+    def trajectory(self):
+        r"""
+        Return the braid's trajectory.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: b = B([1, 2, 1, 2, 3, -1, 2, -1, 3])
+            sage: b.trajectory()
+            [s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s2*s0*s1*s2*s1*s0^2*s1*s2^2,
+             s0*s1*s2^3,
+             s0*s1*s2*s1^2,
+             s0*s1*s0*s2*s1]
+
+        """
+        traj = trajectory(self)
+        B = self.parent()
+        return [B._element_from_libbraiding(b) for b in traj]
+
+    def cyclic_slidings(self):
+        r"""
+        Return the the braid's cyclic slidings.
+
+        OUTPUT: The braid's cyclic slidings. Each cyclic sliding is a list of braids.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: b = B([1, 2, 1, 2, 3, -1, 2, 1])
+            sage: b.cyclic_slidings()
+            [[s0*s2*s1*s0*s1*s2, s0*s1*s2*s1*s0^2, s1*s0*s2^2*s1*s0],
+             [s0*s1*s2*s1^2*s0, s0*s1*s2*s1*s0*s2, s1*s0*s2*s0*s1*s2]]
+
+        """
+        cs = cyclic_slidings(self)
+        B = self.parent()
+        return [[B._element_from_libbraiding(b) for b in t] for t in cs]
 
 
 class RightQuantumWord:
