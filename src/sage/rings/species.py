@@ -1539,6 +1539,55 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         """
         return self.is_molecular() and len(self.support()[0]) == 1
 
+    def tilde(self):
+        r"""
+        Return the tilde species of ``self``.
+
+        The tilde species `\tilde F` of a species `F` has as
+        structures the set of pairs `(s, a)`, consisting of an
+        `F`-structure `s` and an automorphism `a` of `s`.
+
+        We use https://mathoverflow.net/a/480852 to compute it.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import AtomicSpecies, MolecularSpecies, PolynomialSpecies
+            sage: M = MolecularSpecies("X")
+            sage: P = PolynomialSpecies(QQ, "X")
+            sage: sortkey = lambda x: (len(x[1]), sum(x[1].coefficients()), str(x[0]))
+            sage: n=4; table(sorted([(m, P.monomial(m).tilde()) for m in M.subset(n)], key=sortkey))
+            X^4               X^4
+            X^2*E_2           2*X^2*E_2
+            {((1,2)(3,4),)}   2*{((1,2)(3,4),)}
+            X*C_3             3*X*C_3
+            C_4               4*C_4
+            E_2^2             4*E_2^2
+            Pb_4              4*Pb_4
+            X*E_3             X*E_3 + X^2*E_2 + X*C_3
+            Eo_4              Eo_4 + 2*X*C_3 + Pb_4
+            P_4               2*P_4 + E_2^2 + Pb_4 + C_4
+            E_4               E_4 + E_2^2 + X*C_3 + P_4 + C_4
+
+            sage: P.<X,Y> = PolynomialSpecies(QQ)
+            sage: E2 = PolynomialSpecies(QQ, "X")(SymmetricGroup(2))
+            sage: E2(X*Y).tilde()
+            2*E_2(XY)
+        """
+        P = self.parent()
+        M = P._indices
+        P_one = P.one()
+        one = ZZ.one()
+        result = P.zero()
+        for m, c in self:
+            result_m = P_one
+            for a, e in m:
+                G, pi = a.permutation_group()
+                result_a = P.sum(P(G.centralizer(g), pi)
+                                 for g in G.conjugacy_classes_representatives())
+                result_m *= result_a ** e
+            result += c * result_m
+        return result
+
     def hadamard_product(self, other):
         r"""
         Compute the hadamard product of ``self`` and ``other``.
