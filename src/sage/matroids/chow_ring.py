@@ -176,7 +176,7 @@ class ChowRing(QuotientRing_generic):
             True
         """
         from sage.sets.family import Family
-        monomial_basis = list(self._ideal.normal_basis())
+        monomial_basis = self._ideal.normal_basis()
         return Family([self.element_class(self, mon, reduce=False) for mon in monomial_basis])
 
     class Element(QuotientRing_generic.Element):
