@@ -41,6 +41,11 @@ cdef extern from "braiding.h" namespace "Braiding":
     int thurstontype(int n, list[int] word)
     int Rigidity_ext(int n, list[int] word)
     list[list[list[list[int]]]] SlidingCircuits(int n, list[int] word)
+    list[list[list[int]]] SendToSSS(int n, list[int] word)
+    list[list[list[int]]] SendToUSS(int n, list[int] word)
+    list[list[list[int]]] SendToSC(int n, list[int] word)
+    list[list[list[int]]] Trajectory(int n, list[int] word)
+    list[list[list[list[int]]]] CyclicSlidings(int n, list[int] word)
 
 
 def conjugatingbraid(braid1, braid2):
@@ -383,3 +388,53 @@ def sliding_circuits(braid):
     cdef list[list[list[list[int]]]] rop = SlidingCircuits(nstrands, l)
     sig_off()
     return rop
+
+def send_to_sss(braid):
+    r"""
+    Returns an element of the braid's SSS and the conjugating braid.
+    """
+    nstrands = braid.parent().strands()
+    l = braid.Tietze()
+    sig_on()
+    cdef list[list[list[int]]] rop = SendToSSS(nstrands, l)
+    sig_off()
+    return rop
+
+def send_to_uss(braid):
+    r"""
+    Returns an element of the braid's USS and the conjugating braid.
+    """
+    nstrands = braid.parent().strands()
+    l = braid.Tietze()
+    sig_on()
+    cdef list[list[list[int]]] rop = SendToUSS(nstrands, l)
+    sig_off()
+    return rop
+
+def send_to_sc(braid):
+    r"""
+    Returns an element of the braid's SC and the conjugating braid.
+    """
+    nstrands = braid.parent().strands()
+    l = braid.Tietze()
+    sig_on()
+    cdef list[list[list[int]]] rop = SendToSC(nstrands, l)
+    sig_off()
+    return rop
+
+def trajectory(braid):
+    nstrands = braid.parent().strands()
+    l = braid.Tietze()
+    sig_on()
+    cdef list[list[list[int]]] rop = Trajectory(nstrands, l)
+    sig_off()
+    return rop
+
+def cyclic_slidings(braid):
+    nstrands = braid.parent().strands()
+    l = braid.Tietze()
+    sig_on()
+    cdef list[list[list[list[int]]]] rop = CyclicSlidings(nstrands, l)
+    sig_off()
+    return rop
+
