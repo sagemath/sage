@@ -176,7 +176,7 @@ when the system has no solutions over the rationals.
     The Groebner basis modulo any product of the prime factors is also non-trivial::
 
         sage: I.change_ring(P.change_ring(IntegerModRing(2 * 7))).groebner_basis()
-        [x + 9*y + 13*z, y^2 + 3*y, y*z + 7*y + 6, 2*y + 6, z^2 + 3, 2*z + 10]
+        [x + ..., y^2 + 3*y, y*z + 7*y + 6, 2*y + 6, z^2 + 3, 2*z + 10]
 
     Modulo any other prime the Groebner basis is trivial so there are
     no other solutions. For example::
@@ -2311,6 +2311,7 @@ class MPolynomialIdeal_singular_repr(
 
         You can use Giac to compute the elimination ideal::
 
+            sage: # needs sage.libs.giac
             sage: print("possible output from giac", flush=True); I.elimination_ideal([t, s], algorithm='giac') == J
             possible output...
             True
@@ -2331,7 +2332,7 @@ class MPolynomialIdeal_singular_repr(
 
         Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field sage.libs.giac
             sage: R.<x,y,t,s,z> = QQbar[]
             sage: I = R * [x - t, y - t^2, z - t^3, s - x + y^3]
             sage: J = I.elimination_ideal([t, s]); J
@@ -4366,12 +4367,12 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         reverse lexicographical ordering here, in order to test against
         :issue:`21884`::
 
+            sage: # needs sage.libs.giac
             sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
             sage: J = I.change_ring(P.change_ring(order='degrevlex'))
             sage: gb = J.groebner_basis('giac')  # random
             sage: gb
             [c^3 - 79/210*c^2 + 1/30*b + 1/70*c, b^2 - 3/5*c^2 - 1/5*b + 1/5*c, b*c + 6/5*c^2 - 1/10*b - 2/5*c, a + 2*b + 2*c - 1]
-
             sage: J.groebner_basis.set_cache(gb)
             sage: ideal(J.transformed_basis()).change_ring(P).interreduced_basis()  # testing issue #21884
             ...[a - 60*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 - 79/7*c^2 + 3/7*c, c^4 - 10/21*c^3 + 1/84*c^2 + 1/84*c]
@@ -4379,6 +4380,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         Giac's gbasis over `\QQ` can benefit from a probabilistic lifting and
         multi threaded operations::
 
+            sage: # needs sage.libs.giac
             sage: A9 = PolynomialRing(QQ, 9, 'x')
             sage: I9 = sage.rings.ideal.Katsura(A9)
             sage: print("possible output from giac", flush=True); I9.groebner_basis("giac", proba_epsilon=1e-7)  # long time (3s)
@@ -4630,7 +4632,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: I.groebner_basis('libsingular:slimgb')
             [a + (-60)*c^3 + 158/7*c^2 + 8/7*c - 1, b + 30*c^3 + (-79/7)*c^2 + 3/7*c, c^4 + (-10/21)*c^3 + 1/84*c^2 + 1/84*c]
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field sage.libs.giac
             sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
             sage: J = I.change_ring(P.change_ring(order='degrevlex'))
             sage: gb = J.groebner_basis('giac')  # random

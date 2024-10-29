@@ -1188,8 +1188,8 @@ cdef number *sa2si_transext_QQ(object elem, ring *_ring) noexcept:
     if nMapFuncPtr is NULL:
         raise RuntimeError("Failed to determine nMapFuncPtr")
 
-    numerdic = elem.numerator().dict()
-    denomdic = elem.denominator().dict()
+    numerdic = elem.numerator().monomial_coefficients()
+    denomdic = elem.denominator().monomial_coefficients()
 
     if numerdic and not isinstance(list(numerdic)[0], (tuple, ETuple)):
         numerdic = {(k,):b for k,b in numerdic.items()}
@@ -1303,8 +1303,8 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring) noexcept:
     if nMapFuncPtr is NULL:
         raise RuntimeError("Failed to determine nMapFuncPtr")
 
-    numerdic = elem.numerator().dict()
-    denomdic = elem.denominator().dict()
+    numerdic = elem.numerator().monomial_coefficients()
+    denomdic = elem.denominator().monomial_coefficients()
 
     if numerdic and not isinstance(list(numerdic)[0], (tuple, ETuple)):
         numerdic = {(k,):b for k,b in numerdic.items()}
@@ -1321,11 +1321,11 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring) noexcept:
             a = _ring.cf.cfParameter(j+1, _ring.cf)
             for k in range(ex):
                 aux1 = naCoeff
-                naCoeff = _ring.cf.cfMult(aux1, a ,_ring.cf)
+                naCoeff = _ring.cf.cfMult(aux1, a, _ring.cf)
                 _ring.cf.cfDelete(&aux1, _ring.cf)
             _ring.cf.cfDelete(&a, _ring.cf)
         aux2 = numerator
-        numerator = _ring.cf.cfAdd(aux2, naCoeff,_ring.cf)
+        numerator = _ring.cf.cfAdd(aux2, naCoeff, _ring.cf)
         _ring.cf.cfDelete(&naCoeff, _ring.cf)
         _ring.cf.cfDelete(&aux2, _ring.cf)
 
@@ -1338,7 +1338,7 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring) noexcept:
                 a = _ring.cf.cfParameter(j+1, _ring.cf)
                 for k in range(ex):
                     aux1 = naCoeff
-                    naCoeff = _ring.cf.cfMult(aux1, a ,_ring.cf)
+                    naCoeff = _ring.cf.cfMult(aux1, a, _ring.cf)
                     _ring.cf.cfDelete(&aux1, _ring.cf)
                 _ring.cf.cfDelete(&a, _ring.cf)
             aux2 = denominator
@@ -1425,11 +1425,11 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
     rComplete(qqr,1)
     qqr.ShortOut = 0
 
-    nMapFuncPtr =  naSetMap( qqr.cf , _ring.cf ) # choose correct mapping function
+    nMapFuncPtr =  naSetMap(qqr.cf, _ring.cf)  # choose correct mapping function
     cdef poly *_p
     for i from 0 <= i < len(elem):
         nlCoeff = nlInit2gmp( mpq_numref((<Rational>elem[i]).value), mpq_denref((<Rational>elem[i]).value),  qqr.cf )
-        naCoeff = nMapFuncPtr(nlCoeff, qqr.cf , _ring.cf )
+        naCoeff = nMapFuncPtr(nlCoeff, qqr.cf, _ring.cf)
         nlDelete(&nlCoeff, _ring.cf)
 
         # faster would be to assign the coefficient directly
@@ -1548,9 +1548,9 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
         _name = omStrDup("a")
         _ext_names = <char**>omAlloc0(sizeof(char*))
         _ext_names[0] = omStrDup(_name)
-        _cf = nInitChar( n_Z, NULL) # integer coefficient ring
-        ZZr = rDefault (_cf ,1, _ext_names)
-        rComplete(ZZr,1)
+        _cf = nInitChar(n_Z, NULL)  # integer coefficient ring
+        ZZr = rDefault (_cf, 1, _ext_names)
+        rComplete(ZZr, 1)
         ZZr.ShortOut = 0
 
         nn = nrzInit(0, ZZr.cf)

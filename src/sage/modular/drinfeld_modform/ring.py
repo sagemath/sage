@@ -44,6 +44,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 from .element import DrinfeldModularFormsElement
 
+
 class DrinfeldModularForms(Parent, UniqueRepresentation):
     r"""
     Base class for the graded ring of Drinfeld modular forms.
@@ -430,13 +431,11 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             [(T^2 + T)*g1, g1^3 + (T^4 + T)*g2, g1^4*g2 + g1*g2^2, g2^5]
         """
         a = a.numerator()
-        d = a.degree()
         poly_ring = PolynomialRing(self._base_ring, self.rank(), 'g')
         poly_ring_gens = poly_ring.gens()
         Frob = poly_ring.frobenius_endomorphism()
         gen = [self._base_ring.gen()]
-        for g in poly_ring_gens:
-            gen.append(g)
+        gen.extend(poly_ring_gens)
         ore_pol_ring = OrePolynomialRing(poly_ring, Frob, 't')
         gen = ore_pol_ring(gen)
         f = sum(c*(gen**idx) for idx, c in enumerate(a.coefficients(sparse=False)))

@@ -8285,8 +8285,7 @@ class NumberField_absolute(NumberField_generic):
             log_half_root_bound = log2abs(f[0]/2)/n
             for i in range(1, n):
                 bd = log2abs(f[i])/(n-i)
-                if bd > log_half_root_bound:
-                    log_half_root_bound = bd
+                log_half_root_bound = max(bd, log_half_root_bound)
             # Twice the bound on the roots of f, in other words an upper
             # bound for the distance between two roots.
             log_double_root_bound = log_half_root_bound + 2.0  # 2.0 = log2(4)
@@ -9344,6 +9343,41 @@ class NumberField_absolute(NumberField_generic):
               From: Number Field in a with defining polynomial x^3 - 2
               To:   Complex Field with 53 bits of precision
               Defn: a |--> 1.25992104989487
+            ]
+
+        Some more (possible and impossible) embeddings of cyclotomic fields::
+
+            sage: CyclotomicField(5).embeddings(QQbar)
+            [
+            Ring morphism:
+              From: Cyclotomic Field of order 5 and degree 4
+              To:   Algebraic Field
+              Defn: zeta5 |--> 0.3090169943749474? + 0.9510565162951536?*I,
+            Ring morphism:
+              From: Cyclotomic Field of order 5 and degree 4
+              To:   Algebraic Field
+              Defn: zeta5 |--> -0.8090169943749474? + 0.5877852522924731?*I,
+            Ring morphism:
+              From: Cyclotomic Field of order 5 and degree 4
+              To:   Algebraic Field
+              Defn: zeta5 |--> -0.8090169943749474? - 0.5877852522924731?*I,
+            Ring morphism:
+              From: Cyclotomic Field of order 5 and degree 4
+              To:   Algebraic Field
+              Defn: zeta5 |--> 0.3090169943749474? - 0.9510565162951536?*I
+            ]
+            sage: CyclotomicField(3).embeddings(CyclotomicField(7))
+            [ ]
+            sage: CyclotomicField(3).embeddings(CyclotomicField(6))
+            [
+            Ring morphism:
+              From: Cyclotomic Field of order 3 and degree 2
+              To:   Cyclotomic Field of order 6 and degree 2
+              Defn: zeta3 |--> zeta6 - 1,
+            Ring morphism:
+              From: Cyclotomic Field of order 3 and degree 2
+              To:   Cyclotomic Field of order 6 and degree 2
+              Defn: zeta3 |--> -zeta6
             ]
 
         Test that :issue:`15053` is fixed::

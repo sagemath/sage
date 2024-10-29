@@ -98,9 +98,9 @@ cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
     # "Memory efficient scheduling of Strassen-Winograd's matrix multiplication algorithm",
     # Table 1).
 
-    cdef MatrixWindow S0, S1, S2, S3, T0, T1 ,T2, T3, P0, P1, P2, P3, P4, P5, P6, U0, U1, U2, U3, U4, U5, U6
+    cdef MatrixWindow S0, S1, S2, S3, T0, T1, T2, T3, P0, P1, P2, P3, P4, P5, P6, U0, U1, U2, U3, U4, U5, U6
     cdef MatrixWindow X, Y
-    X = A.new_empty_window(A_sub_nrows, max(A_sub_ncols,B_sub_ncols))
+    X = A.new_empty_window(A_sub_nrows, max(A_sub_ncols, B_sub_ncols))
     Y = B.new_empty_window(A_sub_ncols, B_sub_ncols)
 
     # 1 S2 = A00-A10 in X
@@ -112,7 +112,7 @@ cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
     T2.set_to_diff(B11, B01)
 
     # 3 P6 = S2*T2 in C10
-    P6 = C.matrix_window(A_sub_nrows, 0,           A_sub_nrows, B_sub_ncols)
+    P6 = C.matrix_window(A_sub_nrows, 0, A_sub_nrows, B_sub_ncols)
     if have_cutoff:
         P6.set_to_prod(S2, T2)
     else:

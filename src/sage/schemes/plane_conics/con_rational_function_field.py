@@ -503,12 +503,12 @@ for function field of characteristic 2.")
             lastpoly = F(1)
             for n in range(B):
                 lastpoly = (lastpoly * t) % p
-                phi_p[A + 2 + n] = vector(F, d, lastpoly.dict())
+                phi_p[A + 2 + n] = vector(F, d, lastpoly.monomial_coefficients())
             lastpoly = -alpha % p
-            phi_p[A + B + 2] = vector(F, d, lastpoly.dict())
+            phi_p[A + B + 2] = vector(F, d, lastpoly.monomial_coefficients())
             for n in range(C):
                 lastpoly = (lastpoly * t) % p
-                phi_p[A + B + 3 + n] = vector(F, d, lastpoly.dict())
+                phi_p[A + B + 3 + n] = vector(F, d, lastpoly.monomial_coefficients())
             phi_p[A + B + C + 3] = vector(F, d)
             phi.append(matrix(phi_p).transpose())
         for (i, p) in enumerate(supports[1]):
@@ -525,12 +525,12 @@ for function field of characteristic 2.")
             lastpoly = F(1)
             for n in range(C):
                 lastpoly = (lastpoly * t) % p
-                phi_p[A + B + 3 + n] = vector(F, d, lastpoly.dict())
+                phi_p[A + B + 3 + n] = vector(F, d, lastpoly.monomial_coefficients())
             lastpoly = -alpha % p
-            phi_p[0] = vector(F, d, lastpoly.dict())
+            phi_p[0] = vector(F, d, lastpoly.monomial_coefficients())
             for n in range(A):
                 lastpoly = (lastpoly * t) % p
-                phi_p[1 + n] = vector(F, d, lastpoly.dict())
+                phi_p[1 + n] = vector(F, d, lastpoly.monomial_coefficients())
             phi_p[A + B + C + 3] = vector(F, d)
             phi.append(matrix(phi_p).transpose())
         for (i, p) in enumerate(supports[2]):
@@ -547,12 +547,12 @@ for function field of characteristic 2.")
             lastpoly = F(1)
             for n in range(A):
                 lastpoly = (lastpoly * t) % p
-                phi_p[1 + n] = vector(F, d, lastpoly.dict())
+                phi_p[1 + n] = vector(F, d, lastpoly.monomial_coefficients())
             lastpoly = -alpha % p
-            phi_p[A + 1] = vector(F, d, lastpoly.dict())
+            phi_p[A + 1] = vector(F, d, lastpoly.monomial_coefficients())
             for n in range(B):
                 lastpoly = (lastpoly * t) % p
-                phi_p[A + 2 + n] = vector(F, d, lastpoly.dict())
+                phi_p[A + 2 + n] = vector(F, d, lastpoly.monomial_coefficients())
             phi_p[A + B + C + 3] = vector(F, d)
             phi.append(matrix(phi_p).transpose())
         if case == 0:

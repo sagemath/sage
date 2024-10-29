@@ -49,6 +49,7 @@ AUTHORS:
 - Emily A. Kirkman (2006)
 - Michael C. Yurko (2009)
 - David Coudert    (2012)
+- Janmenjaya Panda (2024)
 
 Functions and methods
 ---------------------
@@ -58,6 +59,7 @@ Functions and methods
 #                              and Emily A. Kirkman
 #           Copyright (C) 2009 Michael C. Yurko <myurko@gmail.com>
 #           Copyright (C) 2012 David Coudert <david.coudert@inria.fr>
+#           Copyright (C) 2024 Janmenjaya Panda <janmenjaya.panda.22@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -891,6 +893,9 @@ class DiGraphGenerators:
         r"""
         Return a circulant digraph on `n` vertices from a set of integers.
 
+        A circulant digraph of order `n` has an arc from vertex `i` to
+        vertex `i+j \pmod{n}`, for each `j` in ``integers``.
+
         INPUT:
 
         - ``n`` -- integer; number of vertices
@@ -899,18 +904,30 @@ class DiGraphGenerators:
           that there is an edge from `i` to `j` if and only if `(j-i) \pmod{n}`
           is an integer
 
-        EXAMPLES::
+        EXAMPLES:
 
-            sage: digraphs.Circulant(13,[3,5,7])
-            Circulant graph ([3, 5, 7]): Digraph on 13 vertices
+        Construct and show the circulant graph [3, 5, 7], a digraph on 13
+        vertices::
 
-        TESTS::
+            sage: g = digraphs.Circulant(13, [3, 5, 7])
+            sage: g.show()                          # long time                             # needs sage.plot
 
-            sage: digraphs.Circulant(13,[3,5,7,"hey"])
+        The Koh-Tindell digraph [LM2024]_ is the circulant digraph of order 7
+        with parameters `[1, 5]`.  This `2`-diregular digraph is
+        vertex-transitive but not arc-transitive. The associated bipartite
+        digraph of the Koh-Tindell digraph is a Pfaffian orientation of the
+        Heawood graph. Construct and show the Koh-Tindell digraph::
+
+            sage: kohTindellDigraph = digraphs.Circulant(7, [1, 5])
+            sage: kohTindellDigraph.show()          # long time                             # needs sage.plot
+
+        TESTS:
+
+            sage: digraphs.Circulant(13, [3, 5, 7, "hey"])
             Traceback (most recent call last):
             ...
             ValueError: the list must contain only integers
-            sage: digraphs.Circulant(3,[3,5,7,3.4])
+            sage: digraphs.Circulant(3, [3, 5, 7, 3.4])
             Traceback (most recent call last):
             ...
             ValueError: the list must contain only integers
@@ -1290,7 +1307,7 @@ class DiGraphGenerators:
                 raise ValueError("degree must be greater than or equal to one")
 
             # We start building the set of vertices
-            V = [i for i in my_alphabet]
+            V = list(my_alphabet)
             for i in range(D - 1):
                 VV = []
                 for w in V:
@@ -1640,7 +1657,7 @@ class DiGraphGenerators:
         if is_dense:
             for u in range(n):
                 for v in range(n):
-                    if ((u != v) or loops) and (not (v in adj[u])):
+                    if ((u != v) or loops) and (v not in adj[u]):
                         D.add_edge(u, v)
 
         return D

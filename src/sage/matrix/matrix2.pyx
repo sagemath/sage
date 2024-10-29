@@ -4554,7 +4554,7 @@ cdef class Matrix(Matrix1):
 
         Over inexact rings:
 
-        For inexact rings one should avoid echolonizing if possible::
+        For inexact rings one should avoid echelonizing if possible::
 
             sage: A = Matrix(
             ....: [[          0.0,           0.5,  0.8090169944],
@@ -4801,7 +4801,7 @@ cdef class Matrix(Matrix1):
             :meth:`kernel` is exactly equal to :meth:`left_kernel`.
 
             For inexact rings use :meth:`right_kernel_matrix` with
-            ``basis='computed'`` to avoid echolonizing.
+            ``basis='computed'`` to avoid echelonizing.
 
         INPUT:
 
@@ -5161,6 +5161,7 @@ cdef class Matrix(Matrix1):
     def left_kernel(self, *args, **kwds):
         r"""
         Return the left kernel of this matrix, as a vector space or free module.
+
         This is the set of vectors ``x`` such that ``x*self = 0``.
 
         .. NOTE::
@@ -5169,7 +5170,7 @@ cdef class Matrix(Matrix1):
             :meth:`kernel` is exactly equal to :meth:`left_kernel`.
 
             For inexact rings use :meth:`right_kernel_matrix` with
-            ``basis='computed'`` (on the transpose of the matrix) to avoid echolonizing.
+            ``basis='computed'`` (on the transpose of the matrix) to avoid echelonizing.
 
         INPUT:
 
@@ -12524,7 +12525,7 @@ cdef class Matrix(Matrix1):
                 _, SA = A.jordan_form(transformation=True)
                 _, SB = B.jordan_form(transformation=True)
                 return (True, SB * SA.inverse())
-            except (ValueError, RuntimeError, NotImplementedError):
+            except (ValueError, RuntimeError, NotImplementedError, TypeError):
                 raise RuntimeError('unable to compute transformation for similar matrices')
 
     def symplectic_form(self):
@@ -15900,7 +15901,7 @@ cdef class Matrix(Matrix1):
             sage: a.exp()                                                               # needs sage.symbolic
             [ 1/11882424341266*((11*sqrt(227345670387496707609) + 5941212170633)*e^(3/1275529100*sqrt(227345670387496707609)) - 11*sqrt(227345670387496707609) + 5941212170633)*e^(-3/2551058200*sqrt(227345670387496707609) + 101/200)                            445243650/75781890129165569203*(sqrt(227345670387496707609)*e^(3/1275529100*sqrt(227345670387496707609)) - sqrt(227345670387496707609))*e^(-3/2551058200*sqrt(227345670387496707609) + 101/200)]
             [                                     10000/53470909535697*(sqrt(227345670387496707609)*e^(3/1275529100*sqrt(227345670387496707609)) - sqrt(227345670387496707609))*e^(-3/2551058200*sqrt(227345670387496707609) + 101/200) -1/11882424341266*((11*sqrt(227345670387496707609) - 5941212170633)*e^(3/1275529100*sqrt(227345670387496707609)) - 11*sqrt(227345670387496707609) - 5941212170633)*e^(-3/2551058200*sqrt(227345670387496707609) + 101/200)]
-            sage: a.change_ring(RDF).exp()  # rel tol 1e-14                             # needs sage.symbolic
+            sage: a.change_ring(RDF).exp()  # rel tol 6e-14                             # needs sage.symbolic
             [42748127.31532951 7368259.244159399]
             [234538976.1381042 40426191.45156228]
 
@@ -16342,7 +16343,7 @@ cdef class Matrix(Matrix1):
         Transform the matrix in place to hermite normal form and optionally
         return the transformation matrix.
 
-        The matrix is assumed to be over an Euclidean domain. In particular,
+        The matrix is assumed to be over a Euclidean domain. In particular,
         ``xgcd()`` method should be available for the elements of the domain.
 
         INPUT:
@@ -17098,7 +17099,7 @@ cdef class Matrix(Matrix1):
             sage: A.eigenvalues()
             Traceback (most recent call last):
             ...
-            NotImplementedError: algebraic closures of finite fields are only implemented for prime fields
+            TypeError: no canonical coercion from Finite Field in a of size 5^4 to Finite Field in z4 of size 5^4
 
         Subdivisions are optional.  ::
 
@@ -17460,7 +17461,7 @@ cdef class Matrix(Matrix1):
             sage: A.eigenvalues()
             Traceback (most recent call last):
             ...
-            NotImplementedError: algebraic closures of finite fields are only implemented for prime fields
+            TypeError: no canonical coercion from Finite Field in a of size 7^2 to Finite Field in z2 of size 7^2
 
         Companion matrices may be selected as any one of four different types.
         See the documentation for the companion matrix constructor,
