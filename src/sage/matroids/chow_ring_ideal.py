@@ -56,7 +56,6 @@ class ChowRingIdeal(MPolynomialIdeal):
         chains = lattice_flats.chains()  #Only chains
         return (ranks, chains)
 
-
 class ChowRingIdeal_nonaug(ChowRingIdeal):
     r"""
     The Chow ring ideal of a matroid `M`.
@@ -212,6 +211,8 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             [Aa*Abc, Aa, Abc, Aa*Aabc, Abc*Aabc, Aabc]
             sage: ch.defining_ideal().groebner_basis().is_groebner()
             True
+            sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().hilbert_series(algorithm='singular')
+            True
 
         Another example would be the Groebner basis of the Chow ring ideal of
         the matroid of the length 3 cycle graph::
@@ -220,6 +221,8 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             sage: ch.defining_ideal().groebner_basis()
             [A0*A1, A0*A2, A1*A2, A0, A1, A2, A0*A3, A1*A3, A2*A3, A3]
             sage: ch.defining_ideal().groebner_basis().is_groebner()
+            True
+            sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().hilbert_series(algorithm='singular')
             True
         """
         if algorithm == '':
@@ -245,8 +248,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                 term += flats_gen[G]
             for G in lattice_flats.order_ideal([F]):
                 gb.append(flats_gen[G]*(term)**(ranks[F] - ranks[G]))
-        g_basis = PolynomialSequence(R, [gb])
-        return g_basis
+        return PolynomialSequence(R, [gb])
 
     def normal_basis(self, algorithm='', *args, **kwargs):
         r"""
@@ -283,11 +285,10 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                         max_powers.append(ranks[subset[i]] - ranks[subset[i-1]])
                 for combination in product(*(range(1, p) for p in max_powers)):
                     expression = R.one()
-                    for i in range(k):
-                        expression *= flats_gen[subset[i]]**combination[i]
+                    for val, c in zip(subset, combination):
+                        expression *= flats_gen[val] ** c
                     monomial_basis.append(expression)
-        n_basis = PolynomialSequence(R, [monomial_basis])
-        return n_basis
+        return PolynomialSequence(R, [monomial_basis])
 
 class AugmentedChowRingIdeal_fy(ChowRingIdeal):
     r"""
@@ -494,6 +495,8 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             Polynomial Sequence with 565 Polynomials in 12 Variables
             sage: ch.defining_ideal().groebner_basis(algorithm='').is_groebner()
             True
+            sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().hilbert_series(algorithm='singular')
+            True
         """
         if algorithm == '':
             algorithm = 'constructed'
@@ -524,8 +527,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
                         if term1 != poly_ring.zero():
                             gb.append(self._flats_generator[F]*term1**(self._matroid.rank(G)-self._matroid.rank(F)))
 
-        g_basis = PolynomialSequence(poly_ring, [gb])
-        return g_basis
+        return PolynomialSequence(poly_ring, [gb])
 
     def normal_basis(self, algorithm='', *args, **kwargs):
         r"""
@@ -565,8 +567,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
                     for val, c in zip(subset, combination):
                         expression *= flats_gen[val] ** c
                     monomial_basis.append(expression)
-        n_basis = PolynomialSequence(R, [monomial_basis])
-        return n_basis
+        return PolynomialSequence(R, [monomial_basis])
 
 class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
     r"""
@@ -709,6 +710,8 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             Polynomial Sequence with 22 Polynomials in 3 Variables
             sage: ch.defining_ideal().groebner_basis(algorithm='').is_groebner()
             True
+            sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().hilbert_series(algorithm='singular')
+            True
         """
         if algorithm == '':
             algorithm = 'constructed'
@@ -729,8 +732,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
                         gb.append(self._flats_generator[F]*(term**(self._matroid.rank(G) - self._matroid.rank(F))))
                 gb.append((term**self._matroid.rank(F)) + 1)
 
-        g_basis = PolynomialSequence(poly_ring, [gb])
-        return g_basis
+        return PolynomialSequence(poly_ring, [gb])
 
     def normal_basis(self, algorithm='', *args, **kwargs):
         r"""
@@ -771,8 +773,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
                     #Generating combinations for all powers from 1 to max_powers
                     if sum(combination) <= first_rank:
                         expression = R.one()
-                        for i in range(k):
-                            expression *= flats_gen[subset[i]]**combination[i]
+                        for val, c in zip(subset, combination):
+                            expression *= flats_gen[val] ** c
                         monomial_basis.append(expression)
-        n_basis = PolynomialSequence(R, [monomial_basis])
-        return n_basis
+        return PolynomialSequence(R, [monomial_basis])
