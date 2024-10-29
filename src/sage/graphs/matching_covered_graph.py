@@ -18,7 +18,7 @@ AUTHORS:
 .. TODO:
 
     The following methods are to be incorporated in
-    :class:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph`::
+    :class:`~MatchingCoveredGraph`::
 
     - ``delete_edge()`` | Delete the edge from ``u`` to ``v``.
     - ``delete_edges()`` | Delete edges from an iterable container.
