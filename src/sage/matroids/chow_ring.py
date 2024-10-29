@@ -10,8 +10,6 @@ from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug, AugmentedChowRin
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.commutative_rings import CommutativeRings
-from itertools import product
-from sage.combinat.posets.posets import Poset
 
 class ChowRing(QuotientRing_generic):
     r"""

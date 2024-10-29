@@ -11,6 +11,7 @@ from sage.matroids.utilities import cmp_elements_key
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 from sage.combinat.posets.posets import Poset
+from itertools import product
 
 class ChowRingIdeal(MPolynomialIdeal):
     def matroid(self):
@@ -50,9 +51,26 @@ class ChowRingIdeal(MPolynomialIdeal):
         return dict(self._flats_generator)
 
     def lattice_flats(self):
+        r"""
+        Return the ranks and chains of lattice of flats of the matroid.
+
+        EXAMPLES::
+
+            sage: ch = matroids.catalog.NonFano().chow_ring(QQ, True, 'atom-free')
+            sage: ch.defining_ideal().lattice_flats()
+            ({frozenset({'b'}): 1, frozenset({'c'}): 1, frozenset({'d'}): 1,
+            frozenset({'e'}): 1, frozenset({'f'}): 1, frozenset({'g'}): 1,
+            frozenset({'d', 'e'}): 2, frozenset({'d', 'f'}): 2,
+            frozenset({'e', 'f'}): 2, frozenset({'a', 'b', 'f'}): 2,
+            frozenset({'a', 'c', 'e'}): 2, frozenset({'a', 'd', 'g'}): 2,
+            frozenset({'b', 'c', 'd'}): 2, frozenset({'b', 'e', 'g'}): 2,
+            frozenset({'c', 'f', 'g'}): 2,
+            frozenset({'a', 'b', 'c', 'd', 'e', 'f', 'g'}): 3},
+            Set of chains of Finite poset containing 17 elements)
+        """
         F = self._matroid.lattice_of_flats()
         H = F.hasse_diagram()
-        H.delete_vertex(self._ideal.matroid().flats(0)[0])  # remove the empty flat
+        H.delete_vertex(self._matroid.flats(0)[0])  # remove the empty flat
         lattice_flats = Poset(H)
         flats = list(lattice_flats)
         flats.sort(key=lambda X: (len(X), sorted(X)))
@@ -253,6 +271,19 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         return g_basis
     
     def normal_basis(self, algorithm='', *args, **kwargs):
+        r"""
+        Return the monomial basis of the quotient ring of this ideal.
+
+        EXAMPLES::
+
+            sage: ch = matroids.catalog.Fano().chow_ring(QQ, False)
+            sage: ch.defining_ideal().normal_basis()
+            [1, Abcd, Aace, Aabf, Adef, Aadg, Abeg, Acfg, Aabcdefg, Aabcdefg^2]
+            sage: ch = matroids.AG(2,3).chow_ring(QQ, False)
+            sage: ch.defining_ideal().normal_basis()
+            [1, A012, A236, A046, A156, A345, A247, A057, A137, A258, A678,
+            A038, A148, A012345678, A012345678^2]
+        """
         if algorithm == '':
             algorithm = 'constructed'
         if algorithm != 'constructed':
@@ -518,6 +549,18 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         return g_basis
 
     def normal_basis(self, algorithm='', *args, **kwargs):
+        r"""
+        Return the monomial basis of the quotient ring of this ideal.
+
+        EXAMPLES::
+
+            sage: ch = matroids.catalog.K33().chow_ring(QQ, True, 'fy')
+            sage: ch.defining_ideal().normal_basis()
+            Polynomial Sequence with 1758 Polynomials in 127 Variables
+            sage: ch = matroids.catalog.Wheel4().chow_ring(QQ, True, 'fy')
+            sage: ch.defining_ideal().normal_basis()
+            Polynomial Sequence with 200 Polynomials in 42 Variables
+        """
         if algorithm == '':
             algorithm = 'constructed'
         if algorithm != 'constructed':
@@ -711,6 +754,18 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         return g_basis
 
     def normal_basis(self, algorithm='', *args, **kwargs):
+        r"""
+        Return the monomial basis of the quotient ring of this ideal.
+
+        EXAMPLES::
+
+            sage: ch = matroids.Whirl(5).chow_ring(QQ, True, 'atom-free')
+            sage: ch.defining_ideal().normal_basis()
+            Polynomial Sequence with 1726 Polynomials in 121 Variables
+            sage: ch = matroids.Z(4).chow_ring(QQ, True, 'atom-free')
+            sage: ch.defining_ideal().normal_basis()
+            Polynomial Sequence with 248 Polynomials in 52 Variables
+        """
         if algorithm == '':
             algorithm = 'constructed'
         if algorithm != 'constructed':
