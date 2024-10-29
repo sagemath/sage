@@ -429,7 +429,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             sage: M1 = Matroid(graphs.CycleGraph(3))
             sage: ch = M1.chow_ring(QQ, True, 'fy')
             sage: ch.defining_ideal()._latex_()
-            I_{FY} of matroid \text{\texttt{Graphic{ }matroid{ }of{ }rank{ }2{ }on{ }3{ }elements}}
+            'I_{FY}(\\text{\\texttt{Graphic{ }matroid{ }of{ }rank{ }2{ }on{ }3{ }elements}})'
         """
         from sage.misc.latex import latex
         return 'I_{{FY}}({})'.format((latex(self._matroid)))
@@ -602,10 +602,10 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             sage: M1 = Matroid(graphs.CycleGraph(3))
             sage: ch = M1.chow_ring(QQ, True, 'atom-free')
             sage: ch.defining_ideal()._latex_()
-            I_{af} of matroid \text{\texttt{Graphic{ }matroid{ }of{ }rank{ }2{ }on{ }3{ }elements}}
+            'I_{af}(\\text{\\texttt{Graphic{ }matroid{ }of{ }rank{ }2{ }on{ }3{ }elements}})'
         """
         from sage.misc.latex import latex
-        return 'I_{{af}}({}) of matroid '.format(latex(self._matroid))
+        return 'I_{{af}}({})'.format(latex(self._matroid))
 
     def groebner_basis(self, algorithm='', *args, **kwargs):
         """

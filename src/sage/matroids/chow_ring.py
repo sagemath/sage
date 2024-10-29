@@ -133,7 +133,7 @@ class ChowRing(QuotientRing_generic):
         base = "A({})_{{{}}}"
         if self._augmented:
             base += "^*"
-        return base.format(latex(self.matroid()), latex(self.base_ring()))
+        return base.format(latex(self._matroid), latex(self.base_ring()))
 
     def _coerce_map_from_base_ring(self):
         r"""
@@ -157,10 +157,9 @@ class ChowRing(QuotientRing_generic):
             sage: ch.basis()
             Family (1, B1, B1*B012345, B0, B0*B012345, B01, B01^2, B2,
             B2*B012345, B02, B02^2, B12, B12^2, B3, B3*B012345, B03, B03^2,
-            B13, B13^2, B23, B23^2, B4, B4*B012345, B24, B24^2, B34, B34^2,
-            B04, B04^2, B14, B14^2, B5, B5*B012345, B25, B25^2, B35, B35^2,
-            B45, B45^2, B05, B05^2, B15, B15^2, B012345, B012345^2,
-            B012345^3)
+            B13, B13^2, B23, B23^2, B4, B4*B012345, B04, B04^2, B14, B14^2,
+            B24, B24^2, B34, B34^2, B5, B5*B012345, B05, B05^2, B15, B15^2,
+            B25, B25^2, B35, B35^2, B45, B45^2, B012345, B012345^2, B012345^3)
             sage: set(ch.defining_ideal().normal_basis()) == set(ch.basis())
             True
             sage: ch = matroids.catalog.Fano().chow_ring(QQ, False)
@@ -310,15 +309,15 @@ class ChowRing(QuotientRing_generic):
                 A03 1
                 A13 1
                 A23 1
-                A24 1
-                A34 1
                 A04 1
                 A14 1
+                A24 1
+                A34 1
+                A05 1
+                A15 1
                 A25 1
                 A35 1
                 A45 1
-                A05 1
-                A15 1
                 A012345 1
                 A012345^2 2
                 sage: v = sum(ch.basis())
