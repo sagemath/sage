@@ -1253,10 +1253,9 @@ class TropicalCurve(TropicalVariety):
 
         A dictionary where the keys represent the vertices, and the
         values are lists of tuples. Each tuple consists of the index
-        of an adjacent edge (component) `e_i` and a string indicating
-        the directionality of `e_i` relative to the vertex. The string
-        is either "pos" or "neg", specifying whether it is positive or
-        negative.
+        of an adjacent edge (component) `e_i` and a number indicating
+        the directionality of `e_i` relative to the vertex. The number
+        is either -1 or 1.
 
         EXAMPLES::
 
@@ -1264,13 +1263,13 @@ class TropicalCurve(TropicalVariety):
             sage: R.<x,y> = PolynomialRing(T)
             sage: p1 = R(0) + x + y + x*y + x^2*y + x*y^2
             sage: p1.tropical_variety()._vertices_components()
-            {(0, 0): [(0, 'pos'), (1, 'pos'), (2, 'pos'), (3, 'neg'), (4, 'neg')]}
+            {(0, 0): [(0, 1), (1, 1), (2, 1), (3, -1), (4, -1)]}
             sage: p2 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
             sage: p2.tropical_variety()._vertices_components()
-            {(-2, 0): [(0, 'neg'), (1, 'pos'), (3, 'pos')],
-             (-1, -3): [(2, 'neg'), (4, 'pos'), (5, 'pos')],
-             (-1, 0): [(3, 'neg'), (4, 'neg'), (6, 'pos')],
-             (3, 4): [(6, 'neg'), (7, 'pos'), (8, 'pos')]}
+            {(-2, 0): [(0, -1), (1, 1), (3, 1)],
+             (-1, -3): [(2, -1), (4, 1), (5, 1)],
+             (-1, 0): [(3, -1), (4, -1), (6, 1)],
+             (3, 4): [(6, -1), (7, 1), (8, 1)]}
         """
         comp_vert = {}
         if len(self._hypersurface) >= 3:
@@ -1284,16 +1283,16 @@ class TropicalCurve(TropicalVariety):
                     x = parametric_function[0].subs(**{str(v): lower})
                     y = parametric_function[1].subs(**{str(v): lower})
                     if (x,y) not in comp_vert:
-                        comp_vert[(x,y)] = [(i, 'pos')]
+                        comp_vert[(x,y)] = [(i, 1)]
                     else:
-                        comp_vert[(x,y)].append((i, 'pos'))
+                        comp_vert[(x,y)].append((i, 1))
                 if upper != infinity:
                     x = parametric_function[0].subs(**{str(v): upper})
                     y = parametric_function[1].subs(**{str(v): upper})
                     if (x,y) not in comp_vert:
-                        comp_vert[(x,y)] = [(i, 'neg')]
+                        comp_vert[(x,y)] = [(i, -1)]
                     else:
-                        comp_vert[(x,y)].append((i, 'neg'))
+                        comp_vert[(x,y)].append((i, -1))
         return comp_vert
 
     def weight_vectors(self):
@@ -1357,10 +1356,7 @@ class TropicalCurve(TropicalVariety):
             vectors = []
             for comp in cov[vertex]:
                 weight = self._hypersurface[comp[0]][2]
-                if comp[1] == 'pos':
-                    vectors.append(weight*temp_vectors[comp[0]])
-                else:
-                    vectors.append(weight*(-temp_vectors[comp[0]]))
+                vectors.append(weight*comp[1]*temp_vectors[comp[0]])
             result[vertex] = vectors
         return result
 
@@ -1385,9 +1381,7 @@ class TropicalCurve(TropicalVariety):
             sage: p2.tropical_variety().is_smooth()
             True
         """
-        if len(self.vertices()) == self._poly.degree()**2:
-            return True
-        return False
+        return len(self.vertices()) == self._poly.degree() ** 2
 
     def is_simple(self):
         r"""
@@ -1413,10 +1407,9 @@ class TropicalCurve(TropicalVariety):
         for vertex in self.vertices():
             if len(vov[vertex]) > 4:
                 return False
-            elif len(vov[vertex]) == 4:
-                for v in vov[vertex]:
-                    if -v not in vov[vertex]:
-                        return False
+            if len(vov[vertex]) == 4:
+                if any(-v not in vov[vertex] for v in vov[vertex]):
+                    return False
         return True
 
     def genus(self):
@@ -1606,10 +1599,29 @@ class TropicalCurve(TropicalVariety):
         Another tropical polynomial with numerous components, resulting
         in a more intricate structure::
 
-            sage: p2 = (R(8) + R(4)*x + R(2)*y + R(1)*x^2 + x*y + R(1)*y^2
+            sage: p2 = (x^6 + R(4)*x^4*y^2 + R(2)*x^3*y^3 + R(3)*x^2*y^4
+            ....:       + x*y^5 + R(7)*x^2 + R(5)*x*y + R(3)*y^2 + R(2)*x
+            ....:       + y + R(10))
+            sage: p2.tropical_variety().plot()
+            Graphics object consisting of 11 graphics primitives
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ)
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
+            p2 = (x**6 + R(4)*x**4*y^2 + R(2)*x**3*y**3 + R(3)*x**2*y**4
+                  + x*y**5 + R(7)*x**2 + R(5)*x*y + R(3)*y**2 + R(2)*x
+                  + y + R(10))
+            sphinx_plot(p2.tropical_variety().plot())
+
+        ::
+
+            sage: p3 = (R(8) + R(4)*x + R(2)*y + R(1)*x^2 + x*y + R(1)*y^2
             ....:       + R(2)*x^3 + x^2*y + x*y^2 + R(4)*y^3 + R(8)*x^4
             ....:       + R(4)*x^3*y + x^2*y^2 + R(2)*x*y^3 + y^4)
-            sage: p2.tropical_variety().plot()
+            sage: p3.tropical_variety().plot()
             Graphics object consisting of 23 graphics primitives
 
         .. PLOT::
@@ -1618,10 +1630,10 @@ class TropicalCurve(TropicalVariety):
             T = TropicalSemiring(QQ)
             R = PolynomialRing(T, ('x,y'))
             x, y = R.gen(), R.gen(1)
-            p2 = (R(8) + R(4)*x + R(2)*y + R(1)*x**2 + x*y + R(1)*y**2
+            p3 = (R(8) + R(4)*x + R(2)*y + R(1)*x**2 + x*y + R(1)*y**2
                  + R(2)*x**3 + x**2*y + x*y**2 + R(4)*y**3 + R(8)*x**4
                  + R(4)*x**3*y + x**2*y**2 + R(2)*x*y**3 + y**4)
-            sphinx_plot(p2.tropical_variety().plot())
+            sphinx_plot(p3.tropical_variety().plot())
         """
         from sage.plot.plot import plot
         from sage.plot.text import text
