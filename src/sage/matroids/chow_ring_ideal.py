@@ -28,14 +28,14 @@ class ChowRingIdeal(MPolynomialIdeal):
         M = self._matroid
         return M
 
-    def lattice_flats(self):
+    def _lattice_flats(self):
         r"""
         Return the ranks and chains of lattice of flats of the matroid.
 
         EXAMPLES::
 
             sage: ch = matroids.catalog.NonFano().chow_ring(QQ, True, 'atom-free')
-            sage: ch.defining_ideal().lattice_flats()
+            sage: ch.defining_ideal()._lattice_flats()
             ({frozenset({'a'}): 1, frozenset({'b'}): 1, frozenset({'c'}): 1,
             frozenset({'d'}): 1, frozenset({'e'}): 1, frozenset({'f'}): 1,
             frozenset({'g'}): 1, frozenset({'d', 'e'}): 2,
@@ -269,7 +269,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         R = self.ring()
         flats_gen = self._flats_generator
         monomial_basis = []
-        ranks, chains = self.lattice_flats()
+        ranks, chains = self._lattice_flats()
         for subset in chains:
             max_powers = []
             k = len(subset)
@@ -547,7 +547,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         R = self.ring()
         flats_gen = self._flats_generator
         monomial_basis = []
-        ranks, chains = self.lattice_flats()
+        ranks, chains = self._lattice_flats()
         for subset in chains:
             if not subset:
                 monomial_basis.append(R.one())
@@ -752,7 +752,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         R = self.ring()
         flats_gen = self._flats_generator
         monomial_basis = []
-        ranks, chains = self.lattice_flats()
+        ranks, chains = self._lattice_flats()
         for subset in chains:
             max_powers = []
             k = len(subset)
