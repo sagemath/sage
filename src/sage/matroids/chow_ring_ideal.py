@@ -49,6 +49,17 @@ class ChowRingIdeal(MPolynomialIdeal):
         """
         return dict(self._flats_generator)
 
+    def lattice_flats(self):
+        F = self._matroid.lattice_of_flats()
+        H = F.hasse_diagram()
+        H.delete_vertex(self._ideal.matroid().flats(0)[0])  # remove the empty flat
+        lattice_flats = Poset(H)
+        flats = list(lattice_flats)
+        flats.sort(key=lambda X: (len(X), sorted(X)))
+        ranks = {F: self._matroid.rank(F) for F in flats}
+        chains = lattice_flats.chains()  #Only chains
+        return (ranks, chains)
+
 
 class ChowRingIdeal_nonaug(ChowRingIdeal):
     r"""
@@ -240,6 +251,34 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                 gb.append(flats_gen[G]*(term)**(ranks[F] - ranks[G]))
         g_basis = PolynomialSequence(R, [gb])
         return g_basis
+    
+    def normal_basis(self, algorithm='', *args, **kwargs):
+        if algorithm == '':
+            algorithm = 'constructed'
+        if algorithm != 'constructed':
+            return super().normal_basis(algorithm=algorithm, *args, **kwargs)
+        R = self.ring()
+        flats_gen = self._flats_generator
+        monomial_basis = []
+        ranks, chains = self.lattice_flats()
+        for subset in chains:
+            max_powers = []
+            k = len(subset)
+            if (k == 0):
+                monomial_basis.append(R.one())
+            elif not ((k == 1) & (ranks[subset[0]] == 1)):
+                for i in range(k):
+                    if i == 0:
+                        max_powers.append(ranks[subset[i]])
+                    else:
+                        max_powers.append(ranks[subset[i]] - ranks[subset[i-1]])
+                for combination in product(*(range(1, p) for p in max_powers)):
+                    expression = R.one()
+                    for i in range(k):
+                        expression *= flats_gen[subset[i]]**combination[i]
+                    monomial_basis.append(expression)
+        n_basis = PolynomialSequence(R, [monomial_basis])
+        return n_basis
 
 class AugmentedChowRingIdeal_fy(ChowRingIdeal):
     r"""
@@ -478,6 +517,35 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         g_basis = PolynomialSequence(poly_ring, [gb])
         return g_basis
 
+    def normal_basis(self, algorithm='', *args, **kwargs):
+        if algorithm == '':
+            algorithm = 'constructed'
+        if algorithm != 'constructed':
+            return super().normal_basis(algorithm=algorithm, *args, **kwargs)
+        R = self.ring()
+        flats_gen = self._flats_generator
+        monomial_basis = []
+        ranks, chains = self.lattice_flats()
+        for subset in chains:
+            k = len(subset)
+            if k == 0:
+                monomial_basis.append(R.one())
+            else:
+                max_powers = []
+                max_powers.append(ranks[subset[0]])
+                for i in range(1, k):
+                    max_powers.append(ranks[subset[i]] - ranks[subset[i-1]])
+                ranges = [range(1, p) for p in max_powers]
+                ranges[0] = range(1, max_powers[0] + 1)
+                for combination in product(*(r for r in ranges)):
+                    #Generating combinations for all powers up to max_powers
+                    expression = R.one()
+                    for i in range(k):
+                        expression *= flats_gen[subset[i]]**combination[i]
+                    monomial_basis.append(expression)
+        n_basis = PolynomialSequence(R, [monomial_basis])
+        return n_basis
+
 class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
     r"""
     The augmented Chow ring ideal for a matroid `M` over ring `R` in the
@@ -641,3 +709,36 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
 
         g_basis = PolynomialSequence(poly_ring, [gb])
         return g_basis
+
+    def normal_basis(self, algorithm='', *args, **kwargs):
+        if algorithm == '':
+            algorithm = 'constructed'
+        if algorithm != 'constructed':
+            return super().normal_basis(algorithm=algorithm, *args, **kwargs)
+        R = self.ring()
+        flats_gen = self._flats_generator
+        monomial_basis = []
+        ranks, chains = self.lattice_flats()
+        for subset in chains:
+            max_powers = []
+            k = len(subset)
+            if subset == []:
+                monomial_basis.append(R.one())
+            else:
+                for i in range(k):
+                    if i == 0:
+                        max_powers.append(ranks[subset[i]])
+                    else:
+                        max_powers.append(ranks[subset[i]] - ranks[subset[i-1]])
+                ranges = [range(1, p) for p in max_powers]
+                ranges[0] = range(1, max_powers[0] + 1)
+                first_rank = ranks[subset[k-1]] + 1
+                for combination in product(*(r for r in ranges)):
+                    #Generating combinations for all powers from 1 to max_powers
+                    if sum(combination) <= first_rank:
+                        expression = R.one()
+                        for i in range(k):
+                            expression *= flats_gen[subset[i]]**combination[i]
+                        monomial_basis.append(expression)
+        n_basis = PolynomialSequence(R, [monomial_basis])
+        return n_basis
