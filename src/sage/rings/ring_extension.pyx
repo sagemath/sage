@@ -575,7 +575,7 @@ cdef class RingExtension_generic(Parent):
             # but CommutativeRings() seems safer, especially when dealing with
             # morphisms which do not need to preserve the base
             category = CommutativeRings()
-        Parent.__init__(self, ZZ, category=category)
+        Parent.__init__(self, base=ZZ, category=category)
         self._base = base
         self._backend = ring
         self._backend_defining_morphism = defining_morphism
