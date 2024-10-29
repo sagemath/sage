@@ -6,6 +6,7 @@ from sage.categories.monoids import Monoids
 from sage.categories.sets_cat import cartesian_product
 from sage.categories.sets_with_grading import SetsWithGrading
 from sage.categories.tensor import tensor
+from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.partition import Partitions, _Partitions
@@ -118,7 +119,7 @@ class AtomicSpeciesElement(WithEqualityById,
         dompart = [[ZZ(C._domain_to_gap[e]) for e in b] for b in dompart]
         orbits = sorted(G.Orbits().sage(), key=len, reverse=True)
         for orbit in orbits:
-            if not any(set(orbit).issubset(p) for p in dompart):
+            if not any(set(orbit).issubset(b) for b in dompart):
                 o = [C._domain_from_gap[e] for e in orbit]
                 raise ValueError(f"All elements of orbit {o} must have the same sort")
 
@@ -734,10 +735,10 @@ def _stabilizer_subgroups(G, X, a):
         sage: _stabilizer_subgroups(SymmetricGroup(2), [1], lambda pi, H: H)
         [Permutation Group with generators [(1,2)]]
     """
-    from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
     to_gap = {x: i for i, x in enumerate(X, 1)}
 
-    g_orbits = [orbit_decomposition(list(to_gap), lambda x: a(g, x))
+    X = set(X)  # because orbit_decomposition turns X into a set
+    g_orbits = [orbit_decomposition(X, lambda x: a(g, x))
                 for g in G.gens()]
 
     gens = [PermutationGroupElement([tuple([to_gap[x] for x in o])
@@ -1262,7 +1263,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             f_dompart_list = [(A ** n).permutation_group() for A, n in factors]
             f_list = [f for f, _ in f_dompart_list]
             dompart_list = [f_dompart for _, f_dompart in f_dompart_list]
-            tc_list = list(accumulate([sum(len(p) for p in f_dompart)
+            tc_list = list(accumulate([sum(len(b) for b in f_dompart)
                                        for f_dompart in dompart_list],
                                       initial=0))
             gens = [gen
@@ -1971,7 +1972,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: P1 == P3
             False
         """
-        from sage.structure.category_object import normalize_names
         names = normalize_names(-1, names)
         return super().__classcall__(cls, base_ring, names)
 
@@ -2112,7 +2112,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
                              + [(b[0], b[1]) for b in dompart if len(b) > 1],
                              domain=list(chain(*dompart)))
         Hs = _stabilizer_subgroups(S, X, a)
-        return self.sum_of_terms((self._indices(H, pi, check=check), ZZ.one()) for H in Hs)
+        return self.sum_of_terms((self._indices(H, pi, check=check), ZZ.one())
+                                 for H in Hs)
 
     def _first_ngens(self, n):
         r"""
