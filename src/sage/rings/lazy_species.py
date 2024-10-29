@@ -177,7 +177,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         EXAMPLES::
 
             sage: from sage.rings.lazy_species import LazySpecies
-            sage: L = LazySpecies(ZZ, "X")
+            sage: L = LazySpecies(QQ, "X")
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: E.generating_series()
             1 + X + 1/2*X^2 + 1/6*X^3 + 1/24*X^4 + 1/120*X^5 + 1/720*X^6 + O(X^7)
@@ -211,11 +211,11 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
                                 P._laurent_poly_ring._indices._indices.variable_names())
         if P._arity == 1:
             def coefficient(n):
-                return sum(c / M.group_and_partition()[0].cardinality()
+                return sum(c / M.permutation_group()[0].cardinality()
                            for M, c in self[n].monomial_coefficients().items())
         else:
             def coefficient(n):
-                return sum(c / M.group_and_partition()[0].cardinality()
+                return sum(c / M.permutation_group()[0].cardinality()
                            * P.base_ring().prod(v ** d for v, d in zip(L.gens(), M.grade()))
                            for M, c in self[n].monomial_coefficients().items())
         return L(coefficient)
@@ -239,7 +239,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             s[1, 1, 1, 1, 1] + s[2, 2, 1] + 2*s[3, 1, 1] + s[3, 2] + s[5]
 
             sage: from sage.rings.species import PolynomialSpecies
-            sage: L = LazySpecies(ZZ, "X")
+            sage: L = LazySpecies(QQ, "X")
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: L2 = LazySpecies(QQ, "X, Y")
             sage: P2 = PolynomialSpecies(QQ, "X, Y")
@@ -256,7 +256,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         if P._arity == 1:
             L = LazySymmetricFunctions(p)
             def coefficient(n):
-                return sum(c * M.group_and_partition()[0].cycle_index()
+                return sum(c * M.permutation_group()[0].cycle_index()
                            for M, c in self[n].monomial_coefficients().items())
         else:
             L = LazySymmetricFunctions(tensor([p for _ in range(P._arity)]))
@@ -322,7 +322,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         EXAMPLES::
 
             sage: from sage.rings.lazy_species import LazySpecies
-            sage: L = LazySpecies(ZZ, "X")
+            sage: L = LazySpecies(QQ, "X")
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: list(E.structures([1,2,3]))
             [((1, 2, 3), E_3)]
@@ -373,7 +373,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             if c < 0:
                 raise NotImplementedError("only implemented for proper non-virtual species")
             types = [tuple(S(rep)._act_on_list_on_position(l))[::-1]
-                     for rep in libgap.RightTransversal(S, M.group_and_partition()[0])]
+                     for rep in libgap.RightTransversal(S, M.permutation_group()[0])]
             if c == 1:
                 for s in types:
                     yield s, M
@@ -550,6 +550,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         sorder = self._coeff_stream._approximate_order
         gv = min(g._coeff_stream._approximate_order for g in args)
         R = P._internal_poly_ring.base_ring()
+        L = fP._internal_poly_ring.base_ring()
 
         def coefficient(n):
             if not n:
@@ -563,9 +564,9 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             result = R.zero()
             for i in range(n // gv + 1):
                 # compute homogeneous components
-                lF = defaultdict(R)
+                lF = defaultdict(L)
                 for M, c in self[i]:
-                    lF[M.grade()] += R._from_dict({M: c})
+                    lF[M.grade()] += L._from_dict({M: c})
                 for mc, F in lF.items():
                     for degrees in weighted_vector_compositions(mc, n, weights):
                         multiplicities = [c for alpha, g_flat in zip(degrees, args_flat)
