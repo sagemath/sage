@@ -1482,8 +1482,8 @@ class MatchingCoveredGraph(Graph):
 
     def get_matching(self):
         r"""
-        Return ``self._matching``, which is a perfect matching of the (matching
-        covered) graph computed at the initialization.
+        Return a :class:`~EdgesView` of ``self._matching`` (a perfect matching
+        of the (matching covered) graph computed at the initialization).
 
         OUTPUT:
 
