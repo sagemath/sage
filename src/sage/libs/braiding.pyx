@@ -389,6 +389,7 @@ def sliding_circuits(braid):
     sig_off()
     return rop
 
+
 def send_to_sss(braid):
     r"""
     Return an element of the braid's super summit set and the conjugating braid.
@@ -416,6 +417,7 @@ def send_to_sss(braid):
     cdef list[list[list[int]]] rop = SendToSSS(nstrands, l)
     sig_off()
     return rop
+
 
 def send_to_uss(braid):
     r"""
@@ -445,6 +447,7 @@ def send_to_uss(braid):
     sig_off()
     return rop
 
+
 def send_to_sc(braid):
     r"""
     Return an element of the braid's sliding circuits and the conjugating braid.
@@ -473,6 +476,7 @@ def send_to_sc(braid):
     cdef list[list[list[int]]] rop = SendToSC(nstrands, l)
     sig_off()
     return rop
+
 
 def trajectory(braid):
     r"""
@@ -505,6 +509,7 @@ def trajectory(braid):
     sig_off()
     return rop
 
+
 def cyclic_slidings(braid):
     r"""
     Return the cyclic slidings of the braid.
@@ -536,4 +541,3 @@ def cyclic_slidings(braid):
     cdef list[list[list[list[int]]]] rop = CyclicSlidings(nstrands, l)
     sig_off()
     return rop
-
