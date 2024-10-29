@@ -583,6 +583,174 @@ class MatchingCoveredGraph(Graph):
             return s.capitalize()
         return "".join(["Matching covered ", s])
 
+    def _subgraph_by_adding(self, vertices=None, edges=None, edge_property=None, immutable=None):
+        r"""
+        Return the matching covered subgraph containing the given vertices and edges.
+
+        The edges also satisfy the edge_property, if it is not None. The
+        subgraph is created by creating a new empty graph and adding the
+        necessary vertices, edges, and other properties.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph._subgraph_by_adding`
+            method to ensure that resultant subgraph is also matching covered.
+
+        INPUT:
+
+        - ``vertices`` -- (default: ``None``) an iterable container of
+          vertices, e.g. a list, set, graph, file or numeric array. If not
+          passed (i.e., ``None``), defaults to the entire graph.
+
+        - ``edges`` -- a single edge or an iterable container of edges (e.g., a
+          list, set, file, numeric array, etc.). By default (``edges=None``),
+          all edges are assumed and the returned graph is an induced
+          subgraph. In the case of multiple edges, specifying an edge as `(u,v)`
+          means to keep all edges `(u,v)`, regardless of the label.
+
+        - ``edge_property`` -- function (default: ``None``); a function that
+          inputs an edge and outputs a boolean value, i.e., a edge ``e`` in
+          ``edges`` is kept if ``edge_property(e) == True``
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable subgraph. ``immutable=None`` (default) means that
+          the graph and its subgraph will behave the same way.
+
+        OUTPUT:
+
+        - An instance of :class:`~MatchingCoveredGraph` is returned if the
+          subgraph obtained is matching covered, otherwise a :exc:`ValueError`
+          is thrown.
+
+        EXAMPLES:
+
+        Ladder graphs are subgraphs of a staircase graph, that is
+        matching covered::
+
+            sage: G = MatchingCoveredGraph(graphs.StaircaseGraph(4))
+            sage: H = G._subgraph_by_adding(vertices=[0..5])
+            sage: H.order(), H.size()
+            (6, 7)
+            sage: H
+            Matching covered subgraph of (staircase graph): graph on 6 vertices
+            sage: H.is_isomorphic(graphs.LadderGraph(3))
+            True
+
+        Cycle graphs are subgraphs of a biwheel graph, that is
+        matching covered::
+
+            sage: G = MatchingCoveredGraph(graphs.BiwheelGraph(5))
+            sage: H = G._subgraph_by_adding(vertices=[0..7],
+            ....:     edges=[(u, (u+1) % 8) for u in range(8)])
+            sage: H.order(), H.size()
+            (8, 8)
+            sage: H
+            Matching covered subgraph of (biwheel graph): graph on 8 vertices
+            sage: H.is_isomorphic(graphs.CycleGraph(8))
+            True
+
+        One may use the ``edge_property`` argument::
+
+            sage: G = Graph(multiedges=True)
+            sage: G.add_edges([
+            ....:     (0, 1, 'label'), (0, 2), (0, 3), (0, 4),
+            ....:     (0, 5), (1, 2, 'label'), (1, 2), (1, 5),
+            ....:     (2, 5), (3, 4), (3, 5), (4, 5)
+            ....: ])
+            sage: H = MatchingCoveredGraph(G)
+            sage: J = H._subgraph_by_adding(vertices=[0, 1, 2, 5], edge_property=
+            ....:     (lambda edge:
+            ....:             (edge[0] in [1, 2]) != (edge[1] in [1, 2]))
+            ....: )
+            sage: J.order(), J.size()
+            (4, 4)
+            sage: J
+            Matching covered subgraph of (): multi-graph on 4 vertices
+            sage: J.is_isomorphic(graphs.CompleteBipartiteGraph(2, 2))
+            True
+
+        We may specify the subgraph to be immutable::
+
+            sage: M = graphs.MoebiusLadderGraph(4)
+            sage: G = MatchingCoveredGraph(M)
+            sage: H = G._subgraph_by_adding(edge_property=
+            ....:     (lambda edge: abs(edge[0] - edge[1]) != 4),
+            ....:     immutable=True)
+            sage: H.order(), H.size()
+            (8, 8)
+            sage: H
+            Matching covered subgraph of (moebius ladder graph): graph on 8 vertices
+            sage: H.is_isomorphic(graphs.CycleGraph(8))
+            True
+            sage: H.is_immutable()
+            True
+
+        An error is thrown if the subgraph is not matching covered::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: H = G._subgraph_by_adding(vertices=[])
+            Traceback (most recent call last):
+            ...
+            ValueError: the graph is trivial
+            sage: H = G._subgraph_by_adding(edge_property=
+            ....:     (lambda edge: edge[0] == 0)
+            ....: )
+            Traceback (most recent call last):
+            ...
+            ValueError: the graph is not connected
+            sage: H = G._subgraph_by_adding(vertices=[1, 2, 3])
+            Traceback (most recent call last):
+            ...
+            ValueError: input graph is not matching covered
+        """
+        if immutable is None:
+            immutable = self.is_immutable()
+
+        if edges is None and edge_property is None:
+            if vertices is None:
+                G = self.copy()
+                G.name('Matching covered subgraph of ({})'.format(self.name()))
+                if immutable:
+                    G = G.copy(immutable=True)
+
+                return G
+
+            else:
+                # Check if all existent vertices are there
+                all_existent_vertices = True
+                for vertex in self:
+                    if vertex not in vertices:
+                        all_existent_vertices = False
+                        break
+
+                if all_existent_vertices:
+                    G = self.copy()
+                    G.name('Matching covered subgraph of ({})'.format(self.name()))
+                    if immutable:
+                        G = G.copy(immutable=True)
+
+                    return G
+
+        G = Graph(self, weighted=self._weighted, loops=self.allows_loops(),
+                  multiedges=self.allows_multiple_edges())
+
+        H = G._subgraph_by_adding(vertices=vertices, edges=edges,
+                                  edge_property=edge_property,
+                                  immutable=False)
+
+        try:
+            H = MatchingCoveredGraph(H)
+            H.name('Matching covered subgraph of ({})'.format(self.name()))
+            if immutable:
+                H = H.copy(immutable=True)
+
+            return H
+
+        except Exception as exception:
+            raise exception
+
     def add_edge(self, u, v=None, label=None):
         r"""
         Add an edge from vertex ``u`` to vertex ``v``.
