@@ -1,0 +1,20 @@
+#!/bin/sh
+if [ "$SAGE_LOCAL" = "" ]; then
+    echo "SAGE_LOCAL is not set. Exiting."
+    exit 1
+fi
+GITHUB_FILES="https://github.com/bodnalev/csdpy/archive/refs/heads/master.zip"
+TMP_DIR=$(mktemp -d)
+wget -O "$TMP_DIR/csdpy.zip" "$GITHUB_FILES" || exit 1
+unzip "$TMP_DIR/csdpy.zip" -d "$TMP_DIR" || exit 1
+cd "$TMP_DIR/csdpy-master" || exit 1
+OS_TYPE=$(uname)
+if [ "$OS_TYPE" = "Linux" ]; then
+    "$SAGE_LOCAL/bin/python3" setup_linux.py install || exit 1
+elif [ "$OS_TYPE" = "Darwin" ]; then
+    "$SAGE_LOCAL/bin/python3" setup_mac.py install || exit 1
+else
+    echo "Unsupported OS: $OS_TYPE. Exiting."
+    exit 1
+fi
+rm -rf "$TMP_DIR"
