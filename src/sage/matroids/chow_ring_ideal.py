@@ -391,6 +391,10 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             self._flats_generator[x] = poly_ring.gens()[i]
         for i, F in enumerate(self._flats):
             self._flats_generator[F] = poly_ring.gens()[len(E) + i]
+        self._flats_containing = {x: [] for x in E}
+        for F in self._flats:
+            for x in F:
+                self._flats_containing[x].append(F)
         MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
 
     def _gens_constructor(self, poly_ring):
@@ -401,62 +405,54 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
 
             sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'fy')
             sage: ch.defining_ideal()._gens_constructor(ch.defining_ideal().ring())
-            [B0*B1, B0*B2, B0*B3, B0*B4, B0*B5, B0*B124, B0*B15, B0*B23,
-             B0*B345, B0*B1, B1*B2, B1*B3, B1*B4, B1*B5, B1*B025, B1*B04,
-             B1*B23, B1*B345, B0*B2, B1*B2, B2*B3, B2*B4, B2*B5, B2*B013,
-             B2*B04, B2*B15, B2*B345, B0*B3, B1*B3, B2*B3, B3*B4, B3*B5,
-             B3*B025, B3*B04, B3*B124, B3*B15, B0*B4, B1*B4, B2*B4, B3*B4,
-             B4*B5, B4*B013, B4*B025, B4*B15, B4*B23, B0*B5, B1*B5, B2*B5,
-             B3*B5, B4*B5, B5*B013, B5*B04, B5*B124, B5*B23, B2*B013, B4*B013,
-             B5*B013, B013*B025, B013*B04, B013*B124, B013*B15, B013*B23,
-             B013*B345, B1*B025, B3*B025, B4*B025, B013*B025, B025*B04,
-             B025*B124, B025*B15, B025*B23, B025*B345, B1*B04, B2*B04, B3*B04,
-             B5*B04, B013*B04, B025*B04, B04*B124, B04*B15, B04*B23, B04*B345,
-             B0*B124, B3*B124, B5*B124, B013*B124, B025*B124, B04*B124,
-             B124*B15, B124*B23, B124*B345, B0*B15, B2*B15, B3*B15, B4*B15,
-             B013*B15, B025*B15, B04*B15, B124*B15, B15*B23, B15*B345, B0*B23,
-             B1*B23, B4*B23, B5*B23, B013*B23, B025*B23, B04*B23, B124*B23,
-             B15*B23, B23*B345, B0*B345, B1*B345, B2*B345, B013*B345,
-             B025*B345, B04*B345, B124*B345, B15*B345, B23*B345, A0*B, A0*B1,
-             A0*B2, A0*B3, A0*B4, A0*B5, A0*B124, A0*B15, A0*B23, A0*B345,
-             A1*B, A1*B0, A1*B2, A1*B3, A1*B4, A1*B5, A1*B025, A1*B04, A1*B23,
-             A1*B345, A2*B, A2*B0, A2*B1, A2*B3, A2*B4, A2*B5, A2*B013, A2*B04,
-             A2*B15, A2*B345, A3*B, A3*B0, A3*B1, A3*B2, A3*B4, A3*B5, A3*B025,
-             A3*B04, A3*B124, A3*B15, A4*B, A4*B0, A4*B1, A4*B2, A4*B3, A4*B5,
-             A4*B013, A4*B025, A4*B15, A4*B23, A5*B, A5*B0, A5*B1, A5*B2,
-             A5*B3, A5*B4, A5*B013, A5*B04, A5*B124, A5*B23,
+            [B0*B1, B0*B2, B0*B3, B0*B23, B0*B4, B0*B124, B0*B5, B0*B15,
+             B0*B345, B1*B2, B1*B3, B1*B23, B1*B4, B1*B04, B1*B5, B1*B025,
+             B1*B345, B2*B3, B2*B013, B2*B4, B2*B04, B2*B5, B2*B15, B2*B345,
+             B3*B4, B3*B04, B3*B124, B3*B5, B3*B025, B3*B15, B013*B23, B4*B013,
+             B013*B04, B013*B124, B5*B013, B013*B025, B013*B15, B013*B345,
+             B4*B23, B04*B23, B124*B23, B5*B23, B025*B23, B15*B23, B23*B345,
+             B4*B5, B4*B025, B4*B15, B04*B124, B5*B04, B025*B04, B04*B15,
+             B04*B345, B5*B124, B025*B124, B124*B15, B124*B345, B025*B15,
+             B025*B345, B15*B345, A0*B, A0*B1, A0*B2, A0*B3, A0*B4, A0*B5,
+             A0*B124, A0*B15, A0*B23, A0*B345, A1*B, A1*B0, A1*B2, A1*B3,
+             A1*B4, A1*B5, A1*B025, A1*B04, A1*B23, A1*B345, A2*B, A2*B0,
+             A2*B1, A2*B3, A2*B4, A2*B5, A2*B013, A2*B04, A2*B15, A2*B345,
+             A3*B, A3*B0, A3*B1, A3*B2, A3*B4, A3*B5, A3*B025, A3*B04, A3*B124,
+             A3*B15, A4*B, A4*B0, A4*B1, A4*B2, A4*B3, A4*B5, A4*B013, A4*B025,
+             A4*B15, A4*B23, A5*B, A5*B0, A5*B1, A5*B2, A5*B3, A5*B4, A5*B013,
+             A5*B04, A5*B124, A5*B23, A0 + B0 + B013 + B025 + B04 + B012345,
              B + B0 + B1 + B2 + B3 + B4 + B5 + B013 + B025 + B04 + B124 + B15 + B23 + B345 + B012345,
-             A0 + B0 + B013 + B025 + B04 + B012345,
              A1 + B1 + B013 + B124 + B15 + B012345,
+             B + B0 + B1 + B2 + B3 + B4 + B5 + B013 + B025 + B04 + B124 + B15 + B23 + B345 + B012345,
              A2 + B2 + B025 + B124 + B23 + B012345,
+             B + B0 + B1 + B2 + B3 + B4 + B5 + B013 + B025 + B04 + B124 + B15 + B23 + B345 + B012345,
              A3 + B3 + B013 + B23 + B345 + B012345,
+             B + B0 + B1 + B2 + B3 + B4 + B5 + B013 + B025 + B04 + B124 + B15 + B23 + B345 + B012345,
              A4 + B4 + B04 + B124 + B345 + B012345,
-             A5 + B5 + B025 + B15 + B345 + B012345]
+             B + B0 + B1 + B2 + B3 + B4 + B5 + B013 + B025 + B04 + B124 + B15 + B23 + B345 + B012345,
+             A5 + B5 + B025 + B15 + B345 + B012345,
+             B + B0 + B1 + B2 + B3 + B4 + B5 + B013 + B025 + B04 + B124 + B15 + B23 + B345 + B012345]
         """
         E = list(self._matroid.groundset())
-        flats_containing = {x: [] for x in E}
-        for F in self._flats:
-            for x in F:
-                flats_containing[x].append(F)
-
         Q = list()
         L = list()
-        term = poly_ring.zero()
-        for F in self._flats:
-            term += self._flats_generator[F]
-            for G in self._flats:
-                    if not (F <= G or G < F):
-                        Q.append(self._flats_generator[F] * self._flats_generator[G])  # Quadratic generators
-        L.append(term)
+        reln = lambda x,y: x <= y
+        lattice_flats = Poset((self._flats, reln))
+        antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
+        for F, G in antichains:
+            Q.append(self._flats_generator[F] * self._flats_generator[G])  # Quadratic generators
 
         for x in E:
             term = poly_ring.zero()
+            term1 = poly_ring.zero()
             for F in self._flats:
-                if F not in flats_containing[x]:
+                term1 += self._flats_generator[F]
+                if F not in self._flats_containing[x]:
                     Q.append(self._flats_generator[x] * self._flats_generator[F])
                 else:
                     term += self._flats_generator[F]
             L.append(self._flats_generator[x] + term) #Linear Generators
+            L.append(term1)
         return Q + L
 
     def _repr_(self):
@@ -492,7 +488,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
 
             sage: ch = matroids.Uniform(2,5).chow_ring(QQ, True, 'fy')
             sage: ch.defining_ideal().groebner_basis(algorithm='')
-            Polynomial Sequence with 565 Polynomials in 12 Variables
+            Polynomial Sequence with 33 Polynomials in 12 Variables
             sage: ch.defining_ideal().groebner_basis(algorithm='').is_groebner()
             True
             sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().hilbert_series(algorithm='singular')
@@ -505,27 +501,28 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         gb = []  # reduced groebner basis with two eliminated cases
         E = list(self._matroid.groundset())
         poly_ring = self.ring()
+        reln = lambda x,y: x <= y
+        lattice_flats = Poset((self._flats, reln))
+        antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
+        for F, G in antichains:
+            gb.append(self._flats_generator[F] * self._flats_generator[G]) # non-nested flats
+        for i in E:
+            term = poly_ring.zero()
+            for H in self._flats_containing[i]:
+                term += self._flats_generator[H]
+            if term != poly_ring.zero():
+                gb.append(self._flats_generator[i] + term)  # 5.7 (MM2022)
+
         for F in self._flats:
-            for G in self._flats:
-                if not (F <= G or G <= F):  # non-nested flats
-                    gb.append(self._flats_generator[F]*self._flats_generator[G])
-
-                for i in E:
-                    term = poly_ring.zero()
-                    term1 = poly_ring.zero()
-                    for H in self._flats:
-                        if i in H:
-                            term += self._flats_generator[H]
-                        if H >= G:
-                            term1 += self._flats_generator[H]
-                    if term != poly_ring.zero():
-                        gb.append(self._flats_generator[i] + term) #5.7 (MM2022)
-                    if term1 != poly_ring.zero():
-                        gb.append(term1**(self._matroid.rank(G) + 1)) #5.6 (MM2022)
-
-                    if G > F:  # nested flats
-                        if term1 != poly_ring.zero():
-                            gb.append(self._flats_generator[F]*term1**(self._matroid.rank(G)-self._matroid.rank(F)))
+            term1 = poly_ring.zero()
+            for H in lattice_flats.order_filter([F]):
+                term1 += self._flats_generator[H]
+            if term1 != poly_ring.zero():
+                gb.append(term1**(self._matroid.rank(G) + 1))  #5.6 (MM2022)
+                order_ideal_modified = lattice_flats.order_ideal([F])
+                order_ideal_modified.remove(F)
+                for G in order_ideal_modified:  # nested flats
+                    gb.append(self._flats_generator[F]*term1**(self._matroid.rank(F) - self._matroid.rank(G)))
 
         return PolynomialSequence(poly_ring, [gb])
 
@@ -647,10 +644,9 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             sage: M1 = Matroid(graphs.CycleGraph(3))
             sage: ch = M1.chow_ring(QQ, True, 'atom-free')
             sage: ch.defining_ideal()._gens_constructor(ch.defining_ideal().ring())
-            [A0*A1, A0*A2, A0^2 + 2*A0*A3 + A3^2, A1^2 + 2*A1*A3 + A3^2,
+            [A0*A1, A0*A2, A1*A2, A0^2 + 2*A0*A3 + A3^2, A1^2 + 2*A1*A3 + A3^2,
              A0*A1 + A0*A3, A2^2 + 2*A2*A3 + A3^2, A0*A2 + A0*A3,
-             A0*A1, A1*A2, A0*A1 + A1*A3, A1*A2 + A1*A3, A0*A2, A1*A2,
-             A0*A2 + A2*A3, A1*A2 + A2*A3]
+             A0*A1 + A1*A3, A1*A2 + A1*A3, A0*A2 + A2*A3, A1*A2 + A2*A3]
         """
         E = list(self._matroid.groundset())
         Q = []  # Quadratic generators
@@ -658,10 +654,12 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         for F in self._flats:
             for x in F:
                 flats_containing[x].append(F)
+        reln = lambda x,y: x <= y
+        lattice_flats = Poset((self._flats, reln))
+        antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
+        for F, G in antichains:
+            Q.append(self._flats_generator[F] * self._flats_generator[G])
         for F in self._flats:
-            for G in self._flats:
-                if not (G >= F or F > G): # generators for every pair of non-nested flats
-                    Q.append(self._flats_generator[F] * self._flats_generator[G])
             for x in E: # generators for every set of flats containing element
                 term = poly_ring.zero()
                 for H in flats_containing[x]:
@@ -707,7 +705,8 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             sage: M1 = Matroid(graphs.CycleGraph(3))
             sage: ch = M1.chow_ring(QQ, True, 'atom-free')
             sage: ch.defining_ideal().groebner_basis(algorithm='')
-            Polynomial Sequence with 22 Polynomials in 3 Variables
+            [A0*A1, A0*A2, A1*A2, A0^2 + 2*A0*A3 + A3^2, A1^2 + 2*A1*A3 + A3^2,
+             A2^2 + 2*A2*A3 + A3^2, A0*A3, A1*A3, A2*A3, A3^3]
             sage: ch.defining_ideal().groebner_basis(algorithm='').is_groebner()
             True
             sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().hilbert_series(algorithm='singular')
@@ -719,18 +718,21 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             return super().groebner_basis(algorithm=algorithm, *args, **kwargs)
         gb = []
         poly_ring = self.ring()
+        reln = lambda x,y: x <= y
+        lattice_flats = Poset((self._flats, reln))
+        antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
+        for F, G in antichains:
+            gb.append(self._flats_generator[F]*self._flats_generator[G])
         for F in self._flats:
-            for G in self._flats:
-                term = poly_ring.zero()
-                for H in self._flats:
-                    if H < F:
-                        term += self._flats_generator[H]
-                if not (F >= G or G > F): #Non nested flats
-                    gb.append(self._flats_generator[F]*self._flats_generator[G])
-                elif F < G: #Nested flats
-                    if term != poly_ring.zero():
-                        gb.append(self._flats_generator[F]*(term**(self._matroid.rank(G) - self._matroid.rank(F))))
-                gb.append((term**self._matroid.rank(F)) + 1)
+            term = poly_ring.zero()
+            for H in lattice_flats.order_filter([F]):
+                term += self._flats_generator[H]
+            if term != poly_ring.zero():
+                order_ideal_modified = lattice_flats.order_ideal([F])
+                order_ideal_modified.remove(F)
+                for G in order_ideal_modified:
+                    gb.append(self._flats_generator[G] * (term ** (self._matroid.rank(F) - self._matroid.rank(G))))
+            gb.append(term ** (self._matroid.rank(F) + 1))
 
         return PolynomialSequence(poly_ring, [gb])
 
