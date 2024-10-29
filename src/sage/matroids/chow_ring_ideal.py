@@ -28,28 +28,6 @@ class ChowRingIdeal(MPolynomialIdeal):
         M = self._matroid
         return M
 
-    def flats_generator(self):
-        r"""
-        Return the variables of every corresponding flat/groundset element
-        of the matroid.
-
-        EXAMPLES::
-
-            sage: ch = matroids.catalog.Fano().chow_ring(QQ, False)
-            sage: ch.defining_ideal().flats_generator()
-            {frozenset({'a'}): Aa, frozenset({'b'}): Ab, frozenset({'c'}): Ac,
-             frozenset({'d'}): Ad, frozenset({'e'}): Ae, frozenset({'f'}): Af,
-             frozenset({'g'}): Ag, frozenset({'a', 'b', 'f'}): Aabf,
-             frozenset({'a', 'c', 'e'}): Aace,
-             frozenset({'a', 'd', 'g'}): Aadg,
-             frozenset({'b', 'c', 'd'}): Abcd,
-             frozenset({'b', 'e', 'g'}): Abeg,
-             frozenset({'c', 'f', 'g'}): Acfg,
-             frozenset({'d', 'e', 'f'}): Adef,
-             frozenset({'a', 'b', 'c', 'd', 'e', 'f', 'g'}): Aabcdefg}
-        """
-        return dict(self._flats_generator)
-
     def lattice_flats(self):
         r"""
         Return the ranks and chains of lattice of flats of the matroid.
