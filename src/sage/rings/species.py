@@ -529,15 +529,15 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
         # prevent infinite recursion in self._element_constructor_
         self._renamed.add(n)
-        for i in range(self._arity):
-            pi = {i: range(1, n+1)}
+        for s in range(self._arity):
+            pi = {s: range(1, n+1)}
             if n == 1:
-                self(SymmetricGroup(1), pi, check=False).rename(self._names[i])
+                self(SymmetricGroup(1), pi, check=False).rename(self._names[s])
 
             if self._arity == 1:
                 sort = ""
             else:
-                sort = f"({self._names[i]})"
+                sort = f"({self._names[s]})"
 
             if n >= 2:
                 self(SymmetricGroup(n), pi, check=False).rename(f"E_{n}" + sort)
@@ -683,8 +683,8 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             sage: a
             E_2(XY)
         """
-        G = PermutationGroup([[(2 * i + 1, 2 * i + 2) for i in range(self._arity)]])
-        m = {i: [2 * i + 1, 2 * i + 2] for i in range(self._arity)}
+        G = PermutationGroup([[(2 * s + 1, 2 * s + 2) for s in range(self._arity)]])
+        m = {s: [2 * s + 1, 2 * s + 2] for s in range(self._arity)}
         return self._element_constructor_(G, m)
 
     Element = AtomicSpeciesElement
@@ -748,7 +748,8 @@ def _stabilizer_subgroups(G, X, a):
     while M:
         p = M.pop()
         OS = libgap.OrbitStabilizer(G, p, G.gens(), gens)
-        result.append(PermutationGroup(gap_group=OS["stabilizer"], domain=G.domain()))
+        result.append(PermutationGroup(gap_group=OS["stabilizer"],
+                                       domain=G.domain()))
         M.difference_update(OS["orbit"].sage())
     return result
 
@@ -839,8 +840,9 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
           of a finite set and a transitive action
         - ``pi`` -- ``dict`` mapping sorts to iterables whose union
           is the domain of ``G`` (if ``G`` is a permutation group) or
-          `X` (if ``G`` is a pair ``(X, a)``); if `k=1` and ``G`` is
-          a permutation group, ``pi`` can be omitted
+          the domain of the acting symmetric group (if ``G`` is a
+          pair ``(X, a)``); if `k=1` and ``G`` is a permutation
+          group, ``pi`` can be omitted
         - ``check`` -- boolean (default: ``True``); skip input
           checking if ``False``
 
@@ -923,6 +925,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             ...
             ValueError: 0 must be a permutation group or a pair specifying a
              group action on the given domain pi=None
+
         """
         if parent(G) == self:
             # pi cannot be None because of framework
@@ -958,8 +961,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             X, a = G
         except TypeError:
             raise ValueError(f"{G} must be a permutation group or a pair specifying a group action on the given domain pi={pi}")
-        mc = [len(pi.get(i, [])) for i in range(self._arity)]
-        S = SymmetricGroup(sum(mc)).young_subgroup(mc)
+        dompart = [sorted(pi.get(s, [])) for s in range(self._arity)]
+        S = PermutationGroup([tuple(b) for b in dompart if len(b) > 2]
+                             + [(b[0], b[1]) for b in dompart if len(b) > 1],
+                             domain=list(chain(*dompart)))
         H = _stabilizer_subgroups(S, X, a)
         if len(H) > 1:
             raise ValueError("Action is not transitive")
@@ -2016,9 +2021,11 @@ class PolynomialSpecies(CombinatorialFreeModule):
         - ``G`` -- element of ``self`` (in this case ``pi`` must be ``None``)
           permutation group, or pair ``(X, a)`` consisting of a
           finite set and an action
-        - ``pi`` -- ``dict`` mapping sorts to iterables whose union is the
-          domain of ``G`` (if ``G`` is a permutation group) or `X` (if ``G``
-          is a pair ``(X, a)``); if `k=1`, ``pi`` can be omitted
+        - ``pi`` -- ``dict`` mapping sorts to iterables whose union
+          is the domain of ``G`` (if ``G`` is a permutation group) or
+          the domain of the acting symmetric group (if ``G`` is a
+          pair ``(X, a)``); if `k=1` and ``G`` is a permutation
+          group, ``pi`` can be omitted
         - ``check`` -- boolean (default: ``True``); skip input
           checking if ``False``
 
@@ -2068,6 +2075,24 @@ class PolynomialSpecies(CombinatorialFreeModule):
             Traceback (most recent call last):
             ...
             ValueError: cannot reassign sorts to a polynomial species
+
+        Create a multisort species given an action::
+
+            sage: P = PolynomialSpecies(QQ, "X,Y")
+            sage: G = PermutationGroup([(2,3)])
+            sage: pi = {0: [2, 3], 1: [1]}
+            sage: X = [(s, a) for s in libgap.RightCosets(G, G) for a in G if libgap.OnRight(s, a) == s]
+            sage: def act(s, a, g):
+            ....:     g_dict = g.dict()
+            ....:     g_gap = libgap.PermList([g_dict[i] for i in range(1, max(g_dict)+1)])
+            ....:     t = libgap.OnRight(s, g_gap)
+            ....:     b = a ** g_gap
+            ....:     for r, c in X:
+            ....:         if r == t and c == b:
+            ....:             return r, c
+            ....:     raise ValueError
+            sage: P((X, lambda g, x: act(x[0], x[1], g)), pi)
+            2*Y*E_2(X)
         """
         if parent(G) == self:
             # pi cannot be None because of framework
@@ -2082,8 +2107,10 @@ class PolynomialSpecies(CombinatorialFreeModule):
             return self._from_dict({self._indices(G, pi, check=check): ZZ.one()})
 
         X, a = G
-        mc = [len(pi.get(i, [])) for i in range(self._arity)]
-        S = SymmetricGroup(sum(mc)).young_subgroup(mc)
+        dompart = [sorted(pi.get(s, [])) for s in range(self._arity)]
+        S = PermutationGroup([tuple(b) for b in dompart if len(b) > 2]
+                             + [(b[0], b[1]) for b in dompart if len(b) > 1],
+                             domain=list(chain(*dompart)))
         Hs = _stabilizer_subgroups(S, X, a)
         return self.sum_of_terms((self._indices(H, pi, check=check), ZZ.one()) for H in Hs)
 
