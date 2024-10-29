@@ -14,6 +14,22 @@ called *matching* *covered* if each edge participates in some perfect matching.
 AUTHORS:
 
 - Janmenjaya Panda (2024-06-14): initial version
+
+.. TODO:
+
+    The following methods are to be incorporated in
+    :class:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph`::
+
+    - ``delete_edge()`` | Delete the edge from ``u`` to ``v``.
+    - ``delete_edges()`` | Delete edges from an iterable container.
+    - ``is_removable_double_ear()`` | Check whether the pair of ears form a removable double ear.
+    - ``is_removable_doubleton()`` | Check whether the pair of edges constitute a removable doubleton.
+    - ``is_removable_ear()`` | Check whether the ear is removable.
+    - ``is_removable_edge()`` | Check whether the edge is removable.
+    - ``removable_double_ears()`` | Return a list of removable double ears.
+    - ``removable_doubletons()`` | Return a list of removable doubletons.
+    - ``removable_ears()`` | Return a list of removable ears.
+    - ``removable_edges()`` | Return a :class:`~EdgesView` of removable edges.
 """
 # ****************************************************************************
 #         Copyright (C) 2024 Janmenjaya Panda <janmenjaya.panda.22@gmail.com>
