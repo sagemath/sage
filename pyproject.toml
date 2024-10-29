@@ -4,7 +4,9 @@ build-backend = 'mesonpy'
 requires = [
     'meson-python',
     'cypari2 >=2.1.1',
-    'cysignals >=1.11.4',
+    # cysignals 1.11.2 is the newest version that is available on conda:
+    # https://github.com/conda-forge/cysignals-feedstock/pull/49
+    'cysignals >=1.11.2',
     # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
     'cython >=3.0, != 3.0.3',
     'gmpy2 ~=2.1.b999',
