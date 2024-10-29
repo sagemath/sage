@@ -8037,6 +8037,18 @@ cdef class Matroid(SageObject):
             - :mod:`sage.matroids.chow_ring_ideal`
             - :mod:`sage.matroids.chow_ring`
 
+        INPUT:
+
+        - ``M`` -- matroid
+        - ``R`` -- commutative ring
+        - ``augmented`` -- boolean; when ``True``, this is the augmented
+            Chow ring and if ``False``, this is the non-augmented Chow ring
+        - ``presentation`` -- string (default: ``None``); one of the following
+            (ignored if ``augmented=False``)
+
+            * ``"fy"`` - the Feitchner-Yuzvinsky presentation
+            * ``"atom-free"`` - the atom-free presentation
+
         EXAMPLES::
 
             sage: M = matroids.Wheel(2)
