@@ -58,13 +58,13 @@ class ChowRingIdeal(MPolynomialIdeal):
 
             sage: ch = matroids.catalog.NonFano().chow_ring(QQ, True, 'atom-free')
             sage: ch.defining_ideal().lattice_flats()
-            ({frozenset({'b'}): 1, frozenset({'c'}): 1, frozenset({'d'}): 1,
-            frozenset({'e'}): 1, frozenset({'f'}): 1, frozenset({'g'}): 1,
-            frozenset({'d', 'e'}): 2, frozenset({'d', 'f'}): 2,
-            frozenset({'e', 'f'}): 2, frozenset({'a', 'b', 'f'}): 2,
-            frozenset({'a', 'c', 'e'}): 2, frozenset({'a', 'd', 'g'}): 2,
-            frozenset({'b', 'c', 'd'}): 2, frozenset({'b', 'e', 'g'}): 2,
-            frozenset({'c', 'f', 'g'}): 2,
+            ({frozenset({'a'}): 1, frozenset({'b'}): 1, frozenset({'c'}): 1,
+            frozenset({'d'}): 1, frozenset({'e'}): 1, frozenset({'f'}): 1,
+            frozenset({'g'}): 1, frozenset({'d', 'e'}): 2,
+            frozenset({'d', 'f'}): 2, frozenset({'e', 'f'}): 2,
+            frozenset({'a', 'b', 'f'}): 2, frozenset({'a', 'c', 'e'}): 2,
+            frozenset({'a', 'd', 'g'}): 2, frozenset({'b', 'c', 'd'}): 2,
+            frozenset({'b', 'e', 'g'}): 2, frozenset({'c', 'f', 'g'}): 2,
             frozenset({'a', 'b', 'c', 'd', 'e', 'f', 'g'}): 3},
             Set of chains of Finite poset containing 17 elements)
         """

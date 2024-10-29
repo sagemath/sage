@@ -125,7 +125,7 @@ class ChowRing(QuotientRing_generic):
             sage: M1 = matroids.Uniform(2,5)
             sage: ch = M1.chow_ring(QQ, False)
             sage: ch._latex_()
-            '\\Bold{Q}[A_{0}, A_{1}, A_{2}, A_{3}, A_{4}, A_{01234}] / I_{M} + J_{M} of matroid \\begin{array}{l}\n\\text{\\texttt{U(2,{ }5):{ }Matroid{ }of{ }rank{ }2{ }on{ }5{ }elements{ }with{ }circuit{-}closures}}\\\\\n\\text{\\texttt{{\\char`\\{}2:{ }{\\char`\\{}{\\char`\\{}0,{ }1,{ }2,{ }3,{ }4{\\char`\\}}{\\char`\\}}{\\char`\\}}}}\n\\end{array}'
+            'A(\\begin{array}{l}\n\\text{\\texttt{U(2,{ }5):{ }Matroid{ }of{ }rank{ }2{ }on{ }5{ }elements{ }with{ }circuit{-}closures}}\\\\\n\\text{\\texttt{{\\char`\\{}2:{ }{\\char`\\{}{\\char`\\{}0,{ }1,{ }2,{ }3,{ }4{\\char`\\}}{\\char`\\}}{\\char`\\}}}}\n\\end{array})_{\\Bold{Q}}'
         """
         from sage.misc.latex import latex
         base = "A({})_{{{}}}"
