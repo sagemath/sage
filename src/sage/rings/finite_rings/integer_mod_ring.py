@@ -1947,11 +1947,11 @@ In the latter case, please inform the developers.""".format(self.order()))
             mod_p_roots = fp.roots(multiplicities=False)
 
             this_prime_power = []
-            prime_power_roots.append(this_prime_power)
             for root in mod_p_roots:
                 this_prime_power.extend(
                     self._lift_residue_field_root(p, e, fpe, fpe_prime, root)
                 )
+            prime_power_roots.append(this_prime_power)
 
         # Combine using Chinese Remainder Theorem
         ppwr_basis = CRT_basis([p**e for p, e in fac])
