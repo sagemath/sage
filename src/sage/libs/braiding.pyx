@@ -516,7 +516,7 @@ def cyclic_slidings(braid):
 
     INPUT:
 
-    - ``braid```-- a braid
+    - ``braid`` -- a braid
 
     OUTPUT:
 

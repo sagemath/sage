@@ -2240,9 +2240,9 @@ class Braid(FiniteTypeArtinGroupElement):
         self._cj_with_q[N] = cj.subs({q: 1/q}) if use_inverse else cj
         return self.colored_jones_polynomial(N, variab, try_inverse)
 
-    def send_to_sss(self):
+    def super_summit_set_element(self):
         r"""
-        Return an element of the braid's super summit set, an the conjugating
+        Return an element of the braid's super summit set and the conjugating
         braid.
 
         EXAMPLES::
@@ -2251,15 +2251,14 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b = B([1, 2, 1, 2, 3, -1, 2, 1, 3])
             sage: b.send_to_sss()
             (s0*s2*s0*s1*s2*s1*s0, s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1*s1*s0*s2*s1*s0)
-
         """
         to_sss = send_to_sss(self)
         B = self.parent()
-        return tuple(B._element_from_libbraiding(b) for b in to_sss)
+        return tuple([B._element_from_libbraiding(b) for b in to_sss])
 
-    def send_to_uss(self):
+    def ultra_summit_set_element(self):
         r"""
-        Return an element of the braid's ultra summit set, an the conjugating
+        Return an element of the braid's ultra summit set and the conjugating
         braid.
 
         EXAMPLES::
@@ -2268,15 +2267,14 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b = B([1, 2, 1, 2, 3, -1, 2, -1, 3])
             sage: b.send_to_uss()
             (s0*s1*s0*s2*s1, s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1*s1*s2*s1^2*s0)
-
         """
         to_uss = send_to_uss(self)
         B = self.parent()
-        return tuple(B._element_from_libbraiding(b) for b in to_uss)
+        return tuple([B._element_from_libbraiding(b) for b in to_uss])
 
-    def send_to_sc(self):
+    def sliding_circuits_element(self):
         r"""
-        Return an element of the braid's sliding circuits, an the conjugating
+        Return an element of the braid's sliding circuits, and the conjugating
         braid.
 
         EXAMPLES::
@@ -2285,11 +2283,10 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b = B([1, 2, 1, 2, 3, -1, 2, -1, 3])
             sage: b.send_to_sc()
             (s0*s1*s0*s2*s1, s0^2*s1*s2)
-
         """
         to_sc = send_to_sc(self)
         B = self.parent()
-        return tuple(B._element_from_libbraiding(b) for b in to_sc)
+        return tuple([B._element_from_libbraiding(b) for b in to_sc])
 
     def trajectory(self):
         r"""
@@ -2304,7 +2301,6 @@ class Braid(FiniteTypeArtinGroupElement):
              s0*s1*s2^3,
              s0*s1*s2*s1^2,
              s0*s1*s0*s2*s1]
-
         """
         traj = trajectory(self)
         B = self.parent()
@@ -2312,7 +2308,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
     def cyclic_slidings(self):
         r"""
-        Return the the braid's cyclic slidings.
+        Return the braid's cyclic slidings.
 
         OUTPUT: The braid's cyclic slidings. Each cyclic sliding is a list of braids.
 
@@ -2323,7 +2319,6 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b.cyclic_slidings()
             [[s0*s2*s1*s0*s1*s2, s0*s1*s2*s1*s0^2, s1*s0*s2^2*s1*s0],
              [s0*s1*s2*s1^2*s0, s0*s1*s2*s1*s0*s2, s1*s0*s2*s0*s1*s2]]
-
         """
         cs = cyclic_slidings(self)
         B = self.parent()
