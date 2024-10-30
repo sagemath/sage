@@ -52,7 +52,7 @@ except ImportError:
 pari_typ_to_entries_type = LazyImport('sage.libs.pari.convert_sage_matrix', 'pari_typ_to_entries_type')
 
 
-cpdef gen_to_sage(Gen z, locals=None) noexcept:
+cpdef gen_to_sage(Gen z, locals=None):
     """
     Convert a PARI gen to a Sage/Python object.
 
@@ -60,12 +60,10 @@ cpdef gen_to_sage(Gen z, locals=None) noexcept:
 
     - ``z`` -- PARI ``gen``
 
-    - ``locals`` -- optional dictionary used in fallback cases that
+    - ``locals`` -- (optional) dictionary used in fallback cases that
       involve :func:`sage_eval`
 
-    OUTPUT:
-
-    One of the following depending on the PARI type of ``z``
+    OUTPUT: one of the following depending on the PARI type of ``z``
 
     - a :class:`~sage.rings.integer.Integer` if ``z`` is an integer (type ``t_INT``)
 
@@ -88,7 +86,7 @@ cpdef gen_to_sage(Gen z, locals=None) noexcept:
 
     - a matrix if ``z`` is a matrix (type ``t_MAT``)
 
-    - a padic element (type ``t_PADIC``)
+    - a `p`-adic element (type ``t_PADIC``)
 
     - a :class:`~sage.rings.infinity.Infinity` if ``z`` is an infinity
       (type ``t_INF``)
@@ -248,7 +246,7 @@ cpdef gen_to_sage(Gen z, locals=None) noexcept:
         sage: a.parent()
         Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
 
-    Conversion of p-adics::
+    Conversion of `p`-adics::
 
         sage: # needs sage.rings.padics
         sage: z = pari('569 + O(7^8)'); z
@@ -339,7 +337,7 @@ cpdef gen_to_sage(Gen z, locals=None) noexcept:
     return sage_eval(str(z), locals=locals)
 
 
-cpdef set_integer_from_gen(Integer self, Gen x) noexcept:
+cpdef set_integer_from_gen(Integer self, Gen x):
     r"""
     EXAMPLES::
 
@@ -387,7 +385,7 @@ cpdef set_integer_from_gen(Integer self, Gen x) noexcept:
     INT_to_mpz(self.value, (<Gen>x).g)
 
 
-cpdef Gen new_gen_from_integer(Integer self) noexcept:
+cpdef Gen new_gen_from_integer(Integer self):
     """
     TESTS::
 
@@ -399,7 +397,7 @@ cpdef Gen new_gen_from_integer(Integer self) noexcept:
     return new_gen_from_mpz_t(self.value)
 
 
-cpdef set_rational_from_gen(Rational self, Gen x) noexcept:
+cpdef set_rational_from_gen(Rational self, Gen x):
     r"""
     EXAMPLES::
 
@@ -419,7 +417,7 @@ cpdef set_rational_from_gen(Rational self, Gen x) noexcept:
         mpz_set_si(mpq_denref(self.value), 1)
 
 
-cpdef Gen new_gen_from_rational(Rational self) noexcept:
+cpdef Gen new_gen_from_rational(Rational self):
     """
     TESTS::
 
@@ -431,7 +429,7 @@ cpdef Gen new_gen_from_rational(Rational self) noexcept:
     return new_gen_from_mpq_t(self.value)
 
 
-cpdef list pari_divisors_small(Integer self) noexcept:
+cpdef list pari_divisors_small(Integer self):
     r"""
     Return the list of divisors of this number using PARI ``divisorsu``.
 
@@ -477,7 +475,7 @@ cpdef list pari_divisors_small(Integer self) noexcept:
         avma = ltop
 
 
-cpdef pari_is_prime(Integer p) noexcept:
+cpdef pari_is_prime(Integer p):
     r"""
     Return whether ``p`` is a prime.
 
@@ -504,7 +502,7 @@ cpdef pari_is_prime(Integer p) noexcept:
     return bool(uisprime(mpz_get_ui(p.value)))
 
 
-cpdef pari_is_prime_power(Integer q, bint get_data) noexcept:
+cpdef pari_is_prime_power(Integer q, bint get_data):
     r"""
     Return whether ``q`` is a prime power.
 
@@ -561,7 +559,7 @@ cpdef unsigned long pari_maxprime() noexcept:
     return maxprime()
 
 
-cpdef list pari_prime_range(long c_start, long c_stop, bint py_ints=False) noexcept:
+cpdef list pari_prime_range(long c_start, long c_stop, bint py_ints=False):
     """
     Return a list of all primes between ``start`` and ``stop - 1``, inclusive.
 

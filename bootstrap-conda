@@ -18,10 +18,11 @@ SAGELIB_PACKAGES=
 SAGELIB_OPTIONAL_PACKAGES=
 DEVELOP_PACKAGES=
 
+eval $(sage-package properties --format=shell :all:)
+
 for PKG_BASE in $(sage-package list --has-file distros/conda.txt --exclude _sagemath); do
-    PKG_SCRIPTS=build/pkgs/$PKG_BASE
+    eval PKG_SCRIPTS=\$path_$PKG_BASE PKG_TYPE=\$type_$PKG_BASE
     SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/distros/conda.txt
-    PKG_TYPE=$(cat $PKG_SCRIPTS/type)
     PKG_SYSTEM_PACKAGES=$(echo $(${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE))
     if [ -n "$PKG_SYSTEM_PACKAGES" ]; then
         if [ -f $PKG_SCRIPTS/spkg-configure.m4 ]; then
@@ -98,6 +99,9 @@ echo >&2 $0:$LINENO: generate conda environment files
     ) > environment-template.yml
     (
         sed 's/name: sage-build/name: sage/' environment-template.yml
+        echo "  - meson"
+        echo "  - meson-python"
+        echo "  - pytest"
         echo "  # Additional packages providing all dependencies for the Sage library"
         for pkg in $SAGELIB_SYSTEM_PACKAGES; do
             echo "  - $pkg"
@@ -132,13 +136,12 @@ echo >&2 $0:$LINENO: generate conda environment files
     (
         echo >&4 "  - pip:"
         echo >&5 "  - pip:"
-        for PKG_BASE in $(sage-package list :standard: :optional: --has-file requirements.txt --no-file distros/conda.txt --no-file src; sage-package list :standard: :optional: --has-file install-requires.txt --no-file requirements.txt --no-file distros/conda.txt --no-file src); do
-            PKG_SCRIPTS=build/pkgs/$PKG_BASE
+        for PKG_BASE in $(sage-package list :standard: :optional: --has-file requirements.txt --no-file distros/conda.txt --no-file src; sage-package list :standard: :optional: --has-file version_requirements.txt --no-file requirements.txt --no-file distros/conda.txt --no-file src); do
+            eval PKG_SCRIPTS=\$path_$PKG_BASE PKG_TYPE=\$type_$PKG_BASE
             SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/requirements.txt
             if [ ! -f $SYSTEM_PACKAGES_FILE ]; then
-                SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/install-requires.txt
+                SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/version_requirements.txt
             fi
-            PKG_TYPE=$(cat $PKG_SCRIPTS/type)
             if grep -q SAGERUNTIME $PKG_SCRIPTS/dependencies $PKG_SCRIPTS/dependencies_order_only 2>/dev/null; then
                 : # cannot install packages that depend on the Sage library
             else

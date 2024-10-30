@@ -38,9 +38,9 @@ cdef class TropicalSemiringElement(Element):
     """
     cdef ModuleElement _val
 
-    cdef TropicalSemiringElement _new(self) noexcept:
+    cdef TropicalSemiringElement _new(self):
         """
-        Return a new tropical semiring element with parent ``self`.
+        Return a new tropical semiring element with parent ``self``.
         """
         cdef TropicalSemiringElement x
         x = TropicalSemiringElement.__new__(TropicalSemiringElement)
@@ -132,7 +132,7 @@ cdef class TropicalSemiringElement(Element):
         return hash(self._val)
 
     # Comparisons
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         r"""
         Return the standard comparison of ``left`` and ``right``.
 
@@ -206,7 +206,7 @@ cdef class TropicalSemiringElement(Element):
             return rich_to_bool(op, 1)
         return rich_to_bool(op, 0)
 
-    cpdef _add_(left, right) noexcept:
+    cpdef _add_(left, right):
         """
         Add ``left`` to ``right``.
 
@@ -274,7 +274,7 @@ cdef class TropicalSemiringElement(Element):
             return self
         raise ArithmeticError("cannot negate any non-infinite element")
 
-    cpdef _mul_(left, right) noexcept:
+    cpdef _mul_(left, right):
         """
         Multiply ``left`` and ``right``.
 
@@ -300,7 +300,7 @@ cdef class TropicalSemiringElement(Element):
         x._val = self._val + rhs._val
         return x
 
-    cpdef _div_(left, right) noexcept:
+    cpdef _div_(left, right):
         """
         Divide ``left`` by ``right``.
 
@@ -398,7 +398,7 @@ cdef class TropicalSemiringElement(Element):
         from sage.rings.infinity import infinity
         return infinity
 
-    cpdef ModuleElement lift(self) noexcept:
+    cpdef ModuleElement lift(self):
         """
         Return the value of ``self`` lifted to the base.
 
@@ -417,6 +417,7 @@ cdef class TropicalSemiringElement(Element):
             from sage.rings.infinity import infinity
             return infinity
         return self._val
+
 
 class TropicalSemiring(Parent, UniqueRepresentation):
     r"""
@@ -467,8 +468,8 @@ class TropicalSemiring(Parent, UniqueRepresentation):
     INPUT:
 
     - ``base`` -- the base ordered additive semigroup `R`
-    - ``use_min`` -- (default: ``True``) if ``True``, then the semiring uses
-      `a \oplus b = \min(a, b)`; otherwise uses `a \oplus b = \max(a, b)`
+    - ``use_min`` -- boolean (default: ``True``); if ``True``, then the semiring uses
+      `a \oplus b = \min(a, b)`. Otherwise uses `a \oplus b = \max(a, b)`.
 
     EXAMPLES::
 
@@ -651,12 +652,13 @@ class TropicalSemiring(Parent, UniqueRepresentation):
         """
         return (self.element_class(self, self.base().one()), self.infinity())
 
+
 cdef class TropicalToTropical(Map):
     """
     Map from the tropical semiring to itself (possibly with different bases).
     Used in coercion.
     """
-    cpdef TropicalSemiringElement _call_(self, x) noexcept:
+    cpdef TropicalSemiringElement _call_(self, x):
         """
         EXAMPLES::
 

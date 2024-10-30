@@ -8,6 +8,4 @@ conda init bash
 
 # Build sage
 conda run -n sage-dev ./bootstrap
-conda run -n sage-dev ./configure --with-python=/opt/conda/envs/sage-dev/bin/python --prefix=/opt/conda/envs/sage-dev
-conda run -n sage-dev pip install --no-build-isolation -v -v -e ./pkgs/sage-conf ./pkgs/sage-setup 
 conda run -n sage-dev pip install --no-build-isolation -v -v -e ./src

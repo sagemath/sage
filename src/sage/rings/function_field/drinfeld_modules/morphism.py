@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Drinfeld module morphisms
 
@@ -122,7 +122,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
           Defn: t + z^5 + z^3 + z + 1
         sage: DrinfeldModuleMorphism(Hom(phi, psi), ore_pol) is morphism
         True
-
     """
     @staticmethod
     def __classcall_private__(cls, parent, x):
@@ -459,7 +458,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: F + T
             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
               Defn: (z + 1)*t^3 + t^2 + z
-
         """
         return self.parent()(self.ore_polynomial() + other.ore_polynomial())
 
@@ -480,7 +478,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: f * f  # indirect doctest
             Endomorphism of Drinfeld module defined by T |--> z^2*t^3 + z*t^2 + t + z
               Defn: t^6
-
         """
         return H(self.ore_polynomial() * other.ore_polynomial())
 
@@ -525,7 +522,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             Traceback (most recent call last):
             ...
             ZeroDivisionError: this morphism is not invertible
-
         """
         return self.__invert__()
 
@@ -547,7 +543,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             True
             sage: (g*f).is_identity()
             True
-
         """
         if not self.is_isomorphism():
             raise ZeroDivisionError("this morphism is not invertible")
@@ -573,7 +568,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: f._motive_matrix()
             [                      T + 3 + z                 3 + 3*z + 2*z^2]
             [(1 + z + z^2)*T + 3 + 2*z - z^2               T + 2 - z + 2*z^2]
-
         """
         phi = self.domain()
         phiT = phi.gen()
@@ -614,10 +608,10 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         INPUT:
 
-        - ``ideal`` -- a boolean (default: ``True``); if ``True``,
-          return the norm as an ideal in the function ring of the Drinfeld
-          modules; if ``False``, return the norm as an element in this
-          function ring (only relevant for endomorphisms)
+        - ``ideal`` -- boolean (default: ``True``); if ``True``, return the
+          norm as an ideal in the function ring of the Drinfeld modules; if
+          ``False``, return the norm as an element in this function ring (only
+          relevant for endomorphisms)
 
         EXAMPLES::
 
@@ -660,7 +654,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             Traceback (most recent call last):
             ...
             ValueError: norm is defined as an actual element only for endomorphisms
-
         """
         nu = self._motive_matrix().det()
         # We cast to A
@@ -720,7 +713,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             Traceback (most recent call last):
             ...
             ValueError: the dual isogeny of the zero morphism is not defined
-
         """
         if not self.is_isogeny():
             raise ValueError("the dual isogeny of the zero morphism is not defined")
@@ -736,7 +728,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         INPUT:
 
-        - ``var`` -- a string (default: ``X``), the name of the
+        - ``var`` -- string (default: ``X``), the name of the
           variable of the characteristic polynomial
 
         EXAMPLES::
@@ -772,7 +764,6 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             Traceback (most recent call last):
             ...
             ValueError: characteristic polynomial is only defined for endomorphisms
-
         """
         if self.domain() is not self.codomain():
             raise ValueError("characteristic polynomial is only defined for endomorphisms")
@@ -788,7 +779,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
         INPUT:
 
-        - ``var`` -- a string (default: ``X``), the name of the
+        - ``var`` -- string (default: ``'X'``); the name of the
           variable of the characteristic polynomial
 
         EXAMPLES::
@@ -822,6 +813,5 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
             sage: f.charpoly(var='Y')
             Y^3 + (T + 1)*Y^2 + (2*T + 3)*Y + 2*T^3 + T + 1
-
         """
         return self.characteristic_polynomial(var)

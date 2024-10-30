@@ -13,7 +13,7 @@ def var(*args, **kwds):
 
     INPUT:
 
-    - ``args`` -- A single string ``var('x y')``, a list of strings
+    - ``args`` -- a single string ``var('x y')``, a list of strings
       ``var(['x','y'])``, or multiple strings ``var('x', 'y')``. A
       single string can be either a single variable name, or a space
       or comma separated list of variable names. In a list or tuple of
@@ -22,7 +22,7 @@ def var(*args, **kwds):
       before or after variable names are ignored.
 
     - ``kwds`` -- keyword arguments can be given to specify domain and
-      custom latex_name for variables. See EXAMPLES for usage.
+      custom latex_name for variables; see EXAMPLES for usage
 
     .. NOTE::
 
@@ -36,7 +36,7 @@ def var(*args, **kwds):
     If a single symbolic variable was created, the variable
     itself. Otherwise, a tuple of symbolic variables. The variable
     names are checked to be valid Python identifiers and a
-    :class:`ValueError` is raised otherwise.
+    :exc:`ValueError` is raised otherwise.
 
     EXAMPLES:
 
@@ -77,12 +77,12 @@ def var(*args, **kwds):
 
     Custom latex expression can be assigned to variable::
 
-        sage: x = var('sui', latex_name="s_{u,i}"); x._latex_()
+        sage: x = var('sui', latex_name='s_{u,i}'); x._latex_()
         '{s_{u,i}}'
 
     In notebook, we can also colorize latex expression::
 
-        sage: x = var('sui', latex_name="\\color{red}{s_{u,i}}"); x._latex_()
+        sage: x = var('sui', latex_name='\\color{red}{s_{u,i}}'); x._latex_()
         '{\\color{red}{s_{u,i}}}'
 
     We can substitute a new variable name for n::
@@ -136,32 +136,32 @@ def function(s, **kwds):
 
     INPUT:
 
-    - ``nargs=0`` - number of arguments the function accepts, defaults to
+    - ``nargs=0`` -- number of arguments the function accepts, defaults to
       variable number of arguments, or 0
-    - ``latex_name`` - name used when printing in latex mode
-    - ``conversions`` - a dictionary specifying names of this function in
+    - ``latex_name`` -- name used when printing in latex mode
+    - ``conversions`` -- dictionary specifying names of this function in
       other systems, this is used by the interfaces internally during conversion
-    - ``eval_func`` - method used for automatic evaluation
-    - ``evalf_func`` - method used for numeric evaluation
-    - ``evalf_params_first`` - bool to indicate if parameters should be
+    - ``eval_func`` -- method used for automatic evaluation
+    - ``evalf_func`` -- method used for numeric evaluation
+    - ``evalf_params_first`` -- boolean to indicate if parameters should be
       evaluated numerically before calling the custom evalf function
-    - ``conjugate_func`` - method used for complex conjugation
-    - ``real_part_func`` - method used when taking real parts
-    - ``imag_part_func`` - method used when taking imaginary parts
-    - ``derivative_func`` - method to be used for (partial) derivation
+    - ``conjugate_func`` -- method used for complex conjugation
+    - ``real_part_func`` -- method used when taking real parts
+    - ``imag_part_func`` -- method used when taking imaginary parts
+    - ``derivative_func`` -- method to be used for (partial) derivation
       This method should take a keyword argument deriv_param specifying
       the index of the argument to differentiate w.r.t
-    - ``tderivative_func`` - method to be used for derivatives
-    - ``power_func`` - method used when taking powers
+    - ``tderivative_func`` -- method to be used for derivatives
+    - ``power_func`` -- method used when taking powers
       This method should take a keyword argument power_param specifying
       the exponent
-    - ``series_func`` - method used for series expansion
+    - ``series_func`` -- method used for series expansion
       This method should expect keyword arguments
-      - ``order`` - order for the expansion to be computed
-      - ``var`` - variable to expand w.r.t.
-      - ``at`` - expand at this value
-    - ``print_func`` - method for custom printing
-    - ``print_latex_func`` - method for custom printing in latex mode
+      - ``order`` -- order for the expansion to be computed
+      - ``var`` -- variable to expand w.r.t.
+      - ``at`` -- expand at this value
+    - ``print_func`` -- method for custom printing
+    - ``print_latex_func`` -- method for custom printing in latex mode
 
     Note that custom methods must be instance methods, i.e., expect the instance
     of the symbolic function as the first argument.
@@ -215,7 +215,7 @@ def function(s, **kwds):
     Custom typesetting of symbolic functions in LaTeX, either using latex_name
     keyword::
 
-        sage: function('riemann', latex_name="\\mathcal{R}")
+        sage: function('riemann', latex_name='\\mathcal{R}')
         riemann
         sage: latex(riemann(x))
         \mathcal{R}\left(x\right)
@@ -342,7 +342,7 @@ def function(s, **kwds):
 
     TESTS:
 
-    Make sure that :trac:`15860` is fixed and whitespaces are removed::
+    Make sure that :issue:`15860` is fixed and whitespaces are removed::
 
         sage: function('A, B')
         (A, B)

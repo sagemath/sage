@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Keep track of attached files
 
@@ -52,7 +53,7 @@ character-by-character::
     Traceback (most recent call last):
     ...
         exec(code, globals)
-      File ".../foobar.sage....py", line ..., in <module>
+      File ".../foobar...sage.py", line ..., in <module>
         raise ValueError("third")   # this should appear in the source snippet...
     ValueError: third
     sage: detach(src)
@@ -67,16 +68,18 @@ character-by-character::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 
 import os
 import time
+from pathlib import Path
 from IPython.core.getipython import get_ipython
 
 from sage.repl.load import load, load_wrap
 import sage.repl.inputhook
 import sage.env
 
-# The attached files as a dict of {filename:mtime}
+# The attached files as a dict of {Path object:mtime}
 attached = {}
 
 
@@ -106,10 +109,10 @@ def load_attach_mode(load_debug=None, attach_debug=None):
 
     - ``load_debug`` -- boolean or ``None`` (default); if not
       ``None``, then set a new value for the debug mode for loading
-      files.
+      files
 
     - ``attach_debug`` -- boolean or ``None`` (default); same as
-      ``load_debug``, but for attaching files.
+      ``load_debug``, but for attaching files
 
     OUTPUT:
 
@@ -137,7 +140,7 @@ def load_attach_mode(load_debug=None, attach_debug=None):
         attach_debug_mode = attach_debug
 
 
-search_paths = []
+search_paths: list[Path] = []
 
 
 def load_attach_path(path=None, replace=False):
@@ -148,15 +151,13 @@ def load_attach_path(path=None, replace=False):
     INPUT:
 
     - ``path`` -- string or list of strings (default: ``None``);
-      path(s) to append to or replace the current path.
+      path(s) to append to or replace the current path
 
     - ``replace`` -- boolean (default: ``False``); if ``path`` is not
       ``None``, whether to *replace* the search path instead of
-      *appending* to it.
+      *appending* to it
 
-    OUTPUT:
-
-    ``None`` or a *reference* to the current search paths.
+    OUTPUT: none or a *reference* to the current search paths
 
     EXAMPLES:
 
@@ -164,7 +165,7 @@ def load_attach_path(path=None, replace=False):
 
         sage: sage.repl.attach.reset(); reset_load_attach_path()
         sage: load_attach_path()
-        ['.']
+        [PosixPath('.')]
         sage: t_dir = tmp_dir()
         sage: fullpath = os.path.join(t_dir, 'test.py')
         sage: with open(fullpath, 'w') as f:
@@ -184,10 +185,13 @@ def load_attach_path(path=None, replace=False):
         sage: load_attach_path(t_dir)
         sage: attach('test.py')
         111
-        sage: attached_files() == [fullpath]
+        sage: af = attached_files(); len(af)
+        1
+        sage: af == [fullpath]
         True
+        sage: from pathlib import Path
         sage: sage.repl.attach.reset(); reset_load_attach_path()
-        sage: load_attach_path() == ['.']
+        sage: load_attach_path() == [Path('.')]
         True
         sage: with tempfile.TemporaryDirectory() as d:
         ....:     load_attach_path(d, replace=True)
@@ -199,33 +203,34 @@ def load_attach_path(path=None, replace=False):
     The function returns a reference to the path list::
 
         sage: reset_load_attach_path(); load_attach_path()
-        ['.']
+        [PosixPath('.')]
         sage: load_attach_path('/path/to/my/sage/scripts'); load_attach_path()
-        ['.', '/path/to/my/sage/scripts']
+        [PosixPath('.'), PosixPath('/path/to/my/sage/scripts')]
         sage: load_attach_path(['good', 'bad', 'ugly'], replace=True)
         sage: load_attach_path()
-        ['good', 'bad', 'ugly']
+        [PosixPath('good'), PosixPath('bad'), PosixPath('ugly')]
         sage: p = load_attach_path(); p.pop()
-        'ugly'
+        PosixPath('ugly')
         sage: p[0] = 'weird'; load_attach_path()
-        ['weird', 'bad']
+        ['weird', PosixPath('bad')]
         sage: reset_load_attach_path(); load_attach_path()
-        ['.']
+        [PosixPath('.')]
     """
     global search_paths
     if path is None:
         return search_paths
+
+    if not isinstance(path, list):
+        path = [Path(path)]
+    if replace:
+        search_paths = [Path(p) for p in path]
     else:
-        if not isinstance(path, list):
-            path = [path]
-        if replace:
-            search_paths = path
-        else:
-            for p in path:
-                if not p:
-                    continue
-                if p not in search_paths:
-                    search_paths.append(p)
+        for p in path:
+            if not p:
+                continue
+            as_path = Path(p)
+            if as_path not in search_paths:
+                search_paths.append(as_path)
 
 
 def reset_load_attach_path():
@@ -238,33 +243,34 @@ def reset_load_attach_path():
     EXAMPLES::
 
         sage: load_attach_path()
-        ['.']
+        [PosixPath('.')]
         sage: t_dir = tmp_dir()
         sage: load_attach_path(t_dir)
-        sage: t_dir in load_attach_path()
+        sage: from pathlib import Path
+        sage: Path(t_dir) in load_attach_path()
         True
         sage: reset_load_attach_path(); load_attach_path()
-        ['.']
+        [PosixPath('.')]
 
     At startup, Sage adds colon-separated paths in the environment
     variable ``SAGE_LOAD_ATTACH_PATH``::
 
         sage: reset_load_attach_path(); load_attach_path()
-        ['.']
+        [PosixPath('.')]
         sage: os.environ['SAGE_LOAD_ATTACH_PATH'] = '/veni/vidi:vici:'
         sage: from importlib import reload
         sage: reload(sage.repl.attach)    # Simulate startup
         <module 'sage.repl.attach' from '...'>
         sage: load_attach_path()
-        ['.', '/veni/vidi', 'vici']
+        [PosixPath('.'), PosixPath('/veni/vidi'), PosixPath('vici')]
         sage: del os.environ['SAGE_LOAD_ATTACH_PATH']
         sage: reload(sage.repl.preparse)    # Simulate startup
         <module 'sage.repl.preparse' from '...'>
         sage: reset_load_attach_path(); load_attach_path()
-        ['.']
+        [PosixPath('.')]
     """
     global search_paths
-    search_paths = ['.']
+    search_paths = [Path()]
     for path in os.environ.get('SAGE_LOAD_ATTACH_PATH', '').split(':'):
         load_attach_path(path=path)
 
@@ -288,20 +294,20 @@ def attach(*files):
 
     INPUT:
 
-    - ``files`` -- a list of filenames (strings) to attach.
+    - ``files`` -- list of filenames (strings) to attach
 
     OUTPUT:
 
     Each file is read in and added to an internal list of watched files.
     The meaning of reading in a file depends on the file type:
 
-    -  ``.py`` files are read in with no preparsing (so, e.g., ``2^3`` is 2
-       bit-xor 3);
+    - ``.py`` files are read in with no preparsing (so, e.g., ``2^3`` is 2
+      bit-xor 3);
 
-    -  ``.sage`` files are preparsed, then the result is read in;
+    - ``.sage`` files are preparsed, then the result is read in;
 
     - ``.pyx`` files are *not* preparsed, but rather are compiled to a
-       module ``m`` and then ``from m import *`` is executed.
+      module ``m`` and then ``from m import *`` is executed.
 
     The contents of the file are then loaded, which means they are read
     into the running Sage session. For example, if ``foo.sage`` contains
@@ -332,7 +338,9 @@ def attach(*files):
         sage: attach(t1, t2)
         hello world
         hi there xxx
-        sage: set(attached_files()) == set([t1,t2])
+        sage: af = attached_files(); len(af)
+        2
+        sage: t1 in af and t2 in af
         True
 
     .. SEEALSO::
@@ -362,7 +370,7 @@ def attach(*files):
 
 def add_attached_file(filename):
     """
-    Add to the list of attached files
+    Add to the list of attached files.
 
     This is a callback to be used from
     :func:`~sage.repl.load.load` after evaluating the attached
@@ -370,7 +378,8 @@ def add_attached_file(filename):
 
     INPUT:
 
-    - ``filename`` -- string, the fully qualified file name.
+    - ``filename`` -- string (the fully qualified file name)
+      or :class:`Path` object
 
     EXAMPLES::
 
@@ -385,18 +394,16 @@ def add_attached_file(filename):
         []
     """
     sage.repl.inputhook.install()
-    fpath = os.path.abspath(filename)
-    attached[fpath] = os.path.getmtime(fpath)
+    fpath = Path(filename).absolute()
+    attached[fpath] = fpath.stat().st_mtime
 
 
-def attached_files():
+def attached_files() -> list:
     """
-    Returns a list of all files attached to the current session with
+    Return a list of all files attached to the current session with
     :meth:`attach`.
 
-    OUTPUT:
-
-    The filenames in a sorted list of strings.
+    OUTPUT: the filenames in a sorted list of strings
 
     EXAMPLES::
 
@@ -405,13 +412,13 @@ def attached_files():
         sage: with open(t,'w') as f: _ = f.write("print('hello world')")
         sage: attach(t)
         hello world
-        sage: attached_files()
+        sage: af = attached_files(); af
         ['/....py']
-        sage: attached_files() == [t]
+        sage: af == [t]
         True
     """
     global attached
-    return sorted(attached)
+    return sorted(str(f) for f in attached)
 
 
 def detach(filename):
@@ -422,7 +429,8 @@ def detach(filename):
 
     INPUT:
 
-    - ``filename`` -- a string, or a list of strings, or a tuple of strings.
+    - ``filename`` -- string, a list of strings or a tuple of strings
+      or a :class:`Path`, a list of :class:`Path` or a tuple of :class:`Path`
 
     EXAMPLES::
 
@@ -431,7 +439,9 @@ def detach(filename):
         sage: with open(t,'w') as f: _ = f.write("print('hello world')")
         sage: attach(t)
         hello world
-        sage: attached_files() == [t]
+        sage: af = attached_files(); len(af)
+        1
+        sage: af == [t]
         True
         sage: detach(t)
         sage: attached_files()
@@ -439,14 +449,16 @@ def detach(filename):
 
         sage: sage.repl.attach.reset(); reset_load_attach_path()
         sage: load_attach_path()
-        ['.']
+        [PosixPath('.')]
         sage: t_dir = tmp_dir()
         sage: fullpath = os.path.join(t_dir, 'test.py')
         sage: with open(fullpath, 'w') as f: _ = f.write("print(37 * 3)")
         sage: load_attach_path(t_dir, replace=True)
         sage: attach('test.py')
         111
-        sage: attached_files() == [os.path.normpath(fullpath)]
+        sage: af = attached_files(); len(af)
+        1
+        sage: af == [os.path.normpath(fullpath)]
         True
         sage: detach('test.py')
         sage: attached_files()
@@ -469,22 +481,24 @@ def detach(filename):
         ValueError: file '/dev/null/foobar.sage' is not attached, see attached_files()
     """
     if isinstance(filename, str):
-        filelist = [filename]
+        filelist = [Path(filename)]
     else:
-        filelist = [str(x) for x in filename]
+        filelist = [Path(x) for x in filename]
 
     global attached
     for filename in filelist:
-        fpath = os.path.expanduser(filename)
-        if not os.path.isabs(fpath):
+        fpath = filename.expanduser()
+        if not fpath.is_absolute():
             for path in load_attach_path():
-                epath = os.path.expanduser(path)
-                fpath = os.path.join(epath, filename)
-                fpath = os.path.abspath(fpath)
+                fpath = path.expanduser() / filename
+                fpath = fpath.absolute()
                 if fpath in attached:
                     break
+        abs_fpath = fpath.absolute()
         if fpath in attached:
             attached.pop(fpath)
+        elif abs_fpath in attached:
+            attached.pop(abs_fpath)
         else:
             raise ValueError("file '{0}' is not attached, see attached_files()".format(filename))
     if not attached:
@@ -502,7 +516,9 @@ def reset():
         sage: with open(t,'w') as f: _ = f.write("print('hello world')")
         sage: attach(t)
         hello world
-        sage: attached_files() == [t]
+        sage: af = attached_files(); len(af)
+        1
+        sage: af == [t]
         True
         sage: sage.repl.attach.reset()
         sage: attached_files()
@@ -514,7 +530,7 @@ def reset():
 
 def modified_file_iterator():
     """
-    Iterate over the changed files
+    Iterate over the changed files.
 
     As a side effect the stored time stamps are updated with the
     actual time stamps. So if you iterate over the attached files in
@@ -534,17 +550,17 @@ def modified_file_iterator():
         sage: sleep(1)   # filesystem mtime granularity
         sage: with open(t, 'w') as f: _ = f.write('1')
         sage: list(modified_file_iterator())
-        [('/.../tmp_....py', time.struct_time(...))]
+        [(PosixPath('/.../tmp_....py'), time.struct_time(...))]
     """
     global attached
     modified = {}
     for filename in list(attached):
         old_tm = attached[filename]
-        if not os.path.exists(filename):
+        if not filename.exists():
             print('### detaching file {0} because it does not exist (deleted?) ###'.format(filename))
             detach(filename)
             continue
-        new_tm = os.path.getmtime(filename)
+        new_tm = filename.stat().st_mtime
         if new_tm > old_tm:
             modified[filename] = new_tm
 
@@ -554,7 +570,7 @@ def modified_file_iterator():
 
     for filename in list(modified):
         old_tm = modified[filename]
-        new_tm = os.path.getmtime(filename)
+        new_tm = filename.stat().st_mtime
         if new_tm == old_tm:
             # file was modified but did not change in the last 100ms
             attached[filename] = new_tm
@@ -563,7 +579,7 @@ def modified_file_iterator():
 
 def reload_attached_files_if_modified():
     r"""
-    Reload attached files that have been modified
+    Reload attached files that have been modified.
 
     This is the internal implementation of the attach mechanism.
 
@@ -597,7 +613,7 @@ def reload_attached_files_if_modified():
     """
     ip = get_ipython()
     for filename, mtime in modified_file_iterator():
-        basename = os.path.basename(filename)
+        basename = filename.name
         timestr = time.strftime('%T', mtime)
         notice = '### reloading attached file {0} modified at {1} ###'.format(basename, timestr)
         if ip:

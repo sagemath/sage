@@ -257,7 +257,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
 
         # Give the intersection of kernels of the map `s*x-x` to determine when
         # `s*x = x` for all generators `s` of `S`
-        basis = M.annihilator_basis(S.gens(), action=_invariant_map, side="left")
+        basis = M.annihilator_basis(S.gens(), action=_invariant_map, side='left')
 
         super().__init__(Family(basis),
                          support_order=M._compute_support_order(basis),
@@ -310,9 +310,9 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
             M = M._module
         return f"({self._semigroup})-invariant submodule of {M}"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
-        Return a latex representaion of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -800,7 +800,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
             sage: type(T)
             <class 'sage.modules.with_basis.invariant.FiniteDimensionalInvariantModule_with_category'>
 
-        Check the :class:`ValueError`::
+        Check the :exc:`ValueError`::
 
             sage: T = M.twisted_invariant_module(G, "ichigo", action_on_basis=action)
             Traceback (most recent call last):
@@ -883,11 +883,11 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
         else:
             raise ValueError("side must either be 'left' or 'right'")
 
-        proj_matrix = Matrix(M.dimension()) #initialize the zero-matrix
+        proj_matrix = Matrix(M.dimension())  # initialize the zero-matrix
         for g in self._group:
-            proj_matrix += self._chi(g)*Matrix((self.__sided_action__(g,b)).to_vector() for b in M.basis())
+            proj_matrix += self._chi(g)*Matrix((self.__sided_action__(g, b)).to_vector() for b in M.basis())
 
-        n = self._chi(self._group.identity()) # chi(1) is the dimension
+        n = self._chi(self._group.identity())  # chi(1) is the dimension
         g = self._group.order()
 
         self._projection_matrix = (n/g)*proj_matrix
@@ -905,7 +905,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
 
         basis = M.annihilator_basis(M.basis(),
                                     action=proj_difference,
-                                    side="left")
+                                    side='left')
 
         super().__init__(Family(basis),
                          support_order=M._compute_support_order(basis),
@@ -960,7 +960,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
         """
         return self.retract(self.project_ambient(x))
 
-    def project_ambient(self,x):
+    def project_ambient(self, x):
         r"""
         Project ``x`` in the ambient representation onto the submodule of the
         ambient representation to which ``self`` is isomorphic as a module.
@@ -1005,7 +1005,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
             sage: G.rename(); M.rename()  # reset names
         """
         if (isinstance(self._ambient, Representation)
-            and x.parent() is self._ambient._module):
+                and x.parent() is self._ambient._module):
             x = self._ambient._element_constructor_(x)
         return self._project_ambient(x)
 

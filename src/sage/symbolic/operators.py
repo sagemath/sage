@@ -72,7 +72,7 @@ relation_operators = {operator.eq: '==',
                       operator.ge: '>='}
 
 
-class FDerivativeOperator():
+class FDerivativeOperator:
     r"""
     Function derivative operators.
 
@@ -116,14 +116,13 @@ class FDerivativeOperator():
         TESTS:
 
         We should be able to operate on functions evaluated at a
-        point, not just a symbolic variable, :trac:`12796`::
+        point, not just a symbolic variable, :issue:`12796`::
 
            sage: from sage.symbolic.operators import FDerivativeOperator
            sage: f = function('f')
            sage: op = FDerivativeOperator(f, [0])
            sage: op(1)
            D[0](f)(1)
-
         """
         if (not all(isinstance(x, Expression) and x.is_symbol() for x in args) or
                 len(args) != len(set(args))):
@@ -202,7 +201,7 @@ class FDerivativeOperator():
         return self._parameter_set
 
 
-class DerivativeOperator():
+class DerivativeOperator:
     """
     Derivative operator.
 
@@ -226,9 +225,8 @@ class DerivativeOperator():
         diff(f(x, y), x, y)
         sage: D[0, 1](f)(x, x^2)
         D[0, 1](f)(x, x^2)
-
     """
-    class DerivativeOperatorWithParameters():
+    class DerivativeOperatorWithParameters:
         def __init__(self, parameter_set):
             self._parameter_set = parameter_set
 

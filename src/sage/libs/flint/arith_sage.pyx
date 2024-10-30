@@ -31,6 +31,10 @@ def bell_number(unsigned long n):
 
     See :wikipedia:`Bell_number`.
 
+    ALGORITHM:
+
+    Uses :c:func:`arith_bell_number`.
+
     EXAMPLES::
 
         sage: from sage.libs.flint.arith_sage import bell_number

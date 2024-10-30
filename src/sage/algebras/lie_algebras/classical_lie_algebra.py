@@ -132,13 +132,13 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
 
         TESTS:
 
-        Check that :trac:`23266` is fixed::
+        Check that :issue:`23266` is fixed::
 
             sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')
             sage: isinstance(sl2.indices(), FiniteEnumeratedSet)
             True
 
-        Check that elements are hashable (see :trac:`28961`)::
+        Check that elements are hashable (see :issue:`28961`)::
 
             sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')
             sage: e,f,h = list(sl2.basis())
@@ -379,15 +379,15 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
                         continue
                     basis_pivots.add(p)
                     if self._sparse:
-                        added.append(self.element_class( self, build_assoc(cur_mat[i]) ))
+                        added.append(self.element_class(self, build_assoc(cur_mat[i])))
                     else:
-                        added.append(self.element_class( self, self._assoc(cur_mat[i].list()) ))
+                        added.append(self.element_class(self, self._assoc(cur_mat[i].list())))
                 cur_mat = cur_mat.submatrix(nrows=len(pivots))
         if self._sparse:
-            basis = [self.element_class( self, build_assoc(cur_mat[i]) )
+            basis = [self.element_class(self, build_assoc(cur_mat[i]))
                      for i in range(cur_mat.rank())]
         else:
-            basis = [self.element_class( self, self._assoc(cur_mat[i].list()) )
+            basis = [self.element_class(self, self._assoc(cur_mat[i].list()))
                      for i in range(cur_mat.rank())]
         return Family(basis)
 
@@ -432,7 +432,7 @@ class gl(MatrixLieAlgebraFromAssociative):
 
         TESTS:
 
-        Check that :trac:`23266` is fixed::
+        Check that :issue:`23266` is fixed::
 
             sage: gl2 = lie_algebras.gl(QQ, 2)
             sage: isinstance(gl2.basis().keys(), FiniteEnumeratedSet)
@@ -447,8 +447,8 @@ class gl(MatrixLieAlgebraFromAssociative):
         gens = []
         for i in range(n):
             for j in range(n):
-                names.append('E_{0}_{1}'.format(i,j))
-                mat = MS({(i,j):one})
+                names.append('E_{}_{}'.format(i, j))
+                mat = MS({(i, j): one})
                 mat.set_immutable()
                 gens.append(mat)
         self._n = n
@@ -553,6 +553,7 @@ class gl(MatrixLieAlgebraFromAssociative):
                 d['E_{}_{}'.format(*k)] = self.value[k]
             return d
 
+
 class sl(ClassicalMatrixLieAlgebra):
     r"""
     The matrix Lie algebra `\mathfrak{sl}_n`.
@@ -625,6 +626,7 @@ class sl(ClassicalMatrixLieAlgebra):
         """
         i = self.index_set().index(i)
         return h[i,i] - h[i+1,i+1]
+
 
 class so(ClassicalMatrixLieAlgebra):
     r"""
@@ -767,6 +769,7 @@ class so(ClassicalMatrixLieAlgebra):
             return h[i, i]
         return h[i, i] - h[i+1, i+1]
 
+
 class sp(ClassicalMatrixLieAlgebra):
     r"""
     The matrix Lie algebra `\mathfrak{sp}_n`.
@@ -861,6 +864,7 @@ class sp(ClassicalMatrixLieAlgebra):
             return 2*h[i,i]
         return h[i,i] - h[i+1,i+1]
 
+
 class ExceptionalMatrixLieAlgebra(ClassicalMatrixLieAlgebra):
     """
     A matrix Lie algebra of exceptional type.
@@ -890,6 +894,7 @@ class ExceptionalMatrixLieAlgebra(ClassicalMatrixLieAlgebra):
         """
         return "Simple matrix Lie algebra of type {} over {}".format(self.cartan_type(), self.base_ring())
 
+
 class e6(ExceptionalMatrixLieAlgebra):
     r"""
     The matrix Lie algebra `\mathfrak{e}_6`.
@@ -917,6 +922,7 @@ class e6(ExceptionalMatrixLieAlgebra):
         e = [MS({c: one for c in coord}) for coord in coords]
         f = [MS({(c[1],c[0]): one for c in coord}) for coord in coords]
         ExceptionalMatrixLieAlgebra.__init__(self, R, CartanType(['E', 6]), e, f)
+
 
 class e7(ExceptionalMatrixLieAlgebra):
     r"""
@@ -952,6 +958,7 @@ class e7(ExceptionalMatrixLieAlgebra):
         f = [MS({(c[1], c[0]): one for c in coord}) for coord in coords]
         ExceptionalMatrixLieAlgebra.__init__(self, R, CartanType(['E', 7]), e, f)
 
+
 class e8(ExceptionalMatrixLieAlgebra):
     r"""
     The matrix Lie algebra `\mathfrak{e}_8`.
@@ -971,7 +978,7 @@ class e8(ExceptionalMatrixLieAlgebra):
 
         We skip the not implemented methods test as it takes too much time::
 
-            sage: TestSuite(g).run(skip="_test_not_implemented_methods")  # long time
+            sage: TestSuite(g).run(skip='_test_not_implemented_methods')  # long time
         """
         ct = CartanType(['E', 8])
         g = LieAlgebraChevalleyBasis(R, ct)
@@ -992,6 +999,7 @@ class e8(ExceptionalMatrixLieAlgebra):
         """
         g = LieAlgebraChevalleyBasis(self.base_ring(), self.cartan_type())
         return Family([ge.adjoint_matrix(sparse=True) for ge in g.basis()])
+
 
 class f4(ExceptionalMatrixLieAlgebra):
     r"""
@@ -1040,6 +1048,7 @@ class f4(ExceptionalMatrixLieAlgebra):
         f.reverse()
         ExceptionalMatrixLieAlgebra.__init__(self, R, CartanType(['F', 4]), e, f)
 
+
 class g2(ExceptionalMatrixLieAlgebra):
     r"""
     The matrix Lie algebra `\mathfrak{g}_2`.
@@ -1066,8 +1075,9 @@ class g2(ExceptionalMatrixLieAlgebra):
              MS({(1,1): one, (2,2): -one, (4,4): one, (5,5): -one})]
         ExceptionalMatrixLieAlgebra.__init__(self, R, CartanType(['G', 2]), e, f, h)
 
+
 #######################################
-## Compact real form
+# Compact real form
 
 class MatrixCompactRealForm(FinitelyGeneratedLieAlgebra):
     r"""
@@ -1548,7 +1558,7 @@ class MatrixCompactRealForm(FinitelyGeneratedLieAlgebra):
 
 
 #######################################
-## Chevalley Basis
+# Chevalley Basis
 
 class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
     r"""
@@ -1632,7 +1642,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
                     raise ValueError("not a valid Dynkin orientation")
             else:
                 from sage.graphs.graph import Graph
-                G = Graph(epsilon, multiedges=True, loops=True, format="list_of_edges")
+                G = Graph(epsilon, multiedges=True, loops=True, format='list_of_edges')
                 if (G.has_multiple_edges() or G.has_loops()
                     or cartan_type.dynkin_diagram().to_undirected() != G.to_simple()):
                     raise ValueError("not a valid Dynkin orientation")
@@ -1693,10 +1703,53 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
             [((alpha[1], -alpha[1]), {alphacheck[1]: 1}),
              ((alpha[1], alphacheck[1]), {alpha[1]: -2}),
              ((alphacheck[1], -alpha[1]), {-alpha[1]: -2})]
+
+        TESTS:
+
+        Check that we can construct Lie algebras over positive characteristic
+        fields (:issue:`37773`)::
+
+            sage: sl3 = LieAlgebra(GF(3), cartan_type=['A',2])
+            sage: sl3.center().basis()
+            Family (2*h1 + h2,)
+            sage: sl4 = lie_algebras.sl(GF(3), 4)
+            sage: sl4.center().dimension()
+            0
+            sage: sl4.is_nilpotent()
+            False
+            sage: sl4.lower_central_series()
+            (Lie algebra of ['A', 3] in the Chevalley basis,)
+            sage: sl4.is_solvable()
+            False
+            sage: sl4.is_semisimple()
+            True
+            sage: sl4.killing_form_matrix().det()
+            2
+            sage: sl5 = lie_algebras.sl(GF(3), 5)
+            sage: sl5.killing_form_matrix().det()
+            2
+
+        This also includes characteristic 2::
+
+            sage: sl4 = LieAlgebra(GF(2), cartan_type=['A',3])
+            sage: sl4.center().basis()
+            Family (h1 + h3,)
+            sage: sp6 = LieAlgebra(GF(2), cartan_type=['C',3])
+            sage: sp6.killing_form_matrix().det()
+            0
+            sage: F4 = LieAlgebra(GF(2), cartan_type=['F',4])
+            sage: F4.killing_form_matrix().det()  # long time
+            0
+            sage: G2 = LieAlgebra(GF(2), cartan_type=['G',2])
+            sage: G2.killing_form_matrix().det()
+            0
         """
         alphacheck = self._Q.simple_coroots()
         roots = frozenset(self._Q.roots())
-        one = R.one()
+        # We do everything initially over QQ and then convert to R at the end
+        #   since this is a ZZ-basis.
+        from sage.rings.rational_field import QQ
+        one = QQ.one()
 
         # Determine the signs for the structure coefficients from the root system
         # We first create the special roots
@@ -1748,15 +1801,15 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         for i,r in enumerate(p_roots):
             # [e_r, h_i] and [h_i, f_r]
             for ac in alphacheck:
-                c = r.scalar(ac)
+                c = R(r.scalar(ac))
                 if c == 0:
                     continue
                 s_coeffs[(r, ac)] = {r: -c}
                 s_coeffs[(ac, -r)] = {-r: -c}
 
             # [e_r, f_r]
-            s_coeffs[(r, -r)] = {alphacheck[j]: c
-                                 for j, c in r.associated_coroot()}
+            s_coeffs[(r, -r)] = {alphacheck[j]: Rc
+                                 for j, c in r.associated_coroot() if (Rc := R(c))}
 
             # [e_r, e_s] and [e_r, f_s] with r != +/-s
             # We assume s is positive, as otherwise we negate
@@ -1772,16 +1825,19 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
                         c *= -sp_sign[(b, a)]
                     else:
                         c *= sp_sign[(a, b)]
-                    s_coeffs[(-r, s)] = {a: -c}
-                    s_coeffs[(r, -s)] = {-a: c}
+                    c = R(c)
+                    if c:
+                        s_coeffs[(-r, s)] = {a: -c}
+                        s_coeffs[(r, -s)] = {-a: c}
 
                 # [e_r, e_s]
                 a = r + s
                 if a in p_roots:
                     # (r, s) is a special pair
-                    c = e_coeff(r, s) * sp_sign[(r, s)]
-                    s_coeffs[(r, s)] = {a: c}
-                    s_coeffs[(-r, -s)] = {-a: -c}
+                    c = R(e_coeff(r, s) * sp_sign[(r, s)])
+                    if c:
+                        s_coeffs[(r, s)] = {a: c}
+                        s_coeffs[(-r, -s)] = {-a: -c}
 
         return s_coeffs
 
@@ -1795,6 +1851,19 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
             Lie algebra of ['A', 2] in the Chevalley basis
         """
         return "Lie algebra of {} in the Chevalley basis".format(self._cartan_type)
+
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
+            sage: latex(g)
+            \mathfrak{g}(A_{2})_{\Bold{Q}}
+        """
+        from sage.misc.latex import latex
+        return r"\mathfrak{{g}}({})_{{{}}}".format(latex(self._cartan_type), latex(self.base_ring()))
 
     def _test_structure_coeffs(self, **options):
         """
@@ -1985,7 +2054,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         #   enough in the ambient space to correctly convert things to do
         #   the scalar product.
         alc = wt.parent().simple_coroots()
-        return R(wt.scalar( alc[aci[m]] ))
+        return R(wt.scalar(alc[aci[m]]))
 
     def affine(self, kac_moody=True):
         r"""
@@ -2029,8 +2098,8 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
         INPUT:
 
-        - ``str_keys`` -- (default: ``False``) set to ``True`` to have the
-          indices indexed by strings instead of simple (co)roots
+        - ``str_keys`` -- boolean (default: ``False``); set to ``True`` to have
+          the indices indexed by strings instead of simple (co)roots
 
         EXAMPLES::
 
@@ -2117,13 +2186,9 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         alphacheck = self._Q.simple_coroots()
         B = self.basis()
 
-        ret = []
-        for i in index_set:
-            ret.append(B[alpha[i]])
-        for i in index_set:
-            ret.append(B[-alpha[i]])
-        for i in index_set:
-            ret.append(B[alphacheck[i]])
+        ret = [B[alpha[i]] for i in index_set]
+        ret.extend(B[-alpha[i]] for i in index_set)
+        ret.extend(B[alphacheck[i]] for i in index_set)
         return tuple(ret)
 
     def highest_root_basis_elt(self, pos=True):
@@ -2132,7 +2197,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
         INPUT:
 
-        - ``pos`` -- (default: ``True``) if ``True``, then return
+        - ``pos`` -- boolean (default: ``True``); if ``True``, then return
           `e_{\theta}`, otherwise return `f_{\theta}`
 
         EXAMPLES::

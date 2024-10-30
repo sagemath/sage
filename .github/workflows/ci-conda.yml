@@ -18,15 +18,16 @@ concurrency:
 jobs:
   test:
     name: Conda
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
         # On pushes to tags or branches, test the whole matrix.
         os: >-
           ${{ github.event_name == 'pull_request'
-                && fromJson('["ubuntu"]')
-                || fromJson('["ubuntu", "macos"]') }}
+                && fromJson('["ubuntu-latest"]')
+                || fromJson('["ubuntu-latest", "macos-latest", "macos-13"]') }}
         python: >-
           ${{ github.event_name == 'pull_request'
                 && fromJson('["3.9"]')
@@ -35,12 +36,12 @@ jobs:
         # environment: [environment, environment-optional]
         conda-env: [environment]
         # On pull requests, only test two jobs:
-        # Ubuntu with Python 3.9, macOS with Python 3.10.
-        # Build & Test currently uses Python 3.11 (on ubuntu-focal).
+        # Ubuntu with Python 3.9, macOS (arm64) with Python 3.11.
+        # Build & Test currently uses Python 3.10 (on ubuntu-jammy).
         # Together, they cover the supported minor Python versions.
         include: >-
           ${{ github.event_name == 'pull_request'
-                && fromJson('[{"os": "macos", "python": "3.10", "conda-env": "environment"}]')
+                && fromJson('[{"os": "macos-latest", "python": "3.11", "conda-env": "environment"}]')
                 || fromJson('[]') }}
 
     steps:
@@ -54,14 +55,14 @@ jobs:
           SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
 
       - name: Cache conda packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/conda_pkgs_dir
           key:
             ${{ runner.os }}-conda-${{ hashFiles('src/environment-3.11.yml') }}
 
       - name: Setup Conda environment
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: ${{ matrix.python }}
           miniforge-version: latest
@@ -69,7 +70,7 @@ jobs:
           channels: conda-forge
           channel-priority: true
           activate-environment: sage
-          environment-file: src/${{ matrix.conda-env }}-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && 'macos' || 'linux' }}.yml
+          environment-file: src/${{ matrix.conda-env }}-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || 'linux' }}.yml
 
       - name: Install test tools
         shell: bash -l {0}
@@ -81,25 +82,20 @@ jobs:
           conda info
           conda list
 
-      - name: Configure
+      - name: Bootstrap
         shell: bash -l {0}
         continue-on-error: true
         run: |
           ./bootstrap
-          echo "::add-matcher::.github/workflows/configure-systempackage-problem-matcher.json"
-          ./configure --enable-build-as-root --with-python=$CONDA_PREFIX/bin/python --prefix=$CONDA_PREFIX --enable-system-site-packages $(for pkg in $(./sage -package list :standard: --has-file spkg-configure.m4 --has-file distros/conda.txt --exclude rpy2); do echo --with-system-$pkg=force; done)
-          echo "::remove-matcher owner=configure-system-package-warning::"
-          echo "::remove-matcher owner=configure-system-package-error::"
 
       - name: Build
         shell: bash -l {0}
         run: |
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda.
-          pip install --no-build-isolation --no-deps -v -v -e ./pkgs/sage-conf ./pkgs/sage-setup
           pip install --no-build-isolation --no-deps --config-settings editable_mode=compat -v -v -e ./src
         env:
-          SAGE_NUM_THREADS: 2
-        
+          SAGE_NUM_THREADS: 5
+
       - name: Verify dependencies
         if: success() || failure()
         shell: bash -l {0}

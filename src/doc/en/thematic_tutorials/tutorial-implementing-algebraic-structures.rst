@@ -199,6 +199,7 @@ Ok, let's run the tests::
       Running the test suite of self.an_element()
       running ._test_category() . . . pass
       running ._test_eq() . . . pass
+      running ._test_monomial_coefficients() . . . pass
       running ._test_new() . . . pass
       running ._test_nonzero_equal() . . . pass
       running ._test_not_implemented_methods() . . . pass

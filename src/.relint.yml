@@ -1,7 +1,4 @@
-# From https://github.com/sagemath/sage-patchbot/blob/master/sage_patchbot/plugins.py
-# (simple pattern-exclusion plugins)
-# The patterns have been edited slightly because relint tests the regexp to the whole file,
-# whereas the patchbots tests them line by line.
+# Simple pattern exclusions
 
 - name: 'python3: Python3 incompatible code'
   hint: |
@@ -71,4 +68,4 @@
     magic doctest comments should appear on the "sage:" line, not "....:" lines
   # see optional_regex in src/sage/doctest/parsing.py
   # "indirect doctest" is from src/bin/sage-coverage
-  pattern: '^[ 	]*[.][.][.][.]:.*#.*(arb216|arb218|py2|py3|long time|not implemented|not tested|known bug|optional|indirect doctest)'
+  pattern: '^[ 	]*[.][.][.][.]:.*#.*(py2|py3|long time|not implemented|not tested|known bug|optional|indirect doctest)'

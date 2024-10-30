@@ -14,12 +14,12 @@ cdef class RingExtension_generic(CommutativeRing):
     cdef RingExtension_generic _fraction_field
     cdef type _fraction_field_type
 
-    cpdef is_defined_over(self, base) noexcept
-    cpdef CommutativeRing _check_base(self, CommutativeRing base) noexcept
-    cpdef _degree_over(self, CommutativeRing base) noexcept
-    cpdef _is_finite_over(self, CommutativeRing base) noexcept
-    cpdef _is_free_over(self, CommutativeRing base) noexcept
-    cdef Map _defining_morphism_fraction_field(self, bint extend_base) noexcept
+    cpdef is_defined_over(self, base)
+    cpdef CommutativeRing _check_base(self, CommutativeRing base)
+    cpdef _degree_over(self, CommutativeRing base)
+    cpdef _is_finite_over(self, CommutativeRing base)
+    cpdef _is_free_over(self, CommutativeRing base)
+    cdef Map _defining_morphism_fraction_field(self, bint extend_base)
 
 
 cdef class RingExtensionFractionField(RingExtension_generic):
@@ -31,7 +31,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
     cdef _basis_names
     cdef _basis_latex_names
 
-    cpdef _basis_over(self, CommutativeRing base) noexcept
+    cpdef _basis_over(self, CommutativeRing base)
     # cpdef _free_module(self, CommutativeRing base, bint map)
 
 

@@ -22,7 +22,6 @@ AUTHORS:
 
 - Julian Rueth (2011-09-14): replaced ``@cached_function`` with
   ``UniqueFactory``
-
 """
 
 # ****************************************************************************
@@ -156,7 +155,7 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
         TESTS:
 
-        Verify that :trac:`16530` has been resolved::
+        Verify that :issue:`16530` has been resolved::
 
             sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
@@ -168,7 +167,6 @@ class FunctionFieldExtensionFactory(UniqueFactory):
             sage: N.<z> = K.extension(z - 1)
             sage: M is N
             False
-
         """
         if names is None:
             names = polynomial.variable_name()

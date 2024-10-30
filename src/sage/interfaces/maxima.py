@@ -35,7 +35,7 @@ This is the interface used by the maxima object::
     <class 'sage.interfaces.maxima.Maxima'>
 
 If the string "error" (case insensitive) occurs in the output of
-anything from Maxima, a :class:`RuntimeError` exception is raised.
+anything from Maxima, a :exc:`RuntimeError` exception is raised.
 
 EXAMPLES: We evaluate a very simple expression in Maxima.
 
@@ -410,7 +410,7 @@ Long Input
 The MAXIMA interface reads in even very long input (using files) in
 a robust manner, as long as you are creating a new object.
 
-.. note::
+.. NOTE::
 
    Using ``maxima.eval`` for long input is much less robust, and is
    not recommended.
@@ -448,14 +448,14 @@ A long complicated input expression::
     sage: maxima._eval_line('((((((((((0) + ((1) / ((n0) ^ (0)))) + ((1) / ((n1) ^ (1)))) + ((1) / ((n2) ^ (2)))) + ((1) / ((n3) ^ (3)))) + ((1) / ((n4) ^ (4)))) + ((1) / ((n5) ^ (5)))) + ((1) / ((n6) ^ (6)))) + ((1) / ((n7) ^ (7)))) + ((1) / ((n8) ^ (8)))) + ((1) / ((n9) ^ (9)));')
     '1/n9^9+1/n8^8+1/n7^7+1/n6^6+1/n5^5+1/n4^4+1/n3^3+1/n2^2+1/n1+1'
 
-Test that Maxima gracefully handles this syntax error (:trac:`17667`)::
+Test that Maxima gracefully handles this syntax error (:issue:`17667`)::
 
     sage: maxima.eval("1 == 1;")
     Traceback (most recent call last):
     ...
     TypeError: ...incorrect syntax: = is not a prefix operator...
 
-Test that conversion of symbolic functions with latex names works (:trac:`31047`)::
+Test that conversion of symbolic functions with latex names works (:issue:`31047`)::
 
     sage: var('phi')
     phi
@@ -467,7 +467,7 @@ Test that conversion of symbolic functions with latex names works (:trac:`31047`
     sage: test.operator()._latex_() == 'C_+'
     True
 
-Test that the output is parseable (:trac:`31796`)::
+Test that the output is parseable (:issue:`31796`)::
 
     sage: foo = maxima('a and (b or c)') ; foo
     a and (b or c)
@@ -475,8 +475,6 @@ Test that the output is parseable (:trac:`31796`)::
     a and (b or c)
     sage: bar == foo
     True
-
-
 """
 
 # ****************************************************************************
@@ -542,7 +540,7 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima == loads(dumps(m))
             True
 
-        We make sure labels are turned off (see :trac:`6816`)::
+        We make sure labels are turned off (see :issue:`6816`)::
 
             sage: 'nolabels : true' in maxima._Expect__init_code
             True
@@ -627,7 +625,6 @@ class Maxima(MaximaAbstract, Expect):
             sage: m._start()
             sage: m.is_running()
             True
-
         """
         Expect._start(self)
         self._sendline(r":lisp (defun tex-derivative (x l r) (tex (if $derivabbrev (tex-dabbrev x) (tex-d x '\\partial)) l r lop rop ))")
@@ -779,8 +776,6 @@ class Maxima(MaximaAbstract, Expect):
             Traceback (most recent call last):
             ...
             TypeError: Error executing code in Maxima...
-
-
         """
         if len(line) == 0:
             return ''
@@ -977,7 +972,7 @@ class Maxima(MaximaAbstract, Expect):
         """
         Send a lisp command to Maxima.
 
-        .. note::
+        .. NOTE::
 
            The output of this command is very raw - not pretty.
 
@@ -1122,7 +1117,7 @@ class Maxima(MaximaAbstract, Expect):
 
 def is_MaximaElement(x):
     """
-    Return True if ``x`` is of type :class:`MaximaElement`.
+    Return ``True`` if ``x`` is of type :class:`MaximaElement`.
 
     EXAMPLES::
 

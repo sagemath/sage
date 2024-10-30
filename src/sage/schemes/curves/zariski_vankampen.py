@@ -23,12 +23,12 @@ AUTHORS:
 
 EXAMPLES::
 
-    sage: # optional - sirocco
+    sage: # needs sirocco
     sage: from sage.schemes.curves.zariski_vankampen import fundamental_group, braid_monodromy
     sage: R.<x, y> = QQ[]
     sage: f = y^3 + x^3 - 1
     sage: braid_monodromy(f)
-    ([s1*s0, s1*s0, s1*s0], {0: 0, 1: 0, 2: 0})
+    ([s1*s0, s1*s0, s1*s0], {0: 0, 1: 0, 2: 0}, {}, 3)
     sage: fundamental_group(f)
     Finitely presented group < x0 |  >
 """
@@ -42,21 +42,21 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import itertools
-from copy import copy
 
-from sage.combinat.combination import Combinations
+from copy import copy
+from itertools import combinations
+
 from sage.combinat.permutation import Permutation
 from sage.functions.generalized import sign
 from sage.geometry.voronoi_diagram import VoronoiDiagram
 from sage.graphs.graph import Graph
 from sage.groups.braid import BraidGroup
-from sage.groups.finitely_presented import wrap_FpGroup
 from sage.groups.free_group import FreeGroup
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-from sage.libs.braiding import leftnormalform, rightnormalform
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_function
 from sage.misc.flatten import flatten
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.parallel.decorate import parallel
 from sage.rings.complex_interval_field import ComplexIntervalField
@@ -67,7 +67,9 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import QQbar
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField
-# from sage.sets.set import Set
+from sage.schemes.curves.constructor import Curve
+
+lazy_import('sage.libs.braiding', ['leftnormalform', 'rightnormalform'])
 
 roots_interval_cache = {}
 
@@ -78,17 +80,15 @@ def braid_from_piecewise(strands):
 
     INPUT:
 
-    - ``strands`` -- a list of lists of tuples ``(t, c1, c2)``, where ``t``
+    - ``strands`` -- list of lists of tuples ``(t, c1, c2)``, where ``t``
       is a number between 0 and 1, and ``c1`` and ``c2`` are rationals
-      or algebraic reals.
+      or algebraic reals
 
-    OUTPUT:
-
-    The braid formed by the piecewise linear strands.
+    OUTPUT: the braid formed by the piecewise linear strands
 
     EXAMPLES::
 
-        sage: # optional - sirocco
+        sage: # needs sirocco
         sage: from sage.schemes.curves.zariski_vankampen import braid_from_piecewise
         sage: paths = [[(0, 0, 1), (0.2, -1, -0.5), (0.8, -1, 0), (1, 0, -1)],
         ....:          [(0, -1, 0), (0.5, 0, -1), (1, 1, 0)],
@@ -109,8 +109,8 @@ def braid_from_piecewise(strands):
                 yauxi = val[indices[j]][2]
                 aaux = val[indices[j] - 1][0]
                 baux = val[indices[j]][0]
-                interpolar = xauxr + (yauxr - xauxr) * (i - aaux) / (baux - aaux)
-                interpolai = xauxi + (yauxi - xauxi) * (i - aaux) / (baux - aaux)
+                interpolar = xauxr + (yauxr - xauxr)*(i - aaux) / (baux - aaux)
+                interpolai = xauxi + (yauxi - xauxi)*(i - aaux) / (baux - aaux)
                 totalpoints[j].append([interpolar, interpolai])
             else:
                 totalpoints[j].append([val[indices[j]][1],
@@ -129,6 +129,7 @@ def braid_from_piecewise(strands):
         if x > y:
             return -1
         return 0
+
     for i in range(len(totalpoints[0]) - 1):
         l1 = [totalpoints[j][i] for j in range(len(L))]
         l2 = [totalpoints[j][i + 1] for j in range(len(L))]
@@ -176,25 +177,23 @@ def discrim(pols) -> tuple:
 
     INPUT:
 
-    - ``pols`` -- a list or tuple of polynomials in two variables with
+    - ``pols`` -- list or tuple of polynomials in two variables with
       coefficients in a number field with a fixed embedding in `\QQbar`
 
-    OUTPUT:
-
-    A tuple with the roots of the discriminant in `\QQbar`.
+    OUTPUT: a tuple with the roots of the discriminant in `\QQbar`
 
     EXAMPLES::
 
         sage: from sage.schemes.curves.zariski_vankampen import discrim
         sage: R.<x, y> = QQ[]
         sage: flist = (y^3 + x^3 - 1, 2 * x + y)
-        sage: discrim(flist)
-        (1,
-        -0.500000000000000? - 0.866025403784439?*I,
-        -0.500000000000000? + 0.866025403784439?*I,
-        -0.522757958574711?,
-        0.2613789792873551? - 0.4527216721561923?*I,
-        0.2613789792873551? + 0.4527216721561923?*I)
+        sage: sorted((discrim(flist)))
+        [-0.522757958574711?,
+         -0.500000000000000? - 0.866025403784439?*I,
+         -0.500000000000000? + 0.866025403784439?*I,
+         0.2613789792873551? - 0.4527216721561923?*I,
+         0.2613789792873551? + 0.4527216721561923?*I,
+         1]
     """
     x, y = pols[0].parent().gens()
     field = pols[0].base_ring()
@@ -206,7 +205,8 @@ def discrim(pols) -> tuple:
             return pol_ring(f.discriminant(y))
         return pol_ring(f.resultant(g, y))
 
-    pairs = [(f, None) for f in pols] + [tuple(t) for t in Combinations(pols, 2)]
+    pairs = [(f, None) for f in pols] + [tuple(t) for t
+                                         in combinations(pols, 2)]
     fdiscrim = discrim_pairs(pairs)
     rts = ()
     poly = 1
@@ -226,7 +226,7 @@ def corrected_voronoi_diagram(points):
 
     INPUT:
 
-    - ``points`` -- a list of complex numbers
+    - ``points`` -- tuple of complex numbers
 
     OUTPUT:
 
@@ -266,7 +266,8 @@ def corrected_voronoi_diagram(points):
         V = VoronoiDiagram(configuration)
         valid = True
         for r in V.regions().items():
-            if not r[1].rays() and not r[1].interior_contains(apprpoints[r[0].affine()]):
+            if (not r[1].rays() and
+               not r[1].interior_contains(apprpoints[r[0].affine()])):
                 prec += 53
                 valid = False
                 break
@@ -281,15 +282,15 @@ def orient_circuit(circuit, convex=False, precision=53, verbose=False):
 
     INPUT:
 
-    - ``circuit`` --  a circuit in the graph of a Voronoi Diagram, given
+    - ``circuit`` -- a circuit in the graph of a Voronoi Diagram, given
       by a list of edges
 
-    - ``convex`` -- boolean (default: `False`), if set to ``True`` a simpler
+    - ``convex`` -- boolean (default: ``False``); if set to ``True`` a simpler
       computation is made
 
-    -  ``precision`` -- bits of precision (default: 53)
+    - ``precision`` -- bits of precision (default: 53)
 
-    - ``verbose`` -- boolean (default: ``False``) for testing purposes
+    - ``verbose`` -- boolean (default: ``False``); for testing purposes
 
     OUTPUT:
 
@@ -353,7 +354,6 @@ def orient_circuit(circuit, convex=False, precision=53, verbose=False):
             # return circuit
             return circuit_vertex
         elif pr < 0:
-            # return list(reversed([(c[1], c[0]) + c[2:] for c in circuit]))
             return tuple(reversed(circuit_vertex))
     prec = precision
     while True:
@@ -361,17 +361,15 @@ def orient_circuit(circuit, convex=False, precision=53, verbose=False):
         totalangle = sum((CIF(*vectors[i]) / CIF(*vectors[i - 1])).argument()
                          for i in range(len(vectors)))
         if totalangle < 0:
-            # return list(reversed([(c[1], c[0]) + c[2:] for c in circuit]))
             return tuple(reversed(circuit_vertex))
         if totalangle > 0:
-            # return circuit
             return circuit_vertex
         prec *= 2
         if verbose:
             print(prec)
 
 
-def voronoi_cells(V):
+def voronoi_cells(V, vertical_lines=frozenset()):
     r"""
     Compute the graph, the boundary graph, a base point, a positive orientation
     of the boundary graph, and the dual graph of a corrected Voronoi diagram.
@@ -380,22 +378,27 @@ def voronoi_cells(V):
 
     - ``V`` -- a corrected Voronoi diagram
 
+    - ``vertical_lines`` -- frozenset (default: ``frozenset()``); indices of the
+      vertical lines
+
     OUTPUT:
 
     - ``G`` -- the graph of the 1-skeleton of ``V``
     - ``E`` -- the subgraph of the boundary
     - ``p`` -- a vertex in ``E``
-    - ``EC`` -- a list of vertices (representing a counterclockwise orientation
+    - ``EC`` -- list of vertices (representing a counterclockwise orientation
       of ``E``) with identical first and last elements)
     - ``DG`` -- the dual graph of ``V``, where the vertices are labelled
-      by the compact regions of ``V`` and the edges by their dual edges.
+      by the compact regions of ``V`` and the edges by their dual edges
+    - ``vertical_regions`` -- dictionary for the regions associated
+      with vertical lines
 
     EXAMPLES::
 
         sage: from sage.schemes.curves.zariski_vankampen import corrected_voronoi_diagram, voronoi_cells
         sage: points = (2, I, 0.000001, 0, 0.000001*I)
         sage: V = corrected_voronoi_diagram(points)
-        sage: G, E, p, EC, DG = voronoi_cells(V)
+        sage: G, E, p, EC, DG, VR = voronoi_cells(V, vertical_lines=frozenset((1,)))
         sage: Gv = G.vertices(sort=True)
         sage: Ge = G.edges(sort=True)
         sage: len(Gv), len(Ge)
@@ -443,25 +446,38 @@ def voronoi_cells(V):
          (A vertex at (2000001/2000000, 500001/1000000), A vertex at (11/4, 4), None))
         sage: edg[-1] in Ge
         True
+        sage: VR
+        {1: (A vertex at (-49000001/14000000, 1000001/2000000),
+             A vertex at (1000001/2000000, 1000001/2000000),
+             A vertex at (2000001/2000000, 500001/1000000),
+             A vertex at (11/4, 4),
+             A vertex at (-4, 4),
+             A vertex at (-49000001/14000000, 1000001/2000000))}
     """
-    compact_regions = [_ for _ in V.regions().values() if _.is_compact()]
-    non_compact_regions = [_ for _ in V.regions().values() if not _.is_compact()]
-    G = Graph([u.vertices() for v in compact_regions for u in v.faces(1)], format='list_of_edges')
-    E = Graph([u.vertices() for v in non_compact_regions for u in v.faces(1) if u.is_compact()], format='list_of_edges')
+    regions = V.regions()
+    points = [p for p in V.regions().keys() if V.regions()[p].is_compact()]
+    compact_regions = [regions[p] for p in points]
+    vertical_regions = {}
+    non_compact_regions = [reg for reg in V.regions().values()
+                           if not reg.is_compact()]
+    G = Graph([u.vertices() for v in compact_regions for u in v.faces(1)],
+              format='list_of_edges')
+    E = Graph([u.vertices() for v in non_compact_regions for u in v.faces(1)
+               if u.is_compact()], format='list_of_edges')
     p = next(E.vertex_iterator())
     EC = orient_circuit(E.eulerian_circuit())
-    # EC = [EC0[0][0]] + [e[1] for e in EC0]
     DG = Graph()
     for i, reg in enumerate(compact_regions):
         Greg0 = orient_circuit(reg.graph().eulerian_circuit(), convex=True)
-        # Greg = (Greg0[0][0],) + tuple(e[1] for e in Greg0)
+        if i in vertical_lines:
+            vertical_regions[i] = Greg0
         DG.add_vertex((i, Greg0))
     for e in G.edges(sort=True):
         a, b = e[:2]
         regs = [v for v in DG.vertices(sort=True) if a in v[1] and b in v[1]]
         if len(regs) == 2:
             DG.add_edge(regs[0], regs[1], e)
-    return (G, E, p, EC, DG)
+    return (G, E, p, EC, DG, vertical_regions)
 
 
 def followstrand(f, factors, x0, x1, y0a, prec=53) -> list:
@@ -472,7 +488,7 @@ def followstrand(f, factors, x0, x1, y0a, prec=53) -> list:
     INPUT:
 
     - ``f`` -- an irreducible polynomial in two variables
-    - ``factors`` -- a list of irreducible polynomials in two variables
+    - ``factors`` -- list of irreducible polynomials in two variables
     - ``x0`` -- a complex value, where the homotopy starts
     - ``x1`` -- a complex value, where the homotopy ends
     - ``y0a`` -- an approximate solution of the polynomial `F(y) = f(x_0, y)`
@@ -492,7 +508,7 @@ def followstrand(f, factors, x0, x1, y0a, prec=53) -> list:
 
     EXAMPLES::
 
-        sage: # optional - sirocco
+        sage: # needs sirocco
         sage: from sage.schemes.curves.zariski_vankampen import followstrand
         sage: R.<x, y> = QQ[]
         sage: f = x^2 + y^3
@@ -548,7 +564,7 @@ def followstrand(f, factors, x0, x1, y0a, prec=53) -> list:
                 ci = c.imag()
                 coefsfactors += list(cr.endpoints())
                 coefsfactors += list(ci.endpoints())
-    from sage.libs.sirocco import contpath, contpath_mp, contpath_comps, contpath_mp_comps
+    from sage.libs.sirocco import (contpath, contpath_mp, contpath_comps, contpath_mp_comps)
     try:
         if prec == 53:
             if factors:
@@ -603,11 +619,9 @@ def fieldI(field):
 
     INPUT:
 
-    - ``field`` -- a number field with an embedding in ``QQbar``.
+    - ``field`` -- a number field with an embedding in `\QQbar`
 
-    OUTPUT:
-
-    The extension ``F`` of ``field`` containing  ``I`` with  an embedding in ``QQbar``.
+    OUTPUT: the extension ``F`` of ``field`` containing  ``I`` with  an embedding in `\QQbar`
 
     EXAMPLES::
 
@@ -616,9 +630,20 @@ def fieldI(field):
         sage: a0 = p.roots(QQbar, multiplicities=False)[0]
         sage: F0.<a> = NumberField(p, embedding=a0)
         sage: fieldI(F0)
-        Number Field in b with defining polynomial
+        Number Field in prim with defining polynomial
         x^10 + 5*x^8 + 14*x^6 - 2*x^5 - 10*x^4 + 20*x^3 - 11*x^2 - 14*x + 10
-        with b = 0.4863890359345430? + 1.000000000000000?*I
+        with prim = 0.4863890359345430? + 1.000000000000000?*I
+        sage: F0 = CyclotomicField(5)
+        sage: fieldI(F0)
+        Number Field in prim with defining polynomial
+        x^8 - 2*x^7 + 7*x^6 - 10*x^5 + 16*x^4 - 10*x^3 - 2*x^2 + 4*x + 1
+        with prim = -0.3090169943749474? + 0.04894348370484643?*I
+        sage: fieldI(QuadraticField(3))
+        Number Field in prim with defining polynomial x^4 - 4*x^2 + 16
+        with prim = -1.732050807568878? + 1.000000000000000?*I
+        sage: fieldI(QuadraticField(-3))
+        Number Field in prim with defining polynomial x^4 + 8*x^2 + 4
+        with prim = 0.?e-18 - 0.732050807568878?*I
 
     If ``I`` is already in the field, the result is the field itself::
 
@@ -628,6 +653,8 @@ def fieldI(field):
         sage: F0.<a> = NumberField(p, embedding=a0)
         sage: F1 = fieldI(F0)
         sage: F0 == F1
+        True
+        sage: QuadraticField(-1) == fieldI(QuadraticField(-1))
         True
     """
     I0 = QQbar.gen()
@@ -641,8 +668,8 @@ def fieldI(field):
     for h1 in qembd:
         b1 = h1(b0)
         b2 = h1(field_b(field_a.gen(0)))
-        b3 = field.gen(0)
-        F1 = NumberField(q, 'b', embedding=b1)
+        b3 = QQbar(field.gen(0))
+        F1 = NumberField(q, 'prim', embedding=b1)
         if b3 in F1 and b2.imag() > 0:
             return F1
 
@@ -705,7 +732,7 @@ def roots_interval(f, x0):
         diam = min((CF(r) - CF(r0)).abs()
                    for r0 in roots[:i] + roots[i + 1:]) / divisor
         envelop = IF(diam) * IF((-1, 1), (-1, 1))
-        while not newton(fx, r, r + envelop) in r + envelop:
+        while newton(fx, r, r + envelop) not in r + envelop:
             prec += 53
             IF = ComplexIntervalField(prec)
             CF = ComplexField(prec)
@@ -757,7 +784,7 @@ def populate_roots_interval_cache(inputs):
 
     INPUT:
 
-    - ``inputs`` -- a list of tuples ``(f, x0)``
+    - ``inputs`` -- list of tuples ``(f, x0)``
 
     EXAMPLES::
 
@@ -777,7 +804,6 @@ def populate_roots_interval_cache(inputs):
          0.4795466549853897? - 1.475892845355996?*I: 1.? - 2.?*I,
          0.4795466549853897? + 1.475892845355996?*I: 1.? + 2.?*I,
          14421467174121563/9293107134194871: 2.? + 0.?*I}
-
     """
     global roots_interval_cache
     tocompute = [inp for inp in inputs if inp not in roots_interval_cache]
@@ -800,19 +826,16 @@ def braid_in_segment(glist, x0, x1, precision={}):
 
     INPUT:
 
-    - ``glist`` -- a tuple of polynomials in two variables
+    - ``glist`` -- tuple of polynomials in two variables
     - ``x0`` -- a Gauss rational
     - ``x1`` -- a Gauss rational
-    - ``precision`` -- a dictionary (default: `dict()`) which assigns a number
+    - ``precision`` -- dictionary (default: `{}`) which assigns a number
       precision bits to each element of ``glist``
 
-    OUTPUT:
-
-    A braid.
+    OUTPUT: a braid
 
     EXAMPLES::
 
-        sage: # optional - sirocco
         sage: from sage.schemes.curves.zariski_vankampen import braid_in_segment, fieldI
         sage: R.<x, y> = QQ[]
         sage: K = fieldI(QQ)
@@ -820,12 +843,12 @@ def braid_in_segment(glist, x0, x1, precision={}):
         sage: f = f.change_ring(K)
         sage: x0 = 1
         sage: x1 = 1 + I / 2
-        sage: braid_in_segment(tuple(_[0] for _ in f.factor()), x0, x1)
+        sage: braid_in_segment(tuple(_[0] for _ in f.factor()), x0, x1)     # needs sirocco
         s1
 
     TESTS:
 
-    Check that :trac:`26503` is fixed::
+    Check that :issue:`26503` is fixed::
 
         sage: # needs sage.rings.real_mpfr sage.symbolic
         sage: wp = QQ['t']([1, 1, 1]).roots(QQbar)[0][0]
@@ -844,43 +867,44 @@ def braid_in_segment(glist, x0, x1, precision={}):
         sage: p2a = CC(p2)
         sage: p2b = QQ(p2a.real()) + I*QQ(p2a.imag())
         sage: glist = tuple([_[0] for _ in g.factor()])
-        sage: B = braid_in_segment(glist, p1b, p2b); B              # optional - sirocco
+        sage: B = braid_in_segment(glist, p1b, p2b); B              # needs sirocco
         s5*s3^-1
     """
     precision1 = precision.copy()
     g = prod(glist)
     F1 = g.base_ring()
     x, y = g.parent().gens()
-    X0 = F1(x0)
-    X1 = F1(x1)
     intervals = {}
-    if not precision1:  # new
-        precision1 = {f: 53 for f in glist}  # new
+    if not precision1:
+        precision1 = {f: 53 for f in glist}
     y0s = []
     for f in glist:
         if f.variables() == (y,):
             f0 = F1[y](f)
         else:
-            f0 = F1[y](f.subs({x: X0}))
+            f0 = F1[y](f.subs({x: F1(x0)}))
         y0sf = f0.roots(QQbar, multiplicities=False)
         y0s += list(y0sf)
         while True:
             CIFp = ComplexIntervalField(precision1[f])
             intervals[f] = [r.interval(CIFp) for r in y0sf]
-            if not any(a.overlaps(b) for a, b in itertools.combinations(intervals[f], 2)):
+            if not any(a.overlaps(b) for a, b in
+                       itertools.combinations(intervals[f], 2)):
                 break
             precision1[f] *= 2
     strands = []
     for f in glist:
         for i in intervals[f]:
-            aux = followstrand(f, [p for p in glist if p != f], x0, x1, i.center(), precision1[f])
+            aux = followstrand(f, [p for p in glist if p != f],
+                               x0, x1, i.center(), precision1[f])
             strands.append(aux)
-    complexstrands = [[(QQ(a[0]), QQ(a[1]), QQ(a[2])) for a in b] for b in strands]
+    complexstrands = [[(QQ(a[0]), QQ(a[1]), QQ(a[2])) for a in b]
+                      for b in strands]
     centralbraid = braid_from_piecewise(complexstrands)
     initialstrands = []
     finalstrands = []
-    initialintervals = roots_interval_cached(g, X0)
-    finalintervals = roots_interval_cached(g, X1)
+    initialintervals = roots_interval_cached(g, x0)
+    finalintervals = roots_interval_cached(g, x1)
     I1 = QQbar.gen()
     for cs in complexstrands:
         ip = cs[0][1] + I1 * cs[0][2]
@@ -888,27 +912,29 @@ def braid_in_segment(glist, x0, x1, precision={}):
         matched = 0
         for center, interval in initialintervals.items():
             if ip in interval:
-                initialstrands.append([(0, center.real(), center.imag()), (1, cs[0][1], cs[0][2])])
+                initialstrands.append([(0, center.real(), center.imag()),
+                                       (1, cs[0][1], cs[0][2])])
                 matched += 1
         if matched != 1:
-            precision1 = {f: precision1[f] * 2 for f in glist}  # new
-            return braid_in_segment(glist, x0, x1, precision=precision1)  # new
+            precision1 = {f: precision1[f] * 2 for f in glist}
+            return braid_in_segment(glist, x0, x1, precision=precision1)
 
         matched = 0
         for center, interval in finalintervals.items():
             if fp in interval:
-                finalstrands.append([(0, cs[-1][1], cs[-1][2]), (1, center.real(), center.imag())])
+                finalstrands.append([(0, cs[-1][1], cs[-1][2]),
+                                     (1, center.real(), center.imag())])
                 matched += 1
         if matched != 1:
-            precision1 = {f: precision1[f] * 2 for f in glist}  # new
-            return braid_in_segment(glist, x0, x1, precision=precision1)  # new
+            precision1 = {f: precision1[f] * 2 for f in glist}
+            return braid_in_segment(glist, x0, x1, precision=precision1)
     initialbraid = braid_from_piecewise(initialstrands)
     finalbraid = braid_from_piecewise(finalstrands)
 
     return initialbraid * centralbraid * finalbraid
 
 
-def geometric_basis(G, E, EC0, p, dual_graph) -> list:
+def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions={}) -> list:
     r"""
     Return a geometric basis, based on a vertex.
 
@@ -919,7 +945,7 @@ def geometric_basis(G, E, EC0, p, dual_graph) -> list:
     - ``E`` -- a subgraph of ``G`` which is a cycle containing the bounded
       edges touching an unbounded region of a Voronoi Diagram
 
-    - ``EC0`` -- A counterclockwise orientation of the vertices of ``E``
+    - ``EC0`` -- a counterclockwise orientation of the vertices of ``E``
 
     - ``p`` -- a vertex of ``E``
 
@@ -927,74 +953,76 @@ def geometric_basis(G, E, EC0, p, dual_graph) -> list:
       ``E`` is the boundary of the non-bounded component of the complement.
       The edges are labelled as the dual edges and the vertices are labelled
       by a tuple whose first element is the an integer for the position and the
-      second one is the cyclic ordered list of vertices in the region.
+      second one is the cyclic ordered list of vertices in the region
 
-    OUTPUT: A geometric basis. It is formed by a list of sequences of paths.
-    Each path is a list of vertices, that form a closed path in ``G``, based at
-    ``p``, that goes to a region, surrounds it, and comes back by the same
-    path it came. The concatenation of all these paths is equivalent to ``E``.
+    - ``vertical_regions`` -- dictionary (default: `{}`); its keys are
+      the vertices of ``dual_graph`` to fix regions associated with
+      vertical lines
+
+    OUTPUT: a geometric basis and a dictionary
+
+    The geometric basis is formed by a list of sequences of paths. Each path is a
+    ist of vertices, that form a closed path in ``G``, based at ``p``, that goes
+    to a region, surrounds it, and comes back by the same path it came. The
+    concatenation of all these paths is equivalent to ``E``.
+
+    The dictionary associates to each vertical line the index of the generator
+    of the geometric basis associated to it.
 
     EXAMPLES::
 
-        sage: from sage.schemes.curves.zariski_vankampen import geometric_basis, voronoi_cells
-        sage: points = [(-3,0),(3,0),(0,3),(0,-3)]+ [(0,0),(0,-1),(0,1),(1,0),(-1,0)]
-        sage: V = VoronoiDiagram(points)
-        sage: G, E, p, EC, DG = voronoi_cells(V)
-        sage: geometric_basis(G, E, EC, p, DG)
-        [[A vertex at (-2, -2),
-          A vertex at (2, -2),
-          A vertex at (2, 2),
-          A vertex at (1/2, 1/2),
-          A vertex at (1/2, -1/2),
-          A vertex at (2, -2),
-          A vertex at (-2, -2)],
-         [A vertex at (-2, -2),
-          A vertex at (2, -2),
-          A vertex at (1/2, -1/2),
-          A vertex at (1/2, 1/2),
-          A vertex at (-1/2, 1/2),
-          A vertex at (-1/2, -1/2),
-          A vertex at (1/2, -1/2),
-          A vertex at (2, -2),
-          A vertex at (-2, -2)],
-         [A vertex at (-2, -2),
-          A vertex at (2, -2),
-          A vertex at (1/2, -1/2),
-          A vertex at (-1/2, -1/2),
-          A vertex at (-2, -2)],
-         [A vertex at (-2, -2),
-          A vertex at (-1/2, -1/2),
-          A vertex at (-1/2, 1/2),
-          A vertex at (1/2, 1/2),
-          A vertex at (2, 2),
-          A vertex at (-2, 2),
-          A vertex at (-1/2, 1/2),
-          A vertex at (-1/2, -1/2),
-          A vertex at (-2, -2)],
-         [A vertex at (-2, -2),
-          A vertex at (-1/2, -1/2),
-          A vertex at (-1/2, 1/2),
-          A vertex at (-2, 2),
-          A vertex at (-2, -2)]]
+        sage: from sage.schemes.curves.zariski_vankampen import geometric_basis, corrected_voronoi_diagram, voronoi_cells
+        sage: points = (0, -1, I, 1, -I)
+        sage: V = corrected_voronoi_diagram(points)
+        sage: G, E, p, EC, DG, VR = voronoi_cells(V, vertical_lines=frozenset((0 .. 4)))
+        sage: gb, vd = geometric_basis(G, E, EC, p, DG, vertical_regions=VR)
+        sage: gb
+        [[A vertex at (5/2, -5/2), A vertex at (5/2, 5/2), A vertex at (-5/2, 5/2),
+          A vertex at (-1/2, 1/2), A vertex at (-1/2, -1/2), A vertex at (1/2, -1/2),
+          A vertex at (1/2, 1/2), A vertex at (-1/2, 1/2), A vertex at (-5/2, 5/2),
+          A vertex at (5/2, 5/2), A vertex at (5/2, -5/2)],
+         [A vertex at (5/2, -5/2), A vertex at (5/2, 5/2), A vertex at (-5/2, 5/2),
+          A vertex at (-1/2, 1/2), A vertex at (1/2, 1/2), A vertex at (5/2, 5/2),
+          A vertex at (5/2, -5/2)],
+         [A vertex at (5/2, -5/2), A vertex at (5/2, 5/2), A vertex at (1/2, 1/2),
+          A vertex at (1/2, -1/2), A vertex at (5/2, -5/2)], [A vertex at (5/2, -5/2),
+          A vertex at (1/2, -1/2), A vertex at (-1/2, -1/2), A vertex at (-1/2, 1/2),
+          A vertex at (-5/2, 5/2), A vertex at (-5/2, -5/2), A vertex at (-1/2, -1/2),
+          A vertex at (1/2, -1/2), A vertex at (5/2, -5/2)],
+         [A vertex at (5/2, -5/2), A vertex at (1/2, -1/2), A vertex at (-1/2, -1/2),
+          A vertex at (-5/2, -5/2), A vertex at (5/2, -5/2)]]
+        sage: vd
+        {0: 0, 1: 3, 2: 1, 3: 2, 4: 4}
     """
     i = EC0.index(p)
-    EC = EC0[i:-1] + EC0[:i + 1]   # A counterclockwise eulerian circuit on the boundary, starting and ending at p
+    EC = EC0[i:-1] + EC0[:i + 1]
+    # A counterclockwise eulerian circuit on the boundary,
+    # starting and ending at p
     if G.size() == E.size():
         if E.is_cycle():
-            return [EC]
+            j = next(dual_graph.vertex_iterator())[0]
+            if j in vertical_regions:
+                vd = {j: 0}
+            else:
+                vd = {}
+            return [EC], vd
     edges_E = E.edges(sort=True)
     InternalEdges = [e for e in G.edges(sort=True) if e not in edges_E]
     InternalVertices = [v for e in InternalEdges for v in e[:2]]
     Internal = G.subgraph(vertices=InternalVertices, edges=InternalEdges)
     for i, ECi in enumerate(EC):  # q and r are the points we will cut through
         if ECi in Internal:
-            EI = [v for v in E if v in Internal.connected_component_containing_vertex(ECi, sort=True) and v != ECi]
+            EI = [v for v in E if v in
+                  Internal.connected_component_containing_vertex(ECi, sort=True)
+                  and v != ECi]
             if EI:
                 q = ECi
                 connecting_path = list(EC[:i])
                 break
         if EC[-i] in Internal:
-            EI = [v for v in E if v in Internal.connected_component_containing_vertex(EC[-i], sort=True) and v != EC[-i]]
+            EI = [v for v in E if v in
+                  Internal.connected_component_containing_vertex(EC[-i], sort=True)
+                  and v != EC[-i]]
             if EI:
                 q = EC[-i]
                 connecting_path = list(reversed(EC[-i:]))
@@ -1003,7 +1031,6 @@ def geometric_basis(G, E, EC0, p, dual_graph) -> list:
     E_dist_q = E.shortest_path_lengths(q)
     I_dist_q = Internal.shortest_path_lengths(q)
     distancequotients = [(E_dist_q[v]**2 / I_dist_q[v], v) for v in EI]
-    # distancequotients = [(E.distance(q, v)**2 / Internal.distance(q, v), v) for v in EI]
     r = max(distancequotients)[1]
     cutpath = Internal.shortest_path(q, r)
     for i, v in enumerate(cutpath):
@@ -1037,7 +1064,8 @@ def geometric_basis(G, E, EC0, p, dual_graph) -> list:
         E1.add_edge(cutpath[i], cutpath[i + 1], None)
         E2.add_edge(cutpath[i], cutpath[i + 1], None)
     Gd = copy(dual_graph)
-    to_delete = [e for e in Gd.edges(sort=True) if e[2][0] in cutpath and e[2][1] in cutpath]
+    to_delete = [e for e in Gd.edges(sort=True) if e[2][0] in cutpath and
+                 e[2][1] in cutpath]
     Gd.delete_edges(to_delete)
     Gd1, Gd2 = Gd.connected_components_subgraphs()
     edges_2 = []
@@ -1045,16 +1073,20 @@ def geometric_basis(G, E, EC0, p, dual_graph) -> list:
     for reg in Gd2.vertices(sort=True):
         vertices_2 += reg[1][:-1]
         reg_circuit = reg[1]
-        edges_2 += [(v1, reg_circuit[i + 1]) for i, v1 in enumerate(reg_circuit[:-1])]
-        edges_2 += [(v1, reg_circuit[i - 1]) for i, v1 in enumerate(reg_circuit[1:])]
+        edges_2 += [(v1, reg_circuit[i + 1])
+                    for i, v1 in enumerate(reg_circuit[:-1])]
+        edges_2 += [(v1, reg_circuit[i - 1])
+                    for i, v1 in enumerate(reg_circuit[1:])]
     G2 = G.subgraph(vertices=vertices_2, edges=edges_2)
     edges_1 = []
     vertices_1 = []
     for reg in Gd1.vertices(sort=True):
         vertices_1 += reg[1]
         reg_circuit = reg[1] + (reg[1][0],)
-        edges_1 += [(v1, reg_circuit[i + 1]) for i, v1 in enumerate(reg_circuit[:-1])]
-        edges_1 += [(v1, reg_circuit[i - 1]) for i, v1 in enumerate(reg_circuit[1:])]
+        edges_1 += [(v1, reg_circuit[i + 1])
+                    for i, v1 in enumerate(reg_circuit[:-1])]
+        edges_1 += [(v1, reg_circuit[i - 1])
+                    for i, v1 in enumerate(reg_circuit[1:])]
     G1 = G.subgraph(vertices=vertices_1, edges=edges_1)
     if EC[qi + 1] in G2:
         G1, G2 = G2, G1
@@ -1067,9 +1099,13 @@ def geometric_basis(G, E, EC0, p, dual_graph) -> list:
         EC1 = list(EC[qi:] + EC[1:ri]) + list(reversed(cutpath))
         EC2 = cutpath + list(EC[ri + 1:qi + 1])
 
-    gb1 = geometric_basis(G1, E1, EC1, q, Gd1)
-    gb2 = geometric_basis(G2, E2, EC2, q, Gd2)
+    gb1, vd1 = geometric_basis(G1, E1, EC1, q, Gd1, vertical_regions=vertical_regions)
+    gb2, vd2 = geometric_basis(G2, E2, EC2, q, Gd2, vertical_regions=vertical_regions)
 
+    vd = {j: vd1[j] for j in vd1}
+    m = len(gb1)
+    for j in vd2.keys():
+        vd[j] = vd2[j] + m
     reverse_connecting = list(reversed(connecting_path))
     resul = [connecting_path + path + reverse_connecting
              for path in gb1 + gb2]
@@ -1083,10 +1119,52 @@ def geometric_basis(G, E, EC0, p, dual_graph) -> list:
                     i -= 1
             else:
                 i += 1
-    return resul
+    return (resul, vd)
 
 
-def strand_components(f, flist, p1):
+def vertical_lines_in_braidmon(pols) -> list:
+    r"""
+    Return the vertical lines in ``pols``, unless
+    one of the other components has a vertical asymptote.
+
+    INPUT:
+
+    - ``pols`` -- a  list of polynomials with two variables whose
+      product equals ``f``
+
+    OUTPUT:
+
+    A list with the indices of the vertical lines in ``flist`` if there is
+    no other component with vertical asymptote; otherwise it returns an empty
+    list.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.curves.zariski_vankampen import vertical_lines_in_braidmon
+        sage: R.<x, y> = QQ[]
+        sage: flist = [x^2 - y^3, x, x + 3 * y - 5, 1 - x]
+        sage: vertical_lines_in_braidmon(flist)
+        [1, 3]
+        sage: flist += [x * y - 1]
+        sage: vertical_lines_in_braidmon(flist)
+        []
+        sage: vertical_lines_in_braidmon([])
+        []
+    """
+    if not pols:
+        return []
+    res = []
+    for j, f in enumerate(pols):
+        C = Curve(f)
+        vertical_asymptote = C.has_vertical_asymptote()
+        if vertical_asymptote:
+            return []
+        if C.is_vertical_line():
+            res.append(j)
+    return res
+
+
+def strand_components(f, pols, p1):
     r"""
     Compute only the assignment from strands to elements of ``flist``.
 
@@ -1095,7 +1173,7 @@ def strand_components(f, flist, p1):
     - ``f`` -- a  reduced polynomial with two variables, over a number field
       with an embedding in the complex numbers
 
-    - ``flist`` -- a  list of polynomials with two variables whose
+    - ``pols`` -- a  list of polynomials with two variables whose
       product equals ``f``
 
     - ``p1`` -- a Gauss rational
@@ -1103,13 +1181,13 @@ def strand_components(f, flist, p1):
     OUTPUT:
 
     - A list and a dictionary.  The first one is an ordered list of pairs
-      consisting of ``(z,i)`` where ``z`` is a root of ``f(p_1,y)`` and `i` is the position
-      of the polynomial in the list whose root is ``z``. The second one attaches
-      a number `i` (strand) to a number `j` (a polynomial in the list).
+      consisting of ``(z,i)`` where ``z`` is a root of ``f(p_1,y)``
+      and `i` is the position of the polynomial in the list whose root
+      is ``z``. The second one attaches a number `i` (strand) to a
+      number `j` (a polynomial in the list).
 
     EXAMPLES::
 
-        sage: # optional - sirocco
         sage: from sage.schemes.curves.zariski_vankampen import strand_components
         sage: R.<x, y> = QQ[]
         sage: flist = [x^2 - y^3, x + 3 * y - 5]
@@ -1119,20 +1197,20 @@ def strand_components(f, flist, p1):
           (1, 0), (1.333333333333334?, 1)], {0: 0, 1: 0, 2: 0, 3: 1})
     """
     x, y = f.parent().gens()
-    F = flist[0].base_ring()
+    F = pols[0].base_ring()
     strands = {}
     roots_base = []
-    for i, h in enumerate(flist):
+    for i, h in enumerate(pols):
         h0 = h.subs({x: p1})
         h1 = F[y](h0)
         rt = h1.roots(QQbar, multiplicities=False)
         roots_base += [(r, i) for r in rt]
     roots_base.sort()
-    strands = {i: par[1] for i, par in enumerate(roots_base)}  # quitar +1 despues de revision
+    strands = {i: par[1] for i, par in enumerate(roots_base)}
     return (roots_base, strands)
 
 
-def braid_monodromy(f, arrangement=()):
+def braid_monodromy(f, arrangement=(), vertical=False):
     r"""
     Compute the braid monodromy of a projection of the curve defined by
     a polynomial.
@@ -1142,31 +1220,45 @@ def braid_monodromy(f, arrangement=()):
     - ``f`` -- a polynomial with two variables, over a number field
       with an embedding in the complex numbers
 
-    - ``arrangement`` -- an optional tuple of polynomials whose product
-      equals ``f``.
+    - ``arrangement`` -- tuple (default: ``()``); an optional tuple
+      of polynomials whose product equals ``f``
+
+    - ``vertical`` -- boolean (default: ``False``); if set to ``True``,
+      ``arrangements`` contains more than one polynomial, some of them
+      are of degree `1` in `x` and degree `0` in `y`, and none of
+      the other components have vertical asymptotes, then these
+      components are marked as *vertical* and not used for the computation
+      of the braid monodromy. The other ones are marked as *horizontal*. If
+      a vertical component does not pass through a singular points of the
+      projection of the horizontal components a trivial braid is added
+      to the list.
 
     OUTPUT:
 
-    A list of braids and a dictionary.
-    The braids correspond to paths based in the same point;
-    each of these paths is the conjugated of a loop around one of the points
-    in the discriminant of the projection of ``f``. The dictionary assigns each
-    strand to the index of the corresponding factor in ``arrangement``.
+    - A list of braids, images by the braid monodromy of a geometric
+      basis of the complement of the discriminant of `f` in `\CC`.
+
+    - A dictionary: ``i``, index of a strand is sent to the index of
+      the corresponding factor in ``arrangement``.
+
+    - Another dictionary ``dv``, only relevant if ``vertical`` is ``True``.
+      If  ``j`` is the index
+      of a braid corresponding to a vertical line with index ``i``
+      in ``arrangement``, then ``dv[j] = i``.
+
+    - A nonnegative integer: the number of strands of the braids,
+      only necessary if the list of braids is empty.
 
     .. NOTE::
 
         The projection over the `x` axis is used if there are no vertical
         asymptotes. Otherwise, a linear change of variables is done to fall
-        into the previous case.
-
-    .. TODO::
-
-        Create a class ``arrangements_of_curves`` with a ``braid_monodromy``
-        method; it can be also a method for affine line arrangements.
+        into the previous case except if the only vertical asymptotes are lines
+        and ``vertical=True``.
 
     EXAMPLES::
 
-        sage: # optional - sirocco
+        sage: # needs sirocco
         sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy
         sage: R.<x, y> = QQ[]
         sage: f = (x^2 - y^3) * (x + 3*y - 5)
@@ -1174,7 +1266,7 @@ def braid_monodromy(f, arrangement=()):
         ([s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
           s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
           s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
-          s1*s0*s2*s0^-1*s2*s1^-1], {0: 0, 1: 0, 2: 0, 3: 0})
+          s1*s0*s2*s0^-1*s2*s1^-1], {0: 0, 1: 0, 2: 0, 3: 0}, {}, 4)
         sage: flist = (x^2 - y^3, x + 3*y - 5)
         sage: bm1 = braid_monodromy(f, arrangement=flist)
         sage: bm1[0] == bm[0]
@@ -1182,42 +1274,86 @@ def braid_monodromy(f, arrangement=()):
         sage: bm1[1]
         {0: 0, 1: 1, 2: 0, 3: 0}
         sage: braid_monodromy(R(1))
-        ([], {})
+        ([], {}, {}, 0)
         sage: braid_monodromy(x*y^2 - 1)
-        ([s0*s1*s0^-1*s1*s0*s1^-1*s0^-1, s0*s1*s0^-1, s0], {0: 0, 1: 0, 2: 0})
+        ([s0*s1*s0^-1*s1*s0*s1^-1*s0^-1, s0*s1*s0^-1, s0], {0: 0, 1: 0, 2: 0}, {}, 3)
+        sage: L = [x, y, x - 1, x -y]
+        sage: braid_monodromy(prod(L), arrangement=L, vertical=True)
+        ([s^2, 1], {0: 1, 1: 3}, {0: 0, 1: 2}, 2)
     """
     global roots_interval_cache
     F = fieldI(f.base_ring())
     I1 = F(QQbar.gen())
     f = f.change_ring(F)
-    if arrangement == ():
+    if not arrangement:
         arrangement1 = (f,)
     else:
-        arrangement1 = tuple(_.change_ring(F) for _ in arrangement)
+        arrangement1 = tuple(g.change_ring(F) for g in arrangement)
     x, y = f.parent().gens()
-    glist = tuple(_[0] for f0 in arrangement1 for _ in f0.factor())
+    if vertical:
+        indices_v = vertical_lines_in_braidmon(arrangement1)
+    else:
+        indices_v = []
+    arrangement_h = tuple(f0 for j, f0 in enumerate(arrangement1)
+                          if j not in indices_v)
+    arrangement_v = tuple(f0 for j, f0 in enumerate(arrangement1)
+                          if j in indices_v)
+    glist = tuple(fc[0] for f0 in arrangement_h for fc in f0.factor())
     g = f.parent()(prod(glist))
     d = g.degree(y)
-    while not g.coefficient(y**d) in F:
-        g = g.subs({x: x + y})
-        d = g.degree(y)
-        arrangement1 = tuple(f1.subs({x: x + y}) for f1 in arrangement1)
-        glist = tuple(f1.subs({x: x + y}) for f1 in glist)
+    if not arrangement_v:  # change of coordinates only if indices_v is empty
+        while g.coefficient(y**d) not in F:
+            g = g.subs({x: x + y})
+            d = g.degree(y)
+            arrangement_h = tuple(f1.subs({x: x + y}) for f1 in arrangement_h)
+            arrangement1 = arrangement_h
+            glist = tuple(f1.subs({x: x + y}) for f1 in glist)
     if d > 0:
         disc = discrim(glist)
     else:
         disc = []
+    vertical_braid = {}
+    transversal = {}
+    vl = []
+    for f0 in arrangement_v:
+        pt = [j for j, t in enumerate(disc) if f0.subs({x: t}) == 0]
+        if pt:
+            vertical_braid[f0] = (pt[0], arrangement1.index(f0))
+            vl.append(pt[0])
+        else:
+            transversal[f0] = arrangement1.index(f0)
+    vl.sort()
+    vl = frozenset(vl)
     if not disc:
-        result = []
+        vertical_braids = {i: transversal[f0]
+                           for i, f0 in enumerate(transversal)}
+        if d > 1:
+            result = [BraidGroup(d).one() for p in transversal]
+        else:
+            G = FreeGroup(0) / []
+            result = [G.one() for p in transversal]
         p1 = F(0)
-        roots_base, strands = strand_components(g, arrangement1, p1)
-        return ([], strands)
+        if d > 0:
+            roots_base, strands = strand_components(g, arrangement_h, p1)
+            strands1 = {}
+            for j in range(d):
+                i = strands[j]
+                k = arrangement1.index(arrangement_h[i])
+                strands1[j] = k
+        else:
+            strands1 = {}
+        return (result, strands1, vertical_braids, d)
     V = corrected_voronoi_diagram(tuple(disc))
-    G, E, p, EC, DG = voronoi_cells(V)
+    G, E, p, EC, DG, VR = voronoi_cells(V, vertical_lines=vl)
     p0 = (p[0], p[1])
     p1 = p0[0] + I1 * p0[1]
-    roots_base, strands = strand_components(g, arrangement1, p1)
-    geombasis = geometric_basis(G, E, EC, p, DG)
+    roots_base, strands = strand_components(g, arrangement_h, p1)
+    strands1 = {}
+    for j in range(d):
+        i = strands[j]
+        k = arrangement1.index(arrangement_h[i])
+        strands1[j] = k
+    geombasis, vd = geometric_basis(G, E, EC, p, DG, vertical_regions=VR)
     segs = set()
     for p in geombasis:
         for s in zip(p[:-1], p[1:]):
@@ -1253,7 +1389,18 @@ def braid_monodromy(f, arrangement=()):
             x1 = tuple(path[i + 1].vector())
             braidpath = braidpath * segsbraids[(x0, x1)]
         result.append(braidpath)
-    return (result, strands)
+    vertical_braids = {}
+    r = len(result)
+    t = 0
+    for f0 in arrangement_v:
+        if f0 in vertical_braid.keys():
+            k, j = vertical_braid[f0]
+            vertical_braids[vd[k]] = j
+        else:
+            vertical_braids[r + t] = transversal[f0]
+            t += 1
+            result.append(B.one())
+    return (result, strands1, vertical_braids, d)
 
 
 def conjugate_positive_form(braid):
@@ -1263,7 +1410,7 @@ def conjugate_positive_form(braid):
 
     INPUT:
 
-    - ``braid`` -- a braid ``\sigma``.
+    - ``braid`` -- a braid `\sigma`
 
     OUTPUT:
 
@@ -1316,10 +1463,7 @@ def conjugate_positive_form(braid):
             A1 = rightnormalform(sg)
             par = A1[-1][0] % 2
             A1 = [B(a) for a in A1[:-1]]
-            if not A1:
-                b = B.one()
-            else:
-                b = prod(A1)
+            b = prod(A1, B.one())
             b1 = len(b.Tietze()) / (len(A1) + 1)
             if res is None or b1 < res[3]:
                 res = [tau, A1, par, b1]
@@ -1346,8 +1490,8 @@ def braid2rels(L):
 
     INPUT:
 
-    - ``L`` -- a tuple whose first element is a positive braid and the second
-      element is a list of permutation braids.
+    - ``L`` -- tuple whose first element is a positive braid and the second
+      element is a list of permutation braids
 
     OUTPUT:
 
@@ -1373,14 +1517,15 @@ def braid2rels(L):
     k = min(T1) - 1
     B0 = BraidGroup(m)
     F0 = FreeGroup(m)
-    br0 = B0([_-k for _ in T])
+    br0 = B0([j - k for j in T])
     br0_left = leftnormalform(br0)
     q, r = ZZ(br0_left[0][0]).quo_rem(2)
-    br1 = B0.delta()**r * B0(prod(B0(_) for _ in br0_left[1:]))
+    br1 = B0.delta()**r * prod(map(B0, br0_left[1:]), B0.one())
     cox = prod(F0.gens())
     U0 = [cox**q * (f0 * br1) / cox**q / f0 for f0 in F0.gens()[:-1]]
-    U = [tuple(sign(k1) * (abs(k1) + k) for k1 in _.Tietze()) for _ in U0]
-    pasos = [B.one()] + list(reversed(L1))
+    U = [tuple(sign(k1) * (abs(k1) + k) for k1 in br.Tietze()) for br in U0]
+    pasos = [B.one()]
+    pasos.extend(reversed(L1))
     for C in pasos:
         U = [(F(a) * C.inverse()).Tietze() for a in U]
         ga = F / U
@@ -1391,8 +1536,8 @@ def braid2rels(L):
         P.SetTzOptions(dic)
         P.TzGoGo()
         P.TzGoGo()
-        gb = wrap_FpGroup(P.FpGroupPresentation())
-        U = [_.Tietze() for _ in gb.relations()]
+        gb = P.FpGroupPresentation().sage()
+        U = [rel.Tietze() for rel in gb.relations()]
     return U
 
 
@@ -1406,17 +1551,19 @@ def relation(x, b):
     return x * b / x
 
 
-def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projective=False, puiseux=False, vertical=[]):
+def fundamental_group_from_braid_mon(bm, degree=None,
+                                     simplified=True, projective=False,
+                                     puiseux=True, vertical=[]):
     r"""
     Return a presentation of the fundamental group computed from
     a braid monodromy.
 
     INPUT:
 
-    - ``bm`` -- a list of braids
+    - ``bm`` -- list of braids
 
     - ``degree`` -- integer (default: ``None``); only needed if the braid
-      monodromy is an empty list.
+      monodromy is an empty list
 
     - ``simplified`` -- boolean (default: ``True``); if set to ``True`` the
       presentation will be simplified (see below)
@@ -1426,16 +1573,15 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
       of the curve will be computed, otherwise, the fundamental group of
       the complement in the affine plane will be computed
 
-    - ``puiseux`` -- boolean (default: ``False``); if set to ``True``,
-      ``simplified`` is set to ``False``, and
+    - ``puiseux`` -- boolean (default: ``True``); if set to ``True``
       a presentation of the fundamental group with the homotopy type
       of the complement of the affine curve will be computed, adding
       one relation if ``projective`` is set to ``True``.
 
     - ``vertical`` -- list of integers (default: ``[]``); the indices in
-      ``[1..r]`` of the braids that surround a vertical line
+      ``[0 .. r - 1]`` of the braids that surround a vertical line
 
-    If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is
+    If ``projective`` is ``False`` and ``puiseux`` is
     ``True``, a Zariski-VanKampen presentation is returned.
 
     OUTPUT:
@@ -1450,37 +1596,45 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
         sage: bm = [s1*s2*s0*s1*s0^-1*s1^-1*s0^-1,
         ....:       s0*s1^2*s0*s2*s1*(s0^-1*s1^-1)^2*s0^-1,
         ....:       (s0*s1)^2]
-        sage: g = fundamental_group_from_braid_mon(bm, projective=True); g
-        Finitely presented group < x0, x1 | x1*x0^2*x1, x0^-1*x1^-1*x0^-1*x1*x0^-1*x1^-1 >
-        sage: print (g.order(), g.abelian_invariants())
+        sage: g = fundamental_group_from_braid_mon(bm, projective=True); g      # needs sirocco
+        Finitely presented group
+        < x1, x3 | x3^2*x1^2, x1^-1*x3^-1*x1*x3^-1*x1^-1*x3^-1 >
+        sage: print(g.order(), g.abelian_invariants())                         # needs sirocco
         12 (4,)
         sage: B2 = BraidGroup(2)
         sage: bm = [B2(3 * [1])]
-        sage: g = fundamental_group_from_braid_mon(bm, vertical=[1]); g
-        Finitely presented group < x0, x1, x2 | x2*x0*x1*x2^-1*x1^-1*x0^-1,
-                                                x2*x0*x1*x0*x1^-1*x0^-1*x2^-1*x1^-1 >
-        sage: fundamental_group_from_braid_mon([]) is None      # optional - sirocco
+        sage: g = fundamental_group_from_braid_mon(bm, vertical=[0]); g         # needs sirocco
+        Finitely presented group
+        < x0, x1, x2 | x2*x0*x1*x2^-1*x1^-1*x0^-1,
+                       x2*x0*x1*x0*x1^-1*x0^-1*x2^-1*x1^-1 >
+        sage: fundamental_group_from_braid_mon([]) is None                      # needs sirocco
         True
-        sage: fundamental_group_from_braid_mon([], degree=2)    # optional - sirocco
+        sage: fundamental_group_from_braid_mon([], degree=2)                    # needs sirocco
         Finitely presented group < x0, x1 |  >
+        sage: fundamental_group_from_braid_mon([SymmetricGroup(1).one()])       # needs sirocco
+        Finitely presented group < x |  >
     """
     vertical0 = sorted(vertical)
     v = len(vertical0)
     if not bm:
         d = degree
+    elif bm[0].parent().order() == 1:
+        d = 1
     else:
         d = bm[0].parent().strands()
     if d is None:
         return None
     F = FreeGroup(d)
     Fv = FreeGroup(d + v)
-    bmh = [br for j, br in enumerate(bm) if j + 1 not in vertical0]
+    if d == 0:
+        return Fv / []
+    if d == 1:
+        return Fv / [(1, j, -1, -j) for j in range(2, d + v + 1)]
+    bmh = [br for j, br in enumerate(bm) if j not in vertical0]
     if not puiseux:
         relations_h = (relation([(x, b) for x in F.gens() for b in bmh]))
         rel_h = [r[1] for r in relations_h]
-        simplified0 = simplified
     else:
-        simplified0 = False
         conjugate_desc = conjugate_positive_form_p(bmh)
         trenzas_desc = [b1[-1] for b1 in conjugate_desc]
         trenzas_desc_1 = flatten(trenzas_desc, max_level=1)
@@ -1490,7 +1644,7 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
     rel_v = []
     for j, k in enumerate(vertical0):
         l1 = d + j + 1
-        br = bm[k - 1]
+        br = bm[k]
         for gen in F.gens():
             j0 = gen.Tietze()[0]
             rl = (l1,) + (gen * br).Tietze() + (-l1, -j0)
@@ -1499,12 +1653,12 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
     if projective:
         rel.append(prod(Fv.gens()).Tietze())
     G = Fv / rel
-    if simplified0:
+    if simplified:
         return G.simplified()
     return G
 
 
-def fundamental_group(f, simplified=True, projective=False, puiseux=False):
+def fundamental_group(f, simplified=True, projective=False, puiseux=True):
     r"""
     Return a presentation of the fundamental group of the complement of
     the algebraic set defined by the polynomial ``f``.
@@ -1522,12 +1676,14 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
       of the curve will be computed, otherwise, the fundamental group of
       the complement in the affine plane will be computed
 
-    - ``puiseux`` -- boolean (default: ``False``); if set to ``True``,
+    - ``puiseux`` -- boolean (default: ``True``); if set to ``True``,
       a presentation of the fundamental group with the homotopy type
-      of the complement of the affine curve is computed, ``simplified`` is
-      ignored. One relation is added if ``projective`` is set to ``True``.
+      of the complement of the affine curve is computed. If the Euler
+      characteristic does not match, the homotopy type is obtained
+      with a wedge of 2-spheres. One relation is added if ``projective``
+      is set to ``True``.
 
-    If ``simplified` and ``projective``` are ``False`` and ``puiseux`` is
+    If ``projective`` is ``False`` and ``puiseux`` is
     ``True``, a Zariski-VanKampen presentation is returned.
 
     OUTPUT:
@@ -1537,13 +1693,13 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
 
     EXAMPLES::
 
-        sage: # optional - sirocco
+        sage: # needs sirocco
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group, braid_monodromy
         sage: R.<x, y> = QQ[]
         sage: f = x^2 + y^3
         sage: fundamental_group(f)
-        Finitely presented group < x1, x2 | x1*x2*x1^-1*x2^-1*x1^-1*x2 >
-        sage: fundamental_group(f, simplified=False).sorted_presentation()
+        Finitely presented group < x0, x1 | x0*x1^-1*x0^-1*x1^-1*x0*x1 >
+        sage: fundamental_group(f, simplified=False, puiseux=False).sorted_presentation()
         Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x0*x1,
                                                 x2^-1*x0*x1*x0^-1,
                                                 x1^-1*x0^-1*x1^-1*x0*x1*x0 >
@@ -1554,17 +1710,17 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
 
     ::
 
-        sage: # optional - sirocco
+        sage: # needs sirocco
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group
         sage: R.<x, y> = QQ[]
         sage: f = y^3 + x^3
-        sage: fundamental_group(f)
-        Finitely presented group < x0, x1, x2 | x0*x1*x2*x0^-1*x2^-1*x1^-1, x2*x0*x1*x2^-1*x1^-1*x0^-1 >
+        sage: fundamental_group(f).sorted_presentation()
+        Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x0^-1*x2*x0*x1,
+                                                x2^-1*x1^-1*x2*x0*x1*x0^-1 >
 
     It is also possible to have coefficients in a number field with a
     fixed embedding in `\QQbar`::
 
-        sage: # optional - sirocco
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group
         sage: zeta = QQbar['x']('x^2 + x+ 1').roots(multiplicities=False)[0]
         sage: zeta
@@ -1574,22 +1730,19 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
         Defining zeta
         sage: R.<x, y> = F[]
         sage: f = y^3 + x^3 + zeta * x + 1
-        sage: fundamental_group(f)
+        sage: fundamental_group(f)                                  # needs sirocco
         Finitely presented group < x0 |  >
 
-    We compute the fundamental group of the complement of a quartic using the ``puiseux`` option::
+    We compute the fundamental group of the complement of a
+    quartic using the ``puiseux`` option::
 
         sage: # optional - sirocco
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group
         sage: R.<x, y> = QQ[]
         sage: f = x^2 * y^2 + x^2 + y^2 - 2 * x * y  * (x + y + 1)
-        sage: g = fundamental_group(f, puiseux=True); g.sorted_presentation()
-        Finitely presented group
-         < x0, x1, x2, x3 | x3^-1*x2^-1*x1^-1*x0^-1*x1*x2*x1^-1*x0*x1*x2,
-                            x3^-1*x2^-1*x1*x2, x2^-1*x1^-1*x0^-1*x1*x2*x1, x2^-1*x0 >
-        sage: g.simplified().sorted_presentation()
+        sage: g = fundamental_group(f); g.sorted_presentation()
         Finitely presented group < x0, x1 | x1^-2*x0^2, (x1^-1*x0)^3 >
-        sage: g = fundamental_group(f, puiseux=True, projective=True)
+        sage: g = fundamental_group(f, projective=True)
         sage: g.order(), g.abelian_invariants()
         (12, (4,))
         sage: fundamental_group(y * (y - 1))
@@ -1599,7 +1752,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
     x, y = g.parent().gens()
     F = g.parent().base_ring()
     d = g.degree(y)
-    while not g.coefficient(y**d) in F:
+    while g.coefficient(y**d) not in F:
         g = g.subs({x: x + y})
         d = g.degree(y)
     if projective:
@@ -1610,10 +1763,15 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
         d = g.degree(y)
     else:
         d = bm[0].parent().strands()
-    return fundamental_group_from_braid_mon(bm, degree=d, simplified=simplified, projective=projective, puiseux=puiseux)
+    return fundamental_group_from_braid_mon(bm, degree=d,
+                                            simplified=simplified,
+                                            projective=projective,
+                                            puiseux=puiseux)
 
 
-def fundamental_group_arrangement(flist, simplified=True, projective=False, puiseux=False):
+def fundamental_group_arrangement(flist, simplified=True, projective=False,
+                                  puiseux=True, vertical=False,
+                                  braid_data=None):
     r"""
     Compute the fundamental group of the complement of a curve
     defined by a list of polynomials with the extra information
@@ -1633,11 +1791,18 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
       of the curve will be computed, otherwise, the fundamental group of
       the complement in the affine plane will be computed
 
-    - ``puiseux`` -- boolean (default: ``False``); if set to ``True``,
-      ``simplified`` is set to ``False``, and
+    - ``puiseux`` -- boolean (default: ``True``); if set to ``True``
       a presentation of the fundamental group with the homotopy type
       of the complement of the affine curve will be computed, adding
       one relation if ``projective`` is set to ``True``.
+
+    - ``vertical`` -- boolean (default: ``False``); if set to ``True``,
+      whenever no curve has vertical asymptotes the computation of braid
+      monodromy is simpler if some lines are vertical
+
+    - ``braid_data`` -- tuple (default: ``None``); if it is not the default
+      it is the output of ``fundamental_group_from_braid_mon`` previously
+      computed
 
     OUTPUT:
 
@@ -1645,15 +1810,15 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
       each of this paths is the conjugated of a loop around one of the points
       in the discriminant of the projection of ``f``.
 
-    - A dictionary attaching a tuple ``(i,)`` (generator) to a number ``j``
-      (a polynomial in the list). If ``simplified`` is set to ``True``,
-      a longer key may appear for either the meridian of the line at infinity,
-      if ``projective`` is ``True``, or a simplified generator,
-      if ``projective`` is ``False``
+    - A dictionary attaching to ``j`` a tuple a list of elements
+      of the group  which are meridians of the curve in position ``j``.
+      If ``projective`` is ``False`` and the `y`-degree of the horizontal
+      components coincide with the total degree, another key is added
+      to give a meridian of the line at infinity.
 
     EXAMPLES::
 
-        sage: # optional - sirocco
+        sage: # needs sirocco
         sage: from sage.schemes.curves.zariski_vankampen import braid_monodromy
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group_arrangement
         sage: R.<x, y> = QQ[]
@@ -1661,36 +1826,48 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         sage: g, dic = fundamental_group_arrangement(flist)
         sage: g.sorted_presentation()
         Finitely presented group
-         < x0, x1, x2 | x2^-1*x1^-1*x2*x1, x2^-1*x0^-1*x2^-1*x0*x2*x0, x1^-1*x0^-1*x1*x0 >
+         < x0, x1, x2 | x2^-1*x1^-1*x2*x1, x2^-1*x0^-1*x2^-1*x0*x2*x0,
+                        x1^-1*x0^-1*x1*x0 >
         sage: dic
-        {0: [x0, x2, x0], 1: [x1], 2: [x0^-1*x2^-1*x1^-1*x0^-1]}
-        sage: g, dic = fundamental_group_arrangement(flist, simplified=False)
+        {0: [x0, x2], 1: [x1], 2: [x0^-1*x2^-1*x1^-1*x0^-1]}
+        sage: g, dic = fundamental_group_arrangement(flist, simplified=False, puiseux=False)
         sage: g.sorted_presentation(), dic
         (Finitely presented group
-         < x0, x1, x2, x3 | 1, 1, 1, 1, 1, 1, 1, x3^-1*x2^-1*x1^-1*x2*x3*x2^-1*x1*x2,
+         < x0, x1, x2, x3 | 1, 1, 1, 1, 1, 1, 1,
+                            x3^-1*x2^-1*x1^-1*x2*x3*x2^-1*x1*x2,
                             x3^-1*x2^-1*x1^-1*x0^-1*x1*x2*x3*x2,
                             x3^-1*x2^-1*x1^-1*x0^-1*x1*x2*x1^-1*x0*x1*x2,
-                            x3^-1*x2^-1*x1^-1*x2*x3*x2^-1*x1*x2, x3^-1*x1^-1*x0*x1,
-                            x1^-1*x0^-1*x1*x0, x1^-1*x0^-1*x1*x0, x1^-1*x0^-1*x1*x0,
-                            x1^-1*x0^-1*x1*x0 >,
+                            x3^-1*x2^-1*x1^-1*x2*x3*x2^-1*x1*x2,
+                            x3^-1*x1^-1*x0*x1,
+                            x1^-1*x0^-1*x1*x0, x1^-1*x0^-1*x1*x0,
+                            x1^-1*x0^-1*x1*x0, x1^-1*x0^-1*x1*x0 >,
          {0: [x0, x2, x3], 1: [x1], 2: [x3^-1*x2^-1*x1^-1*x0^-1]})
         sage: fundamental_group_arrangement(flist, projective=True)
-        (Finitely presented group < x |  >, {0: [x0, x0, x0], 1: [x0^-3]})
+        (Finitely presented group < x |  >, {0: [x], 1: [x^-3]})
         sage: fundamental_group_arrangement([])
         (Finitely presented group <  |  >, {})
         sage: g, dic = fundamental_group_arrangement([x * y])
         sage: g.sorted_presentation(), dic
         (Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >,
-        {0: [x0, x1], 1: [x1^-1*x0^-1]})
-        sage: fundamental_group_arrangement([y + x^2], projective=True)
-        (Finitely presented group < x | x^2 >, {0: [x0, x0]})
-
-    .. TODO::
-
-        Create a class ``arrangements_of_curves`` with a ``fundamental_group``
-        method it can be also a method for affine or projective line
-        arrangements, even for hyperplane arrangements defined over a number
-        subfield of ``QQbar`` after applying a generic line section.
+         {0: [x0, x1], 1: [x1^-1*x0^-1]})
+        sage: fundamental_group_arrangement([y + x^2])
+        (Finitely presented group < x |  >, {0: [x]})
+        sage: fundamental_group_arrangement([y^2 + x], projective=True)
+        (Finitely presented group < x | x^2 >, {0: [x]})
+        sage: L = [x, y, x - 1, x -y]
+        sage: G, dic =fundamental_group_arrangement(L)
+        sage: G.sorted_presentation()
+        Finitely presented group
+        < x0, x1, x2, x3 | x3^-1*x2^-1*x3*x2, x3^-1*x1^-1*x0^-1*x1*x3*x0,
+                           x3^-1*x1^-1*x3*x0*x1*x0^-1, x2^-1*x0^-1*x2*x0 >
+        sage: dic
+        {0: [x1], 1: [x3], 2: [x2], 3: [x0], 4: [x3^-1*x2^-1*x1^-1*x0^-1]}
+        sage: fundamental_group_arrangement(L, vertical=True)
+        (Finitely presented group
+         < x0, x1, x2, x3 | x3*x0*x3^-1*x0^-1, x3*x1*x3^-1*x1^-1,
+                            x1*x2*x0*x2^-1*x1^-1*x0^-1,
+                            x1*x2*x0*x1^-1*x0^-1*x2^-1 >,
+         {0: [x2], 1: [x0], 2: [x3], 3: [x1], 4: [x3^-1*x2^-1*x1^-1*x0^-1]})
     """
     if flist:
         f = prod(flist)
@@ -1699,23 +1876,32 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         R = PolynomialRing(QQ, ('x', 'y'))
         f = R(1)
     x, y = R.gens()
-    F = R.base_ring()
-    flist1 = list(flist)
-    d = f.degree(y)
-    while not f.coefficient(y**d) in F:
-        flist1 = [g.subs({x: x + y}) for g in flist1]
-        f = prod(flist1)
-        d = f.degree(y)
-    if projective:
-        while f.degree(y) < f.degree():
-            flist1 = [g.subs({x: x + y}) for g in flist]
-            f = prod(flist1)
-    if not flist1:
+    flist1 = tuple(flist)
+    if vertical and vertical_lines_in_braidmon(flist1):
+        infinity = all(Curve(g).is_vertical_line() or
+                       g.degree(y) == g.degree() for g in flist1)
+    else:
+        infinity = any(Curve(g).has_vertical_asymptote() or
+                       Curve(g).is_vertical_line() for g in flist1)
+        if not infinity:
+            infinity = all(g.degree(y) == g.degree() for g in flist1)
+    if braid_data:
+        bm, dic, dv, d1 = braid_data
+    elif not flist:
         bm = []
         dic = {}
+        dv = {j: j for j, f in flist1}
+        d1 = 0
     else:
-        bm, dic = braid_monodromy(f, flist1)
-    g = fundamental_group_from_braid_mon(bm, degree=d, simplified=False, projective=projective, puiseux=puiseux)
+        bm, dic, dv, d1 = braid_monodromy(f, flist1, vertical=vertical)
+    vert_lines = list(dv)
+    vert_lines.sort()
+    for i, j in enumerate(vert_lines):
+        dic[d1 + i] = dv[j]
+    g = fundamental_group_from_braid_mon(bm, degree=d1, simplified=False,
+                                         projective=projective,
+                                         puiseux=puiseux,
+                                         vertical=vert_lines)
     if simplified:
         hom = g.simplification_isomorphism()
     else:
@@ -1725,12 +1911,13 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         return (g1, {})
     dic1 = {}
     for i in range(len(flist1)):
-        L = [j1 for j1 in dic.keys() if dic[j1] == i]
+        L = [j1 for j1 in dic if dic[j1] == i]
         dic1[i] = [hom(g.gen(j)) for j in L]
-    if not projective and f.degree(y) == f.degree():
-        t = prod(hom(x) for x in g.gens()).inverse()
+    if not projective and infinity:
+        t = prod(hom(a) for a in g.gens()).inverse()
         dic1[len(flist1)] = [t]
     n = g1.ngens()
-    rels = [_.Tietze() for _ in g1.relations()]
+    rels = [rel.Tietze() for rel in g1.relations()]
     g1 = FreeGroup(n) / rels
+    dic1 = {i: list({g1(el.Tietze()) for el in dic1[i]}) for i in dic1}
     return (g1, dic1)

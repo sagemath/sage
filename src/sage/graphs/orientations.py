@@ -12,6 +12,8 @@ etc.). It also implements some iterators over all these orientations.
     :widths: 30, 70
     :delim: |
 
+    :meth:`orient` | Return an oriented version of `G` according the input function `f`.
+    :meth:`acyclic_orientations` | Return an iterator over all acyclic orientations of an undirected graph `G`.
     :meth:`strong_orientations_iterator` | Return an iterator over all strong orientations of a graph `G`
     :meth:`random_orientation` | Return a random orientation of a graph `G`
 
@@ -28,7 +30,7 @@ Methods
 # ****************************************************************************
 #       Copyright (C)      2017 Kolja Knauer <kolja.knauer@gmail.com>
 #                          2017 Petru Valicov <petru.valicov@lirmm.fr>
-#                     2017-2023 David Coudert <david.coudert@inria.fr>
+#                     2017-2024 David Coudert <david.coudert@inria.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,6 +41,449 @@ Methods
 
 from copy import copy
 from sage.graphs.digraph import DiGraph
+
+
+def orient(G, f, weighted=None, data_structure=None, sparse=None,
+           immutable=None, hash_labels=None):
+    r"""
+    Return an oriented version of `G` according the input function `f`.
+
+    INPUT:
+
+    - ``G`` -- an undirected graph
+
+    - ``f`` -- a function that inputs an edge and outputs an orientation of this
+      edge
+
+    - ``weighted`` -- boolean (default: ``None``); weightedness for the oriented
+      digraph. By default (``None``), the graph and its orientation will behave
+      the same.
+
+    - ``sparse`` -- boolean (default: ``None``); ``sparse=True`` is an alias for
+      ``data_structure="sparse"``, and ``sparse=False`` is an alias for
+      ``data_structure="dense"``. Only used when ``data_structure=None``.
+
+    - ``data_structure`` -- string (default: ``None``); one of ``'sparse'``,
+      ``'static_sparse'``, or ``'dense'``. See the documentation of
+      :class:`DiGraph`.
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable digraph. Only used when ``data_structure=None``.
+
+      * ``immutable=None`` (default) means that the graph and its orientation
+        will behave the same way.
+
+      * ``immutable=True`` is a shortcut for ``data_structure='static_sparse'``
+
+      * ``immutable=False`` means that the created digraph is mutable. When used
+        to orient an immutable graph, the data structure used is ``'sparse'``
+        unless anything else is specified.
+
+    - ``hash_labels`` -- boolean (default: ``None``); whether to include edge
+      labels during hashing of the oriented digraph. This parameter defaults to
+      ``True`` if the graph is weighted. This parameter is ignored when
+      parameter ``immutable`` is not ``True``. Beware that trying to hash
+      unhashable labels will raise an error.
+
+    OUTPUT: a :class:`DiGraph` object
+
+    .. NOTE::
+
+        This method behaves similarly to method
+        :meth:`~sage.graphs.generic_graph.GenericGraph.copy`. That is, the
+        returned digraph uses the same data structure by default, unless the
+        user asks to use another data structure, and the attributes of the input
+        graph are copied.
+
+    EXAMPLES::
+
+        sage: G = graphs.CycleGraph(4); G
+        Cycle graph: Graph on 4 vertices
+        sage: D = G.orient(lambda e:e if e[0] < e[1] else (e[1], e[0], e[2])); D
+        Orientation of Cycle graph: Digraph on 4 vertices
+        sage: sorted(D.edges(labels=False))
+        [(0, 1), (0, 3), (1, 2), (2, 3)]
+
+    TESTS:
+
+    We make sure that one can get an immutable orientation by providing the
+    ``data_structure`` optional argument::
+
+        sage: def foo(e):
+        ....:     return e if e[0] < e[1] else (e[1], e[0], e[2])
+        sage: G = graphs.CycleGraph(4)
+        sage: D = G.orient(foo, data_structure='static_sparse')
+        sage: D.is_immutable()
+        True
+        sage: D = G.orient(foo, immutable=True)
+        sage: D.is_immutable()
+        True
+
+    Bad input::
+
+        sage: G.orient(foo, data_structure='sparse', sparse=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: you cannot define 'immutable' or 'sparse' when 'data_structure' has a value
+        sage: G.orient(foo, data_structure='sparse', immutable=True)
+        Traceback (most recent call last):
+        ...
+        ValueError: you cannot define 'immutable' or 'sparse' when 'data_structure' has a value
+        sage: G.orient(foo, immutable=True, sparse=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: there is no dense immutable backend at the moment
+
+    Which backend? ::
+
+        sage: G.orient(foo, data_structure='sparse')._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+        sage: G.orient(foo, data_structure='dense')._backend
+        <sage.graphs.base.dense_graph.DenseGraphBackend object at ...>
+        sage: G.orient(foo, data_structure='static_sparse')._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend object at ...>
+        sage: G.orient(foo, immutable=True)._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend object at ...>
+        sage: G.orient(foo, immutable=True, sparse=True)._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend object at ...>
+        sage: G.orient(foo, immutable=False, sparse=True)._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+        sage: G.orient(foo, immutable=False, sparse=False)._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+        sage: G.orient(foo, data_structure=None, immutable=None, sparse=True)._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+        sage: G.orient(foo, data_structure=None, immutable=None, sparse=False)._backend
+        <sage.graphs.base.dense_graph.DenseGraphBackend object at ...>
+        sage: G.orient(foo, data_structure=None, immutable=None, sparse=None)._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+        sage: H = Graph(data_structure='dense')
+        sage: H.orient(foo, data_structure=None, immutable=None, sparse=None)._backend
+        <sage.graphs.base.dense_graph.DenseGraphBackend object at ...>
+    """
+    # Which data structure should be used ?
+    if data_structure is not None:
+        # data_structure is already defined so there is nothing left to do
+        # here. Did the user try to define too much ?
+        if immutable is not None or sparse is not None:
+            raise ValueError("you cannot define 'immutable' or 'sparse' "
+                             "when 'data_structure' has a value")
+    # At this point, data_structure is None.
+    elif immutable is True:
+        data_structure = 'static_sparse'
+        if sparse is False:
+            raise ValueError("there is no dense immutable backend at the moment")
+    elif immutable is False:
+        # If the user requests a mutable digraph and input is immutable, we
+        # choose the 'sparse' cgraph backend. Unless the user explicitly
+        # asked for something different.
+        if G.is_immutable():
+            data_structure = 'dense' if sparse is False else 'sparse'
+    elif sparse is True:
+        data_structure = "sparse"
+    elif sparse is False:
+        data_structure = "dense"
+
+    if data_structure is None:
+        from sage.graphs.base.dense_graph import DenseGraphBackend
+        if isinstance(G._backend, DenseGraphBackend):
+            data_structure = "dense"
+        else:
+            data_structure = "sparse"
+
+    if weighted is None:
+        weighted = G.weighted()
+
+    edges = (f(e) for e in G.edge_iterator())
+    D = DiGraph([G, edges], format='vertices_and_edges',
+                data_structure=data_structure,
+                loops=G.allows_loops(),
+                multiedges=G.allows_multiple_edges(),
+                name=f"Orientation of {G.name()}",
+                pos=copy(G._pos), weighted=weighted,
+                hash_labels=hash_labels)
+
+    attributes_to_copy = ('_assoc', '_embedding')
+    for attr in attributes_to_copy:
+        if hasattr(G, attr):
+            copy_attr = {}
+            old_attr = getattr(G, attr)
+            if isinstance(old_attr, dict):
+                for v, value in old_attr.items():
+                    try:
+                        copy_attr[v] = value.copy()
+                    except AttributeError:
+                        copy_attr[v] = copy(value)
+                setattr(D, attr, copy_attr)
+            else:
+                setattr(D, attr, copy(old_attr))
+
+    return D
+
+
+def acyclic_orientations(G):
+    r"""
+    Return an iterator over all acyclic orientations of an undirected graph `G`.
+
+    ALGORITHM:
+
+    The algorithm is based on [Sq1998]_.
+    It presents an efficient algorithm for listing the acyclic orientations of a
+    graph. The algorithm is shown to require O(n) time per acyclic orientation
+    generated, making it the most efficient known algorithm for generating acyclic
+    orientations.
+
+    The function uses a recursive approach to generate acyclic orientations of the
+    graph. It reorders the vertices and edges of the graph, creating a new graph
+    with updated labels. Then, it iteratively generates acyclic orientations by
+    considering subsets of edges and checking whether they form upsets in a
+    corresponding poset.
+
+    INPUT:
+
+    - ``G`` -- an undirected graph
+
+    OUTPUT: an iterator over all acyclic orientations of the input graph
+
+    .. NOTE::
+
+        The function assumes that the input graph is undirected and the edges
+        are unlabelled.
+
+    EXAMPLES:
+
+    To count the number of acyclic orientations for a graph::
+
+        sage: g = Graph([(0, 3), (0, 4), (3, 4), (1, 3), (1, 2), (2, 3), (2, 4)])
+        sage: it = g.acyclic_orientations()
+        sage: len(list(it))
+        54
+
+    Test for arbitrary vertex labels::
+
+        sage: g_str = Graph([('abc', 'def'), ('ghi', 'def'), ('xyz', 'abc'),
+        ....:                ('xyz', 'uvw'), ('uvw', 'abc'), ('uvw', 'ghi')])
+        sage: it = g_str.acyclic_orientations()
+        sage: len(list(it))
+        42
+
+    Check that the method returns properly relabeled acyclic digraphs::
+
+        sage: g = Graph([(0, 1), (1, 2), (2, 3), (3, 0), (0, 2)])
+        sage: orientations = set([frozenset(d.edges(labels=false)) for d in g.acyclic_orientations()])
+        sage: len(orientations)
+        18
+        sage: all(d.is_directed_acyclic() for d in g.acyclic_orientations())
+        True
+
+    TESTS:
+
+    To count the number of acyclic orientations for a graph with 0 vertices::
+
+        sage: list(Graph().acyclic_orientations())
+        []
+
+    To count the number of acyclic orientations for a graph with 1 vertex::
+
+        sage: list(Graph(1).acyclic_orientations())
+        []
+
+    To count the number of acyclic orientations for a graph with 2 vertices::
+
+        sage: list(Graph(2).acyclic_orientations())
+        []
+
+    Acyclic orientations of a complete graph::
+
+        sage: g = graphs.CompleteGraph(5)
+        sage: it = g.acyclic_orientations()
+        sage: len(list(it))
+        120
+
+    Graph with one edge::
+
+        sage: list(Graph([(0, 1)]).acyclic_orientations())
+        [Digraph on 2 vertices, Digraph on 2 vertices]
+
+    Graph with two edges::
+
+        sage: len(list(Graph([(0, 1), (1, 2)]).acyclic_orientations()))
+        4
+
+    Cycle graph::
+
+        sage: len(list(Graph([(0, 1), (1, 2), (2, 0)]).acyclic_orientations()))
+        6
+    """
+    if not G.size():
+        # A graph without edge cannot be oriented
+        return
+
+    from sage.rings.infinity import Infinity
+    from sage.combinat.subset import Subsets
+
+    def reorder_vertices(G):
+        n = G.order()
+        ko = n
+        k = n
+        G_copy = G.copy()
+        vertex_labels = {v: None for v in G_copy.vertices()}
+
+        while G_copy.size() > 0:
+            min_val = float('inf')
+            uv = None
+            for u, v, _ in G_copy.edges():
+                du = G_copy.degree(u)
+                dv = G_copy.degree(v)
+                val = (du + dv) / (du * dv)
+                if val < min_val:
+                    min_val = val
+                    uv = (u, v)
+
+            if uv:
+                u, v = uv
+                vertex_labels[u] = ko
+                vertex_labels[v] = ko - 1
+                G_copy.delete_vertex(u)
+                G_copy.delete_vertex(v)
+                ko -= 2
+
+            if G_copy.size() == 0:
+                break
+
+        for vertex, label in vertex_labels.items():
+            if label is None:
+                vertex_labels[vertex] = ko
+                ko -= 1
+
+        return vertex_labels
+
+    def order_edges(G, vertex_labels):
+        n = len(vertex_labels)
+        m = 1
+        edge_labels = {}
+
+        for j in range(2, n + 1):
+            for i in range(1, j):
+                if G.has_edge(i, j):
+                    edge_labels[(i, j)] = m
+                    m += 1
+
+        return edge_labels
+
+    def is_upset_of_poset(Poset, subset, keys):
+        for (u, v) in subset:
+            for (w, x) in keys:
+                if (Poset[(u, v), (w, x)] == 1 and (w, x) not in subset):
+                    return False
+        return True
+
+    def generate_orientations(globO, starting_of_Ek, m, k, keys):
+        # Creating a poset
+        Poset = {}
+        for i in range(starting_of_Ek, m - 1):
+            for j in range(starting_of_Ek, m - 1):
+                u, v = keys[i]
+                w, x = keys[j]
+                Poset[(u, v), (w, x)] = 0
+
+        # Create a new graph to determine reachable vertices
+        new_G = DiGraph()
+
+        # Process vertices up to starting_of_Ek
+        new_G.add_edges([(v, u) if globO[(u, v)] == 1 else (u, v) for u, v in keys[:starting_of_Ek]])
+
+        # Process vertices starting from starting_of_Ek
+        new_G.add_vertices([u for u, _ in keys[starting_of_Ek:]] + [v for _, v in keys[starting_of_Ek:]])
+
+        if (globO[(k-1, k)] == 1):
+            new_G.add_edge(k, k - 1)
+        else:
+            new_G.add_edge(k-1, k)
+
+        for i in range(starting_of_Ek, m - 1):
+            for j in range(starting_of_Ek, m - 1):
+                u, v = keys[i]
+                w, x = keys[j]
+                # w should be reachable from u and v should be reachable from x
+                if w in new_G.depth_first_search(u) and v in new_G.depth_first_search(x):
+                    Poset[(u, v), (w, x)] = 1
+
+        # For each subset of the base set of E_k, check if it is an upset or not
+        upsets = []
+        for subset in Subsets(keys[starting_of_Ek:m-1]):
+            if (is_upset_of_poset(Poset, subset, keys[starting_of_Ek:m-1])):
+                upsets.append(list(subset))
+
+        for upset in upsets:
+            for i in range(starting_of_Ek, m - 1):
+                u, v = keys[i]
+                if (u, v) in upset:
+                    globO[(u, v)] = 1
+                else:
+                    globO[(u, v)] = 0
+
+            yield globO.copy()
+
+    def helper(G, globO, m, k):
+        keys = list(globO.keys())
+        keys = keys[0:m]
+
+        if m <= 0:
+            yield {}
+            return
+
+        starting_of_Ek = 0
+        for (u, v) in keys:
+            if u >= k - 1 or v >= k - 1:
+                break
+            else:
+                starting_of_Ek += 1
+
+        # s is the size of E_k
+        s = m - 1 - starting_of_Ek
+
+        # Recursively generate acyclic orientations
+        orientations_G_small = helper(G, globO, starting_of_Ek, k - 2)
+
+        # For each orientation of G_k-2, yield acyclic orientations
+        for alpha in orientations_G_small:
+            for (u, v) in alpha:
+                globO[(u, v)] = alpha[(u, v)]
+
+            # Orienting H_k as 1
+            globO[(k-1, k)] = 1
+            yield from generate_orientations(globO, starting_of_Ek, m, k, keys)
+
+            # Orienting H_k as 0
+            globO[(k-1, k)] = 0
+            yield from generate_orientations(globO, starting_of_Ek, m, k, keys)
+
+    # Reorder vertices based on the logic in reorder_vertices function
+    vertex_labels = reorder_vertices(G)
+
+    # Create a new graph with updated vertex labels using SageMath, Assuming the graph edges are unlabelled
+    new_G = G.relabel(perm=vertex_labels, inplace=False)
+
+    G = new_G
+
+    # Order the edges based on the logic in order_edges function
+    edge_labels = order_edges(G, vertex_labels)
+
+    # Create globO array
+    globO = {uv: 0 for uv in edge_labels}
+
+    m = len(edge_labels)
+    k = len(vertex_labels)
+    orientations = helper(G, globO, m, k)
+
+    # Create a mapping between original and new vertex labels
+    reverse_vertex_labels = {label: vertex for vertex, label in vertex_labels.items()}
+
+    # Iterate over acyclic orientations and create relabeled graphs
+    for orientation in orientations:
+        D = DiGraph([(u, v) if label else (v, u) for (u, v), label in orientation.items()])
+        D.relabel(perm=reverse_vertex_labels, inplace=True)
+        yield D
 
 
 def strong_orientations_iterator(G):
@@ -69,11 +514,9 @@ def strong_orientations_iterator(G):
 
     INPUT:
 
-    - ``G`` -- an undirected graph.
+    - ``G`` -- an undirected graph
 
-    OUTPUT:
-
-    - an iterator which will produce all strong orientations of this graph.
+    OUTPUT: an iterator which will produce all strong orientations of this graph
 
     .. NOTE::
 
@@ -190,17 +633,15 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
 
     INPUT:
 
-    - ``Dg`` -- the mixed graph. The undirected edges are doubly oriented.
+    - ``Dg`` -- the mixed graph. The undirected edges are doubly oriented
 
     - ``V`` -- the set of vertices
 
     - ``E`` -- the set of undirected edges (they are oriented in both ways);
-      No labels are allowed.
+      no labels are allowed
 
-    OUTPUT:
-
-    - an iterator which will produce all strong orientations of the input
-      partially directed graph.
+    OUTPUT: an iterator which will produce all strong orientations of the input
+    partially directed graph
 
     EXAMPLES::
 
@@ -217,7 +658,7 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
     while i < length:
         u, v = E[i]
         Dg.delete_edge(u, v)
-        if not (v in Dg.depth_first_search(u)):
+        if v not in Dg.depth_first_search(u):
             # del E[i] in constant time
             E[i] = E[-1]
             E.pop()
@@ -228,7 +669,7 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
         else:
             Dg.add_edge(u, v)
             Dg.delete_edge(v, u)
-            if not (u in Dg.depth_first_search(v)):
+            if u not in Dg.depth_first_search(v):
                 # del E[i] in constant time
                 E[i] = E[-1]
                 E.pop()
@@ -267,7 +708,7 @@ def random_orientation(G):
 
     INPUT:
 
-    - ``G`` -- a Graph.
+    - ``G`` -- a Graph
 
     EXAMPLES::
 

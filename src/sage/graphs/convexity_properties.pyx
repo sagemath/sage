@@ -117,7 +117,7 @@ cdef class ConvexityProperties:
       elements `z` with `d_{G}(u,w) + d_{G}(w,v) = d_{G}(u,v)`. This is not in
       general equal to `h(\{u,v\})` !
 
-    Nothing says these recommandations will actually lead to any actual
+    Nothing says these recommendations will actually lead to any actual
     improvements. There are just some ideas remembered while writing this
     code. Trying to optimize may well lead to lost in efficiency on many
     instances.
@@ -142,7 +142,7 @@ cdef class ConvexityProperties:
 
     def __init__(self, G):
         r"""
-        Constructor
+        Constructor.
 
         EXAMPLES::
 
@@ -215,7 +215,7 @@ cdef class ConvexityProperties:
 
     def __dealloc__(self):
         r"""
-        Destructor
+        Destructor.
 
         EXAMPLES::
 
@@ -223,24 +223,23 @@ cdef class ConvexityProperties:
             sage: g = graphs.PetersenGraph()
             sage: ConvexityProperties(g)
             <sage.graphs.convexity_properties.ConvexityProperties object at ...>
-
         """
         binary_matrix_free(self._cache_hull_pairs)
 
-    cdef list _vertices_to_integers(self, vertices) noexcept:
+    cdef list _vertices_to_integers(self, vertices):
         r"""
-        Converts a list of vertices to a list of integers with the cached data.
+        Convert a list of vertices to a list of integers with the cached data.
         """
         return [self._dict_vertices_to_integers[v] for v in vertices]
 
-    cdef list _integers_to_vertices(self, list integers) noexcept:
+    cdef list _integers_to_vertices(self, list integers):
         r"""
         Convert a list of integers to a list of vertices with the cached data.
         """
         cdef int i
         return [self._list_integers_to_vertices[i] for i in integers]
 
-    cdef _bitset_convex_hull(self, bitset_t hull) noexcept:
+    cdef _bitset_convex_hull(self, bitset_t hull):
         r"""
         Compute the convex hull of a list of vertices given as a bitset.
 
@@ -290,13 +289,13 @@ cdef class ConvexityProperties:
             # Otherwise, update and back to the loop
             count = tmp_count
 
-    cpdef hull(self, list vertices) noexcept:
+    cpdef hull(self, list vertices):
         r"""
         Return the convex hull of a set of vertices.
 
         INPUT:
 
-        * ``vertices`` -- A list of vertices.
+        - ``vertices`` -- list of vertices
 
         EXAMPLES::
 
@@ -321,7 +320,7 @@ cdef class ConvexityProperties:
 
         return answer
 
-    cdef _greedy_increase(self, bitset_t bs) noexcept:
+    cdef _greedy_increase(self, bitset_t bs):
         r"""
         Given a bitset whose hull is not the whole set, greedily add vertices
         and stop before its hull is the whole set.
@@ -343,7 +342,7 @@ cdef class ConvexityProperties:
 
         bitset_free(tmp)
 
-    cpdef hull_number(self, value_only=True, verbose=False) noexcept:
+    cpdef hull_number(self, value_only=True, verbose=False):
         r"""
         Compute the hull number and a corresponding generating set.
 
@@ -352,11 +351,11 @@ cdef class ConvexityProperties:
 
         INPUT:
 
-        * ``value_only`` -- boolean (default: ``True``); whether to return only
+        - ``value_only`` -- boolean (default: ``True``); whether to return only
           the hull number (default) or a minimum set whose convex hull is the
           whole graph
 
-        * ``verbose`` -- boolean (default: ``False``); whether to display
+        - ``verbose`` -- boolean (default: ``False``); whether to display
           information on the LP
 
         **COMPLEXITY:**
@@ -507,7 +506,8 @@ def geodetic_closure(G, S):
     each vertex `u \in S`, the algorithm first performs a breadth first search
     from `u` to get distances, and then identifies the vertices of `G` lying on
     a shortest path from `u` to any `v\in S` using a reversal traversal from
-    vertices in `S`.  This algorithm has time complexity in `O(|S|(n + m))` and
+    vertices in `S`.  This algorithm has time complexity in `O(|S|(n + m))` for
+    ``SparseGraph``, `O(|S|(n + m) + n^2)` for ``DenseGraph`` and
     space complexity in `O(n + m)`.
 
     INPUT:
@@ -678,10 +678,10 @@ def is_geodetic(G):
     Check whether the input (di)graph is geodetic.
 
     A graph `G` is *geodetic* if there exists only one shortest path between
-    every pair of its vertices. This can be checked in time `O(nm)` in
-    unweighted (di)graphs with `n` nodes and `m` edges. Examples of geodetic
-    graphs are trees, cliques and odd cycles. See the
-    :wikipedia:`Geodetic_graph` for more details.
+    every pair of its vertices. This can be checked in time `O(nm)` for
+    ``SparseGraph`` and `O(nm+n^2)` for ``DenseGraph`` in unweighted (di)graphs
+    with `n` nodes and `m` edges. Examples of geodetic graphs are trees, cliques
+    and odd cycles. See the :wikipedia:`Geodetic_graph` for more details.
 
     (Di)graphs with multiple edges are not considered geodetic.
 

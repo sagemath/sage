@@ -7,7 +7,6 @@ a vector bundle.
 AUTHORS:
 
 - Michael Jung (2019): initial version
-
 """
 
 #******************************************************************************
@@ -21,13 +20,14 @@ AUTHORS:
 
 from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 
+
 class VectorBundleFiberElement(FiniteRankFreeModuleElement):
     r"""
     Vector in a fiber of a vector bundle at the given point.
 
     INPUT:
 
-    - parent -- :class:`~sage.manifolds.vector_bundle_fiber.VectorBundleFiber`;
+    - ``parent`` -- :class:`~sage.manifolds.vector_bundle_fiber.VectorBundleFiber`;
       the fiber to which the vector belongs
     - ``name`` -- (default: ``None``) string; symbol given to the vector
     - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote
@@ -57,7 +57,6 @@ class VectorBundleFiberElement(FiniteRankFreeModuleElement):
 
         :class:`~sage.tensor.modules.free_module_element.FiniteRankFreeModuleElement`
         for more documentation.
-
     """
     def __init__(self, parent, name=None, latex_name=None):
         r"""
@@ -76,7 +75,6 @@ class VectorBundleFiberElement(FiniteRankFreeModuleElement):
              topological manifold M
             sage: v[:] = 5, -3/2
             sage: TestSuite(v).run()
-
         """
         FiniteRankFreeModuleElement.__init__(self, parent, name=name,
                                              latex_name=latex_name)
@@ -103,7 +101,6 @@ class VectorBundleFiberElement(FiniteRankFreeModuleElement):
             sage: repr(v)  # indirect doctest
             'Vector v in the fiber of E at Point p on the 2-dimensional
              topological manifold M'
-
         """
         desc = "Vector "
         if self._name:

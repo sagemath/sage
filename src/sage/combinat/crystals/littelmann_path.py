@@ -28,6 +28,7 @@ AUTHORS:
 # ***************************************************************************
 
 from sage.misc.cachefunc import cached_in_parent_method, cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.parent import Parent
@@ -38,12 +39,13 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.loop_crystals import (RegularLoopCrystals,
                                            KirillovReshetikhinCrystals)
 from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.combinat.root_system.root_system import RootSystem
 from sage.arith.misc import integer_floor as floor
 from sage.misc.latex import latex
+
+lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
 
 
 class CrystalOfLSPaths(UniqueRepresentation, Parent):
@@ -758,7 +760,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
 
         - ``q`` -- (default: ``None``) a variable or ``None``; if ``None``,
           a variable ``q`` is set in the code
-        - ``group_components`` -- (default: ``True``) boolean; if ``True``,
+        - ``group_components`` -- boolean (default: ``True``); if ``True``,
           then the terms are grouped by classical component
 
         The one-dimensional configuration sum is the sum of the weights
@@ -995,7 +997,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
             """
             cartan = self.parent().weight.parent().cartan_type().classical()
             I = cartan.index_set()
-            W = WeylGroup(cartan, prefix='s', implementation="permutation")
+            W = WeylGroup(cartan, prefix='s', implementation='permutation')
             return [W.from_reduced_word(x.to_dominant_chamber(index_set=I, reduced_word=True)[1]) for x in self.value]
 
         @cached_in_parent_method
@@ -1149,7 +1151,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
             ct = P.cartan_type()
             cartan = ct.classical()
             Qv = RootSystem(cartan).coroot_lattice()
-            W = WeylGroup(cartan, prefix='s', implementation="permutation")
+            W = WeylGroup(cartan, prefix='s', implementation='permutation')
             J = tuple(weight.weyl_stabilizer())
             L = self.weyl_group_representation()
             if ct.is_untwisted_affine() or ct.type() == 'BC':
@@ -1158,7 +1160,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
             else:
                 untwisted = False
                 cartan_dual = cartan.dual()
-                Wd = WeylGroup(cartan_dual, prefix='s', implementation="permutation")
+                Wd = WeylGroup(cartan_dual, prefix='s', implementation='permutation')
                 G = Wd.quantum_bruhat_graph(J)
                 Qd = RootSystem(cartan_dual).root_lattice()
 
@@ -1303,7 +1305,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
             - ``i`` -- element of the index set
             - ``power`` -- (default: 1) positive integer; specifies the
               power of the lowering operator to be applied
-            - ``length_only`` -- (default: ``False``) boolean; if ``True``,
+            - ``length_only`` -- boolean (default: ``False``); if ``True``,
               then return the distance to the anti-dominant end of the
               `i`-string of ``self``
 
@@ -1338,7 +1340,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
                 sage: [x.epsilon(i) for i in B.index_set()]
                 [1, 1, 0, 1]
 
-            Check that :trac:`21671` is fixed::
+            Check that :issue:`21671` is fixed::
 
                 sage: B = crystals.infinity.LSPaths(['G',2])
                 sage: len(B.subcrystal(max_depth=7))
@@ -1380,7 +1382,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
             - ``i`` -- element of the index set
             - ``power`` -- (default: 1) positive integer; specifies the
               power of the lowering operator to be applied
-            - ``length_only`` -- (default: ``False``) boolean; if ``True``,
+            - ``length_only`` -- boolean (default: ``False``); if ``True``,
               then return the distance to the anti-dominant end of the
               `i`-string of ``self``
 

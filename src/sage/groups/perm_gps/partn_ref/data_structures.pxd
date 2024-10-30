@@ -14,6 +14,8 @@ from libc.string cimport memcpy
 from libc.stdlib cimport rand
 from sage.libs.gmp.mpz cimport *
 
+from cysignals.memory cimport sig_free
+
 
 cdef enum:
     # The following is for the automorphism group computation, says what the
@@ -85,8 +87,7 @@ cdef inline OrbitPartition *OP_copy(OrbitPartition *OP) noexcept:
     """
     Allocate and return a pointer to a copy of a OrbitPartition of degree n.
 
-    Returns a
-    null pointer in the case of an allocation failure.
+    Returns a null pointer in the case of an allocation failure.
     """
     cdef OrbitPartition *OP2 = OP_new(OP.degree)
     if OP is NULL:
@@ -95,7 +96,7 @@ cdef inline OrbitPartition *OP_copy(OrbitPartition *OP) noexcept:
     OP_copy_from_to(OP, OP2)
     return OP2
 
-cdef OP_string(OrbitPartition *OP) noexcept
+cdef OP_string(OrbitPartition *OP)
 
 cdef inline void OP_clear(OrbitPartition *OP) noexcept:
     cdef int i, n = OP.degree
@@ -115,7 +116,7 @@ cdef inline int OP_find(OrbitPartition *OP, int n) noexcept:
         OP.parent[n] = OP_find(OP, OP.parent[n])
         return OP.parent[n]
 
-cdef inline int OP_join(OrbitPartition *OP, int m, int n) noexcept:
+cdef inline void OP_join(OrbitPartition *OP, int m, int n) noexcept:
     """
     Join the cells containing m and n, if they are different.
     """
@@ -137,16 +138,51 @@ cdef inline int OP_join(OrbitPartition *OP, int m, int n) noexcept:
     if m_root != n_root:
         OP.num_cells -= 1
 
+
+cdef inline void OP_make_set(OrbitPartition *OP) noexcept:
+    cdef int i, n = OP.degree
+    cdef int *new_parent, *new_rank, *new_mcr, *new_size
+
+    cdef int *int_array = <int *> sig_malloc(4*(n+1) * sizeof(int))
+    if int_array is NULL:
+        raise MemoryError("MemoryError allocating int_array in make_set method")
+
+    OP.degree = n + 1
+    OP.num_cells = OP.num_cells + 1
+    new_parent = int_array
+    new_rank = int_array + (n + 1)
+    new_mcr = int_array + (2*n + 2)
+    new_size = int_array + (3 * n + 3)
+
+    memcpy(new_parent, OP.parent, n * sizeof(int))
+    memcpy(new_rank, OP.rank, n * sizeof(int))
+    memcpy(new_mcr, OP.mcr, n * sizeof(int))
+    memcpy(new_size, OP.size, n * sizeof(int))
+
+    new_parent[n] = n
+    new_rank[n] = 0
+    new_mcr[n] = n
+    new_size[n] = 1
+
+    sig_free(OP.parent)
+
+    OP.parent = new_parent
+    OP.rank = new_rank
+    OP.mcr = new_mcr
+    OP.size = new_size
+
 cdef inline int OP_merge_list_perm(OrbitPartition *OP, int *gamma) noexcept:
     """
     Joins the cells of OP which intersect the same orbit of gamma.
 
     INPUT:
-        gamma - an integer array representing i -> gamma[i].
+
+    - ``gamma`` - an integer array representing ``i -> gamma[i]``.
 
     OUTPUT:
-        1 - something changed
-        0 - orbits of gamma all contained in cells of OP
+
+    - 1 -- something changed
+    - 0 -- orbits of gamma all contained in cells of OP
     """
     cdef int i, i_root, gamma_i_root, changed = 0
     for i from 0 <= i < OP.degree:
@@ -172,7 +208,7 @@ cdef inline int PS_copy_from_to(PartitionStack *PS, PartitionStack *PS2) noexcep
 
 cdef inline bint PS_is_discrete(PartitionStack *PS) noexcept:
     """
-    Returns whether the deepest partition consists only of singleton cells.
+    Return whether the deepest partition consists only of singleton cells.
     """
     cdef int i
     for i from 0 <= i < PS.degree:
@@ -182,7 +218,7 @@ cdef inline bint PS_is_discrete(PartitionStack *PS) noexcept:
 
 cdef inline int PS_num_cells(PartitionStack *PS) noexcept:
     """
-    Returns the number of cells.
+    Return the number of cells.
     """
     cdef int i, ncells = 0
     for i from 0 <= i < PS.degree:
@@ -206,20 +242,20 @@ cdef inline void PS_move_min_to_front(PartitionStack *PS, int start, int end) no
 
 cdef inline bint PS_is_mcr(PartitionStack *PS, int m) noexcept:
     """
-    Returns whether PS.elements[m] (not m!) is the smallest element of its cell.
+    Return whether PS.elements[m] (not m!) is the smallest element of its cell.
     """
     return m == 0 or PS.levels[m-1] <= PS.depth
 
 cdef inline bint PS_is_fixed(PartitionStack *PS, int m) noexcept:
     """
-    Returns whether PS.elements[m] (not m!) is in a singleton cell, assuming
+    Return whether PS.elements[m] (not m!) is in a singleton cell, assuming
     PS_is_mcr(PS, m) is already true.
     """
     return PS.levels[m] <= PS.depth
 
 cdef inline int PS_clear(PartitionStack *PS) noexcept:
     """
-    Sets the current partition to the first shallower one, i.e. forgets about
+    Set the current partition to the first shallower one, i.e. forgets about
     boundaries between cells that are new to the current level.
     """
     cdef int i, cur_start = 0
@@ -243,7 +279,7 @@ cdef inline int PS_move_all_mins_to_front(PartitionStack *PS) noexcept:
 cdef inline int PS_get_perm_from(PartitionStack *PS1, PartitionStack *PS2, int *gamma) noexcept:
     """
     Store the permutation determined by PS2[i] -> PS1[i] for each i, where PS[i]
-    denotes the entry of the ith cell of the discrete partition PS.
+    denotes the entry of the `i`-th cell of the discrete partition PS.
     """
     cdef int i
     for i from 0 <= i < PS1.degree:
@@ -255,7 +291,7 @@ cdef PartitionStack *PS_copy(PartitionStack *PS) noexcept
 
 cdef void PS_dealloc(PartitionStack *PS) noexcept
 
-cdef PS_print(PartitionStack *PS) noexcept
+cdef PS_print(PartitionStack *PS)
 
 cdef void PS_unit_partition(PartitionStack *PS) noexcept
 
@@ -263,7 +299,7 @@ cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=?) no
 
 cdef PartitionStack *PS_from_list(list L) noexcept
 
-cdef list PS_singletons(PartitionStack * part) noexcept
+cdef list PS_singletons(PartitionStack * part)
 
 cdef int PS_all_new_cells(PartitionStack *PS, bitset_t** nonsingletons_ptr) noexcept
 
@@ -320,14 +356,13 @@ cdef inline int split_point_and_refine(PartitionStack *PS, int v, void *S,
     the refinement function.
 
     INPUT:
-    PS -- the partition stack to refine
-    v -- the point to split
-    S -- the structure
-    refine_and_return_invariant -- the refinement function provided
-    cells_to_refine_by -- an array, contents ignored
-    group -- the containing group, NULL for full S_n
-    perm_stack -- represents a partial traversal decomposition for group
-
+    - ``PS`` -- the partition stack to refine
+    - ``v`` -- the point to split
+    - ``S`` -- the structure
+    - ``refine_and_return_invariant`` -- the refinement function provided
+    - ``cells_to_refine_by`` -- an array, contents ignored
+    - ``group`` -- the containing group, NULL for full S_n
+    - ``perm_stack`` -- represents a partial traversal decomposition for group
     """
     PS.depth += 1
     PS_clear(PS)
@@ -385,7 +420,7 @@ cdef inline void SC_identify(int *perm, int degree) noexcept:
 
 cdef inline void SC_add_base_point(StabilizerChain *SC, int b) noexcept:
     """
-    Adds base point b to the end of SC. Assumes b is not already in the base.
+    Add base point b to the end of SC. Assumes b is not already in the base.
     """
     cdef int i, n = SC.degree
     SC.orbit_sizes[SC.base_size] = 1
@@ -481,8 +516,8 @@ cdef inline int SC_update_tree(StabilizerChain *SC, int level, int *pi, int num_
 
 cdef inline void SC_order(StabilizerChain *SC, int i, mpz_t order) noexcept:
     """
-    Gives the order of the stabilizer of base points up to but not including the
-    i-th, storing it to ``order``, which must be already initialized.
+    Give the order of the stabilizer of base points up to but not including the
+    `i`-th, storing it to ``order``, which must be already initialized.
 
     To get the order of the full group, let ``i = 0``.
     """
@@ -516,7 +551,7 @@ cdef inline bint SC_contains(StabilizerChain *SC, int level, int *pi, bint modif
 
 cdef inline void SC_random_element(StabilizerChain *SC, int level, int *perm) noexcept:
     """
-    Gives a random element of the level-th stabilizer. For a random element of the
+    Give a random element of the level-th stabilizer. For a random element of the
     whole group, set level to 0. Must have level < SC.base_size.
     """
     cdef int i, x, n = SC.degree
@@ -533,7 +568,7 @@ cdef inline void update_perm_stack(StabilizerChain *group, int level, int point,
     int *perm_stack) noexcept:
     """
     Ensure that perm_stack[level] is gamma_0^{-1}...gamma_{level-1}^{-1}, where
-    each gamma_i represents the coset representative at the ith level determined
+    each gamma_i represents the coset representative at the `i`-th level determined
     by our current position in the search tree.
 
     For internal use within the automorphism group, canonical label and double

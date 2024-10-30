@@ -3,7 +3,7 @@
 from sage.rings.power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element
 from sage.rings.infinity import infinity
-from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings import power_series_poly
 
 
@@ -56,13 +56,13 @@ cdef class PowerSeries_mpoly(PowerSeries):
             # avoid having an if statement in the inner loop of a
             # doubly-nested for loop.
             d = {}
-            if is_MPolynomialRing(B):
+            if isinstance(B, MPolynomialRing_base):
                 for i in range(len(v)):
-                    for n, c in v[i].dict().iteritems():
+                    for n, c in v[i].monomial_coefficients().items():
                         d[tuple(n) + (i,)] = c
             else:
                 for i in range(len(v)):
-                    for n, c in v[i].dict().iteritems():
+                    for n, c in v[i].monomial_coefficients().items():
                         d[(n,i)] = c
 
             self.__f = S(d)
@@ -106,7 +106,7 @@ cdef class PowerSeries_mpoly(PowerSeries):
     def _mpoly(self):
         return self.__f
 
-    cpdef _mul_(self, right_r) noexcept:
+    cpdef _mul_(self, right_r):
         """
         Return the product of two power series.
         """
@@ -115,7 +115,6 @@ cdef class PowerSeries_mpoly(PowerSeries):
                                  self.__f * (<PowerSeries_mpoly>right_r).__f,
                                  prec = prec,
                                  check =True)
-
 
     def __iter__(self):
         """
@@ -130,7 +129,7 @@ cdef class PowerSeries_mpoly(PowerSeries):
         return PowerSeries_mpoly(self._parent, -self.__f,
                                          self._prec, check=False)
 
-    cpdef _add_(self, right_m) noexcept:
+    cpdef _add_(self, right_m):
         """
         EXAMPLES:
         """
@@ -138,7 +137,7 @@ cdef class PowerSeries_mpoly(PowerSeries):
         return PowerSeries_mpoly(self._parent, self.__f + right.__f,
                                  self.common_prec_c(right), check=True)
 
-    cpdef _sub_(self, right_m) noexcept:
+    cpdef _sub_(self, right_m):
         """
         Return difference of two power series.
 
@@ -148,11 +147,11 @@ cdef class PowerSeries_mpoly(PowerSeries):
         return PowerSeries_mpoly(self._parent, self.__f - right.__f,
                                  self.common_prec_c(right), check=True)
 
-    cpdef _rmul_(self, Element c) noexcept:
+    cpdef _rmul_(self, Element c):
         return PowerSeries_mpoly(self._parent, self.__f._rmul_(c),
                                  self._prec, check=False)
 
-    cpdef _lmul_(self, Element c) noexcept:
+    cpdef _lmul_(self, Element c):
         return PowerSeries_mpoly(self._parent, self.__f._lmul_(c),
                                  self._prec, check=False)
 

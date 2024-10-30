@@ -8,7 +8,6 @@ AUTHORS:
 - Vincent Delecroix (2011): cleaning, bug corrections, doctests
 
 - Antoine Genitrini (2020) : new implementation of the lexicographic unranking of combinations
-
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,

@@ -30,7 +30,7 @@ from sage.arith.misc import gcd
 #########################################################################
 class Polyhedron_ZZ(Polyhedron_QQ):
     r"""
-    Base class for Polyhedra over `\ZZ`
+    Base class for Polyhedra over `\ZZ`.
 
     TESTS::
 
@@ -91,7 +91,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         TESTS:
 
-        Check :trac:`22622`::
+        Check :issue:`22622`::
 
             sage: P1 = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]])
             sage: P1.is_lattice_polytope()
@@ -115,26 +115,26 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``verbose`` - boolean (default: ``False``); if ``True``, print the
-          whole output of the LattE command.
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print the
+          whole output of the LattE command
 
         The following options are passed to the LattE command, for details you
         should consult `the LattE documentation
         <https://www.math.ucdavis.edu/~latte/software/packages/latte_current/>`__:
 
-        - ``dual`` - boolean; triangulate and signed-decompose in the dual
+        - ``dual`` -- boolean; triangulate and signed-decompose in the dual
           space
 
-        - ``irrational_primal`` - boolean; triangulate in the dual space,
-          signed-decompose in the primal space using irrationalization.
+        - ``irrational_primal`` -- boolean; triangulate in the dual space,
+          signed-decompose in the primal space using irrationalization
 
-        - ``irrational_all_primal`` - boolean; triangulate and signed-decompose
-          in the primal space using irrationalization.
+        - ``irrational_all_primal`` -- boolean; triangulate and signed-decompose
+          in the primal space using irrationalization
 
         - ``maxdet`` -- integer; decompose down to an index (determinant) of
-          ``maxdet`` instead of index 1 (unimodular cones).
+          ``maxdet`` instead of index 1 (unimodular cones)
 
-        - ``no_decomposition`` -- boolean; do not signed-decompose simplicial cones.
+        - ``no_decomposition`` -- boolean; do not signed-decompose simplicial cones
 
         - ``compute_vertex_cones`` -- string; either 'cdd' or 'lrs' or '4ti2'
 
@@ -142,9 +142,9 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         - ``dualization`` -- string; either 'cdd' or '4ti2'
 
-        - ``triangulation`` - string; 'cddlib', '4ti2' or 'topcom'
+        - ``triangulation`` -- string; 'cddlib', '4ti2' or 'topcom'
 
-        - ``triangulation_max_height`` - integer; use a uniform distribution of
+        - ``triangulation_max_height`` -- integer; use a uniform distribution of
           height from 1 to this number
 
         .. NOTE::
@@ -266,12 +266,10 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``variable`` -- (string, default='t'); the variable in which the
-          Ehrhart polynomial is expressed.
+        - ``variable`` -- string (default: ``'t'``); the variable in which the
+          Ehrhart polynomial is expressed
 
-        OUTPUT:
-
-        A univariate polynomial over a rational field.
+        OUTPUT: a univariate polynomial over a rational field
 
         EXAMPLES::
 
@@ -316,7 +314,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``engine`` -- string; The backend to use. Allowed values are:
+        - ``engine`` -- string; the backend to use. Allowed values are:
 
           * ``None`` (default); When no input is given the Ehrhart polynomial
             is computed using LattE Integrale (optional)
@@ -324,23 +322,23 @@ class Polyhedron_ZZ(Polyhedron_QQ):
           * ``'normaliz'``; use Normaliz program (optional). The backend of
             ``self`` must be set to 'normaliz'.
 
-        - ``variable`` -- string (default: 't'); The variable in which the
-          Ehrhart polynomial should be expressed.
+        - ``variable`` -- string (default: ``'t'``); the variable in which the
+          Ehrhart polynomial should be expressed
 
         - When the ``engine`` is 'latte' or None, the additional input values are:
 
-          * ``verbose`` - boolean (default: ``False``); if ``True``, print the
+          * ``verbose`` -- boolean (default: ``False``); if ``True``, print the
             whole output of the LattE command.
 
           The following options are passed to the LattE command, for details
           consult `the LattE documentation
           <https://www.math.ucdavis.edu/~latte/software/packages/latte_current/>`__:
 
-          * ``dual`` - boolean; triangulate and signed-decompose in the dual
+          * ``dual`` -- boolean; triangulate and signed-decompose in the dual
             space
-          * ``irrational_primal`` - boolean; triangulate in the dual space,
+          * ``irrational_primal`` -- boolean; triangulate in the dual space,
             signed-decompose in the primal space using irrationalization.
-          * ``irrational_all_primal`` - boolean; Triangulate and signed-decompose
+          * ``irrational_all_primal`` -- boolean; triangulate and signed-decompose
             in the primal space using irrationalization.
           * ``maxdet`` -- integer; decompose down to an index (determinant) of
             ``maxdet`` instead of index 1 (unimodular cones).
@@ -349,8 +347,8 @@ class Polyhedron_ZZ(Polyhedron_QQ):
           * ``compute_vertex_cones`` -- string; either 'cdd' or 'lrs' or '4ti2'
           * ``smith_form`` -- string; either 'ilio' or 'lidia'
           * ``dualization`` -- string; either 'cdd' or '4ti2'
-          * ``triangulation`` - string; 'cddlib', '4ti2' or 'topcom'
-          * ``triangulation_max_height`` - integer; use a uniform distribution of
+          * ``triangulation`` -- string; 'cddlib', '4ti2' or 'topcom'
+          * ``triangulation_max_height`` -- integer; use a uniform distribution of
             height from 1 to this number
 
         OUTPUT:
@@ -514,7 +512,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         TESTS:
 
-        Test that :trac:`28551` is fixed::
+        Test that :issue:`28551` is fixed::
 
             sage: polytopes.cube(backend='normaliz').polar().backend()  # optional - pynormaliz
             'normaliz'
@@ -627,8 +625,8 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``dim`` -- integer. The dimension of the lattice polytope
-          fiber.
+        - ``dim`` -- integer; the dimension of the lattice polytope
+          fiber
 
         OUTPUT:
 
@@ -669,12 +667,12 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         INPUT:
 
-        - ``translated_polyhedron`` -- a polyhedron.
+        - ``translated_polyhedron`` -- a polyhedron
 
         OUTPUT:
 
         A `\ZZ`-vector that translates ``self`` to
-        ``translated_polyhedron``. A ``ValueError`` is raised if
+        ``translated_polyhedron``. A :exc:`ValueError` is raised if
         ``translated_polyhedron`` is not a translation of ``self``,
         this can be used to check that two polyhedra are not
         translates of each other.
@@ -842,16 +840,16 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             summands += [X, Y]
         return tuple(decompositions)
 
-    def normal_form(self, algorithm="palp_native", permutation=False):
+    def normal_form(self, algorithm='palp_native', permutation=False):
         r"""
         Return the normal form of vertices of the lattice polytope ``self``.
 
         INPUT:
 
-        - ``algorithm`` -- must be ``"palp_native"``, the default.
+        - ``algorithm`` -- must be ``'palp_native'``, the default
 
         - ``permutation`` -- boolean (default: ``False``); if ``True``, the permutation
-          applied to vertices to obtain the normal form is returned as well.
+          applied to vertices to obtain the normal form is returned as well
 
         For more more detail,
         see :meth:`~sage.geometry.lattice_polytope.LatticePolytopeClass.normal_form`.
@@ -903,7 +901,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         TESTS::
 
-            sage: d.normal_form(algorithm="palp_fiction")
+            sage: d.normal_form(algorithm='palp_fiction')
             Traceback (most recent call last):
             ...
             ValueError: algorithm must be 'palp_native'

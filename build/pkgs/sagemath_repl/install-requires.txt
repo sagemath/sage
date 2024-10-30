@@ -1,2 +1,0 @@
-# This file is updated on every release by the sage-update-version script
-sagemath-repl ~= 10.3rc0

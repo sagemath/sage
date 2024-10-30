@@ -9,7 +9,7 @@ AUTHORS:
 - ??? (2006 or before)
 
 - Jeroen Demeyer (2014-10-20): move this function from ``gmp.pxi``,
-  simplify and fix some bugs, see :trac:`17180`
+  simplify and fix some bugs, see :issue:`17180`
 """
 # ****************************************************************************
 #       Copyright (C) 2006 ???
@@ -35,7 +35,7 @@ cdef int mpq_rational_reconstruction(mpq_t answer, mpz_t a, mpz_t m) except -1:
     sqrt(m/2).
 
     If `m` is zero, raise :class`ZeroDivisionError`. If the rational
-    reconstruction does not exist, raise :class:`ValueError`.
+    reconstruction does not exist, raise :exc:`ValueError`.
 
     We assume that ``mpq_init`` has been called on ``answer``.
 

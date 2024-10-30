@@ -10,7 +10,7 @@ representative for each isomorphism class of graphs::
     sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
     sage: E = EnumeratedSetFromIterator(
     ....:   graphs,
-    ....:   name="Graphs",
+    ....:   name='Graphs',
     ....:   category=InfiniteEnumeratedSets(),
     ....:   cache=True)
     sage: E
@@ -78,9 +78,9 @@ class EnumeratedSetFromIterator(Parent):
 
     - ``f`` -- a function that returns an iterable from which the set is built from
 
-    - ``args`` -- tuple -- arguments to be sent to the function ``f``
+    - ``args`` -- tuple; arguments to be sent to the function `f`
 
-    - ``kwds`` -- dictionary -- keywords to be sent to the function ``f``
+    - ``kwds`` -- dictionary; keywords to be sent to the function `f`
 
     - ``name`` -- an optional name for the set
 
@@ -90,10 +90,9 @@ class EnumeratedSetFromIterator(Parent):
       you know that your iterator will run over and over you should set it as
       :class:`InfiniteEnumeratedSets`.
 
-    - ``cache`` -- boolean (default: ``False``) -- Whether or not use a cache
-      mechanism for the iterator. If ``True``, then the function ``f`` is called
+    - ``cache`` -- boolean (default: ``False``); whether or not use a cache
+      mechanism for the iterator. If ``True``, then the function `f` is called
       only once.
-
 
     EXAMPLES::
 
@@ -133,7 +132,7 @@ class EnumeratedSetFromIterator(Parent):
         3
 
     The following warning is due to ``E`` being a facade parent. For more,
-    see the discussion on :trac:`16239`::
+    see the discussion on :issue:`16239`::
 
         sage: TestSuite(E).run()
         doctest:...: UserWarning: Testing equality of infinite sets which will not end in case of equality
@@ -362,7 +361,7 @@ class EnumeratedSetFromIterator(Parent):
 
     def __iter__(self):
         r"""
-        Returns an iterator over the element of ``self``.
+        Return an iterator over the element of ``self``.
 
         EXAMPLES::
 
@@ -383,7 +382,7 @@ class EnumeratedSetFromIterator(Parent):
 
     def unrank(self, i):
         r"""
-        Returns the element at position ``i``.
+        Return the element at position ``i``.
 
         EXAMPLES::
 
@@ -451,7 +450,7 @@ class EnumeratedSetFromIterator(Parent):
 
 # TODO: move it in sage.misc ?
 @instancedoc
-class Decorator():
+class Decorator:
     r"""
     Abstract class that manage documentation and sources of the wrapped object.
 
@@ -488,7 +487,7 @@ class Decorator():
 
     def _sage_src_(self):
         r"""
-        Returns the source code for the wrapped function.
+        Return the source code for the wrapped function.
 
         TESTS::
 
@@ -506,7 +505,7 @@ class Decorator():
 
     def _sage_src_lines_(self):
         r"""
-        Returns the list of source lines and the first line number
+        Return the list of source lines and the first line number
         of the wrapped function.
 
         TESTS::
@@ -724,8 +723,8 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
 
     - ``f`` -- a method of a class of ``inst`` (and not of the instance itself)
 
-    - ``name`` -- optional -- either a string (which may contains substitution
-      rules from argument or a function ``args, kwds -> string``.
+    - ``name`` -- (optional) either a string (which may contains substitution
+      rules from argument or a function ``args, kwds -> string``
 
     - ``options`` -- any option accepted by :class:`EnumeratedSetFromIterator`
     """
@@ -839,17 +838,17 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
             **self.options)
 
 
-class EnumeratedSetFromIterator_method_decorator():
+class EnumeratedSetFromIterator_method_decorator:
     r"""
     Decorator for enumerated set built from a method.
 
     INPUT:
 
-    - ``f`` -- Optional function from which are built the enumerated sets at
+    - ``f`` -- (optional) function from which are built the enumerated sets at
       each call
 
-    - ``name`` -- Optional string (which may contains substitution rules from
-      argument) or a function ``(args,kwds) -> string``.
+    - ``name`` -- (optional) string (which may contains substitution rules from
+      argument) or a function ``(args,kwds) -> string``
 
     - any option accepted by :class:`EnumeratedSetFromIterator`.
 
@@ -1003,7 +1002,7 @@ class DummyExampleForPicklingTest:
     @set_from_method
     def f(self):
         r"""
-        Returns the set between ``self.start`` and ``self.stop``.
+        Return the set between ``self.start`` and ``self.stop``.
 
         EXAMPLES::
 

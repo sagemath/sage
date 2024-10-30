@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Containers for storing coercion data
 
@@ -16,8 +17,8 @@ as an entry in a normal dictionary: Its existence in :class:`TripleDict`
 prevents it from being garbage collected.
 
 That container currently is used to store coercion and conversion maps between
-two parents (:trac:`715`) and to store homsets of pairs of objects of a
-category (:trac:`11521`). In both cases, it is essential that the parent
+two parents (:issue:`715`) and to store homsets of pairs of objects of a
+category (:issue:`11521`). In both cases, it is essential that the parent
 structures remain garbage collectable, it is essential that the data access is
 faster than with a usual :class:`~weakref.WeakKeyDictionary`, and we enforce
 the "unique parent condition" in Sage (parent structures should be identical
@@ -25,15 +26,15 @@ if they are equal).
 
 :class:`MonoDict` behaves similarly, but it takes a single item as a key. It
 is used for caching the parents which allow a coercion map into a fixed other
-parent (:trac:`12313`).
+parent (:issue:`12313`).
 
-By :trac:`14159`, :class:`MonoDict` and :class:`TripleDict` can be optionally
+By :issue:`14159`, :class:`MonoDict` and :class:`TripleDict` can be optionally
 used with weak references on the values.
 
 Note that this kind of dictionary is also used for caching actions and
 coerce maps. In previous versions of Sage, the cache was by strong
 references and resulted in a memory leak in the following example.
-However, this leak was fixed by :trac:`715`, using weak references::
+However, this leak was fixed by :issue:`715`, using weak references::
 
     sage: # needs sage.combinat sage.modules sage.rings.finite_rings
     sage: K.<t> = GF(2^55)
@@ -110,7 +111,7 @@ cdef class ObjectWrapper:
     cdef PyObject* obj
 
 
-cdef inline ObjectWrapper wrap(obj) noexcept:
+cdef inline ObjectWrapper wrap(obj):
     """
     Wrap a given Python object in an :class:`ObjectWrapper`.
     """
@@ -126,7 +127,7 @@ cdef inline PyObject* unwrap(w) except? NULL:
     return (<ObjectWrapper?>w).obj
 
 
-cdef extract_mono_cell(mono_cell* cell) noexcept:
+cdef extract_mono_cell(mono_cell* cell):
     """
     Take the refcounted components from a mono_cell, put them in a
     tuple and return it. The mono_cell itself is marked as "freed".
@@ -151,7 +152,7 @@ cdef extract_mono_cell(mono_cell* cell) noexcept:
     return t
 
 
-cdef extract_triple_cell(triple_cell* cell) noexcept:
+cdef extract_triple_cell(triple_cell* cell):
     # See extract_mono_cell for documentation
     assert valid(cell.key_id1)
     t = PyTuple_New(4)
@@ -203,7 +204,7 @@ cdef class MonoDictEraser:
         """
         INPUT:
 
-        A :class:`MonoDict`.
+        - ``D`` -- a :class:`MonoDict`
 
         EXAMPLES::
 
@@ -221,7 +222,7 @@ cdef class MonoDictEraser:
         """
         INPUT:
 
-        A weak reference with key.
+        - ``r`` -- a weak reference with key
 
         For internal use only.
 
@@ -272,12 +273,12 @@ cdef class MonoDict:
 
     INPUT:
 
-    - ``data`` -- optional iterable defining initial data, as dict or
-      iterable of (key, value) pairs.
+    - ``data`` -- (optional) iterable defining initial data, as dict or
+      iterable of (key, value) pairs
 
-    - ``weak_values`` -- optional bool (default False). If it is true,
-      weak references to the values in this dictionary will be used,
-      when possible.
+    - ``weak_values`` -- boolean (default: ``False``); if it is
+      ``True``, weak references to the values in this dictionary will be used,
+      when possible
 
     EXAMPLES::
 
@@ -368,7 +369,7 @@ cdef class MonoDict:
 
     The following demonstrates that :class:`MonoDict` is safer than
     :class:`~weakref.WeakKeyDictionary` against recursions created by nested
-    callbacks; compare :trac:`15069` (the mechanism used now is different, though)::
+    callbacks; compare :issue:`15069` (the mechanism used now is different, though)::
 
         sage: M = MonoDict()
         sage: class A: pass
@@ -519,7 +520,7 @@ cdef class MonoDict:
 
     def __cinit__(self):
         """
-        Setup basic data structure
+        Setup basic data structure.
 
         TESTS::
 
@@ -554,7 +555,6 @@ cdef class MonoDict:
             sage: L = MonoDict([(a, 1)])
             sage: L[a]
             1
-
         """
         self.weak_values = weak_values
         if data:
@@ -571,7 +571,7 @@ cdef class MonoDict:
 
     def __len__(self):
         """
-        The number of items in self.
+        The number of items in ``self``.
         EXAMPLES::
 
             sage: from sage.structure.coerce_dict import MonoDict
@@ -644,7 +644,7 @@ cdef class MonoDict:
         """
         return self.get(k)
 
-    cdef get(self, k) noexcept:
+    cdef get(self, k):
         cdef mono_cell* cursor = self.lookup(<PyObject*>k)
         if not valid(cursor.key_id):
             raise KeyError(k)
@@ -923,7 +923,7 @@ cdef class TripleDictEraser:
         """
         INPUT:
 
-        A :class:`TripleDict`. For internal use only.
+        - ``D`` -- a :class:`TripleDict`. For internal use only.
 
         EXAMPLES::
 
@@ -935,7 +935,6 @@ cdef class TripleDictEraser:
             sage: del k
             sage: len(D) # indirect doctest
             0
-
         """
         self.D = ref(D)
 
@@ -943,7 +942,7 @@ cdef class TripleDictEraser:
         """
         INPUT:
 
-        A weak reference with key.
+        - ``r`` -- a weak reference with key
 
         For internal use only.
 
@@ -1002,22 +1001,19 @@ cdef class TripleDict:
     It is bare-bones in the sense that not all dictionary methods are
     implemented.
 
-
     INPUT:
 
-    - ``data`` -- optional iterable defining initial data, as dict or
-      iterable of (key, value) pairs.
+    - ``data`` -- (optional) iterable defining initial data, as dict or
+      iterable of (key, value) pairs
 
-    - ``weak_values`` -- optional bool (default False). If it is true,
-      weak references to the values in this dictionary will be used,
-      when possible.
-
+    - ``weak_values`` -- boolean (default: ``False``); if it is
+      ``True``, weak references to the values in this dictionary will be used,
+      when possible
 
     IMPLEMENTATION:
 
     It is implemented as a hash table with open addressing, similar to python's
     dict.
-
 
     EXAMPLES::
 
@@ -1189,7 +1185,7 @@ cdef class TripleDict:
 
     def __cinit__(self):
         """
-        Setup basic data structure
+        Setup basic data structure.
 
         TESTS::
 
@@ -1225,7 +1221,6 @@ cdef class TripleDict:
             sage: L = TripleDict({key: 42})
             sage: L[key]
             42
-
         """
         self.weak_values = weak_values
         if data:
@@ -1242,7 +1237,7 @@ cdef class TripleDict:
 
     def __len__(self):
         """
-        The number of items in self.
+        The number of items in ``self``.
 
         EXAMPLES::
 
@@ -1320,7 +1315,7 @@ cdef class TripleDict:
             raise KeyError(k)
         return self.get(k1, k2, k3)
 
-    cdef get(self, k1, k2, k3) noexcept:
+    cdef get(self, k1, k2, k3):
         cdef triple_cell* cursor = self.lookup(<PyObject*>k1, <PyObject*>k2, <PyObject*>k3)
         if not valid(cursor.key_id1):
             raise KeyError((k1, k2, k3))

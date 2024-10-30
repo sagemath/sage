@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Codes
 
@@ -205,7 +205,7 @@ class AbstractCode(Parent):
     def __init__(self, length, default_encoder_name=None,
                  default_decoder_name=None, metric='Hamming'):
         r"""
-        Initializes mandatory parameters that any code shares.
+        Initialize mandatory parameters that any code shares.
 
         This method only exists for inheritance purposes as it initializes
         parameters that need to be known by every code. The class
@@ -281,19 +281,19 @@ class AbstractCode(Parent):
             ...
             ValueError: length must be a Python int or a Sage Integer
 
-        If the length of the code is not a non-zero positive integer
-        (See :trac:`21326`), it will raise an exception::
+        If the length of the code is not a nonzero positive integer
+        (See :issue:`21326`), it will raise an exception::
 
             sage: C = MyCodeFamily(0)
             Traceback (most recent call last):
             ...
-            ValueError: length must be a non-zero positive integer
+            ValueError: length must be a nonzero positive integer
         """
 
         if not isinstance(length, (int, Integer)):
             raise ValueError("length must be a Python int or a Sage Integer")
         if length <= 0:
-            raise ValueError("length must be a non-zero positive integer")
+            raise ValueError("length must be a nonzero positive integer")
 
         self._length = length
         self._metric = metric
@@ -398,7 +398,7 @@ class AbstractCode(Parent):
 
     def __call__(self, m):
         r"""
-        Returns either ``m`` if it is a codeword or ``self.encode(m)``
+        Return either ``m`` if it is a codeword or ``self.encode(m)``
         if it is an element of the message space of the encoder used by
         ``encode``.
 
@@ -516,7 +516,7 @@ class AbstractCode(Parent):
 
     def length(self):
         r"""
-        Returns the length of this code.
+        Return the length of this code.
 
         EXAMPLES::
 
@@ -542,7 +542,7 @@ class AbstractCode(Parent):
 
     def add_decoder(self, name, decoder):
         r"""
-        Adds an decoder to the list of registered decoders of ``self``.
+        Add an decoder to the list of registered decoders of ``self``.
 
         .. NOTE::
 
@@ -604,7 +604,7 @@ class AbstractCode(Parent):
 
     def add_encoder(self, name, encoder):
         r"""
-        Adds an encoder to the list of registered encoders of ``self``.
+        Add an encoder to the list of registered encoders of ``self``.
 
         .. NOTE::
 
@@ -672,15 +672,13 @@ class AbstractCode(Parent):
 
         - ``word`` -- an element in the ambient space as ``self``
 
-        - ``decoder_name`` -- (default: ``None``) Name of the decoder which will be used
+        - ``decoder_name`` -- (default: ``None``) name of the decoder which will be used
           to decode ``word``. The default decoder of ``self`` will be used if
           default value is kept.
 
         - ``args``, ``kwargs`` -- all additional arguments are forwarded to :meth:`decoder`
 
-        OUTPUT:
-
-        - A vector of ``self``.
+        OUTPUT: a vector of ``self``
 
         EXAMPLES::
 
@@ -710,15 +708,13 @@ class AbstractCode(Parent):
 
         - ``word`` -- an element in the ambient space as ``self``
 
-        - ``decoder_name`` -- (default: ``None``) Name of the decoder which will be used
+        - ``decoder_name`` -- (default: ``None``) name of the decoder which will be used
           to decode ``word``. The default decoder of ``self`` will be used if
           default value is kept.
 
         - ``args``, ``kwargs`` -- all additional arguments are forwarded to :meth:`decoder`
 
-        OUTPUT:
-
-        - A vector of the message space of ``self``.
+        OUTPUT: a vector of the message space of ``self``
 
         EXAMPLES::
 
@@ -752,9 +748,7 @@ class AbstractCode(Parent):
         - ``args``, ``kwargs`` -- all additional arguments will be forwarded to the constructor of the decoder
           that will be returned by this method
 
-        OUTPUT:
-
-        - a decoder object
+        OUTPUT: a decoder object
 
         Besides creating the decoder and returning it, this method also stores
         the decoder in a cache. With this behaviour, each decoder will be created
@@ -810,7 +804,6 @@ class AbstractCode(Parent):
             It accepts unspecified arguments as well. See the documentation of
             sage.coding.information_set_decoder.LinearCodeInformationSetDecoder
             for more details.
-
         """
         if not self._default_decoder_name:
             raise NotImplementedError("No decoder implemented for this code.")
@@ -832,15 +825,15 @@ class AbstractCode(Parent):
 
     def decoders_available(self, classes=False):
         r"""
-        Returns a list of the available decoders' names for ``self``.
+        Return a list of the available decoders' names for ``self``.
 
         INPUT:
 
-        - ``classes`` -- (default: ``False``) if ``classes`` is set to ``True``,
-          return instead a :class:`dict` mapping available decoder name to the
-          associated decoder class.
+        - ``classes`` -- boolean (default: ``False``); if ``classes`` is set to
+          ``True``, return instead a :class:`dict` mapping available decoder
+          name to the associated decoder class
 
-        OUTPUT: a list of strings, or a :class:`dict` mapping strings to classes.
+        OUTPUT: list of strings, or a :class:`dict` mapping strings to classes
 
         EXAMPLES::
 
@@ -863,26 +856,24 @@ class AbstractCode(Parent):
 
     def encode(self, word, encoder_name=None, *args, **kwargs):
         r"""
-        Transforms an element of a message space into a codeword.
+        Transform an element of a message space into a codeword.
 
         INPUT:
 
         - ``word`` -- an element of a message space of the code
 
-        - ``encoder_name`` -- (default: ``None``) Name of the encoder which will be used
-          to encode ``word``. The default encoder of ``self`` will be used if
-          default value is kept.
+        - ``encoder_name`` -- (default: ``None``) name of the encoder which
+          will be used to encode ``word``. The default encoder of ``self`` will
+          be used if default value is kept.
 
-        - ``args``, ``kwargs`` -- all additional arguments are forwarded to the construction of the
-          encoder that is used..
+        - ``args``, ``kwargs`` -- all additional arguments are forwarded to the
+          construction of the encoder that is used
 
         One can use the following shortcut to encode a word ::
 
             C(word)
 
-        OUTPUT:
-
-        - a vector of ``self``.
+        OUTPUT: a vector of ``self``
 
         EXAMPLES::
 
@@ -909,7 +900,7 @@ class AbstractCode(Parent):
     @cached_method
     def encoder(self, encoder_name=None, *args, **kwargs):
         r"""
-        Returns an encoder of ``self``.
+        Return an encoder of ``self``.
 
         The returned encoder provided by this method is cached.
 
@@ -923,12 +914,10 @@ class AbstractCode(Parent):
           returned. The default encoder of ``self`` will be used if
           default value is kept.
 
-        - ``args``, ``kwargs`` -- all additional arguments are forwarded to the constructor of the encoder
-          this method will return.
+        - ``args``, ``kwargs`` -- all additional arguments are forwarded to the
+          constructor of the encoder this method will return
 
-        OUTPUT:
-
-        - an Encoder object.
+        OUTPUT: an Encoder object
 
         .. NOTE::
 
@@ -1011,15 +1000,15 @@ class AbstractCode(Parent):
 
     def encoders_available(self, classes=False):
         r"""
-        Returns a list of the available encoders' names for ``self``.
+        Return a list of the available encoders' names for ``self``.
 
         INPUT:
 
-        - ``classes`` -- (default: ``False``) if ``classes`` is set to ``True``,
-          return instead a :class:`dict` mapping available encoder name to the
-          associated encoder class.
+        - ``classes`` -- boolean (default: ``False``); if ``classes`` is set to
+          ``True``, return instead a :class:`dict` mapping available encoder
+          name to the associated encoder class
 
-        OUTPUT: a list of strings, or a :class:`dict` mapping strings to classes.
+        OUTPUT: list of strings, or a :class:`dict` mapping strings to classes
 
         EXAMPLES::
 
@@ -1040,29 +1029,28 @@ class AbstractCode(Parent):
 
     def unencode(self, c, encoder_name=None, nocheck=False, **kwargs):
         r"""
-        Returns the message corresponding to ``c``.
+        Return the message corresponding to ``c``.
 
         This is the inverse of :meth:`encode`.
 
         INPUT:
 
-        - ``c`` -- a codeword of ``self``.
+        - ``c`` -- a codeword of ``self``
 
         - ``encoder_name`` -- (default: ``None``) name of the decoder which will be used
           to decode ``word``. The default decoder of ``self`` will be used if
           default value is kept.
 
-        - ``nocheck`` -- (default: ``False``) checks if ``c`` is in ``self``. You might set
-          this to ``True`` to disable the check for saving computation. Note that if ``c`` is
-          not in ``self`` and ``nocheck = True``, then the output of :meth:`unencode` is
-          not defined (except that it will be in the message space of ``self``).
+        - ``nocheck`` -- boolean (default: ``False``); checks if ``c`` is in
+          ``self``. You might set this to ``True`` to disable the check for
+          saving computation. Note that if ``c`` is not in ``self`` and
+          ``nocheck = True``, then the output of :meth:`unencode` is not
+          defined (except that it will be in the message space of ``self``).
 
         - ``kwargs`` -- all additional arguments are forwarded to the construction of the
-          encoder that is used.
+          encoder that is used
 
-        OUTPUT:
-
-        - an element of the message space of ``encoder_name`` of ``self``.
+        OUTPUT: an element of the message space of ``encoder_name`` of ``self``
 
         EXAMPLES::
 
@@ -1078,12 +1066,10 @@ class AbstractCode(Parent):
 
     def random_element(self, *args, **kwds):
         """
-        Returns a random codeword; passes other positional and keyword
+        Return a random codeword; passes other positional and keyword
         arguments to ``random_element()`` method of vector space.
 
-        OUTPUT:
-
-        - Random element of the vector space of this code
+        OUTPUT: random element of the vector space of this code
 
         EXAMPLES::
 
@@ -1098,14 +1084,14 @@ class AbstractCode(Parent):
 
         TESTS:
 
-        Test that the codeword returned is immutable (see :trac:`16469`)::
+        Test that the codeword returned is immutable (see :issue:`16469`)::
 
             sage: c = C.random_element()
             sage: c.is_immutable()
             True
 
         Test that codeword returned has the same parent as any non-random codeword
-        (see :trac:`19653`)::
+        (see :issue:`19653`)::
 
             sage: C = codes.random_linear_code(GF(16, 'a'), 10, 4)
             sage: c1 = C.random_element()

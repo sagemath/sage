@@ -1,4 +1,5 @@
-import os
+# sage_setup: distribution = sagemath-environment
+from pathlib import Path
 
 from . import StaticFile
 
@@ -25,26 +26,36 @@ class Threejs(StaticFile):
         """
         from sage.env import SAGE_SHARE, THREEJS_DIR
 
-        version = self.required_version()
-
+        share_dir = Path(SAGE_SHARE)
         threejs_search_path = THREEJS_DIR or (
-            os.path.join(SAGE_SHARE, "jupyter", "nbextensions", "threejs-sage"),
-            os.path.join(SAGE_SHARE, "sagemath", "threejs-sage"),
-            os.path.join(SAGE_SHARE, "sage", "threejs"),
-            os.path.join(SAGE_SHARE, "threejs-sage")
+            (share_dir / "jupyter" / "nbextensions" / "threejs-sage"),
+            (share_dir / "sagemath" / "threejs-sage"),
+            (share_dir / "sage" / "threejs"),
+            (share_dir / "threejs-sage")
             )
 
+        try:
+            version = self.required_version()
+            filename = Path(version) / "three.min.js"
+        except FileNotFoundError:
+            filename = 'unknown'
+
         StaticFile.__init__(
-            self, name="threejs",
-            filename=os.path.join(version, "three.min.js"),
-            spkg="threejs",
-            type="standard",
+            self, name='threejs',
+            filename=filename,
+            spkg='threejs',
+            type='standard',
             search_path=threejs_search_path,
             description="JavaScript library to display 3D graphics")
 
     def required_version(self):
         """
         Return the version of threejs that Sage requires.
+
+        Defining what version is required is delegated to the distribution package
+        that provides the file ``threejs-version.txt`` in :mod:`sage.ext_data.threejs`.
+
+        If the file is not provided, :exc:`FileNotFoundError` is raised.
 
         EXAMPLES::
 
@@ -54,7 +65,7 @@ class Threejs(StaticFile):
         """
         from sage.env import SAGE_EXTCODE
 
-        filename = os.path.join(SAGE_EXTCODE, 'threejs', 'threejs-version.txt')
+        filename = Path(SAGE_EXTCODE) / 'threejs' / 'threejs-version.txt'
 
         with open(filename) as f:
             return f.read().strip()
