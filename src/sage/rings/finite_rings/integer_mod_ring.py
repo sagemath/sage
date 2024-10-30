@@ -1824,6 +1824,13 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: (3*x).roots(multiplicities=False)
             [0, 4, 2]
 
+        Test polynomial with many roots:
+
+                    sage: R.<x> = Zmod(6)[]
+                    sage: f = x * (x - 1) * (x - 2) * (x - 3) * (x - 4) * (x - 5)
+                    sage: len(f.roots(multiplicities=False))
+                    6
+
         Test finding roots over large prime powers:
 
             sage: R.<x> = Zmod(2**16)[]
