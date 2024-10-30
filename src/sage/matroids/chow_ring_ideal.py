@@ -256,13 +256,19 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: ch = matroids.catalog.Fano().chow_ring(QQ, False)
-            sage: ch.defining_ideal().normal_basis()
-            [1, Abcd, Aace, Aabf, Adef, Aadg, Abeg, Acfg, Aabcdefg, Aabcdefg^2]
+            sage: ch = matroids.Z(3).chow_ring(QQ, False)
+            sage: I = ch.defining_ideal()
+            sage: I.normal_basis()
+            [1, Ax2x3y1, Ax1x3y2, Ax1x2y3, Ay1y2y3, Atx1y1, Atx2y2, Atx3y3, Atx1x2x3y1y2y3, Atx1x2x3y1y2y3^2]
+            sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
+            True
             sage: ch = matroids.AG(2,3).chow_ring(QQ, False)
-            sage: ch.defining_ideal().normal_basis()
+            sage: I = ch.defining_ideal()
+            sage: I.normal_basis()
             [1, A012, A236, A046, A156, A345, A247, A057, A137, A258, A678,
             A038, A148, A012345678, A012345678^2]
+            sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
+            True
         """
         if algorithm == '':
             algorithm = 'constructed'
@@ -486,9 +492,9 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: ch = matroids.Uniform(2,5).chow_ring(QQ, True, 'fy')
+            sage: ch = matroids.catalog.NonFano().chow_ring(QQ, True, 'fy')
             sage: ch.defining_ideal().groebner_basis(algorithm='')
-            Polynomial Sequence with 33 Polynomials in 12 Variables
+            Polynomial Sequence with 178 Polynomials in 25 Variables
             sage: ch.defining_ideal().groebner_basis(algorithm='').is_groebner()
             True
             sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().hilbert_series(algorithm='singular')
@@ -518,11 +524,11 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             for H in lattice_flats.order_filter([F]):
                 term1 += self._flats_generator[H]
             if term1 != poly_ring.zero():
-                gb.append(term1**(self._matroid.rank(G) + 1))  #5.6 (MM2022)
+                gb.append(term1**(self._matroid.rank(F) + 1))  #5.6 (MM2022)
                 order_ideal_modified = lattice_flats.order_ideal([F])
                 order_ideal_modified.remove(F)
                 for G in order_ideal_modified:  # nested flats
-                    gb.append(self._flats_generator[F]*term1**(self._matroid.rank(F) - self._matroid.rank(G)))
+                    gb.append(self._flats_generator[G]*term1**(self._matroid.rank(F) - self._matroid.rank(G)))
 
         return PolynomialSequence(poly_ring, [gb])
 
@@ -532,12 +538,18 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: ch = matroids.catalog.K33().chow_ring(QQ, True, 'fy')
-            sage: ch.defining_ideal().normal_basis()
-            Polynomial Sequence with 1758 Polynomials in 127 Variables
-            sage: ch = matroids.catalog.Wheel4().chow_ring(QQ, True, 'fy')
-            sage: ch.defining_ideal().normal_basis()
-            Polynomial Sequence with 200 Polynomials in 42 Variables
+            sage: ch = matroids.Uniform(2,5).chow_ring(QQ, True, 'fy')
+            sage: I = ch.defining_ideal()
+            sage: I.normal_basis()
+            [1, B0, B1, B2, B3, B4, B01234, B01234^2]
+            sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
+            True
+            sage: ch = matroids.catalog.Fano().chow_ring(QQ, True, 'fy')
+            sage: I = ch.defining_ideal()
+            sage: I.normal_basis()
+            Polynomial Sequence with 32 Polynomials in 15 Variables
+            sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
+            True
         """
         if algorithm == '':
             algorithm = 'constructed'
@@ -702,11 +714,10 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: M1 = Matroid(graphs.CycleGraph(3))
+            sage: M1 = matroids.Uniform(3,6)
             sage: ch = M1.chow_ring(QQ, True, 'atom-free')
             sage: ch.defining_ideal().groebner_basis(algorithm='')
-            [A0*A1, A0*A2, A1*A2, A0^2 + 2*A0*A3 + A3^2, A1^2 + 2*A1*A3 + A3^2,
-             A2^2 + 2*A2*A3 + A3^2, A0*A3, A1*A3, A2*A3, A3^3]
+            Polynomial Sequence with 253 Polynomials in 22 Variables
             sage: ch.defining_ideal().groebner_basis(algorithm='').is_groebner()
             True
             sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().hilbert_series(algorithm='singular')
@@ -742,12 +753,18 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: ch = matroids.Whirl(5).chow_ring(QQ, True, 'atom-free')
-            sage: ch.defining_ideal().normal_basis()
-            Polynomial Sequence with 1726 Polynomials in 121 Variables
-            sage: ch = matroids.Z(4).chow_ring(QQ, True, 'atom-free')
-            sage: ch.defining_ideal().normal_basis()
-            Polynomial Sequence with 248 Polynomials in 52 Variables
+            sage: ch = Matroid(graphs.CycleGraph(3)).chow_ring(QQ, True, 'atom-free')
+            sage: I = ch.defining_ideal()
+            sage: I.normal_basis()
+            [1, A0, A1, A2, A3, A3^2]
+            sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
+            True
+            sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
+            sage: I = ch.defining_ideal()
+            sage: I.normal_basis()
+            Polynomial Sequence with 30 Polynomials in 14 Variables
+            sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
+            True
         """
         if algorithm == '':
             algorithm = 'constructed'
