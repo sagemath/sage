@@ -38,6 +38,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from .base2 import Polyhedron_base2
 
+
 class Polyhedron_base3(Polyhedron_base2):
     """
     Methods related to the combinatorics of a polyhedron.
