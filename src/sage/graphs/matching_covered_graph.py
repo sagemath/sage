@@ -15,27 +15,71 @@ REFERENCES:
 
 - This methods of this module has been adopted and inspired by the book of
   Lucchesi and Murty [LM2024]_.
-  
+
 AUTHORS:
 
 - Janmenjaya Panda (2024-06-14): initial version
 
-.. TODO:
+.. TODO::
 
     The following methods are to be incorporated in
-    :class:`~MatchingCoveredGraph`::
+    :class:`~MatchingCoveredGraph`:
+
+    Overwritten Methods:
 
     - ``delete_edge()`` | Delete the edge from ``u`` to ``v``.
     - ``delete_edges()`` | Delete edges from an iterable container.
-    - ``is_removable_double_ear()`` | Check whether the pair of ears form a removable double ear.
-    - ``is_removable_doubleton()`` | Check whether the pair of edges constitute a removable doubleton.
+
+    Barriers and canonical partition:
+
+    - ``canonical_partition()`` | Return the canonical partition of the
+      (matching covered) graph.
+    - ``maximal_barrier()`` | Return the (unique) maximal barrier of the
+      (matching covered) graph containing the (provided) vertex.
+
+    Bricks, braces and tight cut decomposition:
+
+    - ``bricks_and_braces()`` | Return the list of (underlying simple graph of)
+      the bricks and braces of the (matching covered) graph.
+    - ``is_brace()`` | Check if the (matching covered) graph is a brace.
+    - ``is_brick()`` | Check if the (matching covered) graph is a brick.
+    - ``number_of_braces()`` | Return the number of braces.
+    - ``number_of_bricks()`` | Return the number of bricks.
+    - ``number_of_petersen_bricks()`` | Return the number of Petersen bricks.
+    - ``tight_cut_decomposition()`` | Return a tight cut decomposition.
+
+    Removability and ear decomposition:
+
+    - ``efficient_ear_decomposition()`` | Return a matching covered ear
+      decomposition computed at the fastest possible time.
+    - ``is_removable_double_ear()`` | Check whether the pair of ears form a
+      removable double ear.
+    - ``is_removable_doubleton()`` | Check whether the pair of edges constitute
+      a removable doubleton.
     - ``is_removable_ear()`` | Check whether the ear is removable.
     - ``is_removable_edge()`` | Check whether the edge is removable.
+    - ``optimal_ear_decomposition()`` | Return an optimal ear decomposition.
     - ``removable_double_ears()`` | Return a list of removable double ears.
     - ``removable_doubletons()`` | Return a list of removable doubletons.
     - ``removable_ears()`` | Return a list of removable ears.
     - ``removable_edges()`` | Return a :class:`~EdgesView` of removable edges.
+    - ``retract()`` | Compute the retract of the (matching covered) graph.
+
+    Generating bricks and braces:
+
+    - ``brace_generation_sequence()`` | Return a McCuaig brace generation
+      sequence of the (given) brace.
+    - ``brick_generation_sequence()`` | Return a Norine-Thomas brick generation
+      sequence of the (given) brick.
+    - ``is_mccuaig_brace()`` | Check if the brace is a McCuaig brace.
+    - ``is_norine_thomas_brick()`` | Check if the brick is a Norine-Thomas
+      brick.
+
+
+Methods
+-------
 """
+
 # ****************************************************************************
 #         Copyright (C) 2024 Janmenjaya Panda <janmenjaya.panda.22@gmail.com>
 #
