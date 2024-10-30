@@ -1439,6 +1439,34 @@ class MatchingCoveredGraph(Graph):
             raise ValueError('loops are not allowed in '
                              'matching covered graphs')
 
+    def allows_loops(self):
+        r"""
+        Return whether loops are permitted in (matching covered) graphs.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.allows_loops` method
+            to show that loops are forbidden in :class:`~MatchingCoveredGraph`.
+
+        OUTPUT:
+
+        - A boolean value ``False`` is returned, since matching covered graphs,
+          by definition, are free of loops.
+
+        EXAMPLES:
+
+        Petersen graph is matching covered::
+
+            sage: P = graphs.PetersenGraph()
+            sage: P.is_matching_covered()
+            True
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.allows_loops()
+            False
+        """
+        return False
+
     def delete_vertex(self, vertex, in_order=False):
         r"""
         Delete a vertex, removing all incident edges.
