@@ -554,17 +554,12 @@ class MatchingCoveredGraph(Graph):
 
         elif isinstance(data, Graph):
             try:
-                check = Graph.is_matching_covered(G=data, matching=matching,
-                                                  algorithm=algorithm,
-                                                  coNP_certificate=False,
-                                                  solver=solver, verbose=verbose,
-                                                  integrality_tolerance=integrality_tolerance)
-
-                if check:
-                    Graph.__init__(self, data, *args, **kwds)
-                    success = True
-                else:
-                    raise ValueError("input graph is not matching covered")
+                self._upgrade_from_graph(data=data, matching=matching,
+                                         algorithm=algorithm,
+                                         solver=solver, verbose=verbose,
+                                         integrality_tolerance=integrality_tolerance,
+                                         *args, **kwds)
+                success = True
 
             except Exception as exception:
                 raise exception
@@ -800,6 +795,29 @@ class MatchingCoveredGraph(Graph):
                 H = H.copy(immutable=True)
 
             return H
+
+        except Exception as exception:
+            raise exception
+
+    def _upgrade_from_graph(self, data=None, matching=None, algorithm='Edmonds',
+                            solver=None, verbose=0, integrality_tolerance=0.001,
+                            *args, **kwds):
+        r"""
+        Upgrade the given graph to a matching covered graph if eligible.
+
+        See documentation ``MatchingCoveredGraph?`` for detailed information.
+        """
+        try:
+            check = Graph.is_matching_covered(G=data, matching=matching,
+                                              algorithm=algorithm,
+                                              coNP_certificate=False,
+                                              solver=solver, verbose=verbose,
+                                              integrality_tolerance=integrality_tolerance)
+
+            if check:
+                Graph.__init__(self, data, *args, **kwds)
+            else:
+                raise ValueError("input graph is not matching covered")
 
         except Exception as exception:
             raise exception
