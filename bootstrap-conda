@@ -17,6 +17,8 @@ OPTIONAL_PACKAGES=
 SAGELIB_PACKAGES=
 SAGELIB_OPTIONAL_PACKAGES=
 DEVELOP_PACKAGES=
+UNCONSTRAINED_PACKAGES=
+CONSTRAINED_PACKAGES=
 
 eval $(sage-package properties --format=shell :all:)
 
@@ -25,6 +27,15 @@ for PKG_BASE in $(sage-package list --has-file distros/conda.txt --exclude _sage
     SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/distros/conda.txt
     PKG_SYSTEM_PACKAGES=$(echo $(${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE))
     if [ -n "$PKG_SYSTEM_PACKAGES" ]; then
+        case "$PKG_SYSTEM_PACKAGES" in
+            *([-A-Za-z0-9_ ]))  # just a package name
+                UNCONSTRAINED_PACKAGES+=" $PKG_BASE"
+                ;;
+            *)  # a package name with version constraints or other decorations;
+                # we never remove such packages when minimizing package lists
+                CONSTRAINED_PACKAGES+=" $PKG_BASE"
+                ;;
+        esac
         if [ -f $PKG_SCRIPTS/spkg-configure.m4 ]; then
             if grep -q SAGE_PYTHON_PACKAGE_CHECK $PKG_SCRIPTS/spkg-configure.m4; then
                 # Python package that would need --enable-system-site-packages to be used
@@ -67,7 +78,34 @@ for PKG_BASE in $(sage-package list --has-file distros/conda.txt --exclude _sage
 done
 unset PKG_SYSTEM_PACKAGES
 
-[ -n "$BOOTSTRAP_VERBOSE" ] && echo "## Collected:" && set | grep PACKAGES=
+[ -n "$BOOTSTRAP_VERBOSE" ] && printf "##\n## Collected:\n##\n" && set | grep PACKAGES=
+
+# Minimize
+
+                 PACKAGES=$(sage-package list $(sage-package list --include-dependencies $PACKAGES --exclude $UNCONSTRAINED_PACKAGES)                   \
+                                              $(sage-package list --exclude-dependencies $PACKAGES))
+
+       BOOTSTRAP_PACKAGES=$(sage-package list $(sage-package list --include-dependencies $BOOTSTRAP_PACKAGES --exclude $UNCONSTRAINED_PACKAGES)         \
+                                              $(sage-package list --exclude-dependencies $BOOTSTRAP_PACKAGES)                                           \
+                                    --exclude $(sage-package list --include-dependencies $PACKAGES))
+
+         DEVELOP_PACKAGES=$(sage-package list $(sage-package list --include-dependencies $DEVELOP_PACKAGES --exclude $UNCONSTRAINED_PACKAGES)           \
+                                              $(sage-package list --exclude-dependencies $DEVELOP_PACKAGES)                                             \
+                                    --exclude $(sage-package list --include-dependencies $PACKAGES $BOOTSTRAP_PACKAGES))
+
+        OPTIONAL_PACKAGES=$(sage-package list $(sage-package list --include-dependencies $OPTIONAL_PACKAGES --exclude $UNCONSTRAINED_PACKAGES)          \
+                                              $(sage-package list --exclude-dependencies $OPTIONAL_PACKAGES)                                            \
+                                    --exclude $(sage-package list --include-dependencies $PACKAGES $BOOTSTRAP_PACKAGES))
+
+         SAGELIB_PACKAGES=$(sage-package list $(sage-package list --include-dependencies $SAGELIB_PACKAGES --exclude $UNCONSTRAINED_PACKAGES)           \
+                                              $(sage-package list --exclude-dependencies $SAGELIB_PACKAGES)                                             \
+                                    --exclude $(sage-package list --include-dependencies $PACKAGES $BOOTSTRAP_PACKAGES))
+
+SAGELIB_OPTIONAL_PACKAGES=$(sage-package list $(sage-package list --include-dependencies $SAGELIB_OPTIONAL_PACKAGES --exclude $UNCONSTRAINED_PACKAGES)  \
+                                              $(sage-package list --exclude-dependencies $SAGELIB_OPTIONAL_PACKAGES)                                    \
+                                    --exclude $(sage-package list --include-dependencies $PACKAGES $BOOTSTRAP_PACKAGES $SAGELIB_PACKAGES $OPTIONAL_PACKAGES))
+
+[ -n "$BOOTSTRAP_VERBOSE" ] && printf "##\n## Minimized:\n##\n" && set | grep PACKAGES=
 
 # Translate to system packages
 export ENABLE_SYSTEM_SITE_PACKAGES=yes  # Disable filtering in sage-get-system-packages
@@ -79,7 +117,7 @@ SAGELIB_OPTIONAL_SYSTEM_PACKAGES=$(sage-get-system-packages conda $SAGELIB_OPTIO
 DEVELOP_SYSTEM_PACKAGES=$(sage-get-system-packages conda $DEVELOP_PACKAGES)
 unset ENABLE_SYSTEM_SITE_PACKAGES
 
-[ -n "$BOOTSTRAP_VERBOSE" ] && echo "## Translated to system:" && set | grep SYSTEM_PACKAGES=
+[ -n "$BOOTSTRAP_VERBOSE" ] && printf "##\n## Translated to system:\n##\n" && set | grep SYSTEM_PACKAGES=
 
 echo >&2 $0:$LINENO: generate conda environment files
 
@@ -136,6 +174,7 @@ echo >&2 $0:$LINENO: generate conda environment files
     (
         echo >&4 "  - pip:"
         echo >&5 "  - pip:"
+        echo >&6 "  - pip:"
         for PKG_BASE in $(sage-package list :standard: :optional: --has-file requirements.txt --no-file distros/conda.txt --no-file src; sage-package list :standard: :optional: --has-file version_requirements.txt --no-file requirements.txt --no-file distros/conda.txt --no-file src); do
             eval PKG_SCRIPTS=\$path_$PKG_BASE PKG_TYPE=\$type_$PKG_BASE
             SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/requirements.txt
@@ -147,7 +186,7 @@ echo >&2 $0:$LINENO: generate conda environment files
             else
                 case "$PKG_BASE:$PKG_TYPE" in
                     $DEVELOP_SPKG_PATTERN:*) FD=4;;
-                    *:standard)              FD="4 5";;
+                    *:standard)              FD="4 5 6";;
                     *)                       FD=5;;
                 esac
                 ${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE | while read -r line; do
@@ -155,7 +194,7 @@ echo >&2 $0:$LINENO: generate conda environment files
                 done
             fi
         done
-    ) 4>> /dev/null 5>> src/environment-optional-template.yml
+    ) 4>> /dev/null 5>> src/environment-optional-template.yml 6>>src/environment-template.yml
 
 for f in environment environment-optional src/environment src/environment-optional src/environment-dev; do
     for python_version in 3.9 3.10 3.11; do

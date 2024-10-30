@@ -1,0 +1,1 @@
+# The presence of this file ensures that we do not try to pip-install JuPyMake (there is no polymake conda package).

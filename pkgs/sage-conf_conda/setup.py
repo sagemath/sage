@@ -29,8 +29,8 @@ class build_py(setuptools_build_py):
                              'See https://doc.sagemath.org/html/en/installation/conda.html on how to get started.')
 
         cmd = f"cd {SAGE_ROOT} && ./configure --enable-build-as-root --with-system-python3=force --disable-notebook --disable-sagelib --disable-sage_conf --disable-doc"
-        cmd += ' --with-python=$CONDA_PREFIX/bin/python --prefix="$CONDA_PREFIX"'
-        cmd += ' $(for pkg in $(PATH="build/bin:$PATH" build/bin/sage-package list :standard: --exclude rpy2 --has-file spkg-configure.m4 --has-file distros/conda.txt); do echo --with-system-$pkg=force; done)'
+        cmd += ' --with-python=$CONDA_PREFIX/bin/python --prefix="$CONDA_PREFIX" --enable-system-site-packages'
+        cmd += ' $(for pkg in $(PATH="build/bin:$PATH" build/bin/sage-package list :standard: --exclude rpy2 --has-file spkg-configure.m4 --has-file distros/conda.txt --exclude-dependencies); do echo --with-system-$pkg=force; done)'
         print(f"Running {cmd}")
         sys.stdout.flush()
         if os.system(cmd) != 0:

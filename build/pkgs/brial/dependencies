@@ -1,4 +1,4 @@
-boost_cropped m4ri libpng | pkgconf
+m4ri libpng | pkgconf boost_cropped
 
 ----------
 All lines of this file are ignored except the first.
