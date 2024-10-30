@@ -1456,7 +1456,7 @@ def conjugate_positive_form(braid):
         braid1 = A[0]
         sg0 = braid.conjugating_braid(braid1)
     if ex > 0:
-        blocks = list(braid1.Tietze())
+        blocks = [list(braid1.Tietze())]
     else:
         L1 = braid1.Tietze()
         gns = set(L1)
