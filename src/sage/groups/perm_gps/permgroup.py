@@ -2355,7 +2355,7 @@ class PermutationGroup_generic(FiniteGroup):
         return Integer(len(unique)).factorial()
 
     @cached_method
-    def order(self):
+    def cardinality(self):
         """
         Return the number of elements of this group.
 
@@ -2390,8 +2390,6 @@ class PermutationGroup_generic(FiniteGroup):
             return subgroup_order
 
         return Integer(self.gap().Size())
-
-    cardinality = order
 
     def random_element(self):
         """
