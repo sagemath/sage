@@ -2373,7 +2373,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.order()
             1
 
-        :meth:`cardinality` is just an alias::
+        :meth:`cardinality` is an alias::
 
             sage: PermutationGroup([(1,2,3)]).cardinality()
             3
