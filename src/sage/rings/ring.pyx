@@ -652,28 +652,6 @@ cdef class Ring(ParentWithGens):
         """
         return True
 
-    def is_prime_field(self):
-        r"""
-        Return ``True`` if this ring is one of the prime fields `\QQ` or
-        `\GF{p}`.
-
-        EXAMPLES::
-
-            sage: QQ.is_prime_field()
-            True
-            sage: GF(3).is_prime_field()
-            True
-            sage: GF(9, 'a').is_prime_field()                                           # needs sage.rings.finite_rings
-            False
-            sage: ZZ.is_prime_field()
-            False
-            sage: QQ['x'].is_prime_field()
-            False
-            sage: Qp(19).is_prime_field()                                               # needs sage.rings.padics
-            False
-        """
-        return False
-
     def order(self):
         """
         The number of elements of ``self``.

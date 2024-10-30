@@ -434,6 +434,30 @@ class Rings(CategoryWithAxiom):
             """
             return False
 
+        def is_prime_field(self):
+            r"""
+            Return ``True`` if this ring is one of the prime fields `\QQ` or
+            `\GF{p}`.
+
+            EXAMPLES::
+
+                sage: QQ.is_prime_field()
+                True
+                sage: GF(3).is_prime_field()
+                True
+                sage: GF(9, 'a').is_prime_field()                                           # needs sage.rings.finite_rings
+                False
+                sage: ZZ.is_prime_field()
+                False
+                sage: QQ['x'].is_prime_field()
+                False
+                sage: Qp(19).is_prime_field()                                               # needs sage.rings.padics
+                False
+            """
+            # the case of QQ is handled by QQ itself
+            from sage.categories.finite_fields import FiniteFields
+            return self in FiniteFields() and self.degree() == 1
+
         def is_zero(self) -> bool:
             """
             Return ``True`` if this is the zero ring.
