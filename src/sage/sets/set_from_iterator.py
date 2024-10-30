@@ -516,9 +516,9 @@ class Decorator:
             sage: d = Decorator()
             sage: d.f = MathieuGroup.cardinality
             sage: S = sage_getsourcelines(d)   # indirect doctest
-            sage: S[0][2]
+            sage: S[0][3]
             '        Return the number of elements of this group.\n'
-            sage: S[0][25]
+            sage: S[0][26]
             '        if not gens:\n'
         """
         from sage.misc.sageinspect import sage_getsourcelines
