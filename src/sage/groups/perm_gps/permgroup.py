@@ -2354,6 +2354,7 @@ class PermutationGroup_generic(FiniteGroup):
         # Compute the order.
         return Integer(len(unique)).factorial()
 
+    @cached_method
     def order(self):
         """
         Return the number of elements of this group.
