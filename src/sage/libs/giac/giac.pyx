@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.giac
 # distutils: libraries = giac
 # distutils: language = c++
 # distutils: extra_compile_args = -std=c++11
