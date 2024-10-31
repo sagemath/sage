@@ -1794,6 +1794,195 @@ class MatchingCoveredGraph(Graph):
         """
         return self._matching
 
+    @doc_index('Barriers and canonical partition')
+    def maximal_barrier(self, vertex):
+        r"""
+        Return the (unique) maximal barrier containing the vertex.
+
+        We use the following theorem.
+
+        .. RUBRIC:: Theorem ([LM2024]_):
+
+        Let `u` and `v` be any two vertices in a matchable graph `G`. Then the
+        graph `G - u - v` is matchable if and only if there is no barrier of
+        `G` which contains both `u` and `v`.
+
+        And in order to find the vertices that do not lie in the maximal
+        barrier containing the provided vertex in linear time we take
+        inspiration of the `M` alternating tree seach method ([LR2004]_).
+
+        INPUT:
+
+        - ``vertex`` -- a vertex of the graph
+
+        OUTPUT:
+
+        - A :exc:`~ValueError` is returned if ``vertex`` is not a vertex of the
+          graph, otherwise a set of vertices that constitute the (unique)
+          maximal barrier containing the vertex is returned.
+
+        EXAMPLES:
+
+        The graph `K_4 \odot K_{3, 3}` is matching covered. Show the set of
+        vertices in the (unique) maximal barrier containing the vertex `2`::
+
+            sage: G = Graph([
+            ....:    (0, 2), (0, 3), (0, 4), (1, 2),
+            ....:    (1, 3), (1, 4), (2, 5), (3, 6),
+            ....:    (4, 7), (5, 6), (5, 7), (6, 7)
+            ....: ])
+            sage: H = MatchingCoveredGraph(G)
+            sage: B = H.maximal_barrier(2)
+            sage: B
+            {2, 3, 4}
+
+        Let `B` be a maximal barrier of a matching covered graph `G` (which is,
+        of course, a matchable graph). The graph, `J := G - B` has no even
+        component::
+
+            sage: J = G.copy()
+            sage: J.delete_vertices(B)
+            sage: all(len(K)%2 != 0 for K in J.connected_components())
+            ...
+            True
+
+        Let `B` be a maximal barrier in a matching covered graph `G` and let
+        `M` be a perfect matching of `G`. If `K` is an odd component of
+        `J := G - B`, then `M \cap \partial_G(K)` has precisely one edge and if
+        `v` is the end of that edge in `V(K)`, then `M \cap E(K)` is a perfect
+        matching of `K - v`::
+
+            sage: K = J.subgraph(vertices=(J.connected_components())[0])
+            sage: # Let F := \partial_G(K) and T := M \cap F
+            sage: F = [edge for edge in G.edge_iterator()
+            ....:      if (edge[0] in K and edge[1] not in K)
+            ....:      or (edge[0] not in K and edge[1] in K)
+            ....: ]
+            sage: M = H.get_matching()
+            sage: T = [edge for edge in F if edge in M]
+            sage: len(T) == 1
+            True
+            sage: v = T[0][0] if T[0][0] in K else T[0][1]
+            sage: # Let N := M \cap E(K) and L := K - v
+            sage: N = Graph([edge for edge in K.edge_iterator() if edge in M])
+            sage: L = K.copy()
+            sage: L.delete_vertex(v)
+            sage: # Check if N is a perfect matching of L
+            sage: L.order() == 2*N.size()
+            True
+
+        Let `B` be a maximal barrier of a matching covered graph `G` (which is,
+        of course, a matchable graph). The graph induced by each component of
+        `G - B` is factor critical::
+
+            sage: all((K.subgraph(vertices=connected_component)).is_factor_critical()
+            ....:     for connected_component in K.connected_components()
+            ....: )
+            True
+
+        For a bicritical graph (for instance, the Petersen graph), for each
+        vertex the maximal barrier is a singleton set containing only that
+        vertex::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: u = 0
+            sage: set([u]) == G.maximal_barrier(u)
+            True
+
+        In a bipartite matching covered graph (for instance, the Hexahedral
+        graph), for a vertex, the maximal barrier is the set of vertices of
+        the color class that the particular vertex belongs to. In other words,
+        there are precisely two maximal barriers in a bipartite matching
+        covered graph, that is, the vertex sets of the individual color class::
+
+            sage: G = graphs.HexahedralGraph()
+            sage: H = MatchingCoveredGraph(G)
+            sage: A, _ = H.bipartite_sets()
+            sage: # needs random
+            sage: import random
+            sage: a = random.choice(list(A))
+            sage: A == H.maximal_barrier(a)
+            True
+
+        Maximal barriers of matching covered graph constitute a partition of
+        its vertex set::
+
+            sage: S = set()
+            sage: for v in H:
+            ....:     B = tuple(sorted(list(H.maximal_barrier(v))))
+            ....:     S.add(B)
+            sage: S = list(S)
+            sage: # Check that S is a partition of the vertex set of H
+            sage: # Part 1: Check if S spans the vertex set of H
+            sage: sorted([u for B in S for u in B]) == sorted(list(H))
+            True
+            sage: # Part 2: Check if each maximal barrier in S is disjoint
+            sage: is_disjoint = True
+            sage: for i in range(len(S)):
+            ....:     for j in range(i+1, len(S)):
+            ....:         c = [v for v in S[i] if v in S[j]]
+            ....:         is_disjoint = (len(c) == 0)
+            sage: is_disjoint
+            True
+
+        TESTS:
+
+        Providing with a nonexistent vertex::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.maximal_barrier('')
+            Traceback (most recent call last):
+            ...
+            ValueError: vertex  not in the graph
+            sage: G.maximal_barrier(100)
+            Traceback (most recent call last):
+            ...
+            ValueError: vertex 100 not in the graph
+
+        REFERENCES:
+
+        - [LZ2004]_
+        - [LM2024]_
+
+        .. SEEALSO::
+
+            :meth:`~sage.graphs.graph.Graph.is_factor_critical`,
+            :meth:`~sage.graphs.graph.Graph.is_matching_covered`,
+            :meth:`~sage.graphs.graph.Graph.is_bicritical`
+
+        """
+        if vertex not in self:
+            raise ValueError('vertex {} not in the graph'.format(vertex))
+
+        G = Graph(self, multiedges=False)
+        M = Graph(self.get_matching())
+        B = set([vertex])
+
+        # u: The M neighbor of vertex
+        u = next(M.neighbor_iterator(vertex))
+        vertex_neighbors = []
+
+        for v in G.neighbor_iterator(vertex):
+            vertex_neighbors.append(v)
+
+        # Goal: Find the vertices w such that G - w - vertex is matchable.
+        # In other words, there exists an odd length M-alternating vertex-w
+        # path in G, starting and ending with edges in M. Alternatively, there
+        # exists an even length M-alternating u-w path in the graph G - vertex
+        # starting with an edge not in M and ending with and edge in M.
+
+        # even: The set of all such vertex w
+        from sage.graphs.matching import M_alternating_even_mark
+        even = M_alternating_even_mark(G=G, matching=M, vertex=u)
+
+        for v in G:
+            if v not in even:
+                B.add(v)
+
+        return B
+
     @doc_index('Miscellaneous methods')
     def update_matching(self, matching):
         r"""
