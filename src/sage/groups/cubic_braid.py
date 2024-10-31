@@ -22,7 +22,7 @@ enumerated in the Shephard-Todd classification as `G_{4}`, `G_{25}` and
 
 Coxeter realized these groups as subgroups of unitary groups with respect
 to a certain Hermitian form over the complex numbers (in fact over `\QQ`
-adjoined with a primitive 12-th root of unity).
+adjoined with a primitive `12`-th root of unity).
 
 In "Einige endliche Faktorgruppen der Zopfgruppen" (Math. Z., 163 (1978),
 291-302) J. Assion considered two series `S(m)` and `U(m)` of finite
@@ -91,6 +91,8 @@ from sage.groups.finitely_presented import FinitelyPresentedGroup, FinitelyPrese
 from sage.groups.braid import BraidGroup
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
+from sage.structure.unique_representation import UniqueRepresentation
+
 
 try:
     from sage.libs.gap.element import GapElement
@@ -282,7 +284,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
         EXAMPLES::
 
             sage: CBG3 = CubicBraidGroup(3)
-            sage: sorted(CBG3)    # indirect doctest
+            sage: sorted(CBG3)    # indirect doctest, random output
             [(c0*c1^-1)^2, c0*c1^-1*c0, c0^-1*c1*c0^-1, c0^-1*c1^-1*c0,
              c1*c0^-1*c1, c0^-1*c1^-1*c0^-1, c0^-1*c1^-1, c1^-1*c0*c1^-1,
              c0*c1^-1*c0^-1, c0^-1*c1, c0^-1*c1*c0, c0*c1^-1, c1*c0^-1,
@@ -368,7 +370,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
 
         - ``root_bur`` -- six (resp. twelfth) root of unity in some field
           (default: root of unity over `\QQ`)
-        - ``domain``  -- (default: cyclotomic field of order 3 and degree 2, resp.
+        - ``domain`` -- (default: cyclotomic field of order 3 and degree 2, resp.
           the domain of `root_bur` if given) base ring for the Burau matrix
         - ``characteristic`` -- integer giving the characteristic of the
           domain (default: 0 or the characteristic of ``domain`` if given)
@@ -565,7 +567,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
 #                  Class CubicBraidGroup
 #
 ##############################################################################
-class CubicBraidGroup(FinitelyPresentedGroup):
+class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
     r"""
     Factor groups of the Artin braid group mapping their generators to elements
     of order 3.
@@ -669,7 +671,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         r"""
         Enum class to select the type of the group:
 
-        - ``Coxeter`` -- ``'C'`` the full cubic braid group.
+        - ``Coxeter`` -- ``'C'`` the full cubic braid group
         - ``AssionS`` -- ``'S'`` finite factor group of type S considered by Assion
         - ``AssionU`` -- ``'U'`` finite factor group of type U considered by Assion
 
@@ -750,7 +752,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         n = Integer(len(names))
         if n < 1:
             raise ValueError("the number of strands must be an integer larger than one")
-
         if cbg_type is None:
             cbg_type = CubicBraidGroup.type.Coxeter
         if not isinstance(cbg_type, CubicBraidGroup.type):
@@ -995,7 +996,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             matrix_grpF4 = self.as_matrix_group(root_bur=r64)
             self._internal_test_attached_group(matrix_grpF4, tester)
 
-        if self.strands() < 5  or self._cbg_type == CubicBraidGroup.type.Coxeter:
+        if self.strands() < 5 or self._cbg_type == CubicBraidGroup.type.Coxeter:
             matrix_grpF5 = self.as_matrix_group(characteristic=5)
             self._internal_test_attached_group(matrix_grpF5, tester)
 
@@ -1040,7 +1041,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
          - self._classical_group            This is the classical group returned by as_classical_group method.
          - self._classical_base_group       this only differs in special cases for Assion groups from the former.
          - self._classical_invariant_form   invariant form of the classical base group.
-         - self._centralizing_matrix        for Assion groups: element in classical base group commuting with self.
+         - self._centralizing_matrix        for Assion groups: element in classical base group commuting with ``self``.
          - self._centralizing_element       image under natural map of the former one in the projective classical group.
          - self._classical_embedding        as subgroup of classical base group (if different from classical group).
 
@@ -1150,7 +1151,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
             INPUT:
 
-            - ``m`` --  integer; the dimension of the classical groups
+            - ``m`` -- integer; the dimension of the classical groups
               vector-space of operation
 
             The function calculates the centralizing matrix and the
@@ -1180,7 +1181,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             # to the invariant bilinear form.
             # -----------------------------------------------------------
             xbas = [bas[mhalf - i - 1] for i in range(mhalf)]
-            ybas = [bas[mhalf + i]    for i in range(mhalf)]
+            ybas = [bas[mhalf + i] for i in range(mhalf)]
 
             # -----------------------------------------------------------
             # computing the List of transvection vectors according to
@@ -1200,7 +1201,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
             def transvec2mat(v, bas=bas, bform=bform, fact=1):
                 t = [x + fact*(x * bform * v) * v for x in bas]
-                return matrix(bform.base_ring(),  t)
+                return matrix(bform.base_ring(), t)
 
             # ------------------------------------------------------------------------------
             # setting the centralizing matrix for the case of projective group realization
@@ -1223,7 +1224,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
             INPUT:
 
-            - ``m`` --  integer; the dimension of the classical groups
+            - ``m`` -- integer; the dimension of the classical groups
               vector-space of operation
 
             The function calculates the centralizing_matrix and the
@@ -1469,7 +1470,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
         - ``root_bur`` -- (default: root of unity over `\QQ`) six (resp. twelfth)
           root of unity in some field
-        - ``domain``  -- (default: cyclotomic field of order 3 and degree 2, resp.
+        - ``domain`` -- (default: cyclotomic field of order 3 and degree 2, resp.
           the domain of ``root_bur`` if given) base ring for the Burau matrix
         - ``characteristic`` -- integer (optional); the characteristic of the
           domain; if none of the keywords ``root_bur``, ``domain`` and

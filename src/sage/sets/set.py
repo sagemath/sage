@@ -209,7 +209,7 @@ def Set(X=None, category=None):
         return Set_object_enumerated(X, category=category)
 
 
-class Set_base():
+class Set_base:
     r"""
     Abstract base class for sets, not necessarily parents.
     """
@@ -303,7 +303,7 @@ class Set_base():
 
     def symmetric_difference(self, X):
         r"""
-        Returns the symmetric difference of ``self`` and ``X``.
+        Return the symmetric difference of ``self`` and ``X``.
 
         EXAMPLES::
 
@@ -342,7 +342,7 @@ class Set_base():
         if set_self is not self:
             from sage.misc.sage_unittest import TestSuite
             tester.info("\n  Running the test suite of Set(self)")
-            TestSuite(set_self).run(skip="_test_pickling",  # see Issue #32025
+            TestSuite(set_self).run(skip='_test_pickling',  # see Issue #32025
                                     verbose=tester._verbose,
                                     prefix=tester._prefix + "  ")
             tester.info(tester._prefix + " ", newline=False)
@@ -371,7 +371,7 @@ class Set_boolean_operators:
 
     def __and__(self, X):
         """
-        Returns the intersection of ``self`` and ``X``.
+        Return the intersection of ``self`` and ``X``.
 
         EXAMPLES::
 
@@ -384,7 +384,7 @@ class Set_boolean_operators:
 
     def __xor__(self, X):
         """
-        Returns the symmetric difference of ``self`` and ``X``.
+        Return the symmetric difference of ``self`` and ``X``.
 
         EXAMPLES::
 
@@ -470,7 +470,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
     def __init__(self, X, category=None):
         """
-        Create a Set_object
+        Create a Set_object.
 
         This function is called by the Set function; users
         shouldn't call this directly.
@@ -704,9 +704,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         """
         Return boolean representing emptiness of the set.
 
-        OUTPUT:
-
-        True if the set is empty, False if otherwise.
+        OUTPUT: ``True`` if the set is empty, ``False`` otherwise
 
         EXAMPLES::
 
@@ -806,7 +804,6 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             sage: Y = Set()
             sage: Y.subsets_lattice()                                                   # needs sage.graphs
             Finite lattice containing 1 elements
-
         """
         if not self.is_finite():
             raise NotImplementedError(
@@ -1094,7 +1091,7 @@ class Set_object_enumerated(Set_object):
 
         INPUT:
 
-         - ``other`` -- a finite Set
+        - ``other`` -- a finite Set
 
         EXAMPLES::
 
@@ -1122,7 +1119,7 @@ class Set_object_enumerated(Set_object):
 
         INPUT:
 
-         - ``other`` -- a finite Set
+        - ``other`` -- a finite Set
 
         EXAMPLES::
 
@@ -1267,9 +1264,9 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
 
     - ``X``, ``Y`` -- sets, the operands to ``op``
 
-    - ``op`` -- a string describing the binary operation
+    - ``op`` -- string describing the binary operation
 
-    - ``latex_op`` -- a string used for rendering this object in LaTeX
+    - ``latex_op`` -- string used for rendering this object in LaTeX
 
     EXAMPLES::
 
@@ -1961,7 +1958,6 @@ class Set_object_symmetric_difference(Set_object_binary):
             True
             sage: Y == X
             True
-
         """
         if not isinstance(right, Set_generic):
             return rich_to_bool(op, -1)

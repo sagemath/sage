@@ -71,42 +71,40 @@ def mandelbrot_plot(f=None, **kwds):
 
     INPUT:
 
-    - ``f`` -- map (default: ``z^2 + c``), polynomial family used to
-      plot the Mandelbrot set.
+    - ``f`` -- map (default: ``z^2 + c``); polynomial family used to
+      plot the Mandelbrot set
 
-    - ``parameter`` -- variable (default: ``c``), parameter variable
-      used to plot the Mandelbrot set.
+    - ``parameter`` -- variable (default: ``c``); parameter variable
+      used to plot the Mandelbrot set
 
-    - ``x_center`` -- double (default: ``-1.0``), Real part of center
-      point.
+    - ``x_center`` -- double (default: ``-1.0``); Real part of center
+      point
 
-    - ``y_center`` -- double (default: ``0.0``), Imaginary part of
-      center point.
+    - ``y_center`` -- double (default: ``0.0``); Imaginary part of
+      center point
 
-    - ``image_width`` -- double (default: ``4.0``), width of image
-      in the complex plane.
+    - ``image_width`` -- double (default: ``4.0``); width of image
+      in the complex plane
 
-    - ``max_iteration`` -- long (default: ``500``), maximum number of
-      iterations the map ``f_c(z)``.
+    - ``max_iteration`` -- long (default: ``500``); maximum number of
+      iterations the map ``f_c(z)``
 
-    - ``pixel_count`` -- long (default: ``500``), side length of
-      image in number of pixels.
+    - ``pixel_count`` -- long (default: ``500``); side length of
+      image in number of pixels
 
-    - ``base_color`` -- RGB color (default: ``[40, 40, 40]``) color
-      used to determine the coloring of set.
+    - ``base_color`` -- RGB color (default: ``[40, 40, 40]``); color
+      used to determine the coloring of set
 
-    - ``level_sep`` -- long (default: 1) number of iterations
-      between each color level.
+    - ``level_sep`` -- long (default: 1); number of iterations
+      between each color level
 
-    - ``number_of_colors`` -- long (default: 30) number of colors
-      used to plot image.
+    - ``number_of_colors`` -- long (default: 30); number of colors
+      used to plot image
 
-    - ``interact`` -- boolean (default: ``False``), controls whether
-      plot will have interactive functionality.
+    - ``interact`` -- boolean (default: ``False``); controls whether
+      plot will have interactive functionality
 
-    OUTPUT:
-
-    24-bit RGB image of the Mandelbrot set in the complex plane.
+    OUTPUT: 24-bit RGB image of the Mandelbrot set in the complex plane
 
     EXAMPLES:
 
@@ -211,11 +209,11 @@ def mandelbrot_plot(f=None, **kwds):
                    y_center=FloatSlider(min=-1.0, max=1.0, step=EPS,
                                           value=y_center, description="Imag center"),
                    image_width=FloatSlider(min=EPS, max=4.0, step=EPS,
-                                             value=image_width, description="Width"),
+                                             value=image_width, description='Width'),
                    max_iteration=IntSlider(min=0, max=1000,
-                                             value=max_iteration, description="Iterations"),
+                                             value=max_iteration, description='Iterations'),
                    pixel_count=IntSlider(min=10, max=1000,
-                                           value=pixel_count, description="Pixels"),
+                                           value=pixel_count, description='Pixels'),
                    level_sep=IntSlider(min=1, max=20,
                                          value=level_sep, description="Color sep"),
                    color_num=IntSlider(min=1, max=100,
@@ -301,36 +299,34 @@ def external_ray(theta, **kwds):
 
     INPUT:
 
-    - ``theta`` -- double or list of doubles, angles between 0 and 1 inclusive.
+    - ``theta`` -- double or list of doubles, angles between 0 and 1 inclusive
 
     kwds:
 
-    - ``image`` -- 24-bit RGB image (default: None) user specified
-      image of Mandelbrot set.
+    - ``image`` -- 24-bit RGB image (default: ``None``); user specified
+      image of Mandelbrot set
 
-    - ``D`` -- long (default: ``25``) depth of the approximation.
+    - ``D`` -- long (default: ``25``); depth of the approximation.
       As ``D`` increases, the external ray gets closer to the boundary of the
       Mandelbrot set. If the ray doesn't reach the boundary of the Mandelbrot
       set, increase ``D``.
 
-    - ``S`` -- long (default: ``10``) sharpness of the approximation.
+    - ``S`` -- long (default: ``10``); sharpness of the approximation.
       Adjusts the number of points used to approximate the external ray (number
       of points is equal to ``S*D``). If ray looks jagged, increase ``S``.
 
-    - ``R`` -- long (default: ``100``) radial parameter. If ``R`` is
+    - ``R`` -- long (default: ``100``); radial parameter. If ``R`` is
       large, the external ray reaches sufficiently close to infinity. If ``R`` is
       too small, Newton's method may not converge to the correct ray.
 
-    - ``prec`` -- long (default: ``300``) specifies the bits of
+    - ``prec`` -- long (default: ``300``); specifies the bits of
       precision used by the Complex Field when using Newton's method to compute
-      points on the external ray.
+      points on the external ray
 
     - ``ray_color`` -- RGB color (default: ``[255, 255, 255]``) color
-      of the external ray(s).
+      of the external ray(s)
 
-    OUTPUT:
-
-    24-bit RGB image of external ray(s) on the Mandelbrot set.
+    OUTPUT: 24-bit RGB image of external ray(s) on the Mandelbrot set
 
     EXAMPLES::
 
@@ -434,6 +430,7 @@ def external_ray(theta, **kwds):
                 pixel[int(k[0]), int(k[1])] = tuple(ray_color)
     return M
 
+
 def kneading_sequence(theta):
     r"""
     Determines the kneading sequence for an angle theta in RR/ZZ which
@@ -444,9 +441,7 @@ def kneading_sequence(theta):
 
     - ``theta`` -- a rational number with odd denominator
 
-    OUTPUT:
-
-    a string representing the kneading sequence of theta in RR/ZZ
+    OUTPUT: string representing the kneading sequence of theta in RR/ZZ
 
     REFERENCES:
 
@@ -529,48 +524,46 @@ def julia_plot(f=None, **kwds):
 
     INPUT:
 
-    - ``f`` -- input polynomial (default: ``z^2 - 1``).
+    - ``f`` -- input polynomial (default: ``z^2 - 1``)
 
-    - ``period`` -- list (default: ``None``), returns the Julia set
-      for a random `c` value with the given (formal) cycle structure.
+    - ``period`` -- list (default: ``None``); returns the Julia set
+      for a random `c` value with the given (formal) cycle structure
 
-    - ``mandelbrot`` -- boolean (default: ``True``), when set to
+    - ``mandelbrot`` -- boolean (default: ``True``); when set to
       ``True``, an image of the Mandelbrot set is appended to the right of the
-      Julia set.
+      Julia set
 
-    - ``point_color`` -- RGB color (default: ``'tomato'``),
-      color of the point `c` in the Mandelbrot set (any valid input for Color).
+    - ``point_color`` -- RGB color (default: ``'tomato'``);
+      color of the point `c` in the Mandelbrot set (any valid input for Color)
 
-    - ``x_center`` -- double (default: ``-1.0``), Real part
-      of center point.
+    - ``x_center`` -- double (default: ``-1.0``); real part
+      of center point
 
-    - ``y_center`` -- double (default: ``0.0``), Imaginary part
-      of center point.
+    - ``y_center`` -- double (default: ``0.0``); imaginary part
+      of center point
 
-    - ``image_width`` -- double (default: ``4.0``), width of image
-      in the complex plane.
+    - ``image_width`` -- double (default: ``4.0``); width of image
+      in the complex plane
 
-    - ``max_iteration`` -- long (default: ``500``), maximum number
-      of iterations the map `f(z)`.
+    - ``max_iteration`` -- long (default: ``500``); maximum number
+      of iterations the map `f(z)`
 
-    - ``pixel_count`` -- long (default: ``500``), side length of
-      image in number of pixels.
+    - ``pixel_count`` -- long (default: ``500``); side length of
+      image in number of pixels
 
-    - ``base_color`` -- hex color (default: ``'steelblue'``), color
-      used to determine the coloring of set (any valid input for Color).
+    - ``base_color`` -- hex color (default: ``'steelblue'``); color
+      used to determine the coloring of set (any valid input for Color)
 
-    - ``level_sep`` -- long (default: 1), number of iterations
-      between each color level.
+    - ``level_sep`` -- long (default: 1); number of iterations
+      between each color level
 
-    - ``number_of_colors`` -- long (default: 30), number of colors
-      used to plot image.
+    - ``number_of_colors`` -- long (default: 30); number of colors
+      used to plot image
 
-    - ``interact`` -- boolean (default: ``False``), controls whether
-      plot will have interactive functionality.
+    - ``interact`` -- boolean (default: ``False``); controls whether
+      plot will have interactive functionality
 
-    OUTPUT:
-
-    24-bit RGB image of the Julia set in the complex plane.
+    OUTPUT: 24-bit RGB image of the Julia set in the complex plane
 
     .. TODO::
 
@@ -738,11 +731,11 @@ def julia_plot(f=None, **kwds):
                 y_center=FloatSlider(min=-1.0, max=1.0, step=EPS,
                                   value=y_center, description="Imag center"),
                 image_width=FloatSlider(min=EPS, max=4.0, step=EPS,
-                                  value=image_width, description="Width"),
+                                  value=image_width, description='Width'),
                 max_iteration=IntSlider(min=0, max=1000,
-                                  value=max_iteration, description="Iterations"),
+                                  value=max_iteration, description='Iterations'),
                 pixel_count=IntSlider(min=10, max=1000,
-                                  value=pixel_count, description="Pixels"),
+                                  value=pixel_count, description='Pixels'),
                 level_sep=IntSlider(min=1, max=20,
                                   value=level_sep, description="Color sep"),
                 color_num=IntSlider(min=1, max=100,

@@ -535,7 +535,8 @@ The components on the basis are returned by the square bracket operator for
 # ******************************************************************************
 from __future__ import annotations
 
-from typing import Generator, Optional
+from typing import Optional
+from collections.abc import Generator
 
 from sage.categories.fields import Fields
 from sage.categories.homset import Hom
@@ -582,7 +583,6 @@ class FiniteRankFreeModule_abstract(UniqueRepresentation, ReflexiveModule_abstra
             sage: TestSuite(M).run()
             sage: f = M.basis('f')
             sage: TestSuite(M).run()
-
         """
         # This duplicates the normalization done in __classcall_private__,
         # but it is needed for various subclasses.
@@ -620,7 +620,6 @@ class FiniteRankFreeModule_abstract(UniqueRepresentation, ReflexiveModule_abstra
             '\\mathcal{M}'
             sage: latex(M1)
             \mathcal{M}
-
         """
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
@@ -654,7 +653,6 @@ class FiniteRankFreeModule_abstract(UniqueRepresentation, ReflexiveModule_abstra
             27
             sage: M.tensor_module(2,2).rank()
             81
-
         """
         return self._rank
 
@@ -697,7 +695,6 @@ class FiniteRankFreeModule_abstract(UniqueRepresentation, ReflexiveModule_abstra
             [[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
              [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
              [[0, 0, 0], [0, 0, 0], [0, 0, 0]]]
-
         """
         resu = self._element_constructor_(name='zero', latex_name='0')
         for basis in self._known_bases:
@@ -1234,7 +1231,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         0.333333333333333 e_0 - 2.00000000000000 e_2
         sage: v.display(e, format_spec=10)  # 10 bits of precision
         0.33 e_0 - 2.0 e_2
-
     """
 
     Element = FiniteRankFreeModuleElement
@@ -1244,7 +1240,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
     def __classcall_private__(cls, ring, rank, name=None, latex_name=None, start_index=0,
                               output_formatter=None, category=None, ambient=None):
         r"""
-        Normalize init arguments for ``UniqueRepresentation``
+        Normalize init arguments for ``UniqueRepresentation``.
 
         TESTS::
 
@@ -1289,7 +1285,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             sage: TestSuite(M).run()
             sage: f = M.basis('f')
             sage: TestSuite(M).run()
-
         """
         super().__init__(ring, rank, name=name, latex_name=latex_name,
                          category=category, ambient=ambient)
@@ -1320,7 +1315,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
 
     def construction(self):
         """
-        The construction functor and base ring for self.
+        The construction functor and base ring for ``self``.
 
         EXAMPLES::
 
@@ -1373,7 +1368,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             Element zero of the Rank-3 free module M over the Integer Ring
             sage: v = M._element_constructor_() ; v
             Element of the Rank-3 free module M over the Integer Ring
-
         """
         if isinstance(comp, (int, Integer)) and comp == 0:
             return self.zero()
@@ -1398,7 +1392,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             True
             sage: v.parent()
             Rank-3 free module M over the Integer Ring
-
         """
         if self._def_basis is None:
             self.basis('e')
@@ -1418,7 +1411,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
 
             sage: FiniteRankFreeModule(ZZ, 3, name='M')
             Rank-3 free module M over the Integer Ring
-
         """
         if self._ring in Fields():
             description = "{}-dimensional vector space ".format(self._rank)
@@ -1456,7 +1448,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             Set of Morphisms from Rank-3 free module M over the Integer Ring
              to Rank-2 free module N over the Integer Ring
              in Category of finite dimensional modules over Integer Ring
-
         """
         from .free_module_homset import FreeModuleHomset
         return FreeModuleHomset(self, other)
@@ -1468,9 +1459,9 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
 
         INPUT:
 
-        - ``k`` -- non-negative integer; the contravariant rank, the tensor
+        - ``k`` -- nonnegative integer; the contravariant rank, the tensor
           type being `(k, l)`
-        - ``l`` -- non-negative integer; the covariant rank, the tensor type
+        - ``l`` -- nonnegative integer; the covariant rank, the tensor type
           being `(k, l)`
         - ``sym`` -- (default: ``None``) a symmetry or a list of symmetries
           among the tensor arguments: each symmetry is described by a tuple
@@ -1650,7 +1641,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
 
         INPUT:
 
-        - ``p`` -- non-negative integer
+        - ``p`` -- nonnegative integer
 
         OUTPUT:
 
@@ -1690,7 +1681,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         See
         :class:`~sage.tensor.modules.ext_pow_free_module.ExtPowerFreeModule`
         for more documentation.
-
         """
         try:
             return self._exterior_powers[p]
@@ -1725,7 +1715,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
 
         INPUT:
 
-        - ``p`` -- non-negative integer
+        - ``p`` -- nonnegative integer
 
         OUTPUT:
 
@@ -1831,7 +1821,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         See
         :class:`~sage.tensor.modules.free_module_linear_group.FreeModuleLinearGroup`
         for more documentation.
-
         """
         from sage.tensor.modules.free_module_linear_group import \
                                                           FreeModuleLinearGroup
@@ -1999,7 +1988,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
 
         For more documentation on bases see
         :class:`~sage.tensor.modules.free_module_basis.FreeModuleBasis`.
-
         """
         from .free_module_basis import FreeModuleBasis
         for other in self._known_bases:
@@ -2053,7 +2041,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
               running ._test_not_implemented_methods() . . . pass
               running ._test_pickling() . . . pass
               running ._test_some_elements() . . . pass
-
         """
         from sage.misc.sage_unittest import TestSuite
         # The intention is to raise an exception only if this is
@@ -2288,7 +2275,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
              Rank-3 free module M over the Integer Ring
             sage: t.display(e)
             4 e^0∧e^1 + 5 e^1∧e^2
-
         """
         from .comp import CompWithSym, CompFullyAntiSym
 
@@ -2378,7 +2364,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         See
         :class:`~sage.tensor.modules.alternating_contr_tensor.AlternatingContrTensor`
         for more documentation.
-
         """
         if degree == 1:
             return self.element_class(self, name=name,
@@ -2438,7 +2423,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         See
         :class:`~sage.tensor.modules.free_module_alt_form.FreeModuleAltForm`
         for more documentation.
-
         """
         if degree == 0:
             try:
@@ -2498,7 +2482,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         See
         :class:`~sage.tensor.modules.free_module_alt_form.FreeModuleAltForm`
         for more documentation.
-
         """
         return self.dual_exterior_power(1).element_class(self, 1, name=name,
                                                          latex_name=latex_name)
@@ -2584,7 +2567,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         See
         :class:`~sage.tensor.modules.free_module_automorphism.FreeModuleAutomorphism`
         for more documentation.
-
         """
         resu = self.general_linear_group().element_class(self, name=name,
                                                          latex_name=latex_name)
@@ -2689,7 +2671,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
 
         See :class:`~sage.tensor.modules.free_module_tensor.FreeModuleTensor`
         for more documentation.
-
         """
         return self.tensor_module(0,2).element_class(self, (0,2), name=name,
                                               latex_name=latex_name, sym=(0,1))
@@ -2733,11 +2714,10 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             sage: e = M.basis('e')
             sage: e.dual_basis()[0] in M.dual()
             True
-
         """
         return self.dual_exterior_power(1)
 
-    def irange(self, start: Optional[int] = None) -> Generator[int, None, None]:
+    def irange(self, start: int | None = None) -> Generator[int, None, None]:
         r"""
         Single index generator, labelling the elements of a basis of ``self``.
 
@@ -2770,7 +2750,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             sage: M2 = FiniteRankFreeModule(ZZ, 3, start_index=-4)
             sage: list(M2.irange())
             [-4, -3, -2]
-
         """
         si = self._sindex
         imax = self._rank + si
@@ -2815,7 +2794,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             Basis (f_1,f_2) on the Rank-2 free module M over the Integer Ring
             sage: M.default_basis()
             Basis (e_1,e_2) on the Rank-2 free module M over the Integer Ring
-
         """
         if self._def_basis is None:
             print("No default basis has been defined on the {}".format(self))
@@ -2823,7 +2801,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
 
     def set_default_basis(self, basis):
         r"""
-        Sets the default basis of ``self``.
+        Set the default basis of ``self``.
 
         The *default basis* is simply a basis whose name can be skipped in
         methods requiring a basis as an argument. By default, it is the first
@@ -2849,7 +2827,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             sage: M.set_default_basis(f)
             sage: M.default_basis()
             Basis (f_1,f_2,f_3) on the Rank-3 free module M over the Integer Ring
-
         """
         from .free_module_basis import FreeModuleBasis
         if not isinstance(basis, FreeModuleBasis):
@@ -2925,7 +2902,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             sage: M.bases()
             [Basis (e_1,e_2,e_3) on the Rank-3 free module M_3 over the Integer Ring,
              Basis (f_1,f_2,f_3) on the Rank-3 free module M_3 over the Integer Ring]
-
         """
         return list(self._known_bases)
 
@@ -3030,7 +3006,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
 
             sage: R == Q*P^(-1)
             True
-
         """
         if basis1 == basis2:
             return self.identity_map()
@@ -3084,8 +3059,8 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
           :class:`~sage.tensor.modules.free_module_automorphism.FreeModuleAutomorphism`
           describing the automorphism `P` that relates the basis `(e_i)` to
           the basis `(f_i)` according to `f_i = P(e_i)`
-        - ``compute_inverse`` (default: ``True``) -- if set to ``True``, the
-          inverse automorphism is computed and the change from basis `(f_i)`
+        - ``compute_inverse`` -- boolean (default: ``True``); if set to ``True``,
+          the inverse automorphism is computed and the change from basis `(f_i)`
           to `(e_i)` is set to it in the internal dictionary
           ``self._basis_changes``
 
@@ -3115,7 +3090,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             f_0 = e_0 - e_1
             sage: e[0].display(f)
             e_0 = 3/5 f_0 + 1/5 f_1
-
         """
         if basis1 not in self._known_bases:
             raise TypeError("{} is not a basis of the {}".format(basis1,
@@ -3167,7 +3141,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         - ``name`` -- (default: ``None``) string; name given to the
           homomorphism
         - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote
-          the homomorphism; if None, ``name`` will be used.
+          the homomorphism. If ``None``, ``name`` will be used.
 
         OUTPUT:
 
@@ -3211,7 +3185,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         See class
         :class:`~sage.tensor.modules.free_module_morphism.FiniteRankFreeModuleMorphism`
         for more documentation.
-
         """
         homset = Hom(self, codomain)
         return homset(matrix_rep, bases=bases, name=name,
@@ -3238,7 +3211,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         - ``name`` -- (default: ``None``) string; name given to the
           endomorphism
         - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote
-          the endomorphism; if none is provided, ``name`` will be used.
+          the endomorphism. If none is provided, ``name`` will be used.
 
         OUTPUT:
 
@@ -3277,7 +3250,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
 
         See :class:`~sage.tensor.modules.free_module_morphism.FiniteRankFreeModuleMorphism`
         for more documentation.
-
         """
         from sage.categories.homset import End
         if basis is None:
@@ -3355,7 +3327,6 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             Identity map of the Rank-3 free module N over the Integer Ring
             sage: latex(Id)
             \mathrm{Id}_N
-
         """
         if self._identity_map is None:
             self._identity_map = self.general_linear_group().one()
@@ -3432,7 +3403,7 @@ class FiniteRankDualFreeModule(ReflexiveModule_dual, FiniteRankFreeModule_abstra
         sage: A(0) is A.zero()
         True
 
-    while non-zero elements are constructed by providing their components in a
+    while nonzero elements are constructed by providing their components in a
     given basis::
 
         sage: e
@@ -3481,7 +3452,6 @@ class FiniteRankDualFreeModule(ReflexiveModule_dual, FiniteRankFreeModule_abstra
             sage: A = FiniteRankDualFreeModule(M) ; A
             Dual of the Rank-3 free module M over the Integer Ring
             sage: TestSuite(A).run()
-
         """
         self._fmodule = fmodule
         rank = fmodule._rank
@@ -3559,7 +3529,6 @@ class FiniteRankDualFreeModule(ReflexiveModule_dual, FiniteRankFreeModule_abstra
             Linear form on the 4-dimensional vector space M2 over the Rational Field
             sage: M2.default_basis()
             Basis (e_0,e_1,e_2,e_3) on the 4-dimensional vector space M2 over the Rational Field
-
         """
         resu = self.element_class(self._fmodule, 1)
         # Make sure that the base module has a default basis
@@ -3585,7 +3554,6 @@ class FiniteRankDualFreeModule(ReflexiveModule_dual, FiniteRankFreeModule_abstra
             Linear form zero on the Rank-3 free module M over the Integer Ring
             sage: A(0) is A.zero()
             True
-
         """
         resu = self._element_constructor_(name='zero', latex_name='0')
         for basis in self._fmodule._known_bases:
@@ -3624,6 +3592,5 @@ class FiniteRankDualFreeModule(ReflexiveModule_dual, FiniteRankFreeModule_abstra
             Rank-5 free module M over the Integer Ring
             sage: A.base_module() is M
             True
-
         """
         return self._fmodule

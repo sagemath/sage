@@ -19,12 +19,13 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.power_series_ring_element import is_PowerSeries
+from sage.rings.power_series_ring_element import PowerSeries
 
 lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
 
 from sage.modular.dirichlet import DirichletGroup, DirichletCharacter
 from .element import ModularFormElement
+
 
 def hecke_operator_on_qexp(f, n, k, eps=None,
                            prec=None, check=True, _return_list=False):
@@ -87,7 +88,7 @@ def hecke_operator_on_qexp(f, n, k, eps=None,
         # ZZ can coerce to GF(p), but QQ can't.
         eps = DirichletGroup(1, base_ring=ZZ)[0]
     if check:
-        if not (is_PowerSeries(f) or isinstance(f, ModularFormElement)):
+        if not (isinstance(f, PowerSeries) or isinstance(f, ModularFormElement)):
             raise TypeError("f (=%s) must be a power series or modular form" % f)
         if not isinstance(eps, DirichletCharacter):
             raise TypeError("eps (=%s) must be a Dirichlet character" % eps)
@@ -132,7 +133,7 @@ def hecke_operator_on_qexp(f, n, k, eps=None,
 
 def _hecke_operator_on_basis(B, V, n, k, eps):
     """
-    Does the work for hecke_operator_on_basis once the input
+    Do the work for hecke_operator_on_basis once the input
     is normalized.
 
     EXAMPLES::
@@ -163,7 +164,7 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
     with character `\varepsilon` to precision at least `\#B\cdot n+1`,
     this function computes the matrix of `T_n` relative to `B`.
 
-    .. note::
+    .. NOTE::
 
        If the elements of B are not known to sufficient precision,
        this function will report that the vectors are linearly
@@ -171,16 +172,16 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
 
     INPUT:
 
-    - ``B`` -- list of q-expansions
+    - ``B`` -- list of `q`-expansions
 
-    - ``n`` -- an integer >= 1
+    - ``n`` -- integer >= 1
 
-    - ``k`` -- an integer
+    - ``k`` -- integer
 
     - ``eps`` -- Dirichlet character
 
-    - ``already_echelonized`` -- bool (default: ``False``); if True, use that the
-      basis is already in Echelon form, which saves a lot of time.
+    - ``already_echelonized`` -- boolean (default: ``False``); if ``True``, use
+      that the basis is already in Echelon form, which saves a lot of time
 
     EXAMPLES::
 
@@ -235,7 +236,7 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
         eps = DirichletGroup(1, R)[0]
     all_powerseries = True
     for x in B:
-        if not is_PowerSeries(x):
+        if not isinstance(x, PowerSeries):
             all_powerseries = False
     if not all_powerseries:
         raise TypeError("each element of B must be a power series")

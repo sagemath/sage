@@ -35,6 +35,7 @@ from sage.symbolic.ring import SymbolicRing
 from sage.manifolds.scalarfield_algebra import ScalarFieldAlgebra
 from sage.manifolds.differentiable.scalarfield import DiffScalarField
 
+
 class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
     r"""
     Commutative algebra of differentiable scalar fields on a differentiable
@@ -367,7 +368,6 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
     It is passed also for `C^k(W)`::
 
         sage: TestSuite(CW).run()
-
     """
 
     Element = DiffScalarField
@@ -388,7 +388,6 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
             sage: type(CM).__base__
             <class 'sage.manifolds.differentiable.scalarfield_algebra.DiffScalarFieldAlgebra'>
             sage: TestSuite(CM).run()
-
         """
         ScalarFieldAlgebra.__init__(self, domain)
 
@@ -396,7 +395,7 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
 
     def _coerce_map_from_(self, other):
         r"""
-        Determine whether coercion to self exists from other parent
+        Determine whether coercion to ``self`` exists from other parent.
 
         TESTS::
 
@@ -417,7 +416,6 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
             False
             sage: CU._coerce_map_from_(CM)
             True
-
         """
         from sage.manifolds.chart_func import ChartFunctionRing
 
@@ -447,7 +445,6 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
             'Algebra of differentiable scalar fields on the 2-dimensional differentiable manifold M'
             sage: repr(CM)  # indirect doctest
             'Algebra of differentiable scalar fields on the 2-dimensional differentiable manifold M'
-
         """
         return "Algebra of differentiable scalar fields on " + \
                "the {}".format(self._domain)

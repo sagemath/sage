@@ -84,7 +84,7 @@ class HTMLText(HTMLMath):
         pass
 
 
-class TransformWidget():
+class TransformWidget:
     """
     A mixin class for a widget to transform the bare widget value for
     use in interactive functions.
@@ -92,7 +92,7 @@ class TransformWidget():
     INPUT:
 
     - ``transform`` -- a one-argument function which transforms the
-      value of the widget for use by an interactive function.
+      value of the widget for use by an interactive function
 
     - other arguments are passed to the base class
 
@@ -133,7 +133,7 @@ class TransformWidget():
             sage: from ipywidgets import ColorPicker
             sage: from sage.repl.ipython_kernel.widgets import TransformWidget
             sage: class TransformColorPicker(TransformWidget, ColorPicker): pass
-            sage: TransformColorPicker(value="red").get_value()
+            sage: TransformColorPicker(value='red').get_value()
             'red'
         """
         return self.value
@@ -276,7 +276,7 @@ class TransformText(TransformWidget, Text):
     EXAMPLES::
 
         sage: from sage.repl.ipython_kernel.widgets import TransformText
-        sage: w = TransformText(value="hello", transform=lambda x: x + x)
+        sage: w = TransformText(value='hello', transform=lambda x: x + x)
         sage: w
         TransformText(value='hello')
         sage: w.get_interact_value()
@@ -293,7 +293,7 @@ class TransformTextarea(TransformWidget, Textarea):
     EXAMPLES::
 
         sage: from sage.repl.ipython_kernel.widgets import TransformTextarea
-        sage: w = TransformTextarea(value="hello", transform=lambda x: x + x)
+        sage: w = TransformTextarea(value='hello', transform=lambda x: x + x)
         sage: w
         TransformTextarea(value='hello')
         sage: w.get_interact_value()
@@ -310,7 +310,7 @@ class EvalText(EvalWidget, Text):
     EXAMPLES::
 
         sage: from sage.repl.ipython_kernel.widgets import EvalText
-        sage: w = EvalText(value="pi", transform=lambda x: x^2)
+        sage: w = EvalText(value='pi', transform=lambda x: x^2)
         sage: w
         EvalText(value='pi')
         sage: w.get_interact_value()                                                    # needs sage.symbolic
@@ -327,7 +327,7 @@ class EvalTextarea(EvalWidget, Textarea):
     EXAMPLES::
 
         sage: from sage.repl.ipython_kernel.widgets import EvalTextarea
-        sage: w = EvalTextarea(value="pi", transform=lambda x: x^2)
+        sage: w = EvalTextarea(value='pi', transform=lambda x: x^2)
         sage: w
         EvalTextarea(value='pi')
         sage: w.get_interact_value()                                                    # needs sage.symbolic
@@ -383,7 +383,7 @@ class Grid(TransformWidget, HBox, ValueWidget):
     value = List()
     description = Unicode()
 
-    def __init__(self, nrows, ncols, make_widget, description=u"", transform=None):
+    def __init__(self, nrows, ncols, make_widget, description="", transform=None):
         """
         Create a :class:`Grid` widget.
 
@@ -392,11 +392,11 @@ class Grid(TransformWidget, HBox, ValueWidget):
         - ``nrows``, ``ncols`` -- number of rows and columns in the grid
 
         - ``make_widget`` -- a function of two arguments ``(i,j)``
-          returning the widget to be placed at position ``(i,j)``.
+          returning the widget to be placed at position ``(i,j)``
 
-        - ``description`` -- an optional label.
+        - ``description`` -- an optional label
 
-        - ``transform`` -- an optional transformation, see :class:`TransformWidget`.
+        - ``transform`` -- an optional transformation, see :class:`TransformWidget`
 
         EXAMPLES::
 
@@ -431,7 +431,7 @@ class Grid(TransformWidget, HBox, ValueWidget):
             widgets = []
             for i in range(nrows):
                 w = make_widget(i, j)
-                w.observe(self._update, names="value")
+                w.observe(self._update, names='value')
                 widgets.append(w)
             col.children = widgets
             self.cols.append(col)

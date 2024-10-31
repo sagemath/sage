@@ -128,7 +128,6 @@ def PrisonersDilemma(R=-2, P=-4, S=-5, T=0):
         ...
         TypeError: the input values for a Prisoners Dilemma must be
         of the form T > R > P > S
-
     """
     if not (T > R > P > S):
         raise TypeError("the input values for a Prisoners Dilemma must be of the form T > R > P > S")
@@ -319,7 +318,6 @@ def StagHunt():
         True
         sage: g.obtain_nash()
         [[(0, 1), (0, 1)], [(2/3, 1/3), (2/3, 1/3)], [(1, 0), (1, 0)]]
-
     """
     g = CoordinationGame(A=5, a=5, B=4, b=0, C=0, c=4, D=2, d=2)
     g.rename('Stag hunt - ' + repr(g))
@@ -550,7 +548,6 @@ def Pigs():
         True
         sage: g.obtain_nash()
         [[(1, 0), (0, 1)]]
-
     """
     from sage.matrix.constructor import matrix
     A = matrix([[3, 1], [6, 0]])
@@ -915,7 +912,6 @@ def TravellersDilemma(max_value=10):
         True
         sage: g.obtain_nash()
         [[(0, 0, 0, 1), (0, 0, 0, 1)]]
-
     """
     from sage.matrix.constructor import matrix
     from sage.functions.generalized import sign

@@ -44,6 +44,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 from .element import DrinfeldModularFormsElement
 
+
 class DrinfeldModularForms(Parent, UniqueRepresentation):
     r"""
     Base class for the graded ring of Drinfeld modular forms.
@@ -76,20 +77,20 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
     INPUT:
 
     - ``base_ring`` -- the fraction field of a univariate polynomial
-      ring over `\mathbb{F}_q`.
+      ring over `\mathbb{F}_q`
 
-    - ``rank`` integer (default: ``None``) -- the rank of the ring. If
+    - ``rank`` integer (default: ``None``); the rank of the ring. If
       the rank is ``None``, then the names of the generators must be
       specified.
 
-    - ``group`` (not implemented, default: ``None``) -- the group of the
+    - ``group`` -- (not implemented, default: ``None``) the group of the
       ring. The current implementation only supports the full modular
       group `\mathrm{GL}_r(A)`.
 
-    - ``has_type`` boolean (default: ``False``) -- if set to ``True``,
-      returns the graded ring of arbitrary type.
+    - ``has_type`` -- boolean (default: ``False``); if set to ``True``,
+      returns the graded ring of arbitrary type
 
-    - ``names`` string, tuple or list (default: ``None``) -- a single
+    - ``names`` -- string, tuple or list (default: ``None``); a single
       character, a tuple or list of character, or comma separated string
       of character representing the names of the generators. If this
       parameter is set to ``None`` and the rank is specified, then the
@@ -341,7 +342,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
     def _an_element_(self):
         r"""
-        Return an element of self.
+        Return an element of ``self``.
 
         TESTS::
 
@@ -356,7 +357,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
     def _repr_(self):
         r"""
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         TESTS::
 
@@ -371,7 +372,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
     def _generator_coefficient_form(self, i):
         r"""
-        Return the i-th coefficient form at `T`.
+        Return the `i`-th coefficient form at `T`.
 
         For internal use only, the user should use
         :meth:`coefficient_form` instead.
@@ -415,9 +416,9 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``a`` -- an element in the ring of regular functions.
+        - ``a`` -- an element in the ring of regular functions
 
-        OUTPUT: a list of Drinfeld modular forms. The `i`-th element of
+        OUTPUT: list of Drinfeld modular forms. The `i`-th element of
         that list corresponds to the `(i+1)`-th coefficient form at `a`.
 
         TESTS::
@@ -430,13 +431,11 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             [(T^2 + T)*g1, g1^3 + (T^4 + T)*g2, g1^4*g2 + g1*g2^2, g2^5]
         """
         a = a.numerator()
-        d = a.degree()
         poly_ring = PolynomialRing(self._base_ring, self.rank(), 'g')
         poly_ring_gens = poly_ring.gens()
         Frob = poly_ring.frobenius_endomorphism()
         gen = [self._base_ring.gen()]
-        for g in poly_ring_gens:
-            gen.append(g)
+        gen.extend(poly_ring_gens)
         ore_pol_ring = OrePolynomialRing(poly_ring, Frob, 't')
         gen = ore_pol_ring(gen)
         f = sum(c*(gen**idx) for idx, c in enumerate(a.coefficients(sparse=False)))
@@ -460,7 +459,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``i`` -- an integer between 1 and `r d_a`;
+        - ``i`` -- integer between 1 and `r d_a`
 
         - ``a`` -- (default: ``None``) an element in the ring of regular
           functions. If `a` is ``None``, then the method returns the
@@ -546,7 +545,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
           functions. If `a` is ``None``, then the method returns the
           coefficients forms at `a = T`.
 
-        OUTPUT: a list of Drinfeld modular forms. The `i`-th element of
+        OUTPUT: list of Drinfeld modular forms. The `i`-th element of
         that list corresponds to the `(i+1)`-th coefficient form at `a`.
 
         EXAMPLES::
@@ -728,7 +727,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``k`` -- an integer.
+        - ``k`` -- integer
 
         EXAMPLES::
 

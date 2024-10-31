@@ -39,9 +39,9 @@ def report(F, title, systems=['sage', 'magma'], **kwds):
 
     INPUT:
 
-    - ``F`` -- a list of callables used for benchmarking
-    - ``title`` -- a string describing this report
-    - ``systems`` -- a list of systems (supported entries are 'sage' and 'magma')
+    - ``F`` -- list of callables used for benchmarking
+    - ``title`` -- string describing this report
+    - ``systems`` -- list of systems (supported entries are 'sage' and 'magma')
     - ``**kwds`` -- keyword arguments passed to all functions in ``F``
 
     EXAMPLES::
@@ -132,7 +132,7 @@ def nullspace_ZZ(n=200, min=0, max=2**32, system='sage'):
     - ``n`` -- matrix dimension (default: ``200``)
     - ``min`` -- minimal value for entries of matrix (default: ``0``)
     - ``max`` -- maximal value for entries of matrix (default: ``2**32``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -172,7 +172,7 @@ def charpoly_ZZ(n=100, min=0, max=9, system='sage'):
     - ``n`` -- matrix dimension (default: ``100``)
     - ``min`` -- minimal value for entries of matrix (default: ``0``)
     - ``max`` -- maximal value for entries of matrix (default: ``9``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -212,7 +212,7 @@ def rank_ZZ(n=700, min=0, max=9, system='sage'):
     - ``n`` -- matrix dimension (default: ``700``)
     - ``min`` -- minimal value for entries of matrix (default: ``0``)
     - ``max`` -- maximal value for entries of matrix (default: ``9``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -251,7 +251,7 @@ def rank2_ZZ(n=400, min=0, max=2**64, system='sage'):
     - ``n`` -- matrix dimension (default: ``400``)
     - ``min`` -- minimal value for entries of matrix (default: ``0``)
     - ``max`` -- maximal value for entries of matrix (default: ``2**64``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -292,7 +292,7 @@ def smithform_ZZ(n=128, min=0, max=9, system='sage'):
     - ``n`` -- matrix dimension (default: ``128``)
     - ``min`` -- minimal value for entries of matrix (default: ``0``)
     - ``max`` -- maximal value for entries of matrix (default: ``9``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -332,7 +332,7 @@ def matrix_multiply_ZZ(n=300, min=-9, max=9, system='sage', times=1):
     - ``n`` -- matrix dimension (default: ``300``)
     - ``min`` -- minimal value for entries of matrix (default: ``-9``)
     - ``max`` -- maximal value for entries of matrix (default: ``9``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
     - ``times`` -- number of experiments (default: ``1``)
 
     EXAMPLES::
@@ -377,7 +377,7 @@ def matrix_add_ZZ(n=200, min=-9, max=9, system='sage', times=50):
     - ``n`` -- matrix dimension (default: ``200``)
     - ``min`` -- minimal value for entries of matrix (default: ``-9``)
     - ``max`` -- maximal value for entries of matrix (default: ``9``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
     - ``times`` -- number of experiments (default: ``50``)
 
     EXAMPLES::
@@ -423,7 +423,7 @@ def matrix_add_ZZ_2(n=200, bits=16, system='sage', times=50):
 
     - ``n`` -- matrix dimension (default: ``200``)
     - ``bits`` -- bitsize of entries
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
     - ``times`` -- number of experiments (default: ``50``)
 
     EXAMPLES::
@@ -446,7 +446,7 @@ def det_ZZ(n=200, min=1, max=100, system='sage'):
     - ``n`` -- matrix dimension (default: ``200``)
     - ``min`` -- minimal value for entries of matrix (default: ``1``)
     - ``max`` -- maximal value for entries of matrix (default: ``100``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -486,7 +486,7 @@ def det_QQ(n=300, num_bound=10, den_bound=10, system='sage'):
     - ``n`` -- matrix dimension (default: ``200``)
     - ``num_bound`` -- numerator bound, inclusive (default: ``10``)
     - ``den_bound`` -- denominator bound, inclusive (default: ``10``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -529,7 +529,7 @@ def vecmat_ZZ(n=300, min=-9, max=9, system='sage', times=200):
     - ``n`` -- matrix dimension (default: ``300``)
     - ``min`` -- minimal value for entries of matrix (default: ``-9``)
     - ``max`` -- maximal value for entries of matrix (default: ``9``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
     - ``times`` -- number of runs (default: ``200``)
 
     EXAMPLES::
@@ -570,7 +570,7 @@ s := Cputime(t);
 
 def report_GF(p=16411, **kwds):
     """
-    Runs all the reports for finite field matrix operations, for
+    Run all the reports for finite field matrix operations, for
     prime p=16411.
 
     INPUT:
@@ -578,7 +578,7 @@ def report_GF(p=16411, **kwds):
     - ``p`` -- ignored
     - ``**kwds`` -- passed through to :func:`report`
 
-    .. note::
+    .. NOTE::
 
         right now, even though p is an input, it is being ignored!  If
         you need to check the performance for other primes, you can
@@ -611,7 +611,7 @@ def nullspace_GF(n=300, p=16411, system='sage'):
 
     - ``n`` -- matrix dimension (default: 300)
     - ``p`` -- prime number (default: ``16411``)
-    - ``system`` -- either 'magma' or 'sage' (default: 'sage')
+    - ``system`` -- either 'magma' or 'sage' (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -651,7 +651,7 @@ def charpoly_GF(n=100, p=16411, system='sage'):
 
     - ``n`` -- matrix dimension (default: 100)
     - ``p`` -- prime number (default: ``16411``)
-    - ``system`` -- either 'magma' or 'sage' (default: 'sage')
+    - ``system`` -- either 'magma' or 'sage' (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -687,7 +687,7 @@ def matrix_add_GF(n=1000, p=16411, system='sage',times=100):
 
     - ``n`` -- matrix dimension (default: 300)
     - ``p`` -- prime number (default: ``16411``)
-    - ``system`` -- either 'magma' or 'sage' (default: 'sage')
+    - ``system`` -- either 'magma' or 'sage' (default: ``'sage'``)
     - ``times`` -- number of experiments (default: ``100``)
 
     EXAMPLES::
@@ -733,7 +733,7 @@ def matrix_multiply_GF(n=100, p=16411, system='sage', times=3):
 
     - ``n`` -- matrix dimension (default: 100)
     - ``p`` -- prime number (default: ``16411``)
-    - ``system`` -- either 'magma' or 'sage' (default: 'sage')
+    - ``system`` -- either 'magma' or 'sage' (default: ``'sage'``)
     - ``times`` -- number of experiments (default: ``3``)
 
     EXAMPLES::
@@ -777,7 +777,7 @@ def rank_GF(n=500, p=16411, system='sage'):
 
     - ``n`` -- matrix dimension (default: 300)
     - ``p`` -- prime number (default: ``16411``)
-    - ``system`` -- either 'magma' or 'sage' (default: 'sage')
+    - ``system`` -- either 'magma' or 'sage' (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -814,7 +814,7 @@ def rank2_GF(n=500, p=16411, system='sage'):
 
     - ``n`` -- matrix dimension (default: 300)
     - ``p`` -- prime number (default: ``16411``)
-    - ``system`` -- either 'magma' or 'sage' (default: 'sage')
+    - ``system`` -- either 'magma' or 'sage' (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -852,7 +852,7 @@ def det_GF(n=400, p=16411 , system='sage'):
 
     - ``n`` -- matrix dimension (default: 300)
     - ``p`` -- prime number (default: ``16411``)
-    - ``system`` -- either 'magma' or 'sage' (default: 'sage')
+    - ``system`` -- either 'magma' or 'sage' (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -887,7 +887,7 @@ s := Cputime(t);
 
 def hilbert_matrix(n):
     """
-    Returns the Hilbert matrix of size n over rationals.
+    Return the Hilbert matrix of size n over rationals.
 
     EXAMPLES::
 
@@ -915,7 +915,7 @@ def echelon_QQ(n=100, min=0, max=9, system='sage'):
     - ``n`` -- matrix dimension (default: ``300``)
     - ``min`` -- minimal value for entries of matrix (default: ``-9``)
     - ``max`` -- maximal value for entries of matrix (default: ``9``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -955,7 +955,7 @@ def inverse_QQ(n=100, min=0, max=9, system='sage'):
     - ``n`` -- matrix dimension (default: ``300``)
     - ``min`` -- minimal value for entries of matrix (default: ``-9``)
     - ``max`` -- maximal value for entries of matrix (default: ``9``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -995,7 +995,7 @@ def matrix_multiply_QQ(n=100, bnd=2, system='sage', times=1):
 
     - ``n`` -- matrix dimension (default: ``300``)
     - ``bnd`` -- numerator and denominator bound (default: ``bnd``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
     - ``times`` -- number of experiments (default: ``1``)
 
     EXAMPLES::
@@ -1034,13 +1034,13 @@ s := Cputime(t);
 # Determinant of Hilbert matrix
 def det_hilbert_QQ(n=80, system='sage'):
     """
-    Runs the benchmark for calculating the determinant of the hilbert
+    Run the benchmark for calculating the determinant of the hilbert
     matrix over rationals of dimension n.
 
     INPUT:
 
     - ``n`` -- matrix dimension (default: ``300``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -1069,13 +1069,13 @@ delete h;
 # inverse of Hilbert matrix
 def invert_hilbert_QQ(n=40, system='sage'):
     """
-    Runs the benchmark for calculating the inverse of the hilbert
+    Run the benchmark for calculating the inverse of the hilbert
     matrix over rationals of dimension n.
 
     INPUT:
 
     - ``n`` -- matrix dimension (default: ``300``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -1110,7 +1110,7 @@ def MatrixVector_QQ(n=1000,h=100,system='sage',times=1):
 
     - ``n`` -- matrix dimension (default: ``300``)
     - ``h`` -- numerator and denominator bound (default: ``bnd``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
     - ``times`` -- number of experiments (default: ``1``)
 
     EXAMPLES::
@@ -1167,7 +1167,7 @@ def nullspace_RR(n=300, min=0, max=10, system='sage'):
     - ``n`` -- matrix dimension (default: ``300``)
     - ``min`` -- minimal value for entries of matrix (default: ``0``)
     - ``max`` -- maximal value for entries of matrix (default: ``10``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 
@@ -1207,8 +1207,8 @@ def nullspace_RDF(n=300, min=0, max=10, system='sage'):
 
     - ``n`` -- matrix dimension (default: ``300``)
     - ``min`` -- minimal value for entries of matrix (default: ``0``)
-    - ``max`` -- maximal value for entries of matrix (default: `10``)
-    - ``system`` -- either 'sage' or 'magma' (default: 'sage')
+    - ``max`` -- maximal value for entries of matrix (default: ``10``)
+    - ``system`` -- either ``'sage'`` or ``'magma'`` (default: ``'sage'``)
 
     EXAMPLES::
 

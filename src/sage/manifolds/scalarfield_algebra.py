@@ -38,6 +38,7 @@ from sage.categories.topological_spaces import TopologicalSpaces
 from sage.symbolic.ring import SymbolicRing, SR
 from sage.manifolds.scalarfield import ScalarField
 
+
 class ScalarFieldAlgebra(UniqueRepresentation, Parent):
     r"""
     Commutative algebra of scalar fields on a topological manifold.
@@ -356,7 +357,6 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
     It is passed also for `C^0(W)`::
 
         sage: TestSuite(CW).run()
-
     """
 
     Element = ScalarField
@@ -377,7 +377,6 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
             sage: type(CM).__base__
             <class 'sage.manifolds.scalarfield_algebra.ScalarFieldAlgebra'>
             sage: TestSuite(CM).run()
-
         """
         base_field = domain.base_field()
         if domain.base_field_type() in ['real', 'complex']:
@@ -449,7 +448,6 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
             sage: fU.display()
             f: U → ℝ
                (x, y) ↦ y^2 + x
-
         """
         try:
             if coord_expression.is_trivial_zero():
@@ -481,7 +479,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
 
     def _an_element_(self):
         r"""
-        Construct some element of the algebra
+        Construct some element of the algebra.
 
         TESTS::
 
@@ -493,7 +491,6 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
             sage: f.display()
             M → ℝ
             (x, y) ↦ 2
-
         """
         return self.element_class(self, coord_expression=2, chart='all')
 
@@ -520,7 +517,6 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
             False
             sage: CU._coerce_map_from_(CM)
             True
-
         """
         from .chart_func import ChartFunctionRing
         if isinstance(other, SymbolicRing):
@@ -549,7 +545,6 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
             'Algebra of scalar fields on the 2-dimensional topological manifold M'
             sage: CM
             Algebra of scalar fields on the 2-dimensional topological manifold M
-
         """
         return "Algebra of scalar fields on the {}".format(self._domain)
 
@@ -565,7 +560,6 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
             'C^0 \\left(M\\right)'
             sage: latex(CM)
             C^0 \left(M\right)
-
         """
         return r"C^0 \left(" + self._domain._latex_() + r"\right)"
 
@@ -592,7 +586,6 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
 
             sage: CM.zero() is z
             True
-
         """
         coord_express = {chart: chart.zero_function()
                          for chart in self._domain.atlas()}
@@ -626,7 +619,6 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
 
             sage: CM.one() is h
             True
-
         """
         coord_express = {chart: chart.one_function()
                          for chart in self._domain.atlas()}

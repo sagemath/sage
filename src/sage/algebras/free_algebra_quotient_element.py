@@ -189,7 +189,7 @@ class FreeAlgebraQuotientElement(AlgebraElement):
 
     def __neg__(self):
         """
-        Return negative of self.
+        Return negative of ``self``.
 
         EXAMPLES::
 

@@ -21,9 +21,10 @@ Test of the :mod:`~sage.structure.factory` module
 from sage.structure.factory import UniqueFactory
 
 
-class A():
+class A:
     # something we can weakref
     pass
+
 
 class UniqueFactoryTester(UniqueFactory):
 

@@ -39,7 +39,7 @@ class CharacterArt(SageObject):
 
     def __init__(self, lines=[], breakpoints=[], baseline=None):
         r"""
-        Abstract base class for character art
+        Abstract base class for character art.
 
         INPUT:
 
@@ -96,7 +96,7 @@ class CharacterArt(SageObject):
     @classmethod
     def empty(cls):
         """
-        Return the empty character art object
+        Return the empty character art object.
 
         EXAMPLES::
 
@@ -242,9 +242,7 @@ class CharacterArt(SageObject):
         connected to a terminal. Otherwise you should treat ``stdout`` as
         being redirected to a file.
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -276,7 +274,7 @@ class CharacterArt(SageObject):
         import fcntl
         import termios
         import struct
-        rc = fcntl.ioctl(int(0), termios.TIOCGWINSZ,
+        rc = fcntl.ioctl(0, termios.TIOCGWINSZ,
                          struct.pack('HHHH', sys.stdout.fileno(), 0, 0, 0))
         h, w, hp, wp = struct.unpack('HHHH', rc)
         return w
@@ -292,7 +290,7 @@ class CharacterArt(SageObject):
 
         - ``size`` -- the maximum width of each chunk
 
-        - ``offset`` -- (default: ``0``); the first chunk has width at most
+        - ``offset`` -- (default: ``0``) the first chunk has width at most
           ``size - offset``
 
         TESTS::
@@ -303,7 +301,7 @@ class CharacterArt(SageObject):
         # We implement a custom iterator instead of repeatedly using
         # itertools.chain to prepend elements in order to avoid quadratic time
         # complexity
-        class PrependIterator():
+        class PrependIterator:
             """
             Iterator with support for prepending of elements.
             """
@@ -560,9 +558,7 @@ class CharacterArt(SageObject):
         r"""
         Return the length (width) of the ASCII art object.
 
-        OUTPUT:
-
-        Integer. The number of characters in each line.
+        OUTPUT: integer; the number of characters in each line
 
         TESTS::
 
@@ -582,9 +578,7 @@ class CharacterArt(SageObject):
         r"""
         Return the height of the ASCII art object.
 
-        OUTPUT:
-
-        Integer. The number of lines.
+        OUTPUT: integer; the number of lines
 
         TESTS::
 
