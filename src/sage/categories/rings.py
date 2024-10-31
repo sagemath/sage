@@ -892,6 +892,46 @@ class Rings(CategoryWithAxiom):
                 Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
                 sage: R.ideal()
                 Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
+
+            Check that we can create the ideal even if no gcd method is implemented::
+
+                sage: from sage.structure.element import Element
+                sage: class MyRingElement(Element):
+                ....:     def __init__(self, parent, x):
+                ....:         Element.__init__(self, parent)
+                ....:         self._x = parent._K(x)
+                ....:     def _repr_(self):
+                ....:         return str(self._x)
+                ....:     def _add_(self, other):
+                ....:         P = self.parent()
+                ....:         return P.element_class(P, self._x + other._x)
+                ....:     def _mul_(self, other):
+                ....:         return P.element_class(P, self._x * other._x)
+
+                sage: class MyRing(Parent):
+                ....:     def __init__(self):
+                ....:         R.<x,y> = PolynomialRing(QQ)
+                ....:         self._K = R.quotient(x^2+y^2+1)
+                ....:         category = PrincipalIdealDomains()
+                ....:         Parent.__init__(self, base=QQ, category=category)
+                ....:     def _repr_(self):
+                ....:         return "Non-Euclidean principal ideal domain"
+                ....:     Element = MyRingElement
+
+                sage: R = MyRing()
+                sage: R.ideal(R(3))
+                Principal ideal (3) of Non-Euclidean principal ideal domain
+
+                sage: R.ideal(R(2), R(3))
+
+            Compare with::
+
+                sage: R.<x,y> = PolynomialRing(QQ)
+                sage: K = R.quotient(x^2+y^2+1)
+                sage: K._refine_category_(PrincipalIdealDomains())
+                sage: K.ideal(2, 3)
+                Ideal (2, 3) of Quotient of Multivariate Polynomial Ring in x, y
+                 over Rational Field by the ideal (x^2 + y^2 + 1)
             """
             if 'coerce' in kwds:
                 coerce = kwds['coerce']
