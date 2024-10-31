@@ -1145,7 +1145,7 @@ class RESetMapReduce:
 
         Cleanup::
 
-            sage: S.finish()
+            sage: S.finish()   # long time
         """
         if self._nprocess == 0:
             raise ValueError("No process connected")
