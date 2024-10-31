@@ -16,7 +16,8 @@ called *matching* *covered* if each edge participates in some perfect matching.
 REFERENCES:
 
 - This methods of this module has been adopted and inspired by the book of
-  Lucchesi and Murty [LM2024]_.
+  Lucchesi and Murty --- *Perfect Matchings: a theory of matching covered
+  graphs* [LM2024]_.
 
 AUTHORS:
 
