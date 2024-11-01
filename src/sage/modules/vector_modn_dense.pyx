@@ -171,13 +171,15 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         """
         Create an element.
 
+        TESTS:
+
         Note that ``coerce=False`` is dangerous::
 
             sage: V = VectorSpace(GF(7), 3)
             sage: v = V([2, 9, -5], coerce=False)
             sage: v[0] == v[1]
             False
-            sage: v[0]+1 == v[1]+1
+            sage: v[0] + 1 == v[1] + 1
             True
             sage: v[0] == v[2]
             False
