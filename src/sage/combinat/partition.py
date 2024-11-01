@@ -169,7 +169,7 @@ Here are all the partitions of `11` of length between `2` and `4` such
 that the difference between two consecutive parts is between `-3` and
 `-1`::
 
-    sage: Partitions(11,min_slope=-3,max_slope=-1,min_length=2,max_length=4).list()
+    sage: Partitions(11, min_slope=-3, max_slope=-1, min_length=2, max_length=4).list()
     [[7, 4], [6, 5], [6, 4, 1], [6, 3, 2], [5, 4, 2], [5, 3, 2, 1]]
 
 Partition objects can also be created individually with :class:`Partition`::
@@ -1716,24 +1716,22 @@ class Partition(CombinatorialElement):
         def condition(a, b):
             if partition_type in ('strict', 'strictly decreasing'):
                 return a < b - 1
-            elif partition_type in (None, 'weak', 'weakly decreasing'):
+            if partition_type in (None, 'weak', 'weakly decreasing'):
                 return a < b
-            else:
-                raise ValueError('unrecognized partition type')
+            raise ValueError('unrecognized partition type')
+
         for r in range(len(p) - 1, -1, -1):
-            if r == 0:
-                if (max is None or p[r] < max[r]):
+            if not r:
+                if max is None or p[r] < max[r]:
                     next_p[r] += 1
                     break
-                else:
-                    return None
-            else:
-                if (max is None or p[r] < max[r]) and condition(p[r], p[r-1]):
-                    next_p[r] += 1
-                    break
-                else:
-                    next_p[r] = min[r]
-                    continue
+                return None
+            elif (max is None or p[r] < max[r]) and condition(p[r], p[r-1]):
+                next_p[r] += 1
+                break
+            next_p[r] = min[r]
+            continue
+
         return _Partitions(next_p)
 
     def row_standard_tableaux(self):
@@ -5319,7 +5317,10 @@ class Partition(CombinatorialElement):
 
         # Replace each p_i by i*x_i-1
         items = ps_mu.monomial_coefficients().items()  # items contains a list of (partition, coeff) pairs
-        partition_to_monomial = lambda part: prod([i*x[i-1] - 1 for i in part])
+
+        def partition_to_monomial(part):
+            return prod([i*x[i-1] - 1 for i in part])
+
         res = [[partition_to_monomial(mc[0]), mc[1]] for mc in items]
 
         # Write things in the monomial basis
@@ -5420,40 +5421,40 @@ class Partition(CombinatorialElement):
             smaller = Partition([])
         if k == 1:
             if smaller == Partition([]):        # In this case, use the hook dimension formula
-                return factorial(larger.size())/prod(larger.hooks())
-            else:
-                if not larger.contains(smaller):    # easy case
-                    return 0
-                else:
-                    # relative dimension
-                    # Uses a formula of Olshanski, Regev, Vershik (see reference)
-                    def inv_factorial(i):
-                        if i < 0:
-                            return 0
-                        return 1/factorial(i)
-
-                    len_range = range(larger.length())
-                    from sage.matrix.constructor import matrix
-                    M = matrix(QQ, [[inv_factorial(larger.get_part(i)-smaller.get_part(j)-i+j) for i in len_range] for j in len_range])
-                    return factorial(larger.size()-smaller.size())*M.determinant()
-        else:
-            larger_core = larger.core(k)
-            smaller_core = smaller.core(k)
-            if smaller_core != larger_core:  # easy case
+                return factorial(larger.size()) / prod(larger.hooks())
+            if not larger.contains(smaller):    # easy case
                 return 0
-            larger_quotients = larger.quotient(k)
-            smaller_quotients = smaller.quotient(k)
 
-            def multinomial_with_partitions(sizes, path_counts):
-                # count the number of ways of performing the k paths in parallel,
-                # if we know the total length allotted for each of the paths (sizes), and the number
-                # of paths for each component. A multinomial picks the ordering of the components where
-                # each step is taken.
-                return prod(path_counts) * multinomial(sizes)
+            # relative dimension
+            # Uses a formula of Olshanski, Regev, Vershik (see reference)
+            def inv_factorial(i):
+                if i < 0:
+                    return 0
+                return 1 / factorial(i)
 
-            sizes = [larger_quotients[i].size()-smaller_quotients[i].size() for i in range(k)]
-            path_counts = [larger_quotients[i].dimension(smaller_quotients[i]) for i in range(k)]
-            return multinomial_with_partitions(sizes, path_counts)
+            len_range = range(larger.length())
+            from sage.matrix.constructor import matrix
+            M = matrix(QQ, [[inv_factorial(larger.get_part(i) - smaller.get_part(j) - i + j)
+                             for i in len_range] for j in len_range])
+            return factorial(larger.size() - smaller.size()) * M.determinant()
+
+        larger_core = larger.core(k)
+        smaller_core = smaller.core(k)
+        if smaller_core != larger_core:  # easy case
+            return 0
+        larger_quotients = larger.quotient(k)
+        smaller_quotients = smaller.quotient(k)
+
+        def multinomial_with_partitions(sizes, path_counts):
+            # count the number of ways of performing the k paths in parallel,
+            # if we know the total length allotted for each of the paths (sizes), and the number
+            # of paths for each component. A multinomial picks the ordering of the components where
+            # each step is taken.
+            return prod(path_counts) * multinomial(sizes)
+
+        sizes = [larger_quotients[i].size() - smaller_quotients[i].size() for i in range(k)]
+        path_counts = [larger_quotients[i].dimension(smaller_quotients[i]) for i in range(k)]
+        return multinomial_with_partitions(sizes, path_counts)
 
     def plancherel_measure(self):
         r"""
@@ -5484,7 +5485,7 @@ class Partition(CombinatorialElement):
             sage: all(sum(mu.plancherel_measure() for mu in Partitions(n))==1 for n in range(10))
             True
         """
-        return self.dimension()**2/factorial(self.size())
+        return self.dimension()**2 / factorial(self.size())
 
     def outline(self, variable=None):
         r"""
@@ -5500,7 +5501,7 @@ class Partition(CombinatorialElement):
         EXAMPLES::
 
             sage: # needs sage.symbolic
-            sage: [Partition([5,4]).outline()(x=i) for i in range(-10,11)]
+            sage: [Partition([5,4]).outline()(x=i) for i in range(-10, 11)]
             [10, 9, 8, 7, 6, 5, 6, 5, 6, 5, 4, 3, 2, 3, 4, 5, 6, 7, 8, 9, 10]
             sage: Partition([]).outline()
             abs(x)
@@ -5513,7 +5514,7 @@ class Partition(CombinatorialElement):
 
         TESTS::
 
-            sage: integrate(Partition([1]).outline()-abs(x),(x,-10,10))                 # needs sage.symbolic
+            sage: integrate(Partition([1]).outline() - abs(x), (x, -10, 10))              # needs sage.symbolic
             2
         """
         if variable is None:
@@ -5533,7 +5534,7 @@ class Partition(CombinatorialElement):
         following two conditions are satisfied:
 
         - In the one-line notation of the permutation `p`, the letter
-          `i` does not appear inbetween `i-1` and `i+1`.
+          `i` does not appear between `i-1` and `i+1`.
 
         - The permutation `q` is obtained from `p` by switching two
           of the three letters `i-1, i, i+1` (in its one-line
@@ -5938,7 +5939,7 @@ class Partitions(UniqueRepresentation, Parent):
     and ``length``::
 
         sage: Partitions(5, min_part=2)
-        Partitions of the integer 5 satisfying constraints min_part=2
+        Partitions of 5 having parts at least 2
         sage: Partitions(5, min_part=2).list()
         [[5], [3, 2]]
 
@@ -6028,8 +6029,8 @@ class Partitions(UniqueRepresentation, Parent):
         sage: TestSuite(Partitions(5)).run()                                            # needs sage.libs.flint
         sage: TestSuite(Partitions(5, min_part=2)).run()                                # needs sage.libs.flint
 
-        sage: repr( Partitions(5, min_part=2) )
-        'Partitions of the integer 5 satisfying constraints min_part=2'
+        sage: repr(Partitions(5, min_part=2))
+        'Partitions of 5 having parts at least 2'
 
         sage: P = Partitions(5, min_part=2)
         sage: P.first().parent()
@@ -6067,18 +6068,26 @@ class Partitions(UniqueRepresentation, Parent):
 
     Check :issue:`15467`::
 
-        sage: Partitions(5,parts_in=[1,2,3,4], length=4)
+        sage: Partitions(5, parts_in=[1,2,3,4], length=4)
         Traceback (most recent call last):
         ...
-        ValueError: the parameters 'parts_in', 'starting' and 'ending' cannot be combined with anything else
-        sage: Partitions(5,starting=[3,2], length=2)
+        ValueError: the parameters 'parts_in', 'starting', 'ending', 'regular' and 'restricted' cannot be combined with anything else
+        sage: Partitions(5, starting=[3,2], length=2)
         Traceback (most recent call last):
         ...
-        ValueError: the parameters 'parts_in', 'starting' and 'ending' cannot be combined with anything else
-        sage: Partitions(5,ending=[3,2], length=2)
+        ValueError: the parameters 'parts_in', 'starting', 'ending', 'regular' and 'restricted' cannot be combined with anything else
+        sage: Partitions(5, ending=[3,2], length=2)
         Traceback (most recent call last):
         ...
-        ValueError: the parameters 'parts_in', 'starting' and 'ending' cannot be combined with anything else
+        ValueError: the parameters 'parts_in', 'starting', 'ending', 'regular' and 'restricted' cannot be combined with anything else
+        sage: Partitions(5, restricted=2, length=2)
+        Traceback (most recent call last):
+        ...
+        ValueError: the parameters 'parts_in', 'starting', 'ending', 'regular' and 'restricted' cannot be combined with anything else
+        sage: Partitions(5, regular=5, length=2)
+        Traceback (most recent call last):
+        ...
+        ValueError: the parameters 'parts_in', 'starting', 'ending', 'regular' and 'restricted' cannot be combined with anything else
         sage: Partitions(NN, length=2)
         Traceback (most recent call last):
         ...
@@ -6110,6 +6119,24 @@ class Partitions(UniqueRepresentation, Parent):
         Partitions of the integer 5 satisfying constraints inner=[2, 1], outer=[3, 2]
         sage: P.list()
         [[3, 2]]
+
+    Check that contradictory length requirements are handled correctly::
+
+        sage: list(Partitions(5, max_length=1, length=3))
+        Traceback (most recent call last):
+        ...
+        ValueError: do not specify the length together with the minimal or maximal length
+
+        sage: list(Partitions(5, min_length=2, max_length=1))
+        []
+
+    Check that :issue:`38897` is fixed::
+
+        sage: Partitions(40, min_length=10).cardinality()
+        24000
+
+        sage: Partitions(40, max_length=10).cardinality()
+        16928
     """
     @staticmethod
     def __classcall_private__(cls, n=None, **kwargs):
@@ -6139,21 +6166,26 @@ class Partitions(UniqueRepresentation, Parent):
         if n == infinity:
             raise ValueError("n cannot be infinite")
         if isinstance(n, (int, Integer)):
-            if len(kwargs) == 0:
+            if not kwargs:
                 return Partitions_n(n)
 
             if len(kwargs) == 1:
                 if 'max_part' in kwargs:
                     return PartitionsGreatestLE(n, kwargs['max_part'])
+                if 'min_part' in kwargs:
+                    return PartitionsSmallestGE(n, kwargs['min_part'], 0, n)
                 if 'length' in kwargs:
                     return Partitions_nk(n, kwargs['length'])
 
             if (len(kwargs) > 1 and
                 ('parts_in' in kwargs or
                  'starting' in kwargs or
-                 'ending' in kwargs)):
-                raise ValueError("the parameters 'parts_in', 'starting' and " +
-                                 "'ending' cannot be combined with anything else")
+                 'ending' in kwargs or
+                 'regular' in kwargs or
+                 'restricted' in kwargs)):
+                raise ValueError("the parameters 'parts_in', 'starting', "
+                                 + "'ending', 'regular' and 'restricted' "
+                                 + "cannot be combined with anything else")
 
             if 'parts_in' in kwargs:
                 return Partitions_parts_in(n, kwargs['parts_in'])
@@ -6165,6 +6197,19 @@ class Partitions(UniqueRepresentation, Parent):
                 return RegularPartitions_n(n, kwargs['regular'])
             elif 'restricted' in kwargs:
                 return RestrictedPartitions_n(n, kwargs['restricted'])
+
+            if 'length' in kwargs and ('min_length' in kwargs or 'max_length' in kwargs):
+                raise ValueError("do not specify the length together with the minimal or maximal length")
+
+            if set(kwargs).issubset(['length', 'min_part',
+                                     'min_length', 'max_length']):
+                if 'length' in kwargs:
+                    return PartitionsSmallestGE(n, kwargs.get('min_part', 1),
+                                                kwargs['length'],
+                                                kwargs['length'])
+                return PartitionsSmallestGE(n, kwargs.get('min_part', 1),
+                                            kwargs.get('min_length', 0),
+                                            kwargs.get('max_length', n))
 
             # FIXME: should inherit from IntegerListLex, and implement repr, or _name as a lazy attribute
             kwargs['name'] = "Partitions of the integer {} satisfying constraints {}".format(n, ", ".join(["{}={}".format(key, kwargs[key]) for key in sorted(kwargs)]))
@@ -7967,9 +8012,9 @@ class PartitionsInBox(Partitions):
 
     EXAMPLES::
 
-        sage: PartitionsInBox(2,2)
+        sage: PartitionsInBox(2, 2)
         Integer partitions which fit in a 2 x 2 box
-        sage: PartitionsInBox(2,2).list()
+        sage: PartitionsInBox(2, 2).list()
         [[], [1], [1, 1], [2], [2, 1], [2, 2]]
     """
 
@@ -8044,7 +8089,10 @@ class PartitionsInBox(Partitions):
             return [self.element_class(self, [])]
         else:
             l = [[i] for i in range(w + 1)]
-            add = lambda x: [x + [i] for i in range(x[-1] + 1)]
+
+            def add(x):
+                return [x + [i] for i in range(x[-1] + 1)]
+
             for i in range(h-1):
                 new_list = []
                 for element in l:
@@ -8670,7 +8718,6 @@ class OrderedPartitions(Partitions):
         sage: OrderedPartitions(4).list()                                               # needs sage.libs.gap
         [[4], [3, 1], [2, 2], [2, 1, 1], [1, 3], [1, 2, 1], [1, 1, 2], [1, 1, 1, 1]]
     """
-
     @staticmethod
     def __classcall_private__(cls, n, k=None):
         """
@@ -8785,13 +8832,122 @@ class OrderedPartitions(Partitions):
 
 
 ##########################
+# Partitions Smallest GE #
+##########################
+
+class PartitionsSmallestGE(UniqueRepresentation, IntegerListsLex):
+    r"""
+    The class of all partitions of the integer `n` having parts
+    at least `k` and restricted length.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.partition import PartitionsSmallestGE
+        sage: PartitionsSmallestGE(10, 2, 0, 10)
+        Partitions of 10 having parts at least 2
+        sage: list(PartitionsSmallestGE(9, 2, 3, 4))
+        [[5, 2, 2], [4, 3, 2], [3, 3, 3], [3, 2, 2, 2]]
+
+        sage: [4,3,2,1] in PartitionsSmallestGE(10, 2, 0, 10)
+        False
+        sage: [2,2,2,2,2] in PartitionsSmallestGE(10, 2, 0, 10)
+        True
+    """
+    @staticmethod
+    def __classcall_private__(cls, n, min_part, min_length, max_length):
+        """
+        Normalize the input to ensure a unique representation.
+
+        TESTS::
+
+            sage: from sage.combinat.partition import PartitionsSmallestGE
+            sage: P1 = PartitionsSmallestGE(9, 0, -1, 10)
+            sage: P2 = PartitionsSmallestGE(9, 1, 0, 10)
+            sage: P1 is P2
+            True
+        """
+        n = ZZ(n)
+        min_part = max(min_part, ZZ.one())
+        min_length = max(min_length, ZZ.zero())
+        max_length = min(max_length, n)
+        return super().__classcall__(cls, n, min_part, min_length, max_length)
+
+    def __init__(self, n, min_part, min_length, max_length):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: from sage.combinat.partition import PartitionsSmallestGE
+            sage: p = PartitionsSmallestGE(10, 2, 0, 10)
+            sage: TestSuite(p).run()
+        """
+        self._n = n
+        self._min_part = min_part
+        self._min_length = min_length
+        self._max_length = max_length
+
+        IntegerListsLex.__init__(self, self._n, max_slope=0,
+                                 min_part=self._min_part,
+                                 min_length=self._min_length,
+                                 max_length=self._max_length)
+
+    def _repr_(self):
+        """
+        Return a string representation of ``self``.
+
+        TESTS::
+
+            sage: from sage.combinat.partition import PartitionsSmallestGE
+            sage: PartitionsSmallestGE(9, 2, 0, 10)
+            Partitions of 9 having parts at least 2
+            sage: PartitionsSmallestGE(9, 2, 3, 5)
+            Partitions of 9 having length between 3 and 5 and parts at least 2
+        """
+        if self._min_length == self._max_length:
+            return f"Partitions of {self._n} having length {self._min_length} and parts at least {self._min_part}"
+        if not self._min_length or (self._n and self._min_length == 1):
+            if self._max_length >= self._n:
+                return f"Partitions of {self._n} having parts at least {self._min_part}"
+            return f"Partitions of {self._n} having length at most {self._max_length} and parts at least {self._min_part}"
+        if self._max_length >= self._n:
+            return f"Partitions of {self._n} having length at least {self._min_length} and parts at least {self._min_part}"
+        return f"Partitions of {self._n} having length between {self._min_length} and {self._max_length} and parts at least {self._min_part}"
+
+    def cardinality(self):
+        """
+        Return the cardinality of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.partition import PartitionsSmallestGE
+            sage: list(PartitionsSmallestGE(9, 3, 0, 2))
+            [[9], [6, 3], [5, 4]]
+            sage: PartitionsSmallestGE(9, 3, 0, 2).cardinality()
+            3
+
+        TESTS::
+
+            sage: all(PartitionsSmallestGE(n, a, b, c).cardinality() ==
+            ....:     len(list(PartitionsSmallestGE(n, a, b, c)))
+            ....:     for n in range(6) for a in range(1, 6) for b in range(6) for c in range(6))
+            True
+        """
+        return sum(number_of_partitions_length(self._n - (self._min_part-1)*ell, ell)
+                   for ell in range(self._min_length, self._max_length + 1))
+
+    Element = Partition
+    options = Partitions.options
+
+
+##########################
 # Partitions Greatest LE #
 ##########################
 
 class PartitionsGreatestLE(UniqueRepresentation, IntegerListsLex):
-    """
-    The class of all (unordered) "restricted" partitions of the integer `n`
-    having parts less than or equal to the integer `k`.
+    r"""
+    The class of all (unordered) "restricted" partitions of the
+    integer `n` having parts less than or equal to the integer `k`.
 
     EXAMPLES::
 
@@ -8812,7 +8968,6 @@ class PartitionsGreatestLE(UniqueRepresentation, IntegerListsLex):
         sage: PartitionsGreatestLE(10, 2).first().parent()
         Partitions...
     """
-
     def __init__(self, n, k):
         """
         Initialize ``self``.
@@ -8850,12 +9005,12 @@ class PartitionsGreatestLE(UniqueRepresentation, IntegerListsLex):
 
         TESTS::
 
-            sage: all(PartitionsGreatestLE(n, a).cardinality() ==                       # needs sage.libs.gap
-            ....:     len(PartitionsGreatestLE(n, a).list())
+            sage: all(PartitionsGreatestLE(n, a).cardinality() ==
+            ....:     len(list(PartitionsGreatestLE(n, a)))
             ....:     for n in range(20) for a in range(6))
             True
         """
-        return sum(number_of_partitions_length(self.n, i) for i in range(self.k+1))
+        return sum(number_of_partitions_length(self.n, i) for i in range(self.k + 1))
 
     Element = Partition
     options = Partitions.options
@@ -9056,9 +9211,9 @@ class RestrictedPartitions_generic(Partitions):
 
             sage: for n in range(10):
             ....:     for ell in range(2, n):
-            ....:         Pres = Partitions(n, restricted=ell)
-            ....:         Preg = Partitions(n, regular=ell)
-            ....:         assert set(Pres) == set(p.conjugate() for p in Preg)
+            ....:         P_res = Partitions(n, restricted=ell)
+            ....:         P_reg = Partitions(n, regular=ell)
+            ....:         assert set(P_res) == set(p.conjugate() for p in P_reg)
         """
         if n == 0:
             yield []
