@@ -123,13 +123,10 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
     if rpos is None:
         rpos = [0., 0.]
 
-    def draw_point(point):
-        return '(%.3f, %.3f)' % (point[0], point[1])
-
     if not tree_node.children:
         r = ''
         node_name = node_prefix + str(node_id)
-        r = "\\node (%s) at %s" % (node_name, draw_point(start))
+        r = "\\node (%s) at (%.3f, %.3f)" % (node_name, *start)
         if node_label:
             r += "{$%s$};\n" % tree_node._latex_()
         else:
@@ -187,7 +184,7 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
     rpos[0] = pos[0]
     rpos[1] = pos[1]
     point_str = ''
-    node_str = "\\node%s (%s) at %s" % (style_node, node_name, draw_point(pos))
+    node_str = "\\node%s (%s) at (%.3f, %.3f)" % (style_node, node_name, *pos)
     if node_label:
         node_str += "{$%s$};\n" % tree_node._latex_()
     else:
