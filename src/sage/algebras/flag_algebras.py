@@ -1585,10 +1585,14 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     verify = verify_certificate
     
     def match_pattern(self, pattern):
+        if pattern is Flag:
+            return [pattern]
         ss = pattern
         if len(ss.ftype_points())!=0:
             ss = ss.subpattern()
         return [xx for xx in self.generate_flags(ss.size(), ss.ftype()) if ss.is_compatible(xx)]
+    
+    match = match_pattern
     
     def _gfe(self, excluded, n, ftype):
         r"""
