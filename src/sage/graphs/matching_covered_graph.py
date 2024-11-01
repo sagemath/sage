@@ -36,8 +36,6 @@ AUTHORS:
 
     - ``canonical_partition()`` | Return the canonical partition of the
       (matching covered) graph.
-    - ``maximal_barrier()`` | Return the (unique) maximal barrier of the
-      (matching covered) graph containing the (provided) vertex.
 
     Bricks, braces and tight cut decomposition:
 
