@@ -1801,7 +1801,7 @@ class MatchingCoveredGraph(Graph):
 
         We use the following theorem.
 
-        .. RUBRIC:: Theorem ([LM2024]_):
+        .. RUBRIC:: Theorem [LM2024]_:
 
         Let `u` and `v` be any two vertices in a matchable graph `G`. Then the
         graph `G - u - v` is matchable if and only if there is no barrier of
@@ -1809,7 +1809,7 @@ class MatchingCoveredGraph(Graph):
 
         And in order to find the vertices that do not lie in the maximal
         barrier containing the provided vertex in linear time we take
-        inspiration of the `M` alternating tree seach method ([LR2004]_).
+        inspiration of the `M` alternating tree seach method [LR2004]_.
 
         INPUT:
 
