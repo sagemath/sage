@@ -14,6 +14,7 @@ Current implementations of elliptic-curve morphisms (child classes):
 - :class:`~sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar`
 - :class:`~sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius`
 - :class:`~sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt`
+- :class:`~sage.schemes.elliptic_curves.hom_fractional.EllipticCurveHom_fractional`
 
 AUTHORS:
 
@@ -443,6 +444,8 @@ class EllipticCurveHom(Morphism):
         - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.kernel_polynomial`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.kernel_polynomial`
         - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.kernel_polynomial`
+        - :meth:`sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt.kernel_polynomial`
+        - :meth:`sage.schemes.elliptic_curves.hom_fractional.EllipticCurveHom_fractional.kernel_polynomial`
 
         TESTS::
 
@@ -466,6 +469,8 @@ class EllipticCurveHom(Morphism):
         - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.dual`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.dual`
         - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.dual`
+        - :meth:`sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt.dual`
+        - :meth:`sage.schemes.elliptic_curves.hom_fractional.EllipticCurveHom_fractional.dual`
 
         TESTS::
 
@@ -491,6 +496,8 @@ class EllipticCurveHom(Morphism):
         - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.rational_maps`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.rational_maps`
         - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.rational_maps`
+        - :meth:`sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt.rational_maps`
+        - :meth:`sage.schemes.elliptic_curves.hom_fractional.EllipticCurveHom_fractional.rational_maps`
 
         TESTS::
 
@@ -515,6 +522,8 @@ class EllipticCurveHom(Morphism):
         - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.x_rational_map`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.x_rational_map`
         - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.x_rational_map`
+        - :meth:`sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt.x_rational_map`
+        - :meth:`sage.schemes.elliptic_curves.hom_fractional.EllipticCurveHom_fractional.x_rational_map`
 
         TESTS::
 
@@ -546,6 +555,8 @@ class EllipticCurveHom(Morphism):
         - :meth:`sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite.scaling_factor`
         - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.scaling_factor`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.scaling_factor`
+        - :meth:`sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt.scaling_factor`
+        - :meth:`sage.schemes.elliptic_curves.hom_fractional.EllipticCurveHom_fractional.scaling_factor`
 
         TESTS::
 
@@ -698,6 +709,8 @@ class EllipticCurveHom(Morphism):
         - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.inseparable_degree`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.inseparable_degree`
         - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.inseparable_degree`
+        - :meth:`sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt.inseparable_degree`
+        - :meth:`sage.schemes.elliptic_curves.hom_fractional.EllipticCurveHom_fractional.inseparable_degree`
 
         TESTS::
 
