@@ -436,6 +436,30 @@ class Rings(CategoryWithAxiom):
             """
             return False
 
+        def is_prime_field(self):
+            r"""
+            Return ``True`` if this ring is one of the prime fields `\QQ` or
+            `\GF{p}`.
+
+            EXAMPLES::
+
+                sage: QQ.is_prime_field()
+                True
+                sage: GF(3).is_prime_field()
+                True
+                sage: GF(9, 'a').is_prime_field()                                           # needs sage.rings.finite_rings
+                False
+                sage: ZZ.is_prime_field()
+                False
+                sage: QQ['x'].is_prime_field()
+                False
+                sage: Qp(19).is_prime_field()                                               # needs sage.rings.padics
+                False
+            """
+            # the case of QQ is handled by QQ itself
+            from sage.categories.finite_fields import FiniteFields
+            return self in FiniteFields() and self.degree() == 1
+
         def is_zero(self) -> bool:
             """
             Return ``True`` if this is the zero ring.
@@ -458,6 +482,54 @@ class Rings(CategoryWithAxiom):
                 False
             """
             return self.one() == self.zero()
+
+        def is_subring(self, other):
+            """
+            Return ``True`` if the canonical map from ``self`` to ``other`` is
+            injective.
+
+            This raises a :exc:`NotImplementedError` if not known.
+
+            EXAMPLES::
+
+                sage: ZZ.is_subring(QQ)
+                True
+                sage: ZZ.is_subring(GF(19))
+                False
+
+            TESTS::
+
+                sage: QQ.is_subring(QQ['x'])
+                True
+                sage: QQ.is_subring(GF(7))
+                False
+                sage: QQ.is_subring(CyclotomicField(7))                                     # needs sage.rings.number_field
+                True
+                sage: QQ.is_subring(ZZ)
+                False
+
+            Every ring is a subring of itself, :issue:`17287`::
+
+                sage: QQbar.is_subring(QQbar)                                               # needs sage.rings.number_field
+                True
+                sage: RR.is_subring(RR)
+                True
+                sage: CC.is_subring(CC)                                                     # needs sage.rings.real_mpfr
+                True
+                sage: x = polygen(ZZ, 'x')
+                sage: K.<a> = NumberField(x^3 - x + 1/10)                                   # needs sage.rings.number_field
+                sage: K.is_subring(K)                                                       # needs sage.rings.number_field
+                True
+                sage: R.<x> = RR[]
+                sage: R.is_subring(R)
+                True
+            """
+            if self is other:
+                return True
+            try:
+                return self.Hom(other).natural_map().is_injective()
+            except (TypeError, AttributeError):
+                return False
 
         def bracket(self, x, y):
             """
