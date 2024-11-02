@@ -1126,7 +1126,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             ...
             AssertionError: (1,3,5)(2,4,6) and [1, 2, 3, 4, 5, 6, 7] should have the same length
         """
-        assert len(x) == self.n, '%s and %s should have the same length'%(self, x)
+        assert len(x) == self.n, '%s and %s should have the same length' % (self, x)
         return [ x[self.perm[i]] for i in range(self.n) ]
 
     cpdef ClonableIntArray _act_on_array_on_position(self, ClonableIntArray x):
@@ -1146,7 +1146,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         cdef int i
         cdef ClonableIntArray y
         cdef int l = self.n
-        assert x._len == l, '%s and %s should have the same length'%(self, x)
+        assert x._len == l, '%s and %s should have the same length' % (self, x)
         y = x.clone()
         for i in range(l):
             y._list[i] = x._list[self.perm[i]]
