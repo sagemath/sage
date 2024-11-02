@@ -142,7 +142,6 @@ lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 
 try:
     from sage.libs.pari.all import pari, PariError
-    from cypari2.pari_instance import prec_words_to_bits
 except ImportError:
     PariError = ()
 
@@ -3712,7 +3711,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         E_pari = E_work.pari_curve()
         log_pari = E_pari.ellpointtoz(pt_pari, precision=working_prec)
 
-        while prec_words_to_bits(log_pari.precision()) < precision:
+        while log_pari.bitprecision() < precision:
             # result is not precise enough, re-compute with double
             # precision. if the base field is not QQ, this
             # requires modifying the precision of the embedding,
