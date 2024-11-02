@@ -129,7 +129,6 @@ This base class provides a lot more methods than a general parent::
      'fraction_field',
      'gen',
      'gens',
-     'ideal',
      'integral_closure',
      'is_commutative',
      'is_field',
