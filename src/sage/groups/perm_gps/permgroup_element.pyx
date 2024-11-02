@@ -96,8 +96,6 @@ Check that :issue:`13569` is fixed::
     (1,2), (1,3), (1,3), (2,3), (1,2), (1,2), (1,3), (2,3)]
 """
 
-# hi
-
 # ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2006 David Joyner
