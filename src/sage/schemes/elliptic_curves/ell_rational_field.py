@@ -4116,7 +4116,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
     label = cremona_label
 
-    def reduction(self,p):
+    def reduction(self, p):
         r"""
         Return the reduction of the elliptic curve at a prime of good
         reduction.
@@ -5945,7 +5945,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         except TypeError:
             raise ValueError("approximated point not on the curve")
 
-    def integral_x_coords_in_interval(self,xmin,xmax):
+    def integral_x_coords_in_interval(self, xmin, xmax):
         r"""
         Return the set of integers `x` with `xmin\le x\le xmax` which are
         `x`-coordinates of rational points on this curve.
@@ -6136,7 +6136,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         # INTERNAL FUNCTIONS ################################################
 
         ############################## begin ################################
-        def point_preprocessing(free,tor):
+        def point_preprocessing(free, tor):
             r"""
             Transform the mw_basis ``free`` into a `\ZZ`-basis for
             `E(\QQ)\cap E^0(`\RR)`. If there is a torsion point on the

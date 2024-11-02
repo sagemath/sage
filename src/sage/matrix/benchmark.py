@@ -679,7 +679,7 @@ s := Cputime(t);
     else:
         raise ValueError('unknown system "%s"' % system)
 
-def matrix_add_GF(n=1000, p=16411, system='sage',times=100):
+def matrix_add_GF(n=1000, p=16411, system='sage', times=100):
     """
     Given two n x n matrix over GF(p) with random entries, add them.
 
@@ -1101,7 +1101,7 @@ delete h;
         magma.eval(code)
         return float(magma.eval('s'))
 
-def MatrixVector_QQ(n=1000,h=100,system='sage',times=1):
+def MatrixVector_QQ(n=1000, h=100, system='sage', times=1):
     """
     Compute product of square ``n`` matrix by random vector with num and
     denom bounded by ``h`` the given number of ``times``.

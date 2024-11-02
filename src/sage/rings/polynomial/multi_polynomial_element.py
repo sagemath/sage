@@ -1657,7 +1657,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         return tuple([self.parent().gen(index) for index in self.degrees().nonzero_positions()])
 
-    def variable(self,i):
+    def variable(self, i):
         """
         Return the `i`-th variable occurring in this polynomial.
 
@@ -2200,7 +2200,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         return F
 
     @handle_AA_and_QQbar
-    def lift(self,I):
+    def lift(self, I):
         """
         Given an ideal `I = (f_1,...,f_r)` and some `g` (= ``self``) in `I`, find
         `s_1,...,s_r` such that `g = s_1 f_1 + ... + s_r f_r`.

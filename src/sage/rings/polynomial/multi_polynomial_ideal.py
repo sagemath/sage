@@ -3724,7 +3724,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
         from sage.libs.singular.groebner_strategy import NCGroebnerStrategy
         return NCGroebnerStrategy(self.std())
 
-    def reduce(self,p):
+    def reduce(self, p):
         """
         Reduce an element modulo a Groebner basis for this ideal.
 
@@ -3759,7 +3759,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
         """
         return self._groebner_strategy().normal_form(p)
 
-    def _contains_(self,p):
+    def _contains_(self, p):
         """
         EXAMPLES:
 
@@ -4739,7 +4739,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
                 gb = self._groebner_basis_ginv(*args, **kwds)
             elif ":" in algorithm:
                 ginv,alg = algorithm.split(":")
-                gb = self._groebner_basis_ginv(algorithm=alg,*args, **kwds)
+                gb = self._groebner_basis_ginv(algorithm=alg, *args, **kwds)
             else:
                 raise NameError("Algorithm '%s' unknown." % algorithm)
         elif algorithm == 'giac:gbasis':

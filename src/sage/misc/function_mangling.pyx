@@ -47,7 +47,7 @@ cdef class ArgumentFixer:
     watching the caller.  For example,
     ::
 
-        sage: def f(x = 10):
+        sage: def f(x=10):
         ....:     return min(1,x)
 
     the following calls are equivalent,
@@ -63,7 +63,7 @@ cdef class ArgumentFixer:
     but from the perspective of a wrapper, they are different::
 
         sage: def wrap(g):
-        ....:     def _g(*args,**kwargs):
+        ....:     def _g(*args, **kwargs):
         ....:         print("{} {}".format(args, kwargs))
         ....:         return g(*args, **kwargs)
         ....:     return _g
@@ -92,7 +92,7 @@ cdef class ArgumentFixer:
         ....:     af = ArgumentFixer(g)
         ....:     def _g(*args, **kwargs):
         ....:         print(af.fix_to_pos())
-        ....:         return g(*args,**kwargs)
+        ....:         return g(*args, **kwargs)
         ....:     return _g
         sage: h2 = wrap2(f)
         sage: t = h2()
@@ -105,13 +105,13 @@ cdef class ArgumentFixer:
     ::
 
         sage: class one:
-        ....:    def __init__(self, x = 1):
+        ....:    def __init__(self, x=1):
         ....:       self.x = x
         sage: af = ArgumentFixer(one.__init__, classmethod=True)
         sage: af.fix_to_pos(1,2,3,a=31,b=2,n=3)
         ((1, 2, 3), (('a', 31), ('b', 2), ('n', 3)))
     """
-    def __init__(self, f, classmethod = False):
+    def __init__(self, f, classmethod=False):
         try:
             arg_names, varargs, varkw, defaults, kwonlyargs, kwonlydefaults, annotations = sage_getargspec(f)
         except AttributeError:
@@ -159,7 +159,7 @@ cdef class ArgumentFixer:
         """
         return "Argument Fixer of %s"%self.f
 
-    def fix_to_named(self, *args,**kwargs):
+    def fix_to_named(self, *args, **kwargs):
         """
         Normalize the arguments with a preference for named arguments.
 
@@ -185,7 +185,7 @@ cdef class ArgumentFixer:
         ::
 
             A,K = self.fix_to_pos(...)
-            self.f(*A,**dict(K))`
+            self.f(*A, **dict(K))`
 
         and
         ::
@@ -247,7 +247,7 @@ cdef class ArgumentFixer:
         ::
 
             A,K = self.fix_to_pos(...)
-            self.f(*A,**dict(K))
+            self.f(*A, **dict(K))
 
         are equivalent to
         ::

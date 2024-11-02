@@ -602,7 +602,7 @@ class Fields(CategoryWithAxiom):
         # Of course, in general gcd and lcm in a field are not very interesting.
         # However, they should be implemented!
         @coerce_binop
-        def gcd(self,other):
+        def gcd(self, other):
             """
             Greatest common divisor.
 

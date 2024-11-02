@@ -352,7 +352,7 @@ cdef leftv* new_leftv(void *data, res_type) noexcept:
     res.rtyp = res_type
     return res
 
-cdef free_leftv(leftv *args, ring *r = NULL):
+cdef free_leftv(leftv *args, ring *r=NULL):
     """
     Kills this ``leftv`` and all ``leftv``s in the tail.
 
@@ -692,7 +692,7 @@ cdef class Converter(SageObject):
                 result[i,j] = p
         return result
 
-    cdef to_sage_vector_destructive(self, poly *p, free_module = None):
+    cdef to_sage_vector_destructive(self, poly *p, free_module=None):
         cdef int rank
         if free_module:
             rank = free_module.rank()
@@ -826,7 +826,7 @@ cdef class Converter(SageObject):
         cdef poly *p
         ncols = mat.ncols()
         nrows = mat.nrows()
-        cdef matrix* _m=mpNew(nrows,ncols)
+        cdef matrix* _m=mpNew(nrows, ncols)
         for i in range(nrows):
             for j in range(ncols):
                 #FIXME

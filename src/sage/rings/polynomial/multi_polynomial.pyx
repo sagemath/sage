@@ -1391,7 +1391,7 @@ cdef class MPolynomial(CommutativePolynomial):
         v = [self] + [self.map_coefficients(k.hom([k.gen()**(p**i)])) for i in range(1,e)]
         return prod(v).change_ring(k.prime_subfield())
 
-    def sylvester_matrix(self, right, variable = None):
+    def sylvester_matrix(self, right, variable=None):
         r"""
         Given two nonzero polynomials ``self`` and ``right``, return the Sylvester
         matrix of the polynomials with respect to a given variable.
@@ -1545,7 +1545,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         return M
 
-    def discriminant(self,variable):
+    def discriminant(self, variable):
         r"""
         Return the discriminant of ``self`` with respect to the given variable.
 

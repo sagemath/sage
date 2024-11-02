@@ -4169,7 +4169,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
                            ' methods in Sage uniform. Please update your code.')
         return Q.log(self)
 
-    def padic_elliptic_logarithm(self,Q, p):
+    def padic_elliptic_logarithm(self, Q, p):
         r"""
         Return the discrete logarithm of `Q` to base `P` = ``self``,
         that is, an integer `x` such that `xP = Q` only for anomalous curves.
