@@ -9350,7 +9350,7 @@ class Graph(GenericGraph):
             sage: g.arboricity(True)                                                    # needs sage.modules
             (0, [])
         """
-        from sage.matroids.constructor import Matroid
+        from sage.matroids.matroid import Matroid
         P = Matroid(self).partition()
         if certificate:
             return (len(P), [self.subgraph(edges=forest) for forest in P])

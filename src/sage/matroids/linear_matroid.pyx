@@ -9,7 +9,7 @@ Construction
 ============
 
 The recommended way to create a linear matroid is by using the
-:func:`Matroid() <sage.matroids.constructor.Matroid>` function, with a
+:class:`Matroid() <sage.matroids.matroid.Matroid>` class, with a
 representation matrix `A` as input. This function will intelligently choose
 one of the dedicated classes :class:`BinaryMatroid`, :class:`TernaryMatroid`,
 :class:`QuaternaryMatroid`, :class:`RegularMatroid` when appropriate. However,
@@ -228,7 +228,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
     .. NOTE::
 
         The recommended way to generate a linear matroid is through the
-        :func:`Matroid() <sage.matroids.constructor.Matroid>` function. It
+        :class:`Matroid() <sage.matroids.matroid.Matroid>` function. It
         will automatically choose more optimized classes when present
         (currently :class:`BinaryMatroid`, :class:`TernaryMatroid`,
         :class:`QuaternaryMatroid`, :class:`RegularMatroid`). For direct
@@ -3044,7 +3044,7 @@ cdef class BinaryMatroid(LinearMatroid):
     .. NOTE::
 
         An indirect way to generate a binary matroid is through the
-        :func:`Matroid() <sage.matroids.constructor.Matroid>` function. This
+        :class:`Matroid() <sage.matroids.matroid.Matroid>` function. This
         is usually the preferred way, since it automatically chooses between
         :class:`BinaryMatroid` and other classes. For direct access to the
         ``BinaryMatroid`` constructor, run::
@@ -4073,7 +4073,7 @@ cdef class TernaryMatroid(LinearMatroid):
     .. NOTE::
 
         The recommended way to generate a ternary matroid is through the
-        :func:`Matroid() <sage.matroids.constructor.Matroid>` function. This
+        :class:`Matroid() <sage.matroids.matroid.Matroid>` function. This
         is usually the preferred way, since it automatically chooses between
         ``TernaryMatroid`` and other classes. For direct access to the
         ``TernaryMatroid`` constructor, run::
@@ -4941,7 +4941,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
     .. NOTE::
 
         The recommended way to generate a quaternary matroid is through the
-        :func:`Matroid() <sage.matroids.constructor.Matroid>` function. This
+        :class:`Matroid() <sage.matroids.matroid.Matroid>` function. This
         is usually the preferred way, since it automatically chooses between
         ``QuaternaryMatroid`` and other classes. For direct access to the
         ``QuaternaryMatroid`` constructor, run::
@@ -5643,7 +5643,7 @@ cdef class RegularMatroid(LinearMatroid):
     .. NOTE::
 
         The recommended way to generate a regular matroid is through the
-        :func:`Matroid() <sage.matroids.constructor.Matroid>` function. This
+        :class:`Matroid() <sage.matroids.matroid.Matroid>` function. This
         is usually the preferred way, since it automatically chooses between
         ``RegularMatroid`` and other classes. Moreover, it will test whether
         the input actually yields a regular matroid, unlike this class.

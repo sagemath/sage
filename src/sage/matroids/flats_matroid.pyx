@@ -8,8 +8,8 @@ as data.
 A ``FlatsMatroid`` can be created from another matroid or from a dictionary of
 flats. For a full description of allowed inputs, see
 :class:`below <sage.matroids.flats_matroid.FlatsMatroid>`. It is
-recommended to use the :func:`Matroid() <sage.matroids.constructor.Matroid>`
-function for a more flexible way of constructing a ``FlatsMatroid`` and other
+recommended to use the :class:`Matroid() <sage.matroids.matroid.Matroid>`
+class for a more flexible way of constructing a ``FlatsMatroid`` and other
 classes of matroids. For direct access to the ``FlatsMatroid`` constructor,
 run::
 

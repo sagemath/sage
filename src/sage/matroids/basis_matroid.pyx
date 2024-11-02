@@ -22,7 +22,7 @@ Construction
 A ``BasisMatroid`` can be created from another matroid, from a list of bases,
 or from a list of nonbases. For a full description of allowed inputs, see
 :class:`below <sage.matroids.basis_matroid.BasisMatroid>`. It is recommended
-to use the :func:`Matroid() <sage.matroids.constructor.Matroid>` function for
+to use the :class:`Matroid() <sage.matroids.matroid.Matroid>` class for
 easy construction of a ``BasisMatroid``. For direct access to the
 ``BasisMatroid`` constructor, run::
 

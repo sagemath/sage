@@ -12,7 +12,7 @@ A ``CircuitClosuresMatroid`` can be created from another matroid or from a
 list of circuit-closures. For a full description of allowed inputs, see
 :class:`below <sage.matroids.circuit_closures_matroid.CircuitClosuresMatroid>`.
 It is recommended to use the
-:func:`Matroid() <sage.matroids.constructor.Matroid>` function for a more
+:class:`Matroid() <sage.matroids.matroid.Matroid>` class for a more
 flexible construction of a ``CircuitClosuresMatroid``. For direct access to
 the ``CircuitClosuresMatroid`` constructor, run::
 

@@ -26,7 +26,7 @@ This adds the following to the main namespace:
         - :class:`RankMatroid <sage.matroids.rank_matroid.RankMatroid>`
 
     Note that you can construct all of these through the
-    :func:`Matroid() <sage.matroids.constructor.Matroid>` function, which is
+    :class:`Matroid() <sage.matroids.matroid.Matroid>` class, which is
     available on startup. Using the classes directly can sometimes be useful
     for faster code (e.g. if your code calls ``Matroid()`` frequently).
 

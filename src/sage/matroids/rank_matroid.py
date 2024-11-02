@@ -34,8 +34,8 @@ EXAMPLES::
     False
 
 See :class:`below <sage.matroids.rank_matroid.RankMatroid>` for more. It is
-recommended to use the :func:`Matroid() <sage.matroids.constructor.Matroid>`
-function for easy construction of a ``RankMatroid``. For direct access to the
+recommended to use the :class:`Matroid() <sage.matroids.matroid.Matroid>`
+class for easy construction of a ``RankMatroid``. For direct access to the
 ``RankMatroid`` constructor, run::
 
         sage: from sage.matroids.advanced import *

@@ -1902,7 +1902,7 @@ class HyperplaneArrangementElement(Element):
             ((0, 0), (0, 8), (8, 0), (8, 8))
         """
         import itertools
-        from sage.matroids.constructor import Matroid
+        from sage.matroids.matroid import Matroid
         R = self.parent().base_ring()
         parallels = self._parallel_hyperplanes()
         A_list = [parallel[0][1] for parallel in parallels]
@@ -3202,7 +3202,7 @@ class HyperplaneArrangementElement(Element):
         if not self.is_central():
             raise ValueError("the hyperplane arrangement must be central")
         norms = [p.normal() for p in self]
-        from sage.matroids.constructor import Matroid
+        from sage.matroids.matroid import Matroid
         return Matroid(matrix=matrix(norms).transpose())
 
     def orlik_solomon_algebra(self, base_ring=None, ordering=None, **kwds):

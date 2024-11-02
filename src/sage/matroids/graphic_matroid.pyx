@@ -10,7 +10,7 @@ Construction
 ============
 
 The recommended way to create a graphic matroid is by using the
-:func:`Matroid() <sage.matroids.constructor.Matroid>` function, with a
+:class:`Matroid() <sage.matroids.matroid.Matroid>` class, with a
 graph `G` as input. This function can accept many different kinds of input
 to get a graphic matroid if the ``graph`` keyword is used, similar to the
 :func:`Graph() <sage.graphs.graph.Graph>` constructor. However,
@@ -1973,7 +1973,7 @@ cdef class GraphicMatroid(Matroid):
             sage: set(M.circuits()) == set(R.circuits())
             True
         """
-        from sage.matroids.constructor import Matroid as ConstructorMatroid
+        from sage.matroids.matroid import Matroid as ConstructorMatroid
         X = [l for u, v, l in self._G.edge_iterator()]
         return ConstructorMatroid(groundset=X, graph=self._G, regular=True)
 

@@ -160,7 +160,7 @@ def AllMatroids(n, r=None, type='all'):
         ....:             for M in matroids.AllMatroids(n+7, r+3, "unorientable"):
         ....:                 assert M.is_valid()
     """
-    from sage.matroids.constructor import Matroid
+    from sage.matroids.matroid import Matroid
     from sage.features.databases import DatabaseMatroids
     DatabaseMatroids().require()
     import matroid_database

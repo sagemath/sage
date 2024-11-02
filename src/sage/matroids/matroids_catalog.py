@@ -10,8 +10,8 @@ matroids type ``matroids.catalog.`` + :kbd:`Tab`.
 
 .. NOTE::
 
-    To create a custom matroid using a variety of inputs, see the function
-    :func:`Matroid() <sage.matroids.constructor.Matroid>`.
+    To create a custom matroid using a variety of inputs, see the class
+    :class:`Matroid() <sage.matroids.matroid.Matroid>`.
 
 - Parametrized matroids (``matroids.`` + :kbd:`Tab`)
     - :func:`matroids.AG <sage.matroids.database_matroids.AG>`

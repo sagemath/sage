@@ -8,8 +8,8 @@ as data.
 A ``CircuitsMatroid`` can be created from another matroid or from a list of
 circuits. For a full description of allowed inputs, see
 :class:`below <sage.matroids.circuits_matroid.CircuitsMatroid>`. It is
-recommended to use the :func:`Matroid() <sage.matroids.constructor.Matroid>`
-function for a more flexible way of constructing a ``CircuitsMatroid`` and
+recommended to use the :class:`Matroid() <sage.matroids.matroid.Matroid>`
+class for a more flexible way of constructing a ``CircuitsMatroid`` and
 other classes of matroids. For direct access to the ``CircuitsMatroid``
 constructor, run::
 

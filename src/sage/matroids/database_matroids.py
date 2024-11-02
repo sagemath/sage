@@ -37,7 +37,7 @@ collection, see the associated publications, [Bre2023]_ and [BP2023]_.
 # ****************************************************************************
 
 from sage.matrix.constructor import Matrix
-from sage.matroids.constructor import Matroid
+from sage.matroids.matroid import Matroid
 from sage.matroids.linear_matroid import (
     RegularMatroid,
     BinaryMatroid,
