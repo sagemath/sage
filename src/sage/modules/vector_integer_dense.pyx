@@ -325,7 +325,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
         name = singular._next_var_name()
         values = str(self.list())[1:-1]
-        singular.eval("intvec %s = %s"%(name, values))
+        singular.eval("intvec %s = %s" % (name, values))
 
         from sage.interfaces.singular import SingularElement
         return SingularElement(singular, 'foobar', name, True)
