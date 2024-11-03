@@ -668,6 +668,8 @@ cdef class GenericGraphBackend(SageObject):
         produces a copy of ``self``. The function returned is always
         :func:`unpickle_graph_backend`.
 
+        EXAMPLES:
+
         Pickling of the static graph backend makes pickling of immutable
         graphs and digraphs work::
 
@@ -703,20 +705,30 @@ cdef class GenericGraphBackend(SageObject):
             sage: gi = g.copy(immutable=True)
             sage: loads(dumps(gi)) == gi
             True
+
+        TESTS:
+
+        Check that :issue:`38900` is fixed:
+
+            sage: from itertools import product
+            sage: for sparse, immutable in product([True, False], [True, False]):
+            ....:     G = Graph([[0, 1, 2], [(0, 1)]], sparse=sparse, immutable=immutable)
+            ....:     H = loads(dumps(G))
+            ....:     if type(G._backend) != type(H._backend):
+            ....:         print(sparse, immutable, type(G._backend), type(H._backend))
         """
         from sage.graphs.base.static_sparse_backend import StaticSparseBackend
         from sage.graphs.base.sparse_graph import SparseGraphBackend
         from sage.graphs.base.dense_graph import DenseGraphBackend
 
-        # implementation, data_structure, multiedges, directed, loops
+        # data_structure, multiedges, directed, loops
         if isinstance(self, CGraphBackend):
-            implementation = "c_graph"
             if isinstance(self, SparseGraphBackend):
                 data_structure = "sparse"
             elif isinstance(self, DenseGraphBackend):
                 data_structure = "dense"
             elif isinstance(self, StaticSparseBackend):
-                implementation = "static_sparse"
+                data_structure = "static_sparse"
             else:
                 raise Exception
             multiedges = (<CGraphBackend> self)._multiple_edges
@@ -735,7 +747,8 @@ cdef class GenericGraphBackend(SageObject):
         return (unpickle_graph_backend,
                 (directed, vertices, edges,
                  {'loops': loops,
-                  'multiedges': multiedges}))
+                  'multiedges': multiedges,
+                  'data_structure': data_structure}))
 
 
 def unpickle_graph_backend(directed, vertices, edges, kwds):
@@ -779,6 +792,5 @@ def unpickle_graph_backend(directed, vertices, edges, kwds):
     else:
         from sage.graphs.graph import Graph as constructor
 
-    G = constructor(data=edges, **kwds)
-    G.add_vertices(vertices)
+    G = constructor(data=[vertices, edges], format='vertices_and_edges', **kwds)
     return G._backend
