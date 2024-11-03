@@ -168,6 +168,7 @@ docs = [
 ]
 lint = [
   "relint",
+  "ruff",
   "pycodestyle",
   "flake8-rst-docstrings",
 ]
