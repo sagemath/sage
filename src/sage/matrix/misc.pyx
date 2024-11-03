@@ -209,7 +209,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
         from sage.structure.proof.proof import get_flag
         proof = get_flag(proof, "linear_algebra")
 
-    verbose("Multimodular echelon algorithm on %s x %s matrix"%(self._nrows, self._ncols), caller_name="multimod echelon")
+    verbose("Multimodular echelon algorithm on %s x %s matrix" % (self._nrows, self._ncols), caller_name="multimod echelon")
     cdef Matrix E
     if self._nrows == 0 or self._ncols == 0:
         return self, ()
@@ -219,7 +219,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
     height = self.height()
     if height_guess is None:
         height_guess = 10000000*(height+100)
-    tm = verbose("height_guess = %s"%height_guess, level=2, caller_name="multimod echelon")
+    tm = verbose("height_guess = %s" % height_guess, level=2, caller_name="multimod echelon")
 
     if proof:
         M = self._ncols * height_guess * height  +  1
@@ -244,7 +244,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
             problem = problem + 1
             if problem > 50:
                 verbose("echelon multi-modular possibly not converging?", caller_name="multimod echelon")
-            t = verbose("echelon modulo p=%s (%.2f%% done)"%(
+            t = verbose("echelon modulo p=%s (%.2f%% done)" % (
                        p, 100*float(len(str(prod))) / len(str(M))), level=2, caller_name="multimod echelon")
 
             # We use denoms=False, since we made self integral by calling clear_denom above.

@@ -157,7 +157,7 @@ cdef class ArgumentFixer:
             sage: g = ArgumentFixer(number_of_partitions); g                            # needs sage.combinat
             Argument Fixer of <function number_of_partitions at 0x...>
         """
-        return "Argument Fixer of %s"%self.f
+        return "Argument Fixer of %s" % self.f
 
     def fix_to_named(self, *args, **kwargs):
         """

@@ -49,7 +49,7 @@ cdef class Matrix:
             [-1  1  1 -1  0]
             [ 0 -1  0  0  0]
         """
-        return "%s x %s Cremona matrix over Rational Field"%(self.nrows(), self.ncols())
+        return "%s x %s Cremona matrix over Rational Field" % (self.nrows(), self.ncols())
 
     def str(self):
         r"""

@@ -738,7 +738,7 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
                         st += ' '
                     if E_box:
                         st_num = str_tab[k-j][j]
-                        ln_left = int((len(st_num) - (len(st_num) % 2))/2)
+                        ln_left = len(st_num) // 2
                         st += st_num.rjust(row_height - 1 - ln_left + len(st_num), ' ').ljust(diag_length, ' ')
                     else:
                         st += ' ' * diag_length
@@ -761,12 +761,12 @@ def ascii_art_table_russian(data, use_unicode=False, compact=False):
     import re
     mm = min(len(re.search('^ +', l)[0]) for l in str_list) - 1
     str_list = [l[mm:].rstrip() for l in str_list]
-    while str_list[-1] == '':
+    while not str_list[-1]:
         str_list.pop()
     return "\n".join(str_list)
 
 
-def box_exists(tab, i, j):
+def box_exists(tab, i, j) -> bool:
     r"""
     Return ``True`` if ``tab[i][j]`` exists and is not ``None``; in particular this
     allows for `tab[i][j]` to be ``''`` or ``0``.

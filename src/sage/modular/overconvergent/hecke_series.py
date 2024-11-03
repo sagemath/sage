@@ -1152,9 +1152,9 @@ def hecke_series(p, N, klist, m, modformsring=False, weightbound=6):
 
     oneweight = False
     # convert single weight to list
-    if ((isinstance(klist, int)) or (isinstance(klist, Integer))):
+    if isinstance(klist, (int, Integer)):
         klist = [klist]
-        oneweight = True # input is single weight
+        oneweight = True  # input is single weight
 
     # algorithm may finish with false output unless:
     is_valid_weight_list(klist, p)

@@ -8996,32 +8996,18 @@ cdef class Polynomial(CommutativePolynomial):
                         self = self//c
                     except (AttributeError, NotImplementedError, TypeError):
                         pass
-                return self._roots_from_factorization(self.factor(), multiplicities)
+                try:
+                    fac = self.factor()
+                except ArithmeticError:
+                    raise NotImplementedError
+                else:
+                    return self._roots_from_factorization(fac, multiplicities)
             else:
                 raise NotImplementedError
         except NotImplementedError:
             if K.is_finite():
                 if multiplicities:
                     raise NotImplementedError("root finding with multiplicities for this polynomial not implemented (try the multiplicities=False option)")
-                elif isinstance(K, sage.rings.abc.IntegerModRing):
-                    # handling via the chinese remainders theorem
-                    N = K.cardinality()
-                    primes = N.prime_divisors()
-                    residue_roots = []
-                    for p in primes:
-                        local_self = self.change_ring(GF(p))
-                        local_roots = local_self.roots(multiplicities=False)
-                        residue_roots.append([a.lift() for a in local_roots])
-                    result = []
-                    P = ZZ.prod(primes)
-                    for res in cartesian_product_iterator(residue_roots):
-                        lifted = crt(list(res), primes)
-                        candidate = lifted
-                        for k in range(N // P):
-                            if not self(candidate):
-                                result.append(K(candidate))
-                            candidate += P
-                    return result
                 else:
                     return [a for a in K if not self(a)]
 
