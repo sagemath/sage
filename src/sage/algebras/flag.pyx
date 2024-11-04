@@ -270,9 +270,9 @@ cdef class Flag(Element):
         self._blocks = {}
         for xx in theory._signature.keys():
             if xx in params:
-                self._blocks[xx] = [list(yy) for yy in params[xx]]
+                self._blocks[xx] = tuple([tuple(yy) for yy in params[xx]])
             else:
-                self._blocks[xx] = []
+                self._blocks[xx] = tuple()
         self._unique = ()
         self._ftype = None
         Element.__init__(self, theory)
@@ -1043,9 +1043,6 @@ cdef class Flag(Element):
         cdef int large_size = large_ftype.size()
         cdef int ctr = 0
         cdef bint chk = 0
-        cdef int valid_ftypes = 0
-        cdef int correct_ftypes = 0
-        cdef int valid_flag_pairs = 0
         
         ret = {}
         small_points = self._ftype_points
@@ -1059,17 +1056,10 @@ cdef class Flag(Element):
                 else:
                     large_points[ii] = difference[vii-small_size]
             ind_large_ftype = self.subflag([], ftype_points=large_points)
-            if ind_large_ftype.unique()==None:
-                continue
-            
-            valid_ftypes += 1
             if ind_large_ftype==large_ftype:
-                correct_ftypes += 1
                 not_large_points = [ii for ii in range(N) if ii not in large_points]
                 for n1_extra_points in itertools.combinations(not_large_points, n1 - large_size):
                     n1_subf = self.subflag(n1_extra_points, ftype_points=large_points)
-                    if n1_subf.unique()==None:
-                        continue
                     try:
                         n1_ind = n1flgs.index(n1_subf)
                     except ValueError:
@@ -1082,9 +1072,6 @@ cdef class Flag(Element):
                     remaining_points = [ii for ii in not_large_points if ii not in n1_extra_points]
                     for n2_extra_points in itertools.combinations(remaining_points, n2 - large_size):
                         n2_subf = self.subflag(n2_extra_points, ftype_points=large_points)
-                        if n2_subf.unique()==None:
-                            continue
-                        valid_flag_pairs += 1
                         try:
                             n2_ind = n2flgs.index(n2_subf)
                         except:
@@ -1097,7 +1084,7 @@ cdef class Flag(Element):
                             ret[(n1_ind, n2_ind)] += 1
                         except:
                             ret[(n1_ind, n2_ind)] = 1
-        return (len(n1flgs), len(n2flgs), ret, valid_ftypes, valid_flag_pairs, correct_ftypes)
+        return (len(n1flgs), len(n2flgs), ret)
 
 
 cdef class Pattern(Element):

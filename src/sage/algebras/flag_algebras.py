@@ -235,11 +235,38 @@ import pickle
 import os
 from tqdm import tqdm
 
+def overlap(*theories):
+    if len(theories)==0:
+        raise ValueError("At least one theory is expected!")
+    groups = []
+    for xx in theories:
+        if isinstance(xx, CombinatorialTheory):
+            groups.append([xx])
+        else:
+            groups.append(xx)
+    theories = [xx for group in groups for xx in group]
+    
+    signature = {}
+    ord_any = False
+    next_ind = 0
+    
+    for xx in theories:
+        for kk in xx.signature().keys():
+            max_ind = max(xx.signature()[kk][2], max_ind)
+    
+    for xx in theories:
+        prevsig = set(signature.keys())
+        conflicts = prevsig.intersection(set(xx.signature().keys()))
+        if len(conflicts) != 0 :
+            raise ValueError("The theories must have signatures with different names. Conflict with ", conflicts)
+        
+
+
 class CombinatorialTheory(Parent, UniqueRepresentation):
     
     Element = Flag
     
-    def __init__(self, name, generator, identifier, size_combine=None, **signature):
+    def __init__(self, name, relation_name, arity, is_ordered=False, signature={}):
         r"""
         Initialize a Combinatorial Theory
         
@@ -250,70 +277,22 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         INPUT:
 
         - ``name`` -- string; name of the Theory
-        - ``generator`` -- function; generates elements 
-            of the theory. For a given input ``n`` 
-            returns a list of elements of the theory
-            in a dictionary format (for each
-            value in the signature, one dictionary 
-            entry describing the blocks corresponding to
-            that signature)
-        - ``identifier`` -- function; given a structure
-            with the matching signature of this theory,
-            returns a unique identifier, such that
-            automorphic structures return the same 
-            value.
-        - ``**signature`` -- named integers; the signature
-            of the theory, for each name a corresponding number
-            giving the arity of that symbol
+        - ``relation_name`` -- string; name of the relation
+        - ``arity`` -- integer; arity of the relation
+        - ``is_ordered`` -- boolean; if the values are ordered
+        - ``signature`` -- dictionary; only used internally for
+            for creating complex theories
 
         OUTPUT: A CombinatorialTheory object
-
-        EXAMPLES::
-
-        This example shows how to create the theory for graphs 
-        with ordered vertices (or equivalently 0-1 matrices)::
-            
-            sage: from sage.algebras.flag_algebras import *
-            sage: def test_generator_ov_graph(n):
-            ....:    full = list(itertools.combinations(range(n), int(2)))
-            ....:    for ii in range(binomial(n, 2)+1):
-            ....:        for xx in itertools.combinations(full, int(ii)):
-            ....:            yield {'edges': xx}
-            ....: 
-            sage: def test_identify_ov_graph(n, ftype_points, edges):
-            ....:    return (n, tuple(ftype_points), \
-            ....:    tuple(sorted(list(edges))))
-            ....: 
-            sage: TestOVGraphTheory = CombinatorialTheory('TestOVGraph', \
-            ....: test_generator_ov_graph, test_identify_ov_graph, edges=2)
-            sage: TestOVGraphTheory
-            Theory for TestOVGraph
-
-        .. NOTE::
-
-            There are pre-constructed CombinatorialTheory objects
-            in sage.algebras.flag_algebras for the following:
-            -GraphTheory
-            -ThreeGraphTheory
-            -DiGraphTheory
-            -TournamentTheory
-            -PermutationTheory
-            -OVGraphTheory (graphs with ordered vertices)
-            -OEGraphTheory (graphs with ordered edges)
-            -RamseyGraphTheory (see [LiPf2021]_ for explanation)
         """
-        self._signature = signature
-        if size_combine==None:
-            self._sizes = NN
-            self._size_combine = None
-        else:
-            self._size_combine = size_combine
-            self._sizes = [ii for ii in range(100) if size_combine(0, ii, 0) == ii]
         self._excluded = []
         self._cache = {}
-        self._generator = generator
-        self._identifier = identifier
         self._name = name
+        
+        if signature != {}:
+            self._signature = signature
+        else:
+            self._signature = {relation_name: (arity, is_ordered, 0)}
         Parent.__init__(self, category=(Sets(), ))
         self._populate_coercion_lists_()
     
@@ -444,12 +423,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         """
         return 'Theory for {}'.format(self._name)
     
-    def pattern(self, n, **kwds):
+    def Pattern(self, n, **kwds):
         return Pattern(self, n, **kwds)
     
-    p = pattern
-    P = pattern
-    Pattern = pattern
+    P = Pattern
     
     def _element_constructor_(self, n, **kwds):
         r"""
@@ -505,9 +482,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             #this is needed for sum to work
             alg = FlagAlgebra(QQ, self)
             return alg(0)
-        if n in self.sizes():
-            return self.element_class(self, n, **kwds)
-        raise ValueError("For theory {}, size {} is not allowed.".format(self._name, n))
+        return self.element_class(self, n, **kwds)
     
     def empty_element(self):
         r"""
@@ -559,10 +534,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         Returns a list of elements
         """
         res = [self._an_element_()]
-        if 1 in self.sizes():
-            res.append(self.element_class(self, 1, ftype=[0]))
-        if 2 in self.sizes():
-            res.append(self._an_element_(n=2))
         return res
     
     def flag_compact_repr(self, flag):
@@ -656,58 +627,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     def signature(self):
         return self._signature
-    
-    def sizes(self):
-        return self._sizes
-    
-    def size_combine(self, k, n1, n2):
-        if k<0 or n1<0 or n2<0:
-            raise ValueError("Can't have negative size.")
-        if n1<k or n2<k:
-            raise ValueError("Can't have larger ftype size than flag size.")
-        ret = n1+n2-k
-        if self._size_combine != None:
-            ret = self._size_combine(k, n1, n2)
-        if ret==None:
-            raise ValueError("Size combination is not allowed.")
-        if ret<0:
-            raise ValueError("The size combination resulted in a negative value.")
-        return ret
-    
-    def identify(self, n, ftype_points, **blocks):
-        r"""
-        The function used to test for equality.
-
-        INPUT:
-
-        - ``n`` -- integer; size of the flag
-        - ``ftype_points`` -- list; the points of the ftype
-        - ``**blocks`` -- the blocks for each signature
-
-        OUTPUT: The identifier of the structure defined by the
-            ``identifier`` function in the __init__
-
-        .. SEEALSO::
-
-            :func:`Flag.unique`
-        """
-        if n not in self.sizes():
-            return None
-        blocks = {key:tuple([tuple(xx) for xx in blocks[key]]) 
-                  for key in blocks}
-        if len(ftype_points)!=0 and not hasattr(ftype_points[0], "__getitem__"):
-            ftype_points = [(ii, ) for ii in ftype_points]
-        else:
-            ftype_points = [tuple(xx) for xx in ftype_points]
-        return self._identify(n, tuple(ftype_points), **blocks)
-    
-    @lru_cache(maxsize=None)
-    def _identify(self, n, ftype_points, **blocks):
-        r"""
-        The hidden _identify, the inputs are in a tuple form
-        and is cached for some speed
-        """
-        return self._identifier(n, ftype_points, **blocks)
     
     def _adjust_table_phi(self, table_constructor, phi_vectors_exact, test=False):
         r"""
@@ -837,16 +756,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         r"""
         Returns the ftypes useful for optimizing up to `target_size`
         """
-        plausible_sizes = []
-        for fs in self.sizes():
-            if fs>=target_size:
-                break
-            if fs==0:
-                continue
-            plausible_sizes.append(fs)
+        plausible_sizes = list(range(1, target_size))
         ftype_pairs = []
         for fs, ns in itertools.combinations(plausible_sizes, r=int(2)):
-            if self.size_combine(fs, ns, ns) <= target_size:
+            if ns+ns-fs <= target_size:
                 kk = ns-fs
                 found = False
                 for ii, (bfs, bns) in enumerate(ftype_pairs):
@@ -915,14 +828,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                     continue
                 kf = fv.ftype().size()
                 nf = fv.size()
-                if self._size_combine == None:
-                    df = target_size - nf + kf
-                else:
-                    df = -1
-                    for xx in self.sizes():
-                        if self._size_combine(kf, nf, xx)==target_size:
-                            df = xx
-                            break
+                df = target_size - nf + kf
                 mult_table = self.mul_project_table(nf, df, fv.ftype(), ftype_inj=[], target_size=target_size)
                 fvvals = fv.values()
                 m = matrix(QQ, [vector(fvvals*mat) for mat in mult_table])
@@ -1333,10 +1239,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         #
         # Initial setup
         #
-
-        if target_size not in self.sizes():
-            raise ValueError("For theory {}, size {} is not allowed.".format(self._name, target_size))
-
         base_flags = self.generate_flags(target_size)
         print("Base flags generated, their number is {}".format(len(base_flags)))
         mult = -1 if maximize else 1
@@ -1654,7 +1556,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         - ``ftype`` -- Flag; the ftype of the returned structures
 
         OUTPUT: List of all flags with given size and ftype
-
+        
         EXAMPLES::
 
         There are 4 graphs on 3 vertices. Flags with empty
@@ -1676,8 +1578,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             See the notes on :func:`optimize_problem`. A large `n` can
             result in large number of structures.
         """
-        if n not in self.sizes():
-            raise ValueError("For theory {}, size {} is not allowed.".format(self._name, n))
         if ftype==None:
             ftype = self.empty()
         else:
@@ -1741,13 +1641,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         
         if type(flags)==Flag or type(flags)==Pattern:
             flags = [flags]
-        self._excluded = []
-        for xx in flags:
-            if type(xx)==Flag and xx.unique() != None:
-                self._excluded.append(xx)
-            if type(xx)==Pattern:
-                self._excluded.append(xx)
-                return
+        self._excluded = flags
     
     def _check_excluded(self, elms):
         r"""
@@ -1819,10 +1713,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 raise ValueError('ftype_inj must map into the points of {}'.format(large_ftype))
             if len(set(ftype_inj)) != len(ftype_inj):
                 raise ValueError('ftype_inj must be injective (no repeated elements)')
-        if target_size==None:
-            target_size = self.size_combine(large_size, n1, n2)
-        elif target_size not in self.sizes():
-            raise ValueError("For theory {}, size {} is not allowed.".format(self._name, target_size))
+        target_size = n1+n2 - large_size
         return self._mpte(tuple(self._excluded), target_size, n1, n2, large_ftype, ftype_inj)
     
     mpt = mul_project_table
@@ -1855,13 +1746,11 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         mats = pool.map(self._density_wrapper, slist)
         pool.close(); pool.join()
         
-        if all([mat[4]==0 for mat in mats]):
-            #This is a degenerate mult table
-            return None
+        norm = falling_factorial(N - small_size, large_size - small_size) 
+        norm *= binomial(N - large_size, n1 - large_size)
         
         ret = tuple([ \
-            MatrixArgs(QQ, mat[0], mat[1], entries=mat[2]).matrix()/max(1, QQ(mat[4]*mat[3]/(max(1, mat[5])))) \
-            for mat in mats])
+            MatrixArgs(QQ, mat[0], mat[1], entries=mat[2]).matrix()/norm for mat in mats])
         
         self._save(ind, ret, True)
         return ret
@@ -2419,7 +2308,7 @@ class FlagAlgebraElement(Element):
             vals = self.values() * other.values()[0]
             return self.__class__(self.parent(), self.size(), vals)
         table = self.parent().mpt(self.size(), other.size())
-        N = self.parent().theory().size_combine(self.ftype().size(), self.size(), other.size())
+        N = -self.ftype().size() + self.size() + other.size()
         vals = [self.values() * mat * other.values() for mat in table]
         return self.__class__(self.parent(), N, vals)
     
@@ -2575,7 +2464,7 @@ class FlagAlgebraElement(Element):
         new_ftype = self.ftype().subflag([], ftype_points=ftype_inj)
         if new_ftype==None or new_ftype.unique()==None:
             raise ValueError("The ftype injection maps to an invalid ftype.")
-        N = self.parent().theory().size_combine(self.ftype().size(), self.size(), other.size())
+        N = -self.ftype().size() + self.size() + other.size()
         if target_size!=None:
             if target_size<N:
                 raise ValueError("Target size is smaller than minimum allowed size for this operation.")
@@ -2876,9 +2765,6 @@ class FlagAlgebra(Parent, UniqueRepresentation):
             raise ValueError('Can\'t construct an element from {}'.format(v))
         return self.element_class(self, *args, **kwds)
     
-    def sizes(self):
-        return self.theory().sizes()
-    
     def _coerce_map_from_(self, S):
         r"""
         Checks if it can be coerced from S
@@ -3046,497 +2932,3 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         return self.theory().mul_project_table(n1, n2, self.ftype(), ftype_inj, target_size)
     
     mpt = mul_project_table
-
-
-#************************************************
-#
-#   Implementation of a few (common) theories
-#
-#************************************************
-
-
-def _generator_graph(n):
-    r"""
-    Given `n` integer, generates the graphs of size `n` using nauty
-    and returns them in a dictionary required for Flag constructors
-    """
-    for xx in graphs.nauty_geng(str(n)):
-        yield {'edges': tuple(xx.edges(labels=None))}
-
-def _identify_graph(n, ftype_points, edges):
-    r"""
-    Creates a unique identifier for a graph using canonical labelings
-    """
-    ftype_union = [jj for ff in ftype_points for jj in ff]
-    partition = list(ftype_points) + [[ii for ii in range(n) if ii not in ftype_union]]
-    g = Graph([list(range(n)), edges], format='vertices_and_edges')
-    blocks = tuple(g.canonical_label(partition=partition).edges(labels=None, sort=True))
-    return (n, tuple([len(xx) for xx in ftype_points]), blocks)
-
-def _generator_threegraph(n):
-    r"""
-    Given `n` integer, generates the threegraphs of size `n` using nauty
-    and returns them in a dictionary required for Flag constructors.
-    
-    Can also be modified to return hypergraphs for any size, but
-    larger edge sizes result in too large theories usually.
-    """
-    r = 3
-    for ee in range(binomial(n, r)+1):
-        for xx in hypergraphs.nauty(ee, n, uniform=r):
-            yield {'edges': xx}
-
-def _identify_hypergraph(n, ftype_points, edges):
-    r"""
-    Identifies hypergraphs by creating a canonical label for the adjacency
-    bipartite graph.
-    """
-    g = Graph([list(range(n+len(edges))), [(i+n,x) for i,b in enumerate(edges) for x in b]], 
-              format='vertices_and_edges')
-    ftype_union = [jj for ff in ftype_points for jj in ff]
-    partt = list(ftype_points) + \
-            [[ii for ii in range(n) if ii not in ftype_union]] + \
-            [list(range(n,n+len(edges)))]
-    blocks = tuple(g.canonical_label(partition=partt).edges(labels=None, sort=True))
-    return (n, tuple([len(xx) for xx in ftype_points]), blocks)
-
-def _generator_digraph(n):
-    r"""
-    Given `n` integer, generates the digraphs of size `n` using nauty
-    and returns them in a dictionary required for Flag constructors
-    """
-    gen = graphs.nauty_geng(str(n))
-    for xx in digraphs.nauty_directg(gen):
-        yield {'edges': tuple(xx.edges(labels=None))}
-
-def _identify_digraph(n, ftype_points, edges):
-    r"""
-    Creates a unique identifier for a graph using canonical labelings
-    """
-    partition = list(ftype_points) + [list(set(range(n)).difference(set(ftype_points))), ]
-    g = DiGraph([list(range(n)), edges], format='vertices_and_edges')
-    blocks = tuple(g.canonical_label(partition=partition).edges(labels=None, sort=True))
-    return (n, tuple([len(xx) for xx in ftype_points]), blocks)
-
-def _generator_tournament(n):
-    r"""
-    Given `n` integer, generates the tournaments of size `n` using nauty
-    and returns them in a dictionary required for Flag constructors
-    """
-    for xx in digraphs.tournaments_nauty(n):
-        yield {'edges': tuple(xx.edges(labels=None))}
-
-def _generator_permutation(n):
-    r"""
-    Given `n` integer, generates the permutations of objects `n`
-    and returns the ordering as a binary relation in dictionary
-    form required for Flag constructors
-    """
-    for perm in itertools.permutations(range(n)):
-        yield {'edges': tuple(itertools.combinations(perm, r=2))}
-
-def _identify_permutation(n, ftype_points, edges):
-    r"""
-    Returns a unique representation of this permutation
-    """
-    return (ftype_points, tuple(sorted(edges)))
-
-def _identify_oe_graph(n, ftype_points, edges):
-    r"""
-    Identifies ordered edge graphs by creating a canonical label for 
-    the adjacency bipartite graph.
-    """
-    g = Graph([list(range(n+len(edges))), [(i+n,x) for i,b in enumerate(edges) for x in b]], 
-              format='vertices_and_edges')
-    ftype_union = [jj for ff in ftype_points for jj in ff]
-    partt = list(ftype_points) + \
-            [[ii] for ii in range(n, n+len(edges))] + \
-            [[ii for ii in range(n) if ii not in ftype_union]]
-    blocks = tuple(g.canonical_label(partition=partt).edges(labels=None, sort=True))
-    return (n, tuple([len(xx) for xx in ftype_points]), blocks)
-
-def _generator_oe_graph(n):
-    r"""
-    Given `n` integer, generates the graphs on `n` vertices
-    with different (non-isomorphic) edge orderings.
-    """
-    for xx in graphs.nauty_geng(str(n)):
-        unordered = tuple(xx.edges(labels=None))
-        unique = []
-        for perm in itertools.permutations(unordered):
-            rel = _identify_oe_graph(n, [], perm)
-            if rel not in unique:
-                unique.append(rel)
-                yield {'edges': perm}
-
-def _generator_ov_graph(n):
-    r"""
-    Given `n` integer, generates the graphs on `n` vertices
-    with different (non-isomorphic) vertex orderings.
-    
-    This is the same set as the boolean symmetric 
-    nxn matrices with 0s on the diagonal.
-    """
-    full = list(itertools.combinations(range(n), int(2)))
-    for ii in range(binomial(n, 2)+1):
-        for xx in itertools.combinations(full, int(ii)):
-            yield {'edges': xx}
-
-def _identify_ov_graph(n, ftype_points, edges):
-    r"""
-    Returns a unique representation for this ordered
-    vertex graph
-    """
-    return (n, tuple(ftype_points), tuple(sorted(list(edges))))
-
-
-
-def _ramsey_graphs_from_graph(xx, n, excess_edges, two_edge_triples):
-    r"""
-    From a graph creates all the Ramsey graphs using nauty multig.
-    
-    A Ramsey graph here is essentially a multigraph where the edge
-    colorings are represented by multi edges.
-    """
-    from sage.features.nauty import NautyExecutable
-    import subprocess, select
-    import shlex
-    directg_path = NautyExecutable("multig").absolute_filename()
-    edges = xx.edges(labels=None)
-    le = len(edges)
-    options=" -T -m2 -e{}".format(le+excess_edges)
-    sub = subprocess.Popen(
-        shlex.quote(directg_path) + ' {0}'.format(options),
-        shell=True,
-        stdout=subprocess.PIPE,
-        stdin=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        encoding='latin-1'
-    )
-    sub.stdin.write(xx.graph6_string())
-    sub.stdin.close()
-    unique = []
-    for ll in sub.stdout:
-        if ll and ll[0]==str(n):
-            edges_marked = []
-            seq = ll[:-1].split(" ")
-            for ii in range(1, len(seq)//3):
-                try:
-                    ed = (int(seq[ii*3]), int(seq[ii*3 + 1]))
-                except:
-                    print("error on line: \n", ll, "\nhappened at graph: ", xx)
-                    return
-                if seq[ii*3 + 2]=="2":
-                    edges_marked.append(ed)
-            two_good = True
-            for trp in two_edge_triples:
-                count = sum([(trp[0], trp[1]) in edges_marked, 
-                             (trp[0], trp[2]) in edges_marked, 
-                             (trp[1], trp[2]) in edges_marked])
-                if count == 1:
-                    two_good = False
-                    break
-            if two_good:
-                yield {'edges': edges, 'edges_marked': edges_marked}
-    for line in sub.stderr:
-        pass
-    sub.wait()
-
-def _generator_ramsey_graph(n):
-    r"""
-    Given `n` integer, generates the graphs on `n` vertices
-    with some of the edges marked. 
-    
-    This is color-blind, so coloring the complement of the graph
-    results in the same graph.
-    """
-    for xx in graphs.nauty_geng(str(n)):
-        edges = xx.edges(labels=None)
-        good = True
-        two_edge_triples = []
-        for trp in itertools.combinations(range(n), int(3)):
-            count = sum([(trp[0], trp[1]) in edges, 
-                         (trp[0], trp[2]) in edges, 
-                         (trp[1], trp[2]) in edges])
-            if count == 1:
-                good = False
-                break
-            if count == 2:
-                two_edge_triples.append(trp)
-        if good: 
-            le = len(edges)
-            for ii in range(le//2 + 1):
-                for rr in _ramsey_graphs_from_graph(xx, n, ii, two_edge_triples):
-                    yield rr
-
-def _identify_ramsey_graph(n, ftype_points, edges, edges_marked):
-    r"""
-    Creates a canonical label for the Ramsey graph and returns
-    it as the identifier.
-    """
-    ftype_union = [jj for ff in ftype_points for jj in ff]
-    if len(edges_marked) == len(edges)/2:
-        edges_marked_alter = [xx for xx in edges if xx not in edges_marked]
-        g = Graph([list(range(n+len(edges)+len(edges_marked))), 
-                   [(i+n, x) for i,b in enumerate(edges) for x in b] + 
-                  [(i+n+len(edges), x) for i, b in enumerate(edges_marked) for x in b]], 
-                  format='vertices_and_edges')
-        partt = list(ftype_points) + \
-                [[ii for ii in range(n) if ii not in ftype_union]] + \
-                [list(range(n,n+len(edges)))] + \
-                [list(range(n+len(edges), n+len(edges)+len(edges_marked)))]
-        blocks = tuple(g.canonical_label(partition=partt).edges(labels=None, sort=True))
-        
-        g_alter = Graph([list(range(n+len(edges)+len(edges_marked_alter))), 
-                   [(i+n, x) for i,b in enumerate(edges) for x in b] + 
-                  [(i+n+len(edges), x) for i, b in enumerate(edges_marked_alter) for x in b]], 
-                  format='vertices_and_edges')
-        partt_alter = list(ftype_points) + \
-                [[ii for ii in range(n) if ii not in ftype_union]] + \
-                [list(range(n,n+len(edges)))] + \
-                [list(range(n+len(edges), n+len(edges)+len(edges_marked_alter)))]
-        blocks_alter = tuple(g_alter.canonical_label(partition=partt_alter).edges(labels=None, sort=True))
-        return (n, tuple([len(xx) for xx in ftype_points]), min(blocks, blocks_alter))
-    else:
-        if len(edges_marked) > len(edges)/2:
-            edges_marked = [xx for xx in edges if xx not in edges_marked]
-        g = Graph([list(range(n+len(edges)+len(edges_marked))), 
-                   [(i+n, x) for i,b in enumerate(edges) for x in b] + 
-                  [(i+n+len(edges), x) for i, b in enumerate(edges_marked) for x in b]], 
-                  format='vertices_and_edges')
-        partt = list(ftype_points) + \
-                [[ii for ii in range(n) if ii not in ftype_union]] + \
-                [list(range(n,n+len(edges)))] + \
-                [list(range(n+len(edges), n+len(edges)+len(edges_marked)))]
-        blocks = tuple(g.canonical_label(partition=partt).edges(labels=None, sort=True))
-        return (n, tuple([len(xx) for xx in ftype_points]), blocks)
-
-def _cube_graphs(d, edge_num):
-    from sage.features.nauty import NautyExecutable
-    import subprocess, select
-    import shlex
-    directg_path = NautyExecutable("multig").absolute_filename()
-    dcube = graphs.CubeGraph(d, embedding=0)
-    le = len(dcube.edges(labels=None))
-    options=" -T -m2 -e{}".format(le+edge_num)
-    sub = subprocess.Popen(
-        shlex.quote(directg_path) + ' {0}'.format(options),
-        shell=True,
-        stdout=subprocess.PIPE,
-        stdin=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        encoding='latin-1'
-    )
-    sub.stdin.write(dcube.graph6_string())
-    sub.stdin.close()
-
-    for line in sub.stdout:
-        if line and line[0]==str(2**d) or line[:2]==str(2**d):
-            edges = []
-            seq = line[:-1].split(" ")
-            for ii in range(1, len(seq)//3):
-                try:
-                    ed = (int(seq[ii*3]), int(seq[ii*3 + 1]))
-                except:
-                    print("error on line: \n", line)
-                    return
-                edges.append(ed)
-                if seq[ii*3 + 2]=="2":
-                    edges.append((ed[0], ed[1]))
-            yield {'edges': edges}
-    for line in sub.stderr:
-        pass
-    sub.wait()
-
-def _generator_cube_graphs(n):
-    if n==0:
-        yield {'edges': []}
-        return
-    if log(n, 2) in NN:
-        d = log(n, 2)
-        for enum in range(2**(n-1)*n + 1):
-            for xx in _cube_graphs(d, enum):
-                yield xx
-    else:
-        return None
-
-def _identify_cube_graphs(n, ftype_points, edges):
-    if n==0:
-        return (), ()
-    if not (log(n, 2) in NN):
-        return None
-    d = log(n, 2)
-    if len(set(edges))!=2**(d-1) * d:
-        return None
-    ftype_union = [jj for ff in ftype_points for jj in ff]
-    partt = list(ftype_points) + [[ff for ff in range(n) if ff not in ftype_union]]
-    g = Graph([list(range(n)), edges], format='vertices_and_edges', multiedges=True, vertex_labels=False)
-    blocks = g.canonical_label(partition=partt).edges(labels=False, sort=True)
-    return tuple(blocks), tuple([len(xx) for xx in ftype_points])
-
-def _cube_points(d, point_num, edges):
-    unique = []
-    n = 2**d
-    for ps in itertools.combinations(range(n), point_num):
-        points = [[ii] for ii in ps]
-        id = _identify_cube_points(n, [], edges, points)
-        if id not in unique:
-            unique.append(id)
-            yield {'edges': edges, 'points': points}
-
-def _generator_cube_points(n):
-    if n==0:
-        yield {'edges':[], 'points':[]}
-        return
-    if log(n, 2) in NN:
-        d = log(n, 2)
-        dcube = graphs.CubeGraph(d, embedding=0)
-        edges = Graph(dcube.graph6_string(), format="graph6").edges(labels=None)
-        for pnum in range(n+1):
-            for xx in _cube_points(d, pnum, edges):
-                yield xx
-    else:
-        return None
-
-def _identify_cube_points(n, ftype_points, edges, points):
-    if n==0:
-        return (), ()
-    if not (log(n, 2) in NN):
-        return None
-    d = log(n, 2)
-    if len(set(edges))!=2**(d-1) * d:
-        return None
-    ftype_union = [jj for ff in ftype_points for jj in ff]
-    g_parts = list(ftype_points) + \
-              [[ii for ii in range(n) if ii not in ftype_union]] + [[n]]
-    g_verts = list(range(n+1))
-    g_edges = list(edges) + [(ii[0], n) for ii in points]
-    g = Graph([g_verts, g_edges], format='vertices_and_edges')
-    blocks = tuple(g.canonical_label(partition=g_parts).edges(labels=None, sort=True))
-    return (n, tuple([len(xx) for xx in ftype_points]), blocks)
-
-def _cube_size_combine(k, n1, n2):
-    if k==0 and n1==0 and n2==0:
-        return 0
-    if k==0:
-        if n1>0 and n2>0:
-            return None
-    n1 = max(n1, 1)
-    n2 = max(n2, 1)
-    k = max(k, 1)
-    if log(n1, 2) not in NN or log(n2, 2) not in NN or log(k, 2) not in NN:
-        return None
-    return QQ(n1*n2/k)
-
-def colored_identify(k, order_partition, n, ftype_points, **kwargs):
-    r"""
-    A general identifier code, it works on any edge arity and color number,
-    and supports color symmetries using the `order_partition`
-    """
-    is_graph = (k==2)
-    color_number = sum(len(xx) for xx in order_partition)
-    edges = kwargs["edges"]
-    Cs = [[cx[0] for cx in kwargs["C{}".format(ii)]] for ii in range(color_number)]
-    ftype_union = [jj for ff in ftype_points for jj in ff]
-    g_parts = list(ftype_points) + \
-              [[ii for ii in range(n) if ii not in ftype_union]]
-    ppadd = 0 if is_graph else len(edges)
-    g_verts = list(range(n+ppadd+color_number))
-    g_parts.append(list(range(n, n+ppadd)))
-
-    g_parts += [[n+ppadd+ii for ii in partition_j] for partition_j in order_partition]
-    
-    if is_graph:
-        g_edges = list(edges)
-        for ii in range(color_number):
-            g_edges += [(xx, n+ii) for xx in Cs[ii]]
-    else:
-        g_edges = [(i+n,x) for i,b in enumerate(edges) for x in b]
-        for ii in range(color_number):
-            g_edges += [(xx, n+len(edges)+ii) for xx in Cs[ii]]
-    g = Graph([g_verts, g_edges], format='vertices_and_edges')
-    blocks = tuple(g.canonical_label(partition=g_parts).edges(labels=None, sort=True))
-    return (n, tuple([len(xx) for xx in ftype_points]), blocks)
-
-def colored_generate(k, order_partition, n):
-    r"""
-    A general generator code, it works on any edge arity and color number,
-    and supports color symmetries using the `order_partition`
-    """
-    color_number = sum(len(xx) for xx in order_partition)
-    if k==2:
-        BT = GraphTheory
-    if k==3:
-        BT = ThreeGraphTheory
-    for xx in BT.generate_flags(n):
-        unique = []
-        edges = xx.blocks()['edges']
-        
-        for yy in itertools.product(range(color_number), repeat=int(n)):
-            yy = list(yy)
-            Cs = {"C{}".format(cc):[[ii] for ii, oo in enumerate(yy) if oo==cc] for cc in range(color_number)}
-            iden = colored_identify(k==2, order_partition, n, [], edges=edges, **Cs)
-            if iden not in unique:
-                unique.append(iden)
-                Cs["edges"] = edges
-                yield Cs
-
-GraphTheory = CombinatorialTheory('Graph', 
-                                  _generator_graph, 
-                                  _identify_graph, 
-                                  edges=2)
-
-ThreeGraphTheory = CombinatorialTheory('3-Graph', 
-                                       _generator_threegraph, 
-                                       _identify_hypergraph, 
-                                       edges=3)
-
-DiGraphTheory = CombinatorialTheory('DiGraph', 
-                                    _generator_digraph, 
-                                    _identify_digraph, 
-                                    edges=2)
-
-TournamentTheory = CombinatorialTheory('Tournament', 
-                                       _generator_tournament, 
-                                       _identify_digraph, 
-                                       edges=2)
-#Note: TournamentTheory is equivalent to 
-#DiGraphTheory.exclude([DiGraphTheory(2, edges=[[0, 1], [1, 0]]), DiGraphTheory(2)])
-
-PermutationTheory = CombinatorialTheory('Permutation', 
-                                        _generator_permutation, 
-                                        _identify_permutation, 
-                                        edges=2)
-
-OEGraphTheory = CombinatorialTheory('OrderedEdgeGraph', 
-                                    _generator_oe_graph, 
-                                    _identify_oe_graph, 
-                                    edges=2)
-
-OVGraphTheory = CombinatorialTheory('OrderedVertexGraph', 
-                                    _generator_ov_graph, 
-                                    _identify_ov_graph, 
-                                    edges=2)
-
-RamseyGraphTheory = CombinatorialTheory('RamseyGraph', 
-                                        _generator_ramsey_graph, 
-                                        _identify_ramsey_graph, 
-                                        edges=2, 
-                                        edges_marked=2)
-
-# should only be used up to size 8.
-# note that for the next size, even with only 15 edges (out of the 32) there are 1.4M nonisomorphic graphs
-# len(list(_cube_graphs(4, 15)))
-# 1479300
-HypercubeGraphTheory = CombinatorialTheory('HypercubeGraph', 
-                                           _generator_cube_graphs, 
-                                           _identify_cube_graphs, 
-                                           size_combine=_cube_size_combine, 
-                                           edges=2)
-
-# should only be used up to size 16.
-HypercubeVertexTheory = CombinatorialTheory('HypercubeVertex', 
-                                         _generator_cube_points, 
-                                         _identify_cube_points, 
-                                         size_combine=_cube_size_combine, 
-                                         edges=2, points=1)
