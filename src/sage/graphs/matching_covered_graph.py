@@ -1797,6 +1797,12 @@ class MatchingCoveredGraph(Graph):
         r"""
         Return the (unique) maximal barrier containing the vertex.
 
+        For a matching covered graph `G`, a subset `B` of the vertex set `V` is
+        a barrier if `|B| = o(G - B)`, where `|B|` denotes the cardinality of
+        the set `B` and `o(G - B)` denotes the number of odd components in the
+        graph `G - B`. And a barrier `B` is a maximal barrier if `C` is not a
+        barrier for each `C` such that `B \subset C \subseteq V`.
+
         We use the following theorem.
 
         .. RUBRIC:: Theorem [LM2024]_:
