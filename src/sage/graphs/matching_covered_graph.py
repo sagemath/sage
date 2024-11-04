@@ -1953,10 +1953,9 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            :meth:`~sage.graphs.graph.Graph.is_factor_critical`,
-            :meth:`~sage.graphs.graph.Graph.is_matching_covered`,
-            :meth:`~sage.graphs.graph.Graph.is_bicritical`
-
+            - :meth:`~sage.graphs.graph.Graph.is_bicritical`
+            - :meth:`~sage.graphs.graph.Graph.is_matching_covered`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.canonical_partition`
         """
         if vertex not in self:
             raise ValueError('vertex {} not in the graph'.format(vertex))
