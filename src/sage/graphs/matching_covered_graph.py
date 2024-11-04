@@ -1803,7 +1803,8 @@ class MatchingCoveredGraph(Graph):
         graph `G - B`. And a barrier `B` is a maximal barrier if `C` is not a
         barrier for each `C` such that `B \subset C \subseteq V`.
 
-        We use the following theorem.
+        In a matching covered graph, each vertex belongs to a unique maximal
+        barrier, which is a consequence of the following theorem.
 
         .. RUBRIC:: Theorem [LM2024]_:
 
