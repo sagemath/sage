@@ -355,7 +355,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
         n = self._parent._n
         assert self._len == m, "Wrong number of values"
         for i in range(m):
-            assert 0 <= self._list[i] < n, "Wrong value self(%i) = %i"%(i, self._list[i])
+            assert 0 <= self._list[i] < n, "Wrong value self(%i) = %i" % (i, self._list[i])
         if hasattr(self._parent, 'check_element'):
             self._parent.check_element(self)
 

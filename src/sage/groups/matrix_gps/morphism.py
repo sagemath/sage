@@ -15,6 +15,7 @@ Deprecated May, 2018; use :class:`sage.groups.libgap_morphism` instead.
 
 from sage.misc.lazy_import import lazy_import
 
+
 def to_libgap(x):
     """
     Helper to convert ``x`` to a LibGAP matrix or matrix group

@@ -207,7 +207,6 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 s = 1
                 n = self.dimension()
                 B = [b.on_left_matrix() for b in self.basis()]
-                I = B[0].parent().one()
                 while s <= n:
                     # we use that p_{AB}(x) = p_{BA}(x) here
                     data = [[None]*(len(B)+1) for _ in B]

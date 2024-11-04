@@ -1583,7 +1583,7 @@ def add_variables(field, variables):
     if isinstance(field, FractionField_generic):
         # Q(a) ---> Q(a, b) rather than Q(a)(b)
         R = field.ring()
-        if isinstance(R, PolynomialRing_general) or isinstance(R, MPolynomialRing_base):
+        if isinstance(R, (PolynomialRing_general, MPolynomialRing_base)):
             new_variables = list(R.variable_names())
             for v in variables:
                 if v not in new_variables:

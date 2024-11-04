@@ -2359,7 +2359,6 @@ class LieAlgebraChevalleyBasis_simply_laced(LieAlgebraChevalleyBasis):
                                    for ii, ca in r._monomial_coefficients.items()
                                    for jj, cb in s._monomial_coefficients.items())
                     s_coeffs[r, s] = {r+s: coeff}
-                    ht = sum(r.coefficients()) + sum(s.coefficients())
                     s_coeffs[-r, -s] = {-r-s: -coeff}
                 if r - s in p_roots_set or s - r in p_roots_set:
                     coeff = R.prod((-1)**(ca*cb) if (ii, jj) in self._epsilon or ii == jj else 1

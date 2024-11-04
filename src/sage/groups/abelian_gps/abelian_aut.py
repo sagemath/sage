@@ -205,6 +205,7 @@ class AbelianGroupAutomorphism(ElementLibGAP):
         m.set_immutable()
         return m
 
+
 class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
                                         GroupMixinLibGAP,
                                         Group,
@@ -407,6 +408,7 @@ class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
             return False
         return G.gap().IsSubsemigroup(self).sage()
 
+
 class AbelianGroupAutomorphismGroup(AbelianGroupAutomorphismGroup_gap):
     r"""
     The full automorphism group of a finite abelian group.
@@ -466,6 +468,7 @@ class AbelianGroupAutomorphismGroup(AbelianGroupAutomorphismGroup_gap):
             sage: aut = G.automorphism_group()
         """
         return "Full group of automorphisms of %s" % self.domain()
+
 
 class AbelianGroupAutomorphismGroup_subgroup(AbelianGroupAutomorphismGroup_gap):
     r"""

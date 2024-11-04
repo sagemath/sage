@@ -419,7 +419,6 @@ class SimpleLieCenterIndices(CenterIndices):
         n = len(self._gen_degrees)
         wts = sorted(self._gen_degrees.values(), reverse=True)
         while True:
-            total = 0
             for exps in intvecwt_iterator(deg, wts):
                 yield self.element_class(self, {n-1-i: e for i, e in enumerate(exps) if e})
             deg += 1

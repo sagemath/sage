@@ -20,6 +20,7 @@ from sage.structure.sage_object import SageObject
 from sage.typeset.ascii_art import AsciiArt
 from sage.typeset.unicode_art import UnicodeArt
 
+
 class GraftalLaceCellularAutomata(SageObject):
     r"""
     Graftal Lace Cellular Automata (GLCA).

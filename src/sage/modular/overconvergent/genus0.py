@@ -278,7 +278,7 @@ def OverconvergentModularForms(prime, weight, radius, base_ring=QQ, prec=20, cha
         Space of 3-adic 1/2-overconvergent modular forms
          of weight-character (3, 3, [-1]) over Rational Field
     """
-    if isinstance(prime, Gamma0_class) or isinstance(prime, Gamma1_class):
+    if isinstance(prime, (Gamma0_class, Gamma1_class)):
         prime = prime.level()
     else:
         prime = ZZ(prime)

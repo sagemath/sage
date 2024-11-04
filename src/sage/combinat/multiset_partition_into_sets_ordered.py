@@ -251,8 +251,8 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
             string_parts = (str(sorted(k)) for k in self)
         else:
             string_parts = (str(sorted(k, key=str)) for k in self)
-        string_parts = ", ".join(string_parts).replace("[","{").replace("]","}")
-        return "[" + string_parts + "]"
+        string = ", ".join(string_parts).replace("[", "{").replace("]", "}")
+        return "[" + string + "]"
 
     def _repr_tight(self):
         r"""
@@ -670,7 +670,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
         if not self:
             return {tuple([self]*k): 1}
 
-        out = {}
+        out: dict[tuple, int] = {}
         for t in product(*[_split_block(block, k) for block in self]):
             tt = tuple([P([l for l in c if l]) for c in zip(*t)])
             out[tt] = out.get(tt, 0) + 1

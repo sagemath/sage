@@ -39,6 +39,7 @@ AUTHORS:
 
 from sage.structure.factory import UniqueFactory
 
+
 class FunctionFieldFactory(UniqueFactory):
     """
     Return the function field in one variable with constant field ``F``. The

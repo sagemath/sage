@@ -2230,7 +2230,7 @@ def _is_function(v):
         x^2 + 1
     """
     # note that Sage variables are callable, so we only check the type
-    return isinstance(v, Function) or isinstance(v, FunctionType)
+    return isinstance(v, (Function, FunctionType))
 
 
 def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):

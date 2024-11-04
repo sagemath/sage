@@ -815,7 +815,7 @@ def Matroid(groundset=None, data=None, **kwds):
             key = 'matroid'
         elif isinstance(data, str):
             key = 'revlex'
-        elif isinstance(data, dict) or isinstance(data, FiniteLatticePoset):
+        elif isinstance(data, (dict, FiniteLatticePoset)):
             key = 'flats'
         elif data is None:
             raise TypeError("no input data given for Matroid()")

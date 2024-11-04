@@ -884,6 +884,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         """
         return self.as_scheme_morphism().degree()
 
+
 class DynamicalSystem_affine_field(DynamicalSystem_affine,
                                    SchemeMorphism_polynomial_affine_space_field):
     @cached_method
@@ -984,6 +985,7 @@ class DynamicalSystem_affine_field(DynamicalSystem_affine,
                     ((3*x^2 + y)/(5*x), (5*y^2 + 5)/(5*x + 5*y))
         """
         return self.as_scheme_morphism().reduce_base_field().as_dynamical_system()
+
 
 class DynamicalSystem_affine_finite_field(DynamicalSystem_affine_field,
                                     SchemeMorphism_polynomial_affine_space_finite_field):

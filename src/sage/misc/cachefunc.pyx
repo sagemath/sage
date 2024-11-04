@@ -3509,9 +3509,9 @@ class FileCache():
             sage: print(N[len(dir):])
             foo-1_2
         """
-        a,k = key
-        kwdstr = '_'.join(['%s-%s'%x for x in k])
-        argstr = '_'.join(['%s'%x for x in a])
+        a, k = key
+        kwdstr = '_'.join('%s-%s' % x for x in k)
+        argstr = '_'.join('%s' % x for x in a)
         if kwdstr and argstr:
             keystr = kwdstr + '.' + argstr
         else:

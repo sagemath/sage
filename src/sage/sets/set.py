@@ -492,7 +492,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             and 'Integer Ring'
         """
         from sage.rings.integer import Integer
-        if isinstance(X, int) or isinstance(X, Integer):
+        if isinstance(X, (int, Integer)):
             # The coercion model will try to call Set_object(0)
             raise ValueError('underlying object cannot be an integer')
 

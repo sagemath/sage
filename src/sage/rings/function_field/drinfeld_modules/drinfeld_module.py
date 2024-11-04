@@ -46,6 +46,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
 
+
 class DrinfeldModule(Parent, UniqueRepresentation):
     r"""
     This class implements Drinfeld `\mathbb{F}_q[T]`-modules.

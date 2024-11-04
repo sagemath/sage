@@ -267,7 +267,7 @@ cdef int add_mpq_vector_init(mpq_vector* sum,
     Initialize sum and set sum = v + multiple*w.
     """
     if v.degree != w.degree:
-        print("Can't add vectors of degree %s and %s"%(v.degree, w.degree))
+        print("Can't add vectors of degree %s and %s" % (v.degree, w.degree))
         raise ArithmeticError("The vectors must have the same degree.")
 
     cdef Py_ssize_t nz, i, j, k, do_multiply

@@ -263,14 +263,14 @@ class FormsSpace_abstract(FormsRing_abstract):
                 return self.construct_quasi_form(el)
         if isinstance(el, FreeModuleElement) and (self.module() is P or self.ambient_module() is P):
             return self.element_from_ambient_coordinates(el)
-        if (not self.is_ambient()) and (isinstance(el, list) or isinstance(el, tuple) or isinstance(el, FreeModuleElement)) and len(el) == self.rank():
+        if not self.is_ambient() and isinstance(el, (list, tuple, FreeModuleElement)) and len(el) == self.rank():
             try:
                 return self.element_from_coordinates(el)
             except (ArithmeticError, TypeError):
                 pass
         if self.ambient_module() and self.ambient_module().has_coerce_map_from(P):
             return self.element_from_ambient_coordinates(self.ambient_module()(el))
-        if (isinstance(el,list) or isinstance(el, tuple)) and len(el) == self.degree():
+        if isinstance(el, (list, tuple)) and len(el) == self.degree():
             try:
                 return self.element_from_ambient_coordinates(el)
             except (ArithmeticError, TypeError):

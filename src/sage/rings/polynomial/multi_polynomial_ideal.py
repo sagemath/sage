@@ -450,6 +450,7 @@ class MPolynomialIdeal_magma_repr:
         B = PolynomialSequence([R(e) for e in mgb], R, immutable=True)
         return B
 
+
 class MPolynomialIdeal_singular_base_repr:
     @require_field
     def syzygy_module(self):
@@ -3492,6 +3493,7 @@ class MPolynomialIdeal_macaulay2_repr:
         k = M2('(%r) %% %s' % (f, I.name()))
         R = self.ring()
         return R(k)
+
 
 class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
     def __init__(self, ring, gens, coerce=True, side='left'):

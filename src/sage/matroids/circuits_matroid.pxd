@@ -34,4 +34,4 @@ cdef class CircuitsMatroid(Matroid):
     cpdef relabel(self, mapping)
 
     # verification
-    cpdef bint is_valid(self) noexcept
+    cpdef is_valid(self, certificate=*)

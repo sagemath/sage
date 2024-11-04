@@ -26,6 +26,7 @@ from sage.categories.rings import Rings
 from sage.rings.integer_ring import ZZ
 from copy import copy
 
+
 class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
     r"""
     The Heisenberg group of degree `n`.

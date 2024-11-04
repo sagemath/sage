@@ -4866,6 +4866,7 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
             return strformat("O({})".format(formatter(z**m)))
         return formatter(poly) + strformat(" + O({})".format(formatter(z**m)))
 
+
 class LazyPowerSeries(LazyCauchyProductSeries):
     r"""
     A Taylor series where the coefficients are computed lazily.
@@ -6149,6 +6150,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
                 left._approximate_order += 1
         return super()._floordiv_(other)
 
+
 class LazyPowerSeries_gcd_mixin:
     """
     A lazy power series that also implements the GCD algorithm.
@@ -6265,6 +6267,7 @@ class LazyPowerSeries_gcd_mixin:
                     unit * x)
         unit = ~unit
         return (x**val, unit, unit)
+
 
 class LazyCompletionGradedAlgebraElement(LazyCauchyProductSeries):
     """

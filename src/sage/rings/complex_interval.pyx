@@ -250,14 +250,14 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             s = self.real().str(base=base, style=style)
         if not self.imag().is_zero():
             y  =  self.imag()
-            if s!="":
+            if s:
                 if y < 0:
-                    s = s+" - "
+                    s += " - "
                     y = -y
                 else:
-                    s = s+" + "
-            s = s+"%s*I"%y.str(base=base, style=style)
-        if len(s) == 0:
+                    s += " + "
+            s += "%s*I" % y.str(base=base, style=style)
+        if not s:
             s = "0"
         return s
 

@@ -377,6 +377,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     elif K.degree() > 1:
         return PolynomialSequence_gf2e(parts, ring, immutable=immutable, cr=cr, cr_str=cr_str)
 
+
 class PolynomialSequence_generic(Sequence_generic):
     def __init__(self, parts, ring, immutable=False, cr=False, cr_str=None):
         """
@@ -1256,6 +1257,7 @@ class PolynomialSequence_generic(Sequence_generic):
             True
         """
         return self.ideal().basis_is_groebner()
+
 
 class PolynomialSequence_gf2(PolynomialSequence_generic):
     r"""

@@ -240,7 +240,7 @@ def Conic(base_field, F=None, names=None, unique=True):
             return ProjectiveConic_rational_field(P2, F)
         if isinstance(base_field, NumberField):
             return ProjectiveConic_number_field(P2, F)
-        if isinstance(base_field, FractionField_generic) and (isinstance(base_field.ring(), PolynomialRing_general) or isinstance(base_field.ring(), MPolynomialRing_base)):
+        if isinstance(base_field, FractionField_generic) and isinstance(base_field.ring(), (PolynomialRing_general, MPolynomialRing_base)):
             return ProjectiveConic_rational_function_field(P2, F)
 
         return ProjectiveConic_field(P2, F)

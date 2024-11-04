@@ -365,7 +365,6 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
                      alphacheck[1]: alphacheck[1],
                      alphacheck[2]: alphacheck[2]}
                 """
-                Q = self.cartan_type().root_system().root_lattice()
                 K = self.basis().keys()
                 deg_map = {}
                 ret = {}

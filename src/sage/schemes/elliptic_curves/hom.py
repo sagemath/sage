@@ -1180,6 +1180,7 @@ def compare_via_evaluation(left, right):
     E = left.domain()
     F = E.base_ring()
 
+    d = left.degree()
     if isinstance(F, finite_field_base.FiniteField):
         # check at a random rational point first
         P = E.random_point()
@@ -1188,7 +1189,6 @@ def compare_via_evaluation(left, right):
 
         # then extend to a field with enough points to conclude
         q = F.cardinality()
-        d = left.degree()
         e = integer_floor(1 + 2 * (2*d.sqrt() + 1).log(q))  # from Hasse bound
         e = next(i for i, n in enumerate(E.count_points(e+1), 1) if n > 4*d)
         EE = E.base_extend(F.extension(e, 'U'))  # named extension is faster
@@ -1198,10 +1198,11 @@ def compare_via_evaluation(left, right):
     elif isinstance(F, number_field_base.NumberField):
         for _ in range(100):
             P = E.lift_x(F.random_element(), extend=True)
-            if not P.has_finite_order():
+            if P._has_order_at_least(4*d + 1, attempts=50):
+            # if P.height(precision=250) == 0:  # slow sometimes
                 return left._eval(P) == right._eval(P)
         else:
-            assert False, "couldn't find a point of infinite order"
+            assert False, "couldn't find a point of large enough order"
 
     else:
         raise NotImplementedError('not implemented for this base field')

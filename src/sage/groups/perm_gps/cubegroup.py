@@ -128,6 +128,7 @@ globals().update(named_colors)
 #########################################################
 # written by Tom Boothby, placed in the public domain
 
+
 def xproj(x, y, z, r):
     r"""
     Return the `x`-projection of `(x,y,z)` rotated by `r`.
@@ -346,6 +347,7 @@ singmaster_indices = {
     31: "rd",
     32: "rbd",
 }
+
 
 def index2singmaster(facet):
     """

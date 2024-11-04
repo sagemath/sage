@@ -208,7 +208,7 @@ cdef class _bigint:
         if s.isdigit() or s[0] == "-" and s[1:].isdigit():
             self.x = str_to_bigint(str_to_bytes(s))
         else:
-            raise ValueError("invalid _bigint: %r"%x)
+            raise ValueError("invalid _bigint: %r" % x)
 
     def __dealloc__(self):
         """

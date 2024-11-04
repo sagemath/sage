@@ -43,6 +43,7 @@ from sage.rings.integer import Integer
 from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.structure.sequence import Sequence
 
+
 class FiniteFieldHomset(RingHomset_generic):
     """
     Set of homomorphisms with domain a given finite field.

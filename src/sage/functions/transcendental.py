@@ -449,7 +449,7 @@ def zeta_symmetric(s):
     - I copied the definition of xi from
       http://web.viu.ca/pughg/RiemannZeta/RiemannZetaLong.html
     """
-    if not (isinstance(s, ComplexNumber) or isinstance(s, RealNumber)):
+    if not isinstance(s, (ComplexNumber, RealNumber)):
         s = ComplexField()(s)
 
     R = s.parent()

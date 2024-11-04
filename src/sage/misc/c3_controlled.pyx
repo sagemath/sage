@@ -656,7 +656,7 @@ def C3_merge(list lists):
                 break
         if not next_item_found:
             # No head is available
-            raise ValueError("Cannot merge the items %s."%', '.join(repr(head) for head in heads))
+            raise ValueError("Cannot merge the items %s." % ', '.join(repr(head) for head in heads))
     return out
 
 
@@ -1353,7 +1353,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         super_classes = tuple(self._from_value(base).cls for base in self._bases_controlled)
         if not super_classes:
             super_classes = (object,)
-        return dynamic_class("%s.cls"%self, super_classes)
+        return dynamic_class("%s.cls" % self, super_classes)
 
     @cached_method
     def all_bases(self):

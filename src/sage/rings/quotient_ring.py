@@ -1545,6 +1545,7 @@ class QuotientRingIdeal_generic(ideal.Ideal_generic):
         J = R.cover_ring().ideal(Igens)
         return other.lift() in J
 
+
 class QuotientRingIdeal_principal(ideal.Ideal_principal, QuotientRingIdeal_generic):
     r"""
     Specialized class for principal quotient-ring ideals.

@@ -77,8 +77,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.categories.integral_domains import IntegralDomains
 from sage.misc.cachefunc import cached_method
-from sage.rings.ring import IntegralDomain
+from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
 import sage.rings.abc
@@ -426,7 +427,7 @@ def EquationOrder(f, names, **kwds):
     return K.order(K.gens())
 
 
-class Order(IntegralDomain, sage.rings.abc.Order):
+class Order(Parent, sage.rings.abc.Order):
     r"""
     An order in a number field.
 
@@ -478,8 +479,8 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             0.0535229072603327 + 1.20934552493846*I
         """
         self._K = K
-        IntegralDomain.__init__(self, ZZ, names=K.variable_names(),
-                                normalize=False)
+        Parent.__init__(self, base=ZZ, names=K.variable_names(),
+                        normalize=False, category=IntegralDomains())
         self._populate_coercion_lists_(embedding=self.number_field())
         if self.absolute_degree() == 2:
             self.is_maximal()       # cache
@@ -665,7 +666,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             sage: O2.krull_dimension()
             1
         """
-        return ZZ(1)
+        return ZZ.one()
 
     def integral_closure(self):
         r"""
@@ -732,6 +733,20 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             3
         """
         return self.absolute_degree()
+
+    def gens(self) -> tuple:
+        """
+        Return the generators as a tuple.
+
+        EXAMPLES::
+
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^3 + x^2 - 2*x + 8)
+            sage: O = K.maximal_order()
+            sage: O.gens()
+            (1, 1/2*a^2 + 1/2*a, a^2)
+        """
+        return tuple(self.gen(i) for i in range(self.absolute_degree()))
 
     def basis(self):  # this must be defined in derived class
         r"""

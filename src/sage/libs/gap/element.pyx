@@ -5,9 +5,6 @@ This document describes the individual wrappers for various GAP
 elements. For general information about GAP, you should read the
 :mod:`~sage.libs.gap.libgap` module documentation.
 """
-
-# hi
-
 # ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #

@@ -9,6 +9,7 @@ deprecation_msg = "{} is deprecated and will be removed from Sage.\n"      \
 "information at\n"                                                         \
 "    http://www.labri.fr/perso/vdelecro/surface-dynamics/latest/"
 
+
 def surface_dynamics_deprecation(name):
     r"""
     TESTS::
