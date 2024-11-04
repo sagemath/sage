@@ -8060,7 +8060,8 @@ cdef class Matroid(SageObject):
 
             sage: M = matroids.Wheel(2)
             sage: A = M.chow_ring(R=ZZ, augmented=False); A
-            Chow ring of Wheel(2): Regular matroid of rank 2 on 4 elements with 5 bases
+            Chow ring of Wheel(2): Regular matroid of rank 2 on 4 elements with
+            5 bases over Integer Ring
             sage: A.defining_ideal()._gens_constructor(A.defining_ideal().ring())
             [A0*A1, A0*A23, A1*A23, A0 + A0123, A1 + A0123, A23 + A0123]
             sage: A23 = A.gen(0)
@@ -8072,6 +8073,7 @@ cdef class Matroid(SageObject):
             sage: M = matroids.catalog.Fano()
             sage: A = M.chow_ring(QQ); A
             Chow ring of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
+            over Rational Field
             sage: G = A.gens()[6:]; G
             (Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef)
             sage: Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef = G
@@ -8095,11 +8097,12 @@ cdef class Matroid(SageObject):
             sage: M = matroids.Wheel(3)
             sage: ch = M.chow_ring(QQ, augmented=True, presentation='fy'); ch
             Augmented Chow ring of Wheel(3): Regular matroid of rank 3 on
-            6 elements with 16 bases in Feitchner-Yuzvinsky presentation
+            6 elements with 16 bases in Feitchner-Yuzvinsky presentation over
+            Rational Field
             sage: M = matroids.Uniform(3, 6)
             sage: ch = M.chow_ring(QQ, augmented=True, presentation='atom-free'); ch
             Augmented Chow ring of U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
-            {3: {{0, 1, 2, 3, 4, 5}}} in atom-free presentation
+            {3: {{0, 1, 2, 3, 4, 5}}} in atom-free presentation over Rational Field
         """
         from sage.matroids.chow_ring import ChowRing
         return ChowRing(M=self, R=R, augmented=augmented, presentation=presentation)

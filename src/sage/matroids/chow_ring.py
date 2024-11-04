@@ -70,10 +70,11 @@ class ChowRing(QuotientRing_generic):
 
     EXAMPLES::
 
-        sage: M1 = matroids.catalog.P8pp() #more examples
+        sage: M1 = matroids.catalog.P8pp()
         sage: ch = M1.chow_ring(QQ, False)
         sage: ch
         Chow ring of P8'': Matroid of rank 4 on 8 elements with 8 nonspanning circuits
+        over Rational Field
     """
     def __init__(self, R, M, augmented, presentation=None):
         r"""
@@ -108,14 +109,15 @@ class ChowRing(QuotientRing_generic):
             sage: ch = M1.chow_ring(QQ, False)
             sage: ch
             Chow ring of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
+            over Rational Field
         """
         output = "Chow ring of {}".format(self._matroid)
         if self._augmented is True:
             output = "Augmented " + output
             if self._presentation == 'fy':
-                output += "Feitchner-Yuzvinsky presentation"
+                output += " in Feitchner-Yuzvinsky presentation"
             elif self._presentation == 'atom-free':
-                output += "atom-free presentation"
+                output +=  " in atom-free presentation"
         return output + " over " + repr(self.base_ring())
 
     def _latex_(self):
