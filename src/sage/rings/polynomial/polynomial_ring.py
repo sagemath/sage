@@ -2219,7 +2219,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain):
         if category is None:
             cat = PrincipalIdealDomains()
         else:
-            cat &= PrincipalIdealDomains()
+            cat = category & PrincipalIdealDomains()
 
         PolynomialRing_integral_domain.__init__(self, base_ring, name=name,
                                                 sparse=sparse, implementation=implementation,
