@@ -8066,7 +8066,13 @@ cdef class Matroid(SageObject):
             sage: M = matroids.catalog.Fano()
             sage: A = M.chow_ring(QQ); A
             Chow ring of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
-            sage: G = A.gens()[6:]
+            sage: G = A.gens()[6:]; G
+            (Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef)
+            sage: Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef = G
+            sage: Ag*Ag
+            2*Adef^2
+            sage: Ag*Abeg
+            -Adef^2
             sage: matrix([[x * y for x in G] for y in G])
             [2*Adef^2        0        0  -Adef^2        0  -Adef^2  -Adef^2        0]
             [       0   Adef^2        0        0        0        0        0        0]
