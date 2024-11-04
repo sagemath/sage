@@ -887,7 +887,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: M((X, a), {0: [1,2], 1: [3,4]})
             Traceback (most recent call last):
             ...
-            ValueError: Action is not transitive
+            ValueError: action is not transitive
 
             sage: G = PermutationGroup([[(1,3),(5,7)]], domain=[1,3,5,7])
             sage: M(G, ([1,3], [5,7]))
