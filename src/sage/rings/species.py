@@ -162,17 +162,16 @@ class AtomicSpeciesElement(WithEqualityById,
             if parent._arity == 1 and lookup:
                 assert len(lookup) == 1
                 return lookup[0]
-            else:
-                domain = list(chain(*map(sorted, dompart)))
-                dis_gap = dis.gap()
-                dis_gens = dis_gap.GeneratorsOfGroup()
-                for elm in lookup:
-                    # check whether the assignment to sorts given by
-                    # dompart and by elm._dompart are the same
-                    elm_domain = list(chain(*map(sorted, elm._dompart)))
-                    mp = libgap.MappingPermListList(elm_domain, domain)
-                    if all(g ** mp in dis_gap for g in dis_gens):
-                        return elm
+            domain = list(chain(*map(sorted, dompart)))
+            dis_gap = dis.gap()
+            dis_gens = dis_gap.GeneratorsOfGroup()
+            for elm in lookup:
+                # check whether the assignment to sorts given by
+                # dompart and by elm._dompart are the same
+                elm_domain = list(chain(*map(sorted, elm._dompart)))
+                mp = libgap.MappingPermListList(elm_domain, domain)
+                if all(g ** mp in dis_gap for g in dis_gens):
+                    return elm
         else:
             lookup = parent._cache[key] = []
 
