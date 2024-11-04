@@ -97,11 +97,11 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         sage: ch = matroids.Uniform(3,6).chow_ring(QQ, False)
         sage: ch.defining_ideal()
         Chow ring ideal of U(3, 6): Matroid of rank 3 on 6 elements with
-        circuit-closures {3: {{0, 1, 2, 3, 4, 5}}} - non augmented
+         circuit-closures {3: {{0, 1, 2, 3, 4, 5}}} - non augmented
         sage: ch = matroids.catalog.Fano().chow_ring(QQ, False)
         sage: ch.defining_ideal()
         Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements,
-        type (3, 0) - non augmented
+         type (3, 0) - non augmented
     """
     def __init__(self, M, R):
         r"""
@@ -198,7 +198,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             I_{M} + J_{M} of matroid \text{\texttt{Matroid{ }of{ }rank{ }2{ }on{ }4{ }elements{ }with{ }3{ }bases}}
         """
         from sage.misc.latex import latex
-        return 'I_{M} + J_{M} of matroid ' + latex(self._matroid)
+        return '(I_{{{M}}} + J_{{{M}}}'.format(M=latex(self._matroid))
 
     def groebner_basis(self, algorithm='', *args, **kwargs):
         r"""
@@ -222,7 +222,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             [A0*A1, A0*A2, A1*A2, A0, A1, A2, A0*A3, A1*A3, A2*A3, A3]
             sage: ch.defining_ideal().groebner_basis().is_groebner()
             True
-            sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().hilbert_series(algorithm='singular')
+            sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().gens().ideal().hilbert_series()
             True
         """
         if algorithm == '':
@@ -237,12 +237,12 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         flats_gen = self._flats_generator
         lattice_flats = Poset((flats, reln))
         antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
-        for subset in antichains: #Taking antichains of size 2
+        for subset in antichains:  # Taking antichains of size 2
             term = R.one()
             for x in subset:
                 term *= flats_gen[x]
             gb.append(term)
-        for F in flats: #Reduced groebner basis by computing the sum first and then the product
+        for F in flats:  # Reduced groebner basis by computing the sum first and then the product
             term = R.zero()
             for G in lattice_flats.order_filter([F]):
                 term += flats_gen[G]
@@ -295,6 +295,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                         expression *= flats_gen[val] ** c
                     monomial_basis.append(expression)
         return PolynomialSequence(R, [monomial_basis])
+
 
 class AugmentedChowRingIdeal_fy(ChowRingIdeal):
     r"""
@@ -440,9 +441,9 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
              B + B0 + B1 + B2 + B3 + B4 + B5 + B013 + B025 + B04 + B124 + B15 + B23 + B345 + B012345]
         """
         E = list(self._matroid.groundset())
-        Q = list()
-        L = list()
-        reln = lambda x,y: x <= y
+        Q = []
+        L = []
+        reln = lambda x, y: x <= y
         lattice_flats = Poset((self._flats, reln))
         antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
         for F, G in antichains:
@@ -497,7 +498,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             Polynomial Sequence with 178 Polynomials in 25 Variables
             sage: ch.defining_ideal().groebner_basis(algorithm='').is_groebner()
             True
-            sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().hilbert_series(algorithm='singular')
+            sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().gens().ideal().hilbert_series()
             True
         """
         if algorithm == '':
@@ -577,6 +578,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
                         expression *= flats_gen[val] ** c
                     monomial_basis.append(expression)
         return PolynomialSequence(R, [monomial_basis])
+
 
 class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
     r"""
@@ -720,7 +722,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             Polynomial Sequence with 253 Polynomials in 22 Variables
             sage: ch.defining_ideal().groebner_basis(algorithm='').is_groebner()
             True
-            sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().hilbert_series(algorithm='singular')
+            sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().gens().ideal().hilbert_series()
             True
         """
         if algorithm == '':

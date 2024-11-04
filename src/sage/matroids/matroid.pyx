@@ -8053,8 +8053,8 @@ cdef class Matroid(SageObject):
         - ``presentation`` -- string; if ``augmented=True``, then this
           must be one of the following (ignored if ``augmented=False``):
 
-            * ``"fy"`` - the Feitchner-Yuzvinsky presentation
-            * ``"atom-free"`` - the atom-free presentation
+          * ``"fy"`` - the Feitchner-Yuzvinsky presentation
+          * ``"atom-free"`` - the atom-free presentation
 
         EXAMPLES::
 
