@@ -1542,6 +1542,85 @@ class MatchingCoveredGraph(Graph):
         """
         return False
 
+    @doc_index('Barriers and canonical partition')
+    def canonical_partition(self):
+        r"""
+        Return the canonical partition of the (matching covered) graph.
+
+        For a matching covered graph `G`, a subset `B` of the vertex set `V` is
+        a barrier if `|B| = o(G - B)`, where `|B|` denotes the cardinality of
+        the set `B` and `o(G - B)` denotes the number of odd components in the
+        graph `G - B`. And a barrier `B` is a maximal barrier if `C` is not a
+        barrier for each `C` such that `B \subset C \subseteq V`.
+
+        Note that in a matching covered graph, each vertex belongs to a unique
+        maximal barrier. The maximal barriers of a matching covered graph
+        partitons its vertex set and the partition of the vertex set of a
+        matching covered graph into its maximal barriers is called as its
+        *canonical* *partition*.
+
+        OUTPUT:
+
+        - A list of sets that constitute a (canonical) partition of the vertex
+          set, wherein each set is a (unique) maximal barrier of the (matching
+          covered) graph.
+
+        EXAMPLES:
+
+        Show the maximal barrier of the graph `K_4 \odot K_{3, 3}`::
+
+            sage: G = Graph([
+            ....:    (0, 2), (0, 3), (0, 4), (1, 2),
+            ....:    (1, 3), (1, 4), (2, 5), (3, 6),
+            ....:    (4, 7), (5, 6), (5, 7), (6, 7)
+            ....: ])
+            sage: H = MatchingCoveredGraph(G)
+            sage: H.canonical_partition()
+            [{0}, {1}, {2, 3, 4}, {5}, {6}, {7}]
+
+        For a bicritical graph (for instance, the Petersen graph), the
+        canonical parition constitutes of only singleton sets each containing
+        an individual vertex::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.canonical_partition()
+            [{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}]
+
+        For a bipartite matching covered graph (for instance, the Hexahedral
+        graph), the canonical partition consists of two sets each of which
+        corresponds to the individual color class::
+
+            sage: H = graphs.HexahedralGraph()
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.canonical_partition()
+            [{0, 2, 5, 7}, {1, 3, 4, 6}]
+            sage: B = BipartiteGraph(H)
+            sage: list(B.bipartition()) == G.canonical_partition()
+            True
+
+        REFERENCES:
+
+            - [LM2024]_
+
+        .. SEEALSO::
+
+            - :meth:`~sage.graphs.graph.Graph.is_bicritical`
+            - :meth:`~sage.graphs.graph.Graph.is_matching_covered`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.maximal_barrier`
+        """
+        visited = set()
+
+        maximal_barriers = []
+        for v in self:
+            if v not in visited:
+                B = self.maximal_barrier(v)
+                for u in B:
+                    visited.add(u)
+                maximal_barriers.append(B)
+
+        return sorted(maximal_barriers, key=lambda s: min(s))
+
     @doc_index('Overwritten methods')
     def delete_vertex(self, vertex, in_order=False):
         r"""
