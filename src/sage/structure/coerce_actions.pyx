@@ -316,6 +316,7 @@ cdef class ModuleAction(Action):
         If there is a coercion from ``G`` to ``S``, we do not create
         the module action of ``G`` on the pushout of ``G`` and ``S``::
 
+            sage: # needs sage.modules
             sage: G = PolynomialRing(QQ, "x")
             sage: S = PolynomialRing(MatrixSpace(QQ, 2), "x")
             sage: G.gen() * S.gen()
@@ -325,6 +326,7 @@ cdef class ModuleAction(Action):
         Contrast the previous example with the following, where we
         have no coercion from ``G`` to ``S``::
 
+            sage: # needs sage.modules
             sage: S = PolynomialRing(MatrixSpace(QQ, 2), "y")
             sage: G.gen() * S.gen()
             [x 0]

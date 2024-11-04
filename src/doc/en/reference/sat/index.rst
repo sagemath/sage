@@ -96,6 +96,7 @@ Converters
 Sage supports conversion from Boolean polynomials (also known as Algebraic Normal Form) to
 Conjunctive Normal Form::
 
+    sage: # needs sage.rings.polynomial.pbori
     sage: B.<a,b,c> = BooleanPolynomialRing()
     sage: from sage.sat.converters.polybori import CNFEncoder
     sage: from sage.sat.solvers.dimacs import DIMACS
@@ -123,6 +124,7 @@ Highlevel Interfaces
 Sage provides various highlevel functions which make working with Boolean polynomials easier. We
 construct a very small-scale AES system of equations and pass it to a SAT solver::
 
+    sage: # needs sage.rings.polynomial.pbori
     sage: sr = mq.SR(1,1,1,4,gf2=True,polybori=True)
     sage: while True:
     ....:     try:

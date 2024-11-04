@@ -358,8 +358,8 @@ class QuotientFields(Category_singleton):
             Here is an example to show that :issue:`7868` has been resolved::
 
                 sage: R.<x,y> = GF(2)[]
-                sage: f = x*y/(x+y)
-                sage: f.factor()                                                        # needs sage.rings.finite_rings
+                sage: f = x*y/(x+y)                                                     # needs sage.libs.singular
+                sage: f.factor()                                                        # needs sage.libs.singular
                 (x + y)^-1 * y * x
             """
             return (self.numerator().factor(*args, **kwds) /
@@ -620,7 +620,7 @@ class QuotientFields(Category_singleton):
             ::
 
                 sage: F.<x,y> = Frac(QQ['x,y'])
-                sage: (1/(x+y)).derivative(x,y)
+                sage: (1/(x+y)).derivative(x,y)                                         # needs sage.libs.singular
                 2/(x^3 + 3*x^2*y + 3*x*y^2 + y^3)
             """
             from sage.misc.derivative import multi_derivative
@@ -657,6 +657,7 @@ class QuotientFields(Category_singleton):
 
             ::
 
+                sage: # needs sage.libs.singular
                 sage: F.<x,y> = Frac(QQ['x,y'])
                 sage: t = (x*y/(x+y))
                 sage: t._derivative(x)

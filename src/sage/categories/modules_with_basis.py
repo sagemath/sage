@@ -996,6 +996,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: X = CombinatorialFreeModule(QQ, range(4)); x = X.basis()
                 sage: U = X.submodule([x[0]-x[1], x[1]-x[2], x[2]-x[3]])
                 sage: F = CombinatorialFreeModule(QQ, ['a','b','c','d'])
@@ -1049,6 +1050,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: s.cardinality()                                                   # needs sage.combinat sage.modules
                 +Infinity
 
+                sage: # needs sage.modules
                 sage: M = CombinatorialFreeModule(QQ, [])
                 sage: M.dimension()
                 0
@@ -1479,6 +1481,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             By default, this method tests only the elements returned by
             ``self.some_elements()``::
 
+                sage: # needs sage.modules
                 sage: A = AlgebrasWithBasis(QQ).example(); A
                 An example of an algebra with basis:
                  the free algebra on the generators ('a', 'b', 'c') over Rational Field
@@ -2142,6 +2145,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             We can map into a different base ring::
 
+                sage: # needs sage.modules
                 sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
                 sage: B = F.basis()
                 sage: a = 1/2*(B['a'] + 3*B['c']); a
@@ -2158,9 +2162,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             Coefficients are converted to the new base ring after
             applying the map::
 
-                sage: B['a'].map_coefficients(lambda c: 2*c, GF(2))
+                sage: B['a'].map_coefficients(lambda c: 2*c, GF(2))                     # needs sage.modules
                 0
-                sage: B['a'].map_coefficients(lambda c: GF(2)(c), QQ)
+                sage: B['a'].map_coefficients(lambda c: GF(2)(c), QQ)                   # needs sage.modules
                 B['a']
             """
             R = self.parent()

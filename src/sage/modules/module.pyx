@@ -276,15 +276,15 @@ def is_Module(x):
     EXAMPLES::
 
         sage: from sage.modules.module import is_Module
-        sage: M = FreeModule(RationalField(),30)                                        # needs sage.modules
-        sage: is_Module(M)                                                              # needs sage.modules
+        sage: is_Module(10)
         doctest:warning...
         DeprecationWarning: the function is_Module is deprecated;
         use 'isinstance(..., Module)' instead
         See https://github.com/sagemath/sage/issues/37924 for details.
-        True
-        sage: is_Module(10)
         False
+        sage: M = FreeModule(RationalField(),30)                                        # needs sage.modules
+        sage: is_Module(M)                                                              # needs sage.modules
+        True
     """
     from sage.misc.superseded import deprecation_cython
     deprecation_cython(37924, "the function is_Module is deprecated; use 'isinstance(..., Module)' instead")

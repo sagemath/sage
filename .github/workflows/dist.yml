@@ -181,7 +181,7 @@ jobs:
       # SPKGs to install as system packages
       SPKGS: _bootstrap _prereq
       # Non-Python packages to install as spkgs
-      TARGETS_PRE: gmp mpfr mpc bliss coxeter3 mcqd meataxe sirocco boost_cropped tdlib
+      TARGETS_PRE: gmp mpfr mpc bliss coxeter3 mcqd meataxe sirocco boost_cropped tdlib brial
       CIBW_BUILD: "*${{ matrix.build }}*"
       # Disable building PyPy wheels on all platforms
       CIBW_SKIP: "pp*"
@@ -254,6 +254,10 @@ jobs:
       - name: sagemath-bliss
         run: |
           "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*bliss*
+
+      - name: sagemath-brial
+        run: |
+          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*brial*
 
       - name: sagemath-coxeter3
         run: |

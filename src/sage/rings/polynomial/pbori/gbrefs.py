@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-brial
+# sage.doctest: needs sage.rings.polynomial.pbori
 import gzip
 from io import StringIO
 import base64 as uu

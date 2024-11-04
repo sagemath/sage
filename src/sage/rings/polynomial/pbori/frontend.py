@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-brial
+# sage.doctest: needs sage.rings.polynomial.pbori
 # Import basic functionality
 r"""
 This module defines an initial ring, and patches the declare_ring to use

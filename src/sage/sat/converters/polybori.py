@@ -29,12 +29,14 @@ Classes and Methods
 ##############################################################################
 
 from random import Random
-from sage.rings.polynomial.pbori.pbori import if_then_else as ite
 from sage.rings.integer_ring import ZZ
 from sage.functions.other import ceil
 from sage.misc.cachefunc import cached_method, cached_function
+from sage.misc.lazy_import import lazy_import
 from sage.combinat.permutation import Permutations
 from sage.sat.converters import ANF2CNFConverter
+
+lazy_import('sage.rings.polynomial.pbori.pbori', 'if_then_else', as_='ite')
 
 
 class CNFEncoder(ANF2CNFConverter):

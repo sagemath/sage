@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-brial
+# sage.doctest: needs sage.rings.polynomial.pbori
 r"""
 PolyBoRi's interface to libpolybori/BRiAL
 

@@ -1381,6 +1381,7 @@ class InfinitePolynomialGen(SageObject):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.real_mpfr
         sage: X.<x1,x2> = InfinitePolynomialRing(RR)
         sage: x1
         x1_*

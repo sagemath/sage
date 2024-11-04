@@ -76,7 +76,7 @@ else:
 
     log.info("Discovering Python/Cython source code...")
 
-    optional_packages = ['mcqd', 'bliss', 'tdlib',
+    optional_packages = ['mcqd', 'bliss', 'brial', 'tdlib',
                          'coxeter3', 'sirocco', 'meataxe']
     distributions_to_exclude = [f"sagemath-{pkg}"
                                 for pkg in optional_packages]

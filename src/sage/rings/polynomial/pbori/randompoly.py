@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-brial
+# sage.doctest: needs sage.rings.polynomial.pbori
 from random import Random
 from pprint import pformat
 

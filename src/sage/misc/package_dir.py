@@ -481,6 +481,7 @@ if __name__ == '__main__':
 
     if distribution == 'all':
         distributions = ["sagemath-bliss",
+                         "sagemath-brial",
                          "sagemath-coxeter3",
                          "sagemath-mcqd",
                          "sagemath-meataxe",

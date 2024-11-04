@@ -1450,6 +1450,8 @@ def has_order(P, n, operation='+'):
     EXAMPLES::
 
         sage: from sage.groups.generic import has_order
+
+        sage: # needs sage.schemes
         sage: E.<P> = EllipticCurve(GF(71), [5,5])
         sage: P.order()
         57
@@ -1468,7 +1470,7 @@ def has_order(P, n, operation='+'):
 
         sage: R = Zmod(14981)
         sage: g = R(321)
-        sage: g.multiplicative_order()
+        sage: g.multiplicative_order()                                                  # needs sage.libs.pari
         42
         sage: has_order(g, 42, operation='*')
         True
@@ -1479,6 +1481,7 @@ def has_order(P, n, operation='+'):
 
     TESTS::
 
+        sage: # needs sage.modules
         sage: ns = [randrange(1,10**5) for _ in range(randrange(1,5))]
         sage: A = AdditiveAbelianGroup(ns)
         sage: from sage.groups.generic import has_order

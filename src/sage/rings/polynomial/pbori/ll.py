@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-brial
+# sage.doctest: needs sage.rings.polynomial.pbori
 from .pbori import (top_index, if_then_else,
                     substitute_variables, BooleSet,
                     ll_red_nf_redsb, ll_red_nf_noredsb,

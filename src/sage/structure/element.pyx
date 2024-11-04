@@ -805,7 +805,7 @@ cdef class Element(SageObject):
             25*y^2 + y + 30
             sage: f.subs(x=5)
             25*y^2 + y + 30
-            sage: (1/f).subs(x=5)
+            sage: (1/f).subs(x=5)                                                       # needs sage.libs.singular
             1/(25*y^2 + y + 30)
             sage: Integer(5).subs(x=4)
             5
@@ -844,7 +844,7 @@ cdef class Element(SageObject):
             25*y^2 + y + 30
             sage: f.substitute(x=5)
             25*y^2 + y + 30
-            sage: (1/f).substitute(x=5)
+            sage: (1/f).substitute(x=5)                                                 # needs sage.libs.singular
             1/(25*y^2 + y + 30)
             sage: Integer(5).substitute(x=4)
             5
@@ -4494,15 +4494,15 @@ def is_AlgebraElement(x):
     TESTS::
 
         sage: from sage.structure.element import is_AlgebraElement
-        sage: R.<x,y> = FreeAlgebra(QQ, 2)                                              # needs sage.combinat sage.modules
-        sage: is_AlgebraElement(x * y)                                                  # needs sage.combinat sage.modules
+        sage: is_AlgebraElement(1)
         doctest:warning...
         DeprecationWarning: The function is_AlgebraElement is deprecated; use 'isinstance(..., AlgebraElement)' instead.
         See https://github.com/sagemath/sage/issues/38077 for details.
+        False
+        sage: R.<x,y> = FreeAlgebra(QQ, 2)                                              # needs sage.combinat sage.modules
+        sage: is_AlgebraElement(x * y)                                                  # needs sage.combinat sage.modules
         True
 
-        sage: is_AlgebraElement(1)
-        False
     """
     from sage.misc.superseded import deprecation_cython
     deprecation_cython(38077, "The function is_AlgebraElement is deprecated; use 'isinstance(..., AlgebraElement)' instead.")

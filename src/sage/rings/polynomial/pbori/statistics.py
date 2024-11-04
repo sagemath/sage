@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-brial
+# sage.doctest: needs sage.rings.polynomial.pbori
 from .pbori import top_index, BooleConstant
 from .PyPolyBoRi import Monomial, Polynomial
 

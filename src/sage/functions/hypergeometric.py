@@ -298,7 +298,7 @@ class Hypergeometric(BuiltinFunction):
 
         TESTS::
 
-            sage: hypergeometric([2, 3, 4], [4, 1], 1)
+            sage: hypergeometric([2, 3, 4], [4, 1], 1)                                  # needs sage.symbolic
             hypergeometric((2, 3, 4), (4, 1), 1)
         """
         return BuiltinFunction.__call__(self,

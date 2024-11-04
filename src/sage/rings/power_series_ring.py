@@ -175,6 +175,7 @@ except ImportError:
     LaurentSeriesRing = ()
     LaurentSeries = ()
 
+lazy_import('sage.rings.lazy_series', 'LazyPowerSeries')
 lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 
 
@@ -476,6 +477,8 @@ def is_PowerSeriesRing(R):
         False
         sage: is_PowerSeriesRing(QQ[['x']])
         True
+
+        sage: # needs sage.combinat
         sage: is_PowerSeriesRing(LazyPowerSeriesRing(QQ, 'x'))
         True
         sage: is_PowerSeriesRing(LazyPowerSeriesRing(QQ, 'x, y'))
@@ -712,7 +715,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             False
             sage: A.has_coerce_map_from(ZZ[['x']])
             True
-            sage: A.has_coerce_map_from(LazyPowerSeriesRing(ZZ, 'x'))
+            sage: A.has_coerce_map_from(LazyPowerSeriesRing(ZZ, 'x'))                   # needs sage.combinat
             True
         """
         if self.base_ring().has_coerce_map_from(S):
@@ -816,6 +819,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
 
         From lazy series::
 
+            sage: # needs sage.combinat
             sage: L.<x> = LazyPowerSeriesRing(QQ)
             sage: R = PowerSeriesRing(QQ, 'x')
             sage: R(1 / (1 + x^3))
@@ -853,7 +857,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
                 else:
                     raise TypeError("Can only convert series into ring with same variable name.")
         else:
-            from sage.rings.lazy_series import LazyPowerSeries
             if isinstance(f, LazyPowerSeries):
                 if prec is infinity:
                     try:

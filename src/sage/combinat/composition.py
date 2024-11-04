@@ -1775,9 +1775,9 @@ class Compositions(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = Compositions()
-            sage: P([3,3,1]) # indirect doctest
+            sage: P([3,3,1])  # indirect doctest
             [3, 3, 1]
-            sage: P(Partition([5,2,1]))
+            sage: P(Partition([5,2,1]))                                                 # needs sage.combinat
             [5, 2, 1]
         """
         # input can be an iterator, and one has to use it twice

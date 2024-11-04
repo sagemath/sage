@@ -282,6 +282,7 @@ class AbelianVarieties(Schemes_over_base):
 
             EXAMPLES::
 
+                sage: # needs sage.schemes
                 sage: Hom(EllipticCurve(j=1), EllipticCurve(j=2)) in CommutativeAdditiveGroups()
                 True
             """
@@ -301,6 +302,7 @@ class AbelianVarieties(Schemes_over_base):
 
                 EXAMPLES::
 
+                    sage: # needs sage.schemes
                     sage: End(EllipticCurve(j=1)) in Rings()
                     True
                 """
