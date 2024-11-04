@@ -165,12 +165,12 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                 term *= self._flats_generator[el]
             I.append(term) #Stanley-Reisner Ideal
         atoms = self._matroid.lattice_of_flats().atoms()
-        atoms_gen = {a:poly_ring.zero() for a in atoms}
+        atoms_gen = {a: poly_ring.zero() for a in atoms}
         for F in flats:
             for a in atoms:
                 if a.issubset(F):
                     atoms_gen[a] += self._flats_generator[F]
-        J = list(atoms_gen.values()) #Linear Generators
+        J = list(atoms_gen.values())  # Linear generators
         return I + J
 
     def _repr_(self):
@@ -457,7 +457,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
                     Q.append(self._flats_generator[x] * self._flats_generator[F])
                 else:
                     term += self._flats_generator[F]
-            L.append(self._flats_generator[x] + term) #Linear Generators
+            L.append(self._flats_generator[x] + term)  # Linear generators
             L.append(term1)
         return Q + L
 
@@ -672,14 +672,14 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         for F, G in antichains:
             Q.append(self._flats_generator[F] * self._flats_generator[G])
         for F in self._flats:
-            for x in E: # generators for every set of flats containing element
+            for x in E:  # generators for every set of flats containing element
                 term = poly_ring.zero()
                 for H in flats_containing[x]:
                     term += self._flats_generator[H]
                 if term**2 not in Q:
                     Q.append(term**2)
 
-                if F not in flats_containing[x]: #generators for every set of flats not containing element
+                if F not in flats_containing[x]:  # generators for every set of flats not containing element
                     Q.append(self._flats_generator[F]*term)
         return Q
 
@@ -789,7 +789,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
                 ranges[0] = range(1, max_powers[0] + 1)
                 first_rank = ranks[subset[k-1]] + 1
                 for combination in product(*(r for r in ranges)):
-                    #Generating combinations for all powers from 1 to max_powers
+                    # Generating combinations for all powers from 1 to max_powers
                     if sum(combination) <= first_rank:
                         expression = R.one()
                         for val, c in zip(subset, combination):

@@ -8041,10 +8041,11 @@ cdef class Matroid(SageObject):
 
         - ``M`` -- matroid
         - ``R`` -- commutative ring
-        - ``augmented`` -- boolean; when ``True``, this is the augmented
-            Chow ring and if ``False``, this is the non-augmented Chow ring
-        - ``presentation`` -- string (default: ``None``); one of the following
-            (ignored if ``augmented=False``)
+        - ``augmented`` -- boolean (default: ``False``); when ``True``, this
+          is the augmented Chow ring and if ``False``, this is the
+          non-augmented Chow ring
+        - ``presentation`` -- string; if ``augmented=True``, then this
+          must be one of the following (ignored if ``augmented=False``):
 
             * ``"fy"`` - the Feitchner-Yuzvinsky presentation
             * ``"atom-free"`` - the atom-free presentation
