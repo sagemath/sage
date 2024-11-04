@@ -290,7 +290,7 @@ class DocBuilder():
             with open(tex_file, 'w') as f:
                 f.write(ref)
 
-        make_target = "cd '%s' && $MAKE %s && mv -f *.pdf '%s'"
+        make_target = "cd '%s' && ${MAKE:-make} %s && mv -f *.pdf '%s'"
         error_message = "failed to run $MAKE %s in %s"
         command = 'all-pdf'
 

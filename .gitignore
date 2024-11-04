@@ -202,6 +202,7 @@ build/pkgs/wheel/version_requirements.txt
 
 # Generated files in the top-level source trees
 /pkgs/*/build
+/pkgs/*/.mesonpy-*
 /pkgs/*/dist
 /pkgs/*/MANIFEST
 /pkgs/*/*.egg-info
@@ -237,6 +238,7 @@ build/pkgs/wheel/version_requirements.txt
 /pkgs/sagemath-sirocco/pyproject.toml
 /pkgs/sagemath-tdlib/pyproject.toml
 /pkgs/sagemath-categories/pyproject.toml
+/pkgs/sagemath-doc-*/pyproject.toml
 /pkgs/sagemath-environment/pyproject.toml
 /pkgs/sagemath-repl/pyproject.toml
 /pkgs/sagemath-objects/requirements*.txt

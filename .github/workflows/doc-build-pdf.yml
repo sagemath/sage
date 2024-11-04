@@ -2,7 +2,7 @@ name: Build documentation (PDF)
 
 on:
   pull_request:
-  push:
+  merge_group:
   workflow_dispatch:
     # Allow to run manually
     inputs:

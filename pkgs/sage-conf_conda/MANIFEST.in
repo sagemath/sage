@@ -41,7 +41,6 @@ include         sage_root/src/bin/sage-env-config.in
 include         sage_root/src/bin/sage-src-env-config.in
 include         sage_root/src/bin/sage-venv-config
 include         sage_root/src/bin/sage-version.sh
-include         sage_root/src/doc/bootstrap                     # FIXME: should move to builds/pkgs/sagemath_doc_html/
 
 global-exclude  .tox
 global-exclude  *~*

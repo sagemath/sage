@@ -1,0 +1,7 @@
+mkdir -p "${SAGE_DOC}"
+cd "${SAGE_INST_LOCAL}/share/doc/sage"
+for a in *; do
+    if [ -e "$a" -a ! -e "${SAGE_DOC}/$a" ]; then
+        ln -sf "${SAGE_INST_LOCAL}/share/doc/sage/$a" "${SAGE_DOC}/$a"
+    fi
+done

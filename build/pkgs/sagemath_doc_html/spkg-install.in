@@ -1,0 +1,20 @@
+cd src
+
+# Needed because we have trees.txt, which directs us to $SAGE_LOCAL/...
+export PIP_FIND_LINKS=$SAGE_VENV/var/lib/sage/wheels
+
+if [ "$SAGE_EDITABLE" = yes ]; then
+    # Editables 0.5 does not map non-package data files
+    # https://editables.readthedocs.io/en/latest/use-cases.html#mapping-non-python-directories-or-files
+    mkdir -p ${SAGE_DESTDIR}${SAGE_INST_LOCAL}/share/doc/sage
+    sdh_pip_editable_install .
+    # We expect a subdirectory like build/cp312.
+    # Use 'find -newer' to use the one just created/modified by the editable build.
+    find $(pwd -P)/build -maxdepth 1 -name "cp*" -newer ${SAGE_DESTDIR}${SAGE_INST_LOCAL} -exec \
+         ln -svf {}/html {}/index.html ${SAGE_DESTDIR}${SAGE_INST_LOCAL}/share/doc/sage/ \;
+    if [ "$SAGE_WHEELS" = yes ]; then
+        sdh_build_and_store_wheel --no-build-isolation .
+    fi
+else
+    sdh_pip_install --no-build-isolation .
+fi
