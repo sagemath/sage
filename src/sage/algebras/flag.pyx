@@ -1,4 +1,40 @@
 r"""
+TODO for this:
+
+from the theory should only receive "signature"
+"signature" ideally contains information about the symmetry group of the components.
+
+Preferably this should all be cython, so it is all fast
+
+For the identifier:
+-place blocks in standard form
+--sorted when the symbol is unordered
+-build a canonical graph based on signature
+--with bliss directly
+-get a relabeling after canonical label is calculated
+-store some small canonical value for later equality tests (or could relabel itself)
+
+For the generator:
+-calculate all extensions from previous and excluded data
+-merge signatures
+--for the above both: loop through unique relabels of a structure
+-generate primitives quickly
+--using nauty directly
+-check excluded
+
+For patterns:
+-make no-edge mean optional by default
+-make it use the block standard form and the nonisom permutator
+
+Perhaps sanity checks when a flag is defined?
+Perhaps do that in combi theory? And know that flags defined here are correct?
+
+
+
+"""
+
+
+r"""
 Implementation of Flag, elements of :class:`CombinatorialTheory`
 
 Cython class for flags and types. Types will be called ftype 

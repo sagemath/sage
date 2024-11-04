@@ -1,4 +1,20 @@
 r"""
+TODO for this:
+-approximate generator loads
+-pick optimal, warn if it seems to be really long
+-save and load generator outputs
+
+Perhaps if some of the methods are parallelized, then run those from here? 
+Can cython run things parallel?
+
+"""
+
+
+
+
+
+
+r"""
 Implementation of flag algebras, with a class for combinatorial theories
 
 
