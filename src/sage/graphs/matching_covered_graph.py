@@ -631,7 +631,6 @@ class MatchingCoveredGraph(Graph):
             return s.capitalize()
         return "".join(["Matching covered ", s])
 
-    @doc_index('Overwritten methods')
     def _subgraph_by_adding(self, vertices=None, edges=None, edge_property=None, immutable=None):
         r"""
         Return the matching covered subgraph containing the given vertices and edges.
