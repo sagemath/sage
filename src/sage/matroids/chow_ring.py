@@ -117,7 +117,7 @@ class ChowRing(QuotientRing_generic):
             if self._presentation == 'fy':
                 output += " in Feitchner-Yuzvinsky presentation"
             elif self._presentation == 'atom-free':
-                output +=  " in atom-free presentation"
+                output += " in atom-free presentation"
         return output + " over " + repr(self.base_ring())
 
     def _latex_(self):
