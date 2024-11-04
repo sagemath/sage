@@ -90,6 +90,7 @@ def interval_roots(p, rts, prec):
 
     return irts
 
+
 def intervals_disjoint(intvs):
     """
     Given a list of complex intervals, check whether they are pairwise
