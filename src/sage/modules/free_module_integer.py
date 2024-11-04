@@ -32,6 +32,7 @@ TESTS::
 ##############################################################################
 
 from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.modules.free_module import FreeModule_submodule_with_basis_pid, FreeModule_ambient_pid
@@ -784,16 +785,11 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             i -= 1
         return t - t_new
 
-    def approximate_closest_vector(self, t, delta=None, *args, **kwargs):
+    def approximate_closest_vector(self, t, delta=None, algorithm='embedding', *args, **kwargs):
         r"""
-        Compute a vector `w` such that
-
-        .. MATH::
-
-            |t-w|<(\frac{1}{\delta-\frac{1}{4}})^{d/2}|t-u|
-
-        where `u` is the closest lattice point to `t`, `\delta` is the LLL
-        reduction parameter, and `d` is the dimension of the lattice.
+        Compute a vector `w` in this lattice which is close to the target vector `t`.
+        The ratio `\frac{|t-w|}{|t-u|}`, where `u` is the closest lattice vector to `t`,
+        is exponential in the dimension of the lattice.
 
         This will check whether the basis is already `\delta`-LLL-reduced
         and otherwise it will run LLL to make sure that it is. For more
@@ -804,6 +800,18 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         - ``t`` -- the target vector to compute a close vector to
 
         - ``delta`` -- (default: ``0.99``) the LLL reduction parameter
+
+        - ``algorithm`` -- string (default: 'embedding'):
+
+          - ``'embedding'`` -- embeds the lattice in a d+1 dimensional space
+            and seeks short vectors using LLL. This calls LLL twice but is
+            usually still quick.
+
+          - ``'nearest_plane'`` -- uses the "NEAREST PLANE" algorithm from [Bab86]_
+
+          - ``'rounding_off'`` -- uses the "ROUNDING OFF" algorithm from [Bab86]_.
+            This yields slightly worse results than the other algorithms but is
+            at least faster than ``'nearest_plane'``.
 
         - ``*args`` -- passed through to :meth:`LLL`
 
@@ -825,30 +833,62 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             ....:                     [0, 0, 101, 0], [-28, 39, 45, 1]], lll_reduce=False)
             sage: t = vector([1337]*4)
             sage: L.approximate_closest_vector(t, delta=0.26)
-            (1348, 1340, 1383, 1337)
+            (1331, 1324, 1349, 1334)
             sage: L.approximate_closest_vector(t, delta=0.99)
             (1326, 1349, 1339, 1345)
             sage: L.closest_vector(t)
             (1326, 1349, 1339, 1345)
 
-        ALGORITHM:
-
-        Uses the algorithm from [Bab86]_.
+            sage: # Checking that the other algorithms work
+            sage: L.approximate_closest_vector(t, algorithm='nearest_plane')
+            (1326, 1349, 1339, 1345)
+            sage: L.approximate_closest_vector(t, algorithm='rounding_off')
+            (1331, 1324, 1349, 1334)
         """
         if delta is None:
             delta = ZZ(99)/ZZ(100)
 
-        # bound checks on delta are performed in is_LLL_reduced
+        # Bound checks on delta are performed in is_LLL_reduced
         if not self._reduced_basis.is_LLL_reduced(delta=delta):
             self.LLL(*args, delta=delta, **kwargs)
 
         B = self._reduced_basis
-        G = B.gram_schmidt()[0]
         t = vector(t)
 
-        b = t
-        for i in reversed(range(G.nrows())):
-            b -= B[i] * ((b * G[i]) / (G[i] * G[i])).round("even")
-        return (t - b).change_ring(ZZ)
+        if algorithm == 'embedding':
+            L = matrix(QQ, B.nrows()+1, B.ncols()+1)
+            L.set_block(0, 0, B)
+            L.set_block(B.nrows(), 0, matrix(t))
+            weight = (B[-1]*B[-1]).isqrt()+1  # Norm of the largest vector
+            L[-1, -1] = weight
 
-    babai = approximate_closest_vector
+            # The vector should be the last row but we iterate just in case
+            for v in reversed(L.LLL(delta=delta, *args, **kwargs).rows()):
+                if abs(v[-1]) == weight:
+                    return t - v[:-1]*v[-1].sign()
+            raise ValueError('No suitable vector found in basis.'
+                             'This is a bug, please report it.')
+
+        elif algorithm == 'nearest_plane':
+            G = B.gram_schmidt()[0]
+
+            b = t
+            for i in reversed(range(G.nrows())):
+                b -= B[i] * ((b * G[i]) / (G[i] * G[i])).round("even")
+            return (t - b).change_ring(ZZ)
+
+        elif algorithm == 'rounding_off':
+            # t = x*B might not have a solution over QQ so we instead solve
+            # the system x*B*B^T = t*B^T which will be the "closest" solution
+            # if it does not exist, same effect as using the psuedo-inverse
+            sol = (B*B.T).solve_left(t*B.T)
+            return vector(ZZ, [QQ(x).round('even') for x in sol])*B
+
+        else:
+            raise ValueError("algorithm must be one of 'embedding', 'nearest_plane' or 'rounding_off'")
+
+    def babai(self, *args, **kwargs):
+        """
+        Alias for :meth:`approximate_closest_vector`.
+        """
+        return self.approximate_closest_vector(*args, **kwargs)

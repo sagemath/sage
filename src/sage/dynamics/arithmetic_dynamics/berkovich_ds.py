@@ -869,7 +869,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
                     else:
                         new_poly.append(ring_of_integers(i).mod(ideal))
                 new_poly = R(new_poly)
-                fraction.append((new_poly))
+                fraction.append(new_poly)
             gcd = fraction[0].gcd(fraction[1])
             num = fraction[0].quo_rem(gcd)[0]
             dem = fraction[1].quo_rem(gcd)[0]
@@ -959,6 +959,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
                 valuation = dem_splitting_field(Taylor_expansion[i]).valuation(prime)
                 new_radius = max(new_radius, p**(-valuation/prime.absolute_ramification_index())*r**i)
         return self.domain()(new_center, new_radius)
+
 
 class DynamicalSystem_Berkovich_affine(DynamicalSystem_Berkovich):
     r"""
