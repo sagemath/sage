@@ -663,8 +663,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         return Set([self(G, pi, check=False) for G in S.conjugacy_classes_subgroups()
                     if len(G.disjoint_direct_product_decomposition()) <= 1])
 
-    @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 
@@ -2188,8 +2187,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
         """
         return self._indices.one()
 
-    @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 
