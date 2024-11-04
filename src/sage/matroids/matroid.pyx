@@ -8074,6 +8074,10 @@ cdef class Matroid(SageObject):
             sage: A = M.chow_ring(QQ); A
             Chow ring of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
             over Rational Field
+
+        Next, we get the non-trivial generators and do some computations::
+
+            sage: # needs sage.libs.singular sage.rings.finite_rings
             sage: G = A.gens()[6:]; G
             (Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef)
             sage: Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef = G
