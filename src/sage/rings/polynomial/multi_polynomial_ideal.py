@@ -638,7 +638,7 @@ class MPolynomialIdeal_singular_repr(
         try:
             self.ring()._singular_(singular).set_ring()
             I = self.__singular
-            if not (I.parent() is singular):
+            if I.parent() is not singular:
                 raise ValueError
             I._check_valid()
             return I

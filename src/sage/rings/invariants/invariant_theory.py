@@ -286,7 +286,7 @@ def transvectant(f, g, h=1, scale='default'):
             dg = g.form().derivative(x,h-j).derivative(y,j)
             return (-1)**j * binomial(h,j) * df * dg
         tv = scalar * sum([diff(j) for j in range(h+1)])
-        if not tv.parent() is R:
+        if tv.parent() is not R:
             S = tv.parent()
             x = S(x)
             y = S(y)
