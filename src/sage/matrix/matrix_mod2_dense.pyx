@@ -1957,6 +1957,16 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: B = A * random_vector(GF(2), m)
             sage: A * A.solve_right(B) == B
             True
+            sage: matrix(GF(2), 2, 0).solve_right(matrix(GF(2), 2, 2)) == matrix(GF(2), 0, 2)
+            True
+            sage: matrix(GF(2), 2, 0).solve_right(matrix(GF(2), 2, 2) + 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+            sage: matrix(GF(2), 2, 0).solve_right(matrix(GF(2), 2, 2) + 1, check=False) == matrix(GF(2), 0, 2)
+            True
+            sage: matrix(GF(2), 2, 2).solve_right(matrix(GF(2), 2, 0)) == matrix(GF(2), 2, 0)
+            True
         """
         cdef mzd_t *B_entries = (<Matrix_mod2_dense>B)._entries
 
@@ -1964,7 +1974,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         X = self.new_matrix(nrows=self._entries.ncols, ncols=B_entries.ncols)
         if self._entries.ncols == 0 or B_entries.ncols == 0:
             # special case: empty matrix
-            if B != 0:
+            if check and B != 0:
                 raise ValueError("matrix equation has no solutions")
             return X
         cdef rci_t rows = self._entries.nrows
