@@ -470,7 +470,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             ValueError: 0 must be a permutation group
         """
         if check:
-            if parent(G) == self:
+            if parent(G) is self:
                 # pi cannot be None because of framework
                 raise ValueError("cannot reassign sorts to an atomic species")
             if not isinstance(G, PermutationGroup_generic):
@@ -2099,7 +2099,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: P((X, lambda g, x: act(x[0], x[1], g)), pi)
             2*Y*E_2(X)
         """
-        if parent(G) == self:
+        if parent(G) is self:
             # pi cannot be None because of framework
             raise ValueError("cannot reassign sorts to a polynomial species")
         if isinstance(G, PermutationGroup_generic):
