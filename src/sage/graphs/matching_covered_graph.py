@@ -93,7 +93,7 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from .graph import Graph
-from sage.misc.rest_index_of_methods import doc_index
+from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
 
 class MatchingCoveredGraph(Graph):
     r"""
@@ -1965,3 +1965,5 @@ class MatchingCoveredGraph(Graph):
 
         except Exception as exception:
             raise exception
+
+__doc__ = __doc__.replace("{INDEX_OF_METHODS}", gen_thematic_rest_table_index(MatchingCoveredGraph))
