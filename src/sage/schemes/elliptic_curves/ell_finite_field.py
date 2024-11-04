@@ -2942,6 +2942,7 @@ def EllipticCurve_with_order(m, *, D=None):
                         seen.add(Et)
                         yield Et
 
+
 def EllipticCurve_with_prime_order(N):
     r"""
     Given a prime number ``N``, find another prime number `p` and construct an

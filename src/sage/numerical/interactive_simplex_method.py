@@ -213,6 +213,7 @@ from sage.structure.all import SageObject
 # will have to be left.
 generate_real_LaTeX = False
 
+
 def _assemble_arrayl(lines, stretch=None):
     r"""
     Return ``lines`` assembled in a left-justified array.
@@ -442,6 +443,7 @@ available_styles = {
 
 current_style = 'UAlberta'
 
+
 def default_variable_name(variable):
     r"""
     Return default variable name for the current :func:`style`.
@@ -464,6 +466,7 @@ def default_variable_name(variable):
         'UAlberta'
     """
     return available_styles[current_style][variable]
+
 
 def style(new_style=None):
     r"""
@@ -3704,6 +3707,7 @@ class LPAbstractDictionary(SageObject):
             5000
         """
 
+
 class LPDictionary(LPAbstractDictionary):
     r"""
     Construct a dictionary for an LP problem.
@@ -4264,6 +4268,7 @@ class LPDictionary(LPAbstractDictionary):
 
 
 random_dictionary = LPDictionary.random_element
+
 
 class LPRevisedDictionary(LPAbstractDictionary):
     r"""

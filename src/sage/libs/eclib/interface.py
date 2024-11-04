@@ -31,6 +31,7 @@ from sage.rings.integer_ring import IntegerRing
 
 from .mwrank import _Curvedata, _two_descent, _mw, parse_point_list
 
+
 class mwrank_EllipticCurve(SageObject):
     r"""
     The :class:`mwrank_EllipticCurve` class represents an elliptic

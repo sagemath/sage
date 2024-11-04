@@ -126,6 +126,8 @@ class SplittingAlgebraElement(PolynomialQuotientRingElement):
 # ------------------------------------------------------------------------------------------------------------------
 # Parent class of the splitting algebra
 # --------------------------------------------------------------------------------------------------------
+
+
 class SplittingAlgebra(PolynomialQuotientRing_domain):
     r"""
     For a given monic polynomial `p(t)` of degree `n` over a commutative
