@@ -655,8 +655,16 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             1
             sage: A.graded_component([2, 3])  # random
             {{((2,3)(4,5), (1,2,3)): ({4, 5}, {1, 2, 3})}}
+
+        TESTS::
+
+            sage: A.graded_component([0])
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid degree
         """
-        assert len(mc) == self._arity
+        if len(mc) != self._arity:
+            raise ValueError("invalid degree")
         S = SymmetricGroup(sum(mc)).young_subgroup(mc)
         domain = S.domain()
         pi = {i: domain[sum(mc[:i]): sum(mc[:i+1])] for i in range(len(mc))}
@@ -1011,8 +1019,16 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
              {((1,2,3), (1,3)(4,5)): ({1, 2, 3}, {4, 5})},
              X*{((1,2)(3,4),): ({1, 2}, {3, 4})}, X*E_2(X)*Y^2, E_3(X)*E_2(Y),
              C_3(X)*Y^2, C_3(X)*E_2(Y)}
+
+        TESTS::
+
+            sage: M.graded_component([0])
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid degree
         """
-        assert len(mc) == self._arity
+        if len(mc) != self._arity:
+            raise ValueError("invalid degree")
         S = SymmetricGroup(sum(mc)).young_subgroup(mc)
         domain = S.domain()
         pi = {i: domain[sum(mc[:i]): sum(mc[:i+1])] for i in range(len(mc))}
