@@ -150,8 +150,6 @@ from sage.structure.richcmp cimport rich_to_bool_sgn
 cdef bin_op
 from sage.structure.element import bin_op
 
-from sage.libs.mpmath.utils cimport mpfr_to_mpfval
-
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.rings.real_double cimport RealDoubleElement

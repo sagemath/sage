@@ -254,8 +254,9 @@ SINGULAR_BIN = var("SINGULAR_BIN") or "Singular"
 OPENMP_CFLAGS = var("OPENMP_CFLAGS", "")
 OPENMP_CXXFLAGS = var("OPENMP_CXXFLAGS", "")
 
-# Make sure mpmath uses Sage types
-os.environ['MPMATH_SAGE'] = '1'
+# Make sure that mpmath < 1.4 does not try to use Sage types
+os.environ.pop('MPMATH_SAGE', None)
+os.environ['MPMATH_NOSAGE'] = '1'
 
 # misc
 SAGE_BANNER = var("SAGE_BANNER", "")
