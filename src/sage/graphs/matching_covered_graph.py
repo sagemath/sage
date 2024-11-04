@@ -1795,6 +1795,91 @@ class MatchingCoveredGraph(Graph):
         """
         return self._matching
 
+    @doc_index('Overwritten methods')
+    def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
+                             *, integrality_tolerance=1e-3):
+        r"""
+        Return whether the graph has a perfect matching.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.graph.Graph.has_perfect_matching` method in
+            order to return ``True`` (provided the input arguments are valid)
+            as matching covered graphs always admit a perfect matching.
+
+        INPUT:
+
+        - ``algorithm`` -- string (default: ``'Edmonds'``)
+
+        - ``'Edmonds'`` uses Edmonds' algorithm as implemented in NetworkX to
+            find a matching of maximal cardinality, then check whether this
+            cardinality is half the number of vertices of the graph.
+
+        - ``'LP_matching'`` uses a Linear Program to find a matching of
+            maximal cardinality, then check whether this cardinality is half the
+            number of vertices of the graph.
+
+        - ``'LP'`` uses a Linear Program formulation of the perfect matching
+            problem: put a binary variable ``b[e]`` on each edge `e`, and for
+            each vertex `v`, require that the sum of the values of the edges
+            incident to `v` is 1.
+
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
+        Linear Programming (MILP) solver to be used. If set to ``None``, the
+        default one is used. For more information on MILP solvers and which
+        default solver is used, see the method :meth:`solve
+        <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+        :class:`MixedIntegerLinearProgram
+        <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+        - ``verbose`` -- integer (default: 0); sets the level of verbosity:
+        set to 0 by default, which means quiet (only useful when
+        ``algorithm == "LP_matching"`` or ``algorithm == "LP"``)
+
+        - ``integrality_tolerance`` -- float; parameter for use with MILP
+        solvers over an inexact base ring; see
+        :meth:`MixedIntegerLinearProgram.get_values`.
+
+        OUTPUT:
+
+        - If the input arguments are valid, a boolean (``True``) is returned as
+          a maximum matching of a matching covered graph is always a perfect
+          matching, otherwise a :exc:`~ValueError` is raised.
+
+        EXAMPLES:
+
+        Note that regardless of the algorithm (as long as the input arguments
+        are in valid format), the method always returns the boolean ``True``::
+
+            sage: P = graphs.PetersenGraph()
+            sage: P.has_perfect_matching()  # Calls Graph.has_perfect_matching()
+            True
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.has_perfect_matching()  # Calls MatchingCoveredGraph.has_perfect_matching()
+            True
+            sage: W = graphs.WheelGraph(6)
+            sage: H = MatchingCoveredGraph(W)
+            sage: H.has_perfect_matching(algorithm='LP_matching')
+            True
+
+        Providing with an algorithm, that is not one of ``'Edmonds'``,
+        ``'LP_matching'`` or ``'LP'``::
+
+            sage: S = graphs.StaircaseGraph(4)
+            sage: J = MatchingCoveredGraph(S)
+            sage: J.has_perfect_matching(algorithm='algorithm')
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm must be set to 'Edmonds',
+            'LP_matching' or 'LP'
+        """
+        if algorithm in ['Edmonds', 'LP_matching', 'LP']:
+            return True
+
+        raise ValueError('algorithm must be set to \'Edmonds\', '
+                         '\'LP_matching\' or \'LP\'')
+
     @doc_index('Miscellaneous methods')
     def update_matching(self, matching):
         r"""
