@@ -59,9 +59,9 @@ class AtomicSpeciesElement(WithEqualityById,
           arity, representing the assignment of each element of the
           domain of ``dis`` to a sort
 
-        ..WARNING::
+        .. WARNING::
 
-            we do not check whether ``C`` is indeed directly
+            We do not check whether ``C`` is indeed directly
             indecomposable.
 
         TESTS::
@@ -156,7 +156,7 @@ class AtomicSpeciesElement(WithEqualityById,
 
         dompart = [[ZZ(e ** mp) for e in b] for b in dompart]
         mc = tuple([len(b) for b in dompart])
-        key = mc, dis
+        key = (mc, dis)
         if key in parent._cache:
             lookup = parent._cache[key]
             if parent._arity == 1 and lookup:
@@ -593,7 +593,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             sage: (0, {0: []}) in AtomicSpecies("X, Y")
             False
         """
-        if parent(x) == self:
+        if parent(x) is self:
             return True
         if isinstance(x, PermutationGroup_generic):
             if self._arity == 1:
@@ -926,9 +926,8 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             ...
             ValueError: 0 must be a permutation group or a pair specifying a
              group action on the given domain pi=None
-
         """
-        if parent(G) == self:
+        if parent(G) is self:
             # pi cannot be None because of framework
             raise ValueError("cannot reassign sorts to a molecular species")
 
@@ -968,7 +967,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                              domain=list(chain(*dompart)))
         H = _stabilizer_subgroups(S, X, a)
         if len(H) > 1:
-            raise ValueError("Action is not transitive")
+            raise ValueError("action is not transitive")
         return self(H[0], pi, check=check)
 
     def grading_set(self):
@@ -1408,7 +1407,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             # TODO: the case that G in F(G) has a constant part and F
             # is a polynomial species is not yet covered - see
             # section 4.3 of [ALL2002]_
-            Mlist = [None for _ in range(sum(self.grade()))]
+            Mlist = [None] * sum(self.grade())
             G, dompart = self.permutation_group()
             for i, v in enumerate(dompart):
                 for k in v:
@@ -1628,10 +1627,10 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
         INPUT:
 
-            - ``names``, the (flat) list of names of the result
-            - ``args``, the sequence of `k` compositions, each of
-              which sums to the corresponding degree of ``self``,
-              where `k` is the arity of ``self``.
+        - ``names``, the (flat) list of names of the result
+        - ``args``, the sequence of `k` compositions, each of
+          which sums to the corresponding degree of ``self``,
+          where `k` is the arity of ``self``
 
         OUTPUT:
 
@@ -1717,10 +1716,10 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
           in sort `i`, and the total length of the compositions is
           the number of names
 
-        ..TODO::
+        .. TODO::
 
-            once this is thoroughly tested, there should be an
-            optional keyword parameter to skip the checks
+            Once this is thoroughly tested, there should be an
+            optional keyword parameter to skip the checks.
 
         EXAMPLES:
 
@@ -2029,7 +2028,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
         - ``check`` -- boolean (default: ``True``); skip input
           checking if ``False``
 
-
         EXAMPLES::
 
             sage: from sage.rings.species import PolynomialSpecies
@@ -2240,9 +2238,9 @@ class PolynomialSpecies(CombinatorialFreeModule):
         coefficient of `t^n/n` in `\log E(tX)`, where `E` is the
         species of sets.
 
-        ..TODO::
+        .. TODO::
 
-           this is really a univariate species, so it would be better
+           This is really a univariate species, so it would be better
            to have a fast way to change all the variables of a
            univariate species into a new sort.
 
@@ -2273,9 +2271,9 @@ class PolynomialSpecies(CombinatorialFreeModule):
         r"""
         Return `E(\sum_i m_i X_i)` in the specified degrees.
 
-        ..TODO::
+        .. TODO::
 
-            rethink the signature
+            Rethink the signature.
 
         EXAMPLES::
 
