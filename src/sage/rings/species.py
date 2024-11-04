@@ -1035,29 +1035,22 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         return Set([self(G, pi, check=False) for G in S.conjugacy_classes_subgroups()])
 
     class Element(IndexedFreeAbelianMonoidElement):
-        def __init__(self, parent, x):
-            r"""
-            Initialize a molecular species.
+        r"""
+        A molecular species.
 
-            INPUT:
+        EXAMPLES::
 
-            - ``x`` -- a dictionary mapping atomic species to exponents
+            sage: from sage.rings.species import MolecularSpecies
+            sage: M = MolecularSpecies("X")
+            sage: M(CyclicPermutationGroup(3))
+            C_3
 
-            EXAMPLES::
+        TESTS::
 
-                sage: from sage.rings.species import MolecularSpecies
-                sage: M = MolecularSpecies("X")
-                sage: M(CyclicPermutationGroup(3))  # indirect doctest
-                C_3
-
-            TESTS::
-
-                sage: X = M(CyclicPermutationGroup(3))
-                sage: C3 = M(CyclicPermutationGroup(3))
-                sage: TestSuite(X*C3).run()
-            """
-            super().__init__(parent, x)
-
+            sage: X = M(CyclicPermutationGroup(3))
+            sage: C3 = M(CyclicPermutationGroup(3))
+            sage: TestSuite(X*C3).run()
+        """
         @cached_method
         def grade(self):
             r"""
