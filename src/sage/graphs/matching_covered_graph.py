@@ -1967,10 +1967,6 @@ class MatchingCoveredGraph(Graph):
 
         # u: The M neighbor of vertex
         u = next(M.neighbor_iterator(vertex))
-        vertex_neighbors = []
-
-        for v in G.neighbor_iterator(vertex):
-            vertex_neighbors.append(v)
 
         # Goal: Find the vertices w such that G - w - vertex is matchable.
         # In other words, there exists an odd length M-alternating vertex-w
@@ -1982,9 +1978,7 @@ class MatchingCoveredGraph(Graph):
         from sage.graphs.matching import M_alternating_even_mark
         even = M_alternating_even_mark(G=G, matching=M, vertex=u)
 
-        for v in G:
-            if v not in even:
-                B.add(v)
+        B.update(v for v in G if v not in even)
 
         return B
 
