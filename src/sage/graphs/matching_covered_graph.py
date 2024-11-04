@@ -1812,34 +1812,34 @@ class MatchingCoveredGraph(Graph):
 
         - ``algorithm`` -- string (default: ``'Edmonds'``)
 
-        - ``'Edmonds'`` uses Edmonds' algorithm as implemented in NetworkX to
+          - ``'Edmonds'`` uses Edmonds' algorithm as implemented in NetworkX to
             find a matching of maximal cardinality, then check whether this
             cardinality is half the number of vertices of the graph.
 
-        - ``'LP_matching'`` uses a Linear Program to find a matching of
+          - ``'LP_matching'`` uses a Linear Program to find a matching of
             maximal cardinality, then check whether this cardinality is half the
             number of vertices of the graph.
 
-        - ``'LP'`` uses a Linear Program formulation of the perfect matching
+          - ``'LP'`` uses a Linear Program formulation of the perfect matching
             problem: put a binary variable ``b[e]`` on each edge `e`, and for
             each vertex `v`, require that the sum of the values of the edges
             incident to `v` is 1.
 
         - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
-        Linear Programming (MILP) solver to be used. If set to ``None``, the
-        default one is used. For more information on MILP solvers and which
-        default solver is used, see the method :meth:`solve
-        <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
-        :class:`MixedIntegerLinearProgram
-        <sage.numerical.mip.MixedIntegerLinearProgram>`.
+          Linear Programming (MILP) solver to be used. If set to ``None``, the
+          default one is used. For more information on MILP solvers and which
+          default solver is used, see the method :meth:`solve
+          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+          :class:`MixedIntegerLinearProgram
+          <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
         - ``verbose`` -- integer (default: 0); sets the level of verbosity:
-        set to 0 by default, which means quiet (only useful when
-        ``algorithm == "LP_matching"`` or ``algorithm == "LP"``)
+          set to 0 by default, which means quiet (only useful when
+          ``algorithm == "LP_matching"`` or ``algorithm == "LP"``)
 
         - ``integrality_tolerance`` -- float; parameter for use with MILP
-        solvers over an inexact base ring; see
-        :meth:`MixedIntegerLinearProgram.get_values`.
+          solvers over an inexact base ring; see
+          :meth:`MixedIntegerLinearProgram.get_values`.
 
         OUTPUT:
 
