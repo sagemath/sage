@@ -263,13 +263,13 @@ class AtomicSpeciesElement(WithEqualityById,
             sage: P = Poset([A.subset(4), lambda b, c: b <= c])
             sage: len(P.cover_relations())
             7
-            sage: P.cover_relations()  # random
-            [[E_4, Eo_4],
+            sage: sorted(P.cover_relations(), key=str)
+            [[C_4, {((1,2)(3,4),)}],
+             [E_4, Eo_4],
              [E_4, P_4],
              [Eo_4, Pb_4],
              [P_4, C_4],
              [P_4, Pb_4],
-             [C_4, {((1,2)(3,4),)}],
              [Pb_4, {((1,2)(3,4),)}]]
 
         TESTS::
@@ -1100,24 +1100,24 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: P = Poset([M.subset(4), lambda b, c: b <= c])
                 sage: len(P.cover_relations())
                 17
-                sage: P.cover_relations()  # random
-                [[E_4, P_4],
+                sage: sorted(P.cover_relations(), key=str)
+                [[C_4, {((1,2)(3,4),)}],
+                 [E_2^2, X^2*E_2],
+                 [E_2^2, {((1,2)(3,4),)}],
                  [E_4, Eo_4],
+                 [E_4, P_4],
                  [E_4, X*E_3],
+                 [Eo_4, Pb_4],
+                 [Eo_4, X*C_3],
                  [P_4, C_4],
                  [P_4, E_2^2],
                  [P_4, Pb_4],
-                 [C_4, {((1,2)(3,4),)}],
-                 [E_2^2, {((1,2)(3,4),)}],
-                 [E_2^2, X^2*E_2],
-                 [Eo_4, Pb_4],
-                 [Eo_4, X*C_3],
                  [Pb_4, {((1,2)(3,4),)}],
-                 [{((1,2)(3,4),)}, X^4],
-                 [X*E_3, X^2*E_2],
+                 [X*C_3, X^4],
                  [X*E_3, X*C_3],
+                 [X*E_3, X^2*E_2],
                  [X^2*E_2, X^4],
-                 [X*C_3, X^4]]
+                 [{((1,2)(3,4),)}, X^4]]
 
             TESTS::
 
