@@ -88,7 +88,7 @@ def hecke_operator_on_qexp(f, n, k, eps=None,
         # ZZ can coerce to GF(p), but QQ can't.
         eps = DirichletGroup(1, base_ring=ZZ)[0]
     if check:
-        if not (isinstance(f, PowerSeries) or isinstance(f, ModularFormElement)):
+        if not isinstance(f, (PowerSeries, ModularFormElement)):
             raise TypeError("f (=%s) must be a power series or modular form" % f)
         if not isinstance(eps, DirichletCharacter):
             raise TypeError("eps (=%s) must be a Dirichlet character" % eps)

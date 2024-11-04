@@ -715,6 +715,7 @@ class ConstantOreFunctionSection(Map):
             return numerator.leading_coefficient() / denominator.leading_coefficient()
         raise TypeError(f"{x} is not a constant function")
 
+
 class OreFunctionBaseringInjection(Morphism):
     r"""
     Representation of the canonical homomorphism from a field `k` into a Ore
