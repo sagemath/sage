@@ -17,9 +17,11 @@ A few tests for the method ``is_integrally_closed``::
     sage: Z5 = Integers(5); Z5
     Ring of integers modulo 5
     sage: Z5.is_integrally_closed()
-    False
+    Traceback (most recent call last):
+    ...
+    NotImplementedError
 
-Note that this returns ``False`` if the answer is not known.
+Note that this raises a :exc:`NotImplementedError` if the answer is not known.
 """
 # ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>

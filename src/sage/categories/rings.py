@@ -427,7 +427,8 @@ class Rings(CategoryWithAxiom):
             r"""
             Return whether this ring is integrally closed.
 
-            This is the default implementation that returns ``False``.
+            This is the default implementation that
+            raises a :exc:`NotImplementedError`.
 
             EXAMPLES::
 
@@ -443,7 +444,7 @@ class Rings(CategoryWithAxiom):
                 sage: S.is_integrally_closed()
                 True
             """
-            return False
+            raise NotImplementedError
 
         def is_noetherian(self):
             """
