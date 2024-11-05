@@ -1653,6 +1653,10 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: vertex (100) not in the graph
+            sage: G.delete_vertex(vertex=u, in_order=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: vertex (100) not in the graph
 
         Deleting an existing vertex::
 
@@ -1660,6 +1664,10 @@ class MatchingCoveredGraph(Graph):
             sage: G = MatchingCoveredGraph(W)
             sage: u = next(G.vertex_iterator())
             sage: G.delete_vertex(u)
+            Traceback (most recent call last):
+            ...
+            ValueError: odd order is not allowed for matching covered graphs
+            sage: G.delete_vertex(vertex=u, in_order=True)
             Traceback (most recent call last):
             ...
             ValueError: odd order is not allowed for matching covered graphs
