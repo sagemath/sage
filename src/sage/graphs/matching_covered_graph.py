@@ -1798,7 +1798,7 @@ class MatchingCoveredGraph(Graph):
     def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
                              *, integrality_tolerance=1e-3):
         r"""
-        Return whether the graph has a perfect matching.
+        Check whether the graph has a perfect matching.
 
         .. NOTE::
 
