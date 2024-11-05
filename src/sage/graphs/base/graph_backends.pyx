@@ -708,7 +708,7 @@ cdef class GenericGraphBackend(SageObject):
 
         TESTS:
 
-        Check that :issue:`38900` is fixed:
+        Check that :issue:`38900` is fixed::
 
             sage: from itertools import product
             sage: for sparse, immutable in product([True, False], [True, False]):
