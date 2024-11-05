@@ -1,6 +1,25 @@
 # sage_setup: distribution = sagemath-categories
 r"""
 Integral domains
+
+TEST:
+
+A few doctest for the method ``is_integrally_closed``::
+
+    sage: ZZ.is_integrally_closed()
+    True
+    sage: QQ.is_integrally_closed()
+    True
+    sage: QQbar.is_integrally_closed()                                          # needs sage.rings.number_field
+    True
+    sage: GF(5).is_integrally_closed()
+    True
+    sage: Z5 = Integers(5); Z5
+    Ring of integers modulo 5
+    sage: Z5.is_integrally_closed()
+    False
+
+Note that this returns ``False`` is the answer is not known.
 """
 # ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
