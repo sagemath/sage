@@ -8082,9 +8082,9 @@ cdef class Matroid(SageObject):
             (Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef, Aabcdefg)
             sage: Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef, Aabcdefg = G
             sage: Aabf*Aabf
-            2*Aabcdefgf^2
-            sage: Aabf*Acfg
             -Aabcdefg^2
+            sage: Aabf*Acfg
+            0
             sage: matrix([[x * y for x in G] for y in G])
             [-Aabcdefg^2           0           0           0           0           0           0           0]
             [          0 -Aabcdefg^2           0           0           0           0           0           0]
