@@ -22,7 +22,6 @@ from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-from sage.misc.superseded import deprecated_function_alias
 
 
 def is_FiniteFieldElement(x):
@@ -1103,8 +1102,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         if reverse:
             f = f.reverse(self.parent().degree() - 1)
         return f(p)
-
-    integer_representation = deprecated_function_alias(33941, to_integer)
 
     def to_bytes(self, byteorder='big'):
         r"""
