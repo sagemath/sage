@@ -743,8 +743,8 @@ class MatchingCoveredGraph(Graph):
 
         EXAMPLES:
 
-        Ladder graphs are subgraphs of a staircase graph, that is
-        matching covered::
+        Ladder graphs are matching covered subgraphs of a staircase graph,
+        which is also matching covered::
 
             sage: G = MatchingCoveredGraph(graphs.StaircaseGraph(4))
             sage: H = G._subgraph_by_adding(vertices=[0..5])
@@ -755,8 +755,8 @@ class MatchingCoveredGraph(Graph):
             sage: H.is_isomorphic(graphs.LadderGraph(3))
             True
 
-        Cycle graphs are subgraphs of a biwheel graph, that is
-        matching covered::
+        Cycle graphs are matching covered subgraphs of a biwheel graph, which
+        is also matching covered::
 
             sage: G = MatchingCoveredGraph(graphs.BiwheelGraph(5))
             sage: H = G._subgraph_by_adding(vertices=[0..7],
@@ -766,6 +766,15 @@ class MatchingCoveredGraph(Graph):
             sage: H
             Matching covered subgraph of (biwheel graph): graph on 8 vertices
             sage: H.is_isomorphic(graphs.CycleGraph(8))
+            True
+
+        One may pass no value for any of the input arguments; in such a case,
+        the whole matching covered graph will be returned::
+
+            sage: T = graphs.TwinplexGraph()
+            sage: G = MatchingCoveredGraph(T)
+            sage: J = G._subgraph_by_adding()
+            sage: G == J
             True
 
         One may use the ``edge_property`` argument::
