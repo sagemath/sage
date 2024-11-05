@@ -163,7 +163,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             term = poly_ring.one()
             for el in subset:
                 term *= self._flats_generator[el]
-            I.append(term) #Stanley-Reisner Ideal
+            I.append(term)  # Stanley-Reisner Ideal
         atoms = self._matroid.lattice_of_flats().atoms()
         atoms_gen = {a: poly_ring.zero() for a in atoms}
         for F in flats:
@@ -208,7 +208,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
 
             sage: ch = Matroid(groundset='abc', bases=['ab', 'ac']).chow_ring(QQ, False)
             sage: ch.defining_ideal().groebner_basis()
-            [Aa*Abc, Aa, Abc, Aa*Aabc, Abc*Aabc, Aabc]
+            [Aa*Abc, Aa + Aabc, Abc + Aabc, Aa*Aabc, Abc*Aabc, Aabc^2]
             sage: ch.defining_ideal().groebner_basis().is_groebner()
             True
             sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().gens().ideal().hilbert_series()
@@ -219,7 +219,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
 
             sage: ch = Matroid(graphs.CycleGraph(3)).chow_ring(QQ, False)
             sage: ch.defining_ideal().groebner_basis()
-            [A0*A1, A0*A2, A1*A2, A0, A1, A2, A0*A3, A1*A3, A2*A3, A3]
+            [A0*A1, A0*A2, A1*A2, A0 + A3, A1 + A3, A2 + A3, A0*A3, A1*A3, A2*A3, A3^2]
             sage: ch.defining_ideal().groebner_basis().is_groebner()
             True
             sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().gens().ideal().hilbert_series()

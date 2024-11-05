@@ -8078,22 +8078,23 @@ cdef class Matroid(SageObject):
         Next we get the non-trivial generators and do some computations::
 
             sage: # needs sage.libs.singular sage.rings.finite_rings
-            sage: G = A.gens()[6:]; G
-            (Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef)
-            sage: Ag, Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef = G
-            sage: Ag*Ag
-            2*Adef^2
-            sage: Ag*Abeg
-            -Adef^2
+            sage: G = A.gens()[7:]; G
+            (Aabf, Aace, Aadg, Abcd, Abeg, Acfg, Adef, Aabcdefg)
+            sage: Aabf, Aace, Aadg, Abcd, Abeg, Acfg Adef, Aabcdefg = G
+            sage: Aabf*Aabf
+            2*Aabcdefgf^2
+            sage: Aabf*Acfg
+            -Aabcdefg^2
             sage: matrix([[x * y for x in G] for y in G])
-            [2*Adef^2        0        0  -Adef^2        0  -Adef^2  -Adef^2        0]
-            [       0   Adef^2        0        0        0        0        0        0]
-            [       0        0   Adef^2        0        0        0        0        0]
-            [ -Adef^2        0        0   Adef^2        0        0        0        0]
-            [       0        0        0        0   Adef^2        0        0        0]
-            [ -Adef^2        0        0        0        0   Adef^2        0        0]
-            [ -Adef^2        0        0        0        0        0   Adef^2        0]
-            [       0        0        0        0        0        0        0   Adef^2]
+            [-2*Aabcdefg^2             0             0    Aabcdefg^2             0    Aabcdefg^2    Aabcdefg^2             0   -Aabcdefg^2]
+            [            0   -Aabcdefg^2             0             0             0             0             0             0             0]
+            [            0             0   -Aabcdefg^2             0             0             0             0             0             0]
+            [   Aabcdefg^2             0             0   -Aabcdefg^2             0             0             0             0             0]
+            [            0             0             0             0   -Aabcdefg^2             0             0             0             0]
+            [   Aabcdefg^2             0             0             0             0   -Aabcdefg^2             0             0             0]
+            [   Aabcdefg^2             0             0             0             0             0   -Aabcdefg^2             0             0]
+            [            0             0             0             0             0             0             0   -Aabcdefg^2             0]
+            [  -Aabcdefg^2             0             0             0             0             0             0             0    Aabcdefg^2]
 
         The augmented Chow ring can also be constructed with the
         Feitchner-Yuzvinsky and atom-free presentation::

@@ -192,9 +192,9 @@ class ChowRing(QuotientRing_generic):
 
                 sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False)
                 sage: v = ch.an_element(); v
-                0
+                -A01 - A02 - A03 - A04 - A05 - A012345
                 sage: v.to_vector()
-                (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                (0, -1, -1, 0, -1, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0)
             """
             P = self.parent()
             B = P.basis()
@@ -253,7 +253,7 @@ class ChowRing(QuotientRing_generic):
                 A012345^2 2
                 sage: v = sum(ch.basis())
                 sage: v.degree()
-                0
+                2
             """
             return self.lift().degree()
 
