@@ -2033,12 +2033,9 @@ class MatchingCoveredGraph(Graph):
         if vertex not in self:
             raise ValueError('vertex {} not in the graph'.format(vertex))
 
-        G = Graph(self, multiedges=False)
-        M = Graph(self.get_matching())
-        B = set([vertex])
-
         # u: The M neighbor of vertex
-        u = next(M.neighbor_iterator(vertex))
+        matching = self.get_matching()
+        u = next((a if b == vertex else b) for a, b, *_ in matching if vertex in [a, b])
 
         # Goal: Find the vertices w such that G - w - vertex is matchable.
         # In other words, there exists an odd length M-alternating vertex-w
@@ -2048,9 +2045,11 @@ class MatchingCoveredGraph(Graph):
 
         # even: The set of all such vertex w
         from sage.graphs.matching import M_alternating_even_mark
-        even = M_alternating_even_mark(G=G, matching=M, vertex=u)
+        even = M_alternating_even_mark(G=self, matching=matching,
+                                       vertex=u)
 
-        B.update(v for v in G if v not in even)
+        B = set([vertex])
+        B.update(v for v in self if v not in even)
 
         return B
 
