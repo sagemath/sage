@@ -247,7 +247,11 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             for G in lattice_flats.order_filter([F]):
                 term += flats_gen[G]
             for G in lattice_flats.order_ideal([F]):
-                gb.append(flats_gen[G]*(term)**(ranks[F] - ranks[G]))
+                if G != F:
+                    gb.append(flats_gen[G]*(term) ** (ranks[F] - ranks[G]))
+
+            gb.append(term ** ranks[F])
+
         return PolynomialSequence(R, [gb])
 
     def normal_basis(self, algorithm='', *args, **kwargs):
