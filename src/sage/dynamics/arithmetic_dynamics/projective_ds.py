@@ -474,7 +474,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         """
         # Next attribute needed for _fast_eval and _fastpolys
         R = polys[0].base_ring()
-        self._is_prime_finite_field = isinstance(R, FiniteField) and R.is_prime_field()
+        self._is_prime_finite_field = isinstance(R, FiniteField) and R.degree() == 1
         DynamicalSystem.__init__(self, polys, domain)
 
     def __copy__(self):
