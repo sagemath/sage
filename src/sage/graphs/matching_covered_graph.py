@@ -36,7 +36,7 @@ AUTHORS:
         ``__hash__()`` | Compute a hash for ``self``, if ``self`` is immutable.
         ``_subgraph_by_deleting()`` | Return the matching covered subgraph containing the provided vertices and edges.
 
-    Overwritten Methods:
+    **Overwritten Methods:**
 
     .. csv-table::
         :class: contentstable
@@ -89,7 +89,7 @@ AUTHORS:
         ``transitive_reduction()`` | Return a transitive reduction of the matching covered graph.
         ``union()`` | Return the union of ``self`` and ``other``.
 
-    Barriers and canonical partition:
+    **Barriers and canonical partition:**
 
     .. csv-table::
         :class: contentstable
@@ -99,7 +99,7 @@ AUTHORS:
         ``canonical_partition()`` | Return the canonical partition of the (matching covered) graph.
         ``maximal_barrier()`` | Return the (unique) maximal barrier of the (matching covered) graph containing the (provided) vertex.
 
-    Bricks, braces and tight cut decomposition:
+    **Bricks, braces and tight cut decomposition:**
 
     .. csv-table::
         :class: contentstable
@@ -114,7 +114,7 @@ AUTHORS:
         ``number_of_petersen_bricks()`` | Return the number of Petersen bricks.
         ``tight_cut_decomposition()`` | Return a tight cut decomposition.
 
-    Removability and ear decomposition:
+    **Removability and ear decomposition:**
 
     .. csv-table::
         :class: contentstable
@@ -136,7 +136,7 @@ AUTHORS:
         ``removable_edges()`` | Return a :class:`~EdgesView` of removable edges.
         ``retract()`` | Compute the retract of the (matching covered) graph.
 
-    Generating bricks and braces:
+    **Generating bricks and braces:**
 
     .. csv-table::
         :class: contentstable
