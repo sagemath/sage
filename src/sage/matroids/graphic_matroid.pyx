@@ -186,7 +186,7 @@ cdef class GraphicMatroid(Matroid):
         groundset_set = frozenset(groundset)
 
         # if the provided groundset is incomplete, it gets overwritten
-        # invalidate `None` as label
+        # invalidate ``None`` as label
         if None in groundset_set or len(groundset_set) != G.num_edges():
             groundset = range(G.num_edges())
             groundset_set = frozenset(groundset)
@@ -238,7 +238,7 @@ cdef class GraphicMatroid(Matroid):
         """
         return self._groundset
 
-    cpdef int _rank(self, frozenset X):
+    cpdef int _rank(self, frozenset X) except? -1:
         """
         Return the rank of a set ``X``.
 
@@ -501,8 +501,8 @@ cdef class GraphicMatroid(Matroid):
         INPUT:
 
         - ``N`` -- matroid
-        - ``certificate`` -- (default: ``False``) if ``True``, returns the
-          certificate isomorphism from the minor of ``self`` to ``N``
+        - ``certificate`` -- boolean (default: ``False``); if ``True``, returns
+          the certificate isomorphism from the minor of ``self`` to ``N``
 
         OUTPUT:
 
@@ -625,7 +625,7 @@ cdef class GraphicMatroid(Matroid):
                 N = N.regular_matroid()
             return M._has_minor(N, certificate=certificate)
 
-    cpdef int _corank(self, frozenset X):
+    cpdef int _corank(self, frozenset X) noexcept:
         """
         Return the corank of the set `X` in the matroid.
 
@@ -653,7 +653,7 @@ cdef class GraphicMatroid(Matroid):
             DS_vertices.union(u, v)
         return len(X) - (DS_vertices.number_of_subsets() - Integer(1))
 
-    cpdef bint _is_circuit(self, frozenset X):
+    cpdef bint _is_circuit(self, frozenset X) noexcept:
         """
         Test if input is a circuit.
 
@@ -812,7 +812,7 @@ cdef class GraphicMatroid(Matroid):
         - ``X`` -- an iterable container of groundset elements
 
         OUTPUT: ``frozenset`` instance containing a subset of ``X``;
-        a :class:`ValueError` is raised if the set contains no circuit
+        a :exc:`ValueError` is raised if the set contains no circuit
 
         EXAMPLES::
 
@@ -918,7 +918,7 @@ cdef class GraphicMatroid(Matroid):
             g.add_edge(e)
         return frozenset(XX)
 
-    cpdef bint _is_closed(self, frozenset X):
+    cpdef bint _is_closed(self, frozenset X) noexcept:
         """
         Test if input is a closed set.
 
@@ -1093,13 +1093,17 @@ cdef class GraphicMatroid(Matroid):
         """
         return self.is_isomorphic(other, certificate=True)[1]
 
-    cpdef bint is_valid(self):
+    cpdef is_valid(self, certificate=False):
         """
         Test if the data obey the matroid axioms.
 
         Since a graph is used for the data, this is always the case.
 
-        OUTPUT: ``True``
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``)
+
+        OUTPUT: ``True``, or ``(True, {})``
 
         EXAMPLES::
 
@@ -1108,9 +1112,9 @@ cdef class GraphicMatroid(Matroid):
             sage: M.is_valid()
             True
         """
-        return True
+        return True if not certificate else (True, {})
 
-    cpdef bint is_graphic(self):
+    cpdef bint is_graphic(self) noexcept:
         r"""
         Return if ``self`` is graphic.
 
@@ -1124,7 +1128,7 @@ cdef class GraphicMatroid(Matroid):
         """
         return True
 
-    cpdef bint is_regular(self):
+    cpdef bint is_regular(self) noexcept:
         r"""
         Return if ``self`` is regular.
 
@@ -1364,8 +1368,8 @@ cdef class GraphicMatroid(Matroid):
           each extension
         - ``vertices`` -- (optional) a set of vertices over which the extension
           may be taken
-        - ``simple`` -- (default: ``False``) if true, extensions by loops and
-          parallel elements are not taken
+        - ``simple`` -- boolean (default: ``False``); if ``True``, extensions
+          by loops and parallel elements are not taken
 
         OUTPUT:
 
@@ -1440,7 +1444,7 @@ cdef class GraphicMatroid(Matroid):
         - ``v`` -- (optional) the name of the new vertex after splitting
         - ``X`` -- (optional) a list of the matroid elements corresponding to
           edges incident to ``u`` that move to the new vertex after splitting
-        - ``element`` -- (optional) The name of the newly added element
+        - ``element`` -- (optional) the name of the newly added element
 
         OUTPUT:
 
@@ -1573,7 +1577,7 @@ cdef class GraphicMatroid(Matroid):
         - ``vertices`` -- (optional) the vertices to be split
         - ``v`` -- (optional) the name of the new vertex
         - ``element`` -- (optional) the name of the new element
-        - ``cosimple`` -- (default: ``False``) if true, coextensions
+        - ``cosimple`` -- boolean (default: ``False``); if ``True``, coextensions
           by a coloop or series elements will not be taken
 
         OUTPUT:

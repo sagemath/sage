@@ -105,9 +105,9 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
 
     - ``ncols`` -- number of columns
 
-    - ``sparse`` -- (boolean) whether the matrix class should be sparse
+    - ``sparse`` -- boolean; whether the matrix class should be sparse
 
-    - ``implementation`` -- (``None`` or string or a matrix class) a possible
+    - ``implementation`` -- ``None`` or string or a matrix class; a possible
       implementation. See the documentation of the constructor of :class:`MatrixSpace`.
 
     EXAMPLES::
@@ -192,7 +192,6 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
         sage: type(matrix(GF(125, 'z'), 2, range(4)))                       # optional - meataxe, needs sage.rings.finite_rings
         <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
-
     """
     if isinstance(implementation, type):
         return implementation
@@ -298,7 +297,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
             except ImportError:
                 pass
             else:
-                if polynomial_ring.is_PolynomialRing(R) and R.base_ring() in _Fields:
+                if isinstance(R, polynomial_ring.PolynomialRing_general) and R.base_ring() in _Fields:
                     try:
                         from . import matrix_polynomial_dense
                     except ImportError:
@@ -306,7 +305,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                     else:
                         return matrix_polynomial_dense.Matrix_polynomial_dense
 
-                elif multi_polynomial_ring_base.is_MPolynomialRing(R) and R.base_ring() in _Fields:
+                elif isinstance(R, multi_polynomial_ring_base.MPolynomialRing_base) and R.base_ring() in _Fields:
                     try:
                         from . import matrix_mpolynomial_dense
                     except ImportError:
@@ -384,7 +383,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
             return Matrix_generic_dense
 
         if implementation == 'gap':
-            from .matrix_gap import Matrix_gap
+            from sage.matrix.matrix_gap import Matrix_gap
             return Matrix_gap
 
         raise ValueError("unknown matrix implementation %r over %r" % (implementation, R))
@@ -447,17 +446,17 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
     - ``base_ring`` -- a ring
 
-    - ``nrows`` or ``row_keys`` -- (nonnegative integer) the number of rows, or
+    - ``nrows`` or ``row_keys`` -- nonnegative integer; the number of rows, or
       a finite family of arbitrary objects that index the rows of the matrix
 
-    - ``ncols`` or ``column_keys`` -- (nonnegative integer, default ``nrows``)
+    - ``ncols`` or ``column_keys`` -- nonnegative integer (default: ``nrows``);
       the number of columns, or a finite family of arbitrary objects that index
       the columns of the matrix
 
-    - ``sparse`` -- (boolean, default ``False``) whether or not matrices
-       are given a sparse representation
+    - ``sparse`` -- boolean (default: ``False``); whether or not matrices
+      are given a sparse representation
 
-    - ``implementation`` -- (optional, a string or a matrix class) a possible
+    - ``implementation`` -- (optional)  string or matrix class; a possible
       implementation. Depending on the base ring, the string can be
 
       - ``'generic'`` -- on any base rings
@@ -697,13 +696,13 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         ::
 
-            sage: M = MatrixSpace(ZZ, 10, implementation="flint")                       # needs sage.libs.flint
+            sage: M = MatrixSpace(ZZ, 10, implementation='flint')                       # needs sage.libs.flint
             sage: M                                                                     # needs sage.libs.flint
             Full MatrixSpace of 10 by 10 dense matrices over Integer Ring
             sage: loads(M.dumps()) is M                                                 # needs sage.libs.flint
             True
 
-            sage: MatrixSpace(ZZ, 10, implementation="foobar")
+            sage: MatrixSpace(ZZ, 10, implementation='foobar')
             Traceback (most recent call last):
             ...
             ValueError: unknown matrix implementation 'foobar' over Integer Ring
@@ -792,15 +791,15 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         - ``base_ring``
 
-        -  ``nrows`` -- (positive integer) the number of rows
+        - ``nrows`` -- positive integer; the number of rows
 
-        -  ``ncols`` -- (positive integer, default nrows) the number of
-           columns
+        - ``ncols`` -- positive integer (default: ``nrows``); the number of
+          columns
 
-        -  ``sparse`` -- (boolean, default ``False``) whether or not matrices
-           are given a sparse representation
+        - ``sparse`` -- boolean (default: ``False``); whether or not matrices
+          are given a sparse representation
 
-        - ``implementation`` -- (optional, a string or a matrix class) a possible
+        - ``implementation`` -- (optional) string or matrix class; a possible
           implementation. Depending on the base ring the string can be
 
            - ``'generic'`` -- on any base rings
@@ -1022,7 +1021,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: MS = MatrixSpace(QQ,20,20)
             sage: MS._copy_zero
             False
-
         """
         if self.__is_sparse:
             return False
@@ -1161,9 +1159,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         INPUT:
 
-
-        -  ``R`` -- ring
-
+        - ``R`` -- ring
 
         OUTPUT: a matrix space
 
@@ -1189,7 +1185,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         INPUT:
 
-        -  ``R`` -- ring
+        - ``R`` -- ring
 
         OUTPUT: a matrix space
 
@@ -1535,8 +1531,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
     def __len__(self):
         """
         Return number of elements of this matrix space if it fits in
-        an int; raise a :class:`TypeError` if there are infinitely many
-        elements, and raise an :class:`OverflowError` if there are finitely
+        an int; raise a :exc:`TypeError` if there are infinitely many
+        elements, and raise an :exc:`OverflowError` if there are finitely
         many but more than the size of an int.
 
         EXAMPLES::
@@ -1563,7 +1559,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
     def __iter__(self):
         r"""
         Return a generator object which iterates through the elements of
-        self. The order in which the elements are generated is based on a
+        ``self``. The order in which the elements are generated is based on a
         'weight' of a matrix which is the number of iterations on the base
         ring that are required to reach that matrix.
 
@@ -1883,16 +1879,16 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``gens`` -- a list or family of elements of ``self``
+        - ``gens`` -- list or family of elements of ``self``
 
-        - ``check`` -- (default: ``True``) whether to verify that the
-           elements of ``gens`` are in ``self``
+        - ``check`` -- boolean (default: ``True``); whether to verify that the
+          elements of ``gens`` are in ``self``
 
-        - ``already_echelonized`` -- (default: ``False``) whether
-           the elements of ``gens`` are already in (not necessarily
-           reduced) echelon form
+        - ``already_echelonized`` -- boolean (default: ``False``); whether
+          the elements of ``gens`` are already in (not necessarily
+          reduced) echelon form
 
-        - ``unitriangular`` -- (default: ``False``) whether
+        - ``unitriangular`` -- boolean (default: ``False``); whether
           the lift morphism is unitriangular
 
         - ``support_order`` -- (optional) either something that can
@@ -2009,7 +2005,6 @@ class MatrixSpace(UniqueRepresentation, Parent):
             <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
             sage: type(M2.identity_matrix())
             <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
-
         """
         if self.__nrows != self.__ncols:
             raise TypeError("identity matrix must be square")
@@ -2023,7 +2018,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
     def diagonal_matrix(self, entries):
         """
-        Create a diagonal matrix in ``self`` using the specified elements
+        Create a diagonal matrix in ``self`` using the specified elements.
 
         INPUT:
 
@@ -2118,7 +2113,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
     def gen(self, n):
         """
-        Return the n-th generator of this matrix space.
+        Return the `n`-th generator of this matrix space.
 
         This does not compute all basis matrices, so it is reasonably
         intelligent.
@@ -2170,9 +2165,20 @@ class MatrixSpace(UniqueRepresentation, Parent):
             False
             sage: MM.zero().is_mutable()
             False
+
+        Check that :issue:`38221` is fixed::
+
+            sage: # needs sage.groups
+            sage: G = CyclicPermutationGroup(7)
+            sage: R = GF(2)
+            sage: A = G.algebra(R)
+            sage: S = MatrixSpace(A, 3, 3)
+            sage: S.zero_matrix()
+            [0 0 0]
+            [0 0 0]
+            [0 0 0]
         """
-        zero = self.base_ring().zero()
-        res = self.element_class(self, zero, False, False)
+        res = self.element_class(self, None, False, False)
         res.set_immutable()
         return res
 
@@ -2199,12 +2205,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         - ``x`` -- data to construct a new matrix from. See :func:`matrix`
 
-        - ``coerce`` -- (default: ``True``) if False, assume without
-          checking that the values in ``x`` lie in the base ring
+        - ``coerce`` -- boolean (default: ``True``); if ``False``, assume
+          without checking that the values in ``x`` lie in the base ring
 
-        OUTPUT:
-
-        - a matrix in ``self``.
+        OUTPUT: a matrix in ``self``
 
         EXAMPLES::
 
@@ -2315,7 +2319,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         """
         Return the matrix space with given number of rows, columns and
         sparsity over the same base ring as self, and defaults the same as
-        self.
+        ``self``.
 
         EXAMPLES::
 
@@ -2400,22 +2404,20 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         INPUT:
 
-        -  ``density`` -- ``float`` or ``None`` (default: ``None``);  rough
-           measure of the proportion of nonzero entries in the random matrix;
-           if set to ``None``, all entries of the matrix are randomized,
-           allowing for any element of the underlying ring, but if set to
-           a ``float``, a proportion of entries is selected and randomized to
-           non-zero elements of the ring
+        - ``density`` -- ``float`` or ``None`` (default: ``None``);  rough
+          measure of the proportion of nonzero entries in the random matrix;
+          if set to ``None``, all entries of the matrix are randomized,
+          allowing for any element of the underlying ring, but if set to
+          a ``float``, a proportion of entries is selected and randomized to
+          nonzero elements of the ring
 
-        -  ``*args, **kwds`` -- remaining parameters, which may be passed to
-           the random_element function of the base ring. ("may be", since this
-           function calls the ``randomize`` function on the zero matrix, which
-           need not call the ``random_element`` function of the base ring at
-           all in general.)
+        - ``*args, **kwds`` -- remaining parameters, which may be passed to
+          the random_element function of the base ring. ("may be", since this
+          function calls the ``randomize`` function on the zero matrix, which
+          need not call the ``random_element`` function of the base ring at
+          all in general.)
 
-        OUTPUT:
-
-        -  Matrix
+        OUTPUT: Matrix
 
         .. NOTE::
 
@@ -2423,7 +2425,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             in a newly allocated zero matrix.
 
             By default, if the user sets the value of ``density`` explicitly, this
-            method will enforce that these entries are set to non-zero values.
+            method will enforce that these entries are set to nonzero values.
             However, if the test for equality with zero in the base ring is too
             expensive, the user can override this behaviour by passing the
             argument ``nonzero=False`` to this method.
@@ -2523,9 +2525,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         See :class:`TestSuite` for a typical use case.
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -2587,19 +2587,17 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
     def _random_nonzero_element(self, *args, **kwds):
         """
-        Return a random non-zero matrix.
+        Return a random nonzero matrix.
 
-        This function repeatedly calls ``random_element`` until a non-zero
+        This function repeatedly calls ``random_element`` until a nonzero
         matrix is obtained.
 
         INPUT:
 
-        - ``*args``, ``**kwds`` -- Parameters that can be forwarded to the
+        - ``*args``, ``**kwds`` -- parameters that can be forwarded to the
           ``random_element`` method
 
-        OUTPUT:
-
-        - Random non-zero matrix
+        OUTPUT: random nonzero matrix
 
         EXAMPLES::
 
@@ -2666,6 +2664,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         """
         return self.element_class(self, d, coerce=coerce)
 
+
 def dict_to_list(entries, nrows, ncols):
     r"""
     Given a dictionary of coordinate tuples, return the list given by
@@ -2691,23 +2690,21 @@ def dict_to_list(entries, nrows, ncols):
 
 def _test_trivial_matrices_inverse(ring, sparse=True, implementation=None, checkrank=True):
     """
-    Tests inversion, determinant and is_invertible for trivial matrices.
+    Test inversion, determinant and is_invertible for trivial matrices.
 
     This function is a helper to check that the inversion of trivial matrices
     (of size 0x0, nx0, 0xn or 1x1) is handled consistently by the various
     implementation of matrices. The coherency is checked through a bunch of
-    assertions. If an inconsistency is found, an AssertionError is raised
-    which should make clear what is the problem.
+    assertions. If an inconsistency is found, an :exc:`AssertionError` is
+    raised which should make clear what is the problem.
 
     INPUT:
 
     - ``ring`` -- a ring
-    - ``sparse`` -- a boolean
-    - ``checkrank`` -- a boolean
+    - ``sparse`` -- boolean
+    - ``checkrank`` -- boolean
 
-    OUTPUT:
-
-    - nothing if everything is correct, otherwise raise an AssertionError
+    OUTPUT: nothing if everything is correct, otherwise raise an AssertionError
 
     The methods determinant, is_invertible, rank and inverse are checked for
      - the 0x0 empty identity matrix
@@ -2748,7 +2745,6 @@ def _test_trivial_matrices_inverse(ring, sparse=True, implementation=None, check
         sage: tinv(CyclotomicField(7), sparse=False)                                    # needs sage.rings.number_field
         sage: tinv(QQ['x,y'], sparse=True)
         sage: tinv(QQ['x,y'], sparse=False)
-
     """
     # Check that the empty 0x0 matrix is it's own inverse with det=1.
     ms00 = MatrixSpace(ring, 0, 0, sparse=sparse)

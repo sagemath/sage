@@ -30,6 +30,7 @@ from sage.rings.infinity import infinity
 python_min = min
 python_max = max
 
+
 def gauss_sum(a, p, f, prec=20, factored=False, algorithm='pari', parent=None):
     r"""
     Return the Gauss sum `g_q(a)` as a `p`-adic number.
@@ -68,11 +69,11 @@ def gauss_sum(a, p, f, prec=20, factored=False, algorithm='pari', parent=None):
 
     - ``f`` -- positive integer
 
-    - ``prec`` -- positive integer (optional, 20 by default)
+    - ``prec`` -- positive integer (default: 20)
 
-    - ``factored`` -- boolean (optional, ``False`` by default)
+    - ``factored`` -- boolean (default: ``False``)
 
-    - ``algorithm`` -- flag passed to p-adic Gamma function (optional, ``"pari"`` by default)
+    - ``algorithm`` -- flag passed to `p`-adic Gamma function (default: ``'pari'``)
 
     OUTPUT:
 
@@ -184,9 +185,10 @@ def max(*L):
     except ValueError:
         return -infinity
 
+
 def precprint(prec_type, prec_cap, p):
     """
-    String describing the precision mode on a p-adic ring or field.
+    String describing the precision mode on a `p`-adic ring or field.
 
     EXAMPLES::
 
@@ -208,6 +210,7 @@ def precprint(prec_type, prec_cap, p):
              'lattice-float':'with lattice-float precision',
              'relaxed':'handled with relaxed arithmetics'}
     return precD[prec_type]
+
 
 def trim_zeros(L):
     r"""

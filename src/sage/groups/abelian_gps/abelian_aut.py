@@ -94,7 +94,7 @@ class AbelianGroupAutomorphism(ElementLibGAP):
 
     - ``x`` -- a libgap element
     - ``parent`` -- the parent :class:`~AbelianGroupAutomorphismGroup_gap`
-    - ``check`` -- bool (default: ``True``) checks if ``x`` is an element
+    - ``check`` -- boolean (default: ``True``); checks if ``x`` is an element
       of the group
 
     EXAMPLES::
@@ -204,6 +204,7 @@ class AbelianGroupAutomorphism(ElementLibGAP):
         m = R(coeffs)
         m.set_immutable()
         return m
+
 
 class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
                                         GroupMixinLibGAP,
@@ -407,6 +408,7 @@ class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
             return False
         return G.gap().IsSubsemigroup(self).sage()
 
+
 class AbelianGroupAutomorphismGroup(AbelianGroupAutomorphismGroup_gap):
     r"""
     The full automorphism group of a finite abelian group.
@@ -467,6 +469,7 @@ class AbelianGroupAutomorphismGroup(AbelianGroupAutomorphismGroup_gap):
         """
         return "Full group of automorphisms of %s" % self.domain()
 
+
 class AbelianGroupAutomorphismGroup_subgroup(AbelianGroupAutomorphismGroup_gap):
     r"""
     Groups of automorphisms of abelian groups.
@@ -481,7 +484,7 @@ class AbelianGroupAutomorphismGroup_subgroup(AbelianGroupAutomorphismGroup_gap):
     INPUT:
 
     - ``ambient`` -- the ambient group
-    - ``generators`` -- a tuple of gap elements of the ambient group
+    - ``generators`` -- tuple of gap elements of the ambient group
 
     EXAMPLES::
 

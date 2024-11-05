@@ -407,14 +407,14 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
     Return a correlation graph with a node per sequence in ``seqs``.
 
     Edges are added between nodes where the corresponding sequences have a
-    correlation coeffecient greater than alpha.
+    correlation coefficient greater than alpha.
 
     If ``include_anticorrelation`` is ``True``, then edges are also added
     between nodes with correlation coefficient less than ``-alpha``.
 
     INPUT:
 
-    - ``seqs`` -- list of sequences, taht is a list of lists
+    - ``seqs`` -- list of sequences, that is a list of lists
 
     - ``alpha`` -- float; threshold on the correlation coefficient between two
       sequences for adding an edge
@@ -440,7 +440,7 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
     from numpy import corrcoef
     from sage.matrix.constructor import Matrix
 
-    # compute pairwise correlation coeffecients
+    # compute pairwise correlation coefficients
     corrs = corrcoef(seqs)
 
     # compare against alpha to get adjacency matrix
@@ -452,7 +452,7 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
     adjacency_matrix = Matrix(boolean_adjacency_matrix.astype(int))
 
     # call graph constructor
-    return Graph(adjacency_matrix, format="adjacency_matrix", name="Correlation Graph")
+    return Graph(adjacency_matrix, format='adjacency_matrix', name="Correlation Graph")
 
 
 def CompleteBipartiteGraph(p, q, set_position=True):
@@ -467,7 +467,7 @@ def CompleteBipartiteGraph(p, q, set_position=True):
 
     - ``p``, ``q`` -- number of vertices in each side
 
-    - ``set_position`` -- boolean (default ``True``); if set to ``True``, we
+    - ``set_position`` -- boolean (default: ``True``); if set to ``True``, we
       assign positions to the vertices so that the set of cardinality `p` is
       on the line `y=1` and the set of cardinality `q` is on the line `y=0`.
 
@@ -591,7 +591,7 @@ def CompleteMultipartiteGraph(L):
 
     INPUT:
 
-    - ``L`` -- a list of integers; the respective sizes of the components
+    - ``L`` -- list of integers; the respective sizes of the components
 
     PLOTTING: Produce a layout of the vertices so that vertices in the same
     vertex set are adjacent and clearly separated from vertices in other vertex
@@ -893,7 +893,7 @@ def Grid2dGraph(p, q, set_positions=True):
 
     INPUT:
 
-    - ``p`` and ``q`` -- two positive integers
+    - ``p``, ``q`` -- two positive integers
 
     - ``set_positions`` -- boolean (default: ``True``); whether to set the
       position of the nodes
@@ -954,8 +954,8 @@ def GridGraph(dim_list):
 
     INPUT:
 
-    - ``dim_list`` -- a list of integers representing the number of nodes to
-       extend in each dimension
+    - ``dim_list`` -- list of integers representing the number of nodes to
+      extend in each dimension
 
     PLOTTING: When plotting, this graph will use the default spring-layout
     algorithm, unless a position dictionary is specified.
@@ -1182,12 +1182,12 @@ def MoebiusLadderGraph(n):
 
     INPUT:
 
-    - ``n`` -- a non negative integer; number of nodes is `2n`
+    - ``n`` -- a nonnegative integer; number of nodes is `2n`
 
     OUTPUT:
 
     - ``G`` -- a Möbius ladder graph of order `2n`; note that a
-      :class:`ValueError` is returned if `n < 0`
+      :exc:`ValueError` is returned if `n < 0`
 
     EXAMPLES:
 
@@ -1214,12 +1214,12 @@ def MoebiusLadderGraph(n):
 
     TESTS:
 
-    The input parameter must be a non negative integer::
+    The input parameter must be a nonnegative integer::
 
         sage: G = graphs.MoebiusLadderGraph(-1)
         Traceback (most recent call last):
         ...
-        ValueError: parameter n must be a non negative integer
+        ValueError: parameter n must be a nonnegative integer
 
     REFERENCES:
 
@@ -1235,7 +1235,7 @@ def MoebiusLadderGraph(n):
     - Janmenjaya Panda (2024-05-26)
     """
     if n < 0:
-        raise ValueError("parameter n must be a non negative integer")
+        raise ValueError("parameter n must be a nonnegative integer")
 
     G = Graph(2 * n, name="Moebius ladder graph")
     G._circle_embedding(list(range(2 * n)), angle=pi/2)
@@ -1421,7 +1421,7 @@ def StarGraph(n):
         sage: G = graphics_array(j)
         sage: G.show()                          # long time
     """
-    G = Graph({0: list(range(1, n + 1))}, name="Star graph", format="dict_of_lists")
+    G = Graph({0: list(range(1, n + 1))}, name="Star graph", format='dict_of_lists')
     G.set_pos({0: (0, 0)})
     G._circle_embedding(list(range(1, n + 1)), angle=pi/2)
     return G

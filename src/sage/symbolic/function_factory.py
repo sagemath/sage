@@ -150,7 +150,7 @@ def unpickle_function(name, nargs, latex_name, conversions, evalf_params_first,
     return function_factory(*args)
 
 
-def function(s, **kwds) -> Union[SymbolicFunction, list[SymbolicFunction]]:
+def function(s, **kwds) -> SymbolicFunction | list[SymbolicFunction]:
     r"""
     Create a formal symbolic function with the name *s*.
 
@@ -159,11 +159,11 @@ def function(s, **kwds) -> Union[SymbolicFunction, list[SymbolicFunction]]:
     - ``nargs=0`` -- number of arguments the function accepts, defaults to
       variable number of arguments, or 0
     - ``latex_name`` -- name used when printing in latex mode
-    - ``conversions`` -- a dictionary specifying names of this function in
+    - ``conversions`` -- dictionary specifying names of this function in
       other systems, this is used by the interfaces internally during conversion
     - ``eval_func`` -- method used for automatic evaluation
     - ``evalf_func`` -- method used for numeric evaluation
-    - ``evalf_params_first`` -- bool to indicate if parameters should be
+    - ``evalf_params_first`` -- boolean to indicate if parameters should be
       evaluated numerically before calling the custom evalf function
     - ``conjugate_func`` -- method used for complex conjugation
     - ``real_part_func`` -- method used when taking real parts

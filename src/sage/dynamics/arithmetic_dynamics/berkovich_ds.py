@@ -55,9 +55,9 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
 
     INPUT:
 
-    - ``dynamical_system`` -- A :class:`DynamicalSystem`
+    - ``dynamical_system`` -- a :class:`DynamicalSystem`
       over affine or projective space. If this input is not defined
-      over a p-adic field, then ``domain`` MUST be specified.
+      over a `p`-adic field, then ``domain`` MUST be specified.
 
     - ``domain`` -- (optional) affine or projective Berkovich space
       over `\CC_p`. ``domain`` must be specified if ``dynamical_system``
@@ -345,7 +345,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
         """
         Return the domain of this dynamical system.
 
-        OUTPUT: A Berkovich space over ``Cp``.
+        OUTPUT: a Berkovich space over ``Cp``
 
         EXAMPLES::
 
@@ -361,7 +361,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
         r"""
         Return this dynamical system as :class:`DynamicalSystem`.
 
-        OUTPUT: An affine or projective :class:`DynamicalSystem`.
+        OUTPUT: an affine or projective :class:`DynamicalSystem`
 
         EXAMPLES::
 
@@ -376,13 +376,13 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
 
     def __getitem__(self, i):
         """
-        Return the ith polynomial.
+        Return the `i`-th polynomial.
 
         INPUT:
 
-        - ``i`` -- an integer.
+        - ``i`` -- integer
 
-        OUTPUT: An element of polynomial ring or a
+        OUTPUT: an element of polynomial ring or a
         fraction field of a polynomial ring
 
         EXAMPLES::
@@ -399,7 +399,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
         """
         Return the defining polynomials.
 
-        OUTPUT: A tuple of polynomials that defines the
+        OUTPUT: a tuple of polynomials that defines the
         dynamical system.
 
         EXAMPLES::
@@ -417,7 +417,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
         """
         The base ring of this dynamical system, that is, the field of definition of the coefficients.
 
-        OUTPUT: A field.
+        OUTPUT: a field
 
         EXAMPLES::
 
@@ -442,7 +442,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
         r"""
         Return a string representation of this dynamical system.
 
-        OUTPUT: a string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -471,11 +471,11 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
     - ``dynamical_system`` -- a :class:`DynamicalSystem_Projective`
       of relative dimension 1. If this input is not defined
-      over a p-adic field, then ``domain`` MUST be specified.
+      over a `p`-adic field, then ``domain`` MUST be specified.
 
     - ``domain`` -- (optional) projective Berkovich space
       over `\CC_p`. If the input to ``dynamical_system`` is
-      not defined over a p-adic field, ``domain``
+      not defined over a `p`-adic field, ``domain``
       must be specified.
 
     EXAMPLES:
@@ -566,13 +566,13 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
     def scale_by(self, t):
         """
-        Scales each coordinate of this dynamical system by a factor of ``t``.
+        Scale each coordinate of this dynamical system by a factor of `t`.
 
         INPUT:
 
-        - ``t`` -- a ring element.
+        - ``t`` -- a ring element
 
-        OUTPUT: None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -602,9 +602,9 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
     def normalize_coordinates(self):
         r"""
-        Normalizes the coordinates of the inducing map.
+        Normalize the coordinates of the inducing map.
 
-        OUTPUT: None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -616,7 +616,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
               Defn: Defined on coordinates by sending (x : y) to (x^2 : y^2)
 
 
-        Normalize_coordinates may sometimes fail over p-adic fields::
+        Normalize_coordinates may sometimes fail over `p`-adic fields::
 
             sage: g = DynamicalSystem_Berkovich([2*x^2, x*y])
             sage: g.normalize_coordinates()  # not tested
@@ -646,9 +646,9 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
         INPUT:
 
-        - ``M`` -- a square invertible matrix.
+        - ``M`` -- a square invertible matrix
 
-        - ``adjugate`` -- (default: ``False``) boolean, also classically
+        - ``adjugate`` -- boolean (default: ``False``); also classically
           called adjoint, takes a square matrix ``M`` and finds the transpose
           of its cofactor matrix. Used for conjugation in place of inverse
           when specified ``'True'``. Functionality is the same in projective space.
@@ -657,7 +657,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
           Used to specify an extension in the case where ``M`` is not defined
           over the same number field as this dynamical system.
 
-        OUTPUT: a dynamical system.
+        OUTPUT: a dynamical system
 
         EXAMPLES::
 
@@ -711,7 +711,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
     def resultant(self, normalize=False):
         r"""
-        Computes the resultant of the defining polynomials of
+        Compute the resultant of the defining polynomials of
         this dynamical system.
 
         If ``normalize`` is ``True``, then first normalize the coordinate
@@ -719,9 +719,9 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
         INPUT:
 
-        - ``normalize`` -- (default: ``False``) boolean.
+        - ``normalize`` -- boolean (default: ``False``)
 
-        OUTPUT: an element of the base ring of this map.
+        OUTPUT: an element of the base ring of this map
 
         EXAMPLES::
 
@@ -751,10 +751,10 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
         INPUT:
 
-        - ``n`` -- a tuple of nonnegative integers; if ``n`` is an integer,
-          then the two values of the tuple are assumed to be the same.
+        - ``n`` -- tuple of nonnegative integers; if `n` is an integer,
+          then the two values of the tuple are assumed to be the same
 
-        OUTPUT: A dynamical system on affine Berkovich space.
+        OUTPUT: a dynamical system on affine Berkovich space
 
         EXAMPLES::
 
@@ -779,15 +779,15 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
 
         INPUT:
 
-        - ``x`` -- a point of projective Berkovich space over ``Cp``.
+        - ``x`` -- a point of projective Berkovich space over ``Cp``
 
-        - ``type_3_pole_check`` -- (default ``True``) A bool. WARNING:
+        - ``type_3_pole_check`` -- boolean (default: ``True``); WARNING:
           changing the value of ``type_3_pole_check`` can lead to mathematically
           incorrect answers. Only set to ``False`` if there are NO
           poles of the dynamical system in the disk corresponding
           to the type III point ``x``. See Examples.
 
-        OUTPUT: A point of projective Berkovich space over ``Cp``.
+        OUTPUT: a point of projective Berkovich space over ``Cp``
 
         EXAMPLES::
 
@@ -869,7 +869,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
                     else:
                         new_poly.append(ring_of_integers(i).mod(ideal))
                 new_poly = R(new_poly)
-                fraction.append((new_poly))
+                fraction.append(new_poly)
             gcd = fraction[0].gcd(fraction[1])
             num = fraction[0].quo_rem(gcd)[0]
             dem = fraction[1].quo_rem(gcd)[0]
@@ -960,14 +960,15 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
                 new_radius = max(new_radius, p**(-valuation/prime.absolute_ramification_index())*r**i)
         return self.domain()(new_center, new_radius)
 
+
 class DynamicalSystem_Berkovich_affine(DynamicalSystem_Berkovich):
     r"""
     A dynamical system of the affine Berkovich line over `\CC_p`.
 
     INPUT:
 
-    - ``dynamical_system`` -- A :class:`DynamicalSystem_affine`
-      of relative dimension 1.
+    - ``dynamical_system`` -- a :class:`DynamicalSystem_affine`
+      of relative dimension 1
 
     - ``domain`` -- (optional) affine or projective Berkovich space
       over `\CC_p`. If the input to ``dynamical_system`` is
@@ -1054,7 +1055,7 @@ class DynamicalSystem_Berkovich_affine(DynamicalSystem_Berkovich):
 
         INPUT:
 
-        - ``n`` -- a tuple of nonnegative integers. If ``n`` is an integer,
+        - ``n`` -- tuple of nonnegative integers. If `n` is an integer,
           then the two values of the tuple are assumed to be the same
 
         OUTPUT: a dynamical system on projective Berkovich space

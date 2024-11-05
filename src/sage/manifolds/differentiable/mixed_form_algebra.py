@@ -37,6 +37,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.symbolic.ring import SR
 from sage.manifolds.differentiable.mixed_form import MixedForm
 
+
 class MixedFormAlgebra(Parent, UniqueRepresentation):
     r"""
     An instance of this class represents the graded algebra of mixed forms.
@@ -140,7 +141,6 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
          subset U of the 3-dimensional differentiable manifold M
         sage: OmegaU.has_coerce_map_from(Omega)
         True
-
     """
     Element = MixedForm
 
@@ -165,7 +165,6 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             ....:                                       import MixedFormAlgebra
             sage: A = MixedFormAlgebra(M.vector_field_module())
             sage: TestSuite(A).run()
-
         """
         if vector_field_module is None:
             raise ValueError("underlying vector field module must be provided")
@@ -212,7 +211,6 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             sage: a = A([x,0,0], name='a'); a
             Mixed differential form a on the 2-dimensional differentiable
              manifold M
-
         """
         try:
             if comp.is_trivial_zero():
@@ -269,7 +267,6 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             sage: A._an_element_()
             Mixed differential form on the 2-dimensional differentiable
              manifold M
-
         """
         res = self.element_class(self)
         dom = self._domain
@@ -301,7 +298,6 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             True
             sage: A._coerce_map_from_(AU)
             False
-
         """
         if isinstance(S, type(self)):
             # coercion by domain restriction
@@ -336,7 +332,6 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             sage: A.zero()
             Mixed differential form zero on the 3-dimensional differentiable
              manifold M
-
         """
         res = self.element_class(self, name='zero', latex_name='0')
         res._comp = [self._domain.diff_form_module(j, dest_map=self._dest_map).zero()
@@ -357,7 +352,6 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             sage: A.one()
             Mixed differential form one on the 3-dimensional differentiable
              manifold M
-
         """
         res = self.element_class(self, name='one', latex_name='1')
         res._comp = [self._domain.one_scalar_field(),
@@ -385,7 +379,6 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             Module X(M,Phi) of vector fields along the 2-dimensional
              differentiable manifold M mapped into the 3-dimensional
              differentiable manifold N
-
         """
         return self._vmodule
 
@@ -399,7 +392,6 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             sage: A = M.mixed_form_algebra(); A
             Graded algebra Omega^*(M) of mixed differential forms on the
              3-dimensional differentiable manifold M
-
         """
         desc = "Graded algebra " + self._name
         desc += " of mixed differential forms "
@@ -427,7 +419,6 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             '\\Omega^*\\left(\\mathcal{M}\\right)'
             sage: latex(A)  # indirect doctest
             \Omega^*\left(\mathcal{M}\right)
-
         """
         return self._latex_name
 
@@ -461,7 +452,6 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
                (x, y) ↦ x
             sage: d0(f).display()
             df = dx
-
         """
         if degree is None:
             domain = codomain = self
@@ -503,7 +493,6 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             sage: A.cohomology()
             De Rham cohomology ring on the 3-dimensional differentiable
              manifold M
-
         """
         from .de_rham_cohomology import DeRhamCohomologyRing
         return DeRhamCohomologyRing(self)
@@ -533,7 +522,6 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             [0, 1, 2, 3]
             sage: list(A.irange(2))
             [2, 3]
-
         """
         imax = self._max_deg + 1
         if start is None:
@@ -564,6 +552,5 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
             sage: C.lift_from_homology(a)
             Mixed differential form alpha on the 2-dimensional differentiable
              manifold M
-
         """
         return x.lift()

@@ -111,10 +111,10 @@ cdef class InnerGroup:
 
     Those stabilizers can be stored as triples:
 
-    - ``rank`` -- an integer in `\{0, \ldots, k\}`
+    - ``rank`` -- integer in `\{0, \ldots, k\}`
     - ``row_partition`` -- a partition of `\{0, \ldots, k-1\}` with
-      discrete cells for all integers `i` `\geq` ``rank``.
-    - ``frob_pow`` -- an integer `s` in `\{0, \ldots, r-1\}` if `q = p^r`
+      discrete cells for all integers `i` `\geq` ``rank``
+    - ``frob_pow`` -- integer `s` in `\{0, \ldots, r-1\}` if `q = p^r`
 
     The group `G_{\Pi^{(I)}(x)}` contains all elements `(A, \varphi, \alpha) \in G`,
     where
@@ -132,13 +132,13 @@ cdef class InnerGroup:
 
     See [Feu2009]_ for more details.
     """
-    def __cinit__(self, k=0, algorithm="semilinear", **kwds):
+    def __cinit__(self, k=0, algorithm='semilinear', **kwds):
         r"""
-        See :class:`sage.coding.codecan.codecan.InnerGroup`
+        See :class:`sage.coding.codecan.codecan.InnerGroup`.
 
         INPUT:
 
-        - ``k`` -- an integer, gives the dimension of the matrix component
+        - ``k`` -- integer; gives the dimension of the matrix component
         - ``algorithm`` -- either
 
             * "semilinear" --  full group
@@ -146,7 +146,7 @@ cdef class InnerGroup:
             * "permutational -- no field automorphisms and no column multiplications
               i.e. `G = GL(k,q)`
 
-        - ``transporter`` (optional) -- set to an element of the group
+        - ``transporter`` -- (optional) set to an element of the group
           :class:`sage.groups.semimonomial_transformations.semimonomial_transformation_group.SemimonomialTransformationGroup`
           if you would like to modify this element simultaneously
 
@@ -186,7 +186,7 @@ cdef class InnerGroup:
 
     def __dealloc__(self):
         r"""
-        Deallocates ``self``.
+        Deallocate ``self``.
         """
         OP_dealloc(self.row_partition)
 
@@ -198,7 +198,7 @@ cdef class InnerGroup:
 
     cdef bint has_semilinear_action(self) noexcept:
         """
-        Returns ``True`` iff the field automorphism group component of ``self``
+        Return ``True`` iff the field automorphism group component of ``self``
         is non-trivial.
         """
         return (self.frob_pow > 0)
@@ -505,7 +505,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         self._nr_of_point_refine_calls = 0
         self._stored_states = dict()
 
-    def __init__(self, n, generator_matrix, P=None, algorithm_type="semilinear"):
+    def __init__(self, n, generator_matrix, P=None, algorithm_type='semilinear'):
         r"""
         Initialization, we immediately start the algorithm
         (see :mod:`sage.coding.codecan.codecan`)
@@ -514,13 +514,13 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
         - ``generator_matrix`` -- a `k \times n` matrix over `\GF{q}` of full row rank,
-          i.e. `k<n` and without zero columns.
-        - partition (optional) -- a partition (as list of lists) of the set
+          i.e. `k<n` and without zero columns
+        - partition --  (optional) a partition (as list of lists) of the set
           `\{0, \ldots, n-1\}` which restricts the action of the permutational
           part of the group to the stabilizer of this partition
-        - algorithm_type (optional) -- use one of the following options
+        - algorithm_type -- (optional) use one of the following options
 
           * "semilinear" --  full group
           * "linear" -- no field automorphisms, i.e. `G = (GL(k,q) \times \GF{q}^n )`
@@ -552,7 +552,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
 
     def __dealloc__(self):
         r"""
-        Deallocates ``self``.
+        Deallocate ``self``.
         """
         cdef int i
         if self._points2hyp is not NULL:
@@ -608,7 +608,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
 
         self._init_partition_stack(P)
         self._init_point_hyperplane_incidence()
-        self._start_Sn_backtrack() #start the main computation
+        self._start_Sn_backtrack()  # start the main computation
 
         # up to now, we just computed the permutational part of the group action
         # compute the other components of the transporter
@@ -826,7 +826,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
 
         INPUT:
 
-        - ``pos`` -- A position in  ``range(self.n)``
+        - ``pos`` -- a position in  ``range(self.n)``
 
         OUTPUT:
 
@@ -854,10 +854,8 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         Refine the partition ``self.part``. Set  ``part_changed`` to ``True``
         if and only if ``self.part`` was refined.
 
-        OUTPUT:
-
-        - ``False`` -- only if the actual node compares larger than the candidate
-          for the canonical form.
+        OUTPUT: ``False`` -- only if the actual node compares larger than the
+        candidate for the canonical form
         """
         part_changed[0] = False
         cdef bint res, hyp_part_changed = not first_step
@@ -918,8 +916,8 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         if self._inner_group.rank < 2:
             return True
 
-        lower = iter(self._matrix[ : self._inner_group.rank].columns())
-        upper = iter(self._matrix[self._inner_group.rank : ].columns())
+        lower = iter(self._matrix[:self._inner_group.rank].columns())
+        upper = iter(self._matrix[self._inner_group.rank:].columns())
 
         for i in range(self._n):
             l = next(lower)
@@ -1066,7 +1064,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         """
         self._best_candidate = copy(self._matrix)
 
-    cdef void _latex_act_node(self, str comment="", int printlvl=0) noexcept:
+    cdef void _latex_act_node(self, str comment='', int printlvl=0) noexcept:
         """
         Print the actual status as latex (tikz) commands to
         ``self._latex_debug_string``. Only needed if one wants to visualize

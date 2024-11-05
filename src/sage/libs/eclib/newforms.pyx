@@ -134,11 +134,11 @@ cdef class ECModularSymbol:
 
         - ``E``- an elliptic curve defined over Q.
 
-        - ``sign`` (int) -- 0 or +1.  If +1, only plus modular symbols
+        - ``sign`` -- integer; 0 or +1.  If +1, only plus modular symbols
          of this sign are available.  If 0, modular symbols of both
          signs are available but the construction is more expensive.
 
-        - ``nap`` -- (int, default 1000): the number of ap of E to use
+        - ``nap`` -- integer (default: 1000); the number of ap of E to use
          in determining the normalisation of the modular symbols.
          Note that eclib will increase this to 100*sqrt(N) if necessary.
 
@@ -237,21 +237,23 @@ cdef class ECModularSymbol:
             sage: M = ECModularSymbol(E, 0); M
             Modular symbol with sign 0 over Rational Field attached to Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
         """
-        return "Modular symbol with sign %s over Rational Field attached to %s"%(self.sign, self._E)
+        return "Modular symbol with sign %s over Rational Field attached to %s" % (self.sign, self._E)
 
     def __call__(self, r, sign=None, base_at_infinity=True):
-        """
-        Computes the value of self on {0,r} or {oo,r} for rational r.
+        r"""
+        Compute the value of ``self`` on `\{0,r\}` or `\{\infty, r\}` for
+        rational `r`.
 
         INPUT:
 
-        - ``r`` (rational) -- a rational number
+        - ``r`` -- rational; a rational number
 
-        - ``sign`` (int) -- either +1, -1 or 0.  If the sign of the
-          space is +1, only sign +1 is allowed.  Default: self.sign, or +1 when self.sign=0.
+        - ``sign`` -- integer; either +1, -1 or 0.  If the sign of the
+          space is +1, only sign +1 is allowed.  Default: ``self.sign``, or +1
+          when ``self.sign==0``.
 
-        - ``base_at_infinity`` (bool) -- if True, evaluates
-          {oo,r}. otherwise (default) evaluates {0,r}.
+        - ``base_at_infinity`` -- boolean; if ``True``, evaluates
+          `\{\infty, r\}`. Otherwise (default) evaluates `\{0,r\}`.
 
         OUTPUT:
 

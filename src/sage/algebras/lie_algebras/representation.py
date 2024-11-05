@@ -60,9 +60,7 @@ class Representation_abstract:
         r"""
         Return that ``self`` is a left representation.
 
-        OUTPUT:
-
-        - the string ``"left"``
+        OUTPUT: the string ``'left'``
 
         EXAMPLES::
 
@@ -102,7 +100,7 @@ class Representation_abstract:
         EXAMPLES::
 
             sage: H1 = lie_algebras.Heisenberg(QQ, 1)
-            sage: F = H1.faithful_representation(algorithm="minimal")
+            sage: F = H1.faithful_representation(algorithm='minimal')
             sage: P1 = F.representation_matrix(H1.gen(0)); P1
             [0 0 0]
             [0 0 0]
@@ -144,10 +142,10 @@ class RepresentationByMorphism(CombinatorialFreeModule, Representation_abstract)
     - ``f`` -- the Lie algebra morphism defining the action of the basis
       elements of ``lie_algebra``
     - ``index_set`` -- (optional) the index set of the module basis
-    - ``on_basis`` -- (default: ``False``) the function ``f`` defines a
+    - ``on_basis`` -- boolean (default: ``False``); the function `f` defines a
       map from the basis elements or from a generic element of ``lie_algebra``
 
-    If ``f`` is encoded as a ``dict`` or ``Family``, then the keys must
+    If `f` is encoded as a ``dict`` or ``Family``, then the keys must
     be indices of the basis of ``lie_algebra`` and the values being the
     corresponding matrix defining the action. This sets ``on_basis=True``.
 
@@ -476,7 +474,7 @@ class TrivialRepresentation(CombinatorialFreeModule, Representation_abstract):
 
 class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation_abstract):
     r"""
-    Return a faithful reprensetation of a nilpotent Lie algebra
+    Return a faithful representation of a nilpotent Lie algebra
     constructed using the PBW basis.
 
     Let `L` be a `k`-step nilpotent Lie algebra. Define a weight function
@@ -509,7 +507,7 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
         2*F[1, 0, 0] + 8*F[1, 1, 0] + 3*F[2, 0, 0] + 4*F[0, 1, 0]
          + 4*F[0, 2, 0] + 4*F[0, 0, 1]
 
-        sage: MF = L.faithful_representation(algorithm="minimal")
+        sage: MF = L.faithful_representation(algorithm='minimal')
         sage: MF.dimension()
         3
         sage: [MF.representation_matrix(be) for be in L.basis()]
@@ -527,7 +525,7 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
         sage: F = L.faithful_representation(); F
         Faithful 11 dimensional representation of Lie algebra on 4
          generators (a, b, c, d) over Rational Field
-        sage: MF = L.faithful_representation(algorithm="minimal"); MF
+        sage: MF = L.faithful_representation(algorithm='minimal'); MF
         Minimal faithful representation of Lie algebra on 4
          generators (a, b, c, d) over Rational Field
         sage: MF.dimension()
@@ -551,14 +549,14 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
             sage: H2 = lie_algebras.Heisenberg(QQ, 2)
             sage: F = H2.faithful_representation()
             sage: TestSuite(F).run(elements=list(F.basis()))
-            sage: MF = H2.faithful_representation(algorithm="minimal")
+            sage: MF = H2.faithful_representation(algorithm='minimal')
             sage: TestSuite(MF).run(elements=list(MF.basis()))
 
             sage: sc = {('a','b'): {'b':-1, 'c':1}, ('a','c'): {'b':-1, 'c':1}}
             sage: L.<a,b,c> = LieAlgebra(QQ, sc)
             sage: F = L.faithful_representation()
             sage: TestSuite(F).run(elements=list(F.basis()))
-            sage: MF = L.faithful_representation(algorithm="minimal")
+            sage: MF = L.faithful_representation(algorithm='minimal')
             sage: TestSuite(MF).run(elements=list(MF.basis()))
         """
         LCS = L.lower_central_series()

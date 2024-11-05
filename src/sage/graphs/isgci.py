@@ -293,7 +293,7 @@ result ::
 What ISGCI knows is that perfect graphs contain unimodular graph which contain
 bipartite graphs. Therefore bipartite graphs are perfect !
 
-.. note::
+.. NOTE::
 
     The inclusion digraph is **NOT ACYCLIC**. Indeed, several entries exist in
     the ISGCI database which represent the same graph class, for instance
@@ -655,7 +655,7 @@ class GraphClasses(UniqueRepresentation):
 
         INPUT:
 
-        - ``id`` (string) -- the desired class' ID
+        - ``id`` -- string; the desired class' ID
 
         .. SEEALSO::
 
@@ -719,9 +719,7 @@ class GraphClasses(UniqueRepresentation):
         r"""
         Return the graph class inclusions.
 
-        OUTPUT:
-
-        a list of dictionaries
+        OUTPUT: list of dictionaries
 
         Upon the first call, this loads the database from the local XML file.
         Subsequent calls are cached.
@@ -799,7 +797,7 @@ class GraphClasses(UniqueRepresentation):
         data_dir = os.path.dirname(DatabaseGraphs().absolute_filename())
         u = urlopen('https://www.graphclasses.org/data.zip',
                     context=default_context())
-        with tempfile.NamedTemporaryFile(suffix=".zip") as f:
+        with tempfile.NamedTemporaryFile(suffix='.zip') as f:
             f.write(u.read())
             z = zipfile.ZipFile(f.name)
 
@@ -834,7 +832,7 @@ class GraphClasses(UniqueRepresentation):
         inclusions = DB['Inclusions']['incl']
 
         # Parses the list of ISGCI small graphs
-        smallgraph_file = open(os.path.join(data_dir, _SMALLGRAPHS_FILE), 'r')
+        smallgraph_file = open(os.path.join(data_dir, _SMALLGRAPHS_FILE))
         smallgraphs = {}
 
         for line in smallgraph_file.readlines():
@@ -849,7 +847,7 @@ class GraphClasses(UniqueRepresentation):
 
     def update_db(self):
         r"""
-        Updates the ISGCI database by downloading the latest version from
+        Update the ISGCI database by downloading the latest version from
         internet.
 
         This method downloads the ISGCI database from the website
@@ -877,7 +875,7 @@ class GraphClasses(UniqueRepresentation):
 
     def _get_ISGCI(self):
         r"""
-        Returns the contents of the ISGCI database.
+        Return the contents of the ISGCI database.
 
         This method is mostly for internal use, but often provides useful
         information during debugging operations.
@@ -901,7 +899,7 @@ class GraphClasses(UniqueRepresentation):
 
     def show_all(self):
         r"""
-        Prints all graph classes stored in ISGCI
+        Print all graph classes stored in ISGCI.
 
         EXAMPLES::
 
@@ -974,11 +972,9 @@ def _XML_to_dict(root):
 
     INPUT:
 
-    - ``root`` -- an ``xml.etree.cElementTree.ElementTree`` object.
+    - ``root`` -- an ``xml.etree.cElementTree.ElementTree`` object
 
-    OUTPUT:
-
-    A dictionary representing the XML data.
+    OUTPUT: a dictionary representing the XML data
 
     EXAMPLES::
 

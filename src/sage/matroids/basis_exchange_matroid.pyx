@@ -146,7 +146,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
             sage: from sage.matroids.advanced import *
             sage: M = BasisExchangeMatroid(groundset=[1, 2, 3], rank=2)
-            sage: TestSuite(M).run(skip="_test_pickling")
+            sage: TestSuite(M).run(skip='_test_pickling')
 
         .. NOTE::
 
@@ -199,7 +199,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
           label of `e`
 
-        OUTPUT: ``None``
+        OUTPUT: none
 
         .. NOTE::
 
@@ -652,7 +652,7 @@ cdef class BasisExchangeMatroid(Matroid):
         self.__max_independent(self._output, self._input)
         return self.__unpack(self._output)
 
-    cpdef int _rank(self, frozenset F):
+    cpdef int _rank(self, frozenset F) except? -1:
         """
         Compute the rank of a subset of the groundset.
 
@@ -796,7 +796,7 @@ cdef class BasisExchangeMatroid(Matroid):
         self.__max_coindependent(self._output, self._input)
         return self.__unpack(self._output)
 
-    cpdef int _corank(self, frozenset F):
+    cpdef int _corank(self, frozenset F) noexcept:
         """
         Return the corank of a set.
 
@@ -805,7 +805,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``F`` -- an object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``
 
-        OUTPUT: integer; the corank of ``F``
+        OUTPUT: integer; the corank of `F`
 
         EXAMPLES::
 
@@ -940,7 +940,7 @@ cdef class BasisExchangeMatroid(Matroid):
         self.__augment(self._output, self._input, self._input2)
         return self.__unpack(self._output)
 
-    cpdef bint _is_independent(self, frozenset F):
+    cpdef bint _is_independent(self, frozenset F) noexcept:
         """
         Test if input is independent.
 
@@ -1503,6 +1503,8 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``k`` -- integer (optional); if specified, return the size-`k`
           independent sets of the matroid
 
+        OUTPUT: :class:`SetSystem`
+
         EXAMPLES::
 
             sage: M = matroids.catalog.Fano()
@@ -2001,7 +2003,7 @@ cdef class BasisExchangeMatroid(Matroid):
         INPUT:
 
         - ``other`` -- matroid
-        - ``morphism`` -- a dictionary mapping the groundset of ``self`` to
+        - ``morphism`` -- dictionary mapping the groundset of ``self`` to
           the groundset of ``other``
 
         OUTPUT: boolean
@@ -2229,7 +2231,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         return self._characteristic_setsystem()._isomorphism(other._characteristic_setsystem(), PS, PO) is not None
 
-    cpdef bint is_valid(self):
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if the data obey the matroid axioms.
 
@@ -2240,7 +2242,11 @@ cdef class BasisExchangeMatroid(Matroid):
         * if `X` and `Y` are in `B`, and `x` is in `X - Y`, then there is a
           `y` in `Y - X` such that `(X - x) + y` is again a member of `B`.
 
-        OUTPUT: boolean
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``)
+
+        OUTPUT: boolean, or (boolean, dictionary)
 
         EXAMPLES::
 
@@ -2249,8 +2255,8 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: M.is_valid()
             True
             sage: M = Matroid(groundset='abcd', bases=['ab', 'cd'])
-            sage: M.is_valid()
-            False
+            sage: M.is_valid(certificate=True)
+            (False, {'error': 'exchange axiom failed'})
 
         TESTS:
 
@@ -2276,7 +2282,7 @@ cdef class BasisExchangeMatroid(Matroid):
                 if not bitset_eq(self._current_basis, BB._subsets[pointerY]):
                     # We failed to set the current basis to Y through basis exchanges.
                     # Therefore, the exchange axioms are violated!
-                    return False
+                    return False if not certificate else (False, {"error": "exchange axiom failed"})
                 bitset_difference(self._input, BB._subsets[pointerX], BB._subsets[pointerY])
                 bitset_difference(self._input2, BB._subsets[pointerY], BB._subsets[pointerX])
                 x = bitset_first(self._input)
@@ -2290,11 +2296,11 @@ cdef class BasisExchangeMatroid(Matroid):
                         else:
                             y = bitset_next(self._input2, y + 1)
                     if not foundpair:
-                        return False
+                        return False if not certificate else (False, {"error": "exchange axiom failed"})
                     x = bitset_next(self._input, x + 1)
                 pointerY += 1
             pointerX += 1
-        return True
+        return True if not certificate else (True, {})
 
 cdef bint nxksrd(bitset_s* b, long n, long k, bint succ) noexcept:
     """

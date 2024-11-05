@@ -45,33 +45,29 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.misc import integer_ceil as ceil
 from sage.arith.misc import binomial
+from sage.arith.misc import integer_ceil as ceil
 from sage.categories.algebras import Algebras
-from sage.functions.log import log
+from sage.categories.integral_domains import IntegralDomains
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc import newton_method_sizes
 from sage.misc.profiler import Profiler
 from sage.misc.repr import repr_lincomb
-from sage.modules.free_module_element import vector
 from sage.modules.free_module import FreeModule
-from sage.modules.free_module_element import FreeModuleElement
+from sage.modules.free_module_element import FreeModuleElement, vector
 from sage.modules.module import Module
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
+from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.laurent_series_ring import LaurentSeriesRing
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
-from sage.rings.rational_field import RationalField as Rationals
 from sage.rings.rational import Rational
-from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.rings.rational_field import QQ
-from sage.rings.integer_ring import ZZ
-from sage.categories.integral_domains import IntegralDomains
-from sage.rings.infinity import Infinity
-from sage.rings.laurent_series_ring import is_LaurentSeriesRing
-from sage.rings.padics.factory import Qp as pAdicField
-from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.rational_field import QQ, RationalField as Rationals
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
@@ -80,6 +76,10 @@ from sage.structure.element import ModuleElement
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
+
+lazy_import('sage.functions.log', 'log')
+lazy_import('sage.rings.lazy_series_ring', 'LazyLaurentSeriesRing')
+lazy_import('sage.rings.padics.factory', 'Qp', as_='pAdicField')
 
 
 class SpecialCubicQuotientRingElement(ModuleElement):
@@ -98,7 +98,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
         - ``p0``, ``p1``, ``p2`` -- coefficients; must be coercible
           into parent.poly_ring()
 
-        - ``check`` -- bool (default: ``True``): whether to carry
+        - ``check`` -- boolean (default: ``True``); whether to carry
           out coercion
 
         EXAMPLES::
@@ -277,8 +277,8 @@ class SpecialCubicQuotientRingElement(ModuleElement):
 
         INPUT:
 
-        - ``scalar`` -- either an element of base_ring, or an
-          element of poly_ring.
+        - ``scalar`` -- either an element of ``base_ring``, or an
+          element of ``poly_ring``
 
         EXAMPLES::
 
@@ -606,7 +606,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
         - ``p0``, ``p1``, ``p2`` -- coefficients; must be coercible
           into poly_ring()
 
-        - ``check`` -- bool (default: ``True``): whether to carry
+        - ``check`` -- boolean (default: ``True``); whether to carry
           out coercion
 
         EXAMPLES::
@@ -662,11 +662,9 @@ def transpose_list(input) -> list[list]:
     """
     INPUT:
 
-    - ``input`` -- a list of lists, each list of the same length
+    - ``input`` -- list of lists, each list of the same length
 
-    OUTPUT:
-
-    - ``output`` -- a list of lists such that output[i][j] = input[j][i]
+    OUTPUT: list of lists such that ``output[i][j] = input[j][i]``
 
     EXAMPLES::
 
@@ -1024,7 +1022,7 @@ def reduce_all(Q, p, coeffs, offset, compute_exact_form=False):
     OUTPUT:
 
     - ``A``, ``B`` -- pair such that the input differential is
-      cohomologous to (A + Bx) dx/y.
+      cohomologous to (A + Bx) dx/y
 
     .. NOTE::
 
@@ -1102,9 +1100,9 @@ def frobenius_expansion_by_newton(Q, p, M):
       `Q(x) = x^3 + ax + b`, whose coefficient ring is a
       `Z/(p^M)Z`-algebra
 
-    - ``p`` -- residue characteristic of the p-adic field
+    - ``p`` -- residue characteristic of the `p`-adic field
 
-    - ``M`` -- p-adic precision of the coefficient ring
+    - ``M`` -- `p`-adic precision of the coefficient ring
       (this will be used to determine the number of Newton iterations)
 
     OUTPUT:
@@ -1112,7 +1110,7 @@ def frobenius_expansion_by_newton(Q, p, M):
     - ``F0``, ``F1`` -- elements of
       ``SpecialCubicQuotientRing(Q)``, as described above
 
-    - ``r`` -- non-negative integer, as described above
+    - ``r`` -- nonnegative integer, as described above
 
     EXAMPLES::
 
@@ -1300,7 +1298,7 @@ def frobenius_expansion_by_series(Q, p, M):
     - ``F0``, ``F1`` -- elements of
       ``SpecialCubicQuotientRing(Q)``, as described above
 
-    - ``r`` -- non-negative integer, as described above
+    - ``r`` -- nonnegative integer, as described above
 
     EXAMPLES::
 
@@ -1378,7 +1376,7 @@ def adjusted_prec(p, prec):
 
     - ``p`` -- a prime ``p >= 5``
 
-    - ``prec`` -- integer, desired output precision, ``prec >= 1``
+    - ``prec`` -- integer; desired output precision, ``prec >= 1``
 
     OUTPUT: adjusted precision (usually slightly more than ``prec``)
 
@@ -1806,7 +1804,6 @@ def matrix_of_frobenius_hyperelliptic(Q, p=None, prec=None, M=None):
         [      3*5 + 5^2 + O(5^3)             3*5 + O(5^3)             4*5 + O(5^3)         2 + 5^2 + O(5^3)]
         [    4*5 + 4*5^2 + O(5^3)     3*5 + 2*5^2 + O(5^3)       5 + 3*5^2 + O(5^3)     2*5 + 2*5^2 + O(5^3)]
         [            5^2 + O(5^3)       5 + 4*5^2 + O(5^3)     4*5 + 3*5^2 + O(5^3)             2*5 + O(5^3)]
-
     """
     prof = Profiler()
     prof("setup")
@@ -1935,7 +1932,7 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
     def __call__(self, *x):
         """
-        Evaluate ``self`` at given arguments
+        Evaluate ``self`` at given arguments.
 
         EXAMPLES::
 
@@ -1983,7 +1980,7 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
     def __bool__(self):
         """
-        Return True iff ``self`` is not zero.
+        Return ``True`` iff ``self`` is not zero.
 
         EXAMPLES::
 
@@ -2280,7 +2277,7 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
 
         OUTPUT:
 
-        - ``coeffs`` -- a list of coefficients of powers of `x` for each power
+        - ``coeffs`` -- list of coefficients of powers of `x` for each power
           of `y`
 
         - ``n`` -- an offset indicating the power of `y` of the first list
@@ -2412,7 +2409,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             if not hasattr(self, '_curve'):
                 if self._Q.degree() == 3:
                     ainvs = [0, self._Q[2], 0, self._Q[1], self._Q[0]]
-                    self._curve = EllipticCurve(ainvs, check_squarefree=R.is_field())
+                    self._curve = EllipticCurve(ainvs)
                 else:
                     self._curve = HyperellipticCurve(self._Q, check_squarefree=R.is_field())
 
@@ -2451,7 +2448,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             sage: x.parent()  # indirect doctest
             SpecialHyperellipticQuotientRing K[x,y,y^-1] / (y^2 = x^5 - 3*x + 1) over Rational Field
         """
-        y_inverse = ",y^-1" if is_LaurentSeriesRing(self._series_ring) else ""
+        y_inverse = ",y^-1" if isinstance(self._series_ring, (LaurentSeriesRing, LazyLaurentSeriesRing)) else ""
         return "SpecialHyperellipticQuotientRing K[x,y%s] / (y^2 = %s) over %s" % (y_inverse, self._Q, self.base_ring())
 
     def base_extend(self, R):
@@ -2489,7 +2486,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             over Integer Ring
         """
         return SpecialHyperellipticQuotientRing(self._Q.change_ring(R), R,
-                                                is_LaurentSeriesRing(self._series_ring))
+                                                isinstance(self._series_ring, (LaurentSeriesRing, LazyLaurentSeriesRing)))
 
     def _element_constructor_(self, val, offset=0, check=True):
         r"""
@@ -2544,7 +2541,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
     def gens(self):
         """
-        Return the generators of ``self``
+        Return the generators of ``self``.
 
         EXAMPLES::
 
@@ -2558,7 +2555,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
     def x(self):
         r"""
-        Return the generator `x` of ``self``
+        Return the generator `x` of ``self``.
 
         EXAMPLES::
 
@@ -2572,7 +2569,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
     def y(self):
         r"""
-        Return the generator `y` of ``self``
+        Return the generator `y` of ``self``.
 
         EXAMPLES::
 
@@ -2830,7 +2827,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         - ``val`` -- element of the base ring, or list of coefficients
 
-        - ``offset`` -- (default: 0) if non-zero, shift val by `y^\text{offset}`
+        - ``offset`` -- (default: 0) if nonzero, shift val by `y^\text{offset}`
 
         EXAMPLES::
 
@@ -3156,7 +3153,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
             sage: (y^-5*x^2+y^-1*x).diff().reduce_neg_y_fast()
             ((y^-1)*x + (y^-5)*x^2, 0 dx/2y)
 
-        It leaves non-negative powers of `y` alone::
+        It leaves nonnegative powers of `y` alone::
 
             sage: y.diff()
             (-3*1 + 5*x^4) dx/2y
@@ -3446,11 +3443,9 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         INPUT:
 
-        - R -- An (optional) base ring in which to cast the coefficients
+        - ``R`` -- an (optional) base ring in which to cast the coefficients
 
-        OUTPUT:
-
-        The raw coefficients of `A` where ``self`` is `A dx/2y`.
+        OUTPUT: the raw coefficients of `A` where ``self`` is `A dx/2y`
 
         EXAMPLES::
 
@@ -3477,9 +3472,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
 
         - `P`, `Q` -- two points on the underlying curve
 
-        OUTPUT:
-
-        `\int_P^Q \text{self}`
+        OUTPUT: `\int_P^Q \text{self}`
 
         EXAMPLES::
 
@@ -3487,7 +3480,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
             sage: E = EllipticCurve(K,[-31/3,-2501/108]) #11a
             sage: P = E(K(14/3), K(11/2))
             sage: w = E.invariant_differential()
-            sage: w.coleman_integral(P,2*P)
+            sage: w.coleman_integral(P, 2*P)
             O(5^6)
 
             sage: Q = E([3,58332])
@@ -3570,16 +3563,14 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
     def change_ring(self, R):
         """
-        Return a new differential ring which is self with the coefficient
+        Return a new differential ring which is ``self`` with the coefficient
         ring changed to `R`.
 
         INPUT:
 
         - ``R`` -- ring of coefficients
 
-        OUTPUT:
-
-        ``self`` with the coefficient ring changed to `R`.
+        OUTPUT: ``self`` with the coefficient ring changed to `R`
 
         EXAMPLES::
 
@@ -3633,7 +3624,7 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
     def Q(self):
         """
         Return `Q(x)` where the model of the underlying hyperelliptic curve
-        of self is given by `y^2 = Q(x)`.
+        of ``self`` is given by `y^2 = Q(x)`.
 
         EXAMPLES::
 
@@ -3856,7 +3847,7 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
         - ``parent`` -- Monsky-Washnitzer differential ring (instance of class
           :class:`~MonskyWashnitzerDifferentialRing`
         - ``val`` -- element of the base ring, or list of coefficients
-        - ``offset`` -- (default: 0) if non-zero, shift val by `y^\text{offset}`
+        - ``offset`` -- (default: 0) if nonzero, shift val by `y^\text{offset}`
 
         EXAMPLES::
 

@@ -26,6 +26,7 @@ from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing_
 from sage.structure.richcmp import op_EQ, op_NE, op_LT, op_LE, op_GT, op_GE
 from sage.arith.misc import GCD
 
+
 class LaurentPolynomialIdeal( Ideal_generic ):
     def __init__(self, ring, gens, coerce=True, hint=None):
         r"""
@@ -48,7 +49,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         INPUT:
 
         - ``ring`` -- the ring the ideal is defined in
-        - ``gens`` -- a list of generators for the ideal
+        - ``gens`` -- list of generators for the ideal
         - ``coerce`` -- whether or not to coerce elements into ``ring``
         - ``hint`` -- an ideal in the associated polynomial ring (optional; see above)
 

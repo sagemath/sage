@@ -1,1 +1,1 @@
-SageMath version 10.4.rc1, Release Date: 2024-06-27
+SageMath version 10.5.beta9, Release Date: 2024-11-03

@@ -159,7 +159,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                  over Integer Ring(i))_{i in Partitions}
 
             Checking this method on a filtered algebra. Note that this
-            will typically raise a :class:`NotImplementedError` when this
+            will typically raise a :exc:`NotImplementedError` when this
             feature is not implemented. ::
 
                 sage: A = AlgebrasWithBasis(ZZ).Filtered().example()
@@ -481,9 +481,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             - ``f`` -- a filtration-preserving linear map from ``self``
               to ``other`` (can be given as a morphism or as a function)
 
-            OUTPUT:
-
-            The graded linear map `\operatorname{gr} f`.
+            OUTPUT: the graded linear map `\operatorname{gr} f`
 
             EXAMPLES:
 
@@ -1199,7 +1197,6 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                 from collections import defaultdict
                 from sage.rings.integer_ring import ZZ
                 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-                R = self.base_ring()
                 PR = PolynomialRing(ZZ, 't')
                 dims = defaultdict(ZZ)
                 for b in self.basis():

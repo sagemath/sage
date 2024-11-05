@@ -205,18 +205,7 @@ sdh_make_install() {
         sdh_die "Error installing $PKG_NAME"
 }
 
-sdh_setup_bdist_wheel() {
-    # Issue #32046: Most uses of this function can be replaced by sdh_pip_install
-    mkdir -p dist
-    rm -f dist/*.whl
-    BDIST_DIR="$(mktemp -d)"
-    python3 setup.py --no-user-cfg \
-         bdist_wheel --bdist-dir "$BDIST_DIR" \
-         "$@" || sdh_die "Error building a wheel for $PKG_NAME"
-}
-
-sdh_pip_install() {
-    echo "Installing $PKG_NAME"
+sdh_build_wheel() {
     mkdir -p dist
     rm -f dist/*.whl
     export PIP_NO_INDEX=1
@@ -224,6 +213,8 @@ sdh_pip_install() {
     build_options=""
     # pip has --no-build-isolation but no flag that turns the default back on...
     build_isolation_option=""
+    # build has --wheel but no flag that turns the default (build sdist and then wheel) back on
+    dist_option="--wheel"
     export PIP_FIND_LINKS="$SAGE_SPKG_WHEELS"
     unset PIP_NO_BINARY
     while [ $# -gt 0 ]; do
@@ -243,6 +234,9 @@ sdh_pip_install() {
                 export PIP_NO_BINARY=:all:
                 build_isolation_option="--no-isolation --skip-dependency-check"
                 ;;
+            --sdist-then-wheel)
+                dist_option=""
+                ;;
             --no-deps)
                 install_options="$install_options $1"
                 ;;
@@ -258,7 +252,7 @@ sdh_pip_install() {
         esac
         shift
     done
-    if python3 -m build --wheel --outdir=dist $build_isolation_option $build_options "$@"; then
+    if python3 -m build $dist_option --outdir=dist $build_isolation_option $build_options "$@"; then
         : # successful
     else
         case $build_isolation_option in
@@ -266,12 +260,12 @@ sdh_pip_install() {
                 sdh_die "Error building a wheel for $PKG_NAME"
                 ;;
             *)
-                echo >&2 "Warning: building with \"python3 -m build --wheel --outdir=dist $build_isolation_option $build_options $@\" failed."
+                echo >&2 "Warning: building with \"python3 -m build $dist_option --outdir=dist $build_isolation_option $build_options $@\" failed."
                 unset PIP_FIND_LINKS
                 export PIP_NO_BINARY=:all:
                 build_isolation_option="--no-isolation --skip-dependency-check"
-                echo >&2 "Retrying with \"python3 -m build --wheel --outdir=dist $build_isolation_option $build_options $@\"."
-                if python3 -m build --wheel --outdir=dist $build_isolation_option $build_options "$@"; then
+                echo >&2 "Retrying with \"python3 -m build $dist_option --outdir=dist $build_isolation_option $build_options $@\"."
+                if python3 -m build $dist_option --outdir=dist $build_isolation_option $build_options "$@"; then
                     echo >&2 "Warning: Wheel building needed to use \"$build_isolation_option\" to succeed. This means that a dependencies file in build/pkgs/ needs to be updated. Please report this to sage-devel@googlegroups.com, including the build log of this package."
                 else
                     sdh_die "Error building a wheel for $PKG_NAME"
@@ -282,6 +276,16 @@ sdh_pip_install() {
     unset PIP_FIND_LINKS
     unset PIP_NO_BINARY
     unset PIP_NO_INDEX
+}
+
+sdh_build_and_store_wheel() {
+    sdh_build_wheel "$@"
+    sdh_store_wheel .
+}
+
+sdh_pip_install() {
+    echo "Installing $PKG_NAME"
+    sdh_build_wheel "$@"
     sdh_store_and_pip_install_wheel $install_options .
 }
 

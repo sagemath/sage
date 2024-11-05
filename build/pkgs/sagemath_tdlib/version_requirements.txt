@@ -1,2 +1,2 @@
 # This file is updated on every release by the sage-update-version script
-sagemath-tdlib ~= 10.4rc1
+sagemath-tdlib ~= 10.5b9

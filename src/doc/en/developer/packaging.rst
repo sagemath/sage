@@ -444,10 +444,6 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
   arguments. If ``$SAGE_DESTDIR`` is not set then the command is run
   with ``$SAGE_SUDO``, if set.
 
-- ``sdh_setup_bdist_wheel [...]``: Runs ``setup.py bdist_wheel`` with
-  the given arguments, as well as additional default arguments used for
-  installing packages into Sage.
-
 - ``sdh_pip_install [...]``: The equivalent of running ``pip install``
   with the given arguments, as well as additional default arguments used for
   installing packages into Sage with pip. The last argument must be
@@ -608,10 +604,6 @@ case the ``spkg-install.in`` script template might just consist of
 Where ``sdh_pip_install`` is a function provided by ``sage-dist-helpers`` that
 points to the correct ``pip`` for the Python used by Sage, and includes some
 default flags needed for correct installation into Sage.
-
-If ``pip`` will not work for a package but a command like ``python3 setup.py install``
-will, you may use ``sdh_setup_bdist_wheel``, followed by
-``sdh_store_and_pip_install_wheel .``.
 
 For ``spkg-check.in`` script templates, use ``python3`` rather
 than just ``python``.  The paths are set by the Sage build system
@@ -1018,11 +1010,11 @@ to refer to the dot-separated components of a version by ``VERSION_MAJOR``,
 ``VERSION_MINOR``, and ``VERSION_MICRO``.
 
 For Python packages available from PyPI, you should use an
-``upstream_url`` from ``pypi.io``, which follows the format
+``upstream_url`` from ``files.pythonhosted.org``, which follows the format
 
 .. CODE-BLOCK:: bash
 
-    upstream_url=https://pypi.io/packages/source/m/matplotlib/matplotlib-VERSION.tar.gz
+    upstream_url=https://files.pythonhosted.org/packages/source/m/matplotlib/matplotlib-VERSION.tar.gz
 
 Developers who wish to test a package update from a PR branch before
 the archive is available on a Sage mirror. Sage falls back to

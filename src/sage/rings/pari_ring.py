@@ -124,7 +124,7 @@ class Pari(RingElement):
             sage: a^2
             9
         """
-        if not (other in PariRing()):
+        if other not in PariRing():
             other = Pari(other)
         return self.__class__(self.__x ** other.__x, parent=_inst)
 
@@ -202,8 +202,8 @@ class PariRing(Singleton, Parent):
           between 0 and `x-1`, inclusive. If both are provided, then the
           result is between `x` and `y-1`, inclusive.
 
-        - `distribution` -- optional string, so that ``ZZ`` can make sense
-          of it as a probability distribution.
+        - ``distribution`` -- (optional) string, so that ``ZZ`` can make sense
+          of it as a probability distribution
 
         EXAMPLES::
 
@@ -212,9 +212,8 @@ class PariRing(Singleton, Parent):
             True
             sage: R(5) <= R.random_element(5,13) < R(13)
             True
-            sage: R.random_element(distribution="1/n").parent() is R
+            sage: R.random_element(distribution='1/n').parent() is R
             True
-
         """
         from sage.rings.integer_ring import ZZ
         return self(ZZ.random_element(x, y, distribution))

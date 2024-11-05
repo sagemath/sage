@@ -21,7 +21,7 @@ from sage.structure.richcmp import op_EQ, op_NE
 
 from sage.structure.element cimport Element
 from sage.categories.map import Map
-from sage.rings.ring cimport CommutativeRing
+from sage.structure.parent cimport Parent
 from sage.rings.morphism cimport RingMap
 from sage.rings.ring_extension cimport RingExtension_generic, RingExtensionWithBasis
 from sage.rings.ring_extension_element cimport RingExtensionElement
@@ -57,7 +57,7 @@ cdef are_equal_morphisms(f, g):
         sage: H(f^2) == H(g^2)  # indirect doctest
         True
     """
-    cdef CommutativeRing b
+    cdef Parent b
     cdef tuple gens
     if f is None and g is None:
         return True
@@ -108,7 +108,7 @@ cdef class RingExtensionHomomorphism(RingMap):
           the action of this morphism on one of the bases of the domain;
           if ``None``, a coercion map is used
 
-        - ``check`` -- a boolean (default: ``True``); whether to check if
+        - ``check`` -- boolean (default: ``True``); whether to check if
           the given data define a valid homomorphism
 
         TESTS::
@@ -293,7 +293,6 @@ cdef class RingExtensionHomomorphism(RingMap):
              Field in b with defining polynomial x^3 + (2 + 2*a)*x - a over its base
               Defn: b |--> 2 + 2*a*b + (2 - a)*b^2
             sage: phi.base_map()                                                        # needs sage.rings.finite_rings
-
         """
         domain = self.domain()
         codomain = self.codomain()
@@ -634,7 +633,6 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
         sage: type(f)
         <class 'sage.rings.ring_extension_morphism.RingExtensionBackendReverseIsomorphism'>
         sage: TestSuite(f).run()
-
     """
     def __init__(self, parent):
         r"""
@@ -717,7 +715,6 @@ cdef class MapFreeModuleToRelativeRing(Map):
         sage: V, i, j = K.free_module()                                                 # needs sage.rings.finite_rings
         sage: type(i)                                                                   # needs sage.rings.finite_rings
         <class 'sage.rings.ring_extension_morphism.MapFreeModuleToRelativeRing'>
-
     """
     def __init__(self, E, K):
         r"""
@@ -740,7 +737,7 @@ cdef class MapFreeModuleToRelativeRing(Map):
         """
         self._degree = E.degree(K)
         self._basis = [ (<RingExtensionElement>x)._backend for x in E.basis_over(K) ]
-        self._f = backend_morphism(E.defining_morphism(K), forget="codomain")
+        self._f = backend_morphism(E.defining_morphism(K), forget='codomain')
         domain = K ** self._degree
         parent = domain.Hom(E)
         Map.__init__(self, parent)
@@ -804,7 +801,6 @@ cdef class MapRelativeRingToFreeModule(Map):
         sage: V, i, j = K.free_module()                                                 # needs sage.rings.finite_rings
         sage: type(j)                                                                   # needs sage.rings.finite_rings
         <class 'sage.rings.ring_extension_morphism.MapRelativeRingToFreeModule'>
-
     """
     def __init__(self, E, K):
         r"""
@@ -825,11 +821,11 @@ cdef class MapRelativeRingToFreeModule(Map):
               From: Field in z6 with defining polynomial x^2 + (10*z3^2 + z3 + 6)*x + z3 over its base
               To:   Vector space of dimension 2 over Finite Field in z3 of size 11^3
         """
-        cdef CommutativeRing L, base
+        cdef Parent L, base
 
         self._degree = (<RingExtensionWithBasis>E)._degree_over(K)
         self._basis = [ (<RingExtensionElement>x)._backend for x in E.basis_over(K) ]
-        f = backend_morphism(E.defining_morphism(K), forget="codomain")
+        f = backend_morphism(E.defining_morphism(K), forget='codomain')
         codomain = K ** self._degree
         Map.__init__(self, E.Hom(codomain))
 

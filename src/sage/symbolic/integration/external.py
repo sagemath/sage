@@ -12,7 +12,7 @@ from sage.symbolic.ring import SR
 
 def maxima_integrator(expression, v, a=None, b=None):
     """
-    Integration using Maxima
+    Integration using Maxima.
 
     EXAMPLES::
 
@@ -49,7 +49,7 @@ def maxima_integrator(expression, v, a=None, b=None):
 
 def sympy_integrator(expression, v, a=None, b=None):
     """
-    Integration using SymPy
+    Integration using SymPy.
 
     EXAMPLES::
 
@@ -71,7 +71,7 @@ def sympy_integrator(expression, v, a=None, b=None):
 
 def mma_free_integrator(expression, v, a=None, b=None):
     """
-    Integration using Mathematica's online integrator
+    Integration using Mathematica's online integrator.
 
     EXAMPLES::
 
@@ -96,19 +96,17 @@ def mma_free_integrator(expression, v, a=None, b=None):
 
     Check that :issue:`14764` is resolved::
 
-        sage: integrate(x^2, x, 0, 1, algorithm="mathematica_free") # optional - internet
+        sage: integrate(x^2, x, 0, 1, algorithm='mathematica_free') # optional - internet
         1/3
-        sage: integrate(sin(x), [x, 0, pi], algorithm="mathematica_free") # optional - internet
+        sage: integrate(sin(x), [x, 0, pi], algorithm='mathematica_free') # optional - internet
         2
-        sage: integrate(sqrt(x), (x, 0, 1), algorithm="mathematica_free") # optional - internet
+        sage: integrate(sqrt(x), (x, 0, 1), algorithm='mathematica_free') # optional - internet
         2/3
 
     ::
 
         sage: mma_free_integrator(exp(-x^2)*log(x), x) # optional - internet
         1/2*sqrt(pi)*erf(x)*log(x) - x*hypergeometric((1/2, 1/2), (3/2, 3/2), -x^2)
-
-
     """
     from sage.interfaces.mathematica import request_wolfram_alpha, parse_moutput_from_json, symbolic_expression_from_mathematica_string
     math_expr = expression._mathematica_init_()
@@ -132,7 +130,7 @@ def mma_free_integrator(expression, v, a=None, b=None):
 
 def fricas_integrator(expression, v, a=None, b=None, noPole=True):
     """
-    Integration using FriCAS
+    Integration using FriCAS.
 
     EXAMPLES::
 
@@ -151,7 +149,7 @@ def fricas_integrator(expression, v, a=None, b=None, noPole=True):
 
     Check that :issue:`25220` is fixed::
 
-        sage: integral(sqrt(1-cos(x)), x, 0, 2*pi, algorithm="fricas")          # optional - fricas
+        sage: integral(sqrt(1-cos(x)), x, 0, 2*pi, algorithm='fricas')          # optional - fricas
         4*sqrt(2)
 
     Check that in case of failure one gets unevaluated integral::
@@ -164,13 +162,13 @@ def fricas_integrator(expression, v, a=None, b=None, noPole=True):
 
     Check that :issue:`28641` is fixed::
 
-        sage: integrate(sqrt(2)*x^2 + 2*x, x, algorithm="fricas")               # optional - fricas
+        sage: integrate(sqrt(2)*x^2 + 2*x, x, algorithm='fricas')               # optional - fricas
         1/3*sqrt(2)*x^3 + x^2
 
-        sage: integrate(sqrt(2), x, algorithm="fricas")                         # optional - fricas
+        sage: integrate(sqrt(2), x, algorithm='fricas')                         # optional - fricas
         sqrt(2)*x
 
-        sage: integrate(1, x, algorithm="fricas")                               # optional - fricas
+        sage: integrate(1, x, algorithm='fricas')                               # optional - fricas
         x
 
     Check that :issue:`28630` is fixed::
@@ -183,7 +181,7 @@ def fricas_integrator(expression, v, a=None, b=None, noPole=True):
 
         sage: var("a c d"); f = (I*a*tan(d*x + c) + a)*sec(d*x + c)^10
         (a, c, d)
-        sage: ii = integrate(f, x, algorithm="fricas")                               # optional - fricas
+        sage: ii = integrate(f, x, algorithm='fricas')                               # optional - fricas
         sage: 1/315*(64512*I*a*e^(10*I*d*x + 10*I*c) + 53760*I*a*e^(8*I*d*x + 8*I*c) + 30720*I*a*e^(6*I*d*x + 6*I*c) + 11520*I*a*e^(4*I*d*x + 4*I*c) + 2560*I*a*e^(2*I*d*x + 2*I*c) + 256*I*a)/(d*e^(20*I*d*x + 20*I*c) + 10*d*e^(18*I*d*x + 18*I*c) + 45*d*e^(16*I*d*x + 16*I*c) + 120*d*e^(14*I*d*x + 14*I*c) + 210*d*e^(12*I*d*x + 12*I*c) + 252*d*e^(10*I*d*x + 10*I*c) + 210*d*e^(8*I*d*x + 8*I*c) + 120*d*e^(6*I*d*x + 6*I*c) + 45*d*e^(4*I*d*x + 4*I*c) + 10*d*e^(2*I*d*x + 2*I*c) + d) - ii                        # optional - fricas
         0
     """
@@ -218,7 +216,7 @@ def fricas_integrator(expression, v, a=None, b=None, noPole=True):
 
 def giac_integrator(expression, v, a=None, b=None):
     r"""
-    Integration using Giac
+    Integration using Giac.
 
     EXAMPLES::
 
@@ -259,7 +257,7 @@ def giac_integrator(expression, v, a=None, b=None):
 
 def libgiac_integrator(expression, v, a=None, b=None):
     r"""
-    Integration using libgiac
+    Integration using libgiac.
 
     EXAMPLES::
 
@@ -287,7 +285,15 @@ def libgiac_integrator(expression, v, a=None, b=None):
         sage: (F.derivative(x) - f).simplify_trig()
         0
     """
-    from sage.libs.giac import libgiac
+    try:
+        from sage.libs.giac import libgiac
+    except ImportError:
+        # If libgiac isn't available, return a symbolic answer
+        # (without actually integrating anything). This is essentially
+        # the failure case of any integration: see below for what we
+        # do if libgiac is *available* but unable to do much.
+        return expression.integrate(v, a, b, hold=True)
+
     from sage.libs.giac.giac import Pygen
     # We call Pygen on first argument because otherwise some expressions
     # involving derivatives result in doctest failures in interfaces/sympy.py

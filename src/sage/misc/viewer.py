@@ -38,9 +38,9 @@ def default_viewer(viewer=None):
 
     INPUT:
 
-    - ``viewer``: ``None`` or a string: one of 'browser', 'pdf', 'png',
-      'dvi' -- return the name of the corresponding program.  ``None``
-      is treated the same as 'browser'.
+    - ``viewer`` -- ``None`` or a string; one of ``'browser'``, ``'pdf'``,
+      ``'png'``, ``'dvi'``. Return the name of the corresponding program.
+      ``None`` is treated the same as ``'browser'``.
 
     EXAMPLES::
 
@@ -69,7 +69,7 @@ def default_viewer(viewer=None):
     elif os.uname()[0] == 'Darwin':
         # Simple on OS X, since there is an open command that opens
         # anything, using the user's preferences.
-        BROWSER = 'open'
+        BROWSER = 'open -W'
         DVI_VIEWER = BROWSER
         PDF_VIEWER = BROWSER
         PNG_VIEWER = BROWSER
@@ -149,9 +149,9 @@ class Viewer(SageObject):
 
         INPUT:
 
-        - ``app`` -- ``None`` or a string, the program to use
-        - ``TYPE`` -- a string, must be in the list ``VIEWERS`` defined in
-          :mod:`sage.misc.viewer`.  Default 'browser'.
+        - ``app`` -- ``None`` or a string; the program to use
+        - ``TYPE`` -- string (default: ``'browser'``); must be in the list
+          ``VIEWERS`` defined in :mod:`sage.misc.viewer`
 
         EXAMPLES::
 

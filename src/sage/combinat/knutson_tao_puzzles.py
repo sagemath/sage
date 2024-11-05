@@ -308,9 +308,7 @@ class NablaPiece(PuzzlePiece):
         r"""
         Rotate the Nabla piece by 120 degree clockwise.
 
-        OUTPUT:
-
-        - Nabla piece
+        OUTPUT: Nabla piece
 
         EXAMPLES::
 
@@ -327,9 +325,7 @@ class NablaPiece(PuzzlePiece):
         r"""
         Rotate the Nabla piece by 180 degree.
 
-        OUTPUT:
-
-        - Delta piece
+        OUTPUT: Delta piece
 
         EXAMPLES::
 
@@ -430,9 +426,7 @@ class DeltaPiece(PuzzlePiece):
         r"""
         Rotate the Delta piece by 120 degree clockwise.
 
-        OUTPUT:
-
-        - Delta piece
+        OUTPUT: Delta piece
 
         EXAMPLES::
 
@@ -449,9 +443,7 @@ class DeltaPiece(PuzzlePiece):
         r"""
         Rotate the Delta piece by 180 degree.
 
-        OUTPUT:
-
-        - Nabla piece
+        OUTPUT: Nabla piece
 
         EXAMPLES::
 
@@ -1052,7 +1044,6 @@ def BK_pieces(max_letter):
         sage: BK_pieces(3)
         Nablas : [1\1/1, 1\2(1)/2, 1\3(1)/3, 2(1)\2/1, 2\1/2(1), 2\2/2, 2\3(2)/3, 3(1)\3/1, 3(2)\3/2, 3\1/3(1), 3\2/3(2), 3\3/3]
         Deltas : [1/1\1, 1/2\2(1), 1/3\3(1), 2(1)/1\2, 2/2(1)\1, 2/2\2, 2/3\3(2), 3(1)/1\3, 3(2)/2\3, 3/3(1)\1, 3/3(2)\2, 3/3\3]
-
     """
     forbidden_border_labels = ['%s(%s)' % (i, j)
                                for i in range(1, max_letter + 1)
@@ -1358,7 +1349,7 @@ class PuzzleFilling:
             for k in range(d + 1):
                 yield self[k + 1, self._n - d + k]
 
-    def plot(self, labels=True, style="fill"):
+    def plot(self, labels=True, style='fill'):
         r"""
         Plot completed puzzle.
 
@@ -1496,8 +1487,8 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         - ``HT2step`` -- equivariant cohomology of the *2-step* Grassmannian
         - ``BK`` -- Belkale-Kumar puzzle pieces
 
-    - ``max_letter`` -- (default: None) None or a positive integer. This is
-      only required only for Belkale-Kumar puzzles.
+    - ``max_letter`` -- ``None`` or a positive integer(default: ``None``); this
+      is only required for Belkale-Kumar puzzles
 
     EXAMPLES:
 
@@ -1570,7 +1561,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
           (3, 4): 1/\0  0\/1,
           (4, 4): 1/1\1}]
 
-    The pieces in a puzzle filling are indexed by pairs of non-negative
+    The pieces in a puzzle filling are indexed by pairs of nonnegative
     integers `(i, j)` with `1 \leq i \leq j \leq n`, where `n` is the
     length of the word labelling the triangle edge. The pieces indexed by
     `(i, i)` are the triangles along the south edge of the puzzle. ::
@@ -2064,9 +2055,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         - ``nw_label``, ``nw_label`` -- label
         - ``pieces`` -- puzzle pieces used for the filling
 
-        OUTPUT:
-
-        - list of the fillings
+        OUTPUT: list of the fillings
 
         EXAMPLES::
 
@@ -2075,12 +2064,9 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
             sage: ps._fill_piece('0', '0', ps._bottom_deltas)
             [0/0\0]
         """
-        output = []
-        for piece in pieces:
-            if (piece['north_west'] == nw_label and
-                    piece['north_east'] == ne_label):
-                output.append(piece)
-        return output
+        return [piece for piece in pieces
+                if (piece['north_west'] == nw_label and
+                    piece['north_east'] == ne_label)]
 
     @cached_method
     def _fill_strip(self, nw_labels, ne_label, pieces, final_pieces=None):
@@ -2094,9 +2080,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         - ``pieces`` -- puzzle pieces used for the filling
         - ``final_pieces`` -- pieces used for the last piece to be filled in
 
-        OUTPUT:
-
-        - list of lists of the fillings
+        OUTPUT: list of lists of the fillings
 
         EXAMPLES::
 
@@ -2227,9 +2211,9 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
 
         - ``pieces`` -- puzzle pieces to be used
         - ``lambda``, ``mu`` -- edge labels of puzzle for northwest and north east side
-        - ``nu`` -- (default: ``None``) If ``nu`` is not specified a dictionary is returned with
+        - ``nu`` -- (default: ``None``) if ``nu`` is not specified a dictionary is returned with
           the structure coefficients corresponding to all south labels; if ``nu`` is given, only
-          the coefficients with the specified label is returned.
+          the coefficients with the specified label is returned
 
         OUTPUT: dictionary
 

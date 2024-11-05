@@ -50,7 +50,7 @@ an element (in the Hamming metric) is `d({\bf v},{\bf 0})`,
 where `0` is a distinguished element of `F`;
 in particular it is `0` of the field if `F` is a field.
 The minimum distance of
-a linear code is the smallest non-zero weight of a codeword in `C`.  The
+a linear code is the smallest nonzero weight of a codeword in `C`.  The
 relatively minimum distance is denoted
 
 
@@ -108,47 +108,42 @@ the best possible solution, that may belong to a linear or nonlinear code.
 
 This module implements:
 
--  ``codesize_upper_bound(n,d,q)``, for the best known (as of May,
-   2006) upper bound `A(n,d)` for the size of a code of length `n`,
-   minimum distance `d` over a field of size `q`.
+- ``codesize_upper_bound(n,d,q)``, for the best known (as of May, 2006) upper
+  bound `A(n,d)` for the size of a code of length `n`, minimum distance `d`
+  over a field of size `q`.
 
--  ``dimension_upper_bound(n,d,q)``, an upper bound
-   `B(n,d)=B_q(n,d)` for the dimension of a linear code of
-   length `n`, minimum distance `d` over a field of size `q`.
+- ``dimension_upper_bound(n,d,q)``, an upper bound `B(n,d)=B_q(n,d)` for the
+  dimension of a linear code of length `n`, minimum distance `d` over a field
+  of size `q`.
 
--  ``gilbert_lower_bound(n,q,d)``, a lower bound for number of
-   elements in the largest code of min distance `d` in
-   `\GF{q}^n`.
+- ``gilbert_lower_bound(n,q,d)``, a lower bound for number of elements in the
+  largest code of min distance `d` in `\GF{q}^n`.
 
--  ``gv_info_rate(n,delta,q)``, `log_q(GLB)/n`, where GLB is
-   the Gilbert lower bound and `\delta = d/n`.
+- ``gv_info_rate(n,delta,q)``, `log_q(GLB)/n`, where GLB is the Gilbert lower
+  bound and `\delta = d/n`.
 
--  ``gv_bound_asymp(delta,q)``, asymptotic analog of Gilbert lower
-   bound.
+- ``gv_bound_asymp(delta,q)``, asymptotic analog of Gilbert lower bound.
 
--  ``plotkin_upper_bound(n,q,d)``
+- ``plotkin_upper_bound(n,q,d)``
 
--  ``plotkin_bound_asymp(delta,q)``, asymptotic analog of Plotkin
-   bound.
+- ``plotkin_bound_asymp(delta,q)``, asymptotic analog of Plotkin bound.
 
--  ``griesmer_upper_bound(n,q,d)``
+- ``griesmer_upper_bound(n,q,d)``
 
--  ``elias_upper_bound(n,q,d)``
+- ``elias_upper_bound(n,q,d)``
 
--  ``elias_bound_asymp(delta,q)``, asymptotic analog of Elias bound.
+- ``elias_bound_asymp(delta,q)``, asymptotic analog of Elias bound.
 
--  ``hamming_upper_bound(n,q,d)``
+- ``hamming_upper_bound(n,q,d)``
 
--  ``hamming_bound_asymp(delta,q)``, asymptotic analog of Hamming
-   bound.
+- ``hamming_bound_asymp(delta,q)``, asymptotic analog of Hamming bound.
 
--  ``singleton_upper_bound(n,q,d)``
+- ``singleton_upper_bound(n,q,d)``
 
--  ``singleton_bound_asymp(delta,q)``, asymptotic analog of Singleton
-   bound.
+- ``singleton_bound_asymp(delta,q)``, asymptotic analog of Singleton bound.
 
--  ``mrrw1_bound_asymp(delta,q)``, "first" asymptotic
-   McEliese-Rumsey-Rodemich-Welsh bound for the information rate.
+- ``mrrw1_bound_asymp(delta,q)``, "first" asymptotic
+  McEliese-Rumsey-Rodemich-Welsh bound for the information rate.
 
 -  Delsarte (a.k.a. Linear Programming (LP)) upper bounds.
 
@@ -195,7 +190,7 @@ def _check_n_q_d(n, q, d, field_based=True):
     More precisely, this checks that the parameters are positive
     integers, that `q` is a prime power for codes over a field, or,
     more generally, that `q` is of size at least 2, and that `n >= d`.
-    This raises a :class:`ValueError` otherwise.
+    This raises a :exc:`ValueError` otherwise.
 
     TESTS::
 
@@ -254,15 +249,15 @@ def codesize_upper_bound(n, d, q, algorithm=None):
 
         sage: codes.bounds.codesize_upper_bound(10, 3, 2)
         93
-        sage: codes.bounds.codesize_upper_bound(24, 8, 2, algorithm="LP")               # needs sage.numerical.mip
+        sage: codes.bounds.codesize_upper_bound(24, 8, 2, algorithm='LP')               # needs sage.numerical.mip
         4096
-        sage: codes.bounds.codesize_upper_bound(10, 3, 2, algorithm="gap")      # optional - gap_package_guava
+        sage: codes.bounds.codesize_upper_bound(10, 3, 2, algorithm='gap')              # optional - gap_package_guava
         85
         sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm=None)               # needs sage.symbolic
         123361
-        sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm="gap")      # optional - gap_package_guava
+        sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm='gap')              # optional - gap_package_guava
         123361
-        sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm="LP")               # needs sage.numerical.mip
+        sage: codes.bounds.codesize_upper_bound(11, 3, 4, algorithm='LP')               # needs sage.numerical.mip
         109226
 
     TESTS:
@@ -271,7 +266,7 @@ def codesize_upper_bound(n, d, q, algorithm=None):
 
         sage: codes.bounds.codesize_upper_bound(19, 10, 2)
         20
-        sage: codes.bounds.codesize_upper_bound(19, 10, 2, algorithm="gap")     # optional - gap_package_guava
+        sage: codes.bounds.codesize_upper_bound(19, 10, 2, algorithm='gap')            # optional - gap_package_guava
         20
 
     Meaningless parameters are rejected::
@@ -283,7 +278,7 @@ def codesize_upper_bound(n, d, q, algorithm=None):
     """
     _check_n_q_d(n, q, d, field_based=False)
     if algorithm == "gap":
-        GapPackage("guava", spkg="gap_packages").require()
+        GapPackage("guava", spkg='gap_packages').require()
         libgap.load_package('guava')
         return int(libgap.UpperBound(n, d, q))
     if algorithm == "LP":
@@ -313,7 +308,7 @@ def dimension_upper_bound(n, d, q, algorithm=None):
         6
         sage: codes.bounds.dimension_upper_bound(30,15,4)                               # needs sage.libs.pari sage.symbolic
         13
-        sage: codes.bounds.dimension_upper_bound(30,15,4,algorithm="LP")                # needs sage.libs.pari sage.numerical.mip
+        sage: codes.bounds.dimension_upper_bound(30,15,4,algorithm='LP')                # needs sage.libs.pari sage.numerical.mip
         12
 
     TESTS:
@@ -365,6 +360,7 @@ def gilbert_lower_bound(n, q, d):
     ans = q**n/volume_hamming(n,q,d-1)
     return ans
 
+
 def plotkin_upper_bound(n,q,d, algorithm=None):
     r"""
     Return the Plotkin upper bound.
@@ -380,12 +376,12 @@ def plotkin_upper_bound(n,q,d, algorithm=None):
 
         sage: codes.bounds.plotkin_upper_bound(10,2,3)
         192
-        sage: codes.bounds.plotkin_upper_bound(10,2,3,algorithm="gap")  # optional - gap_package_guava
+        sage: codes.bounds.plotkin_upper_bound(10,2,3,algorithm='gap')  # optional - gap_package_guava
         192
     """
     _check_n_q_d(n, q, d, field_based=False)
     if algorithm == "gap":
-        GapPackage("guava", spkg="gap_packages").require()
+        GapPackage("guava", spkg='gap_packages').require()
         libgap.load_package("guava")
         return QQ(libgap.UpperBoundPlotkin(n, d, q))
     else:
@@ -403,6 +399,7 @@ def plotkin_upper_bound(n,q,d, algorithm=None):
                 fact = int(fact) + 1
             return int(d/( d - t * fact)) * q**(n - fact)
 
+
 def griesmer_upper_bound(n,q,d,algorithm=None):
     r"""
     Return the Griesmer upper bound.
@@ -417,7 +414,6 @@ def griesmer_upper_bound(n,q,d,algorithm=None):
 
         `n\geq \sum_{i=0}^{k-1} \lceil d/q^i \rceil.`
 
-
     EXAMPLES:
 
     The bound is reached for the ternary Golay codes::
@@ -431,7 +427,7 @@ def griesmer_upper_bound(n,q,d,algorithm=None):
 
         sage: codes.bounds.griesmer_upper_bound(10,2,3)                                 # needs sage.libs.pari
         128
-        sage: codes.bounds.griesmer_upper_bound(10,2,3,algorithm="gap")         # optional - gap_package_guava, needs sage.libs.pari
+        sage: codes.bounds.griesmer_upper_bound(10,2,3,algorithm='gap')                 # optional - gap_package_guava, needs sage.libs.pari
         128
 
     TESTS::
@@ -443,7 +439,7 @@ def griesmer_upper_bound(n,q,d,algorithm=None):
     """
     _check_n_q_d(n, q, d)
     if algorithm == "gap":
-        GapPackage("guava", spkg="gap_packages").require()
+        GapPackage("guava", spkg='gap_packages').require()
         libgap.load_package("guava")
         return QQ(libgap.UpperBoundGriesmer(n, d, q))
     else:
@@ -472,13 +468,13 @@ def elias_upper_bound(n,q,d,algorithm=None):
 
         sage: codes.bounds.elias_upper_bound(10,2,3)
         232
-        sage: codes.bounds.elias_upper_bound(10,2,3,algorithm="gap")  # optional - gap_package_guava
+        sage: codes.bounds.elias_upper_bound(10,2,3,algorithm='gap')  # optional - gap_package_guava
         232
     """
     _check_n_q_d(n, q, d, field_based=False)
     r = 1-1/q
     if algorithm == "gap":
-        GapPackage("guava", spkg="gap_packages").require()
+        GapPackage("guava", spkg='gap_packages').require()
         libgap.load_package("guava")
         return QQ(libgap.UpperBoundElias(n, d, q))
     else:
@@ -577,10 +573,10 @@ def entropy(x, q=2):
 
     INPUT:
 
-    - ``x`` -- real number in the interval `[0, 1]`.
+    - ``x`` -- real number in the interval `[0, 1]`
 
-    - ``q`` -- (default: 2) integer greater than 1. This is the base of the
-      logarithm.
+    - ``q`` -- (default: 2) integer greater than 1; this is the base of the
+      logarithm
 
     EXAMPLES::
 
@@ -622,10 +618,10 @@ def entropy_inverse(x, q=2):
 
     INPUT:
 
-    - ``x`` -- real number in the interval `[0, 1]`.
+    - ``x`` -- real number in the interval `[0, 1]`
 
-    - ``q`` -- (default: 2) integer greater than 1. This is the base of the
-      logarithm.
+    - ``q`` -- (default: 2) integer greater than 1; this is the base of the
+      logarithm
 
     OUTPUT:
 
@@ -741,7 +737,7 @@ def elias_bound_asymp(delta, q):
         0.39912396330...
     """
     r = 1 - 1 / q
-    return RDF((1-entropy(r-sqrt(r*(r-delta)), q)))
+    return RDF(1-entropy(r-sqrt(r*(r-delta)), q))
 
 
 def mrrw1_bound_asymp(delta, q):
