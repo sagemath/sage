@@ -32,11 +32,6 @@ AUTHORS:
     - ``delete_edge()`` | Delete the edge from ``u`` to ``v``.
     - ``delete_edges()`` | Delete edges from an iterable container.
 
-    Barriers and canonical partition:
-
-    - ``canonical_partition()`` | Return the canonical partition of the
-      (matching covered) graph.
-
     Bricks, braces and tight cut decomposition:
 
     - ``bricks_and_braces()`` | Return the list of (underlying simple graph of)
