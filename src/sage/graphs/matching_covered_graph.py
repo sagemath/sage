@@ -1664,11 +1664,11 @@ class MatchingCoveredGraph(Graph):
             ...
             ValueError: odd order is not allowed for matching covered graphs
         """
-        if in_order:
-            vertex = self.vertices(sort=True)[vertex]
-
         if vertex not in self:
             raise ValueError('vertex (%s) not in the graph' % str(vertex))
+
+        if in_order:
+            vertex = self.vertices(sort=True)[vertex]
 
         raise ValueError('odd order is not allowed for '
                          'matching covered graphs')
