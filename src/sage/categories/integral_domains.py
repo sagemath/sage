@@ -4,7 +4,7 @@ Integral domains
 
 TEST:
 
-A few doctest for the method ``is_integrally_closed``::
+A few tests for the method ``is_integrally_closed``::
 
     sage: ZZ.is_integrally_closed()
     True
@@ -19,7 +19,7 @@ A few doctest for the method ``is_integrally_closed``::
     sage: Z5.is_integrally_closed()
     False
 
-Note that this returns ``False`` is the answer is not known.
+Note that this returns ``False`` if the answer is not known.
 """
 # ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
