@@ -1550,7 +1550,7 @@ class MatchingCoveredGraph(Graph):
 
         Note that in a matching covered graph, each vertex belongs to a unique
         maximal barrier. The maximal barriers of a matching covered graph
-        partitons its vertex set and the partition of the vertex set of a
+        partitions its vertex set and the partition of the vertex set of a
         matching covered graph into its maximal barriers is called as its
         *canonical* *partition*.
 
