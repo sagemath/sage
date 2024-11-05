@@ -137,6 +137,20 @@ class ChowRing(QuotientRing_generic):
             base += "^*"
         return base.format(latex(self._matroid), latex(self.base_ring()))
 
+    def matroid(self):
+        r"""
+        Return the matroid of ``self``.
+
+        EXAMPLES::
+
+            sage: ch = matroids.Uniform(3,6).chow_ring(QQ, True, 'fy')
+            sage: ch.matroid()
+            U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
+            {3: {{0, 1, 2, 3, 4, 5}}}
+        """
+        M = self._matroid
+        return M
+
     def _coerce_map_from_base_ring(self):
         r"""
         Disable the coercion from the base ring from the category.

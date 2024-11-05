@@ -155,8 +155,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
              Ag + Aadg + Abeg + Acfg + Aabcdefg]
         """
         flats = list(self._flats_generator)
-        reln = lambda x,y: x <= y
-        lattice_flats = Poset((flats, reln))
+        lattice_flats = Poset((flats, lambda x, y: x <= y))
         I = []
         subsets = lattice_flats.antichains().elements_of_depth_iterator(2)
         for subset in subsets:
@@ -231,11 +230,10 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             return super().groebner_basis(algorithm=algorithm, *args, **kwargs)
         flats = sorted(list(self._flats_generator), key=len)
         ranks = {F: self._matroid.rank(F) for F in flats}
-        gb = list()
+        gb = []
         R = self.ring()
-        reln = lambda x,y: x <= y
         flats_gen = self._flats_generator
-        lattice_flats = Poset((flats, reln))
+        lattice_flats = Poset((flats, lambda x, y: x <= y))
         antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
         for subset in antichains:  # Taking antichains of size 2
             term = R.one()
@@ -447,8 +445,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         E = list(self._matroid.groundset())
         Q = []
         L = []
-        reln = lambda x, y: x <= y
-        lattice_flats = Poset((self._flats, reln))
+        lattice_flats = Poset((self._flats, lambda x, y: x <= y))
         antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
         for F, G in antichains:
             Q.append(self._flats_generator[F] * self._flats_generator[G])  # Quadratic generators
@@ -735,8 +732,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             return super().groebner_basis(algorithm=algorithm, *args, **kwargs)
         gb = []
         poly_ring = self.ring()
-        reln = lambda x,y: x <= y
-        lattice_flats = Poset((self._flats, reln))
+        lattice_flats = Poset((self._flats, lambda x, y: x <= y))
         antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
         for F, G in antichains:
             gb.append(self._flats_generator[F]*self._flats_generator[G])
