@@ -1260,8 +1260,13 @@ class MatchingCoveredGraph(Graph):
 
             sage: H = graphs.HexahedralGraph()
             sage: G = MatchingCoveredGraph(H)
-            sage: F = {(0, 5), (2, 7)}
+            sage: F = [(3, 8), (6, 9), (8, 9)]
             sage: G.add_edges(F)
+            Traceback (most recent call last):
+            ...
+            ValueError: the resulting graph after the addition ofthe edges is not matching covered
+            sage: I = [(0, 8), (1, 9)]
+            sage: G.add_edges(I)
             Traceback (most recent call last):
             ...
             ValueError: the resulting graph after the addition ofthe edges is not matching covered
