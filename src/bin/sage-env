@@ -373,32 +373,6 @@ if [ -n "$SAGE_LOCAL" ]; then
     # Construct and export LDFLAGS
     if [ "$UNAME" = "Darwin" ]; then
        LDFLAGS="-L$SAGE_LOCAL/lib $LDFLAGS"
-       # On OS X, use the old linker if it is available.
-       # if "ld-classic" is present in the selected XCode
-       # toolchain, add "-Wl,-ld_classic" to LDFLAGS (see #36599) unless
-       # LD is already set, as it will be with conda on macOS.  When the
-       # selected toolchain is in the Xcode app the output of "xcode-select -p"
-       # is "/Applications/Xcode.app/Contents/Developer", but "ld-classic" is
-       # not in the subdirectory "usr/bin/" but rather in the subdirectory
-       # "Toolchains/XcodeDefault.xctoolchain/usr/bin/".  (See #37237.)
-       if [ -z "$LD" ]; then
-	   # Running xcode-select on a system with no toolchain writes an
-	   # error message to stderr, so redirect stderr to /dev/null. 
-	   XCODE_PATH=$(/usr/bin/xcode-select -p 2> /dev/null)
-	   if [ -n $XCODE_PATH ]; then
-               if [ -x "$XCODE_PATH/usr/bin/ld-classic" -o \
-		       -x "$XCODE_PATH/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld-classic" ]; then
-		   LDFLAGS="$LDFLAGS -Wl,-ld_classic"
-               fi
-           else
-               # On a macOS system with no toolchain we don't want this script
-               # to call gcc because that will also print an error message to
-               # stderr.  We can avoid this by setting AS and LD to their
-               # default values.
-               AS=as
-               LD=ld
-	   fi
-       fi
     fi
     if [ "$UNAME" = "Linux" ]; then
 	LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
