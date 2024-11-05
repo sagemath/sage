@@ -195,7 +195,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             sage: M1 = Matroid(groundset='abcd', bases=['ab','ad', 'bc'])
             sage: ch = M1.chow_ring(QQ, False)
             sage: ch.defining_ideal()._latex_()
-            I_{M} + J_{M} of matroid \text{\texttt{Matroid{ }of{ }rank{ }2{ }on{ }4{ }elements{ }with{ }3{ }bases}}
+            '(I_{\\text{\\texttt{Matroid{ }of{ }rank{ }2{ }on{ }4{ }elements{ }with{ }3{ }bases}}} + J_{\\text{\\texttt{Matroid{ }of{ }rank{ }2{ }on{ }4{ }elements{ }with{ }3{ }bases}}}'
         """
         from sage.misc.latex import latex
         return '(I_{{{M}}} + J_{{{M}}}'.format(M=latex(self._matroid))
