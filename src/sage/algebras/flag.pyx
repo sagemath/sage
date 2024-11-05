@@ -37,155 +37,6 @@ Perhaps do that in combi theory? And know that flags defined here are correct?
 r"""
 Implementation of Flag, elements of :class:`CombinatorialTheory`
 
-Cython class for flags and types. Types will be called ftype 
-(short for flag type, to distinguish from the type keyword in python)
-They are elements of :class:`CombinatorialTheory`. They also behave as
-basis elements for :class:`FlagAlgebra`, hence basic operations
-like addition and multiplication are defined.
-
-
-The class :class:`CombinatorialTheory` acts as a parent for flag elements.
-Its members are theories, they come with signature, ways to generate 
-elements, ways to check if they are equal. This example uses the 
-GraphTheory object. To find out more about combinatorial theories,
-other pre-implemented members, and how to solve problems inside them
-using flag algebras, see the documentation of 
-:mod:`sage.algebras.flag_algebras`. This file is about flags mainly.
-
-Formally, for a given theory $T$, and two models $M, N$,
-with model embedding of $M$ in $N$, $\Theta: M \rightarrow N$, the pair 
-$F = (N, \Theta)$ is a flag, with type $M$. The size of the model is 
-the number of elements in it. Here, the elements of each model form
-initial segments of the naturals, therefore a model on 3 elements must
-have elements `range(3)`. The relations in the theory are
-list of lists from the elements. For example in the theory of graphs,
-there is only one relational symbol, the edge. This allows to specify 
-a triangle with the edge list `[[0, 1], [0, 2], [1, 2]]`. As combinatorial
-theories are closed under sub-models, any subset of ${0, 1, 2}$ induces a
-sub-model. For example, the subset $1$ induces the empty graph with $1$ 
-vertex. The embedding of this empty graph into the triangle therefore forms
-a flag. Notice that the collection of flags $(N, \emptyset)$ is isomorphic
-to the models of $T$. In this code they are identified, so elements of $T$
-are simply flags with empty type. Furthermore, to distinguish types from 
-models (and to simplify calculations), the types are identified with flags 
-using the identity embedding $(M, id)$.
-
-
-The examples will use `GraphTheory`
-
-    sage: from sage.algebras.flag_algebras import GraphTheory
-
-To create flags from a theory we can call for example ::
-    
-    sage: g = GraphTheory(3, edges=[[0, 1]])
-
-This creates a graph on `3` vertices (equal to `[0, 1, 2]`), 
-and it defines the single edge `[0, 1]`. The result is a Flag
-`g`. The ftype is a collection of marked vertices (a constant in the theory). 
-For example, we can define the same graph but mark one vertex ::
-    
-    sage: g0 = GraphTheory(3, edges=[[0, 1]], ftype=[0])
-    sage: g1 = GraphTheory(3, edges=[[0, 1]], ftype=[1])
-    sage: g2 = GraphTheory(3, edges=[[0, 1]], ftype=[2])
-
-Note that marking `2` defines a different flag than the other two since the
-only nontrivial automorphism of the graph is the [0, 1] pair transposition ::
-    
-    sage: g0==g2
-    False
-    sage: g0==g1
-    True
-
-On flags we can do various computations. For example we can define an edge ::
-
-    sage: e = GraphTheory(2, edges=[[0, 1]])
-
-And calculate the sum of the two elements resulting in a 
-FlagAlgebraElement ::
-
-    sage: e+g
-    Flag Algebra Element over Rational Field
-    0   - Flag on 3 points, ftype from [] with edges=[]
-    4/3 - Flag on 3 points, ftype from [] with edges=[[0, 2]]
-    2/3 - Flag on 3 points, ftype from [] with edges=[[0, 2], [1, 2]]
-    1   - Flag on 3 points, ftype from [] with edges=[[0, 1], [0, 2], [1, 2]]
-
-We can also calculate the product of the elements ::
-    
-    sage: e*g
-    Flag Algebra Element over Rational Field
-    1/5  - Flag on 5 points, ftype from [] with edges=[[0, 3], [1, 4]]
-    ...
-    3/10 - Flag on 5 points, ftype from [] with edges=[[0, 2], [0, 3], [0, 4], [1, 4], [2, 3], [2, 4], [3, 4]]
-    1/10 - Flag on 5 points, ftype from [] with edges=[[0, 2], [0, 3], [0, 4], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]
-
-In order to add or multiply elements, it is required to have the same ftype
-and the result will have the same ftype. In the examples above 
-`e, g, e+g, e*g` all have the same empty ftype. It is the default ftype when 
-nothing is provided. `g0, g1, g2` have the same point
-ftype ::
-    
-    sage: g.ftype()
-    Ftype on 0 points with edges=[]
-    sage: g1.ftype()
-    Ftype on 1 points with edges=[]
-
-This implementation defines ftypes as flags. The only distinction is that
-an ftype has all it's points part of the ftype, while flags have points
-outside the ftype.
-
-To change between ftypes, one can project the flag to a smaller ftype. 
-A projection is defined by an injective map from a smaller ftype into a larger
-one. For example we can define the following flag with a largeish ftype ::
-
-    sage: gg = GraphTheory(5, edges=[[0, 1], [2, 3]], ftype=[0, 2, 3, 4])
-    sage: gg
-    Flag on 5 points, ftype from [0, 2, 3, 4] with edges=[[0, 1], [2, 3]]
-    sage: gg.ftype()
-    Ftype on 4 points with edges=[[1, 2]]
-    
-The injection is simply a list of the smaller ftype's points inside
-the larger ftype's points. For example picking `[0, 1, 2]` as the
-injection, would result in an ftype on `[0, 2, 3]` points with the same 
-edge `[2, 3]` which after renaming to `[0, 1, 2]` would be `[1, 2]`::
-    
-    sage: gg.project([0, 1, 2])
-    Flag Algebra Element over Rational Field
-    1/2 - Flag on 5 points, ftype from [0, 1, 4] with edges=[[0, 3], [1, 4]]
-    sage: gg.project([0, 1, 2]).ftype()
-    Ftype on 3 points with edges=[[1, 2]]
-    
-The result is normalized, but note that it is isomorphic to the one claimed
-before. Three points `[0, 1, 4]` and one edge between, `[1, 4]`. If nothing
-is provided then the flag is projected to the empty ftype ::
-    
-    sage: gg.project()
-    Flag Algebra Element over Rational Field
-    1/15 - Flag on 5 points, ftype from [] with edges=[[0, 3], [1, 4]]
-
-For a little extra speed, multiplication and then projection is implemented::
-    
-    sage: gp = GraphTheory(2, ftype=[0])
-    sage: (gp*gp).project()
-    Flag Algebra Element over Rational Field
-    1   - Flag on 3 points, ftype from [] with edges=[]
-    1/3 - Flag on 3 points, ftype from [] with edges=[[0, 2]]
-    0   - Flag on 3 points, ftype from [] with edges=[[0, 2], [1, 2]]
-    0   - Flag on 3 points, ftype from [] with edges=[[0, 1], [0, 2], [1, 2]]
-    sage: gp.mul_project(gp) == (gp*gp).project()
-    True
-
-.. SEEALSO::
-    :func:`Flag.__init__`
-    :func:`Flag.ftype`
-    :func:`Flag._add_`
-    :func:`Flag._mul_`
-    :func:`Flag.project`
-    :func:`Flag.mul_project`
-    :class:`CombinatorialTheory`
-    :class:`FlagAlgebra`
-    :class:`FlagAlgebraElement`
-
 AUTHORS:
 
 - Levente Bodnar (Dec 2023): Initial version
@@ -206,91 +57,61 @@ import itertools
 from sage.rings.rational_field import QQ
 from cysignals.signals cimport sig_check
 from sage.structure.element cimport Element
+from sage.graphs.bliss cimport canonical_form_from_edge_list
 
-cpdef _subblock_helper(list points, list block):
-    r"""
-    Helper to find induced substructures
-    
-    TESTS::
-
-        sage: _subblock_helper([0, 1, 2], [[0, 1, 2], [2, 4], [1, 1, 2]])
-        [[0, 1, 2], [1, 1, 2]]
-    """
-    cdef bint gd = 0
-    ret = []
+cdef list _subblock_helper(list points, list block):
+    cdef bint gd = False
+    cdef list ret = []
     if len(block)==0:
         return ret
     for xx in block:
-        gd = 1
+        gd = True
         for yy in xx:
             if yy not in points:
-                gd = 0
+                gd = False
                 break
         if gd:
+            cdef int ii
             ret.append([points.index(ii) for ii in xx])
     return ret
 
-cpdef _block_compare(list block0, list allowed0, list block1, list allowed1):
-    for xx in allowed1:
-        if xx not in allowed0:
-            return False
-    symdiff = [xx for xx in block0 if xx not in block1] + [xx for xx in block1 if xx not in block0]
-    for xx in symdiff:
-        if xx not in allowed0:
+cdef bint _block_consistency(list block, list missing):
+    for xx in block:
+        if xx in missing:
             return False
     return True
+
+cdef bint _block_refinement(list block0, list missing0, list block1, list missing1):
+    for xx in block0:
+        if xx not in block1:
+            return False
+    for yy in block1:
+        if yy in missing0:
+            return False
+    for zz in missing0:
+        if zz not in missing1:
+            return False
+    return True
+
+cdef list _format_block(list block, bint ordered):
+    if ordered:
+        return sorted([tuple(sorted(xx)) for xx in block])
+    else:
+        return sorted([tuple(xx) for xx in block])
 
 cdef class Flag(Element):
     
     cdef int _n
     cdef int _ftype_size
     
-    cdef list _ftype_points
-    cdef list _not_ftype_points
+    cdef tuple _ftype_points
+    cdef tuple _not_ftype_points
     cdef dict _blocks
     cdef tuple _unique
     
     cdef Flag _ftype
     
     def __init__(self, theory, n, **params):
-        r"""
-        Initialize a :class:`Flag` element
-
-        INPUT:
-
-        - ``theory`` -- :class:`CombinatorialTheory`; the underlying theory, 
-            which is also the parent
-        - ``n`` -- integer; the size (number of vertices) of the flag
-        - ``**params`` -- optional parameters; can contain the points of the
-            ftype as a list of points under the name "ftype" of "ftype_points", 
-            if not provided then empty ftype is assumed. Can also contain the 
-            blocks for each element in the signature, if not provided then an 
-            empty block set is assumed.
-
-        OUTPUT: The resulting flag
-
-        EXAMPLES::
-
-        Create a simple GraphTheory triangle ::
-            
-            sage: from sage.algebras.flag_algebras import *
-            sage: from sage.algebras.flag import Flag
-            sage: Flag(GraphTheory, 3, edges=[[0, 1], [0, 2], [1, 2]])
-            Flag on 3 points, ftype from [] with edges=[[0, 1], [0, 2], [1, 2]]
-        
-        Create a DiGraphTheory edge out from a pointed ftype ::
-
-            sage: Flag(DiGraphTheory, 2, edges=[[0, 1]], ftype=[0])
-            Flag on 2 points, ftype from [0] with edges=[[0, 1]]
-        
-        .. NOTE::
-
-            It is recommended to create flags using the parent's element constructor
-
-        .. SEEALSO::
-
-            :func:`CombinatorialTheory._element_constructor_`
-        """
         self._n = int(n)
         
         if 'ftype_points' in params:
@@ -298,41 +119,22 @@ cdef class Flag(Element):
         elif 'ftype' in params:
             ftype_points = params['ftype']
         else:
-            ftype_points = []
+            ftype_points = tuple()
         
         self._ftype_size = len(ftype_points)
-        self._ftype_points = list(ftype_points)
+        self._ftype_points = tuple(ftype_points)
         self._not_ftype_points = None
         self._blocks = {}
         for xx in theory._signature.keys():
             if xx in params:
-                self._blocks[xx] = tuple([tuple(yy) for yy in params[xx]])
+                self._blocks[xx] = [tuple(yy) for yy in params[xx]]
             else:
-                self._blocks[xx] = tuple()
-        self._unique = ()
+                self._blocks[xx] = list()
+        self._unique = None
         self._ftype = None
         Element.__init__(self, theory)
     
     def _repr_(self):
-        r"""
-        Return a nice representation.
-        
-        If it is an ftype (all the points are part of the ftype), then
-        the text changes to indicate this fact.
-
-        EXAMPLES::
-
-        For flags ::
-
-            sage: from sage.algebras.flag_algebras import *
-            sage: GraphTheory(3) 
-            Flag on 3 points, ftype from [] with edges=[]
-            
-        For ftypes ::
-        
-            sage: ThreeGraphTheory(4, ftype_points=[0, 1, 2, 3], edges=[[0, 1, 2]])
-            Ftype on 4 points with edges=[[0, 1, 2]]
-        """
         blocks = self.blocks()
         strblocks = ', '.join([xx+'='+str(blocks[xx]) for xx in blocks.keys()])
         if self.is_ftype():
@@ -353,21 +155,8 @@ cdef class Flag(Element):
                 desc += ",".join(["".join(map(str, ed)) for ed in blocks[name]])
             ret.append(desc)
         return "; ".join(ret)
-            
     
     def raw_numbers(self):
-        r"""
-        Return a list of numbers uniquely describing this flag.
-        
-        This is used in saving and loading calculations
-
-        EXAMPLES::
-
-            sage: from sage.algebras.flag_algebras import *
-            sage: GraphTheory(2, edges=[[0, 1]], ftype=[0]).raw_numbers()
-            [2, 0, 15, 0, 1, 15]
-            
-        """
         numbers = [self.size()] + self.ftype_points() + [15]
         blocks = self.blocks()
         for xx in blocks:
@@ -375,61 +164,6 @@ cdef class Flag(Element):
                 numbers += yy
             numbers.append(15)
         return numbers
-    
-    cpdef subflag(self, points=None, ftype_points=None):
-        r"""
-        Returns the induced subflag.
-        
-        The resulting sublaf contains the union of points and ftype_points
-        and has ftype constructed from ftype_points. 
-
-        INPUT:
-
-        - ``points`` -- list (default: `None`); the points inducing the subflag.
-            If not provided (or `None`) then this is the entire vertex set, so
-            only the ftype changes
-        - ``ftype_points`` list (default: `None`); the points inducing the ftype
-            of the subflag. If not provided (or `None`) then the original ftype
-            point set is used, so the result of the ftype will be the same
-
-        OUTPUT: The induced sub Flag
-
-        EXAMPLES::
-
-        Same ftype ::
-
-            sage: from sage.algebras.flag_algebras import *
-            sage: g = GraphTheory(3, edges=[[0, 1]], ftype=[0])
-            sage: g.subflag([0, 2])
-            Flag on 2 points, ftype from [0] with edges=[]
-            
-        Only change ftype ::
-            
-            sage: g.subflag(ftype_points=[0, 1])
-            Flag on 3 points, ftype from [0, 1] with edges=[[0, 1]]
-
-        .. NOTE::
-
-            As the ftype points can be chosen, the result can have different
-            ftype as self.
-
-        TESTS::
-
-            sage: g.subflag()==g
-            True
-        """
-        if ftype_points==None:
-            ftype_points = self._ftype_points
-        
-        if points==None:
-            points = list(range(self._n))
-        else:
-            points = [ii for ii in range(self._n) if (ii in points or ii in ftype_points)]
-        if len(points)==self._n and ftype_points==self._ftype_points:
-            return self
-        blocks = {xx: _subblock_helper(points, self._blocks[xx]) for xx in self._blocks.keys()}
-        new_ftype_points = [points.index(ii) for ii in ftype_points]
-        return self.__class__(self.parent(), len(points), ftype=new_ftype_points, **blocks)
     
     def combinatorial_theory(self):
         r"""
@@ -496,8 +230,8 @@ cdef class Flag(Element):
         return self._n
     
     vertex_number = size
-    
-    cpdef blocks(self, as_tuple=False, key=None):
+
+    cpdef blocks(self, as_tuple=False, key=None, standard=False):
         r"""
         Returns the blocks
 
@@ -509,18 +243,120 @@ cdef class Flag(Element):
         OUTPUT: A dictionary, one entry for each element in the signature
             and list (or tuple) of the blocks for that signature.
         """
-        if as_tuple:
-            if key != None:
-                return tuple([tuple(yy) for yy in self._blocks[key]])
+        if key==None:
+            if not standard and not as_tuple:
+                return self._blocks
             ret = {}
-            for xx in self._blocks:
-                ret[xx] = tuple([tuple(yy) for yy in self._blocks[xx]])
+            for key in self._blocks:
+                if standard:
+                    bl = _format_block(self._blocks[key], self.theory().signature()[key]["ordered"])
+                else:
+                    bl = [tuple(xx) for xx in self._blocks[key]]
+                if as_tuple:
+                    ret[key] = tuple(bl)
+                else:
+                    ret[key] = bl
             return ret
-        if key!=None:
-            return self._blocks[key]
-        return self._blocks
+        else:
+            ret = None
+            if standard:
+                ret = _format_block(self._blocks[key], self.theory().signature()[key]["ordered"])
+            else:
+                ret = self._blocks[key]
+            if as_tuple:
+                return tuple(ret)
+            else:
+                return ret
+
+    cpdef Flag subflag(self, points=None, ftype_points=None):
+        r"""
+        Returns the induced subflag.
+        
+        The resulting sublaf contains the union of points and ftype_points
+        and has ftype constructed from ftype_points. 
+
+        INPUT:
+
+        - ``points`` -- list (default: `None`); the points inducing the subflag.
+            If not provided (or `None`) then this is the entire vertex set, so
+            only the ftype changes
+        - ``ftype_points`` list (default: `None`); the points inducing the ftype
+            of the subflag. If not provided (or `None`) then the original ftype
+            point set is used, so the result of the ftype will be the same
+
+        OUTPUT: The induced sub Flag
+
+        EXAMPLES::
+
+        Same ftype ::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: g = GraphTheory(3, edges=[[0, 1]], ftype=[0])
+            sage: g.subflag([0, 2])
+            Flag on 2 points, ftype from [0] with edges=[]
+            
+        Only change ftype ::
+            
+            sage: g.subflag(ftype_points=[0, 1])
+            Flag on 3 points, ftype from [0, 1] with edges=[[0, 1]]
+
+        .. NOTE::
+
+            As the ftype points can be chosen, the result can have different
+            ftype as self.
+
+        TESTS::
+
+            sage: g.subflag()==g
+            True
+        """
+        cdef int ii
+        if ftype_points==None:
+            ftype_points = self._ftype_points
+        
+        if points==None:
+            points = list(range(self._n))
+        else:
+            points = [ii for ii in range(self._n) if (ii in points or ii in ftype_points)]
+        if len(points)==self._n and ftype_points==self._ftype_points:
+            return self
+        blocks = {xx: _subblock_helper(points, self._blocks[xx]) for xx in self._blocks.keys()}
+        new_ftype_points = [points.index(ii) for ii in ftype_points]
+        return self.__class__(self.parent(), len(points), ftype=new_ftype_points, **blocks)
     
-    cpdef ftype(self):
+    cpdef tuple ftype_points(self):
+        r"""
+        The points of the ftype inside self.
+        
+        This gives an injection of ftype into self
+
+        OUTPUT: list of integers
+
+        EXAMPLES::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: two_pointed_triangle = GraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]], ftype=[0, 1])
+            sage: two_pointed_triangle.ftype_points()
+            [0, 1]
+
+        .. SEEALSO::
+
+            :func:`__init__`
+        """
+        return self._ftype_points
+
+    cpdef tuple not_ftype_points(self):
+        r"""
+        This is a helper function, caches the points that are not
+        part of the ftype.
+        """
+        if self._not_ftype_points != None:
+            return self._not_ftype_points
+        cdef int ii
+        self._not_ftype_points = tuple([ii for ii in range(self.size()) if ii not in self._ftype_points])
+        return self._not_ftype_points
+
+    cpdef Flag ftype(self):
         r"""
         Returns the ftype of this `Flag`
 
@@ -554,73 +390,7 @@ cdef class Flag(Element):
             self._ftype = self.subflag([])
         return self._ftype
     
-    cpdef ftype_points(self):
-        r"""
-        The points of the ftype inside self.
-        
-        This gives an injection of ftype into self
-
-        OUTPUT: list of integers
-
-        EXAMPLES::
-
-            sage: from sage.algebras.flag_algebras import *
-            sage: two_pointed_triangle = GraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]], ftype=[0, 1])
-            sage: two_pointed_triangle.ftype_points()
-            [0, 1]
-
-        .. SEEALSO::
-
-            :func:`__init__`
-        """
-        return self._ftype_points
-    
-    cpdef not_ftype_points(self):
-        r"""
-        This is a helper function, caches the points that are not
-        part of the ftype.
-        """
-        if self._not_ftype_points != None:
-            return self._not_ftype_points
-        self._not_ftype_points = [ii for ii in range(self.size()) if ii not in self._ftype_points]
-        return self._not_ftype_points
-    
-    def unique(self, weak=False):
-        r"""
-        This returns a unique identifier that can equate isomorphic
-        objects
-
-        EXAMPLES::
-
-        Isomorphic graphs have the same :func:`unique` value ::
-
-            sage: from sage.algebras.flag_algebras import *
-            sage: b1 = [[0, 1], [0, 2], [0, 4], [1, 3], [2, 4]]
-            sage: b2 = [[0, 4], [1, 2], [1, 3], [2, 3], [3, 4]]
-            sage: g1 = GraphTheory(5, edges=b1)
-            sage: g2 = GraphTheory(5, edges=b2)
-            sage: g1.unique() == g2.unique()
-            True
-            
-        .. NOTE::
-
-            The value returned here depends on the values of
-            the parent `CombinatorialTheory`
-
-        .. SEEALSO::
-
-            :func:`theory`
-            :func:`CombinatorialTheory.identify`
-            :func:`__eq__`
-        """
-        if weak:
-            return self.theory().identify(self._n, [self._ftype_points], **self._blocks)
-        if self._unique==():
-            self._unique = self.theory().identify(
-                self._n, self._ftype_points, **self._blocks)
-        return self._unique
-    
-    cpdef is_ftype(self):
+    cpdef bint is_ftype(self):
         r"""
         Returns `True` if this flag is an ftype.
 
@@ -629,6 +399,155 @@ cdef class Flag(Element):
             :func:`_repr_`
         """
         return self._n == self._ftype_size
+    
+    def canonical_relabel(self):
+        cdef dict blocks = self._blocks
+        cdef int next_vertex = self._n
+        cdef dict signature = self.theory().signature()
+
+        #Data for relations
+        cdef dict rel_info
+        cdef str rel_name
+        cdef int group
+        cdef bint ordered
+
+        #
+        #Creating lookup tables for the vertices/groups
+        #
+        cdef dict unary_relation_vertices = {}
+        cdef dict tuple_vertices = {}
+        cdef dict group_vertices = {}
+        cdef set groups = {}
+        for rel_name in signature:
+            rel_info = signature[rel_name]
+            arity = rel_info['arity']
+            group = rel_info['group']
+
+            #Layer 1 vertices for the relations
+            if arity == 1:
+                unary_relation_vertices[rel_name] = next_vertex
+                next_vertex += 1
+            else:
+                occurrences = blocks[rel_name]
+                tuple_vertices[rel_name] = {}
+                for t in occurrences:
+                    tuple_vertices[rel_name][t] = next_vertex
+                    next_vertex += 1
+            
+            #Creating groups
+            if group not in groups:
+                groups[group] = [rel_name]
+            else:
+                groups[group].append(rel_name)
+            #Layer 2 vertices
+            group_vertices[rel_name] = next_vertex
+            next_vertex += 1
+
+        #Creating the partition, first the vertices from layer 0
+        cdef list partition = [list(range(self._n))]
+        for group in groups:
+            #Layer 2 partition
+            partition.append([group_vertices[rel_name] for rel_name in group])
+
+            #Layer 1 partition
+            cdef list group_relation_vertices = []
+            for rel_name in groups[group]:
+                if rel_name in unary_relation_vertices:
+                    group_relation_vertices.append(unary_relation_vertices[rel_name])
+                else:
+                    group_relation_vertices += list(tuple_vertices[rel_name].values())
+            partition.append(group_relation_vertices)
+
+        # Build the edge lists
+        cdef list Vout = []
+        cdef list Vin = []
+        cdef list labels = []
+        cdef int max_edge_label = 0
+        cdef tuple t
+        cdef list conns
+
+        
+        for rel_name in unary_relation_vertices:
+            #This will find connections to unary_relation_vertices[rel_name] in Layer 1
+
+            #From layer 0
+            conns = [t[0] for t in blocks[rel_name]]
+            #From layer 2
+            conns.append(group_vertices[rel_name])
+            Vout += conns
+            Vin += [unary_relation_vertices[rel_name]] * len(conns)
+
+        for rel_name in tuple_vertices:
+            #Same but for every element in unary_relation_vertices[rel_name]
+            rel_info = signature[rel_name]
+            ordered = rel_info['ordered']
+            arity = rel_info['arity']
+
+            #If this is the first time we realize things must be ordered
+            if ordered:
+                if max_edge_label==0:
+                    labels = [0]*len(Vin)
+                max_edge_label = max(max_edge_label, arity+2)
+            
+            for block in tuple_vertices[rel_name]:
+                conns = [group_vertices[rel_name]] + list(block)
+                Vout += conns
+                Vin += [tuple_vertices[rel_name][block]] * len(conns)
+                if ordered:
+                    labels += list(range(1, len(conns)+1))
+                elif max_edge_label>0:
+                    labels += [0] * len(conns)
+
+        
+        cdef int Vnr = next_vertex
+        cdef int Lnr = max_edge_label
+        
+        cdef tuple result = canonical_form_from_edge_list(\
+        Vnr, Vout, Vin, Lnr, labels, partition, False, True)
+        #new edges is good for a unique identifier
+        cdef tuple new_edges = tuple(result[0])
+        cdef dict relabel = result[1]
+        relabel = {i: relabel[i] for i in range(n)}
+        return new_edges, relabel
+
+    cdef tuple unique(self, weak=False):
+        cdef list parts = []
+        cdef int ii
+        cdef int next_num = 0
+        if weak:
+            parts = [self._ftype_points, self._not_ftype_points]
+        else:
+            parts = [[ii] for ii in self._ftype_points] + [self._not_ftype_points]
+        next_num = self.size()
+        for kk in self.theory().signature().keys():
+            
+            
+
+            if self.theory().signature()[kk]["arity"]==1:
+                parts.append(next_num)
+                next_num += 1
+            else:
+                edge_points.append()
+        verts += self.theory().signature_graph().size()
+        cdef list parts = []
+        if weak:
+            parts = [self._ftype_points, self._not_ftype_points, ]
+
+        if weak:
+            return self.theory().identify(self._n, [self._ftype_points], **self._blocks)
+        if self._unique==():
+            self._unique = self.theory().identify(
+                self._n, self._ftype_points, **self._blocks)
+        return self._unique
+    
+    cpdef weak_equal(self, Flag other):
+        return self.unique(weak=True) == other.unique(weak=True)
+    
+    cpdef normal_equal(self, Flag other):
+        return self.unqiue() == other.unique()
+    
+    cpdef strong_equal(self, Flag other):
+        return self.blocks(standard=True) == other.blocks(standard=True)
     
     def _add_(self, other):
         r"""
@@ -814,25 +733,6 @@ cdef class Flag(Element):
         if self.parent()!=other.parent():
             return False
         return self.unique() == other.unique()
-    
-    def weak_eq(self, other):
-        r"""
-        Compare two flags for weak equality
-        
-        This is the isomorphism where type permutations
-        are allowed.
-
-        .. SEEALSO::
-
-            :func:`unique`
-            :func:`theory`
-            :func:`CombinatorialTheory.identify`
-        """
-        if type(other)!=type(self):
-            return False
-        if self.parent()!=other.parent():
-            return False
-        return self.unique(weak=True) == other.unique(weak=True)
     
     def __lt__(self, other):
         r"""
@@ -1025,7 +925,7 @@ cdef class Flag(Element):
         oafae = safae.parent(other)
         return self.afae().density(other)
     
-    def _ftypes_inside(self, target):
+    cpdef list _ftypes_inside(self, target):
         r"""
         Returns the possible ways self ftype appears in target
 
@@ -1035,15 +935,17 @@ cdef class Flag(Element):
 
         OUTPUT: list of Flags with ftype matching as self, not necessarily unique
         """
-        ret = []
-        lrp = list(range(target.size()))
+        cdef list ret = []
+        cdef list lrp = list(range(target.size()))
+        cdef tuple ftype_points
         for ftype_points in itertools.permutations(range(target.size()), self._n):
             sig_check()
             if target.subflag(ftype_points, ftype_points)==self:
                 ret.append(target.subflag(lrp, ftype_points))
         return ret
     
-    cpdef densities(self, n1, n1flgs, n2, n2flgs, ftype_remap, large_ftype, small_ftype):
+    cpdef densities(self, int n1, list n1flgs, int n2, list n2flgs, \
+    list ftype_remap, Flag large_ftype, Flag small_ftype):
         r"""
         Returns the density matrix, indexed by the entries of `n1flgs` and `n2flgs`
         
@@ -1078,24 +980,26 @@ cdef class Flag(Element):
         cdef int small_size = small_ftype.size()
         cdef int large_size = large_ftype.size()
         cdef int ctr = 0
-        cdef bint chk = 0
         
-        ret = {}
-        small_points = self._ftype_points
+        cdef dict ret = {}
+        cdef list small_points = self._ftype_points
+        cdef int ii
+        cdef int vii
         for difference in itertools.permutations(self.not_ftype_points(), large_size - small_size):
             sig_check()
-            large_points = [0]*len(ftype_remap)
+            cdef list large_points = [0]*len(ftype_remap)
             for ii in range(len(ftype_remap)):
                 vii = ftype_remap[ii]
                 if vii<small_size:
                     large_points[ii] = small_points[vii]
                 else:
                     large_points[ii] = difference[vii-small_size]
-            ind_large_ftype = self.subflag([], ftype_points=large_points)
+            cdef Flag ind_large_ftype = self.subflag([], ftype_points=large_points)
             if ind_large_ftype==large_ftype:
-                not_large_points = [ii for ii in range(N) if ii not in large_points]
+                cdef list not_large_points = [ii for ii in range(N) if ii not in large_points]
                 for n1_extra_points in itertools.combinations(not_large_points, n1 - large_size):
-                    n1_subf = self.subflag(n1_extra_points, ftype_points=large_points)
+                    cdef Flag n1_subf = self.subflag(n1_extra_points, ftype_points=large_points)
+                    cdef int n1_ind
                     try:
                         n1_ind = n1flgs.index(n1_subf)
                     except ValueError:
@@ -1105,9 +1009,10 @@ cdef class Flag(Element):
                                          "(from the current CombinatorialTheory) is incompatible, ",\
                                          "or if the theory is not heredetary")
                     
-                    remaining_points = [ii for ii in not_large_points if ii not in n1_extra_points]
+                    cdef list remaining_points = [ii for ii in not_large_points if ii not in n1_extra_points]
                     for n2_extra_points in itertools.combinations(remaining_points, n2 - large_size):
-                        n2_subf = self.subflag(n2_extra_points, ftype_points=large_points)
+                        cdef Flag n2_subf = self.subflag(n2_extra_points, ftype_points=large_points)
+                        cdef int n2_ind
                         try:
                             n2_ind = n2flgs.index(n2_subf)
                         except:

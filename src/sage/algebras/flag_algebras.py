@@ -7,6 +7,8 @@ TODO for this:
 Perhaps if some of the methods are parallelized, then run those from here? 
 Can cython run things parallel?
 
+
+
 """
 
 
@@ -275,14 +277,12 @@ def overlap(*theories):
         conflicts = prevsig.intersection(set(xx.signature().keys()))
         if len(conflicts) != 0 :
             raise ValueError("The theories must have signatures with different names. Conflict with ", conflicts)
-        
-
 
 class CombinatorialTheory(Parent, UniqueRepresentation):
     
     Element = Flag
     
-    def __init__(self, name, relation_name, arity, is_ordered=False, signature={}):
+    def __init__(self, name, relation_name, arity, is_ordered=False, signature={}, symm_graph=None):
         r"""
         Initialize a Combinatorial Theory
         
