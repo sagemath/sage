@@ -28,55 +28,125 @@ AUTHORS:
     The following methods are to be incorporated in
     :class:`~MatchingCoveredGraph`:
 
+    .. csv-table::
+        :class: contentstable
+        :widths: 30, 70
+        :delim: |
+
+        ``__hash__()`` | Compute a hash for ``self``, if ``self`` is immutable.
+        ``_subgraph_by_deleting()`` | Return the matching covered subgraph containing the provided vertices and edges.
+
     Overwritten Methods:
 
-    - ``delete_edge()`` | Delete the edge from ``u`` to ``v``.
-    - ``delete_edges()`` | Delete edges from an iterable container.
+    .. csv-table::
+        :class: contentstable
+        :widths: 30, 70
+        :delim: |
+
+        ``add_clique()`` | Add a clique to the graph with the provided vertices.
+        ``add_cycle()`` | Add a cycle to the graph with the provided vertices.
+        ``add_path()`` | Add a path to the graph with the provided vertices.
+        ``cartesian_product()`` | Return the Cartesian product of ``self`` and ``other``.
+        ``clear()`` | Empties the graph of vertices and edges and removes name, associated objects, and position information.
+        ``complement()`` | Return the complement of the graph.
+        ``contract_edge()`` | Contract an edge from ``u`` to ``v``.
+        ``contract_edges()`` | Contract edges from an iterable container.
+        ``degree_constrained_subgraph()`` | Return a degree-constrained matching covered subgraph.
+        ``delete_edge()`` | Delete the edge from ``u`` to ``v``.
+        ``delete_edges()`` | Delete edges from an iterable container.
+        ``delete_multiedge()`` | Delete all edges from ``u`` to ``v``.
+        ``disjoint_union()`` | Return the disjoint union of ``self`` and ``other``.
+        ``disjunctive_product()`` | Return the disjunctive product of ``self`` and ``other``.
+        ``has_loops()`` | Return whether there are loops in the matching covered graph.
+        ``is_biconnected()`` | Check if the matching covered graph is biconnected.
+        ``is_block_graph()`` | Check whether the matching covered graph is a block graph.
+        ``is_cograph()`` | Check whether the matching covered graph is cograph.
+        ``is_forest()`` | Check if the matching covered graph is a forest, i.e. a disjoint union of trees.
+        ``is_matching_covered()`` | Check if the graph is matching covered.
+        ``is_path()`` | Check whether the graph is a path.
+        ``is_subgraph()`` | Check whether the matching covered graph is a subgraph of ``other``.
+        ``is_tree()`` | Check whether the matching covered graph is a tree.
+        ``join()`` | Return the join of ``self`` and ``other``.
+        ``lexicographic_product()`` | Return the lexicographic product of ``self`` and ``other``.
+        ``load_afile()`` | Load the matching covered graph specified in the given file into the current object.
+        ``loop_edges()`` | Return a list of all loops in the matching covered graph.
+        ``loop_vertices()`` | Return a list of vertices with loops.
+        ``merge_vertices()`` | Merge vertices.
+        ``number_of_loops()`` | Return the number of edges that are loops.
+        ``random_subgraph()`` | Return a random matching covered subgraph containing each vertex with probability ``p``.
+        ``remove_loops()`` | Remove loops on vertices in ``vertices``.
+        ``save_afile()`` | Save the graph to file in alist format.
+        ``strong_product()`` | Return the strong product of ``self`` and ``other``.
+        ``subdivide_edge()`` | Subdivide an edge `k` times.
+        ``subdivide_edges()`` | Subdivide `k` times edges from an iterable container.
+        ``subgraph()`` | Return the matching covered subgraph containing the given vertices and edges.
+        ``subgraph_search()`` | Return a copy of (matching covered) ``G`` in ``self``.
+        ``subgraph_search_count()`` | Return the number of labelled occurrences of (matching covered) ``G`` in ``self``.
+        ``subgraph_search_iterator()`` | Return an iterator over the labelled copies of (matching covered) ``G`` in ``self``.
+        ``tensor_product()`` | Return the tensor product of ``self`` and ``other``.
+        ``to_undirected()`` | Return an undirected Graph instance of the matching covered graph.
+        ``transitive_closure()`` | Return the transitive closure of the matching covered graph.
+        ``transitive_reduction()`` | Return a transitive reduction of the matching covered graph.
+        ``union()`` | Return the union of ``self`` and ``other``.
 
     Barriers and canonical partition:
 
-    - ``canonical_partition()`` | Return the canonical partition of the
-      (matching covered) graph.
-    - ``maximal_barrier()`` | Return the (unique) maximal barrier of the
-      (matching covered) graph containing the (provided) vertex.
+    .. csv-table::
+        :class: contentstable
+        :widths: 30, 70
+        :delim: |
+
+        ``canonical_partition()`` | Return the canonical partition of the (matching covered) graph.
+        ``maximal_barrier()`` | Return the (unique) maximal barrier of the (matching covered) graph containing the (provided) vertex.
 
     Bricks, braces and tight cut decomposition:
 
-    - ``bricks_and_braces()`` | Return the list of (underlying simple graph of)
-      the bricks and braces of the (matching covered) graph.
-    - ``is_brace()`` | Check if the (matching covered) graph is a brace.
-    - ``is_brick()`` | Check if the (matching covered) graph is a brick.
-    - ``number_of_braces()`` | Return the number of braces.
-    - ``number_of_bricks()`` | Return the number of bricks.
-    - ``number_of_petersen_bricks()`` | Return the number of Petersen bricks.
-    - ``tight_cut_decomposition()`` | Return a tight cut decomposition.
+    .. csv-table::
+        :class: contentstable
+        :widths: 30, 70
+        :delim: |
+
+        ``bricks_and_braces()`` | Return the list of (underlying simple graph of) the bricks and braces of the (matching covered) graph.
+        ``is_brace()`` | Check if the (matching covered) graph is a brace.
+        ``is_brick()`` | Check if the (matching covered) graph is a brick.
+        ``number_of_braces()`` | Return the number of braces.
+        ``number_of_bricks()`` | Return the number of bricks.
+        ``number_of_petersen_bricks()`` | Return the number of Petersen bricks.
+        ``tight_cut_decomposition()`` | Return a tight cut decomposition.
 
     Removability and ear decomposition:
 
-    - ``efficient_ear_decomposition()`` | Return a matching covered ear
-      decomposition computed at the fastest possible time.
-    - ``is_removable_double_ear()`` | Check whether the pair of ears form a
-      removable double ear.
-    - ``is_removable_doubleton()`` | Check whether the pair of edges constitute
-      a removable doubleton.
-    - ``is_removable_ear()`` | Check whether the ear is removable.
-    - ``is_removable_edge()`` | Check whether the edge is removable.
-    - ``optimal_ear_decomposition()`` | Return an optimal ear decomposition.
-    - ``removable_double_ears()`` | Return a list of removable double ears.
-    - ``removable_doubletons()`` | Return a list of removable doubletons.
-    - ``removable_ears()`` | Return a list of removable ears.
-    - ``removable_edges()`` | Return a :class:`~EdgesView` of removable edges.
-    - ``retract()`` | Compute the retract of the (matching covered) graph.
+    .. csv-table::
+        :class: contentstable
+        :widths: 30, 70
+        :delim: |
+
+        ``add_ear()`` | Add an ear to the graph with the provided end vertices number of internal vertices.
+        ``bisubdivide_edge()`` | Bisubdivide an edge `k` times.
+        ``bisubdivide_edges()`` | Bisubdivide `k` times edges from an iterable container.
+        ``efficient_ear_decomposition()`` | Return a matching covered ear decomposition computed at the fastest possible time.
+        ``is_removable_double_ear()`` | Check whether the pair of ears form a removable double ear.
+        ``is_removable_doubleton()`` | Check whether the pair of edges constitute a removable doubleton.
+        ``is_removable_ear()`` | Check whether the ear is removable.
+        ``is_removable_edge()`` | Check whether the edge is removable.
+        ``optimal_ear_decomposition()`` | Return an optimal ear decomposition.
+        ``removable_double_ears()`` | Return a list of removable double ears.
+        ``removable_doubletons()`` | Return a list of removable doubletons.
+        ``removable_ears()`` | Return a list of removable ears.
+        ``removable_edges()`` | Return a :class:`~EdgesView` of removable edges.
+        ``retract()`` | Compute the retract of the (matching covered) graph.
 
     Generating bricks and braces:
 
-    - ``brace_generation_sequence()`` | Return a McCuaig brace generation
-      sequence of the (given) brace.
-    - ``brick_generation_sequence()`` | Return a Norine-Thomas brick generation
-      sequence of the (given) brick.
-    - ``is_mccuaig_brace()`` | Check if the brace is a McCuaig brace.
-    - ``is_norine_thomas_brick()`` | Check if the brick is a Norine-Thomas
-      brick.
+    .. csv-table::
+        :class: contentstable
+        :widths: 30, 70
+        :delim: |
+
+        ``brace_generation_sequence()`` | Return a McCuaig brace generation sequence of the (provided) brace.
+        ``brick_generation_sequence()`` | Return a Norine-Thomas brick generation sequence of the (provided) brick.
+        ``is_mccuaig_brace()`` | Check if the brace is a McCuaig brace.
+        ``is_norine_thomas_brick()`` | Check if the brick is a Norine-Thomas brick.
 
 
 Methods
