@@ -211,7 +211,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             [Aa*Abc, Aa, Abc, Aa*Aabc, Abc*Aabc, Aabc]
             sage: ch.defining_ideal().groebner_basis().is_groebner()
             True
-            sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().hilbert_series(algorithm='singular')
+            sage: ch.defining_ideal().hilbert_series() == ch.defining_ideal().gens().ideal().hilbert_series()
             True
 
         Another example would be the Groebner basis of the Chow ring ideal of
