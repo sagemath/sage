@@ -148,8 +148,7 @@ class ChowRing(QuotientRing_generic):
             U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
             {3: {{0, 1, 2, 3, 4, 5}}}
         """
-        M = self._matroid
-        return M
+        return self._matroid
 
     def _coerce_map_from_base_ring(self):
         r"""
