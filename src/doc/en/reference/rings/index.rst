@@ -47,6 +47,14 @@ Fraction Fields
    sage/rings/fraction_field
    sage/rings/fraction_field_element
 
+Burnside Ring
+--------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/rings/burnside
+
 Localization
 ---------------
 
