@@ -1610,11 +1610,10 @@ class MatchingCoveredGraph(Graph):
         for v in self:
             if v not in visited:
                 B = self.maximal_barrier(v)
-                for u in B:
-                    visited.add(u)
+                visited.update(B)
                 maximal_barriers.append(B)
 
-        return sorted(maximal_barriers, key=lambda s: min(s))
+        return maximal_barriers
 
     @doc_index('Overwritten methods')
     def delete_vertex(self, vertex, in_order=False):
