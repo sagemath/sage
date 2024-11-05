@@ -74,6 +74,7 @@ from sage.rings.integer import Integer
 
 from .place import PlaceSet
 
+
 def divisor(field, data):
     """
     Construct a divisor from the data.
@@ -97,6 +98,7 @@ def divisor(field, data):
     """
     divisor_group = field.divisor_group()
     return divisor_group.element_class(divisor_group, data)
+
 
 def prime_divisor(field, place, m=1):
     """

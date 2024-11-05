@@ -591,7 +591,6 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         """
         if self._ambient is not self:
             raise NotImplementedError
-        data = self._vertices
         return sib.name('LatticePolytope')(sib(self._vertices), compute_vertices=False)
 
     def __contains__(self, point):

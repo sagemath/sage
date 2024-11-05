@@ -960,6 +960,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
                 new_radius = max(new_radius, p**(-valuation/prime.absolute_ramification_index())*r**i)
         return self.domain()(new_center, new_radius)
 
+
 class DynamicalSystem_Berkovich_affine(DynamicalSystem_Berkovich):
     r"""
     A dynamical system of the affine Berkovich line over `\CC_p`.
