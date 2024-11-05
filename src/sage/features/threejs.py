@@ -67,8 +67,11 @@ class Threejs(StaticFile):
 
         filename = Path(SAGE_EXTCODE) / 'threejs' / 'threejs-version.txt'
 
-        with open(filename) as f:
-            return f.read().strip()
+        try:
+            with open(filename) as f:
+                return f.read().strip()
+        except FileNotFoundError:
+            return "unknown"
 
 
 def all_features():
