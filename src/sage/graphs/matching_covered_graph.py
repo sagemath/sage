@@ -812,6 +812,14 @@ class MatchingCoveredGraph(Graph):
             True
             sage: H.is_immutable()
             True
+            sage: C = graphs.CubeplexGraph()
+            sage: D = MatchingCoveredGraph(C)
+            sage: I = D._subgraph_by_adding(immutable=True)
+            sage: (I == D) and (I.is_immutable())
+            True
+            sage: J = D._subgraph_by_adding(vertices=D.vertices(), immutable=True)
+            sage: (J == D) and (J.is_immutable())
+            True
 
         An error is thrown if the subgraph is not matching covered::
 
