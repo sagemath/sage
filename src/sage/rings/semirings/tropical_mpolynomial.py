@@ -509,7 +509,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p3 = (R(8) + R(4)*x + R(2)*y + R(1)*x^2 + x*y + R(1)*y^2
             ....:      + R(2)*x^3 + x^2*y + x*y^2 + R(4)*y^3 + R(8)*x^4
             ....:      + R(4)*x^3*y + x^2*y^2 + R(2)*x*y^3 + y^4)
-            sage: p3.dual_subdivision().plot()
+            sage: p3.dual_subdivision().plot() # long time
             Graphics object consisting of 10 graphics primitives
 
         .. PLOT::

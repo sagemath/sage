@@ -899,7 +899,7 @@ class TropicalSurface(TropicalVariety):
 
             sage: p2 = x^2 + x + y + z + R(1)
             sage: tv2 = p2.tropical_variety()
-            sage: tv2._polygon_vertices()
+            sage: tv2._polygon_vertices() # long time
             {0: {(0, 0, 0), (0, 0, 2), (1, 1, 1), (2, 2, 2)},
             1: {(0, 0, 0), (0, 2, 0), (1, 1, 1), (2, 2, 2)},
             2: {(0, 0, 0), (0, 0, 2), (0, 2, 0), (0, 2, 2)},
@@ -1043,7 +1043,7 @@ class TropicalSurface(TropicalVariety):
 
             sage: p2 = x^2 + x + y + z + R(1)
             sage: tv = p2.tropical_variety()
-            sage: tv.plot()
+            sage: tv.plot() # long time
             Graphics3d Object
 
         .. PLOT::
@@ -1602,7 +1602,7 @@ class TropicalCurve(TropicalVariety):
             sage: p2 = (x^6 + R(4)*x^4*y^2 + R(2)*x^3*y^3 + R(3)*x^2*y^4
             ....:       + x*y^5 + R(7)*x^2 + R(5)*x*y + R(3)*y^2 + R(2)*x
             ....:       + y + R(10))
-            sage: p2.tropical_variety().plot()
+            sage: p2.tropical_variety().plot() # long time
             Graphics object consisting of 11 graphics primitives
 
         .. PLOT::
@@ -1621,7 +1621,7 @@ class TropicalCurve(TropicalVariety):
             sage: p3 = (R(8) + R(4)*x + R(2)*y + R(1)*x^2 + x*y + R(1)*y^2
             ....:       + R(2)*x^3 + x^2*y + x*y^2 + R(4)*y^3 + R(8)*x^4
             ....:       + R(4)*x^3*y + x^2*y^2 + R(2)*x*y^3 + y^4)
-            sage: p3.tropical_variety().plot()
+            sage: p3.tropical_variety().plot() # long time
             Graphics object consisting of 23 graphics primitives
 
         .. PLOT::
