@@ -59,7 +59,7 @@ from cysignals.signals cimport sig_check
 from sage.structure.element cimport Element
 from sage.graphs.bliss cimport canonical_form_from_edge_list
 
-cdef list _subblock_helper(list points, list block):
+cdef tuple _subblock_helper(tuple points, tuple block):
     cdef bint gd = False
     cdef list ret = []
     if len(block)==0:
@@ -73,14 +73,16 @@ cdef list _subblock_helper(list points, list block):
         if gd:
             cdef int ii
             ret.append([points.index(ii) for ii in xx])
-    return ret
+    return tuple(ret)
 
+#TODO move to all tuple
 cdef bint _block_consistency(list block, list missing):
     for xx in block:
         if xx in missing:
             return False
     return True
 
+#TODO move to all tuple
 cdef bint _block_refinement(list block0, list missing0, list block1, list missing1):
     for xx in block0:
         if xx not in block1:
@@ -93,11 +95,19 @@ cdef bint _block_refinement(list block0, list missing0, list block1, list missin
             return False
     return True
 
-cdef list _format_block(list block, bint ordered):
+
+cpdef tuple _additional_relations(int n, int arity, bint ordered):
+
+    cdef tuple base = tuple(range(n-arity, n))
+    cdef tuple ord_base
+    cdef int ii
+
     if ordered:
-        return sorted([tuple(sorted(xx)) for xx in block])
+        ord_base = tuple(itertools.permutations(base))
     else:
-        return sorted([tuple(xx) for xx in block])
+        ord_base = (base, )
+    return tuple(itertools.chain())
+
 
 cdef class Flag(Element):
     
@@ -116,21 +126,24 @@ cdef class Flag(Element):
         self._n = int(n)
         
         if 'ftype_points' in params:
-            ftype_points = params['ftype_points']
+            ftype_points = tuple(params['ftype_points'])
         elif 'ftype' in params:
-            ftype_points = params['ftype']
+            ftype_points = tuple(params['ftype'])
         else:
             ftype_points = tuple()
         
         self._ftype_size = len(ftype_points)
-        self._ftype_points = tuple(ftype_points)
+        self._ftype_points = ftype_points
         self._not_ftype_points = None
         self._blocks = {}
         for xx in theory._signature.keys():
             if xx in params:
-                self._blocks[xx] = [tuple(yy) for yy in params[xx]]
+                if theory._signature[xx]["ordered"]:
+                    self._blocks[xx] = tuple(sorted([tuple(yy) for yy in params[xx]]))
+                else:
+                    self._blocks[xx] = tuple(sorted([tuple(sorted(yy)) for yy in params[xx]]))
             else:
-                self._blocks[xx] = list()
+                self._blocks[xx] = tuple()
         self._unique = None
         self._weak_unique = None
         self._ftype = None
@@ -138,7 +151,16 @@ cdef class Flag(Element):
     
     def _repr_(self):
         blocks = self.blocks()
-        strblocks = ', '.join([xx+'='+str(blocks[xx]) for xx in blocks.keys()])
+        blocks_reps = []
+        for xx in blocks.keys():
+            brx = '('
+            block_reps = []
+            for ee in blocks[xx]:
+                block_reps.append("".join(map(str, ee)))
+            brx += ' '.join(block_reps)
+            brx += ')'
+            blocks_reps.append(brx)
+        strblocks = ', '.join(blocks_reps)
         if self.is_ftype():
             return 'Ftype on {} points with {}'.format(self.size(), strblocks)
         return 'Flag on {} points, ftype from {} with {}'.format(self.size(), self.ftype_points(), strblocks)
@@ -233,100 +255,42 @@ cdef class Flag(Element):
     
     vertex_number = size
 
-    cpdef blocks(self, as_tuple=False, key=None, standard=False):
+    cpdef dict signature(self):
+        return self.theory().signature()
+
+    cpdef dict blocks(self, key=None):
         r"""
         Returns the blocks
 
         INPUT:
 
-        - ``as_tuple`` -- boolean (default: `False`); if the result should
-            contain the blocks as a tuple
+        - ``key`` -- 
 
-        OUTPUT: A dictionary, one entry for each element in the signature
-            and list (or tuple) of the blocks for that signature.
+        OUTPUT: 
         """
         if key==None:
-            if not standard and not as_tuple:
-                return self._blocks
-            ret = {}
-            for key in self._blocks:
-                if standard:
-                    bl = _format_block(self._blocks[key], self.theory().signature()[key]["ordered"])
-                else:
-                    bl = [tuple(xx) for xx in self._blocks[key]]
-                if as_tuple:
-                    ret[key] = tuple(bl)
-                else:
-                    ret[key] = bl
-            if standard and not as_tuple:
-                self._blocks = ret
-            return ret
+            return self._blocks
         else:
-            ret = None
-            if standard:
-                ret = _format_block(self._blocks[key], self.theory().signature()[key]["ordered"])
-            else:
-                ret = self._blocks[key]
-            if as_tuple:
-                return tuple(ret)
-            else:
-                return ret
+            return self._blocks[key]
 
     cpdef Flag subflag(self, points=None, ftype_points=None):
         r"""
         Returns the induced subflag.
-        
-        The resulting sublaf contains the union of points and ftype_points
-        and has ftype constructed from ftype_points. 
-
-        INPUT:
-
-        - ``points`` -- list (default: `None`); the points inducing the subflag.
-            If not provided (or `None`) then this is the entire vertex set, so
-            only the ftype changes
-        - ``ftype_points`` list (default: `None`); the points inducing the ftype
-            of the subflag. If not provided (or `None`) then the original ftype
-            point set is used, so the result of the ftype will be the same
-
-        OUTPUT: The induced sub Flag
-
-        EXAMPLES::
-
-        Same ftype ::
-
-            sage: from sage.algebras.flag_algebras import *
-            sage: g = GraphTheory(3, edges=[[0, 1]], ftype=[0])
-            sage: g.subflag([0, 2])
-            Flag on 2 points, ftype from [0] with edges=[]
-            
-        Only change ftype ::
-            
-            sage: g.subflag(ftype_points=[0, 1])
-            Flag on 3 points, ftype from [0, 1] with edges=[[0, 1]]
-
-        .. NOTE::
-
-            As the ftype points can be chosen, the result can have different
-            ftype as self.
-
-        TESTS::
-
-            sage: g.subflag()==g
-            True
         """
         cdef int ii
         if ftype_points==None:
             ftype_points = self._ftype_points
         
         if points==None:
-            points = list(range(self._n))
+            points = tuple(range(self._n))
         else:
-            points = [ii for ii in range(self._n) if (ii in points or ii in ftype_points)]
-        if len(points)==self._n and ftype_points==self._ftype_points:
+            points = tuple(list(points) + [ii for ii in ftype_points if ii not in points])
+        ftype_points = tuple(ftype_points)
+        if points==tuple(range(self.size())) and ftype_points==self._ftype_points:
             return self
         blocks = {xx: _subblock_helper(points, self._blocks[xx]) for xx in self._blocks.keys()}
         new_ftype_points = [points.index(ii) for ii in ftype_points]
-        return self.__class__(self.parent(), len(points), ftype=new_ftype_points, **blocks)
+        return Flag(self.parent(), len(points), ftype=new_ftype_points, **blocks)
     
     cpdef tuple ftype_points(self):
         r"""
@@ -412,7 +376,7 @@ cdef class Flag(Element):
 
         cdef dict blocks = self._blocks
         cdef int next_vertex = self.size()
-        cdef dict signature = self.theory().signature()
+        cdef dict signature = self.signature()
 
         #Data for relations
         cdef dict rel_info
@@ -552,7 +516,7 @@ cdef class Flag(Element):
             return False
         if self.ftype_points() != other.ftype_points():
             return False
-        return self.blocks(standard=True) == other.blocks(standard=True)
+        return self._blocks == other._blocks
     
     cpdef list ftypes_inside(self, target):
         r"""
@@ -578,13 +542,13 @@ cdef class Flag(Element):
 
     cpdef list nonequal_permutations(self):
         cdef list ret = []
-        cdef tuple ftype_points
+        cdef tuple perm
         cdef Flag newflag
         cdef Flag xx
         cdef bint can_add
-        for ftype_points in itertools.permutations(range(self.size())):
+        for perm in itertools.permutations(range(self.size())):
             sig_check()
-            newflag = self.subflag(ftype_points=ftype_points)
+            newflag = self.subflag(points=perm)
             can_add = True
             for xx in ret:
                 if xx.strong_equal(newflag):
@@ -594,40 +558,79 @@ cdef class Flag(Element):
                 ret.append(newflag)
         return ret
     
-    cpdef list generate_overlaps(self, other_theory):
+    cpdef list generate_overlaps(self, other_theory, result_theory):
+        if self.ftype().size() != 0:
+            raise ValueError("Ftype must be empty")
         cdef list result = []
+        cdef list result_partial = []
         cdef tuple other_flags = other_theory.generate(self.size())
         cdef Flag other, other_permed, overlap
-        cdef dict overlap_blocks
-        cdef list existing_flags
-        cdef bint is_equal
         
         for other in other_flags:
+            result_partial = []
             for other_permed in other.nonequal_permutations():
-                overlap_blocks = {}
-                # Add blocks from self
-                for key in self._blocks:
-                    overlap_blocks[key] = self._blocks[key]
-                # Add blocks from G_prime
-                for key in G_prime._blocks:
-                    overlap_blocks[key] = G_prime._blocks[key]
-                # Create a new Flag with the combined blocks and resulting_signature
-                overlap_flag = Flag(self.theory(), n)
-                overlap_flag._blocks = overlap_blocks
-                # Set the theory's signature to the resulting_signature
-                overlap_flag.theory()._signature = resulting_signature
-                # Canonicalize the flag to ensure proper comparison
-                canonical_blocks = overlap_flag.canonical_relabel()
-                overlap_flag._blocks = canonical_blocks
-                # Check if overlap_flag is isomorphic to any existing flag in result
-                is_equal = False
-                for existing_flag in result:
-                    if overlap_flag.normal_equal(existing_flag):
-                        is_equal = True
-                        break
-                if not is_equal:
-                    result.append(overlap_flag)
+                overlap = Flag(result_theory, self.size(), **self._blocks, **other_permed._blocks)
+                if overlap not in result_partial:
+                    result_partial.append(overlap)
+            result += result_partial
         return result
+
+    cpdef list extensions(self, list other_list):
+        cdef list ret = []
+        cdef int n = self._n
+        cdef list perms = self.nonequal_permutations()
+        cdef Flag self_permed, other, new_flag
+        
+        
+        cdef int point_new = n  # The new point to add
+        cdef dict combined_blocks
+        cdef bint is_equal
+        cdef dict signature = self.theory().signature()
+
+        for other in other_list:
+            for self_permed in perms:
+                if self_permed.subflag(range(n-1)).strong_equal(other.subflag(range(n-1))):
+                    
+                    possible_relations = generate_possible_relations_between_points(self, 0, point_new, n, signature)
+
+                    # For each possible set of relations between points 0 and point_new
+                    for relations in possible_relations:
+                        # Create combined_blocks by merging the blocks from self_permed and other
+                        combined_blocks = {}
+                        # Blocks from self_permed
+                        for key in self_permed._blocks:
+                            combined_blocks[key] = [tuple(t) for t in self_permed._blocks[key]]
+                        # Blocks from other, adjusted to new point indices
+                        for key in other._blocks:
+                            adjusted_blocks = [tuple(v if v > 0 else point_new for v in t) for t in other._blocks[key]]
+                            if key in combined_blocks:
+                                combined_blocks[key].extend(adjusted_blocks)
+                            else:
+                                combined_blocks[key] = adjusted_blocks
+                        # Add the relations involving points 0 and point_new
+                        for key in relations:
+                            if key in combined_blocks:
+                                combined_blocks[key].extend(relations[key])
+                            else:
+                                combined_blocks[key] = relations[key]
+
+                        # Create the new flag
+                        new_flag = Flag(self.theory(), n)
+                        new_flag._blocks = combined_blocks
+
+                        # Canonicalize the new flag
+                        canonical_blocks = new_flag.canonical_relabel()
+                        new_flag._blocks = canonical_blocks
+
+                        # Check if new_flag is isomorphic to any existing flag
+                        is_equal = False
+                        for existing_flag in ret:
+                            if new_flag.normal_equal(existing_flag):
+                                is_equal = True
+                                break
+                        if not is_equal:
+                            ret.append(new_flag)
+        return ret
 
     def _add_(self, other):
         r"""
@@ -1043,9 +1046,10 @@ cdef class Flag(Element):
         cdef int ctr = 0
         
         cdef dict ret = {}
-        cdef list small_points = self._ftype_points
+        cdef tuple small_points = self._ftype_points
         cdef int ii
         cdef int vii
+        cdef tuple difference
         for difference in itertools.permutations(self.not_ftype_points(), large_size - small_size):
             sig_check()
             cdef list large_points = [0]*len(ftype_remap)
