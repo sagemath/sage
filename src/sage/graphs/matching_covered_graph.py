@@ -1855,7 +1855,7 @@ class MatchingCoveredGraph(Graph):
             raise ValueError('the resulting graph after the removal of '
                              'the vertices is not matching covered')
 
-    @doc_index('Overwritten methods')
+    @doc_index('Miscellaneous methods')
     def get_matching(self):
         r"""
         Return a :class:`~EdgesView` of ``self._matching`` (a perfect matching
