@@ -106,10 +106,9 @@ TESTS::
     False
 
     sage: R.<x,y,z> = FreeAlgebra(QQ, 3)
-    sage: P = R.g_algebra(relations={},order='lex')
+    sage: P = R.g_algebra(relations={}, order='lex')
     sage: P.is_commutative()
     True
-
 """
 from cysignals.memory cimport sig_malloc, sig_free
 
