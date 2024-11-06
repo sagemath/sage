@@ -11,6 +11,8 @@ EXAMPLES::
     sage: R.<x,y,z> = PolynomialRing(T)
     sage: z.parent()
     Multivariate Tropical Polynomial Semiring in x, y, z over Rational Field
+    sage: R(2)*x + R(-1)*x + R(5)*y + R(-3)
+    (-1)*x + 5*y + (-3)
     sage: (x+y+z)^2
     0*x^2 + 0*x*y + 0*y^2 + 0*x*z + 0*y*z + 0*z^2
 
@@ -211,7 +213,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         return self(tuple(variables))
 
     def plot3d(self, color='random'):
-        """
+        r"""
         Return the 3d plot of ``self``.
 
         Only implemented for tropical polynomial in two variables.
@@ -406,7 +408,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         return TropicalVariety(self)
 
     def newton_polytope(self):
-        """
+        r"""
         Return the Newton polytope of ``self``.
 
         The Newton polytope is the convex hull of all the points
@@ -424,6 +426,12 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p1 = x + y
             sage: p1.newton_polytope()
             A 1-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices
+            sage: p1.newton_polytope().Vrepresentation()
+            (A vertex at (0, 1), A vertex at (1, 0))
+            sage: p1.newton_polytope().Hrepresentation()
+            (An equation (1, 1) x - 1 == 0,
+             An inequality (0, -1) x + 1 >= 0,
+             An inequality (0, 1) x + 0 >= 0)
 
         .. PLOT::
             :width: 300 px
@@ -441,6 +449,19 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p1 = x^2 + x*y*z + x + y + z + R(0)
             sage: p1.newton_polytope()
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 5 vertices
+            sage: p1.newton_polytope().Vrepresentation()
+            (A vertex at (0, 0, 0),
+            A vertex at (0, 0, 1),
+            A vertex at (0, 1, 0),
+            A vertex at (2, 0, 0),
+            A vertex at (1, 1, 1))
+            sage: p1.newton_polytope().Hrepresentation()
+            (An inequality (0, 1, 0) x + 0 >= 0,
+             An inequality (0, 0, 1) x + 0 >= 0,
+             An inequality (1, 0, 0) x + 0 >= 0,
+             An inequality (1, -1, -1) x + 1 >= 0,
+             An inequality (-1, -2, 1) x + 2 >= 0,
+             An inequality (-1, 1, -2) x + 2 >= 0)
 
         .. PLOT::
             :width: 300 px
@@ -477,8 +498,13 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: T = TropicalSemiring(QQ, use_min=False)
             sage: R.<x,y> = PolynomialRing(T)
             sage: p1 = R(3) + R(2)*x + R(2)*y + R(3)*x*y + x^2 + y^2
-            sage: p1.dual_subdivision()
+            sage: pc = p1.dual_subdivision(); pc
             Polyhedral complex with 4 maximal cells
+            sage: [p.Vrepresentation() for p in pc.maximal_cells_sorted()]
+            [(A vertex at (0, 0), A vertex at (0, 1), A vertex at (1, 1)),
+             (A vertex at (0, 0), A vertex at (1, 0), A vertex at (1, 1)),
+             (A vertex at (0, 1), A vertex at (0, 2), A vertex at (1, 1)),
+             (A vertex at (1, 0), A vertex at (1, 1), A vertex at (2, 0))]
 
         .. PLOT::
             :width: 300 px
@@ -492,8 +518,14 @@ class TropicalMPolynomial(MPolynomial_polydict):
         A subdivision of a pentagonal Newton polytope::
 
             sage: p2 = R(3) + x^2 + R(-2)*y + R(1/2)*x^2*y + R(2)*x*y^3 + R(-1)*x^3*y^4
-            sage: p2.dual_subdivision()
+            sage: pc = p2.dual_subdivision(); pc
             Polyhedral complex with 5 maximal cells
+            sage: [p.Vrepresentation() for p in pc.maximal_cells_sorted()]
+            [(A vertex at (0, 0), A vertex at (0, 1), A vertex at (1, 3)),
+             (A vertex at (0, 0), A vertex at (1, 3), A vertex at (2, 1)),
+             (A vertex at (0, 0), A vertex at (2, 0), A vertex at (2, 1)),
+             (A vertex at (1, 3), A vertex at (2, 1), A vertex at (3, 4)),
+             (A vertex at (2, 0), A vertex at (2, 1), A vertex at (3, 4))]
 
         .. PLOT::
             :width: 300 px
@@ -506,16 +538,32 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
         A subdivision with many faces, not all of which are triangles::
 
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
             sage: p3 = (R(8) + R(4)*x + R(2)*y + R(1)*x^2 + x*y + R(1)*y^2
             ....:      + R(2)*x^3 + x^2*y + x*y^2 + R(4)*y^3 + R(8)*x^4
             ....:      + R(4)*x^3*y + x^2*y^2 + R(2)*x*y^3 + y^4)
-            sage: p3.dual_subdivision().plot() # long time
-            Graphics object consisting of 10 graphics primitives
+            sage: pc = p3.dual_subdivision(); pc
+            Polyhedral complex with 10 maximal cells
+            sage: [p.Vrepresentation() for p in pc.maximal_cells_sorted()]
+            [(A vertex at (0, 0), A vertex at (0, 1), A vertex at (1, 0)),
+             (A vertex at (0, 1), A vertex at (0, 2), A vertex at (1, 1)),
+             (A vertex at (0, 1), A vertex at (1, 0), A vertex at (2, 0)),
+             (A vertex at (0, 1), A vertex at (1, 1), A vertex at (2, 0)),
+             (A vertex at (0, 2), A vertex at (0, 4), A vertex at (1, 1)),
+             (A vertex at (0, 4),
+              A vertex at (1, 1),
+              A vertex at (2, 1),
+              A vertex at (2, 2)),
+             (A vertex at (1, 1), A vertex at (2, 0), A vertex at (2, 1)),
+             (A vertex at (2, 0), A vertex at (2, 1), A vertex at (3, 0)),
+             (A vertex at (2, 1), A vertex at (2, 2), A vertex at (3, 0)),
+             (A vertex at (2, 2), A vertex at (3, 0), A vertex at (4, 0))]
 
         .. PLOT::
             :width: 300 px
 
-            T = TropicalSemiring(QQ,  use_min=False)
+            T = TropicalSemiring(QQ)
             R = PolynomialRing(T, ('x,y'))
             x, y = R.gen(), R.gen(1)
             p3 = (R(8) + R(4)*x + R(2)*y + R(1)*x**2 + x*y + R(1)*y**2
@@ -528,8 +576,16 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
             sage: p1 = x + y + z + x^2 + R(1)
-            sage: p1.dual_subdivision()
+            sage: pc = p1.dual_subdivision(); pc
             Polyhedral complex with 7 maximal cells
+            sage: [p.Vrepresentation() for p in pc.maximal_cells_sorted()]
+            [(A vertex at (0, 0, 0), A vertex at (0, 0, 1), A vertex at (0, 1, 0)),
+             (A vertex at (0, 0, 0), A vertex at (0, 0, 1), A vertex at (1, 0, 0)),
+             (A vertex at (0, 0, 0), A vertex at (0, 1, 0), A vertex at (1, 0, 0)),
+             (A vertex at (0, 0, 1), A vertex at (0, 1, 0), A vertex at (1, 0, 0)),
+             (A vertex at (0, 0, 1), A vertex at (0, 1, 0), A vertex at (2, 0, 0)),
+             (A vertex at (0, 0, 1), A vertex at (1, 0, 0), A vertex at (2, 0, 0)),
+             (A vertex at (0, 1, 0), A vertex at (1, 0, 0), A vertex at (2, 0, 0))]
 
         .. PLOT::
             :width: 300 px
@@ -545,8 +601,21 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: T = TropicalSemiring(QQ)
             sage: R.<a,b,c,d> = PolynomialRing(T)
             sage: p1 = R(2)*a*b + R(3)*a*c + R(-1)*c^2 + R(-1/3)*a*d
-            sage: p1.dual_subdivision()
+            sage: pc = p1.dual_subdivision(); pc
             Polyhedral complex with 4 maximal cells
+            sage: [p.Vrepresentation() for p in pc.maximal_cells_sorted()]
+            [(A vertex at (0, 0, 2, 0),
+             A vertex at (1, 0, 0, 1),
+             A vertex at (1, 0, 1, 0)),
+            (A vertex at (0, 0, 2, 0),
+             A vertex at (1, 0, 0, 1),
+             A vertex at (1, 1, 0, 0)),
+            (A vertex at (0, 0, 2, 0),
+             A vertex at (1, 0, 1, 0),
+             A vertex at (1, 1, 0, 0)),
+            (A vertex at (1, 0, 0, 1),
+             A vertex at (1, 0, 1, 0),
+             A vertex at (1, 1, 0, 0))]
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
         from sage.geometry.polyhedral_complex import PolyhedralComplex
@@ -581,7 +650,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
     def _repr_(self):
         r"""
-        Return string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -602,7 +671,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
     def _latex_(self):
         r"""
-        Return the latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 

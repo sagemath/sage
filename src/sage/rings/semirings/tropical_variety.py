@@ -542,10 +542,10 @@ class TropicalVariety(UniqueRepresentation, SageObject):
 
         Assume ``self`` is a `n`-dimensional tropical variety.
         Suppose `L` is an intersection lying within the components
-        `S_1, ldots, S_k` with respective weights `w_1, ldots, w_k`.
+        `S_1, \ldots, S_k` with respective weights `w_1, \ldots, w_k`.
         This `L` is a linear structure in `\RR^{n-1}` and has `n-1`
         direction vectors `d_1,d_2,\ldots, d_{n-1}`. Each component
-        `S_1, ldots, S_k` has a normal vector `n_1, \ldots, n_k`.
+        `S_1, \ldots, S_k` has a normal vector `n_1, \ldots, n_k`.
         Then, we scale each normal vector to an integer vector such
         that the greatest common divisor of its elements is 1.
 
@@ -1303,12 +1303,12 @@ class TropicalCurve(TropicalVariety):
         of the curve. Each vector corresponds to an edge emanating from
         that vertex and points in the direction of the edge.
 
-        Suppose `v` is a vertex adjacent to the edges `e_1, ldots, e_k`
+        Suppose `v` is a vertex adjacent to the edges `e_1, \ldots, e_k`
         with respective weights `w_1, \ldots, w_k`. Every edge `e_i` is
         contained in a line (component) defined by an equation. Therefore,
         there exists a unique integer vector `v_i = (\alpha, \beta)` in
         the direction of `e_i` such that `\gcd(\alpha, \beta)=1`. Then,
-        each vertex `v` yield the vectors `w_1 v_1, ldots, w_k v_k`.
+        each vertex `v` yield the vectors `w_1 v_1, \ldots, w_k v_k`.
         These vectors will satisfy the following balancing condition:
         `\sum_{i=1}^k w_i v_i = 0`.
 
