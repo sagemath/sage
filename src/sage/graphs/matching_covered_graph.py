@@ -162,7 +162,7 @@ Methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .graph import Graph
+from sage.graphs.graph import Graph
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
 
 class MatchingCoveredGraph(Graph):
