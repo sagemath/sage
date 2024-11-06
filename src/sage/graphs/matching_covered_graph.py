@@ -2066,4 +2066,4 @@ class MatchingCoveredGraph(Graph):
             raise exception
 
 
-__doc__ = __doc__.replace("{INDEX_OF_METHODS}", gen_thematic_rest_table_index(MatchingCoveredGraph))
+__doc__ = __doc__.replace('{INDEX_OF_METHODS}', gen_thematic_rest_table_index(MatchingCoveredGraph, only_local_functions=False))
