@@ -108,6 +108,7 @@ cdef class Flag(Element):
     cdef tuple _not_ftype_points
     cdef dict _blocks
     cdef tuple _unique
+    cdef tuple _weak_unique
     
     cdef Flag _ftype
     
@@ -131,6 +132,7 @@ cdef class Flag(Element):
             else:
                 self._blocks[xx] = list()
         self._unique = None
+        self._weak_unique = None
         self._ftype = None
         Element.__init__(self, theory)
     
@@ -256,6 +258,8 @@ cdef class Flag(Element):
                     ret[key] = tuple(bl)
                 else:
                     ret[key] = bl
+            if standard and not as_tuple:
+                self._blocks = ret
             return ret
         else:
             ret = None
@@ -400,9 +404,14 @@ cdef class Flag(Element):
         """
         return self._n == self._ftype_size
     
-    def canonical_relabel(self):
+    cdef tuple unique(self, bint weak = False):
+        if weak and self._weak_unique != None:
+            return self._weak_unique
+        if (not weak) and self._unique != None:
+            return self._unique
+
         cdef dict blocks = self._blocks
-        cdef int next_vertex = self._n
+        cdef int next_vertex = self.size()
         cdef dict signature = self.theory().signature()
 
         #Data for relations
@@ -444,7 +453,14 @@ cdef class Flag(Element):
             next_vertex += 1
 
         #Creating the partition, first the vertices from layer 0
-        cdef list partition = [list(range(self._n))]
+        cdef list partition
+
+        if weak:
+            partition = [self.ftype_points(), self.not_ftype_points()]
+        else:
+            partition = [[ii] for ii in self.ftype_points()]
+            partition.append(self.not_ftype_points())
+
         for group in groups:
             #Layer 2 partition
             partition.append([group_vertices[rel_name] for rel_name in group])
@@ -465,7 +481,6 @@ cdef class Flag(Element):
         cdef int max_edge_label = 0
         cdef tuple t
         cdef list conns
-
         
         for rel_name in unary_relation_vertices:
             #This will find connections to unary_relation_vertices[rel_name] in Layer 1
@@ -497,58 +512,123 @@ cdef class Flag(Element):
                     labels += list(range(1, len(conns)+1))
                 elif max_edge_label>0:
                     labels += [0] * len(conns)
-
         
         cdef int Vnr = next_vertex
         cdef int Lnr = max_edge_label
         
         cdef tuple result = canonical_form_from_edge_list(\
         Vnr, Vout, Vin, Lnr, labels, partition, False, True)
-        #new edges is good for a unique identifier
-        cdef tuple new_edges = tuple(result[0])
+        cdef list new_edges = list(result[0])
+        cdef tuple uniret = tuple([len(self.ftype_points(), weak)] + new_edges)
         cdef dict relabel = result[1]
-        relabel = {i: relabel[i] for i in range(n)}
-        return new_edges, relabel
-
-    cdef tuple unique(self, weak=False):
-        cdef list parts = []
-        cdef int ii
-        cdef int next_num = 0
+        relabel = {i: relabel[i] for i in range(self.size())}
+        cdef tuple ret = (uniret, relabel)
         if weak:
-            parts = [self._ftype_points, self._not_ftype_points]
+            self._weak_unique = ret
         else:
-            parts = [[ii] for ii in self._ftype_points] + [self._not_ftype_points]
-        next_num = self.size()
-        for kk in self.theory().signature().keys():
-            
-            
-
-            if self.theory().signature()[kk]["arity"]==1:
-                parts.append(next_num)
-                next_num += 1
-            else:
-                edge_points.append()
-        verts += self.theory().signature_graph().size()
-        cdef list parts = []
-        if weak:
-            parts = [self._ftype_points, self._not_ftype_points, ]
-
-        if weak:
-            return self.theory().identify(self._n, [self._ftype_points], **self._blocks)
-        if self._unique==():
-            self._unique = self.theory().identify(
-                self._n, self._ftype_points, **self._blocks)
-        return self._unique
+            self._unique = ret
+        return ret
     
-    cpdef weak_equal(self, Flag other):
-        return self.unique(weak=True) == other.unique(weak=True)
+    cpdef bint weak_equal(self, Flag other):
+        if self.theory() != other.theory():
+            return False
+        if self._ftype_size != other._ftype_size:
+            return False
+        cdef tuple sun = self.unique(weak=True)
+        cdef tuple oun = other.unique(weak=True)
+        return sun[0] == oun[0]
     
-    cpdef normal_equal(self, Flag other):
-        return self.unqiue() == other.unique()
+    cpdef bint normal_equal(self, Flag other):
+        if self.theory() != other.theory():
+            return False
+        if self._ftype_size != other._ftype_size:
+            return False
+        cdef tuple sun = self.unique(weak=False)
+        cdef tuple oun = other.unique(weak=False)
+        return sun[0] == oun[0]
     
-    cpdef strong_equal(self, Flag other):
+    cpdef bint strong_equal(self, Flag other):
+        if self.theory() != other.theory():
+            return False
+        if self.ftype_points() != other.ftype_points():
+            return False
         return self.blocks(standard=True) == other.blocks(standard=True)
     
+    cpdef list ftypes_inside(self, target):
+        r"""
+        Returns the possible ways self ftype appears in target
+
+        INPUT:
+
+        - ``target`` -- Flag; the flag where we are looking for copies of self
+
+        OUTPUT: list of Flags with ftype matching as self, not necessarily unique
+        """
+        cdef list ret = []
+        cdef list lrp = list(range(target.size()))
+        cdef tuple ftype_points
+        cdef Flag newflag
+        for ftype_points in itertools.permutations(range(target.size()), self._n):
+            sig_check()
+            if target.subflag(ftype_points, ftype_points)==self:
+                newflag = target.subflag(lrp, ftype_points)
+                if newflag not in ret:
+                    ret.append(newflag)
+        return ret
+
+    cpdef list nonequal_permutations(self):
+        cdef list ret = []
+        cdef tuple ftype_points
+        cdef Flag newflag
+        cdef Flag xx
+        cdef bint can_add
+        for ftype_points in itertools.permutations(range(self.size())):
+            sig_check()
+            newflag = self.subflag(ftype_points=ftype_points)
+            can_add = True
+            for xx in ret:
+                if xx.strong_equal(newflag):
+                    can_add = False
+                    break
+            if can_add:
+                ret.append(newflag)
+        return ret
+    
+    cpdef list generate_overlaps(self, other_theory):
+        cdef list result = []
+        cdef tuple other_flags = other_theory.generate(self.size())
+        cdef Flag other, other_permed, overlap
+        cdef dict overlap_blocks
+        cdef list existing_flags
+        cdef bint is_equal
+        
+        for other in other_flags:
+            for other_permed in other.nonequal_permutations():
+                overlap_blocks = {}
+                # Add blocks from self
+                for key in self._blocks:
+                    overlap_blocks[key] = self._blocks[key]
+                # Add blocks from G_prime
+                for key in G_prime._blocks:
+                    overlap_blocks[key] = G_prime._blocks[key]
+                # Create a new Flag with the combined blocks and resulting_signature
+                overlap_flag = Flag(self.theory(), n)
+                overlap_flag._blocks = overlap_blocks
+                # Set the theory's signature to the resulting_signature
+                overlap_flag.theory()._signature = resulting_signature
+                # Canonicalize the flag to ensure proper comparison
+                canonical_blocks = overlap_flag.canonical_relabel()
+                overlap_flag._blocks = canonical_blocks
+                # Check if overlap_flag is isomorphic to any existing flag in result
+                is_equal = False
+                for existing_flag in result:
+                    if overlap_flag.normal_equal(existing_flag):
+                        is_equal = True
+                        break
+                if not is_equal:
+                    result.append(overlap_flag)
+        return result
+
     def _add_(self, other):
         r"""
         Add two Flags together
@@ -732,7 +812,7 @@ cdef class Flag(Element):
             return False
         if self.parent()!=other.parent():
             return False
-        return self.unique() == other.unique()
+        return self.normal_equal(other)
     
     def __lt__(self, other):
         r"""
@@ -756,9 +836,7 @@ cdef class Flag(Element):
         for subp in itertools.combinations(other.not_ftype_points(), self.size()-self.ftype().size()):
             sig_check()
             osub = other.subflag(subp)
-            if osub==None or osub.unique()==None:
-                continue
-            if osub.unique()==self.unique():
+            if self==osub:
                 return True
         return False
     
@@ -808,7 +886,7 @@ cdef class Flag(Element):
         A hash based on the unique identifier
         so this is compatible with `__eq__`.
         """
-        return hash(self.unique())
+        return hash(self.unique()[0])
     
     def __getstate__(self):
         r"""
@@ -818,7 +896,8 @@ cdef class Flag(Element):
               'n': self._n, 
               'ftype_points': self._ftype_points, 
               'blocks':self._blocks, 
-              'unique':self._unique}
+              'unique':self._unique,
+              'weak_unique':self._weak_unique}
         return dd
     
     def __setstate__(self, dd):
@@ -832,6 +911,7 @@ cdef class Flag(Element):
         self._not_ftype_points = None
         self._blocks = dd['blocks']
         self._unique = dd['unique']
+        self._weak_unique = dd['weak_unique']
     
     def project(self, ftype_inj=tuple()):
         r"""
@@ -924,25 +1004,6 @@ cdef class Flag(Element):
         safae = self.afae()
         oafae = safae.parent(other)
         return self.afae().density(other)
-    
-    cpdef list _ftypes_inside(self, target):
-        r"""
-        Returns the possible ways self ftype appears in target
-
-        INPUT:
-
-        - ``target`` -- Flag; the flag where we are looking for copies of self
-
-        OUTPUT: list of Flags with ftype matching as self, not necessarily unique
-        """
-        cdef list ret = []
-        cdef list lrp = list(range(target.size()))
-        cdef tuple ftype_points
-        for ftype_points in itertools.permutations(range(target.size()), self._n):
-            sig_check()
-            if target.subflag(ftype_points, ftype_points)==self:
-                ret.append(target.subflag(lrp, ftype_points))
-        return ret
     
     cpdef densities(self, int n1, list n1flgs, int n2, list n2flgs, \
     list ftype_remap, Flag large_ftype, Flag small_ftype):
