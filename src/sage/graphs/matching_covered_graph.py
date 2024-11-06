@@ -1858,8 +1858,7 @@ class MatchingCoveredGraph(Graph):
     @doc_index('Miscellaneous methods')
     def get_matching(self):
         r"""
-        Return a :class:`~EdgesView` of ``self._matching`` (a perfect matching
-        of the (matching covered) graph computed at the initialization).
+        Return an :class:`~EdgesView` of ``self._matching``.
 
         OUTPUT:
 
