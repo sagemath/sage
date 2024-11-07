@@ -4440,10 +4440,14 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             bnf = self._pari_bnf
         except AttributeError:
             f = self.pari_polynomial("y")
+            _saved_rand = pari.getrand()
+            # make this deterministic, it affects printing of ideals
+            pari.setrand(1)
             if units:
                 self._pari_bnf = f.bnfinit(1)
             else:
                 self._pari_bnf = f.bnfinit()
+            pari.setrand(_saved_rand)
             bnf = self._pari_bnf
         # Certify if needed
         if proof and not getattr(self, "_pari_bnf_certified", False):
