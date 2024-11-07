@@ -2940,12 +2940,21 @@ def GaussianIntegers(names='I', latex_name='i'):
         x^2 + 1
         sage: GaussianIntegers().basis()
         [1, I]
+
+    TESTS::
+
+        sage: ZZI.<I> = GaussianIntegers()
+        sage: ZZI.category()
+        Category of principal ideal domains
     """
     from sage.rings.complex_double import CDF
     from sage.rings.number_field.number_field import NumberField
+    from sage.categories.principal_ideal_domains import PrincipalIdealDomains
     f = ZZ['x']([1, 0, 1])
     nf = NumberField(f, names, embedding=CDF(0, 1), latex_name=latex_name)
-    return nf.ring_of_integers()
+    order = nf.ring_of_integers()
+    order._refine_category_(PrincipalIdealDomains())
+    return order
 
 
 def EisensteinIntegers(names='omega'):
@@ -2971,9 +2980,18 @@ def EisensteinIntegers(names='omega'):
         x^2 + x + 1
         sage: EisensteinIntegers().basis()
         [1, omega]
+
+    TESTS::
+
+        sage: R.<omega> = EisensteinIntegers()
+        sage: R.category()
+        Category of principal ideal domains
     """
     from sage.rings.complex_double import CDF
     from sage.rings.number_field.number_field import NumberField
+    from sage.categories.principal_ideal_domains import PrincipalIdealDomains
     f = ZZ['x']([1, 1, 1])
     nf = NumberField(f, names, embedding=CDF(-0.5, 0.8660254037844386))
-    return nf.ring_of_integers()
+    order = nf.ring_of_integers()
+    order._refine_category_(PrincipalIdealDomains())
+    return order
