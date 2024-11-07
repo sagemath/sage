@@ -1,3 +1,36 @@
+r"""
+Polynomial virtual weighted multisort species
+
+A combinatorial species, as introduced by Joyal, is a functor from
+the category of finite sets with bijections to the category of finite
+sets with bijections.  Alternatively, we can regard a combinatorial
+species as a formal sum of group actions of the symmetric groups
+`\mathfrak S_n`, for `n\in\NN`.  For example, the trivial action of
+`\mathfrak S_n` corresponds to the species `\mathcal E_n$ of sets of
+cardinality `n`.
+
+More generally, a weighted multisort species in `k` sorts is a
+functor from the category of `k`-tuples of finite sets with
+bijections to the category of weighted finite sets with
+weight-preserving bijections.  We may think of the sorts as
+variables, traditionally denoted by `X, Y, Z`.
+
+Such a species is equivalent to a formal sum of group actions of
+groups `\mathfrak S_{n_1}\times\cdots\mathfrak S_{n_k}` with
+`(n_1,\dots,n_k)\in\NN^k`, together with a weight on the orbits of
+each group action.  Yet more generally, a virtual weighted multisort
+species is a formal difference of weighted multisort species.
+
+The class :class:`PolynomialSpecies` represents polynomial virtual
+weighted multisort species, that is, formal sums of finitely many
+actions.
+
+AUTHORS:
+
+- Mainak Roy and Martin Rubey (2024-11): Initial version
+
+"""
+
 from itertools import accumulate, chain
 
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
@@ -314,8 +347,13 @@ class AtomicSpeciesElement(WithEqualityById,
 
 
 class AtomicSpecies(UniqueRepresentation, Parent):
-    """
-    The class of atomic species.
+    r"""
+    The set of multisort atomic species.
+
+    INPUT:
+
+    - ``names`` -- an iterable of strings for the sorts of the
+      species
     """
     @staticmethod
     def __classcall__(cls, names):
@@ -339,12 +377,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
     def __init__(self, names):
         r"""
-        Initialize the class of (multivariate) atomic species.
-
-        INPUT:
-
-        - ``names`` -- an iterable of strings for the sorts of the
-          species
+        Initialize the class of (multisort) atomic species.
 
         TESTS:
 
@@ -762,8 +795,21 @@ def _stabilizer_subgroups(G, X, a):
 
 
 class MolecularSpecies(IndexedFreeAbelianMonoid):
-    """
-    The monoid of (multivariate) molecular species.
+    r"""
+    The monoid of multisort molecular species.
+
+    INPUT:
+
+    - ``names`` -- an iterable of strings for the sorts of the
+      species
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import MolecularSpecies
+        sage: M = MolecularSpecies("X,Y")
+        sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
+        sage: M(G, {0: [5,6], 1: [1,2,3,4]})
+        E_2(X)*{((1,2)(3,4),): ({}, {1, 2, 3, 4})}
     """
     @staticmethod
     def __classcall__(cls, names):
@@ -784,20 +830,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
     def __init__(self, names):
         r"""
-        Initialize the class of (multivariate) molecular species.
-
-        INPUT:
-
-        - ``names`` -- an iterable of ``k`` strings for the sorts of
-          the species
-
-        EXAMPLES::
-
-            sage: from sage.rings.species import MolecularSpecies
-            sage: M = MolecularSpecies("X,Y")
-            sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
-            sage: M(G, {0: [5,6], 1: [1,2,3,4]})
-            E_2(X)*{((1,2)(3,4),): ({}, {1, 2, 3, 4})}
+        Initialize the monoid of (multisort) molecular species.
 
         TESTS:
 
@@ -805,6 +838,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         :meth:`~sage.combinat.integer_vector.IntegerVectors.some_elements`
         yields degrees that are too large::
 
+            sage: from sage.rings.species import MolecularSpecies
             sage: M1 = MolecularSpecies("X")
             sage: TestSuite(M1).run(skip="_test_graded_components")
             sage: M2 = MolecularSpecies(["X", "Y"])
@@ -1368,7 +1402,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: (X*Y)(X, Y^2)
                 X*Y^2
 
-            A multivariate example::
+            A multisort example::
 
                 sage: M1 = MolecularSpecies("X")
                 sage: M2 = MolecularSpecies("X, Y")
@@ -1959,6 +1993,23 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
 
 class PolynomialSpecies(CombinatorialFreeModule):
+    r"""
+    The ring of polynomial weighted virtual multisort species.
+
+    INPUT:
+
+    - ``base_ring`` -- a ring
+    - ``names`` -- an iterable of strings for the sorts of the
+      species
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import PolynomialSpecies
+        sage: P.<X,Y> = PolynomialSpecies(QQ)
+        sage: G = SymmetricGroup(5).young_subgroup([2, 3])
+        sage: P(G, ([1,2], [3,4,5]))
+        E_2(X)*E_3(Y)
+    """
     def __classcall__(cls, base_ring, names):
         r"""
         Normalize the arguments.
@@ -1979,7 +2030,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
     def __init__(self, base_ring, names):
         r"""
-        Ring of `k`-variate polynomial (virtual) species.
+        Initialize the ring of (multisort) polynomial species.
 
         TESTS::
 
@@ -2016,13 +2067,14 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
     def _element_constructor_(self, G, pi=None, check=True):
         r"""
-        Construct the `k`-variate polynomial species with the given data.
+        Construct the `k`-variate polynomial species with the
+        given data.
 
         INPUT:
 
-        - ``G`` -- element of ``self`` (in this case ``pi`` must be ``None``)
-          permutation group, or pair ``(X, a)`` consisting of a
-          finite set and an action
+        - ``G`` -- element of ``self`` (in this case ``pi`` must be
+          ``None``), permutation group, or pair ``(X, a)`` consisting
+          of a finite set and an action
         - ``pi`` -- ``dict`` mapping sorts to iterables whose union
           is the domain of ``G`` (if ``G`` is a permutation group) or
           the domain of the acting symmetric group (if ``G`` is a
@@ -2094,6 +2146,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
             ....:     raise ValueError
             sage: P((X, lambda g, x: act(x[0], x[1], g)), pi)
             2*Y*E_2(X)
+
         """
         if parent(G) is self:
             # pi cannot be None because of framework
@@ -2242,9 +2295,9 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         .. TODO::
 
-           This is really a univariate species, so it would be better
-           to have a fast way to change all the variables of a
-           univariate species into a new sort.
+           This is really a species of a single sort, so it might be
+           better to have a fast way to turn a single sort species
+           into a multisort species
 
         EXAMPLES::
 
