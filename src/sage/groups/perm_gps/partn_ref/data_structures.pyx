@@ -46,23 +46,31 @@ cdef inline OrbitPartition *OP_new(int n) noexcept:
     """
     cdef OrbitPartition *OP = <OrbitPartition *> \
                                 sig_malloc(sizeof(OrbitPartition))
-    cdef int *int_array = <int *> sig_malloc( 4*n * sizeof(int) )
-    if OP is NULL or int_array is NULL:
+    if OP is NULL:
         sig_free(OP)
-        sig_free(int_array)
+        return NULL
+    OP.parent = <int *> sig_malloc(n * sizeof(int))
+    OP.rank = <int *> sig_malloc(n * sizeof(int))
+    OP.mcr = <int *> sig_malloc(n * sizeof(int))
+    OP.size = <int *> sig_malloc(n * sizeof(int))
+    if OP.parent is NULL or OP.rank is NULL or OP.mcr is NULL or OP.size is NULL:
+        sig_free(OP.parent)
+        sig_free(OP.rank)
+        sig_free(OP.mcr)
+        sig_free(OP.size)
+        sig_free(OP)
         return NULL
     OP.degree = n
     OP.num_cells = n
-    OP.parent = int_array
-    OP.rank   = int_array +   n
-    OP.mcr    = int_array + 2*n
-    OP.size   = int_array + 3*n
     OP_clear(OP)
     return OP
 
 cdef inline void OP_dealloc(OrbitPartition *OP) noexcept:
     if OP is not NULL:
         sig_free(OP.parent)
+        sig_free(OP.rank)
+        sig_free(OP.mcr)
+        sig_free(OP.size)
         sig_free(OP)
 
 cdef OP_string(OrbitPartition *OP):
@@ -76,6 +84,32 @@ cdef OP_string(OrbitPartition *OP):
         j = OP_find(OP, i)
         s += "%d -> %d" % (i, j)
     return s
+
+
+cdef inline void OP_make_set(OrbitPartition *OP) noexcept:
+    """
+    Increase the degree of the input partition by one.
+    An error is raised in case of memory allocation failure.
+    """
+    cdef int n = OP.degree
+
+    OP.parent = <int *> sig_realloc(OP.parent, (n + 1) * sizeof(int))
+    OP.rank = <int *> sig_realloc(OP.rank,(n + 1) * sizeof(int))
+    OP.mcr = <int *> sig_realloc(OP.mcr,(n + 1) * sizeof(int))
+    OP.size = <int *> sig_realloc(OP.size, (n + 1) * sizeof(int))
+    if OP.parent is NULL or OP.rank is NULL or OP.mcr is NULL or OP.size is NULL:
+        sig_free(OP.parent)
+        sig_free(OP.rank)
+        sig_free(OP.mcr)
+        sig_free(OP.size)
+        raise MemoryError("unable to reallocate memory in OP_make_set method")
+    OP.degree = n + 1
+    OP.num_cells = OP.num_cells + 1
+
+    OP.parent[n] = n
+    OP.rank[n] = 0
+    OP.mcr[n] = n
+    OP.size[n] = 1
 
 
 def OP_represent(int n, merges, perm):

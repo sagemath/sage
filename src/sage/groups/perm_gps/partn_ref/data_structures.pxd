@@ -138,38 +138,7 @@ cdef inline void OP_join(OrbitPartition *OP, int m, int n) noexcept:
     if m_root != n_root:
         OP.num_cells -= 1
 
-
-cdef inline void OP_make_set(OrbitPartition *OP) noexcept:
-    cdef int i, n = OP.degree
-    cdef int *new_parent, *new_rank, *new_mcr, *new_size
-
-    cdef int *int_array = <int *> sig_malloc(4*(n+1) * sizeof(int))
-    if int_array is NULL:
-        raise MemoryError("MemoryError allocating int_array in make_set method")
-
-    OP.degree = n + 1
-    OP.num_cells = OP.num_cells + 1
-    new_parent = int_array
-    new_rank = int_array + (n + 1)
-    new_mcr = int_array + (2*n + 2)
-    new_size = int_array + (3 * n + 3)
-
-    memcpy(new_parent, OP.parent, n * sizeof(int))
-    memcpy(new_rank, OP.rank, n * sizeof(int))
-    memcpy(new_mcr, OP.mcr, n * sizeof(int))
-    memcpy(new_size, OP.size, n * sizeof(int))
-
-    new_parent[n] = n
-    new_rank[n] = 0
-    new_mcr[n] = n
-    new_size[n] = 1
-
-    sig_free(OP.parent)
-
-    OP.parent = new_parent
-    OP.rank = new_rank
-    OP.mcr = new_mcr
-    OP.size = new_size
+cdef void OP_make_set(OrbitPartition *OP) noexcept
 
 cdef inline int OP_merge_list_perm(OrbitPartition *OP, int *gamma) noexcept:
     """
