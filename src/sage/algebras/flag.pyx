@@ -6,31 +6,12 @@ from the theory should only receive "signature"
 
 Preferably this should all be cython, so it is all fast
 
-For the identifier:
--place blocks in standard form
---sorted when the symbol is unordered
--build a canonical graph based on signature
---with bliss directly
--get a relabeling after canonical label is calculated
--store some small canonical value for later equality tests (or could relabel itself)
-
 For the generator:
--calculate all extensions from previous and excluded data
--merge signatures
---for the above both: loop through unique relabels of a structure
--generate primitives quickly
---using nauty directly
 -check excluded
 
 For patterns:
 -make no-edge mean optional by default
 -make it use the block standard form and the nonisom permutator
-
-Perhaps sanity checks when a flag is defined?
-Perhaps do that in combi theory? And know that flags defined here are correct?
-
-
-
 """
 
 
@@ -75,29 +56,29 @@ cdef tuple _subblock_helper(tuple points, tuple block):
             ret.append([points.index(ii) for ii in xx])
     return tuple(ret)
 
-#TODO move to all tuple
-cdef bint _block_consistency(list block, list missing):
+cdef bint _block_consistency(tuple block, tuple missing):
+    cdef tuple xx
     for xx in block:
         if xx in missing:
             return False
     return True
 
-#TODO move to all tuple
-cdef bint _block_refinement(list block0, list missing0, list block1, list missing1):
+cdef bint _block_refinement(tuple block0, tuple missing0, tuple block1, tuple missing1):
+    cdef tuple xx
     for xx in block0:
         if xx not in block1:
             return False
-    for yy in block1:
-        if yy in missing0:
+    for xx in block1:
+        if xx in missing0:
             return False
-    for zz in missing0:
-        if zz not in missing1:
+    for xx in missing0:
+        if xx not in missing1:
             return False
     return True
 
-
-cpdef tuple _additional_relations(int n, int arity, bint ordered):
-
+cpdef tuple _single_relation(int n, dict relation):
+    cdef int arity = relation['arity']
+    cdef bint ordered = relation['ordered']
     cdef tuple base = tuple(range(n-arity, n))
     cdef tuple ord_base
     cdef int ii
@@ -106,8 +87,153 @@ cpdef tuple _additional_relations(int n, int arity, bint ordered):
         ord_base = tuple(itertools.permutations(base))
     else:
         ord_base = (base, )
-    return tuple(itertools.chain())
+    
+    return tuple(itertools.chain.from_iterable(
+        itertools.combinations(ord_base, r) for r in range(len(ord_base) + 1)
+    ))
 
+cdef int _get_max_arity(dict signature):
+    cdef int max_arity = 0
+    cdef int curr_arity
+    cdef str xx
+    for xx in signature:
+        curr_arity = signature[xx]['arity']
+        if curr_arity<1 or curr_arity>3:
+            raise ValueError("For each relation, the arity must be between 1 and 3")
+        max_arity = max(max_arity, curr_arity)
+    return max_arity
+
+cdef tuple _get_extensions(int n, dict signature):
+    cdef int max_arity = _get_max_arity(signature)
+    cdef list terms = []
+    cdef str xx
+
+    for xx in signature:
+        if signature[xx]["arity"] != max_arity:
+            terms.append(tuple())
+        else:
+            terms.append(_single_relation(n, signature[xx]))
+    
+    cdef tuple poss
+    cdef list ret = []
+    for poss in itertools.product(*terms):
+        ret.append({xx: poss[ii] for ii,xx in enumerate(signature)})
+    return tuple(ret)
+
+cpdef list _possible_mergings(int n, tuple smaller_structures, dict signature):
+    cdef int max_arity = _get_max_arity(signature)
+    cdef tuple extensions = _get_extensions(n, signature)
+    cdef list ret = []
+
+    cdef Flag F_subf, G_subf, H_subf #each with size n-2
+    cdef Flag F, G, F_permed, G_permed, H_permed #each with size n-1
+    cdef Flag final_flag #each with size n
+    cdef tuple F_perms, G_perms, H_perms
+    cdef dict ext
+    cdef dict FG_overlap, FGH_overlap, final_overlap
+    cdef tuple all_perms
+    cdef tuple minustwo = tuple(list(range(n-2)) + [n-1])
+
+    cdef int ii, jj, kk
+    cdef int sslen = len(smaller_structures)
+    if max_arity==1:
+        for F in smaller_structures:
+            for ext in extensions:
+                final_overlap = _merge_blocks_0(F._blocks, ext)
+                final_flag = Flag(F.theory(), n, **final_overlap)
+                if final_flag not in ret:
+                    ret.append(final_flag)
+    
+    elif max_arity==2:
+        for ii, F in enumerate(smaller_structures):
+            F_perms = F.nonequal_permutations()
+            for G in smaller_structures[ii:]:
+                G_subf = G.subflag(range(n-2))
+                for F_permed in F_perms:
+                    if F_permed.subflag(range(n-2)).strong_equal(G_subf):
+                        FG_overlap = _merge_blocks_1(F_permed._blocks, G._blocks, n-2, n-1)
+                        for ext in extensions:
+                            sig_check()
+                            final_overlap = _merge_blocks_0(FG_overlap, ext)
+                            final_flag = Flag(F.theory(), n, **final_overlap)
+                            if final_flag not in ret:
+                                ret.append(final_flag)
+    
+    elif max_arity==3:
+        all_perms = tuple((F.nonequal_permutations() for F in smaller_structures))
+        for ii, F in enumerate(smaller_structures):
+            sig_check()
+            F_subf = F.subflag(range(n-2))
+            for jj in range(ii, sslen):
+                G_perms = all_perms[jj]
+                for G_permed in G_perms:
+                    G_subf = G_permed.subflag(range(n-2))
+                    if G_subf.strong_equal(F_subf):
+                        FG_overlap = _merge_blocks_1(F._blocks, G_permed._blocks, n-2, n-1)
+                        
+                        #F and G_permed are compatible
+
+                        for kk in range(jj, sslen):
+                            for H_permed in all_perms[kk]:
+                                if G_subf.strong_equal(H_permed.subflag(minustwo)):
+                                    if H_permed.subflag(range(n-2)).strong_equal(F.subflag(minustwo)):
+                                        
+                                        #F, G_permed, H_permed are compatible
+                                        
+                                        FGH_overlap = _merge_blocks_2(FG_overlap, H_permed._blocks, n-3, n-2, n-2, n-1)
+                                        for ext in extensions:
+                                            sig_check()
+                                            final_overlap = _merge_blocks_0(FGH_overlap, ext)
+                                            final_flag = Flag(F.theory(), n, **final_overlap)
+                                            if final_flag not in ret:
+                                                ret.append(final_flag)
+    return ret
+
+cdef dict _merge_blocks_0(dict block0, dict block1):
+    cdef dict merged = {}
+    cdef str key
+    for key in block0:
+        merged[key] = tuple(itertools.chain(block0[key], block1[key]))
+    return merged
+
+cdef dict _merge_blocks_1(dict block0, dict block1, int from0, int to0):
+    cdef dict merged = {}
+    cdef str key
+    cdef object terms_remapped
+    cdef tuple term
+
+    for key in block0:
+        terms_remapped = (
+            tuple((xx if xx != from0 else to0) for xx in term)
+            for term in block1[key] if from0 in term
+        )
+        merged[key] = tuple(itertools.chain(block0[key], terms_remapped))
+    return merged
+
+#TODO check if the order of remaps can break if there is an overlap
+cdef dict _merge_blocks_2(dict block0, dict block1, int from0, int to0, int from1, int to1):
+    cdef dict merged = {}
+    cdef str key
+    cdef object terms_remapped
+    cdef tuple term
+
+    for key in block0:
+        terms_remapped = (
+            tuple(
+                    (
+                        (
+                        xx if xx != from1 else to1
+                        ) 
+                        if xx != from0 else to0
+                    ) for xx in term
+                )
+            for term in block1[key] if 
+            (
+                from0 in term and from1 in term
+            )
+        )
+        merged[key] = tuple(itertools.chain(block0[key], terms_remapped))
+    return merged
 
 cdef class Flag(Element):
     
@@ -574,63 +700,6 @@ cdef class Flag(Element):
                     result_partial.append(overlap)
             result += result_partial
         return result
-
-    cpdef list extensions(self, list other_list):
-        cdef list ret = []
-        cdef int n = self._n
-        cdef list perms = self.nonequal_permutations()
-        cdef Flag self_permed, other, new_flag
-        
-        
-        cdef int point_new = n  # The new point to add
-        cdef dict combined_blocks
-        cdef bint is_equal
-        cdef dict signature = self.theory().signature()
-
-        for other in other_list:
-            for self_permed in perms:
-                if self_permed.subflag(range(n-1)).strong_equal(other.subflag(range(n-1))):
-                    
-                    possible_relations = generate_possible_relations_between_points(self, 0, point_new, n, signature)
-
-                    # For each possible set of relations between points 0 and point_new
-                    for relations in possible_relations:
-                        # Create combined_blocks by merging the blocks from self_permed and other
-                        combined_blocks = {}
-                        # Blocks from self_permed
-                        for key in self_permed._blocks:
-                            combined_blocks[key] = [tuple(t) for t in self_permed._blocks[key]]
-                        # Blocks from other, adjusted to new point indices
-                        for key in other._blocks:
-                            adjusted_blocks = [tuple(v if v > 0 else point_new for v in t) for t in other._blocks[key]]
-                            if key in combined_blocks:
-                                combined_blocks[key].extend(adjusted_blocks)
-                            else:
-                                combined_blocks[key] = adjusted_blocks
-                        # Add the relations involving points 0 and point_new
-                        for key in relations:
-                            if key in combined_blocks:
-                                combined_blocks[key].extend(relations[key])
-                            else:
-                                combined_blocks[key] = relations[key]
-
-                        # Create the new flag
-                        new_flag = Flag(self.theory(), n)
-                        new_flag._blocks = combined_blocks
-
-                        # Canonicalize the new flag
-                        canonical_blocks = new_flag.canonical_relabel()
-                        new_flag._blocks = canonical_blocks
-
-                        # Check if new_flag is isomorphic to any existing flag
-                        is_equal = False
-                        for existing_flag in ret:
-                            if new_flag.normal_equal(existing_flag):
-                                is_equal = True
-                                break
-                        if not is_equal:
-                            ret.append(new_flag)
-        return ret
 
     def _add_(self, other):
         r"""

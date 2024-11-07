@@ -245,44 +245,61 @@ from sage.misc.functional import log, round
 from sage.graphs.graph import Graph
 from sage.graphs.digraph import DiGraph
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.graphs.graph_generators", "graphs")
-lazy_import("sage.graphs.digraph_generators", "digraphs")
-lazy_import("sage.graphs.hypergraph_generators", "hypergraphs")
+
 
 import pickle
 import os
 from tqdm import tqdm
 
-def overlap(*theories):
+def combine(name, *theories, symmetries=None):
+    #Sanity checks
     if len(theories)==0:
         raise ValueError("At least one theory is expected!")
+    
+    #Check if symmetry combine
+    is_basic = True
+    common_arity = -1
+    common_oriented = -1
     groups = []
-    for xx in theories:
-        if isinstance(xx, CombinatorialTheory):
-            groups.append([xx])
-        else:
-            groups.append(xx)
-    theories = [xx for group in groups for xx in group]
+    keys = []
+    for theory in theories:
+        tkeys = list(theory.keys())
+
+        #Check keys are unique
+        for kk in tkeys:
+            if kk in keys:
+                raise ValueError("The relation names must be different")
+            keys.append(kk)
+        
+        #Add group to container
+        groups.append([theory[kk]["group"] for kk in tkeys])
+
+        #Set values to determine if basic
+        if len(tkeys)!=1:
+            is_basic = False
+        
+        if common_arity != -1:
+            xarity = xx[xkeys[0]]["arity"]
+            if common_arity==0:
+                common_arity = xarity
+            elif common_arity != xarity:
+                common_arity = -1
+        
+        
+    if common_arity == -1 and symmetries != None:
+        raise ValueError("Symmetries can only be defined when combining same arity single relation theories!")
     
-    signature = {}
-    ord_any = False
-    next_ind = 0
-    
-    for xx in theories:
-        for kk in xx.signature().keys():
-            max_ind = max(xx.signature()[kk][2], max_ind)
-    
-    for xx in theories:
-        prevsig = set(signature.keys())
-        conflicts = prevsig.intersection(set(xx.signature().keys()))
-        if len(conflicts) != 0 :
-            raise ValueError("The theories must have signatures with different names. Conflict with ", conflicts)
+    if common_arity != -1:
+        if isinstance(symmetries, Flag):
+            signature = {}
+            return CombinatorialTheory(name, from_data=)
+
 
 class CombinatorialTheory(Parent, UniqueRepresentation):
     
     Element = Flag
     
-    def __init__(self, name, relation_name, arity, is_ordered=False, signature={}, symm_graph=None):
+    def __init__(self, name, relation_name="edges", arity=2, is_ordered=False, from_data=None):
         r"""
         Initialize a Combinatorial Theory
         
@@ -296,8 +313,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         - ``relation_name`` -- string; name of the relation
         - ``arity`` -- integer; arity of the relation
         - ``is_ordered`` -- boolean; if the values are ordered
-        - ``signature`` -- dictionary; only used internally for
-            for creating complex theories
 
         OUTPUT: A CombinatorialTheory object
         """
@@ -305,10 +320,11 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         self._cache = {}
         self._name = name
         
-        if signature != {}:
-            self._signature = signature
+        if complex_signature != None:
+            self._signature = complex_signature[0]
         else:
             self._signature = {relation_name: (arity, is_ordered, 0)}
+            self._symmetries = [[]]
         Parent.__init__(self, category=(Sets(), ))
         self._populate_coercion_lists_()
     
@@ -376,12 +392,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     def _other_save(self, name, data):
         save_name = self._calcs_dir() + name
         with open(save_name, 'wb') as file:
-            pickle.dump(ret, file)
+            pickle.dump(data, file)
     
     def _other_load(self, name):
         save_name = self._calcs_dir() + name
         with open(save_name, 'rb') as file:
-            pickle.load(ret, file)
+            return pickle.load(file)
     
     def _load(self, ind, is_table):
         r"""
