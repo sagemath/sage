@@ -77,6 +77,8 @@ def is_LaurentPolynomialRing(R):
 
 
 _cache = {}
+
+
 def LaurentPolynomialRing(base_ring, *args, **kwds):
     r"""
     Return the globally unique univariate or multivariate Laurent polynomial
@@ -251,6 +253,7 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
     _cache[R] = P
     return P
 
+
 def _split_dict_(D, indices, group_by=None):
     r"""
     Split the dictionary ``D`` by ``indices`` and ``group_by``.
@@ -331,6 +334,7 @@ def _split_dict_(D, indices, group_by=None):
     else:
         return result
 
+
 def _split_laurent_polynomial_dict_(P, M, d):
     r"""
     Helper function for splitting a multivariate Laurent polynomial
@@ -388,7 +392,9 @@ def _split_laurent_polynomial_dict_(P, M, d):
         return {k: value(v, P.base_ring()) for k, v in D.items()}
     except (ValueError, TypeError):
         pass
-    return sum(P({k: 1}) * value(v, P) for k, v in D.items()).dict()
+    return sum(P({k: 1}) * value(v, P)
+               for k, v in D.items()).monomial_coefficients()
+
 
 def from_fraction_field(L, x):
     r"""
@@ -444,6 +450,8 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
         if R.ngens() != 1:
             raise ValueError("must be 1 generator")
         LaurentPolynomialRing_generic.__init__(self, R)
+        from sage.rings.integer_ring import IntegerRing
+        self._indices = IntegerRing()
 
     Element = LaurentPolynomial_univariate
 
@@ -535,9 +543,9 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             P = x.parent()
             if set(self.variable_names()) & set(P.variable_names()):
                 if isinstance(x, LaurentPolynomial_univariate):
-                    d = {(k,): v for k, v in x.dict().items()}
+                    d = {(k,): v for k, v in x.monomial_coefficients().items()}
                 else:
-                    d = x.dict()
+                    d = x.monomial_coefficients()
                 x = _split_laurent_polynomial_dict_(self, P, d)
                 x = {k[0]: v for k, v in x.items()}
             elif P is self.base_ring():
@@ -545,7 +553,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             elif x.is_constant() and self.has_coerce_map_from(x.parent().base_ring()):
                 return self(x.constant_coefficient())
             elif len(self.variable_names()) == len(P.variable_names()):
-                x = x.dict()
+                x = x.monomial_coefficients()
 
         elif isinstance(x, FractionFieldElement):
             # since the field of fraction of self is defined corresponding to
@@ -559,6 +567,12 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             return from_fraction_field(self, F(x))
 
         return self.element_class(self, x)
+
+    def monomial(self, arg):
+        r"""
+        Return the monomial with the given exponent.
+        """
+        return self.element_class(self, {arg: self.base_ring().one()})
 
     def __reduce__(self):
         """
@@ -590,6 +604,9 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
         if not R.base_ring().is_integral_domain():
             raise ValueError("base ring must be an integral domain")
         LaurentPolynomialRing_generic.__init__(self, R)
+        from sage.modules.free_module import FreeModule
+        from sage.rings.integer_ring import IntegerRing
+        self._indices = FreeModule(IntegerRing(), R.ngens())
 
     Element = LazyImport('sage.rings.polynomial.laurent_polynomial_mpair', 'LaurentPolynomial_mpair')
 
@@ -604,7 +621,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
         """
         return "Multivariate Laurent Polynomial Ring in %s over %s" % (", ".join(self._R.variable_names()), self._R.base_ring())
 
-    def monomial(self, *args):
+    def monomial(self, *exponents):
         r"""
         Return the monomial whose exponents are given in argument.
 
@@ -628,14 +645,27 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             sage: L.monomial(1, 2, 3)                                                   # needs sage.modules
             Traceback (most recent call last):
             ...
-            TypeError: tuple key must have same length as ngens
-        """
-        if len(args) != self.ngens():
-            raise TypeError("tuple key must have same length as ngens")
+            TypeError: tuple key (1, 2, 3) must have same length as ngens (= 2)
 
+        We also allow to specify the exponents in a single tuple::
+
+            sage: L.monomial((-1, 2))                                                   # needs sage.modules
+            x0^-1*x1^2
+
+            sage: L.monomial((-1, 2, 3))                                                # needs sage.modules
+            Traceback (most recent call last):
+            ...
+            TypeError: tuple key (-1, 2, 3) must have same length as ngens (= 2)
+        """
         from sage.rings.polynomial.polydict import ETuple
-        m = ETuple(args, int(self.ngens()))
-        return self.element_class(self, self.polynomial_ring().one(), m)
+        if len(exponents) == 1 and isinstance((e := exponents[0]), (tuple, ETuple)):
+            exponents = e
+
+        if len(exponents) != self.ngens():
+            raise TypeError(f"tuple key {exponents} must have same length as ngens (= {self.ngens()})")
+
+        m = ETuple(exponents, int(self.ngens()))
+        return self.element_class(self, self.polynomial_ring().base_ring().one(), m)
 
     def _element_constructor_(self, x, mon=None):
         """
@@ -762,9 +792,9 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
                 pass
             elif set(self.variable_names()) & set(P.variable_names()):
                 if isinstance(x, LaurentPolynomial_univariate):
-                    d = {(k,): v for k, v in x.dict().items()}
+                    d = {(k,): v for k, v in x.monomial_coefficients().items()}
                 else:
-                    d = x.dict()
+                    d = x.monomial_coefficients()
                 x = _split_laurent_polynomial_dict_(self, P, d)
             elif P is self.base_ring():
                 from sage.rings.polynomial.polydict import ETuple
@@ -773,7 +803,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             elif x.is_constant() and self.has_coerce_map_from(P.base_ring()):
                 return self(x.constant_coefficient())
             elif len(self.variable_names()) == len(P.variable_names()):
-                x = x.dict()
+                x = x.monomial_coefficients()
 
         elif isinstance(x, FractionFieldElement):
             # since the field of fraction of self is defined corresponding to

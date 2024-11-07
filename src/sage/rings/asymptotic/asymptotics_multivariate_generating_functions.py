@@ -3501,7 +3501,7 @@ class FractionWithFactoredDenominatorSum(list):
 
         # Compute the sum's numerator and denominator.
         R = self.denominator_ring
-        summy = sum((f.quotient() for f in self))
+        summy = sum(f.quotient() for f in self)
         numer = summy.numerator()
         denom = R(summy.denominator())
 

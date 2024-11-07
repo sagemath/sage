@@ -311,7 +311,7 @@ def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
     decoded_factors = []
     for factor in factors_denominator:
         factor = L(factor)
-        D = factor.dict()
+        D = factor.monomial_coefficients()
         if not D:
             raise ZeroDivisionError('Denominator contains a factor 0.')
         elif len(D) == 1:
@@ -331,7 +331,7 @@ def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
     numerator = L(numerator) / prod(to_numerator)
 
     result_numerator, result_factors_denominator = \
-        _Omega_(numerator.dict(), decoded_factors)
+        _Omega_(numerator.monomial_coefficients(), decoded_factors)
     if result_numerator == 0:
         return Factorization([], unit=result_numerator)
 
@@ -589,7 +589,7 @@ def Omega_ge(a, exponents):
         It is assumed that ``var`` only occurs with exponents
         divisible by ``exponent``.
         """
-        p = tuple(var.dict().popitem()[0]).index(1)  # var is the p-th generator
+        p = tuple(var.monomial_coefficients().popitem()[0]).index(1)  # var is the p-th generator
 
         def subs_e(e):
             e = list(e)
@@ -597,7 +597,8 @@ def Omega_ge(a, exponents):
             e[p] = e[p] // exponent
             return tuple(e)
         parent = expression.parent()
-        result = parent({subs_e(e): c for e, c in expression.dict().items()})
+        result = parent({subs_e(e): c
+                         for e, c in expression.monomial_coefficients().items()})
         return result
 
     def de_power(expression):

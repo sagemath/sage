@@ -893,7 +893,7 @@ class Modules(Category_module):
                      (Vector space of dimension 2 over Rational Field,
                       Univariate Polynomial Ring in x over Rational Field)
                     sage: A.category()                                                  # needs sage.modules
-                    Category of Cartesian products of vector spaces
+                    Category of Cartesian products of vector spaces with basis
                      over (number fields and quotient fields and metric spaces)
                     sage: A.base_ring()                                                 # needs sage.modules
                     Rational Field

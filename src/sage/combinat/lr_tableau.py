@@ -28,7 +28,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
 
-from itertools import zip_longest
+from itertools import zip_longest, accumulate
 
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.tableau import SemistandardTableau, SemistandardTableaux
@@ -277,14 +277,15 @@ def is_littlewood_richardson(t, heights):
         False
     """
     from sage.combinat.words.word import Word
-    partial = [sum(heights[i] for i in range(j)) for j in range(len(heights)+1)]
     try:
         w = t.to_word()
     except AttributeError:  # Not an instance of Tableau
         w = sum(reversed(t), [])
+
+    partial = list(accumulate(heights, initial=0))
     for i in range(len(heights)):
         subword = Word([j for j in w if partial[i]+1 <= j <= partial[i+1]],
-                       alphabet=list(range(partial[i]+1,partial[i+1]+1)))
+                       alphabet=list(range(partial[i]+1, partial[i+1]+1)))
         if not subword.is_yamanouchi():
             return False
     return True
@@ -305,5 +306,5 @@ def _tableau_join(t1, t2, shift=0):
         sage: _tableau_join([[1,2]],[[None,None,2],[3]],shift=5)
         [[1, 2, 7], [8]]
     """
-    return [list(row1) + [e2+shift for e2 in row2 if e2 is not None]
-            for (row1, row2) in zip_longest(t1, t2, fillvalue=[])]
+    return [list(row1) + [e2 + shift for e2 in row2 if e2 is not None]
+            for row1, row2 in zip_longest(t1, t2, fillvalue=[])]
