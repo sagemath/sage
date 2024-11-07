@@ -766,7 +766,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
     The monoid of (multivariate) molecular species.
     """
     @staticmethod
-    def __classcall__(cls, *args, **kwds):
+    def __classcall__(cls, names):
         """
         Normalize the arguments.
 
@@ -779,17 +779,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: MolecularSpecies("X,Y") == MolecularSpecies(["X", "Z"])
             False
         """
-        if isinstance(args[0], AtomicSpecies):
-            indices = args[0]
-        else:
-            assert "names" not in kwds or kwds["names"] is None
-            indices = AtomicSpecies(args[0])
-        category = Monoids().Commutative() & SetsWithGrading().Infinite()
-        return super().__classcall__(cls, indices,
-                                     prefix='', bracket=False,
-                                     category=category)
+        names = normalize_names(-1, names)
+        return UniqueRepresentation.__classcall__(cls, names)
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, names):
         r"""
         Initialize the class of (multivariate) molecular species.
 
@@ -817,8 +810,11 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: M2 = MolecularSpecies(["X", "Y"])
             sage: TestSuite(M2).run(skip="_test_graded_components")
         """
-        IndexedFreeAbelianMonoid.__init__(self, *args, **kwds)
-        self._arity = args[0]._arity
+        indices = AtomicSpecies(names)
+        category = Monoids().Commutative() & SetsWithGrading().Infinite()
+        IndexedFreeAbelianMonoid.__init__(self, indices, prefix='',
+                                          bracket=False, category=category)
+        self._arity = indices._arity
 
     def _repr_(self):
         r"""
