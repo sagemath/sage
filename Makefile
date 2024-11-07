@@ -122,7 +122,7 @@ sagelib-clean:
 	     rm -rf c_lib .cython_version cython_debug; \
 	     rm -rf build; find . -name '*.pyc' -o -name "*.so" | xargs rm -f; \
 	     rm -f $$(find . -name "*.pyx" | sed 's/\(.*\)[.]pyx$$/\1.c \1.cpp/'); \
-	     rm -rf sage/ext/interpreters) \
+	     cd sage/ext/interpreters/; rm -f *.so *.c *.h *.py* *.pxd) \
 	    && (cd "$(SAGE_ROOT)/build/pkgs/sagelib/src/" && rm -rf build); \
 	fi
 
