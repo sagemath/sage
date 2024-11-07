@@ -5585,7 +5585,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: 5.is_norm(K)
             False
             sage: n.is_norm(K, element=True)
-            (True, 4*beta + 6)
+            (True, -4*beta + 6)
             sage: n.is_norm(K, element=True)[1].norm()
             4
             sage: n = 5

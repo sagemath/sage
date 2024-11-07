@@ -121,7 +121,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             sage: K.<i> = QuadraticField(-1)
             sage: C = Conic(K, [1, 3, -5])
             sage: C.has_rational_point(point=True, obstruction=True)
-            (False, Fractional ideal (i + 2))
+            (False, Fractional ideal (2*i - 1))
             sage: C.has_rational_point(algorithm='rnfisnorm')
             False
             sage: C.has_rational_point(algorithm='rnfisnorm', obstruction=True,

@@ -7136,7 +7136,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: K.<a> = NumberField(1/2*x^2 - 1/6)
             sage: K.units()
-            (-3*a + 2,)
+            (3*a + 2,)
         """
         proof = proof_flag(proof)
 
