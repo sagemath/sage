@@ -42,6 +42,7 @@ from sage.env import SAGE_EXTCODE
 class Dokchitser(SageObject):
     r"""
     Dokchitser's `L`-functions Calculator.
+
     PARI code can be found on
     `Dokchitser's homepage <https://people.maths.bris.ac.uk/~matyd/computel>`_.
 
