@@ -446,27 +446,25 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
             return (False, set(list(A)[:2]))
         return (False, set(list(B)[:2]))
 
-    # A graph (without a self-loop) is bicritical if and only if the underlying
-    # simple graph is bicritical
-    G_simple = G.to_simple()
-
     from sage.graphs.graph import Graph
     if matching:
         # The input matching must be a valid perfect matching of the graph
         M = Graph(matching)
         if any(d != 1 for d in M.degree()):
             raise ValueError("the input is not a matching")
-        if any(not G_simple.has_edge(edge) for edge in M.edge_iterator()):
+
+        if any(not G.has_edge(edge) for edge in M.edge_iterator()):
             raise ValueError("the input is not a matching of the graph")
-        if (G_simple.order() != M.order()) or (G_simple.order() != 2*M.size()):
+
+        if (G.order() != M.order()) or (G.order() != 2*M.size()):
             raise ValueError("the input is not a perfect matching of the graph")
     else:
         # A maximum matching of the graph is computed
-        M = Graph(G_simple.matching(algorithm=algorithm, solver=solver, verbose=verbose,
+        M = Graph(G.matching(algorithm=algorithm, solver=solver, verbose=verbose,
                                     integrality_tolerance=integrality_tolerance))
 
         # It must be a perfect matching
-        if G_simple.order() != M.order():
+        if G.order() != M.order():
             u, v = next(M.edge_iterator(labels=False))
             return (False, set([u, v])) if coNP_certificate else False
 
@@ -474,12 +472,12 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
     # every vertex of the graph distinct from v must be reachable from u through an even length
     # M-alternating uv-path starting with an edge not in M and ending with an edge in M
 
-    for u in G_simple:
+    for u in G:
         v = next(M.neighbor_iterator(u))
 
-        even = M_alternating_even_mark(G_simple, u, M)
+        even = M_alternating_even_mark(G, u, M)
 
-        for w in G_simple:
+        for w in G:
             if w != v and w not in even:
                 return (False, set([v, w])) if coNP_certificate else False
 
