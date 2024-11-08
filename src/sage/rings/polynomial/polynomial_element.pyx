@@ -13078,7 +13078,7 @@ cpdef bint polynomial_is_variable(x) noexcept:
     .. SEEALSO::
 
         - :meth:`sage.rings.polynomial.polynomial_element.Polynomial.is_gen`
-        - :meth:`sage.rings.polynomial.multi_polynomial.MPolynomial.is_generator`
+        - :meth:`sage.rings.polynomial.multi_polynomial.MPolynomial.is_gen`
 
     EXAMPLES::
 
@@ -13116,5 +13116,5 @@ cpdef bint polynomial_is_variable(x) noexcept:
         return (x.is_gen()
                 or (x.degree() == 1 and x[0].is_zero() and x[1].is_one()))
     if isinstance(x, MPolynomial):
-        return x.is_generator()
+        return x.is_gen()
     return False

@@ -70,7 +70,7 @@ from sage.structure.sequence import Sequence
 from .multi_polynomial import MPolynomial, is_MPolynomial
 from sage.categories.morphism import Morphism
 from sage.misc.lazy_attribute import lazy_attribute
-
+from sage.misc.superseded import deprecated_function_alias
 from sage.rings.rational_field import QQ
 from sage.rings.fraction_field import FractionField
 
@@ -693,7 +693,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
                     x = self.parent().coerce(x)
                 except TypeError:
                     raise TypeError("x must canonically coerce to parent")
-            if not x.is_generator():
+            if not x.is_gen():
                 raise TypeError("x must be one of the generators of the parent")
         else:
             raise TypeError("x must be one of the generators of the parent")
@@ -1349,7 +1349,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         R = self.parent()
         return R(X)
 
-    def is_generator(self):
+    def is_gen(self) -> bool:
         """
         Return ``True`` if ``self`` is a generator of its parent.
 
@@ -1357,18 +1357,30 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
             sage: # needs sage.rings.number_field
             sage: R.<x,y> = QQbar[]
-            sage: x.is_generator()
+            sage: x.is_gen()
             True
-            sage: (x + y - y).is_generator()
+            sage: (x + y - y).is_gen()
             True
-            sage: (x*y).is_generator()
+            sage: (x*y).is_gen()
             False
+
+        TESTS::
+
+            sage: # needs sage.rings.number_field
+            sage: R.<x,y> = QQbar[]
+            sage: x.is_generator()
+            doctest:warning...:
+            DeprecationWarning: is_generator is deprecated. Please use is_gen instead.
+            See https://github.com/sagemath/sage/issues/38888 for details.
+            True
         """
         elt = self.element()
         if len(elt) == 1:
             (e, c), = elt.dict().items()
             return e.nonzero_values() == [1] and c.is_one()
         return False
+
+    is_generator = deprecated_function_alias(38888, is_gen)
 
     def is_monomial(self):
         """
