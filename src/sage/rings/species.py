@@ -416,7 +416,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, G, pi=None, check=True):
         r"""
-        Construct the `k`-variate atomic species with the given data.
+        Construct the atomic species with the given data.
 
         INPUT:
 
@@ -868,7 +868,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
     def _element_constructor_(self, G, pi=None, check=True):
         r"""
-        Construct the `k`-variate molecular species with the given data.
+        Construct the molecular species with the given data.
 
         INPUT:
 
@@ -960,12 +960,23 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: M(0)
             Traceback (most recent call last):
             ...
-            ValueError: 0 must be a permutation group or a pair specifying a
-             group action on the given domain pi=None
+            ValueError: 0 must be a permutation group or a pair (X, a)
+             specifying a group action of the symmetric group on pi=None
         """
         if parent(G) is self:
             # pi cannot be None because of framework
             raise ValueError("cannot reassign sorts to a molecular species")
+
+        if isinstance(G, tuple):
+            X, a = G
+            dompart = [sorted(pi.get(s, [])) for s in range(self._arity)]
+            S = PermutationGroup([tuple(b) for b in dompart if len(b) > 2]
+                                 + [(b[0], b[1]) for b in dompart if len(b) > 1],
+                                 domain=list(chain(*dompart)))
+            H = _stabilizer_subgroups(S, X, a)
+            if len(H) > 1:
+                raise ValueError("action is not transitive")
+            G = H[0]
 
         if isinstance(G, PermutationGroup_generic):
             if pi is None:
@@ -993,18 +1004,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 elm *= self.gen(a)
             return elm
 
-        try:
-            X, a = G
-        except TypeError:
-            raise ValueError(f"{G} must be a permutation group or a pair specifying a group action on the given domain pi={pi}")
-        dompart = [sorted(pi.get(s, [])) for s in range(self._arity)]
-        S = PermutationGroup([tuple(b) for b in dompart if len(b) > 2]
-                             + [(b[0], b[1]) for b in dompart if len(b) > 1],
-                             domain=list(chain(*dompart)))
-        H = _stabilizer_subgroups(S, X, a)
-        if len(H) > 1:
-            raise ValueError("action is not transitive")
-        return self(H[0], pi, check=check)
+        raise ValueError(f"{G} must be a permutation group or a pair (X, a) specifying a group action of the symmetric group on pi={pi}")
 
     def grading_set(self):
         r"""
@@ -2067,8 +2067,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
     def _element_constructor_(self, G, pi=None, check=True):
         r"""
-        Construct the `k`-variate polynomial species with the
-        given data.
+        Construct the polynomial species with the given data.
 
         INPUT:
 
@@ -2113,22 +2112,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: P((X, act), {0: range(1, n+1)})
             4*E_4 + 4*P_4 + E_2^2 + 2*X*E_3
 
-        TESTS::
-
-            sage: P = PolynomialSpecies(ZZ, "X, Y")
-            sage: G = PermutationGroup([(1,2), (3,4)])
-            sage: P(G)
-            Traceback (most recent call last):
-            ...
-            ValueError: the assignment of sorts to the domain elements must be provided
-            sage: f = P(G, {0: [1, 2], 1: [3, 4]})
-            sage: P(f) is f
-            True
-            sage: P(f, {0: [1,2,3,4]})
-            Traceback (most recent call last):
-            ...
-            ValueError: cannot reassign sorts to a polynomial species
-
         Create a multisort species given an action::
 
             sage: P = PolynomialSpecies(QQ, "X,Y")
@@ -2147,10 +2130,48 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: P((X, lambda g, x: act(x[0], x[1], g)), pi)
             2*Y*E_2(X)
 
+        TESTS::
+
+            sage: P = PolynomialSpecies(ZZ, "X, Y")
+            sage: G = PermutationGroup([(1,2), (3,4)])
+            sage: P(G)
+            Traceback (most recent call last):
+            ...
+            ValueError: the assignment of sorts to the domain elements must be provided
+            sage: f = P(G, {0: [1, 2], 1: [3, 4]})
+            sage: P(f) is f
+            True
+            sage: P(f, {0: [1,2,3,4]})
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot reassign sorts to a polynomial species
+
+        Elements of the base ring are coerced correctly::
+
+            sage: P(2)
+            2
+
+            sage: P(1/2)
+            Traceback (most recent call last):
+            ...
+            ValueError: 1/2 must be an element of the base ring, a permutation
+             group or a pair (X, a) specifying a group action of the symmetric
+             group on pi=None
         """
         if parent(G) is self:
             # pi cannot be None because of framework
             raise ValueError("cannot reassign sorts to a polynomial species")
+
+        if isinstance(G, tuple):
+            X, a = G
+            dompart = [sorted(pi.get(s, [])) for s in range(self._arity)]
+            S = PermutationGroup([tuple(b) for b in dompart if len(b) > 2]
+                                 + [(b[0], b[1]) for b in dompart if len(b) > 1],
+                                 domain=list(chain(*dompart)))
+            Hs = _stabilizer_subgroups(S, X, a)
+            return self.sum_of_terms((self._indices(H, pi, check=check), ZZ.one())
+                                     for H in Hs)
+
         if isinstance(G, PermutationGroup_generic):
             if pi is None:
                 if self._arity == 1:
@@ -2160,14 +2181,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 pi = {i: v for i, v in enumerate(pi)}
             return self._from_dict({self._indices(G, pi, check=check): ZZ.one()})
 
-        X, a = G
-        dompart = [sorted(pi.get(s, [])) for s in range(self._arity)]
-        S = PermutationGroup([tuple(b) for b in dompart if len(b) > 2]
-                             + [(b[0], b[1]) for b in dompart if len(b) > 1],
-                             domain=list(chain(*dompart)))
-        Hs = _stabilizer_subgroups(S, X, a)
-        return self.sum_of_terms((self._indices(H, pi, check=check), ZZ.one())
-                                 for H in Hs)
+        raise ValueError(f"{G} must be an element of the base ring, a permutation group or a pair (X, a) specifying a group action of the symmetric group on pi={pi}")
 
     def _first_ngens(self, n):
         r"""
