@@ -636,12 +636,9 @@ class MatchingCoveredGraph(Graph):
             raise ValueError('the graph is trivial')
 
         elif isinstance(data, MatchingCoveredGraph):
-            try:
-                Graph.__init__(self, data, *args, **kwds)
-                success = True
+            Graph.__init__(self, data, *args, **kwds)
+            success = True
 
-            except Exception as exception:
-                raise exception
 
         elif isinstance(data, Graph):
             try:
@@ -657,21 +654,9 @@ class MatchingCoveredGraph(Graph):
 
         if success:
             if matching:
-                # The input matching must be a valid perfect matching of the graph
-                M = Graph(matching)
-
-                if any(d != 1 for d in M.degree()):
-                    raise ValueError("the input is not a matching")
-
-                G = Graph(self, multiedges=False)
-
-                if any(not G.has_edge(edge) for edge in M.edge_iterator()):
-                    raise ValueError("the input is not a matching of the graph")
-
-                if (G.order() != M.order()):
-                    raise ValueError("the input is not a perfect matching of the graph")
-
+                # The input matching is a valid perfect matching of the graph
                 self._matching = matching
+
             else:
                 self._matching = Graph(self).matching()
 
