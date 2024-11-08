@@ -81,7 +81,10 @@ cdef inline int OP_copy_from_to(OrbitPartition *OP, OrbitPartition *OP2) noexcep
     -   OP2.degree == OP.degree
     -   OP2.num_cells == OP.num_cells
     """
-    memcpy(OP2.parent, OP.parent, 4*OP.degree * sizeof(int) )
+    memcpy(OP2.parent, OP.parent, OP.degree * sizeof(int))
+    memcpy(OP2.rank, OP.rank, OP.degree * sizeof(int))
+    memcpy(OP2.mcr, OP.mcr, OP.degree * sizeof(int))
+    memcpy(OP2.size, OP.size, OP.degree * sizeof(int))
 
 cdef inline OrbitPartition *OP_copy(OrbitPartition *OP) noexcept:
     """
