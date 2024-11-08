@@ -225,10 +225,10 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         """
         try:
             import numpy
-            from .numpy_util import set_mzd_from_numpy
         except ImportError:
             pass
         else:
+            from .numpy_util import set_mzd_from_numpy
             if set_mzd_from_numpy(<uintptr_t>self._entries, self._degree, x):
                 return
         if isinstance(x, (list, tuple)):
