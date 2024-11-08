@@ -16,8 +16,8 @@ weight-preserving bijections.  We may think of the sorts as
 variables, traditionally denoted by `X, Y, Z`.
 
 Such a species is equivalent to a formal sum of group actions of
-groups `\mathfrak S_{n_1}\times\cdots\mathfrak S_{n_k}` with
-`(n_1,\dots,n_k)\in\NN^k`, together with a weight on the orbits of
+groups `\mathfrak S_{n_1} \times \cdots \times \mathfrak S_{n_k}` with
+`(n_1,\ldots,n_k)\in\NN^k`, together with a weight on the orbits of
 each group action.  Yet more generally, a virtual weighted multisort
 species is a formal difference of weighted multisort species.
 
