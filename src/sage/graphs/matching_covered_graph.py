@@ -1019,6 +1019,21 @@ class MatchingCoveredGraph(Graph):
              (3, 6, None), (4, 5, None), (4, 6, 'label'), (4, 7, 'label'),
              (5, 7, None), (6, 7, None)]
 
+        Note that the ``weight`` of the edge shall be input as the ``label``::
+
+            sage: G.add_edge((1, 3), label=5)
+            sage: G.edges()
+            [(0, 1, None), (0, 3, None), (0, 4, None), (0, 5, None),
+             (0, 6, None), (1, 2, None), (1, 3, 5), (1, 4, None),
+             (2, 3, None), (2, 4, 'label'), (2, 5, None), (2, 7, None),
+             (3, 4, None), (3, 6, None), (4, 5, None), (4, 6, 'label'),
+             (4, 7, 'label'), (5, 7, None), (6, 7, None)]
+            sage: G.add_edge((2, 4, 6), label=6)
+            Traceback (most recent call last):
+            ...
+            ValueError: the graph obtained after the addition of edge
+            (((2, 4, 6), None, 6)) is not matching covered
+
         Vertex name cannot be ``None``, so::
 
             sage: W = graphs.WheelGraph(6)
@@ -1051,6 +1066,12 @@ class MatchingCoveredGraph(Graph):
             sage: G.add_edge(next(G.edge_iterator()))
             sage: P == G
             True
+            sage: G.size()
+            15
+            sage: G.allow_multiple_edges(True)
+            sage: G.add_edge(0, 1)
+            sage: G.size()
+            16
 
         Adding an edge such that the resulting graph is matching covered::
 
