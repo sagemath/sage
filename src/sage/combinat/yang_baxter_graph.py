@@ -45,8 +45,8 @@ def YangBaxterGraph(partition=None, root=None, operators=None):
 
     OUTPUT: either:
 
-      - :class:`YangBaxterGraph_partition` -- if partition is defined
-      - :class:`YangBaxterGraph_generic` -- if partition is ``None``
+    - :class:`YangBaxterGraph_partition` -- if partition is defined
+    - :class:`YangBaxterGraph_generic` -- if partition is ``None``
 
     EXAMPLES:
 
@@ -108,8 +108,7 @@ def YangBaxterGraph(partition=None, root=None, operators=None):
     """
     if partition is None:
         return YangBaxterGraph_generic(root=root, operators=operators)
-    else:
-        return YangBaxterGraph_partition(partition=Partition(partition))
+    return YangBaxterGraph_partition(partition=Partition(partition))
 
 # *********** General class for Yang-Baxter Graphs ***********
 
@@ -203,7 +202,7 @@ class YangBaxterGraph_generic(SageObject):
                 digraph.add_edge(u, v, l)
         return digraph
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -236,7 +235,7 @@ class YangBaxterGraph_generic(SageObject):
             sage: Y3.__eq__(Y2)
             False
         """
-        return type(self) is type(other) and self._digraph == other._digraph
+        return isinstance(other, YangBaxterGraph_generic) and self._digraph == other._digraph
 
     def __ne__(self, other) -> bool:
         r"""
@@ -634,7 +633,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
             [((0, 1, 0), (1, 0, 0), Swap positions 0 and 1)]
         """
         digraph = super()._digraph
-        for (u, v, op) in digraph.edges(sort=True):
+        for u, v, op in digraph.edges(sort=True):
             digraph.set_edge_label(u, v, SwapOperator(op.position()))
         return digraph
 
@@ -777,7 +776,7 @@ class SwapOperator(SageObject):
         """
         self._position = i
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
