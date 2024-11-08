@@ -79,6 +79,13 @@ class AtomicSpeciesElement(WithEqualityById,
     Two atomic species are equal if the underlying groups are
     conjugate, and their domain partitions are equal under the
     conjugating element.
+
+    INPUT:
+
+    - ``dis`` -- a directly indecomposable permutation group
+    - ``domain_partition`` -- a `k`-tuple of ``frozenset`` entries,
+      where `k` is the arity, representing the assignment of each
+      element of the domain of ``dis`` to a sort
     """
     @staticmethod
     def __classcall__(cls, parent, C, dompart):
@@ -216,13 +223,6 @@ class AtomicSpeciesElement(WithEqualityById,
     def __init__(self, parent, dis, domain_partition):
         r"""
         Initialize an atomic species.
-
-        INPUT:
-
-        - ``dis`` -- a directly indecomposable permutation group
-        - ``domain_partition`` -- a `k`-tuple of ``frozenset``s,
-          where `k` is the arity, representing the assignment of each
-          element of the domain of ``dis`` to a sort
 
         TESTS::
 
@@ -377,7 +377,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
     def __init__(self, names):
         r"""
-        Initialize the class of (multisort) atomic species.
+        Initialize the class of atomic species.
 
         TESTS:
 
@@ -830,7 +830,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
     def __init__(self, names):
         r"""
-        Initialize the monoid of (multisort) molecular species.
+        Initialize the monoid of molecular species.
 
         TESTS:
 
@@ -2030,7 +2030,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
     def __init__(self, base_ring, names):
         r"""
-        Initialize the ring of (multisort) polynomial species.
+        Initialize the ring of polynomial species.
 
         TESTS::
 
