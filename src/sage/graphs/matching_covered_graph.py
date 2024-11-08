@@ -639,7 +639,6 @@ class MatchingCoveredGraph(Graph):
             Graph.__init__(self, data, *args, **kwds)
             success = True
 
-
         elif isinstance(data, Graph):
             try:
                 self._upgrade_from_graph(data=data, matching=matching,
