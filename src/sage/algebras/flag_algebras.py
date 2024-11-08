@@ -229,7 +229,7 @@ from sage.structure.element import Element
 from sage.rings.rational_field import QQ
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.rings.integer import Integer
-from sage.rings.real_mpfr import RR
+from sage.rings.infinity import infinity
 from sage.algebras.flag import Flag, Pattern
 
 from sage.categories.sets_cat import Sets
@@ -239,14 +239,12 @@ from sage.matrix.constructor import matrix
 from sage.matrix.special import diagonal_matrix
 
 from sage.misc.prandom import randint
-from sage.arith.misc import falling_factorial, binomial
-from sage.misc.functional import log, round
-
-from sage.graphs.graph import Graph
-from sage.graphs.digraph import DiGraph
+from sage.arith.misc import falling_factorial, binomial, factorial
+from sage.misc.functional import round
 from sage.misc.lazy_import import lazy_import
+from sage.misc.persist import save, load
 
-
+import hashlib
 import pickle
 import os
 from tqdm import tqdm
@@ -255,45 +253,49 @@ def combine(name, *theories, symmetries=None):
     #Sanity checks
     if len(theories)==0:
         raise ValueError("At least one theory is expected!")
-    
-    #Check if symmetry combine
-    is_basic = True
-    common_arity = -1
-    common_oriented = -1
-    groups = []
-    keys = []
+    if len(theories)==1:
+        tt = theories[0]
+        return CombinatorialTheory(
+            name, from_data=[tt._signature, tt._symmetries, tt._source_theories])
+
+    #Check if we can use symmetry
+    can_symmetry = True
+
+    next_group = 0
+    result_signature = {}
+    result_symmetry = []
     for theory in theories:
-        tkeys = list(theory.keys())
-
-        #Check keys are unique
-        for kk in tkeys:
-            if kk in keys:
-                raise ValueError("The relation names must be different")
-            keys.append(kk)
-        
-        #Add group to container
-        groups.append([theory[kk]["group"] for kk in tkeys])
-
-        #Set values to determine if basic
-        if len(tkeys)!=1:
-            is_basic = False
-        
-        if common_arity != -1:
-            xarity = xx[xkeys[0]]["arity"]
-            if common_arity==0:
-                common_arity = xarity
-            elif common_arity != xarity:
-                common_arity = -1
-        
-        
-    if common_arity == -1 and symmetries != None:
-        raise ValueError("Symmetries can only be defined when combining same arity single relation theories!")
+        next_group_increment = 0
+        if len(theory._signature.keys())!=1:
+            can_symmetry = False
+        for kk in theory._signature:
+            if kk in result_signature:
+                raise ValueError("The relation names must be different!")
+            tkk = theory._signature[kk].clone()
+            if can_symmetry:
+                for ll in result_signature:
+                    tll = result_signature[ll]
+                    if tll!=tkk:
+                        can_symmetry = False
+            next_group_increment = max(next_group_increment, tkk["group"]+1)
+            tkk["group"] += next_group
+            result_signature[kk] = tkk
+        result_symmetry += theory._symmetries
+        next_group += next_group_increment
     
-    if common_arity != -1:
-        if isinstance(symmetries, Flag):
-            signature = {}
-            return CombinatorialTheory(name, from_data=)
 
+    if not can_symmetry and symmetries!=None:
+        import warnings
+        warnings.warn("""Warning! The combined theories are not identical (apart from relation names). 
+                      The provided symmetries are ignored.""", RuntimeWarning)
+        symmetries = None
+    
+    if symmetries != None:
+        for xx in result_signature:
+            result_signature[xx]["group"] = 0
+    else:
+        symmetries = result_symmetry
+    return CombinatorialTheory(name, from_data=[result_signature, symmetries, theories])
 
 class CombinatorialTheory(Parent, UniqueRepresentation):
     
@@ -313,6 +315,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         - ``relation_name`` -- string; name of the relation
         - ``arity`` -- integer; arity of the relation
         - ``is_ordered`` -- boolean; if the values are ordered
+        - ``from_data`` -- list; only used internally
 
         OUTPUT: A CombinatorialTheory object
         """
@@ -320,126 +323,22 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         self._cache = {}
         self._name = name
         
-        if complex_signature != None:
-            self._signature = complex_signature[0]
+        if from_data != None:
+            self._signature = from_data[0]
+            self._symmetries = from_data[1]
+            self._source_theories = from_data[2]
         else:
-            self._signature = {relation_name: (arity, is_ordered, 0)}
+            if arity not in [1, 2, 3]:
+                raise ValueError("Only arity 1, 2, or 3 supported!")
+            self._signature = {relation_name: {
+                "arity": arity,
+                "ordered": is_ordered,
+                "group": 0
+            }}
             self._symmetries = [[]]
+            self._source_theories = []
         Parent.__init__(self, category=(Sets(), ))
         self._populate_coercion_lists_()
-    
-    def _compress(self, numbers):
-        r"""
-        Compresses the list of numbers to a short string.
-        
-        This is used when naming files in saving and loading, to store the parameters of this theory.
-
-        EXAMPLES::
-
-            sage: from sage.algebras.flag_algebras import *
-            sage: GraphTheory._compress([1, 1, 10, 4, 2, 11, 15])
-            '_kKgb'
-        """
-        table = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
-        
-        p = 1007016245527451
-        rem = 0
-        for ii in numbers:
-            rem = (rem*16 + ii) % p
-        ret = ""
-        if rem==0:
-            ret = table[0]
-        while rem > 0:
-            ret += table[rem%64]
-            rem //= 64
-        return ret
-    
-    def clear(self):
-        r"""
-        Clears the saved data generated by this theory, and the cached functions.
-        """
-        self._identify.cache_clear()
-        for xx in os.listdir(self._calcs_dir()):
-            if xx.startswith(self._name):
-                os.remove(self._calcs_dir()+xx)
-    
-    def _save(self, ind, ret, is_table):
-        r"""
-        Saves the calculated data to persistent storage.
-        """
-        ns = self._calcs_dir() + self._name + "."
-        
-        if is_table:
-            excluded, n1, n2, N, large_ftype, ftype_inj = ind
-            numsind = [0]
-            for xx in excluded:
-                numsind += xx.raw_numbers()
-            numsind += [n1, n2, N] + large_ftype.raw_numbers() + list(ftype_inj)
-            if len(ret)<3000:
-                self._cache[ind] = ret
-        else:
-            excluded, n, ftype = ind
-            numsind = [1]
-            for xx in excluded:
-                numsind += xx.raw_numbers()
-            numsind += [n] + ftype.raw_numbers()
-            self._cache[ind] = ret
-        save_name = ns + self._compress(numsind)
-        os.makedirs(os.path.dirname(save_name), exist_ok=True)
-        with open(save_name, 'wb') as file:
-            pickle.dump(ret, file)
-    
-    def _other_save(self, name, data):
-        save_name = self._calcs_dir() + name
-        with open(save_name, 'wb') as file:
-            pickle.dump(data, file)
-    
-    def _other_load(self, name):
-        save_name = self._calcs_dir() + name
-        with open(save_name, 'rb') as file:
-            return pickle.load(file)
-    
-    def _load(self, ind, is_table):
-        r"""
-        Tries to load persistent data.
-        """
-        ns = self._calcs_dir() + self._name + "."
-        
-        if ind in self._cache.keys():
-            return self._cache[ind]
-        
-        if is_table:
-            excluded, n1, n2, N, large_ftype, ftype_inj = ind
-            numsind = [0]
-            for xx in excluded:
-                numsind += xx.raw_numbers()
-            numsind += [n1, n2, N] + large_ftype.raw_numbers() + list(ftype_inj)
-        else:
-            excluded, n, ftype = ind
-            numsind = [1]
-            for xx in excluded:
-                numsind += xx.raw_numbers()
-            numsind += [n] + ftype.raw_numbers()
-        load_name = ns + self._compress(numsind)
-        if os.path.isfile(load_name):
-            with open(load_name, 'rb') as file:
-                ret = pickle.load(file)
-                if not is_table:
-                    for xx in ret:
-                        xx._set_parent(self)
-                self._cache[ind] = ret
-                return ret
-        return None
-    
-    def _calcs_dir(self):
-        if os.path.isdir("../calcs"):
-            return "../calcs/"
-        return "calcs/"
-    
-    def _certs_dir(self):
-        if os.path.isdir("../certs"):
-            return "../certs/"
-        return "certs/"
     
     def _repr_(self):
         r"""
@@ -459,7 +358,17 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return Pattern(self, n, **kwds)
     
     P = Pattern
+
+    def signature(self):
+        return self._signature
+
+    def symmetries(self):
+        return self._symmetries
+
+    def sources(self):
+        return self._source_theories
     
+    #Parent methods
     def _element_constructor_(self, n, **kwds):
         r"""
         Construct elements of this theory
@@ -567,22 +476,86 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         """
         res = [self._an_element_()]
         return res
+
+    #Persistend data management
+    def _calcs_dir(self):
+        calcs_dir = os.path.join(os.getenv('HOME'), '.sage', 'calcs')
+        if not os.path.exists(calcs_dir):
+            os.makedirs(calcs_dir)
+        return calcs_dir
+
+    def _save(self, data, key=None, path=None, name=None):
+        if name==None:
+            if key==None:
+                raise ValueError("Either the key or the name must be provided!")
+            serialized_key = pickle.dumps((self, key))
+            hashed_key = hashlib.sha256(serialized_key).hexdigest()
+            file_name = self._name + "." + hashed_key
+        else:
+            file_name = name
+
+        if path==None:
+            file_path = os.path.join(self._calcs_dir(), file_name)
+        else:
+            if not os.path.exists(path):
+                os.makedirs(path)
+            file_path = os.path.join(path, file_name)
+
+        save_object = {'key': serialized_key, 'data': data}
+        save(save_object, file_path)
+
+    def _load(self, key, path=None, name=None):
+        if name==None:
+            if key==None:
+                raise ValueError("Either the key or the name must be provided!")
+            serialized_key = pickle.dumps((self, key))
+            hashed_key = hashlib.sha256(serialized_key).hexdigest()
+            file_name = self._name + "." + hashed_key
+        else:
+            file_name = name
+
+        if path==None:
+            file_path = os.path.join(self._calcs_dir(), file_name)
+        else:
+            if not os.path.exists(path):
+                os.makedirs(path)
+            file_path = os.path.join(path, file_name)
+        
+        if not os.path.exists(file_path):
+            return None
+
+        save_object = load(file_path)
+        if save_object['key'] != serialized_key:
+            import warnings
+            warnings.warn("Hash collision or corrupted data!")
+            return None
+        
+        return save_object['data']
+
+    def clear(self):
+        for xx in os.listdir(self._calcs_dir()):
+            if xx.startswith(self._name + "."):
+                os.remove(self._calcs_dir()+xx)
     
-    def flag_compact_repr(self, flag):
-        blocks = flag.blocks()
-        ret = ["n:{}".format(flag.size())]
-        if len(flag.ftype_points())!=0:
-            ret.append("t:"+"".join(map(str, flag.ftype_points())))
-        for name in self._signature.keys():
-            desc = name + ":"
-            arity = self._signature[name]
-            if arity==1:
-                desc += "".join([str(xx[0]) for xx in blocks[name]])
-            else:
-                desc += ",".join(["".join(map(str, ed)) for ed in blocks[name]])
-            ret.append(desc)
-        return "; ".join(ret)
+    def _certs_dir(self):
+        if os.path.isdir("../certs"):
+            return "../certs/"
+        return "certs/"
     
+    def _serialize(self, excluded=None):
+        if excluded==None:
+            excluded = self._excluded
+        return {
+            "name": self._name,
+            "signature": self._signature,
+            "symmetries": self._symmetries,
+            "sources": [xx._serialize() for xx in self._source_theories],
+            "excluded": [xx._serialize() for xx in excluded]
+        }
+    
+
+    #Optimizing and rounding
+
     def blowup_construction(self, target_size, pattern_size, symbolic=False, symmetric=True, unordered=False, **kwargs):
         r"""
         Returns a blowup construction, based on a given pattern
@@ -656,9 +629,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                     blocks[rel] = bladd
                 res += self(target_size, **blocks).afae() * coeff
         return res
-    
-    def signature(self):
-        return self._signature
     
     def _adjust_table_phi(self, table_constructor, phi_vectors_exact, test=False):
         r"""
@@ -878,7 +848,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         
         return len(base_flags), constraints_vals, positives_list_exact, one_vector
     
-    
     def _round_sdp_solution_no_phi(self, sdp_result, sdp_data, table_constructor, \
                                    constraints_data, denom=1024):
         import numpy as np
@@ -1092,7 +1061,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         
         return result, X_final, e_vector_corr, slacks, phi_vectors_exact
     
-    
     def _fix_X_bases(self, table_constructor, X_original):
         r"""
         Transforms the X matrices to a base that agrees with the original list of flags
@@ -1147,7 +1115,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             D_vecs.append(vector(D.diagonal()))
         return P_dicts, L_mats, D_vecs
     
-    def _format_optimizer_output(self, table_constructor, mult=1, sdp_output=None, rounding_output=None, file="default"):
+    def _format_optimizer_output(self, table_constructor, mult=1, sdp_output=None, rounding_output=None, file=None):
         r"""
         Formats the outputs to a nice certificate
         
@@ -1155,22 +1123,13 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                             a guess or exact construction, the list of base flags, the list of used (typed) flags
         """
         
-        is_json = file.endswith(".json")
-        
         target_size = 0
         typed_flags = {}
         for params in table_constructor.keys():
             ns, ftype, target_size = params
-            if is_json:
-                safekey = "target:" + str(ns) + "; " + self.flag_compact_repr(ftype)
-                typed_flags[safekey] = [self.flag_compact_repr(xx) for xx in self.generate_flags(ns, ftype)]
-            else:
-                typed_flags[(ns, ftype)] = self.generate_flags(ns, ftype)
+            typed_flags[(ns, ftype)] = self.generate_flags(ns, ftype)
         
-        if is_json:
-            base_flags = [self.flag_compact_repr(xx) for xx in self.generate_flags(target_size)]
-        else:
-            base_flags = self.generate_flags(target_size)
+        base_flags = self.generate_flags(target_size)
         
         result = None
         X_original = None
@@ -1200,20 +1159,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                      "typed flags": typed_flags
                     }
         
-        if file!="default":
-            if is_json:
-                import json
-                file = self._certs_dir() + file
-                with open(file, "w") as f:
-                    json.dump(cert_dict, f, indent=2, default=str)
-            else:
-                import pickle
-                if not file.endswith(".pickle"):
-                    file += ".pickle"
-                file = self._certs_dir() + file
-                with open(file, "wb") as f:
-                    pickle.dump(cert_dict, f)
-        
+        if file!=None and file!="":
+            if not file.endswith(".pickle"):
+                file += ".pickle"
+            self._save(cert_dict, path=self._certs_dir(), name=file)
         return cert_dict
     
     def optimize_problem(self, target_element, target_size, maximize=True, positives=None, \
@@ -1394,15 +1343,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             return rounding_output[0] * mult
         return self._format_optimizer_output(table_constructor, mult=mult, rounding_output=rounding_output, file=file)
     
-    
     optimize = optimize_problem
-    
     
     def verify_certificate(self, file_or_cert, target_element, target_size, maximize=True, positives=None, construction=None):
         r"""
         Verifies the certificate provided by the optimizer written to `file`
         """
-        import pickle
         
         #
         # Load the certificate file (only pickle is supported)
@@ -1517,17 +1463,72 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return result
     
     verify = verify_certificate
+
+
+    #Calculating flags and tables
     
-    def match_pattern(self, pattern):
-        if pattern is Flag:
-            return [pattern]
-        ss = pattern
-        if len(ss.ftype_points())!=0:
-            ss = ss.subpattern()
-        return [xx for xx in self.generate_flags(ss.size(), ss.ftype()) if ss.is_compatible(xx)]
+    #Guessing flag numbers
+    def _try_load_generate(self, n, ftype):
+        excluded = tuple([xx for xx in self._excluded if xx.size()<=n])
+        key = (self._serialize(excluded=excluded), n, ftype._serialize())
+        return self._load(key=key)
+
+    def _guess_number(self, n):
+        if n==0:
+            return 1
+        data = self._try_load_generate(n, self.empty())
+        if data!=None:
+            return len(data)
+        guess_overlap = self._guess_overlap(n)
+        guess_inductive = self._guess_inductive(n)
+        return min(guess_overlap, guess_inductive)
+
+    def _guess_primitive(self, n, arity, is_ordered, with_permutations=False):
+        if with_permutations:
+            return 2**(binomial(n, arity) * (factorial(arity) if is_ordered else 1))
+        if arity==1:
+            return n+1
+        elif arity==2:
+            if not is_ordered:
+                vals = [1, 1, 2, 4, 11, 34, 156, 1044, 12346, 274668, \
+                        12005168, 1018997864, 165091172592, 50502031367952]
+                try:
+                    return vals[n]
+                except:
+                    return infinity
+            else:
+                vals = [1, 1, 3, 16, 218, 9608, 1540944, 882033440, \
+                        1793359192848, 13027956824399552]
+                try:
+                    return vals[n]
+                except:
+                    return infinity
+        elif arity==3:
+            if not is_ordered:
+                vals = [1, 1, 1, 2, 5, 34, 2136, 7013320, 1788782616656, \
+                        53304527811667897248]
+                try:
+                    return vals[n]
+                except:
+                    return infinity
+            else:
+                #TODO update this with actual values
+                vals = [1, 1, 1, 10, 1000, 1000000]
+                try:
+                    return vals[n]
+                except:
+                    return infinity
+        raise ValueError("Theories only support arities in [1, 2, 3]")
     
-    match = match_pattern
+    def _guess_overlap(self, n):
+        source_nums = [xx._guess_number(n) for xx in self._source_theories]
+        return 
+
+    def _guess_inductive(self, n):
+        return 0
     
+    #Generating flags
+
     def _gfe(self, excluded, n, ftype):
         r"""
         Cached version of generate flags excluded
@@ -1625,7 +1626,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return self._gfe(tuple(self._excluded), n, ftype)
     
     generate = generate_flags
-    
+
     def exclude(self, flags=[]):
         r"""
         Exclude some induced flags from the theory
@@ -1685,6 +1686,23 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 return False
         return True
     
+    def match_pattern(self, pattern):
+        if pattern is Flag:
+            return [pattern]
+        ss = pattern
+        if len(ss.ftype_points())!=0:
+            ss = ss.subpattern()
+        return [xx for xx in self.generate_flags(ss.size(), ss.ftype()) if ss.is_compatible(xx)]
+    
+    match = match_pattern
+
+    #Generating tables
+    def _try_load_table(self, N, n1, n2, large_ftype, ftype_inj):
+        excluded = tuple([xx for xx in self._excluded if xx.size()<=N])
+        key = (self._serialize(excluded=excluded), \
+               N, n1, n2, large_ftype._serialize(), ftype_inj)
+        return self._load(key=key)
+
     def mul_project_table(self, n1, n2, large_ftype, ftype_inj=None, target_size=None):
         r"""
         Returns the multiplication projection table
@@ -1817,6 +1835,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return ar[0].densities(ar[1], ar[2], ar[3], ar[4], ar[5], ar[6], ar[7])
 
 
+#Primitive rounding methods
 def _flatten_matrix(mat, doubled=False):
     r"""
     Flatten a symmetric matrix, optionally double non-diagonal elements
