@@ -2911,10 +2911,10 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
         sage: AA((-1)^(2/3))
         1
         sage: number_field_elements_from_algebraics([(-1)^(2/3)])
-        (Cyclotomic Field of order 6 and degree 2,
+        (Number Field in zeta6 with defining polynomial x^2 - x + 1,
          [zeta6 - 1],
          Ring morphism:
-           From: Cyclotomic Field of order 6 and degree 2
+           From: Number Field in zeta6 with defining polynomial x^2 - x + 1
            To:   Algebraic Field
            Defn: zeta6 |--> 0.500000000000000? + 0.866025403784439?*I)
     """
