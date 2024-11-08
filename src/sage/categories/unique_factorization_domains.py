@@ -172,9 +172,23 @@ class UniqueFactorizationDomains(Category_singleton):
 
                 sage: P = PolynomialRing(QQbar, 4, "x")
                 sage: p = sum(QQbar.zeta(i + 1) * P.gen(i) for i in range(4))
-                sage: (p^4 - 1).gcd(p^3 + 1) == p + 1
+                sage: ((p^4 - 1).gcd(p^3 + 1) / (p + 1)).is_unit()
                 True
             """
+            def content(X):
+                """
+                Return the content of ``X`` up to a unit.
+                """
+                X_it = iter(X.coefficients())
+                x = next(X_it)
+                if x.is_unit():
+                    return None
+                for c in X_it:
+                    x = x.gcd(c)
+                    if x.is_unit():
+                        return None
+                return x
+
             if f.degree() < g.degree():
                 A, B = g, f
             else:
@@ -183,26 +197,19 @@ class UniqueFactorizationDomains(Category_singleton):
             if B.is_zero():
                 return A
 
-            A_it = iter(A.coefficients())
-            a = next(A_it)
-            for c in A_it:
-                a = a.gcd(c)
-                if a.is_one():
-                    break
-            else:
+            a = content(A)
+            if a is not None:
                 A //= a
-
-            B_it = iter(B.coefficients())
-            b = next(B_it)
-            for c in B_it:
-                b = b.gcd(c)
-                if b.is_one():
-                    break
-            else:
+            b = content(B)
+            if b is not None:
                 B //= b
 
-            d = a.gcd(b)
-            g = h = 1
+            one = A.base_ring().one()
+            if a is not None and b is not None:
+                d = a.gcd(b)
+            else:
+                d = one
+            g = h = one
             delta = A.degree() - B.degree()
             _, R = A.pseudo_quo_rem(B)
             while R.degree() > 0:
@@ -214,14 +221,10 @@ class UniqueFactorizationDomains(Category_singleton):
                 _, R = A.pseudo_quo_rem(B)
 
             if R.is_zero():
-                B_it = iter(B.coefficients())
-                b = next(B_it)
-                for c in B_it:
-                    b = b.gcd(c)
-                    if b.is_one():
-                        return d * B
-                return d * B // b  # TODO: does b divide d?
-
+                b = content(B)
+                if b is None:
+                    return d * B
+                return d * B // b
             return f.parent()(d)
 
     class ElementMethods:

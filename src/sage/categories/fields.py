@@ -652,7 +652,7 @@ class Fields(CategoryWithAxiom):
                 from sage.rings.integer_ring import ZZ
                 try:
                     return P(ZZ(self).gcd(ZZ(other)))
-                except TypeError:
+                except (TypeError, ValueError):
                     pass
 
             if self == P.zero() and other == P.zero():
