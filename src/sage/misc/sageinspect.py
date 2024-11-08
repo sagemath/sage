@@ -1865,28 +1865,10 @@ def _sage_getdoc_unformatted(obj):
         sage: _sage_getdoc_unformatted(isinstance.__class__)
         ''
 
-    Construct an object raising an exception when accessing the
-    ``__doc__`` attribute. This should not give an error in
-    ``_sage_getdoc_unformatted``, see :issue:`19671`::
-
-        sage: class NoSageDoc():
-        ....:     @property
-        ....:     def __doc__(self):
-        ....:         raise Exception("no doc here")
-        sage: obj = NoSageDoc()
-        sage: obj.__doc__
-        Traceback (most recent call last):
-        ...
-        Exception: no doc here
-        sage: _sage_getdoc_unformatted(obj)
-        ''
     """
     if obj is None:
         return ''
-    try:
-        r = obj.__doc__
-    except Exception:
-        return ''
+    r = obj.__doc__
 
     # Check if the __doc__ attribute was actually a string, and
     # not a 'getset_descriptor' or similar.
