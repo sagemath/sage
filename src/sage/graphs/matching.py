@@ -1567,7 +1567,8 @@ def M_alternating_even_mark(G, vertex, matching):
     M = Graph(matching)
     if any(d != 1 for d in M.degree()):
         raise ValueError("the input is not a matching")
-    if any(not G_simple.has_edge(edge) for edge in M.edge_iterator()):
+
+    if any(not G.has_edge(edge) for edge in M.edge_iterator()):
         raise ValueError("the input is not a matching of the graph")
 
     # Build an M-alternating tree T rooted at vertex
@@ -1602,8 +1603,10 @@ def M_alternating_even_mark(G, vertex, matching):
                 while ancestor_x[-1] != ancestor_y[-1]:
                     if rank[ancestor_x[-1]] > rank[ancestor_y[-1]]:
                         ancestor_x.append(predecessor[ancestor_x[-1]])
+
                     elif rank[ancestor_x[-1]] < rank[ancestor_y[-1]]:
                         ancestor_y.append(predecessor[ancestor_y[-1]])
+
                     else:
                         ancestor_x.append(predecessor[ancestor_x[-1]])
                         ancestor_y.append(predecessor[ancestor_y[-1]])
@@ -1613,6 +1616,7 @@ def M_alternating_even_mark(G, vertex, matching):
                 # Set t as pred of all vertices of the chains and add
                 # vertices marked odd to the queue
                 next_rank_to_lcs_rank = rank[lcs] + 1
+
                 for a in itertools.chain(ancestor_x, ancestor_y):
                     predecessor[a] = lcs
                     rank[a] = next_rank_to_lcs_rank
