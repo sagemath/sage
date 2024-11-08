@@ -40,31 +40,15 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-cimport numpy as np
-
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport rich_to_bool
 cimport sage.modules.free_module_element as free_module_element
+from libc.stdint cimport uintptr_t
 
 from sage.libs.m4ri cimport *
-
-
-ctypedef fused numpy_integral:
-    np.int8_t
-    np.int32_t
-    np.int64_t
-
-
-cdef _set_from_numpy_unsafe(mzd_t* entries, np.ndarray[numpy_integral, ndim=1] x):
-    """
-    Internal function. Caller are responsible for checking the two arrays have the same length.
-    """
-    for i in range(len(x)):
-        mzd_write_bit(entries, 0, i, x[i] & 1)
-
 
 cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
     cdef _new_c(self):
@@ -223,35 +207,28 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             (0, 1, 1)
             sage: VS(numpy.array([False,True,False], dtype=bool))
             (0, 1, 0)
+            sage: VS(numpy.array([[1]]))
+            Traceback (most recent call last):
+            ...
+            ValueError: numpy array must have dimension 1
+            sage: VS(numpy.array([1,2,3,4]))
+            Traceback (most recent call last):
+            ...
+            ValueError: numpy array must have the right length
+
+        Make sure it's reasonably fast::
+
+            sage: VS = VectorSpace(GF(2),2*10^7)
+            sage: v = VS(numpy.random.randint(0, 1, size=VS.dimension()))  # around 300ms
         """
-        cdef Py_ssize_t i
-        cdef np.ndarray[np.npy_bool, ndim=1] x_bool
         try:
             import numpy
         except ImportError:
             pass
         else:
-            if isinstance(x, np.ndarray):
-                if x.ndim != 1:
-                    raise TypeError("numpy array must have dimension 1")
-                if x.shape[0] != self._degree:
-                    raise TypeError("numpy array must have the right length")
-                if x.dtype == numpy.int8:
-                    _set_from_numpy_unsafe(self._entries, <np.ndarray[np.int8_t, ndim=1]>x)
-                    return
-                if x.dtype == numpy.int32:
-                    _set_from_numpy_unsafe(self._entries, <np.ndarray[np.int32_t, ndim=1]>x)
-                    return
-                if x.dtype == numpy.int64:
-                    _set_from_numpy_unsafe(self._entries, <np.ndarray[np.int64_t, ndim=1]>x)
-                    return
-                if x.dtype == numpy.bool_:
-                    x_bool = x
-                    for i in range(self._degree):
-                        mzd_write_bit(self._entries, 0, i, x_bool[i])
-                    return
-                # inefficient fallback
-                x = x.tolist()
+            from .numpy_util import set_mzd_from_numpy
+            if set_mzd_from_numpy(<uintptr_t>self._entries, self._degree, x):
+                return
         if isinstance(x, (list, tuple)):
             if len(x) != self._degree:
                 raise TypeError("x must be a list of the right length")
