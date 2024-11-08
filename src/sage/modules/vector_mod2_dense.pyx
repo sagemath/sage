@@ -218,6 +218,8 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
         Make sure it's reasonably fast::
 
+            sage: # needs numpy
+            sage: import numpy
             sage: VS = VectorSpace(GF(2),2*10^7)
             sage: v = VS(numpy.random.randint(0, 1, size=VS.dimension()))  # around 300ms
         """
