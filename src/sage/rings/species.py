@@ -6,7 +6,7 @@ the category of finite sets with bijections to the category of finite
 sets with bijections.  Alternatively, we can regard a combinatorial
 species as a formal sum of group actions of the symmetric groups
 `\mathfrak S_n`, for `n\in\NN`.  For example, the trivial action of
-`\mathfrak S_n` corresponds to the species `\mathcal E_n$ of sets of
+`\mathfrak S_n` corresponds to the species `\mathcal E_n` of sets of
 cardinality `n`.
 
 More generally, a weighted multisort species in `k` sorts is a
