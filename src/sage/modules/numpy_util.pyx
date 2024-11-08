@@ -24,7 +24,7 @@ cdef set_mzd_from_numpy_unsafe(mzd_t* entries, np.ndarray[numpy_integral, ndim=1
         mzd_write_bit(entries, 0, i, x[i] & 1)
 
 
-cpdef int set_mzd_from_numpy(uintptr_t entries_addr, Py_ssize_t degree, x) except -1:
+def set_mzd_from_numpy(uintptr_t entries_addr, Py_ssize_t degree, x):
     """
     Set the entries in ``entries`` from numpy array ``x``.
 
