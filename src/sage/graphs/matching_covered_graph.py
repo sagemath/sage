@@ -374,6 +374,21 @@ class MatchingCoveredGraph(Graph):
         sage: sorted(H.get_matching()) == sorted(M)
         True
 
+    One may specify some keyword arguments::
+
+        sage: G = Graph([(0, 1, 5)], {'weighted': True})
+        sage: kwds = {
+        ....:   'loops': False,
+        ....:   'multiedges': True,
+        ....:   'pos': {0: (0, 0), 1: (1, 1)}
+        ....: }
+        sage: H = MatchingCoveredGraph(G, **kwds)
+        sage: H
+        Matching covered multi-graph on 2 vertices
+        sage: H.add_edge(0, 1)
+        sage: H.edges()
+        [(0, 1, None), (0, 1, 5)]
+
     TESTS:
 
     An empty graph is not matching covered::
@@ -402,6 +417,11 @@ class MatchingCoveredGraph(Graph):
     Make sure that self-loops are not allowed for a matching covered graph::
 
         sage: P = graphs.PetersenGraph()
+        sage: kwds = {'loops': True}
+        sage: G = MatchingCoveredGraph(P, **kwds)
+        Traceback (most recent call last):
+        ...
+        ValueError: loops are not allowed in matching covered graphs
         sage: G = MatchingCoveredGraph(P)
         sage: G.allows_loops()
         False
@@ -604,7 +624,7 @@ class MatchingCoveredGraph(Graph):
         """
         success = False
 
-        if kwds is None:
+        if not kwds:
             kwds = {'loops': False}
         else:
             if 'loops' in kwds and kwds['loops']:
