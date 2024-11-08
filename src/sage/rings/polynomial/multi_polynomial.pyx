@@ -1311,12 +1311,12 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: x.is_generator()
             doctest:warning...:
             DeprecationWarning: is_generator is deprecated. Please use is_gen instead.
-            See https://github.com/sagemath/sage/issues/38888 for details.
+            See https://github.com/sagemath/sage/issues/38942 for details.
             True
         """
         return self in self.parent().gens()
 
-    is_generator = deprecated_function_alias(38888, is_gen)
+    is_generator = deprecated_function_alias(38942, is_gen)
 
     def map_coefficients(self, f, new_base_ring=None):
         r"""

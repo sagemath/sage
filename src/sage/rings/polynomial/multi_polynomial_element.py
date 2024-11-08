@@ -1371,7 +1371,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: x.is_generator()
             doctest:warning...:
             DeprecationWarning: is_generator is deprecated. Please use is_gen instead.
-            See https://github.com/sagemath/sage/issues/38888 for details.
+            See https://github.com/sagemath/sage/issues/38942 for details.
             True
         """
         elt = self.element()
@@ -1380,7 +1380,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             return e.nonzero_values() == [1] and c.is_one()
         return False
 
-    is_generator = deprecated_function_alias(38888, is_gen)
+    is_generator = deprecated_function_alias(38942, is_gen)
 
     def is_monomial(self):
         """
