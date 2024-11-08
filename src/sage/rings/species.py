@@ -1374,7 +1374,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
         def __call__(self, *args):
             r"""
-            Substitute `M_1,\dots, M_k` into ``self``.
+            Substitute `M_1,\ldots, M_k` into ``self``.
 
             The arguments must all have the same parent and must all
             be molecular.  The number of arguments must be equal to
@@ -1671,8 +1671,8 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
         OUTPUT:
 
-        - the polynomial species `self(X_1 + \dots + X_{m_1}, Y_1
-          + \dots + Y_{m_2}, \dots)`, where `m_i` is the number
+        - the polynomial species `self(X_1 + \cdots + X_{m_1}, Y_1
+          + \cdots + Y_{m_2}, \ldots)`, where `m_i` is the number
           of parts of the `i`-th composition, restricted to the
           degrees given by ``args``.
 
