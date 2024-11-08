@@ -2969,10 +2969,8 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
     exact_generator = gen.root_as_algebraic()
     hom = fld.hom([exact_generator])
 
-    if fld is QQ:
-        # ignore embedded parameter
-        pass
-    else:
+    if fld is not QQ:
+        # ignore the embedded parameter for QQ
         # cyclotomic fields are embedded by default
         # number fields are not embedded by default
         # if the default embedding is different from what is expected then modify the field
