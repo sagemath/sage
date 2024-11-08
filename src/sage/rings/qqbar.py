@@ -2830,62 +2830,62 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
 
     Test ``embedded`` for quadratic and cyclotomic fields::
 
-        sage: number_field_elements_from_algebraics([QQbar((-1)^(2/3))], embedded=False, minimal=True)
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(2/3))], embedded=False, minimal=True); v
         (Number Field in zeta6 with defining polynomial x^2 - x + 1,
          [zeta6 - 1],
          Ring morphism:
            From: Number Field in zeta6 with defining polynomial x^2 - x + 1
            To:   Algebraic Field
            Defn: zeta6 |--> 0.500000000000000? + 0.866025403784439?*I)
-        sage: _[0].coerce_embedding()
-        sage: number_field_elements_from_algebraics([QQbar((-1)^(2/3))], embedded=True, minimal=True)
+        sage: v[0].coerce_embedding()
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(2/3))], embedded=True, minimal=True); v
         (Cyclotomic Field of order 6 and degree 2,
          [zeta6 - 1],
          Ring morphism:
            From: Cyclotomic Field of order 6 and degree 2
            To:   Algebraic Field
            Defn: zeta6 |--> 0.500000000000000? + 0.866025403784439?*I)
-        sage: _[0].coerce_embedding()
+        sage: v[0].coerce_embedding()
         Generic morphism:
           From: Cyclotomic Field of order 6 and degree 2
           To:   Complex Lazy Field
           Defn: zeta6 -> 0.500000000000000? + 0.866025403784439?*I
-        sage: number_field_elements_from_algebraics([QQbar((-1)^(1/2))], embedded=False, minimal=True)
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/2))], embedded=False, minimal=True); v
         (Number Field in I with defining polynomial x^2 + 1,
          [I],
          Ring morphism:
            From: Number Field in I with defining polynomial x^2 + 1
            To:   Algebraic Field
            Defn: I |--> 1*I)
-        sage: _[0].coerce_embedding()
-        sage: number_field_elements_from_algebraics([QQbar((-1)^(1/2))], embedded=True, minimal=True)
+        sage: v[0].coerce_embedding()
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/2))], embedded=True, minimal=True); v
         (Number Field in I with defining polynomial x^2 + 1 with I = 1*I,
          [I],
          Ring morphism:
            From: Number Field in I with defining polynomial x^2 + 1 with I = 1*I
            To:   Algebraic Field
            Defn: I |--> 1*I)
-        sage: _[0].coerce_embedding()
+        sage: v[0].coerce_embedding()
         Generic morphism:
           From: Number Field in I with defining polynomial x^2 + 1 with I = 1*I
           To:   Complex Lazy Field
           Defn: I -> 1*I
-        sage: number_field_elements_from_algebraics([QQbar((-1)^(1/5))], embedded=False, minimal=True)
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/5))], embedded=False, minimal=True); v
         (Number Field in zeta10 with defining polynomial x^4 - x^3 + x^2 - x + 1,
          [zeta10],
          Ring morphism:
            From: Number Field in zeta10 with defining polynomial x^4 - x^3 + x^2 - x + 1
            To:   Algebraic Field
            Defn: zeta10 |--> 0.8090169943749474? + 0.5877852522924731?*I)
-        sage: _[0].coerce_embedding()
-        sage: number_field_elements_from_algebraics([QQbar((-1)^(1/5))], embedded=True, minimal=True)
+        sage: v[0].coerce_embedding()
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/5))], embedded=True, minimal=True); v
         (Cyclotomic Field of order 10 and degree 4,
          [zeta10],
          Ring morphism:
            From: Cyclotomic Field of order 10 and degree 4
            To:   Algebraic Field
            Defn: zeta10 |--> 0.8090169943749474? + 0.5877852522924731?*I)
-        sage: _[0].coerce_embedding()
+        sage: v[0].coerce_embedding()
         Generic morphism:
           From: Cyclotomic Field of order 10 and degree 4
           To:   Complex Lazy Field
