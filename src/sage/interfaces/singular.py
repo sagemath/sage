@@ -2486,11 +2486,6 @@ def singular_version():
     """
     Return the version of Singular being used.
 
-    OUTPUT:
-
-    A string describing the Singular function ``name``. A ``KeyError``
-    is raised if no such function was found in the Singular documentation.
-
     EXAMPLES::
 
         sage: singular.version()
