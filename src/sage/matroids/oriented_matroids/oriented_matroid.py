@@ -190,17 +190,38 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         Depending on the data provided, this method will return an oriented
         matroid of the appropriate type.
 
-        sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-        sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
-        sage: M
-        Covector oriented matroid of rank 1
+        EXAMPLES::
+        
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
+            sage: type(M)
+            <class 'sage.matroids.oriented_matroids.covector_oriented_matroid.CovectorOrientedMatroid_with_category'>
+            
+            sage: M = OrientedMatroid([[1], [-1]], key='circuit')
+            sage: type(M)
+            <class 'sage.matroids.oriented_matroids.circuit_oriented_matroid.CircuitOrientedMatroid_with_category'>
 
-        sage: M = OrientedMatroid([[1], [-1]], key='circuit'); M
-        Circuit oriented matroid of rank 0
+            sage: V = [[1,1], [-1,-1], [0,0]]
+            sage: M = OrientedMatroid(V, key='vector')
+            sage: type(M)
+            <class 'sage.matroids.oriented_matroids.vector_oriented_matroid.VectorOrientedMatroid_with_category'>
 
-        sage: V = [[1,1], [-1,-1], [0,0]]
-        sage: M = OrientedMatroid(V, key='vector'); M
-        Vector oriented matroid of rank 1
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: type(M)
+            <class 'sage.matroids.oriented_matroids.real_hyperplane_arrangement_oriented_matroid.RealHyperplaneArrangementOrientedMatroid_with_category'>
+
+            sage: P = PointConfiguration([[0,1], [1/2,1/2],[1,0]])
+            sage: M = OrientedMatroid(P)
+            sage: type(M)
+            <class 'sage.matroids.oriented_matroids.circuit_oriented_matroid.CircuitOrientedMatroid_with_category'>
+
+            sage: D = DiGraph({'v1': {'v2': 1, 'v3': 2,'v4': 3},
+            ....:              'v2': {'v3': 4, 'v4': 5},
+            ....:              'v3': {'v4': 6}})
+            sage: M = OrientedMatroid(D, key="circuit")
+            sage: type(M)
+            <class 'sage.matroids.oriented_matroids.circuit_oriented_matroid.CircuitOrientedMatroid_with_category'>
         """
         OM = None
 
