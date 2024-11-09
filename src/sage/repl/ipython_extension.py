@@ -342,7 +342,7 @@ class SageMagics(Magics):
 
         INPUT:
 
-        - ``line`` -- ignored
+        - ``line`` -- parsed as keyword arguments. See :func:`~sage.misc.cython.cython` for details.
 
         - ``cell`` -- string; the Cython source code to process
 
@@ -350,19 +350,88 @@ class SageMagics(Magics):
 
         EXAMPLES::
 
+            sage: # needs sage.misc.cython
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell(                                                       # needs sage.misc.cython
+            sage: shell.run_cell(
             ....: '''
-            ....: %%cython
+            ....: %%cython -v1 --annotate --no-sage-namespace
             ....: def f():
             ....:     print('test')
             ....: ''')
-            sage: f()                                                                   # needs sage.misc.cython
+            Compiling ....pyx because it changed.
+            [1/1] Cythonizing ....pyx
+            sage: f()
             test
+
+        TESTS:
+
+        See :mod:`sage.repl.interpreter` for explanation of the dummy line.
+
+        Test unrecognized arguments::
+
+            sage: # needs sage.misc.cython
+            sage: print("dummy line"); shell.run_cell('''
+            ....: %%cython --some-unrecognized-argument
+            ....: print(1)
+            ....: ''')
+            dummy line
+            ...
+            ArgumentError...Traceback (most recent call last)
+            ...
+            ArgumentError: unrecognized arguments: --some-unrecognized-argument
+
+        Test ``--help`` is disabled::
+
+            sage: # needs sage.misc.cython
+            sage: print("dummy line"); shell.run_cell('''
+            ....: %%cython --help
+            ....: print(1)
+            ....: ''')
+            dummy line
+            ...
+            ArgumentError...Traceback (most recent call last)
+            ...
+            ArgumentError: unrecognized arguments: --help
+
+        Test invalid quotes::
+
+            sage: # needs sage.misc.cython
+            sage: print("dummy line"); shell.run_cell('''
+            ....: %%cython --a='
+            ....: print(1)
+            ....: ''')
+            dummy line
+            ...
+            ValueError...Traceback (most recent call last)
+            ...
+            ValueError: No closing quotation
         """
         from sage.misc.cython import cython_compile
-        return cython_compile(cell)
+        import shlex
+        import argparse
+
+        class ExitCatchingArgumentParser(argparse.ArgumentParser):
+            def error(self, message):
+                # exit_on_error=False does not work completely in some Python versions
+                # see https://stackoverflow.com/q/67890157
+                raise argparse.ArgumentError(None, message)
+
+        parser = ExitCatchingArgumentParser(prog="%%cython", add_help=False)
+        parser.add_argument("--verbose", "-v", type=int)
+        for (arg, arg_short) in [
+                ("compile-message", "m"),
+                ("use-cache", "c"),
+                ("create-local-c-file", "l"),
+                ("annotate", "a"),
+                ("sage-namespace", "s"),
+                ("create-local-so-file", "o"),
+            ]:
+            action = parser.add_argument(f"--{arg}", f"-{arg_short}", action="store_true", default=None)
+            parser.add_argument(f"--no-{arg}", action="store_false", dest=action.dest, default=None)
+
+        args = parser.parse_args(shlex.split(line))
+        return cython_compile(cell, **{k: v for k, v in args.__dict__.items() if v is not None})
 
     @cell_magic
     def fortran(self, line, cell):
