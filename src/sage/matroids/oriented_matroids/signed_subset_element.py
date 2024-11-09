@@ -93,7 +93,7 @@ class SignedSubsetElement(Element):
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
             sage: from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
             sage: M = OrientedMatroid([[1],[-1]], key='circuit');
-            sage: SignedSubsetElement(M,data = (0,))
+            sage: E = SignedSubsetElement(M,data = (0,)); E
             +:
             -:
             0: 0
@@ -219,7 +219,7 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: E = M.elements()[0]
             sage: E(1)
@@ -244,7 +244,7 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: E = M.elements()[0]
             sage: hash(E)
@@ -262,7 +262,7 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: E = M.elements()[0]; E
             +: 0
@@ -285,7 +285,7 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: E1 = M.elements()[0]
             sage: E2 = M.elements()[1]
@@ -308,7 +308,7 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: E1 = M.elements()[0]
             sage: E2 = M.elements()[1]
@@ -342,7 +342,7 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: E1 = M.elements()[0]; E1
             +: 0
@@ -433,7 +433,7 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: E = M.elements()[0]
             sage: copy(E) == E
@@ -448,7 +448,7 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: E = M.elements()[0]
             sage: deepcopy(E) == E
@@ -463,7 +463,7 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: E = M.elements()[0]
             sage: list(E)
@@ -594,7 +594,7 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: E1 = M.elements()[0]
             sage: E2 = M.elements()[1]
@@ -615,20 +615,14 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: E = M.elements()[0]; E
-            +: 0
-            -: 2
-            0: 1
+            (1,0,-1)
             sage: E.reorientation(2)
-            +: 0,2
-            -: 
-            0: 1
+            (1,0,1)
             sage: E.reorientation([0,1,2])
-            +: 2
-            -: 0
-            0: 1
+            (-1,0,1)
         """
         if change_set in self.groundset():
             change_set = set([change_set])
@@ -657,7 +651,7 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: E1 = M.elements()[0]
             sage: E2 = M.elements()[1]
@@ -681,7 +675,7 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: E1 = M.elements()[0]
             sage: E2 = M.elements()[1]
@@ -709,7 +703,7 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: E1 = M.elements()[0]
             sage: E3 = M.elements()[2]
@@ -739,7 +733,7 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: E1 = M.elements()[0]
             sage: E3 = M.elements()[2]
@@ -767,16 +761,12 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: E1 = M.elements()[0]; E1
-            +: 0
-            -: 2
-            0: 1
+            (1,0,-1)
             sage: E3 = M.elements()[2]; E3
-            +: 
-            -: 
-            0: 0,1,2
+            (0,0,0)
             sage: E1.is_zero()
             False
             sage: E3.is_zero()

@@ -85,6 +85,7 @@ class CircuitOrientedMatroid(OrientedMatroid):
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
             sage: M = OrientedMatroid([[1], [-1]], key='circuit'); M
             Circuit oriented matroid of rank 0
+            sage: TestSuite(M).run()
         """
         OrientedMatroid.__init__(self, category=category)
 

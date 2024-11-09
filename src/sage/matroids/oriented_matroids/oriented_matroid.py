@@ -309,10 +309,48 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         
         This class acts as the abstract class that all oriented matroid
         objects will extend from.
+
+        TESTS::
+
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: TestSuite(M).run()
         """
         if category is None:
             category = Sets()
         Parent.__init__(self, category=category)
+
+    def __eq__(self, other):
+        """
+        Return whether two oriented matroids are equal.
+                        
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: M == M
+            True
+        """
+        if isinstance(other, type(self)):
+            return self.elements() == other.elements()
+        return False
+
+    def __hash__(self):
+        """
+        Return hashed string of oriented matroid.
+        
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: hash(M)
+            -8378776308224696727
+        """
+        fse = frozenset(self.elements())
+        fsgs = frozenset(self.groundset())
+        return hash((fsgs, fse))
 
     @abstract_method
     def is_valid(self, certificate=False) -> bool | tuple[bool, str]:
@@ -874,7 +912,7 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: M.are_parallel(0, 2)
             True
@@ -906,7 +944,7 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
             sage: M.is_simple()
             True
 
-            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: M.is_simple()
             False
@@ -948,6 +986,7 @@ def deep_tupler(obj):
 
     EXAMPLES::
 
+        sage: from sage.matroids.oriented_matroids.oriented_matroid import deep_tupler
         sage: deep_tupler([1,2,[3,4],[5,[6,7]],[8]])
         (1, 2, (3, 4), (5, (6, 7)), (8,))
     """

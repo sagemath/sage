@@ -76,9 +76,9 @@ class CovectorOrientedMatroid(OrientedMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
-            sage: M
+            sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector'); M
             Covector oriented matroid of rank 1
+            sage: TestSuite(M).run()
         """
         OrientedMatroid.__init__(self, category=category)
 

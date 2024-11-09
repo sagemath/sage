@@ -67,6 +67,7 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
             sage: A = hyperplane_arrangements.braid(3)
             sage: M = OrientedMatroid(A); M
             Hyperplane arrangement oriented matroid of rank 2
+            sage: TestSuite(M).run()
         """
         self._arrangement = data
 

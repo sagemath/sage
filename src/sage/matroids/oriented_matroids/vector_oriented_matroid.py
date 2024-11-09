@@ -76,6 +76,7 @@ class VectorOrientedMatroid(OrientedMatroid):
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
             sage: M = OrientedMatroid([[1],[-1],[0]], key='vector'); M
             Vector oriented matroid of rank 0
+            sage: TestSuite(M).run()
         """
         OrientedMatroid.__init__(self, category=category)
 
