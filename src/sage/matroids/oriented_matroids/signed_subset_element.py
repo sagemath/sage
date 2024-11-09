@@ -1,5 +1,4 @@
 r"""
-
 Class for Signed Subsets
 
 AUTHORS:
