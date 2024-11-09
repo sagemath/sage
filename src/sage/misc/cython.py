@@ -24,6 +24,7 @@ import os
 import re
 import sys
 import shutil
+import webbrowser
 
 from sage.env import (SAGE_LOCAL, cython_aliases,
                       sage_include_directories)
@@ -79,8 +80,8 @@ sequence_number = {}
 
 
 def cython(filename, verbose=0, compile_message=False,
-           use_cache=False, create_local_c_file=False, annotate=True, sage_namespace=True,
-           create_local_so_file=False):
+           use_cache=False, create_local_c_file=False, annotate=True, view_annotate=False,
+           sage_namespace=True, create_local_so_file=False):
     r"""
     Compile a Cython file. This converts a Cython file to a C (or C++ file),
     and then compiles that. The .c file and the .so file are
@@ -109,6 +110,9 @@ def cython(filename, verbose=0, compile_message=False,
       annotates the conversion from .pyx to .c. By default this is only created
       in the temporary directory, but if ``create_local_c_file`` is also True,
       then save a copy of the .html file in the current directory.
+
+    - ``view_annotate`` -- boolean (default: ``False``); if ``True``, open the
+      annotated html file in a web browser using :func:`webbrowser.open`
 
     - ``sage_namespace`` -- boolean (default: ``True``); if ``True``, import
       ``sage.all``
@@ -391,6 +395,11 @@ def cython(filename, verbose=0, compile_message=False,
         if annotate:
             shutil.copy(os.path.join(target_dir, name + ".html"),
                         os.curdir)
+
+    if view_annotate:
+        if not annotate:
+            raise ValueError("Cannot view annotated file without creating it")
+        webbrowser.open(os.path.join(target_dir, name + ".html"))
 
     # This emulates running "setup.py build" with the correct options
     #
