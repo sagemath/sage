@@ -82,7 +82,7 @@ class SignedSubsetElement(Element):
 
     .. SEEALSO::
 
-        - :class:`~oriented_matroids.oriented_matroid.OrientedMatroid`
+        - :class:`~sage.oriented_matroids.oriented_matroid.OrientedMatroid`
     """
     def __init__(self, parent=None, data=None, groundset=None, positives=None, negatives=None, zeros=None):
         """
