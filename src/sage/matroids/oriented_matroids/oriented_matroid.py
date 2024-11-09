@@ -26,18 +26,16 @@ Constructing oriented matroids
 ==============================
 
 To define your own oriented matroid, you can call the function
-`OrientedMatroid(data, key)` where `data` is the data of the oriented matroid
-and the `key` is the type of oriented matroid you are constructing. In case you
+``OrientedMatroid(data, key)``, where ``data`` is the data of the oriented matroid
+and the ``key`` is the type of oriented matroid you are constructing. In case you
 pass an object as the data (such as a hyperplane arrangement, digraph,
 etc.) the code will try and create an oriented matroid for you.
-
 
 AUTHORS:
 
 - Aram Dermenjian (2019-07-12): Initial version
 - Elizabeth Flight (2023-08-01): Beta version
 - Tudor Tanasa (2023-08-01): Beta version
-
 """
 
 # *****************************************************************************
@@ -79,26 +77,26 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
 
       + Objects
 
-          + Hyperplane Arrangement
-          + Point Configuration
-          + Digraph
-          + Matrix (not yet implemented)
+        + Hyperplane arrangement
+        + Point configuration
+        + Digraph
+        + Matrix (not yet implemented)
 
       + A list or tuple of
 
-          + :class:`SignedSubsetElement`
-          + A tuple with positive, negative, and zero sets.
+        + :class:`SignedSubsetElement`
+        + A tuple with positive, negative, and zero sets.
 
     - ``groundset`` -- (default: ``None``) the groundset of the oriented
       matroid
 
     - ``key`` -- (default: ``None``) the representation of the oriented
-      matroid. It can be one of the following:
+      matroid; can be one of the following:
 
       + ``'covector'`` - uses covector axioms with covectors
       + ``'vector'`` - uses vector axioms with signed subsets
       + ``'circuit'`` - uses circuit axioms with signed subsets
-      + ``None`` - try and guess key.
+      + ``None`` - try and guess key
 
     EXAMPLES::
 
@@ -302,7 +300,6 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         a provided set of axioms for a given representation
         to ensure that we actually do have an oriented matroid.
         """
-        pass
 
     def groundset(self):
         """
@@ -362,7 +359,6 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         if hasattr(self, "_vectors"):
             return self._vectors
         raise NotImplementedError("vectors not implemented")
-        pass
 
     def covectors(self):
         """
@@ -587,11 +583,11 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         Let `M = (E, \mathcal{L})` be an oriented matroid over a set `E`
         and a set of covectors `\mathcal{L}`. Given `A \subseteq E`, the
         *deletion* is the (covector) oriented matroid
-        `M\backslash A = (E \backslash A, \mathcal{L} \backslash A)` where
+        `M\backslash A = (E \backslash A, \mathcal{L} \backslash A)`, where
 
         .. MATH::
 
-            \mathcal{C} \backslash A = \left\{ X\mid_{E \backslash A} : X \in \mathcal{C}\right\}
+            \mathcal{C} \backslash A = \left\{ X\mid_{E \backslash A} : X \in \mathcal{C}\right\}.
 
         EXAMPLES::
 
@@ -623,11 +619,11 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         Given an oriented matroid `M = (E, \mathcal{L})` where `E` is a
         set and `\mathcal{L}` is the set of covectors. Given
         `A \subseteq E`, the *restriction* is the (covector) oriented
-        matroid `M / A = (E \backslash A, \mathcal{C} / A)` where
+        matroid `M / A = (E \backslash A, \mathcal{C} / A)`, where
 
         .. MATH::
 
-            \mathcal{C} / A = \left\{ X\mid_{E \backslash A} : X \in \mathcal{C} \text{ and} A \subseteq X^0 \right\}
+            \mathcal{C} / A = \left\{ X\mid_{E \backslash A} : X \in \mathcal{C} \text{ and} A \subseteq X^0 \right\}.
 
         EXAMPLES::
 

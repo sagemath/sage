@@ -523,8 +523,8 @@ class SignedSubsetElement(Element):
         `Y` we sometimes say `X` conforms to `Y`. This should not be mistaken
         with *is conformal with*.
         """
-        return self.positives().issubset(other.positives()) \
-            and self.negatives().issubset(other.negatives())
+        return (self.positives().issubset(other.positives())
+                and self.negatives().issubset(other.negatives()))
 
     def is_tope(self):
         r"""
@@ -535,7 +535,7 @@ class SignedSubsetElement(Element):
 
         .. WARNING::
 
-            Requires the method `face_lattice` to exist in the oriented
+            Requires the method ``face_lattice`` to exist in the oriented
             matroid.
         """
         if getattr(self.parent(), 'face_lattice', None) is not None:
