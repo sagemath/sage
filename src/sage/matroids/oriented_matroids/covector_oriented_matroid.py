@@ -70,9 +70,8 @@ class CovectorOrientedMatroid(OrientedMatroid):
 
     .. SEEALSO::
 
-        - :class:`~oriented_matroids.oriented_matroid.OrientedMatroid`
+        - :class:`~sage.oriented_matroids.oriented_matroid.OrientedMatroid`
     """
-
     def __init__(self, data, groundset=None, category=None):
         """
         Initialize ``self``.

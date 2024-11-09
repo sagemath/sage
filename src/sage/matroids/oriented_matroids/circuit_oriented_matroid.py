@@ -74,10 +74,9 @@ class CircuitOrientedMatroid(OrientedMatroid):
 
     .. SEEALSO::
 
-        - :class:`~oriented_matroids.oriented_matroid.OrientedMatroid`
-        - :class:`~oriented_matroids.oriented_matroids_category.OrientedMatroids`
+        - :class:`~sage.oriented_matroids.oriented_matroid.OrientedMatroid`
+        - :class:`~sage.oriented_matroids.oriented_matroids_category.OrientedMatroids`
     """
-
     def __init__(self, data, groundset=None, category=None):
         """
         Initialize ``self``.
@@ -142,7 +141,6 @@ class CircuitOrientedMatroid(OrientedMatroid):
             sage: M4 = OrientedMatroid(C4, key='circuit', groundset=[1,2,3,4])
             sage: M4.is_valid(certificate=True)
             (False, 'every element needs an opposite')
-
         """
         circuits = self.circuits()
 

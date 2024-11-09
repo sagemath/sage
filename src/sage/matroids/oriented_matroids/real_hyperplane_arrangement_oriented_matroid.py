@@ -54,11 +54,10 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
 
     .. SEEALSO::
 
-        - :class:`~oriented_matroids.oriented_matroid.OrientedMatroid`
-        - :class:`~oriented_matroids.covector_oriented_matroid.CovectorOrientedMatroid`
+        - :class:`~sage.oriented_matroids.oriented_matroid.OrientedMatroid`
+        - :class:`~sage.oriented_matroids.covector_oriented_matroid.CovectorOrientedMatroid`
         - :class:`sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement`
     """
-
     def __init__(self, data, groundset=None, category=None):
         """
         Initialize ``self``.

@@ -63,13 +63,11 @@ class VectorOrientedMatroid(OrientedMatroid):
         sage: M.groundset()
         ('e',)
 
-
     .. SEEALSO::
 
-        - :class:`~oriented_matroids.oriented_matroid.OrientedMatroid`
-        - :class:`~oriented_matroids.signed_subset_element.SignedSubsetElement`
+        - :class:`~sage.oriented_matroids.oriented_matroid.OrientedMatroid`
+        - :class:`~sage.oriented_matroids.signed_subset_element.SignedSubsetElement`
     """
-
     def __init__(self, data, groundset=None, category=None):
         """
         Initialize ``self``.
@@ -85,7 +83,7 @@ class VectorOrientedMatroid(OrientedMatroid):
 
         # If our groundset is none, make sure the groundsets are the same for
         # all elements
-        if groundset is None and len(vectors) > 0:
+        if groundset is None and bool(vectors):
             groundset = vectors[0].groundset()
             for X in vectors:
                 if X.groundset() != groundset:
@@ -216,7 +214,7 @@ class VectorOrientedMatroid(OrientedMatroid):
         Return the circuits.
 
         Given a vector oriented matroid, the set of circuits is the set
-        `Min(V)` which denotes the set of inclusion-minimal (nonempty) signed
+        `\min(V)` which denotes the set of inclusion-minimal (nonempty) signed
         subsets.
 
         EXAMPLES::
