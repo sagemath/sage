@@ -148,7 +148,7 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         Covector oriented matroid of rank 0
         sage: M = OrientedMatroid([[0]], key='circuit')
         sage: M.is_valid(certificate=True)
-        (False, 'empty set not allowed')
+        (False, {'elt': (0), 'msg': 'empty set not allowed'})
         sage: OrientedMatroid.options.display='set'
 
     OUTPUT:
@@ -353,7 +353,7 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         return hash((fsgs, fse))
 
     @abstract_method
-    def is_valid(self, certificate=False) -> bool | tuple[bool, str]:
+    def is_valid(self, certificate=False) -> bool | tuple[bool, dict]:
         r"""
         Return whether ``self`` satisfies the oriented matroid axioms.
 
@@ -368,7 +368,7 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
             sage: M.is_valid()
             True
             sage: M.is_valid(True)
-            (True, '')
+            (True, {})
         """
 
     def groundset(self):

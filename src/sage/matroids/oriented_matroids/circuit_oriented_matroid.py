@@ -117,7 +117,7 @@ class CircuitOrientedMatroid(OrientedMatroid):
         else:
             self._groundset = tuple(groundset)
 
-    def is_valid(self, certificate=False) -> bool | tuple[bool, str]:
+    def is_valid(self, certificate=False) -> bool | tuple[bool, dict]:
         """
         Return whether our circuits satisfy the circuit axioms.
 
@@ -127,26 +127,41 @@ class CircuitOrientedMatroid(OrientedMatroid):
             sage: C = [((1,4),(2,3)), ((2,3),(1,4))]
             sage: M = OrientedMatroid(C, key='circuit')
             sage: M.is_valid(certificate=True)
-            (True, '')
+            (True, {})
             sage: M.is_valid()
             True
 
             sage: C2 = [((1,4),(2,3)), ((1,3),(2,4)), ((2,3),(1,4))]
             sage: M2 = OrientedMatroid(C2, key='circuit')
             sage: M2.is_valid(certificate=True)
-            (False, 'only same/opposites can have same support')
+            (False,
+             {'elt': (+: 1,4
+               -: 2,3
+               0: ,
+               +: 1,3
+               -: 2,4
+               0: ),
+              'msg': 'only same/opposites can have same support'})
             sage: M2.is_valid()
             False
 
             sage: C3 = [((),()), ((1,4),(2,3)), ((2,3),(1,4))]
             sage: M3 = OrientedMatroid(C3, key='circuit', groundset=[1,2,3,4])
             sage: M3.is_valid(certificate=True)
-            (False, 'empty set not allowed')
+            (False,
+             {'elt': +: 
+               -: 
+               0: 1,2,3,4,
+              'msg': 'empty set not allowed'})
 
             sage: C4= [((1,),()), ((1,4),(2,3)), ((2,3),(1,4))]
             sage: M4 = OrientedMatroid(C4, key='circuit', groundset=[1,2,3,4])
             sage: M4.is_valid(certificate=True)
-            (False, 'every element needs an opposite')
+            (False,
+             {'elt': +: 1
+               -: 
+               0: 2,3,4,
+              'msg': 'every element needs an opposite'})
         """
         circuits = self.circuits()
 
@@ -154,21 +169,33 @@ class CircuitOrientedMatroid(OrientedMatroid):
             # Axiom 1: Make sure empty is not present
             if X.is_zero():
                 if certificate:
-                    return (False, "empty set not allowed")
+                    error_info = {
+                        'msg': "empty set not allowed",
+                        'elt': X
+                        }
+                    return (False, error_info)
                 return False
             # Axiom 2: (symmetry) Make sure negative exists
             if -X not in circuits:
                 if certificate:
-                    return (False, "every element needs an opposite")
+                    error_info = {
+                        'msg': "every element needs an opposite",
+                        'elt': X
+                        }
+                    return (False, error_info)
                 return False
             for Y in circuits:
                 # Axiom 3: (incomparability) supports must not be contained
                 if X.support().issubset(Y.support()):
                     if X != Y and X != -Y:
                         if certificate:
+                            error_info = {
+                                'msg': "only same/opposites can have same support",
+                                'elt': (X, Y)
+                                }
                             return (
                                 False,
-                                "only same/opposites can have same support"
+                                error_info
                             )
                         return False
                 # Axiom 4: Weak elimination
@@ -187,10 +214,14 @@ class CircuitOrientedMatroid(OrientedMatroid):
                                 found = True
                         if not found:
                             if certificate:
-                                return (False, "weak elimination failed")
+                                error_info = {
+                                    'msg': "weak elimination failed",
+                                    'elt': (X, Y)
+                                    }
+                                return (False, error_info)
                             return False
         if certificate:
-            return (True, "")
+            return (True, {})
         return True
 
     def _repr_(self) -> str:

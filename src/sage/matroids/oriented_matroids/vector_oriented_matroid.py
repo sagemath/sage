@@ -103,7 +103,7 @@ class VectorOrientedMatroid(OrientedMatroid):
         else:
             self._groundset = tuple(groundset)
 
-    def is_valid(self, certificate=False) -> bool | tuple[bool, str]:
+    def is_valid(self, certificate=False) -> bool | tuple[bool, dict]:
         """
         Return whether our vectors satisfy the vector axioms.
 
@@ -113,17 +113,35 @@ class VectorOrientedMatroid(OrientedMatroid):
             sage: V2 = [[1, 1]]
             sage: M2 = OrientedMatroid(V2, key='vector')
             sage: M2.is_valid(certificate=True)
-            (False, 'every element needs an opposite')
+            (False,
+             {'elt': +: 0,1
+               -: 
+               0: ,
+              'msg': 'every element needs an opposite'})
 
             sage: V3 = [[1,1], [-1,-1], [0,-1], [0,1], [-1,0], [1,0]]
             sage: M3 = OrientedMatroid(V3, key='vector')
             sage: M3.is_valid(certificate=True)
-            (False, 'composition must be in vectors')
+            (False,
+             {'elt': (+: 
+               -: 1
+               0: 0,
+               +: 0,1
+               -: 
+               0: ),
+              'msg': 'composition must be in vectors'})
 
             sage: V4 = [[1,1], [-1,-1]]
             sage: M4 = OrientedMatroid(V4, key='vector')
             sage: M4.is_valid(certificate=True)
-            (False, 'vector elimination failed')
+            (False,
+             {'elt': (+: 0,1
+               -: 
+               0: ,
+               +: 
+               -: 0,1
+               0: ),
+              'msg': 'vector elimination failed'})
         """
         vectors = self.vectors()
 
@@ -135,13 +153,21 @@ class VectorOrientedMatroid(OrientedMatroid):
             # Axiom 2: Make sure negative exists
             if -X not in vectors:
                 if certificate:
-                    return (False, "every element needs an opposite")
+                    error_info = {
+                        'msg': "every element needs an opposite",
+                        'elt': X
+                        }
+                    return (False, error_info)
                 return False
             for Y in vectors:
                 # Axiom 3: Closed under composition
                 if X.composition(Y) not in vectors:
                     if certificate:
-                        return (False, "composition must be in vectors")
+                        error_info = {
+                            'msg': "composition must be in vectors",
+                            'elt': (X, Y)
+                            }
+                        return (False, error_info)
                     return False
                 # Axiom 4: Vector elimination
                 E = X.positives().intersection(Y.negatives())
@@ -166,16 +192,24 @@ class VectorOrientedMatroid(OrientedMatroid):
                             found = True
                     if not found:
                         if certificate:
-                            return (False, "vector elimination failed")
+                            error_info = {
+                                'msg': "vector elimination failed",
+                                'elt': (X, Y)
+                                }
+                            return (False, error_info)
                         return False
 
         if not zero_found:
             if certificate:
-                return (False, "empty set is required")
+                error_info = {
+                    'msg': "empty set is required",
+                    'elt': None
+                    }
+                return (False, error_info)
             return False
 
         if certificate:
-            return (True, "")
+            return (True, {})
         return True
 
     def _repr_(self) -> str:

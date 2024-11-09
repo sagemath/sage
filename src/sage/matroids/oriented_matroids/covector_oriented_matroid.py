@@ -120,7 +120,7 @@ class CovectorOrientedMatroid(OrientedMatroid):
             rep = "Covector oriented matroid"
         return rep
 
-    def is_valid(self, certificate=False) -> bool | tuple[bool, str]:
+    def is_valid(self, certificate=False) -> bool | tuple[bool, dict]:
         """
         Return whether our covectors satisfy the covector axioms.
 
@@ -128,23 +128,41 @@ class CovectorOrientedMatroid(OrientedMatroid):
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
             sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
-            sage: M
-            Covector oriented matroid of rank 1
+            sage: M.is_valid()
+            True
 
             sage: C2 = [[0,0], [1,1]]
             sage: M2 = OrientedMatroid(C2, key='covector')
             sage: M2.is_valid(certificate=True)
-            (False, 'every element needs an opposite')
+            (False,
+             {'elt': +: 0,1
+               -: 
+               0: ,
+              'msg': 'every element needs an opposite'})
 
             sage: C3 = [[1,1], [-1,-1], [0,1], [1,0], [-1,0], [0,-1]]
             sage: M3 = OrientedMatroid(C3, key='covector')
             sage: M3.is_valid(certificate=True)
-            (False, 'composition must be in vectors')
+            (False,
+             {'elt': (+: 1
+               -: 
+               0: 0,
+               +: 
+               -: 0,1
+               0: ),
+              'msg': 'composition must be in vectors'})
 
             sage: C4 = [[0,0], [1,1], [-1,-1], [1,-1], [-1,1]]
             sage: M4 = OrientedMatroid(C4, key='covector')
             sage: M4.is_valid(certificate=True)
-            (False, 'weak elimination failed')
+            (False,
+             {'elt': (+: 0,1
+               -: 
+               0: ,
+               +: 0
+               -: 1
+               0: ),
+              'msg': 'weak elimination failed'})
         """
         covectors = self.covectors()
 
@@ -156,13 +174,21 @@ class CovectorOrientedMatroid(OrientedMatroid):
             # Axiom 2: Make sure negative exists
             if -X not in covectors:
                 if certificate:
-                    return (False, "every element needs an opposite")
+                    error_info = {
+                        'msg': "every element needs an opposite",
+                        'elt': X
+                        }
+                    return (False, error_info)
                 return False
             for Y in covectors:
                 # Axiom 3: Closed under composition
                 if X.composition(Y) not in covectors:
                     if certificate:
-                        return (False, "composition must be in vectors")
+                        error_info = {
+                            'msg': "composition must be in vectors",
+                            'elt': (X, Y)
+                            }
+                        return (False, error_info)
                     return False
                 # Axiom 4: Weak elimination axiom
                 E = X.separation_set(Y)
@@ -180,16 +206,24 @@ class CovectorOrientedMatroid(OrientedMatroid):
                                     found = False
                     if not found:
                         if certificate:
-                            return (False, "weak elimination failed")
+                            error_info = {
+                                'msg': "weak elimination failed",
+                                'elt': (X, Y)
+                                }
+                            return (False, error_info)
                         return False
 
         if not zero_found:
             if certificate:
-                return (False, "all zero covector is required")
+                error_info = {
+                    'msg': "all zero covector is required",
+                    'elt': None
+                    }
+                return (False, error_info)
             return False
 
         if certificate:
-            return (True, "")
+            return (True, {})
         return True
 
     def matroid(self):
