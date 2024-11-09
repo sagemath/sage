@@ -516,7 +516,7 @@ class SignedSubsetElement(Element):
 
     def is_restriction_of(self, other):
         r"""
-        Return if `self` is a restriction of `other`.
+        Return if ``self`` is a restriction of ``other``.
 
         A signed subset `X` is a *restriction* of a signed subset `Y` if
         `X^+ \subseteq Y^+` and `X^- \subseteq Y^-`. If `X` is a restriction of
