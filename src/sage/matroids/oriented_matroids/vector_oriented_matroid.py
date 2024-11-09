@@ -11,20 +11,14 @@ AUTHORS:
 # ****************************************************************************
 #      Copyright (C) 2019   Aram Dermenjian <aram.dermenjian.math at gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-from sage.categories.sets_cat import Sets
 
 
 class VectorOrientedMatroid(OrientedMatroid):
@@ -75,7 +69,13 @@ class VectorOrientedMatroid(OrientedMatroid):
     """
     def __init__(self, data, groundset=None, category=None):
         """
-        Initialize ``self``.
+        Return a ``VectorOrientedMatroid`` object.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: M = OrientedMatroid([[1],[-1],[0]], key='vector'); M
+            Vector oriented matroid of rank 0
         """
         OrientedMatroid.__init__(self, category=category)
 

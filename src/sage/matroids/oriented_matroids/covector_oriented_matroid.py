@@ -11,15 +11,10 @@ AUTHORS:
 # ****************************************************************************
 #      Copyright (C) 2019   Aram Dermenjian <aram.dermenjian.math at gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
@@ -56,8 +51,6 @@ class CovectorOrientedMatroid(OrientedMatroid):
 
         sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
         sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
-        sage: M
-        Covector oriented matroid of rank 1
         sage: M.groundset()
         ('e',)
 
@@ -78,7 +71,14 @@ class CovectorOrientedMatroid(OrientedMatroid):
     """
     def __init__(self, data, groundset=None, category=None):
         """
-        Initialize ``self``.
+        Return a ``CovectorOrientedMatroid`` object.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
+            sage: M
+            Covector oriented matroid of rank 1
         """
         OrientedMatroid.__init__(self, category=category)
 
@@ -106,6 +106,13 @@ class CovectorOrientedMatroid(OrientedMatroid):
     def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
+            sage: M
+            Covector oriented matroid of rank 1
         """
         try:
             rep = f"Covector oriented matroid of rank {self.rank()}"

@@ -32,5 +32,8 @@
         "Cython"
     ],
     "editor.formatOnType": true,
-    "esbonio.sphinx.confDir": ""
+    "esbonio.sphinx.confDir": "",
+    "flake8.args": [
+        "--select=E111,E21,E221,E222,E225,E227,E228,E25,E271,E303,E305,E306,E401,E502,E701,E702,E703,E71,E72,W291,W293,W391,W605"
+    ]
 }

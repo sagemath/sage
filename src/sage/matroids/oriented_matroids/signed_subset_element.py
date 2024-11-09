@@ -11,15 +11,10 @@ AUTHORS:
 # ****************************************************************************
 #      Copyright (C) 2019   Aram Dermenjian <aram.dermenjian.math at gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
@@ -91,7 +86,17 @@ class SignedSubsetElement(Element):
     """
     def __init__(self, parent=None, data=None, groundset=None, positives=None, negatives=None, zeros=None):
         """
-        Initialize ``self``.
+        Return a ``SignedSubsetElement`` object.
+        
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
+            sage: M = OrientedMatroid([[1],[-1]], key='circuit');
+            sage: SignedSubsetElement(M,data = (0,))
+            +:
+            -:
+            0: 0
         """
         # If our groundset isn't set but our parent has one, use its groundset
         if groundset is None:
@@ -210,8 +215,20 @@ class SignedSubsetElement(Element):
     def __call__(self, var):
         """
         Return the sign of an element in the groundset.
-        """
 
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E = M.elements()[0]
+            sage: E(1)
+            0
+            sage: E(0)
+            1
+            sage: E(2)
+            -1
+        """
         if var in self.positives():
             return 1
         if var in self.negatives():
@@ -223,6 +240,15 @@ class SignedSubsetElement(Element):
     def __hash__(self):
         """
         Return hashed string of signed subset.
+        
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E = M.elements()[0]
+            sage: hash(E)
+            1231571227600608182
         """
         fsp = frozenset(self._p)
         fsn = frozenset(self._n)
@@ -232,6 +258,20 @@ class SignedSubsetElement(Element):
     def __neg__(self):
         """
         Return the opposite signed subset.
+                
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E = M.elements()[0]; E
+            +: 0
+            -: 2
+            0: 1
+            sage: -E
+            +: 2
+            -: 0
+            0: 1
         """
         N = copy.copy(self)
         N._p = self._n
@@ -241,6 +281,18 @@ class SignedSubsetElement(Element):
     def __eq__(self, other):
         """
         Return whether two elements are equal.
+                        
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E1 = M.elements()[0]
+            sage: E2 = M.elements()[1]
+            sage: E1 == E2
+            False
+            sage: E1 == E1
+            True
         """
         if isinstance(other, SignedSubsetElement):
             if self._p == other._p \
@@ -251,7 +303,19 @@ class SignedSubsetElement(Element):
 
     def __ne__(self, other):
         """
-        Return whether two elements are not equal.
+        Return whether two elements are not equal.        
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E1 = M.elements()[0]
+            sage: E2 = M.elements()[1]
+            sage: E1 != E2
+            True
+            sage: E1 != E1
+            False
         """
         return not (self == other)
 
@@ -274,6 +338,24 @@ class SignedSubsetElement(Element):
         For an oriented matroid, we consider the empty set
         `\emptyset = (\emptyset,\emptyset)` to be a zero as
         it is the same as the all zero vector.
+        
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E1 = M.elements()[0]; E1
+            +: 0
+            -: 2
+            0: 1
+            sage: bool(E1)
+            True
+            sage: E3 = M.elements()[2]; E3
+            +: 
+            -: 
+            0: 0,1,2
+            sage: bool(E3)
+            False
         """
         if len(self.support()) > 0:
             return True
@@ -347,18 +429,45 @@ class SignedSubsetElement(Element):
     def __copy__(self):
         """
         Return a copy of the element.
+        
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E = M.elements()[0]
+            sage: copy(E) == E
+            True
         """
         return SignedSubsetElement(parent=self.parent(), groundset=self.groundset(), positives=self.positives(), negatives=self.negatives(), zeros=self.zeros())
 
-    def __deepcopy__(self):
+    def __deepcopy__(self, memo):
         """
-        Return a copy of the element.
+        Return a copy of the element.    
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E = M.elements()[0]
+            sage: deepcopy(E) == E
+            True
         """
         return SignedSubsetElement(parent=self.parent(), groundset=self.groundset(), positives=self.positives(), negatives=self.negatives(), zeros=self.zeros())
 
     def to_list(self):
         """
         Convert object to a list.
+        
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E = M.elements()[0]
+            sage: list(E)
+            [1, 0, -1]
         """
         return eval("[" + ','.join([str(self(e)) for e in self.groundset()]) + "]")
 
@@ -481,6 +590,16 @@ class SignedSubsetElement(Element):
 
         The separation set of two elements `X` and `Y`
         is given by `S(X, Y) = \left\{e \mid X(e) = -Y(e) \neq 0 \right\}`
+                
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E1 = M.elements()[0]
+            sage: E2 = M.elements()[1]
+            sage: E1.separation_set(E2)
+            {0, 2}
         """
         return self.positives().intersection(other.negatives()).union(self.negatives().intersection(other.positives()))
 
@@ -491,7 +610,25 @@ class SignedSubsetElement(Element):
         The reorientation of `X` by some `A \subseteq E` is
         the signed subset (covector) given by `{}_{-A}X` where
         `{}_{-A}X^+ = (X^+ \backslash A) \cup (X^- \cap A)` and similarly for
-        `{}_{-A}X^-`.
+        `{}_{-A}X^-`.  
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E = M.elements()[0]; E
+            +: 0
+            -: 2
+            0: 1
+            sage: E.reorientation(2)
+            +: 0,2
+            -: 
+            0: 1
+            sage: E.reorientation([0,1,2])
+            +: 2
+            -: 0
+            0: 1
         """
         if change_set in self.groundset():
             change_set = set([change_set])
@@ -516,6 +653,19 @@ class SignedSubsetElement(Element):
         Two elements `X` and `Y` are *conformal* if
         `S(X,Y) = \emptyset`. This is true if and only if `X^+ \subseteq Y^+`
         and `X^- \subseteq Y^-`.
+        
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E1 = M.elements()[0]
+            sage: E2 = M.elements()[1]
+            sage: E3 = M.elements()[2]
+            sage: E1.is_conformal_with(E2)
+            False
+            sage: E1.is_conformal_with(E3)
+            True
         """
         return len(self.separation_set(other)) == 0
 
@@ -526,7 +676,20 @@ class SignedSubsetElement(Element):
         A signed subset `X` is a *restriction* of a signed subset `Y` if
         `X^+ \subseteq Y^+` and `X^- \subseteq Y^-`. If `X` is a restriction of
         `Y` we sometimes say `X` conforms to `Y`. This should not be mistaken
-        with *is conformal with*.
+        with *is conformal with*.  
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E1 = M.elements()[0]
+            sage: E2 = M.elements()[1]
+            sage: E3 = M.elements()[2]
+            sage: E2.is_restriction_of(E1)
+            False
+            sage: E3.is_restriction_of(E1)
+            True
         """
         return (self.positives().issubset(other.positives())
                 and self.negatives().issubset(other.negatives()))
@@ -542,8 +705,20 @@ class SignedSubsetElement(Element):
 
             Requires the method ``face_lattice`` to exist in the oriented
             matroid.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E1 = M.elements()[0]
+            sage: E3 = M.elements()[2]
+            sage: E1.is_tope()
+            True
+            sage: E3.is_tope()
+            False
         """
-        if getattr(self.parent(), 'face_lattice', None) is not None:
+        if getattr(self.parent(), 'face_lattice', None) is None:
             raise TypeError(
                 "topes are only implemented if .face_lattice() is implemented")
 
@@ -560,6 +735,20 @@ class SignedSubsetElement(Element):
         elements. In other words, if `[0,T]` has `2^n` elements and
         the breadth of `[0,T]` is `n` then the interval is boolean
         and thus `T` is simplicial.
+        
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E1 = M.elements()[0]
+            sage: E3 = M.elements()[2]
+            sage: E1.is_simplicial()
+            True
+            sage: E3.is_simplicial()
+            Traceback (most recent call last):
+            ...
+            TypeError: only topes can be simplicial
         """
         if not self.is_tope():
             raise TypeError("only topes can be simplicial")
@@ -573,5 +762,24 @@ class SignedSubsetElement(Element):
     def is_zero(self):
         """
         Return whether or not element is 0.
+
+                
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E1 = M.elements()[0]; E1
+            +: 0
+            -: 2
+            0: 1
+            sage: E3 = M.elements()[2]; E3
+            +: 
+            -: 
+            0: 0,1,2
+            sage: E1.is_zero()
+            False
+            sage: E3.is_zero()
+            True
         """
         return not any(self(e) != 0 for e in self.groundset())

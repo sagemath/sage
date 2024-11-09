@@ -11,20 +11,14 @@ AUTHORS:
 # ****************************************************************************
 #      Copyright (C) 2019   Aram Dermenjian <aram.dermenjian.math at gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.matroids.oriented_matroids.covector_oriented_matroid import CovectorOrientedMatroid
-from sage.categories.sets_cat import Sets
 
 
 class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
@@ -65,7 +59,14 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
     """
     def __init__(self, data, groundset=None, category=None):
         """
-        Initialize ``self``.
+        Return a ``RealHyperplaneArrangementOrientedMatroid`` object.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A); M
+            Hyperplane arrangement oriented matroid of rank 2
         """
         self._arrangement = data
 
@@ -80,6 +81,13 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
     def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A); M
+            Hyperplane arrangement oriented matroid of rank 2
         """
         try:
             rep = "Hyperplane arrangement oriented matroid of rank {}".format(
@@ -91,6 +99,14 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
     def is_valid(self, certificate=False) -> bool | tuple[bool, str]:
         """
         Return whether or not the arrangement is an oriented matroid.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: M.is_valid()
+            True
         """
         if not self.arrangement().is_central():
             if certificate:
@@ -141,5 +157,5 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
             for h in hyperplanes:
                 A = A.deletion(h)
         else:
-            A = A.deletion(h)
+            A = A.deletion(hyperplanes)
         return RealHyperplaneArrangementOrientedMatroid(A)

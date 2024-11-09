@@ -174,11 +174,6 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         Options for oriented matroids.
 
         @OPTIONS@
-
-        .. NOTE::
-
-            Changing the ``convention`` for tableaux also changes the
-            ``convention`` for partitions.
         """
         NAME = 'OrientedMatroids'
         display = dict(default="set",
@@ -189,7 +184,24 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
                        )
 
     def __classcall_private__(self, data=None, groundset=None, key=None, **kwds):
-        # Instantiate oriented matroid
+        r"""
+        Return appropriate oriented matroid.
+
+        Depending on the data provided, this method will return an oriented
+        matroid of the appropriate type.
+
+        sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+        sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
+        sage: M
+        Covector oriented matroid of rank 1
+
+        sage: M = OrientedMatroid([[1], [-1]], key='circuit'); M
+        Circuit oriented matroid of rank 0
+
+        sage: V = [[1,1], [-1,-1], [0,0]]
+        sage: M = OrientedMatroid(V, key='vector'); M
+        Vector oriented matroid of rank 1
+        """
         OM = None
 
         # If we have a hyperplane arrangement we need to force the key to be an
@@ -292,6 +304,12 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         return OM
 
     def __init__(self, category=None):
+        """
+        Return an ``OrientedMatroid`` object.OrientedMatroid
+        
+        This class acts as the abstract class that all oriented matroid
+        objects will extend from.
+        """
         if category is None:
             category = Sets()
         Parent.__init__(self, category=category)
@@ -304,6 +322,15 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         Given a set of objects, this method tests against
         a provided set of axioms for a given representation
         to ensure that we actually do have an oriented matroid.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
+            sage: M.is_valid()
+            True
+            sage: M.is_valid(True)
+            (True, '')
         """
 
     def groundset(self):
@@ -326,6 +353,21 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         The elements of an oriented matroid are the "defining" elements of
         the oriented matroid. For example, covectors are the elements of
         an oriented matroid defined using covectors.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
+            sage: M.elements()
+            [+: e
+            -: 
+            0: ,
+            +: 
+            -: e
+            0: ,
+            +: 
+            -: 
+            0: e]
         """
         return self._elements
 
@@ -360,6 +402,22 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
     def vectors(self):
         """
         Return all vectors.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: M = OrientedMatroid([[1],[-1],[0]], key='vector'); M
+            Vector oriented matroid of rank 0
+            sage: M.vectors()
+            [+: 0
+            -: 
+            0: ,
+            +: 
+            -: 0
+            0: ,
+            +: 
+            -: 
+            0: 0]
         """
         if hasattr(self, "_vectors"):
             return self._vectors
@@ -368,13 +426,59 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
     def covectors(self):
         """
         Return all covectors.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: M.covectors()
+            [+: 
+            -: 
+            0: Hyperplane t0 - t1 + 0*t2 + 0,Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0,
+            +: Hyperplane t0 - t1 + 0*t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+            -: 
+            0: Hyperplane 0*t0 + t1 - t2 + 0,
+            +: 
+            -: Hyperplane t0 - t1 + 0*t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+            0: Hyperplane 0*t0 + t1 - t2 + 0,
+            +: Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+            -: 
+            0: Hyperplane t0 - t1 + 0*t2 + 0,
+            +: Hyperplane t0 - t1 + 0*t2 + 0,Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+            -: 
+            0: ,
+            +: Hyperplane 0*t0 + t1 - t2 + 0
+            -: Hyperplane t0 - t1 + 0*t2 + 0
+            0: Hyperplane t0 + 0*t1 - t2 + 0,
+            +: Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+            -: Hyperplane t0 - t1 + 0*t2 + 0
+            0: ,
+            +: Hyperplane 0*t0 + t1 - t2 + 0
+            -: Hyperplane t0 - t1 + 0*t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+            0: ,
+            +: 
+            -: Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+            0: Hyperplane t0 - t1 + 0*t2 + 0,
+            +: Hyperplane t0 - t1 + 0*t2 + 0
+            -: Hyperplane 0*t0 + t1 - t2 + 0
+            0: Hyperplane t0 + 0*t1 - t2 + 0,
+            +: Hyperplane t0 - t1 + 0*t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+            -: Hyperplane 0*t0 + t1 - t2 + 0
+            0: ,
+            +: Hyperplane t0 - t1 + 0*t2 + 0
+            -: Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+            0: ,
+            +: 
+            -: Hyperplane t0 - t1 + 0*t2 + 0,Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+            0: ]
         """
         if hasattr(self, "_covectors"):
             return self._covectors
         raise NotImplementedError("covectors not implemented")
 
     def convert_to(self, new_type=None):
-        '''
+        """
         Return an oriented matroid of type specified.
 
         EXAMPLES::
@@ -387,7 +491,7 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
             Traceback (most recent call last):
             ...
             TypeError: must be given a type to convert to
-        '''
+        """
         from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
         if new_type is None:
             raise TypeError("must be given a type to convert to")
@@ -409,13 +513,6 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: A = hyperplane_arrangements.braid(3)
-            sage: M = OrientedMatroid(A)
-            sage: m = M.matroid()
-            sage: m.dual()
-            Dual of 'Matroid of rank 2 on 3 elements with 5 flats'
-            sage: m.dual() is m
-            False
         """
         pass
 
@@ -423,6 +520,14 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
     def matroid(self):
         r"""
         Return the underlying matroid.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: M.matroid()
+            Matroid of rank 2 on 3 elements with 5 flats
         """
         pass
 
@@ -510,7 +615,7 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
             Finite lattice containing 14 elements
         """
         from sage.combinat.posets.lattices import LatticePoset
-        els = self.covectors()
+        els = copy.deepcopy(self.covectors())
         rels = [
             (Y, X)
             for X in els
@@ -529,6 +634,31 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         Return the topes.
 
         A *tope* is the maximal covector in the face poset.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: M.topes()
+            [+: Hyperplane t0 - t1 + 0*t2 + 0,Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+            -: 
+            0: ,
+            +: Hyperplane 0*t0 + t1 - t2 + 0
+            -: Hyperplane t0 - t1 + 0*t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+            0: ,
+            +: Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+            -: Hyperplane t0 - t1 + 0*t2 + 0
+            0: ,
+            +: 
+            -: Hyperplane t0 - t1 + 0*t2 + 0,Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+            0: ,
+            +: Hyperplane t0 - t1 + 0*t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+            -: Hyperplane 0*t0 + t1 - t2 + 0
+            0: ,
+            +: Hyperplane t0 - t1 + 0*t2 + 0
+            -: Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
+            0: ]
         """
         return self.face_poset(facade=True).maximal_elements()
 
@@ -541,6 +671,15 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         *base tope*. The order is given by inclusion of separation sets
         from the base tope: `X \leq Y` if and only if
         `S(B, X) \subseteq S(B, Y)`.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: T = M.topes()
+            sage: M.tope_poset(T[0])
+            Finite poset containing 6 elements
         """
         from sage.combinat.posets.posets import Poset
         els = self.topes()
@@ -558,6 +697,14 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         Return if the oriented matroid is simplicial.
 
         An oriented matroid is *simplicial* if every tope is simplicial.
+        
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: M.is_simplicial()
+            True
 
         .. SEEALSO::
 
@@ -575,6 +722,14 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         A covector oriented matroid is *acyclic* if there exists a positive
         tope where a *positive tope* is defined as a tope with no
         negative part.
+                
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: M.is_acyclic()
+            True
         """
         for t in self.topes():
             if len(t.negatives()) == 0:
@@ -597,6 +752,16 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: M.groundset()
+            (Hyperplane 0*t0 + t1 - t2 + 0,
+            Hyperplane t0 - t1 + 0*t2 + 0,
+            Hyperplane t0 + 0*t1 - t2 + 0)
+            sage: D = M.deletion(M.groundset()[0]); D
+            Hyperplane arrangement oriented matroid of rank 2
+            sage: D.groundset()
+            (Hyperplane t0 - t1 + 0*t2 + 0, Hyperplane t0 + 0*t1 - t2 + 0)
         """
         if change_set in self.groundset():
             change_set = set([change_set])
@@ -677,13 +842,25 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         tope `T \in \mathcal{T}` with `T(e) = 0`. In particular
         if `T(e) = 0` for some `T`, then it is true for all
         `T \in \mathcal{T}`.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: M.loops()
+            []
+
+            sage: C = [[1,0], [-1,0],[0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: M.loops()
+            [1]
         """
         T = self.topes()[0]
         loops = []
-        gs = self.groundset()
-        for i, j in enumerate(T):
+        for j in self.groundset():
             if T(j) == 0:
-                loops.append(gs[i])
+                loops.append(j)
         return loops
 
     def are_parallel(self, e, f):
@@ -693,6 +870,18 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         Two elements in the groundset `e, f \in E` are parallel if they
         are not loops and for all `X \in \mathcal{C}`, `X(e) = 0`
         implies `X(f) = 0`. See Lemma 4.1.10 [BLSWZ1999]_ .
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: M.are_parallel(0, 2)
+            True
+            sage: M.are_parallel(0, 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: elements must be in groundset and must not be loops
         """
         gs = set(self.groundset()).difference(set(self.loops()))
         if e not in gs or f not in gs:
@@ -708,6 +897,19 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
 
         An oriented matroid is *simple* if there are no loops
         and no parallel elements.
+        
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: M.is_simple()
+            True
+
+            sage: C = [[1,0, -1], [-1,0, 1],[0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: M.is_simple()
+            False
         """
         from sage.combinat.subset import Subsets
         if len(self.loops()) > 0:
@@ -720,6 +922,17 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
     def _element_constructor_(self, x):
         r"""
         Determine if ``x`` may be viewed as belonging to ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: E = M.an_element()
+            sage: E in M
+            True
+            sage: M(E) == E
+            True
         """
         try:
             if x in self.elements():
@@ -732,6 +945,11 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
 def deep_tupler(obj):
     r"""
     Change a (nested) list or set into a (nested) tuple to be hashable.
+
+    EXAMPLES::
+
+        sage: deep_tupler([1,2,[3,4],[5,[6,7]],[8]])
+        (1, 2, (3, 4), (5, (6, 7)), (8,))
     """
     if isinstance(obj, list) or isinstance(obj, set):
         return tuple([deep_tupler(i) for i in obj])
