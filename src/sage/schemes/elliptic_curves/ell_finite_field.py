@@ -2565,10 +2565,12 @@ def is_j_supersingular(j, proof=True):
     return E.trace_of_frobenius() % p == 0
 
 
-def special_supersingular_curve(F, *, endomorphism=False):
+def special_supersingular_curve(F, q=None, *, endomorphism=False):
     r"""
-    Given a finite field ``F``, construct a "special" supersingular
-    elliptic curve `E` defined over ``F``.
+    Given a finite field ``F`` of characteristic `p`, and optionally
+    a positive integer `q` such that the Hilbert conductor of `-q`
+    and `-p` equals `p`, construct a "special" supersingular elliptic
+    curve `E` defined over ``F``.
 
     Such a curve
 
@@ -2577,20 +2579,31 @@ def special_supersingular_curve(F, *, endomorphism=False):
     - has group structure `E(\mathbb F_p) \cong \ZZ/(p+1)` and
       `E(\mathbb F_{p^2}) \cong \ZZ/(p+1) \times \ZZ/(p+1)`;
 
-    - has an endomorphism `\vartheta` of small degree `q` that
+    - has an endomorphism `\vartheta` of degree `q` that
       anticommutes with the `\mathbb F_p`-Frobenius on `E`.
 
     (The significance of `\vartheta` is that any such endomorphism,
     together with the `\mathbb F_p`-Frobenius, generates the endomorphism
     algebra `\mathrm{End}(E) \otimes \QQ`.)
 
+    The complexity grows exponentially in `\log(q)`. Automatically
+    chosen values of `q` lie in `O((\log p)^2)` assuming GRH.
+
     INPUT:
 
-    - ``F`` -- finite field `\mathbb F_{p^r}`;
+    - ``F`` -- finite field `\mathbb F_{p^r}`
+
+    - ``q`` -- positive integer (optional, default ``None``)
 
     - ``endomorphism`` -- boolean (default: ``False``); when set to ``True``,
       it is required that `2 \mid r`, and the function then additionally
       returns `\vartheta`
+
+    .. WARNING::
+
+        Due to :issue:`38481`, calling this function with a value of `q`
+        larger than approximately `p/4` may currently fail. This failure
+        will not occur for automatically chosen values of `q`.
 
     EXAMPLES::
 
@@ -2604,8 +2617,8 @@ def special_supersingular_curve(F, *, endomorphism=False):
            Via:  (u,r,s,t) = (389*z2 + 241, 0, 0, 0))
 
         sage: special_supersingular_curve(GF(1021^2), endomorphism=True)
-        (Elliptic Curve defined by y^2 = x^3 + 785*x + 794 over Finite Field in z2 of size 1021^2,
-         Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + 785*x + 794 over Finite Field in z2 of size 1021^2 to Elliptic Curve defined by y^2 = x^3 + 785*x + 794 over Finite Field in z2 of size 1021^2)
+        (Elliptic Curve defined by y^2 = x^3 + 791*x + 230 over Finite Field in z2 of size 1021^2,
+         Isogeny of degree 2 from Elliptic Curve defined by y^2 = x^3 + 791*x + 230 over Finite Field in z2 of size 1021^2 to Elliptic Curve defined by y^2 = x^3 + 791*x + 230 over Finite Field in z2 of size 1021^2)
 
         sage: special_supersingular_curve(GF(1031^2), endomorphism=True)
         (Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 1031^2,
@@ -2629,6 +2642,20 @@ def special_supersingular_curve(F, *, endomorphism=False):
         (Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 1051^2,
          Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 1051^2
            Via:  (u,r,s,t) = (922*z2 + 129, 0, 0, 0))
+
+    We can also supply a suitable value of `q` ourselves::
+
+        sage: special_supersingular_curve(GF(1019), q=99)
+        Elliptic Curve defined by y^2 = x^3 + 211*x + 808 over Finite Field of size 1019
+
+        sage: special_supersingular_curve(GF(1019^2), q=99, endomorphism=True)
+        (Elliptic Curve defined by y^2 = x^3 + 211*x + 808 over Finite Field in z2 of size 1019^2,
+         Isogeny of degree 99 from Elliptic Curve defined by y^2 = x^3 + 211*x + 808 over Finite Field in z2 of size 1019^2 to Elliptic Curve defined by y^2 = x^3 + 211*x + 808 over Finite Field in z2 of size 1019^2)
+
+        sage: special_supersingular_curve(GF(1013), q=99)
+        Traceback (most recent call last):
+        ...
+        ValueError: invalid choice of q
 
     TESTS::
 
@@ -2678,6 +2705,35 @@ def special_supersingular_curve(F, *, endomorphism=False):
         sage: pi * endo == -endo * pi
         True
 
+    Also try it when `q` is given:
+
+        sage: p = random_prime(300, lbound=10)
+        sage: k = ZZ(randrange(1, 5))
+        sage: while True:
+        ....:     q = randrange(1, p//4)  # upper bound p//4 is a workaround for #38481
+        ....:     if QuaternionAlgebra(-q, -p).discriminant() == p:
+        ....:         break
+        sage: E = special_supersingular_curve(GF((p, k)), q)
+        sage: E.is_supersingular()
+        True
+        sage: F.<t> = GF((p, 2*k))
+        sage: E, endo = special_supersingular_curve(F, q, endomorphism=True)
+        sage: E.is_supersingular()
+        True
+        sage: E.j_invariant() in GF(p)
+        True
+        sage: endo.domain() is endo.codomain() is E
+        True
+        sage: endo.degree() == q
+        True
+        sage: endo.trace()
+        0
+        sage: pi = E.frobenius_isogeny()
+        sage: pi.codomain() is pi.domain() is E
+        True
+        sage: pi * endo == -endo * pi
+        True
+
     .. NOTE::
 
         This function makes no guarantees about the distribution of
@@ -2694,42 +2750,49 @@ def special_supersingular_curve(F, *, endomorphism=False):
     if endomorphism and deg % 2:
         raise ValueError('endomorphism was requested but is not defined over given field')
 
-    E = None
+    if q is not None:
+        from sage.arith.misc import hilbert_conductor
+        if p.divides(q) or hilbert_conductor(-q, -p) != p:
+            raise ValueError('invalid choice of q')
 
     # first find the degree q of our special endomorphism
-    if p == 2:
-        q = 3
-        E = EllipticCurve(F, [0,0,1,0,0])
-
-    elif p % 4 == 3:
-        q = 1
-        E = EllipticCurve(F, [1,0])
-
-    elif p % 3 == 2:
-        q = 3
-        E = EllipticCurve(F, [0,1])
-
-    elif p % 8 == 5:
-        q = 2
-        E = EllipticCurve(F, [-4320, 96768])
-
-    else:
-        from sage.arith.misc import legendre_symbol
-        for q in map(ZZ, range(3,p,4)):
-            if not q.is_prime():
-                continue
-            if legendre_symbol(-q, p) == -1:
-                break
+    if q is None:
+        if p == 2:
+            q = 3
+        elif p % 4 == 3:
+            q = 1
+        elif p % 3 == 2:
+            q = 3
+        elif p % 8 == 5:
+            q = 2
         else:
-            assert False  # should never happen
+            from sage.arith.misc import legendre_symbol
+            for q in map(ZZ, range(3,p,4)):
+                if not q.is_prime():
+                    continue
+                if legendre_symbol(-q, p) == -1:
+                    break
+            else:  # should never happen
+                assert False, 'bug in special_supersingular_curve()'
+    q = ZZ(q)
 
-    if E is None:
-        from sage.arith.misc import fundamental_discriminant
-        from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial
-        H = hilbert_class_polynomial(fundamental_discriminant(-q))
-        j = H.change_ring(GF(p)).any_root()
+    from sage.arith.misc import fundamental_discriminant
+    from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial
+    H = hilbert_class_polynomial(fundamental_discriminant(-q))
+    j = H.change_ring(GF(p)).any_root()
+    if j.is_zero():
+        if p == 2:
+            ainvs = [0,0,1,0,0]
+        elif p == 3:
+            ainvs = [1,0]
+        else:
+            ainvs = [0,1]
+    elif j == 1728:
+        ainvs = [1,0]
+    else:
         a = 27 * j / (4 * (1728-j))
-        E = EllipticCurve(F, [a,-a])
+        ainvs = [a,-a]
+    E = EllipticCurve(F, ainvs)
 
     if ZZ(2).divides(deg):
         k = deg//2
@@ -2740,23 +2803,26 @@ def special_supersingular_curve(F, *, endomorphism=False):
     if not endomorphism:
         return E
 
-    if q == 1 or p <= 13:
-        if q == 1:
-            endos = E.automorphisms()
-        else:
-            endos = (iso*phi for phi in E.isogenies_prime_degree(q)
-                             for iso in phi.codomain().isomorphisms(E))
-        endo = next(endo for endo in endos if endo.trace().is_zero())
-
+    if q.is_one():
+        endo = next(auto for auto in E.automorphisms() if auto.trace().is_zero())
     else:
-        from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-        iso = WeierstrassIsomorphism(None, (F(-q).sqrt(),0,0,0), E)
-        if q == 3 and E.a_invariants() == (0,0,0,0,1):
-            # workaround for #21883
-            endo = E.isogeny(E(0,1))
-        else:
-            endo = E.isogeny(None, iso.domain(), degree=q)
-        endo = iso * endo
+        iso = E.isomorphism(F(-q).sqrt(), is_codomain=True)
+        try:
+            endo = iso * E.isogeny(None, iso.domain(), degree=q)
+        except (NotImplementedError, ValueError):  #FIXME catching ValueError here is a workaround for #38481
+            #FIXME this code could be simplified/optimized after #37388 and/or #35949
+            def _isogs(E, d):
+                if d.is_one():
+                    yield E.identity_morphism()
+                    return
+                l = d.prime_factors()[-1]
+                for phi in E.isogenies_prime_degree(l):
+                    for psi in _isogs(phi.codomain(), d//l):
+                        yield psi * phi
+            endos = (iso*phi for phi in _isogs(E, q) for iso in phi.codomain().isomorphisms(E))
+#            endos = (iso*phi for phi in E.isogenies_degree(q)
+#                             for iso in phi.codomain().isomorphisms(E))
+            endo = next(endo for endo in endos if endo.trace().is_zero())
 
     endo._degree = ZZ(q)
     endo.trace.set_cache(ZZ.zero())
@@ -2896,7 +2962,7 @@ def EllipticCurve_with_prime_order(N):
     a suitable `D` *incrementally*, by enlarging the table `S` by `log(N)`-size
     interval of primes `p` and testing all products of distinct primes `p` (or
     rather `p^*`). We find this difficult to implement without testing
-    duplicate `D`s, so we instead enlarge the table one prime at a time
+    duplicate `D`\s, so we instead enlarge the table one prime at a time
     (effectively replacing `[r\log(N), (r + 1)\log(N)]` in the paper by `[r,
     r]`). To compensate for the speed loss, we begin the algorithm by
     prefilling `S` with the primes below `1000` (satisfying quadratic
@@ -2904,14 +2970,14 @@ def EllipticCurve_with_prime_order(N):
     to be fast for many purposes, and for most `N` we tested we are able to
     find a suitable small `D` without increasing the size of `S`.
 
-    The paper also doesn't specify how to enumerate such `D`s, which recall
+    The paper also doesn't specify how to enumerate such `D`\s, which recall
     should be product of distinct values in the table `S`. We implement this
     with a priority queue (min heap), which also allows us to search for the
-    suitable `D`s in increasing (absolute value) order. This is suitable for
+    suitable `D`\s in increasing (absolute value) order. This is suitable for
     the algorithm because smaller `D` means the Hilbert class polynomial is
     computed quicker.
 
-    Finally, to avoid repeatedly testing the same `D`s, we require the latest
+    Finally, to avoid repeatedly testing the same `D`\s, we require the latest
     prime to be added to the table to be included as a factor of `D` (see code
     for more explanation). As we need to find integers `x, y` such that `x^2 +
     (-D)y^2 = 4N` with `D < 0` and `N` prime, we actually need `|D| \leq 4N`,
@@ -2956,7 +3022,7 @@ def EllipticCurve_with_prime_order(N):
         sage: E.has_order(N)
         True
 
-    ::
+    Another example for large primes::
 
         sage: N = next_prime(2^256)
         sage: E = next(EllipticCurve_with_prime_order(N)); E                            # random

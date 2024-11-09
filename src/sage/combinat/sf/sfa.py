@@ -1982,7 +1982,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         # Convert to the power sum
         p = self.realization_of().power()
         p_x = p(x)
-        expr_k = lambda k: expr.subs(**dict([(str(x),x**k) for x in deg_one]))
+        expr_k = lambda k: expr.subs(**{str(x): x**k for x in deg_one})
         f = lambda m,c: (m, c*prod([expr_k(k) for k in m]))
         return self(p_x.map_item(f))
 
@@ -6900,7 +6900,7 @@ def _from_polynomial(p, f):
     n = p.parent().ngens()
     if n == 1:
         d = {_Partitions.from_exp([e]): c
-             for e, c in p.dict().items()}
+             for e, c in p.monomial_coefficients().items()}
     else:
         d = {_Partitions.from_exp(e): c
              for e, c in p.iterator_exp_coeff(False)}

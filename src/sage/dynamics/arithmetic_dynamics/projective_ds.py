@@ -2935,7 +2935,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         # Calling possible_periods for each prime in parallel
         parallel_data = []
         for q in primes(primebound[0], primebound[1] + 1):
-            if not (q in badprimes):
+            if q not in badprimes:
                 F = self.change_ring(GF(q))
                 parallel_data.append(((F,), {}))
 
@@ -6768,7 +6768,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         (crit_set, post_crit_set) = crit, list(post_crit)
 
         # All Lattes maps have 3 or 4 post critical values
-        if not len(post_crit_set) in [3, 4]:
+        if len(post_crit_set) not in [3, 4]:
             return False
 
         f = F_crit.dehomogenize(1)[0]
@@ -7026,6 +7026,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             return (M, E)
         return E
 
+
 class DynamicalSystem_projective_field(DynamicalSystem_projective,
                                        SchemeMorphism_polynomial_projective_space_field):
 
@@ -7228,7 +7229,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                     while not done and k <= n:
                         newP = self(newP)
                         if newP == P:
-                            if not ([P, k] in good_points):
+                            if [P, k] not in good_points:
                                 good_points.append([newP, k])
                             done = True
                         k += 1
@@ -7499,7 +7500,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                 pos_points = []
                 # check period, remove duplicates
                 for i in range(len(all_points)):
-                    if all_points[i][1] in periods and not (all_points[i] in pos_points):
+                    if all_points[i][1] in periods and all_points[i] not in pos_points:
                         pos_points.append(all_points[i])
                 periodic_points = DS.lift_to_rational_periodic(pos_points,B)
                 for p,n in periodic_points:
@@ -7594,7 +7595,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             P = points.pop()
             preimages = self.rational_preimages(P)
             for i in range(len(preimages)):
-                if not preimages[i] in preperiodic:
+                if preimages[i] not in preperiodic:
                     points.append(preimages[i])
                     preperiodic.add(preimages[i])
         return list(preperiodic)
@@ -9073,7 +9074,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         """
         if self.degree() == 1:
             raise NotImplementedError("degree one Newton maps are trivial")
-        if not self.base_ring() in NumberFields():
+        if self.base_ring() not in NumberFields():
             raise NotImplementedError("only implemented over number fields")
         # check if Newton map
         sigma_1 = self.sigma_invariants(1)
@@ -9116,6 +9117,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                 return False, None
         else:
             return Npoly.derivative(z) == (z - N_aff[0]).denominator()
+
 
 class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
                                               SchemeMorphism_polynomial_projective_space_finite_field):

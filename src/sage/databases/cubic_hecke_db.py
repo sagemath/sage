@@ -117,7 +117,9 @@ def simplify(mat):
     d = mat.dict()
     if isinstance(B, CubicHeckeExtensionRing):
         # Laurent polynomial cannot be reconstructed from string
-        res = {k: {tuple(j): u.dict() for j, u in v.dict().items()} for k, v in d.items()}
+        res = {k: {tuple(j): u.monomial_coefficients()
+                   for j, u in v.monomial_coefficients().items()}
+               for k, v in d.items()}
     else:
         res = {k: str(v) for k, v in d.items()}
     return res
@@ -661,7 +663,7 @@ class CubicHeckeFileCache(SageObject):
           in the case of cubic Hecke algebras on more than 4 strands
         - ``markov_trace`` -- file cache for intermediate results of long
           calculations in order to recover the results already obtained by
-          preboius attemps of calculation until the corresponding intermediate
+          previous attemps of calculation until the corresponding intermediate
           step
 
         EXAMPLES::

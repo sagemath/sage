@@ -386,7 +386,7 @@ class EllipticCurveSaturator(SageObject):
             -- points were not 2-saturated, gaining index 2
             (1, (0 : 1 : 0))
 
-        A CM example where large siecing primes are needed (LMFDB
+        A CM example where large sieving primes are needed (LMFDB
         label 2.0.3.1-50625.1-CMb2)::
 
             sage: K.<a> = NumberField(x^2 - x + 1)
