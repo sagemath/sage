@@ -861,9 +861,13 @@ class GraphPlot(SageObject):
 
                         estyle = self._options['edge_style']
                         ethickness = self._options['edge_thickness']
-                        if style_key_edges is not None and ((style_key_edges and (x, y) in self._options['edge_styles']) or (not style_key_edges and lab in self._options['edge_styles'])):
+                        if (style_key_edges is not None
+                            and ((style_key_edges and (x, y) in self._options['edge_styles'])
+                                or (not style_key_edges and lab in self._options['edge_styles']))):
                             estyle = style_key_edges and self._options['edge_styles'][(x, y)] or self._options['edge_styles'][lab]
-                        if thickness_key_edges is not None and ((thickness_key_edges and (x, y) in self._options['edge_thicknesses']) or (not thickness_key_edges and lab in self._options['edge_thicknesses'])):
+                        if (thickness_key_edges is not None 
+                            and ((thickness_key_edges and (x, y) in self._options['edge_thicknesses']) 
+                                or (not thickness_key_edges and lab in self._options['edge_thicknesses']))):
                             ethickness = thickness_key_edges and self._options['edge_thicknesses'][(x, y)] or self._options['edge_thicknesses'][lab]
                             
                         c = circle((x, y), loop_size, rgbcolor=col, linestyle=estyle, thickness=ethickness)
@@ -999,9 +1003,13 @@ class GraphPlot(SageObject):
 
             estyle = self._options['edge_style']
             ethickness = self._options['edge_thickness']
-            if style_key_edges is not None and ((style_key_edges and e in self._options['edge_styles']) or (not style_key_edges and elabel in self._options['edge_styles'])):
+            if (style_key_edges is not None
+                and ((style_key_edges and e in self._options['edge_styles'])
+                    or (not style_key_edges and elabel in self._options['edge_styles']))):
                 estyle = style_key_edges and self._options['edge_styles'][e] or self._options['edge_styles'][elabel]
-            if thickness_key_edges is not None and ((thickness_key_edges and e in self._options['edge_thicknesses']) or (not thickness_key_edges and elabel in self._options['edge_thicknesses'])):
+            if (thickness_key_edges is not None
+                and ((thickness_key_edges and e in self._options['edge_thicknesses'])
+                    or (not thickness_key_edges and elabel in self._options['edge_thicknesses']))):
                 ethickness = thickness_key_edges and self._options['edge_thicknesses'][e] or self._options['edge_thicknesses'][elabel]
 
             if self._arcdigraph:
