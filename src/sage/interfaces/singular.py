@@ -2335,12 +2335,12 @@ def get_docstring(name, prefix=False, code=False):
     INPUT:
 
     - ``name`` -- a Singular function name
-    - ``prefix`` -- boolean (default: False); whether or not to include
-      the prefix stating that what follows is from the Singular
-      documentation.
-    - ``code`` -- boolean (default: False); whether or not to format the
-      result as a reStructuredText code block. This is intended to support
-      the feature requested in :issue:`11268`.
+    - ``prefix`` -- boolean (default: ``False``); whether or not to
+      include the prefix stating that what follows is from the
+      Singular documentation.
+    - ``code`` -- boolean (default: ``False``); whether or not to
+      format the result as a reStructuredText code block. This is
+      intended to support the feature requested in :issue:`11268`.
 
     OUTPUT:
 
