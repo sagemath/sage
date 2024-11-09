@@ -915,7 +915,7 @@ class SwapIncreasingOperator(SwapOperator):
         j = i + 1
         if u[i] < u[j]:
             v = list(u)
-            v[j], v[i] = (v[i], v[j])
+            v[j], v[i] = v[i], v[j]
             if isinstance(u, Permutation):
                 return Permutation(v)
             return type(u)(v)
