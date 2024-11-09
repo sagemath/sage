@@ -8,15 +8,20 @@ AUTHORS:
 - Tudor Tanasa (2023-08-01): Beta version
 """
 
-# *****************************************************************************
-#  Copyright (C) 2019 Aram Dermenjian <aram.dermenjian.math at gmail.com>
+# ****************************************************************************
+#      Copyright (C) 2019   Aram Dermenjian <aram.dermenjian.math at gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
+#    This code is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#    General Public License for more details.
+#
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-# ******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.element import Element
 import copy

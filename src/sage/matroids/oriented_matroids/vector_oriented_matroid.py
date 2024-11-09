@@ -8,15 +8,20 @@ AUTHORS:
 - Aram Dermenjian (2019-07-12): Initial version
 """
 
-##############################################################################
-#       Copyright (C) 2018 Aram Dermenjian <aram.dermenjian.math at gmail.com>
+# ****************************************************************************
+#      Copyright (C) 2019   Aram Dermenjian <aram.dermenjian.math at gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
+#    This code is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#    General Public License for more details.
+#
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-##############################################################################
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
 from sage.categories.sets_cat import Sets
