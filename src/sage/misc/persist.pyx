@@ -92,7 +92,7 @@ def load(*filename, compress=True, verbose=True, **kwargs):
     an ``.sobj`` extension added if it doesn't have one.  Or, if the input
     is a filename ending in ``.py``, ``.pyx``, ``.sage``, ``.spyx``,
     ``.f``, ``.f90`` or ``.m``, load that file into the current running
-    session.
+    session using :func:`sage.repl.load.load`.
 
     Loaded files are not loaded into their own namespace, i.e., this is
     much more like Python's ``execfile`` than Python's ``import``.

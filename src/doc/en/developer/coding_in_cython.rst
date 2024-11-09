@@ -60,14 +60,19 @@ There are several ways to create and build Cython code in Sage.
           %cython
           from __main__ import testfunction
 
-#. Create an ``.spyx`` file and attach or load it from the command
-   line. This is similar to creating a ``%cython`` cell in the
-   notebook but works completely from the command line (and not from
-   the notebook).
+#. Create an ``.spyx`` file and :ref:`attach or load it <section-attach-or-load-spyx-files>`
+   from the :ref:`command line <section-command-line>`.
+   This is similar to creating a ``%cython``
+   cell in the notebook but works completely from the command line
+   (and not from the notebook).
+
+#. Use ``%%cython`` cell magic in the command line.
+   Refer to :meth:`sage.repl.ipython_extension.SageMagics.cython`.
 
 #. Create a ``.pyx`` file and add it to the Sage library.
    Then run ``sage -b`` to rebuild Sage.
 
+.. _section-attach-or-load-spyx-files:
 
 Attaching or loading .spyx files
 ================================

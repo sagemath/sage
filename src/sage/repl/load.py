@@ -87,6 +87,11 @@ def load(filename, globals, attach=False):
 
             from t import *
 
+    .. NOTE::
+
+        The global ``load`` function is :func:`sage.misc.persist.load`,
+        which delegates to this function for code file formats.
+
     INPUT:
 
     - ``filename`` -- string (denoting a filename or URL) or a :class:`Path` object
@@ -97,13 +102,15 @@ def load(filename, globals, attach=False):
     - ``attach`` -- boolean (default: ``False``); whether to add the
       file to the list of attached files
 
-    Loading an executable Sage script from the command prompt will run whatever
-    code is inside an
+    Loading an executable Sage script from the :ref:`command line <section-command-line>`
+    will run whatever code is inside an
+
+    ::
 
         if __name__ == "__main__":
 
     section, as the condition on ``__name__`` will hold true (code run from the
-    command prompt is considered to be running in the ``__main__`` module.)
+    command line is considered to be running in the ``__main__`` module.)
 
     EXAMPLES:
 
