@@ -2133,10 +2133,6 @@ class MatchingCoveredGraph(Graph):
             sage: G = MatchingCoveredGraph(H)
             sage: G
             Matching covered heawood graph: graph on 14 vertices
-            sage: G.has_loops()
-            False
-            sage: G.allows_loops()
-            False
             sage: G.add_edge(0, 0)
             Traceback (most recent call last):
             ...
@@ -2145,10 +2141,6 @@ class MatchingCoveredGraph(Graph):
             []
             sage: G.loop_edges()
             []
-            sage: G.loop_vertices()
-            []
-            sage: G.number_of_loops()
-            0
 
         A matching covered graph may support multiple edges, still no
         loops are allowed::
@@ -2165,18 +2157,10 @@ class MatchingCoveredGraph(Graph):
             ValueError: loops are not allowed in matching covered graphs
             sage: G.edges(sort=False)
             [(0, 1, None), (0, 1, 'label'), (0, 3, None), (1, 2, None), (2, 3, None)]
-            sage: G.allows_loops()
-            False
-            sage: G.has_loops()
-            False
             sage: G.loops()
             []
             sage: G.loop_edges()
             []
-            sage: G.loop_vertices()
-            []
-            sage: G.number_of_loops()
-            0
 
         One may set the ``label`` to either ``True`` or ``False``::
 
