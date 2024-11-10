@@ -2208,22 +2208,12 @@ class MatchingCoveredGraph(Graph):
             sage: G = MatchingCoveredGraph(M)
             sage: G
             Matching covered moebius ladder graph: graph on 8 vertices
-            sage: G.has_loops()
-            False
-            sage: G.allows_loops()
-            False
             sage: G.add_edge(0, 0)
             Traceback (most recent call last):
             ...
             ValueError: loops are not allowed in matching covered graphs
-            sage: G.loops()
-            []
-            sage: G.loop_edges()
-            []
             sage: G.loop_vertices()
             []
-            sage: G.number_of_loops()
-            0
 
         A matching covered graph may support multiple edges, still no
         loops are allowed::
@@ -2243,18 +2233,8 @@ class MatchingCoveredGraph(Graph):
              (1, 2, None), (1, 4, None), (2, 5, None), (2, 7, None),
              (3, 4, None), (3, 6, None), (4, 5, None), (5, 7, None),
              (6, 7, None)]
-            sage: G.allows_loops()
-            False
-            sage: G.has_loops()
-            False
-            sage: G.loops()
-            []
-            sage: G.loop_edges()
-            []
             sage: G.loop_vertices()
             []
-            sage: G.number_of_loops()
-            0
 
         .. SEEALSO::
 
