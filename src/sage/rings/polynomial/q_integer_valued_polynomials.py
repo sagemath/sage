@@ -93,9 +93,8 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
     Quantum-valued polynomial rings are commutative and associative
     algebras, with a basis indexed by integers.
 
-    The basis used here is given by `B[i] = \binom{i+n}{i}` for `i \in \NN`.
-
-    There is a nice formula for the product, see [HaHo2017]_.
+    This is endowed with two bases, named ``B`` or ``Binomial``
+    and ``S`` or ``Shifted``⋅
 
     INPUT:
 
@@ -813,8 +812,6 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
 
                 .. SEEALSO:: :meth:`h_polynomial`, :meth:`fraction`
 
-                changement de base vers les (binomial(x+i,d))_{i=0..d}
-
                 EXAMPLES::
 
                     sage: A = QuantumValuedPolynomialRing(ZZ).S()
@@ -846,8 +843,6 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
                 Return the `h`-vector as a polynomial.
 
                 .. SEEALSO:: :meth:`h_vector`, :meth:`fraction`
-
-                peut-etre pas dans le bon sens ?
 
                 EXAMPLES::
 
@@ -943,7 +938,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
 
             - ``n1``, ``n2`` -- integers
 
-            The formula is taken from Theorem 3.4 in Harman-Hopkins.
+            The formula is taken from Theorem 3.4 in [HaHo2017]_.
 
             EXAMPLES::
 
