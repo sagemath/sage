@@ -1967,14 +1967,6 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: loops are not allowed in matching covered graphs
-            sage: G.loops()
-            []
-            sage: G.loop_edges()
-            []
-            sage: G.loop_vertices()
-            []
-            sage: G.number_of_loops()
-            0
 
         A matching covered graph may support multiple edges, still no
         loops are allowed::
@@ -1995,15 +1987,11 @@ class MatchingCoveredGraph(Graph):
             False
             sage: G.has_loops()
             False
-            sage: G.loops()
-            []
-            sage: G.loop_edges()
-            []
-            sage: G.loop_vertices()
-            []
-            sage: G.number_of_loops()
-            0
-
+            sage: G.allow_loops(True)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            
         .. SEEALSO::
 
             :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
