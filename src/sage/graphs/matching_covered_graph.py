@@ -1915,7 +1915,87 @@ class MatchingCoveredGraph(Graph):
 
     @doc_index('Overwritten methods')
     def has_loops(self):
-        raise NotImplementedError()
+        r"""
+        Check whether thare are loops in the (matching covered) graph.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.has_loops` method in
+            order to return ``False`` as matching covered graphs are always
+            free of looped edges.
+
+        OUTPUT:
+
+        - A boolean ``False`` is returned since matching covered graphs, by
+          definition, are free of self-loops.
+
+        EXAMPLES:
+
+        A matching covered graph, for instance the Petersen graph, is always free
+        of loops::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G
+            Matching covered petersen graph: graph on 10 vertices
+            sage: G.has_loops()
+            False
+            sage: G.allows_loops()
+            False
+            sage: G.add_edge(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            sage: G.loops()
+            []
+            sage: G.loop_edges()
+            []
+            sage: G.loop_vertices()
+            []
+            sage: G.number_of_loops()
+            0
+
+        A matching covered graph may support multiple edges, still no
+        loops are allowed::
+
+            sage: K = graphs.CompleteGraph(2)
+            sage: G = MatchingCoveredGraph(K)
+            sage: G.allow_multiple_edges(True)
+            sage: G
+            Matching covered complete graph: multi-graph on 2 vertices
+            sage: G.add_edge(0, 1, 'label')
+            sage: G.add_edge(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 1, 'label')]
+            sage: G.allows_loops()
+            False
+            sage: G.has_loops()
+            False
+            sage: G.loops()
+            []
+            sage: G.loop_edges()
+            []
+            sage: G.loop_vertices()
+            []
+            sage: G.number_of_loops()
+            0
+
+        .. SEEALSO::
+
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+
+        """
+        return False
 
     @doc_index('Overwritten methods')
     def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
