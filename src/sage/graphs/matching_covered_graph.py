@@ -57,7 +57,6 @@ AUTHORS:
         ``delete_multiedge()`` | Delete all edges from ``u`` to ``v``.
         ``disjoint_union()`` | Return the disjoint union of ``self`` and ``other``.
         ``disjunctive_product()`` | Return the disjunctive product of ``self`` and ``other``.
-        ``has_loops()`` | Return whether there are loops in the matching covered graph.
         ``is_biconnected()`` | Check if the matching covered graph is biconnected.
         ``is_block_graph()`` | Check whether the matching covered graph is a block graph.
         ``is_cograph()`` | Check whether the matching covered graph is cograph.
@@ -69,12 +68,8 @@ AUTHORS:
         ``join()`` | Return the join of ``self`` and ``other``.
         ``lexicographic_product()`` | Return the lexicographic product of ``self`` and ``other``.
         ``load_afile()`` | Load the matching covered graph specified in the given file into the current object.
-        ``loop_edges()`` | Return a list of all loops in the matching covered graph.
-        ``loop_vertices()`` | Return a list of vertices with loops.
         ``merge_vertices()`` | Merge vertices.
-        ``number_of_loops()`` | Return the number of edges that are loops.
         ``random_subgraph()`` | Return a random matching covered subgraph containing each vertex with probability ``p``.
-        ``remove_loops()`` | Remove loops on vertices in ``vertices``.
         ``save_afile()`` | Save the graph to file in alist format.
         ``strong_product()`` | Return the strong product of ``self`` and ``other``.
         ``subdivide_edge()`` | Subdivide an edge `k` times.
@@ -1919,6 +1914,10 @@ class MatchingCoveredGraph(Graph):
         return self._matching
 
     @doc_index('Overwritten methods')
+    def has_loops(self):
+        raise NotImplementedError()
+
+    @doc_index('Overwritten methods')
     def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
                              *, integrality_tolerance=1e-3):
         r"""
@@ -2002,6 +2001,22 @@ class MatchingCoveredGraph(Graph):
 
         raise ValueError('algorithm must be set to \'Edmonds\', '
                          '\'LP_matching\' or \'LP\'')
+
+    @doc_index('Overwritten methods')
+    def loop_edges(self, labels=True):
+        raise NotImplementedError()
+
+    @doc_index('Overwritten methods')
+    def loop_vertices(self):
+        raise NotImplementedError()
+
+    @doc_index('Overwritten methods')
+    def number_of_loops(self):
+        raise NotImplementedError()
+
+    @doc_index('Overwritten methods')
+    def remove_loops(self, vertices=None):
+        raise NotImplementedError()
 
     @doc_index('Miscellaneous methods')
     def update_matching(self, matching):
