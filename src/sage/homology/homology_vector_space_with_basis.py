@@ -690,10 +690,9 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
             if m <= n:
                 return self.parent().zero()
 
-            if not self_on_left: # i.e., module element on left
+            if not self_on_left:  # i.e., module element on left
                 a = a.antipode()
             P = self.parent()
-            B = list(P.basis(m-n))
             return P._from_dict({x.support()[0]: self.eval(a * x)
                                  for x in sorted(self.parent().dual().basis(m-n))})
 

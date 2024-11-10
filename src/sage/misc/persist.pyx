@@ -1232,7 +1232,7 @@ def db(name):
     The database directory is ``$HOME/.sage/db``.
     """
     from sage.misc.misc import SAGE_DB
-    return load('%s/%s'%(SAGE_DB,name))
+    return load('%s/%s' % (SAGE_DB, name))
 
 
 def db_save(x, name=None):
@@ -1245,4 +1245,4 @@ def db_save(x, name=None):
         x.db(name)
     except AttributeError:
         from sage.misc.misc import SAGE_DB
-        save(x, '%s/%s'%(SAGE_DB,name))
+        save(x, '%s/%s' % (SAGE_DB, name))

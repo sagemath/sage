@@ -2241,7 +2241,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: maple(v)  # optional - maple
             Vector[row](3, [x^2+2,2*x+1,-2*x^2+4*x])
         """
-        return "Vector[row](%s)"%(str(self.list()))
+        return "Vector[row](%s)" % str(self.list())
 
     def degree(self):
         """
@@ -2695,7 +2695,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                 return self._parent.coordinate_ring().zero()
             return self._dot_product_(r)
         if self._degree != r._degree:
-            raise ArithmeticError("degrees (%s and %s) must be the same"%(self.degree(), right.degree()))
+            raise ArithmeticError("degrees (%s and %s) must be the same" % (self.degree(), right.degree()))
         # Base rings are not equal => use dot product with coercion
         return self._dot_product_coerce_(r)
 

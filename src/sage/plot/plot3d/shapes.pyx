@@ -483,7 +483,7 @@ cdef class Cylinder(ParametricSurface):
    Base %s %s %s
    Apex %s %s %s
    Rad %s
-   %s     """%(base[0], base[1], base[2], top[0], top[1], top[2], rad, self.texture.id)
+   %s     """ % (base[0], base[1], base[2], top[0], top[1], top[2], rad, self.texture.id)
         if self.closed:
             normal = (0,0,1)
             if transform is not None:
@@ -866,7 +866,7 @@ cdef class Sphere(ParametricSurface):
             sage: Sphere(12).x3d_geometry()
             "<Sphere radius='12.0'/>"
         """
-        return "<Sphere radius='%s'/>"%(self.radius)
+        return "<Sphere radius='%s'/>" % (self.radius)
 
     def tachyon_repr(self, render_params):
         r"""
@@ -1111,7 +1111,7 @@ class Text(PrimitiveObject):
             sage: Text("Hi").x3d_geometry()
             "<Text string='Hi' solid='true'/>"
         """
-        return "<Text string='%s' solid='true'/>"%self.string
+        return "<Text string='%s' solid='true'/>" % self.string
 
     def obj_repr(self, render_params):
         """
