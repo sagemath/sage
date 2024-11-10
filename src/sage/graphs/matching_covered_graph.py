@@ -2455,6 +2455,28 @@ class MatchingCoveredGraph(Graph):
             []
             sage: G.number_of_loops()
             0
+            sage: G.remove_loops(vertices=[0, 1])
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 1, 'label')]
+            sage: G.remove_loops(vertices=[0..100])
+
+        Note that the parameter ``vertices`` must be either ``None`` or an
+        iterable::
+
+            sage: G.remove_loops(vertices='')
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 1, 'label')]
+            sage: G.remove_loops(vertices=None)
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 1, 'label')]
+            sage: G.remove_loops(vertices=0)
+            Traceback (most recent call last):
+            ...
+            TypeError: 'Integer' object is not iterable
+            sage: G.remove_loops(vertices=False)
+            Traceback (most recent call last):
+            ...
+            TypeError: 'bool' object is not iterable
 
         .. SEEALSO::
 
@@ -2466,6 +2488,12 @@ class MatchingCoveredGraph(Graph):
             :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
             :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`
         """
+        from collections.abc import Iterable
+
+        if vertices is not None and not isinstance(vertices, Iterable):
+            raise TypeError(f'\'{vertices.__class__.__name__}\' '
+                            'object is not iterable')
+
         return
 
     @doc_index('Miscellaneous methods')
