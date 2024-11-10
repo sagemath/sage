@@ -2116,8 +2116,8 @@ class MatchingCoveredGraph(Graph):
 
         INPUT:
 
-        - ``labels`` -- boolean (default: ``True``); whether returned edges have
-         labels (``(u,v,l)``) or not (``(u,v)``)
+        - ``labels`` -- boolean (default: ``True``); whether returned edges
+          have labels (``(u,v,l)``) or not (``(u,v)``).
 
         OUTPUT:
 
