@@ -1074,7 +1074,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         else:
             try:
                 poly = parent._polynomial_ring(x)
-                self._poly = PolyDict(poly.dict(), None)
+                self._poly = PolyDict(poly.monomial_coefficients(), None)
             except TypeError:
                 # last chance: we first try to convert to the rational Tate series
                 if parent._integral:
@@ -2192,7 +2192,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         """
         return [ t.monomial() for t in self.terms() ]
 
-    def dict(self):
+    def monomial_coefficients(self):
         """
         Return a dictionary whose keys are the exponents and whose values
         are the corresponding coefficients of this series.
@@ -2202,11 +2202,18 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: R = Zp(2, prec=10, print_mode='digits')
             sage: A.<x,y> = TateAlgebra(R)
             sage: f = 2*x^2 + x
+            sage: f.monomial_coefficients()
+            {(1, 0): ...0000000001, (2, 0): ...00000000010}
+
+        ``dict`` is an alias::
+
             sage: f.dict()
             {(1, 0): ...0000000001, (2, 0): ...00000000010}
         """
         self._normalize()
         return dict(self._poly.__repn)
+
+    dict = monomial_coefficients
 
     def coefficient(self, exponent):
         r"""
@@ -2364,7 +2371,9 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
                 return elt.lift_to_precision(prec)
             except PrecisionError:
                 return elt.lift_to_precision()
-        ans._poly = PolyDict({ e: lift_without_error(c) for (e,c) in self._poly.__repn.iteritems() }, None)
+        ans._poly = PolyDict({e: lift_without_error(c)
+                              for e, c in self._poly.__repn.items()},
+                             None)
         if prec is None:
             prec = self._parent.precision_cap()
         ans._prec = max(self._prec, prec)

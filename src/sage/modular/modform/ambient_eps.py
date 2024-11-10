@@ -94,6 +94,7 @@ from . import ambient_R
 from . import cuspidal_submodule
 from . import eisenstein_submodule
 
+
 class ModularFormsAmbient_eps(ModularFormsAmbient):
     """
     A space of modular forms with character.

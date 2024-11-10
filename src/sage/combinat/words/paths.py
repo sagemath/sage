@@ -1801,10 +1801,8 @@ class FiniteWordPath_2d(FiniteWordPath_all):
                 y_min = y
                 y_max = y
             else:
-                if y > y_max:
-                    y_max = y
-                if y < y_min:
-                    y_min = y
+                y_max = max(y, y_max)
+                y_min = min(y, y_min)
             h_vec.append(y_max - y_min)
         return h_vec
 
@@ -1866,10 +1864,8 @@ class FiniteWordPath_2d(FiniteWordPath_all):
                 x_min = x
                 x_max = x
             else:
-                if x > x_max:
-                    x_max = x
-                if x < x_min:
-                    x_min = x
+                x_max = max(x, x_max)
+                x_min = min(x, x_min)
             w_vec.append(x_max - x_min)
         return w_vec
 

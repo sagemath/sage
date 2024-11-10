@@ -158,8 +158,8 @@ Consulta anche la Guida dello Sviluppo Sage, specialmente il capitolo
 `Convenzioni per scrivere codice sorgente in Sage <https://doc.sagemath.org/html/en/developer/#sage-coding-details>`_.
 
 
-Ho inviato al server trac una correzione molte settimane fa. Perché la state ignorando?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Ho inviato al GitHub Sage repo una correzione molte settimane fa. Perché la state ignorando?
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 Non stiamo cercando di ignorare la tua correzione.
 Le persone che lavorano su Sage lo fanno nel loro tempo libero.

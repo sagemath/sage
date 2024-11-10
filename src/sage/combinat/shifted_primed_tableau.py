@@ -2716,9 +2716,11 @@ def _add_strip(sub_tab, full_tab, length):
             if sub_tab and len(sub_tab) < len(full_tab):
                 plat_list.append(min(sub_tab[-1] + primed_strip[-2] - 1,
                                      full_tab[len(sub_tab)]))
-            for row in reversed(range(1, len(sub_tab))):
-                plat_list.append(min(sub_tab[row-1]+primed_strip[row-1]-1, full_tab[row])
-                                 - sub_tab[row] - primed_strip[row])
+            plat_list.extend(
+                min(sub_tab[row-1] + primed_strip[row-1] - 1, full_tab[row])
+                - sub_tab[row] - primed_strip[row]
+                for row in reversed(range(1, len(sub_tab))))
+
             if sub_tab:
                 plat_list.append(full_tab[0] - sub_tab[0] - primed_strip[0])
             else:

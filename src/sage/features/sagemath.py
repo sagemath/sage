@@ -537,6 +537,32 @@ class sage__libs__ntl(JoinFeature):
                              spkg='sagemath_ntl', type='standard')
 
 
+class sage__libs__giac(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.giac`.
+
+    In addition to the modularization purposes that this tag serves,
+    it also provides attribution to the upstream project.
+
+    TESTS::
+
+        sage: from sage.features.sagemath import sage__libs__giac
+        sage: sage__libs__giac().is_present()                                           # needs sage.libs.giac
+        FeatureTestResult('sage.libs.giac', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__giac
+            sage: isinstance(sage__libs__giac(), sage__libs__giac)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.giac',
+                             [PythonModule('sage.libs.giac.giac')],
+                             spkg='sagemath_giac', type='standard')
+
+
 class sage__libs__homfly(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.homfly`.
@@ -1155,6 +1181,7 @@ def all_features():
             sage__libs__ecl(),
             sage__libs__flint(),
             sage__libs__gap(),
+            sage__libs__giac(),
             sage__libs__homfly(),
             sage__libs__linbox(),
             sage__libs__m4ri(),

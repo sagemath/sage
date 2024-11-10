@@ -237,7 +237,7 @@ cdef class ECModularSymbol:
             sage: M = ECModularSymbol(E, 0); M
             Modular symbol with sign 0 over Rational Field attached to Elliptic Curve defined by y^2 + y = x^3 + x^2 - 2*x over Rational Field
         """
-        return "Modular symbol with sign %s over Rational Field attached to %s"%(self.sign, self._E)
+        return "Modular symbol with sign %s over Rational Field attached to %s" % (self.sign, self._E)
 
     def __call__(self, r, sign=None, base_at_infinity=True):
         r"""

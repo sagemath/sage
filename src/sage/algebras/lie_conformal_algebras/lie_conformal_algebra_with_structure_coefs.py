@@ -275,7 +275,7 @@ class LieConformalAlgebraWithStructureCoefficients(
 
         s_coeff = dict(s_coeff)
         self._s_coeff = Family({k: tuple((j, sum(c*self.monomial(i)
-                for i,c in v )) for j,v in s_coeff[k]) for k in s_coeff})
+                for i,c in v)) for j,v in s_coeff[k]) for k in s_coeff})
         self._parity = dict(zip(self.gens(),parity+(0,)*len(central_elements)))
 
     def structure_coefficients(self):

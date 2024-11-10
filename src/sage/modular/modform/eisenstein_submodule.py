@@ -119,6 +119,7 @@ class EisensteinSubmodule(submodule.ModularFormsSubmodule):
         A = self.ambient_module()
         return A.modular_symbols(sign).eisenstein_submodule()
 
+
 class EisensteinSubmodule_params(EisensteinSubmodule):
 
     @cached_method
@@ -586,9 +587,9 @@ class EisensteinSubmodule_eps(EisensteinSubmodule_params):
         ]
     """
     # TODO
-    #def _compute_q_expansion_basis(self, prec):
-        #B = EisensteinSubmodule_params._compute_q_expansion_basis(self, prec)
-        #raise NotImplementedError, "must restrict scalars down correctly."
+    # def _compute_q_expansion_basis(self, prec):
+    #     B = EisensteinSubmodule_params._compute_q_expansion_basis(self, prec)
+    #     raise NotImplementedError("must restrict scalars down correctly.")
 
 
 def cyclotomic_restriction(L, K):
@@ -667,8 +668,8 @@ def cyclotomic_restriction_tower(L, K):
     f = L.defining_polynomial()
     R = K['x']
     g = R(f)
-    h_ls = [ t[0] for t in g.factor() if t[0](L.gen(0)) == 0 ]
-    if len(h_ls) == 0:
+    h_ls = [t[0] for t in g.factor() if t[0](L.gen(0)) == 0]
+    if not h_ls:
         raise ValueError(r"K (= Q(\zeta_%s)) is not contained in L (= Q(\zeta_%s))" % (K._n(), L._n()))
     h = h_ls[0]
 

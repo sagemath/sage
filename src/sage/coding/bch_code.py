@@ -35,6 +35,7 @@ from .cyclic_code import CyclicCode
 from .grs_code import GeneralizedReedSolomonCode
 from .decoder import Decoder
 
+
 class BCHCode(CyclicCode):
     r"""
     Representation of a BCH code seen as a cyclic code.

@@ -15,8 +15,8 @@ cdef struct iter_s:
     bint dual                  # if 1, then iterate over dual Polyhedron
     face_t face                # the current face of the iterator
     FaceStatus face_status
-    size_t *atom_rep           # a place where atom-representaion of face will be stored
-    size_t *coatom_rep         # a place where coatom-representaion of face will be stored
+    size_t *atom_rep           # a place where atom-representation of face will be stored
+    size_t *coatom_rep         # a place where coatom-representation of face will be stored
     int current_dimension      # dimension of current face, dual dimension if ``dual``
     int dimension              # dimension of the polyhedron
     int output_dimension       # only faces of this (dual?) dimension are considered

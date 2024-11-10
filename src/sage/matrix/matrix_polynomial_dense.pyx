@@ -2845,7 +2845,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             with the required degree property
 
         In the latter case (rank-deficient or strictly fewer rows than columns,
-        with no solution to `A = XB`), there might stil be a quotient and
+        with no solution to `A = XB`), there might still be a quotient and
         remainder, in which case this method will find it via normal form
         computation::
 

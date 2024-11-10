@@ -1677,8 +1677,7 @@ def p_adic_LLL_bound(SUK, A, prec=106):
                     Log_p_Mus = [embedding_to_Kp(a, v, local_prec) for a in Log_p_Mus]
                     m0_Kv_new,increase_precision = p_adic_LLL_bound_one_prime(v, m0_Kv_old, Mus, Log_p_Mus, m0, c3_func(SUK, local_prec), local_prec)
 
-            if m0_Kv_old > val:
-                val = m0_Kv_old
+            val = max(m0_Kv_old, val)
 
         LLL_K0_by_finite_place.append(val)
     return max(LLL_K0_by_finite_place)

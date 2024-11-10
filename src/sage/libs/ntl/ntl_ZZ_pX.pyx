@@ -957,7 +957,7 @@ cdef class ntl_ZZ_pX():
             sage: f.derivative()
             [7 0 19]
         """
-        cdef ntl_ZZ_pX r = self._new() #restores context
+        cdef ntl_ZZ_pX r = self._new()  # restores context
         sig_on()
         ZZ_pX_diff(r.x, self.x)
         sig_off()

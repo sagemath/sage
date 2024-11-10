@@ -456,8 +456,8 @@ if __name__ == "__main__":
     finally:
         # Print report also when interrupted
         if verbosity:
-            log_messages = sorted(log_messages.rstrip().split('\n'))
-            for i, message in enumerate(log_messages, start=1):
+            log_messages_split = sorted(log_messages.rstrip().split('\n'))
+            for i, message in enumerate(log_messages_split, start=1):
                 # add index to each line
                 print(f'{i}. {message.rstrip()}')
         report = 'REPORT:\n'

@@ -843,7 +843,7 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
 
 
 #####################################################################
-## Morphisms and Homset
+# Morphisms and Homset
 
 
 class VermaModuleMorphism(Morphism):

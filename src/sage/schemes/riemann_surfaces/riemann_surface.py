@@ -358,7 +358,7 @@ def differential_basis_baker(f):
             return None
     from sage.geometry.polyhedron.constructor import Polyhedron
 
-    D = {(k[0], k[1]): v for k, v in f.dict().items()}
+    D = {(k[0], k[1]): v for k, v in f.monomial_coefficients().items()}
     P = Polyhedron(D)
     kT = k["t"]
     # here we check the additional genericity conditions: that the polynomials
@@ -1010,7 +1010,7 @@ class RiemannSurface:
         INPUT:
 
         - ``edge`` -- tuple ``(z_start, z_end)`` indicating the straight line
-          over which to perform the homotopy continutation
+          over which to perform the homotopy continuation
 
         OUTPUT:
 
@@ -3013,7 +3013,7 @@ class RiemannSurface:
                 return newg
 
         # As multiple calls of the minimal polynomial and it's derivative will
-        # be required for the homotopy continuaiton, we create fast-callable
+        # be required for the homotopy continuation, we create fast-callable
         # versions of these.
         fc_mp_list = [fast_callable(mp, domain=self._CC) for mp in mp_list]
         fc_dmp_list = [
@@ -3024,7 +3024,7 @@ class RiemannSurface:
             prec = self._prec
         # tau here is playing the role of the desired error.
         tau = self._RR(2)**(-prec + 3)
-        one = self._RR(1)
+        one = self._RR.one()
         la = self._RR.pi() / 2
 
         # Cutoffs are used to allow us to not have to integrate as close into
@@ -3044,7 +3044,7 @@ class RiemannSurface:
             A = PolynomialRing(self._CC, "xyz")
             aes = []
             for mp in mp_list:
-                d = mp.dict()
+                d = mp.monomial_coefficients()
                 mp = sum(
                     [
                         d[k] * CCzg.gen(0)**k[0] * CCzg.gen(1)**k[1]

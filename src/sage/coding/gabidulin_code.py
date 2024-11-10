@@ -207,7 +207,7 @@ class GabidulinCode(AbstractLinearRankMetricCode):
             if not len(evaluation_points) == length:
                 raise ValueError("the number of evaluation points should be equal to the length of the code")
             for i in range(length):
-                if not evaluation_points[i] in base_field:
+                if evaluation_points[i] not in base_field:
                     raise ValueError("evaluation point does not belong to the 'base field'")
             basis = self.matrix_form_of_vector(vector(evaluation_points))
             if basis.rank() != length:

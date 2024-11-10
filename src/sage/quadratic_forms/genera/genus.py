@@ -18,7 +18,7 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from pathlib import Path
 from copy import copy, deepcopy
 
 from sage.misc.lazy_import import lazy_import
@@ -509,12 +509,12 @@ def is_2_adic_genus(genus_symbol_quintuple_list) -> bool:
                 return False
         if s[1] == 2 and s[3] == 1:
             if s[2] % 8 in (1, 7):
-                if not s[4] in (0, 2, 6):
+                if s[4] not in (0, 2, 6):
                     return False
             if s[2] % 8 in (3, 5):
-                if not s[4] in (2, 4, 6):
+                if s[4] not in (2, 4, 6):
                     return False
-        if (s[1] - s[4]) % 2 == 1:
+        if (s[1] - s[4]) % 2:
             return False
         if s[3] == 0 and s[4] != 0:
             return False
@@ -2802,7 +2802,8 @@ class GenusSymbol_global_ring:
         signature_pair = (p1 + p2, n1 + n2)
 
         primes = [s.prime() for s in self.local_symbols()]
-        primes += [s.prime() for s in other.local_symbols() if not s.prime() in primes]
+        primes.extend(s.prime() for s in other.local_symbols()
+                      if s.prime() not in primes)
         primes.sort()
         local_symbols = []
         for p in primes:
@@ -2930,13 +2931,11 @@ class GenusSymbol_global_ring:
             sig = self.signature_pair_of_matrix()
             if sig[0] * sig[1] != 0:
                 from sage.env import SAGE_EXTCODE
-                from sage.interfaces.gp import gp
-
                 m = pari(L)
-                gp.read(SAGE_EXTCODE + "/pari/simon/qfsolve.gp")
-                m = gp.eval('qflllgram_indefgoon(%s)' % m)
+                pari.read(Path(SAGE_EXTCODE) / "pari" / "simon" / "qfsolve.gp")
+                m = pari('qflllgram_indefgoon')(m)
                 # convert the output string to sage
-                L = pari(m).sage()[0]
+                L = m.sage()[0]
             elif sig[1] != 0:
                 U = -(-L).LLL_gram()
                 L = U.T * L * U

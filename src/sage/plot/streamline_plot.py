@@ -296,9 +296,8 @@ def streamline_plot(f_g, xrange, yrange, **options):
     else:
         options['density'] = float(options['density'])
 
-    xpos_array, ypos_array, xvec_array, yvec_array = [], [], [], []
-    for x in xsrange(*ranges[0], include_endpoint=True):
-        xpos_array.append(x)
+    ypos_array, xvec_array, yvec_array = [], [], []
+    xpos_array = list(xsrange(*ranges[0], include_endpoint=True))
     for y in xsrange(*ranges[1], include_endpoint=True):
         ypos_array.append(y)
         xvec_row, yvec_row = [], []

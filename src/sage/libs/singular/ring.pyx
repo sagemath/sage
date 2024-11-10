@@ -293,12 +293,14 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
     if isinstance(base_ring, RationalField):
         characteristic = 0
-        _ring = rDefault( characteristic ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+        _ring = rDefault(characteristic, nvars, _names, nblcks,
+                         _order, _block0, _block1, _wvhdl)
 
     elif isinstance(base_ring, FractionField_generic) and isinstance(base_ring.base(), (MPolynomialRing_libsingular, PolynomialRing_field)) and isinstance(base_ring.base().base_ring(), RationalField):
         characteristic = 1
         k = PolynomialRing(RationalField(),
-            names=base_ring.variable_names(), order='lex', implementation='singular')
+                           names=base_ring.variable_names(), order='lex',
+                           implementation='singular')
 
         ngens = len(k.gens())
 
@@ -317,7 +319,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         if (_cf is NULL):
             raise RuntimeError("Failed to allocate _cf ring.")
 
-        _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+        _ring = rDefault (_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     elif isinstance(base_ring, FractionField_generic) and isinstance(base_ring.base(), (MPolynomialRing_libsingular, PolynomialRing_field)) and isinstance(base_ring.base().base_ring(), FiniteField_generic):
         if not base_ring.base_ring().is_prime_field():
@@ -343,7 +345,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         if (_cf is NULL):
             raise RuntimeError("Failed to allocate _cf ring.")
 
-        _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+        _ring = rDefault (_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     elif isinstance(base_ring, NumberField) and base_ring.is_absolute():
         characteristic = 1
@@ -369,11 +371,11 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         if (_cf is NULL):
             raise RuntimeError("Failed to allocate _cf ring.")
 
-        _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+        _ring = rDefault (_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     elif isinstance(base_ring, IntegerRing_class):
         _cf = nInitChar( n_Z, NULL) # integer coefficient ring
-        _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+        _ring = rDefault (_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     elif (isinstance(base_ring, FiniteField_generic) and base_ring.is_prime_field()):
         if base_ring.characteristic() <= 2147483647:
@@ -384,7 +386,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         # example for simpler ring creation interface without monomial orderings:
         #_ring = rDefault(characteristic, nvars, _names)
 
-        _ring = rDefault( characteristic , nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+        _ring = rDefault(characteristic, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     elif isinstance(base_ring, FiniteField_generic):
         if base_ring.characteristic() <= 2147483647:
@@ -418,7 +420,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         if (_cf is NULL):
             raise RuntimeError("Failed to allocate _cf ring.")
 
-        _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+        _ring = rDefault (_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     elif isinstance(base_ring, sage.rings.abc.IntegerModRing):
 
@@ -472,12 +474,12 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
             mpz_init_set_ui(_info.base, characteristic)
             _info.exp = 1
             _cf = nInitChar( n_Zn, <void *>&_info )
-        _ring = rDefault( _cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+        _ring = rDefault(_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     else:
         raise NotImplementedError(f"polynomials over {base_ring} are not supported in Singular")
 
-    if (_ring is NULL):
+    if _ring is NULL:
         raise ValueError("Failed to allocate Singular ring.")
 
     _ring.ShortOut = 0

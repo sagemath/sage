@@ -415,6 +415,7 @@ def ReflexivePolytope(dim, n):
 # Sequences of reflexive polytopes
 _rp = [None] * 4
 
+
 def ReflexivePolytopes(dim):
     r"""
     Return the sequence of all 2- or 3-dimensional reflexive polytopes.
@@ -493,6 +494,7 @@ def is_LatticePolytope(x):
     from sage.misc.superseded import deprecation
     deprecation(34307, "is_LatticePolytope is deprecated, use isinstance instead")
     return isinstance(x, LatticePolytopeClass)
+
 
 @richcmp_method
 class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.LatticePolytope):
@@ -589,7 +591,6 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         """
         if self._ambient is not self:
             raise NotImplementedError
-        data = self._vertices
         return sib.name('LatticePolytope')(sib(self._vertices), compute_vertices=False)
 
     def __contains__(self, point):
@@ -1327,7 +1328,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             parts.extend(["face of", str(self.ambient())])
         return " ".join(parts)
 
-    def _sort_faces(self,  faces):
+    def _sort_faces(self, faces):
         r"""
         Return sorted (if necessary) ``faces`` as a tuple.
 
@@ -1402,7 +1403,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         adjacent = set()
         for superface in self.facet_of():
             for facet in self.facets():
-                adjacent.update(L.open_interval(facet,  superface))
+                adjacent.update(L.open_interval(facet, superface))
         adjacent.discard(self)
         return self._sort_faces(adjacent)
 
@@ -2064,7 +2065,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                 faces.append(self)
                 for face in dfaces:
                     L.add_edge(face_to_index[face], next_index)
-            D = {i:f for i,f in enumerate(faces)}
+            D = dict(enumerate(faces))
             L.relabel(D)
             return FinitePoset(L, faces, key=id(self))
 
@@ -4981,6 +4982,7 @@ class NefPartition(SageObject, Hashable):
 
 
 _palp_dimension = None
+
 
 def _palp(command, polytopes, reduce_dimension=False):
     r"""

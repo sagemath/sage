@@ -2072,6 +2072,9 @@ class NumberField_relative(NumberField_generic):
             sage: f[0](a+b)
             -0.62996052494743693 - 0.091123635971721295*I
         """
+        if K.characteristic():
+            return Sequence([], immutable=True, check=False, universe=self.Hom(K))
+
         try:
             # this should be concordant with automorphisms
             return self.__embeddings[K]

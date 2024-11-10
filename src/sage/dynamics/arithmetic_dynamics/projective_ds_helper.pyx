@@ -132,7 +132,7 @@ cpdef _fast_possible_periods(self, return_points=False):
                     for r in rvalues:
                         periods.add(period*r)
                         points_periods.append([P_proj, period*r])
-                        if p == 2 or p == 3: #need e=1 for N=1, QQ
+                        if p == 2 or p == 3:  # need e=1 for N=1, QQ
                             periods.add(period*r*p)
                             points_periods.append([P_proj, period*r*p])
                 else:
@@ -141,7 +141,7 @@ cpdef _fast_possible_periods(self, return_points=False):
                         periods.add(period*r*p)
                         points_periods.append([P_proj, period*r])
                         points_periods.append([P_proj, period*r*p])
-                        if p == 2:  #need e=3 for N>1, QQ
+                        if p == 2:  # need e=3 for N>1, QQ
                             periods.add(period*r*4)
                             points_periods.append([P_proj, period*r*4])
                             periods.add(period*r*8)

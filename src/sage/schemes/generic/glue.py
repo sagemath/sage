@@ -5,7 +5,7 @@ Scheme obtained by gluing two other schemes
 #*******************************************************************************
 #  Copyright (C) 2006 William Stein
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*******************************************************************************
 
 from sage.misc.lazy_import import lazy_import

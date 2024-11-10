@@ -54,6 +54,7 @@ from sage.rings.power_series_ring import PowerSeriesRing
 # Note: Part of the documentation is replicated in ell_field.py for
 # users' convenience. Make sure to keep the two copies synchronized.
 
+
 def weierstrass_p(E, prec=20, algorithm=None):
     r"""
     Compute the Weierstrass `\wp`-function on an elliptic curve.
@@ -165,6 +166,7 @@ def weierstrass_p(E, prec=20, algorithm=None):
     u = E.isomorphism_to(Esh).u
     return wp(z*u) * u**2
 
+
 def compute_wp_pari(E,prec):
     r"""
     Compute the Weierstrass `\wp`-function with the ``ellwp`` function
@@ -250,6 +252,7 @@ def compute_wp_quadratic(k, A, B, prec):
         c[i-1] = ci
 
     return pe(Z**2).add_bigoh(prec)
+
 
 def compute_wp_fast(k, A, B, m):
     r"""

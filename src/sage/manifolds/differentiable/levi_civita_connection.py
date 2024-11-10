@@ -34,6 +34,7 @@ from sage.parallel.parallelism import Parallelism
 from sage.manifolds.differentiable.affine_connection import AffineConnection
 from sage.manifolds.differentiable.vectorframe import CoordFrame
 
+
 class LeviCivitaConnection(AffineConnection):
     r"""
     Levi-Civita connection on a pseudo-Riemannian manifold.

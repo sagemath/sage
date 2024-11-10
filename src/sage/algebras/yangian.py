@@ -575,13 +575,13 @@ class Yangian(CombinatorialFreeModule):
         # This is the special term of x = 1
         x1 = self.zero()
         if b[1] == a[2]:
-            x1 += self.monomial( I.gen((a[0]+b[0]-1, a[1], b[2])) )
+            x1 += self.monomial(I.gen((a[0]+b[0]-1, a[1], b[2])))
         if a[1] == b[2]:
-            x1 -= self.monomial( I.gen((a[0]+b[0]-1, b[1], a[2])) )
+            x1 -= self.monomial(I.gen((a[0]+b[0]-1, b[1], a[2])))
 
         return self.monomial(I.gen(b) * I.gen(a)) + x1 + self.sum(
-                self.monomial( I.gen((x-1, b[1], a[2])) * I.gen((a[0]+b[0]-x, a[1], b[2])) )
-                - self.product_on_gens( (a[0]+b[0]-x, b[1], a[2]), (x-1, a[1], b[2]) )
+                self.monomial(I.gen((x-1, b[1], a[2])) * I.gen((a[0]+b[0]-x, a[1], b[2])))
+                - self.product_on_gens((a[0]+b[0]-x, b[1], a[2]), (x-1, a[1], b[2]))
                 for x in range(2, b[0]+1))
 
     def coproduct_on_basis(self, m):
@@ -610,9 +610,9 @@ class Yangian(CombinatorialFreeModule):
         """
         T = self.tensor_square()
         I = self._indices
-        return T.prod(T.monomial( (I.one(), I.gen((a[0],a[1],a[2]))) )
-                      + T.monomial( (I.gen((a[0],a[1],a[2])), I.one()) )
-                      + T.sum_of_terms([(( I.gen((s,a[1],k)), I.gen((a[0]-s,k,a[2])) ), 1)
+        return T.prod(T.monomial((I.one(), I.gen((a[0],a[1],a[2]))))
+                      + T.monomial((I.gen((a[0],a[1],a[2])), I.one()))
+                      + T.sum_of_terms([((I.gen((s,a[1],k)), I.gen((a[0]-s,k,a[2]))), 1)
                                         for k in range(1, self._n+1)
                                         for s in range(1, a[0])])
                       for a,exp in m._sorted_items() for p in range(exp))
@@ -881,12 +881,12 @@ class YangianLevel(Yangian):
         x1 = self.zero()
         if a[0]+b[0]-1 <= self._level:
             if b[1] == a[2]:
-                x1 += self.monomial( I.gen((a[0]+b[0]-1, a[1], b[2])) )
+                x1 += self.monomial(I.gen((a[0]+b[0]-1, a[1], b[2])))
             if a[1] == b[2]:
-                x1 -= self.monomial( I.gen((a[0]+b[0]-1, b[1], a[2])) )
+                x1 -= self.monomial(I.gen((a[0]+b[0]-1, b[1], a[2])))
 
         return self.monomial(I.gen(b) * I.gen(a)) + x1 + self.sum(
-                self.monomial( I.gen((x-1, b[1], a[2])) * I.gen((a[0]+b[0]-x, a[1], b[2])) )
+                self.monomial(I.gen((x-1, b[1], a[2])) * I.gen((a[0]+b[0]-x, a[1], b[2])))
                 - self.product_on_gens((a[0]+b[0]-x, b[1], a[2]), (x-1, a[1], b[2]))
                 for x in range(2, b[0]+1) if a[0]+b[0]-x <= self._level)
 
@@ -1043,8 +1043,8 @@ class GradedYangianLoop(GradedYangianBase):
              + 10*tbar(1)[1,2]*tbar(1)[1,3]^3*tbar(3)[1,2]
              + 15*tbar(1)[1,2]^2*tbar(1)[1,3]^2*tbar(3)[1,3]
         """
-        return self.prod( (-1)**exp * self.monomial(a**exp)
-                          for a,exp in reversed(list(m)) )
+        return self.prod((-1)**exp * self.monomial(a**exp)
+                          for a,exp in reversed(list(m)))
 
     def coproduct_on_basis(self, m):
         """

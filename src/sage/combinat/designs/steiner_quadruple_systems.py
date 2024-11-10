@@ -64,6 +64,8 @@ from sage.misc.cachefunc import cached_function
 from sage.combinat.designs.incidence_structures import IncidenceStructure
 
 # Construction 1
+
+
 def two_n(B):
     r"""
     Return a Steiner Quadruple System on `2n` points.
@@ -100,6 +102,8 @@ def two_n(B):
     return IncidenceStructure(2*n,Y,check=False,copy=False)
 
 # Construction 2
+
+
 def three_n_minus_two(B):
     """
     Return a Steiner Quadruple System on `3n-2` points.
@@ -155,6 +159,8 @@ def three_n_minus_two(B):
     return IncidenceStructure(3*n-2,Y,check=False,copy=False)
 
 # Construction 3
+
+
 def three_n_minus_eight(B):
     r"""
     Return a Steiner Quadruple System on `3n-8` points.
@@ -214,6 +220,8 @@ def three_n_minus_eight(B):
     return IncidenceStructure(3*n-8,Y,check=False,copy=False)
 
 # Construction 4
+
+
 def three_n_minus_four(B):
     r"""
     Return a Steiner Quadruple System on `3n-4` points.
@@ -278,6 +286,8 @@ def three_n_minus_four(B):
     return IncidenceStructure(3*n-4,Y,check=False,copy=False)
 
 # Construction 5
+
+
 def four_n_minus_six(B):
     """
     Return a Steiner Quadruple System on `4n-6` points.
@@ -349,6 +359,8 @@ def four_n_minus_six(B):
     return IncidenceStructure(4*n-6,Y,check=False,copy=False)
 
 # Construction 6
+
+
 def twelve_n_minus_ten(B):
     """
     Return a Steiner Quadruple System on `12n-6` points.
@@ -446,6 +458,7 @@ def twelve_n_minus_ten(B):
                         Y.append([r(x,a), r(y,aa), r(z,aaa), r(t,aaaa)])
     return IncidenceStructure(12*n-10,Y,check=False,copy=False)
 
+
 def relabel_system(B):
     r"""
     Relabel the set so that `\{n-4, n-3, n-2, n-1\}` is in `B`.
@@ -481,6 +494,7 @@ def relabel_system(B):
 
     B = [[get_label(_) for _ in s] for s in B]
     return IncidenceStructure(n,B)
+
 
 def P(alpha, m):
     r"""
@@ -525,6 +539,7 @@ def P(alpha, m):
             pairs += [(y,m+y)]
             return pairs
 
+
 def _missing_pair(n,l):
     r"""
     Return the smallest `(x,x+1)` that is not contained in `l`.
@@ -558,6 +573,7 @@ def barP(eps, m):
         [(0, 4), (3, 5), (1, 2)]
     """
     return barP_system(m)[eps]
+
 
 @cached_function
 def barP_system(m):
@@ -671,6 +687,7 @@ def barP_system(m):
 
     return pairs
 
+
 @cached_function
 def steiner_quadruple_system(n, check=False):
     r"""
@@ -738,6 +755,7 @@ def steiner_quadruple_system(n, check=False):
 
     return sqs
 
+
 def _SQS14():
     r"""
     Return a Steiner Quadruple System on 14 points.
@@ -770,6 +788,7 @@ def _SQS14():
             [5, 7, 9, 11], [5, 8, 11, 13], [5, 10, 12, 13], [6, 7, 8, 9], [6, 7, 10, 11],
             [6, 8, 10, 12], [6, 9, 11, 12], [7, 8, 10, 13], [7, 8, 11, 12], [7, 9, 10, 12],
             [8, 9, 10, 11]]
+
 
 def _SQS38():
     r"""

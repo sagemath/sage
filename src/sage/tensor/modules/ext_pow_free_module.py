@@ -62,6 +62,7 @@ from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
 from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
 
+
 class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
     r"""
     Exterior power of a free module of finite rank over a commutative

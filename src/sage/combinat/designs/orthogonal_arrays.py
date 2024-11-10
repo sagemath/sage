@@ -955,12 +955,12 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
 
     # Constructions from the database III (Quasi-difference matrices)
     elif (may_be_available and
-          (n,1) in QDM     and
+          (n, 1) in QDM and
           any(kk >= k and mu <= lmbda and (orthogonal_array(k,u,existence=True) is True) for (_,lmbda,mu,u),(kk,_) in QDM[n,1].items())):
         _OA_cache_set(k,n,True)
 
-        for (nn,lmbda,mu,u),(kk,f) in QDM[n,1].items():
-            if (kk >= k     and
+        for (nn, lmbda, mu, u), (kk, f) in QDM[n,1].items():
+            if (kk >= k and
                 mu <= lmbda and
                 (orthogonal_array(k,u,existence=True) is True)):
                 if existence:
@@ -1236,11 +1236,11 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
         raise EmptySetError("The total size of holes must be smaller or equal than the size of the ground set")
 
     if (max_hole == 1 and
-        resolvable    and
+        resolvable and
         sum_of_holes != n):
         if existence:
             return False
-        raise EmptySetError("There is no resolvable incomplete OA({},{}) whose holes' sizes sum to {}<n(={})".format(k,n,sum_of_holes,n))
+        raise EmptySetError("There is no resolvable incomplete OA({},{}) whose holes' sizes sum to {}<n(={})".format(k, n, sum_of_holes, n))
 
     # resolvable OA(k,n)-n.OA(k,1) ==> equivalent to OA(k+1,n)
     if max_hole == 1 and resolvable:
@@ -1366,11 +1366,11 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
     # Equal holes [h,h,...] with h>1 through OA product construction
     #
     # (i.e. OA(k,n1)-x.OA(k,1) and OA(k,n2) ==> OA(k,n1.n2)-x.OA(k,n2) )
-    elif (min_hole > 1                                and
-          max_hole == min_hole                        and
-          n % min_hole == 0                           and  # h divides n
+    elif (min_hole > 1 and
+          max_hole == min_hole and
+          n % min_hole == 0 and  # h divides n
           orthogonal_array(k,min_hole,existence=True) and  # OA(k,h)
-          incomplete_orthogonal_array(k,n//min_hole,[1]*number_of_holes,existence=True)): # OA(k,n/h)-x.OA(k,1)
+          incomplete_orthogonal_array(k,n//min_hole,[1]*number_of_holes,existence=True)):  # OA(k,n/h)-x.OA(k,1)
         if existence:
             return True
         h = min_hole
@@ -1540,7 +1540,7 @@ def OA_relabel(OA, k, n, blocks=tuple(), matrix=None, symbol_list=None):
     """
     if blocks:
         l = []
-        for i,B in enumerate(zip(*blocks)): # the blocks are disjoint
+        for i, B in enumerate(zip(*blocks)):  # the blocks are disjoint
             if len(B) != len(set(B)):
                 raise RuntimeError("Two block have the same coordinate for one of the k dimensions")
 
@@ -1941,7 +1941,7 @@ def QDM_from_Vmt(m,t,V):
         for e in V:
             L.append(e*wm**i)
         for ii in range(m+2):
-            M.append(L[-ii:]+L[:-ii]) # cyclic shift
+            M.append(L[-ii:]+L[:-ii])  # cyclic shift
 
     M.append([0]*(m+2))
 
@@ -2053,6 +2053,7 @@ def OA_from_wider_OA(OA,k):
     if len(OA[0]) == k:
         return OA
     return [L[:k] for L in OA]
+
 
 class OAMainFunctions:
     r"""

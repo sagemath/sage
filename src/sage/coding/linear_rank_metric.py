@@ -176,6 +176,7 @@ def to_matrix_representation(v, sub_field=None, basis=None):
     extension, to_big_field, from_big_field = base_field.vector_space(sub_field, basis, map=True)
     return matrix(sub_field, m, n, lambda i, j: from_big_field(v[j])[i])
 
+
 def from_matrix_representation(w, base_field=None, basis=None):
     r"""
     Return a vector representation of a matrix ``w`` over ``base_field`` in terms
@@ -254,6 +255,7 @@ def rank_weight(c, sub_field=None, basis=None):
     if isinstance(c, Vector):
         c = to_matrix_representation(c, sub_field, basis)
     return c.rank()
+
 
 def rank_distance(a, b, sub_field=None, basis=None):
     r"""

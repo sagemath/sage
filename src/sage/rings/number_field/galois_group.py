@@ -1025,6 +1025,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
             raise ValueError("%s is ramified" % P)
         return t[0]
 
+
 class GaloisGroup_subgroup(GaloisSubgroup_perm):
     r"""
     A subgroup of a Galois group, as returned by functions such as
@@ -1187,6 +1188,7 @@ class GaloisGroup_subgroup(GaloisSubgroup_perm):
         if name is None:
             name = G._field.variable_name() + '0'
         return L.subfield(x, name=name)
+
 
 class GaloisGroupElement(PermutationGroupElement):
     r"""

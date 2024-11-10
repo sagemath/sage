@@ -888,7 +888,7 @@ class Braid(FiniteTypeArtinGroupElement):
             # Since the result of the calculation is known to be a Laurent polynomial
             # in t0 and t1 all exponents of ltemp must be divisable by 2
             L = ltemp.parent()
-            lred = L({(k[0]/2, k[1]/2): v for k, v in ltemp.dict().items()})
+            lred = L({(k[0]/2, k[1]/2): v for k, v in ltemp.monomial_coefficients().items()})
             t0, t1 = R.gens()
             return lred(t0, t1)
 

@@ -58,6 +58,7 @@ lazy_import('sage.dynamics.arithmetic_dynamics.generic_ds', 'DynamicalSystem')
 
 EPS = 0.00001
 
+
 def mandelbrot_plot(f=None, **kwds):
     r"""
     Plot of the Mandelbrot set for a one parameter family of polynomial maps.
@@ -430,6 +431,7 @@ def external_ray(theta, **kwds):
                 pixel[int(k[0]), int(k[1])] = tuple(ray_color)
     return M
 
+
 def kneading_sequence(theta):
     r"""
     Determines the kneading sequence for an angle theta in RR/ZZ which
@@ -496,6 +498,7 @@ def kneading_sequence(theta):
             y = 2*y - floor(2*y)
         KS_str = ''.join(KS) + '*'
     return KS_str
+
 
 def julia_plot(f=None, **kwds):
     r"""

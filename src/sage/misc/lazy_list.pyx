@@ -823,8 +823,8 @@ cdef class lazy_list_generic():
             stop = self.start + stop * self.step
         if stop > self.stop:
             stop = self.stop
-        if stop != PY_SSIZE_T_MAX and stop%step != start%step:
-            stop = stop - (stop-start)%step + step
+        if stop != PY_SSIZE_T_MAX and stop % step != start % step:
+            stop = stop - (stop - start) % step + step
 
         if stop <= start:
             return empty_lazy_list
@@ -1087,7 +1087,7 @@ cdef class lazy_list_from_update_function(lazy_list_generic):
           The update function should take as input a list and make it longer
           (using either the methods ``append`` or ``extend``). If after a call
           to the update function the list of values is shorter a
-          :exc:`RuntimeError` will occurr. If no value is added then the lazy list
+          :exc:`RuntimeError` will occur. If no value is added then the lazy list
           is considered finite.
 
         - ``cache`` -- an optional list to be used as the cache. Be careful that

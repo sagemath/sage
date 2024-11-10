@@ -25,6 +25,7 @@ from sage.tensor.modules.tensor_with_indices import TensorWithIndices
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 
+
 class Section(ModuleElementWithMutability):
     r"""
     Section in a vector bundle.
@@ -2249,6 +2250,7 @@ class Section(ModuleElementWithMutability):
         super().set_immutable()
 
 #******************************************************************************
+
 
 class TrivialSection(FiniteRankFreeModuleElement, Section):
     r"""

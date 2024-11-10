@@ -3707,7 +3707,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if inplace and self._is_immutable:
             raise ValueError("this simplicial complex is not mutable")
 
-        if not Simplex(simplex) in self:
+        if Simplex(simplex) not in self:
             raise ValueError("the face to subdivide is not a face of self")
 
         if inplace:

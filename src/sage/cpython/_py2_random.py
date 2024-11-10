@@ -45,6 +45,7 @@ BPF = 53        # Number of bits in a float
 
 import _random
 
+
 class Random(_random.Random):
     """Random number generator base class used by bound module functions.
 

@@ -40,6 +40,7 @@ REFERENCES:
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 from sage.tensor.modules.comp import Components, CompFullyAntiSym
 
+
 class FreeModuleAltForm(FreeModuleTensor):
     r"""
     Alternating form on a free module of finite rank over a commutative ring.
@@ -804,7 +805,7 @@ class FreeModuleAltForm(FreeModuleTensor):
         """
         from .format_utilities import is_atomic
         from .alternating_contr_tensor import AlternatingContrTensor
-        if not isinstance(alt_tensor,  AlternatingContrTensor):
+        if not isinstance(alt_tensor, AlternatingContrTensor):
             raise TypeError("{} is not an alternating ".format(alt_tensor) +
                             "contravariant tensor")
         p_res = alt_tensor._tensor_rank - self._tensor_rank  # degree of result

@@ -212,14 +212,14 @@ def plot(hyperplane_arrangement, **kwds):
     if 'ranges' in kwds:
         ranges_set = True
         ranges = kwds.pop('ranges')
-        if not type(ranges) in [list,tuple]: # ranges is a single number
+        if type(ranges) not in [list,tuple]: # ranges is a single number
             ranges = [ranges] * N
         # So ranges is some type of list.
         elif dim == 2: # arrangement of lines in the plane
-            if not type(ranges[0]) in [list,tuple]: # a single interval
+            if type(ranges[0]) not in [list,tuple]: # a single interval
                 ranges = [ranges] * N
         elif dim == 3: # arrangement of planes in 3-space
-            if not type(ranges[0][0]) in [list,tuple]:
+            if type(ranges[0][0]) not in [list,tuple]:
                 ranges = [ranges] * N
         elif dim not in [2,3]: # ranges is not an option unless dim is 2 or 3
             ranges_set = False

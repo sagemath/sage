@@ -34,7 +34,6 @@ import string
 from sage.structure.sage_object import SageObject
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.integer import Integer
-from sage.misc.sage_eval import sage_eval
 from sage.misc.verbose import verbose
 import sage.interfaces.gp
 from sage.env import SAGE_EXTCODE
@@ -478,10 +477,6 @@ class Dokchitser(SageObject):
         self.__init = (v, cutoff, w, pari_precode, max_imaginary_part,
                        max_asymp_coeffs)
 
-    def __to_CC(self, s):
-        s = s.replace('.E', '.0E').replace(' ', '')
-        return self.__CC(sage_eval(s, locals={'I': self.__CC.gen(0)}))
-
     def _clear_value_cache(self):
         del self.__values
 
@@ -515,6 +510,7 @@ class Dokchitser(SageObject):
         except KeyError:
             pass
         z = self._gp_call_inst('L', s)
+        CC = self.__CC
         if 'pole' in z:
             print(z)
             raise ArithmeticError
@@ -525,10 +521,10 @@ class Dokchitser(SageObject):
             i = z.rfind('\n')
             msg = z[:i].replace('digits', 'decimal digits')
             verbose(msg, level=-1)
-            ans = self.__to_CC(z[i + 1:])
+            ans = CC(z[i + 1:])
             self.__values[s] = ans
             return ans
-        ans = self.__to_CC(z)
+        ans = CC(z)
         self.__values[s] = ans
         return ans
 

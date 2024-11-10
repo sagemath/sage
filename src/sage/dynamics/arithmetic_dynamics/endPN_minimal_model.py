@@ -473,6 +473,8 @@ def Min(Fun, p, ubRes, conj, all_orbits=False):
 ###################################################
 
 #modification of Bruin-Molnar for all representatives
+
+
 def BM_all_minimal(vp, return_transformation=False, D=None):
     r"""
     Determine a representative in each `SL(2,\ZZ)` orbit with minimal
@@ -590,7 +592,7 @@ def BM_all_minimal(vp, return_transformation=False, D=None):
     for M in all_M:
         new_map = mp.conjugate(M)
         new_map.normalize_coordinates()
-        if not [new_map, M] in all_maps:
+        if [new_map, M] not in all_maps:
             all_maps.append([new_map, M])
 
     #Split into conjugacy classes
@@ -623,6 +625,8 @@ def BM_all_minimal(vp, return_transformation=False, D=None):
 ###################################################
 
 #find minimal model
+
+
 def HS_minimal(f, return_transformation=False, D=None):
     r"""
     Compute a minimal model for the given projective dynamical system.
@@ -713,6 +717,8 @@ def HS_minimal(f, return_transformation=False, D=None):
     return F
 
 #find all representatives of orbits for one prime
+
+
 def HS_all_minimal_p(p, f, m=None, return_transformation=False):
     r"""
     Find a representative in each distinct `SL(2,\ZZ)` orbit with
@@ -814,6 +820,8 @@ def HS_all_minimal_p(p, f, m=None, return_transformation=False):
         return [funct for funct, matr in reps]
 
 #find all representatives of orbits
+
+
 def HS_all_minimal(f, return_transformation=False, D=None):
     r"""
     Determine a representative in each `SL(2,\ZZ)` orbit with minimal resultant.
@@ -905,6 +913,7 @@ def HS_all_minimal(f, return_transformation=False, D=None):
 #
 # Ben Hutz July 2018
 #####################################3
+
 
 def get_bound_dynamical(F, f, m=1, dynatomic=True, prec=53, emb=None):
     """
@@ -1095,9 +1104,7 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
         red_g = f.conjugate(M*MG)
         if G != pts_poly:
             R2 = get_bound_dynamical(G, red_g, m=n, dynatomic=dynatomic, prec=prec, emb=emb)
-            if R2 < R:
-                # use the better bound
-                R = R2
+            R = min(R2, R)
         red_g.normalize_coordinates()
         if red_g.global_height(prec=prec) == 0:
             return [red_g, M*MG]
@@ -1134,8 +1141,7 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
                 if new_size == 1:  # early exit
                     return [current_min[1], current_min[4]]
                 new_R = get_bound_dynamical(G, g, m=n, dynatomic=dynatomic, prec=prec, emb=emb)
-                if new_R < R:
-                    R = new_R
+                R = min(new_R, R)
 
             # add new points to check
             if label != 1 and min((rep+1).norm(), (rep-1).norm()) >= 1: # don't undo S

@@ -817,10 +817,11 @@ class SimplicialSetMorphism(Morphism):
         if self._is_identity:
             return True
         domain = self.domain()
-        for n in range(domain.dimension()+1):
-            input = domain.n_cells(n)
-            output = {self(sigma) for sigma in input if self(sigma).is_nondegenerate()}
-            if len(input) > len(output):
+        for n in range(domain.dimension() + 1):
+            domain_cells = domain.n_cells(n)
+            output = {self(sigma) for sigma in domain_cells
+                      if self(sigma).is_nondegenerate()}
+            if len(domain_cells) > len(output):
                 return False
         return True
 

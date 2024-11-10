@@ -31,6 +31,7 @@ from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from copy import copy
 
+
 class ExtendedCode(AbstractLinearCode):
     r"""
     Representation of an extended code.

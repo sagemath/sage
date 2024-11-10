@@ -24,6 +24,7 @@ AUTHORS:
 
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 
+
 def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
                 quotient=None, dual=False, ntl=False, lattice=False):
     r"""

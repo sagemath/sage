@@ -78,7 +78,7 @@ cdef class PythonPartitionStack:
             sage: P # implicit doctest
             PythonPartitionStack of degree 7 and depth 0.
         """
-        return "PythonPartitionStack of degree %d and depth %d."%(self.c_ps.degree, self.c_ps.depth)
+        return "PythonPartitionStack of degree %d and depth %d." % (self.c_ps.degree, self.c_ps.depth)
 
     def display(self):
         """

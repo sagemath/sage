@@ -413,7 +413,7 @@ class PeriodLattice_ell(PeriodLattice):
         (tuple of Complex) `(\omega_1,\omega_2)` where the lattice is
         `\ZZ\omega_1 + \ZZ\omega_2`.  If the lattice is real then
         `\omega_1` is real and positive, `\Im(\omega_2)>0` and
-        `\Re(\omega_1/\omega_2)` is either `0` (for rectangular
+        `\Re(\omega_2/\omega_1)` is either `0` (for rectangular
         lattices) or `\frac{1}{2}` (for non-rectangular lattices).
         Otherwise, `\omega_1/\omega_2` is in the fundamental region of
         the upper half-plane.  If the latter normalisation is required
@@ -498,7 +498,7 @@ class PeriodLattice_ell(PeriodLattice):
         (tuple of Complex) `(\omega_1,\omega_2)` where the lattice is
         `\ZZ\omega_1 + \ZZ\omega_2`.  If the lattice is real then
         `\omega_1` is real and positive, `\Im(\omega_2)>0` and
-        `\Re(\omega_1/\omega_2)` is either `0` (for rectangular
+        `\Re(\omega_2/\omega_1)` is either `0` (for rectangular
         lattices) or `\frac{1}{2}` (for non-rectangular lattices).
         Otherwise, `\omega_1/\omega_2` is in the fundamental region of
         the upper half-plane.  If the latter normalisation is required
@@ -650,7 +650,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         (tuple of Complex) `(\omega_1,\omega_2)` where the lattice has
         the form `\ZZ\omega_1 + \ZZ\omega_2`, `\omega_1` is real and
-        `\omega_1/\omega_2` has real part either `0` or `frac{1}{2}`.
+        `\omega_2/\omega_1` has real part either `0` or `frac{1}{2}`.
 
         EXAMPLES::
 

@@ -1024,6 +1024,8 @@ def partition_to_vector_of_contents(partition, reverse=False):
 
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.combinat.specht_module import SymmetricGroupRepresentation as SymmetricGroupRepresentation_mixin
+
+
 class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricGroupRepresentation_mixin):
     r"""
     A Garsia-Procesi module.

@@ -1172,10 +1172,10 @@ class SkewTableau(ClonableList,
         # tableau, by including the identity permutation on the set [1..k].
         k = self.size()
         gens = [list(range(1, k + 1))]
-        for row in self:
-            for j in range(len(row) - 1):
-                if row[j] is not None:
-                    gens.append((row[j], row[j + 1]))
+        gens.extend((row[j], row[j + 1])
+                    for row in self
+                    for j in range(len(row) - 1)
+                    if row[j] is not None)
         return PermutationGroup(gens)
 
     def column_stabilizer(self):
@@ -1777,12 +1777,10 @@ class SkewTableau(ClonableList,
             sage: s.cells()
             [(0, 1), (0, 2), (1, 0), (2, 0)]
         """
-        res = []
-        for i in range(len(self)):
-            for j in range(len(self[i])):
-                if self[i][j] is not None:
-                    res.append((i, j))
-        return res
+        return [(i, j)
+                for i, selfi in enumerate(self)
+                for j in range(len(selfi))
+                if selfi[j] is not None]
 
     def cells_containing(self, i):
         r"""
@@ -1950,12 +1948,11 @@ class SkewTableaux(UniqueRepresentation, Parent):
             sage: SkewTableaux().from_expr([[1,1],[[5],[3,4],[1,2]]])
             [[None, 1, 2], [None, 3, 4], [5]]
         """
-        skp = []
         outer = expr[1]
         inner = expr[0] + [0] * (len(outer) - len(expr[0]))
 
-        for i in range(len(outer)):
-            skp.append([None] * (inner[i]) + outer[-(i + 1)])
+        skp = [[None] * (inner[i]) + outer[-(i + 1)]
+               for i in range(len(outer))]
 
         return self.element_class(self, skp)
 

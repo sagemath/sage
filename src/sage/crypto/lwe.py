@@ -399,6 +399,7 @@ class Regev(LWE):
         D = DiscreteGaussianDistributionIntegerSampler(s/sqrt(2*pi.n()), q)
         LWE.__init__(self, n=n, q=q, D=D, secret_dist=secret_dist, m=m)
 
+
 class LindnerPeikert(LWE):
     """
     LWE oracle with parameters as in [LP2011]_.
@@ -512,6 +513,7 @@ class UniformNoiseLWE(LWE):
         else:
             raise TypeError("Parameter instance=%s not understood." % (instance))
 
+
 class RingLWE(SageObject):
     """
     Ring Learning with Errors oracle.
@@ -607,6 +609,7 @@ class RingLWE(SageObject):
         a = self.R_q.random_element()
         return vector(a), vector(a * (self.__s) + self.D())
 
+
 class RingLindnerPeikert(RingLWE):
     """
     Ring-LWE oracle with parameters as in [LP2011]_.
@@ -649,6 +652,7 @@ class RingLindnerPeikert(RingLWE):
         stddev = s/sqrt(2*pi.n())
         D = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], n, stddev)
         RingLWE.__init__(self, N=N, q=q, D=D, poly=None, secret_dist='noise', m=m)
+
 
 class RingLWEConverter(SageObject):
     """
@@ -711,6 +715,7 @@ class RingLWEConverter(SageObject):
             RingLWEConverter(RingLWE(20, 257, Discrete Gaussian sampler for polynomials of degree < 8 with σ=5.000000 in each component, x^8 - x^6 + x^4 - x^2 + 1, 'uniform', None))
         """
         return "RingLWEConverter(%s)" % str(self.ringlwe)
+
 
 def samples(m, n, lwe, seed=None, balanced=False, **kwds):
     """

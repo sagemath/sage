@@ -19,14 +19,14 @@ TESTS::
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import math
 
@@ -156,22 +156,22 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
             ls[i] = err
         return Sequence(ls, cr=True)
 
-    F6 = eisenstein_series_poly(6,prec)
+    F6 = eisenstein_series_poly(6, prec)
 
     if e == 0:
         A = Fmpz_poly(1)
     elif e == 4:
-        A = eisenstein_series_poly(4,prec)
+        A = eisenstein_series_poly(4, prec)
     elif e == 6:
         A = F6
     elif e == 8:
-        A = eisenstein_series_poly(8,prec)
+        A = eisenstein_series_poly(8, prec)
     elif e == 10:
-        A = eisenstein_series_poly(10,prec)
-    else: # e == 14
-        A = eisenstein_series_poly(14,prec)
+        A = eisenstein_series_poly(10, prec)
+    else:  # e == 14
+        A = eisenstein_series_poly(14, prec)
 
-    if A[0] == -1 :
+    if A[0] == -1:
         A = -A
 
     if n == 0:
@@ -186,9 +186,9 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
     if cusp_only:
         ls = [Fmpz_poly(0)] + [A] * n
     else:
-        ls = [A] * (n+1)
+        ls = [A] * (n + 1)
 
-    for i in range(1,n+1):
+    for i in range(1, n + 1):
         ls[n-i] *= Fprod
         ls[i] *= Dprod
         ls[n-i]._unsafe_mutate_truncate(prec)
@@ -201,17 +201,17 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
 
     P = PowerSeriesRing(ZZ, var)
     if cusp_only:
-        for i in range(1,n+1) :
-            for j in range(1, i) :
+        for i in range(1, n + 1):
+            for j in range(1, i):
                 ls[j] = ls[j] - ls[j][i]*ls[i]
 
-        return Sequence([P(l.list()).add_bigoh(prec) for l in ls[1:]],cr=True)
-    else :
-        for i in range(1,n+1):
-            for j in range(i):
-                ls[j] = ls[j] - ls[j][i]*ls[i]
+        return Sequence([P(l.list()).add_bigoh(prec) for l in ls[1:]], cr=True)
 
-        return Sequence([P(l.list()).add_bigoh(prec) for l in ls], cr=True)
+    for i in range(1, n + 1):
+        for j in range(i):
+            ls[j] = ls[j] - ls[j][i] * ls[i]
+
+    return Sequence([P(l.list()).add_bigoh(prec) for l in ls], cr=True)
 
 
 def _delta_poly(prec=10):
@@ -284,9 +284,9 @@ def _delta_poly_modulo(N, prec=10):
 
     OUTPUT:
 
-        the polynomial of degree ``prec``-1 which is the truncation
-        of `\Delta` modulo `N`, as an element of the polynomial
-        ring in `q` over the integers modulo `N`.
+    the polynomial of degree ``prec``-1 which is the truncation
+    of `\Delta` modulo `N`, as an element of the polynomial
+    ring in `q` over the integers modulo `N`.
 
     EXAMPLES::
 
@@ -297,7 +297,7 @@ def _delta_poly_modulo(N, prec=10):
         2*q^11 + 7*q^9 + 6*q^7 + 2*q^6 + 8*q^4 + 2*q^3 + 6*q^2 + q
     """
     if prec <= 0:
-        raise ValueError( "prec must be positive" )
+        raise ValueError("prec must be positive")
     v = [0] * prec
 
     # Let F = \sum_{n >= 0} (-1)^n (2n+1) q^(floor(n(n+1)/2)).
@@ -324,7 +324,7 @@ def _delta_poly_modulo(N, prec=10):
     return f
 
 
-def delta_qexp(prec=10, var='q', K=ZZ) :
+def delta_qexp(prec=10, var='q', K=ZZ):
     r"""
     Return the `q`-expansion of the weight 12 cusp form `\Delta` as a power
     series with coefficients in the ring K (`= \ZZ` by default).

@@ -311,7 +311,7 @@ def _extract_embedded_signature(docstring, name):
         sage: from sage.misc.sageinspect import _extract_embedded_signature
         sage: from sage.misc.nested_class import MainClass
         sage: print(_extract_embedded_signature(MainClass.NestedClass.NestedSubClass.dummy.__doc__, 'dummy')[0])
-        File: sage/misc/nested_class.pyx (starting at line ...)
+        File: ...sage/misc/nested_class.pyx (starting at line ...)
         ...
         sage: _extract_embedded_signature(MainClass.NestedClass.NestedSubClass.dummy.__doc__, 'dummy')[1]
         FullArgSpec(args=['self', 'x', 'r'], varargs='args', varkw='kwds', defaults=((1, 2, 3.4),), kwonlyargs=[], kwonlydefaults=None, annotations={})
@@ -1850,7 +1850,7 @@ def _sage_getdoc_unformatted(obj):
         sage: from sage.misc.sageinspect import _sage_getdoc_unformatted
         sage: print(_sage_getdoc_unformatted(sage.rings.integer.Integer))
         Integer(x=None, base=0)
-        File: sage/rings/integer.pyx (starting at line ...)
+        File: ...sage/rings/integer.pyx (starting at line ...)
         <BLANKLINE>
             The :class:`Integer` class represents arbitrary precision
             integers. It derives from the :class:`Element` class, so
@@ -2255,7 +2255,7 @@ def sage_getsourcelines(obj):
         sage: sage_getsourcelines(test_func)
         (['def base(x):\n',
         ...
-        '    return x\n'], 7)
+        '    return x\n'], 8)
 
     Here are some cases that were covered in :issue:`11298`;
     note that line numbers may easily change, and therefore we do

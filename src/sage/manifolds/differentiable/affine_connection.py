@@ -35,6 +35,7 @@ from sage.manifolds.differentiable.manifold import DifferentiableManifold
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
 
+
 class AffineConnection(SageObject):
     r"""
     Affine connection on a smooth manifold.

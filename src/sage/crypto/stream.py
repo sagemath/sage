@@ -25,6 +25,7 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 
 IntegerModRing = IntegerModFactory("IntegerModRing")
 
+
 class LFSRCryptosystem(SymmetricKeyCryptosystem):
     """
     Linear feedback shift register cryptosystem class
@@ -101,6 +102,7 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
         except Exception:
             raise TypeError("Argument M = %s does not encode in the cipher domain" % M)
 
+
 class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
     """
     Shrinking generator cryptosystem class
@@ -164,6 +166,7 @@ class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
             return S.encoding(M)
         except Exception:
             raise TypeError("Argument M = %s does not encode in the cipher domain" % M)
+
 
 def blum_blum_shub(length, seed=None, p=None, q=None,
                    lbound=None, ubound=None, ntries=100):

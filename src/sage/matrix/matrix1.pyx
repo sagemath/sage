@@ -216,21 +216,21 @@ cdef class Matrix(Matrix0):
         EXAMPLES::
 
             sage: M = matrix(ZZ, 2, range(4))
-            sage: giac(M)                                                               # needs sage.libs.giac
+            sage: giac(M)                                                               # needs giac
             [[0,1],[2,3]]
 
             sage: M = matrix(QQ, 3, [1,2,3, 4/3,5/3,6/4, 7,8,9])
-            sage: giac(M)                                                               # needs sage.libs.giac
+            sage: giac(M)                                                               # needs giac
             [[1,2,3],[4/3,5/3,3/2],[7,8,9]]
 
             sage: P.<x> = ZZ[]
             sage: M = matrix(P, 2, [-9*x^2-2*x+2, x-1, x^2+8*x, -3*x^2+5])
-            sage: giac(M)                                                               # needs sage.libs.giac
+            sage: giac(M)                                                               # needs giac
             [[-9*sageVARx^2-2*sageVARx+2,sageVARx-1],[sageVARx^2+8*sageVARx,-3*sageVARx^2+5]]
 
             sage: y = var('y')                                                          # needs sage.symbolic
             sage: M = matrix(SR, 2, [y+sin(y), y - 4, 1/y, dilog(y)])                   # needs sage.symbolic
-            sage: giac(M).det().sage()                                                  # needs sage.libs.giac sage.symbolic
+            sage: giac(M).det().sage()                                                  # needs giac sage.symbolic
             (y^2*dilog(y) + y*dilog(y)*sin(y) - y + 4)/y
         """
         s = ','.join('[' + ','.join(cf._giac_init_() for cf in row) + ']'
@@ -670,7 +670,7 @@ cdef class Matrix(Matrix0):
             entries = [[sib(v, 2) for v in row] for row in self.rows()]
             return sib.name('matrix')(self.base_ring(), entries)
 
-    def numpy(self, dtype=None):
+    def numpy(self, dtype=None, copy=True):
         """
         Return the Numpy matrix associated to this matrix.
 
@@ -679,6 +679,10 @@ cdef class Matrix(Matrix0):
         - ``dtype`` -- the desired data-type for the array. If not given,
           then the type will be determined as the minimum type required
           to hold the objects in the sequence.
+
+        - ``copy`` -- if `self` is already an `ndarray`, then this flag
+          determines whether the data is copied (the default), or whether
+          a view is constructed.
 
         EXAMPLES::
 
@@ -731,7 +735,7 @@ cdef class Matrix(Matrix0):
             (3, 4)
         """
         import numpy
-        A = numpy.matrix(self.list(), dtype=dtype)
+        A = numpy.matrix(self.list(), dtype=dtype, copy=copy)
         return numpy.resize(A,(self.nrows(), self.ncols()))
 
     # Define the magic "__array__" function so that numpy.array(m) can convert

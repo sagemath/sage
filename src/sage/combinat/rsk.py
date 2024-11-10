@@ -2957,12 +2957,10 @@ class RuleStar(Rule):
                 if j == 0:
                     df.append([])
                 if j > 0 and obj1[j] < obj1[j-1]:
-                    for _ in range(obj1[j-1]-obj1[j]):
-                        df.append([])
+                    df.extend([] for _ in range(obj1[j-1]-obj1[j]))
                 df[-1].append(obj2[j])
             if obj1:
-                for a in range(obj1[-1]-1):
-                    df.append([])
+                df.extend([] for a in range(obj1[-1]-1))
             # If biword is empty, return a decreasing factorization with 1 factor
             else:
                 df.append([])

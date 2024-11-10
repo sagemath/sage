@@ -425,7 +425,7 @@ cdef class StaticSparseCGraph(CGraph):
 
 cdef class StaticSparseBackend(CGraphBackend):
 
-    def __init__(self, G, loops=False, multiedges=False):
+    def __init__(self, G, loops=False, multiedges=False, sort=True):
         """
         A graph :mod:`backend <sage.graphs.base.graph_backends>` for static
         sparse graphs.
@@ -511,10 +511,11 @@ cdef class StaticSparseBackend(CGraphBackend):
             True
         """
         vertices = list(G)
-        try:
-            vertices.sort()
-        except TypeError:
-            pass
+        if sort:
+            try:
+                vertices.sort()
+            except TypeError:
+                pass
         cdef StaticSparseCGraph cg = <StaticSparseCGraph> StaticSparseCGraph(G, vertices)
         self._cg = cg
 

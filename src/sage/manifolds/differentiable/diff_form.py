@@ -770,7 +770,7 @@ class DiffForm(TensorField):
             nondegenerate_tensor = self._vmodule._ambient_domain.metric()
 
         p = self.tensor_type()[1]
-        # For performance reasons, we raise the indicies of the volume form
+        # For performance reasons, we raise the indices of the volume form
         # and not of the differential form; in the symplectic case this is wrong by
         # a factor of (-1)^p, which will be corrected below
         eps = nondegenerate_tensor.volume_form(p)
@@ -787,7 +787,7 @@ class DiffForm(TensorField):
                     result = result * nondegenerate_tensor._indic_signat
             from sage.manifolds.differentiable.symplectic_form import SymplecticForm
             if isinstance(nondegenerate_tensor, SymplecticForm):
-                # correction because we lifted the indicies of the volume (see above)
+                # correction because we lifted the indices of the volume (see above)
                 result = result * (-1)**p
 
         result.set_name(

@@ -289,14 +289,14 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
     for R in OA:
         if len(R) != k:
             if verbose:
-                print({"OA"   : "Some row does not have length "+str(k),
-                       "MOLS" : "The number of squares is not "+str(k-2)}[terminology])
+                print({"OA": "Some row does not have length "+str(k),
+                       "MOLS": "The number of squares is not "+str(k-2)}[terminology])
             return False
 
     if len(OA) != n2:
         if verbose:
-            print({"OA"   : "The number of rows is {} instead of {}^2={}".format(len(OA),n,n2),
-                   "MOLS" : "All squares do not have dimension n^2={}^2".format(n)}[terminology])
+            print({"OA": "The number of rows is {} instead of {}^2={}".format(len(OA),n,n2),
+                   "MOLS": "All squares do not have dimension n^2={}^2".format(n)}[terminology])
         return False
 
     if n == 0:
@@ -319,8 +319,8 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
         for j,x in enumerate(R):
             if x < 0 or x >= n:
                 if verbose:
-                    print({"OA"   : "{} is not in the interval [0..{}]".format(x,n-1),
-                           "MOLS" : "Entry {} was expected to be in the interval [0..{}]".format(x,n-1)}[terminology])
+                    print({"OA": "{} is not in the interval [0..{}]".format(x,n-1),
+                           "MOLS": "Entry {} was expected to be in the interval [0..{}]".format(x,n-1)}[terminology])
                 sig_free(OAc)
                 return False
             OAc[j*n2+i] = x
@@ -341,8 +341,8 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
                 sig_free(OAc)
                 bitset_free(seen)
                 if verbose:
-                    print({"OA"   : "Columns {} and {} are not orthogonal".format(i,j),
-                           "MOLS" : "Squares {} and {} are not orthogonal".format(i,j)}[terminology])
+                    print({"OA": "Columns {} and {} are not orthogonal".format(i,j),
+                           "MOLS": "Squares {} and {} are not orthogonal".format(i,j)}[terminology])
                 return False
 
     sig_free(OAc)

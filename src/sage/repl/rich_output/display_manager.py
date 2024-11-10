@@ -103,7 +103,7 @@ class RichReprWarning(UserWarning):
     pass
 
 
-class restricted_output():
+class restricted_output:
 
     def __init__(self, display_manager, output_classes):
         """
@@ -634,10 +634,10 @@ class DisplayManager(SageObject):
         rich_output = self._promote_output(rich_output)
         # check that the output container types are valid for the backend
         supported = self._backend.supported_output()
-        if not (type(plain_text) in supported):
+        if type(plain_text) not in supported:
             raise OutputTypeException(
                 'text output container not supported: {0}'.format(type(plain_text)))
-        if not (type(rich_output) in supported):
+        if type(rich_output) not in supported:
             raise OutputTypeException(
                 'output container not supported: {0}'.format(type(rich_output)))
         return plain_text, rich_output

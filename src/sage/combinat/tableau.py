@@ -1148,12 +1148,10 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: Tableau( [[1,2,3],[4,5]] ).descents()
             [(1, 0), (1, 1)]
         """
-        descents = []
-        for i in range(1, len(self)):
-            for j in range(len(self[i])):
-                if self[i][j] > self[i-1][j]:
-                    descents.append((i, j))
-        return descents
+        return [(i, j)
+                for i in range(1, len(self))
+                for j, selfij in enumerate(self[i])
+                if selfij > self[i-1][j]]
 
     def major_index(self):
         """
@@ -1214,15 +1212,15 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             for j, entry in enumerate(row):
                 # c is in position (i,j)
                 # find the d that satisfy condition 1
-                for k in range(j+1, len(row)):
-                    if entry > row[k]:
-                        inversions.append(((i, j), (i, k)))
+                inversions.extend(((i, j), (i, k))
+                                  for k in range(j + 1, len(row))
+                                  if entry > row[k])
                 # find the d that satisfy condition 2
                 if i == 0:
                     continue
-                for k in range(j):
-                    if entry > previous_row[k]:
-                        inversions.append(((i, j), (i-1, k)))
+                inversions.extend(((i, j), (i - 1, k))
+                                  for k in range(j)
+                                  if entry > previous_row[k])
             previous_row = row
         return inversions
 

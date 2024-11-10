@@ -2802,7 +2802,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: R in A.realizations()  # indirect doctest
                     True
 
-                Note: the test above uses ``QQ[x]`` to not interfer
+                Note: the test above uses ``QQ[x]`` to not interfere
                 with other tests.
                 """
                 assert realization.realization_of() is self

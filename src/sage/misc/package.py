@@ -39,7 +39,7 @@ Functions
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from typing import Dict, List, NamedTuple, Optional, Union
+from typing import NamedTuple, Optional, Union
 
 import sage.env
 
@@ -144,7 +144,7 @@ def spkg_type(name):
 
     The type as a string in ``('base', 'standard', 'optional', 'experimental')``.
     If no ``SPKG`` exists with the given name (or the directory ``SAGE_PKGS`` is
-    not avaialble), ``None`` is returned.
+    not available), ``None`` is returned.
     """
     spkg_type = None
     from sage.env import SAGE_PKGS
@@ -230,8 +230,8 @@ class PackageInfo(NamedTuple):
         return self.installed_version is not None
 
 
-def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 'script'],
-                  local: bool = False, ignore_URLError: bool = False, exclude_pip: bool = False) -> Dict[str, PackageInfo]:
+def list_packages(*pkg_types: str, pkg_sources: list[str] = ['normal', 'pip', 'script'],
+                  local: bool = False, ignore_URLError: bool = False, exclude_pip: bool = False) -> dict[str, PackageInfo]:
     r"""
     Return a dictionary of information about each package.
 
@@ -402,9 +402,9 @@ def installed_packages(exclude_pip=True):
         sage: # optional - sage_spkg
         sage: from sage.misc.package import installed_packages
         sage: sorted(installed_packages().keys())
-        [...'conway_polynomials', ...]
-        sage: installed_packages()['conway_polynomials']  # random
-        '0.5'
+        [...'gnulib', ...]
+        sage: installed_packages()['gnulib']  # random
+        'f9b39c4e337f1dc0dd07c4f3985c476fb875d799'
 
     .. SEEALSO::
 
@@ -439,7 +439,7 @@ def is_package_installed(package, exclude_pip=True):
     EXAMPLES::
 
         sage: from sage.misc.package import is_package_installed
-        sage: is_package_installed('conway_polynomials')  # optional - sage_spkg
+        sage: is_package_installed('gnulib')  # optional - sage_spkg
         True
 
     Giving just the beginning of the package name is not good enough::
@@ -537,8 +537,8 @@ def package_manifest(package):
 
         sage: # optional - sage_spkg
         sage: from sage.misc.package import package_manifest
-        sage: manifest = package_manifest('conway_polynomials')
-        sage: manifest['package_name'] == 'conway_polynomials'
+        sage: manifest = package_manifest('gnulib')
+        sage: manifest['package_name'] == 'gnulib'
         True
         sage: 'files' in manifest
         True

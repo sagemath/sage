@@ -354,8 +354,8 @@ class ToricIdeal(MPolynomialIdeal):
         x = ring.gens()
         binomials = []
         for row in self.ker().matrix().rows():
-            xpos = prod(x[i]**max( row[i],0) for i in range(0,len(x)))
-            xneg = prod(x[i]**max(-row[i],0) for i in range(0,len(x)))
+            xpos = prod(x[i]**max(row[i], 0) for i in range(len(x)))
+            xneg = prod(x[i]**max(-row[i], 0) for i in range(len(x)))
             binomials.append(xpos - xneg)
         return ring.ideal(binomials)
 
@@ -407,7 +407,7 @@ class ToricIdeal(MPolynomialIdeal):
             return tuple([l[0] - power] + l[1:])
 
         def divide_by_x_n(p):
-            d_old = p.dict()
+            d_old = p.monomial_coefficients()
             power = min(e[0] for e in d_old)
             d_new = {subtract(exponent, power): coefficient
                      for exponent, coefficient in d_old.items()}
@@ -445,6 +445,6 @@ class ToricIdeal(MPolynomialIdeal):
         J = self._naive_ideal(ring)
         if J.is_zero():
             return J
-        for i in range(0,self.nvariables()):
+        for i in range(self.nvariables()):
             J = self._ideal_quotient_by_variable(ring, J, i)
         return J

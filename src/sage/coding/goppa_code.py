@@ -35,6 +35,7 @@ from sage.coding.encoder import Encoder
 from sage.modules.free_module_element import vector
 from sage.coding.all import codes
 
+
 def _columnize(element):
     """
     Convert a finite field element to a column vector over the prime field.

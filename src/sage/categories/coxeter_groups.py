@@ -2671,7 +2671,7 @@ class CoxeterGroups(Category_singleton):
             reduced word for ``other`` contains a reduced word for
             ``self`` as subword. See Stembridge, A short derivation of
             the Möbius function for the Bruhat order. J. Algebraic
-            Combin. 25 (2007), no. 2, 141--148, Proposition 1.1.
+            Combinatoric 25 (2007), no. 2, 141--148, Proposition 1.1.
 
             Complexity: `O(l * c)`, where `l` is the minimum of the
             lengths of `u` and of `v`, and `c` is the cost of the low

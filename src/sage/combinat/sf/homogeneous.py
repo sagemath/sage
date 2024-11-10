@@ -435,4 +435,6 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.homogeneous', 'SymmetricFunctionAlgebraElement_homogeneous',  SymmetricFunctionAlgebra_homogeneous.Element)
+register_unpickle_override('sage.combinat.sf.homogeneous',
+                           'SymmetricFunctionAlgebraElement_homogeneous',
+                           SymmetricFunctionAlgebra_homogeneous.Element)

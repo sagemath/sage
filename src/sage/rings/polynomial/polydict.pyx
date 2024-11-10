@@ -672,7 +672,7 @@ cdef class PolyDict:
                 ans[ETuple(t)] = self.__repn[S]
         return self._new(ans)
 
-    def is_homogeneous(self):
+    def is_homogeneous(self, tuple w=None):
         r"""
         Return whether this polynomial is homogeneous.
 
@@ -688,12 +688,20 @@ cdef class PolyDict:
         """
         if not self.__repn:
             return True
+        cdef size_t s
         it = iter(self.__repn)
-        cdef size_t s = (<ETuple> next(it)).unweighted_degree()
-        for elt in it:
-            if (<ETuple> elt).unweighted_degree() != s:
-                return False
-        return True
+        if w is None:
+            s = (<ETuple> next(it)).unweighted_degree()
+            for elt in it:
+                if (<ETuple> elt).unweighted_degree() != s:
+                    return False
+            return True
+        else:
+            s = (<ETuple> next(it)).weighted_degree(w)
+            for elt in it:
+                if (<ETuple> elt).weighted_degree(w) != s:
+                    return False
+            return True
 
     def is_constant(self):
         """
@@ -800,7 +808,9 @@ cdef class PolyDict:
             ring = self.__repn[E[0]].parent()
             pos_one = ring.one()
             neg_one = -pos_one
-        except AttributeError:
+        except (AttributeError, ArithmeticError):
+            # AritchmeticError occurs when self.__repn[E[0]] is a tropical
+            # semiring element
             # probably self.__repn[E[0]] is not a ring element
             pos_one = 1
             neg_one = -1
@@ -901,7 +911,9 @@ cdef class PolyDict:
             ring = self.__repn[E[0]].parent()
             pos_one = ring.one()
             neg_one = -pos_one
-        except AttributeError:
+        except (AttributeError, ArithmeticError):
+            # AritchmeticError occurs when self.__repn[E[0]] is a tropical
+            # semiring element
             # probably self.__repn[E[0]] is not a ring element
             pos_one = 1
             neg_one = -1

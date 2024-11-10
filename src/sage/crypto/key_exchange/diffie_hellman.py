@@ -33,6 +33,7 @@ from sage.structure.proof.proof import WithProof
 
 from typing import Union
 
+
 class DiffieHellman(KeyExchangeScheme):
 
     @experimental(37305)

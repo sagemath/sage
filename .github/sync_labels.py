@@ -609,7 +609,7 @@ class GhLabelSynchronizer:
         for com in coms:
             for auth in com['authors']:
                 login = auth['login']
-                if not login in authors:
+                if login not in authors:
                     if not self.is_this_bot(login) and login != author:
                         debug('PR %s has recent commit by %s' % (self._issue, login))
                         authors.append(login)
@@ -746,7 +746,7 @@ class GhLabelSynchronizer:
         r"""
         Add the given label to the issue or PR.
         """
-        if not label in self.get_labels():
+        if label not in self.get_labels():
             self.edit(label, '--add-label')
             info('Add label to %s: %s' % (self._issue, label))
 

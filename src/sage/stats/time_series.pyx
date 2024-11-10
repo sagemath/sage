@@ -307,10 +307,10 @@ cdef class TimeSeries:
         if len(self) > max_print:
             v0 = self[:max_print//2]
             v1 = self[-max_print//2:]
-            return '[' + ', '.join(format%x for x in v0) + ' ... ' + \
-                         ', '.join(format%x for x in v1) + ']'
+            return '[' + ', '.join(format % x for x in v0) + ' ... ' + \
+                         ', '.join(format % x for x in v1) + ']'
         else:
-            return '[' + ', '.join(format%x for x in self) + ']'
+            return '[' + ', '.join(format % x for x in self) + ']'
 
     def __len__(self):
         r"""
@@ -2024,7 +2024,7 @@ cdef class TimeSeries:
             sage: v
             [20.0000, -3.0000, 4.5000, -2.0000]
         """
-        cnumpy.import_array() #This must be called before using the numpy C/api or you will get segfault
+        cnumpy.import_array()  # This must be called before using the numpy C/api or you will get segfault
         cdef cnumpy.npy_intp dims[1]
         dims[0] = self._length
         cdef cnumpy.ndarray n = cnumpy.PyArray_SimpleNewFromData(1, dims, cnumpy.NPY_DOUBLE, self._values)

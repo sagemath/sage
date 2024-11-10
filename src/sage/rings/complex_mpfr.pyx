@@ -1917,10 +1917,10 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_mul(t1, self.__im, self.__im, rnd)
 
         mpfr_add(t0, t0, t1, rnd)         # now t0 is the norm
-        mpfr_div(x.__re, self.__re, t0, rnd)   #     x.__re = self.__re/norm
+        mpfr_div(x.__re, self.__re, t0, rnd)   # x.__re = self.__re/norm
 
         mpfr_neg(t1, self.__im, rnd)
-        mpfr_div(x.__im, t1, t0, rnd)  #     x.__im = -self.__im/norm
+        mpfr_div(x.__im, t1, t0, rnd)  # x.__im = -self.__im/norm
 
         mpfr_clear(t0)
         mpfr_clear(t1)

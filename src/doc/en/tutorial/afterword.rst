@@ -107,10 +107,8 @@ behaves differently from Python in several ways.
        10
 
 -  **Integer division:** The Python expression ``2/3`` does not
-   behave the way mathematicians might expect. In Python2, if ``m`` and
-   ``n`` are ints, then ``m/n`` is also an int, namely the quotient of ``m``
-   divided by ``n``. Therefore ``2/3=0``. In Python3, ``2/3`` returns the
-   floating point number ``0.6666...``. In both Python2 and Python3, ``//``
+   behave the way mathematicians might expect:  ``2/3`` returns the
+   floating point number ``0.6666...``. Note that ``//``
    is the Euclidean division and ``2//3`` returns ``0``.
 
    We deal with this in the Sage interpreter, by wrapping integer
@@ -125,16 +123,11 @@ behaves differently from Python in several ways.
        Rational Field
        sage: 2//3
        0
-       sage: int(2)/int(3)  # not tested, python2
-       0
 
 -  **Long integers:** Python has native support for arbitrary
    precision integers, in addition to C-int's. These are significantly
-   slower than what GMP provides, and have the property that they
-   print with an ``L`` at the end to distinguish them from int's (and
-   this won't change any time soon). Sage implements arbitrary
-   precision integers using the GMP C-library, and these print without
-   an ``L``.
+   slower than what GMP provides. Sage implements arbitrary
+   precision integers using the GMP C-library.
 
 
 Rather than modifying the Python interpreter (as some people have

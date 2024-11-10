@@ -1649,8 +1649,7 @@ class LocalGeneric(CommutativeRing):
                 for j in range(n):
                     prec = min(prec, S[i,j].precision_absolute())
                 prec -= S[i,i].valuation()
-                if prec < relprec:
-                    relprec = prec
+                relprec = min(prec, relprec)
                 if prec < 0:
                     relprec_neg += prec
             if relprec_neg < 0:

@@ -438,7 +438,7 @@ Type specific data
 
 The data essentially consists of a description of the Dynkin/Coxeter
 diagram and, when relevant, of the natural embedding of the root
-system in an Euclidean space. Everything else is reconstructed from
+system in a Euclidean space. Everything else is reconstructed from
 this data.
 
 - :ref:`sage.combinat.root_system.type_A`

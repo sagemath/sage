@@ -39,6 +39,7 @@ REFERENCES:
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 from sage.tensor.modules.comp import Components, CompFullyAntiSym
 
+
 class AlternatingContrTensor(FreeModuleTensor):
     r"""
     Alternating contravariant tensor on a free module of finite rank

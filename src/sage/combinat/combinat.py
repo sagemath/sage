@@ -164,7 +164,7 @@ Functions and classes
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.arith.misc import bernoulli, factorial
 from sage.rings.integer_ring import ZZ
@@ -1570,6 +1570,7 @@ class CombinatorialElement(CombinatorialObject, Element,
 
 #####################################################
 # combinatorial sets/lists
+
 
 def tuples(S, k, algorithm='itertools'):
     r"""

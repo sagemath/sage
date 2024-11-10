@@ -167,7 +167,7 @@ REFERENCES:
 # ****************************************************************************
 from __future__ import annotations
 import numbers
-from typing import Iterator
+from collections.abc import Iterator
 from itertools import product
 
 from sage.misc.fast_methods import Singleton

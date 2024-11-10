@@ -1401,7 +1401,7 @@ cdef class pAdicPrinter_class(SageObject):
                         return s
                     else:
                         count += 1
-                        if count == max_unram_terms: #this will never trigger if max_unram_terms == -1
+                        if count == max_unram_terms:  # this will never trigger if max_unram_terms == -1
                             newj = len(L) - 1
                             while L[newj] == 0:
                                 newj -= 1
@@ -1424,7 +1424,7 @@ cdef class pAdicPrinter_class(SageObject):
                         return s
                     else:
                         count += 1
-                        if count == max_unram_terms: #this will never trigger if max_unram_terms == -1
+                        if count == max_unram_terms:  # this will never trigger if max_unram_terms == -1
                             newj = 0
                             while L[newj] == 0:
                                 newj += 1

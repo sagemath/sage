@@ -576,8 +576,7 @@ class OperationTable(SageObject):
             width = 0
             for e in self._elts:
                 estr = repr(e)
-                if len(estr) > width:
-                    width = len(estr)
+                width = max(len(estr), width)
                 name_list.append(estr)
         elif isinstance(names, list):
             if len(names) != self._n:
@@ -588,8 +587,7 @@ class OperationTable(SageObject):
                 if not isinstance(name, str):
                     raise ValueError(
                         'list of element names must only contain strings, not %s' % name)
-                if len(name) > width:
-                    width = len(name)
+                width = max(len(name), width)
                 name_list.append(name)
         else:
             raise ValueError(

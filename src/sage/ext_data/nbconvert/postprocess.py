@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     file_name = sys.argv[1]
 
-    with open(file_name, 'r') as f:
+    with open(file_name) as f:
             lines = f.readlines()
 
     # states of the parser

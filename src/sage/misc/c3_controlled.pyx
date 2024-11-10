@@ -624,11 +624,11 @@ def C3_merge(list lists):
     cdef bint next_item_found
 
     while nbheads:
-        for i in range(nbheads): # from 0 <= i < nbheads:
+        for i in range(nbheads):
             O = heads[i]
             # Does O appear in none of the tails?  ``all(O not in tail for tail in tailsets)``
             next_item_found = True
-            for j in range(nbheads): #from 0 <= j < nbheads:
+            for j in range(nbheads):
                 if j == i:
                     continue
                 tailset = tailsets[j]
@@ -640,7 +640,7 @@ def C3_merge(list lists):
                 # Clear O from other heads, removing the line altogether
                 # if the tail is already empty.
                 # j goes down so that ``del heads[j]`` does not screw up the numbering
-                for j in range(nbheads-1, -1, -1): # from nbheads > j >= 0:
+                for j in range(nbheads-1, -1, -1):
                     if heads[j] == O: # is O
                         tail = tails[j]
                         if tail:
@@ -656,7 +656,7 @@ def C3_merge(list lists):
                 break
         if not next_item_found:
             # No head is available
-            raise ValueError("Cannot merge the items %s."%', '.join(repr(head) for head in heads))
+            raise ValueError("Cannot merge the items %s." % ', '.join(repr(head) for head in heads))
     return out
 
 
@@ -860,7 +860,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
         # Find the position of the largest head which will become the next item
         max_i   = 0
         max_key = key(heads[0])
-        for i in range(1, nbheads): #from 1 <= i < nbheads:
+        for i in range(1, nbheads):
             O = heads[i]
             O_key = key(O)
             if O_key > max_key:
@@ -870,14 +870,14 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
 
         # Find all the bad choices
         max_bad = None
-        for i in range(max_i): #from 0 <= i < max_i:
+        for i in range(max_i):
             O = heads[i]
             # Does O appear in none of the tails?
             O_key = key(O)
             # replace the closure
             # if any(O_key in tailsets[j] for j in range(nbheads) if j != i): continue
             cont = False
-            for j from 0<=j<i:
+            for j in range(i):
                 if O_key in tailsets[j]:
                     cont = True
                     break
@@ -936,7 +936,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
         # Clear O from other heads, removing the line altogether
         # if the tail is already empty.
         # j goes down so that ``del heads[j]`` does not screw up the numbering
-        for j in range(nbheads-1, -1, -1):#from nbheads > j >= 0:
+        for j in range(nbheads-1, -1, -1):
             if heads[j] == max_value:
                 tail = tails[j]
                 if tail:
@@ -1053,7 +1053,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         [<class '44.cls'>, <class '43.cls'>, <class '42.cls'>, <class '41.cls'>, <class '40.cls'>, <class '39.cls'>, <class '38.cls'>, <class '37.cls'>, <class '36.cls'>, <class '35.cls'>, <class '34.cls'>, <class '33.cls'>, <class '32.cls'>, <class '31.cls'>, <class '30.cls'>, <class '29.cls'>, <class '28.cls'>, <class '27.cls'>, <class '26.cls'>, <class '25.cls'>, <class '24.cls'>, <class '23.cls'>, <class '22.cls'>, <class '21.cls'>, <class '20.cls'>, <class '19.cls'>, <class '18.cls'>, <class '17.cls'>, <class '16.cls'>, <class '15.cls'>, <class '14.cls'>, <class '13.cls'>, <class '12.cls'>, <class '11.cls'>, <class '10.cls'>, <class '9.cls'>, <class '8.cls'>, <class '7.cls'>, <class '6.cls'>, <class '5.cls'>, <class '4.cls'>, <class '3.cls'>, <class '2.cls'>, <class '1.cls'>, <class '0.cls'>, <... 'object'>]
     """
     @staticmethod
-    def __classcall__(cls, value, succ, key = None):
+    def __classcall__(cls, value, succ, key=None):
         """
         EXAMPLES::
 
@@ -1353,7 +1353,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         super_classes = tuple(self._from_value(base).cls for base in self._bases_controlled)
         if not super_classes:
             super_classes = (object,)
-        return dynamic_class("%s.cls"%self, super_classes)
+        return dynamic_class("%s.cls" % self, super_classes)
 
     @cached_method
     def all_bases(self):

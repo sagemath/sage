@@ -652,7 +652,7 @@ class VirasoroAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
         pass
 
 #####################################################################
-## Representations
+# Representations
 
 
 class ChargelessRepresentation(CombinatorialFreeModule):

@@ -621,7 +621,8 @@ def solve(f, *args, **kwds):
 
     - ``algorithm`` -- string (default: ``'maxima'``); to use SymPy's
       solvers set this to 'sympy'. Note that SymPy is always used
-      for diophantine equations. Another choice is 'giac'.
+      for diophantine equations. Another choice, if it is installed,
+      is 'giac'.
 
     - ``domain`` -- string (default: ``'complex'``); setting this to 'real'
       changes the way SymPy solves single equations; inequalities
@@ -926,13 +927,16 @@ def solve(f, *args, **kwds):
 
     A basic interface to Giac is provided::
 
+        sage: # needs sage.libs.giac
         sage: solve([(2/3)^x-2], [x], algorithm='giac')
         ...[[-log(2)/(log(3) - log(2))]]
 
+        sage: # needs sage.libs.giac
         sage: f = (sin(x) - 8*cos(x)*sin(x))*(sin(x)^2 + cos(x)) - (2*cos(x)*sin(x) - sin(x))*(-2*sin(x)^2 + 2*cos(x)^2 - cos(x))
         sage: solve(f, x, algorithm='giac')
         ...[-2*arctan(sqrt(2)), 0, 2*arctan(sqrt(2)), pi]
 
+        sage: # needs sage.libs.giac
         sage: x, y = SR.var('x,y')
         sage: solve([x+y-4,x*y-3],[x,y],algorithm='giac')
         [[1, 3], [3, 1]]
@@ -1434,17 +1438,20 @@ def _giac_solver(f, x, solution_dict=False):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.giac
         sage: solve([(2/3)^x-2], [x], algorithm='giac')
         ...[[-log(2)/(log(3) - log(2))]]
         sage: solve([(2/3)^x-2], [x], algorithm='giac', solution_dict=True)
         ...[{x: -log(2)/(log(3) - log(2))}]
 
+        sage: # needs sage.libs.giac
         sage: f = (sin(x) - 8*cos(x)*sin(x))*(sin(x)^2 + cos(x)) - (2*cos(x)*sin(x) - sin(x))*(-2*sin(x)^2 + 2*cos(x)^2 - cos(x))
         sage: solve(f, x, algorithm='giac')
         ...[-2*arctan(sqrt(2)), 0, 2*arctan(sqrt(2)), pi]
         sage: solve(f, x, algorithm='giac', solution_dict=True)
         ...[{x: -2*arctan(sqrt(2))}, {x: 0}, {x: 2*arctan(sqrt(2))}, {x: pi}]
 
+        sage: # needs sage.libs.giac
         sage: x, y = SR.var('x,y')
         sage: solve([x+y-7,x*y-10],[x,y],algorithm='giac')
         [[2, 5], [5, 2]]
@@ -1458,7 +1465,7 @@ def _giac_solver(f, x, solution_dict=False):
         if not sols:
             return []
         if isinstance(sols[0], list):
-            return [{v: sv for v, sv in zip(x, solution)} for solution in sols]
+            return [dict(zip(x, solution)) for solution in sols]
         return [{x: sx} for sx in sols]
     return sols
 
@@ -1803,7 +1810,7 @@ def solve_ineq_fourier(ineq, vars=None):
         setvars = set([])
         for i in (ineq):
             setvars = setvars.union(set(i.variables()))
-            vars = [i for i in setvars]
+            vars = list(setvars)
     ineq0 = [i._maxima_() for i in ineq]
     ineq0[0].parent().eval("if fourier_elim_loaded#true then (fourier_elim_loaded:true,load(\"fourier_elim\"))")
     sol = ineq0[0].parent().fourier_elim(ineq0, vars)

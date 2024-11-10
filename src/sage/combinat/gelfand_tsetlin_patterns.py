@@ -302,11 +302,9 @@ class GelfandTsetlinPattern(ClonableArray,
             sage: G.boxed_entries()
             ((1, 0),)
         """
-        ret = []
-        for i in range(1, len(self)):
-            for j in range(len(self[i])):
-                if self[i][j] == self[i - 1][j]:
-                    ret.append((i, j))
+        ret = [(i, j) for i in range(1, len(self))
+               for j, selfij in enumerate(self[i])
+               if selfij == self[i - 1][j]]
         return tuple(ret)
 
     @cached_method
@@ -324,11 +322,9 @@ class GelfandTsetlinPattern(ClonableArray,
             sage: G.circled_entries()
             ((1, 1), (2, 0))
         """
-        ret = []
-        for i in range(1, len(self)):
-            for j in range(len(self[i])):
-                if self[i][j] == self[i - 1][j + 1]:
-                    ret.append((i, j))
+        ret = [(i, j) for i in range(1, len(self))
+               for j, selfij in enumerate(self[i])
+               if selfij == self[i - 1][j + 1]]
         return tuple(ret)
 
     @cached_method
@@ -349,11 +345,9 @@ class GelfandTsetlinPattern(ClonableArray,
             sage: G.special_entries()
             ((2, 0),)
         """
-        ret = []
-        for i in range(1, len(self)):
-            for j in range(len(self[i])):
-                if self[i-1][j] > self[i][j] and self[i][j] > self[i-1][j+1]:
-                    ret.append((i, j))
+        ret = [(i, j) for i in range(1, len(self))
+               for j, selfij in enumerate(self[i])
+               if self[i - 1][j] > selfij > self[i - 1][j + 1]]
         return tuple(ret)
 
     def number_of_boxes(self) -> int:

@@ -187,6 +187,7 @@ def characteristic_polynomial_from_traces(traces, d, q, i, sign, deg=None, use_f
         data[k] = sign * coeffs[d - k] * q**(i * (k - d / 2))
     return ring(data)
 
+
 def enumerate_hypergeometric_data(d, weight=None):
     r"""
     Return an iterator over parameters of hypergeometric motives (up to swapping).

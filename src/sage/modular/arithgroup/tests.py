@@ -311,7 +311,7 @@ class Test:
             if getattr(G, f)() != getattr(GG, f)():
                 raise AssertionError("results of %s does not coincide for %s" % (f, G))
 
-        if sorted((G.cusp_width(c) for c in G.cusps())) != GG.cusp_widths():
+        if sorted(G.cusp_width(c) for c in G.cusps()) != GG.cusp_widths():
             raise AssertionError("Cusps widths are different for %s" % G)
 
         for _ in range(20):

@@ -124,7 +124,7 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
 
         os.remove(tmpfile + '.phc')
         os.popen('phc -b ' + tmpfile + ' ' + tmpfile + '.phc')
-        f = open(tmpfile + '.phc', 'r')
+        f = open(tmpfile + '.phc')
         f_str = f.read()
         pos = f_str.find('= real ')
         crits = []

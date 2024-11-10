@@ -260,7 +260,7 @@ cdef inline bint cisunit(celement a, PowComputer_ prime_pow) except -1:
 
 cdef inline int cshift(celement out, celement rem, celement a, long n, long prec, PowComputer_ prime_pow, bint reduce_afterward) except -1:
     """
-    Mulitplies by a power of the uniformizer.
+    Multiplies by a power of the uniformizer.
 
     INPUT:
 
@@ -291,7 +291,7 @@ cdef inline int cshift(celement out, celement rem, celement a, long n, long prec
 
 cdef inline int cshift_notrunc(celement out, celement a, long n, long prec, PowComputer_ prime_pow, bint reduce_afterward) except -1:
     """
-    Mulitplies by a power of the uniformizer, assuming that the
+    Multiplies by a power of the uniformizer, assuming that the
     valuation of a is at least -n.
 
     INPUT:

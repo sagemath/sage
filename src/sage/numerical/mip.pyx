@@ -1836,7 +1836,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         cdef int i
 
         if obj is None:
-            f = {-1 : 0}
+            f = {-1: 0}
         else:
             # See if it is a constant
             R = self.base_ring()
@@ -3389,7 +3389,7 @@ cdef class MIPVariable(FiniteFamily):
             integer=(self._vtype == self._p.__INTEGER),
             obj=zero,
             name=name)
-        v = self._p.linear_functions_parent()({j : 1})
+        v = self._p.linear_functions_parent()({j: 1})
         self._p._variables[v] = j
         self._dictionary[i] = v
         return v

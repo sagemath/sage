@@ -178,7 +178,7 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
         mpq_init(mpq_tmp)
 
     try:
-        init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex, sort_neighbors=False)
+        init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
         init_reverse(bfs_dag, g)
 
         queue = <uint32_t*> check_allocarray(n, sizeof(uint32_t))
@@ -689,7 +689,7 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef list V = list(G)
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=V, sort_neighbors=False)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=V)
     cdef int n = sd.n
     cdef int* reachL = <int*> mem.malloc(n * sizeof(int))
     cdef int* reachU
@@ -939,7 +939,7 @@ def centrality_closeness_random_k(G, int k=1):
         # Copying the whole graph as a static_sparse_graph for fast shortest
         # paths computation in unweighted graph. This data structure is well
         # documented in module sage.graphs.base.static_sparse_graph
-        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex, sort_neighbors=False)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
         distance = <uint32_t*> mem.malloc(n * sizeof(uint32_t))
         waiting_list = <uint32_t*> mem.malloc(n * sizeof(uint32_t))
         bitset_init(seen, n)

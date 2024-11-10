@@ -735,7 +735,7 @@ class MultiGraphics(WithEqualityById, SageObject):
         INPUT:
 
         - ``figure`` -- a Matplotlib ``Figure`` object
-        - ``index`` -- integer specifiying the element of ``self``
+        - ``index`` -- integer specifying the element of ``self``
         - ``options`` -- extra options to be passed to ``Figure.add_axes``
 
         OUTPUT: a Matplotlib ``Axes`` object
@@ -783,7 +783,7 @@ class MultiGraphics(WithEqualityById, SageObject):
 
         INPUT:
 
-        - ``index`` -- integer specifiying which element of ``self``
+        - ``index`` -- integer specifying which element of ``self``
 
         OUTPUT:
 
@@ -1167,7 +1167,7 @@ class GraphicsArray(MultiGraphics):
         INPUT:
 
         - ``figure`` -- a Matplotlib ``Figure`` object
-        - ``index`` -- integer specifiying the element of ``self``
+        - ``index`` -- integer specifying the element of ``self``
         - ``options`` -- extra options to be passed to ``Figure.add_subplot``
 
         OUTPUT: a Matplotlib ``Axes`` object
@@ -1254,7 +1254,7 @@ class GraphicsArray(MultiGraphics):
 
         INPUT:
 
-        - ``index`` -- integer specifiying which element of ``self``
+        - ``index`` -- integer specifying which element of ``self``
 
         OUTPUT:
 

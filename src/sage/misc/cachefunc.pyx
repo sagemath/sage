@@ -1751,7 +1751,7 @@ cdef class CachedMethodCaller(CachedFunction):
         """
         # initialize CachedFunction. Since the cached method is actually bound
         # to an instance, it now makes sense to initialise the ArgumentFixer
-        # and re-use it for all bound cached method callers of the unbound
+        # and reuse it for all bound cached method callers of the unbound
         # cached method.
         if cachedmethod._cachedfunc._argument_fixer is None:
             cachedmethod._cachedfunc.argfix_init()
@@ -2096,7 +2096,7 @@ cdef class CachedMethodCaller(CachedFunction):
             pass
         try:
             if inst._cached_methods is None:
-                inst._cached_methods = {self._cachedmethod._cachedfunc.__name__ : Caller}
+                inst._cached_methods = {self._cachedmethod._cachedfunc.__name__: Caller}
             else:
                 (<dict>inst._cached_methods)[self._cachedmethod._cachedfunc.__name__] = Caller
         except AttributeError:
@@ -2471,7 +2471,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             pass
         try:
             if inst._cached_methods is None:
-                inst._cached_methods = {self.__name__ : Caller}
+                inst._cached_methods = {self.__name__: Caller}
             else:
                 (<dict>inst._cached_methods)[self.__name__] = Caller
         except AttributeError:
@@ -2852,7 +2852,7 @@ cdef class CachedMethod():
             pass
         try:
             if inst._cached_methods is None:
-                inst._cached_methods = {name : Caller}
+                inst._cached_methods = {name: Caller}
             else:
                 (<dict>inst._cached_methods)[name] = Caller
         except AttributeError:
@@ -3509,9 +3509,9 @@ class FileCache():
             sage: print(N[len(dir):])
             foo-1_2
         """
-        a,k = key
-        kwdstr = '_'.join(['%s-%s'%x for x in k])
-        argstr = '_'.join(['%s'%x for x in a])
+        a, k = key
+        kwdstr = '_'.join('%s-%s' % x for x in k)
+        argstr = '_'.join('%s' % x for x in a)
         if kwdstr and argstr:
             keystr = kwdstr + '.' + argstr
         else:

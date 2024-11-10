@@ -33,7 +33,7 @@ dnl From Makefile.in: SAGERUNTIME
     SPKG_INSTALL_REQUIRES_ipython
     SPKG_INSTALL_REQUIRES_pexpect
 dnl From Makefile.in: DOC_DEPENDENCIES
-    SPKG_INSTALL_REQUIRES_sphinx
+    sphinx >=5.2, <9
     SPKG_INSTALL_REQUIRES_networkx
     SPKG_INSTALL_REQUIRES_scipy
     SPKG_INSTALL_REQUIRES_sympy

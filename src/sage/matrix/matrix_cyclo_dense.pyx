@@ -985,7 +985,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
         INPUT:
 
-        - ``col`` -- integer indicating the column; must be coercable to
+        - ``col`` -- integer indicating the column; must be coercible to
           ``int``, and this must lie between 0 (inclusive) and
           ``self._ncols`` (exclusive), since no bounds-checking is performed
         - ``nump1`` -- integer; numerator bound plus one

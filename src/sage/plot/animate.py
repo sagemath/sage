@@ -552,7 +552,7 @@ class Animation(WithEqualityById, SageObject):
         nrows, rem = divmod(n,ncols)
         if rem > 0:
             nrows += 1
-        return plot.graphics_array(frame_list, nrows,  ncols)
+        return plot.graphics_array(frame_list, nrows, ncols)
 
     def gif(self, delay=20, savefile=None, iterations=0, show_path=False,
             use_ffmpeg=False):

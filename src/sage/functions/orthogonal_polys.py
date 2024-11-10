@@ -2343,10 +2343,10 @@ class Func_ultraspherical(GinacFunction):
         sage: # needs mpmath
         sage: from mpmath import gegenbauer as gegenbauer_mp
         sage: from mpmath import mp
-        sage: mp.pretty = True; mp.dps=25
-        sage: gegenbauer_mp(-7,0.5,0.3)
+        sage: print(gegenbauer_mp(-7,0.5,0.3))
         0.1291811875
-        sage: gegenbauer_mp(2+3j, -0.75, -1000j)
+        sage: with mp.workdps(25):
+        ....:     print(gegenbauer_mp(2+3j, -0.75, -1000j))
         (-5038991.358609026523401901 + 9414549.285447104177860806j)
 
     TESTS:

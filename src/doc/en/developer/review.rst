@@ -76,6 +76,13 @@ The following should generally be checked while reading and testing the code:
   optional doctests related to the functionality. See :ref:`chapter-doctesting`
   for more information.
 
+For changes that affect the **user interface**, in particular, upgrades to
+IPython and Jupyter component packages, manual testing is crucial because
+our automatic tests do not cover the user interface. We recommend to use
+a `Jupyter notebook with comprehensive tests of graphics and typesetting
+<https://github.com/egourgoulhon/SageMathTest/blob/master/Notebooks/test_display.ipynb>`_,
+some of which is Sage-specific.
+
 You are now ready to change the PR's status (see
 :ref:`section-github-pr-status`):
 

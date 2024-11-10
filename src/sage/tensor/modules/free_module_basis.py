@@ -35,6 +35,7 @@ from sage.rings.integer_ring import ZZ
 from sage.sets.family import AbstractFamily
 from sage.structure.unique_representation import UniqueRepresentation
 
+
 class Basis_abstract(UniqueRepresentation, AbstractFamily):
     """
     Abstract base class for (dual) bases of free modules.
@@ -419,6 +420,7 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
 
 #******************************************************************************
 
+
 class FreeModuleCoBasis(Basis_abstract):
     r"""
     Dual basis of a free module over a commutative ring.
@@ -548,6 +550,7 @@ class FreeModuleCoBasis(Basis_abstract):
         return "Dual basis {} on the {}".format(self._name, self._fmodule)
 
 #******************************************************************************
+
 
 class FreeModuleBasis(Basis_abstract):
     r"""

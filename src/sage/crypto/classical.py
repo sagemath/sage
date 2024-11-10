@@ -2969,6 +2969,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
         from sage.misc.prandom import randint
         return Integer(randint(0, self.alphabet_size() - 1))
 
+
 class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
     """
     Create a substitution cryptosystem.
@@ -3192,6 +3193,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
         """
         e = self(K)
         return e(M)
+
 
 class TranspositionCryptosystem(SymmetricKeyCryptosystem):
     """

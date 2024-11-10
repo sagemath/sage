@@ -1414,12 +1414,12 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
             # get n processes
             nproc = Parallelism().get('tensor')
-            if nproc != 1 :
+            if nproc != 1:
 
                 # Parallel computation
                 lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-                ind_list = [ind for ind in resc.non_redundant_index_generator()]
-                ind_step = max(1, int(len(ind_list)/nproc))
+                ind_list = list(resc.non_redundant_index_generator())
+                ind_step = max(1, len(ind_list) // nproc)
                 local_list = lol(ind_list, ind_step)
                 # list of input parameters:
                 listParalInput = [(self, vector, coord_frame, chart, ind_part) for ind_part in local_list]

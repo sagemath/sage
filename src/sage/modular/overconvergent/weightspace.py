@@ -85,6 +85,8 @@ lazy_import('sage.rings.padics.padic_generic_element', 'pAdicGenericElement')
 
 
 _wscache = {}
+
+
 def WeightSpace_constructor(p, base_ring=None):
     r"""
     Construct the `p`-adic weight space for the given prime p.

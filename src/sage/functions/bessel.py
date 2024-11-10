@@ -1228,7 +1228,7 @@ def Bessel(*args, **kwds):
             _type = kwds['typ']
         else:
             _type = 'J'
-    if not (_type in ['I', 'J', 'K', 'Y']):
+    if _type not in ['I', 'J', 'K', 'Y']:
         raise ValueError("type must be one of I, J, K, Y")
 
     # return the function

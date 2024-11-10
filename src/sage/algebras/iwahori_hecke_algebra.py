@@ -83,7 +83,7 @@ def normalized_laurent_polynomial(R, p):
         u + v^-1 + u^-1
     """
     try:
-        return R({k: R._base(c) for k, c in p.dict().items()})
+        return R({k: R._base(c) for k, c in p.monomial_coefficients().items()})
     except (AttributeError, TypeError):
         return R(p)
 
@@ -1255,7 +1255,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
         # This **must** match the name of the class in order for
         #   specialize_to() to work
-        _basis_name = None
+        _basis_name = 'B'
 
         def _repr_term(self, t):
             r"""

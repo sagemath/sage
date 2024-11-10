@@ -2914,7 +2914,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
             return contained and contains
         if op == op_NE:
             return not (contained and contains)
-         # remaining case <
+        # remaining case <
         return contained and not contains
 
     def __mul__(self, other):

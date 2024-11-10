@@ -15,6 +15,7 @@ Frank Lübeck's tables of Conway polynomials over finite fields
 # ****************************************************************************
 from collections.abc import Mapping
 
+
 class DictInMapping(Mapping):
     def __init__(self, dict):
         """

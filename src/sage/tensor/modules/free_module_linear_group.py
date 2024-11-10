@@ -35,6 +35,7 @@ from sage.categories.groups import Groups
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
 
+
 class FreeModuleLinearGroup(UniqueRepresentation, Parent):
     r"""
     General linear group of a free module of finite rank over a commutative

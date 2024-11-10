@@ -211,10 +211,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
             sage: CompositionTableau([[1],[3,2],[4,4]]).descent_set()
             [1, 3]
         """
-        cols = {}
-        for row in self:
-            for col, i in enumerate(row):
-                cols[i] = col
+        cols = {i: col for row in self for col, i in enumerate(row)}
         return sorted(i for i in cols if i + 1 in cols and cols[i + 1] >= cols[i])
 
     def descent_composition(self):

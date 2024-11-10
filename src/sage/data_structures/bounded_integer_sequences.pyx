@@ -1205,7 +1205,7 @@ cdef class BoundedIntegerSequence:
         if other is None or self is None:
             raise TypeError('cannot concatenate bounded integer sequence and None')
         myself = self  # may result in a type error
-        right = other  #  --"--
+        right = other  # --"--
         if right.data.itembitsize != myself.data.itembitsize:
             raise ValueError("can only concatenate bounded integer sequences of compatible bounds")
         out = BoundedIntegerSequence.__new__(BoundedIntegerSequence, 0, None)

@@ -400,7 +400,7 @@ cdef class FvarsHandler:
       known squares for initialization, e.g., from a solver checkpoint
     - ``use_mp`` -- integer indicating the number of child processes
       used for multiprocessing; if running serially, use 0
-    - ``pids_name`` -- the name of a ``ShareableList`` contaning the
+    - ``pids_name`` -- the name of a ``ShareableList`` containing the
       process ``pid``'s for every process in the pool (including the
       parent process)
     - ``name`` -- the name of a shared memory object
@@ -500,7 +500,7 @@ cdef class FvarsHandler:
         else:
             self.fvars = np.ndarray((self.ngens, ), dtype=self.fvars_t)
             self.child_id = 0
-        # Populate with initialziation data
+        # Populate with initialization data
         for sextuple, fvar in init_data.items():
             if isinstance(fvar, MPolynomial_libsingular):
                 fvar = _flatten_coeffs(poly_to_tup(fvar))

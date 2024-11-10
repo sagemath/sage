@@ -605,7 +605,7 @@ class KlyachkoBundle_class(SageObject):
         C = fan.complex()
         CV = []
         F = self.base_ring()
-        for dim in range(1,fan.dim()+1):
+        for dim in range(1, fan.dim()+1):
             codim = fan.dim() - dim
             d_C = C.differential(codim)
             d_V = []
@@ -616,7 +616,7 @@ class KlyachkoBundle_class(SageObject):
                     sigma = fan(dim-1)[i]
                     if sigma.is_face_of(tau):
                         pr = self.E_quotient_projection(sigma, tau, m)
-                        d = d_C[i,j] * pr.matrix().transpose()
+                        d = d_C[i, j] * pr.matrix().transpose()
                     else:
                         E_sigma = self.E_quotient(sigma, m)
                         E_tau = self.E_quotient(tau, m)
@@ -695,7 +695,7 @@ class KlyachkoBundle_class(SageObject):
             except KeyError:
                 HH[d] = FreeModule(self.base_ring(), 0)
         if dim:
-            HH = vector(ZZ, [HH[i].rank() for i in range(space_dim+1) ])
+            HH = vector(ZZ, [HH[i].rank() for i in range(space_dim+1)])
         return HH
 
     def __richcmp__(self, other, op):

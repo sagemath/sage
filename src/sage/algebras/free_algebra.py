@@ -651,7 +651,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
                     return M([(i % ngens, Ti) for i, Ti in enumerate(T) if Ti])
 
                 return self.element_class(self, {exp_to_monomial(T): c
-                                                 for T, c in x.letterplace_polynomial().dict().items()})
+                                                 for T, c in x.letterplace_polynomial().monomial_coefficients().items()})
         # ok, not a free algebra element (or should not be viewed as one).
         if isinstance(x, str):
             from sage.misc.sage_eval import sage_eval

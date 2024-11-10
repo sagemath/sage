@@ -37,6 +37,7 @@ from sage.rings.integer_ring import ZZ
 from sage.modules.free_module_element import vector
 from .base1 import Polyhedron_base1
 
+
 class Polyhedron_base2(Polyhedron_base1):
     """
     Methods related to lattice points.

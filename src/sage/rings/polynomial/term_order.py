@@ -539,6 +539,7 @@ description_mapping = {
     'block'         : block_description,
 }
 
+
 class TermOrder(SageObject):
     """
     A term order.

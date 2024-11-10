@@ -301,14 +301,12 @@ class ToricPlotter(SageObject):
         for key in ["xmin", "ymin", "zmin"]:
             if round or sd[key] is None:
                 sd[key] = - r
-            if sd[key] > - 0.5:
-                sd[key] = - 0.5
+            sd[key] = min(sd[key], - 0.5)
             sd[key] = RDF(sd[key])
         for key in ["xmax", "ymax", "zmax"]:
             if round or sd[key] is None:
                 sd[key] = r
-            if sd[key] < 0.5:
-                sd[key] = 0.5
+            sd[key] = max(sd[key], 0.5)
             sd[key] = RDF(sd[key])
         if self.show_lattice is None:
             self.show_lattice = (r <= 5) if d <= 2 else r <= 3

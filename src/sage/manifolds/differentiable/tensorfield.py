@@ -52,7 +52,7 @@ REFERENCES:
 # *****************************************************************************
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union
+from typing import TYPE_CHECKING, Optional, TypeVar, Union
 
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -72,7 +72,7 @@ if TYPE_CHECKING:
     from sage.tensor.modules.comp import Components
 
 
-TensorType = Tuple[int, int]
+TensorType = tuple[int, int]
 T = TypeVar("T", bound='TensorField')
 
 

@@ -66,8 +66,8 @@ cdef class _lazy_attribute():
 
             sage: Parent.element_class
             <sage.misc.lazy_attribute.lazy_attribute object at 0x...>
-            sage: Parent.element_class.__doc__[91:147]
-            'The (default) class for the elements of this parent.\n\n   '
+            sage: "The (default) class for the elements of this parent" in Parent.element_class.__doc__
+            True
             sage: Parent.element_class.__name__
             'element_class'
             sage: Parent.element_class.__module__
@@ -512,7 +512,7 @@ class lazy_class_attribute(lazy_attribute):
     A lazy class attribute for a class is like a usual class attribute,
     except that, instead of being computed when the class is constructed, it
     is computed on the fly the first time it is accessed, either through the
-    class itself or trough on of its objects.
+    class itself or through one of its objects.
 
     This is very similar to :class:`lazy_attribute` except that the attribute
     is a class attribute. More precisely, once computed, the lazy class

@@ -23,6 +23,7 @@ AUTHORS:
 from sage.misc.superseded import experimental
 from sage.structure.sage_object import SageObject
 
+
 class KeyExchangeScheme(SageObject):
     """
     Abstract base class for key exchange schemes.

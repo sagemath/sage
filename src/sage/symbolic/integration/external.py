@@ -285,7 +285,15 @@ def libgiac_integrator(expression, v, a=None, b=None):
         sage: (F.derivative(x) - f).simplify_trig()
         0
     """
-    from sage.libs.giac import libgiac
+    try:
+        from sage.libs.giac import libgiac
+    except ImportError:
+        # If libgiac isn't available, return a symbolic answer
+        # (without actually integrating anything). This is essentially
+        # the failure case of any integration: see below for what we
+        # do if libgiac is *available* but unable to do much.
+        return expression.integrate(v, a, b, hold=True)
+
     from sage.libs.giac.giac import Pygen
     # We call Pygen on first argument because otherwise some expressions
     # involving derivatives result in doctest failures in interfaces/sympy.py

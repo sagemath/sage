@@ -94,8 +94,8 @@ cdef int c_p1_normalize_int(int N, int u, int v,
 
     # Now g = s*u + t*N, so s is a "pseudo-inverse" of u mod N
     # Adjust s modulo N/g so it is coprime to N.
-    if g!=1:
-        d = N/g
+    if g != 1:
+        d = N // g
         while arith_int.c_gcd_int(s,N) != 1:
             s = (s+d) % N
 
@@ -105,8 +105,8 @@ cdef int c_p1_normalize_int(int N, int u, int v,
 
     min_v = v
     min_t = 1
-    if g!=1:
-        Ng = N/g
+    if g != 1:
+        Ng = N // g
         vNg = (v*Ng) % N
         t = 1
         for k in range(2, g + 1):
@@ -355,8 +355,8 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
 
     # Now g = s*u + t*N, so s is a "pseudo-inverse" of u mod N
     # Adjust s modulo N/g so it is coprime to N.
-    if g!=1:
-        d = N/g
+    if g != 1:
+        d = N // g
         while arith_int.c_gcd_int(s,N) != 1:
             s = (s+d) % N
 
@@ -367,8 +367,8 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
 
     min_v = v
     min_t = 1
-    if g!=1:
-        Ng = N/g
+    if g != 1:
+        Ng = N // g
         vNg = <int> ((<llong>v * <llong> Ng) % ll_N)
         t = 1
         for k in range(2, g + 1):
@@ -640,8 +640,8 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
 
     # Now g = s*u + t*N, so s is a "pseudo-inverse" of u mod N
     # Adjust s modulo N/g so it is coprime to N.
-    if g!=1:
-        d = N/g
+    if g != 1:
+        d = N // g
         while t_g[s] != 1:  # while arith_int.c_gcd_int(s,N) != 1:
             s = (s+d) % N
 
@@ -651,8 +651,8 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
 
     min_v = v
     min_t = 1
-    if g!=1:
-        Ng = N/g
+    if g != 1:
+        Ng = N // g
         vNg = (v*Ng) % N
         t = 1
         for k in range(2, g + 1):
@@ -1237,17 +1237,17 @@ def lift_to_sl2z_int(int c, int d, int N):
 
     # compute prime-to-d part of m.
     while True:
-        g = arith_int.c_gcd_int(m,d)
+        g = arith_int.c_gcd_int(m, d)
         if g == 1:
             break
-        m = m / g
+        m = m // g
 
     # compute prime-to-N part of m.
     while True:
-        g = arith_int.c_gcd_int(m,N)
+        g = arith_int.c_gcd_int(m, N)
         if g == 1:
             break
-        m = m / g
+        m = m // g
     d += N * m
     g = arith_int.c_xgcd_int(c, d, &z1, &z2)
 
@@ -1299,7 +1299,7 @@ def lift_to_sl2z_llong(llong c, llong d, int N):
     g = arith_llong.c_xgcd_longlong(c, d, &z1, &z2)
 
     # We're lucky: z1*c + z2*d = 1.
-    if g==1:
+    if g == 1:
         return [z2, -z1, c, d]
 
     # Have to try harder.
@@ -1307,17 +1307,17 @@ def lift_to_sl2z_llong(llong c, llong d, int N):
 
     # compute prime-to-d part of m.
     while True:
-        g = arith_llong.c_gcd_longlong(m,d)
+        g = arith_llong.c_gcd_longlong(m, d)
         if g == 1:
             break
-        m = m / g
+        m = m // g
 
     # compute prime-to-N part of m.
     while True:
-        g = arith_llong.c_gcd_longlong(m,N)
+        g = arith_llong.c_gcd_longlong(m, N)
         if g == 1:
             break
-        m = m / g
+        m = m // g
     d += N * m
     g = arith_llong.c_xgcd_longlong(c, d, &z1, &z2)
 

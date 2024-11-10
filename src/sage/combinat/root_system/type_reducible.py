@@ -525,7 +525,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             [(1, 1, 0, 0, 0), (0, 0, 0, 1/2, 1/2)]
         """
         shift = self.root_system.cartan_type()._shifts[i]
-        return self._from_dict( dict([(shift+k, c) for (k,c) in v ]))
+        return self._from_dict({shift + k: c for k, c in v})
 
     @cached_method
     def simple_root(self, i):

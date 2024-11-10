@@ -1,10 +1,10 @@
 r"""
 Euclidean Spaces
 
-An *Euclidean space of dimension* `n` is an affine space `E`, whose associated
+A *Euclidean space of dimension* `n` is an affine space `E`, whose associated
 vector space is a `n`-dimensional vector space over `\RR` and is equipped with
 a positive definite symmetric bilinear form, called the *scalar product* or
-*dot product* [Ber1987]_. An Euclidean space of dimension `n` can also be
+*dot product* [Ber1987]_. A Euclidean space of dimension `n` can also be
 viewed as a Riemannian manifold that is diffeomorphic to `\RR^n` and that
 has a flat metric `g`. The Euclidean scalar product is then that defined
 by the Riemannian metric `g`.
@@ -419,11 +419,12 @@ from sage.manifolds.differentiable.pseudo_riemannian import \
 
 ###############################################################################
 
+
 class EuclideanSpace(PseudoRiemannianManifold):
     r"""
     Euclidean space.
 
-    An *Euclidean space of dimension* `n` is an affine space `E`, whose
+    A *Euclidean space of dimension* `n` is an affine space `E`, whose
     associated vector space is a `n`-dimensional vector space over `\RR` and
     is equipped with a positive definite symmetric bilinear form, called
     the *scalar product* or *dot product*.
@@ -506,7 +507,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
         sage: latex(F)
         \mathcal{F}
 
-    By default, an Euclidean space is created with a single coordinate chart:
+    By default, a Euclidean space is created with a single coordinate chart:
     that of Cartesian coordinates::
 
         sage: E.atlas()
@@ -556,7 +557,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
         sage: latex(xi+ze)
         {\xi} + {\zeta}
 
-    Thanks to the argument ``coordinates``, an Euclidean space can be
+    Thanks to the argument ``coordinates``, a Euclidean space can be
     constructed with curvilinear coordinates initialized instead of the
     Cartesian ones::
 
@@ -729,14 +730,14 @@ class EuclideanSpace(PseudoRiemannianManifold):
                  category=None, init_coord_methods=None,
                  unique_tag=None):
         r"""
-        Construct an Euclidean space.
+        Construct a Euclidean space.
 
         INPUT:
 
         This class also takes the following input:
 
         - ``base_manifold`` -- (default: ``None``) if not ``None``, must be
-          an Euclidean space; the created object is then an open subset
+          a Euclidean space; the created object is then an open subset
           of ``base_manifold``
         - ``category`` -- (default: ``None``) to specify the category;
           if ``None``,
@@ -1041,18 +1042,19 @@ class EuclideanSpace(PseudoRiemannianManifold):
 
 ###############################################################################
 
+
 class EuclideanPlane(EuclideanSpace):
     r"""
     Euclidean plane.
 
-    An *Euclidean plane* is an affine space `E`, whose associated vector space
+    A *Euclidean plane* is an affine space `E`, whose associated vector space
     is a 2-dimensional vector space over `\RR` and is equipped with a
     positive definite symmetric bilinear form, called the *scalar product* or
     *dot product*.
 
     The class :class:`EuclideanPlane` inherits from
     :class:`~sage.manifolds.differentiable.pseudo_riemannian.PseudoRiemannianManifold`
-    (via :class:`EuclideanSpace`) since an Euclidean plane can be viewed
+    (via :class:`EuclideanSpace`) since a Euclidean plane can be viewed
     as a Riemannian manifold that is diffeomorphic to `\RR^2` and that has a
     flat metric `g`. The Euclidean scalar product is the one defined by the
     Riemannian metric `g`.
@@ -1109,7 +1111,7 @@ class EuclideanPlane(EuclideanSpace):
 
     EXAMPLES:
 
-    One creates an Euclidean plane ``E`` with::
+    One creates a Euclidean plane ``E`` with::
 
         sage: E.<x,y> = EuclideanSpace(); E
         Euclidean plane E^2
@@ -1165,7 +1167,7 @@ class EuclideanPlane(EuclideanSpace):
                  symbols=None, metric_name='g', metric_latex_name=None,
                  start_index=1, base_manifold=None, category=None, unique_tag=None):
         r"""
-        Construct an Euclidean plane.
+        Construct a Euclidean plane.
 
         TESTS::
 
@@ -1598,7 +1600,7 @@ class Euclidean3dimSpace(EuclideanSpace):
     - ``start_index`` -- (default: 1) integer; lower value of the range of
       indices used for "indexed objects" in the Euclidean 3-space, e.g.
       coordinates of a chart
-    - ``base_manifold`` -- (default: ``None``) if not ``None``, must be an
+    - ``base_manifold`` -- (default: ``None``) if not ``None``, must be a
       Euclidean 3-space; the created object is then an open subset of
       ``base_manifold``
     - ``category`` -- (default: ``None``) to specify the category; if ``None``,
@@ -1686,7 +1688,7 @@ class Euclidean3dimSpace(EuclideanSpace):
                  symbols=None, metric_name='g', metric_latex_name=None,
                  start_index=1, base_manifold=None, category=None, unique_tag=None):
         r"""
-        Construct an Euclidean 3-space.
+        Construct a Euclidean 3-space.
 
         TESTS::
 
@@ -2439,7 +2441,7 @@ class Euclidean3dimSpace(EuclideanSpace):
         Return the scalar triple product operator, as a 3-form.
 
         The *scalar triple product* (also called *mixed product*) of three
-        vector fields `u`, `v` and `w` defined on an Euclidean space `E`
+        vector fields `u`, `v` and `w` defined on a Euclidean space `E`
         is the scalar field
 
         .. MATH::

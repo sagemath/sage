@@ -949,7 +949,7 @@ def contour_plot(f, xrange, yrange, **options):
             # ...make it actually the const_z0 function.
             xy_data_array.fill(z0)
 
-            # We're going to set fill=True in a momemt, so we need to
+            # We're going to set fill=True in a moment, so we need to
             # prepend an entry to the cmap so that the user's original
             # cmap winds up in the right place.
             if "cmap" in options:

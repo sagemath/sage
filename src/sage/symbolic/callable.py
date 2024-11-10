@@ -213,11 +213,11 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
         temp = set()
         # Sorting remaining variables.
         for j in range(i, len(a)):
-            if not a[j] in temp:
+            if a[j] not in temp:
                 temp.add(a[j])
 
         for j in range(i, len(b)):
-            if not b[j] in temp:
+            if b[j] not in temp:
                 temp.add(b[j])
 
         new_list.extend(sorted(temp, key=repr))

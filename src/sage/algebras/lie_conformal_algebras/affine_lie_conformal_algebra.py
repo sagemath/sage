@@ -96,7 +96,7 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
                 ct = CartanType(ct)
             except IndexError:
                 raise ValueError("ct must be a valid Cartan Type")
-        if not (ct.is_finite() and ct.is_irreducible ):
+        if not (ct.is_finite() and ct.is_irreducible):
             raise ValueError("only affine algebras of simple finite dimensional"
                 "Lie algebras are implemented")
         hv = Integer(ct.dual_coxeter_number())

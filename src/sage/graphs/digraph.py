@@ -873,7 +873,7 @@ class DiGraph(GenericGraph):
         r"""
         Return the ``dig6`` representation of the digraph as an ASCII string.
 
-        This is only valid for single (no multiple edges) digraphs on at most
+        This is only valid for simple (no multiple edges) digraphs on at most
         `2^{18} - 1 = 262143` vertices.
 
         .. NOTE::
@@ -893,6 +893,9 @@ class DiGraph(GenericGraph):
             sage: D = DiGraph({0: [1, 2], 1: [2], 2: [3], 3: [0]})
             sage: D.dig6_string()
             'CW`_'
+            sage: L = DiGraph({0: [1, 2], 1: [2], 2: [3], 3: [3]})
+            sage: L.dig6_string()
+            'CW`C'
 
         TESTS::
 
@@ -1315,7 +1318,7 @@ class DiGraph(GenericGraph):
         if vertices in self:
             return self._backend.in_degree(vertices)
         elif labels:
-            return {v: d for v, d in self.in_degree_iterator(vertices, labels=labels)}
+            return dict(self.in_degree_iterator(vertices, labels=labels))
         return list(self.in_degree_iterator(vertices, labels=labels))
 
     def in_degree_iterator(self, vertices=None, labels=False):
@@ -1385,7 +1388,7 @@ class DiGraph(GenericGraph):
         if vertices in self:
             return self._backend.out_degree(vertices)
         elif labels:
-            return {v: d for v, d in self.out_degree_iterator(vertices, labels=labels)}
+            return dict(self.out_degree_iterator(vertices, labels=labels))
         return list(self.out_degree_iterator(vertices, labels=labels))
 
     def out_degree_iterator(self, vertices=None, labels=False):

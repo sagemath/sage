@@ -1,1 +1,5 @@
-notebook r
+notebook rpy2
+
+----------
+R is the real dependency. But SPKG r is a dummy package, and does not install R.
+Since SPKG rpy2 checks for the system R, we put rpy2 as a dependency instead.

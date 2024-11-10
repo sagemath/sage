@@ -21,7 +21,7 @@ design from this database, we include extra information:
 REFERENCES:
 
 .. [1] La Jolla Covering Repository,
-  https://ljcr.dmgordon.org/cover.html
+  https://dmgordon.org/cover
 
 .. [2] Daniel M. Gordon and Douglas R. Stinson, *Coverings*,
   Chapter 1 in: Charles J. Colbourn and Jeffrey H. Dinitz,
@@ -516,7 +516,7 @@ def best_known_covering_design_www(v, k, t, verbose=False):
     k = int(k)
     t = int(t)
     param = "?v=%s&k=%s&t=%s" % (v, k, t)
-    url = "https://ljcr.dmgordon.org/cover/get_cover.php" + param
+    url = "https://ljcr.dmgordon.org/get_cover.php" + param
     if verbose:
         print("Looking up the bounds at %s" % url)
 

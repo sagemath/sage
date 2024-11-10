@@ -23,6 +23,7 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.structure.sage_object import SageObject
 
+
 class Encoder(SageObject):
     r"""
     Abstract top-class for :class:`Encoder` objects.
@@ -379,6 +380,7 @@ class Encoder(SageObject):
             [0 1 0 1 0 1 0]
             [1 1 0 1 0 0 1]
         """
+
 
 class EncodingError(Exception):
     r"""

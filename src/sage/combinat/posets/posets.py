@@ -7682,18 +7682,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: R.chain_polynomial()
             q + 1
         """
-        hasse = self._hasse_diagram
-        q = polygen(ZZ, 'q')
-        one = q.parent().one()
-        hasse_size = hasse.cardinality()
-        chain_polys = [0] * hasse_size
-        # chain_polys[i] will be the generating function for the
-        # chains with topmost vertex i (in the labelling of the
-        # Hasse diagram).
-        for i in range(hasse_size):
-            chain_polys[i] = q + sum(q * chain_polys[j]
-                                     for j in hasse.principal_order_ideal(i))
-        return one + sum(chain_polys)
+        return self._hasse_diagram.chain_polynomial()
 
     def order_polynomial(self):
         r"""
@@ -8895,11 +8884,11 @@ class FinitePosets_n(UniqueRepresentation, Parent):
         sage: P.cardinality()
         5
         sage: for p in P: print(p.cover_relations())
-        []
-        [[1, 2]]
-        [[0, 1], [0, 2]]
-        [[0, 1], [1, 2]]
         [[1, 2], [0, 2]]
+        [[0, 1], [0, 2]]
+        [[0, 2]]
+        [[0, 1], [1, 2]]
+        []
     """
 
     def __init__(self, n) -> None:
@@ -8941,27 +8930,40 @@ class FinitePosets_n(UniqueRepresentation, Parent):
         return P in FinitePosets() and P.cardinality() == self._n
 
     def __iter__(self):
-        """
+        r"""
         Return an iterator of representatives of the isomorphism classes
         of finite posets of a given size.
 
         .. NOTE::
 
-            This uses the DiGraph iterator as a backend to construct
-            transitively-reduced, acyclic digraphs.
+            If the size `n\leq 16`, this uses an iterator from
+            ``nauty`` as a backend to construct only transitively-reduced,
+            acyclic digraphs. Otherwise it uses a slow naive iterator,
+            as the ``nauty`` iterator is not available.
 
         EXAMPLES::
 
             sage: P = Posets(2)
             sage: list(P)
             [Finite poset containing 2 elements, Finite poset containing 2 elements]
+
+        TESTS::
+
+            sage: it = iter(Posets(17))
+            sage: next(it)
+            Finite poset containing 17 elements
         """
-        from sage.graphs.digraph_generators import DiGraphGenerators
-        for dig in DiGraphGenerators()(self._n, is_poset):
+        if self._n <= 16:
+            it = digraphs.nauty_posetg(f"{self._n} o")
+        else:
+            it = digraphs(self._n, is_poset)
+
+        for dig in it:
             # We need to relabel the digraph since range(self._n) must be a linear
             # extension. Too bad we need to compute this again. TODO: Fix this.
-            label_dict = dict(zip(dig.topological_sort(), range(dig.order())))
-            yield FinitePoset(dig.relabel(label_dict, inplace=False))
+            label_dict = dict(zip(dig.topological_sort(), range(self._n)))
+            dig.relabel(label_dict, inplace=True)
+            yield FinitePoset(dig)
 
     def cardinality(self, from_iterator=False):
         r"""

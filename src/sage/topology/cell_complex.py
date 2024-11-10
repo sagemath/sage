@@ -709,16 +709,17 @@ class GenericCellComplex(SageObject):
             sage: S2c.betti(2)                                                          # needs sage.modules
             1
         """
-        dict = {}
+        dic = {}
         H = self.homology(dim, base_ring=QQ, subcomplex=subcomplex)
         try:
             for n in H.keys():
-                dict[n] = H[n].dimension()
+                dic[n] = H[n].dimension()
                 if n == 0:
-                    dict[n] += 1
-            return dict
+                    dic[n] += 1
         except AttributeError:
             return H.dimension()
+        else:
+            return dic
 
     def is_acyclic(self, base_ring=ZZ):
         """

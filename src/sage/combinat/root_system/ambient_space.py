@@ -369,8 +369,7 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
 
     def inner_product(self, lambdacheck):
         """
-        The scalar product with elements of the coroot lattice
-        embedded in the ambient space.
+        The scalar product with elements of the ambient space.
 
         EXAMPLES::
 
@@ -379,15 +378,32 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
             (-1, 0, 0)
             sage: a.inner_product(a)
             2
+
+        TESTS:
+
+        Verify that :issue:`15325` (A) is fixed::
+
+            sage: rt = RootSystem(['E', 8])
+            sage: lat = rt.root_lattice()
+            sage: spc = rt.ambient_space()
+            sage: spc.simple_root(1).scalar(lat.simple_coroot(2))
+            0
         """
+        if self.parent() is not lambdacheck.parent():
+            try:
+                # see if lambdacheck can be converted to the ambient space
+                lambdacheck = self.parent()(lambdacheck)
+            except (TypeError, ValueError):
+                raise TypeError(f"unable to coerce {lambdacheck} into {self.parent()}")
+
+        # self and lambdacheck both belong to the same ambient space, so use the inner product there
         self_mc = self._monomial_coefficients
         lambdacheck_mc = lambdacheck._monomial_coefficients
 
         result = self.parent().base_ring().zero()
         for t,c in lambdacheck_mc.items():
-            if t not in self_mc:
-                continue
-            result += c*self_mc[t]
+            if t in self_mc:
+                result += c*self_mc[t]
         return result
 
     scalar = inner_product

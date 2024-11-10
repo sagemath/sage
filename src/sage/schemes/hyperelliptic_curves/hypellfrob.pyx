@@ -127,8 +127,10 @@ def interval_products(M0, M1, target):
     cdef long dim = M0.nrows()
     sig_on()
     c.restore_c()
+    sig_off()
     set_ntl_matrix_modn_dense(mm0, c, M0)
     set_ntl_matrix_modn_dense(mm1, c, M1)
+    sig_on()
     for t in target:
         targ.push_back(ntl_ZZ(t).x)
     numintervals = len(target)/2

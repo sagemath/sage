@@ -34,6 +34,7 @@ REFERENCES:
 from sage.categories.homset import Hom
 from sage.categories.morphism import Morphism
 
+
 class ContinuousMap(Morphism):
     r"""
     Continuous map between two topological manifolds.
@@ -1062,7 +1063,7 @@ class ContinuousMap(Morphism):
 
         EXAMPLES:
 
-        A simple reparamentrization::
+        A simple reparametrization::
 
             sage: R.<t> = manifolds.RealLine()
             sage: I = R.open_interval(0, 2*pi)

@@ -854,7 +854,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             A.subdivide(*self.subdivisions())
         return A
 
-
     cpdef _add_(self, right):
         r"""
         Add two dense matrices over `\Z/n\Z`.
@@ -897,7 +896,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             M._entries[i] = k - (k >= p) * p
         sig_off()
         return M
-
 
     cpdef _sub_(self, right):
         r"""
@@ -1403,7 +1401,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         self.cache(cache_key, g)
         return g
-
 
     def minpoly(self, var='x', algorithm='linbox', proof=None):
         """

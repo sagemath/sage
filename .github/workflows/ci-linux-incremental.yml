@@ -46,7 +46,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Get all packages that have changed
         id: changed-files
-        uses: tj-actions/changed-files@v44
+        uses: tj-actions/changed-files@v45
         with:
           files_yaml: |
             configures:
@@ -60,9 +60,9 @@ jobs:
           uninstall_targets=$(echo $(for a in '' ${{ steps.changed-files.outputs.configures_all_changed_files }}; do echo $a | sed -E 's,build/pkgs/([a-z0-9][_.a-z0-9]*)/spkg-configure[.]m4 *,\1-uninstall,'; done | sort -u))
           build_targets=$(echo $(for a in '' ${{ steps.changed-files.outputs.pkgs_all_changed_files }}; do SPKG=$(echo $a | sed -E 's,-,_,g;s,(build/)?pkgs/([a-z0-9][-_.a-z0-9]*)/[^ ]* *,\2,;'); if [ -f "build/pkgs/$SPKG/checksums.ini" -o -f "build/pkgs/$SPKG/requirements.txt" -o -f "build/pkgs/$SPKG/spkg-install" ]; then echo "$SPKG-ensure"; fi; done | sort -u))
           if [ -n "$uninstall_targets" ]; then
-              echo "build_targets=$uninstall_targets reconfigure $build_targets ci-build-with-fallback" >> $GITHUB_OUTPUT
+              echo "build_targets=$uninstall_targets reconfigure $build_targets" >> $GITHUB_OUTPUT
           else
-              echo "build_targets=$build_targets ci-build-with-fallback" >> $GITHUB_OUTPUT
+              echo "build_targets=$build_targets" >> $GITHUB_OUTPUT
           fi
           cat $GITHUB_OUTPUT
       - uses: actions/checkout@v4
@@ -92,7 +92,7 @@ jobs:
       from_docker_target: "with-targets"
       from_docker_tag: "dev"
       docker_targets: "with-targets"
-      targets: "${{needs.changed_files.outputs.build_targets}} doc-html ptest-nodoc"
+      targets: "${{needs.changed_files.outputs.build_targets}} ci-build-with-fallback doc-html ptest-nodoc"
       tox_system_factors: >-
         ["ubuntu-focal",
          "ubuntu-noble",
@@ -107,6 +107,29 @@ jobs:
            "minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
       max_parallel: 8
+
+  constraints_pkgs-norequirements:
+    needs: [changed_files]
+    uses: ./.github/workflows/docker.yml
+    with:
+      # Build incrementally from published Docker image
+      incremental: true
+      free_disk_space: true
+      from_docker_repository: ghcr.io/sagemath/sage/
+      from_docker_target: "with-targets-pre"
+      from_docker_tag: "dev"
+      docker_targets: "with-targets-pre"
+      targets_pre: "${{needs.changed_files.outputs.build_targets}} all-sage-local python3-ensure tox-ensure sagelib-tox-sagepython-constraints_pkgs-norequirements"
+      tox_system_factors: >-
+        ["ubuntu-focal",
+         "ubuntu-noble",
+         "debian-bookworm",
+         "fedora-40",
+         "debian-bullseye-i386"]
+      tox_packages_factors: >-
+          ["standard"]
+      docker_push_repository: ghcr.io/${{ github.repository }}/
+      max_parallel: 16
 
   site:
     needs: [changed_files]

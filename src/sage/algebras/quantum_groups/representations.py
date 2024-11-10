@@ -124,7 +124,7 @@ class QuantumGroupRepresentation(CombinatorialFreeModule):
         """
         WLR = self.basis().keys().weight_lattice_realization()
         alc = WLR.simple_coroots()
-        return self.term( b, self._q**(b.weight().scalar(alc[i]) * self._d[i] * power) )
+        return self.term(b, self._q**(b.weight().scalar(alc[i]) * self._d[i] * power))
 
 
 class CyclicRepresentation(QuantumGroupRepresentation):

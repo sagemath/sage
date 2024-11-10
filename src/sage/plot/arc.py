@@ -150,7 +150,7 @@ class Arc(GraphicPrimitive):
         if angle < 0:
             angle += twopi
 
-        epsilon = float(0.0000001)
+        epsilon = 0.0000001
 
         cos_angle = cos(angle)
         sin_angle = sin(angle)

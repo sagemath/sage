@@ -202,11 +202,7 @@ def _monomial_exponent_to_lower_factorial(me, x):
         sage: _monomial_exponent_to_lower_factorial(([2,2,2]),a)
         x^2*y^2*z^2 - x^2*y^2*z - x^2*y*z^2 - x*y^2*z^2 + x^2*y*z + x*y^2*z + x*y*z^2 - x*y*z
     """
-    terms = []
-    for i in range(len(me)):
-        for j in range(me[i]):
-            terms.append( x[i]-j )
-    return prod(terms)
+    return prod(x[i] - j for i, mei in enumerate(me) for j in range(mei))
 
 
 def umbral_operation(poly):
@@ -235,7 +231,7 @@ def umbral_operation(poly):
     exponents = poly.exponents()
     coefficients = poly.coefficients()
     length = len(exponents)
-    return sum( [coefficients[i]*_monomial_exponent_to_lower_factorial(exponents[i],x) for i in range(length)] )
+    return sum(coefficients[i]*_monomial_exponent_to_lower_factorial(exponents[i], x) for i in range(length))
 
 
 class IterableFunctionCall:

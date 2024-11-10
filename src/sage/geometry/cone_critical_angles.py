@@ -40,6 +40,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
 from sage.symbolic.constants import pi
 
+
 def _normalize_gevp_solution(gevp_solution):
     r"""
     Normalize the results of :func:`solve_gevp_nonzero` and

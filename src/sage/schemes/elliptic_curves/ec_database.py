@@ -72,6 +72,7 @@ from ast import literal_eval
 
 from .constructor import EllipticCurve
 
+
 class EllipticCurves:
     def rank(self, rank, tors=0, n=10, labels=False):
         r"""

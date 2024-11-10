@@ -135,21 +135,25 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         return self._from_dict(z_elt)
 
     def from_polynomial(self, f, check=True):
-        """
-        Return the symmetric function in the monomial basis corresponding to the polynomial ``f``.
+        r"""
+        Return the symmetric function in the monomial basis corresponding
+        to the polynomial ``f``.
 
         INPUT:
 
         - ``self`` -- a monomial symmetric function basis
-        - ``f`` -- a polynomial in finitely many variables over the same base ring as ``self``;
-          it is assumed that this polynomial is symmetric
-        - ``check`` -- boolean (default: ``True``); checks whether the polynomial is indeed symmetric
+        - ``f`` -- a polynomial in finitely many variables over the
+          same base ring as ``self``; it is assumed that this
+          polynomial is symmetric
+        - ``check`` -- boolean (default: ``True``); checks whether
+          the polynomial is indeed symmetric
 
         OUTPUT:
 
-        - This function converts a symmetric polynomial `f` in a polynomial ring in finitely
-          many variables to a symmetric function in the monomial
-          basis of the ring of symmetric functions over the same base ring.
+        - This function converts a symmetric polynomial `f` in a
+          polynomial ring in finitely many variables to a symmetric
+          function in the monomial basis of the ring of symmetric
+          functions over the same base ring.
 
         EXAMPLES::
 
@@ -173,12 +177,13 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             sage: f = (2*m[2,1]+m[1,1]+3*m[3]).expand(3)
             sage: m.from_polynomial(f)
             m[1, 1] + 2*m[2, 1] + 3*m[3]
+
         """
         assert self.base_ring() == f.base_ring()
         if check and not f.is_symmetric():
             raise ValueError("%s is not a symmetric polynomial" % f)
         out = self._from_dict({_Partitions.element_class(_Partitions, list(e)): c
-                               for (e,c) in f.dict().items()
+                               for e, c in f.monomial_coefficients().items()
                                if all(e[i+1] <= e[i] for i in range(len(e)-1))},
                               remove_zeros=False)
         return out

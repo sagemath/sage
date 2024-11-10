@@ -605,13 +605,13 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sc[k[1], k[0]] = -v
             X = self.basis().keys()
             d = len(X)
-            ret = []
             t = m.nrows()
             c_mat = matrix(self.base_ring(),
-                           [[sum(m[i,j] * sc[x,xp][k] for j, xp in enumerate(X)
-                                 if (x, xp) in sc)
+                           [[sum(m[i, j] * sc[x, xp][k]
+                                 for j, xp in enumerate(X) if (x, xp) in sc)
                              for x in X]
-                            + [0]*(i*t) + [-m[j,k] for j in range(t)] + [0]*((t-i-1)*t)
+                            + [0]*(i*t) + [-m[j, k] for j in range(t)]
+                            + [0]*((t-i-1)*t)
                             for i in range(t) for k in range(d)])
             C = c_mat.right_kernel().basis_matrix()
             return [self.from_vector(c[:d]) for c in C]
@@ -2430,7 +2430,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
               General case
 
-              * ``'generic'`` -- generic algortihm (only implemented currently
+              * ``'generic'`` -- generic algorithm (only implemented currently
                 for positive characteristic)
 
             Note that the algorithm for any more generic cases can be used

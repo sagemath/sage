@@ -2064,12 +2064,9 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
             sage: ps._fill_piece('0', '0', ps._bottom_deltas)
             [0/0\0]
         """
-        output = []
-        for piece in pieces:
-            if (piece['north_west'] == nw_label and
-                    piece['north_east'] == ne_label):
-                output.append(piece)
-        return output
+        return [piece for piece in pieces
+                if (piece['north_west'] == nw_label and
+                    piece['north_east'] == ne_label)]
 
     @cached_method
     def _fill_strip(self, nw_labels, ne_label, pieces, final_pieces=None):

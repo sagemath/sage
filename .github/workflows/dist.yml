@@ -76,24 +76,6 @@ jobs:
             upstream
           name: release_dist
 
-  release:
-
-    needs: release_dist
-    runs-on: ubuntu-latest
-    if: (success() || failure()) && github.repository == 'sagemath/sage' && startsWith(github.ref, 'refs/tags/') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: release_dist
-      - uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
-          files: |
-            dist/*
-            upstream/*
-    permissions:
-      contents: write
-
   sdists_for_pypi:
 
     runs-on: ubuntu-latest
@@ -123,6 +105,29 @@ jobs:
           skip-existing: true
           verbose: true
         if: env.CAN_DEPLOY == 'true'
+
+  release:
+
+    needs: [release_dist, sdists_for_pypi]
+    runs-on: ubuntu-latest
+    if: (success() || failure()) && github.repository == 'sagemath/sage' && startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release_dist
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'rc') }}
+          files: |
+            dist/*
+            upstream/*
+    permissions:
+      contents: write
 
   noarch_wheels_for_pypi:
 
@@ -257,6 +262,13 @@ jobs:
       - name: sagemath-mcqd
         run: |
           "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*mcqd*
+
+      - name: sagemath-tdlib
+        run: |
+          case "${{ matrix.arch }}" in
+              i686) ;;  # broken - boost-related
+              *) "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*tdlib*
+          esac
 
       - uses: actions/upload-artifact@v4
         with:

@@ -159,7 +159,7 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
             E._unsafe_mutate(0, a0)
         return R(E, prec)
         # The following is an older slower alternative to the above three lines:
-        #return a0fac*R(eisenstein_series_poly(k, prec).list(), prec=prec, check=False)
+        # return a0fac*R(eisenstein_series_poly(k, prec).list(), prec=prec, check=False)
     else:
         # This used to work with check=False, but that can only be regarded as
         # an improbable lucky miracle. Enabling checking is a noticeable speed
@@ -169,6 +169,7 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
             return a0fac*R(eisenstein_series_poly(k, prec).list(), prec=prec, check=True)
         else:
             return R(eisenstein_series_poly(k, prec).list(), prec=prec, check=True)
+
 
 def __common_minimal_basering(chi, psi):
     """
@@ -279,7 +280,7 @@ def __find_eisen_chars(character, k):
         if L not in C:
             continue
         GL = C[L]
-        for R in divisors(N/L):
+        for R in divisors(N // L):
             if R not in C:
                 continue
             GR = C[R]
@@ -288,8 +289,8 @@ def __find_eisen_chars(character, k):
                     if chi*psi == eps:
                         chi0, psi0 = __common_minimal_basering(chi, psi)
                         for t in divisors(N//(R*L)):
-                            if k != 1 or ((psi0, chi0, t) not in params):
-                                params.append( (chi0,psi0,t) )
+                            if k != 1 or (psi0, chi0, t) not in params:
+                                params.append((chi0, psi0, t))
     return params
 
 
@@ -365,8 +366,6 @@ def __find_eisen_chars_gamma1(N, k):
                         pairs.append((psi, chi))
                     else:
                         pairs.append((chi, psi))
-        #end fors
-    #end if
 
     triples = []
     for chi, psi in pairs:
@@ -376,14 +375,14 @@ def __find_eisen_chars_gamma1(N, k):
         if k == 2 and chi.is_trivial() and psi.is_trivial():
             D.remove(1)
         chi, psi = __common_minimal_basering(chi, psi)
-        for t in D:
-            triples.append((chi, psi, t))
+        triples.extend((chi, psi, t) for t in D)
+
     return triples
 
 
 def eisenstein_series_lseries(weight, prec=53,
-               max_imaginary_part=0,
-               max_asymp_coeffs=40):
+                              max_imaginary_part=0,
+                              max_asymp_coeffs=40):
     r"""
     Return the `L`-series of the weight `2k` Eisenstein series
     on `\SL_2(\ZZ)`.

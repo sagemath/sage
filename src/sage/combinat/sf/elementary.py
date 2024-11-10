@@ -521,4 +521,6 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.elementary', 'SymmetricFunctionAlgebraElement_elementary',  SymmetricFunctionAlgebra_elementary.Element)
+register_unpickle_override('sage.combinat.sf.elementary',
+                           'SymmetricFunctionAlgebraElement_elementary',
+                           SymmetricFunctionAlgebra_elementary.Element)

@@ -150,7 +150,6 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
                 return root
         raise ValueError("%s is not in the image of %s" % (x, self._inverse))
 
-
     def _repr_(self):
         """
         Return a string representation of this section.
@@ -166,7 +165,6 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
             'Section of Ring morphism:\n  From: Finite Field in t of size 3^7\n  To:   Finite Field in T of size 3^21\n  Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T'
         """
         return "Section of %s" % self._inverse
-
 
     def _latex_(self):
         r"""
@@ -321,7 +319,6 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
             f = f.map_coefficients(bm)
         return f(self.im_gens()[0])
 
-
     def is_injective(self):
         """
         Return ``True`` since a embedding between finite fields is
@@ -337,7 +334,6 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
             True
         """
         return True
-
 
     def is_surjective(self):
         """
@@ -357,7 +353,6 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
             True
         """
         return self.domain().cardinality() == self.codomain().cardinality()
-
 
     @cached_method
     def section(self):
@@ -544,7 +539,6 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         self._q = domain.characteristic() ** self._power
         RingHomomorphism.__init__(self, Hom(domain, domain))
 
-
     def _repr_(self):
         """
         Return a string representation of this endomorphism.
@@ -568,7 +562,6 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         s += " %s" % self.domain()
         return s
 
-
     def _repr_short(self):
         """
         Return a short string representation of this endomorphism.
@@ -590,7 +583,6 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         else:
             s = "%s |--> %s^(%s^%s)" % (name, name, self.domain().characteristic(), self._power)
         return s
-
 
     def _latex_(self):
         r"""
@@ -615,7 +607,6 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
             s = "%s \\mapsto %s^{%s^{%s}}" % (name, name, self.domain().characteristic(), self._power)
         return s
 
-
     cpdef Element _call_(self, x):
         """
         TESTS::
@@ -631,7 +622,6 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
             return x
         else:
             return x.pth_power(self._power)
-
 
     def order(self):
         """
@@ -672,7 +662,6 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
             1
         """
         return self._power
-
 
     def __pow__(self, n, modulus):
         """
@@ -735,7 +724,6 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         else:
             return RingHomomorphism._composition(self, right)
 
-
     def fixed_field(self):
         """
         Return the fixed field of ``self``.
@@ -780,7 +768,6 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
             f = FiniteFieldHomomorphism_generic(Hom(k, self.domain()))
         return k, f
 
-
     def is_injective(self):
         """
         Return ``True`` since any power of the Frobenius endomorphism
@@ -795,7 +782,6 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         """
         return True
 
-
     def is_surjective(self):
         """
         Return ``True`` since any power of the Frobenius endomorphism
@@ -809,7 +795,6 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
             True
         """
         return True
-
 
     def is_identity(self):
         """

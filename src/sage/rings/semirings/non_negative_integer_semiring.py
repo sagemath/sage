@@ -1,17 +1,18 @@
 r"""
 Non Negative Integer Semiring
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010  Nicolas Borie <nicolas.borie at math.u-psud.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.categories.semirings import Semirings
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.sets.family import Family
+
 
 class NonNegativeIntegerSemiring(NonNegativeIntegers):
     r"""
@@ -69,9 +70,10 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
             Category of facade infinite enumerated commutative semirings
             sage: TestSuite(NN).run()
         """
-        NonNegativeIntegers.__init__(self, category=(Semirings().Commutative(), InfiniteEnumeratedSets()) )
+        NonNegativeIntegers.__init__(self, category=(Semirings().Commutative(),
+                                                     InfiniteEnumeratedSets()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

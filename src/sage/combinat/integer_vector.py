@@ -1174,19 +1174,17 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         EXAMPLES::
 
             sage: IV = IntegerVectors(2,3)
-            sage: IV._list_rec(2,3)
+            sage: list(IV._list_rec(2,3))
             [(2, 0, 0), (1, 1, 0), (1, 0, 1), (0, 2, 0), (0, 1, 1), (0, 0, 2)]
         """
-        res = []
-
         if k == 1:
-            return [(n, )]
+            yield (n,)
+            return
 
         for nbar in range(n + 1):
             n_diff = n - nbar
             for rest in self._list_rec(nbar, k - 1):
-                res.append((n_diff,) + rest)
-        return res
+                yield (n_diff,) + rest
 
     def __iter__(self):
         """

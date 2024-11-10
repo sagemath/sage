@@ -33,6 +33,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.manifolds.continuous_map import ContinuousMap
 from sage.misc.cachefunc import cached_method
 
+
 class TopologicalManifoldHomset(UniqueRepresentation, Homset):
     r"""
     Set of continuous maps between two topological manifolds.

@@ -482,15 +482,15 @@ class Chain_class(ModuleElement):
         from sage.typeset.unicode_art import UnicodeArt
 
         def arrow_art(d):
-            d_str = [u'  d_{0}  '.format(d)]
-            arrow = u' <' + u'─' * (len(d_str[0]) - 3) + u' '
+            d_str = ['  d_{0}  '.format(d)]
+            arrow = ' <' + '─' * (len(d_str[0]) - 3) + ' '
             d_str.append(arrow)
             return UnicodeArt(d_str, baseline=0)
 
         def vector_art(d):
             v = self.vector(d)
             if not v.degree():
-                return UnicodeArt([u'0'])
+                return UnicodeArt(['0'])
             w = matrix(v).transpose()
             return w._unicode_art_()
 
@@ -499,17 +499,17 @@ class Chain_class(ModuleElement):
         for ordered in chain_complex.ordered_degrees():
             ordered = list(reversed(ordered))
             if not ordered:
-                return UnicodeArt([u'0'])
+                return UnicodeArt(['0'])
             result_ordered = vector_art(ordered[0] +
                                         chain_complex.degree_of_differential())
             for n in ordered:
                 result_ordered += arrow_art(n) + vector_art(n)
             result = [result_ordered] + result
         if len(result) == 0:
-            return UnicodeArt([u'0'])
+            return UnicodeArt(['0'])
         concatenated = result[0]
         for r in result[1:]:
-            concatenated += UnicodeArt([u' ... ']) + r
+            concatenated += UnicodeArt([' ... ']) + r
         return concatenated
 
     def is_cycle(self):
@@ -1721,33 +1721,33 @@ class ChainComplex_class(Parent):
         def arrow_art(n):
             d_n = self.differential(n)
             if not d_n.nrows() or not d_n.ncols():
-                return UnicodeArt([u'<──'])
+                return UnicodeArt(['<──'])
             d_str = list(d_n._unicode_art_())
-            arrow = u'<' + u'─' * (len(d_str[0]) - 1)
+            arrow = '<' + '─' * (len(d_str[0]) - 1)
             d_str.append(arrow)
             return UnicodeArt(d_str)
 
         def module_art(n):
             C_n = self.free_module(n)
             if not C_n.rank():
-                return UnicodeArt([u' 0 '])
+                return UnicodeArt([' 0 '])
             else:
-                return UnicodeArt([u' C_{0} '.format(n)])
+                return UnicodeArt([' C_{0} '.format(n)])
 
         result = []
         for ordered in self.ordered_degrees():
             ordered = list(reversed(ordered))
             if not ordered:
-                return UnicodeArt([u'0'])
+                return UnicodeArt(['0'])
             result_ordered = module_art(ordered[0] + self.degree_of_differential())
             for n in ordered:
                 result_ordered += arrow_art(n) + module_art(n)
             result = [result_ordered] + result
         if len(result) == 0:
-            return UnicodeArt([u'0'])
+            return UnicodeArt(['0'])
         concatenated = result[0]
         for r in result[1:]:
-            concatenated += UnicodeArt([u' ... ']) + r
+            concatenated += UnicodeArt([' ... ']) + r
         return concatenated
 
     def _latex_(self):

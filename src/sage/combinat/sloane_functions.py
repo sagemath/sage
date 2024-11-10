@@ -6794,8 +6794,7 @@ class A001694(SloaneSequence):
         # This is naive -- too slow; too much overhead
         #  return [i for i in range(self._n, self._n+how_many) if self.is_powerful(i)]
 
-        if n < 4:
-            n = 4
+        n = max(n, 4)
         # Use PARI directly -- much faster.
         from sage.libs.pari.all import pari
         L = pari('v=listcreate(); for(i=%s,%s,if(vecmin(factor(i)[,2])>1,listput(v,i))); v' % (n, m))
@@ -8315,8 +8314,7 @@ class A109814(SloaneSequence):
                 continue
             # d is odd divisor
             k = min(d, 2 * n // d)
-            if k > m:
-                m = k
+            m = max(k, m)
         return ZZ(m)
 
 

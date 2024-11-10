@@ -52,6 +52,7 @@ lazy_import('sage.modular.modform.vm_basis', 'victor_miller_basis')
 from .submodule import ModularFormsSubmodule
 from . import weight1
 
+
 class CuspidalSubmodule(ModularFormsSubmodule):
     """
     Base class for cuspidal submodules of ambient spaces of modular forms.
@@ -210,6 +211,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
             ValueError: Space cannot be defined over Rational Field
         """
         return self.ambient_module().change_ring(R).cuspidal_submodule()
+
 
 class CuspidalSubmodule_R(CuspidalSubmodule):
     """
@@ -626,10 +628,12 @@ class CuspidalSubmodule_gH_Q(CuspidalSubmodule_modsym_qexp):
         symbs = self.modular_symbols(sign=1)
         return _convert_matrix_from_modsyms(symbs, symbs.diamond_bracket_matrix(d))[0]
 
+
 class CuspidalSubmodule_g1_Q(CuspidalSubmodule_gH_Q):
     r"""
     Space of cusp forms for `\Gamma_1(N)` over `\QQ`.
     """
+
 
 class CuspidalSubmodule_eps(CuspidalSubmodule_modsym_qexp):
     """
@@ -658,6 +662,7 @@ class CuspidalSubmodule_eps(CuspidalSubmodule_modsym_qexp):
         O(q^1)
     """
     pass
+
 
 def _convert_matrix_from_modsyms(symbs, T):
     r"""
@@ -694,17 +699,19 @@ def _convert_matrix_from_modsyms(symbs, T):
 
     # we repeatedly use these matrices below, so we store them
     # once as lists to save time.
-    hecke_matrix_ls = [ symbs.hecke_matrix(m).list() for m in range(1,r+1) ]
-    hecke_image_ls = [ (T*symbs.hecke_matrix(m)).list() for m in range(1,r+1) ]
+    hecke_matrix_ls = [symbs.hecke_matrix(m).list()
+                       for m in range(1, r + 1)]
+    hecke_image_ls = [(T * symbs.hecke_matrix(m)).list()
+                      for m in range(1, r + 1)]
 
     # compute the q-expansions of some cusp forms and their
     # images under T_n
     for i in range(d**2):
-        v = X([ hecke_matrix_ls[m][i] for m in range(r) ])
+        v = X([hecke_matrix_ls[m][i] for m in range(r)])
         Ynew = Y.span(Y.basis() + [v])
         if Ynew.rank() > Y.rank():
             basis.append(v)
-            basis_images.append(X([ hecke_image_ls[m][i] for m in range(r) ]))
+            basis_images.append(X([hecke_image_ls[m][i] for m in range(r)]))
             Y = Ynew
             if len(basis) == d:
                 break

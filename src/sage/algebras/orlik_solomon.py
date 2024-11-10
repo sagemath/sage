@@ -791,9 +791,9 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
         # computing the invariant will be a block matrix. To avoid dealing
         # with huge matrices, we can split it up into graded pieces.
 
-        max_deg = max([b.degree() for b in OS.basis()])
-        B = []  #initialize the basis
-        for d in range(max_deg+1):
+        max_deg = max(b.degree() for b in OS.basis())
+        B = []  # initialize the basis
+        for d in range(max_deg + 1):
             OS_d = OS.homogeneous_component(d)
             OSG_d = OS_d.invariant_module(G, action=action, category=category)
             B += [OS_d.lift(OSG_d.lift(b)) for b in OSG_d.basis()]

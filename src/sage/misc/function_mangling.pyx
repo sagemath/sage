@@ -132,16 +132,16 @@ cdef class ArgumentFixer:
         else:
             self._default_tuple = tuple(defaults)
 
-        #code = f.__code__
+        # code = f.__code__
 
         self.f = f
         self._ndefault = len(defaults)
         if classmethod:
-            self._nargs = len(arg_names)-1 #code.co_argcount-1
-            self._arg_names = tuple(arg_names[1:]) #code.co_varnames[1:self._nargs+1]
+            self._nargs = len(arg_names)-1  # code.co_argcount-1
+            self._arg_names = tuple(arg_names[1:])  # code.co_varnames[1:self._nargs+1]
         else:
-            self._nargs = len(arg_names) #code.co_argcount
-            self._arg_names = tuple(arg_names) #code.co_varnames[:self._nargs]
+            self._nargs = len(arg_names)  # code.co_argcount
+            self._arg_names = tuple(arg_names)  # code.co_varnames[:self._nargs]
         self._classmethod = classmethod
 
         cdef dict default_map
@@ -157,7 +157,7 @@ cdef class ArgumentFixer:
             sage: g = ArgumentFixer(number_of_partitions); g                            # needs sage.combinat
             Argument Fixer of <function number_of_partitions at 0x...>
         """
-        return "Argument Fixer of %s"%self.f
+        return "Argument Fixer of %s" % self.f
 
     def fix_to_named(self, *args,**kwargs):
         """
@@ -295,7 +295,7 @@ cdef class ArgumentFixer:
         cdef Py_ssize_t i
         for i in range(lenargs, nargs):
             # in addition to the positional arguments, we take the
-            # ones with default values, unless they are overridded by
+            # ones with default values, unless they are overridden by
             # the named arguments.
             name = arg_names[i]
             if name in kwargs:

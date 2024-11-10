@@ -50,6 +50,7 @@ lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
 _NumberFields = NumberFields()
 
+
 # --------------------
 # Projective varieties
 # --------------------

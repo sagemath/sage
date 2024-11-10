@@ -16,6 +16,7 @@ from . import constructor
 from .theta import theta2_qexp, theta_qexp
 from copy import copy
 
+
 def half_integral_weight_modform_basis(chi, k, prec):
     r"""
     A basis for the space of weight `k/2` forms with character

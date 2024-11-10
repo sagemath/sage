@@ -14,6 +14,7 @@ Decorators
 
 from sage.misc.decorators import decorator_keywords, sage_wraps
 
+
 @decorator_keywords
 def handle_AA_and_QQbar(func):
     r"""

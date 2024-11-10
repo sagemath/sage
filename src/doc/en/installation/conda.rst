@@ -7,7 +7,7 @@ SageMath can be installed on Linux and macOS via Conda from the
 `conda-forge <https://conda-forge.org>`_ conda channel.
 
 Both the ``x86_64`` (Intel) architecture and the ``arm64``/``aarch64``
-architectures (including Apple Silicon, M1) are supported.
+architectures (including Apple Silicon, M1, M2, M3, M4) are supported.
 
 You will need a working Conda installation: either Miniforge (or Mambaforge),
 Miniconda or Anaconda. If you don't have one yet, we recommend installing

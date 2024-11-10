@@ -245,10 +245,10 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         for i in range(self._n):
             r = list(zero) # Make a copy
             r[i] = 1
-            d['t%s' % (i+1)] = self.monomial( (tuple(r), one) )
+            d['t%s' % (i+1)] = self.monomial((tuple(r), one))
         G = self._Pn.group_generators()
         for i in range(1, self._n):
-            d['g%s' % i] = self.monomial( (tuple(zero), G[i]) )
+            d['g%s' % i] = self.monomial((tuple(zero), G[i]))
         return Family(sorted(d), lambda i: d[i])
 
     @cached_method
@@ -494,5 +494,5 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
             H = self.parent()
             t,w = self.support_of_term()
             c = ~self.coefficients()[0]
-            telt = H.monomial( (tuple((H._d - e) % H._d for e in t), H._Pn.one()) )
+            telt = H.monomial((tuple((H._d - e) % H._d for e in t), H._Pn.one()))
             return c * telt * H.prod(H.inverse_g(i) for i in reversed(w.reduced_word()))

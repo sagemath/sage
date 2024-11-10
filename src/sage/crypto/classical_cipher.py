@@ -232,6 +232,7 @@ class HillCipher(SymmetricKeyCipher):
             raise ValueError("Argument\n\n%s\n\nmust be an invertible cipher." % self)
         return E(B)
 
+
 class ShiftCipher(SymmetricKeyCipher):
     r"""
     Shift cipher class. This is the class that does the actual work of
@@ -374,6 +375,7 @@ class ShiftCipher(SymmetricKeyCipher):
         # as the alphabet used for the plaintext and ciphertext spaces.
         return "Shift cipher on %s" % self.parent().cipher_domain()
 
+
 class SubstitutionCipher(SymmetricKeyCipher):
     """
     Substitution cipher class
@@ -447,6 +449,7 @@ class SubstitutionCipher(SymmetricKeyCipher):
         K = E.inverse_key(self.key())
         return E(K)
 
+
 class TranspositionCipher(SymmetricKeyCipher):
     """
     Transition cipher class
@@ -516,6 +519,7 @@ class TranspositionCipher(SymmetricKeyCipher):
         E = self.parent()
         K = E.inverse_key(self.key())
         return E(K)
+
 
 class VigenereCipher(SymmetricKeyCipher):
     """

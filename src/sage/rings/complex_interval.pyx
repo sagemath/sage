@@ -250,14 +250,14 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             s = self.real().str(base=base, style=style)
         if not self.imag().is_zero():
             y  =  self.imag()
-            if s!="":
+            if s:
                 if y < 0:
-                    s = s+" - "
+                    s += " - "
                     y = -y
                 else:
-                    s = s+" + "
-            s = s+"%s*I"%y.str(base=base, style=style)
-        if len(s) == 0:
+                    s += " + "
+            s += "%s*I" % y.str(base=base, style=style)
+        if not s:
             s = "0"
         return s
 
@@ -2218,7 +2218,7 @@ cdef _circle_invert_standard(
     # crosses the x-Axis, the north east or south east diagonal, respectively.
     #
     # Given standard form, the input also has to cross the north east
-    # diagonal and x-Axis if it corsses the south east diagonal.
+    # diagonal and x-Axis if it crosses the south east diagonal.
     #
     # Thus, we are left with five cases:
     #
