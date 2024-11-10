@@ -2270,7 +2270,89 @@ class MatchingCoveredGraph(Graph):
 
     @doc_index('Overwritten methods')
     def number_of_loops(self):
-        raise NotImplementedError()
+        r"""
+        Return the number of edges that are loops.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.number_of_loops`
+            method in order to return 0 as matching covered graphs are free
+            of looped edges.
+
+        OUTPUT:
+
+        - An integer, 0 is returned, since matching covered graphs do not
+          contain zero loops.
+
+        EXAMPLES:
+
+        A matching covered graph, for instance the Truncated biwheel graph,
+        by definition, is always free of loops::
+
+            sage: T = graphs.TruncatedBiwheelGraph(5)
+            sage: G = MatchingCoveredGraph(T)
+            sage: G
+            Matching covered truncated biwheel graph: graph on 10 vertices
+            sage: G.has_loops()
+            False
+            sage: G.allows_loops()
+            False
+            sage: G.add_edge(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            sage: G.loops()
+            []
+            sage: G.loop_edges()
+            []
+            sage: G.loop_vertices()
+            []
+            sage: G.number_of_loops()
+            0
+
+        A matching covered graph may support multiple edges, still no
+        loops are allowed::
+
+            sage: B = graphs.BiwheelGraph(4)
+            sage: G = MatchingCoveredGraph(B)
+            sage: G.allow_multiple_edges(True)
+            sage: G
+            Matching covered biwheel graph: multi-graph on 8 vertices
+            sage: G.add_edge(0, 1, 'label')
+            sage: G.add_edge(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 1, 'label'), (0, 5, None), (0, 7, None),
+             (1, 2, None), (1, 6, None), (2, 3, None), (2, 7, None),
+             (3, 4, None), (3, 6, None), (4, 5, None), (4, 7, None),
+             (5, 6, None)]
+            sage: G.allows_loops()
+            False
+            sage: G.has_loops()
+            False
+            sage: G.loops()
+            []
+            sage: G.loop_edges()
+            []
+            sage: G.loop_vertices()
+            []
+            sage: G.number_of_loops()
+            0
+
+        .. SEEALSO::
+
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+        """
+        return 0
 
     @doc_index('Overwritten methods')
     def remove_loops(self, vertices=None):
