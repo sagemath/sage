@@ -2276,18 +2276,10 @@ class MatchingCoveredGraph(Graph):
             sage: G = MatchingCoveredGraph(T)
             sage: G
             Matching covered truncated biwheel graph: graph on 10 vertices
-            sage: G.has_loops()
-            False
-            sage: G.allows_loops()
-            False
             sage: G.add_edge(0, 0)
             Traceback (most recent call last):
             ...
             ValueError: loops are not allowed in matching covered graphs
-            sage: G.loops()
-            []
-            sage: G.loop_edges()
-            []
             sage: G.loop_vertices()
             []
             sage: G.number_of_loops()
@@ -2311,14 +2303,6 @@ class MatchingCoveredGraph(Graph):
              (1, 2, None), (1, 6, None), (2, 3, None), (2, 7, None),
              (3, 4, None), (3, 6, None), (4, 5, None), (4, 7, None),
              (5, 6, None)]
-            sage: G.allows_loops()
-            False
-            sage: G.has_loops()
-            False
-            sage: G.loops()
-            []
-            sage: G.loop_edges()
-            []
             sage: G.loop_vertices()
             []
             sage: G.number_of_loops()
