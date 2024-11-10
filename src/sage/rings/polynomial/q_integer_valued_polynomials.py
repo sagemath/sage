@@ -94,7 +94,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
     algebras, with a basis indexed by integers.
 
     This is endowed with two bases, named ``B`` or ``Binomial``
-    and ``S`` or ``Shifted``⋅
+    and ``S`` or ``Shifted``.
 
     INPUT:
 
