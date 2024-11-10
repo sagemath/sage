@@ -1991,7 +1991,7 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: loops are not allowed in matching covered graphs
-            
+
         .. SEEALSO::
 
             :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
