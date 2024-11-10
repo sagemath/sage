@@ -2214,9 +2214,9 @@ class SR_gf2n(SR_generic):
             True
         """
         if isinstance(l, Matrix):
-            ret = [e for e in l.transpose().list()[0:-1:self.e]]
+            ret = l.transpose().list()[0:-1:self.e]
         else:
-            ret = [e for e in l[0:-1:self.e]]
+            ret = l[0:-1:self.e]
 
         if isinstance(l, list):
             return ret
@@ -2447,6 +2447,7 @@ class SR_gf2n(SR_generic):
 
         _vars = self.vars(name, i, l, e)
         return [_vars[e*j+k]**2 - _vars[e*j+(k+1) % e] for j in range(l) for k in range(e)]
+
 
 class SR_gf2(SR_generic):
     def __init__(self, n=1, r=1, c=1, e=4, star=False, **kwargs):
@@ -3162,6 +3163,7 @@ class SR_gf2(SR_generic):
         _vars = self.vars(name, i, l, e)
         return [_vars[e*j+k]**2 - _vars[e*j+k] for j in range(l) for k in range(e)]
 
+
 class SR_gf2_2(SR_gf2):
     """
     This is an example how to customize the SR constructor.
@@ -3246,6 +3248,7 @@ class SR_gf2_2(SR_gf2):
         F = S.polynomials(w, x, degree=e-2, groebner=groebner)
         return F
 
+
 class AllowZeroInversionsContext:
     """
     Temporarily allow zero inversion.
@@ -3293,6 +3296,7 @@ class AllowZeroInversionsContext:
             False
         """
         self.sr._allow_zero_inversions = self.allow_zero_inversions
+
 
 def test_consistency(max_n=2, **kwargs):
     r"""

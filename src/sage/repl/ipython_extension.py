@@ -71,6 +71,7 @@ from sage.env import SAGE_IMPORTALL, SAGE_STARTUP_FILE
 from sage.misc.lazy_import import LazyImport
 from sage.misc.misc import run_once
 
+
 @magics_class
 class SageMagics(Magics):
 
@@ -417,7 +418,7 @@ class SageMagics(Magics):
         return fortran(cell)
 
 
-class SageCustomizations():
+class SageCustomizations:
 
     def __init__(self, shell=None):
         """
@@ -484,7 +485,7 @@ class SageCustomizations():
         Run Sage's initial startup file.
         """
         try:
-            with open(SAGE_STARTUP_FILE, 'r') as f:
+            with open(SAGE_STARTUP_FILE) as f:
                 self.shell.run_cell(f.read(), store_history=False)
         except OSError:
             pass

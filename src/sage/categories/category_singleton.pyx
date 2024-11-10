@@ -16,6 +16,8 @@ from sage.categories.category import Category
 from sage.structure.category_object cimport CategoryObject
 from sage.structure.dynamic_class import DynamicMetaclass
 
+# I have no idea why this is necessary, but otherwise the type import fails (maybe because its shadowed by sage's cpython module?)
+from cpython.method cimport PyMethod_Check
 from cpython.type cimport PyType_IsSubtype
 
 # This helper class is used to implement Category_singleton.__contains__
@@ -62,11 +64,11 @@ cdef class Category_contains_method_by_parent_class:
 
         TESTS:
 
-            The following used to segfault in a preliminary version of the
-            code::
+        The following used to segfault in a preliminary version of the
+        code::
 
-                sage: None in Rings()
-                False
+            sage: None in Rings()
+            False
         """
         if x is None:
             return False
@@ -76,7 +78,7 @@ cdef class Category_contains_method_by_parent_class:
             return PyType_IsSubtype(<type>((y._category or y.category()).parent_class), self._parent_class_of_category)
         except AttributeError:
             return False
-        except TypeError: # this is for objects that aren't CategoryObjects
+        except TypeError:  # this is for objects that are not CategoryObjects
             try:
                 return PyType_IsSubtype(<type>(x.category().parent_class), self._parent_class_of_category)
             except AttributeError:
@@ -293,7 +295,8 @@ class Category_singleton(Category):
             sage: Category_singleton()
             Traceback (most recent call last):
             ...
-            AssertionError: <class 'sage.categories.category_singleton.Category_singleton'> is not a direct subclass of <class 'sage.categories.category_singleton.Category_singleton'>
+            AssertionError: <class 'sage.categories.category_singleton.Category_singleton'> is not a direct subclass of
+            <class 'sage.categories.category_singleton.Category_singleton'>
 
         Instantiating a subclass of a subclass of :class:`Category_singleton`
         also triggers an assertion error::

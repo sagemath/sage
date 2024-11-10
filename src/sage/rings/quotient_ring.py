@@ -1474,9 +1474,13 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
         I = self.defining_ideal()._macaulay2_(macaulay2)
         return I.ring()._operator('/', I)
 
-    def _ideal_class_(self, num_gens):
+    def _ideal_class_(self, n=0):
         r"""
         Use a specialized class for quotient ring ideals.
+
+        INPUT:
+
+        - ``n`` -- integer (default: ``0``); the number of generators
 
         EXAMPLES::
 
@@ -1487,9 +1491,10 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
             sage: type(Zmod(14).ideal([2,7]))
             <class 'sage.rings.quotient_ring.QuotientRingIdeal_generic'>
         """
-        if num_gens == 1:
+        if n == 1:
             return QuotientRingIdeal_principal
         return QuotientRingIdeal_generic
+
 
 class QuotientRingIdeal_generic(ideal.Ideal_generic):
     r"""
@@ -1539,6 +1544,7 @@ class QuotientRingIdeal_generic(ideal.Ideal_generic):
         Igens += [g.lift() for g in self.gens()]
         J = R.cover_ring().ideal(Igens)
         return other.lift() in J
+
 
 class QuotientRingIdeal_principal(ideal.Ideal_principal, QuotientRingIdeal_generic):
     r"""

@@ -70,6 +70,7 @@ from sage.tensor.modules.reflexive_module import ReflexiveModule_tensor
 
 from .tensor_free_submodule_basis import TensorFreeSubmoduleBasis_sym
 
+
 class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
     r"""
     Class for the free modules over a commutative ring `R` that are

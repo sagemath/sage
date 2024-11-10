@@ -319,7 +319,9 @@ class _Coordinates:
         from sage.structure.element import Expression
         from sage.rings.real_mpfr import RealNumber
         from sage.rings.integer import Integer
-        if params is not None and (isinstance(func, Expression) or isinstance(func, RealNumber) or isinstance(func, Integer)):
+        if params is not None and isinstance(func, (Expression,
+                                                    RealNumber,
+                                                    Integer)):
             return self.transform(**{
                 self.dep_var: func,
                 self.indep_vars[0]: params[0],
@@ -1168,8 +1170,7 @@ def plot3d_adaptive(f, x_range, y_range, color='automatic',
         x, y = var('x,y')
         sphinx_plot(plot3d_adaptive(sin(x*y), (x,-pi,pi), (y,-pi,pi), initial_depth=5))
     """
-    if initial_depth >= max_depth:
-        max_depth = initial_depth
+    max_depth = max(max_depth, initial_depth)
 
     from sage.plot.misc import setup_for_eval_on_grid
     g, ranges = setup_for_eval_on_grid(f, [x_range,y_range], plot_points=2)

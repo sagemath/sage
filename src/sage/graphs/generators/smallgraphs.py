@@ -7,6 +7,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #           Copyright (C) 2006 Robert L. Miller <rlmillster@gmail.com>
 #                              and Emily A. Kirkman
 #           Copyright (C) 2009 Michael C. Yurko <myurko@gmail.com>
+#           Copyright (C) 2024 Janmenjaya Panda <janmenjaya.panda.22@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -1898,6 +1899,168 @@ def CoxeterGraph():
     return g
 
 
+def CubeplexGraph(embedding='LM'):
+    r"""
+    Return the Cubeplex graph.
+
+    The Cubeplex graph is the cubic hamiltonian graph of order 12 that
+    corresponds to the graph labeled as `\Gamma_1` in Fischer and Little
+    [FiLi2001]_. It has LCF notation `[-6, -5, -3, -6, 3, 5, -6, -3, 5, -6, -5,
+    3]`.
+
+    The Fischer-Little Theorem [FiLi2001]_ may be stated as follows [LM2024]_:
+
+    A near-bipartite graph is non-Pfaffian if and only if it contains one of
+    the graphs `K_{3, 3}`, `\Gamma_1` and `\Gamma_2` as an `S`-minor.
+
+    Norine and Thomas [NT2007]_ use the term ``Cubeplex`` to describe one of
+    the 12-vertex cubic graphs, `\Gamma_1` and `\Gamma_2`, as defined by
+    Fischer and Little [FiLi2001]_. However, the figure in their paper that
+    supposedly provides embeddings for the graphs labeled Cubeplex and Twinplex
+    actually shows both embeddings corresponding to Fischer and Little's
+    `\Gamma_1`, which is the Cubeplex graph. Followingly, for
+    ``embedding='NT'``, we present only the embedding that is shown by the
+    labeling ``Cubeplex`` in the paper of Norine and Thomas [NT2007]_.
+
+    PLOTTING:
+
+    Upon construction, the position dictionary is filled to override
+    the spring-layout algorithm. For different values of the parameter
+    ``embedding``, the Cubeplex graph is displayed as it is mentioned in the
+    respective paper/ book.
+
+    INPUT:
+
+    - ``embedding`` -- string (default: ``'LM'``)
+
+      - ``'LM'`` displays the embedding as shown for `\Gamma_1` by Lucchesi and
+        Murty [LM2024]_
+
+      - ``'FL'`` displays the embedding as shown for `\Gamma_1` by Fischer and
+        Little [FiLi2001]_
+
+      - ``'NT'`` displays the embedding as shown for the ``Cubeplex`` by Norine
+        and Thomas [NT2007]_
+
+    OUTPUT:
+
+    - ``G`` -- the Cubeplex graph; note that a :class:`ValueError` is returned
+      if ``embedding`` is none of ``'FT'``, ``'NT'`` or ``'LM'``
+
+    EXAMPLES:
+
+    Construct and show the Cubeplex graph::
+
+        sage: g = graphs.CubeplexGraph()
+        sage: g.name()
+        'Cubeplex Graph'
+        sage: g.order()
+        12
+        sage: g.size()
+        18
+        sage: g.girth()
+        4
+        sage: g.diameter()
+        3
+        sage: g.is_hamiltonian()
+        True
+        sage: g.crossing_number()
+        1
+        sage: g.show()                          # long time                             # needs sage.plot
+
+    TESTS:
+
+    Note that all three embeddings refer to the same graph, the Cubeplex graph,
+    aka `\Gamma_1`::
+
+        sage: fl = graphs.CubeplexGraph(embedding='FL')
+        sage: nt = graphs.CubeplexGraph(embedding='NT')
+        sage: lm = graphs.CubeplexGraph(embedding='LM')
+        sage: fl.is_isomorphic(nt) and fl.is_isomorphic(lm)
+        True
+
+    The input parameter must be one of 'FL', 'NT' or 'LM'::
+
+        sage: g = graphs.CubeplexGraph(embedding='embedding')
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter 'embedding' must be 'FL', 'NT' or 'LM'
+
+    .. SEEALSO::
+
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.TwinplexGraph`
+
+    AUTHORS:
+
+    - Janmenjaya Panda (2024-08-03)
+    """
+    if embedding == 'FL':
+        from math import pi
+
+        G = Graph(12, name='Cubeplex Graph')
+        G.add_cycle(list(range(12)))
+
+        G.add_edges([
+            (0, 3), (1, 6), (2, 8),
+            (4, 9), (5, 11), (7, 10)
+        ])
+
+        G._circle_embedding(list(range(12)), angle=2*pi/3)
+
+    elif embedding == 'NT':
+        pos_dict = {
+            0: (1, 2),
+            1: (3, 2),
+            2: (0, 1),
+            3: (1, 1),
+            4: (2, 1),
+            5: (3, 1),
+            6: (4, 1),
+            7: (0, -1),
+            8: (1, 0),
+            9: (2, 0),
+            10: (3, 0),
+            11: (4, -1),
+        }
+
+        G = Graph(12, pos=pos_dict, name='Cubeplex Graph')
+        G.add_edges([
+            (0, 2), (0, 4), (0, 6),
+            (1, 3), (1, 5), (1, 6),
+            (2, 7), (2, 8), (3, 7),
+            (3, 8), (4, 9), (4, 10),
+            (5, 9), (5, 10), (6, 11),
+            (7, 11), (8, 9), (10, 11)
+        ])
+
+    elif embedding == 'LM':
+        from math import pi
+
+        pos_dict = {
+            8: (0, 1),
+            9: (1, 0),
+            10: (-3*cos(pi/16), -3*sin(pi/16)),
+            11: (3*cos(pi/16), -3*sin(pi/16))
+        }
+
+        for v in range(8):
+            t = pi * (v+2)/4
+            pos_dict[v] = (-2*cos(t), 2*sin(t))
+
+        G = Graph(12, pos=pos_dict, name='Cubeplex Graph')
+
+        G.add_cycle(list(range(8)))
+        G.add_edges([
+            (0, 8), (1, 11), (2, 9), (3, 11), (4, 8),
+            (5, 10), (6, 9), (7, 10), (8, 9), (10, 11)
+        ])
+
+    else:
+        raise ValueError("parameter 'embedding' must be 'FL', 'NT' or 'LM'")
+
+    return G
+
+
 def DejterGraph():
     r"""
     Return the Dejter graph.
@@ -2951,7 +3114,7 @@ def GritsenkoGraph():
              (33, 49), (33, 51), (33, 57), (33, 61)]
     # use the union of the orbits of a on the edges
     return Graph(reduce(lambda x, y: x + y,
-                        map(lambda o: a.orbit(o, action='OnSets'), edges)),
+                        (a.orbit(o, action='OnSets') for o in edges)),
                  format='list_of_edges',
                  name="Gritsenko strongly regular graph")
 
@@ -3813,6 +3976,88 @@ def MoserSpindle():
     return Graph(edge_dict, pos=pos_dict, name="Moser spindle")
 
 
+def MurtyGraph():
+    r"""
+    Return the Murty graph.
+
+    Consider the complete bipartite graph `K_{3, 3}`. There is a set of three
+    black vertices and a set of three white vertices. Now, consider splicing
+    the complete graph `K_4` with one of the black vertices, this generates the
+    graph `K_4 \odot K_{3, 3}`. The Murty graph is obtained from
+    `K_4 \odot K_{3, 3}` with the addition of an edge joining the remaining two
+    black vertices. The Murty graph is free of conformal bicycles; in
+    other words, the Murty graph is an example of a graph that is Birkhoff-von
+    Neumann as well as PM-compact.
+
+    This is the smallest brick that is Birkhoff-von Neumann, aka a solid
+    brick, but is not odd-intercyclic. It is in this context that
+    Prof. U.S.R. Murty first stumbled upon this graph, and it also appears in
+    the work of Carvalho, Lucchesi, and Murty [CLM2006]_.
+
+    PLOTTING:
+
+    Upon construction, the position dictionary is filled to override
+    the spring-layout algorithm. By convention, the Murty graph is
+    displayed as mentioned in the paper [CKWL2019]_, with the first two
+    (noncubic) vertices on the top row, the second three vertices (that form a
+    stable set) in the middle row, and the remaining three vertices (that form
+    a triangle) at the bottom.
+
+    OUTPUT:
+
+    - ``G`` -- the Murty graph
+
+    EXAMPLES:
+
+    Construct and show the Murty graph::
+
+        sage: g = graphs.MurtyGraph()
+        sage: g.name()
+        'Murty Graph'
+        sage: g.order()
+        8
+        sage: g.size()
+        13
+        sage: g.girth()
+        3
+        sage: g.diameter()
+        2
+        sage: g.is_hamiltonian()
+        True
+        sage: g.show()                          # long time                             # needs sage.plot
+
+    REFERENCES:
+
+    - [CKWL2019]_
+    - [CLM2006]_
+    - [LM2024]_
+
+    AUTHORS:
+
+    - Janmenjaya Panda (2024-08-03)
+    """
+    pos_dict = {
+        0: (-0.5, sqrt(3)/2),
+        1: (0.5, sqrt(3)/2),
+        2: (-1, 0),
+        3: (0, 0),
+        4: (1, 0),
+        5: (-0.5, -1 - sqrt(3)/2),
+        6: (0, -1),
+        7: (0.5, -1 - sqrt(3)/2)
+    }
+
+    G = Graph(8, pos=pos_dict, name="Murty Graph")
+
+    G.add_edge(0, 1)
+    for v in range(2, 5):
+        G.add_edges([(0, v), (1, v), (v, v+3)])
+
+    G.add_edges([(5, 6), (5, 7), (6, 7)])
+
+    return G
+
+
 def NauruGraph(embedding=2):
     """
     Return the Nauru Graph.
@@ -4372,6 +4617,102 @@ def TietzeGraph():
     return g
 
 
+def TricornGraph():
+    r"""
+    Return the Tricorn graph.
+
+    The Tricorn graph is obtained by splicing a complete graph `K_4` with the
+    the triangular circular ladder graph `\overline{C_6}`. (Note that this
+    generates a unqiue graph as both of the graphs `K_4` and `\overline{C_6}`
+    are vertex-transitive). It is a nonsolid brick. This matching covered graph
+    is one of the ten extremal cubic bricks. (A matching covered graph `G` is
+    *extremal* if `\Phi(G) = dim(\mathcal{Lin}(G))`, where `\Phi(G)` denotes
+    the number of perfect matchings of `G`, and `dim(\mathcal{Lin}(G))` stands
+    for the dimension of the linear space of `G`).
+
+    The Tricorn graph has no removable doubletons and has precisely three
+    removable edges. The wheel graph `W_5` and the complete graph `K_4` are
+    matching minors of the Tricorn graph.
+
+    As per a theorem of Lovász [Lov1983]_, each non bipartite matching covered
+    graph has a conformal subgraph which is either a bi-subdivision of `K_4` or
+    of `\overline{C_6}` or both. In their paper, Kothari and Murty [KM2015]_
+    characterized those planar bricks that are free of `\overline{C_6}` (that
+    is, the planar bricks that do not contain a bi-subdivision of
+    `\overline{C_6}` as a conformal subgraph). Besides two infinite families of
+    matching covered graphs (odd wheel graphs and staircase graphs of order
+    *4k*), the Tricorn graph is the only exception brick that is simple, planar
+    and free of `\overline{C_6}`.
+
+    PLOTTING:
+
+    Upon construction, the position dictionary is filled to override
+    the spring-layout algorithm. By convention, the Tricorn graph is
+    displayed as mentioned in the book [LM2024]_, with the central vertex being
+    the `0`-th one. Rest of the nine vertices are shown in groups of three,
+    one on the top, rest two on the bottom left and on the bottom right
+    corners respectively.
+
+    OUTPUT:
+
+    - ``G`` -- the Tricorn graph
+
+    EXAMPLES:
+
+    Construct and show the Tricorn graph; note that the edges `(2, 3)`,
+    `(5, 6)` and `(8, 9)` are the only removable edges of the Tricorn
+    graph::
+
+        sage: g = graphs.TricornGraph()
+        sage: g.name()
+        'Tricorn Graph'
+        sage: g.order()
+        10
+        sage: g.size()
+        15
+        sage: g.girth()
+        3
+        sage: g.diameter()
+        3
+        sage: g.is_hamiltonian()
+        True
+        sage: g.show()                          # long time                             # needs sage.plot
+
+    REFERENCES:
+
+    - [KM2015]_
+    - [LM2024]_
+    - [Lov1983]_
+
+    AUTHORS:
+
+    - Janmenjaya Panda (2024-08-02)
+    """
+    pos_dict = {
+        0: (0, 0),
+        1: (0, 1),
+        2: (1/2, 1 + sqrt(3)/2),
+        3: (-1/2, 1 + sqrt(3)/2),
+        4: (-sqrt(3)/2, -1/2),
+        5: (-sqrt(3)/2 - 1, -1/2),
+        6: (-sqrt(3)/2 - 1/2, -1/2 - sqrt(3)/2),
+        7: (sqrt(3)/2, -1/2),
+        8: (sqrt(3)/2 + 1/2, -1/2 - sqrt(3)/2),
+        9: (sqrt(3)/2 + 1, -1/2)
+    }
+
+    G = Graph(10, pos=pos_dict, name="Tricorn Graph")
+
+    for v in range(1, 8, 3):
+        G.add_edges([
+            (0, v), (v, v+1),
+            (v, v+2), (v+1, v+2),
+            (v+2, int((-v**2 + 7*v + 4)/2))
+        ])
+
+    return G
+
+
 def TruncatedIcosidodecahedralGraph():
     r"""
     Return the truncated icosidodecahedron.
@@ -4571,6 +4912,204 @@ def TutteGraph():
     return g
 
 
+def TwinplexGraph(embedding='LM'):
+    r"""
+    Return the Twinplex graph.
+
+    The Twinplex graph is a cubic hamiltonian graph of order 12 with the graph
+    crossing number 2 and has a girth 5 (that is the maximal girth among all
+    cubic graphs on 12 vertices [CHNP2020]_). It corresponds to the graph
+    labeled as `\Gamma_2` by Fischer and Little [FiLi2001]_. The Twinplex graph
+    has LCF notation `[-5, -4, 4, -4, 4, 5, -4, 5, -4, 4, -5, 4]`.
+
+    The Fischer-Little Theorem [FiLi2001]_ may be stated as follows [LM2024]_:
+
+    A near-bipartite graph is non-Pfaffian if and only if it contains one of
+    the graphs `K_{3, 3}`, `\Gamma_1` and `\Gamma_2` as an `S`-minor.
+
+    Norine and Thomas [NT2007]_ use the term ``Twinplex`` to describe one of
+    the 12-vertex cubic graphs, `\Gamma_1` and `\Gamma_2`, as defined by
+    Fischer and Little [FiLi2001]_. However, the figure in their paper that
+    supposedly provides embeddings for the graphs labeled Cubeplex and Twinplex
+    actually shows both embeddings corresponding to Fischer and Little's
+    `\Gamma_1`, which is the Cubeplex graph. Followingly, for
+    ``embedding='NT'``, we present a correct version of the Twinplex graph
+    with a slight modification of the embedding that is labeled as ``Twinplex``
+    in the paper of Norine and Thomas [NT2007]_.
+
+    PLOTTING:
+
+    Upon construction, the position dictionary is filled to override
+    the spring-layout algorithm. For different values of the parameter
+    ``embedding``, the Twinplex graph is displayed as it is mentioned in the
+    respective paper/ book. Note that for ``embedding='NT'``, a correct
+    embedding of the Twinplex graph is displayed with a minor modification to
+    the (incorrect) embedding shown in the paper [NT2007]_.
+
+    INPUT:
+
+    - ``embedding`` -- string (default: ``'LM'``)
+
+      - ``'LM'`` displays the embedding as shown for `\Gamma_2` by Lucchesi and
+        Murty [LM2024]_
+
+      - ``'FL'`` displays the embedding as shown for `\Gamma_2` by Fischer and
+        Little [FiLi2001]_
+
+      - ``'NT'`` displays the correct embedding with a minor modification to
+        the one shown as the (incorrect) ``Twinplex`` by Norine and Thomas
+        [NT2007]_
+
+      - ``'RST'`` displays the embedding as shown for the ``Twinplex`` by
+        Robertson, Seymour and Thomas [RST2019]_
+
+    OUTPUT:
+
+    - ``G`` -- the Twinplex graph; note that a :class:`ValueError` is returned
+      if ``embedding`` is none of ``'FT'``, ``'NT'``, ``'RST'`` or ``'LM'``
+
+    EXAMPLES:
+
+    Construct and show the Twinplex graph::
+
+        sage: g = graphs.TwinplexGraph()
+        sage: g.name()
+        'Twinplex Graph'
+        sage: g.order()
+        12
+        sage: g.size()
+        18
+        sage: g.girth()
+        5
+        sage: g.diameter()
+        3
+        sage: g.is_hamiltonian()
+        True
+        sage: g.crossing_number()
+        2
+        sage: g.show()                          # long time                             # needs sage.plot
+
+    TESTS:
+
+    Note that all four embeddings refer to the same graph, the Twinplex graph,
+    aka `\Gamma_2`::
+
+        sage: fl = graphs.TwinplexGraph(embedding='FL')
+        sage: nt = graphs.TwinplexGraph(embedding='NT')
+        sage: rst = graphs.TwinplexGraph(embedding='RST')
+        sage: lm = graphs.TwinplexGraph(embedding='LM')
+        sage: all(fl.is_isomorphic(g) for g in (nt, rst, lm))
+        True
+
+    The input parameter must be one of 'FL', 'NT', 'RST' or 'LM'::
+
+        sage: g = graphs.TwinplexGraph(embedding='embedding')
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter 'embedding' must be 'FL', 'NT', 'LM' or 'RST'
+
+    .. SEEALSO::
+
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.CubeplexGraph`
+
+    AUTHORS:
+
+    - Janmenjaya Panda (2024-08-03)
+    """
+    if embedding == 'FL':
+        from math import pi
+
+        G = Graph(12, name='Twinplex Graph')
+        G.add_cycle(list(range(12)))
+
+        G.add_edges([
+            (0, 8), (1, 5), (2, 9),
+            (3, 7), (4, 11), (6, 10)
+        ])
+
+        G._circle_embedding(list(range(12)), angle=5*pi/12)
+
+    elif embedding == 'NT':
+        pos_dict = {
+            0: (1, 2),
+            1: (3, 2),
+            2: (0, 1),
+            3: (1, 1),
+            4: (2, 1),
+            5: (3, 1),
+            6: (4, 1),
+            7: (0, -1),
+            8: (1, 0),
+            9: (2, 0),
+            10: (3, 0),
+            11: (4, -1),
+        }
+
+        G = Graph(12, pos=pos_dict, name='Twinplex Graph')
+        G.add_edges([
+            (0, 2), (0, 4), (0, 6),
+            (1, 3), (1, 5), (1, 6),
+            (2, 7), (2, 9), (3, 7),
+            (3, 8), (4, 8), (4, 10),
+            (5, 9), (5, 10), (6, 11),
+            (7, 11), (8, 9), (10, 11)
+        ])
+
+    elif embedding == 'RST':
+        pos_dict = {
+            0: (-1, 3),
+            1: (1, 3),
+            2: (3, 1),
+            3: (3, -1),
+            4: (1, -3),
+            5: (-1, -3),
+            6: (-3, -1),
+            7: (-3, 1),
+            8: (-1, 1),
+            9: (1, 1),
+            10: (1, -1),
+            11: (-1, -1)
+        }
+
+        G = Graph(12, pos=pos_dict, name='Twinplex Graph')
+
+        G.add_cycle(list(range(8)))
+        G.add_edges([
+            (0, 4), (1, 8), (2, 10),
+            (3, 9), (5, 10), (6, 8),
+            (7, 11), (8, 9), (9, 11),
+            (10, 11)
+        ])
+
+    elif embedding == 'LM':
+        from math import pi
+
+        pos_dict = {
+            8: (0, 1),
+            9: (1, 0),
+            10: (-3*cos(pi/16), -3*sin(pi/16)),
+            11: (3*cos(pi/16), -3*sin(pi/16))
+        }
+
+        for v in range(8):
+            t = pi * (v+2)/4
+            pos_dict[v] = (-2*cos(t), 2*sin(t))
+
+        G = Graph(12, pos=pos_dict, name='Twinplex Graph')
+
+        G.add_cycle(list(range(8)))
+        G.add_edges([
+            (0, 8), (1, 11), (2, 9), (3, 10), (4, 8),
+            (5, 11), (6, 9), (7, 10), (8, 9), (10, 11)
+        ])
+
+    else:
+        raise ValueError("parameter 'embedding' must be 'FL', 'NT',"
+                         " 'LM' or 'RST'")
+
+    return G
+
+
 def WagnerGraph():
     """
     Return the Wagner Graph.
@@ -4734,7 +5273,7 @@ def _EllipticLinesProjectivePlaneScheme(k):
     gp = libgap.Action(g, libgap.Orbit(g, l, libgap.OnLines), libgap.OnLines)
     orbitals = gp.Orbits(list(product(gp.Orbit(1), gp.Orbit(1))),
                          libgap.OnTuples)
-    mats = map(lambda o: [(int(x[0]) - 1, int(x[1]) - 1) for x in o], orbitals)
+    mats = ([(int(x[0]) - 1, int(x[1]) - 1) for x in o] for o in orbitals)
     return [matrix((q * (q - 1)) // 2, lambda i, j: 1 if (i, j) in x else 0)
             for x in mats]
 
@@ -4934,7 +5473,7 @@ def JankoKharaghaniTonchevGraph():
             301, 304, 308, 309, 310, 312, 313, 314, 316, 317, 318)
     Gamma = Graph(multiedges=False, name='Janko-Kharaghani-Tonchev')
     for i, b in ((1, B1), (163, B163)):
-        for j in map(lambda x: x[0], st.OrbitsDomain(b)):
+        for j in (x[0] for x in st.OrbitsDomain(b)):
             Gamma.add_edges(map(tuple, G.Orbit(libgap.Set([i, j]), libgap.OnSets)))
     Gamma.relabel(range(Gamma.order()))
     return Gamma

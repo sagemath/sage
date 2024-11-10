@@ -210,6 +210,7 @@ def cantor_reduction(a, b, f, h, genus):
         return cantor_reduction(a, b, f, h, genus)
     return (a, b)
 
+
 def cantor_composition_simple(D1,D2,f,genus):
     r"""
     Given `D_1` and `D_2` two reduced Mumford
@@ -267,6 +268,7 @@ def cantor_composition_simple(D1,D2,f,genus):
             b = ((b2 + l*h2*(b1-b2)*(a2 // d)) + h3*((f - b2**2) // d)) % (a)
     a = a.monic()
     return (a, b)
+
 
 def cantor_composition(D1,D2,f,h,genus):
     r"""

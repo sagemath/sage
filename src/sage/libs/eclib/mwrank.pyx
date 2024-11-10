@@ -208,7 +208,7 @@ cdef class _bigint:
         if s.isdigit() or s[0] == "-" and s[1:].isdigit():
             self.x = str_to_bigint(str_to_bytes(s))
         else:
-            raise ValueError("invalid _bigint: %r"%x)
+            raise ValueError("invalid _bigint: %r" % x)
 
     def __dealloc__(self):
         """
@@ -830,7 +830,7 @@ cdef class _mw:
           and the computed bound.
 
         - ``sat_low_bd`` -- integer (default: 2); only do saturation at
-          prime not less than this.  For exampe, if the points have
+          prime not less than this.  For example, if the points have
           been found via 2-descent they should already be 2-saturated,
           and ``sat_low_bd=3`` is appropriate.
 

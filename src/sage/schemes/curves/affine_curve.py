@@ -579,7 +579,7 @@ class AffinePlaneCurve(AffineCurve):
             TypeError: (=(1, 1)) is not a point on (=Affine Plane Curve over
             Rational Field defined by x^6 - x^3 + y^3)
         """
-        if not self.base_ring() in Fields():
+        if self.base_ring() not in Fields():
             raise TypeError("curve must be defined over a field")
 
         # Check whether P is a point on this curve
@@ -852,13 +852,24 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             sage: A.<x,y,z> = AffineSpace(GF(7), 3)
             sage: C = Curve([x^2 - z, z - 8*x], A); C
             Affine Curve over Finite Field of size 7 defined by x^2 - z, -x + z
+
+        TESTS::
+
+            sage: K.<x,y,z,t> = QQ[]
+            sage: t1 = x^2*z^2 + y*t
+            sage: t2 = y*z^2 + x^2*t
+            sage: C = Curve([x^4 - y^2 - 19, z^4 - t^2 - 23, t1^2 - t2^2 - 19*23])
+            Traceback (most recent call last):
+            ...
+            ValueError: defining equations (=[x^4 - y^2 - 19, z^4 - t^2 - 23,
+            x^4*z^4 - y^2*z^4 - x^4*t^2 + y^2*t^2 - 437]) define a scheme of dimension 2 != 1
         """
         super().__init__(A, X)
 
-        if not A.base_ring() in Fields():
+        if A.base_ring() not in Fields():
             raise TypeError("curve not defined over a field")
 
-        d = self.dimension()
+        d = super(Curve_generic, self).dimension()
         if d != 1:
             raise ValueError("defining equations (={}) define a scheme of dimension {} != 1".format(X, d))
 
@@ -920,7 +931,10 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
                To:   Affine Space of dimension 3 over Rational Field
                Defn: Defined on coordinates by sending (x, y, z, w) to
                      (x, y, z),
-             Affine Curve over Rational Field defined by c - 1, b - 3, a - 2)
+             Closed subscheme of Affine Space of dimension 3 over Rational Field defined by:
+               c - 1,
+               b - 3,
+               a - 2)
 
         ::
 
@@ -1306,7 +1320,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             self(P)
         except TypeError:
             raise TypeError("(=%s) must be a point on this curve" % P)
-        if not self.base_ring() in Fields():
+        if self.base_ring() not in Fields():
             raise TypeError("the base ring of this curve must be a field")
         if not self.is_irreducible():
             raise TypeError("this curve must be irreducible")

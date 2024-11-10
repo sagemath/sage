@@ -135,7 +135,7 @@ class Image(SageObject):
         """
         return self._pil.load()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation.
 
@@ -148,17 +148,17 @@ class Image(SageObject):
             16x16px 24-bit RGB image
         """
         modestr = {
-            '1':     '{0}x{1}px BW image',
-            'L':     '{0}x{1}px 8-bit BW image',
-            'P':     '{0}x{1}px 8-bit Color image',
-            'RGB':   '{0}x{1}px 24-bit RGB image',
-            'RGBA':  '{0}x{1}px 32-bit RGBA image',
-            'CMYK':  '{0}x{1}px 24-bit CMYK image',
+            '1': '{0}x{1}px BW image',
+            'L': '{0}x{1}px 8-bit BW image',
+            'P': '{0}x{1}px 8-bit Color image',
+            'RGB': '{0}x{1}px 24-bit RGB image',
+            'RGBA': '{0}x{1}px 32-bit RGBA image',
+            'CMYK': '{0}x{1}px 24-bit CMYK image',
             'YCbCr': '{0}x{1}px 24-bit YCbCr mage',
-            'LAB':   '{0}x{1}px 24-bit LAB image',
-            'HSV':   '{0}x{1}px 24-bit HSV image',
-            'I':     '{0}x{1}px 32-bit signed integer image',
-            'F':     '{0}x{1}px 32-bit float image',
+            'LAB': '{0}x{1}px 24-bit LAB image',
+            'HSV': '{0}x{1}px 24-bit HSV image',
+            'I': '{0}x{1}px 32-bit signed integer image',
+            'F': '{0}x{1}px 32-bit float image',
         }
         try:
             mode = modestr[self.pil.mode]
@@ -285,9 +285,9 @@ class Image(SageObject):
             return
         types = display_manager.types
         preferred = (
-            ('PNG',  types.OutputImagePng),
+            ('PNG', types.OutputImagePng),
             ('JPEG', types.OutputImageJpg),
-            ('GIF',  types.OutputImageGif),
+            ('GIF', types.OutputImageGif),
         )
         from sage.repl.rich_output.buffer import OutputBuffer
         for format, output_container in preferred:

@@ -438,6 +438,9 @@ class EllipticCurveFactory(UniqueFactory):
             # Interpret x as a Cremona or LMFDB label.
             from sage.databases.cremona import CremonaDatabase
             x, data = CremonaDatabase().coefficients_and_data(x)
+            # data is only valid for elliptic curves over QQ.
+            if R not in (None, QQ):
+                data = {}
             # User-provided keywords may override database entries.
             data.update(kwds)
             kwds = data
@@ -457,7 +460,7 @@ class EllipticCurveFactory(UniqueFactory):
 
         return (R, tuple(R(a) for a in x)), kwds
 
-    def create_object(self, version, key, **kwds):
+    def create_object(self, version, key, *, names=None, **kwds):
         r"""
         Create an object from a ``UniqueFactory`` key.
 
@@ -467,18 +470,46 @@ class EllipticCurveFactory(UniqueFactory):
             sage: type(E)
             <class 'sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field_with_category'>
 
+        ``names`` is ignored at the moment, however it is used to support a convenient way to get a generator::
+
+            sage: E.<P> = EllipticCurve(QQ, [1, 3])
+            sage: P
+            (-1 : 1 : 1)
+            sage: E.<P> = EllipticCurve(GF(5), [1, 3])
+            sage: P
+            (4 : 1 : 1)
+
         .. NOTE::
 
             Keyword arguments are currently only passed to the
             constructor for elliptic curves over `\QQ`; elliptic
             curves over other fields do not support them.
+
+        TESTS::
+
+            sage: E = EllipticCurve.create_object(0, (QQ, (1, 2, 0, 1, 2)), rank=2)
+            sage: E = EllipticCurve.create_object(0, (GF(3), (1, 2, 0, 1, 2)), rank=2)
+            Traceback (most recent call last):
+            ...
+            TypeError: unexpected keyword arguments: {'rank': 2}
+
+        Coverage tests::
+
+            sage: E = EllipticCurve(QQ, [2, 5], modular_degree=944, regulator=1)
+            sage: E.modular_degree()
+            944
+            sage: E.regulator()
+            1.00000000000000
         """
         R, x = key
 
         if R is QQ:
             from .ell_rational_field import EllipticCurve_rational_field
             return EllipticCurve_rational_field(x, **kwds)
-        elif isinstance(R, NumberField):
+        elif kwds:
+            raise TypeError(f"unexpected keyword arguments: {kwds}")
+
+        if isinstance(R, NumberField):
             from .ell_number_field import EllipticCurve_number_field
             return EllipticCurve_number_field(R, x)
         elif isinstance(R, sage.rings.abc.pAdicField):
@@ -535,6 +566,7 @@ def EllipticCurve_from_Weierstrass_polynomial(f):
         Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
     """
     return EllipticCurve(coefficients_from_Weierstrass_polynomial(f))
+
 
 def coefficients_from_Weierstrass_polynomial(f):
     r"""
@@ -1276,6 +1308,7 @@ def tangent_at_smooth_point(C,P):
         return C.tangents(P)[0]
     except NotImplementedError:
         return C.tangents(P,factor=False)[0]
+
 
 def chord_and_tangent(F, P):
     r"""Return the third point of intersection of a cubic with the tangent at one point.

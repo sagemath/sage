@@ -187,7 +187,7 @@ from sage.structure.parent import Parent
 from sage.misc.lazy_attribute import lazy_attribute
 
 
-from . import morphism
+from sage.modular.abvar import morphism
 
 from sage.rings.infinity import Infinity
 

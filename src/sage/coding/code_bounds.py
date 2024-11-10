@@ -360,6 +360,7 @@ def gilbert_lower_bound(n, q, d):
     ans = q**n/volume_hamming(n,q,d-1)
     return ans
 
+
 def plotkin_upper_bound(n,q,d, algorithm=None):
     r"""
     Return the Plotkin upper bound.
@@ -397,6 +398,7 @@ def plotkin_upper_bound(n,q,d, algorithm=None):
             if RR(fact) == RR(int(fact)):
                 fact = int(fact) + 1
             return int(d/( d - t * fact)) * q**(n - fact)
+
 
 def griesmer_upper_bound(n,q,d,algorithm=None):
     r"""
@@ -735,7 +737,7 @@ def elias_bound_asymp(delta, q):
         0.39912396330...
     """
     r = 1 - 1 / q
-    return RDF((1-entropy(r-sqrt(r*(r-delta)), q)))
+    return RDF(1-entropy(r-sqrt(r*(r-delta)), q))
 
 
 def mrrw1_bound_asymp(delta, q):

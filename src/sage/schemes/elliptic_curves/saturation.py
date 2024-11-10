@@ -54,6 +54,7 @@ from sage.rings.integer_ring import ZZ
 from sage.arith.misc import kronecker as kro
 from sage.structure.sage_object import SageObject
 
+
 def reduce_mod_q(x, amodq):
     r"""The reduction of ``x`` modulo the prime ideal defined by ``amodq``.
 
@@ -87,6 +88,7 @@ def reduce_mod_q(x, amodq):
         return x.lift().change_ring(Fq)(amodq)
     except AttributeError: # in case x is in QQ
         return Fq(x)
+
 
 class EllipticCurveSaturator(SageObject):
     r"""
@@ -384,7 +386,7 @@ class EllipticCurveSaturator(SageObject):
             -- points were not 2-saturated, gaining index 2
             (1, (0 : 1 : 0))
 
-        A CM example where large siecing primes are needed (LMFDB
+        A CM example where large sieving primes are needed (LMFDB
         label 2.0.3.1-50625.1-CMb2)::
 
             sage: K.<a> = NumberField(x^2 - x + 1)
@@ -584,6 +586,7 @@ class EllipticCurveSaturator(SageObject):
                     else: # rank went up but is <n; carry on using more Qs
                         rankA = newrank
                         count = 0
+
 
 def p_projections(Eq, Plist, p, debug=False):
     r"""

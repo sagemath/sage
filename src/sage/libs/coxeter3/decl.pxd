@@ -33,7 +33,6 @@ cdef extern from "coxeter/coxtypes.h" namespace "coxtypes":
     ctypedef unsigned short Length
     ctypedef Ulong StarOp             # for numbering star operations
 
-
     #################
     #    CoxWord    #
     #################

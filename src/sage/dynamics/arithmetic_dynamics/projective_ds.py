@@ -108,6 +108,8 @@ from sage.schemes.projective.projective_morphism import (
 from sage.schemes.projective.projective_space import ProjectiveSpace, ProjectiveSpace_ring
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 from sage.structure.element import get_coercion_model
+from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
+from sage.schemes.elliptic_curves.constructor import EllipticCurve
 
 lazy_import('sage.rings.algebraic_closure_finite_field', 'AlgebraicClosureFiniteField_generic')
 lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractionalIdeal')
@@ -2118,8 +2120,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                                 h = max([(Res*c).local_height_arch(vindex, prec=prec) for c in poly.coefficients()])
                         else: #non-archimedean
                             h = max([c.local_height(v, prec=prec) for c in poly.coefficients()])
-                        if h > maxh:
-                            maxh = h
+                        maxh = max(h, maxh)
             if maxh == 0:
                 maxh = 1  #avoid division by 0
             if isinstance(v, RingHomomorphism_im_gens): #archimedean
@@ -2332,8 +2333,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 if err is not None:
                     err = err / 2
                     N = ceil((R(Res).log().log() - R(d-1).log() - R(err).log())/(R(d).log()))
-                    if N < 1:
-                        N = 1
+                    N = max(N, 1)
                     kwds.update({'error_bound': err})
                     kwds.update({'N': N})
                 for n in range(N):
@@ -2935,7 +2935,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         # Calling possible_periods for each prime in parallel
         parallel_data = []
         for q in primes(primebound[0], primebound[1] + 1):
-            if not (q in badprimes):
+            if q not in badprimes:
                 F = self.change_ring(GF(q))
                 parallel_data.append(((F,), {}))
 
@@ -6739,8 +6739,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         """
         # We need `f` to be defined over a number field for
         # the function `is_postcrtically_finite` to work
-        if self.base_ring() not in NumberFields():
-            raise NotImplementedError("Base ring must be a number field")
+        if self.base_ring() is not QQbar:
+            if self.base_ring() not in NumberFields():
+                    raise NotImplementedError("Base ring must be a number field")
 
         if self.domain().dimension() != 1:
             return False
@@ -6767,7 +6768,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         (crit_set, post_crit_set) = crit, list(post_crit)
 
         # All Lattes maps have 3 or 4 post critical values
-        if not len(post_crit_set) in [3, 4]:
+        if len(post_crit_set) not in [3, 4]:
             return False
 
         f = F_crit.dehomogenize(1)[0]
@@ -6828,6 +6829,202 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         r_lattes_cases = [[2, 2, 2, 2], [3, 3, 3], [2, 4, 4], [2, 3, 6]]
         r_vals = sorted([val for val in r.values() if val != 1])
         return r_vals in r_lattes_cases
+
+    def Lattes_to_curve(self, return_conjugation=False, check_lattes=False):
+        r"""
+        Finds a Short Weierstrass Model Elliptic curve of self
+        self assumed to be Lattes map and not in charateristic 2 or 3
+
+        INPUT:
+
+        `return_conjugation`` -- (default: ``False``) if ``True``, then
+        return the conjugation that moves self to a map that comes from a
+        Short Weierstrass Model Elliptic curve
+        `check_lattes``.-.(default:.``False``) if ``True``, then  will ValueError if not Lattes
+
+        OUTPUT: a Short Weierstrass Model Elliptic curve which is isogenous to
+        the Elliptic curve of 'self',
+        If ``return_conjugation`` is ``True``
+        then also returns conjugation of 'self' to short form as a matrix
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = P.Lattes_map(EllipticCurve([0, 0, 0, 10, 2]), 2)
+            sage: f.Lattes_to_curve()
+            Elliptic Curve defined by y^2 = x^3 + 10*x + 2 over Rational Field
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: M = matrix(QQ,2,2,[[1,2],[-1,2]])
+            sage: f = P.Lattes_map(EllipticCurve([1, 1, 1, 1, 2]), 2)
+            sage: f = f.conjugate(M)
+            sage: f.Lattes_to_curve(return_conjugation = True)
+            (
+            [  -7/36*a^2 + 7/12*a + 7/3 -17/18*a^2 + 17/6*a + 34/3]
+            [    -1/8*a^2 + 1/4*a + 3/2        1/4*a^2 - 1/2*a - 3],
+            Elliptic Curve defined by y^2 = x^3 + (-94/27*a^2+94/9*a+376/9)*x +
+            12232/243 over Number Field in a with defining polynomial y^3 - 18*y - 30
+            )
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ,1)
+            sage: f = P.Lattes_map(EllipticCurve([1, 1, 1, 2, 2]), 2)
+            sage: L.<i> = CyclotomicField(4)
+            sage: M = Matrix([[1+i,2*i], [0, -i]])
+            sage: f = f.conjugate(M)
+            sage: f.Lattes_to_curve(return_conjugation = True)
+            (
+            [              1 19/24*a + 19/24]
+            [              0               1],
+            Elliptic Curve defined by y^2 = x^3 + 95/96*a*x + (-1169/3456*a+1169/3456)
+            over Number Field in a with defining polynomial y^2 + 1
+            )
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: M = matrix(QQ,2,2,[[1,3],[2,1]])
+            sage: E = EllipticCurve([1, 1, 1, 2, 3])
+            sage: f = P.Lattes_map(E, 2)
+            sage: f = f.conjugate(M)
+            sage: f.Lattes_to_curve(return_conjugation = True)
+            (
+            [11/1602*a^2 41/3204*a^2]
+            [     -2/5*a      -1/5*a],
+            Elliptic Curve defined by y^2 = x^3 + 2375/3421872*a^2*x + (-254125/61593696)
+            over Number Field in a with defining polynomial y^3 - 267
+            )
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ , 1)
+            sage: M = matrix(QQ,2,2,[[1 , 3],[2 , 1]])
+            sage: E = EllipticCurve([1, 1, 1, 2, 3])
+            sage: f = P.Lattes_map(E , 2)
+            sage: f = f.conjugate(M)
+            sage: m,H = f.Lattes_to_curve(true)
+            sage: J.<x,y> = ProjectiveSpace(H.base_ring(), 1)
+            sage: K = J.Lattes_map(H,2)
+            sage: K = K.conjugate(m)
+            sage: K.scale_by(f[0].lc()/K[0].lc())
+            sage: K == f.change_ring(K.base_ring())
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(RR, 1)
+            sage: F = DynamicalSystem_projective([x^4, y^4])
+            sage: F.Lattes_to_curve(check_lattes=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Base ring must be a number field
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: F = DynamicalSystem_projective([x^4, y^4])
+            sage: F.Lattes_to_curve(check_lattes=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: Map is not Lattes
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: F = DynamicalSystem_projective([x^4, y^4])
+            sage: F.Lattes_to_curve()
+            Traceback (most recent call last):
+            ...
+            ValueError: No Solutions found. Check if map is Lattes
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: F = DynamicalSystem_projective([x^3, y^3])
+            sage: F.Lattes_to_curve(check_lattes=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Map is not Lattes or is Complex Lattes
+
+        ::
+
+            sage: K.<x>=QuadraticField(2)
+            sage: P.<a,y>=ProjectiveSpace(K, 1)
+            sage: E=EllipticCurve([1, x])
+            sage: f=P.Lattes_map(E, 2)
+            sage: f.Lattes_to_curve()
+            Elliptic Curve defined by y^2 = x^3 + x + a
+            over Number Field in a with defining polynomial y^2 - 2
+
+        ::
+
+            sage: P.<x,y>=ProjectiveSpace(QQbar, 1)
+            sage: E=EllipticCurve([1, 2])
+            sage: f=P.Lattes_map(E, 2)
+            sage: f.Lattes_to_curve(check_lattes=true)
+            Elliptic Curve defined by y^2 = x^3 + x + 2 over Rational Field
+
+        """
+        if self.base_ring() is not QQbar:
+            if self.base_ring() not in NumberFields():
+                    raise NotImplementedError("Base ring must be a number field")
+    #The Complex case is hard to implement and needs to be done later
+        if sqrt(self.degree()) != int(sqrt(self.degree())):
+            raise NotImplementedError("Map is not Lattes or is Complex Lattes")
+        if check_lattes:
+            V = self.is_Lattes()
+            if not V:
+                raise ValueError("Map is not Lattes")
+        n = int(sqrt(self.degree()))
+    #Creating a Symbolic Lattes map f_sym from a short Elliptic curve
+        R = PolynomialRing(self.base_ring(), 6, "avar, bvar, uvar, vvar, wvar, tvar")
+        a, b, u, v, w, t = R.gens()
+        P = ProjectiveSpace(R, 1, self.domain().gens())
+        E_sym = EllipticCurve([a, b])
+        f_sym = P.Lattes_map(E_sym, n)
+    # Conjugating f_sym map to have the right form so we can solve for the conjugating matrix later
+        m = matrix(R, 2, [u, v, t, w])
+        f_sym = f_sym.conjugate(m)
+        f_sym.scale_by(u*w - v*t)
+        F_sym = f_sym.dehomogenize(1)
+    #extracting the base variables to do term by term matching
+        self.scale_by(1/self[0].lc())
+        F = self.dehomogenize(1)
+    #Creating a set of equations, eq, from term by term matching
+        eq = [u*w - v*t-1]
+        for j in range(2):
+            if j == 0:
+                g = F[0].numerator()
+                g_sym = F_sym[0].numerator()
+            else:
+                g = F[0].denominator()
+                g_sym = F_sym[0].denominator()
+            eq += (g - g_sym).coefficients()
+    #Solving the equations
+        phi = QQbar.coerce_map_from(R.base_ring())
+        if phi is None:
+            phi = R.base_ring().embeddings(QQbar)[0]
+        eq = [poly.numerator().change_ring(phi) for poly in eq]
+        I = eq[0].parent().ideal(eq)
+        pts = I.variety()
+        if len(pts) == 0:
+            raise ValueError("No Solutions found. Check if map is Lattes")
+        a = pts[0]['avar']
+        b = pts[0]['bvar']
+        u = pts[0]['uvar']
+        v = pts[0]['vvar']
+        t = pts[0]['tvar']
+        w = pts[0]['wvar']
+        K, [a, b, u, v, t, w], phi = number_field_elements_from_algebraics([a, b, u, v, t, w])
+    #creating our end products
+        E = EllipticCurve([a, b])
+        if return_conjugation:
+            M = matrix(K, 2, 2, [u, v, t, w])
+            return (M, E)
+        return E
 
 
 class DynamicalSystem_projective_field(DynamicalSystem_projective,
@@ -7032,7 +7229,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                     while not done and k <= n:
                         newP = self(newP)
                         if newP == P:
-                            if not ([P, k] in good_points):
+                            if [P, k] not in good_points:
                                 good_points.append([newP, k])
                             done = True
                         k += 1
@@ -7303,7 +7500,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                 pos_points = []
                 # check period, remove duplicates
                 for i in range(len(all_points)):
-                    if all_points[i][1] in periods and not (all_points[i] in pos_points):
+                    if all_points[i][1] in periods and all_points[i] not in pos_points:
                         pos_points.append(all_points[i])
                 periodic_points = DS.lift_to_rational_periodic(pos_points,B)
                 for p,n in periodic_points:
@@ -7398,7 +7595,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             P = points.pop()
             preimages = self.rational_preimages(P)
             for i in range(len(preimages)):
-                if not preimages[i] in preperiodic:
+                if preimages[i] not in preperiodic:
                     points.append(preimages[i])
                     preperiodic.add(preimages[i])
         return list(preperiodic)
@@ -8877,7 +9074,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         """
         if self.degree() == 1:
             raise NotImplementedError("degree one Newton maps are trivial")
-        if not self.base_ring() in NumberFields():
+        if self.base_ring() not in NumberFields():
             raise NotImplementedError("only implemented over number fields")
         # check if Newton map
         sigma_1 = self.sigma_invariants(1)
@@ -8920,6 +9117,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                 return False, None
         else:
             return Npoly.derivative(z) == (z - N_aff[0]).denominator()
+
 
 class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
                                               SchemeMorphism_polynomial_projective_space_finite_field):
