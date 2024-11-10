@@ -241,6 +241,23 @@ def cython(filename, verbose=0, compile_message=False,
         RuntimeError: Error compiling Cython file:
         ...
         ...: 'sage/misc.pxd' not found
+
+    Test ``view_annotate``::
+
+        sage: cython('''
+        ....: def f(int n):
+        ....:     return n*n
+        ....: ''', view_annotate=True)  # optional -- webbrowser
+
+    ::
+
+        sage: cython('''
+        ....: def f(int n):
+        ....:     return n*n
+        ....: ''', view_annotate=True, annotate=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: Cannot view annotated file without creating it
     """
     if not filename.endswith('pyx'):
         print("Warning: file (={}) should have extension .pyx".format(filename), file=sys.stderr)
