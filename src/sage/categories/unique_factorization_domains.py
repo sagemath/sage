@@ -214,9 +214,10 @@ class UniqueFactorizationDomains(Category_singleton):
             _, R = A.pseudo_quo_rem(B)
             while R.degree() > 0:
                 A = B
-                B = R // (g * h**delta)
+                h_delta = h**delta
+                B = R // (g * h_delta)
                 g = A.leading_coefficient()
-                h = h * g**delta // h**delta
+                h = h * g**delta // h_delta
                 delta = A.degree() - B.degree()
                 _, R = A.pseudo_quo_rem(B)
 
