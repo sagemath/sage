@@ -2013,7 +2013,6 @@ class MatchingCoveredGraph(Graph):
             :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
             :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
             :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
-
         """
         return False
 
@@ -2200,7 +2199,7 @@ class MatchingCoveredGraph(Graph):
 
     @doc_index('Overwritten methods')
     def loop_vertices(self):
-        """
+        r"""
         Return a list of vertices with loops.
 
         .. NOTE::
@@ -2282,7 +2281,6 @@ class MatchingCoveredGraph(Graph):
             :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
             :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
             :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
-
         """
         return []
 
