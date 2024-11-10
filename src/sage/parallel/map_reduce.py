@@ -1133,18 +1133,16 @@ class RESetMapReduce:
 
         TESTS::
 
+            sage: # long time
             sage: from sage.parallel.map_reduce import RESetMapReduce
             sage: def children(x):
             ....:     print(f"Starting: {x}", flush=True)
             ....:     return []
             sage: S = RESetMapReduce(roots=[1, 2], children=children)
             sage: S.setup_workers(2)
-            sage: S.start_workers(); sleep(float(5))  # long time
+            sage: S.start_workers(); sleep(float(5))
             Starting: ...
             Starting: ...
-
-        Cleanup::
-
             sage: S.finish()
         """
         if self._nprocess == 0:

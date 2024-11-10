@@ -8,6 +8,7 @@ from sage.groups.galois_group import GaloisGroup_cyc
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic, FrobeniusEndomorphism_finite_field
 
+
 class GaloisGroup_GFElement(AbelianGroupElement):
     def as_hom(self):
         r"""
@@ -51,6 +52,7 @@ class GaloisGroup_GFElement(AbelianGroupElement):
             True
         """
         return self.as_hom().fixed_field()
+
 
 class GaloisGroup_GF(GaloisGroup_cyc):
     r"""
