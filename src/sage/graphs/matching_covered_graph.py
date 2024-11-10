@@ -2180,7 +2180,91 @@ class MatchingCoveredGraph(Graph):
 
     @doc_index('Overwritten methods')
     def loop_vertices(self):
-        raise NotImplementedError()
+        """
+        Return a list of vertices with loops.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.loop_vertices`
+            method in order to return an empty list as matching covered graphs
+            are free of vertices that have looped edges.
+
+        OUTPUT:
+
+        - A list capturing the vertices that have loops in the matching covered
+          graph; note that, the list is empty since matching covered graphs do
+          not contain any looped edges.
+
+        EXAMPLES:
+
+        A matching covered graph, for instance the Möbius graph of order 8, by
+        definition, is always free of loops::
+
+            sage: M = graphs.MoebiusLadderGraph(4)
+            sage: G = MatchingCoveredGraph(M)
+            sage: G
+            Matching covered moebius ladder graph: graph on 8 vertices
+            sage: G.has_loops()
+            False
+            sage: G.allows_loops()
+            False
+            sage: G.add_edge(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            sage: G.loops()
+            []
+            sage: G.loop_edges()
+            []
+            sage: G.loop_vertices()
+            []
+            sage: G.number_of_loops()
+            0
+
+        A matching covered graph may support multiple edges, still no
+        loops are allowed::
+
+            sage: S = graphs.StaircaseGraph(4)
+            sage: G = MatchingCoveredGraph(S)
+            sage: G.allow_multiple_edges(True)
+            sage: G
+            Matching covered staircase graph: multi-graph on 8 vertices
+            sage: G.add_edge(0, 1, 'label')
+            sage: G.add_edge(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 1, 'label'), (0, 3, None), (0, 6, None),
+             (1, 2, None), (1, 4, None), (2, 5, None), (2, 7, None),
+             (3, 4, None), (3, 6, None), (4, 5, None), (5, 7, None),
+             (6, 7, None)]
+            sage: G.allows_loops()
+            False
+            sage: G.has_loops()
+            False
+            sage: G.loops()
+            []
+            sage: G.loop_edges()
+            []
+            sage: G.loop_vertices()
+            []
+            sage: G.number_of_loops()
+            0
+
+        .. SEEALSO::
+
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+
+        """
+        return []
 
     @doc_index('Overwritten methods')
     def number_of_loops(self):
