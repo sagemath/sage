@@ -2266,6 +2266,8 @@ class MatchingCoveredGraph(Graph):
         """
         return []
 
+    loops = loop_edges
+
     @doc_index('Overwritten methods')
     def number_of_loops(self):
         raise NotImplementedError()
