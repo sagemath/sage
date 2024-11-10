@@ -415,7 +415,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         corresponding to the exponents of the monomials of tropical
         polynomial.
 
-        OUTPUT: :class:`~sage.geometry.polyhedron.constructor.Polyhedron`
+        OUTPUT: :func:`~sage.geometry.polyhedron.constructor.Polyhedron`
 
         EXAMPLES:
 

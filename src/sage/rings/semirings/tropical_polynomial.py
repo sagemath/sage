@@ -11,10 +11,12 @@ EXAMPLES::
     sage: R.<x> = PolynomialRing(T)
     sage: x.parent()
     Univariate Tropical Polynomial Semiring in x over Rational Field
-    sage: (R(3)*x + R(1)) * (x^2 + x)
-    3*x^3 + 3*x^2 + 1*x
-    sage: (x^2 + x + R(0))^2
-    0*x^4 + 0*x^3 + 0*x^2 + 0*x + 0
+    sage: (x + R(3)*x) * (x^2 + x)
+    3*x^3 + 3*x^2
+    sage: (x^2 + R(1)*x + R(-1))^2
+    0*x^4 + 1*x^3 + 2*x^2 + 0*x + (-2)
+    sage: (x^2 + x + R(0))^4
+    0*x^8 + 0*x^7 + 0*x^6 + 0*x^5 + 0*x^4 + 0*x^3 + 0*x^2 + 0*x + 0
 
 REFERENCES:
 
