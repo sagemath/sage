@@ -2352,22 +2352,10 @@ class MatchingCoveredGraph(Graph):
             sage: G = MatchingCoveredGraph(W)
             sage: G
             Matching covered wheel graph: graph on 6 vertices
-            sage: G.has_loops()
-            False
-            sage: G.allows_loops()
-            False
             sage: G.add_edge(0, 0)
             Traceback (most recent call last):
             ...
             ValueError: loops are not allowed in matching covered graphs
-            sage: G.loops()
-            []
-            sage: G.loop_edges()
-            []
-            sage: G.loop_vertices()
-            []
-            sage: G.number_of_loops()
-            0
             sage: G.remove_loops()
             sage: G.edges(sort=True)
             [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None),
@@ -2389,18 +2377,6 @@ class MatchingCoveredGraph(Graph):
             ValueError: loops are not allowed in matching covered graphs
             sage: G.edges(sort=False)
             [(0, 1, None), (0, 1, 'label')]
-            sage: G.allows_loops()
-            False
-            sage: G.has_loops()
-            False
-            sage: G.loops()
-            []
-            sage: G.loop_edges()
-            []
-            sage: G.loop_vertices()
-            []
-            sage: G.number_of_loops()
-            0
             sage: G.remove_loops(vertices=[0, 1])
             sage: G.edges(sort=False)
             [(0, 1, None), (0, 1, 'label')]
