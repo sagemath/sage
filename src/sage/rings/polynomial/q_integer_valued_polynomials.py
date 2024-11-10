@@ -4,6 +4,12 @@ Quantum-valued polynomial rings
 AUTHORS:
 
 - Frédéric Chapoton (2024-03): Initial version
+
+REFERENCES:
+
+.. [HaHo2017] Nate Harman and Sam Hopkins, *Quantum integer-valued
+   polynomials*, J. Alg. Comb. 2017, :doi:`10.1007/s10801-016-0717-3`
+
 """
 # ***************************************************************************
 #  Copyright (C) 2024 Frédéric Chapoton <chapoton-math-unistra-fr>
@@ -94,11 +100,6 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
     INPUT:
 
     - ``R`` -- commutative ring
-
-    REFERENCES:
-
-    - [HaHo2017] Nate Harman and Sam Hopkins, *Quantum integer-valued
-      polynomials*, J. Alg. Comb. 2017, :doi:`10.1007/s10801-016-0717-3`
 
     EXAMPLES::
 
