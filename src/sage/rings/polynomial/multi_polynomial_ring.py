@@ -949,31 +949,3 @@ class MPolynomialRing_polydict_domain(IntegralDomain,
         if self.ngens() == 0:
             return self.base_ring().is_field(proof)
         return False
-
-    def ideal(self, *gens, **kwds):
-        """
-        Create an ideal in this polynomial ring.
-        """
-        do_coerce = False
-        if len(gens) == 1:
-            from sage.rings.ideal import Ideal_generic
-            if isinstance(gens[0], Ideal_generic):
-                if gens[0].ring() is self:
-                    return gens[0]
-                gens = gens[0].gens()
-            elif isinstance(gens[0], (list, tuple)):
-                gens = gens[0]
-        if not self._has_singular:
-            # pass through
-            MPolynomialRing_base.ideal(self, gens, **kwds)
-
-        from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
-
-        if isinstance(gens, (sage.interfaces.abc.SingularElement, sage.interfaces.abc.Macaulay2Element)):
-            gens = list(gens)
-            do_coerce = True
-        elif not isinstance(gens, (list, tuple)):
-            gens = [gens]
-        if ('coerce' in kwds and kwds['coerce']) or do_coerce:
-            gens = [self(x) for x in gens]  # this will even coerce from singular ideals correctly!
-        return MPolynomialIdeal(self, gens, **kwds)
