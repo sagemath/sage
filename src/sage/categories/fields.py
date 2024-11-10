@@ -638,6 +638,11 @@ class Fields(CategoryWithAxiom):
                 sage: gcd(0.0, 0.0)                                                     # needs sage.rings.real_mpfr
                 0.000000000000000
 
+            TESTS::
+
+                sage: QQbar(0).gcd(QQbar.zeta(3))
+                1
+
             AUTHOR:
 
             - Simon King (2011-02) -- :issue:`10771`
