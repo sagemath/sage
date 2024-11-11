@@ -572,8 +572,13 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: M = OrientedMatroid([[1], [-1], [0]], key='vector')
+            sage: M.dual()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: dual of oriented matroid not implemented yet
         """
-        pass
+        raise NotImplementedError("dual of oriented matroid not implemented yet")
 
     @cached_method
     def matroid(self):
@@ -588,7 +593,6 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
             sage: M.matroid()
             Matroid of rank 2 on 3 elements with 5 flats
         """
-        pass
 
     def rank(self):
         r"""
@@ -976,6 +980,21 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         for i in Subsets(self.groundset(), 2):
             if self.are_parallel(i[0], i[1]):
                 return False
+        return True
+
+    def is_dual_with(self, other):
+        r"""
+        Return if ``self`` is dual to ``other``.
+
+        Two oriented matroids are dual if the circuits of one are pairwise
+        orthogonal to the circuits of the other.
+        """
+        if self.groundset() != other.groundset():
+            return False
+        for u in self.circuits():
+            for v in other.circuits():
+                if not u.is_orthogonal_with(v):
+                    return False
         return True
 
     def _element_constructor_(self, x):

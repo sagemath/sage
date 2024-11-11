@@ -640,6 +640,36 @@ class SignedSubsetElement(Element):
             self.positives().intersection(change_set))
         return type(self)(self.parent(), positives=p, negatives=n, groundset=self.groundset())
 
+    def restrict_to(self, change_set):
+        r"""
+        Return the restriction by a set.
+
+        The restriction of `X` by some `F \subseteq E` is the signed subset `Y`
+        where `Y^+ = X^+ \cap F` and `Y^- = X^- \cap F`.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E = M.elements()[0]; E
+            (1,0,-1)
+            sage: E.restrict_to([0])
+            (1,0,0)
+            sage: E.restrict_to([2])
+            (0,0,-1)
+            sage: E.restrict_to([1])
+            (0,0,0)
+        """
+        if change_set in self.groundset():
+            change_set = set([change_set])
+        else:
+            change_set = set(change_set)
+
+        p = self.positives().intersection(change_set)
+        n = self.negatives().intersection(change_set)
+        return type(self)(self.parent(), positives=p, negatives=n, groundset=self.groundset())
+
     def is_conformal_with(self, other):
         r"""
         Return if the two elements are conformal.
@@ -662,6 +692,35 @@ class SignedSubsetElement(Element):
             True
         """
         return len(self.separation_set(other)) == 0
+
+    def is_orthogonal_with(self, other):
+        r"""
+        Return if the two elements are orthogonal.
+
+        Two elements `X` and `Y` are orthogonal if either their support is
+        empty or the restriction of `X` and `Y` to their intersection are
+        neither equal nor opposite.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E1 = M.elements()[0]
+            sage: E2 = M.elements()[1]
+            sage: E3 = M.elements()[2]
+            sage: E1.is_orthogonal_with(E2)
+            False
+            sage: E1.is_orthogonal_with(E3)
+            True
+        """
+        intersection = other.support().intersection(self.support())
+        if len(intersection) == 0:
+            return True
+
+        s = self.restrict_to(intersection)
+        o = other.restrict_to(intersection)
+        return (s != o and s != -o)
 
     def is_restriction_of(self, other):
         r"""
@@ -756,8 +815,7 @@ class SignedSubsetElement(Element):
     def is_zero(self):
         """
         Return whether or not element is 0.
-
-                
+ 
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
