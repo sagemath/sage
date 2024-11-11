@@ -33,8 +33,8 @@ do
             PROMPT="${1#--prompt=}"
             ;;
         --prompt)
-            PROMPT='  $ '
-            CONTINUATION='        '
+            PROMPT='$ '
+            CONTINUATION=''
             ;;
         --continuation=*)
             CONTINUATION="${1#--continuation=}"

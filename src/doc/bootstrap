@@ -35,48 +35,48 @@ for SYSTEM in arch debian fedora homebrew opensuse void; do
     RECOMMENDED_SYSTEM_PACKAGES=
     DEVELOP_SYSTEM_PACKAGES=
     for PKG_BASE in $(sage-package list --has-file distros/$SYSTEM.txt); do
-                PKG_SCRIPTS=build/pkgs/$PKG_BASE
-                PKG_TYPE=$(cat $PKG_SCRIPTS/type)
-                PKG_SYSTEM_PACKAGES=$(sage-get-system-packages $SYSTEM $PKG_BASE)
-                if [ -n "PKG_SYSTEM_PACKAGES" ]; then
-                    if [ -f $PKG_SCRIPTS/spkg-configure.m4 ]; then
-                       case "$PKG_BASE:$PKG_TYPE" in
-                           *:standard)
-                               SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
-                               ;;
-                           $DEVELOP_SPKG_PATTERN:*)
-                               DEVELOP_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
-                               ;;
-                           $RECOMMENDED_SPKG_PATTERN:*)
-                               RECOMMENDED_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
-                               ;;
-                           *)
-                               OPTIONAL_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
-                               ;;
-                       esac
-                    else
-                        case "$PKG_BASE:$PKG_TYPE" in
-                           $DEVELOP_SPKG_PATTERN:*)
-                               DEVELOP_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
-                               ;;
-                            *:standard)
-                                SAGELIB_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
-                                ;;
-                            *)
-                                SAGELIB_OPTIONAL_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
-                                ;;
-                        esac
-                    fi
-                fi
+        PKG_SCRIPTS=build/pkgs/$PKG_BASE
+        PKG_TYPE=$(cat $PKG_SCRIPTS/type)
+        PKG_SYSTEM_PACKAGES=$(sage-get-system-packages $SYSTEM $PKG_BASE)
+        if [ -n "$PKG_SYSTEM_PACKAGES" ]; then
+            if [ -f $PKG_SCRIPTS/spkg-configure.m4 ]; then
+               case "$PKG_BASE:$PKG_TYPE" in
+                   *:standard)
+                       SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                       ;;
+                   $DEVELOP_SPKG_PATTERN:*)
+                       DEVELOP_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                       ;;
+                   $RECOMMENDED_SPKG_PATTERN:*)
+                       RECOMMENDED_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                       ;;
+                   *)
+                       OPTIONAL_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                       ;;
+               esac
+            else
+                case "$PKG_BASE:$PKG_TYPE" in
+                   $DEVELOP_SPKG_PATTERN:*)
+                       DEVELOP_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                       ;;
+                    *:standard)
+                        SAGELIB_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                        ;;
+                    *)
+                        SAGELIB_OPTIONAL_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                        ;;
+                esac
+            fi
+        fi
     done
 
     if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
         echo >&2 $0:$LINENO: installing "$OUTPUT_DIR"/$SYSTEM"*.txt"
     fi
-    echo "$(sage-print-system-package-command $SYSTEM --prompt --wrap --sudo install $(echo $(echo $SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM.txt
-    echo "$(sage-print-system-package-command $SYSTEM --prompt --wrap --sudo install $(echo $(echo $OPTIONAL_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-optional.txt
-    echo "$(sage-print-system-package-command $SYSTEM --prompt --wrap --sudo install $(echo $(echo $RECOMMENDED_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-recommended.txt
-    echo "$(sage-print-system-package-command $SYSTEM --prompt --wrap --sudo install $(echo $(echo $DEVELOP_SYSTEM_PACKAGES | xargs -n 1 echo | sort | uniq)))" > "$OUTPUT_DIR"/$SYSTEM-develop.txt
+    echo "$(sage-print-system-package-command $SYSTEM --prompt --wrap --sudo install $(echo "$SYSTEM_PACKAGES" | xargs -n 1 echo | sort | uniq))" > "$OUTPUT_DIR"/$SYSTEM.txt
+    echo "$(sage-print-system-package-command $SYSTEM --prompt --wrap --sudo install $(echo "$OPTIONAL_SYSTEM_PACKAGES" | xargs -n 1 echo | sort | uniq))" > "$OUTPUT_DIR"/$SYSTEM-optional.txt
+    echo "$(sage-print-system-package-command $SYSTEM --prompt --wrap --sudo install $(echo "$RECOMMENDED_SYSTEM_PACKAGES" | xargs -n 1 echo | sort | uniq))" > "$OUTPUT_DIR"/$SYSTEM-recommended.txt
+    echo "$(sage-print-system-package-command $SYSTEM --prompt --wrap --sudo install $(echo "$DEVELOP_SYSTEM_PACKAGES" | xargs -n 1 echo | sort | uniq))" > "$OUTPUT_DIR"/$SYSTEM-develop.txt
 done
 
 OUTPUT_DIR="src/doc/en/reference/spkg"

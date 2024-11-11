@@ -3,8 +3,8 @@
 Install from conda-forge
 ========================
 
-SageMath can be installed on Linux and macOS via Conda from the
-`conda-forge <https://conda-forge.org>`_ conda channel.
+Sage can be installed via Conda from the `conda-forge
+<https://conda-forge.org>`_ conda channel.
 
 Both the ``x86_64`` (Intel) architecture and the ``arm64``/``aarch64``
 architectures (including Apple Silicon, M1, M2, M3, M4) are supported.
@@ -33,10 +33,11 @@ which uses a faster dependency solver than ``conda``.
 
 .. _sec-installation-conda-binary:
 
-Installing all of SageMath from conda (not for development)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Installing all of Sage from conda
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Create a new conda environment containing SageMath, either with ``mamba`` or ``conda``:
+This is a quick way to install Sage for non-developer users. Create a new conda
+environment containing Sage, either with ``mamba`` or ``conda``:
 
 .. tab:: mamba
 
@@ -55,7 +56,7 @@ where ``X`` is version of Python, e.g. ``3.9``.
 To use Sage from there,
 
 * Enter the new environment: ``conda activate sage``
-* Start SageMath: ``sage``
+* Start Sage: ``sage``
 
 If there are any installation failures, please report them to
 the conda-forge maintainers by opening a `GitHub Issue for
@@ -67,7 +68,7 @@ conda-forge/sage-feedstock <https://github.com/conda-forge/sage-feedstock/issues
 Using conda to provide system packages for the Sage distribution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If Conda is installed (check by typing ``conda info``), one can install SageMath
+If Conda is installed (check by typing ``conda info``), one can install Sage
 from source as follows:
 
 - Create a new conda environment including all standard packages
@@ -84,7 +85,7 @@ from source as follows:
   A different Python version can be selected by replacing ``3.11`` by ``3.9``
   or ``3.10`` in these commands.
 
-- Then the SageMath distribution will be built using the compilers provided by Conda
+- Then the Sage distribution will be built using the compilers provided by Conda
   and using many packages installed by Conda::
 
     $ ./bootstrap
