@@ -130,7 +130,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         EXAMPLES::
 
             sage: ch = matroids.catalog.NonFano().chow_ring(QQ, False)
-            sage: ch.defining_ideal()._gens_constructor(ch.defining_ideal().ring())
+            sage: sorted(ch.defining_ideal()._gens_constructor(ch.defining_ideal().ring()))
             [Aa*Ab, Aa*Ac, Aa*Ae, Aa*Ad, Aa*Ade, Aa*Abcd, Aa*Af, Aa*Adf,
              Aa*Aef, Aa*Ag, Aa*Abeg, Aa*Acfg, Ab*Ac, Ab*Ae, Ab*Aace, Ab*Ad,
              Ab*Ade, Ab*Af, Ab*Adf, Ab*Aef, Ab*Ag, Ab*Aadg, Ab*Acfg, Ac*Ae,
@@ -412,7 +412,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         EXAMPLES::
 
             sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'fy')
-            sage: ch.defining_ideal()._gens_constructor(ch.defining_ideal().ring())
+            sage: sorted(ch.defining_ideal()._gens_constructor(ch.defining_ideal().ring()))
             [B0*B1, B0*B2, B0*B3, B0*B23, B0*B4, B0*B124, B0*B5, B0*B15,
              B0*B345, B1*B2, B1*B3, B1*B23, B1*B4, B1*B04, B1*B5, B1*B025,
              B1*B345, B2*B3, B2*B013, B2*B4, B2*B04, B2*B5, B2*B15, B2*B345,
@@ -657,7 +657,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
 
             sage: M1 = Matroid(graphs.CycleGraph(3))
             sage: ch = M1.chow_ring(QQ, True, 'atom-free')
-            sage: ch.defining_ideal()._gens_constructor(ch.defining_ideal().ring())
+            sage: sorted(ch.defining_ideal()._gens_constructor(ch.defining_ideal().ring()))
             [A0*A1, A0*A2, A1*A2, A0^2 + 2*A0*A3 + A3^2, A1^2 + 2*A1*A3 + A3^2,
              A0*A1 + A0*A3, A2^2 + 2*A2*A3 + A3^2, A0*A2 + A0*A3,
              A0*A1 + A1*A3, A1*A2 + A1*A3, A0*A2 + A2*A3, A1*A2 + A2*A3]
