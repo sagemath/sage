@@ -301,7 +301,7 @@ class CharacterArt(SageObject):
         # We implement a custom iterator instead of repeatedly using
         # itertools.chain to prepend elements in order to avoid quadratic time
         # complexity
-        class PrependIterator():
+        class PrependIterator:
             """
             Iterator with support for prepending of elements.
             """

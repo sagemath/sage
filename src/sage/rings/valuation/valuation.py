@@ -1043,7 +1043,7 @@ class DiscreteValuation(DiscretePseudoValuation):
         return super()._ge_(other)
 
 
-class MacLaneApproximantNode():
+class MacLaneApproximantNode:
     r"""
     A node in the tree computed by :meth:`DiscreteValuation.mac_lane_approximants`.
 

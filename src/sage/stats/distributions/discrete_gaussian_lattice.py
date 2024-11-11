@@ -559,7 +559,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         except TypeError:
             self._sigma = matrix(self._RR, sigma)
             # Will it be "annoying" if a matrix Sigma has different behaviour
-            # sometimes? There should be a parameter in the consrtuctor
+            # sometimes? There should be a parameter in the constructor
             if self._sigma == self._sigma[0, 0]:
                 self._sigma = self._RR(self._sigma[0, 0])
             else:

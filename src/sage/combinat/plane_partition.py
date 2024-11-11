@@ -1628,7 +1628,7 @@ class PlanePartitions_box(PlanePartitions):
             pp_matrix[x][y] = z + 1
 
         # For each value in current antichain, fill in the rest of the matrix by
-        # rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partition format
+        # rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichain is now in plane partition format
         if A:
             for i in range(a):
                 i = a - (i + 1)
@@ -2161,7 +2161,7 @@ class PlanePartitions_CSPP(PlanePartitions):
             pp_matrix[x][y] = (z+1)
 
         # For each value in current antichain, fill in the rest of the
-        # matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is
+        # matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichain is
         # now in plane partition format.
         if acl != []:
             for i in range(b):
@@ -2368,7 +2368,7 @@ class PlanePartitions_TSPP(PlanePartitions):
             pp_matrix[y][x] = z + 1  # z,y,x
 
         # for each value in current antichain, fill in the rest of the matrix by
-        # rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partition format
+        # rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichain is now in plane partition format
         if acl != []:
             for i in range(b):
                 i = b - (i + 1)
@@ -3166,7 +3166,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         n = a
         N = n // 2
         pp_matrix = [[0] * (c) for i in range(b)]
-        # creates a matrix for the plane parition populated by 0s
+        # creates a matrix for the plane partition populated by 0s
         # EX: [[0,0,0], [0,0,0], [0,0,0]]
         width = N - 1
         height = N - 1

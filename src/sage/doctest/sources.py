@@ -124,7 +124,7 @@ def get_basename(path):
     return basename
 
 
-class DocTestSource():
+class DocTestSource:
     """
     This class provides a common base class for different sources of doctests.
 

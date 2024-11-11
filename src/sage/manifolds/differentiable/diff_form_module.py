@@ -570,6 +570,7 @@ class DiffFormModule(UniqueRepresentation, Parent):
 
 # *****************************************************************************
 
+
 class DiffFormFreeModule(ExtPowerDualFreeModule):
     r"""
     Free module of differential forms of a given degree `p` (`p`-forms) along
