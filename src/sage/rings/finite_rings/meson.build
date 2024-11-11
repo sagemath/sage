@@ -41,7 +41,10 @@ extension_data = {
 foreach name, pyx : extension_data
   deps = [py_dep, cysignals, gmp]
   if name == 'element_pari_ffelt'
-    deps += [cypari2]
+    deps += [
+      cypari2,
+      pari,  # Runtime dependency
+    ]
   elif name == 'residue_field_pari_ffelt'
     deps += [cypari2]
   endif

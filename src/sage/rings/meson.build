@@ -124,13 +124,20 @@ extension_data = {
 foreach name, pyx : extension_data
   deps = [py_dep, cysignals, gmp]
   if name == 'complex_arb'
-    deps += [flint, mpfi]
+    deps += [
+      flint,
+      mpfi,
+      gsl,  # Runtime dependency
+    ]
   elif name == 'complex_conversion'
     deps += [gsl, mpfr]
   elif name == 'complex_double'
     deps += [gmpy2, gsl]
   elif name == 'complex_interval'
-    deps += [mpfi]
+    deps += [
+      mpfi,
+      flint,  # Runtime dependency
+    ]
   elif name == 'complex_mpc'
     deps += [gmpy2, mpfr, mpc]
   elif name == 'complex_mpfr'
