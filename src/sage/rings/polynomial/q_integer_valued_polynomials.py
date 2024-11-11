@@ -32,6 +32,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -85,7 +86,7 @@ def q_binomial_x(m, n):
 
 class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
     r"""
-    The quantum-valued polynomial ring on some generators over a base ring.
+    The quantum-valued polynomial ring over a base ring.
 
     Quantum-valued polynomial rings are commutative and associative
     algebras, with a basis indexed by integers.
@@ -142,7 +143,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
 
             sage: F = QuantumValuedPolynomialRing(QQ); F
             Quantum-Valued Polynomial Ring over Rational Field
-            sage: TestSuite(F).run()  # not tested
+            sage: TestSuite(F).run()
 
         TESTS::
 
@@ -610,7 +611,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
                 sage: R(x)
                 S[1]
             """
-            P = x.parent()
+            P = parent(x)
             if isinstance(P, QuantumValuedPolynomialRing.Shifted):
                 if P is self:
                     return x
