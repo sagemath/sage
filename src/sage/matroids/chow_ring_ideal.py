@@ -131,27 +131,27 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
 
             sage: ch = matroids.catalog.NonFano().chow_ring(QQ, False)
             sage: sorted(ch.defining_ideal()._gens_constructor(ch.defining_ideal().ring()))
-            [Aa*Ab, Aa*Ac, Aa*Ae, Aa*Ad, Aa*Ade, Aa*Abcd, Aa*Af, Aa*Adf,
-             Aa*Aef, Aa*Ag, Aa*Abeg, Aa*Acfg, Ab*Ac, Ab*Ae, Ab*Aace, Ab*Ad,
-             Ab*Ade, Ab*Af, Ab*Adf, Ab*Aef, Ab*Ag, Ab*Aadg, Ab*Acfg, Ac*Ae,
-             Ac*Ad, Ac*Ade, Ac*Af, Ac*Aabf, Ac*Adf, Ac*Aef, Ac*Ag, Ac*Aadg,
-             Ac*Abeg, Ad*Ae, Ae*Abcd, Ae*Af, Ae*Aabf, Ae*Adf, Ae*Ag, Ae*Aadg,
-             Ae*Acfg, Ad*Aace, Aace*Ade, Aace*Abcd, Af*Aace, Aabf*Aace,
-             Aace*Adf, Aace*Aef, Ag*Aace, Aace*Aadg, Aace*Abeg, Aace*Acfg,
-             Ad*Af, Ad*Aabf, Ad*Aef, Ad*Ag, Ad*Abeg, Ad*Acfg, Abcd*Ade, Af*Ade,
-             Aabf*Ade, Ade*Adf, Ade*Aef, Ag*Ade, Aadg*Ade, Abeg*Ade, Acfg*Ade,
-             Af*Abcd, Aabf*Abcd, Abcd*Adf, Abcd*Aef, Ag*Abcd, Aadg*Abcd,
-             Abcd*Abeg, Abcd*Acfg, Af*Ag, Af*Aadg, Af*Abeg, Aabf*Adf, Aabf*Aef,
-             Ag*Aabf, Aabf*Aadg, Aabf*Abeg, Aabf*Acfg, Adf*Aef, Ag*Adf,
-             Aadg*Adf, Abeg*Adf, Acfg*Adf, Ag*Aef, Aadg*Aef, Abeg*Aef,
-             Acfg*Aef, Aadg*Abeg, Aadg*Acfg, Abeg*Acfg,
-             Aa + Aabf + Aace + Aadg + Aabcdefg,
-             Ab + Aabf + Abcd + Abeg + Aabcdefg,
-             Ac + Aace + Abcd + Acfg + Aabcdefg,
-             Ad + Aadg + Abcd + Ade + Adf + Aabcdefg,
-             Ae + Aace + Abeg + Ade + Aef + Aabcdefg,
+            [Ag + Aadg + Abeg + Acfg + Aabcdefg,
              Af + Aabf + Acfg + Adf + Aef + Aabcdefg,
-             Ag + Aadg + Abeg + Acfg + Aabcdefg]
+             Ae + Aace + Abeg + Ade + Aef + Aabcdefg,
+             Ad + Aadg + Abcd + Ade + Adf + Aabcdefg,
+             Ac + Aace + Abcd + Acfg + Aabcdefg,
+             Ab + Aabf + Abcd + Abeg + Aabcdefg,
+             Aa + Aabf + Aace + Aadg + Aabcdefg,
+             Adf*Aef, Ade*Aef, Acfg*Aef, Abeg*Aef, Abcd*Aef, Aadg*Aef,
+             Aace*Aef, Aabf*Aef, Ag*Aef, Ad*Aef, Ac*Aef, Ab*Aef, Aa*Aef,
+             Ade*Adf, Acfg*Adf, Abeg*Adf, Abcd*Adf, Aadg*Adf, Aace*Adf,
+             Aabf*Adf, Ag*Adf, Ae*Adf, Ac*Adf, Ab*Adf, Aa*Adf, Acfg*Ade,
+             Abeg*Ade, Abcd*Ade, Aadg*Ade, Aace*Ade, Aabf*Ade, Ag*Ade, Af*Ade,
+             Ac*Ade, Ab*Ade, Aa*Ade, Abeg*Acfg, Abcd*Acfg, Aadg*Acfg,
+             Aace*Acfg, Aabf*Acfg, Ae*Acfg, Ad*Acfg, Ab*Acfg, Aa*Acfg,
+             Abcd*Abeg, Aadg*Abeg, Aace*Abeg, Aabf*Abeg, Af*Abeg, Ad*Abeg,
+             Ac*Abeg, Aa*Abeg, Aadg*Abcd, Aace*Abcd, Aabf*Abcd, Ag*Abcd,
+             Af*Abcd, Ae*Abcd, Aa*Abcd, Aace*Aadg, Aabf*Aadg, Af*Aadg, Ae*Aadg,
+             Ac*Aadg, Ab*Aadg, Aabf*Aace, Ag*Aace, Af*Aace, Ad*Aace, Ab*Aace,
+             Ag*Aabf, Ae*Aabf, Ad*Aabf, Ac*Aabf, Af*Ag, Ae*Ag, Ad*Ag, Ac*Ag,
+             Ab*Ag, Aa*Ag, Ae*Af, Ad*Af, Ac*Af, Ab*Af, Aa*Af, Ad*Ae, Ac*Ae,
+             Ab*Ae, Aa*Ae, Ac*Ad, Ab*Ad, Aa*Ad, Ab*Ac, Aa*Ac, Aa*Ab]
         """
         flats = list(self._flats_generator)
         lattice_flats = Poset((flats, lambda x, y: x <= y))
@@ -413,33 +413,34 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
 
             sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'fy')
             sage: sorted(ch.defining_ideal()._gens_constructor(ch.defining_ideal().ring()))
-            [B0*B1, B0*B2, B0*B3, B0*B23, B0*B4, B0*B124, B0*B5, B0*B15,
-             B0*B345, B1*B2, B1*B3, B1*B23, B1*B4, B1*B04, B1*B5, B1*B025,
-             B1*B345, B2*B3, B2*B013, B2*B4, B2*B04, B2*B5, B2*B15, B2*B345,
-             B3*B4, B3*B04, B3*B124, B3*B5, B3*B025, B3*B15, B013*B23, B4*B013,
-             B013*B04, B013*B124, B5*B013, B013*B025, B013*B15, B013*B345,
-             B4*B23, B04*B23, B124*B23, B5*B23, B025*B23, B15*B23, B23*B345,
-             B4*B5, B4*B025, B4*B15, B04*B124, B5*B04, B025*B04, B04*B15,
-             B04*B345, B5*B124, B025*B124, B124*B15, B124*B345, B025*B15,
-             B025*B345, B15*B345, A0*B, A0*B1, A0*B2, A0*B3, A0*B4, A0*B5,
-             A0*B124, A0*B15, A0*B23, A0*B345, A1*B, A1*B0, A1*B2, A1*B3,
-             A1*B4, A1*B5, A1*B025, A1*B04, A1*B23, A1*B345, A2*B, A2*B0,
-             A2*B1, A2*B3, A2*B4, A2*B5, A2*B013, A2*B04, A2*B15, A2*B345,
-             A3*B, A3*B0, A3*B1, A3*B2, A3*B4, A3*B5, A3*B025, A3*B04, A3*B124,
-             A3*B15, A4*B, A4*B0, A4*B1, A4*B2, A4*B3, A4*B5, A4*B013, A4*B025,
-             A4*B15, A4*B23, A5*B, A5*B0, A5*B1, A5*B2, A5*B3, A5*B4, A5*B013,
-             A5*B04, A5*B124, A5*B23, A0 + B0 + B013 + B025 + B04 + B012345,
+            [B + B0 + B1 + B2 + B3 + B4 + B5 + B013 + B025 + B04 + B124 + B15 + B23 + B345 + B012345,
              B + B0 + B1 + B2 + B3 + B4 + B5 + B013 + B025 + B04 + B124 + B15 + B23 + B345 + B012345,
-             A1 + B1 + B013 + B124 + B15 + B012345,
              B + B0 + B1 + B2 + B3 + B4 + B5 + B013 + B025 + B04 + B124 + B15 + B23 + B345 + B012345,
-             A2 + B2 + B025 + B124 + B23 + B012345,
              B + B0 + B1 + B2 + B3 + B4 + B5 + B013 + B025 + B04 + B124 + B15 + B23 + B345 + B012345,
-             A3 + B3 + B013 + B23 + B345 + B012345,
              B + B0 + B1 + B2 + B3 + B4 + B5 + B013 + B025 + B04 + B124 + B15 + B23 + B345 + B012345,
-             A4 + B4 + B04 + B124 + B345 + B012345,
              B + B0 + B1 + B2 + B3 + B4 + B5 + B013 + B025 + B04 + B124 + B15 + B23 + B345 + B012345,
              A5 + B5 + B025 + B15 + B345 + B012345,
-             B + B0 + B1 + B2 + B3 + B4 + B5 + B013 + B025 + B04 + B124 + B15 + B23 + B345 + B012345]
+             A4 + B4 + B04 + B124 + B345 + B012345,
+             A3 + B3 + B013 + B23 + B345 + B012345,
+             A2 + B2 + B025 + B124 + B23 + B012345,
+             A1 + B1 + B013 + B124 + B15 + B012345,
+             A0 + B0 + B013 + B025 + B04 + B012345,
+             B23*B345, B15*B345, B124*B345, B04*B345, B025*B345, B013*B345,
+             B2*B345, B1*B345, B0*B345, A2*B345, A1*B345, A0*B345, B15*B23,
+             B124*B23, B04*B23, B025*B23, B013*B23, B5*B23, B4*B23, B1*B23,
+             B0*B23, A5*B23, A4*B23, A1*B23, A0*B23, B124*B15, B04*B15,
+             B025*B15, B013*B15, B4*B15, B3*B15, B2*B15, B0*B15, A4*B15,
+             A3*B15, A2*B15, A0*B15, B04*B124, B025*B124, B013*B124, B5*B124,
+             B3*B124, B0*B124, A5*B124, A3*B124, A0*B124, B025*B04, B013*B04,
+             B5*B04, B3*B04, B2*B04, B1*B04, A5*B04, A3*B04, A2*B04, A1*B04,
+             B013*B025, B4*B025, B3*B025, B1*B025, A4*B025, A3*B025, A1*B025,
+             B5*B013, B4*B013, B2*B013, A5*B013, A4*B013, A2*B013, B4*B5,
+             B3*B5, B2*B5, B1*B5, B0*B5, A4*B5, A3*B5, A2*B5, A1*B5, A0*B5,
+             B3*B4, B2*B4, B1*B4, B0*B4, A5*B4, A3*B4, A2*B4, A1*B4, A0*B4,
+             B2*B3, B1*B3, B0*B3, A5*B3, A4*B3, A2*B3, A1*B3, A0*B3, B1*B2,
+             B0*B2, A5*B2, A4*B2, A3*B2, A1*B2, A0*B2, B0*B1, A5*B1, A4*B1,
+             A3*B1, A2*B1, A0*B1, A5*B0, A4*B0, A3*B0, A2*B0, A1*B0, A5*B,
+             A4*B, A3*B, A2*B, A1*B, A0*B]
         """
         E = list(self._matroid.groundset())
         Q = []
@@ -658,9 +659,9 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             sage: M1 = Matroid(graphs.CycleGraph(3))
             sage: ch = M1.chow_ring(QQ, True, 'atom-free')
             sage: sorted(ch.defining_ideal()._gens_constructor(ch.defining_ideal().ring()))
-            [A0*A1, A0*A2, A1*A2, A0^2 + 2*A0*A3 + A3^2, A1^2 + 2*A1*A3 + A3^2,
-             A0*A1 + A0*A3, A2^2 + 2*A2*A3 + A3^2, A0*A2 + A0*A3,
-             A0*A1 + A1*A3, A1*A2 + A1*A3, A0*A2 + A2*A3, A1*A2 + A2*A3]
+            [A2^2 + 2*A2*A3 + A3^2, A1*A2, A1*A2 + A2*A3, A1*A2 + A1*A3, A0*A2,
+             A0*A2 + A2*A3, A0*A2 + A0*A3, A1^2 + 2*A1*A3 + A3^2, A0*A1,
+             A0*A1 + A1*A3, A0*A1 + A0*A3, A0^2 + 2*A0*A3 + A3^2]
         """
         E = list(self._matroid.groundset())
         Q = []  # Quadratic generators
