@@ -342,7 +342,18 @@ class SageMagics(Magics):
 
         INPUT:
 
-        - ``line`` -- parsed as keyword arguments. See :func:`~sage.misc.cython.cython` for details.
+        - ``line`` -- parsed as keyword arguments. The allowed arguments are:
+
+          - ``--verbose N`` / ``-v N``
+          - ``--compile-message`` / ``-m``
+          - ``--use-cache`` / ``-c``
+          - ``--create-local-c-file`` / ``-l``
+          - ``--annotate`` / ``-a``
+          - ``--sage-namespace`` / ``-s``
+          - ``--create-local-so-file`` / ``-o``
+          - ``--no-compile-message``, ``--no-use-cache``, etc. (there is no short form for the ``--no-*`` flags)
+
+          See :func:`~sage.misc.cython.cython` for details.
 
         - ``cell`` -- string; the Cython source code to process
 
