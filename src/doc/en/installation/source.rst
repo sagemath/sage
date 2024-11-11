@@ -714,8 +714,14 @@ and WSL.
 Post-build remarks
 ------------------
 
-Test run
-^^^^^^^^
+.. hint::
+
+  The following steps use the classical ``./configure && make`` build
+  process. The modern Meson build system is also supported, see
+  :ref:`build-source-meson`.
+
+#. Follow the procedure in the file `README.md <https://github.com/sagemath/sage/#readme>`_
+   in ``SAGE_ROOT``.
 
 To start Sage, you can now simply type from Sage's home directory::
 

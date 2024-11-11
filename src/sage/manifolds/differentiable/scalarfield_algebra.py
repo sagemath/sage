@@ -35,6 +35,7 @@ from sage.symbolic.ring import SymbolicRing
 from sage.manifolds.scalarfield_algebra import ScalarFieldAlgebra
 from sage.manifolds.differentiable.scalarfield import DiffScalarField
 
+
 class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
     r"""
     Commutative algebra of differentiable scalar fields on a differentiable

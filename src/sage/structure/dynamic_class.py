@@ -144,7 +144,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
     inserted into ``C``, and its bases will be prepended to ``bases``
     (unless ``prepend_cls_bases`` is ``False``).
 
-    The module, documentation and source instrospection is taken from
+    The module, documentation and source introspection is taken from
     ``doccls``, or ``cls`` if ``doccls`` is ``None``, or ``bases[0]``
     if both are ``None`` (therefore ``bases`` should be non empty if
     ``cls`` is ``None``).
@@ -305,7 +305,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
         sage: pickle.loads(pickle.dumps(FooBar)) == FooBar
         True
 
-    We check that instrospection works reasonably::
+    We check that introspection works reasonably::
 
         sage: sage.misc.sageinspect.sage_getdoc(FooBar)
         'The Foo class\n'
@@ -363,7 +363,7 @@ def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, p
         sage: Foo3.__doc__ == sage.structure.dynamic_class.TestClass.__doc__
         True
 
-    We check that instrospection works reasonably::
+    We check that introspection works reasonably::
 
         sage: from sage.misc.sageinspect import sage_getfile, sage_getsourcelines
         sage: sage_getfile(Foo2)
