@@ -1611,7 +1611,7 @@ class TropicalCurve(TropicalVariety):
             T = TropicalSemiring(QQ)
             R = PolynomialRing(T, ('x,y'))
             x, y = R.gen(), R.gen(1)
-            p2 = (x**6 + R(4)*x**4*y^2 + R(2)*x**3*y**3 + R(3)*x**2*y**4
+            p2 = (x**6 + R(4)*x**4*y**2 + R(2)*x**3*y**3 + R(3)*x**2*y**4
                   + x*y**5 + R(7)*x**2 + R(5)*x*y + R(3)*y**2 + R(2)*x
                   + y + R(10))
             sphinx_plot(p2.tropical_variety().plot())

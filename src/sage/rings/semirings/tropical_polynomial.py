@@ -473,7 +473,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
             T = TropicalSemiring(QQ, use_min=False)
             R = PolynomialRing(T, 'x')
-            p1 = p1 = R([4,2,1,3])
+            p1 = R([4,2,1,3])
             sphinx_plot(p1.plot())
 
         A different result will be obtained if the tropical semiring employs
@@ -494,7 +494,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             T = TropicalSemiring(QQ, use_min=True)
             R = PolynomialRing(T, 'x')
             p1 = R([4,2,1,3])
-            sphinx_plot(plot(p1, xmin=-4, xmax=4))
+            sphinx_plot(p1.plot())
 
         TESTS:
 
