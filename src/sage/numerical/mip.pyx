@@ -215,7 +215,7 @@ also implements the :class:`MIPSolverException` exception, as well as the
     :meth:`~MixedIntegerLinearProgram.show`                      | Display the ``MixedIntegerLinearProgram`` in a human-readable
     :meth:`~MixedIntegerLinearProgram.solve`                     | Solve the ``MixedIntegerLinearProgram``
     :meth:`~MixedIntegerLinearProgram.solver_parameter`          | Return or define a solver parameter
-    :meth:`~MixedIntegerLinearProgram.result`                       | Efficiently computes the result of a sequence of LinearFunction elements
+    :meth:`~MixedIntegerLinearProgram.sum`                       | Efficiently computes the sum of a sequence of LinearFunction elements
     :meth:`~MixedIntegerLinearProgram.write_lp`                  | Write the linear program as a LP file
     :meth:`~MixedIntegerLinearProgram.write_mps`                 | Write the linear program as a MPS file
 
@@ -319,7 +319,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
          sage: g = graphs.PetersenGraph()
          sage: p = MixedIntegerLinearProgram(maximization=True, solver='GLPK')
          sage: b = p.new_variable(binary=True)
-         sage: p.set_objective(result([b[v] for v in g]))
+         sage: p.set_objective(sum([b[v] for v in g]))
          sage: for (u,v) in g.edges(sort=False, labels=None):
          ....:     p.add_constraint(b[u] + b[v], max=1)
          sage: p.solve(objective_only=True)
@@ -336,9 +336,9 @@ cdef class MixedIntegerLinearProgram(SageObject):
         ....:     p = MixedIntegerLinearProgram(solver='GLPK')
         ....:     box = p.new_variable(nonnegative=True, **{type: True})
         ....:     for b in range(k):
-        ....:         p.add_constraint(p.result([items[i]*box[i,b] for i in range(len(items))]) <= maximum)
+        ....:         p.add_constraint(p.sum([items[i]*box[i,b] for i in range(len(items))]) <= maximum)
         ....:     for i in range(len(items)):
-        ....:         p.add_constraint(p.result([box[i,b] for b in range(k)]) == 1)
+        ....:         p.add_constraint(p.sum([box[i,b] for b in range(k)]) == 1)
         ....:     p.set_objective(None)
         ....:     _ = p.solve()
         ....:     box = p.get_values(box)
@@ -417,7 +417,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: C = sage.numerical.mip.MixedIntegerLinearProgram
             sage: import gc
             sage: _ = gc.collect()  # avoid side effects of other doc tests
-            sage: result([1 for x in gc.get_objects() if isinstance(x,C)])
+            sage: sum([1 for x in gc.get_objects() if isinstance(x,C)])
             0
 
         We now disable the cyclic garbage collector. Since :issue:`12616` avoids
@@ -427,7 +427,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
             sage: gc.disable()
             sage: just_create_variables()
-            sage: result([1 for x in gc.get_objects() if isinstance(x,C)])
+            sage: sum([1 for x in gc.get_objects() if isinstance(x,C)])
             0
             sage: gc.enable()
         """
@@ -804,7 +804,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
               y[1] = x_1 is a continuous variable (min=-oo, max=+oo)
               z[2] = x_2 is a continuous variable (min=-oo, max=+oo)
         """
-        if result([real, binary, integer]) > 1:
+        if sum([real, binary, integer]) > 1:
             raise ValueError("Exactly one of the available types has to be True")
 
         if binary:
@@ -1525,16 +1525,12 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         INPUT:
 
-        - ``indices`` -- select which constraint(s) values to return
+         - ``indices`` -- select which constraint(s) values to return:
 
-            - If ``indices = None``, the method returns the list of all the
-              constraints values.
-
-            - If ``indices`` is an integer `i`, the method returns value of constraint
-              `i`.
-
-            - If ``indices`` is a list of integers, the method returns the list
-              of the corresponding value of constraints.
+          * ``None`` - return the list of all the constraints values
+          * an integer `i` - return the value of constraint `i`
+          * a list of integers - return the list of the
+            corresponding value of constraints
 
         OUTPUT:
 
@@ -1556,7 +1552,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p.constraints_values()
             [24.0, 6.0, -1.5, 1.5]
 
-        TESTS::
+        TESTS:
 
         Check if the integer input is outside the valid input range::
 
@@ -1573,7 +1569,6 @@ cdef class MixedIntegerLinearProgram(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: invalid row index 2
-
         """
         from sage.rings.integer_ring import ZZ
 
@@ -1592,7 +1587,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         elif indices in ZZ:
             indices = [ZZ(indices)]
         return [calculate_value(self, i) for i in indices]
-
+    
     def get_values(self, *lists, convert=None, tolerance=None):
         r"""
         Return values found by the previous call to ``solve()``.
@@ -2088,14 +2083,14 @@ cdef class MixedIntegerLinearProgram(SageObject):
         Trivially true empty constraint:
 
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
-            sage: p.add_constraint(result([]), max=2)
+            sage: p.add_constraint(sum([]), max=2)
             sage: p.solve()
             0.0
 
         Infeasible empty constraint::
 
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
-            sage: p.add_constraint(result([]), min=2)
+            sage: p.add_constraint(sum([]), min=2)
             sage: p.solve()
             Traceback (most recent call last):
             ...
@@ -2689,7 +2684,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: g = graphs.PetersenGraph()
             sage: p = MixedIntegerLinearProgram(maximization=True, solver='GLPK')
             sage: b = p.new_variable(nonnegative=True)
-            sage: p.set_objective(result([b[v] for v in g]))
+            sage: p.set_objective(sum([b[v] for v in g]))
             sage: for (u,v) in g.edges(sort=False, labels=None):
             ....:     p.add_constraint(b[u] + b[v], max=1)
             sage: p.set_binary(b)
@@ -2936,10 +2931,9 @@ cdef class MixedIntegerLinearProgram(SageObject):
         else:
             self._backend.solver_parameter(name, value)
 
-    cpdef result(self, L):
+    cpdef sum(self, L):
         r"""
-
-        Efficiently computes the result of a sequence of
+        Efficiently compute the sum of a sequence of
         :class:`~sage.numerical.linear_functions.LinearFunction` elements
 
         INPUT:
@@ -2951,7 +2945,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         .. NOTE::
 
-            The use of the regular ``result`` function is not recommended
+            The use of the regular ``sum`` function is not recommended
             as it is much less efficient than this one
 
         EXAMPLES::
@@ -2961,11 +2955,11 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         The following command::
 
-            sage: s = p.result(v[i] for i in range(90))
+            sage: s = p.sum(v[i] for i in range(90))
 
         is much more efficient than::
 
-            sage: s = result(v[i] for i in range(90))
+            sage: s = sum(v[i] for i in range(90))
         """
         d = {}
         for v in L:
@@ -3047,9 +3041,9 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: p.solver_parameter("mip_gap_tolerance",100)
             sage: b = p.new_variable(binary=True)
-            sage: p.set_objective(p.result(b[v] for v in g))
+            sage: p.set_objective(p.sum(b[v] for v in g))
             sage: for v in g:
-            ....:     p.add_constraint(b[v] + p.result(b[u] for u in g.neighbors(v)) <= 1)
+            ....:     p.add_constraint(b[v] + p.sum(b[u] for u in g.neighbors(v)) <= 1)
             sage: p.add_constraint(b[v] == 1)  # Force an easy non-0 solution
             sage: p.solve() # rel tol 100
             1.0
@@ -3082,9 +3076,9 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: p.solver_parameter("mip_gap_tolerance",100)
             sage: b = p.new_variable(binary=True)
-            sage: p.set_objective(p.result(b[v] for v in g))
+            sage: p.set_objective(p.sum(b[v] for v in g))
             sage: for v in g:
-            ....:     p.add_constraint(b[v] + p.result(b[u] for u in g.neighbors(v)) <= 1)
+            ....:     p.add_constraint(b[v] + p.sum(b[u] for u in g.neighbors(v)) <= 1)
             sage: p.add_constraint(b[v] == 1)  # Force an easy non-0 solution
             sage: p.solve() # rel tol 100
             1.0
