@@ -98,6 +98,9 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
 
     - ``R`` -- commutative ring
 
+    The ring ``R`` is not containing the variable `q`. Instead the
+    Laurent polynomial ring over ``R`` is used.
+
     EXAMPLES::
 
         sage: F = QuantumValuedPolynomialRing(QQ).S(); F
