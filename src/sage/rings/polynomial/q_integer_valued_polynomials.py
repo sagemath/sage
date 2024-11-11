@@ -4,19 +4,16 @@ Quantum-valued polynomial rings
 AUTHORS:
 
 - Frédéric Chapoton (2024-03): Initial version
-
-REFERENCES:
-
-.. [HaHo2017] Nate Harman and Sam Hopkins, *Quantum integer-valued
-   polynomials*, J. Alg. Comb. 2017, :doi:`10.1007/s10801-016-0717-3`
-
 """
-# ***************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2024 Frédéric Chapoton <chapoton-math-unistra-fr>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-# ***************************************************************************
+# ****************************************************************************
 from sage.arith.misc import binomial
 from sage.categories.algebras import Algebras
 from sage.categories.realizations import Category_realization_of_parent
@@ -159,6 +156,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
             raise TypeError(msg)
         laurent = LaurentPolynomialRing(R, 'q')
         self._ground_ring = R
+        self._q = laurent.gen()
         cat = Algebras(laurent).Commutative().WithBasis()
         Parent.__init__(self, base=laurent, category=cat.WithRealizations())
 
@@ -262,6 +260,18 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
                 """
                 return self.basis().keys()(0)
 
+            def q(self):
+                """
+                Return the variable `q`.
+
+                EXAMPLES::
+
+                    sage: A = QuantumValuedPolynomialRing(QQ).S()
+                    sage: A.q()
+                    q
+                """
+                return self.realization_of()._q
+
             def degree_on_basis(self, m):
                 r"""
                 Return the degree of the basis element indexed by ``m``.
@@ -299,6 +309,16 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
                     B[1]
                     sage: A.from_polynomial((B[2]+2*B[3]).polynomial())
                     B[2] + 2*B[3]
+
+                TESTS::
+
+                    sage: A = QuantumValuedPolynomialRing(QQ).B()
+                    sage: q = polygen(QQ,'q')
+                    sage: x = polygen(q.parent(),'x')
+                    sage: A.from_polynomial(x**2/(q+1)+1)
+                    Traceback (most recent call last):
+                    ...
+                    ValueError: not a polynomial with integer values : 1/(q + 1) is not a Laurent polynomial
                 """
                 B = self.basis()
                 poly = self._poly
@@ -511,7 +531,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
             j = ZZ(n2)
             if j < i:
                 j, i = i, j
-            q = self.base_ring().gen()
+            q = self.q()
             return self._from_dict({i + j - k: (-1)**k
                                     * q_binomial(i, k)
                                     * q_binomial(i + j - k, i)
@@ -539,7 +559,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
             """
             i = ZZ(i)
             R = self.base_ring()
-            q = self.base_ring().gen()
+            q = self.q()
             return self._from_dict({k: R((-1)**(i - k) * q_binomial(i, k))
                                     * q**(-i**2 + binomial(i - k, 2))
                                     for k in range(i + 1)})
@@ -563,11 +583,13 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
             """
             B = self.basis()
             ring = self.base_ring()
-            q = ring.gen()
+            q = self.q()
             d = len(hv) - 1
             m = matrix(ring, d + 1, d + 1,
-                       lambda j, i: (-1)**(d - j) * q_binomial(d - i, d - j, q) *
-                       q**(-d * (d - i) + binomial(d - j, 2)))
+                       [(-1)**(d - j) * q_binomial(d - i, d - j, q) *
+                        q**(-d * (d - i) + binomial(d - j, 2))
+                        for j in range(d + 1)
+                        for i in range(d + 1)])
             v = vector(ring, [hv[i] for i in range(d + 1)])
             return sum(ring(c) * B[i] for i, c in enumerate(m * v))
 
@@ -599,7 +621,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
             R = self.base_ring()
             # coercion via base ring
             x = R(x)
-            if x == 0:
+            if not x:
                 return self.element_class(self, {})
             return self.from_base_ring_from_one_basis(x)
 
@@ -717,7 +739,6 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
             return q_binomial_x(i, i)
 
         class Element(CombinatorialFreeModule.Element):
-
             def umbra(self):
                 """
                 Return the Bernoulli umbra.
@@ -776,7 +797,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
                     return self
 
                 A = self.parent()
-                q = A.base_ring().gen()
+                q = A.q()
 
                 def on_basis(n):
                     return {A._indices(j): q**(k * j)
@@ -827,7 +848,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
                 """
                 d = max(self.support())
                 ring = self.parent().base_ring()
-                q = ring.gen()
+                q = self.parent().q()
 
                 def fn(j, i):
                     return ((-1)**(d - j) *
@@ -951,7 +972,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
             if j < i:
                 j, i = i, j
 
-            q = self.base_ring().gen()
+            q = self.q()
             return self._from_dict({i + j - k:
                                     q_binomial(i, k)
                                     * q_binomial(i + j - k, i)
@@ -978,7 +999,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
             """
             i = ZZ(i)
             R = self.base_ring()
-            q = self.base_ring().gen()
+            q = self.q()
             return self._from_dict({k: R(q_binomial(i, k))
                                     * q**(k**2)
                                     for k in range(i + 1)})
@@ -1007,7 +1028,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
             R = self.base_ring()
             # coercion via base ring
             x = R(x)
-            if x == 0:
+            if not x:
                 return self.element_class(self, {})
             return self.from_base_ring_from_one_basis(x)
 
@@ -1155,7 +1176,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
                     return self
 
                 A = self.parent()
-                q = A.base_ring().gen()
+                q = A.q()
 
                 def on_basis(n):
                     return {A._indices(j): q**((k + j - n) * j)
