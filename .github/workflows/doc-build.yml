@@ -168,7 +168,7 @@ jobs:
             # Wipe out chronic diffs between old doc and new doc
             (cd doc && \
              find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
-                                                  -e '/<link rel="stylesheet"/ s/?v=[0-9a-f]*"/"/' \
+                                                  -e 's;?v=[0-9a-f]*";";' \
                                                   -e 's;'"$mathjax_path_from"';'"$mathjax_path_to"';' \
                                                   -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d' \
                                                   -e 's;#L[0-9]*";";' \
@@ -221,7 +221,7 @@ jobs:
             # Wipe out chronic diffs of new doc against old doc before creating CHANGES.html
             (cd doc && \
              find . -name "*.html" | xargs sed -i -e '/This is documentation/ s/ built with GitHub PR .* for development/ for development/' \
-                                                  -e '/<link rel="stylesheet"/ s/?v=[0-9a-f]*"/"/' \
+                                                  -e 's;?v=[0-9a-f]*";";' \
                                                   -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d' \
                                                   -e 's;#L[0-9]*";";' \
                                                   -e 's;tab-set--[0-9]*-;tab-set-;' \
