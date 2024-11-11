@@ -513,17 +513,51 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E(X)
             1 + X + E_2(X) + E_3(X) + E_4(X) + E_5(X) + E_6(X) + O^7
         """
-        fP = parent(self)
+        return CompositionSpeciesElement(self, *args)
+
+
+class SumSpeciesElement(LazySpeciesElement):
+    def __init__(self, left, right):
+        self._left = left
+        self._right = right
+        F = super(LazySpeciesElement, type(left))._add_(left, right)
+        super().__init__(F.parent(), F._coeff_stream)
+
+    def structures(self, *labels):
+        yield from self._left.structures(*labels)
+        yield from self._right.structures(*labels)
+
+class ProductSpeciesElement(LazySpeciesElement):
+    def __init__(self, left, right):
+        self._left = left
+        self._right = right
+        F = super(LazySpeciesElement, type(left))._mul_(left, right)
+        super().__init__(F.parent(), F._coeff_stream)
+
+#    def structures(self, labels):
+#        n = len(labels)
+#        l = set(labels)
+#        assert len(l) == n, f"The argument labels must be a set, but {labels} has duplicates"
+#        for k in range(n+1):
+#            for U in itertools.combinations(l, k):
+#                V = l.difference(U)
+#                yield from itertools.product(self._left.structures(U),
+#                                             self._right.structures(V))
+
+
+class CompositionSpeciesElement(LazySpeciesElement):
+    def __init__(self, left, *args):
+        fP = parent(left)
         if len(args) != fP._arity:
             raise ValueError("arity of must be equal to the number of arguments provided")
 
         # Find a good parent for the result
         from sage.structure.element import get_coercion_model
         cm = get_coercion_model()
-        P = cm.common_parent(self.base_ring(), *[parent(g) for g in args])
+        P = cm.common_parent(left.base_ring(), *[parent(g) for g in args])
 
         # f = 0
-        if isinstance(self._coeff_stream, Stream_zero):
+        if isinstance(left._coeff_stream, Stream_zero):
             return P.zero()
 
         # args = (0, ..., 0)
@@ -531,13 +565,13 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
                or (isinstance(g, LazyModuleElement)
                    and isinstance(g._coeff_stream, Stream_zero))
                for g in args):
-            return P(self[0])
+            return P(left[0])
 
         # f is a constant polynomial
-        if (isinstance(self._coeff_stream, Stream_exact)
-            and not self._coeff_stream._constant
-            and self.polynomial().is_constant()):
-            return P(self.polynomial())
+        if (isinstance(left._coeff_stream, Stream_exact)
+            and not left._coeff_stream._constant
+            and left.polynomial().is_constant()):
+            return P(left.polynomial())
 
         args = [P(g) for g in args]
 
@@ -547,15 +581,15 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
                     raise ValueError("can only compose with a positive valuation series")
                 g._coeff_stream._approximate_order = 1
 
-        sorder = self._coeff_stream._approximate_order
+        sorder = left._coeff_stream._approximate_order
         gv = min(g._coeff_stream._approximate_order for g in args)
         R = P._internal_poly_ring.base_ring()
         L = fP._internal_poly_ring.base_ring()
 
         def coefficient(n):
             if not n:
-                if self[0]:
-                    return R(list(self[0])[0][1])
+                if left[0]:
+                    return R(list(left[0])[0][1])
                 return R.zero()
             args_flat = [[(M, c) for i in range(n+1) for M, c in g[i]]
                          for g in args]
@@ -565,7 +599,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             for i in range(n // gv + 1):
                 # compute homogeneous components
                 lF = defaultdict(L)
-                for M, c in self[i]:
+                for M, c in left[i]:
                     lF[M.grade()] += L._from_dict({M: c})
                 for mc, F in lF.items():
                     for degrees in weighted_vector_compositions(mc, n, weights):
@@ -583,35 +617,8 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             return result
 
         coeff_stream = Stream_function(coefficient, P._sparse, sorder * gv)
-        return P.element_class(P, coeff_stream)
+        super().__init__(P, coeff_stream)
 
-class SumSpeciesElement(LazySpeciesElement):
-    def __init__(self, left, right):
-        self._left = left
-        self._right = right
-        add = super(LazySpeciesElement, type(left))._add_(left, right)
-        super().__init__(add.parent(), add._coeff_stream)
-
-    def structures(self, *labels):
-        yield from self._left.structures(*labels)
-        yield from self._right.structures(*labels)
-
-class ProductSpeciesElement(LazySpeciesElement):
-    def __init__(self, left, right):
-        self._left = left
-        self._right = right
-        add = super(LazySpeciesElement, type(left))._mul_(left, right)
-        super().__init__(add.parent(), add._coeff_stream)
-
-#    def structures(self, labels):
-#        n = len(labels)
-#        l = set(labels)
-#        assert len(l) == n, f"The argument labels must be a set, but {labels} has duplicates"
-#        for k in range(n):
-#            for U in itertools.combinations(l, k):
-#                V = l.difference(U)
-#                yield from itertools.product(self._left.structures(U),
-#                                             self._right.structures(V))
 
 class LazySpecies(LazyCompletionGradedAlgebra):
     """
@@ -642,6 +649,12 @@ class LazySpecies(LazyCompletionGradedAlgebra):
             sage: LazySpecies(QQ, "X, Y")
             Lazy completion of Polynomial species in X, Y over Rational Field
 
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.Graphs()
+            sage: P = L.SetPartitions()
+            sage: S = L.Sets()
+            sage: C = L.Cycles()
+
         TESTS::
 
             sage: LazySpecies(QQ, "X, Y, Z")._arity
@@ -649,3 +662,54 @@ class LazySpecies(LazyCompletionGradedAlgebra):
         """
         super().__init__(PolynomialSpecies(base_ring, names))
         self._arity = len(names)
+        if self._arity == 1:
+            self.Graphs = lambda: GraphSpecies(self)
+            self.SetPartitions = lambda: SetPartitionSpecies(self)
+            self.Sets = lambda: SetSpecies(self)
+            self.Cycles = lambda: CycleSpecies(self)
+
+
+from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+class SetSpecies(LazySpeciesElement):
+    def __init__(self, parent):
+        P = parent._laurent_poly_ring
+        S = parent(SymmetricGroup)
+        super().__init__(parent, S._coeff_stream)
+
+from sage.groups.perm_gps.permgroup_named import CyclicPermutationGroup
+class CycleSpecies(LazySpeciesElement):
+    def __init__(self, parent):
+        P = parent._laurent_poly_ring
+        S = parent(lambda n: CyclicPermutationGroup(n) if n else 0)
+        super().__init__(parent, S._coeff_stream)
+
+
+from sage.graphs.graph_generators import graphs
+from sage.rings.integer_ring import ZZ
+class GraphSpecies(LazySpeciesElement):
+    def __init__(self, parent):
+        P = parent._laurent_poly_ring
+        S = parent(lambda n: sum(P(G.automorphism_group()) for G in graphs(n)))
+        super().__init__(parent, S._coeff_stream)
+
+    def isotypes(self, labels):
+        if labels in ZZ:
+            yield from graphs(labels)
+
+
+from sage.combinat.partition import Partitions
+from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+from sage.combinat.set_partition import SetPartitions
+class SetPartitionSpecies(LazySpeciesElement):
+    def __init__(self, parent):
+        P = parent._laurent_poly_ring
+        E = parent(SymmetricGroup)
+        E1 = parent(lambda n: SymmetricGroup(n) if n else 0)
+        super().__init__(parent, E(E1)._coeff_stream)
+
+    def isotypes(self, labels):
+        if labels in ZZ:
+            yield from Partitions(labels)
+
+    def structures(self, labels):
+        yield from SetPartitions(labels)
