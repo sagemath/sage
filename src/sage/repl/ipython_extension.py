@@ -382,28 +382,20 @@ class SageMagics(Magics):
         Test unrecognized arguments::
 
             sage: # needs sage.misc.cython
-            sage: print("dummy line"); shell.run_cell('''
+            sage: shell.run_cell('''
             ....: %%cython --some-unrecognized-argument
             ....: print(1)
             ....: ''')
-            dummy line
-            ...
-            ArgumentError...Traceback (most recent call last)
-            ...
-            ArgumentError: unrecognized arguments: --some-unrecognized-argument
+            UsageError: unrecognized arguments: --some-unrecognized-argument
 
         Test ``--help`` is disabled::
 
             sage: # needs sage.misc.cython
-            sage: print("dummy line"); shell.run_cell('''
+            sage: shell.run_cell('''
             ....: %%cython --help
             ....: print(1)
             ....: ''')
-            dummy line
-            ...
-            ArgumentError...Traceback (most recent call last)
-            ...
-            ArgumentError: unrecognized arguments: --help
+            UsageError: unrecognized arguments: --help
 
         Test invalid quotes::
 
@@ -426,21 +418,19 @@ class SageMagics(Magics):
             def error(self, message):
                 # exit_on_error=False does not work completely in some Python versions
                 # see https://stackoverflow.com/q/67890157
-                raise argparse.ArgumentError(None, message)
+                # we raise UsageError to make the interface similar to what happens when e.g.
+                # IPython's ``%run`` gets unrecognized arguments
+                from IPython.core.error import UsageError
+                raise UsageError(message)
 
         parser = ExitCatchingArgumentParser(prog="%%cython", add_help=False)
         parser.add_argument("--verbose", "-v", type=int)
-        for (arg, arg_short) in [
-                ("compile-message", "m"),
-                ("use-cache", "c"),
-                ("create-local-c-file", "l"),
-                ("annotate", "a"),
-                ("sage-namespace", "s"),
-                ("create-local-so-file", "o"),
-            ]:
-            action = parser.add_argument(f"--{arg}", f"-{arg_short}", action="store_true", default=None)
-            parser.add_argument(f"--no-{arg}", action="store_false", dest=action.dest, default=None)
-
+        parser.add_argument("-m", "--compile-message", action=argparse.BooleanOptionalAction)
+        parser.add_argument("-c", "--use-cache", action=argparse.BooleanOptionalAction)
+        parser.add_argument("-l", "--create-local-c-file", action=argparse.BooleanOptionalAction)
+        parser.add_argument("-a", "--annotate", action=argparse.BooleanOptionalAction)
+        parser.add_argument("-s", "--sage-namespace", action=argparse.BooleanOptionalAction)
+        parser.add_argument("-o", "--create-local-so-file", action=argparse.BooleanOptionalAction)
         args = parser.parse_args(shlex.split(line))
         return cython_compile(cell, **{k: v for k, v in args.__dict__.items() if v is not None})
 
