@@ -1,10 +1,7 @@
 r"""
 TODO for this:
 
-from the theory should only receive "signature"
-"signature" ideally contains information about the symmetry group of the components.
-
-Preferably this should all be cython, so it is all fast
+a good method to serialize
 
 For the generator:
 -check excluded
@@ -306,6 +303,13 @@ cdef class Flag(Element):
             ret.append(desc)
         return "; ".join(ret)
     
+    def _serialize(self):
+        ret = [self.size(), self.ftype_points()]
+        blocks = self.blocks()
+        for kk in blocks:
+            ret.append(blocks[kk])
+        return ret
+
     def raw_numbers(self):
         numbers = [self.size()] + self.ftype_points() + [15]
         blocks = self.blocks()

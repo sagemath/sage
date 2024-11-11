@@ -249,7 +249,7 @@ import pickle
 import os
 from tqdm import tqdm
 
-def combine(name, *theories, symmetries=None):
+def combine(name, *theories, symmetric=False):
     #Sanity checks
     if len(theories)==0:
         raise ValueError("At least one theory is expected!")
@@ -282,20 +282,21 @@ def combine(name, *theories, symmetries=None):
             result_signature[kk] = tkk
         result_symmetry += theory._symmetries
         next_group += next_group_increment
-    
 
-    if not can_symmetry and symmetries!=None:
+    if not can_symmetry and (symmetric is not False):
         import warnings
         warnings.warn("""Warning! The combined theories are not identical (apart from relation names). 
-                      The provided symmetries are ignored.""", RuntimeWarning)
-        symmetries = None
+                      The result will not be symmetric!""", RuntimeWarning)
+        symmetric = False
     
-    if symmetries != None:
+    if symmetric is not False:
         for xx in result_signature:
             result_signature[xx]["group"] = 0
+        if symmetric is True:
+            symmetric = []
     else:
-        symmetries = result_symmetry
-    return CombinatorialTheory(name, from_data=[result_signature, symmetries, theories])
+        symmetric = result_symmetry
+    return CombinatorialTheory(name, from_data=[result_signature, symmetric, theories])
 
 class CombinatorialTheory(Parent, UniqueRepresentation):
     
