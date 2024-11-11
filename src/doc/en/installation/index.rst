@@ -144,7 +144,6 @@ Installation
    binary
    conda
    pypi
-   source
    meson
    launching
    troubles
