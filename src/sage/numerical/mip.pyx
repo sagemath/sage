@@ -1579,7 +1579,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             for index, coeff in zip(cons[0], cons[1]):
                 s += var_val[index] * coeff
             return s
-            
+
         var = [n for n in self._variables]
         var_val = self.get_values([n for n in var])
         if indices is None:
@@ -1587,7 +1587,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         elif indices in ZZ:
             indices = [ZZ(indices)]
         return [calculate_value(self, i) for i in indices]
-    
+
     def get_values(self, *lists, convert=None, tolerance=None):
         r"""
         Return values found by the previous call to ``solve()``.
