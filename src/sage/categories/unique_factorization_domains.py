@@ -179,7 +179,7 @@ class UniqueFactorizationDomains(Category_singleton):
                 """
                 Return the content of ``X`` up to a unit.
                 """
-                X_it = iter(X.coefficients())
+                X_it = reversed(X.coefficients())
                 x = next(X_it)
                 if x.is_unit():
                     return None
