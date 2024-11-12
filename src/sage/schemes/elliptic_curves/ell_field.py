@@ -1559,7 +1559,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: EllipticCurve(QQbar, [1, 6]).period_lattice()
             Period lattice associated to Elliptic Curve defined by y^2 = x^3 + x + 6 over Algebraic Field
 
-        Unsupported cases::
+        Unsupported cases (the exact error being raised may change in the future)::
 
             sage: EllipticCurve(ZZ, [1, 6]).period_lattice()
             Traceback (most recent call last):
@@ -1569,11 +1569,11 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: EllipticCurve(QQt.fraction_field(), [1, 6]).period_lattice()
             Traceback (most recent call last):
             ...
-            AttributeError: 'FractionField_1poly_field_with_category' object has no attribute 'embeddings'
+            AttributeError: 'FractionField_1poly_field_with_category' object has no attribute ...
             sage: EllipticCurve(GF(7), [1, 6]).period_lattice()
             Traceback (most recent call last):
             ...
-            AttributeError: 'FiniteField_prime_modn_with_category' object has no attribute 'embeddings'
+            IndexError: list index out of range
         """
         from sage.schemes.elliptic_curves.period_lattice import PeriodLattice_ell
         return PeriodLattice_ell(self)
