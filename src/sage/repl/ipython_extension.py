@@ -351,7 +351,7 @@ class SageMagics(Magics):
           - ``--annotate``
           - ``--sage-namespace``
           - ``--create-local-so-file`` / ``-o``
-          - ``--no-compile-message``, ``--no-use-cache``, etc. (there is no short form for the ``--no-*`` flags)
+          - ``--no-compile-message``, ``--no-use-cache``, etc.
 
           See :func:`~sage.misc.cython.cython` for details.
 
@@ -377,8 +377,6 @@ class SageMagics(Magics):
 
         TESTS:
 
-        See :mod:`sage.repl.interpreter` for explanation of the dummy line.
-
         Test unrecognized arguments::
 
             sage: # needs sage.misc.cython
@@ -397,7 +395,7 @@ class SageMagics(Magics):
             ....: ''')
             UsageError: unrecognized arguments: --help
 
-        Test invalid quotes::
+        Test invalid quotes (see :mod:`sage.repl.interpreter` for explanation of the dummy line)::
 
             sage: # needs sage.misc.cython
             sage: print("dummy line"); shell.run_cell('''
