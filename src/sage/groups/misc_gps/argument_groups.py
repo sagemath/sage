@@ -1462,8 +1462,13 @@ class Sign(AbstractArgument):
             sage: S(-1)^3  # indirect doctest
             -1
         """
+        result = self._element_ ** exponent
         P = self.parent()
-        return P.element_class(P, self._element_ ** exponent)
+        try:
+            result = P.element_class(P, self._element_ ** exponent)
+        except (ValueError, TypeError):
+            pass
+        return result
 
     def __invert__(self):
         r"""
