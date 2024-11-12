@@ -348,8 +348,8 @@ class SageMagics(Magics):
           - ``--compile-message`` / ``-m``
           - ``--use-cache`` / ``-c``
           - ``--create-local-c-file`` / ``-l``
-          - ``--annotate`` / ``-a``
-          - ``--sage-namespace`` / ``-s``
+          - ``--annotate``
+          - ``--sage-namespace``
           - ``--create-local-so-file`` / ``-o``
           - ``--no-compile-message``, ``--no-use-cache``, etc. (there is no short form for the ``--no-*`` flags)
 
@@ -425,12 +425,12 @@ class SageMagics(Magics):
 
         parser = ExitCatchingArgumentParser(prog="%%cython", add_help=False)
         parser.add_argument("--verbose", "-v", type=int)
-        parser.add_argument("-m", "--compile-message", action=argparse.BooleanOptionalAction)
-        parser.add_argument("-c", "--use-cache", action=argparse.BooleanOptionalAction)
-        parser.add_argument("-l", "--create-local-c-file", action=argparse.BooleanOptionalAction)
-        parser.add_argument("-a", "--annotate", action=argparse.BooleanOptionalAction)
-        parser.add_argument("-s", "--sage-namespace", action=argparse.BooleanOptionalAction)
-        parser.add_argument("-o", "--create-local-so-file", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--compile-message", "-m", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--use-cache", "-c", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--create-local-c-file", "-l", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--annotate", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--sage-namespace", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--create-local-so-file", "-o", action=argparse.BooleanOptionalAction)
         args = parser.parse_args(shlex.split(line))
         return cython_compile(cell, **{k: v for k, v in args.__dict__.items() if v is not None})
 
