@@ -107,6 +107,10 @@ class SageMagics(Magics):
 
         - ``s`` -- string; the file to be loaded
 
+        .. SEEALSO::
+
+            This is the same as :func:`~sage.repl.load.load`.
+
         EXAMPLES::
 
             sage: import os
@@ -132,6 +136,10 @@ class SageMagics(Magics):
         /path/to/file``.
 
         - ``s`` -- string. The file to be attached
+
+        .. SEEALSO::
+
+            This is the same as :func:`~sage.repl.attach.attach`.
 
         EXAMPLES::
 

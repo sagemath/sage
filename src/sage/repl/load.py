@@ -92,6 +92,9 @@ def load(filename, globals, attach=False):
         The global ``load`` function is :func:`sage.misc.persist.load`,
         which delegates to this function for code file formats.
 
+        ``%runfile`` magic can also be used, see
+        :meth:`~sage.repl.ipython_extension.SageMagics.runfile`.
+
     INPUT:
 
     - ``filename`` -- string (denoting a filename or URL) or a :class:`Path` object
