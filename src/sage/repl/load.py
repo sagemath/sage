@@ -166,7 +166,8 @@ def load(filename, globals, attach=False):
 
         sage: sage.repl.load.load('https://raw.githubusercontent.com/sagemath/sage-patchbot/3.0.0/sage_patchbot/util.py', globals())  # optional - internet
 
-    We attach a file::
+    We attach a file (note that :func:`~sage.repl.attach.attach`
+    is equivalent, but available at the global scope by default)::
 
         sage: t = tmp_filename(ext='.py')
         sage: with open(t, 'w') as f:
