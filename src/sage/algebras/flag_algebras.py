@@ -255,8 +255,8 @@ def combine(name, *theories, symmetric=False):
         raise ValueError("At least one theory is expected!")
     if len(theories)==1:
         tt = theories[0]
-        return CombinatorialTheory(
-            name, from_data=[tt._signature, tt._symmetries, tt._source_theories])
+        tt._name = name
+        return tt
 
     #Check if we can use symmetry
     can_symmetry = True
@@ -285,8 +285,7 @@ def combine(name, *theories, symmetric=False):
 
     if not can_symmetry and (symmetric is not False):
         import warnings
-        warnings.warn("""Warning! The combined theories are not identical (apart from relation names). 
-                      The result will not be symmetric!""", RuntimeWarning)
+        warnings.warn("Warning, the combination can not be symmetric. The symmetries are ignored!", RuntimeWarning)
         symmetric = False
     
     if symmetric is not False:
@@ -294,9 +293,9 @@ def combine(name, *theories, symmetric=False):
             result_signature[xx]["group"] = 0
         if symmetric is True:
             symmetric = []
-    else:
-        symmetric = result_symmetry
-    return CombinatorialTheory(name, from_data=[result_signature, symmetric, theories])
+        else:
+            symmetric = result_symmetry
+    return CombinatorialTheory(name, from_data=[result_signature, symmetric])
 
 class CombinatorialTheory(Parent, UniqueRepresentation):
     
@@ -366,9 +365,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     def symmetries(self):
         return self._symmetries
 
-    def sources(self):
-        return self._source_theories
-    
     #Parent methods
     def _element_constructor_(self, n, **kwds):
         r"""
@@ -478,6 +474,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         res = [self._an_element_()]
         return res
 
+
     #Persistend data management
     def _calcs_dir(self):
         calcs_dir = os.path.join(os.getenv('HOME'), '.sage', 'calcs')
@@ -543,19 +540,17 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             return "../certs/"
         return "certs/"
     
-    def _serialize(self, excluded=None):
-        if excluded==None:
-            excluded = self._excluded
+    def _serialize(self):
         return {
             "name": self._name,
             "signature": self._signature,
             "symmetries": self._symmetries,
-            "sources": [xx._serialize() for xx in self._source_theories],
-            "excluded": [xx._serialize() for xx in excluded]
+            "excluded": [xx._serialize() for xx in self._excluded]
         }
     
 
     #Optimizing and rounding
+
 
     def blowup_construction(self, target_size, pattern_size, symbolic=False, symmetric=True, unordered=False, **kwargs):
         r"""
@@ -1465,122 +1460,20 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     verify = verify_certificate
 
-
+    
     #Calculating flags and tables
     
-    #Guessing flag numbers
+    #Generating flags
     def _try_load_generate(self, n, ftype):
         excluded = tuple([xx for xx in self._excluded if xx.size()<=n])
         key = (self._serialize(excluded=excluded), n, ftype._serialize())
         return self._load(key=key)
 
+    #TODO
     def _guess_number(self, n):
-        if n==0:
-            return 1
-        data = self._try_load_generate(n, self.empty())
-        if data!=None:
-            return len(data)
-        guess_overlap = self._guess_overlap(n)
-        guess_inductive = self._guess_inductive(n)
-        return min(guess_overlap, guess_inductive)
-
-    def _guess_primitive(self, n, arity, is_ordered, with_permutations=False):
-        if with_permutations:
-            return 2**(binomial(n, arity) * (factorial(arity) if is_ordered else 1))
-        if arity==1:
-            return n+1
-        elif arity==2:
-            if not is_ordered:
-                vals = [1, 1, 2, 4, 11, 34, 156, 1044, 12346, 274668, \
-                        12005168, 1018997864, 165091172592, 50502031367952]
-                try:
-                    return vals[n]
-                except:
-                    return infinity
-            else:
-                vals = [1, 1, 3, 16, 218, 9608, 1540944, 882033440, \
-                        1793359192848, 13027956824399552]
-                try:
-                    return vals[n]
-                except:
-                    return infinity
-        elif arity==3:
-            if not is_ordered:
-                vals = [1, 1, 1, 2, 5, 34, 2136, 7013320, 1788782616656, \
-                        53304527811667897248]
-                try:
-                    return vals[n]
-                except:
-                    return infinity
-            else:
-                #TODO update this with actual values
-                vals = [1, 1, 1, 10, 1000, 1000000]
-                try:
-                    return vals[n]
-                except:
-                    return infinity
-        raise ValueError("Theories only support arities in [1, 2, 3]")
+        pass
     
-    def _guess_overlap(self, n):
-        source_nums = [xx._guess_number(n) for xx in self._source_theories]
-        return 
-
-    def _guess_inductive(self, n):
-        return 0
-    
-    #Generating flags
-
-    def _gfe(self, excluded, n, ftype):
-        r"""
-        Cached version of generate flags excluded
-
-        .. SEEALSO::
-
-            :func:`generate_flags`
-        """
-        if ftype==None:
-            ftype = self.empty()
-        ind = (excluded, n, ftype)
-        loaded = self._load(ind, False)
-        if loaded != None:
-            return loaded
-        
-        import multiprocessing as mp
-        
-        if ftype.size()==0: #just generate empty elements
-            if n==0:
-                ret = (self.empty_element(), )
-                self._save(ind, ret, False)
-                return ret
-            if len(excluded)==0: #just return the output of the generator
-                ret = tuple([self.element_class(self, n, **xx) for xx in self._generator(n)])
-                self._save(ind, ret, False)
-                return ret
-            
-            #otherwise check each generated for the excluded values
-            slist = [(xx, excluded) for xx in self._gfe(tuple(), n, None)]
-            pool = mp.Pool(mp.cpu_count()-1)
-            canincl = pool.map(self._check_excluded, slist)
-            pool.close(); pool.join()
-            ret = tuple([slist[ii][0] for ii in range(len(slist)) if canincl[ii]])
-            self._save(ind, ret, False)
-            return ret
-        
-        #generate flags by first getting the empty structures then finding the flags
-        empstrs = self._gfe(excluded, n, None)
-        pool = mp.Pool(mp.cpu_count()-1)
-        pares = pool.map(ftype._ftypes_inside, empstrs)
-        pool.close(); pool.join()
-        ret = []
-        for coll in pares:
-            for xx in coll:
-                if xx not in ret:
-                    ret.append(xx)
-        ret = tuple(ret)
-        self._save(ind, ret, False)
-        return ret
-    
-    def generate_flags(self, n, ftype=None):
+    def generate_flags(self, n, ftype=None, run_bound=100000):
         r"""
         Returns the list of flags with a given size and ftype
 
@@ -1612,6 +1505,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             See the notes on :func:`optimize_problem`. A large `n` can
             result in large number of structures.
         """
+        
+        #Handling edge cases
         if ftype==None:
             ftype = self.empty()
         else:
@@ -1624,7 +1519,59 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             return tuple()
         elif n==ftype_size:
             return (ftype, )
-        return self._gfe(tuple(self._excluded), n, ftype)
+
+        
+        #Trying to load
+        excluded = tuple([xx for xx in self._excluded if xx.size()<=n])
+        key = (self._serialize(), n, ftype._serialize())
+        loaded = self._load(key=key)
+        if loaded != None:
+            return loaded
+
+        if ftype.size()==0:
+
+            guess = self._guess_number(n)
+            
+            if guess < run_bound:
+                #Do the generation
+                
+                
+
+
+                pass
+            else:
+                confirm = input("This might take a while. Continue? y/n")
+                if "y" in confirm.lower():
+                    ret = self.generate_flags(n, run_bound=infinity)
+                    return ret
+        else:
+            empstrs = self.generate_flags(n)
+            ret = self._find_ftypes(empstrs, ftype)
+        self._save(ret, key)
+        return ret
+    
+    def _parallel_check(self, base_list, excluded):
+        import multiprocessing as mp
+        
+        slist = [(xx, excluded) for xx in base_list]
+        pool = mp.Pool(mp.cpu_count()-1)
+        canincl = pool.map(self._check_excluded, slist)
+        pool.close(); pool.join()
+        ret = tuple([slist[ii][0] for ii in range(len(slist)) if canincl[ii]])
+        return ret
+    
+    def _find_ftypes(self, empstrs, ftype):
+        import multiprocessing as mp
+        pool = mp.Pool(mp.cpu_count()-1)
+        pares = pool.map(ftype._ftypes_inside, empstrs)
+        pool.close(); pool.join()
+        ret = []
+        for coll in pares:
+            for xx in coll:
+                if xx not in ret:
+                    ret.append(xx)
+        ret = tuple(ret)
+        return ret
     
     generate = generate_flags
 
@@ -1834,6 +1781,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         Helper function used in the parallelization of calculating densities
         """
         return ar[0].densities(ar[1], ar[2], ar[3], ar[4], ar[5], ar[6], ar[7])
+    
 
 
 #Primitive rounding methods

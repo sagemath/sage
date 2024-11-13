@@ -1,18 +1,4 @@
 r"""
-TODO for this:
-
-a good method to serialize
-
-For the generator:
--check excluded
-
-For patterns:
--make no-edge mean optional by default
--make it use the block standard form and the nonisom permutator
-"""
-
-
-r"""
 Implementation of Flag, elements of :class:`CombinatorialTheory`
 
 AUTHORS:
@@ -35,11 +21,12 @@ import itertools
 from sage.rings.rational_field import QQ
 from cysignals.signals cimport sig_check
 from sage.structure.element cimport Element
-from sage.graphs.bliss cimport canonical_form_from_edge_list
+from blisspy cimport canonical_form_from_edge_list
 
 cdef tuple _subblock_helper(tuple points, tuple block):
     cdef bint gd = False
     cdef list ret = []
+    cdef int ii
     if len(block)==0:
         return ret
     for xx in block:
@@ -49,7 +36,6 @@ cdef tuple _subblock_helper(tuple points, tuple block):
                 gd = False
                 break
         if gd:
-            cdef int ii
             ret.append([points.index(ii) for ii in xx])
     return tuple(ret)
 
@@ -86,7 +72,7 @@ cpdef tuple _single_relation(int n, dict relation):
         ord_base = (base, )
     
     return tuple(itertools.chain.from_iterable(
-        itertools.combinations(ord_base, r) for r in range(len(ord_base) + 1)
+        [itertools.combinations(ord_base, r) for r in range(len(ord_base) + 1)]
     ))
 
 cdef int _get_max_arity(dict signature):
@@ -157,7 +143,7 @@ cpdef list _possible_mergings(int n, tuple smaller_structures, dict signature):
                                 ret.append(final_flag)
     
     elif max_arity==3:
-        all_perms = tuple((F.nonequal_permutations() for F in smaller_structures))
+        all_perms = tuple([F.nonequal_permutations() for F in smaller_structures])
         for ii, F in enumerate(smaller_structures):
             sig_check()
             F_subf = F.subflag(range(n-2))
@@ -498,7 +484,7 @@ cdef class Flag(Element):
         """
         return self._n == self._ftype_size
     
-    cdef tuple unique(self, bint weak = False):
+    cpdef tuple unique(self, bint weak = False):
         if weak and self._weak_unique != None:
             return self._weak_unique
         if (not weak) and self._unique != None:
@@ -520,7 +506,9 @@ cdef class Flag(Element):
         cdef dict unary_relation_vertices = {}
         cdef dict tuple_vertices = {}
         cdef dict group_vertices = {}
-        cdef set groups = {}
+        cdef set groups = set()
+        cdef list group_relation_vertices
+        cdef tuple t
         for rel_name in signature:
             rel_info = signature[rel_name]
             arity = rel_info['arity']
@@ -560,7 +548,7 @@ cdef class Flag(Element):
             partition.append([group_vertices[rel_name] for rel_name in group])
 
             #Layer 1 partition
-            cdef list group_relation_vertices = []
+            group_relation_vertices = []
             for rel_name in groups[group]:
                 if rel_name in unary_relation_vertices:
                     group_relation_vertices.append(unary_relation_vertices[rel_name])
@@ -573,7 +561,6 @@ cdef class Flag(Element):
         cdef list Vin = []
         cdef list labels = []
         cdef int max_edge_label = 0
-        cdef tuple t
         cdef list conns
         
         for rel_name in unary_relation_vertices:
@@ -611,9 +598,9 @@ cdef class Flag(Element):
         cdef int Lnr = max_edge_label
         
         cdef tuple result = canonical_form_from_edge_list(\
-        Vnr, Vout, Vin, Lnr, labels, partition, False, True)
+        Vnr, Vout, Vin, Lnr, labels, partition, True)
         cdef list new_edges = list(result[0])
-        cdef tuple uniret = tuple([len(self.ftype_points(), weak)] + new_edges)
+        cdef tuple uniret = tuple([len(self.ftype_points()), weak] + new_edges)
         cdef dict relabel = result[1]
         relabel = {i: relabel[i] for i in range(self.size())}
         cdef tuple ret = (uniret, relabel)
@@ -1079,7 +1066,7 @@ cdef class Flag(Element):
         """
         safae = self.afae()
         oafae = safae.parent(other)
-        return self.afae().density(other)
+        return self.afae().density(oafae)
     
     cpdef densities(self, int n1, list n1flgs, int n2, list n2flgs, \
     list ftype_remap, Flag large_ftype, Flag small_ftype):
@@ -1120,24 +1107,24 @@ cdef class Flag(Element):
         
         cdef dict ret = {}
         cdef tuple small_points = self._ftype_points
-        cdef int ii
-        cdef int vii
+        cdef int ii, vii, n1_ind, n2_ind
         cdef tuple difference
+        cdef list large_points, remaining_points, not_large_points
+        cdef Flag n1_subf, n2_subf, ind_large_ftype
         for difference in itertools.permutations(self.not_ftype_points(), large_size - small_size):
             sig_check()
-            cdef list large_points = [0]*len(ftype_remap)
+            large_points = [0]*len(ftype_remap)
             for ii in range(len(ftype_remap)):
                 vii = ftype_remap[ii]
                 if vii<small_size:
                     large_points[ii] = small_points[vii]
                 else:
                     large_points[ii] = difference[vii-small_size]
-            cdef Flag ind_large_ftype = self.subflag([], ftype_points=large_points)
+            ind_large_ftype = self.subflag([], ftype_points=large_points)
             if ind_large_ftype==large_ftype:
-                cdef list not_large_points = [ii for ii in range(N) if ii not in large_points]
+                not_large_points = [ii for ii in range(N) if ii not in large_points]
                 for n1_extra_points in itertools.combinations(not_large_points, n1 - large_size):
-                    cdef Flag n1_subf = self.subflag(n1_extra_points, ftype_points=large_points)
-                    cdef int n1_ind
+                    n1_subf = self.subflag(n1_extra_points, ftype_points=large_points)
                     try:
                         n1_ind = n1flgs.index(n1_subf)
                     except ValueError:
@@ -1147,10 +1134,9 @@ cdef class Flag(Element):
                                          "(from the current CombinatorialTheory) is incompatible, ",\
                                          "or if the theory is not heredetary")
                     
-                    cdef list remaining_points = [ii for ii in not_large_points if ii not in n1_extra_points]
+                    remaining_points = [ii for ii in not_large_points if ii not in n1_extra_points]
                     for n2_extra_points in itertools.combinations(remaining_points, n2 - large_size):
-                        cdef Flag n2_subf = self.subflag(n2_extra_points, ftype_points=large_points)
-                        cdef int n2_ind
+                        n2_subf = self.subflag(n2_extra_points, ftype_points=large_points)
                         try:
                             n2_ind = n2flgs.index(n2_subf)
                         except:
@@ -1164,7 +1150,6 @@ cdef class Flag(Element):
                         except:
                             ret[(n1_ind, n2_ind)] = 1
         return (len(n1flgs), len(n2flgs), ret)
-
 
 cdef class Pattern(Element):
     
@@ -1235,7 +1220,6 @@ cdef class Pattern(Element):
                 desc += ",".join(["".join(map(str, ed)) for ed in blocks[name]])
             ret.append(desc)
         return "; ".join(ret)
-            
     
     def raw_numbers(self):
         numbers = [self.size()] + self.ftype_points() + [15]
@@ -1310,17 +1294,17 @@ cdef class Pattern(Element):
     def is_ftype(self):
         return False
 
-    def _add_(self, other):
+    cpdef _add_(self, other):
         if self.ftype()!=other.ftype():
             raise TypeError("The terms must have the same ftype")
         return self.afae()._add_(other.afae())
     
-    def _sub_(self, other):
+    cpdef _sub_(self, other):
         if self.ftype()!=other.ftype():
             raise TypeError("The terms must have the same ftype")
         return self.afae()._sub_(other.afae())
     
-    def _mul_(self, other):
+    cpdef _mul_(self, other):
         if self.ftype()!=other.ftype():
             raise TypeError("The terms must have the same ftype")
         return self.afae()._mul_(other.afae())
@@ -1354,7 +1338,7 @@ cdef class Pattern(Element):
         for perm in itertools.permutations(other.not_ftype_points(), len(self.not_ftype_points())):
             opermed = opattern.subpattern(points=perm)
             ob = opermed.blocks()
-            res = all([_block_compare(sb[xx], sb[xx+"_o"], ob[xx], ob[xx+"_o"]) for xx in self.parent().signature().keys()])
-            if all([_block_compare(sb[xx], sb[xx+"_o"], ob[xx], ob[xx+"_o"]) for xx in self.parent().signature().keys()]):
+            res = all([_block_refinement(sb[xx], sb[xx+"_o"], ob[xx], ob[xx+"_o"]) for xx in self.parent().signature().keys()])
+            if all([_block_refinement(sb[xx], sb[xx+"_o"], ob[xx], ob[xx+"_o"]) for xx in self.parent().signature().keys()]):
                 return True
         return False
