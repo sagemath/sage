@@ -1,0 +1,18 @@
+// Dev container for building Sage from source
+// See https://aka.ms/devcontainer.json for format details.
+{
+    "name": "Source",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+    "settings": {
+      "python.defaultInterpreterPath": "/home/codespace/.python/current/bin/python",
+      "python.createEnvironment.trigger": "off",
+    },
+    "containerEnv": {
+        "MAKE": "make -j4",
+    },
+    "onCreateCommand": ".devcontainer/onCreate.sh --sudo",
+    "extensions": [
+        "ms-python.python",   // Python extension for VS Code
+        "charliermarsh.ruff", // Ruff extension for VS Code
+    ],
+}
