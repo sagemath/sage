@@ -256,10 +256,9 @@ def libgiac_integrator(expression, v, a=None, b=None):
         return expression.integrate(v, a, b, hold=True)
 
     from sage.libs.giac.giac import Pygen
-    # We call Pygen on first argument because otherwise some expressions
-    # involving derivatives result in doctest failures in interfaces/sympy.py
-    # -- related to the fixme note in sage.libs.giac.giac.GiacFunction.__call__
-    # regarding conversion of lists.
+    # We call Pygen on first argument because otherwise some
+    # expressions involving derivatives result in doctest failures in
+    # sage/interfaces/sympy.py
     if a is None:
         result = libgiac.integrate(Pygen(expression), v)
     else:
