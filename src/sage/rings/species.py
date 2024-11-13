@@ -2378,19 +2378,19 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: P = PolynomialSpecies(QQ, ["X"])
 
-            sage: c = 3/2; all((E^c)[i] == P.exponential([c], [i]) for i in range(6))
+            sage: c = 3/2; all((E^c)[i] == P._exponential([c], [i]) for i in range(6))
             True
 
-            sage: c = -5/3; all((E^c)[i] == P.exponential([c], [i]) for i in range(6))
+            sage: c = -5/3; all((E^c)[i] == P._exponential([c], [i]) for i in range(6))
             True
 
-            sage: c = 0; all((E^c)[i] == P.exponential([c], [i]) for i in range(6))
+            sage: c = 0; all((E^c)[i] == P._exponential([c], [i]) for i in range(6))
             True
 
-            sage: c = 1; all((E^c)[i] == P.exponential([c], [i]) for i in range(6))
+            sage: c = 1; all((E^c)[i] == P._exponential([c], [i]) for i in range(6))
             True
 
-            sage: c = -1; all((E^c)[i] == P.exponential([c], [i]) for i in range(6))
+            sage: c = -1; all((E^c)[i] == P._exponential([c], [i]) for i in range(6))
             True
 
             sage: P = PolynomialSpecies(QQ, ["X"])
