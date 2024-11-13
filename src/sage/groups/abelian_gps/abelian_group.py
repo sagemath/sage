@@ -1314,14 +1314,13 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         invs = self.gens_orders()
         if 0 not in invs:
             # The group is finite
-            for t in mrange(invs):
-                yield self(t)
+            yield from map(self, mrange(invs))
         else:
             # A similar approach works for infinite groups.
             # (This would also work for finite groups, but is more complicated.)
             from sage.misc.mrange import cantor_product
-            for t in cantor_product(*[range(n) if n > 0 else ZZ for n in invs]):
-                yield self(t)
+            yield from map(self, cantor_product(*[range(n) if n
+                                                  else ZZ for n in invs]))
 
     def number_of_subgroups(self, order=None):
         r"""
