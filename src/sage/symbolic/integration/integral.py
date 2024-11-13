@@ -212,7 +212,9 @@ class DefiniteIntegral(BuiltinFunction):
             sage: ex = 1/max_symbolic(x, 1)**2
             sage: integral(ex, x, 0, 2, algorithm='giac')
             3/2
-            sage: integral(1/max_symbolic(x, 1)**2, x, 0, oo, algorithm='giac')
+            sage: result = integral(1/max_symbolic(x, 1)**2, x, 0, oo, algorithm='giac')
+            ...
+            sage: result
             2
         """
         # The automatic evaluation routine will try these integrators
