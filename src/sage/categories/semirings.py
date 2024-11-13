@@ -2,12 +2,12 @@
 r"""
 Semirngs
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010 Nicolas Borie <nicolas.borie@math.u-psud.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.magmas_and_additive_magmas import MagmasAndAdditiveMagmas
@@ -50,3 +50,17 @@ class Semirings(CategoryWithAxiom):
         sage: TestSuite(Semirings()).run()
     """
     _base_category_class_and_axiom = (MagmasAndAdditiveMagmas.Distributive.AdditiveAssociative.AdditiveCommutative.AdditiveUnital.Associative, "Unital")
+
+    def example(self):
+        r"""
+        Return an example of a semiring, as per
+        :meth:`Category.example()
+        <sage.categories.category.Category.example>`.
+
+        EXAMPLES::
+
+            sage: Semirings().example()
+            An example of a semiring: the ternary-logic semiring
+        """
+        import sage.categories.examples.semirings as examples
+        return examples.TernaryLogic()
