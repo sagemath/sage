@@ -96,6 +96,22 @@ def weighted_vector_compositions(n_vec, d, weights_vec):
         yield from itertools.product(*map(weighted_compositions, n_vec, d_vec, weights_vec))
 
 
+def label_sets(arity, labels):
+    r"""
+    Return labels as a list of sets.
+
+    INPUT:
+
+    - ``arity`` -- the arity of the species
+    - ``labels`` -- an iterable of iterables
+    """
+    if len(labels) != arity:
+        raise ValueError("arity of must be equal to the number of arguments provided")
+
+    label_sets = [set(U) for U in labels]
+    assert all(len(U) == len(V) for U, V in zip(labels, label_sets)), f"The argument labels must be a set, but {labels} has duplicates"
+    return label_sets
+
 ######################################################################
 
 class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
@@ -350,30 +366,30 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: from sage.rings.species import PolynomialSpecies
             sage: L2 = LazySpecies(QQ, "X, Y")
             sage: P2 = PolynomialSpecies(QQ, "X, Y")
-            sage: X = L2(P2(SymmetricGroup(1), {0: [1]}))
-            sage: Y = L2(P2(SymmetricGroup(1), {1: [1]}))
-            sage: list((X*Y).structures([1],[2]))
+            sage: XY = L2(P2(PermutationGroup([], domain=[1, 2]), {0: [1], 1: [2]}))
+            sage: list((XY).structures([1], [2]))
             [((1, 2), X*Y)]
 
-            sage: list(E(X*Y).structures([1,2],[3,4]))
+            sage: list(E(XY).structures([1,2],[3,4]))
             [((3, 4, 1, 2), {((1,2)(3,4),): ({1, 2}, {3, 4})}),
              ((4, 3, 1, 2), {((1,2)(3,4),): ({1, 2}, {3, 4})})]
 
+            sage: list(XY.structures([], [1, 2]))
+            []
         """
-        fP = parent(self)
-        if len(labels) != fP._arity:
-            raise ValueError("arity of must be equal to the number of arguments provided")
-        assert all(len(U) == len(set(U)) for U in labels), f"The argument labels must be a set, but {labels} has duplicates"
-
+        labels = label_sets(self.parent()._arity, labels)
         n = tuple([len(U) for U in labels])
         S = SymmetricGroup(sum(n)).young_subgroup(n)
         F = self[sum(n)]
         l = [e for l in labels for e in l][::-1]
         for M, c in F.monomial_coefficients().items():
-            if c < 0:
+            if c not in ZZ or c < 0:
                 raise NotImplementedError("only implemented for proper non-virtual species")
+            G, dompart = M.permutation_group()
+            if not tuple(len(b) for b in dompart) == n:
+                continue
             types = [tuple(S(rep)._act_on_list_on_position(l))[::-1]
-                     for rep in libgap.RightTransversal(S, M.permutation_group()[0])]
+                     for rep in libgap.RightTransversal(S, G)]
             if c == 1:
                 for s in types:
                     yield s, M
@@ -524,9 +540,12 @@ class SumSpeciesElement(LazySpeciesElement):
         super().__init__(F.parent(), F._coeff_stream)
 
     def structures(self, *labels):
+        labels = label_sets(self.parent()._arity, labels)
         yield from self._left.structures(*labels)
         yield from self._right.structures(*labels)
 
+from itertools import chain, product
+from sage.combinat.subset import subsets
 class ProductSpeciesElement(LazySpeciesElement):
     def __init__(self, left, right):
         self._left = left
@@ -534,16 +553,35 @@ class ProductSpeciesElement(LazySpeciesElement):
         F = super(LazySpeciesElement, type(left))._mul_(left, right)
         super().__init__(F.parent(), F._coeff_stream)
 
-#    def structures(self, labels):
-#        n = len(labels)
-#        l = set(labels)
-#        assert len(l) == n, f"The argument labels must be a set, but {labels} has duplicates"
-#        for k in range(n+1):
-#            for U in itertools.combinations(l, k):
-#                V = l.difference(U)
-#                yield from itertools.product(self._left.structures(U),
-#                                             self._right.structures(V))
+    def structures(self, *labels):
+        """
+        EXAMPLES::
 
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L = LazySpecies(ZZ, "X")
+            sage: E = L.Sets()
+            sage: C = L.Cycles()
+            sage: P = E * C
+            sage: list(P.structures([1,2]))
+            [(set(), [1, 2]), ({1}, [2]), ({2}, [1])]
+
+            sage: P = E * E
+            sage: list(P.structures([1,2]))
+            [(set(), {1, 2}), ({1}, {2}), ({2}, {1}), ({1, 2}, set())]
+
+            sage: L.<X, Y> = LazySpecies(QQ)
+            sage: list((X*Y).structures([1], [2]))
+            [(((1,), X), ((2,), Y))]
+        """
+        def dissections(s):
+            for subset in subsets(s):
+                subset = set(subset)
+                yield (subset, s - subset)
+
+        labels = label_sets(self.parent()._arity, labels)
+        for d in product(*[dissections(u) for u in labels]):
+            yield from product(self._left.structures(*[U for U, _ in d]),
+                               self._right.structures(*[V for _, V in d]))
 
 class CompositionSpeciesElement(LazySpeciesElement):
     def __init__(self, left, *args):
@@ -641,6 +679,26 @@ class LazySpecies(LazyCompletionGradedAlgebra):
         names = normalize_names(-1, names)
         return super().__classcall__(cls, base_ring, names, sparse)
 
+    def _first_ngens(self, n):
+        r"""
+        Used by the preparser for ``F.<x> = ...``.
+
+        We do not use the generic implementation of
+        :class:`sage.combinat.CombinatorialFreeModule`, because we do
+        not want to implement `gens`.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: P.<X, Y> = LazySpecies(QQ)  # indirect doctest
+            sage: 1/(1-X-Y)
+            1 + (X+Y) + (X^2+2*X*Y+Y^2) + (X^3+3*X^2*Y+3*X*Y^2+Y^3)
+             + (X^4+4*X^3*Y+6*X^2*Y^2+4*X*Y^3+Y^4)
+             + (X^5+5*X^4*Y+10*X^3*Y^2+10*X^2*Y^3+5*X*Y^4+Y^5)
+             + (X^6+6*X^5*Y+15*X^4*Y^2+20*X^3*Y^3+15*X^2*Y^4+6*X*Y^5+Y^6) + O^7
+        """
+        return tuple([self(g) for g in self._laurent_poly_ring._first_ngens(n)])
+
     def __init__(self, base_ring, names, sparse):
         """
         EXAMPLES::
@@ -676,13 +734,47 @@ class SetSpecies(LazySpeciesElement):
         S = parent(SymmetricGroup)
         super().__init__(parent, S._coeff_stream)
 
+    def structures(self, *labels):
+        """
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L = LazySpecies(ZZ, "X")
+            sage: E = L.Sets()
+            sage: list(E.structures([1,2,3]))
+            [{1, 2, 3}]
+        """
+        labels = label_sets(self.parent()._arity, labels)
+        yield labels[0]
+
 from sage.groups.perm_gps.permgroup_named import CyclicPermutationGroup
+from sage.combinat.permutation import CyclicPermutations
 class CycleSpecies(LazySpeciesElement):
     def __init__(self, parent):
         P = parent._laurent_poly_ring
         S = parent(lambda n: CyclicPermutationGroup(n) if n else 0)
         super().__init__(parent, S._coeff_stream)
 
+    def structures(self, *labels):
+        """
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L = LazySpecies(ZZ, "X")
+            sage: C = L.Cycles()
+            sage: list(C.structures([]))
+            []
+            sage: list(C.structures([1]))
+            [[1]]
+            sage: list(C.structures([1,2]))
+            [[1, 2]]
+            sage: list(C.structures([1,2,3]))
+            [[1, 2, 3], [1, 3, 2]]
+        """
+        labels = label_sets(self.parent()._arity, labels)
+        yield from CyclicPermutations(labels[0])
 
 from sage.graphs.graph_generators import graphs
 from sage.rings.integer_ring import ZZ
@@ -712,4 +804,5 @@ class SetPartitionSpecies(LazySpeciesElement):
             yield from Partitions(labels)
 
     def structures(self, labels):
+        labels = label_sets(self.parent()._arity, labels)
         yield from SetPartitions(labels)
