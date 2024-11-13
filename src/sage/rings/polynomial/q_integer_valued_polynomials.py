@@ -1,6 +1,8 @@
 r"""
 Quantum-valued polynomial rings
 
+This provide a `q`-analogue of the :class:`~sage.rings.polynomials.integer_valued_polynomials.IntegerValuedPolynomialRing`.
+
 AUTHORS:
 
 - Frédéric Chapoton (2024-03): Initial version
@@ -64,6 +66,10 @@ def q_binomial_x(m, n):
     When evaluated at the `q`-integer `[k]_q`, this gives
     the usual `q`-binomial coefficient `[m + k, n]_q`.
 
+    INPUT:
+
+    - ``m`` and ``n`` -- positive integers
+
     EXAMPLES::
 
         sage: from sage.combinat.q_analogues import q_int
@@ -91,7 +97,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
     Quantum-valued polynomial rings are commutative and associative
     algebras, with a basis indexed by integers.
 
-    This is endowed with two bases, named ``B`` or ``Binomial``
+    This algebra is endowed with two bases, named ``B`` or ``Binomial``
     and ``S`` or ``Shifted``.
 
     INPUT:
@@ -99,7 +105,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
     - ``R`` -- commutative ring
 
     The ring ``R`` is not containing the variable `q`. Instead the
-    Laurent polynomial ring over ``R`` is used.
+    Laurent polynomial ring over ``R`` is built and used.
 
     EXAMPLES::
 
@@ -228,6 +234,8 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
             def ground_ring(self):
                 """
                 Return the ring of coefficients.
+
+                This ring is not supposed to contain the variable `q`.
 
                 EXAMPLES::
 
