@@ -137,6 +137,7 @@ class IndexedGroup(IndexedMonoid):
 
     gens = group_generators
 
+
 class IndexedFreeGroup(IndexedGroup, Group):
     """
     An indexed free group.
@@ -296,6 +297,7 @@ class IndexedFreeGroup(IndexedGroup, Group):
             sign = lambda x: 1 if x > 0 else -1 # It is never 0
             return [ (k, sign(e)) for k,e in self._sorted_items()
                      for dummy in range(abs(e))]
+
 
 class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
     """
