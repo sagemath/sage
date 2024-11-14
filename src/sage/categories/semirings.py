@@ -64,5 +64,5 @@ class Semirings(CategoryWithAxiom):
             sage: Semirings().example()
             An example of a semiring: the ternary-logic semiring
         """
-        import sage.categories.examples.semirings as examples
-        return examples.TernaryLogic()
+        from sage.categories.examples.semirings import TernaryLogic
+        return TernaryLogic()
