@@ -1314,7 +1314,7 @@ cdef class SingularFunction(SageObject):
 
             sage: from sage.libs.singular.function import singular_function
             sage: groebner = singular_function('groebner')
-            sage: 'groebner' in groebner.__doc__
+            sage: 'groebner' in groebner.__doc__  # needs info
             True
         """
 
@@ -1360,14 +1360,9 @@ EXAMPLES::
      [x2, x1^2],
      [x2, x1^2]]
 
-The Singular documentation for '%s' is given below.
-"""%(self._name,self._name)
-        # Github issue #11268: Include the Singular documentation as a block of code
-        singular_doc = get_docstring(self._name).split('\n')
-        if len(singular_doc) > 1:
-            return prefix + "\n::\n\n"+'\n'.join(["    "+L for L in singular_doc])
-        else:
-            return prefix + "\n::\n\n"+"    Singular documentation not found"
+"""%(self._name)
+        from sage.interfaces.singular import get_docstring
+        return prefix + get_docstring(self._name, prefix=True, code=True)
 
     cdef common_ring(self, tuple args, ring=None):
         """
