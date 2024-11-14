@@ -203,6 +203,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             self.__regulator = (kwds.pop('regulator'), True)
         if 'torsion_order' in kwds:
             self._set_torsion_order(kwds.pop('torsion_order'))
+        if 'db_extra' in kwds:
+            # optional data provided by database_cremona_ellcurve
+            self.db_extra = kwds.pop('db_extra')
         if kwds:
             raise TypeError(f"unexpected keyword arguments: {kwds}")
 
