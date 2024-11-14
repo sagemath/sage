@@ -104,6 +104,10 @@ REFERENCES:
              graphs and isoperimetric inequalities*, The Annals of Probability
              32 (2004), no.  3A, 1727-1745.
 
+.. [ALL2002] P. Auger, G. Labelle and P. Leroux, *Combinatorial
+             addition formulas and applications*, Advances in Applied
+             Mathematics 28 (2002) 302-342.
+
 .. [ASV2020] Federico Ardila, Mariel Supina, and Andrés R. Vindas-Meléndez,
          *The Equivariant Ehrhart Theory of the Permutahedron*,
          Proc. Amer. Math. Soc. Volume 148, Number 12, 2020, pp. 5091--5107.
