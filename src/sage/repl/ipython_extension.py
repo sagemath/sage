@@ -357,6 +357,7 @@ class SageMagics(Magics):
           - ``--use-cache``
           - ``--create-local-c-file``
           - ``--annotate``
+          - ``--view-annotate``
           - ``--sage-namespace``
           - ``--create-local-so-file``
           - ``--no-compile-message``, ``--no-use-cache``, etc.
@@ -434,6 +435,7 @@ class SageMagics(Magics):
         parser.add_argument("--use-cache", action=argparse.BooleanOptionalAction)
         parser.add_argument("--create-local-c-file", action=argparse.BooleanOptionalAction)
         parser.add_argument("--annotate", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--view-annotate", action=argparse.BooleanOptionalAction)
         parser.add_argument("--sage-namespace", action=argparse.BooleanOptionalAction)
         parser.add_argument("--create-local-so-file", action=argparse.BooleanOptionalAction)
         args = parser.parse_args(shlex.split(line))
