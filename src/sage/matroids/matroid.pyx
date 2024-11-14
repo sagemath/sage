@@ -6313,7 +6313,7 @@ cdef class Matroid(SageObject):
         from sage.matroids.linear_matroid import BinaryMatroid
         return BinaryMatroid(groundset=E, matrix=A, basis=list(basis), keep_initial_representation=False)
 
-    cpdef binary_matroid(self, randomized_tests=1, verify = True):
+    cpdef binary_matroid(self, randomized_tests=1, verify=True):
         r"""
         Return a binary matroid representing ``self``, if such a
         representation exists.
@@ -6492,7 +6492,7 @@ cdef class Matroid(SageObject):
         from sage.matroids.linear_matroid import TernaryMatroid
         return TernaryMatroid(groundset=E, matrix=A, basis=basis, keep_initial_representation=False)
 
-    cpdef ternary_matroid(self, randomized_tests=1, verify = True):
+    cpdef ternary_matroid(self, randomized_tests=1, verify=True):
         r"""
         Return a ternary matroid representing ``self``, if such a
         representation exists.
@@ -8111,7 +8111,7 @@ cdef class Matroid(SageObject):
         from sage.matroids.chow_ring import ChowRing
         return ChowRing(M=self, R=R, augmented=augmented, presentation=presentation)
 
-    cpdef plot(self, B=None, lineorders=None, pos_method=None,pos_dict=None,save_pos=False):
+    cpdef plot(self, B=None, lineorders=None, pos_method=None, pos_dict=None, save_pos=False):
         """
         Return geometric representation as a sage graphics object.
 

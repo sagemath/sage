@@ -202,7 +202,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             f = Cx([base_map(c) for c in f])
         return codomain(f(im_gens[0]))
 
-    def minpoly(self,var='x',algorithm='pari'):
+    def minpoly(self, var='x', algorithm='pari'):
         """
         Return the minimal polynomial of this element
         (over the corresponding prime subfield).
@@ -822,7 +822,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         return self.square_root(extend=extend, all=all)
 
-    def nth_root(self, n, extend = False, all = False, algorithm=None, cunningham=False):
+    def nth_root(self, n, extend=False, all=False, algorithm=None, cunningham=False):
         r"""
         Return an `n`-th root of ``self``.
 
@@ -941,7 +941,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         n = Integer(n)
         return self._nth_root_common(n, all, algorithm, cunningham)
 
-    def pth_power(self, int k = 1):
+    def pth_power(self, int k=1):
         """
         Return the `(p^k)`-th power of self, where `p` is the
         characteristic of the field.
@@ -975,7 +975,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
     frobenius = pth_power
 
-    def pth_root(self, int k = 1):
+    def pth_root(self, int k=1):
         """
         Return the `(p^k)`-th root of self, where `p` is the characteristic
         of the field.

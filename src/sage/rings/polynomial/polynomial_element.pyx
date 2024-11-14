@@ -208,7 +208,7 @@ cdef class Polynomial(CommutativePolynomial):
     .. automethod:: _mul_trunc_
     """
 
-    def __init__(self, parent, is_gen = False, construct=False):
+    def __init__(self, parent, is_gen=False, construct=False):
         """
         The following examples illustrate creation of elements of
         polynomial rings, and some basic arithmetic.
@@ -3528,7 +3528,7 @@ cdef class Polynomial(CommutativePolynomial):
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.overflowcheck(False)
-    def _mul_karatsuba(self, right, K_threshold = None):
+    def _mul_karatsuba(self, right, K_threshold=None):
         r"""
         Compute the product of two polynomials using the Karatsuba divide
         and conquer multiplication algorithm. This is only used over a
@@ -4323,7 +4323,7 @@ cdef class Polynomial(CommutativePolynomial):
         """
         return [self.diff()]
 
-    def integral(self,var=None):
+    def integral(self, var=None):
         """
         Return the integral of this polynomial.
 
@@ -5314,7 +5314,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         raise NotImplementedError("splitting_field() is only implemented over number fields and finite fields")
 
-    def pseudo_quo_rem(self,other):
+    def pseudo_quo_rem(self, other):
         r"""
         Compute the pseudo-division of two polynomials.
 
@@ -5831,7 +5831,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         return R.fraction_field()[self._parent.variable_name()].quotient(self, names)
 
-    def sylvester_matrix(self, right, variable = None):
+    def sylvester_matrix(self, right, variable=None):
         """
         Return the Sylvester matrix of ``self`` and ``right``.
 
@@ -11805,7 +11805,7 @@ cdef list do_karatsuba_different_size(list left, list right, Py_ssize_t K_thresh
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.overflowcheck(False)
-cdef list do_karatsuba(list left, list right, Py_ssize_t K_threshold,Py_ssize_t start_l, Py_ssize_t start_r,Py_ssize_t num_elts):
+cdef list do_karatsuba(list left, list right, Py_ssize_t K_threshold, Py_ssize_t start_l, Py_ssize_t start_r, Py_ssize_t num_elts):
     """
     Core routine for Karatsuba multiplication. This function works for two
     polynomials of the same degree.

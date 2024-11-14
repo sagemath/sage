@@ -384,7 +384,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         """
         return left._backend._richcmp_(backend_element(right), op)
 
-    cpdef _add_(self,other):
+    cpdef _add_(self, other):
         r"""
         Return the sum of this element and ``other``.
 
@@ -424,7 +424,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         ans._backend = -self._backend
         return ans
 
-    cpdef _sub_(self,other):
+    cpdef _sub_(self, other):
         r"""
         Return the difference of this element and ``other``.
 
@@ -444,7 +444,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         ans._backend = self._backend - (<RingExtensionElement>other)._backend
         return ans
 
-    cpdef _mul_(self,other):
+    cpdef _mul_(self, other):
         r"""
         Return the product of this element and ``other``.
 
@@ -464,7 +464,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         ans._backend = self._backend * (<RingExtensionElement>other)._backend
         return ans
 
-    cpdef _div_(self,other):
+    cpdef _div_(self, other):
         r"""
         Return the quotient of this element by ``other``,
         considered as an element of the fraction field.

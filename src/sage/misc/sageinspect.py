@@ -238,11 +238,11 @@ def _extract_embedded_position(docstring):
 
     The following has been fixed in :issue:`13916`::
 
-        sage: cython('''cpdef test_funct(x,y): return''')                               # needs sage.misc.cython
+        sage: cython('''cpdef test_funct(x, y): return''')                               # needs sage.misc.cython
         sage: func_doc = inspect.getdoc(test_funct)                                     # needs sage.misc.cython
         sage: with open(_extract_embedded_position(func_doc)[1]) as f:                  # needs sage.misc.cython
         ....:     print(f.read())
-        cpdef test_funct(x,y): return
+        cpdef test_funct(x, y): return
 
     Ensure that the embedded filename of the compiled function is
     correct.  In particular it should be relative to ``spyx_tmp()`` in
@@ -252,11 +252,11 @@ def _extract_embedded_position(docstring):
         sage: from sage.env import DOT_SAGE
         sage: from sage.misc.sage_ostools import restore_cwd
         sage: with restore_cwd(DOT_SAGE):                                               # needs sage.misc.cython
-        ....:     cython('''cpdef test_funct(x,y): return''')
+        ....:     cython('''cpdef test_funct(x, y): return''')
         sage: func_doc = inspect.getdoc(test_funct)                                     # needs sage.misc.cython
         sage: with open(_extract_embedded_position(func_doc)[1]) as f:                  # needs sage.misc.cython
         ....:     print(f.read())
-        cpdef test_funct(x,y): return
+        cpdef test_funct(x, y): return
     """
     try:
         res = __embedded_position_re.search(docstring)
@@ -1093,7 +1093,7 @@ def _sage_getargspec_cython(source):
 
     Some malformed input is detected::
 
-        sage: sgc('def f(x,y')
+        sage: sgc('def f(x, y')
         Traceback (most recent call last):
         ...
         SyntaxError: Unexpected EOF while parsing argument list
@@ -1484,7 +1484,7 @@ def sage_getargspec(obj):
         ....: 'cdef class MyClass:',
         ....: '    def _sage_src_(self):',
         ....: '        return "def foo(x, a=\\\')\\\"\\\', b={(2+1):\\\'bar\\\', not 1:3, 3<<4:5}): return\\n"',
-        ....: '    def __call__(self, m,n): return "something"']
+        ....: '    def __call__(self, m, n): return "something"']
         sage: cython('\n'.join(cython_code))
         sage: O = MyClass()
         sage: print(sage.misc.sageinspect.sage_getsource(O))
@@ -1525,11 +1525,11 @@ def sage_getargspec(obj):
         ....: '''
         ....: class Foo:
         ....:     @staticmethod
-        ....:     def join(categories, bint as_list = False, tuple ignore_axioms=(), tuple axioms=()): pass
+        ....:     def join(categories, bint as_list=False, tuple ignore_axioms=(), tuple axioms=()): pass
         ....: cdef class Bar:
         ....:     @staticmethod
-        ....:     def join(categories, bint as_list = False, tuple ignore_axioms=(), tuple axioms=()): pass
-        ....:     cpdef meet(categories, bint as_list = False, tuple ignore_axioms=(), tuple axioms=()): pass
+        ....:     def join(categories, bint as_list=False, tuple ignore_axioms=(), tuple axioms=()): pass
+        ....:     cpdef meet(categories, bint as_list=False, tuple ignore_axioms=(), tuple axioms=()): pass
         ....: ''')
         sage: sage_getargspec(Foo.join)
         FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None,
@@ -1987,7 +1987,7 @@ def sage_getdoc(obj, obj_name='', embedded=False):
         sage: from sage.misc.sageinspect import sage_getdoc
         sage: sage_getdoc(identity_matrix)[87:124]                                      # needs sage.modules
         'Return the n x n identity matrix over'
-        sage: def f(a,b,c,d=1): return a+b+c+d
+        sage: def f(a, b, c, d=1): return a+b+c+d
         ...
         sage: import functools
         sage: f1 = functools.partial(f, 1,c=2)
@@ -2226,9 +2226,9 @@ def sage_getsourcelines(obj):
     TESTS::
 
         sage: # needs sage.misc.cython
-        sage: cython('''cpdef test_funct(x,y): return''')
+        sage: cython('''cpdef test_funct(x, y): return''')
         sage: sage_getsourcelines(test_funct)
-        (['cpdef test_funct(x,y): return\n'], 1)
+        (['cpdef test_funct(x, y): return\n'], 1)
 
     The following tests that an instance of ``functools.partial`` is correctly
     dealt with (see :issue:`9976`)::
