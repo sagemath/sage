@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-categories
 r"""
-Semirngs
+Semirings
 """
 # ****************************************************************************
 #  Copyright (C) 2010 Nicolas Borie <nicolas.borie@math.u-psud.fr>
@@ -32,11 +32,13 @@ class Semirings(CategoryWithAxiom):
         sage: Semirings()
         Category of semirings
         sage: Semirings().super_categories()
-        [Category of associative additive commutative additive associative additive unital distributive magmas and additive magmas,
+        [Category of associative additive commutative additive
+         associative additive unital distributive magmas and additive magmas,
          Category of monoids]
 
         sage: sorted(Semirings().axioms())
-        ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveUnital', 'Associative', 'Distributive', 'Unital']
+        ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveUnital',
+         'Associative', 'Distributive', 'Unital']
 
         sage: Semirings() is (CommutativeAdditiveMonoids() & Monoids()).Distributive()
         True

@@ -3,7 +3,7 @@ r"""
 Examples of semirings
 """
 # ****************************************************************************
-#  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
+#  Copyright (C) 2008-2009 F. Chapoton <chapoton unistra.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
@@ -25,7 +25,7 @@ _PROD = [[0, 0, 0], [0, 1, 2], [0, 2, 2]]
 
 class Ternary(Element):
     """
-    Elements of the Ternary-logic ring.
+    Elements of the ternary-logic ring.
 
     The semantic is as follows:
 
