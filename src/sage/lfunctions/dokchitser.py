@@ -43,6 +43,9 @@ class Dokchitser(SageObject):
     r"""
     Dokchitser's `L`-functions Calculator.
 
+    PARI code can be found on
+    `Dokchitser's homepage <https://people.maths.bris.ac.uk/~matyd/computel>`_.
+
     Create a Dokchitser `L`-series with
 
     Dokchitser(conductor, gammaV, weight, eps, poles, residues, init,
@@ -153,7 +156,7 @@ class Dokchitser(SageObject):
 
     We redefine the default bound on the coefficients: Deligne's
     estimate on tau(n) is better than the default
-    coefgrow(n)=`(4n)^{11/2}` (by a factor 1024), so
+    coefgrow(n)= `(4n)^{11/2}` (by a factor 1024), so
     re-defining coefgrow() improves efficiency (slightly faster). ::
 
         sage: L.num_coeffs()
@@ -587,7 +590,7 @@ class Dokchitser(SageObject):
 
         - ``a`` -- complex number (default: 0); point about which to expand
 
-        - ``k`` -- integer (default: 6); series is `O(``var``^k)`
+        - ``k`` -- integer (default: 6); series is `O(\texttt{var}^k)`
 
         - ``var`` -- string (default: ``'z'``); variable of power series
 
