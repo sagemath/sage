@@ -43,21 +43,46 @@ class Ternary(Element):
     def __init__(self, parent, n):
         """
         Initialize one element.
+
+        TESTS::
+
+            sage: from sage.categories.examples.semirings import TernaryLogic
+            sage: S = TernaryLogic()
+            sage: S(4)
+            Traceback (most recent call last):
+            ...
+            ValueError: input not in (0,1,2)
         """
         if n not in [0, 1, 2]:
-            raise ValueError
+            raise ValueError("input not in (0,1,2)")
         self._n = n
         Element.__init__(self, parent)
 
     def _repr_(self):
         """
         Return the string representation.
+
+        TESTS::
+
+            sage: from sage.categories.examples.semirings import TernaryLogic
+            sage: S = TernaryLogic()
+            sage: [S(i) for i in range(3)]
+            [0, 1, many]
         """
         return ["0", "1", "many"][self._n]
 
     def __eq__(self, other):
         """
         Test for equality.
+
+        TESTS::
+
+            sage: from sage.categories.examples.semirings import TernaryLogic
+            sage: S = TernaryLogic()
+            sage: S(1) == S(2)
+            False
+            sage: S(0) == 3
+            False
         """
         if not isinstance(other, Ternary):
             return False
@@ -66,6 +91,13 @@ class Ternary(Element):
     def __ne__(self, other):
         """
         Test for non-equality.
+
+        TESTS::
+
+            sage: from sage.categories.examples.semirings import TernaryLogic
+            sage: S = TernaryLogic()
+            sage: S(1) != S(2)
+            True
         """
         return not (self == other)
 
@@ -150,6 +182,16 @@ class TernaryLogic(UniqueRepresentation, Parent):
     def __contains__(self, n) -> bool:
         """
         Return whether ``self`` contains the element.
+
+        EXAMPLES::
+
+            sage: S = Semirings().example()
+            sage: S(1) in S
+            True
+            sage: 2 in S
+            True
+            sage: 4 in S
+            False
         """
         if isinstance(n, Ternary):
             return True
@@ -173,6 +215,12 @@ class TernaryLogic(UniqueRepresentation, Parent):
     def one(self):
         """
         Return the unit of ``self``.
+
+        EXAMPLES::
+
+            sage: S = Semirings().example()
+            sage: S.one()
+            1
         """
         return self(1)
 
