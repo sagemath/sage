@@ -4872,7 +4872,7 @@ cdef class Polynomial(CommutativePolynomial):
             -1 * 3^15 * 23 * 887 * 12583 * 6335047 * 371692813
 
         Factoring over a number field over which we cannot factor the
-        discriminant and over which `nffactor()` fails::
+        discriminant and over which ``nffactor()`` fails::
 
             sage: # needs sage.libs.pari sage.rings.number_field
             sage: p = next_prime(10^50); q = next_prime(10^51); n = p*q
@@ -4920,7 +4920,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: (x1 - x2).factor()                                                    # needs sage.libs.singular
             -x + x
 
-        Check that :issue:`26421' is fixed::
+        Check that :issue:`26421` is fixed::
 
             sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: P.<x> = R[]
