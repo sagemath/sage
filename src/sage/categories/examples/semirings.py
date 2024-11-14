@@ -3,19 +3,18 @@ r"""
 Examples of semirings
 """
 # ****************************************************************************
-#  Copyright (C) 2008-2009 F. Chapoton <chapoton unistra.fr>
+#  Copyright (C) 2024 F. Chapoton <chapoton unistra.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.categories.semirings import Semirings
+from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.element import Element
-from sage.categories.semirings import Semirings
 
-
-# semantic : inside NN ;
+# semantic :
 # 0 => 0, empty;
 # 1 => 1, unique;
 # 2 => at least 2
@@ -42,20 +41,32 @@ class Ternary(Element):
     The same semantic works for graphs instead of sets.
     """
     def __init__(self, parent, n):
+        """
+        Initialize one element.
+        """
         if n not in [0, 1, 2]:
             raise ValueError
         self._n = n
         Element.__init__(self, parent)
 
     def _repr_(self):
+        """
+        Return the string representation.
+        """
         return ["0", "1", "many"][self._n]
 
     def __eq__(self, other):
+        """
+        Test for equality.
+        """
         if not isinstance(other, Ternary):
             return False
         return self._n == other._n
 
     def __ne__(self, other):
+        """
+        Test for non-equality.
+        """
         return not (self == other)
 
 
@@ -127,6 +138,8 @@ class TernaryLogic(UniqueRepresentation, Parent):
 
     def _repr_(self):
         r"""
+        Return the string representation.
+
         EXAMPLES::
 
             sage: Semirings().example()._repr_()
@@ -135,6 +148,9 @@ class TernaryLogic(UniqueRepresentation, Parent):
         return "An example of a semiring: the ternary-logic semiring"
 
     def __contains__(self, n) -> bool:
+        """
+        Return whether ``self`` contains the element.
+        """
         if isinstance(n, Ternary):
             return True
         return n in [0, 1, 2]
