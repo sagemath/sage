@@ -2695,7 +2695,7 @@ class Graph(GenericGraph):
             return True if not certificate else None
 
         answer = self.is_odd_hole_free(certificate=certificate)
-        if not (answer is True):
+        if answer is not True:
             return answer
 
         return self_complement.is_odd_hole_free(certificate=certificate)

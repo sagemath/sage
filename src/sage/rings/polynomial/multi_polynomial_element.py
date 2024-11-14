@@ -688,7 +688,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
                 return Integer(self.element().degree(None))
             return self.weighted_degree(self.parent().term_order().weights())
         if isinstance(x, MPolynomial):
-            if not x.parent() is self.parent():
+            if x.parent() is not self.parent():
                 try:
                     x = self.parent().coerce(x)
                 except TypeError:
