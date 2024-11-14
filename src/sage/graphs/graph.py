@@ -7673,97 +7673,9 @@ class Graph(GenericGraph):
 
         return D[0] == NodeType.PRIME and len(D[1]) == self.order()
 
-    def _gomory_hu_tree(self, vertices, algorithm=None):
-        r"""
-        Return a Gomory-Hu tree associated to ``self``.
-
-        This function is the private counterpart of ``gomory_hu_tree()``, with
-        the difference that it has an optional argument needed for recursive
-        computations, which the user is not interested in defining himself.
-
-        See the documentation of ``gomory_hu_tree()`` for more information.
-
-        INPUT:
-
-        - ``vertices`` -- set of "real" vertices, as opposed to the fakes one
-          introduced during the computations. This variable is useful for the
-          algorithm and for recursion purposes.
-
-        - ``algorithm`` -- select the algorithm used by the :meth:`edge_cut`
-          method. Refer to its documentation for allowed values and default
-          behaviour.
-
-        EXAMPLES:
-
-        This function is actually tested in ``gomory_hu_tree()``, this example
-        is only present to have a doctest coverage of 100%::
-
-            sage: g = graphs.PetersenGraph()
-            sage: t = g._gomory_hu_tree(frozenset(g.vertices(sort=False)))
-        """
-        self._scream_if_not_simple()
-
-        # Small case, not really a problem ;-)
-        if len(vertices) == 1:
-            g = Graph()
-            g.add_vertices(vertices)
-            return g
-
-        # Take any two vertices (u,v)
-        it = iter(vertices)
-        u, v = next(it), next(it)
-
-        # Compute a uv min-edge-cut.
-        #
-        # The graph is split into U,V with u \in U and v\in V.
-        flow, edges, [U, V] = self.edge_cut(u, v, use_edge_labels=True,
-                                            vertices=True, algorithm=algorithm)
-
-        # One graph for each part of the previous one
-        gU, gV = self.subgraph(U, immutable=False), self.subgraph(V, immutable=False)
-
-        # A fake vertex fU (resp. fV) to represent U (resp. V)
-        fU = frozenset(U)
-        fV = frozenset(V)
-
-        # Each edge (uu,vv) with uu \in U and vv\in V yields:
-        # - an edge (uu,fV) in gU
-        # - an edge (vv,fU) in gV
-        #
-        # If the same edge is added several times their capacities add up.
-
-        from sage.rings.real_mpfr import RR
-        for uu, vv, capacity in edges:
-            capacity = capacity if capacity in RR else 1
-
-            # Assume uu is in gU
-            if uu in V:
-                uu, vv = vv, uu
-
-            # Create the new edges if necessary
-            if not gU.has_edge(uu, fV):
-                gU.add_edge(uu, fV, 0)
-            if not gV.has_edge(vv, fU):
-                gV.add_edge(vv, fU, 0)
-
-            # update the capacities
-            gU.set_edge_label(uu, fV, gU.edge_label(uu, fV) + capacity)
-            gV.set_edge_label(vv, fU, gV.edge_label(vv, fU) + capacity)
-
-        # Recursion on each side
-        gU_tree = gU._gomory_hu_tree(vertices & frozenset(gU), algorithm=algorithm)
-        gV_tree = gV._gomory_hu_tree(vertices & frozenset(gV), algorithm=algorithm)
-
-        # Union of the two partial trees
-        g = gU_tree.union(gV_tree)
-
-        # An edge to connect them, with the appropriate label
-        g.add_edge(u, v, flow)
-
-        return g
-
     @doc_index("Connectivity, orientations, trees")
-    def gomory_hu_tree(self, algorithm=None):
+    def gomory_hu_tree(self, algorithm=None, solver=None, verbose=0,
+                       *, integrality_tolerance=1e-3):
         r"""
         Return a Gomory-Hu tree of ``self``.
 
@@ -7783,6 +7695,27 @@ class Graph(GenericGraph):
         - ``algorithm`` -- select the algorithm used by the :meth:`edge_cut`
           method. Refer to its documentation for allowed values and default
           behaviour.
+
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
+          Linear Programming (MILP) solver to be used. If set to ``None``, the
+          default one is used. For more information on MILP solvers and which
+          default solver is used, see the method :meth:`solve
+          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+          :class:`MixedIntegerLinearProgram
+          <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+          Only useful when ``algorithm == "LP"``.
+
+        - ``verbose`` -- integer (default: 0); sets the level of
+          verbosity. Set to 0 by default, which means quiet.
+
+          Only useful when ``algorithm == "LP"``.
+
+        - ``integrality_tolerance`` -- float; parameter for use with MILP
+          solvers over an inexact base ring; see
+          :meth:`MixedIntegerLinearProgram.get_values`.
+
+          Only useful when ``algorithm == "LP"``.
 
         OUTPUT: a graph with labeled edges
 
@@ -7842,18 +7775,81 @@ class Graph(GenericGraph):
             sage: graphs.EmptyGraph().gomory_hu_tree()
             Graph on 0 vertices
         """
-        if not self.order():
-            return Graph()
-        if not self.is_connected():
-            g = Graph()
-            for cc in self.connected_components_subgraphs():
-                g = g.union(cc._gomory_hu_tree(frozenset(cc.vertex_iterator()), algorithm=algorithm))
-        else:
-            g = self._gomory_hu_tree(frozenset(self.vertex_iterator()), algorithm=algorithm)
+        self._scream_if_not_simple()
 
+        if self.order() <= 1:
+            return Graph([self, []], format='vertices_and_edges')
+
+        from sage.rings.real_mpfr import RR
+
+        # Graph to store the Gomory-Hu tree
+        T = Graph([self, []], format='vertices_and_edges')
         if self.get_pos() is not None:
-            g.set_pos(dict(self.get_pos()))
-        return g
+            T.set_pos(dict(self.get_pos()))
+
+        # We use a stack to avoid recursion. An element of the stack contains
+        # the graph to be processed and the corresponding set of "real" vertices
+        # (as opposed to the fakes one introduced during the computations.
+        if self.is_connected():
+            stack = [(self, frozenset(self))]
+        else:
+            stack = [(cc, frozenset(cc)) for cc in self.connected_components_subgraphs()]
+
+        # We now iteratively decompose the graph to build the tree
+        while stack:
+            G, vertices = stack.pop()
+
+            if len(vertices) == 1:
+                continue
+
+            # Take any two vertices (u,v)
+            it = iter(vertices)
+            u, v = next(it), next(it)
+
+            # Compute a uv min-edge-cut.
+            #
+            # The graph is split into U,V with u \in U and v\in V.
+            flow, edges, [U, V] = G.edge_cut(u, v, use_edge_labels=True,
+                                             vertices=True, algorithm=algorithm,
+                                             solver=solver, verbose=verbose,
+                                             integrality_tolerance=integrality_tolerance)
+
+            # Add edge (u, v, flow) to the Gomory-Hu tree
+            T.add_edge(u, v, flow)
+
+            # Build one graph for each part of the previous graph and store the
+            # instances to process
+            for X, Y in ((U, V), (V, U)):
+                if len(X) == 1 or len(vertices & frozenset(X)) == 1:
+                    continue
+
+                # build the graph of part X
+                gX = G.subgraph(X, immutable=False)
+
+                # A fake vertex fY to represent Y
+                fY = frozenset(Y)
+
+                # For each edge (x, y) in G with x \in X and y\in Y, add edge
+                # (x, fY) in gX. If the same edge is added several times their
+                # capacities add up.
+                for xx, yy, capacity in edges:
+                    capacity = capacity if capacity in RR else 1
+
+                    # Assume xx is in gX
+                    if xx in fY:
+                        xx, yy = yy, xx
+
+                    # Create the new edge or update its capacity
+                    if gX.has_edge(xx, fY):
+                        gX.set_edge_label(xx, fY, gX.edge_label(xx, fY) + capacity)
+                    else:
+                        gX.add_edge(xx, fY, capacity)
+
+                # Store instance to process
+                stack.append((gX, vertices & frozenset(gX)))
+
+        # Finally return the Gomory-Hu tree
+        return T
 
     @doc_index("Leftovers")
     def two_factor_petersen(self, solver=None, verbose=0, *, integrality_tolerance=1e-3):
