@@ -4706,6 +4706,9 @@ REFERENCES:
              University Press, New York, 1995, With contributions
              by A. Zelevinsky, Oxford Science Publications.
 
+.. [Mac2015] Diane Maclagan and Bernd Sturmfels, *Introduction to
+             Tropical Geometry*, American Mathematical Society, 2015.
+
 .. [MagmaHGM] *Hypergeometric motives* in Magma,
    http://magma.maths.usyd.edu.au/~watkins/papers/HGM-chapter.pdf
 
