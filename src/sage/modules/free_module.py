@@ -3118,7 +3118,7 @@ class FreeModule_generic(Module_free_ambient):
 
         - ``twist`` -- the twisting morphism or the twisting derivation
 
-        - ``codomain`` (default: ``None``) -- the codomain of the pseudo
+        - ``codomain`` -- (default: ``None``) the codomain of the pseudo
           morphisms; if ``None``, the codomain is the same than the domain
 
         EXAMPLES::
@@ -3161,10 +3161,10 @@ class FreeModule_generic(Module_free_ambient):
 
         - ``twist`` -- the twisting morphism or the twisting derivation
 
-        - ``codomain`` (default: ``None``) -- the codomain of the pseudo
+        - ``codomain`` -- (default: ``None``) the codomain of the pseudo
           morphisms; if ``None``, the codomain is the same than the domain
 
-        - ``side`` (default: ``left``) -- side of the vectors acted on by
+        - ``side`` -- (default: ``left``) side of the vectors acted on by
           the matrix
 
         EXAMPLES::

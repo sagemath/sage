@@ -3,8 +3,7 @@ Pseudomorphisms of free modules
 
 AUTHORS:
 
-    - Xavier Caruso, Yossef Musleh (2024-09): initial version
-
+- Xavier Caruso, Yossef Musleh (2024-09): initial version
 """
 # ****************************************************************************
 #  Copyright (C) 2024 Xavier Caruso <xavier.caruso@normalesup.org>
@@ -80,7 +79,6 @@ class FreeModulePseudoMorphism(Morphism):
         sage: v = (4*z^2 + 4*z + 3, 2, z + 5)
         sage: phi(v)
         (2*z + 1, 6*z^2 + 4*z + 5)
-
     """
     def __init__(self, parent, f, side):
         """
@@ -155,7 +153,6 @@ class FreeModulePseudoMorphism(Morphism):
             Traceback (most recent call last):
             ...
             ValueError: the side must be either 'left' or 'right'
-
         """
         Morphism.__init__(self, parent)
         dom = parent.domain()
@@ -199,7 +196,6 @@ class FreeModulePseudoMorphism(Morphism):
             sage: g = M.pseudohom([[1, z, 3], [0, 1, 1], [2, 1, 1]], Frob, side="right")
             sage: g(e)
             (z^2 + 6*z + 2, z^2 + 2*z + 1, 2*z^2 + 4*z)
-
         """
         D = self.domain()
         C = self.codomain()
@@ -289,7 +285,6 @@ class FreeModulePseudoMorphism(Morphism):
             sage: v = M.random_element()
             sage: f(v) == vector([Frob(c) for c in v]) * f.matrix()
             True
-
         """
         if self._side == "left":
             return self._matrix.__copy__()
@@ -317,7 +312,6 @@ class FreeModulePseudoMorphism(Morphism):
             sage: V = Fq^2
             sage: f = V.pseudohom([[1, z], [0, z^2]], Frob)
             sage: f.twisting_derivation()
-
         """
         return self._derivation
 
@@ -342,7 +336,6 @@ class FreeModulePseudoMorphism(Morphism):
             sage: M = P^2
             sage: f = M.pseudohom([[1, 2*x], [x, 1]], d)
             sage: f.twisting_morphism()
-
         """
         return self._morphism
 
@@ -369,7 +362,6 @@ class FreeModulePseudoMorphism(Morphism):
             sage: h2([1, 0])
             (1, z^2)
         """
-
         return self._side
 
     def side_switch(self):
@@ -404,7 +396,6 @@ class FreeModulePseudoMorphism(Morphism):
             sage: v = V.random_element()
             sage: h1(v) == h2(v)
             True
-
         """
         if self._side == "left":
             side = "right"
@@ -442,7 +433,6 @@ class FreeModulePseudoMorphism(Morphism):
             sage: h = V.hom(m)
             sage: g == h
             True
-
         """
         if isinstance(other, FreeModuleMorphism):
             try:

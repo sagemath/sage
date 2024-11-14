@@ -1,10 +1,9 @@
 """
-Space of Pseudomorphisms of free modules
+Space of pseudomorphisms of free modules
 
 AUTHORS:
 
-    - Xavier Caruso, Yossef Musleh (2024-09): initial version
-
+- Xavier Caruso, Yossef Musleh (2024-09): initial version
 """
 # ****************************************************************************
 #  Copyright (C) 2024 Xavier Caruso <xavier.caruso@normalesup.org>
@@ -32,8 +31,6 @@ from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
 
 
 class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
-    Element = FreeModulePseudoMorphism
-
     r"""
     This class implements the space of Pseudomorphisms with a fixed twist.
 
@@ -50,8 +47,9 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
         sage: e = M((4*F.gen()^2 + F.gen() + 2, 4*F.gen()^2 + 4*F.gen() + 4))
         sage: h(e)
         (z3, 2*z3^2 + 3*z3 + 3)
-
     """
+    Element = FreeModulePseudoMorphism
+
     @staticmethod
     def __classcall_private__(cls, domain, codomain, twist):
         r"""
@@ -75,7 +73,6 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             <class 'sage.modules.free_module_pseudohomspace.FreeModulePseudoHomspace_with_category'>
 
             sage: # Testsuite(H).run()
-
         """
         ring = domain.base_ring()
         if codomain.base_ring() is not ring:
@@ -110,7 +107,6 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: M = F^2
             sage: M.pseudoHom(Frob)
             Set of Pseudoendomorphisms (twisted by z3 |--> z3^5) of Vector space of dimension 2 over Finite Field in z3 of size 5^3
-
         """
         self._domain = domain
         self._codomain = codomain
@@ -142,7 +138,6 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             [  z z^2]
             Domain: Vector space of dimension 2 over Finite Field in z of size 5^3
             Codomain: Vector space of dimension 2 over Finite Field in z of size 5^3
-
         """
         return self.element_class(self, f, side)
 
@@ -187,7 +182,6 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: M = A^3
             sage: M.pseudoHom(d)
             Set of Pseudoendomorphisms (twisted by d/dt) of Ambient free module of rank 3 over the principal ideal domain Univariate Polynomial Ring in t over Rational Field
-
         """
         twist = self._ore._repr_twist()
         if self.domain() is self.codomain():
@@ -201,7 +195,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
 
         INPUT:
 
-        - ``var`` (default: ``x``) -- a string, the name of
+        - ``var`` -- string (default: ``x``) the name of
           tha variable
 
         EXAMPLES::
@@ -216,7 +210,6 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
 
             sage: H.ore_ring('y')
             Ore Polynomial Ring in y over Finite Field in z of size 7^3 twisted by z |--> z^7
-
         """
         return self._ore.change_var(var)
 
@@ -234,7 +227,6 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: H = V.pseudoHom(Frob, codomain=W)
             sage: H.matrix_space()
             Full MatrixSpace of 2 by 3 dense matrices over Finite Field in z of size 7^3
-
         """
         return self._matrix_space
 
@@ -266,6 +258,5 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             [0 1]
             Domain: Vector space of dimension 2 over Finite Field in z3 of size 7^3
             Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3]
-
         """
         return Sequence(self(mat) for mat in self._matrix_space.basis())

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Special methods for matrices over discrete valuation rings/fields.
 """
@@ -36,7 +37,7 @@ cpdef hessenbergize_cdvf(Matrix_generic_dense H):
     TESTS::
 
         sage: # needs sage.rings.padics
-        sage: K = Qp(5, print_mode='digits', prec=5)
+        sage: K = Qp(5, print_mode="digits", prec=5)
         sage: H = matrix(K, 3, 3, range(9))
         sage: H
         [        0  ...00001  ...00002]
@@ -69,12 +70,14 @@ cpdef hessenbergize_cdvf(Matrix_generic_dense H):
     n = H.nrows()
     for j in range(n-1):
         k = j + 1
-        maxi = H.get_unsafe(k, j).precision_relative()
+        #maxi = H.get_unsafe(k, j).precision_relative()
+        maxi = - H.get_unsafe(k, j).valuation()
         i = j + 2
         while maxi is not Infinity and i < n:
             entry = H.get_unsafe(i, j)
             if entry:
-                m = entry.precision_relative()
+                #m = entry.precision_relative()
+                m = -entry.valuation()
                 if m > maxi:
                     maxi = m
                     k = i
@@ -84,9 +87,12 @@ cpdef hessenbergize_cdvf(Matrix_generic_dense H):
             H.swap_rows_c(j+1, k)
             H.swap_columns_c(j+1, k)
         pivot = H.get_unsafe(j+1, j)
+        # print(pivot)
         if pivot:
-            inv = ~pivot
+            inv = (~pivot).lift_to_precision()
             for i in range(j+2, n):
                 scalar = inv * H.get_unsafe(i, j)
-                H.add_multiple_of_row_c(i, j+1, -scalar, j)
+                scalar = scalar.lift_to_precision()
+                # print("  ", scalar)
+                H.add_multiple_of_row_c(i, j+1, -scalar, 0)
                 H.add_multiple_of_column_c(j+1, i, scalar, 0)

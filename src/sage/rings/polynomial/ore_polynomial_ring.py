@@ -614,7 +614,6 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             sage: T.<y> = OrePolynomialRing(F, Frob^3, polcast=False)
             sage: T._repr_twist()
             'untwisted'
-
         """
         s = ""
         if self._morphism is not None:
