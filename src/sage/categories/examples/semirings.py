@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-categories
 r"""
-Examples of semigroups
+Examples of semirings
 """
 # ****************************************************************************
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -26,6 +26,20 @@ _PROD = [[0, 0, 0], [0, 1, 2], [0, 2, 2]]
 class Ternary(Element):
     """
     Elements of the Ternary-logic ring.
+
+    The semantic is as follows:
+
+    - 0 -- the integer 0
+    - 1 -- the integer 1
+    - 2 -- some integer greater than 1
+
+    An alternative semantic is:
+
+    - 0 -- an empty set
+    - 1 -- a connected set
+    - 2 -- a disconnected set
+
+    The same semantic works for graphs instead of sets.
     """
     def __init__(self, parent, n):
         if n not in [0, 1, 2]:
@@ -56,7 +70,7 @@ class TernaryLogic(UniqueRepresentation, Parent):
         sage: S = Semirings().example(); S
         An example of a semiring: the ternary-logic semiring
 
-    This is the semigroup that contains 3 objects::
+    This is the semiring that contains 3 objects::
 
         sage: S.some_elements()
         [0, 1, many]
@@ -163,7 +177,7 @@ class TernaryLogic(UniqueRepresentation, Parent):
 
     def an_element(self):
         r"""
-        Return an element of the semigroup.
+        Return an element of the semiring.
 
         EXAMPLES::
 
@@ -174,7 +188,7 @@ class TernaryLogic(UniqueRepresentation, Parent):
 
     def some_elements(self):
         r"""
-        Return a list of some elements of the semigroup.
+        Return a list of some elements of the semiring.
 
         EXAMPLES::
 
