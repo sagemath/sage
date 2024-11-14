@@ -2700,7 +2700,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                 x = self.parent().coerce(x)
             except TypeError:
                 raise TypeError("argument is not coercible to the parent")
-        if not x.is_generator():
+        if not x.is_gen():
             raise TypeError("argument is not a generator")
 
         return Integer(singular_polynomial_deg(p, x._poly, r))
