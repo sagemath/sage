@@ -3144,11 +3144,11 @@ class FreeModule_generic(Module_free_ambient):
 
         We recall that, given two `R`-modules `M` and `M'` together with
         a ring homomorphism `\theta: R \to R` and a `\theta`-derivation,
-        `\delta: R \to R` (that is, a map such that:
+        `\delta: R \to R` (that is, a map such that
         `\delta(xy) = \theta(x)\delta(y) + \delta(x)y`), a
-        pseudomorphism `f : M \to M'` is a additive map such that
+        pseudomorphism `f : M \to M'` is an additive map such that
 
-        .. MATH:
+        .. MATH::
 
             f(\lambda x) = \theta(\lambda) f(x) + \delta(\lambda) x
 
@@ -3210,7 +3210,7 @@ class FreeModule_generic(Module_free_ambient):
             True
 
         If the twisting derivation is not zero, the domain must
-        coerce into the codomain
+        coerce into the codomain::
 
             sage: N = R^3
             sage: M.pseudohom([[1, t, t^2], [1, t^2, t^4]], d, codomain=N)
