@@ -120,7 +120,7 @@ foreach name, pyx : extension_data
     zlib,
   ]
   if name == 'matrix_gfpn_dense'
-    dependencies += [mtx, meataxe]
+    dependencies += [mtx]
   endif
 
   py.extension_module(
