@@ -11,11 +11,6 @@ Can cython run things parallel?
 
 """
 
-
-
-
-
-
 r"""
 Implementation of flag algebras, with a class for combinatorial theories
 
@@ -230,7 +225,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.algebras.flag import Flag, Pattern
+from sage.algebras.flag import Flag, Pattern, possible_mergings
 
 from sage.categories.sets_cat import Sets
 
@@ -258,12 +253,13 @@ def combine(name, *theories, symmetric=False):
         tt._name = name
         return tt
 
-    #Check if we can use symmetry
+    #Check if we can use symmetry, and the resulting groups
     can_symmetry = True
-
     next_group = 0
     result_signature = {}
     result_symmetry = []
+    result_excluded = []
+
     for theory in theories:
         next_group_increment = 0
         if len(theory._signature.keys())!=1:
@@ -271,7 +267,7 @@ def combine(name, *theories, symmetric=False):
         for kk in theory._signature:
             if kk in result_signature:
                 raise ValueError("The relation names must be different!")
-            tkk = theory._signature[kk].clone()
+            tkk = dict(theory._signature[kk])
             if can_symmetry:
                 for ll in result_signature:
                     tll = result_signature[ll]
@@ -280,28 +276,58 @@ def combine(name, *theories, symmetric=False):
             next_group_increment = max(next_group_increment, tkk["group"]+1)
             tkk["group"] += next_group
             result_signature[kk] = tkk
-        result_symmetry += theory._symmetries
+        result_symmetry += list(theory._symmetries)
+        result_excluded += list(theory._excluded)
         next_group += next_group_increment
 
     if not can_symmetry and (symmetric is not False):
         import warnings
         warnings.warn("Warning, the combination can not be symmetric. The symmetries are ignored!", RuntimeWarning)
         symmetric = False
-    
+
     if symmetric is not False:
+        #Make everything in the same group
         for xx in result_signature:
             result_signature[xx]["group"] = 0
         if symmetric is True:
-            symmetric = []
+            #This case symmetry is trivial for the entire group
+            result_symmetry = [[]]
         else:
-            symmetric = result_symmetry
-    return CombinatorialTheory(name, from_data=[result_signature, symmetric])
+            #This case symmetry is as provided by the parameter
+            result_symmetry = [symmetric]
+    #Note that otherwise we use each symmetry from the combined pieces
+    theory_data = {
+        "signature": result_signature, 
+        "symmetries": result_symmetry
+        }
+    ret_theory = CombinatorialTheory(name, _from_data=_serialize_data(theory_data))
+    ret_theory.exclude(result_excluded, force=True)
+    return ret_theory
+
+def _serialize_data(data):
+    #For the signature
+    signature = data["signature"]
+    sered_signature = []
+    for xx in signature:
+        ll = tuple(signature[xx].values())
+        sered_signature.append((xx, ll))
+    sered_signature = tuple(sered_signature)
+
+    #For the symmetries
+    symms = data["symmetries"]
+    sered_symms = []
+    for group_graph in symms:
+        group_graph = [tuple(sorted(list(edge))) for edge in group_graph]
+        sered_symms.append(tuple(sorted(group_graph)))
+    sered_symms = tuple(sered_symms)
+
+    return (sered_signature, sered_symms)
 
 class CombinatorialTheory(Parent, UniqueRepresentation):
     
     Element = Flag
     
-    def __init__(self, name, relation_name="edges", arity=2, is_ordered=False, from_data=None):
+    def __init__(self, name, relation_name="edges", arity=2, is_ordered=False, _from_data=None):
         r"""
         Initialize a Combinatorial Theory
         
@@ -319,14 +345,21 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         OUTPUT: A CombinatorialTheory object
         """
-        self._excluded = []
-        self._cache = {}
         self._name = name
         
-        if from_data != None:
-            self._signature = from_data[0]
-            self._symmetries = from_data[1]
-            self._source_theories = from_data[2]
+        if _from_data != None:
+            #This perhaps needs to be sanity checked
+            sered_signature = _from_data[0]
+            self._signature = {}
+            for ll in sered_signature:
+                key = ll[0]
+                val = {
+                    "arity": ll[1][0],
+                    "ordered": ll[1][1],
+                    "group": ll[1][2]
+                }
+                self._signature[key] = val
+            self._symmetries = _from_data[1]
         else:
             if arity not in [1, 2, 3]:
                 raise ValueError("Only arity 1, 2, or 3 supported!")
@@ -335,8 +368,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 "ordered": is_ordered,
                 "group": 0
             }}
-            self._symmetries = [[]]
-            self._source_theories = []
+            self._symmetries = tuple([tuple([])])
+        self._excluded = tuple()
         Parent.__init__(self, category=(Sets(), ))
         self._populate_coercion_lists_()
     
@@ -355,7 +388,24 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return 'Theory for {}'.format(self._name)
     
     def Pattern(self, n, **kwds):
-        return Pattern(self, n, **kwds)
+        ftype_points = tuple()
+        if 'ftype_points' in kwds:
+            ftype_points = tuple(kwds['ftype_points'])
+        elif 'ftype' in kwds:
+            ftype_points = tuple(kwds['ftype'])
+        
+        blocks = {}
+        for xx in self._signature.keys():
+            blocks[xx] = tuple()
+            blocks[xx+"_n"] = tuple()
+
+            if xx in kwds:
+                blocks[xx] = kwds[xx]
+            
+            for xx_missing in [xx+"_m", xx+"_missing", xx+"_miss"]:
+                if xx_missing in kwds:
+                    blocks[xx+"_m"] = kwds[xx_missing]
+        return Pattern(self, n, ftype_points, **blocks)
     
     P = Pattern
 
@@ -420,7 +470,19 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             #this is needed for sum to work
             alg = FlagAlgebra(QQ, self)
             return alg(0)
-        return self.element_class(self, n, **kwds)
+        
+        ftype_points = tuple()
+        if 'ftype_points' in kwds:
+            ftype_points = tuple(kwds['ftype_points'])
+        elif 'ftype' in kwds:
+            ftype_points = tuple(kwds['ftype'])
+        
+        blocks = {}
+        for xx in self._signature.keys():
+            blocks[xx] = tuple()
+            if xx in kwds:
+                blocks[xx] = kwds[xx]
+        return self.element_class(self, n, ftype_points, **blocks)
     
     def empty_element(self):
         r"""
@@ -444,7 +506,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
             :func:`empty`
         """
-        return self.element_class(self, 0)
+        blocks = {}
+        for xx in self._signature:
+            blocks[xx] = tuple()
+        return self.element_class(self, 0, tuple(), **blocks)
     
     empty = empty_element
     
@@ -499,17 +564,15 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 os.makedirs(path)
             file_path = os.path.join(path, file_name)
 
-        save_object = {'key': serialized_key, 'data': data}
+        save_object = {'key': key, 'data': data}
         save(save_object, file_path)
 
-    def _load(self, key, path=None, name=None):
-        if name==None:
-            if key==None:
-                raise ValueError("Either the key or the name must be provided!")
+    def _load(self, key=None, path=None, name=None):
+        if key!=None:
             serialized_key = pickle.dumps((self, key))
             hashed_key = hashlib.sha256(serialized_key).hexdigest()
             file_name = self._name + "." + hashed_key
-        else:
+        if name!=None:
             file_name = name
 
         if path==None:
@@ -523,12 +586,18 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             return None
 
         save_object = load(file_path)
-        if save_object['key'] != serialized_key:
+        if save_object['key'] != key:
             import warnings
             warnings.warn("Hash collision or corrupted data!")
             return None
         
         return save_object['data']
+
+    def show_files(self):
+        for xx in os.listdir(self._calcs_dir()):
+            if xx.startswith(self._name + "."):
+                data = self._load(name=xx)
+                print(data["key"])
 
     def clear(self):
         for xx in os.listdir(self._calcs_dir()):
@@ -539,7 +608,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         if os.path.isdir("../certs"):
             return "../certs/"
         return "certs/"
-    
+
     def _serialize(self):
         return {
             "name": self._name,
@@ -547,7 +616,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             "symmetries": self._symmetries,
             "excluded": [xx._serialize() for xx in self._excluded]
         }
-    
 
     #Optimizing and rounding
 
@@ -1461,17 +1529,32 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     verify = verify_certificate
 
     
-    #Calculating flags and tables
-    
     #Generating flags
-    def _try_load_generate(self, n, ftype):
-        excluded = tuple([xx for xx in self._excluded if xx.size()<=n])
-        key = (self._serialize(excluded=excluded), n, ftype._serialize())
-        return self._load(key=key)
-
-    #TODO
     def _guess_number(self, n):
-        pass
+        if n<=3:
+            return len(self.generate_flags(n, run_bound=infinity))
+        key = ("generate", self._serialize(), n, self.empty()._serialize())
+        loaded = self._load(key=key)
+        if loaded != None:
+            return len(loaded)
+        max_arity = -1
+        for xx in self._signature:
+            max_arity = max(max_arity, self._signature[xx]["arity"])
+        max_arity_types = []
+        for xx in self._signature:
+            if self._signature[xx]["arity"] == max_arity:
+                max_arity_types.append(self._signature[xx]["ordered"])
+        
+        prev_guess = self._guess_number(n-1)
+        prev_guess_tuples = binomial(prev_guess + max_arity - 1, max_arity)
+        extra_rels = 0
+        if max_arity==1:
+            extra_rels = len(max_arity_types)
+        elif max_arity==2:
+            extra_rels = sum([2 if xx else 1 for xx in max_arity_types])
+        elif max_arity==3:
+            extra_rels = sum([6 if xx else 1 for xx in max_arity_types])
+        return prev_guess_tuples * (2**extra_rels)
     
     def generate_flags(self, n, ftype=None, run_bound=100000):
         r"""
@@ -1523,41 +1606,31 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         
         #Trying to load
         excluded = tuple([xx for xx in self._excluded if xx.size()<=n])
-        key = (self._serialize(), n, ftype._serialize())
+        key = ("generate", self._serialize(), n, ftype._serialize())
         loaded = self._load(key=key)
         if loaded != None:
             return loaded
 
         if ftype.size()==0:
-
-            guess = self._guess_number(n)
-            
-            if guess < run_bound:
-                #Do the generation
-                
-                
-
-
-                pass
+            # Not ftype generation needed, just generate inductively
+            if run_bound<infinity or self._guess_number(n) < run_bound:
+                prev = self.generate_flags(n-1, run_bound=run_bound)
+                ret = possible_mergings(n, prev, self._signature, excluded)
             else:
-                confirm = input("This might take a while. Continue? y/n")
+                confirm = input("This might take a while: {}. Continue? y/n".format(guess))
                 if "y" in confirm.lower():
-                    ret = self.generate_flags(n, run_bound=infinity)
-                    return ret
+                    return self.generate_flags(n, run_bound=infinity)
         else:
+            # First generate the structures without ftypes then find them
             empstrs = self.generate_flags(n)
-            ret = self._find_ftypes(empstrs, ftype)
+            guess = len(empstrs) * falling_factorial(n, ftype.size())
+            if guess < run_bound:
+                ret = self._find_ftypes(empstrs, ftype)
+            else:
+                confirm = input("This might take a while: {}. Continue? y/n".format(guess))
+                if "y" in confirm.lower():
+                    return self.generate_flags(n, ftype, run_bound=infinity)
         self._save(ret, key)
-        return ret
-    
-    def _parallel_check(self, base_list, excluded):
-        import multiprocessing as mp
-        
-        slist = [(xx, excluded) for xx in base_list]
-        pool = mp.Pool(mp.cpu_count()-1)
-        canincl = pool.map(self._check_excluded, slist)
-        pool.close(); pool.join()
-        ret = tuple([slist[ii][0] for ii in range(len(slist)) if canincl[ii]])
         return ret
     
     def _find_ftypes(self, empstrs, ftype):
@@ -1565,75 +1638,26 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         pool = mp.Pool(mp.cpu_count()-1)
         pares = pool.map(ftype._ftypes_inside, empstrs)
         pool.close(); pool.join()
-        ret = []
-        for coll in pares:
-            for xx in coll:
-                if xx not in ret:
-                    ret.append(xx)
-        ret = tuple(ret)
-        return ret
+        return tuple(itertools.chain.from_iterable(pares))
     
     generate = generate_flags
 
-    def exclude(self, flags=[]):
-        r"""
-        Exclude some induced flags from the theory
-        
-        This allows creation of CombinatorialTheory -s with excluded
-        flags. The flags are not allowed to appear as an induced
-        substructure in any of the generated flags later.
-
-        INPUT:
-
-        - ``flags`` -- list of flags or a flag (default: `[]`); 
-            The list of flags to exclude, flags are treated as
-            a singleton list
-
-        EXAMPLES::
-
-        How to create triangle-free graphs ::
-
-            sage: from sage.algebras.flag_algebras import *
-            sage: triangle = GraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]])
-            sage: GraphTheory.exclude(triangle)
-        
-        There are 14 graphs on 5 vertices without triangles ::
-        
-            sage: len(GraphTheory.generate_flags(5))
-            14
-
-        .. NOTE::
-
-            Calling :func:`exclude` again will overwrite the list
-            of excluded structures. So calling exclude() again, gives
-            back the original theory
-
-        TESTS::
-
-            sage: from sage.algebras.flag_algebras import *
-            sage: ThreeGraphTheory.exclude(ThreeGraphTheory(4))
-            sage: len(ThreeGraphTheory.generate_flags(5))
-            23
-            sage: TournamentTheory.exclude(TournamentTheory(3, edges=[[0, 1], [1, 2], [2, 0]]))
-            sage: TournamentTheory.generate_flags(5)
-            (Flag on 5 points, ftype from [] with edges=[[1, 0], [2, 0], [2, 1], [3, 0], [3, 1], [3, 2], [4, 0], [4, 1], [4, 2], [4, 3]],)
-            
-        """
-        
-        if type(flags)==Flag or type(flags)==Pattern:
-            flags = [flags]
-        self._excluded = flags
+    def exclude(self, structs=None, force=False):
+        if structs==None:
+            structs = []
+        elif type(structs)==Flag or type(structs)==Pattern:
+            structs = [structs]
+        res_excluded = list(self._excluded) if not force else []
+        for xx in structs:
+            if xx.theory()!=self:
+                res_excluded.append(self.Pattern(xx.size(), **xx.blocks()))
+            else:
+                res_excluded.append(xx)
+        self._excluded = tuple(res_excluded)
     
-    def _check_excluded(self, elms):
-        r"""
-        Helper to check the excluded structures in generation
-        """
-        flg = elms[0]
-        for xx in elms[1]:
-            if xx <= flg:
-                return False
-        return True
-    
+    def reset_exclude(self):
+        self.exclude(force=True)
+
     def match_pattern(self, pattern):
         if pattern is Flag:
             return [pattern]
@@ -1647,7 +1671,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     #Generating tables
     def _try_load_table(self, N, n1, n2, large_ftype, ftype_inj):
         excluded = tuple([xx for xx in self._excluded if xx.size()<=N])
-        key = (self._serialize(excluded=excluded), \
+        key = ("table", self._serialize(excluded=excluded), \
                N, n1, n2, large_ftype._serialize(), ftype_inj)
         return self._load(key=key)
 
@@ -1783,6 +1807,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return ar[0].densities(ar[1], ar[2], ar[3], ar[4], ar[5], ar[6], ar[7])
     
 
+Theory = CombinatorialTheory
 
 #Primitive rounding methods
 def _flatten_matrix(mat, doubled=False):
