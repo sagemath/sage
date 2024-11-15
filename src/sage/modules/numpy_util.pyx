@@ -24,14 +24,15 @@ cdef set_mzd_from_numpy_unsafe(mzd_t* entries, np.ndarray[numpy_integral, ndim=1
         mzd_write_bit(entries, 0, i, x[i] & 1)
 
 
-def set_mzd_from_numpy(uintptr_t entries_addr, Py_ssize_t degree, x):
+cpdef int set_mzd_from_numpy(uintptr_t entries_addr, Py_ssize_t degree, x) except -1:
     """
-    Set the entries in ``entries`` from numpy array ``x``.
+    Set the entries in ``<mzd_t*>entries_addr`` from numpy array ``x``.
 
     INPUT:
 
     - ``entries_addr`` -- must be a ``mzd_t*`` casted to ``uintptr_t``; the casting
-      is necessary to pass it through Python boundary because of lazy import
+      is necessary to pass it through Python boundary because of lazy import.
+      Do not pass arbitrary integer value here, will crash the program.
 
     - ``degree`` -- the length of the array
 
