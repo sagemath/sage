@@ -19,7 +19,7 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-####################################################################################
+# ****************************************************************************
 
 from sage.categories.morphism import Morphism
 from sage.structure.richcmp import rich_to_bool, richcmp
@@ -32,13 +32,13 @@ class FreeModulePseudoMorphism(Morphism):
     ring homomorphism, and `\delta: R \to R` a `\theta`-derivation,
     which is a map such that:
 
-    .. MATH:
+    .. MATH::
 
         \delta(xy) = \theta(x)\delta(y) + \delta(x)y.
 
     A pseudomorphism `f : M \to M` is an additive map such that
 
-    .. MATH:
+    .. MATH::
 
         f(\lambda x) = \theta(\lambda)f(x) + \delta(\lambda) x
 
@@ -258,7 +258,7 @@ class FreeModulePseudoMorphism(Morphism):
         Return the underlying matrix of this pseudomorphism.
 
         It is defined as the matrix `M` whose lines (resp. columns if
-        ``side`` is ``right``) are the coordinates of the images of
+        ``side`` is ``"right"``) are the coordinates of the images of
         the distinguished basis of the domain.
 
         EXAMPLES::
@@ -271,6 +271,8 @@ class FreeModulePseudoMorphism(Morphism):
             [    1     z     3]
             [    0     1   z^2]
             [z + 1     1     1]
+
+        ::
 
             sage: e1, e2, e3 = M.basis()
             sage: f(e1)

@@ -106,7 +106,8 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: Frob = F.frobenius_endomorphism()
             sage: M = F^2
             sage: M.pseudoHom(Frob)
-            Set of Pseudoendomorphisms (twisted by z3 |--> z3^5) of Vector space of dimension 2 over Finite Field in z3 of size 5^3
+            Set of Pseudoendomorphisms (twisted by z3 |--> z3^5) of
+            Vector space of dimension 2 over Finite Field in z3 of size 5^3
         """
         self._domain = domain
         self._codomain = codomain
@@ -168,12 +169,15 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: Frob = Fq.frobenius_endomorphism()
             sage: V = Fq^2
             sage: V.pseudoHom(Frob)  # indirect doctest
-            Set of Pseudoendomorphisms (twisted by z3 |--> z3^7) of Vector space of dimension 2 over Finite Field in z3 of size 7^3
+            Set of Pseudoendomorphisms (twisted by z3 |--> z3^7) of
+            Vector space of dimension 2 over Finite Field in z3 of size 7^3
 
         ::
 
             sage: V.pseudoHom(Frob, codomain=Fq^3)  # indirect doctest
-            Set of Pseudomorphism (twisted by z3 |--> z3^7) from Vector space of dimension 2 over Finite Field in z3 of size 7^3 to Vector space of dimension 3 over Finite Field in z3 of size 7^3
+            Set of Pseudomorphism (twisted by z3 |--> z3^7)
+            from Vector space of dimension 2 over Finite Field in z3 of size 7^3
+            to Vector space of dimension 3 over Finite Field in z3 of size 7^3
 
         ::
 
@@ -181,7 +185,8 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: d = A.derivation()
             sage: M = A^3
             sage: M.pseudoHom(d)
-            Set of Pseudoendomorphisms (twisted by d/dt) of Ambient free module of rank 3 over the principal ideal domain Univariate Polynomial Ring in t over Rational Field
+            Set of Pseudoendomorphisms (twisted by d/dt) of Ambient free module of rank 3 over
+            the principal ideal domain Univariate Polynomial Ring in t over Rational Field
         """
         twist = self._ore._repr_twist()
         if self.domain() is self.codomain():
@@ -245,15 +250,18 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             [1 0]
             [0 0]
             Domain: Vector space of dimension 2 over Finite Field in z3 of size 7^3
-            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3, Free module pseudomorphism (twisted by z3 |--> z3^7) defined by the matrix
+            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3,
+            Free module pseudomorphism (twisted by z3 |--> z3^7) defined by the matrix
             [0 1]
             [0 0]
             Domain: Vector space of dimension 2 over Finite Field in z3 of size 7^3
-            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3, Free module pseudomorphism (twisted by z3 |--> z3^7) defined by the matrix
+            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3,
+            Free module pseudomorphism (twisted by z3 |--> z3^7) defined by the matrix
             [0 0]
             [1 0]
             Domain: Vector space of dimension 2 over Finite Field in z3 of size 7^3
-            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3, Free module pseudomorphism (twisted by z3 |--> z3^7) defined by the matrix
+            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3,
+            Free module pseudomorphism (twisted by z3 |--> z3^7) defined by the matrix
             [0 0]
             [0 1]
             Domain: Vector space of dimension 2 over Finite Field in z3 of size 7^3
