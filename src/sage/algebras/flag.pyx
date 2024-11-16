@@ -23,23 +23,6 @@ from cysignals.signals cimport sig_check
 from sage.structure.element cimport Element
 from blisspy cimport canonical_form_from_edge_list
 
-def test_all():
-    print("test start")
-
-    edges = ((0, 1), (0, 2), (2, 3))
-    points = (0, 3)
-
-    print("subblock helper output: ", _subblock_helper(points, edges))
-    relation = {
-        "arity": 2,
-        "ordered": True,
-        "group": 0
-    }
-    n = 3
-
-    print("")
-
-
 cdef tuple _subblock_helper(tuple points, tuple block):
     if len(block)==0:
         return tuple()
@@ -148,6 +131,12 @@ cdef bint _excluded_compatible(int n, Flag flag, tuple excluded, int max_signatu
     return True
 
 cpdef tuple possible_mergings(int n, tuple smaller_structures, dict signature, tuple excluded):
+    #TODO
+    #
+    # when the result size would be less then max_signature, perform the operations with one smaller
+    #
+    # Also for 3-graphs debug what is lost (is the lost graph considered to be equal to something else?)
+    # I.e. the generator or the identifier has an issue.
     cdef int max_arity = _get_max_arity(signature)
     cdef tuple extensions = _get_extensions(n, signature)
     cdef dict ret = {}
@@ -177,43 +166,42 @@ cpdef tuple possible_mergings(int n, tuple smaller_structures, dict signature, t
                     elif final_flag not in ret[patt]:
                         ret[patt].append(final_flag)
     elif max_arity==2:
-        print("max arity is 2")
-        print("input values are ", n, signature)
-        print("smaller structs ", smaller_structures)
-        print("excluded is ", excluded)
+        # print("max arity is 2")
+        # print("input values are ", n, signature)
+        # print("smaller structs ", smaller_structures)
+        # print("excluded is ", excluded)
         for ii, F in enumerate(smaller_structures):
-            print("current F is ", F)
+            # print("current F is ", F)
             F_perms = F.nonequal_permutations()
             for G in smaller_structures[ii:]:
-                print("current G is ", G)
+                # print("current G is ", G)
                 G_subf = G.subflag(range(n-2))
                 for F_permed in F_perms:
-                    print("current F permed is ", F_permed)
-                    print("G subflag is ", G_subf)
-                    print("F subflag is ", F_permed.subflag(range(n-2)))
-                    print("are they strong equal? ", F_permed.subflag(range(n-2)).strong_equal(G_subf))
+                    # print("current F permed is ", F_permed)
+                    # print("G subflag is ", G_subf)
+                    # print("F subflag is ", F_permed.subflag(range(n-2)))
+                    # print("are they strong equal? ", F_permed.subflag(range(n-2)).strong_equal(G_subf))
                     if F_permed.subflag(range(n-2)).strong_equal(G_subf):
                         FG_overlap = _merge_blocks_1(F_permed._blocks, G._blocks, n-2, n-1)
                         for ext in extensions:
                             sig_check()
                             final_overlap = _merge_blocks_0(FG_overlap, ext)
                             final_flag = Flag(F.theory(), n, tuple(), **final_overlap)
-                            print("\n\nwe have a result. The components are: ")
-                            print("F_permed is ", F_permed)
-                            print("G is ", G)
-                            print("G subflag and F permed subflag is ", G_subf)
-                            print("FG overlap is ", FG_overlap)
-                            print("extension is ", ext)
-                            print("final blocks are ", final_overlap)
-                            print("the result flag is ", final_flag)
+                            # print("\n\nwe have a result. The components are: ")
+                            # print("F_permed is ", F_permed)
+                            # print("G is ", G)
+                            # print("G subflag and F permed subflag is ", G_subf)
+                            # print("FG overlap is ", FG_overlap)
+                            # print("extension is ", ext)
+                            # print("final blocks are ", final_overlap)
+                            # print("the result flag is ", final_flag)
                             if _excluded_compatible(n, final_flag, excluded, 2):
-                                print("The excluded check was successful")
+                                # print("The excluded check was successful")
                                 patt = final_flag._relation_pattern()
                                 if patt not in ret:
                                     ret[patt] = [final_flag]
                                 elif final_flag not in ret[patt]:
                                     ret[patt].append(final_flag)
-    
     elif max_arity==3:
         all_perms = tuple([F.nonequal_permutations() for F in smaller_structures])
         for ii, F in enumerate(smaller_structures):

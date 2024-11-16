@@ -323,6 +323,47 @@ def _serialize_data(data):
 
     return (sered_signature, sered_symms)
 
+def test_generate():
+    C0 = Theory("C0", relation_name="C0", arity=1)
+    C1 = Theory("C1", relation_name="C1", arity=1)
+    G = Theory("Graph")
+    CG = combine("CGraph", C0, G)
+    Cs = combine("Cs", C0, C1, symmetric=True)
+    TG = Theory("ThreeGraph", arity=3)
+    DG = Theory("DiGraph", arity=2, is_ordered=True)
+    DTG = Theory("DiThreeGraph", arity=3, is_ordered=True)
+    print("\nSingle color generate test start")
+    for ii in [5, 6, 7, 8, 9, 10]:
+        print("Done with size {}, the number is {}".format(ii, len(C0.generate(ii))))
+
+    print("\nTwo colors generate test start")
+    for ii in [3, 4, 5, 6, 7, 8]:
+        print("Done with size {}, the number is {}".format(ii, len(Cs.generate(ii))))
+    
+    print("\nGraph generate test start")
+    for ii in [3, 4, 5, 6, 7]:
+        print("Done with size {}, the number is {}".format(ii, len(G.generate(ii))))
+    
+    #This gives an incorrect value for n=6
+    print("\nThreeGraph generate test start")
+    for ii in [3, 4, 5, 6]:
+        print("Done with size {}, the number is {}".format(ii, len(TG.generate(ii))))
+    
+    print("\nDiGraph generate test start")
+    for ii in [2, 3, 4, 5]:
+        print("Done with size {}, the number is {}".format(ii, len(DG.generate(ii))))
+    
+    #This only returns the uncolored elements
+    print("\nColoredGraph generate test start")
+    for ii in [2, 3, 4, 5]:
+        print("Done with size {}, the number is {}".format(ii, len(CG.generate(ii))))
+    
+    # This has a bug somewhere
+    # print("\nDirectedThreeGraph generate test start")
+    # for ii in [3, 4]:
+    #     print("Done with size {}, the number is {}".format(ii, len(DTG.generate(ii))))
+    
+
 class CombinatorialTheory(Parent, UniqueRepresentation):
     
     Element = Flag
