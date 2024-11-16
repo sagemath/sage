@@ -1587,7 +1587,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: a = M(PermutationGroup([(3,4),(5,)]), {0:[1,3,4], 1:[2,5]})
                 sage: a
                 X*Y^2*E_2(X)
-                sage: list(a.structures([1, 2, 3], ["a", "b"]))
+                sage: sorted(a.structures([1, 2, 3], ["a", "b"]))
                 [((1,), ('a',), ('b',), (2, 3)),
                  ((1,), ('b',), ('a',), (2, 3)),
                  ((2,), ('a',), ('b',), (1, 3)),
@@ -1599,7 +1599,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: a = M(G, {0: [1, 2, 3], 1: [4, 5]})
                 sage: a
                 X*E_2(XY)
-                sage: list(a.structures([1, 2, 3], ["a", "b"]))
+                sage: sorted(a.structures([1, 2, 3], ["a", "b"]))
                 [((1,), (2, 3, 'a', 'b')),
                  ((1,), (2, 3, 'b', 'a')),
                  ((2,), (1, 3, 'a', 'b')),
@@ -1611,9 +1611,15 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             labels = label_sets(k, labels)
             atoms = [a for a, n in self._monomial.items() for _ in range(n)]
             sizes = [a._mc for a in atoms]
-            dissections = product(*[OrderedSetPartitions(l, [mc[i] for mc in sizes])
-                                    for i, l in enumerate(labels)])
-            for d in dissections:
+            try:
+                # TODO: maybe OrderedSetPartitions should not raise
+                # an error if the second argument is a composition,
+                # but not of the right size
+                dissections = [OrderedSetPartitions(l, [mc[i] for mc in sizes])
+                               for i, l in enumerate(labels)]
+            except ValueError:
+                return
+            for d in product(*dissections):
                 yield from product(*[a.structures(*[l[i] for l in d])
                                      for i, a in enumerate(atoms)])
 

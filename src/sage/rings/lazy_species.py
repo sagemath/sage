@@ -17,7 +17,6 @@ from sage.combinat.permutation import CyclicPermutations
 from sage.combinat.set_partition import SetPartitions
 from sage.graphs.graph_generators import graphs
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup, CyclicPermutationGroup
-from sage.libs.gap.libgap import libgap
 from sage.structure.element import parent
 import itertools
 from collections import defaultdict
@@ -307,9 +306,9 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: F = L(lambda n: SymmetricGroup(n))
             sage: list(E.structures([1,2,3]))
-            [((1, 2, 3), E_3)]
+            [(E_3, ((1, 2, 3),))]
             sage: list((E+F).structures([1,2,3]))
-            [((1, 2, 3), E_3), ((1, 2, 3), E_3)]
+            [(E_3, ((1, 2, 3),)), (E_3, ((1, 2, 3),))]
 
         """
         return SumSpeciesElement(self, other)
@@ -327,14 +326,14 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: L = LazySpecies(ZZ, "X")
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: sorted((E^2).structures([1,2,3]))
-            [(((), 1), ((1, 2, 3), E_3)),
-             (((1,), X), ((2, 3), E_2)),
-             (((1, 2), E_2), ((3,), X)),
-             (((1, 2, 3), E_3), ((), 1)),
-             (((1, 3), E_2), ((2,), X)),
-             (((2,), X), ((1, 3), E_2)),
-             (((2, 3), E_2), ((1,), X)),
-             (((3,), X), ((1, 2), E_2))]
+            [((1, ()), (E_3, ((1, 2, 3),))),
+             ((X, ((1,),)), (E_2, ((2, 3),))),
+             ((X, ((2,),)), (E_2, ((1, 3),))),
+             ((X, ((3,),)), (E_2, ((1, 2),))),
+             ((E_2, ((1, 2),)), (X, ((3,),))),
+             ((E_2, ((1, 3),)), (X, ((2,),))),
+             ((E_2, ((2, 3),)), (X, ((1,),))),
+             ((E_3, ((1, 2, 3),)), (1, ()))]
         """
         return ProductSpeciesElement(self, other)
 
@@ -354,61 +353,55 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: L = LazySpecies(QQ, "X")
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: list(E.structures([1,2,3]))
-            [((1, 2, 3), E_3)]
+            [(E_3, ((1, 2, 3),))]
 
             sage: P = L(lambda n: CyclicPermutationGroup(n))
             sage: list(P.structures([1,2,3]))
-            [((1, 2, 3), C_3), ((2, 1, 3), C_3)]
+            [(C_3, ((1, 2, 3),)), (C_3, ((1, 3, 2),))]
 
             sage: F = 1/(2-E)
             sage: sorted(F.structures([1,2,3]))
-            [((1, 2, 3), E_3),
-             ((1, 2, 3), X*E_2, 0),
-             ((1, 2, 3), X*E_2, 1),
-             ((1, 2, 3), X^3),
-             ((1, 3, 2), X^3),
-             ((2, 1, 3), X^3),
-             ((2, 3, 1), X*E_2, 0),
-             ((2, 3, 1), X*E_2, 1),
-             ((2, 3, 1), X^3),
-             ((3, 1, 2), X*E_2, 0),
-             ((3, 1, 2), X*E_2, 1),
-             ((3, 1, 2), X^3),
-             ((3, 2, 1), X^3)]
+            [(E_3, ((1, 2, 3),)),
+             (X*E_2, ((1,), (2, 3)), 0),
+             (X*E_2, ((1,), (2, 3)), 1),
+             (X*E_2, ((2,), (1, 3)), 0),
+             (X*E_2, ((2,), (1, 3)), 1),
+             (X*E_2, ((3,), (1, 2)), 0),
+             (X*E_2, ((3,), (1, 2)), 1),
+             (X^3, ((1,), (2,), (3,))),
+             (X^3, ((1,), (3,), (2,))),
+             (X^3, ((2,), (1,), (3,))),
+             (X^3, ((2,), (3,), (1,))),
+             (X^3, ((3,), (1,), (2,))),
+             (X^3, ((3,), (2,), (1,)))]
 
             sage: from sage.rings.species import PolynomialSpecies
             sage: L = LazySpecies(QQ, "X, Y")
             sage: P = PolynomialSpecies(QQ, "X, Y")
             sage: XY = L(P(PermutationGroup([], domain=[1, 2]), {0: [1], 1: [2]}))
-            sage: list((XY).structures([1], [2]))
-            [((1, 2), X*Y)]
+            sage: list((XY).structures([1], ["a"]))
+            [(X*Y, ((1,), ('a',)))]
 
-            sage: list(E(XY).structures([1,2],[3,4]))
-            [((1, 2, 3, 4), {((1,2)(3,4),): ({1, 2}, {3, 4})}),
-             ((2, 1, 3, 4), {((1,2)(3,4),): ({1, 2}, {3, 4})})]
+            sage: sorted(E(XY).structures([1,2], [3, 4]))  # random
+            [((E_2, ((((2, 'X'), (3, 'Y')), ((1, 'X'), (4, 'Y'))),)),
+              ((X*Y, ((1,), (4,))), (X*Y, ((2,), (3,))))),
+             ((E_2, ((((3, 'Y'), (1, 'X')), ((2, 'X'), (4, 'Y'))),)),
+              ((X*Y, ((1,), (3,))), (X*Y, ((2,), (4,)))))]
 
             sage: list(XY.structures([], [1, 2]))
             []
         """
         labels = label_sets(self.parent()._arity, labels)
-        n = tuple([len(U) for U in labels])
-        S = SymmetricGroup(sum(n)).young_subgroup(n)
-        F = self[sum(n)]
-        l = [e for l in labels for e in l][::-1]
+        F = self[sum(map(len, labels))]
         for M, c in F.monomial_coefficients().items():
             if c not in ZZ or c < 0:
                 raise NotImplementedError("only implemented for proper non-virtual species")
-            G, dompart = M.permutation_group()
-            if not tuple(len(b) for b in dompart) == n:
-                continue
-            types = [tuple(S(rep)._act_on_list_on_position(l))[::-1]
-                     for rep in libgap.RightTransversal(S, G)]
             if c == 1:
-                for s in types:
-                    yield s, M
+                for s in M.structures(*labels):
+                    yield M, s
             else:
-                for e, s in cartesian_product([range(c), types]):
-                    yield s, M, e
+                for e, s in cartesian_product([range(c), M.structures(*labels)]):
+                    yield M, s, e
 
     def isotypes(self, labels):
         pass
@@ -484,7 +477,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: F = E(C(A))
             sage: [sum(F[n].monomial_coefficients().values()) for n in range(1, 7)]
             [1, 3, 7, 19, 47, 130]
-            sage: oeis(_)
+            sage: oeis(_)  # optional -- internet
             0: A001372: Number of unlabeled mappings (or mapping patterns)
              from n points to themselves; number of unlabeled endofunctions.
 
@@ -558,7 +551,7 @@ class ProductSpeciesElement(LazySpeciesElement):
 
             sage: L.<X, Y> = LazySpecies(QQ)
             sage: list((X*Y).structures([1], [2]))
-            [(((1,), X), ((2,), Y))]
+            [((X, ((1,),)), (Y, ((2,),)))]
         """
         def dissections(s):
             for subset in subsets(s):
@@ -656,16 +649,17 @@ class CompositionSpeciesElement(LazySpeciesElement):
             sage: L = LazySpecies(QQ, "X")
             sage: E = L.Sets()
             sage: E1 = L.Sets(min=1)
-            sage: list(E(E1).structures([1,2,3]))
-            [({((1, 0), (2, 0), (3, 0))}, ({1, 2, 3},)),
-             ({((1, 0), (2, 0)), ((3, 0),)}, ({1, 2}, {3})),
-             ({((1, 0), (3, 0)), ((2, 0),)}, ({1, 3}, {2})),
-             ({((1, 0),), ((2, 0), (3, 0))}, ({1}, {2, 3})),
-             ({((1, 0),), ((2, 0),), ((3, 0),)}, ({1}, {2}, {3}))]
+            sage: sorted(E(E1).structures([1,2,3]))  # random
+            [({((2, 'X'), (3, 'X'), (1, 'X'))}, ({1, 2, 3},)),
+             ({((2, 'X'), (1, 'X')), ((3, 'X'),)}, ({1, 2}, {3})),
+             ({((2, 'X'),), ((3, 'X'), (1, 'X'))}, ({1, 3}, {2})),
+             ({((1, 'X'),), ((2, 'X'), (3, 'X'))}, ({1}, {2, 3})),
+             ({((1, 'X'),), ((2, 'X'),), ((3, 'X'),)}, ({1}, {2}, {3}))]
 
             sage: C = L.Cycles()
             sage: L.<X, Y> = LazySpecies(QQ)
             sage: sum(1 for s in C(X*Y).structures([1,2,3], [1,2,3]))
+            12
 
             sage: C(X*Y).generating_series()[6]
             1/3*X^3*Y^3
@@ -677,15 +671,16 @@ class CompositionSpeciesElement(LazySpeciesElement):
         G = self._args
         m = len(G)  # == F.parent()._arity
         k = self.parent()._arity  # == G[i].parent()._arity
+        names = self.parent()._laurent_poly_ring._indices._indices._names
         labels = label_sets(k, labels)
         # make label sets disjoint
-        U = [(e, i) for i, l in enumerate(labels) for e in l]
+        U = [(e, i) for l, i in zip(labels, names) for e in l]
 
         def split_set(C):
             C_split = defaultdict(list)
             for e, i in C:
                 C_split[i].append(e)
-            return [C_split[i] for i in range(k)]
+            return [C_split[i] for i in names]
 
         Par_U = SetPartitions(U)
         for pi in Par_U:
@@ -777,7 +772,6 @@ class LazySpecies(LazyCompletionGradedAlgebra):
 
 class SetSpecies(LazySpeciesElement):
     def __init__(self, parent, min):
-        P = parent._laurent_poly_ring
         S = parent(lambda n: SymmetricGroup(n) if n >= min else 0)
         super().__init__(parent, S._coeff_stream)
 
@@ -798,7 +792,6 @@ class SetSpecies(LazySpeciesElement):
 
 class CycleSpecies(LazySpeciesElement):
     def __init__(self, parent):
-        P = parent._laurent_poly_ring
         S = parent(lambda n: CyclicPermutationGroup(n) if n else 0)
         super().__init__(parent, S._coeff_stream)
 
@@ -836,7 +829,6 @@ class GraphSpecies(LazySpeciesElement):
 
 class SetPartitionSpecies(LazySpeciesElement):
     def __init__(self, parent):
-        P = parent._laurent_poly_ring
         E = parent.Sets()
         E1 = parent.Sets(min=1)
         super().__init__(parent, E(E1)._coeff_stream)
