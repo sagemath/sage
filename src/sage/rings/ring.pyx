@@ -1186,7 +1186,7 @@ cdef class Field(CommutativeRing):
         """
         return self
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Return ``True`` since this is a field.
 

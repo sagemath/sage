@@ -4699,7 +4699,7 @@ def coerce_binop(method):
 
         sage: from sage.structure.element import coerce_binop
         sage: class MyRational(Rational):
-        ....:     def __init__(self,value):
+        ....:     def __init__(self, value):
         ....:         self.v = value
         ....:     @coerce_binop
         ....:     def test_add(self, other, keyword='z'):

@@ -2092,7 +2092,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
             [[0/\0  0\/0, 0/0\0]]
             sage: sorted(ps._fill_strip(('0',), '0', ps._rhombus_pieces), key=str)
             [[0/\0  0\/0], [0/\0  1\/10]]
-            sage: sorted(ps._fill_strip(('0','1'), '0', ps._rhombus_pieces), key =str)
+            sage: sorted(ps._fill_strip(('0','1'), '0', ps._rhombus_pieces), key=str)
             [[1/\0  0\/1, 0/\0  0\/0], [1/\0  0\/1, 0/\0  1\/10]]
 
         TESTS::
