@@ -43,6 +43,7 @@ from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.partition import Partitions, _Partitions
+from sage.combinat.set_partition_ordered import OrderedSetPartitions
 from sage.combinat.sf.sf import SymmetricFunctions
 from sage.groups.perm_gps.constructor import PermutationGroupElement
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
@@ -67,6 +68,23 @@ from sage.structure.unique_representation import (UniqueRepresentation,
                                                   WithPicklingByInitArgs)
 
 GAP_FAIL = libgap.eval('fail')
+
+
+def label_sets(arity, labels):
+    r"""
+    Return labels as a list of sets.
+
+    INPUT:
+
+    - ``arity`` -- the arity of the species
+    - ``labels`` -- an iterable of iterables
+    """
+    if len(labels) != arity:
+        raise ValueError("arity of must be equal to the number of arguments provided")
+
+    label_sets = [set(U) for U in labels]
+    assert all(len(U) == len(V) for U, V in zip(labels, label_sets)), f"The argument labels must be a set, but {labels} has duplicates"
+    return label_sets
 
 
 class AtomicSpeciesElement(WithEqualityById,
@@ -344,6 +362,46 @@ class AtomicSpeciesElement(WithEqualityById,
             True
         """
         return self is other or self < other
+
+    def structures(self, *labels):
+        r"""
+        Iterate over the structures on the given set of labels.
+
+        Generically, this yields a list of relabelled representatives
+        of the cosets of corresponding groups.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import AtomicSpecies
+            sage: A = AtomicSpecies("X, Y")
+            sage: G = PermutationGroup([[("a", "b", "c", "d"), ("e", "f")]])
+            sage: a = A(G, {0: "abcd", 1: "ef"})
+            sage: sorted(a.structures([1, 2, 3, 4], ["a", "b"]))
+            [(1, 2, 3, 4, 'a', 'b'),
+             (1, 2, 3, 4, 'b', 'a'),
+             (1, 2, 4, 3, 'a', 'b'),
+             (1, 2, 4, 3, 'b', 'a'),
+             (1, 3, 2, 4, 'a', 'b'),
+             (1, 3, 2, 4, 'b', 'a'),
+             (1, 3, 4, 2, 'a', 'b'),
+             (1, 3, 4, 2, 'b', 'a'),
+             (1, 4, 2, 3, 'a', 'b'),
+             (1, 4, 2, 3, 'b', 'a'),
+             (1, 4, 3, 2, 'a', 'b'),
+             (1, 4, 3, 2, 'b', 'a')]
+
+            sage: G = PermutationGroup([[(2,3),(4,5)]], domain=[2,3,4,5])
+            sage: a = A(G, {0: [2, 3], 1: [4, 5]})
+            sage: sorted(a.structures([1, 2],["a", "b"]))
+            [(1, 2, 'a', 'b'), (1, 2, 'b', 'a')]
+        """
+        labels = label_sets(self.parent()._arity, labels)
+        n = tuple([len(U) for U in labels])
+        S = SymmetricGroup(sum(n)).young_subgroup(n)
+        l = [e for l in labels for e in l]
+        if self._mc == n:
+            for rep in libgap.RightTransversal(S, self._dis):
+                yield tuple(S(rep)._act_on_list_on_position(l))
 
 
 class AtomicSpecies(UniqueRepresentation, Parent):
@@ -1519,6 +1577,45 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
             return P(PermutationGroup(gens, domain=range(1, starts[-1] + 1)),
                      pi, check=False)
+
+        def structures(self, *labels):
+            r"""
+            Iterate over the structures on the given set of labels.
+
+                sage: from sage.rings.species import MolecularSpecies
+                sage: M = MolecularSpecies("X,Y")
+                sage: a = M(PermutationGroup([(3,4),(5,)]), {0:[1,3,4], 1:[2,5]})
+                sage: a
+                X*Y^2*E_2(X)
+                sage: list(a.structures([1, 2, 3], ["a", "b"]))
+                [((1,), ('a',), ('b',), (2, 3)),
+                 ((1,), ('b',), ('a',), (2, 3)),
+                 ((2,), ('a',), ('b',), (1, 3)),
+                 ((2,), ('b',), ('a',), (1, 3)),
+                 ((3,), ('a',), ('b',), (1, 2)),
+                 ((3,), ('b',), ('a',), (1, 2))]
+
+                sage: G = PermutationGroup([[(2,3),(4,5)]])
+                sage: a = M(G, {0: [1, 2, 3], 1: [4, 5]})
+                sage: a
+                X*E_2(XY)
+                sage: list(a.structures([1, 2, 3], ["a", "b"]))
+                [((1,), (2, 3, 'a', 'b')),
+                 ((1,), (2, 3, 'b', 'a')),
+                 ((2,), (1, 3, 'a', 'b')),
+                 ((2,), (1, 3, 'b', 'a')),
+                 ((3,), (1, 2, 'a', 'b')),
+                 ((3,), (1, 2, 'b', 'a'))]
+            """
+            k = self.parent()._arity
+            labels = label_sets(k, labels)
+            atoms = [a for a, n in self._monomial.items() for _ in range(n)]
+            sizes = [a._mc for a in atoms]
+            dissections = product(*[OrderedSetPartitions(l, [mc[i] for mc in sizes])
+                                    for i, l in enumerate(labels)])
+            for d in dissections:
+                yield from product(*[a.structures(*[l[i] for l in d])
+                                     for i, a in enumerate(atoms)])
 
 
 class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
