@@ -49,7 +49,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#define register
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include "flint/fmpz.h"

@@ -323,7 +323,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                 raise ValueError("the given reflection index set (= %s) does not have the right size" % self._index_set.values())
         self._reflection_index_set_inverse = {i: ii for ii,i in enumerate(self._reflection_index_set)}
 
-    def _irrcomp_repr_(self,W_type):
+    def _irrcomp_repr_(self, W_type):
         r"""
         Return the string representation of an irreducible component
         of ``self``.
@@ -703,7 +703,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         return Family(self._reflection_index_set,
                       lambda i: T[self._reflection_index_set_inverse[i]])
 
-    def reflection(self,i):
+    def reflection(self, i):
         r"""
         Return the ``i``-th reflection of ``self``.
 
@@ -1725,7 +1725,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                 return beta * w.to_matrix()
 
         @cached_function
-        def invariant_value(i,j):
+        def invariant_value(i, j):
             if i > j:
                 return invariant_value(j,i).conjugate()
             val = sum(action_on_root(w, Delta[i]) * action_on_root(w, Delta[j]).conjugate()
@@ -1782,7 +1782,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         """
         return self.invariant_form().principal_square_root()
 
-    def set_reflection_representation(self,refl_repr=None):
+    def set_reflection_representation(self, refl_repr=None):
         r"""
         Set the reflection representation of ``self``.
 

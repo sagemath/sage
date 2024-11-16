@@ -288,7 +288,7 @@ def is_HCP(f, check_monic_irreducible=True):
         return D if f == hilbert_class_polynomial(D) else zero
 
 
-def OrderClassNumber(D0,h0,f):
+def OrderClassNumber(D0, h0, f):
     r"""
     Return the class number h(f**2 * D0), given h(D0)=h0.
 

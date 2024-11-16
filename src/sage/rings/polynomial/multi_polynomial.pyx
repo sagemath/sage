@@ -11,14 +11,14 @@ Base class for elements of multivariate polynomial rings
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ********************************************************************
+from itertools import chain
 
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.coerce cimport coercion_model
 from sage.misc.derivative import multi_derivative
-from itertools import chain
-
 from sage.misc.misc_c import prod
+from sage.misc.superseded import deprecated_function_alias
 
 
 def is_MPolynomial(x):
@@ -1284,28 +1284,39 @@ cdef class MPolynomial(CommutativePolynomial):
         """
         return self.base_ring().ideal(self.coefficients())
 
-    def is_generator(self):
+    def is_gen(self):
         r"""
         Return ``True`` if this polynomial is a generator of its parent.
 
         EXAMPLES::
 
             sage: R.<x,y> = ZZ[]
-            sage: x.is_generator()
+            sage: x.is_gen()
             True
-            sage: (x + y - y).is_generator()
+            sage: (x + y - y).is_gen()
             True
-            sage: (x*y).is_generator()
+            sage: (x*y).is_gen()
             False
             sage: R.<x,y> = QQ[]
-            sage: x.is_generator()
+            sage: x.is_gen()
             True
-            sage: (x + y - y).is_generator()
+            sage: (x + y - y).is_gen()
             True
-            sage: (x*y).is_generator()
+            sage: (x*y).is_gen()
             False
+
+        TESTS::
+
+            sage: R.<x,y> = ZZ[]
+            sage: x.is_generator()
+            doctest:warning...:
+            DeprecationWarning: is_generator is deprecated. Please use is_gen instead.
+            See https://github.com/sagemath/sage/issues/38942 for details.
+            True
         """
-        return (self in self.parent().gens())
+        return self in self.parent().gens()
+
+    is_generator = deprecated_function_alias(38942, is_gen)
 
     def map_coefficients(self, f, new_base_ring=None):
         r"""
@@ -1391,7 +1402,7 @@ cdef class MPolynomial(CommutativePolynomial):
         v = [self] + [self.map_coefficients(k.hom([k.gen()**(p**i)])) for i in range(1,e)]
         return prod(v).change_ring(k.prime_subfield())
 
-    def sylvester_matrix(self, right, variable = None):
+    def sylvester_matrix(self, right, variable=None):
         r"""
         Given two nonzero polynomials ``self`` and ``right``, return the Sylvester
         matrix of the polynomials with respect to a given variable.
@@ -1545,7 +1556,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         return M
 
-    def discriminant(self,variable):
+    def discriminant(self, variable):
         r"""
         Return the discriminant of ``self`` with respect to the given variable.
 

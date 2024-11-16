@@ -16,7 +16,7 @@ from sage.categories.cartesian_product import CartesianProductsCategory
 
 class DistributiveMagmasAndAdditiveMagmas(CategoryWithAxiom):
     """
-    The category of sets `(S,+,*)` with `*` distributing on `+`.
+    The category of sets `(S, +, *)` with `*` distributing on `+`.
 
     This is similar to a ring, but `+` and `*` are only required to be
     (additive) magmas.

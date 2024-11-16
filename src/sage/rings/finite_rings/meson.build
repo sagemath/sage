@@ -39,6 +39,15 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, gmp]
+  if name == 'element_pari_ffelt'
+    deps += [
+      cypari2,
+      pari,  # Runtime dependency
+    ]
+  elif name == 'residue_field_pari_ffelt'
+    deps += [cypari2]
+  endif
   py.extension_module(
     name,
     sources: pyx,
@@ -51,7 +60,7 @@ foreach name, pyx : extension_data
       inc_rings,
       inc_rings_finite,
     ],
-    dependencies: [py_dep, cypari2, cysignals, givaro, gmp, m, ntl, pari],
+    dependencies: deps,
   )
 endforeach
 

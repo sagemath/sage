@@ -37,7 +37,7 @@ cdef class GLPKBackend(GenericBackend):
     MIP Backend that uses the GLPK solver.
     """
 
-    def __cinit__(self, maximization = True):
+    def __cinit__(self, maximization=True):
         """
         Constructor.
 
@@ -537,7 +537,7 @@ cdef class GLPKBackend(GenericBackend):
 
         Removing fancy constraints does not make Sage crash::
 
-            sage: MixedIntegerLinearProgram(solver= "GLPK").remove_constraints([0, -2])
+            sage: MixedIntegerLinearProgram(solver="GLPK").remove_constraints([0, -2])
             Traceback (most recent call last):
             ...
             ValueError: The constraint's index i must satisfy 0 <= i < number_of_constraints

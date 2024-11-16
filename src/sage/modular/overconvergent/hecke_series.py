@@ -153,7 +153,7 @@ def low_weight_bases(N, p, m, NN, weightbound):
     return generators
 
 
-def random_low_weight_bases(N,p,m,NN,weightbound):
+def random_low_weight_bases(N, p, m, NN, weightbound):
     r"""
     Return list of random integral bases of modular forms of level `N` and
     (even) weight at most weightbound with coefficients reduced modulo
@@ -197,7 +197,7 @@ def random_low_weight_bases(N,p,m,NN,weightbound):
     return RandomLWB
 
 
-def low_weight_generators(N,p,m,NN):
+def low_weight_generators(N, p, m, NN):
     r"""
     Return a list of lists of modular forms, and an even natural number.
 
@@ -248,7 +248,7 @@ def low_weight_generators(N,p,m,NN):
     return generators, weightbound
 
 
-def random_solution(B,K):
+def random_solution(B, K):
     r"""
     Return a random solution in nonnegative integers to the equation `a_1 + 2
     a_2 + 3 a_3 + ... + B a_B = K`, using a greedy algorithm.

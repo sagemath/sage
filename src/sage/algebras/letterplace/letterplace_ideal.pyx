@@ -41,7 +41,7 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.rings.noncommutative_ideals import Ideal_nc
-from sage.libs.singular.function import lib, singular_function
+from sage.libs.singular.function import lib
 from sage.algebras.letterplace.free_algebra_letterplace cimport FreeAlgebra_letterplace, FreeAlgebra_letterplace_libsingular
 from sage.algebras.letterplace.free_algebra_element_letterplace cimport FreeAlgebraElement_letterplace
 from sage.rings.infinity import Infinity
@@ -49,8 +49,6 @@ from sage.rings.infinity import Infinity
 #####################
 # Define some singular functions
 lib("freegb.lib")
-singular_twostd = singular_function("twostd")
-poly_reduce = singular_function("NF")
 
 
 class LetterplaceIdeal(Ideal_nc):
@@ -321,6 +319,8 @@ class LetterplaceIdeal(Ideal_nc):
         to_L = P.hom(L.gens(), L, check=False)
         from_L = L.hom(P.gens(), P, check=False)
         I = L.ideal([to_L(x._poly) for x in self.__GB.gens()])
+        from sage.libs.singular.function import singular_function
+        singular_twostd = singular_function("twostd")
         gb = singular_twostd(I)
         out = [FreeAlgebraElement_letterplace(A, from_L(X), check=False)
                for X in gb]
@@ -398,6 +398,8 @@ class LetterplaceIdeal(Ideal_nc):
         bck = (libsingular_options['redTail'], libsingular_options['redSB'])
         libsingular_options['redTail'] = True
         libsingular_options['redSB'] = True
+        from sage.libs.singular.function import singular_function
+        poly_reduce = singular_function("NF")
         sI = poly_reduce(sI, gI, ring=C, attributes={gI: {"isSB": 1}})
         libsingular_options['redTail'] = bck[0]
         libsingular_options['redSB'] = bck[1]

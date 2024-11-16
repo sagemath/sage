@@ -49,7 +49,7 @@ cdef class PPLBackend(GenericBackend):
     # Common denominator for objective function in self.mip (not for the constant term)
     cdef Integer obj_denominator
 
-    def __cinit__(self, maximization = True, base_ring = None):
+    def __cinit__(self, maximization=True, base_ring=None):
         """
         Constructor.
 

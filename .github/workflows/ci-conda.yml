@@ -59,7 +59,7 @@ jobs:
         with:
           path: ~/conda_pkgs_dir
           key:
-            ${{ runner.os }}-conda-${{ hashFiles('src/environment-3.11.yml') }}
+            ${{ runner.os }}-conda-${{ hashFiles('environment-3.11.yml') }}
 
       - name: Setup Conda environment
         uses: conda-incubator/setup-miniconda@v3
@@ -70,7 +70,7 @@ jobs:
           channels: conda-forge
           channel-priority: true
           activate-environment: sage
-          environment-file: src/${{ matrix.conda-env }}-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || 'linux' }}.yml
+          environment-file: ${{ matrix.conda-env }}-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || 'linux' }}.yml
 
       - name: Print Conda environment
         shell: bash -l {0}

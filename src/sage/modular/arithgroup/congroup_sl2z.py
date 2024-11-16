@@ -118,7 +118,7 @@ class SL2Z_class(Gamma0_class):
         """
         return ArithmeticSubgroupElement(self, x, check=check)
 
-    def _contains_sl2(self,a,b,c,d):
+    def _contains_sl2(self, a, b, c, d):
         r"""
         Test whether [a,b,c,d] is an element of self, where a,b,c,d are integers with `ad-bc=1`. In other words, always return True.
 

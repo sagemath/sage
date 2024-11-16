@@ -2609,7 +2609,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         INPUT:
 
-        - `\alpha` -- element of quaternion algebra
+        - `\alpha` -- nonzero element of quaternion algebra
 
         - ``left`` -- boolean (default: ``False``); if ``True`` multiply
           `\alpha` on the left, otherwise multiply `\alpha` on the right
@@ -2631,6 +2631,15 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             4*i
             sage: I.gens()[0] * i
             4*i
+
+        The scaling element must be nonzero::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(419)
+            sage: O = B.quaternion_order([1/2 + 3/2*j, 1/6*i + 2/3*j + 1/2*k, 3*j, k])
+            sage: O * O.zero()
+            Traceback (most recent call last):
+            ...
+            ValueError: the scaling factor must be nonzero
 
         TESTS:
 
@@ -2657,6 +2666,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         """
         Q = self.quaternion_algebra()
         alpha = Q(alpha)
+        if alpha.is_zero():
+            raise ValueError("the scaling factor must be nonzero")
         if left:
             gens = basis_for_quaternion_lattice([alpha * b for b in self.basis()])
         else:
@@ -3657,7 +3668,9 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: B = QuaternionAlgebra(101)
             sage: i,j,k = B.gens()
             sage: I = B.maximal_order().unit_ideal()
-            sage: beta = B.random_element()  # random
+            sage: beta = B.random_element()
+            sage: while beta.is_zero():
+            ....:       beta = B.random_element()
             sage: J = beta*I
             sage: bool, alpha = I.is_right_equivalent(J, certificate=True)
             sage: bool
@@ -3711,7 +3724,9 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
             sage: B.<i,j,k> = QuaternionAlgebra(419)
             sage: O = B.quaternion_order([1/2 + 3/2*j, 1/6*i + 2/3*j + 1/2*k, 3*j, k])
-            sage: beta = O.random_element()  # random
+            sage: beta = O.random_element()
+            sage: while beta.is_zero():
+            ....:     beta = O.random_element()
             sage: I = O*beta
             sage: bool, alpha = I.is_principal(True)
             sage: bool
@@ -3951,7 +3966,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         Check that randomly generated ideals decompose as expected::
 
-            sage: for d in ( m for m in range(400, 750) if is_squarefree(m) ):
+            sage: for d in ( m for m in range(400, 750) if is_squarefree(m) ):        # long time (7s)
             ....:     A = QuaternionAlgebra(d)
             ....:     O = A.maximal_order()
             ....:     for _ in range(10):

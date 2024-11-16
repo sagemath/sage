@@ -39,7 +39,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
     elements are pairwise relatively prime::
 
         sage: from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-        sage: def predicate(x,y): return gcd(x,y) == 1
+        sage: def predicate(x, y): return gcd(x, y) == 1
         sage: P = PairwiseCompatibleSubsets( [4,5,6,8,9], predicate); P
         An enumerated set with a forest structure
         sage: P.list()
@@ -91,7 +91,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
         TESTS::
 
             sage: from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-            sage: def predicate(x,y): return gcd(x,y) == 1
+            sage: def predicate(x, y): return gcd(x, y) == 1
             sage: P = PairwiseCompatibleSubsets( [4,5,6,8,9], predicate); P
             An enumerated set with a forest structure
             sage: import __main__; __main__.predicate = predicate
@@ -113,7 +113,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
         TESTS::
 
             sage: from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-            sage: def predicate(x,y): return gcd(x,y) == 1
+            sage: def predicate(x, y): return gcd(x, y) == 1
             sage: P = PairwiseCompatibleSubsets( [4,5,6,8,9], predicate); P
             An enumerated set with a forest structure
             sage: P == P
@@ -131,7 +131,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
         EXAMPLES::
 
             sage: from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-            sage: def predicate(x,y): return gcd(x,y) == 1
+            sage: def predicate(x, y): return gcd(x, y) == 1
             sage: P = PairwiseCompatibleSubsets( [4,5,6,8,9], predicate); P
             An enumerated set with a forest structure
             sage: Set([5,8,9]) in P
@@ -150,7 +150,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
         TESTS::
 
             sage: from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-            sage: def predicate(x,y): return gcd(x,y) == 1
+            sage: def predicate(x, y): return gcd(x, y) == 1
             sage: P = PairwiseCompatibleSubsets( [4,5,6,8,9], predicate); P
             An enumerated set with a forest structure
             sage: P.post_process( ((4,5), (9)) )
@@ -167,7 +167,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
         TESTS::
 
             sage: from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-            sage: def predicate(x,y): return gcd(x,y) == 1
+            sage: def predicate(x, y): return gcd(x, y) == 1
             sage: P = PairwiseCompatibleSubsets( [3,5,7,11,14], predicate); P
             An enumerated set with a forest structure
             sage: list(P.children( ((3,5), [14,11,7]) ))

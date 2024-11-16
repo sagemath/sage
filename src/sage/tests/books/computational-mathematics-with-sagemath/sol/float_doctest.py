@@ -75,7 +75,7 @@ Sage example in ./sol/float.tex, line 157::
 
 Sage example in ./sol/float.tex, line 179::
 
-  sage: def recur(x1,x0):
+  sage: def recur(x1, x0):
   ....:     return 111 - 1130/x1 + 3000/(x0*x1)
 
 Sage example in ./sol/float.tex, line 190::

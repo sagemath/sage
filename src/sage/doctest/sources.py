@@ -1013,7 +1013,7 @@ class PythonSource(SourceLanguage):
             sage: print(FDS.quotetype)
             None
         """
-        def _update_parens(start,end=None):
+        def _update_parens(start, end=None):
             self.paren_count += line.count("(",start,end) - line.count(")",start,end)
             self.bracket_count += line.count("[",start,end) - line.count("]",start,end)
             self.curly_count += line.count("{",start,end) - line.count("}",start,end)

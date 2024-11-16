@@ -196,7 +196,7 @@ class DiscreteValuationRings(Category_singleton):
             """
             return self.valuation() == 0
 
-        def gcd(self,other):
+        def gcd(self, other):
             """
             Return the greatest common divisor of ``self`` and ``other``,
             normalized so that it is a power of the distinguished
@@ -209,7 +209,7 @@ class DiscreteValuationRings(Category_singleton):
             else:
                 return self.parent().uniformizer() ** val
 
-        def lcm(self,other):
+        def lcm(self, other):
             """
             Return the least common multiple of ``self`` and ``other``,
             normalized so that it is a power of the distinguished

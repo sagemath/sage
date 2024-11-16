@@ -99,6 +99,16 @@ TESTS::
     sage: TestSuite(P).run()
     sage: loads(dumps(P)) is P
     True
+
+    sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+    sage: P = A.g_algebra(relations={y*x:-x*y}, order = 'lex')
+    sage: P.is_commutative()
+    False
+
+    sage: R.<x,y,z> = FreeAlgebra(QQ, 3)
+    sage: P = R.g_algebra(relations={}, order='lex')
+    sage: P.is_commutative()
+    True
 """
 from cysignals.memory cimport sig_malloc, sig_free
 
@@ -335,7 +345,7 @@ cdef class NCPolynomialRing_plural(Ring):
         from sage.libs.singular.function import singular_function
         ncalgebra = singular_function('nc_algebra')
 
-        cdef RingWrap rw = ncalgebra(self._c, self._d, ring = P)
+        cdef RingWrap rw = ncalgebra(self._c, self._d, ring=P)
 
         #       rw._output()
         self._ring = singular_ring_reference(rw._ring)
@@ -676,22 +686,7 @@ cdef class NCPolynomialRing_plural(Ring):
         """
         return self._term_order
 
-    def is_commutative(self):
-        """
-        Return ``False``.
-
-        .. TODO:: Provide a mathematically correct answer.
-
-        EXAMPLES::
-
-            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
-            sage: P = A.g_algebra(relations={y*x:-x*y}, order = 'lex')
-            sage: P.is_commutative()
-            False
-        """
-        return False
-
-    def is_field(self, *args, **kwargs):
+    def is_field(self, *args, **kwargs) -> bool:
         """
         Return ``False``.
 
@@ -1184,7 +1179,7 @@ cdef class NCPolynomialRing_plural(Ring):
             sage: P.monomial_lcm(x,P(1))
             x
         """
-        cdef poly *m = p_ISet(1,self._ring)
+        cdef poly *m = p_ISet(1, self._ring)
 
         if self is not f._parent:
             f = self.coerce(f)
@@ -2091,7 +2086,7 @@ cdef class NCPolynomial_plural(RingElement):
         cdef poly *_degrees = <poly*>0
         cdef poly *p = self._poly
         cdef ring *r = (<NCPolynomialRing_plural>self._parent)._ring
-        cdef poly *newp = p_ISet(0,r)
+        cdef poly *newp = p_ISet(0, r)
         cdef poly *newptemp
         cdef int i
         cdef int flag
@@ -2353,7 +2348,7 @@ cdef class NCPolynomial_plural(RingElement):
             return -2
         return result
 
-    def __getitem__(self,x):
+    def __getitem__(self, x):
         """
         Same as :meth:`monomial_coefficient` but for exponent vectors.
 
@@ -3117,7 +3112,7 @@ def SCA(base_ring, names, alt_vars, order='degrevlex'):
     return H.quotient(I)
 
 
-def ExteriorAlgebra(base_ring, names,order='degrevlex'):
+def ExteriorAlgebra(base_ring, names, order='degrevlex'):
     """
     Return the exterior algebra on some generators.
 

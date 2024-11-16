@@ -474,7 +474,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         """
         # Next attribute needed for _fast_eval and _fastpolys
         R = polys[0].base_ring()
-        self._is_prime_finite_field = isinstance(R, FiniteField) and R.is_prime_field()
+        self._is_prime_finite_field = isinstance(R, FiniteField) and R.degree() == 1
         DynamicalSystem.__init__(self, polys, domain)
 
     def __copy__(self):
@@ -2811,7 +2811,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 display_complex = True
                 kwds["embed"] = embed
             else:
-                field_def = self.field_of_definition_preimage(Q,n)
+                field_def = self.field_of_definition_preimage(Q, n)
                 fbar = self.change_ring(field_def)
                 if display_complex:
                     embed = field_def.embeddings(ComplexField())[0]
@@ -2819,7 +2819,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         elif base_ring in FiniteFields():
             if numerical:
                 raise ValueError("can't solve numerically over a finite field, no embedding into CC")
-            field_def = self.field_of_definition_preimage(Q,n)
+            field_def = self.field_of_definition_preimage(Q, n)
             fbar = self.change_ring(field_def)
             # No embedding from finite field into C
             kwds["display_complex"] = False

@@ -197,7 +197,7 @@ class AmbientSpace(CombinatorialFreeModule):
         else:
             return CombinatorialFreeModule.__call__(self, v)
 
-    def __getitem__(self,i):
+    def __getitem__(self, i):
         """
         Note that indexing starts at 1.
 

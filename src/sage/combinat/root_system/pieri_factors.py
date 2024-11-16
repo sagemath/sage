@@ -427,7 +427,7 @@ class PieriFactors_type_A(PieriFactors_finite_type):
         """
         return [self.W.from_reduced_word(range(self.W.cartan_type().n, 0, -1))]
 
-    def stanley_symm_poly_weight(self,w):
+    def stanley_symm_poly_weight(self, w):
         r"""
         EXAMPLES::
 

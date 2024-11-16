@@ -166,7 +166,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points='automatic',
     values in the interval [0,1]. ::
 
         sage: u,v = var('u,v')
-        sage: def cf(u,v): return sin(u+v/2)**2
+        sage: def cf(u, v): return sin(u+v/2)**2
         sage: P = parametric_plot3d((cos(u), sin(u)+cos(v), sin(v)),
         ....:   (u,0,2*pi), (v,-pi,pi), color=(cf,colormaps.PiYG), plot_points=[60,60])
         sage: P.show(viewer='tachyon')
@@ -174,7 +174,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points='automatic',
     .. PLOT::
 
         u,v = var('u,v')
-        def cf(u,v): return sin(u+v/2)**2
+        def cf(u, v): return sin(u+v/2)**2
         P = parametric_plot3d((cos(u), sin(u)+cos(v), sin(v)),
             (u,0,2*pi), (v,-pi,pi), color=(cf,colormaps.PiYG), plot_points=[60,60])
         sphinx_plot(P)
@@ -182,7 +182,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points='automatic',
     Another example, a colored Möbius band::
 
         sage: cm = colormaps.ocean
-        sage: def c(x,y): return sin(x*y)**2
+        sage: def c(x, y): return sin(x*y)**2
         sage: from sage.plot.plot3d.parametric_surface import MoebiusStrip
         sage: MoebiusStrip(5, 1, plot_points=200, color=(c,cm))
         Graphics3d Object
@@ -190,7 +190,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points='automatic',
     .. PLOT::
 
         cm = colormaps.ocean
-        def c(x,y): return sin(x*y)**2
+        def c(x, y): return sin(x*y)**2
         from sage.plot.plot3d.parametric_surface import MoebiusStrip
         sphinx_plot(MoebiusStrip(5, 1, plot_points=200, color=(c,cm)))
 
@@ -198,8 +198,8 @@ def parametric_plot3d(f, urange, vrange=None, plot_points='automatic',
 
         sage: from sage.plot.plot3d.parametric_surface import ParametricSurface
         sage: cm = colormaps.autumn
-        sage: def c(x,y): return sin(x*y)**2
-        sage: def g(x,y): return x, y+sin(y), x**2 + y**2
+        sage: def c(x, y): return sin(x*y)**2
+        sage: def g(x, y): return x, y+sin(y), x**2 + y**2
         sage: ParametricSurface(g, (srange(-10,10,0.1), srange(-5,5.0,0.1)), color=(c,cm))
         Graphics3d Object
 
@@ -207,8 +207,8 @@ def parametric_plot3d(f, urange, vrange=None, plot_points='automatic',
 
         from sage.plot.plot3d.parametric_surface import ParametricSurface
         cm = colormaps.autumn
-        def c(x,y): return sin(x*y)**2
-        def g(x,y): return x, y+sin(y), x**2 + y**2
+        def c(x, y): return sin(x*y)**2
+        def g(x, y): return x, y+sin(y), x**2 + y**2
         sphinx_plot(ParametricSurface(g, (srange(-10,10,0.1), srange(-5,5.0,0.1)), color=(c,cm)))
 
     We call the space curve function but with polynomials instead of

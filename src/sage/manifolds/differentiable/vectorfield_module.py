@@ -1385,7 +1385,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
     Let us introduce an open subset of `J\subset I` and the vector field module
     corresponding to the restriction of `\Phi` to it::
 
-        sage: J = I.open_subset('J', coord_def= {canon: t<pi})
+        sage: J = I.open_subset('J', coord_def={canon: t<pi})
         sage: XJM = J.vector_field_module(dest_map=Phi.restrict(J)); XJM
         Free module X(J,Phi) of vector fields along the Open subset J of the
          1-dimensional differentiable manifold I mapped into the 2-dimensional

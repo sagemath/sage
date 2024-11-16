@@ -41,7 +41,7 @@ cdef class InteractiveLPBackend:
         sage: p = get_solver(solver = "InteractiveLP")
     """
 
-    def __cinit__(self, maximization = True, base_ring = None):
+    def __cinit__(self, maximization=True, base_ring=None):
         """
         Cython constructor.
 

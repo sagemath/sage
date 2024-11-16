@@ -1106,7 +1106,7 @@ class BooleanFormula:
             :func:`~sage.logic.logicparser.apply_func()` in
             :mod:`~sage.logic.logicparser`.
         """
-        if not isinstance(tree[1], tuple) and not (tree[1] is None):
+        if not isinstance(tree[1], tuple) and tree[1] is not None:
             lval = ('prop', tree[1])
         else:
             lval = tree[1]

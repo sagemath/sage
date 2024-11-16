@@ -1294,7 +1294,7 @@ cdef class SymbolicFunction(Function):
             sage: t(x, y)
             foo(x, y)
 
-            sage: def ev(self, x,y): return 2*x
+            sage: def ev(self, x, y): return 2*x
             sage: foo = function("foo", nargs=2, eval_func=ev)                          # needs sage.symbolic
             sage: foo.__getstate__()                                                    # needs sage.symbolic
             (2, 'foo', 2, None, {}, True,

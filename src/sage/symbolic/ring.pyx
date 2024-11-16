@@ -675,7 +675,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         Simple definition of a functional derivative::
 
-            sage: def functional_derivative(expr,f,x):
+            sage: def functional_derivative(expr, f, x):
             ....:     with SR.temp_var() as a:
             ....:         return expr.subs({f(x):a}).diff(a).subs({a:f(x)})
             sage: f = function('f')
@@ -686,7 +686,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         Contrast this to a similar implementation using SR.var(),
         which gives a wrong result in our example::
 
-            sage: def functional_derivative(expr,f,x):
+            sage: def functional_derivative(expr, f, x):
             ....:     a = SR.var('a')
             ....:     return expr.subs({f(x):a}).diff(a).subs({a:f(x)})
             sage: f = function('f')

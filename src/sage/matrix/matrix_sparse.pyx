@@ -927,7 +927,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         ncols = PyList_GET_SIZE(columns)
         nrows = PyList_GET_SIZE(rows)
-        cdef Matrix_sparse A = self.new_matrix(nrows = nrows, ncols = ncols)
+        cdef Matrix_sparse A = self.new_matrix(nrows=nrows, ncols=ncols)
 
         tmp = [el for el in columns if 0 <= el < self._ncols]
         columns = tmp

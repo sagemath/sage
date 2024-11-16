@@ -190,7 +190,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         """
         mpz_set(self._entries[i], (<Integer>value).value)
 
-    def list(self,copy=True):
+    def list(self, copy=True):
         """
         The list of entries of the vector.
 

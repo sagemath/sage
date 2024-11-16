@@ -170,7 +170,7 @@ jobs:
           ref: ${{ inputs.sage_ref }}
           fetch-depth: 10000
       - name: Download upstream artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: upstream
           name: ${{ inputs.upstream_artifact }}
@@ -260,7 +260,7 @@ jobs:
           cp -r .tox/$TOX_ENV/* "artifacts/$LOGS_ARTIFACT_NAME"
           rm -rf "artifacts/$LOGS_ARTIFACT_NAME"/{bin,lib,pyvenv.cfg}
         if: always()
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: artifacts
           name: ${{ env.LOGS_ARTIFACT_NAME }}

@@ -51,7 +51,7 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
             """
             return len(self.gens())
 
-        def gen(self,i):
+        def gen(self, i):
             r"""
             The ``i``-th generator of this Lie conformal algebra.
 

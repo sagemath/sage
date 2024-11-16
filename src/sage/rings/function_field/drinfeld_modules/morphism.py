@@ -536,9 +536,11 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z> = Fq.extension(3)
             sage: coeffs = [z] + [K.random_element() for _ in range(10)]
             sage: phi = DrinfeldModule(A, coeffs)
-            sage: f = phi.hom(K.random_element())
+            sage: a = K.random_element()
+            sage: while a.is_zero():
+            ....:     a = K.random_element()
+            sage: f = phi.hom(a)
             sage: g = ~f
-
             sage: (f*g).is_identity()
             True
             sage: (g*f).is_identity()

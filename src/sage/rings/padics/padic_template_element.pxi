@@ -383,7 +383,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         """
         raise NotImplementedError
 
-    def expansion(self, n = None, lift_mode = 'simple', start_val = None):
+    def expansion(self, n=None, lift_mode='simple', start_val=None):
         r"""
         Return the coefficients in a `\pi`-adic expansion.
         If this is a field element, start at
@@ -560,7 +560,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             else:
                 return expansion[n]
 
-    def teichmuller_expansion(self, n = None):
+    def teichmuller_expansion(self, n=None):
         r"""
         Return an iterator over coefficients `a_0, a_1, \dots, a_n` such that
 

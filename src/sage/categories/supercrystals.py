@@ -54,7 +54,7 @@ class SuperCrystals(Category_singleton):
                   Crystal of BKK tableaux of shape [2, 1] of gl(2|3)]
                 sage: G = T.digraph()
                 sage: H = S.digraph()
-                sage: G.is_isomorphic(H, edge_labels= True)
+                sage: G.is_isomorphic(H, edge_labels=True)
                 True
             """
             cartan_type = self.cartan_type()

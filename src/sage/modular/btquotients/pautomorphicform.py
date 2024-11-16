@@ -870,14 +870,14 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: X = BruhatTitsQuotient(3,29)
-            sage: H = X.harmonic_cocycles(4,prec =10)
+            sage: X = BruhatTitsQuotient(3, 29)
+            sage: H = X.harmonic_cocycles(4, prec=10)
             sage: H.rank()
             14
             sage: H.is_simple()
             False
-            sage: X = BruhatTitsQuotient(7,2)
-            sage: H = X.harmonic_cocycles(2,prec=10)
+            sage: X = BruhatTitsQuotient(7, 2)
+            sage: H = X.harmonic_cocycles(2, prec=10)
             sage: H.rank()
             1
             sage: H.is_simple()

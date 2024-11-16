@@ -6366,7 +6366,7 @@ class A051959(RecurrenceSequence):
         """
         return "Linear second order recurrence. A051959."
 
-    def g(self,k):
+    def g(self, k):
         """
         EXAMPLES::
 

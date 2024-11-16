@@ -238,12 +238,10 @@ class EllipticCurveHom(Morphism):
             sage: wE = identity_morphism(E)
             sage: wF = identity_morphism(F)
             sage: mE = E.scalar_multiplication(1)
-            sage: mF = F.multiplication_by_m_isogeny(1)
-            doctest:warning ... DeprecationWarning: ...
-            sage: [mE == wE, mF == wF]
-            [True, True]
-            sage: [a == b for a in (wE,mE) for b in (wF,mF)]
-            [False, False, False, False]
+            sage: mE == wE
+            True
+            sage: [a == wF for a in (wE,mE)]
+            [False, False]
 
         .. SEEALSO::
 

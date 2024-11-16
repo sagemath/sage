@@ -121,7 +121,7 @@ cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2) noexcept:
         1
     """
     cdef int i
-    cdef int step = min(v1._len,v2._len)
+    cdef int step = min(v1._len, v2._len)
     for i in range(step):
         if v1._list[i] != v2._list[i]:
             break

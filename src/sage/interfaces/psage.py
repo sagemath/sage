@@ -122,7 +122,7 @@ class PSage(Sage):
         except OSError:
             pass
 
-        if not (self._expect is None):
+        if self._expect is not None:
             cmd = 'kill -9 %s' % self._expect.pid
             os.system(cmd)
 

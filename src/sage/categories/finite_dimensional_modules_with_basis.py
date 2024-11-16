@@ -212,7 +212,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: # needs sage.graphs sage.modules
                 sage: x,y,a,b = F.basis()
-                sage: def scalar(u,v):
+                sage: def scalar(u, v):
                 ....:     return vector([sum(u[i]*v[i] for i in F.basis().keys())])
                 sage: F.annihilator_basis([x + y, a + b], scalar)
                 (x - y, a - b)
@@ -496,7 +496,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: # needs sage.combinat sage.groups sage.modules
                 sage: M = CombinatorialFreeModule(QQ, [1,2,3])
                 sage: G = SymmetricGroup(3)
-                sage: def action(g,x): return(M.term(g(x)))  # permute coordinates
+                sage: def action(g, x): return(M.term(g(x)))  # permute coordinates
                 sage: T = M.twisted_invariant_module(G, [2,0,-1],
                 ....:                                action_on_basis=action)
                 sage: import __main__; __main__.action = action

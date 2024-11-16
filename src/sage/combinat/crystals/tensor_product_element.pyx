@@ -998,7 +998,7 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
         return crystal(self.to_tableau().promotion_inverse(cartan_type.rank()))
 
 cdef class InfinityCrystalOfTableauxElement(CrystalOfTableauxElement):
-    def e(self,i):
+    def e(self, i):
         r"""
         Return the action of `\widetilde{e}_i` on ``self``.
 

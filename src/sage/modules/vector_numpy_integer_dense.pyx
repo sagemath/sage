@@ -13,6 +13,13 @@ EXAMPLES::
     sage: v.numpy()
     array([ 0, 42,  0])               # 64-bit
     array([ 0, 42,  0], dtype=int64)  # 32-bit
+
+TESTS::
+
+    sage: Vector_numpy_integer_dense(FreeModule(GF(2), 3), [0, 0, 0])
+    Traceback (most recent call last):
+    ...
+    ValueError: parent must have base ring ZZ
 """
 
 # ****************************************************************************
@@ -36,6 +43,8 @@ numpy.import_array()
 cdef class Vector_numpy_integer_dense(Vector_numpy_dense):
 
     def __cinit__(self, parent, entries, coerce=True, copy=True):
+        if parent.base_ring() is not ZZ:
+            raise ValueError("parent must have base ring ZZ")
         self._numpy_dtype = numpy.dtype('int64')
         self._numpy_dtypeint = numpy.NPY_INT64
         self._python_dtype = int

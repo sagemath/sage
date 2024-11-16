@@ -183,7 +183,7 @@ cdef class GLPKGraphBackend():
         3.0
     """
 
-    def __cinit__(self, data = None, format = "plain"):
+    def __cinit__(self, data=None, format="plain"):
         """
         Constructor.
 

@@ -1533,7 +1533,7 @@ class ClusterQuiver(SageObject):
             from sage.plot.plot import Graphics
             from sage.plot.text import text
 
-            def _plot_arrow( v, k, center=(0,0) ):
+            def _plot_arrow( v, k, center=(0, 0) ):
                 return text(r"$\longleftrightarrow$",(center[0],center[1]), fontsize=25) + text(r"$\mu_"+str(v)+"$",(center[0],center[1]+0.15), fontsize=15) \
                     + text("$"+str(k)+"$",(center[0],center[1]-0.2), fontsize=15)
 

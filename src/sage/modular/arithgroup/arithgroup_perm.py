@@ -1019,7 +1019,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
 
         return (l_cycle_length, r_cycle_length)
 
-    def _contains_sl2(self, a,b,c,d):
+    def _contains_sl2(self, a, b, c, d):
         r"""
         Test whether ``[a,b;c,d]`` is in the group or not.
 
@@ -1145,7 +1145,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
                 return False
         return True
 
-    def _conjugate(self,j0):
+    def _conjugate(self, j0):
         r"""
         Return the conjugate of ``self`` rooted at j0.
 
@@ -1654,7 +1654,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         """
         return False
 
-    def to_even_subgroup(self,relabel=True):
+    def to_even_subgroup(self, relabel=True):
         r"""
         Return the group with `-Id` added in it.
 
@@ -1784,7 +1784,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
                 n += 1
         return n//2
 
-    def cusp_widths(self,exp=False):
+    def cusp_widths(self, exp=False):
         r"""
         Return the list of cusp widths.
 
@@ -2391,7 +2391,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         """
         return self.todd_coxeter()[0]
 
-    def cusp_widths(self,exp=False):
+    def cusp_widths(self, exp=False):
         r"""
         Return the list of cusp widths of the group.
 
@@ -2462,7 +2462,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         else:
             return self
 
-    def one_odd_subgroup(self,random=False):
+    def one_odd_subgroup(self, random=False):
         r"""
         Return an odd subgroup of index 2 in `\Gamma`, where `\Gamma` is this
         subgroup. If the optional argument ``random`` is False (the default),

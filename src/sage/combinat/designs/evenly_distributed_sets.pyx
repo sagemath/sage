@@ -433,7 +433,7 @@ cdef class EvenlyDistributedSetsBacktracker:
             will be called only once.
         """
         cdef unsigned int i,j,k,tmp1,tmp2,verify
-        cdef list B = [self.B[i] for i in range(1,self.k)]
+        cdef list B = [self.B[i] for i in range(1, self.k)]
         B.append(self.q-1)
         cdef list BB = [None]*self.k
         cdef set relabs = set([tuple(B)])

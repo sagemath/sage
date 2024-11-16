@@ -216,7 +216,7 @@ class PolynomialQuotientRingFactory(UniqueFactory):
             raise TypeError("ring must be a polynomial ring")
         if not isinstance(polynomial, polynomial_element.Polynomial):
             raise TypeError("must be a polynomial")
-        if not polynomial.parent() is ring:
+        if polynomial.parent() is not ring:
             raise TypeError("polynomial must be in ring")
 
         c = polynomial.leading_coefficient()

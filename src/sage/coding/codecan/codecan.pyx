@@ -619,7 +619,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         S = SemimonomialTransformationGroup(self._matrix.base_ring(), self._n)
         S_n = SymmetricGroup(self._n)
 
-        self._transporter = S(perm= S_n(self._to_best.sage()))
+        self._transporter = S(perm=S_n(self._to_best.sage()))
         self._transporter, self._best_candidate, remaining_inner_group = self._compute_group_element(self._transporter, algorithm_type)
 
         # compute the other components of the automorphism group generators

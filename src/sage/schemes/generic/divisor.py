@@ -53,7 +53,7 @@ from sage.structure.formal_sum import FormalSum
 lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 
 
-def CurvePointToIdeal(C,P):
+def CurvePointToIdeal(C, P):
     r"""
     Return the vanishing ideal of a point on a curve.
 

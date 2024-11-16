@@ -287,7 +287,7 @@ cdef class ManinSymbol(Element):
                            matrix[0]*self.u + matrix[2]*self.v,
                            matrix[1]*self.u + matrix[3]*self.v))
 
-    def apply(self, a,b,c,d):
+    def apply(self, a, b, c, d):
         """
         Return the image of ``self`` under the matrix `[a,b;c,d]`.
 

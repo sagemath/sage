@@ -30,7 +30,7 @@ class Triangle:
     """
     A graphical triangle class.
     """
-    def __init__(self,a,b,c,color=0):
+    def __init__(self, a, b, c, color=0):
         """
         a, b, c : triples (x,y,z) representing corners on a triangle in 3-space.
 
@@ -101,7 +101,7 @@ class SmoothTriangle(Triangle):
     """
     A class for smoothed triangles.
     """
-    def __init__(self,a,b,c,da,db,dc,color=0):
+    def __init__(self, a, b, c, da, db, dc, color=0):
         """
         a, b, c : triples (x,y,z) representing corners on a triangle in 3-space
         da, db, dc : triples (dx,dy,dz) representing the normal vector at each point a,b,c
@@ -265,10 +265,10 @@ class TrianglePlot:
             raise ValueError('plot rectangle is really a line; make sure min_x != max_x and min_y != max_y')
         self._num_colors = num_colors
         if g is None:
-            def fcn(x,y):
+            def fcn(x, y):
                 return [self._f(x,y)]
         else:
-            def fcn(x,y):
+            def fcn(x, y):
                 return [self._f(x,y), self._g(x,y)]
 
         self._fcn = fcn
@@ -541,7 +541,7 @@ class TrianglePlot:
             self._max = max(list+[self._max])
 
 
-def crossunit(u,v):
+def crossunit(u, v):
     """
     This function computes triangle normal unit vectors by taking the
     cross-products of the midpoint-to-corner vectors.  It always goes

@@ -196,7 +196,7 @@ from sage.rings.infinity import infinity
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) -1
 
 cdef class pAdicZZpXCAElement(pAdicZZpXElement):
-    def __init__(self, parent, x, absprec = infinity, relprec = infinity, empty = False):
+    def __init__(self, parent, x, absprec=infinity, relprec=infinity, empty=False):
         """
         Create an element of a capped absolute precision, unramified or
         Eisenstein extension of Zp or Qp.
@@ -1769,7 +1769,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         """
         return ZZ_pX_ConstTerm(self.value)
 
-    def is_equal_to(self, right, absprec = None):
+    def is_equal_to(self, right, absprec=None):
         """
         Return whether ``self`` is equal to ``right`` modulo
         ``self.uniformizer()^absprec``.
@@ -1995,7 +1995,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             ZZ_pX_MulMod_pre(cur.x, cur.x, x, m[0])
         return matrix(R, n, n,  L)
 
-#     def matrix(self, base = None):
+#     def matrix(self, base=None):
 #         """
 #         If base is None, return the matrix of right multiplication by
 #         the element on the power basis `1, x, x^2, \ldots, x^{d-1}`
@@ -2034,7 +2034,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
 #         """
 #         raise NotImplementedError
 
-    def teichmuller_expansion(self, n = None):
+    def teichmuller_expansion(self, n=None):
         r"""
         Return a list [`a_0`, `a_1`,..., `a_n`] such that:
 
@@ -2164,7 +2164,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
         else:
             self.prime_pow.teichmuller_set_c(&self.value, &self.value, self.absprec)
 
-#     def padded_list(self, n, lift_mode = 'simple'):
+#     def padded_list(self, n, lift_mode='simple'):
 #         """
 #         Returns a list of coefficients of pi starting with `pi^0` up to
 #         `pi^n` exclusive (padded with zeros if needed)

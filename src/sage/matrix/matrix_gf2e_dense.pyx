@@ -1338,7 +1338,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         if highr > self._entries.nrows:
             raise TypeError("Expected highr <= self.nrows(), but got %d > %d instead."%(highr, self._entries.nrows))
 
-        cdef Matrix_gf2e_dense A = self.new_matrix(nrows = nrows, ncols = ncols)
+        cdef Matrix_gf2e_dense A = self.new_matrix(nrows=nrows, ncols=ncols)
         if ncols == 0 or nrows == 0:
             return A
         A._entries = mzed_submatrix(A._entries, self._entries, row, col, highr, highc)

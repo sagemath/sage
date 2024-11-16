@@ -1293,7 +1293,7 @@ class IntegratedCurve(DifferentiableCurve):
                 # of the system to be provided
 
                 if T.jacobian is None:
-                    def jacobian(t,y):
+                    def jacobian(t, y):
                         jac = []
                         par = self._curve_parameter
                         for i in range(dim):

@@ -432,7 +432,7 @@ class Animation(WithEqualityById, SageObject):
             sage: class MyAnimation(Animation):
             ....:    def make_image(self, frame, filename, **kwds):
             ....:        P = parametric_plot(frame[0], frame[1], **frame[2])
-            ....:        P.save_image(filename,**kwds)
+            ....:        P.save_image(filename, **kwds)
 
             sage: t = SR.var("t")
             sage: x = lambda t: cos(t)

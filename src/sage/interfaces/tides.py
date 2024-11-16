@@ -340,7 +340,7 @@ def remove_repeated(l1, l2):
                 j += 1
 
 
-def remove_constants(l1,l2):
+def remove_constants(l1, l2):
     """
     Given two lists, remove the entries in the first that are real constants,
     and also the corresponding elements in the second one.

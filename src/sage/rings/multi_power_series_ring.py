@@ -1047,7 +1047,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         """
         return self._poly_ring().ideal(self._poly_ring().gens())
 
-    def bigoh(self,prec):
+    def bigoh(self, prec):
         """
         Return big oh with precision ``prec``.  The function ``O`` does the same thing.
 
@@ -1062,7 +1062,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         """
         return self.zero().O(prec)
 
-    def O(self,prec):
+    def O(self, prec):
         """
         Return big oh with precision ``prec``.  This function is an alias for ``bigoh``.
 
@@ -1077,7 +1077,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         """
         return self.bigoh(prec)
 
-    def _send_to_bg(self,f):
+    def _send_to_bg(self, f):
         """
         Send an element of the foreground polynomial ring to the background
         power series ring.
@@ -1100,7 +1100,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             raise TypeError("Cannot coerce input to polynomial ring.")
         return self._bg_ps_ring(f.homogeneous_components())
 
-    def _send_to_fg(self,f):
+    def _send_to_fg(self, f):
         """
         Send an element of the background univariate power series ring to
         the foreground multivariate polynomial ring.

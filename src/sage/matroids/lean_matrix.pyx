@@ -593,8 +593,8 @@ cdef class LeanMatrix:
 
         cdef list lU_2 = sorted(list(U_2))
         cdef list lV_2 = sorted(list(V_2))
-        cdef dict rU = dict(zip(lU_2,range(len(U_2))))
-        cdef dict rV = dict(zip(lV_2,range(len(V_2))))
+        cdef dict rU = dict(zip(lU_2, range(len(U_2))))
+        cdef dict rV = dict(zip(lV_2, range(len(V_2))))
 
         # find a unique representation of every column in U_1xY_3 using columns in U_1xV_2
         B = self.matrix_from_rows_and_columns(list(U_1), range(len(Y)))
@@ -2550,7 +2550,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
         Return a submatrix indexed by indicated rows and columns, as well as
         the column order of the resulting submatrix.
         """
-        cdef QuaternaryMatrix A = QuaternaryMatrix(len(rows), len(columns), ring = self._gf4)
+        cdef QuaternaryMatrix A = QuaternaryMatrix(len(rows), len(columns), ring=self._gf4)
         cdef long r, c, lc, lg
         cdef mp_bitcnt_t *cols
         # deal with trivial case

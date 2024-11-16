@@ -32,12 +32,5 @@ elif xbps-install --version > /dev/null 2>&1; then
 elif pkg -v > /dev/null 2>&1; then
     echo freebsd
 else
-    case `uname -s` in
-        CYGWIN*)
-            echo cygwin
-            ;;
-        *)
-            echo unknown
-            ;;
-    esac
+    echo unknown
 fi

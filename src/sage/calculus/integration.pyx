@@ -498,7 +498,7 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         (4.0, 0.0)
         sage: monte_carlo_integral(lambda u,v: u*v, [0,0], [2,2], 10000)  # abs tol 0.1
         (4.0, 0.0)
-        sage: def f(x1,x2,x3,x4): return x1*x2*x3*x4
+        sage: def f(x1, x2, x3, x4): return x1*x2*x3*x4
         sage: monte_carlo_integral(f, [0,0], [2,2], 1000, params=[0.6,2])  # abs tol 0.2
         (4.8, 0.0)
 
@@ -522,7 +522,7 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         ValueError: The function to be integrated depends on 2 variables (x, y),
         and so cannot be integrated in 3 dimensions. Please fix additional
         variables with the 'params' argument
-        sage: def f(x,y): return x*y
+        sage: def f(x, y): return x*y
         sage: monte_carlo_integral(f, [0,0,0], [2,2,2], 100)
         Traceback (most recent call last):
         ...

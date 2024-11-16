@@ -415,7 +415,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (-2,2), (-2,2))
         sphinx_plot(g)
 
@@ -427,7 +427,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (-2, 2), (-2, 2), contours=2, cmap=[(1,0,0), (0,1,0), (0,0,1)])
         sphinx_plot(g)
 
@@ -440,7 +440,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (-2,2), (-2,2), contours=(0.1,1.0,1.2,1.4), cmap='hsv')
         sphinx_plot(g)
 
@@ -452,7 +452,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (-2,2), (-2,2), contours=(1.0,), fill=False)
         sphinx_plot(g)
 
@@ -475,7 +475,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (-2,2), (-2,2), fill=False, linewidths=10)
         sphinx_plot(g)
 
@@ -488,7 +488,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (-2,2), (-2,2), fill=False, linestyles='dashdot')
         sphinx_plot(g)
 
@@ -667,7 +667,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (-2,2), (-2,2), labels=True, label_colors='red')
         sphinx_plot(g)
 
@@ -680,7 +680,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (x,-3,3), (y,-3,3), colorbar=True)
         sphinx_plot(g)
 
@@ -692,7 +692,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (x,-3,3), (y,-3,3), colorbar=True, colorbar_orientation='horizontal')
         sphinx_plot(g)
 
@@ -704,7 +704,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (x,-3,3), (y,-3,3), contours=[-2,-1,4],
                         colorbar=True)
         sphinx_plot(g)
@@ -718,7 +718,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (x,-3,3), (y,-3,3), contours=[-2,-1,4],
                          colorbar=True, colorbar_spacing='uniform')
         sphinx_plot(g)
@@ -732,7 +732,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (x,-3,3), (y,-3,3), contours=[0,2,3,6],
                          colorbar=True, colorbar_format='%.3f')
         sphinx_plot(g)
@@ -747,7 +747,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (x,-3,3), (y,-3,3), labels=True,
                          label_colors='red', contours=[0,2,3,6],
                          colorbar=True)
@@ -762,7 +762,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 + y**2
+        def f(x, y): return x**2 + y**2
         g = contour_plot(f, (x,-3,3), (y,-3,3), cmap='winter',
                          contours=20, fill=False, colorbar=True)
         sphinx_plot(g)
@@ -793,7 +793,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return cos(x) + sin(y)
+        def f(x, y): return cos(x) + sin(y)
         g = contour_plot(f, (0,pi), (0,pi), axes=True)
         sphinx_plot(g)
 
@@ -819,7 +819,7 @@ def contour_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return cos(x) + sin(y)
+        def f(x, y): return cos(x) + sin(y)
         g = contour_plot(f, (-pi,pi), (-pi,pi), fill=False, axes=True)
         sphinx_plot(g)
 
@@ -1132,7 +1132,7 @@ def implicit_plot(f, xrange, yrange, **options):
 
     .. PLOT::
 
-        def f(x,y): return x**2 + y**2 - 2
+        def f(x, y): return x**2 + y**2 - 2
         g = implicit_plot(f, (-3,3), (-3,3), fill=True, plot_points=500)
         sphinx_plot(g)
 
@@ -1143,7 +1143,7 @@ def implicit_plot(f, xrange, yrange, **options):
 
     .. PLOT::
 
-        def f(x,y): return x**2 + y**2 - 2
+        def f(x, y): return x**2 + y**2 - 2
         g = implicit_plot(f, (-3,3), (-3,3), linewidth=6)
         sphinx_plot(g)
 
@@ -1155,7 +1155,7 @@ def implicit_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x, y =var("x y")
-        def f(x,y): return x**2 + y**2 - 2
+        def f(x, y): return x**2 + y**2 - 2
         g = implicit_plot(f, (-3,3), (-3,3), linestyle='dashdot')
         sphinx_plot(g)
 
@@ -1168,7 +1168,7 @@ def implicit_plot(f, xrange, yrange, **options):
 
     .. PLOT::
 
-        def f(x,y): return x**2 + y**2 - 2
+        def f(x, y): return x**2 + y**2 - 2
         g = implicit_plot(f, (-3,3), (-3,3), color='red', fill=True, fillcolor='green',
                                              plot_points=500)
         sphinx_plot(g)
@@ -1237,7 +1237,7 @@ def implicit_plot(f, xrange, yrange, **options):
         ....:     z = 0
         ....:     for i in range(n):
         ....:         z = z*z + c
-        ....:     def f(x,y):
+        ....:     def f(x, y):
         ....:         val = z(CDF(x, y))
         ....:         return val.norm() - 4
         ....:     return f
@@ -1254,7 +1254,7 @@ def implicit_plot(f, xrange, yrange, **options):
              z = 0
              for i in range(n):
                  z = z*z + c
-             def f(x,y):
+             def f(x, y):
                  val = z(CDF(x, y))
                  return val.norm() - 4
              return f
@@ -1273,7 +1273,7 @@ def implicit_plot(f, xrange, yrange, **options):
              z = 0
              for i in range(n):
                  z = z*z + c
-             def f(x,y):
+             def f(x, y):
                  val = z(CDF(x, y))
                  return val.norm() - 4
              return f
@@ -1296,7 +1296,7 @@ def implicit_plot(f, xrange, yrange, **options):
              z = 0
              for i in range(n):
                  z = z*z + c
-             def f(x,y):
+             def f(x, y):
                  val = z(CDF(x, y))
                  return val.norm() - 4
              return f

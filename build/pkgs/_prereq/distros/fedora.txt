@@ -29,3 +29,5 @@ which
 diffutils
 # Needed for openssl 3.0
 perl-IPC-Cmd
+# Needed to build gcc
+flex

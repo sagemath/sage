@@ -1350,7 +1350,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
     square_root = sqrt
 
-    def nth_root(self, n, extend = False, all = False, algorithm = None, cunningham = False):
+    def nth_root(self, n, extend=False, all=False, algorithm=None, cunningham=False):
         r"""
         Return an `n`-th root of ``self``.
 

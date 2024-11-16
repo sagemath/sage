@@ -238,7 +238,7 @@ class GroupAlgebras(AlgebrasCategory):
             g = self.term(g)
             return tensor([g, g])
 
-        def antipode_on_basis(self,g):
+        def antipode_on_basis(self, g):
             r"""
             Return the antipode of the element ``g`` of the basis.
 
@@ -263,7 +263,7 @@ class GroupAlgebras(AlgebrasCategory):
             """
             return self.term(~g)
 
-        def counit_on_basis(self,g):
+        def counit_on_basis(self, g):
             r"""
             Return the counit of the element ``g`` of the basis.
 
@@ -283,7 +283,7 @@ class GroupAlgebras(AlgebrasCategory):
             """
             return self.base_ring().one()
 
-        def counit(self,x):
+        def counit(self, x):
             r"""
             Return the counit of the element ``x`` of the group
             algebra.

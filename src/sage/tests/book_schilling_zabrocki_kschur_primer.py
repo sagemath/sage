@@ -384,9 +384,9 @@ Sage example in ./kschurnotes/notes-mike-anne.tex, line 2382::
 Sage example in ./kschurnotes/notes-mike-anne.tex, line 2487::
 
     sage: Sym = SymmetricFunctions(QQ)
-    sage: ks = Sym.kschur(3,t=1)
+    sage: ks = Sym.kschur(3, t=1)
     sage: h = Sym.homogeneous()
-    sage: for mu in Partitions(7, max_part =3):
+    sage: for mu in Partitions(7, max_part=3):
     ....:     print(h(ks(mu)))
     h[3, 3, 1]
     h[3, 2, 2] - h[3, 3, 1]

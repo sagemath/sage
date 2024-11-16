@@ -1177,7 +1177,7 @@ class Crystals(Category_singleton):
                 sage: print(C.plot())
                 Graphics object consisting of 17 graphics primitives
             """
-            return self.digraph().plot(edge_labels=True,vertex_size=0,**options)
+            return self.digraph().plot(edge_labels=True, vertex_size=0, **options)
 
         def plot3d(self, **options):
             """
