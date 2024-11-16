@@ -117,12 +117,12 @@ from sage.cpython.getattr import dir_with_other_class
 from sage.misc.latex import latex, latex_variable_name
 
 from sage.structure.factory import UniqueFactory
+from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
 from sage.structure.category_object import normalize_names
 from sage.categories.map cimport Map
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
-from sage.rings.ring cimport CommutativeRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import Infinity
 
@@ -497,7 +497,7 @@ RingExtension = RingExtensionFactory("sage.rings.ring_extension.RingExtension")
 # General extensions
 ####################
 
-cdef class RingExtension_generic(CommutativeRing):
+cdef class RingExtension_generic(Parent):
     r"""
     A generic class for all ring extensions.
 
@@ -564,8 +564,8 @@ cdef class RingExtension_generic(CommutativeRing):
             ...
             ValueError: exotic defining morphism between two rings in the tower; consider using another variable name
         """
-        cdef CommutativeRing base, ring
-        cdef CommutativeRing b, backend
+        cdef Parent base, ring
+        cdef Parent b, backend
         cdef Map f
 
         base = defining_morphism.domain()
@@ -575,7 +575,7 @@ cdef class RingExtension_generic(CommutativeRing):
             # but CommutativeRings() seems safer, especially when dealing with
             # morphisms which do not need to preserve the base
             category = CommutativeRings()
-        CommutativeRing.__init__(self, ZZ, category=category)
+        Parent.__init__(self, base=ZZ, category=category)
         self._base = base
         self._backend = ring
         self._backend_defining_morphism = defining_morphism
@@ -1197,14 +1197,14 @@ cdef class RingExtension_generic(CommutativeRing):
 
             :meth:`base`, :meth:`bases`, :meth:`absolute_base`
         """
-        cdef CommutativeRing b
+        cdef Parent b
         b = self
         while isinstance(b, RingExtension_generic):
             if b is base or (<RingExtension_generic>b)._backend is base: return True
             b = (<RingExtension_generic>b)._base
         return b is base
 
-    cpdef CommutativeRing _check_base(self, CommutativeRing base):
+    cpdef Parent _check_base(self, Parent base):
         r"""
         Check if ``base`` is one of the successive bases of this
         extension and, if it is, normalize it.
@@ -1243,7 +1243,7 @@ cdef class RingExtension_generic(CommutativeRing):
             sage: L._check_base(None) is L.base()                                       # needs sage.rings.finite_rings
             True
         """
-        cdef CommutativeRing b
+        cdef Parent b
         if base is None:
             return self._base
         b = self
@@ -1450,7 +1450,7 @@ cdef class RingExtension_generic(CommutativeRing):
         base = self._check_base(base)
         return self._degree_over(base)
 
-    cpdef _degree_over(self, CommutativeRing base):
+    cpdef _degree_over(self, Parent base):
         r"""
         Return the degree of this extension over ``base``.
 
@@ -1572,7 +1572,7 @@ cdef class RingExtension_generic(CommutativeRing):
             sage: L.is_finite_over()                                                    # needs sage.rings.finite_rings
             True
         """
-        cdef CommutativeRing b
+        cdef Parent b
         base = self._check_base(base)
         if base is self:
             return True
@@ -1590,7 +1590,7 @@ cdef class RingExtension_generic(CommutativeRing):
             b = (<RingExtension_generic?>b)._base
         raise NotImplementedError
 
-    cpdef _is_finite_over(self, CommutativeRing base):
+    cpdef _is_finite_over(self, Parent base):
         r"""
         Return whether or not this extension is finite over ``base``.
 
@@ -1635,7 +1635,7 @@ cdef class RingExtension_generic(CommutativeRing):
             sage: L.is_free_over()                                                      # needs sage.rings.finite_rings
             True
         """
-        cdef CommutativeRing b
+        cdef Parent b
         base = self._check_base(base)
         if base is self or base.is_field():
             return True
@@ -1653,7 +1653,7 @@ cdef class RingExtension_generic(CommutativeRing):
             b = (<RingExtension_generic?>b)._base
         raise NotImplementedError
 
-    cpdef _is_free_over(self, CommutativeRing base):
+    cpdef _is_free_over(self, Parent base):
         r"""
         Return whether or not this extension is finite over ``base``.
 
@@ -1952,7 +1952,7 @@ cdef class RingExtension_generic(CommutativeRing):
 
         TESTS:
 
-            Ensure issue :issue:`34692` is fixed::
+        Ensure issue :issue:`34692` is fixed::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]
@@ -2191,7 +2191,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             b = b.base_ring()
         return base
 
-    cpdef _degree_over(self, CommutativeRing base):
+    cpdef _degree_over(self, Parent base):
         r"""
         Return the degree of this extension over ``base``.
 
@@ -2218,7 +2218,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         else:
             return len(self._basis) * self._base._degree_over(base)
 
-    cpdef _is_finite_over(self, CommutativeRing base):
+    cpdef _is_finite_over(self, Parent base):
         r"""
         Return whether or not this extension is finite over ``base``.
 
@@ -2237,7 +2237,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             return True
         return self._base._is_finite_over(base)
 
-    cpdef _is_free_over(self, CommutativeRing base):
+    cpdef _is_free_over(self, Parent base):
         r"""
         Return whether or not this extension is free over ``base``.
 
@@ -2298,7 +2298,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         base = self._check_base(base)
         return self._basis_over(base)
 
-    cpdef _basis_over(self, CommutativeRing base):
+    cpdef _basis_over(self, Parent base):
         r"""
         Return a basis of this extension over ``base``.
 
@@ -2588,7 +2588,6 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
         RingExtensionWithBasis.__init__(self, defining_morphism, basis, basis_names, check, **kwargs)
         self._gen = self._backend(gen)
         self._names = (self._name,)
-        self._latex_names = (latex_variable_name(self._name),)
         self._basis_latex_names = basis_latex_names
 
     def _repr_topring(self, **options):

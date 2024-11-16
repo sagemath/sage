@@ -937,7 +937,7 @@ class TensorWithIndices(SageObject):
         swap_params = list(combinations(range(self._tensor.tensor_rank()+1), 3))
 
         # The associated permutation is as follows
-        def swap(param,N):
+        def swap(param, N):
             i,j,k = param
             L = list(range(1,N+1))
             L = L[:i] + L[j:k] + L[i:j] + L[k:]

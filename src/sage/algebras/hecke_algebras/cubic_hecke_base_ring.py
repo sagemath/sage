@@ -148,7 +148,7 @@ class GaloisGroupAction(Action):
         if not self.is_left():
             perm, pol = pol, perm
         pol_dict = {}
-        for key, value in pol.dict().items():
+        for key, value in pol.monomial_coefficients().items():
             newkey = [0] * len(key)
             for pos, k in enumerate(key):
                 newkey[perm(pos + 1) - 1] = k

@@ -1680,7 +1680,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             ....:
             ....:     def _act_(self, g, a):
             ....:         D = {}
-            ....:         for k, v in a.dict().items():
+            ....:         for k, v in a.monomial_coefficients().items():
             ....:             nk = [0]*len(k)
             ....:             for i in range(len(k)):
             ....:                 nk[g(i+1)-1] = k[i]

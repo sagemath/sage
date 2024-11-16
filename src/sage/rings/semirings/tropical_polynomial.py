@@ -15,6 +15,8 @@ EXAMPLES::
     3*x^3 + 3*x^2
     sage: (x^2 + R(1)*x + R(-1))^2
     0*x^4 + 1*x^3 + 2*x^2 + 0*x + (-2)
+    sage: (x^2 + x + R(0))^4
+    0*x^8 + 0*x^7 + 0*x^6 + 0*x^5 + 0*x^4 + 0*x^3 + 0*x^2 + 0*x + 0
 
 REFERENCES:
 
@@ -56,7 +58,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
     EXAMPLES:
 
-    First, we construct a tropical polynomial semiring by defining a base
+    We construct a tropical polynomial semiring by defining a base
     tropical semiring and then inputting it to :class:`PolynomialRing`::
 
         sage: T = TropicalSemiring(QQ, use_min=False)
@@ -207,7 +209,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         """
         from itertools import combinations
         tropical_roots = []
-        data = self.dict()
+        data = self.monomial_coefficients()
         R = self.parent().base()
         if len(data) == 1:
             exponent = next(iter(data))
@@ -279,7 +281,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         """
         roots = self.roots()
         R = self.parent()
-        poly = R(self.dict()[self.degree()].lift())
+        poly = R(self.monomial_coefficients()[self.degree()].lift())
         for root in roots:
             linear = R([root, 0])
             poly *= linear
@@ -294,7 +296,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         `x + x_0` is `x_0` and not `-x_0`. However, not every tropical
         polynomial can be factored.
 
-        OUTPUT: a :class:'Factorization'
+        OUTPUT: :class:'Factorization'
 
         EXAMPLES::
 
@@ -321,7 +323,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             (3) * 0
         """
         from sage.structure.factorization import Factorization
-        unit = self.dict()[self.degree()]
+        unit = self.monomial_coefficients()[self.degree()]
         if self != self.split_form() or not self.roots():
             factor = [(self * self.parent(-unit.lift()), 1)]
             return Factorization(factor, unit=unit)
@@ -346,7 +348,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         its corresponding linear function. Next, we must determine which
         term achieves the minimum (maximum) at each interval.
 
-        OUTPUT: A piecewise function
+        OUTPUT: a piecewise function
 
         EXAMPLES::
 
@@ -374,7 +376,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         from sage.sets.real_set import RealSet
 
         x = SR.var('x')
-        data = self.dict()
+        data = self.monomial_coefficients()
         R = self.parent().base()
         if not self.roots():
             f = data[0].lift()
@@ -471,7 +473,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
             T = TropicalSemiring(QQ, use_min=False)
             R = PolynomialRing(T, 'x')
-            p1 = p1 = R([4,2,1,3])
+            p1 = R([4,2,1,3])
             sphinx_plot(p1.plot())
 
         A different result will be obtained if the tropical semiring employs
@@ -492,7 +494,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             T = TropicalSemiring(QQ, use_min=True)
             R = PolynomialRing(T, 'x')
             p1 = R([4,2,1,3])
-            sphinx_plot(plot(p1, xmin=-4, xmax=4))
+            sphinx_plot(p1.plot())
 
         TESTS:
 
@@ -527,7 +529,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
     def _repr_(self):
         r"""
-        Return a string represemtation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -537,7 +539,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             (-1)*x^3 + 2*x^2 + (-1)*x + (-3)
         """
         import re
-        if not self.dict():
+        if not self.monomial_coefficients():
             return str(self.parent().base().zero())
 
         def replace_negatives(expr):
@@ -800,7 +802,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         r"""
         Return a random tropical polynomial of given degrees (bounds).
 
-        OUTPUT: a :class:`TropicalPolynomial`
+        OUTPUT: :class:`TropicalPolynomial`
 
         .. SEEALSO::
 
@@ -844,7 +846,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
         f = R.random_element(degree=degree, monic=monic, *args, **kwds)
-        new_dict = f.dict()
+        new_dict = f.monomial_coefficients()
         if monic:
             new_dict[f.degree()] = 0
         return self.element_class(self, new_dict)
@@ -875,7 +877,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
         - ``points`` -- a list of tuples ``(x, y)``
 
-        OUTPUT: a :class:`TropicalPolynomial`
+        OUTPUT: :class:`TropicalPolynomial`
 
         EXAMPLES::
 

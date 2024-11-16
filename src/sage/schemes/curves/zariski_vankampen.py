@@ -732,7 +732,7 @@ def roots_interval(f, x0):
         diam = min((CF(r) - CF(r0)).abs()
                    for r0 in roots[:i] + roots[i + 1:]) / divisor
         envelop = IF(diam) * IF((-1, 1), (-1, 1))
-        while not newton(fx, r, r + envelop) in r + envelop:
+        while newton(fx, r, r + envelop) not in r + envelop:
             prec += 53
             IF = ComplexIntervalField(prec)
             CF = ComplexField(prec)
@@ -1135,7 +1135,7 @@ def vertical_lines_in_braidmon(pols) -> list:
     OUTPUT:
 
     A list with the indices of the vertical lines in ``flist`` if there is
-    no other componnet with vertical asymptote; otherwise it returns an empty
+    no other component with vertical asymptote; otherwise it returns an empty
     list.
 
     EXAMPLES::
@@ -1302,7 +1302,7 @@ def braid_monodromy(f, arrangement=(), vertical=False):
     g = f.parent()(prod(glist))
     d = g.degree(y)
     if not arrangement_v:  # change of coordinates only if indices_v is empty
-        while not g.coefficient(y**d) in F:
+        while g.coefficient(y**d) not in F:
             g = g.subs({x: x + y})
             d = g.degree(y)
             arrangement_h = tuple(f1.subs({x: x + y}) for f1 in arrangement_h)
@@ -1752,7 +1752,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=True):
     x, y = g.parent().gens()
     F = g.parent().base_ring()
     d = g.degree(y)
-    while not g.coefficient(y**d) in F:
+    while g.coefficient(y**d) not in F:
         g = g.subs({x: x + y})
         d = g.degree(y)
     if projective:

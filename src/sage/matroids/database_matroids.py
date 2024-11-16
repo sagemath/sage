@@ -1462,7 +1462,7 @@ def K5(groundset='abcdefghij'):
     Return the graphic matroid `M(K_5)`.
 
     `M(K_5)` is an excluded minor for the class of cographic matroids. It is
-    the `3`-dimensional Desargues conﬁguration.
+    the `3`-dimensional Desargues configuration.
 
     EXAMPLES::
 
