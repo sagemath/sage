@@ -206,7 +206,7 @@ pentaminos.append(Polyomino([(0,0,0), (0,1,0), (1,1,0), (1,2,0), (1,2,1)], color
 pentaminos.append(Polyomino([(0,1,0), (1,0,0), (1,1,0), (1,1,1), (1,2,0)], color='gray'))
 
 
-def show_pentaminos(box=(5,8,2)):
+def show_pentaminos(box=(5, 8, 2)):
     r"""
     Show the 17 3-D pentaminos included in the game and the `5 \times 8
     \times 2` box where 16 of them must fit.
@@ -281,7 +281,7 @@ class QuantuminoState(SageObject):
         Quantumino state where the following pentamino is put aside :
         Polyomino: [(0, 0, 0), (0, 1, 0), (0, 2, 0), (1, 0, 0), (1, 0, 1)], Color: green
     """
-    def __init__(self, pentos, aside, box=(5,8,2)):
+    def __init__(self, pentos, aside, box=(5, 8, 2)):
         r"""
         EXAMPLES::
 
