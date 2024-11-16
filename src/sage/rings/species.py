@@ -70,9 +70,9 @@ from sage.structure.unique_representation import (UniqueRepresentation,
 GAP_FAIL = libgap.eval('fail')
 
 
-def label_sets(arity, labels):
+def _label_sets(arity, labels):
     r"""
-    Return labels as a list of sets.
+    Return labels as a list of tuples.
 
     INPUT:
 
@@ -84,7 +84,12 @@ def label_sets(arity, labels):
 
     label_sets = [set(U) for U in labels]
     assert all(len(U) == len(V) for U, V in zip(labels, label_sets)), f"The argument labels must be a set, but {labels} has duplicates"
-    return label_sets
+    try:
+        label_sets_sorted = [sorted(x) for x in label_sets]
+    except TypeError:
+        label_sets_sorted = [sorted(x, key=str) for x in label_sets]
+
+    return [tuple(U) for U in label_sets_sorted]
 
 
 class AtomicSpeciesElement(WithEqualityById,
@@ -376,7 +381,7 @@ class AtomicSpeciesElement(WithEqualityById,
             sage: A = AtomicSpecies("X, Y")
             sage: G = PermutationGroup([[("a", "b", "c", "d"), ("e", "f")]])
             sage: a = A(G, {0: "abcd", 1: "ef"})
-            sage: sorted(a.structures([1, 2, 3, 4], ["a", "b"]))
+            sage: list(a.structures([1, 2, 3, 4], ["a", "b"]))
             [(1, 2, 3, 4, 'a', 'b'),
              (1, 2, 3, 4, 'b', 'a'),
              (1, 2, 4, 3, 'a', 'b'),
@@ -392,10 +397,10 @@ class AtomicSpeciesElement(WithEqualityById,
 
             sage: G = PermutationGroup([[(2,3),(4,5)]], domain=[2,3,4,5])
             sage: a = A(G, {0: [2, 3], 1: [4, 5]})
-            sage: sorted(a.structures([1, 2],["a", "b"]))
+            sage: list(a.structures([1, 2],["a", "b"]))
             [(1, 2, 'a', 'b'), (1, 2, 'b', 'a')]
         """
-        labels = label_sets(self.parent()._arity, labels)
+        labels = _label_sets(self.parent()._arity, labels)
         n = tuple([len(U) for U in labels])
         S = SymmetricGroup(sum(n)).young_subgroup(n)
         l = [e for l in labels for e in l]
@@ -1587,7 +1592,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: a = M(PermutationGroup([(3,4),(5,)]), {0:[1,3,4], 1:[2,5]})
                 sage: a
                 X*Y^2*E_2(X)
-                sage: sorted(a.structures([1, 2, 3], ["a", "b"]))
+                sage: list(a.structures([1, 2, 3], ["a", "b"]))
                 [((1,), ('a',), ('b',), (2, 3)),
                  ((1,), ('b',), ('a',), (2, 3)),
                  ((2,), ('a',), ('b',), (1, 3)),
@@ -1599,7 +1604,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: a = M(G, {0: [1, 2, 3], 1: [4, 5]})
                 sage: a
                 X*E_2(XY)
-                sage: sorted(a.structures([1, 2, 3], ["a", "b"]))
+                sage: list(a.structures([1, 2, 3], ["a", "b"]))
                 [((1,), (2, 3, 'a', 'b')),
                  ((1,), (2, 3, 'b', 'a')),
                  ((2,), (1, 3, 'a', 'b')),
@@ -1608,7 +1613,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                  ((3,), (1, 2, 'b', 'a'))]
             """
             k = self.parent()._arity
-            labels = label_sets(k, labels)
+            labels = _label_sets(k, labels)
             atoms = [a for a, n in self._monomial.items() for _ in range(n)]
             sizes = [a._mc for a in atoms]
             try:

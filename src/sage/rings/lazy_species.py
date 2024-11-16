@@ -3,7 +3,7 @@ from sage.rings.lazy_series import LazyCompletionGradedAlgebraElement, LazyModul
 from sage.rings.lazy_series_ring import (LazyCompletionGradedAlgebra,
                                          LazyPowerSeriesRing,
                                          LazySymmetricFunctions)
-from sage.rings.species import PolynomialSpecies
+from sage.rings.species import PolynomialSpecies, _label_sets
 from sage.data_structures.stream import (Stream_zero,
                                          Stream_exact,
                                          Stream_function)
@@ -101,23 +101,6 @@ def weighted_vector_compositions(n_vec, d, weights_vec):
     k = len(n_vec)
     for d_vec in IntegerVectors(d, length=k):
         yield from itertools.product(*map(weighted_compositions, n_vec, d_vec, weights_vec))
-
-
-def label_sets(arity, labels):
-    r"""
-    Return labels as a list of sets.
-
-    INPUT:
-
-    - ``arity`` -- the arity of the species
-    - ``labels`` -- an iterable of iterables
-    """
-    if len(labels) != arity:
-        raise ValueError("arity of must be equal to the number of arguments provided")
-
-    label_sets = [set(U) for U in labels]
-    assert all(len(U) == len(V) for U, V in zip(labels, label_sets)), f"The argument labels must be a set, but {labels} has duplicates"
-    return label_sets
 
 ######################################################################
 
@@ -382,16 +365,16 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: list((XY).structures([1], ["a"]))
             [(X*Y, ((1,), ('a',)))]
 
-            sage: sorted(E(XY).structures([1,2], [3, 4]))  # random
-            [((E_2, ((((2, 'X'), (3, 'Y')), ((1, 'X'), (4, 'Y'))),)),
-              ((X*Y, ((1,), (4,))), (X*Y, ((2,), (3,))))),
-             ((E_2, ((((3, 'Y'), (1, 'X')), ((2, 'X'), (4, 'Y'))),)),
-              ((X*Y, ((1,), (3,))), (X*Y, ((2,), (4,)))))]
+            sage: sorted(E(XY).structures([1,2], [3, 4]))
+            [((E_2, ((((1, 'X'), (3, 'Y')), ((2, 'X'), (4, 'Y'))),)),
+              ((X*Y, ((1,), (3,))), (X*Y, ((2,), (4,))))),
+             ((E_2, ((((1, 'X'), (4, 'Y')), ((2, 'X'), (3, 'Y'))),)),
+              ((X*Y, ((1,), (4,))), (X*Y, ((2,), (3,)))))]
 
             sage: list(XY.structures([], [1, 2]))
             []
         """
-        labels = label_sets(self.parent()._arity, labels)
+        labels = _label_sets(self.parent()._arity, labels)
         F = self[sum(map(len, labels))]
         for M, c in F.monomial_coefficients().items():
             if c not in ZZ or c < 0:
@@ -521,7 +504,7 @@ class SumSpeciesElement(LazySpeciesElement):
         self._right = right
 
     def structures(self, *labels):
-        labels = label_sets(self.parent()._arity, labels)
+        labels = _label_sets(self.parent()._arity, labels)
         yield from self._left.structures(*labels)
         yield from self._right.structures(*labels)
 
@@ -543,11 +526,11 @@ class ProductSpeciesElement(LazySpeciesElement):
             sage: C = L.Cycles()
             sage: P = E * C
             sage: list(P.structures([1,2]))
-            [(set(), [1, 2]), ({1}, [2]), ({2}, [1])]
+            [((), [1, 2]), ((1,), [2]), ((2,), [1])]
 
             sage: P = E * E
             sage: list(P.structures([1,2]))
-            [(set(), {1, 2}), ({1}, {2}), ({2}, {1}), ({1, 2}, set())]
+            [((), (1, 2)), ((1,), (2,)), ((2,), (1,)), ((1, 2), ())]
 
             sage: L.<X, Y> = LazySpecies(QQ)
             sage: list((X*Y).structures([1], [2]))
@@ -555,10 +538,10 @@ class ProductSpeciesElement(LazySpeciesElement):
         """
         def dissections(s):
             for subset in subsets(s):
-                subset = set(subset)
-                yield (subset, s - subset)
+                subset_set = set(subset)
+                yield (subset, tuple([e for e in s if e not in subset_set]))
 
-        labels = label_sets(self.parent()._arity, labels)
+        labels = _label_sets(self.parent()._arity, labels)
         for d in itertools.product(*[dissections(u) for u in labels]):
             yield from itertools.product(self._left.structures(*[U for U, _ in d]),
                                          self._right.structures(*[V for _, V in d]))
@@ -649,12 +632,12 @@ class CompositionSpeciesElement(LazySpeciesElement):
             sage: L = LazySpecies(QQ, "X")
             sage: E = L.Sets()
             sage: E1 = L.Sets(min=1)
-            sage: sorted(E(E1).structures([1,2,3]))  # random
-            [({((2, 'X'), (3, 'X'), (1, 'X'))}, ({1, 2, 3},)),
-             ({((2, 'X'), (1, 'X')), ((3, 'X'),)}, ({1, 2}, {3})),
-             ({((2, 'X'),), ((3, 'X'), (1, 'X'))}, ({1, 3}, {2})),
-             ({((1, 'X'),), ((2, 'X'), (3, 'X'))}, ({1}, {2, 3})),
-             ({((1, 'X'),), ((2, 'X'),), ((3, 'X'),)}, ({1}, {2}, {3}))]
+            sage: sorted(E(E1).structures([1,2,3]))
+            [((((1, 'X'),), ((2, 'X'),), ((3, 'X'),)), ((1,), (2,), (3,))),
+             ((((1, 'X'),), ((2, 'X'), (3, 'X'))), ((1,), (2, 3))),
+             ((((1, 'X'), (2, 'X')), ((3, 'X'),)), ((1, 2), (3,))),
+             ((((1, 'X'), (2, 'X'), (3, 'X')),), ((1, 2, 3),)),
+             ((((1, 'X'), (3, 'X')), ((2, 'X'),)), ((1, 3), (2,)))]
 
             sage: C = L.Cycles()
             sage: L.<X, Y> = LazySpecies(QQ)
@@ -672,7 +655,7 @@ class CompositionSpeciesElement(LazySpeciesElement):
         m = len(G)  # == F.parent()._arity
         k = self.parent()._arity  # == G[i].parent()._arity
         names = self.parent()._laurent_poly_ring._indices._indices._names
-        labels = label_sets(k, labels)
+        labels = _label_sets(k, labels)
         # make label sets disjoint
         U = [(e, i) for l, i in zip(labels, names) for e in l]
 
@@ -685,7 +668,11 @@ class CompositionSpeciesElement(LazySpeciesElement):
         Par_U = SetPartitions(U)
         for pi in Par_U:
             # Fix an arbitrary order of the blocks
-            pi_list = list(pi)
+            try:
+                pi_list = sorted([sorted(b) for b in pi])
+            except TypeError:
+                pi_list = sorted([sorted(b, key=str) for b in pi], key=str)
+
             # Generate all functions chi from pi to {0, ..., m-1}
             for chi in itertools.product(range(m), repeat=len(pi_list)):
                 chi_inv = defaultdict(list)
@@ -784,9 +771,9 @@ class SetSpecies(LazySpeciesElement):
             sage: L = LazySpecies(ZZ, "X")
             sage: E = L.Sets()
             sage: list(E.structures([1,2,3]))
-            [{1, 2, 3}]
+            [(1, 2, 3)]
         """
-        labels = label_sets(self.parent()._arity, labels)
+        labels = _label_sets(self.parent()._arity, labels)
         yield labels[0]
 
 
@@ -812,7 +799,7 @@ class CycleSpecies(LazySpeciesElement):
             sage: list(C.structures([1,2,3]))
             [[1, 2, 3], [1, 3, 2]]
         """
-        labels = label_sets(self.parent()._arity, labels)
+        labels = _label_sets(self.parent()._arity, labels)
         yield from CyclicPermutations(labels[0])
 
 
@@ -838,5 +825,5 @@ class SetPartitionSpecies(LazySpeciesElement):
             yield from Partitions(labels)
 
     def structures(self, labels):
-        labels = label_sets(self.parent()._arity, labels)
+        labels = _label_sets(self.parent()._arity, labels)
         yield from SetPartitions(labels)
