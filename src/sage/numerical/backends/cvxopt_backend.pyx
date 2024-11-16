@@ -55,7 +55,7 @@ cdef class CVXOPTBackend(GenericBackend):
     cdef dict answer
     cdef dict param
 
-    def __cinit__(self, maximization = True):
+    def __cinit__(self, maximization=True):
         """
         Cython constructor.
 
@@ -276,7 +276,7 @@ cdef class CVXOPTBackend(GenericBackend):
         else:
             return self.objective_function[variable]
 
-    cpdef set_objective(self, list coeff, d = 0.0):
+    cpdef set_objective(self, list coeff, d=0.0):
         """
         Set the objective function.
 
@@ -915,7 +915,7 @@ cdef class CVXOPTBackend(GenericBackend):
             return self.col_name_var[index]
         return "x_" + repr(index)
 
-    cpdef variable_upper_bound(self, int index, value = False):
+    cpdef variable_upper_bound(self, int index, value=False):
         """
         Return or define the upper bound on a variable.
 
@@ -944,7 +944,7 @@ cdef class CVXOPTBackend(GenericBackend):
         else:
             return self.col_upper_bound[index]
 
-    cpdef variable_lower_bound(self, int index, value = False):
+    cpdef variable_lower_bound(self, int index, value=False):
         """
         Return or define the lower bound on a variable.
 
@@ -973,7 +973,7 @@ cdef class CVXOPTBackend(GenericBackend):
         else:
             return self.col_lower_bound[index]
 
-    cpdef solver_parameter(self, name, value = None):
+    cpdef solver_parameter(self, name, value=None):
         """
         Return or define a solver parameter.
 

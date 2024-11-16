@@ -69,7 +69,7 @@ be defined by simply using the decorator. However, an indirect
 approach is still needed for cpdef methods::
 
     sage: # needs sage.misc.cython
-    sage: cython_code = ['cpdef test_meth(self,x):',
+    sage: cython_code = ['cpdef test_meth(self, x):',
     ....: '    "some doc for a wrapped cython method"',
     ....: '    return -x',
     ....: 'from sage.misc.cachefunc import cached_method',
@@ -154,7 +154,7 @@ hardly by used.
     sage: cython_code = ["from sage.structure.element cimport Element, ElementWithCachedMethod", "from cpython.object cimport PyObject_RichCompare",
     ....: "cdef class MyBrokenElement(Element):",
     ....: "    cdef public object x",
-    ....: "    def __init__(self,P,x):",
+    ....: "    def __init__(self, P, x):",
     ....: "        self.x=x",
     ....: "        Element.__init__(self,P)",
     ....: "    def __neg__(self):",
@@ -169,7 +169,7 @@ hardly by used.
     ....: "        return -self",
     ....: "cdef class MyElement(ElementWithCachedMethod):",
     ....: "    cdef public object x",
-    ....: "    def __init__(self,P,x):",
+    ....: "    def __init__(self, P, x):",
     ....: "        self.x=x",
     ....: "        ElementWithCachedMethod.__init__(self,P)",
     ....: "    def __neg__(self):",
@@ -267,7 +267,7 @@ Introspection works::
     Some doc for direct method
     <BLANKLINE>
     sage: print(sage_getsource(O.wrapped_method))
-    cpdef test_meth(self,x):
+    cpdef test_meth(self, x):
         "some doc for a wrapped cython method"
         return -x
     sage: print(sage_getsource(O.direct_method))
@@ -312,7 +312,7 @@ latter is easy::
     ....: "cdef class MyClass:",
     ....: "    cdef public dict _cached_methods",
     ....: "    @cached_method",
-    ....: "    def f(self, a,b):",
+    ....: "    def f(self, a, b):",
     ....: "        return a*b"]
     sage: cython(os.linesep.join(cython_code))
     sage: P = MyClass()
@@ -333,7 +333,7 @@ enough in the following example::
     ....: "    cdef dict D",
     ....: "    def __init__(self):",
     ....: "        self.D = {}",
-    ....: "    def __setattr__(self, n,v):",
+    ....: "    def __setattr__(self, n, v):",
     ....: "        self.D[n] = v",
     ....: "    def __getattribute__(self, n):",
     ....: "        try:",
@@ -342,7 +342,7 @@ enough in the following example::
     ....: "            pass",
     ....: "        return getattr(type(self),n).__get__(self)",
     ....: "    @cached_method",
-    ....: "    def f(self, a,b):",
+    ....: "    def f(self, a, b):",
     ....: "        return a+b"]
     sage: cython(os.linesep.join(cython_code))
     sage: Q = MyOtherClass()
@@ -1607,7 +1607,7 @@ class CachedMethodPickle():
         """
         return CachedMethodPickle,(self._instance,self._name,self._cache)
 
-    def __call__(self,*args,**kwds):
+    def __call__(self, *args, **kwds):
         """
         The purpose of this call method is to kill ``self`` and to
         replace it by an actual :class:`CachedMethodCaller`. The last
@@ -1636,9 +1636,9 @@ class CachedMethodPickle():
             else:
                 for k, v in self._cache:
                     CM.cache[k] = v
-        return CM(*args,**kwds)
+        return CM(*args, **kwds)
 
-    def __getattr__(self,s):
+    def __getattr__(self, s):
         """
         TESTS::
 
@@ -1692,7 +1692,7 @@ cdef class CachedMethodCaller(CachedFunction):
 
         sage: class A:
         ....:    @cached_method
-        ....:    def bar(self,x):
+        ....:    def bar(self, x):
         ....:        return x^2
         sage: a = A()
         sage: a.bar
@@ -1718,7 +1718,7 @@ cdef class CachedMethodCaller(CachedFunction):
 
         sage: class A:
         ....:    @cached_method(do_pickle=True)
-        ....:    def bar(self,x):
+        ....:    def bar(self, x):
         ....:        return x^2
 
         sage: __main__.A = A
@@ -1739,7 +1739,7 @@ cdef class CachedMethodCaller(CachedFunction):
             ....:     def __init__(self, x):
             ....:         self._x = x
             ....:     @cached_method
-            ....:     def f(self,*args):
+            ....:     def f(self, *args):
             ....:         return self._x^2
             sage: a = Foo(2)
             sage: a.f.cache
@@ -1812,7 +1812,7 @@ cdef class CachedMethodCaller(CachedFunction):
             ....:     def __init__(self, x):
             ....:         self._x = x
             ....:     @cached_method
-            ....:     def f(self,n=2):
+            ....:     def f(self, n=2):
             ....:         return self._x^n
             sage: a = Foo(2)
             sage: a.f()
@@ -1865,7 +1865,7 @@ cdef class CachedMethodCaller(CachedFunction):
             sage: from sage.misc.superseded import deprecated_function_alias
             sage: class Foo:
             ....:     @cached_method
-            ....:     def f(self, x,y=1):
+            ....:     def f(self, x, y=1):
             ....:         return x+y
             ....:     g = deprecated_function_alias(57, f)
             sage: a = Foo()
@@ -2629,7 +2629,7 @@ cdef class CachedMethod():
             ....:     def __init__(self, x):
             ....:         self._x = x
             ....:     @cached_method
-            ....:     def f(self,n):
+            ....:     def f(self, n):
             ....:         return self._x^n
             ....:     @cached_method
             ....:     def f0(self):
@@ -2708,7 +2708,7 @@ cdef class CachedMethod():
             ....:     def __init__(self, x):
             ....:         self._x = x
             ....:     @cached_method
-            ....:     def f(self,n=2):
+            ....:     def f(self, n=2):
             ....:         return self._x^n
             ....:     g = deprecated_function_alias(57, f)
             sage: a = Foo(2)
@@ -2742,7 +2742,7 @@ cdef class CachedMethod():
             ....:     def __init__(self, x):
             ....:         self._x = x
             ....:     @cached_method
-            ....:     def f(self,n=2):
+            ....:     def f(self, n=2):
             ....:         return self._x^n
             sage: a = Foo(2)
             sage: a.f()
@@ -2778,7 +2778,7 @@ cdef class CachedMethod():
             ....:     def f(self):
             ....:         return 1
             ....:     @cached_method
-            ....:     def g(self, x,n=3):
+            ....:     def g(self, x, n=3):
             ....:         return x^n
             sage: a = Foo()
             sage: type(a.f)
@@ -3685,7 +3685,7 @@ class disk_cached_function:
         sage: foo(200)
         1/200
     """
-    def __init__(self, dir, memory_cache = False, key=None):
+    def __init__(self, dir, memory_cache=False, key=None):
         """
         EXAMPLES::
 

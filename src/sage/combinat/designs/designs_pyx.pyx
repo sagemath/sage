@@ -350,7 +350,7 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
     return True
 
 
-def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=False):
+def is_group_divisible_design(groups, blocks, v, G=None, K=None, lambd=1, verbose=False):
     r"""
     Check that input is a Group Divisible Design on `\{0, \ldots, v-1\}`.
 
@@ -469,7 +469,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
                     print("{} does not belong to [0,...,{}]".format(x, n-1))
                 return False
 
-    cdef unsigned short * matrix = <unsigned short *> sig_calloc(n*n,sizeof(unsigned short))
+    cdef unsigned short * matrix = <unsigned short *> sig_calloc(n*n, sizeof(unsigned short))
     if matrix is NULL:
         raise MemoryError
 
@@ -534,7 +534,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
     return True if not guess_groups else (True, groups)
 
 
-def is_pairwise_balanced_design(blocks,v,K=None,lambd=1,verbose=False):
+def is_pairwise_balanced_design(blocks, v, K=None, lambd=1, verbose=False):
     r"""
     Check that input is a Pairwise Balanced Design (PBD) on `\{0, \ldots, v-1\}`.
 
@@ -663,7 +663,7 @@ def is_projective_plane(blocks, verbose=False):
                                      verbose=verbose)
 
 
-def is_difference_matrix(M,G,k,lmbda=1,verbose=False):
+def is_difference_matrix(M, G, k, lmbda=1, verbose=False):
     r"""
     Test if `M` is a `(G,k,\lambda)`-difference matrix.
 
@@ -728,7 +728,7 @@ def is_difference_matrix(M,G,k,lmbda=1,verbose=False):
     return is_quasi_difference_matrix(M,G,k,lmbda=lmbda,mu=lmbda,u=0,verbose=verbose)
 
 
-def is_quasi_difference_matrix(M,G,int k,int lmbda,int mu,int u,verbose=False):
+def is_quasi_difference_matrix(M, G, int k, int lmbda, int mu, int u, verbose=False):
     r"""
     Test if the matrix is a `(G,k;\lambda,\mu;u)`-quasi-difference matrix.
 
@@ -987,7 +987,7 @@ cpdef _OA_cache_set(int k, int n, truth_value):
     else:
         _OA_cache[n].min_false   = k if k<_OA_cache[n].min_false   else _OA_cache[n].min_false
 
-cpdef _OA_cache_get(int k,int n):
+cpdef _OA_cache_get(int k, int n):
     r"""
     Get a value from the OA cache of existence results.
 
@@ -1006,7 +1006,7 @@ cpdef _OA_cache_get(int k,int n):
 
     return None
 
-cpdef _OA_cache_construction_available(int k,int n):
+cpdef _OA_cache_construction_available(int k, int n):
     r"""
     Test if a construction is implemented using the cache's information.
 

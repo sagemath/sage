@@ -291,7 +291,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         cdef ZZ_pX_c shifter = (<ntl_ZZ_pX>self._ntl_rep()).x
 
         #cdef ntl_ZZ_pContext_class cup = self.prime_pow.get_context(self.prime_pow.prec_cap + (<PowComputer_ZZ_pX_FM_Eis>self.prime_pow).low_length)
-        #cdef ntl_ZZ_pX printer = ntl_ZZ_pX([],cup)
+        #cdef ntl_ZZ_pX printer = ntl_ZZ_pX([], cup)
         #printer.x = ((<PowComputer_ZZ_pX_FM_Eis>self.prime_pow).low_shifter[0]).val()
         #print(printer)
 
@@ -429,7 +429,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
                 norm_of_uniformizer = (-1)**self.parent().degree() * self.parent().defining_polynomial()[0]
             return self.parent().ground_ring()(self.unit_part().matrix_mod_pn().det()) * norm_of_uniformizer**self.valuation()
 
-    def trace(self, base = None):
+    def trace(self, base=None):
         r"""
         Return the absolute or relative trace of this element.
 

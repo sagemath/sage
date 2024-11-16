@@ -439,7 +439,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         if isinstance(P, ShuffleAlgebra):
             if P is self:
                 return x
-            if not (P is self.base_ring()):
+            if P is not self.base_ring():
                 return self.element_class(self, x.monomial_coefficients())
         if isinstance(P, DualPBWBasis):
             return self(P.expansion(x))

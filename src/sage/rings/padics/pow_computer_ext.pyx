@@ -201,7 +201,7 @@ cdef int ZZ_pX_Eis_init(PowComputer_ZZ_pX prime_pow, ntl_ZZ_pX shift_seed) excep
     #ZZ_div(a, ZZ_p_rep(ZZ_pX_ConstTerm(modup)), prime_pow.small_powers[1])
     #ZZ_InvMod(a, a, prime_pow.pow_ZZ_tmp(prime_pow.prec_cap + low_length)[0])
     #ZZ_negate(a, a)
-    ##cdef ntl_ZZ_pX printer = ntl_ZZ_pX([],prime_pow.get_context(prime_pow.prec_cap))
+    ##cdef ntl_ZZ_pX printer = ntl_ZZ_pX([], prime_pow.get_context(prime_pow.prec_cap))
     ##printer.x = modup
     # Note that we're losing one digit of precision here.
     # This is correct because right shifting does not preserve precision.
@@ -728,7 +728,7 @@ cdef class PowComputer_ext(PowComputer_class):
         return self.ram_prec_cap
 
 cdef class PowComputer_ZZ_pX(PowComputer_ext):
-    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed=None):
         """
         Initialization.
 
@@ -1221,7 +1221,7 @@ cdef class PowComputer_ZZ_pX_FM(PowComputer_ZZ_pX):
     and unramified extensions of `\ZZ_p`.
     """
 
-    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed=None):
         """
         Caches a context and modulus for ``prime^prec_cap``.
 
@@ -1316,7 +1316,7 @@ cdef class PowComputer_ZZ_pX_FM_Eis(PowComputer_ZZ_pX_FM):
     This class computes and stores ``low_shifter`` and ``high_shifter``, which aid in right shifting elements.
     """
 
-    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed=None):
         """
         Call ``Eis_init``, which initializes ``high_shifter`` and
         ``low_shifter``.
@@ -1545,7 +1545,7 @@ cdef class PowComputer_ZZ_pX_small(PowComputer_ZZ_pX):
     extensions of the base `p`-adic fields.
     """
 
-    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed=None):
         """
         Caches contexts and moduli densely between 1 and cache_limit.
 
@@ -1745,7 +1745,7 @@ cdef class PowComputer_ZZ_pX_small_Eis(PowComputer_ZZ_pX_small):
     This class computes and stores ``low_shifter`` and ``high_shifter``, which aid in right shifting elements.
     These are only stored at maximal precision: in order to get lower precision versions just reduce mod p^n.
     """
-    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed=None):
         """
         Initialization.
 
@@ -1907,7 +1907,7 @@ cdef class PowComputer_ZZ_pX_big(PowComputer_ZZ_pX):
     a dictionary of contexts and moduli of
     """
 
-    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed=None):
         """
         Caches contexts and moduli densely between 1 and cache_limit.  Caches a context and modulus for prec_cap.
         Also creates the dictionaries.
@@ -2178,7 +2178,7 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
     These are only stored at maximal precision: in order to get lower precision
     versions just reduce mod p^n.
     """
-    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed = None):
+    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly, shift_seed=None):
         """
         Initialization.
 
@@ -2335,7 +2335,7 @@ cdef class PowComputer_ZZ_pX_big_Eis(PowComputer_ZZ_pX_big):
         return ZZ_pX_eis_shift_p(self, x, a, n, finalprec)
 
 
-def PowComputer_ext_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, prec_type = "small", ext_type = "u", shift_seed = None):
+def PowComputer_ext_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, prec_type="small", ext_type="u", shift_seed=None):
     r"""
     Return a ``PowComputer`` that caches the values `1, p, p^2, \ldots, p^C`,
     where `C` is ``cache_limit``.

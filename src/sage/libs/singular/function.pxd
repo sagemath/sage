@@ -52,7 +52,7 @@ cdef class Converter(SageObject):
     cdef leftv * append_module(self, m) except NULL
     cdef to_sage_integer_matrix(self, intvec *mat)
     cdef object to_sage_module_element_sequence_destructive(self, ideal *i)
-    cdef to_sage_vector_destructive(self, poly *p, free_module = ?)
+    cdef to_sage_vector_destructive(self, poly *p, free_module=?)
     cdef to_sage_matrix(self, matrix* mat)
     cdef to_python(self, leftv* to_convert)
 

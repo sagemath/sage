@@ -533,7 +533,7 @@ cdef class FMElement(pAdicTemplateElement):
         """
         return ciszero(self.value, self.prime_pow)
 
-    def is_zero(self, absprec = None):
+    def is_zero(self, absprec=None):
         r"""
         Return whether ``self`` is zero modulo `\pi^{\mbox{absprec}}`.
 

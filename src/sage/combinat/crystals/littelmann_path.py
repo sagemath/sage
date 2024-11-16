@@ -1455,7 +1455,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
             alpha = WLR.simple_roots()
             return -WLR.sum(alpha[i] for i in self.to_highest_weight()[1])
 
-        def phi(self,i):
+        def phi(self, i):
             r"""
             Return `\varphi_i` of ``self``.
 

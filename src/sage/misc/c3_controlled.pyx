@@ -953,7 +953,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
                         last_list_non_empty = False
                 #check_state()
     suggestion.update(holder.values())
-    cdef list suggestion_list = sorted(suggestion, key = key, reverse=True)
+    cdef list suggestion_list = sorted(suggestion, key=key, reverse=True)
     #assert C3_merge(lists[:-1]+[suggestion_list]) == out
     return (out, suggestion_list)
 

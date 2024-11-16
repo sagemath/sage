@@ -442,7 +442,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
     return vector(RDF, min)
 
 
-def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args):
+def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **args):
     r"""
     Minimize a function with constraints.
 

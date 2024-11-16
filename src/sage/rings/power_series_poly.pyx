@@ -874,7 +874,7 @@ cdef class PowerSeries_poly(PowerSeries):
         return PowerSeries_poly(self._parent, self.__f._derivative(),
                                 self.prec()-1, check=False)
 
-    def integral(self,var=None):
+    def integral(self, var=None):
         """
         Return the integral of this power series.
 
