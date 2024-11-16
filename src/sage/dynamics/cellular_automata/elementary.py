@@ -25,6 +25,7 @@ from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.matrix_plot", "matrix_plot")
 from sage.misc.constant_function import ConstantFunction
 
+
 class ElementaryCellularAutomata(SageObject):
     r"""
     Elementary cellular automata.

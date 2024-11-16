@@ -541,7 +541,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             return all(self.is_local_integral_model(x) for x in P)
         return all(x.valuation(P) >= 0 for x in self.ainvs())
 
-    def local_integral_model(self,*P):
+    def local_integral_model(self, *P):
         r"""
         Return a model of ``self`` which is integral at the prime ideal `P`.
 
@@ -1902,7 +1902,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         raise ValueError("%s has no global minimal model!  For a semi-global minimal model use semi_global=True" % self)
 
-    def reduction(self,place):
+    def reduction(self, place):
         r"""
         Return the reduction of the elliptic curve at a place of good reduction.
 

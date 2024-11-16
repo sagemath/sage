@@ -133,7 +133,7 @@ def _coords_in_C_p(I, C, p):
     raise ValueError("The {} power of {} is not principal".format(p.ordinal_str(),I))
 
 
-def _coords_in_C_mod_p(I,C,p):
+def _coords_in_C_mod_p(I, C, p):
     r"""
     Return coordinates of the ideal ``I`` with respect to a basis of
     the `p`-cotorsion of the ideal class group ``C``.

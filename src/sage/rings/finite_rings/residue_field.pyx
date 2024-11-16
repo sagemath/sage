@@ -306,7 +306,7 @@ class ResidueFieldFactory(UniqueFactory):
         sage: K.residue_field(K.ideal(3))                                               # needs sage.rings.number_field
         Residue field of Fractional ideal (3)
     """
-    def create_key_and_extra_args(self, p, names = None, check=True, impl=None, **kwds):
+    def create_key_and_extra_args(self, p, names=None, check=True, impl=None, **kwds):
         """
         Return a tuple containing the key (uniquely defining data)
         and any extra arguments.

@@ -4178,7 +4178,7 @@ def multinomial_coefficients(m, n):
     return r
 
 
-def kronecker_symbol(x,y):
+def kronecker_symbol(x, y):
     """
     The Kronecker symbol `(x|y)`.
 

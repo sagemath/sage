@@ -823,8 +823,8 @@ cdef class lazy_list_generic():
             stop = self.start + stop * self.step
         if stop > self.stop:
             stop = self.stop
-        if stop != PY_SSIZE_T_MAX and stop%step != start%step:
-            stop = stop - (stop-start)%step + step
+        if stop != PY_SSIZE_T_MAX and stop % step != start % step:
+            stop = stop - (stop - start) % step + step
 
         if stop <= start:
             return empty_lazy_list

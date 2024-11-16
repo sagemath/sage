@@ -703,7 +703,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
         new_system = self._system.conjugate(M, adjugate=adjugate)
         system_domain = new_system.domain()
         if new_ideal is None:
-            if not system_domain.base_ring() is QQ:
+            if system_domain.base_ring() is not QQ:
                 new_ideal = system_domain.base_ring().prime_above(self.domain().ideal())
             else:
                 new_ideal = self.domain().ideal()
@@ -959,6 +959,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
                 valuation = dem_splitting_field(Taylor_expansion[i]).valuation(prime)
                 new_radius = max(new_radius, p**(-valuation/prime.absolute_ramification_index())*r**i)
         return self.domain()(new_center, new_radius)
+
 
 class DynamicalSystem_Berkovich_affine(DynamicalSystem_Berkovich):
     r"""
