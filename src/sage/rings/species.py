@@ -1587,6 +1587,8 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             r"""
             Iterate over the structures on the given set of labels.
 
+            EXAMPLES::
+
                 sage: from sage.rings.species import MolecularSpecies
                 sage: M = MolecularSpecies("X,Y")
                 sage: a = M(PermutationGroup([(3,4),(5,)]), {0:[1,3,4], 1:[2,5]})
