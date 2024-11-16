@@ -1345,7 +1345,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         sage: def random_perm(x):
         ....:     shuffle(x)
         ....:     return x
-        sage: def test_stab_chain_fns_6(m,n,k, gap, contains):
+        sage: def test_stab_chain_fns_6(m, n, k, gap, contains):
         ....:     perms = []
         ....:     for i in range(k):
         ....:         perm = sum([random_perm(list(range(i*(n//m),min(n,(i+1)*(n//m))))) for i in range(m)], [])

@@ -464,7 +464,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         q2 = self._q2
         T = self
 
-        def Ti(x,i,c):
+        def Ti(x, i, c):
             return T[i](x)+c*x
 
         try:

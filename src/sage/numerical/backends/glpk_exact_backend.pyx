@@ -28,7 +28,7 @@ cdef class GLPKExactBackend(GLPKBackend):
 
     There is no support for integer variables.
     """
-    def __cinit__(self, maximization = True):
+    def __cinit__(self, maximization=True):
         """
         Constructor.
 
