@@ -7,11 +7,11 @@ import subprocess
 from pathlib import Path
 
 import toml as tomllib
-
 from grayskull.config import Configuration
 from grayskull.strategy.py_base import merge_setup_toml_metadata
 from grayskull.strategy.py_toml import get_all_toml_info
 from grayskull.strategy.pypi import extract_requirements, normalize_requirements_list
+from packaging.requirements import Requirement
 
 # Get source directory from command line arguments
 parser = argparse.ArgumentParser()
@@ -25,7 +25,7 @@ platforms = {
     "linux-aarch64": "linux-aarch64",
     "osx-64": "macos-x86_64",
     "osx-arm64": "macos",
-    # "win-64": "win",
+    "win-64": "win",
 }
 pythons = ["3.9", "3.10", "3.11"]
 tags = ["", "-dev"]
@@ -44,16 +44,28 @@ dependencies:
     print(f"Conda environment file written to {env_file}")
 
 
+def filter_requirements(dependencies: set[str], python: str) -> set[str]:
+    def filter_dep(dep: str):
+        req = Requirement(dep)
+        env = {"python_version": python}
+        if not req.marker or req.marker.evaluate(env):
+            # Serialize the requirement without the marker
+            req.marker = None
+            return str(req)
+        return None
+
+    return set(filter(None, map(filter_dep, dependencies)))
+
+
 def update_conda(source_dir: Path) -> None:
     pyproject_toml = source_dir / "pyproject.toml"
     if not pyproject_toml.exists():
         print(f"pyproject.toml not found in {pyproject_toml}")
         return
 
-    dependencies = get_dependencies(pyproject_toml)
-
     for platform_key, platform_value in platforms.items():
         for python in pythons:
+            dependencies = get_dependencies(pyproject_toml, python)
             for tag in tags:
                 # Pin Python version
                 pinned_dependencies = {
@@ -102,7 +114,7 @@ def update_conda(source_dir: Path) -> None:
                     f.write(f"name: sage{tag}\n{content}")
 
 
-def get_dependencies(pyproject_toml: Path) -> list[str]:
+def get_dependencies(pyproject_toml: Path, python: str) -> list[str]:
     grayskull_config = Configuration("sagemath")
     pyproject_metadata = merge_setup_toml_metadata(
         {}, get_all_toml_info(pyproject_toml)
@@ -139,6 +151,7 @@ def get_dependencies(pyproject_toml: Path) -> list[str]:
     python_requirements = {
         req.replace("lrcalc", "python-lrcalc") for req in python_requirements
     }
+    python_requirements = filter_requirements(python_requirements, python)
     all_requirements += normalize_requirements_list(
         python_requirements, grayskull_config
     )
