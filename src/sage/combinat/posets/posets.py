@@ -1458,10 +1458,9 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: P = Poset(([1,2], [[1,2]]), cover_relations = True)
+            sage: P = Poset(([1,2], [[1,2]]), cover_relations=True)
             sage: tikz = P.tikz()                   # optional - dot2tex graphviz        # long time
             sage: _ = tikz.pdf(view=False)          # optional - dot2tex graphviz latex  # long time
-
         """
         G = self.hasse_diagram()
         return G.tikz(format=format, edge_labels=edge_labels,
