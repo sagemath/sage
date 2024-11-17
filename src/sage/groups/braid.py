@@ -2104,8 +2104,7 @@ class Braid(FiniteTypeArtinGroupElement):
         gens_str += [f'{s}m_{i}' for i in minus for s in 'bca']
         alg_ZZ = FreeAlgebra(ZZ, m3, gens_str)
         gen_indices = {k: i for i, k in enumerate(plus + minus)}
-        gens = [[bca for bca in alg_ZZ.gens()[k:k+3]]
-                for k in range(0, m3, 3)]
+        gens = [alg_ZZ.gens()[k:k + 3] for k in range(0, m3, 3)]
 
         M = identity_matrix(alg_ZZ, n)
         for k, i in enumerate(tz):
