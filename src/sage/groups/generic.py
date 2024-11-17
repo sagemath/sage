@@ -1502,12 +1502,18 @@ def has_order(P, n, operation='+'):
         sage: has_order(x, -8)
         False
 
+    Check for :issue:`38708`::
+
+        sage: has_order(Mod(2,3), int(2), operation='*')
+        True
+
     .. NOTE::
 
         In some cases, order *testing* can be much faster than
         *computing* the order using :func:`order_from_multiple`.
     """
-    if isinstance(n, sage.rings.integer.Integer):
+    if not isinstance(n, sage.structure.factorization_integer.IntegerFactorization):
+        n = integer_ring.ZZ(n)
         if n <= 0:
             return False
         n = n.factor()
