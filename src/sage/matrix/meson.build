@@ -142,7 +142,13 @@ extension_data_cpp = {
 
 foreach name, pyx : extension_data_cpp
   override_options = ['cython_language=cpp']
-  if name == 'matrix_integer_sparse' or name == 'matrix_modn_sparse'
+  if name in [
+    'matrix_integer_dense',
+    'matrix_integer_sparse',
+    'matrix_modn_dense_float',
+    'matrix_modn_dense_double',
+    'matrix_modn_sparse',
+  ]
     # Temporary workaround for https://github.com/linbox-team/linbox/issues/306
     override_options += ['cpp_std=c++11']
   endif
