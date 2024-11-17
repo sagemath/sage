@@ -983,7 +983,7 @@ cdef class BooleanFunction(SageObject):
             self._sum_of_square_indicator = sum(a**2 for a in D)
         return self._sum_of_square_indicator
 
-    def annihilator(self,d, dim = False):
+    def annihilator(self, d, dim=False):
         r"""
         Return (if it exists) an annihilator of the boolean function of
         degree at most `d`, that is a Boolean polynomial `g` such that
@@ -1054,7 +1054,7 @@ cdef class BooleanFunction(SageObject):
         else:
             return res
 
-    def algebraic_immunity(self, annihilator = False):
+    def algebraic_immunity(self, annihilator=False):
         """
         Return the algebraic immunity of the Boolean function.
 

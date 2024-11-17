@@ -46,6 +46,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
 
+
 class DrinfeldModule(Parent, UniqueRepresentation):
     r"""
     This class implements Drinfeld `\mathbb{F}_q[T]`-modules.
@@ -1854,7 +1855,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def velu(self, isog):
         r"""
-        Return a new Drinfeld module such that input is an
+        Return a new Drinfeld module such that ``isog`` defines an
         isogeny to this module with domain ``self``; if no such isogeny
         exists, raise an exception.
 
@@ -2017,11 +2018,19 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             Traceback (most recent call last):
             ...
             ValueError: Ore polynomial does not define a morphism
+
+        Check that x = 0 (without specified codomain) gives the zero endomorphism::
+
+            sage: phi.hom(K.zero())
+            Endomorphism of Drinfeld module defined by ...
+              Defn: 0
         """
         # When `x` is in the function ring (or something that coerces to it):
         if self.function_ring().has_coerce_map_from(x.parent()):
             return self.Hom(self)(x)
         if codomain is None:
+            if x.is_zero():
+                return self.Hom(self)(0)
             try:
                 codomain = self.velu(x)
             except TypeError:

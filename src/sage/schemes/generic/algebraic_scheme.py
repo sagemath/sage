@@ -934,9 +934,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         if isinstance(polynomials, Ideal_generic):
             I = polynomials
             polynomials = I.gens()
-            if I.ring() is R: # Otherwise we will recompute I later after
+            if I.ring() is R:  # Otherwise we will recompute I later after
                 self.__I = I  # converting generators to the correct ring
-        if isinstance(polynomials, tuple) or isinstance(polynomials, PolynomialSequence_generic) or is_iterator(polynomials):
+        if isinstance(polynomials, (tuple, PolynomialSequence_generic)) or is_iterator(polynomials):
             polynomials = list(polynomials)
         elif not isinstance(polynomials, list):
             # Looks like we got a single polynomial

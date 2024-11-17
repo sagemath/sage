@@ -68,9 +68,9 @@ void triangulations::add_neighbours(const simplices & s)
 {
   for (flips::const_iterator
          f=bistellar_flips.begin(); f!=bistellar_flips.end(); ++f) {
-    goodcircuit goody(s,*f);
+    goodcircuit goody(s, *f);
     if (goody.is_good()) {
-      goody.do_flip(s,*f);
+      goody.do_flip(s, *f);
       compact_simplices new_triang=goody.get_neighbor();
       add_triang_if_new(new_triang);
     }

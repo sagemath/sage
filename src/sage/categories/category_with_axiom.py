@@ -1695,7 +1695,7 @@ all_axioms += ("Flying", "Blue",
               )
 
 
-def uncamelcase(s,separator=" "):
+def uncamelcase(s, separator=" "):
     """
     EXAMPLES::
 

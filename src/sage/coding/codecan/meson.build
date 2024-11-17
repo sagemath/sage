@@ -17,7 +17,7 @@ foreach name, pyx : extension_data
       inc_partn_ref2,
       inc_rings,
     ],
-    dependencies: [py_dep, cysignals, gmp],
+    dependencies: [py_dep, cysignals, gap, gmp],
   )
 endforeach
 

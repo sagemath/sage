@@ -2879,8 +2879,10 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
              over Finite Field of size 5
         """
         from sage.rings.ring import CommutativeRing
+        from sage.categories.commutative_rings import CommutativeRings
         from sage.categories.homset import Hom
-        if not isinstance(domain, CommutativeRing):
+        if not (domain in CommutativeRings() or
+                isinstance(domain, CommutativeRing)):  # TODO: remove this line
             raise TypeError("The base ring must be a commutative ring")
         self._p = domain.characteristic()
         if not self._p.is_prime():

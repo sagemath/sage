@@ -253,6 +253,8 @@ CartesianProductGrowthGroups = CartesianProductFactory('CartesianProductGrowthGr
 
 from sage.combinat.posets.cartesian_product import CartesianProductPoset
 from .growth_group import GenericGrowthGroup
+
+
 class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
     r"""
     A Cartesian product of growth groups.

@@ -1271,7 +1271,7 @@ cdef class CoercionModel:
 
         if not isinstance(y, Element):
             op_name = op.__name__
-            mul_method = getattr(y, '__r%s__'%op_name, None)
+            mul_method = getattr(y, '__r%s__' % op_name, None)
             if mul_method is not None:
                 res = mul_method(x)
                 if res is not None and res is not NotImplemented:
@@ -1425,7 +1425,7 @@ cdef class CoercionModel:
             except Exception:
                 self._record_exception()
 
-        raise TypeError("no common canonical parent for objects with parents: '%s' and '%s'"%(xp, yp))
+        raise TypeError("no common canonical parent for objects with parents: '%s' and '%s'" % (xp, yp))
 
     cpdef coercion_maps(self, R, S):
         r"""

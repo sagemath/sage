@@ -1301,10 +1301,26 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             (1,)
             sage: list(G)
             [1]
+
+        We can also iterate over infinite groups::
+
+            sage: A = AbelianGroup([3,0,5,0])
+            sage: for a in A:
+            ....:   if a^2 == A([1, 2, 3, 4]):
+            ....:       print(a, a^2)
+            ....:       break
+            f0^2*f1*f2^4*f3^2 f0*f1^2*f2^3*f3^4
         """
         invs = self.gens_orders()
-        for t in mrange(invs):
-            yield self(t)
+        if 0 not in invs:
+            # The group is finite
+            yield from map(self, mrange(invs))
+        else:
+            # A similar approach works for infinite groups.
+            # (This would also work for finite groups, but is more complicated.)
+            from sage.misc.mrange import cantor_product
+            yield from map(self, cantor_product(*[range(n) if n
+                                                  else ZZ for n in invs]))
 
     def number_of_subgroups(self, order=None):
         r"""

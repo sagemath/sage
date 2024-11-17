@@ -1608,7 +1608,7 @@ class AffineConnection(SageObject):
 
             # definition of the parallel function
             @parallel(p_iter='multiprocessing',ncpus=nproc)
-            def make_CovDerivative(ind_part,tc,gam,frame,n_con,rank,manif):
+            def make_CovDerivative(ind_part, tc, gam, frame, n_con, rank, manif):
                 partial = []
                 for ind in ind_part:
                     p = ind[-1]  # derivation index

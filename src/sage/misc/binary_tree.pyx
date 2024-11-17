@@ -491,7 +491,7 @@ class Test:
     def random(self):
         self.binary_tree()
 
-    def binary_tree(self, values = 100, cycles = 100000):
+    def binary_tree(self, values=100, cycles=100000):
         """
         Perform a sequence of random operations, given random inputs
         to stress test the binary tree structure.
