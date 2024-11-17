@@ -94,7 +94,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         else:
             col = 0
             exp = r
-        cdef SkewPolynomial_finite_order_dense powx = <SkewPolynomial_finite_order_dense>self._new_c([zero,one], parent)
+        cdef SkewPolynomial_finite_order_dense powx = <SkewPolynomial_finite_order_dense>self._new_c([zero, one], parent)
         cdef SkewPolynomial_finite_order_dense v
         if (exp % 2 == 1):
             v = <SkewPolynomial_finite_order_dense>self._new_c([zero,one], parent)

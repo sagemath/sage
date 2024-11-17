@@ -97,7 +97,7 @@ class GaussValuationFactory(UniqueFactory):
         if v is None:
             v = domain.base_ring().valuation()
 
-        if not v.domain() is domain.base_ring():
+        if v.domain() is not domain.base_ring():
             raise ValueError("the domain of v must be the base ring of domain but %r is not defined over %r but over %r" % (v, domain.base_ring(), v.domain()))
         if not v.is_discrete_valuation():
             raise ValueError("v must be a discrete valuation but %r is not" % (v,))

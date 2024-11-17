@@ -51,7 +51,7 @@ def coeff_pi(J, I):
     return prod(prod(K.partial_sums()) for K in J.refinement_splitting(I))
 
 
-def coeff_lp(J,I):
+def coeff_lp(J, I):
     r"""
     Return the coefficient `lp_{J,I}` as defined in [NCSF]_.
 
@@ -73,7 +73,7 @@ def coeff_lp(J,I):
     return prod(K[-1] for K in J.refinement_splitting(I))
 
 
-def coeff_ell(J,I):
+def coeff_ell(J, I):
     r"""
     Return the coefficient `\ell_{J,I}` as defined in [NCSF]_.
 
