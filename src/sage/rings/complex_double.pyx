@@ -2601,7 +2601,7 @@ cdef class ComplexToCDF(Morphism):
 cdef ComplexDoubleField_class _CDF
 _CDF = ComplexDoubleField_class()
 CDF = _CDF  # external interface
-cdef ComplexDoubleElement I = ComplexDoubleElement(0,1)
+cdef ComplexDoubleElement I = ComplexDoubleElement(0, 1)
 
 
 def ComplexDoubleField():
@@ -2619,7 +2619,7 @@ def ComplexDoubleField():
 
 
 from sage.misc.parser import Parser
-cdef cdf_parser = Parser(float, float,  {"I" : _CDF.gen(), "i" : _CDF.gen()})
+cdef cdf_parser = Parser(float, float,  {"I": _CDF.gen(), "i": _CDF.gen()})
 
 cdef inline double complex extract_double_complex(ComplexDoubleElement x) noexcept:
     """

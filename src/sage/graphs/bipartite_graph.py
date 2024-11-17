@@ -1753,7 +1753,7 @@ class BipartiteGraph(Graph):
         """
         # open the file
         try:
-            fi = open(fname, "r")
+            fi = open(fname)
         except OSError:
             print("unable to open file <<" + fname + ">>")
             return None
@@ -2633,11 +2633,26 @@ class BipartiteGraph(Graph):
             sage: C.right
             {4, 5, 6}
 
+        TESTS:
+
+        Check that :issue:`38832` is fixed::
+
+            sage: B = BipartiteGraph(matrix([[1, 1], [1, 1]]))
+            sage: B.canonical_label()
+            Bipartite graph on 4 vertices
+            sage: B.canonical_label(certificate=True)[0]
+            Bipartite graph on 4 vertices
+            sage: B.canonical_label(edge_labels=True)
+            Bipartite graph on 4 vertices
+            sage: B.allow_multiple_edges(True)
+            sage: B.add_edges(B.edges())
+            sage: B.canonical_label()
+            Bipartite multi-graph on 4 vertices
+
         .. SEEALSO::
 
             :meth:`~sage.graphs.generic_graph.GenericGraph.canonical_label()`
         """
-
         if certificate:
             C, cert = GenericGraph.canonical_label(self, partition=partition,
                                                    certificate=certificate,
@@ -2669,6 +2684,8 @@ class BipartiteGraph(Graph):
                 cert = {v: c[G_to[relabeling[v]]] for v in self}
 
             else:
+                if partition is None:
+                    partition = self.bipartition()
                 G_vertices = list(chain(*partition))
                 G_to = {u: i for i, u in enumerate(G_vertices)}
                 H = Graph(len(G_vertices))

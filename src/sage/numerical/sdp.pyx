@@ -459,7 +459,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         return self._backend.base_ring()
 
-    def set_problem_name(self,name):
+    def set_problem_name(self, name):
         r"""
         Set the name of the ``SemidefiniteProgram``.
 
@@ -803,8 +803,8 @@ cdef class SemidefiniteProgram(SageObject):
         if obj is not None:
             f = obj.dict()
         else:
-            f = {-1 : 0}
-        d = f.pop(-1,self._backend.zero())
+            f = {-1: 0}
+        d = f.pop(-1, self._backend.zero())
 
         for i in range(self._backend.ncols()):
             values.append(f.get(i,self._backend.zero()))
@@ -1049,7 +1049,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         return self._backend.slack(i, sparse=sparse)
 
-    def solver_parameter(self, name, value = None):
+    def solver_parameter(self, name, value=None):
         """
         Return or define a solver parameter.
 
@@ -1256,7 +1256,7 @@ cdef class SDPVariable(Element):
         zero = self._p._backend.zero()
         name = self._name + "[" + str(i) + "]" if self._name else None
         j = self._p._backend.add_variable( obj=zero, name=name)
-        v = self._p.linear_function({j : 1})
+        v = self._p.linear_function({j: 1})
         self._p._variables[v] = j
         self._dict[i] = v
         return v

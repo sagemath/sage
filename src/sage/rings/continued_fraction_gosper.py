@@ -36,7 +36,7 @@ from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 
 
-class gosper_iterator():
+class gosper_iterator:
     r"""
     Iterable for the partial quotients of `(a*x+b)/(c*x+d)`, where `a, b, c, d`
     are integers, and `x` is a continued fraction.

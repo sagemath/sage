@@ -619,7 +619,7 @@ cdef class SetMorphism(Morphism):
 
             sage: from sage.categories.morphism import SetMorphism
             sage: R.<x> = QQ[]
-            sage: def foo(x,*args,**kwds):
+            sage: def foo(x, *args, **kwds):
             ....:     print('foo called with {} {}'.format(args, kwds))
             ....:     return x
             sage: f = SetMorphism(Hom(R,R,Rings()), foo)
@@ -798,7 +798,7 @@ cdef class SetIsomorphism(SetMorphism):
             raise RuntimeError('inverse morphism has not been set')
         return self._inverse
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Extend the dictionary with extra slots for this class.
 
@@ -823,7 +823,7 @@ cdef class SetIsomorphism(SetMorphism):
         slots['_inverse'] = self._inverse
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Update the slots of ``self`` from the data in the dictionary.
 

@@ -377,6 +377,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     elif K.degree() > 1:
         return PolynomialSequence_gf2e(parts, ring, immutable=immutable, cr=cr, cr_str=cr_str)
 
+
 class PolynomialSequence_generic(Sequence_generic):
     def __init__(self, parts, ring, immutable=False, cr=False, cr_str=None):
         """
@@ -856,7 +857,7 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: F = F.subs(s); F                                                      # needs sage.rings.polynomial.pbori
             Polynomial Sequence with 40 Polynomials in 16 Variables
         """
-        return PolynomialSequence(self._ring, [tuple([f.subs(*args,**kwargs) for f in r]) for r in self._parts])
+        return PolynomialSequence(self._ring, [tuple([f.subs(*args, **kwargs) for f in r]) for r in self._parts])
 
     def _singular_(self):
         """
@@ -1257,6 +1258,7 @@ class PolynomialSequence_generic(Sequence_generic):
         """
         return self.ideal().basis_is_groebner()
 
+
 class PolynomialSequence_gf2(PolynomialSequence_generic):
     r"""
     Polynomial Sequences over `\GF{2}`.
@@ -1484,7 +1486,8 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             g.reduction_strategy.opt_red_tail = True
             return g
 
-    def solve(self, algorithm='polybori', n=1,  eliminate_linear_variables=True, verbose=False, **kwds):
+    def solve(self, algorithm='polybori', n=1,
+              eliminate_linear_variables=True, verbose=False, **kwds):
         r"""
         Find solutions of this boolean polynomial system.
 

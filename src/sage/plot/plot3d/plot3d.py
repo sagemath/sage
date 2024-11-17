@@ -19,7 +19,7 @@ EXAMPLES::
 
 ::
 
-    sage: def f(x,y):
+    sage: def f(x, y):
     ....:     return math.sin(y^2 + x^2)/math.sqrt(x^2 + y^2 + 0.0001)
     sage: P = plot3d(f, (-3, 3),(-3, 3), adaptive=True,
     ....:            color=rainbow(60, 'rgbtuple'), max_bend=.1, max_depth=15)
@@ -27,13 +27,13 @@ EXAMPLES::
 
 .. PLOT::
 
-    def f(x,y): return math.sin(y**2 + x**2)/math.sqrt(x**2 + y**2 + 0.0001)
+    def f(x, y): return math.sin(y**2 + x**2)/math.sqrt(x**2 + y**2 + 0.0001)
     P = plot3d(f, (-3, 3), (-3, 3), adaptive=True, color=rainbow(60, 'rgbtuple'), max_bend=.1, max_depth=15)
     sphinx_plot(P)
 
 ::
 
-    sage: def f(x,y):
+    sage: def f(x, y):
     ....:     return math.exp(x/5)*math.sin(y)
     ....:
     sage: P = plot3d(f, (-5, 5), (-5, 5), adaptive=True, color=['red', 'yellow'])
@@ -43,7 +43,7 @@ EXAMPLES::
 
 .. PLOT::
 
-    def f(x,y): return math.exp(x/5)*math.sin(y)
+    def f(x, y): return math.exp(x/5)*math.sin(y)
     P = plot3d(f, (-5, 5), (-5, 5), adaptive=True, color=['red', 'yellow'])
     from sage.plot.plot3d.plot3d import axes
     S = P + axes(6, color='black')
@@ -82,7 +82,7 @@ We plot "cape man"::
     sage: S += sphere((.45, .1, .15), size=.1, color='white')
     sage: S += sphere((.51, .1,.17), size=.05, color='black')
     sage: S += sphere((.5, 0, -.2), size=.1, color='yellow')
-    sage: def f(x,y): return math.exp(x/5)*math.cos(y)
+    sage: def f(x, y): return math.exp(x/5)*math.cos(y)
     sage: P = plot3d(f, (-5, 5), (-5, 5), adaptive=True,
     ....:            color=['red','yellow'], max_depth=10)
     sage: cape_man = P.scale(.2) + S.translate(1, 0, 0)
@@ -96,7 +96,7 @@ We plot "cape man"::
     S += sphere((.45, -.1, .15), size=.1, color='white') + sphere((.51,-.1,.17), size=.05, color='black')
     S += sphere((.45, .1, .15), size=.1, color='white') + sphere((.51, .1,.17), size=.05, color='black')
     S += sphere((.5, 0, -.2), size=.1, color='yellow')
-    def f(x,y): return math.exp(x/5)*math.cos(y)
+    def f(x, y): return math.exp(x/5)*math.cos(y)
     P = plot3d(f, (-5, 5), (-5, 5), adaptive=True, color=['red','yellow'], max_depth=10)
     cape_man = P.scale(.2) + S.translate(1, 0, 0)
     cape_man.aspect_ratio([1, 1, 1])
@@ -272,7 +272,7 @@ class _Coordinates:
             FullArgSpec(args=['a', 'b'], varargs=None, varkw=None, defaults=None,
                         kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-            sage: def g(a,b): return 2*a+b
+            sage: def g(a, b): return 2*a+b
             sage: t1,t2,t3=T.to_cartesian(g)
             sage: sage_getargspec(t1)
             FullArgSpec(args=['a', 'b'], varargs=None, varkw=None, defaults=None,
@@ -319,7 +319,9 @@ class _Coordinates:
         from sage.structure.element import Expression
         from sage.rings.real_mpfr import RealNumber
         from sage.rings.integer import Integer
-        if params is not None and (isinstance(func, Expression) or isinstance(func, RealNumber) or isinstance(func, Integer)):
+        if params is not None and isinstance(func, (Expression,
+                                                    RealNumber,
+                                                    Integer)):
             return self.transform(**{
                 self.dep_var: func,
                 self.indep_vars[0]: params[0],
@@ -387,12 +389,12 @@ def _find_arguments_for_callable(func):
         sage: from sage.plot.plot3d.plot3d import _find_arguments_for_callable
         sage: _find_arguments_for_callable(lambda x,y: x+y)
         ['x', 'y']
-        sage: def f(a,b,c): return a+b+c
+        sage: def f(a, b, c): return a+b+c
         sage: _find_arguments_for_callable(f)
         ['a', 'b', 'c']
         sage: _find_arguments_for_callable(lambda x,y,z=2: x+y+z)
         ['x', 'y']
-        sage: def f(a,b,c,d=2,e=1): return a+b+c+d+e
+        sage: def f(a, b, c, d=2, e=1): return a+b+c+d+e
         sage: _find_arguments_for_callable(f)
         ['a', 'b', 'c']
         sage: g(w,r,t)=w+r+t
@@ -1168,8 +1170,7 @@ def plot3d_adaptive(f, x_range, y_range, color='automatic',
         x, y = var('x,y')
         sphinx_plot(plot3d_adaptive(sin(x*y), (x,-pi,pi), (y,-pi,pi), initial_depth=5))
     """
-    if initial_depth >= max_depth:
-        max_depth = initial_depth
+    max_depth = max(max_depth, initial_depth)
 
     from sage.plot.misc import setup_for_eval_on_grid
     g, ranges = setup_for_eval_on_grid(f, [x_range,y_range], plot_points=2)

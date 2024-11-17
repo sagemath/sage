@@ -1148,12 +1148,10 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: Tableau( [[1,2,3],[4,5]] ).descents()
             [(1, 0), (1, 1)]
         """
-        descents = []
-        for i in range(1, len(self)):
-            for j in range(len(self[i])):
-                if self[i][j] > self[i-1][j]:
-                    descents.append((i, j))
-        return descents
+        return [(i, j)
+                for i in range(1, len(self))
+                for j, selfij in enumerate(self[i])
+                if selfij > self[i-1][j]]
 
     def major_index(self):
         """
@@ -1214,15 +1212,15 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             for j, entry in enumerate(row):
                 # c is in position (i,j)
                 # find the d that satisfy condition 1
-                for k in range(j+1, len(row)):
-                    if entry > row[k]:
-                        inversions.append(((i, j), (i, k)))
+                inversions.extend(((i, j), (i, k))
+                                  for k in range(j + 1, len(row))
+                                  if entry > row[k])
                 # find the d that satisfy condition 2
                 if i == 0:
                     continue
-                for k in range(j):
-                    if entry > previous_row[k]:
-                        inversions.append(((i, j), (i-1, k)))
+                inversions.extend(((i, j), (i - 1, k))
+                                  for k in range(j)
+                                  if entry > previous_row[k])
             previous_row = row
         return inversions
 
@@ -2057,14 +2055,14 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         w = self.weight()
         s = self.cells()
 
-        for l in range(1, len(w)+1):
+        for l in range(1, len(w) + 1):
             new_s = [(i, j) for i, j in s if self[i][j] == l]
 
             # If there are no elements that meet the condition
-            if new_s == []:
+            if not new_s:
                 res.append(0)
                 continue
-            x = set((i-j) % (k+1) for i, j in new_s)
+            x = {(i - j) % (k + 1) for i, j in new_s}
             res.append(len(x))
 
         return res
@@ -2957,9 +2955,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         # tableau, by including the identity permutation on the set [1..k].
         k = self.size()
         gens = [list(range(1, k + 1))]
-        for row in self:
-            for j in range(len(row) - 1):
-                gens.append((row[j], row[j + 1]))
+        gens.extend((row[j], row[j + 1])
+                    for row in self for j in range(len(row) - 1))
         return PermutationGroup(gens)
 
     def column_stabilizer(self):
@@ -7677,9 +7674,9 @@ class StandardTableaux(SemistandardTableaux):
         """
         if isinstance(x, StandardTableau):
             return True
-        elif Tableaux.__contains__(self, x):
+        if Tableaux.__contains__(self, x):
             flatx = sorted(c for row in x for c in row)
-            return flatx == list(range(1, len(flatx)+1)) and (len(x) == 0 or
+            return all(i == fi for i, fi in enumerate(flatx, start=1)) and (len(x) == 0 or
                      (all(row[i] < row[i+1] for row in x for i in range(len(row)-1)) and
                       all(x[r][c] < x[r+1][c] for r in range(len(x)-1)
                           for c in range(len(x[r+1])))
@@ -8185,25 +8182,20 @@ class StandardTableaux_shape(StandardTableaux):
         t = [[None] * n for n in p]
 
         # Get the cells in the Young diagram
-        cells = []
-        for i in range(len(p)):
-            for j in range(p[i]):
-                cells.append((i, j))
+        cells = [(i, j) for i in range(len(p)) for j in range(p[i])]
 
         m = sum(p)
-        while m > 0:
+        while m:
             # Choose a cell at random
             cell = random.choice(cells)
 
             # Find a corner
             inner_corners = p.corners()
             while cell not in inner_corners:
-                hooks = []
-                for k in range(cell[1] + 1, p[cell[0]]):
-                    hooks.append((cell[0], k))
-                for k in range(cell[0] + 1, len(p)):
-                    if p[k] > cell[1]:
-                        hooks.append((k, cell[1]))
+                c0, c1 = cell
+                hooks = [(c0, k) for k in range(c1 + 1, p[c0])]
+                hooks.extend((k, c1)
+                             for k in range(c0 + 1, len(p)) if p[k] > c1)
                 cell = random.choice(hooks)
 
             # Assign m to cell

@@ -379,15 +379,15 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
                         continue
                     basis_pivots.add(p)
                     if self._sparse:
-                        added.append(self.element_class( self, build_assoc(cur_mat[i]) ))
+                        added.append(self.element_class(self, build_assoc(cur_mat[i])))
                     else:
-                        added.append(self.element_class( self, self._assoc(cur_mat[i].list()) ))
+                        added.append(self.element_class(self, self._assoc(cur_mat[i].list())))
                 cur_mat = cur_mat.submatrix(nrows=len(pivots))
         if self._sparse:
-            basis = [self.element_class( self, build_assoc(cur_mat[i]) )
+            basis = [self.element_class(self, build_assoc(cur_mat[i]))
                      for i in range(cur_mat.rank())]
         else:
-            basis = [self.element_class( self, self._assoc(cur_mat[i].list()) )
+            basis = [self.element_class(self, self._assoc(cur_mat[i].list()))
                      for i in range(cur_mat.rank())]
         return Family(basis)
 
@@ -1077,7 +1077,7 @@ class g2(ExceptionalMatrixLieAlgebra):
 
 
 #######################################
-## Compact real form
+# Compact real form
 
 class MatrixCompactRealForm(FinitelyGeneratedLieAlgebra):
     r"""
@@ -1558,7 +1558,7 @@ class MatrixCompactRealForm(FinitelyGeneratedLieAlgebra):
 
 
 #######################################
-## Chevalley Basis
+# Chevalley Basis
 
 class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
     r"""
@@ -2054,7 +2054,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         #   enough in the ambient space to correctly convert things to do
         #   the scalar product.
         alc = wt.parent().simple_coroots()
-        return R(wt.scalar( alc[aci[m]] ))
+        return R(wt.scalar(alc[aci[m]]))
 
     def affine(self, kac_moody=True):
         r"""
@@ -2359,7 +2359,6 @@ class LieAlgebraChevalleyBasis_simply_laced(LieAlgebraChevalleyBasis):
                                    for ii, ca in r._monomial_coefficients.items()
                                    for jj, cb in s._monomial_coefficients.items())
                     s_coeffs[r, s] = {r+s: coeff}
-                    ht = sum(r.coefficients()) + sum(s.coefficients())
                     s_coeffs[-r, -s] = {-r-s: -coeff}
                 if r - s in p_roots_set or s - r in p_roots_set:
                     coeff = R.prod((-1)**(ca*cb) if (ii, jj) in self._epsilon or ii == jj else 1

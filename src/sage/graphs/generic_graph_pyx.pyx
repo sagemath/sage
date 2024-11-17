@@ -390,7 +390,7 @@ cdef inline double sqrt_approx(double x, double y, double xx, double yy) noexcep
     Assuming that `x > y > 0`, it is a taylor expansion at `x^2`. To see how
     'bad' the approximation is::
 
-        sage: def dist(x,y):
+        sage: def dist(x, y):
         ....:    x = abs(x)
         ....:    y = abs(y)
         ....:    return max(x,y) + min(x,y)**2/(2*max(x,y))
@@ -1374,8 +1374,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     # static copy of the graph for more efficient operations
     cdef list int_to_vertex = list(G)
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
-                       sort_neighbors=True)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
     cdef short_digraph rev_sd
     cdef bint reverse = False
     if directed:

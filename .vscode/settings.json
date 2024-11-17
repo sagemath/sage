@@ -1,7 +1,5 @@
 {
-    // This settings file is not ignored by git. It should be kept in sync with
-    // the trac repo.
-    "python.defaultInterpreterPath": "./venv/bin/python3",
+    // This settings file is not ignored by git.
     "files.exclude": {
         "**/__pycache__": true,
         "src/**/*.cpp": true,
@@ -15,7 +13,8 @@
         "pkgs/sage-conf_pypi/sage_root": true,
         "pkgs/sage-docbuild/sage_docbuild": true,
         "pkgs/sage-setup/sage_setup": true,
-        "pkgs/sagemath-*/sage": true
+        "pkgs/sagemath-*/sage": true,
+        "pkgs/sagemath-*/sage_setup": true
     },
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [

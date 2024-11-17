@@ -511,10 +511,10 @@ class FiniteWord_class(Word_class):
         length = exp * self.length()
         if length in ZZ and length >= 0:
             return self._parent(fcn, length=length)
-        else:
-            raise ValueError("Power of the word is not defined on the exponent {}:"
-                    " the length of the word ({}) times the exponent ({}) must"
-                    " be a positive integer".format(exp, self.length(), exp))
+
+        raise ValueError("Power of the word is not defined on the exponent {}: "
+                         "the length of the word ({}) times the exponent ({}) must "
+                         "be a positive integer".format(exp, self.length(), exp))
 
     def length(self):
         r"""
@@ -1110,8 +1110,7 @@ class FiniteWord_class(Word_class):
         res = [l - p[-1]]*(l+1)
         for i in range(1, l+1):
             j = l - p[i - 1]
-            if res[j] > (i - p[i-1]):
-                res[j] = i - p[i-1]
+            res[j] = min(res[j], i - p[i-1])
         return res
 
     @cached_method
@@ -3455,8 +3454,7 @@ class FiniteWord_class(Word_class):
                     current_pos = k-j+l-1
                     pft[current_pos] = m
                     current_exp = QQ((current_pos+1, current_pos+1-m))
-                    if current_exp > best_exp:
-                        best_exp = current_exp
+                    best_exp = max(current_exp, best_exp)
                 for ((i, j), u) in st._transition_function[v].items():
                     if j is None:
                         j = self.length()
@@ -4155,8 +4153,7 @@ class FiniteWord_class(Word_class):
             {'1': 3, '2': 6, '3': 5}
         """
         d = {}
-        for i, letter in enumerate(self):
-            d[letter] = i
+        d.update((letter, i) for i, letter in enumerate(self))
         return d
 
     def _pos_in(self, other, p):
@@ -4193,7 +4190,7 @@ class FiniteWord_class(Word_class):
         """
         from sage.misc.superseded import deprecation
         deprecation(30187, 'f._pos_in(w, start) is deprecated.'
-                ' Use w.first_occurrence(f, start) instead.')
+                    ' Use w.first_occurrence(f, start) instead.')
         return other.first_occurrence(self, p)
 
     def first_pos_in(self, other):
@@ -4221,7 +4218,7 @@ class FiniteWord_class(Word_class):
         """
         from sage.misc.superseded import deprecation
         deprecation(30187, 'f.first_pos_in(w) is deprecated.'
-                ' Use w.first_occurrence(f) instead.')
+                    ' Use w.first_occurrence(f) instead.')
         return other.first_occurrence(self)
 
     def find(self, sub, start=0, end=None):
@@ -4442,7 +4439,7 @@ class FiniteWord_class(Word_class):
         """
         from sage.misc.superseded import deprecation
         deprecation(30187, 'f.factor_occurrences_in(w) is deprecated.'
-                ' Use w.factor_occurrences_iterator(f) instead.')
+                    ' Use w.factor_occurrences_iterator(f) instead.')
         return other.factor_occurrences_iterator(self)
 
     def nb_factor_occurrences_in(self, other):
@@ -4477,7 +4474,7 @@ class FiniteWord_class(Word_class):
         """
         from sage.misc.superseded import deprecation
         deprecation(30187, 'f.nb_factor_occurrences_in(w) is deprecated.'
-                ' Use w.number_of_factor_occurrences(f) instead.')
+                    ' Use w.number_of_factor_occurrences(f) instead.')
         return other.number_of_factor_occurrences(self)
 
     def nb_subword_occurrences_in(self, other):
@@ -4546,7 +4543,7 @@ class FiniteWord_class(Word_class):
         """
         from sage.misc.superseded import deprecation
         deprecation(30187, 'f.nb_subword_occurrences_in(w) is deprecated.'
-                ' Use w.number_of_subword_occurrences(f) instead.')
+                    ' Use w.number_of_subword_occurrences(f) instead.')
         return other.number_of_subword_occurrences(self)
 
     def number_of_factor_occurrences(self, other):
@@ -5677,7 +5674,7 @@ class FiniteWord_class(Word_class):
         size = alphabet.cardinality()
         if size == float('inf'):
             raise TypeError("The alphabet of the parent is infinite; define"
-                   " the word with a parent on a finite alphabet")
+                            " the word with a parent on a finite alphabet")
         S = set()
         if n > self.length():
             return S
@@ -6107,8 +6104,8 @@ class FiniteWord_class(Word_class):
         alphabet = self.parent().alphabet()
         if alphabet.cardinality() is Infinity:
             raise TypeError("The alphabet of the parent is infinite; define "
-                    "the word with a parent on a finite alphabet or use "
-                    "evaluation_dict() instead")
+                            "the word with a parent on a finite alphabet "
+                            "or use evaluation_dict() instead")
         ev_dict = self.evaluation_dict()
         return [ev_dict.get(a, 0) for a in alphabet]
 
@@ -6319,8 +6316,7 @@ class FiniteWord_class(Word_class):
         for s in self:
             if s == ss:
                 c += 1
-                if c > max_c:
-                    max_c = c
+                max_c = max(c, max_c)
             else:
                 v.append(c)
                 ss = s
@@ -6806,8 +6802,8 @@ class FiniteWord_class(Word_class):
         else:
             ordered_alphabet = self.parent().alphabet()
             dim = float(self.parent().alphabet().cardinality())
-        letter_to_integer_dict = {a: i for i, a in
-                enumerate(ordered_alphabet)}
+        letter_to_integer_dict = {a: i
+                                  for i, a in enumerate(ordered_alphabet)}
         xp = x
         for a in self:
             i = letter_to_integer_dict[a]

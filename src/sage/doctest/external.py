@@ -32,12 +32,12 @@ AUTHORS:
 #*****************************************************************************
 
 import multiprocessing
-import os
+import platform
 
 # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork' in
 # multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
 # trac #27754.
-if os.uname().sysname == 'Darwin':
+if platform.system() == 'Darwin':
     multiprocessing.set_start_method('fork', force=True)
 Array = multiprocessing.Array
 
@@ -379,7 +379,7 @@ def external_software() -> list[str]:
 external_software = external_software()
 
 
-class AvailableSoftware():
+class AvailableSoftware:
     """
     This class keeps the set of available software whose availability is detected lazily
     from the list of external software.

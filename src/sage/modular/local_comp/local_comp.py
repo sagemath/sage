@@ -37,6 +37,7 @@ lazy_import('sage.rings.qqbar', 'QQbar')
 from .type_space import TypeSpace
 from .smoothchar import SmoothCharacterGroupQp, SmoothCharacterGroupUnramifiedQuadratic, SmoothCharacterGroupRamifiedQuadratic
 
+
 def LocalComponent(f, p, twist_factor=None):
     r"""
     Calculate the local component at the prime `p` of the automorphic
@@ -114,6 +115,7 @@ def LocalComponent(f, p, twist_factor=None):
 
     mintwist = LocalComponent(g, p, twist_factor)
     return ImprimitiveLocalComponent(f, p, twist_factor, mintwist, chi)
+
 
 class LocalComponentBase(SageObject):
     r"""
@@ -316,6 +318,7 @@ class LocalComponentBase(SageObject):
         """
         return not (self == other)
 
+
 class PrimitiveLocalComponent(LocalComponentBase):
     r"""
     Base class for primitive (twist-minimal) local components.
@@ -345,6 +348,7 @@ class PrimitiveLocalComponent(LocalComponentBase):
             True
         """
         return self
+
 
 class PrincipalSeries(PrimitiveLocalComponent):
     r"""
@@ -398,6 +402,7 @@ class PrincipalSeries(PrimitiveLocalComponent):
             NotImplementedError: <abstract method characters at ...>
         """
         pass
+
 
 class UnramifiedPrincipalSeries(PrincipalSeries):
     r"""
@@ -469,6 +474,7 @@ class UnramifiedPrincipalSeries(PrincipalSeries):
         G = SmoothCharacterGroupQp(self.prime(), d.parent())
         return Sequence([G.character(0, [d]), G.character(0, [self.newform()[self.prime()] - d])], cr=True, universe=G)
 
+
 class PrimitivePrincipalSeries(PrincipalSeries):
     r"""
     A ramified principal series of the form `\pi(\chi_1, \chi_2)`
@@ -499,6 +505,7 @@ class PrimitivePrincipalSeries(PrincipalSeries):
         chi1 = G.character(0, [self.newform()[self.prime()]]) * G.norm_character()**t
         chi2 = G.character(0, [self.prime()]) * self.central_character() / chi1
         return Sequence([chi1, chi2], cr=True, universe=G)
+
 
 class PrimitiveSpecial(PrimitiveLocalComponent):
     r"""
@@ -585,6 +592,7 @@ class PrimitiveSpecial(PrimitiveLocalComponent):
         w = QQbar(p)**(self.twist_factor() / ZZ(2))
         for sigma in K.embeddings(QQbar):
             assert sigma(c1(p)).abs() == w
+
 
 class PrimitiveSupercuspidal(PrimitiveLocalComponent):
     r"""
@@ -971,6 +979,7 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
         for sigma in K.embeddings(QQbar):
             assert sigma(c1(p)).abs() == sigma(c2(p)).abs() == w
 
+
 class ImprimitiveLocalComponent(LocalComponentBase):
     r"""
     A smooth representation which is not of minimal level among its character
@@ -978,7 +987,7 @@ class ImprimitiveLocalComponent(LocalComponentBase):
     component and a character to twist by.
     """
 
-    def __init__(self,newform, prime, twist_factor, min_twist, chi):
+    def __init__(self, newform, prime, twist_factor, min_twist, chi):
         r"""
         EXAMPLES::
 

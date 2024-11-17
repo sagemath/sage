@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.giac
 """
 Wrappers for Giac functions
 
@@ -87,7 +88,7 @@ def local_giacsettings(func):
 
     EXAMPLES::
 
-        sage: def testf(a,b):
+        sage: def testf(a, b):
         ....:    giacsettings.proba_epsilon = a/100
         ....:    giacsettings.threads = b+2
         ....:    return (giacsettings.proba_epsilon, giacsettings.threads)
