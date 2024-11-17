@@ -2149,23 +2149,19 @@ class Braid(FiniteTypeArtinGroupElement):
         """
         rqword = RightQuantumWord(qword).reduced_word()
         alg = qword.parent()
-        R = alg.base_ring()
-        result = R.one()
+        result = alg.base_ring().one()
         current_word = alg.one()
-        i = 1
-        continue_summing = True
         # This seemingly infinite sum is always finite if the qword comes
         # from a sum of quantum determinants; because at some point
         # the break condition will become true.
-        while continue_summing:
+        while True:
             current_word *= rqword
-            new_rqw = RightQuantumWord(alg(current_word))
+            new_rqw = RightQuantumWord(current_word)
             current_word = new_rqw.reduced_word()
             new_eps = new_rqw.eps(N)
-            result += new_eps
             if not new_eps:
-                continue_summing = False
-            i += 1
+                break
+            result += new_eps
         return result
 
     def colored_jones_polynomial(self, N, variab=None, try_inverse=True):
@@ -2420,7 +2416,7 @@ class RightQuantumWord:
             sage: from sage.groups.braid import RightQuantumWord
             sage: B = BraidGroup(3)
             sage: b = B([1,-2,1,2])
-            sage: db = b.deformed_burau_matrix()[:, :]
+            sage: db = b.deformed_burau_matrix()
             sage: q = db.parent().base_ring().base_ring().gen()
             sage: (bp_0, cp_0, ap_0,
             ....:  bp_2, cp_2, ap_2,
