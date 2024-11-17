@@ -1406,7 +1406,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         r"""
         Return a TikzPicture illustrating the poset.
 
-        If graphviz and dot2tex are available, it uses these packages for
+        If ``graphviz`` and ``dot2tex`` are available, it uses these packages for
         placements of vertices and edges.
 
         INPUT:
@@ -1430,7 +1430,7 @@ class FinitePoset(UniqueRepresentation, Parent):
           when prog is ``'dot'``, possible values are  ``'down'``,
           ``'up'``, ``'right'`` and ``'left'``.
 
-        Additionnal keywords arguments are forwarded to
+        Additional keywords arguments are forwarded to
         :meth:`sage.graphs.graph_latex.GraphLatex.set_option`.
 
         The following inputs define the preamble of the latex standalone
