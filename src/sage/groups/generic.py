@@ -1512,7 +1512,7 @@ def has_order(P, n, operation='+'):
         In some cases, order *testing* can be much faster than
         *computing* the order using :func:`order_from_multiple`.
     """
-    if not isinstance(n, sage.structure.factorization_integer.IntegerFactorization):
+    if not isinstance(n, sage.structure.factorization.Factorization):
         n = integer_ring.ZZ(n)
         if n <= 0:
             return False
