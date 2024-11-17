@@ -1228,9 +1228,6 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
                 self._fraction_field.register_coercion(self)
         return self._fraction_field
 
-    def quotient(self, P, names=None):
-        return self(P).quotient_module(names=names)
-
     def _pushout_(self, other):
         r"""
         Return the pushout of this Ore polynomial ring and ``other``.
