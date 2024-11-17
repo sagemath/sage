@@ -1841,7 +1841,6 @@ def gcd(a, b=None, **kwargs):
         except TypeError:
             return m(py_scalar_to_element(b), **kwargs)
 
-    from sage.structure.sequence import Sequence
     seq = Sequence(py_scalar_to_element(el) for el in a)
     if seq.universe() is ZZ:
         return GCD_list(seq)
@@ -3498,10 +3497,14 @@ def crt(a, b, m=None, n=None):
 CRT = crt
 
 
-def CRT_list(values, moduli):
+def CRT_list(values, moduli=None):
     r""" Given a list ``values`` of elements and a list of corresponding
     ``moduli``, find a single element that reduces to each element of
     ``values`` modulo the corresponding moduli.
+
+    This function can also be called with one argument, each element
+    of the list is a :class:`IntegerMod_abstract` object. In this case, it returns
+    another :class:`IntegerMod_abstract` object.
 
     .. SEEALSO::
 
@@ -3528,6 +3531,13 @@ def CRT_list(values, moduli):
         Traceback (most recent call last):
         ...
         ValueError: no solution to crt problem since gcd(180,150) does not divide 92-1
+
+    Call with one argument::
+
+        sage: x = CRT_list([mod(2,3),mod(3,5),mod(2,7)]); x
+        23
+        sage: x.parent()
+        Ring of integers modulo 105
 
     The arguments must be lists::
 
@@ -3575,14 +3585,26 @@ def CRT_list(values, moduli):
         sage: ms
         [5, 7, 9]
     """
-    if not isinstance(values, list) or not isinstance(moduli, list):
+    if not isinstance(values, list) or not isinstance(moduli, (list, type(None))):
         raise ValueError("arguments to CRT_list should be lists")
-    if len(values) != len(moduli):
-        raise ValueError("arguments to CRT_list should be lists of the same length")
-    if not values:
-        return ZZ.zero()
-    if len(values) == 1:
-        return moduli[0].parent()(values[0])
+    return_mod = moduli is None
+    if return_mod:
+        from sage.rings.finite_rings.integer_mod import IntegerMod_abstract, Mod
+        if not values:
+            return Mod(0, 1)
+        if not all(isinstance(v, IntegerMod_abstract) for v in values):
+            raise TypeError("arguments to CRT_list should be lists of IntegerMod")
+        if len(values) == 1:
+            return values[0]
+        moduli = [v.modulus() for v in values]
+        values = [v.lift() for v in values]
+    else:
+        if len(values) != len(moduli):
+            raise ValueError("arguments to CRT_list should be lists of the same length")
+        if not values:
+            return ZZ.zero()
+        if len(values) == 1:
+            return moduli[0].parent()(values[0])
 
     # The result is computed using a binary tree. In typical cases,
     # this scales much better than folding the list from one side.
@@ -3593,7 +3615,10 @@ def CRT_list(values, moduli):
             vs[i] = CRT(vs[i], v, ms[i], m)
             ms[i] = lcm(ms[i], m)
         values, moduli = vs, ms
-    return values[0] % moduli[0]
+    if return_mod:
+        return Mod(values[0], moduli[0])
+    else:
+        return values[0] % moduli[0]
 
 
 def CRT_basis(moduli):
