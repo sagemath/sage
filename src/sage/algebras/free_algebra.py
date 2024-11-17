@@ -160,23 +160,25 @@ Some tests for the category::
 # ***************************************************************************
 
 
-from sage.categories.rings import Rings
-
-from sage.monoids.free_monoid import FreeMonoid
-from sage.monoids.free_monoid_element import FreeMonoidElement
-
 from sage.algebras.free_algebra_element import FreeAlgebraElement
-
-from sage.structure.factory import UniqueFactory
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
+from sage.categories.functor import Functor
+from sage.categories.pushout import (ConstructionFunctor,
+                                     CompositeConstructionFunctor,
+                                     IdentityConstructionFunctor)
+from sage.categories.rings import Rings
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.words.alphabet import Alphabet
+from sage.combinat.words.word import Word
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.monoids.free_monoid import FreeMonoid
+from sage.monoids.free_monoid_element import FreeMonoidElement
 from sage.rings.integer_ring import ZZ
-from sage.categories.algebras_with_basis import AlgebrasWithBasis
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.words.word import Word
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.category_object import normalize_names
-
+from sage.structure.coerce_exceptions import CoercionException
+from sage.structure.factory import UniqueFactory
 
 lazy_import('sage.algebras.letterplace.free_algebra_letterplace', 'FreeAlgebra_letterplace')
 
@@ -199,12 +201,12 @@ class FreeAlgebraFactory(UniqueFactory):
         sage: FreeAlgebra(GF(5),3, 'abc')
         Free Algebra on 3 generators (a, b, c) over Finite Field of size 5
         sage: FreeAlgebra(GF(5),1, 'z')
-        Free Algebra on 1 generators (z,) over Finite Field of size 5
+        Free Algebra on 1 generator (z,) over Finite Field of size 5
         sage: FreeAlgebra(GF(5),1, ['alpha'])
-        Free Algebra on 1 generators (alpha,) over Finite Field of size 5
+        Free Algebra on 1 generator (alpha,) over Finite Field of size 5
         sage: FreeAlgebra(FreeAlgebra(ZZ,1,'a'), 2, 'x')
         Free Algebra on 2 generators (x0, x1) over
-         Free Algebra on 1 generators (a,) over Integer Ring
+         Free Algebra on 1 generator (a,) over Integer Ring
 
     Free algebras are globally unique::
 
@@ -264,7 +266,7 @@ class FreeAlgebraFactory(UniqueFactory):
         sage: s = a*b^2 * c^3; s
         a*b^2*c^3
         sage: parent(s)
-        Free Algebra on 1 generators (c,) over
+        Free Algebra on 1 generator (c,) over
          Free Algebra on 2 generators (a, b) over Rational Field
         sage: c^3 * a * b^2
         a*b^2*c^3
@@ -507,6 +509,17 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
         else:
             self._degrees = {g: ZZ(d) for g, d in zip(self.monoid().gens(), degrees)}
 
+    def construction(self):
+        """
+        Return the construction of ``self``.
+
+        EXAMPLES::
+
+            sage: algebras.Free(QQ,4,'x,y,z,t').construction()
+            (Associative[x,y,z,t], Rational Field)
+        """
+        return AssociativeFunctor(self.variable_names(), self._degrees), self.base_ring()
+
     def one_basis(self):
         """
         Return the index of the basis element `1`.
@@ -554,16 +567,17 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
             sage: F                                                             # indirect doctest
             QQ<<x0,x1,x2>>
             sage: FreeAlgebra(ZZ, 1, ['a'])
-            Free Algebra on 1 generators (a,) over Integer Ring
+            Free Algebra on 1 generator (a,) over Integer Ring
 
             sage: FreeAlgebra(QQ, 2, ['x', 'y'], degrees=(2,1))
             Free Algebra on 2 generators (x, y) with degrees (2, 1) over Rational Field
         """
+        txt = "generator" if self.__ngens == 1 else "generators"
         if self._degrees is None:
-            return "Free Algebra on {} generators {} over {}".format(
-                self.__ngens, self.gens(), self.base_ring())
-        return "Free Algebra on {} generators {} with degrees {} over {}".format(
-            self.__ngens, self.gens(), tuple(self._degrees.values()), self.base_ring())
+            return "Free Algebra on {} {} {} over {}".format(
+                self.__ngens, txt, self.gens(), self.base_ring())
+        return "Free Algebra on {} {} {} with degrees {} over {}".format(
+            self.__ngens, txt, self.gens(), tuple(self._degrees.values()), self.base_ring())
 
     def _latex_(self) -> str:
         r"""
@@ -1449,3 +1463,176 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
                 x + x^2*y - 2*x*y*x + y*x^2 + y^4*x
             """
             return self.parent().expansion(self)
+
+
+class AssociativeFunctor(ConstructionFunctor):
+    """
+    A constructor for free associative algebras.
+
+    EXAMPLES::
+
+        sage: P = algebras.Free(ZZ, 2, 'x,y')
+        sage: x,y = P.gens()
+        sage: F = P.construction()[0]; F
+        Associative[x,y]
+
+        sage: A = GF(5)['a,b']
+        sage: a, b = A.gens()
+        sage: F(A)
+        Free Algebra on 2 generators (x, y) over Multivariate Polynomial Ring in a, b over Finite Field of size 5
+
+        sage: f = A.hom([a+b,a-b],A)
+        sage: F(f)
+        Generic endomorphism of Free Algebra on 2 generators (x, y)
+        over Multivariate Polynomial Ring in a, b over Finite Field of size 5
+
+        sage: F(f)(a * F(A)(x))
+        (a+b)*x
+    """
+    rank = 9
+
+    def __init__(self, vars, degs=None):
+        """
+        EXAMPLES::
+
+            sage: from sage.algebras.free_algebra import AssociativeFunctor
+            sage: F = AssociativeFunctor(['x','y'])
+            sage: F
+            Associative[x,y]
+            sage: F(ZZ)
+            Free Algebra on 2 generators (x, y)  over Integer Ring
+        """
+        Functor.__init__(self, Rings(), Rings())
+        self.vars = vars
+        self.degs = degs
+
+    def _apply_functor(self, R):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        EXAMPLES::
+
+            sage: R = algebras.Free(ZZ, 3, 'x,y,z')
+            sage: F = R.construction()[0]; F
+            Associative[x,y,z]
+            sage: type(F)
+            <class 'sage.algebras.free_algebra.AssociativeFunctor'>
+            sage: F(ZZ)          # indirect doctest
+            Free Algebra on 3 generators (x, y, z) over Integer Ring
+        """
+        return FreeAlgebra(R, self.vars, self.degs)
+
+    def _apply_functor_to_morphism(self, f):
+        """
+        Apply the functor ``self`` to the ring morphism `f`.
+
+        TESTS::
+
+            sage: R = algebras.Free(ZZ, 'x').construction()[0]
+            sage: R(ZZ.hom(GF(3)))  # indirect doctest
+            Generic morphism:
+              From: Free Algebra on 1 generator (x,) over Integer Ring
+              To:   Free Algebra on 1 generator (x,) over Finite Field of size 3
+        """
+        dom = self(f.domain())
+        codom = self(f.codomain())
+
+        def action(x):
+            return codom._from_dict({a: f(b)
+                                     for a, b in x.monomial_coefficients().items()})
+        return dom.module_morphism(function=action, codomain=codom)
+
+    def __eq__(self, other):
+        """
+        EXAMPLES::
+
+            sage: F = algebras.Free(ZZ, 3, 'x,y,z').construction()[0]
+            sage: G = algebras.Free(QQ, 3, 'x,y,z').construction()[0]
+            sage: F == G
+            True
+            sage: G == loads(dumps(G))
+            True
+            sage: G = algebras.Free(QQ, 2, 'x,y').construction()[0]
+            sage: F == G
+            False
+        """
+        if not isinstance(other, AssociativeFunctor):
+            return False
+        return self.vars == other.vars and self.degs == other.degs
+
+    def __mul__(self, other):
+        """
+        If two Associative functors are given in a row, form a single Associative functor
+        with all of the variables.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.free_algebra import AssociativeFunctor
+            sage: F = AssociativeFunctor(['x','y'])
+            sage: G = AssociativeFunctor(['t'])
+            sage: G * F
+            Associative[x,y,t]
+        """
+        if isinstance(other, IdentityConstructionFunctor):
+            return self
+        if isinstance(other, AssociativeFunctor):
+            if set(self.vars).intersection(other.vars):
+                raise CoercionException("Overlapping variables (%s,%s)" %
+                                        (self.vars, other.vars))
+            return AssociativeFunctor(other.vars + self.vars)
+        elif (isinstance(other, CompositeConstructionFunctor) and
+              isinstance(other.all[-1], AssociativeFunctor)):
+            return CompositeConstructionFunctor(other.all[:-1],
+                                                self * other.all[-1])
+        else:
+            return CompositeConstructionFunctor(other, self)
+
+    def merge(self, other):
+        """
+        Merge ``self`` with another construction functor, or return ``None``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.free_algebra import AssociativeFunctor
+            sage: F = AssociativeFunctor(['x','y'])
+            sage: G = AssociativeFunctor(['t'])
+            sage: F.merge(G)
+            Associative[x,y,t]
+            sage: F.merge(F)
+            Associative[x,y]
+
+        Now some actual use cases::
+
+            sage: R = algebras.Free(ZZ, 3, 'x,y,z')
+            sage: x,y,z = R.gens()
+            sage: 1/2 * x
+            1/2*x
+            sage: parent(1/2 * x)
+            Free Algebra on 3 generators (x, y, z) over Rational Field
+
+            sage: S = algebras.Free(QQ, 2, 'z,t')
+            sage: z,t = S.gens()
+            sage: x + t
+            B[t[]] + B[x[]]
+            sage: parent(x + t)
+            Free Algebra on 4 generators ['z', 't', 'x', 'y'] over Rational Field
+        """
+        if isinstance(other, AssociativeFunctor):
+            if self.vars == other.vars:
+                return self
+            ret = list(self.vars)
+            cur_vars = set(ret)
+            ret.extend(v for v in other.vars if v not in cur_vars)
+            # degrees are ignored for the moment ; TODO
+            return AssociativeFunctor(Alphabet(ret))
+
+        return None
+
+    def _repr_(self) -> str:
+        """
+        TESTS::
+
+            sage: algebras.Free(QQ,4,'x,y,z,t').construction()[0]
+            Associative[x,y,z,t]
+        """
+        return "Associative[%s]" % ','.join(self.vars)
