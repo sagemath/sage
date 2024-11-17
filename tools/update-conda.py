@@ -28,7 +28,7 @@ platforms = {
     "win-64": "win",
 }
 pythons = ["3.9", "3.10", "3.11"]
-tags = ["", "-dev"]
+tags = [""]
 
 
 def write_env_file(env_file: Path, dependencies: list[str]) -> None:
@@ -72,10 +72,11 @@ def update_conda(source_dir: Path) -> None:
                     f"python={python}" if dep == "python" else dep
                     for dep in dependencies
                 }
-                if tag == "-dev":
-                    dev_dependencies = get_dev_dependencies(pyproject_toml)
-                    print(f"Adding dev dependencies: {dev_dependencies}")
-                    pinned_dependencies = pinned_dependencies.union(dev_dependencies)
+                
+                dev_dependencies = get_dev_dependencies(pyproject_toml)
+                print(f"Adding dev dependencies: {dev_dependencies}")
+                pinned_dependencies = pinned_dependencies.union(dev_dependencies)
+                
                 pinned_dependencies = sorted(pinned_dependencies)
 
                 env_file = source_dir / f"environment{tag}-{python}.yml"
@@ -111,7 +112,7 @@ def update_conda(source_dir: Path) -> None:
                 with open(lock_file_gen, "r+") as f:
                     content = f.read()
                     f.seek(0, 0)
-                    f.write(f"name: sage{tag}\n{content}")
+                    f.write(f"name: sage{tag or '-dev'}\n{content}")
 
 
 def get_dependencies(pyproject_toml: Path, python: str) -> list[str]:

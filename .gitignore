@@ -28,7 +28,7 @@
 /src/lib/pkgconfig
 
 # Conda environment files
-# The files without Python version and in src are no longer generated
+# The files without Python version, with -dev or in src are no longer generated
 # but may still be in users' directories.
 /environment.yml
 /environment-3.9.yml
