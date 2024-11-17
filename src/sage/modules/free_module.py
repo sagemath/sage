@@ -3112,7 +3112,7 @@ class FreeModule_generic(Module_free_ambient):
 
     def pseudoHom(self, twist, codomain=None):
         r"""
-        Return the Pseudo Hom space corresponding to given data.
+        Return the pseudo-Hom space corresponding to given data.
 
         INPUT:
 
@@ -3222,9 +3222,8 @@ class FreeModule_generic(Module_free_ambient):
 
             :meth:`pseudoHom`
         """
-        from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
-        parent = self.pseudoHom(twist, codomain)
-        return FreeModulePseudoMorphism(parent, f, side)
+        H = self.pseudoHom(twist, codomain)
+        return H(f, side)
 
     def inner_product_matrix(self):
         """

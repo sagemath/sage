@@ -321,7 +321,9 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         """
         if base_ring not in CommutativeRings():
             raise TypeError('base_ring must be a commutative ring')
-        if isinstance(twist, Morphism):
+        if twist is None:
+            morphism = derivation = None
+        elif isinstance(twist, Morphism):
             if (twist.domain() is not base_ring
              or twist.codomain() is not base_ring):
                 raise TypeError("the twisting morphism must be an endomorphism of base_ring (=%s)" % base_ring)

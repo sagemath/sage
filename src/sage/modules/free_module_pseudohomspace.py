@@ -72,7 +72,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: type(H)
             <class 'sage.modules.free_module_pseudohomspace.FreeModulePseudoHomspace_with_category'>
 
-            sage: # Testsuite(H).run()
+            sage: TestSuite(H).run()
         """
         ring = domain.base_ring()
         if codomain.base_ring() is not ring:
@@ -268,3 +268,71 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3]
         """
         return Sequence(self(mat) for mat in self._matrix_space.basis())
+
+    def _test_additive_associativity(self, tester):
+        r"""
+        Test associativity for (not necessarily all) elements in this parent.
+
+        This test is not relevant for pseudo-morphisms because they are not
+        stable by addition.
+
+        TESTS::
+
+            sage: Fq = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+            sage: PHS = V.pseudoHom(Frob)
+            sage: TestSuite(PHS).run()  # indirect doctest
+        """
+        pass
+
+    def _test_distributivity(self, tester):
+        r"""
+        Test distributivity for (not necessarily all) elements in this parent.
+
+        This test is not relevant for pseudo-morphisms because they are not
+        stable by addition.
+
+        TESTS::
+
+            sage: Fq = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+            sage: PHS = V.pseudoHom(Frob)
+            sage: TestSuite(PHS).run()  # indirect doctest
+        """
+        pass
+
+    def _test_one(self, tester):
+        r"""
+        Test properties the identity element.
+
+        This test is not relevant for pseudo-morphisms because the identity
+        is not a pseudo-morphism in general.
+
+        TESTS::
+
+            sage: Fq = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+            sage: PHS = V.pseudoHom(Frob)
+            sage: TestSuite(PHS).run()  # indirect doctest
+        """
+        pass
+
+    def _test_zero(self, tester):
+        r"""
+        Test properties of the zero element.
+
+        This test is not relevant for pseudo-morphisms because the zero
+        map is not a pseudo-morphism in general.
+
+        TESTS::
+
+            sage: Fq = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+            sage: PHS = V.pseudoHom(Frob)
+            sage: TestSuite(PHS).run()  # indirect doctest
+        """
+        pass

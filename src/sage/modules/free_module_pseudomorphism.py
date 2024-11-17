@@ -131,7 +131,8 @@ class FreeModulePseudoMorphism(Morphism):
 
             sage: id = End(F).identity()
             sage: g = M.hom(mat)
-            sage: M.pseudoHom(id)(g)
+            sage: g2 = M.pseudoHom(id)(g)
+            sage: g2
             Free module pseudomorphism (untwisted) defined by the matrix
             [      1       z]
             [    z^2 2*z + 2]
@@ -140,7 +141,8 @@ class FreeModulePseudoMorphism(Morphism):
 
         An example with ``side=right``::
 
-            sage: M.pseudohom(mat, Frob, side="right")
+            sage: h = M.pseudohom(mat, Frob, side="right")
+            sage: h
             Free module pseudomorphism (twisted by z |--> z^5) defined as left-multiplication by the matrix
             [      1       z]
             [    z^2 2*z + 2]
@@ -153,6 +155,12 @@ class FreeModulePseudoMorphism(Morphism):
             Traceback (most recent call last):
             ...
             ValueError: the side must be either 'left' or 'right'
+
+        ::
+
+            sage: TestSuite(f).run()
+            sage: TestSuite(g2).run()
+            sage: TestSuite(h).run()
         """
         Morphism.__init__(self, parent)
         dom = parent.domain()
@@ -407,6 +415,9 @@ class FreeModulePseudoMorphism(Morphism):
             mat = self._matrix
         return self.parent()(mat, side)
 
+    def __nonzero__(self):
+        return not (self._derivation is None and self._matrix)
+
     def __eq__(self, other):
         r"""
         Compare this morphism with ``other``.
@@ -443,3 +454,6 @@ class FreeModulePseudoMorphism(Morphism):
                 return False
         if isinstance(other, FreeModulePseudoMorphism):
             return self.parent() is other.parent() and self._matrix == other._matrix
+
+    def _test_nonzero_equal(self, tester):
+        pass
