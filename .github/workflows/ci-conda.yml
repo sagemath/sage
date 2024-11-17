@@ -87,6 +87,8 @@ jobs:
       - name: Build
         shell: bash -l {0}
         run: |
+          # Install a few packages that are not used with meson, and which are thus not contained in the conda env files
+          pip install pkgconfig
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda.
           pip install --no-build-isolation --no-deps --config-settings editable_mode=compat -v -v -e ./src
         env:
