@@ -307,10 +307,10 @@ cdef class TimeSeries:
         if len(self) > max_print:
             v0 = self[:max_print//2]
             v1 = self[-max_print//2:]
-            return '[' + ', '.join(format%x for x in v0) + ' ... ' + \
-                         ', '.join(format%x for x in v1) + ']'
+            return '[' + ', '.join(format % x for x in v0) + ' ... ' + \
+                         ', '.join(format % x for x in v1) + ']'
         else:
-            return '[' + ', '.join(format%x for x in self) + ']'
+            return '[' + ', '.join(format % x for x in self) + ']'
 
     def __len__(self):
         r"""
@@ -557,7 +557,7 @@ cdef class TimeSeries:
             memcpy(v._values + i*T._length, T._values, sizeof(double)*T._length)
         return v
 
-    def autoregressive_fit(self,M):
+    def autoregressive_fit(self, M):
         r"""
         This method fits the time series to an autoregressive process
         of order ``M``. That is, we assume the process is given by
@@ -782,7 +782,7 @@ cdef class TimeSeries:
             t._values[i] = self._values[i] if self._values[i] >= 0 else -self._values[i]
         return t
 
-    def diffs(self, Py_ssize_t k = 1):
+    def diffs(self, Py_ssize_t k=1):
         r"""
         Return the new time series got by taking the differences of
         successive terms in the time series.  So if ``self`` is the time

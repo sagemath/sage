@@ -69,8 +69,8 @@ jobs:
           use-mamba: true
           channels: conda-forge
           channel-priority: true
-          activate-environment: sage
-          environment-file: src/${{ matrix.conda-env }}-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || 'linux' }}.yml
+          activate-environment: sage-dev
+          environment-file: ${{ matrix.conda-env }}-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || 'linux' }}.yml
 
       - name: Print Conda environment
         shell: bash -l {0}

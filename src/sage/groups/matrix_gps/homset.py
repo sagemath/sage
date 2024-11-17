@@ -21,6 +21,7 @@ AUTHORS:
 from sage.misc.lazy_import import lazy_import
 from sage.misc.superseded import deprecation
 
+
 def is_MatrixGroupHomset(x):
     r"""
     Test whether ``x`` is a matrix group homset.

@@ -5,9 +5,6 @@ This document describes the individual wrappers for various GAP
 elements. For general information about GAP, you should read the
 :mod:`~sage.libs.gap.libgap` module documentation.
 """
-
-# hi
-
 # ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #
@@ -3254,7 +3251,7 @@ cdef class GapElement_RecordIterator():
         # note the abs: negative values mean the rec keys are not sorted
         key_index = abs(GET_RNAM_PREC(self.rec.value, i))
         key = char_to_str(GAP_CSTR_STRING(NAME_RNAM(key_index)))
-        cdef Obj result = GET_ELM_PREC(self.rec.value,i)
+        cdef Obj result = GET_ELM_PREC(self.rec.value, i)
         val = make_any_gap_element(self.rec.parent(), result)
         self.i += 1
         return (key, val)

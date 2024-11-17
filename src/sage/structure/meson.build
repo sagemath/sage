@@ -60,13 +60,18 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, gmp]
+  if name == 'coerce'
+    deps += [gmpy2]
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/structure',
     install: true,
     include_directories: [inc_cpython, inc_ext, inc_rings],
-    dependencies: [py_dep, cysignals, gmp, gmpy2, mpc, mpfr],
+    dependencies: deps,
   )
 endforeach
 

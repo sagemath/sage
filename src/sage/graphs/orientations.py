@@ -13,10 +13,14 @@ etc.). It also implements some iterators over all these orientations.
     :delim: |
 
     :meth:`orient` | Return an oriented version of `G` according the input function `f`.
+    :meth:`orientations` | Return an iterator over orientations of `G`.
     :meth:`acyclic_orientations` | Return an iterator over all acyclic orientations of an undirected graph `G`.
+    :meth:`strong_orientation` | Return a strongly connected orientation of the graph `G`.
     :meth:`strong_orientations_iterator` | Return an iterator over all strong orientations of a graph `G`
     :meth:`random_orientation` | Return a random orientation of a graph `G`
-
+    :meth:`minimum_outdegree_orientation` | Return an orientation of `G` with the smallest possible maximum outdegree.
+    :meth:`bounded_outdegree_orientation` | Return an orientation of `G` such that every vertex `v` has out-degree less than `b(v)`.
+    :meth:`eulerian_orientation(G)` | Return a DiGraph which is an Eulerian orientation of the graph `G`.
 
 Authors
 -------
@@ -218,6 +222,165 @@ def orient(G, f, weighted=None, data_structure=None, sparse=None,
                 setattr(D, attr, copy(old_attr))
 
     return D
+
+
+def orientations(G, data_structure=None, sparse=None):
+    r"""
+    Return an iterator over orientations of `G`.
+
+    An *orientation* of an undirected graph is a directed graph such that
+    every edge is assigned a direction.  Hence there are `2^s` oriented
+    digraphs for a simple graph with `s` edges.
+
+    INPUT:
+
+    - ``G`` -- an undirected graph
+
+    - ``data_structure`` -- one of ``'sparse'``, ``'static_sparse'``, or
+      ``'dense'``; see the documentation of :class:`Graph` or :class:`DiGraph`;
+      default is the data structure of `G`
+
+    - ``sparse`` -- boolean (default: ``None``); ``sparse=True`` is an alias for
+      ``data_structure="sparse"``, and ``sparse=False`` is an alias for
+      ``data_structure="dense"``. By default (``None``), guess the most suitable
+      data structure.
+
+    .. WARNING::
+
+        This always considers multiple edges of graphs as distinguishable, and
+        hence, may have repeated digraphs.
+
+    .. SEEALSO::
+
+        - :meth:`~sage.graphs.graph.Graph.strong_orientation`
+        - :meth:`~sage.graphs.orientations.strong_orientations_iterator`
+        - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.nauty_directg`
+        - :meth:`~sage.graphs.orientations.random_orientation`
+
+    EXAMPLES::
+
+        sage: G = Graph([[1,2,3], [(1, 2, 'a'), (1, 3, 'b')]], format='vertices_and_edges')
+        sage: it = G.orientations()
+        sage: D = next(it)
+        sage: D.edges(sort=True)
+        [(1, 2, 'a'), (1, 3, 'b')]
+        sage: D = next(it)
+        sage: D.edges(sort=True)
+        [(1, 2, 'a'), (3, 1, 'b')]
+
+    TESTS::
+
+        sage: G = Graph()
+        sage: D = [g for g in G.orientations()]
+        sage: len(D)
+        1
+        sage: D[0]
+        Digraph on 0 vertices
+
+        sage: G = Graph(5)
+        sage: it = G.orientations()
+        sage: D = next(it)
+        sage: D.size()
+        0
+
+        sage: G = Graph([[1,2,'a'], [1,2,'b']], multiedges=True)
+        sage: len(list(G.orientations()))
+        4
+
+        sage: G = Graph([[1,2], [1,1]], loops=True)
+        sage: len(list(G.orientations()))
+        2
+
+        sage: G = Graph([[1,2],[2,3]])
+        sage: next(G.orientations())
+        Digraph on 3 vertices
+        sage: G = graphs.PetersenGraph()
+        sage: next(G.orientations())
+        An orientation of Petersen graph: Digraph on 10 vertices
+
+    An orientation must have the same ground set of vertices as the original
+    graph (:issue:`24366`)::
+
+        sage: G = Graph(1)
+        sage: next(G.orientations())
+        Digraph on 1 vertex
+
+    Which backend? ::
+
+        sage: next(G.orientations(data_structure='sparse', sparse=True))._backend
+        Traceback (most recent call last):
+        ...
+        ValueError: cannot specify both 'sparse' and 'data_structure'
+        sage: next(G.orientations(sparse=True))._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+        sage: next(G.orientations(sparse=False))._backend
+        <sage.graphs.base.dense_graph.DenseGraphBackend object at ...>
+        sage: next(G.orientations())._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+        sage: G = Graph(1, data_structure='dense')
+        sage: next(G.orientations())._backend
+        <sage.graphs.base.dense_graph.DenseGraphBackend object at ...>
+        sage: G = Graph(1, data_structure='static_sparse')
+        sage: next(G.orientations())._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend object at ...>
+
+    Check that the embedding is copied::
+
+        sage: G = Graph([(0, 1), (0, 2), (1, 2)])
+        sage: embedding = {0: [1, 2], 1: [2, 0], 2: [0, 1]}
+        sage: G.set_embedding(embedding)
+        sage: next(G.orientations()).get_embedding() == embedding
+        True
+        sage: G = Graph()
+        sage: G.set_embedding({})
+        sage: next(G.orientations()).get_embedding() == {}
+        True
+    """
+    if sparse is not None:
+        if data_structure is not None:
+            raise ValueError("cannot specify both 'sparse' and 'data_structure'")
+        data_structure = "sparse" if sparse else "dense"
+    if data_structure is None:
+        from sage.graphs.base.dense_graph import DenseGraphBackend
+        from sage.graphs.base.sparse_graph import SparseGraphBackend
+        if isinstance(G._backend, DenseGraphBackend):
+            data_structure = "dense"
+        elif isinstance(G._backend, SparseGraphBackend):
+            data_structure = "sparse"
+        else:
+            data_structure = "static_sparse"
+
+    name = G.name()
+    if name:
+        name = 'An orientation of ' + name
+
+    if not G.size():
+        D = DiGraph(data=[G, []],
+                    format='vertices_and_edges',
+                    name=name,
+                    pos=G._pos,
+                    multiedges=G.allows_multiple_edges(),
+                    loops=G.allows_loops(),
+                    data_structure=data_structure)
+        if hasattr(G, '_embedding'):
+            D._embedding = copy(G._embedding)
+        yield D
+        return
+
+    E = [[(u, v, label), (v, u, label)] if u != v else [(u, v, label)]
+         for u, v, label in G.edge_iterator()]
+    from itertools import product
+    for edges in product(*E):
+        D = DiGraph(data=[G, edges],
+                    format='vertices_and_edges',
+                    name=name,
+                    pos=G._pos,
+                    multiedges=G.allows_multiple_edges(),
+                    loops=G.allows_loops(),
+                    data_structure=data_structure)
+        if hasattr(G, '_embedding'):
+            D._embedding = copy(G._embedding)
+        yield D
 
 
 def acyclic_orientations(G):
@@ -484,6 +647,124 @@ def acyclic_orientations(G):
         D = DiGraph([(u, v) if label else (v, u) for (u, v), label in orientation.items()])
         D.relabel(perm=reverse_vertex_labels, inplace=True)
         yield D
+
+
+def strong_orientation(G):
+    r"""
+    Return a strongly connected orientation of the graph `G`.
+
+    An orientation of an undirected graph is a digraph obtained by giving an
+    unique direction to each of its edges. An orientation is said to be strong
+    if there is a directed path between each pair of vertices. See also the
+    :wikipedia:`Strongly_connected_component`.
+
+    If the graph is 2-edge-connected, a strongly connected orientation can be
+    found in linear time. If the given graph is not 2-connected, the orientation
+    returned will ensure that each 2-connected component has a strongly
+    connected orientation.
+
+    INPUT:
+
+    - ``G`` -- an undirected graph
+
+    OUTPUT: a digraph representing an orientation of the current graph
+
+    .. NOTE::
+
+        - This method assumes that the input the graph is connected.
+        - The time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)` for
+          ``DenseGraph`` .
+
+    .. SEEALSO::
+
+        - :meth:`~sage.graphs.graph.Graph.orientations`
+        - :meth:`~sage.graphs.orientations.strong_orientations_iterator`
+        - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.nauty_directg`
+        - :meth:`~sage.graphs.orientations.random_orientation`
+
+    EXAMPLES:
+
+    For a 2-regular graph, a strong orientation gives to each vertex an
+    out-degree equal to 1::
+
+        sage: g = graphs.CycleGraph(5)
+        sage: g.strong_orientation().out_degree()
+        [1, 1, 1, 1, 1]
+
+    The Petersen Graph is 2-edge connected. It then has a strongly connected
+    orientation::
+
+        sage: g = graphs.PetersenGraph()
+        sage: o = g.strong_orientation()
+        sage: len(o.strongly_connected_components())
+        1
+
+    The same goes for the CubeGraph in any dimension::
+
+        sage: all(len(graphs.CubeGraph(i).strong_orientation().strongly_connected_components()) == 1
+        ....:     for i in range(2,6))
+        True
+
+    A multigraph also has a strong orientation::
+
+        sage: g = Graph([(0, 1), (0, 2), (1, 2)] * 2, multiedges=True)
+        sage: g.strong_orientation()
+        Multi-digraph on 3 vertices
+    """
+    d = DiGraph(multiedges=G.allows_multiple_edges())
+    i = 0
+
+    # The algorithm works through a depth-first search. Any edge used in the
+    # depth-first search is oriented in the direction in which it has been
+    # used. All the other edges are oriented backward
+
+    v = next(G.vertex_iterator())
+    seen = {}
+    i = 1
+
+    # Time at which the vertices have been discovered
+    seen[v] = i
+
+    # indicates the stack of edges to explore
+    next_ = G.edges_incident(v)
+
+    while next_:
+        e = next_.pop()
+
+        # Ignore loops
+        if e[0] == e[1]:
+            continue
+
+        # We assume e[0] to be a `seen` vertex
+        e = e if seen.get(e[0], False) is not False else (e[1], e[0], e[2])
+
+        # If we discovered a new vertex
+        if seen.get(e[1], False) is False:
+            d.add_edge(e)
+            next_.extend(ee for ee in G.edges_incident(e[1])
+                         if ((e[0], e[1]) != (ee[0], ee[1])) and ((e[0], e[1]) != (ee[1], ee[0])))
+            i += 1
+            seen[e[1]] = i
+
+        # Else, we orient the edges backward
+        else:
+            if seen[e[0]] < seen[e[1]]:
+                d.add_edge(e[1], e[0], e[2])
+            else:
+                d.add_edge(e)
+
+    # Case of multiple edges. If another edge has already been inserted, we add
+    # the new one in the opposite direction.
+    tmp = None
+    for e in G.multiple_edges():
+        if tmp == (e[0], e[1]):
+            if d.has_edge(e[0], e[1]):
+                d.add_edge(e[1], e[0], e[2])
+            else:
+                d.add_edge(e)
+        tmp = (e[0], e[1])
+
+    return d
 
 
 def strong_orientations_iterator(G):
@@ -757,3 +1038,412 @@ def random_orientation(G):
             D.add_edge(v, u, l)
         rbits >>= 1
     return D
+
+
+def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose=0,
+                                  *, integrality_tolerance=1e-3):
+    r"""
+    Return an orientation of `G` with the smallest possible maximum outdegree.
+
+    Given a Graph `G`, it is polynomial to compute an orientation `D` of the
+    edges of `G` such that the maximum out-degree in `D` is minimized. This
+    problem, though, is NP-complete in the weighted case [AMOZ2006]_.
+
+    INPUT:
+
+    - ``G`` -- an undirected graph
+
+    - ``use_edge_labels`` -- boolean (default: ``False``)
+
+      - When set to ``True``, uses edge labels as weights to compute the
+        orientation and assumes a weight of `1` when there is no value available
+        for a given edge.
+
+      - When set to ``False`` (default), gives a weight of 1 to all the edges.
+
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set to 0
+      by default, which means quiet.
+
+    - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
+      over an inexact base ring;
+      see :meth:`MixedIntegerLinearProgram.get_values`.
+
+    EXAMPLES:
+
+    Given a complete bipartite graph `K_{n,m}`, the maximum out-degree of an
+    optimal orientation is `\left\lceil \frac {nm} {n+m}\right\rceil`::
+
+        sage: g = graphs.CompleteBipartiteGraph(3,4)
+        sage: o = g.minimum_outdegree_orientation()                                     # needs sage.numerical.mip
+        sage: max(o.out_degree()) == integer_ceil((4*3)/(3+4))                          # needs sage.numerical.mip
+        True
+
+    Show the influence of edge labels on the solution::
+
+        sage: # needs sage.numerical.mip
+        sage: g = graphs.PetersenGraph()
+        sage: o = g.minimum_outdegree_orientation(use_edge_labels=False)
+        sage: max(o.out_degree())
+        2
+        sage: _ = [g.set_edge_label(u, v, 1) for u, v in g.edge_iterator(labels=False)]
+        sage: o = g.minimum_outdegree_orientation(use_edge_labels=True)
+        sage: max(o.out_degree())
+        2
+        sage: g.set_edge_label(0, 1, 100)
+        sage: o = g.minimum_outdegree_orientation(use_edge_labels=True)
+        sage: max(o.out_degree())
+        3
+
+    TESTS::
+
+        sage: from sage.graphs.orientations import minimum_outdegree_orientation
+        sage: minimum_outdegree_orientation(DiGraph())                                  # needs sage.numerical.mip
+        Traceback (most recent call last):
+        ...
+        ValueError: Cannot compute an orientation of a DiGraph.
+         Please convert it to a Graph if you really mean it.
+    """
+    G._scream_if_not_simple()
+    if G.is_directed():
+        raise ValueError("Cannot compute an orientation of a DiGraph. "
+                         "Please convert it to a Graph if you really mean it.")
+
+    if use_edge_labels:
+        from sage.rings.real_mpfr import RR
+
+        def weight(e):
+            label = G.edge_label(e[0], e[1])
+            return label if label in RR else 1
+    else:
+        def weight(e):
+            return 1
+
+    from sage.numerical.mip import MixedIntegerLinearProgram
+
+    p = MixedIntegerLinearProgram(maximization=False, solver=solver)
+    degree = p.new_variable(nonnegative=True)
+
+    # The orientation of an edge is boolean and indicates whether the edge uv
+    # goes from u to v ( equal to 0 ) or from v to u ( equal to 1)
+    orientation = p.new_variable(binary=True)
+
+    # Whether an edge adjacent to a vertex u counts positively or negatively. To
+    # do so, we first fix an arbitrary extremity per edge uv.
+    ext = {frozenset(e): e[0] for e in G.edge_iterator(labels=False)}
+
+    def outgoing(u, e, variable):
+        if u == ext[frozenset(e)]:
+            return variable
+        return 1 - variable
+
+    for u in G:
+        p.add_constraint(p.sum(weight(e) * outgoing(u, e, orientation[frozenset(e)])
+                               for e in G.edge_iterator(vertices=[u], labels=False))
+                         - degree['max'], max=0)
+
+    p.set_objective(degree['max'])
+
+    p.solve(log=verbose)
+
+    orientation = p.get_values(orientation, convert=bool, tolerance=integrality_tolerance)
+
+    # All the edges from G are doubled in O ( one in each direction )
+    O = DiGraph(G)
+
+    # Builds the list of edges that should be removed
+    edges = (e[::-1] if orientation[frozenset(e)] else e
+             for e in G.edge_iterator(labels=False))
+    O.delete_edges(edges)
+
+    return O
+
+
+def bounded_outdegree_orientation(G, bound, solver=None, verbose=False,
+                                  *, integrality_tolerance=1e-3):
+    r"""
+    Return an orientation of `G` such that every vertex `v` has out-degree less
+    than `b(v)`.
+
+    INPUT:
+
+    - ``G`` -- an undirected graph
+
+    - ``bound`` -- maximum bound on the out-degree. Can be of three
+      different types :
+
+      * An integer `k`. In this case, computes an orientation whose maximum
+        out-degree is less than `k`.
+
+      * A dictionary associating to each vertex its associated maximum
+        out-degree.
+
+      * A function associating to each vertex its associated maximum
+        out-degree.
+
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set to 0
+      by default, which means quiet.
+
+    - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
+      over an inexact base ring;
+      see :meth:`MixedIntegerLinearProgram.get_values`.
+
+    OUTPUT:
+
+    A DiGraph representing the orientation if it exists.
+    A :exc:`ValueError` exception is raised otherwise.
+
+    ALGORITHM:
+
+    The problem is solved through a maximum flow :
+
+    Given a graph `G`, we create a ``DiGraph`` `D` defined on `E(G)\cup V(G)\cup
+    \{s,t\}`. We then link `s` to all of `V(G)` (these edges having a capacity
+    equal to the bound associated to each element of `V(G)`), and all the
+    elements of `E(G)` to `t` . We then link each `v \in V(G)` to each of its
+    incident edges in `G`. A maximum integer flow of value `|E(G)|` corresponds
+    to an admissible orientation of `G`. Otherwise, none exists.
+
+    EXAMPLES:
+
+    There is always an orientation of a graph `G` such that a vertex `v` has
+    out-degree at most `\lceil \frac {d(v)} 2 \rceil`::
+
+        sage: g = graphs.RandomGNP(40, .4)
+        sage: b = lambda v: integer_ceil(g.degree(v)/2)
+        sage: D = g.bounded_outdegree_orientation(b)
+        sage: all(D.out_degree(v) <= b(v) for v in g)
+        True
+
+    Chvatal's graph, being 4-regular, can be oriented in such a way that its
+    maximum out-degree is 2::
+
+        sage: g = graphs.ChvatalGraph()
+        sage: D = g.bounded_outdegree_orientation(2)
+        sage: max(D.out_degree())
+        2
+
+    For any graph `G`, it is possible to compute an orientation such that
+    the maximum out-degree is at most the maximum average degree of `G`
+    divided by 2. Anything less, though, is impossible.
+
+        sage: g = graphs.RandomGNP(40, .4)
+        sage: mad = g.maximum_average_degree()                                      # needs sage.numerical.mip
+
+    Hence this is possible ::
+
+        sage: d = g.bounded_outdegree_orientation(integer_ceil(mad/2))              # needs sage.numerical.mip
+
+    While this is not::
+
+        sage: try:                                                                  # needs sage.numerical.mip
+        ....:     g.bounded_outdegree_orientation(integer_ceil(mad/2-1))
+        ....:     print("Error")
+        ....: except ValueError:
+        ....:     pass
+
+    The bounds can be specified in different ways::
+
+        sage: g = graphs.PetersenGraph()
+        sage: b = lambda v: integer_ceil(g.degree(v)/2)
+        sage: D = g.bounded_outdegree_orientation(b)
+        sage: b_dict = {u: b(u) for u in g}
+        sage: D = g.bounded_outdegree_orientation(b_dict)
+        sage: unique_bound = 2
+        sage: D = g.bounded_outdegree_orientation(unique_bound)
+
+    TESTS:
+
+    As previously for random graphs, but more intensively::
+
+        sage: for i in range(30):      # long time (up to 6s on sage.math, 2012)
+        ....:     g = graphs.RandomGNP(40, .4)
+        ....:     b = lambda v: integer_ceil(g.degree(v)/2)
+        ....:     D = g.bounded_outdegree_orientation(b)
+        ....:     if not (
+        ....:          all( D.out_degree(v) <= b(v) for v in g ) or
+        ....:          D.size() != g.size()):
+        ....:         print("Something wrong happened")
+
+    Empty graph::
+
+        sage: Graph().bounded_outdegree_orientation(b)
+        Digraph on 0 vertices
+    """
+    G._scream_if_not_simple()
+    n = G.order()
+
+    if not n:
+        return DiGraph()
+
+    vertices = list(G)
+    vertices_id = {y: x for x, y in enumerate(vertices)}
+
+    b = {}
+
+    # Checking the input type. We make a dictionary out of it
+    if isinstance(bound, dict):
+        b = bound
+    else:
+        try:
+            b = dict(zip(vertices, map(bound, vertices)))
+        except TypeError:
+            b = dict(zip(vertices, [bound]*n))
+
+    d = DiGraph()
+
+    # Adding the edges (s,v) and ((u,v),t)
+    d.add_edges(('s', vertices_id[v], b[v]) for v in vertices)
+
+    d.add_edges(((vertices_id[u], vertices_id[v]), 't', 1)
+                 for u, v in G.edges(sort=False, labels=None))
+
+    # each v is linked to its incident edges
+
+    for u, v in G.edge_iterator(labels=None):
+        u, v = vertices_id[u], vertices_id[v]
+        d.add_edge(u, (u, v), 1)
+        d.add_edge(v, (u, v), 1)
+
+    # Solving the maximum flow
+    value, flow = d.flow('s', 't', value_only=False, integer=True,
+                         use_edge_labels=True, solver=solver, verbose=verbose,
+                         integrality_tolerance=integrality_tolerance)
+
+    if value != G.size():
+        raise ValueError("No orientation exists for the given bound")
+
+    D = DiGraph()
+    D.add_vertices(vertices)
+
+    # The flow graph may not contain all the vertices, if they are
+    # not part of the flow...
+
+    for u in [x for x in range(n) if x in flow]:
+
+        for uu, vv in flow.neighbors_out(u):
+            v = vv if vv != u else uu
+            D.add_edge(vertices[u], vertices[v])
+
+    # I do not like when a method destroys the embedding ;-)
+    D.set_pos(G.get_pos())
+
+    return D
+
+
+def eulerian_orientation(G):
+    r"""
+    Return a DiGraph which is an Eulerian orientation of the graph `G`.
+
+    An Eulerian graph being a graph such that any vertex has an even degree, an
+    Eulerian orientation of a graph is an orientation of its edges such that
+    each vertex `v` verifies `d^+(v)=d^-(v)=d(v)/2`, where `d^+` and `d^-`
+    respectively represent the out-degree and the in-degree of a vertex.
+
+    If the graph is not Eulerian, the orientation verifies for any vertex `v`
+    that `| d^+(v)-d^-(v) | \leq 1`.
+
+    INPUT:
+
+    - ``G`` -- an undirected graph
+
+    ALGORITHM:
+
+    This algorithm is a random walk through the edges of the graph, which
+    orients the edges according to the walk. When a vertex is reached which has
+    no non-oriented edge (this vertex must have odd degree), the walk resumes at
+    another vertex of odd degree, if any.
+
+    This algorithm has time complexity in `O(n+m)` for ``SparseGraph`` and
+    `O(n^2)` for ``DenseGraph``, where `m` is the number of edges in the graph
+    and `n` is the number of vertices in the graph.
+
+    EXAMPLES:
+
+    The CubeGraph with parameter 4, which is regular of even degree, has an
+    Eulerian orientation such that `d^+ = d^-`::
+
+        sage: g = graphs.CubeGraph(4)
+        sage: g.degree()
+        [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+        sage: o = g.eulerian_orientation()
+        sage: o.in_degree()
+        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+        sage: o.out_degree()
+        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+
+    Secondly, the Petersen Graph, which is 3 regular has an orientation such
+    that the difference between `d^+` and `d^-` is at most 1::
+
+        sage: g = graphs.PetersenGraph()
+        sage: o = g.eulerian_orientation()
+        sage: o.in_degree()
+        [2, 2, 2, 2, 2, 1, 1, 1, 1, 1]
+        sage: o.out_degree()
+        [1, 1, 1, 1, 1, 2, 2, 2, 2, 2]
+
+    TESTS::
+
+        sage: E0 = Graph(); E4 = Graph(4)  # See trac #21741
+        sage: E0.eulerian_orientation()
+        Digraph on 0 vertices
+        sage: E4.eulerian_orientation()
+        Digraph on 4 vertices
+    """
+    d = DiGraph([G, []], format='vertices_and_edges')
+
+    if not G.size():
+        return d
+
+    g = copy(G)
+
+    # list of vertices of odd degree
+    odd = [x for x in g.vertex_iterator() if g.degree(x) % 2]
+
+    # Picks the first vertex, which is preferably an odd one
+    if odd:
+        v = odd.pop()
+    else:
+        v = next(g.edge_iterator(labels=None))[0]
+        odd.append(v)
+    # Stops when there is no edge left
+    while True:
+
+        # If there is an edge adjacent to the current one
+        if g.degree(v):
+            e = next(g.edge_iterator(v))
+            g.delete_edge(e)
+            if e[0] != v:
+                e = (e[1], e[0], e[2])
+            d.add_edge(e)
+            v = e[1]
+
+        # The current vertex is isolated
+        else:
+            odd.remove(v)
+
+            # jumps to another odd vertex if possible
+            if odd:
+                v = odd.pop()
+            # Else jumps to an even vertex which is not isolated
+            elif g.size():
+                v = next(g.edge_iterator())[0]
+                odd.append(v)
+            # If there is none, we are done !
+            else:
+                return d

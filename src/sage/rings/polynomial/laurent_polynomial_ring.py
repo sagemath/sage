@@ -77,6 +77,8 @@ def is_LaurentPolynomialRing(R):
 
 
 _cache = {}
+
+
 def LaurentPolynomialRing(base_ring, *args, **kwds):
     r"""
     Return the globally unique univariate or multivariate Laurent polynomial
@@ -251,6 +253,7 @@ def LaurentPolynomialRing(base_ring, *args, **kwds):
     _cache[R] = P
     return P
 
+
 def _split_dict_(D, indices, group_by=None):
     r"""
     Split the dictionary ``D`` by ``indices`` and ``group_by``.
@@ -331,6 +334,7 @@ def _split_dict_(D, indices, group_by=None):
     else:
         return result
 
+
 def _split_laurent_polynomial_dict_(P, M, d):
     r"""
     Helper function for splitting a multivariate Laurent polynomial
@@ -390,6 +394,7 @@ def _split_laurent_polynomial_dict_(P, M, d):
         pass
     return sum(P({k: 1}) * value(v, P)
                for k, v in D.items()).monomial_coefficients()
+
 
 def from_fraction_field(L, x):
     r"""

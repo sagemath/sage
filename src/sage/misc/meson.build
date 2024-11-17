@@ -124,13 +124,18 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, gmp]
+  if name == 'binary_tree'
+    deps += [cysignals]
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/misc',
     install: true,
     include_directories: [inc_cpython, inc_rings],
-    dependencies: [py_dep, cysignals, gmp],
+    dependencies: deps,
   )
 endforeach
 

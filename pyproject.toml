@@ -56,6 +56,8 @@ dependencies = [
     'ipywidgets >=7.5.1',
     'fpylll >=0.5.9',
     'ptyprocess > 0.5',
+    # TODO: Remove this once the migration to meson is complete
+    'pkgconfig'
 ]
 dynamic = ["version"]
 license = {text = "GNU General Public License (GPL) v2 or later"}
@@ -92,8 +94,8 @@ platforms = [
     'osx-64', 'linux-64', 'linux-aarch64', 'osx-arm64'
 ]
 
-[external]
 # External dependencies in the format proposed by https://peps.python.org/pep-0725
+[external]
 build-requires = [
   "virtual:compiler/c",
   "virtual:compiler/cpp",
@@ -154,4 +156,23 @@ dependencies = [
   "pkg:generic/tachyon",
   "pkg:generic/sagemath-polytopes-db",
   "pkg:generic/sagemath-elliptic-curves",
+  "pkg:generic/sagemath-graphs",
+]
+
+[dependency-groups]
+test = [
+  "pytest",
+  "pytest-xdist",
+  "coverage",
+]
+docs = [
+  "sphinx", 
+  "sphinx-inline-tabs", 
+  "furo",
+]
+lint = [
+  "relint",
+  "ruff",
+  "pycodestyle",
+  "flake8-rst-docstrings",
 ]

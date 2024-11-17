@@ -2977,7 +2977,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         self.permute_rows(row_permutation)
         self.permute_columns(column_permutation)
 
-    def with_permuted_rows_and_columns(self,row_permutation,column_permutation):
+    def with_permuted_rows_and_columns(self, row_permutation, column_permutation):
         r"""
         Return the matrix obtained from permuting the rows and
         columns of ``self`` by applying the permutation group

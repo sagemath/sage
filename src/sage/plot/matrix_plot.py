@@ -234,7 +234,7 @@ class MatrixPlot(GraphicPrimitive):
             if options.get('colorbar', False):
                 colorbar_options = options['colorbar_options']
                 from matplotlib import colorbar
-                cax,kwds = colorbar.make_axes_gridspec(subplot,**colorbar_options)
+                cax,kwds = colorbar.make_axes_gridspec(subplot, **colorbar_options)
                 colorbar.Colorbar(cax, image, **kwds)
 
         if flip_y:

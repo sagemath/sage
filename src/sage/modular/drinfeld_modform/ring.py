@@ -581,8 +581,6 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             ...
             TypeError: unable to convert a to an element in Fq[T]
         """
-        K = self._base_ring
-        T = K.gen()
         if a is None:
             return [self._generator_coefficient_form(i)
                     for i in range(1, self.rank() + 1)]

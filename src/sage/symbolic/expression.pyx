@@ -10010,7 +10010,7 @@ cdef class Expression(Expression_abc):
             sig_off()
         return new_Expression_from_GEx(self._parent, r)
 
-    def numerator(self, bint normalize = True):
+    def numerator(self, bint normalize=True):
         """
         Return the numerator of this symbolic expression.
 
@@ -11018,7 +11018,7 @@ cdef class Expression(Expression_abc):
 
     trig_simplify = simplify_trig
 
-    def simplify_rational(self,algorithm='full', map=False):
+    def simplify_rational(self, algorithm='full', map=False):
         r"""
         Simplify rational expressions.
 
@@ -11604,7 +11604,7 @@ cdef class Expression(Expression_abc):
 
     log_simplify = simplify_log
 
-    def expand_log(self,algorithm='products'):
+    def expand_log(self, algorithm='products'):
         r"""
         Simplify symbolic expression, which can contain logs.
 

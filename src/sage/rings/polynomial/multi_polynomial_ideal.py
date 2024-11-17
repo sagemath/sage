@@ -450,6 +450,7 @@ class MPolynomialIdeal_magma_repr:
         B = PolynomialSequence([R(e) for e in mgb], R, immutable=True)
         return B
 
+
 class MPolynomialIdeal_singular_base_repr:
     @require_field
     def syzygy_module(self):
@@ -637,7 +638,7 @@ class MPolynomialIdeal_singular_repr(
         try:
             self.ring()._singular_(singular).set_ring()
             I = self.__singular
-            if not (I.parent() is singular):
+            if I.parent() is not singular:
                 raise ValueError
             I._check_valid()
             return I
@@ -3493,6 +3494,7 @@ class MPolynomialIdeal_macaulay2_repr:
         R = self.ring()
         return R(k)
 
+
 class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
     def __init__(self, ring, gens, coerce=True, side='left'):
         r"""
@@ -3724,7 +3726,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
         from sage.libs.singular.groebner_strategy import NCGroebnerStrategy
         return NCGroebnerStrategy(self.std())
 
-    def reduce(self,p):
+    def reduce(self, p):
         """
         Reduce an element modulo a Groebner basis for this ideal.
 
@@ -3759,7 +3761,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
         """
         return self._groebner_strategy().normal_form(p)
 
-    def _contains_(self,p):
+    def _contains_(self, p):
         """
         EXAMPLES:
 
@@ -4739,7 +4741,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
                 gb = self._groebner_basis_ginv(*args, **kwds)
             elif ":" in algorithm:
                 ginv,alg = algorithm.split(":")
-                gb = self._groebner_basis_ginv(algorithm=alg,*args, **kwds)
+                gb = self._groebner_basis_ginv(algorithm=alg, *args, **kwds)
             else:
                 raise NameError("Algorithm '%s' unknown." % algorithm)
         elif algorithm == 'giac:gbasis':

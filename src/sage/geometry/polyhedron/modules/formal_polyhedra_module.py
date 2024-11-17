@@ -26,7 +26,7 @@ class FormalPolyhedraModule(CombinatorialFreeModule):
     EXAMPLES::
 
         sage: from sage.geometry.polyhedron.modules.formal_polyhedra_module import FormalPolyhedraModule
-        sage: def closed_interval(a,b): return Polyhedron(vertices=[[a], [b]])
+        sage: def closed_interval(a, b): return Polyhedron(vertices=[[a], [b]])
 
     A three-dimensional vector space of polyhedra::
 
@@ -104,7 +104,7 @@ class FormalPolyhedraModule(CombinatorialFreeModule):
         TESTS::
 
             sage: from sage.geometry.polyhedron.modules.formal_polyhedra_module import FormalPolyhedraModule
-            sage: def closed_interval(a,b): return Polyhedron(vertices=[[a], [b]])
+            sage: def closed_interval(a, b): return Polyhedron(vertices=[[a], [b]])
             sage: I01 = closed_interval(0, 1); I01.rename('conv([0], [1])')
             sage: I11 = closed_interval(1, 1); I11.rename('{[1]}')
             sage: I12 = closed_interval(1, 2); I12.rename('conv([1], [2])')
@@ -125,7 +125,7 @@ class FormalPolyhedraModule(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: from sage.geometry.polyhedron.modules.formal_polyhedra_module import FormalPolyhedraModule
-            sage: def closed_interval(a,b): return Polyhedron(vertices=[[a], [b]])
+            sage: def closed_interval(a, b): return Polyhedron(vertices=[[a], [b]])
             sage: I01 = closed_interval(0, 1); I01.rename('conv([0], [1])')
             sage: I11 = closed_interval(1, 1); I11.rename('{[1]}')
             sage: I12 = closed_interval(1, 2); I12.rename('conv([1], [2])')
