@@ -31,6 +31,7 @@ from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 
+
 class DrinfeldModule_charzero(DrinfeldModule):
     r"""
     This class implements Drinfeld `\mathbb{F}_q[T]`-modules defined
@@ -317,7 +318,6 @@ class DrinfeldModule_charzero(DrinfeldModule):
             True
         """
         L = LazyPowerSeriesRing(self._base, name)
-        zero = self._base.zero()
         q = self._Fq.cardinality()
 
         def coeff_log(k):
