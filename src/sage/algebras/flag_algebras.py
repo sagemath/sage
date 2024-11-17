@@ -335,28 +335,34 @@ def test_generate():
     print("\nSingle color generate test start")
     for ii in [5, 6, 7, 8, 9, 10]:
         print("Done with size {}, the number is {}".format(ii, len(C0.generate(ii))))
+    print("Should be equal to 6, 7, 8, 9, 10, 11")
 
     print("\nTwo colors generate test start")
     for ii in [3, 4, 5, 6, 7, 8]:
         print("Done with size {}, the number is {}".format(ii, len(Cs.generate(ii))))
+    print("Should be equal to 13, 22, 34, 50, 70, 95")
     
     print("\nGraph generate test start")
     for ii in [3, 4, 5, 6, 7]:
         print("Done with size {}, the number is {}".format(ii, len(G.generate(ii))))
+    print("Should be equal to 4, 11, 34, 156, 1044, (12346)")
     
     #This gives an incorrect value for n=6
     print("\nThreeGraph generate test start")
     for ii in [3, 4, 5, 6]:
         print("Done with size {}, the number is {}".format(ii, len(TG.generate(ii))))
+    print("Should be equal to 2, 5, 34, 2136, (7013320)")
     
     print("\nDiGraph generate test start")
     for ii in [2, 3, 4, 5]:
         print("Done with size {}, the number is {}".format(ii, len(DG.generate(ii))))
+    print("Should be equal to 3, 16, 218, 9608 (1540944)")
     
     #This only returns the uncolored elements
     print("\nColoredGraph generate test start")
-    for ii in [2, 3, 4, 5]:
+    for ii in [2, 3, 4, 5, 6]:
         print("Done with size {}, the number is {}".format(ii, len(CG.generate(ii))))
+    print("Should be equal to [6, 20, 90, 544]")
     
     # This has a bug somewhere
     # print("\nDirectedThreeGraph generate test start")
@@ -434,7 +440,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             ftype_points = tuple(kwds['ftype_points'])
         elif 'ftype' in kwds:
             ftype_points = tuple(kwds['ftype'])
-        
+        if len(ftype_points)==n:
+            return self._element_constructor_(n, **kwds)
+
         blocks = {}
         for xx in self._signature.keys():
             blocks[xx] = tuple()
@@ -604,9 +612,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             if not os.path.exists(path):
                 os.makedirs(path)
             file_path = os.path.join(path, file_name)
-
         save_object = {'key': key, 'data': data}
-        save(save_object, file_path)
+        with open(file_path, "wb") as file:
+            pickle.dump(save_object, file)
 
     def _load(self, key=None, path=None, name=None):
         if key!=None:
@@ -626,8 +634,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         if not os.path.exists(file_path):
             return None
 
-        save_object = load(file_path)
-        if save_object['key'] != key:
+        with open(file_path, "rb") as file:
+            save_object = pickle.load(file)
+        
+        if key!=None and save_object != None and save_object['key'] != key:
             import warnings
             warnings.warn("Hash collision or corrupted data!")
             return None
@@ -637,25 +647,33 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     def show_files(self):
         for xx in os.listdir(self._calcs_dir()):
             if xx.startswith(self._name + "."):
-                data = self._load(name=xx)
-                print(data["key"])
+                file_path = os.path.join(self._calcs_dir(), xx)
+                with open(file_path , "rb") as file:
+                    data = pickle.load(file)
+                if data != None:
+                    print(data["key"][:2])
 
     def clear(self):
         for xx in os.listdir(self._calcs_dir()):
             if xx.startswith(self._name + "."):
-                os.remove(self._calcs_dir()+xx)
+                file_path = os.path.join(self._calcs_dir(), xx)
+                os.remove(file_path)
     
     def _certs_dir(self):
         if os.path.isdir("../certs"):
             return "../certs/"
         return "certs/"
 
-    def _serialize(self):
+    def _serialize(self, excluded=None):
+        if excluded==None:
+            excluded = self._excluded
+        else:
+            excluded = tuple(excluded)
         return {
             "name": self._name,
             "signature": self._signature,
             "symmetries": self._symmetries,
-            "excluded": [xx._serialize() for xx in self._excluded]
+            "excluded": [xx._serialize() for xx in excluded]
         }
 
     #Optimizing and rounding
@@ -1368,6 +1386,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             initial_sol = solve_sdp(*sdp_data)
             time.sleep(float(0.1))
             
+            return (initial_sol, sdp_data, table_constructor, target_vector_exact)
+
             # Format the result and return it if floating point values are fine
             if (not exact):
                 if file==None:
@@ -1568,7 +1588,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return result
     
     verify = verify_certificate
-
     
     #Generating flags
     def _guess_number(self, n):
@@ -1647,16 +1666,16 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         
         #Trying to load
         excluded = tuple([xx for xx in self._excluded if xx.size()<=n])
-        key = ("generate", self._serialize(), n, ftype._serialize())
+        key = ("generate", n, self._serialize(excluded), ftype._serialize())
         loaded = self._load(key=key)
         if loaded != None:
             return loaded
 
         if ftype.size()==0:
             # Not ftype generation needed, just generate inductively
-            if run_bound<infinity or self._guess_number(n) < run_bound:
+            if run_bound==infinity or self._guess_number(n) < run_bound:
                 prev = self.generate_flags(n-1, run_bound=run_bound)
-                ret = possible_mergings(n, prev, self._signature, excluded)
+                ret = possible_mergings(n, self, prev, self._signature, excluded)
             else:
                 confirm = input("This might take a while: {}. Continue? y/n".format(guess))
                 if "y" in confirm.lower():
@@ -1677,7 +1696,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     def _find_ftypes(self, empstrs, ftype):
         import multiprocessing as mp
         pool = mp.Pool(mp.cpu_count()-1)
-        pares = pool.map(ftype._ftypes_inside, empstrs)
+        pares = pool.map(ftype.ftypes_inside, empstrs)
         pool.close(); pool.join()
         return tuple(itertools.chain.from_iterable(pares))
     
@@ -1767,6 +1786,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             sage: table[3][1, 1]
             1/6
         """
+
+        #Sanity checks
         large_size = large_ftype.size()
         if ftype_inj==None:
             ftype_inj = tuple(range(large_size))
@@ -1776,21 +1797,18 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 raise ValueError('ftype_inj must map into the points of {}'.format(large_ftype))
             if len(set(ftype_inj)) != len(ftype_inj):
                 raise ValueError('ftype_inj must be injective (no repeated elements)')
-        target_size = n1+n2 - large_size
-        return self._mpte(tuple(self._excluded), target_size, n1, n2, large_ftype, ftype_inj)
-    
-    mpt = mul_project_table
-    table = mul_project_table
-    
-    def _mpte(self, excluded, N, n1, n2, large_ftype, ftype_inj):
-        r"""
-        The (hidden) cached version of :func:`mul_project_table`
-        """
-        ind = (excluded, N, n1, n2, large_ftype, ftype_inj)
-        loaded = self._load(ind, True)
+        if target_size==None:
+            target_size = n1+n2 - large_size
+
+        #Trying to load
+        excluded = tuple([xx for xx in self._excluded if xx.size()<=target_size])
+        key = ("table", (n1, n2, target_size), large_ftype._serialize(), tuple(ftype_inj), self._serialize(excluded))
+        loaded = self._load(key=key)
         if loaded != None:
             return loaded
         
+        N = target_size
+
         from sage.matrix.args import MatrixArgs
         import multiprocessing as mp
         ftype_inj = list(ftype_inj)
@@ -1799,24 +1817,30 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         small_size = small_ftype.size()
         ftype_remap = ftype_inj + [ii for ii in range(large_size) if (ii not in ftype_inj)]
         
-        Nflgs = self._gfe(excluded, N, small_ftype)
-        n1flgs = self._gfe(excluded, n1, large_ftype)
-        n2flgs = self._gfe(excluded, n2, large_ftype)
+        Nflgs = self.generate(N, small_ftype)
+        n1flgs = self.generate(n1, large_ftype)
+        n2flgs = self.generate(n2, large_ftype)
         
         slist = tuple((flg, n1, n1flgs, n2, n2flgs, ftype_remap, large_ftype, small_ftype) for flg in Nflgs)
         
         pool = mp.Pool(mp.cpu_count()-1)
-        mats = pool.map(self._density_wrapper, slist)
+        #mats = pool.map(self._density_wrapper, slist)
+        mats = map(self._density_wrapper, slist)
         pool.close(); pool.join()
         
+        print(mats)
+
         norm = falling_factorial(N - small_size, large_size - small_size) 
         norm *= binomial(N - large_size, n1 - large_size)
         
         ret = tuple([ \
             MatrixArgs(QQ, mat[0], mat[1], entries=mat[2]).matrix()/norm for mat in mats])
         
-        self._save(ind, ret, True)
+        self._save(ret, key=key)
         return ret
+    
+    mpt = mul_project_table
+    table = mul_project_table
     
     def sym_asym_bases(self, n, ftype=None):
         r"""
@@ -1829,7 +1853,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         sym_base = []
         asym_base = []
         for xx in flags:
-            xxid = self.identify(n, [xx.ftype_points()], **xx.blocks())
+            xxid = xx.unique(weak=True)
             if xxid not in uniques:
                 uniques.append(xxid)
                 sym_base.append(xx.afae())
