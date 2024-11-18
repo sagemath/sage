@@ -88,7 +88,7 @@ def _is_irreducible_and_reduced(F) -> bool:
     return len(factors) == 1 and factors[0][1] == 1
 
 
-def Curve(F, A=None):
+def Curve(F, A=None, check=False):
     """
     Return the plane or space curve defined by ``F``, where ``F`` can be either
     a multivariate polynomial, a list or tuple of polynomials, or an algebraic
@@ -108,6 +108,10 @@ def Curve(F, A=None):
     - ``F`` -- a multivariate polynomial, or a list or tuple of polynomials, or an algebraic scheme
 
     - ``A`` -- (default: ``None``) an ambient space in which to create the curve
+
+    - ``check`` -- (default: ``False``) whether to check if the given data
+      ``F`` defines an algebraic scheme of dimension 1. This may take a long
+      time or even fail depending on the base field.
 
     EXAMPLES:
 
@@ -304,6 +308,9 @@ def Curve(F, A=None):
     k = A.base_ring()
 
     if isinstance(A, AffineSpace_generic):
+        if check:
+            if not A.coordinate_ring().ideal(F).dimension() == 1:
+                raise ValueError('given data does not define an affine subscheme of dimension 1')
         if n == 1:
             if A.coordinate_ring().ideal(F).is_zero():
                 if isinstance(k, FiniteField):
@@ -337,6 +344,9 @@ def Curve(F, A=None):
         return AffinePlaneCurve(A, F)
 
     elif isinstance(A, ProjectiveSpace_ring):
+        if check:
+            if not A.coordinate_ring().ideal(F).dimension() == 2:
+                raise ValueError('given data does not define a projective subscheme of dimension 1')
         if n == 1:
             if A.coordinate_ring().ideal(F).is_zero():
                 if isinstance(k, FiniteField):
