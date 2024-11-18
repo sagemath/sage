@@ -665,16 +665,15 @@ cdef class Flag(Element):
         r"""
         Returns the induced subflag.
         """
-        if len(points)==0:
-            return self.parent().empty()
         cdef int ii
         if ftype_points==None:
             ftype_points = self._ftype_points
-        
         if points==None:
             points = tuple(range(self._n))
         else:
             points = tuple(list(points) + [ii for ii in ftype_points if ii not in points])
+        if len(points)==0:
+            return self.parent().empty()
         ftype_points = tuple(ftype_points)
         if points==tuple(range(self.size())) and ftype_points==self._ftype_points:
             return self
@@ -766,8 +765,6 @@ cdef class Flag(Element):
         cdef list large_points, remaining_points, not_large_points
         cdef Flag n1_subf, n2_subf, ind_large_ftype
 
-        print("\n\nrunning density on ", self)
-
         for difference in itertools.permutations(self.not_ftype_points(), large_size - small_size):
             sig_check()
             large_points = [0]*len(ftype_remap)
@@ -778,12 +775,10 @@ cdef class Flag(Element):
                 else:
                     large_points[ii] = difference[vii-small_size]
             ind_large_ftype = self.subflag([], ftype_points=large_points)
-            print("ind l ftype {} l ftype {}".format(ind_large_ftype, large_ftype))
             if ind_large_ftype==large_ftype:
                 not_large_points = [ii for ii in range(N) if ii not in large_points]
                 for n1_extra_points in itertools.combinations(not_large_points, n1 - large_size):
                     n1_subf = self.subflag(n1_extra_points, ftype_points=large_points)
-                    print("\npoints for flag 1 {} and f {} res {}".format(n1_extra_points, large_points, n1_subf))
                     try:
                         n1_ind = n1flgs.index(n1_subf)
                     except ValueError:
@@ -796,7 +791,6 @@ cdef class Flag(Element):
                     remaining_points = [ii for ii in not_large_points if ii not in n1_extra_points]
                     for n2_extra_points in itertools.combinations(remaining_points, n2 - large_size):
                         n2_subf = self.subflag(n2_extra_points, ftype_points=large_points)
-                        print("\npoints for flag 2 {} and f {} res {}".format(n2_extra_points, large_points, n2_subf))
                         try:
                             n2_ind = n2flgs.index(n2_subf)
                         except:

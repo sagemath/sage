@@ -362,7 +362,7 @@ def test_generate():
     print("\nColoredGraph generate test start")
     for ii in [2, 3, 4, 5, 6]:
         print("Done with size {}, the number is {}".format(ii, len(CG.generate(ii))))
-    print("Should be equal to [6, 20, 90, 544]")
+    print("Should be equal to [6, 20, 90, 544, 5096]")
     
     # This has a bug somewhere
     # print("\nDirectedThreeGraph generate test start")
@@ -1385,8 +1385,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             time.sleep(float(0.1))
             initial_sol = solve_sdp(*sdp_data)
             time.sleep(float(0.1))
-            
-            return (initial_sol, sdp_data, table_constructor, target_vector_exact)
 
             # Format the result and return it if floating point values are fine
             if (not exact):
@@ -1616,7 +1614,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             extra_rels = sum([6 if xx else 1 for xx in max_arity_types])
         return prev_guess_tuples * (2**extra_rels)
     
-    def generate_flags(self, n, ftype=None, run_bound=100000):
+    def generate_flags(self, n, ftype=None, run_bound=10000000000):
         r"""
         Returns the list of flags with a given size and ftype
 
@@ -1673,13 +1671,20 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         if ftype.size()==0:
             # Not ftype generation needed, just generate inductively
-            if run_bound==infinity or self._guess_number(n) < run_bound:
+            if run_bound==infinity:
                 prev = self.generate_flags(n-1, run_bound=run_bound)
                 ret = possible_mergings(n, self, prev, self._signature, excluded)
             else:
-                confirm = input("This might take a while: {}. Continue? y/n".format(guess))
-                if "y" in confirm.lower():
-                    return self.generate_flags(n, run_bound=infinity)
+                guess = self._guess_number(n)
+                if guess < run_bound:
+                    prev = self.generate_flags(n-1, run_bound=run_bound)
+                    ret = possible_mergings(n, self, prev, self._signature, excluded)
+                else:
+                    confirm = input("This might take a while: {}. Continue? y/n\n".format(guess))
+                    if "y" in confirm.lower():
+                        return self.generate_flags(n, run_bound=infinity)
+                    else:
+                        raise RuntimeError("Calculation interrupted")
         else:
             # First generate the structures without ftypes then find them
             empstrs = self.generate_flags(n)
@@ -1687,9 +1692,11 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             if guess < run_bound:
                 ret = self._find_ftypes(empstrs, ftype)
             else:
-                confirm = input("This might take a while: {}. Continue? y/n".format(guess))
+                confirm = input("This might take a while: {}. Continue? y/n\n".format(guess))
                 if "y" in confirm.lower():
                     return self.generate_flags(n, ftype, run_bound=infinity)
+                else:
+                    raise RuntimeError("Calculation interrupted")
         self._save(ret, key)
         return ret
     
@@ -1824,11 +1831,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         slist = tuple((flg, n1, n1flgs, n2, n2flgs, ftype_remap, large_ftype, small_ftype) for flg in Nflgs)
         
         pool = mp.Pool(mp.cpu_count()-1)
-        #mats = pool.map(self._density_wrapper, slist)
-        mats = map(self._density_wrapper, slist)
+        mats = pool.map(self._density_wrapper, slist)
         pool.close(); pool.join()
-        
-        print(mats)
 
         norm = falling_factorial(N - small_size, large_size - small_size) 
         norm *= binomial(N - large_size, n1 - large_size)
