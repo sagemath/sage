@@ -1474,10 +1474,9 @@ class Sign(AbstractArgument):
         result = self._element_ ** exponent
         P = self.parent()
         try:
-            result = P.element_class(P, self._element_ ** exponent)
+            return P.element_class(P, result)
         except (ValueError, TypeError):
-            pass
-        return result
+            return result
 
     def __invert__(self):
         r"""
