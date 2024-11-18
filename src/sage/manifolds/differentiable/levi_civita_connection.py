@@ -507,7 +507,7 @@ class LeviCivitaConnection(AffineConnection):
 
                         # definition of the parallel function
                         @parallel(p_iter='multiprocessing',ncpus=nproc)
-                        def make_Connect(local_list_ijk,chart,ginv,gg,manif):
+                        def make_Connect(local_list_ijk, chart, ginv, gg, manif):
                             partial = []
                             for i,j,k in local_list_ijk:
                                 rsum = 0

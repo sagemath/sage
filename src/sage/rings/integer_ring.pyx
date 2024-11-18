@@ -876,7 +876,7 @@ cdef class IntegerRing_class(CommutativeRing):
             return True
         return super()._repr_option(key)
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Return ``False`` since the integers are not a field.
 
@@ -1158,7 +1158,7 @@ cdef class IntegerRing_class(CommutativeRing):
         """
         return True
 
-    def completion(self, p, prec, extras = {}):
+    def completion(self, p, prec, extras={}):
         r"""
         Return the metric completion of the integers at the prime `p`.
 

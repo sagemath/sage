@@ -798,7 +798,7 @@ def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
         sage: E = EllipticCurve([a, 0, 1, 2*a^2 + 5*a + 3, -a^2 - 3*a - 2])
         sage: assert E.conductor().norm() == 8
         sage: G = K.galois_group(names='b')
-        sage: def conj_curve(E,sigma): return EllipticCurve([sigma(a) for a in E.ainvs()])
+        sage: def conj_curve(E, sigma): return EllipticCurve([sigma(a) for a in E.ainvs()])
         sage: EL = conj_curve(E,G[0])
         sage: L = EL.base_field()
         sage: assert L.class_number() == 2
