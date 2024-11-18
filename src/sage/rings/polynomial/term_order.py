@@ -539,6 +539,7 @@ description_mapping = {
     'block'         : block_description,
 }
 
+
 class TermOrder(SageObject):
     """
     A term order.
@@ -1210,7 +1211,7 @@ class TermOrder(SageObject):
             n += len(block)
         return key
 
-    def greater_tuple_matrix(self,f,g):
+    def greater_tuple_matrix(self, f, g):
         """
         Return the greater exponent tuple with respect to the matrix
         term order.
@@ -1239,7 +1240,7 @@ class TermOrder(SageObject):
                 return g
         return g
 
-    def greater_tuple_lex(self,f,g):
+    def greater_tuple_lex(self, f, g):
         """
         Return the greater exponent tuple with respect to the
         lexicographical term order.
@@ -1261,7 +1262,7 @@ class TermOrder(SageObject):
         """
         return f > g and f or g
 
-    def greater_tuple_invlex(self,f,g):
+    def greater_tuple_invlex(self, f, g):
         """
         Return the greater exponent tuple with respect to the inversed
         lexicographical term order.
@@ -1285,7 +1286,7 @@ class TermOrder(SageObject):
         """
         return f.reversed() > g.reversed() and f or g
 
-    def greater_tuple_deglex(self,f,g):
+    def greater_tuple_deglex(self, f, g):
         """
         Return the greater exponent tuple with respect to the total degree
         lexicographical term order.
@@ -1311,7 +1312,7 @@ class TermOrder(SageObject):
         sg = sum(g.nonzero_values(sort=False))
         return ( sf > sg or ( sf == sg and f > g )) and f or g
 
-    def greater_tuple_degrevlex(self,f,g):
+    def greater_tuple_degrevlex(self, f, g):
         """
         Return the greater exponent tuple with respect to the total degree
         reversed lexicographical term order.
@@ -1337,7 +1338,7 @@ class TermOrder(SageObject):
         sg = sum(g.nonzero_values(sort=False))
         return ( sf > sg or ( sf == sg and f.reversed() < g.reversed() )) and f or g
 
-    def greater_tuple_negdegrevlex(self,f,g):
+    def greater_tuple_negdegrevlex(self, f, g):
         """
         Return the greater exponent tuple with respect to the negative
         degree reverse lexicographical term order.
@@ -1366,7 +1367,7 @@ class TermOrder(SageObject):
         sg = sum(g.nonzero_values(sort=False))
         return ( sf < sg or ( sf == sg and f.reversed() < g.reversed() )) and f or g
 
-    def greater_tuple_negdeglex(self,f,g):
+    def greater_tuple_negdeglex(self, f, g):
         """
         Return the greater exponent tuple with respect to the negative
         degree lexicographical term order.
@@ -1395,7 +1396,7 @@ class TermOrder(SageObject):
         sg = sum(g.nonzero_values(sort=False))
         return ( sf < sg or ( sf == sg and f > g )) and f or g
 
-    def greater_tuple_degneglex(self,f,g):
+    def greater_tuple_degneglex(self, f, g):
         """
         Return the greater exponent tuple with respect to the degree negative
         lexicographical term order.
@@ -1421,7 +1422,7 @@ class TermOrder(SageObject):
         sg = sum(g.nonzero_values(sort=False))
         return ( sf > sg or ( sf == sg and f < g )) and f or g
 
-    def greater_tuple_neglex(self,f,g):
+    def greater_tuple_neglex(self, f, g):
         """
         Return the greater exponent tuple with respect to the negative
         lexicographical term order.
@@ -1446,7 +1447,7 @@ class TermOrder(SageObject):
         """
         return (f < g) and f or g
 
-    def greater_tuple_wdeglex(self,f,g):
+    def greater_tuple_wdeglex(self, f, g):
         """
         Return the greater exponent tuple with respect to the weighted degree
         lexicographical term order.
@@ -1473,7 +1474,7 @@ class TermOrder(SageObject):
         sg = sum(l*r for (l,r) in zip(g,self._weights))
         return (sf > sg or ( sf == sg and f > g )) and f or g
 
-    def greater_tuple_wdegrevlex(self,f,g):
+    def greater_tuple_wdegrevlex(self, f, g):
         """
         Return the greater exponent tuple with respect to the weighted degree
         reverse lexicographical term order.
@@ -1500,7 +1501,7 @@ class TermOrder(SageObject):
         sg = sum(l*r for (l,r) in zip(g,self._weights))
         return (sf > sg or ( sf == sg and f.reversed() < g.reversed())) and f or g
 
-    def greater_tuple_negwdeglex(self,f,g):
+    def greater_tuple_negwdeglex(self, f, g):
         """
         Return the greater exponent tuple with respect to the negative
         weighted degree lexicographical term order.
@@ -1530,7 +1531,7 @@ class TermOrder(SageObject):
         sg = sum(l*r for (l,r) in zip(g,self._weights))
         return (sf < sg or ( sf == sg and f > g )) and f or g
 
-    def greater_tuple_negwdegrevlex(self,f,g):
+    def greater_tuple_negwdegrevlex(self, f, g):
         """
         Return the greater exponent tuple with respect to the negative
         weighted degree reverse lexicographical term order.
@@ -1560,7 +1561,7 @@ class TermOrder(SageObject):
         sg = sum(l*r for (l,r) in zip(g,self._weights))
         return (sf < sg or ( sf == sg and f.reversed() < g.reversed() )) and f or g
 
-    def greater_tuple_block(self, f,g):
+    def greater_tuple_block(self, f, g):
         """
         Return the greater exponent tuple with respect to the block
         order as specified when constructing this element.

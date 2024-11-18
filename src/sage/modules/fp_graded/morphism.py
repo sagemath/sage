@@ -1138,7 +1138,7 @@ class FPModuleMorphism(Morphism):
         M = f.domain()
 
         # It is an error to call this function with incompatible arguments.
-        if not f.codomain() is N:
+        if f.codomain() is not N:
             raise ValueError('the codomains of this homomorphism and the homomorphism '
                              'we are lifting over are different')
 

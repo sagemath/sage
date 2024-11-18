@@ -7938,7 +7938,7 @@ cdef class Matrix(Matrix1):
             sage: m == transformation_matrix * m_original
             True
 
-        TESTS::
+        TESTS:
 
         Check that :issue:`34724` is fixed (indirect doctest)::
 

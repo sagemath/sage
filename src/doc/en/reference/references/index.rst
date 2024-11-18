@@ -265,6 +265,9 @@ REFERENCES:
              finite Drinfeld modules.* manuscripta mathematica 93, 1 (01 Aug 1997),
              369–379. https://doi.org/10.1007/BF02677478
 
+.. [ANR2023] Robert Angarone, Anastasia Nathanson, and Victor Reiner. *Chow rings of
+             matroids as permutation representations*, 2023. :arxiv:`2309.14312`.
+
 .. [AP1986] \S. Arnborg, A. Proskurowski,
             *Characterization and Recognition of Partial 3-Trees*,
             SIAM Journal of Alg. and Discrete Methods,
@@ -2925,6 +2928,9 @@ REFERENCES:
                  "Pyjamask"
                  https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/Pyjamask-spec.pdf
 
+.. [Gou2020] Fernando Q. Gouvêa, *$p$-adic Numbers: An Introduction*,
+            Third Edition.  Springer Nature Switzerland AG, 2020.
+
 .. [GJK+2014] Dimitar Grantcharov, Ji Hye Jung, Seok-Jin Kang, Masaki Kashiwara,
               Myungho Kim. *Crystal bases for the quantum queer superalgebra and
               semistandard decomposition tableaux.*; Trans. Amer. Math. Soc.,
@@ -4700,6 +4706,9 @@ REFERENCES:
              University Press, New York, 1995, With contributions
              by A. Zelevinsky, Oxford Science Publications.
 
+.. [Mac2015] Diane Maclagan and Bernd Sturmfels, *Introduction to
+             Tropical Geometry*, American Mathematical Society, 2015.
+
 .. [MagmaHGM] *Hypergeometric motives* in Magma,
    http://magma.maths.usyd.edu.au/~watkins/papers/HGM-chapter.pdf
 
@@ -4928,6 +4937,9 @@ REFERENCES:
 
 .. [MM2015] \J. Matherne and \G. Muller, *Computing upper cluster algebras*,
             Int. Math. Res. Not. IMRN, 2015, 3121-3149.
+
+.. [MM2022] Matthew Mastroeni and Jason McCullough. *Chow rings of matroids are
+            Koszul*. Mathematische Annalen, 387(3-4):1819-1851, November 2022.
 
 .. [MMRS2022] Ruslan G. Marzo, Rafael A. Melo,  Celso C. Ribeiro and
               Marcio C. Santos: *New formulations and branch-and-cut procedures

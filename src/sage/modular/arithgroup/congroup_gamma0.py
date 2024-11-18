@@ -414,7 +414,7 @@ class Gamma0_class(GammaH_class):
         R = IntegerModRing(N)
         return [GammaH(N, H) for H in R.multiplicative_subgroups()]
 
-    def _contains_sl2(self, a,b,c,d):
+    def _contains_sl2(self, a, b, c, d):
         r"""
         Test whether x is an element of this group.
 
