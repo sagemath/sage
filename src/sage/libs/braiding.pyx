@@ -405,6 +405,7 @@ def send_to_sss(braid):
 
     EXAMPLES::
 
+        sage: from sage.libs.braiding import send_to_sss
         sage: B = BraidGroup(4)
         sage: d = B([1, 2, 1, 2, 3, -1, 2,- 3])
         sage: send_to_sss(d)
@@ -434,6 +435,7 @@ def send_to_uss(braid):
 
     EXAMPLES::
 
+        sage: from sage.libs.braiding import send_to_uss
         sage: B = BraidGroup(4)
         sage: d = B([1, 2, 1, 2, 3, -1, 2,- 1])
         sage: send_to_uss(d)
@@ -463,6 +465,7 @@ def send_to_sc(braid):
 
     EXAMPLES::
 
+        sage: from sage.libs.braiding import send_to_sc
         sage: B = BraidGroup(4)
         sage: d = B([1, 2, 1, 2, 3, -1, 2, 2])
         sage: send_to_sc(d)
@@ -492,6 +495,7 @@ def trajectory(braid):
 
     EXAMPLES::
 
+        sage: from sage.libs.braiding import trajectory
         sage: B = BraidGroup(4)
         sage: d = B([1, 2, 1, 2, 3, -1, 2, 2])
         sage: trajectory(d)
@@ -524,6 +528,7 @@ def cyclic_slidings(braid):
 
     EXAMPLES::
 
+        sage: from sage.libs.braiding import cyclic_slidings
         sage: B = BraidGroup(4)
         sage: d = B([1, 2, 1, 2, 3, -1, 2, 2])
         sage: cyclic_slidings(d)
