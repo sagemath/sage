@@ -757,7 +757,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
 
         # free algebras in the same variable over any base that coerces in:
         if isinstance(R, (FreeAlgebra_generic, FreeAlgebra_letterplace)):
-            if R.variable_names() == self.variable_names():
+            if all(x in self.variable_names() for x in R.variable_names()):
                 return self.base_ring().has_coerce_map_from(R.base_ring())
         if isinstance(R, PBWBasisOfFreeAlgebra):
             return self.has_coerce_map_from(R._alg)
