@@ -961,7 +961,7 @@ class SagecodeTransform(SphinxTransform):
                     parent = node.parent
                     index = parent.index(node)
                     prev_node = node.previous_sibling()
-                    if isinstance(node.previous_sibling(), TabContainer):
+                    if isinstance(prev_node, TabContainer):
                         # Make sure not to merge inline tabs for adjacent literal blocks
                         parent.insert(index, nodes.paragraph())
                         prev_node = parent[index]
@@ -1103,4 +1103,3 @@ def feature_tags():
     for feature in all_features():
         if feature.is_present():
             yield 'feature_' + feature.name.replace('.', '_')
-
