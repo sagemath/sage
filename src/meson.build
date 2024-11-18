@@ -56,9 +56,10 @@ print(cypari2.__file__.replace('__init__.py', ''))
   check: true,
 ).stdout().strip()
 cypari2 = declare_dependency(include_directories: inc_cypari2)
+# Cannot be found via pkg-config
 pari = cc.find_library('pari')
 
-mpfr = cc.find_library('mpfr')
+mpfr = dependency('mpfr')
 
 flint = dependency('flint', version: '>=3.0.0')
 if flint.version().version_compare('<3.1')
@@ -78,31 +79,29 @@ endif
 # that too to make the fallback detection with CMake work
 blas_order += ['cblas', 'openblas', 'OpenBLAS', 'flexiblas', 'blis', 'blas']
 blas = dependency(blas_order)
-gsl = dependency(
-  'gsl',
-  version: '>=2.5',
-  required: true,
-)
-gd = cc.find_library('gd')
+gsl = dependency('gsl', version: '>=2.5')
+gd = dependency('gdlib', required: false, version: '>=2.1')
+if not gd.found()
+  gd = cc.find_library('gd', required: true)
+endif
 # Only some platforms have a standalone math library (https://mesonbuild.com/howtox.html#add-math-library-lm-portably)
 m = cc.find_library('m', required: false)
-m4ri = cc.find_library('m4ri')
-m4rie = cc.find_library('m4rie')
-mtx = cc.find_library('mtx', required: false, disabler: true)
-png = cc.find_library('png', required: false)
-if not png.found()
-  png = cc.find_library('png16')
-endif
-zlib = cc.find_library('z')
+m4ri = dependency('m4ri', version: '>=20140914')
+m4rie = dependency('m4rie')
 # Cannot be found via pkg-config
-ec = cc.find_library('ec')
+mtx = cc.find_library('mtx', required: false, disabler: true)
+png = dependency(['libpng', 'png', 'png16'], version: '>=1.2')
+zlib = dependency('zlib', version: '>=1.2.11')
+ec = dependency('eclib', version: '>=20231212')
+# Cannot be found via pkg-config
 ecm = cc.find_library('ecm')
+# Cannot be found via pkg-config
 ppl = cc.find_library('ppl')
-gmpxx = cc.find_library('gmpxx')
-fflas = dependency('fflas-ffpack')
+gmpxx = dependency('gmpxx')
+fflas = dependency('fflas-ffpack', version: '>=2.5.0')
 fplll = dependency('fplll')
-givaro = cc.find_library('givaro')
-linbox = dependency('linbox', required: false)
+givaro = dependency('givaro', version: '>=4.2.0')
+linbox = dependency('linbox', required: false, version: '>=1.7.0')
 if not linbox.found()
   linbox = cc.find_library('linbox')
 endif

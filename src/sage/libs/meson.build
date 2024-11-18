@@ -2,7 +2,7 @@ sirocco = cc.find_library('sirocco', required: false, disabler: true)
 # cannot be found via pkg-config
 ecl = cc.find_library('ecl')
 braiding = cc.find_library('braiding')
-gc = cc.find_library('gc')
+gc = dependency(['bdw-gc-threaded', 'bdw-gc'], version: '>=7.6.4')
 homfly = cc.find_library('homfly', has_headers: ['homfly.h'])
 
 py.install_sources(
