@@ -1994,6 +1994,13 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             Traceback (most recent call last):
             ...
             ValueError: 4 is not prime.
+            sage: EllipticCurve(GF(31).algebraic_closure(), [0, 6, 0, 1, 0]).isogenies_prime_degree(5)
+            [Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 6*x^2 + x over Algebraic closure of Finite Field of size 31 to Elliptic Curve defined by y^2 = x^3 + 11*x over Algebraic closure of Finite Field of size 31,
+             Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 6*x^2 + x over Algebraic closure of Finite Field of size 31 to Elliptic Curve defined by y^2 = x^3 + 7*x + 17 over Algebraic closure of Finite Field of size 31,
+             Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 6*x^2 + x over Algebraic closure of Finite Field of size 31 to Elliptic Curve defined by y^2 = x^3 + (30*z2+9)*x + (24*z2+30) over Algebraic closure of Finite Field of size 31,
+             Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 6*x^2 + x over Algebraic closure of Finite Field of size 31 to Elliptic Curve defined by y^2 = x^3 + (19*z2+15)*x + (15*z2+11) over Algebraic closure of Finite Field of size 31,
+             Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 6*x^2 + x over Algebraic closure of Finite Field of size 31 to Elliptic Curve defined by y^2 = x^3 + (12*z2+22)*x + (16*z2+10) over Algebraic closure of Finite Field of size 31,
+             Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + 6*x^2 + x over Algebraic closure of Finite Field of size 31 to Elliptic Curve defined by y^2 = x^3 + (z2+7)*x + (7*z2+16) over Algebraic closure of Finite Field of size 31]
         """
         F = self.base_ring()
         if isinstance(F, sage.rings.abc.RealField):
