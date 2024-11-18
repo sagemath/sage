@@ -2249,7 +2249,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
             sage: B = BraidGroup(4)
             sage: b = B([1, 2, 1, 2, 3, -1, 2, 1, 3])
-            sage: b.send_to_sss()
+            sage: b.super_summit_set_element()
             (s0*s2*s0*s1*s2*s1*s0, s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1*s1*s0*s2*s1*s0)
         """
         to_sss = send_to_sss(self)
@@ -2265,7 +2265,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
             sage: B = BraidGroup(4)
             sage: b = B([1, 2, 1, 2, 3, -1, 2, -1, 3])
-            sage: b.send_to_uss()
+            sage: b.ultra_summit_set_element()
             (s0*s1*s0*s2*s1, s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1*s1*s2*s1^2*s0)
         """
         to_uss = send_to_uss(self)
@@ -2281,7 +2281,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
             sage: B = BraidGroup(4)
             sage: b = B([1, 2, 1, 2, 3, -1, 2, -1, 3])
-            sage: b.send_to_sc()
+            sage: b.sliding_circuits_element()
             (s0*s1*s0*s2*s1, s0^2*s1*s2)
         """
         to_sc = send_to_sc(self)
