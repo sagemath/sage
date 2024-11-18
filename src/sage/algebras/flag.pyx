@@ -39,23 +39,20 @@ cdef tuple _subblock_helper(tuple points, tuple block):
             ret.append([points.index(ii) for ii in xx])
     return tuple(ret)
 
-cdef bint _block_consistency(tuple block, tuple missing):
-    cdef tuple xx
-    for xx in block:
-        if xx in missing:
-            return False
-    return True
+# cdef bint _block_consistency(tuple block, tuple missing):
+#     cdef tuple xx
+#     for xx in block:
+#         if xx in missing:
+#             return False
+#     return True
 
-cdef bint _block_refinement(tuple block0, tuple missing0, tuple block1, tuple missing1):
+cdef bint _block_refinement(tuple block_flag, tuple block_pattern, tuple missing_pattern):
     cdef tuple xx
-    for xx in block0:
-        if xx not in block1:
+    for xx in block_pattern:
+        if xx not in block_flag:
             return False
-    for xx in block1:
-        if xx in missing0:
-            return False
-    for xx in missing0:
-        if xx not in missing1:
+    for xx in missing_pattern:
+        if xx in block_flag:
             return False
     return True
 
@@ -126,14 +123,13 @@ cdef bint _excluded_compatible(int n, Flag flag, tuple excluded, int max_signatu
 cpdef tuple possible_mergings(int n, theory, tuple smaller_structures, dict signature, tuple excluded):
     #TODO
     #
-    # Also for 3-graphs debug what is lost (is the lost graph considered to be equal to something else?)
+    # For 3-graphs debug what is lost (is the lost graph considered to be equal to something else?)
     # I.e. the generator or the identifier has an issue.
-    # Could be the overlaps with the 3 mergings
     cdef int max_arity = _get_max_arity(signature, n)
     cdef tuple extensions = _get_extensions(n, signature)
     cdef dict ret = {}
 
-    cdef Flag F_subf, G_subf, H_subf #each with size n-2
+    cdef Flag F_subf, F_subf_m2, G_subf #each with size n-2
     cdef Flag F, G, F_permed, G_permed, H_permed #each with size n-1
     cdef Flag final_flag #each with size n
     cdef tuple F_perms, G_perms, H_perms
@@ -186,11 +182,12 @@ cpdef tuple possible_mergings(int n, theory, tuple smaller_structures, dict sign
         all_perms = tuple([F.nonequal_permutations() for F in smaller_structures])
         for ii, F in enumerate(smaller_structures):
             F_subf = F.subflag(range(n-2))
+            F_subf_m2 = F.subflag(minustwo)
             for jj in range(ii, sslen):
                 G_perms = all_perms[jj]
                 for G_permed in G_perms:
-                    G_subf = G_permed.subflag(range(n-2))
-                    if G_subf.strong_equal(F_subf):
+                    G_subf = G_permed.subflag(minustwo)
+                    if G_permed.subflag(range(n-2)).strong_equal(F_subf):
                         FG_overlap = _merge_blocks_1(F._blocks, G_permed._blocks, n-2, n-1)
                         
                         #F and G_permed are compatible
@@ -198,11 +195,11 @@ cpdef tuple possible_mergings(int n, theory, tuple smaller_structures, dict sign
                         for kk in range(jj, sslen):
                             for H_permed in all_perms[kk]:
                                 if G_subf.strong_equal(H_permed.subflag(minustwo)):
-                                    if H_permed.subflag(range(n-2)).strong_equal(F.subflag(minustwo)):
+                                    if F_subf_m2.strong_equal(H_permed.subflag(range(n-2))):
                                         
                                         #F, G_permed, H_permed are compatible
                                         
-                                        FGH_overlap = _merge_blocks_2(FG_overlap, H_permed._blocks, n-3, n-2, n-2, n-1)
+                                        FGH_overlap = _merge_blocks_2(FG_overlap, H_permed._blocks, n-2, n-1, n-3, n-2)
                                         for ext in extensions:
                                             sig_check()
                                             final_overlap = _merge_blocks_0(FGH_overlap, ext)
@@ -236,7 +233,6 @@ cdef dict _merge_blocks_1(dict block0, dict block1, int from0, int to0):
         merged[key] = tuple(itertools.chain(block0[key], terms_remapped))
     return merged
 
-#TODO check if the order of remaps can break if there is an overlap
 cdef dict _merge_blocks_2(dict block0, dict block1, int from0, int to0, int from1, int to1):
     cdef dict merged = {}
     cdef str key
@@ -247,11 +243,9 @@ cdef dict _merge_blocks_2(dict block0, dict block1, int from0, int to0, int from
         terms_remapped = (
             tuple(
                     (
-                        (
-                        xx if xx != from1 else to1
-                        ) 
-                        if xx != from0 else to0
-                    ) for xx in term
+                    xx if (xx != from0 and xx != from1) else (to1 if xx == from1 else to0)
+                    )
+                    for xx in term
                 )
             for term in block1[key] if 
             (
@@ -1217,14 +1211,13 @@ cdef class Flag(Element):
         return self.afae().density(oafae)
     
 
-
 cdef class Pattern(Element):
     
     cdef int _n
     cdef int _ftype_size
     
-    cdef list _ftype_points
-    cdef list _not_ftype_points
+    cdef tuple _ftype_points
+    cdef tuple _not_ftype_points
     cdef dict _blocks
     
     cdef Flag _ftype
@@ -1235,8 +1228,6 @@ cdef class Pattern(Element):
         self._ftype_size = len(self._ftype_points)
         self._not_ftype_points = None
         self._blocks = _standardize_blocks(params, theory._signature, True)
-        self._unique = None
-        self._weak_unique = None
         self._ftype = None
         Element.__init__(self, theory)
     
@@ -1258,7 +1249,7 @@ cdef class Pattern(Element):
     
     def _serialize(self):
         ret = ["pattern", self.size(), self.ftype_points()]
-        blocks = self.blocks()
+        blocks = self._blocks
         for kk in blocks:
             ret.append(blocks[kk])
         return tuple(ret)
@@ -1280,12 +1271,14 @@ cdef class Pattern(Element):
         if key!=None:
             if missing:
                 key += "_m"
-            return self._block[key]
-        return self._block
+            return self._blocks[key]
+        if missing:
+            return self._blocks
+        return {kk:self._blocks[kk] for kk in self.theory().signature().keys()}
 
     cpdef ftype(self):
         if self._ftype==None:
-            blocks = {xx: _subblock_helper(self._ftype_points, self._blocks[xx]) for xx in self._blocks.keys()}
+            blocks = {xx: _subblock_helper(self._ftype_points, self._blocks[xx]) for xx in self.parent().signature().keys()}
             self._ftype = Flag(self.parent(), len(self._ftype_points), self._ftype_points, **blocks)
         return self._ftype
     
@@ -1302,19 +1295,20 @@ cdef class Pattern(Element):
         return False
 
     #Pattern methods
-    cpdef bint is_compatible(self, other):
-        if self._n > other.size():
+
+    cpdef bint is_compatible(self, Flag other):
+        if self.size() != other.size():
             return False
         if self.theory() != other.theory():
             return False
         if self.ftype() != other.ftype():
             return False
-        opattern = Pattern(self.parent(), other.size(), other.ftype_points(), **other.blocks())
-        cdef dict sb = self.blocks()
-        for perm in itertools.permutations(other.not_ftype_points(), len(self.not_ftype_points())):
-            opermed = opattern.subpattern(points=perm)
-            ob = opermed.blocks()
-            if all([_block_refinement(sb[xx], sb[xx+"_o"], ob[xx], ob[xx+"_o"]) for xx in self.parent().signature().keys()]):
+        
+        cdef dict sb = self._blocks
+        cdef dict ob
+        for operm in other.nonequal_permutations():
+            ob = operm.blocks()
+            if all([_block_refinement(ob[xx], sb[xx], sb[xx+"_m"]) for xx in self.parent().signature().keys()]):
                 return True
         return False
 
@@ -1334,8 +1328,21 @@ cdef class Pattern(Element):
 
     #Compatibility with flag algebras
 
+    cpdef list compatible_flags(self):
+        aflags = self.parent().generate(self.size())
+        return [xx for xx in aflags if self.is_compatible(xx)]
+
     def as_flag_algebra_element(self, basis=QQ):
-        return sum(self.compatible_flags())
+        from sage.algebras.flag_algebras import FlagAlgebra
+        from sage.modules.free_module_element import vector
+
+        targ_alg = FlagAlgebra(basis, self.theory(), self.ftype())
+        aflags = self.parent().generate(self.size())
+        targ_vec = {}
+        for ii,xx in enumerate(aflags):
+            if self.is_compatible(xx):
+                targ_vec[ii]=1
+        return targ_alg(self.size(), vector(basis, len(aflags), targ_vec))
     
     afae = as_flag_algebra_element
     

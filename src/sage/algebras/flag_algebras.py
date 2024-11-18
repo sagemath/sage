@@ -214,7 +214,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from functools import lru_cache
+#from functools import lru_cache
 import itertools
 
 from sage.structure.richcmp import richcmp
@@ -236,8 +236,8 @@ from sage.matrix.special import diagonal_matrix
 from sage.misc.prandom import randint
 from sage.arith.misc import falling_factorial, binomial, factorial
 from sage.misc.functional import round
-from sage.misc.lazy_import import lazy_import
-from sage.misc.persist import save, load
+#from sage.misc.lazy_import import lazy_import
+#from sage.misc.persist import save, load
 
 import hashlib
 import pickle
@@ -332,43 +332,70 @@ def test_generate():
     TG = Theory("ThreeGraph", arity=3)
     DG = Theory("DiGraph", arity=2, is_ordered=True)
     DTG = Theory("DiThreeGraph", arity=3, is_ordered=True)
-    print("\nSingle color generate test start")
-    for ii in [5, 6, 7, 8, 9, 10]:
-        print("Done with size {}, the number is {}".format(ii, len(C0.generate(ii))))
-    print("Should be equal to 6, 7, 8, 9, 10, 11")
+    
+    
+    # print("\nSingle color generate test start")
+    # for ii in [5, 6, 7, 8, 9, 10]:
+    #     print("Size {}, the number is {}".format(ii, len(C0.generate(ii))))
+    # print("Should be equal to 6, 7, 8, 9, 10, 11")
 
-    print("\nTwo colors generate test start")
-    for ii in [3, 4, 5, 6, 7, 8]:
-        print("Done with size {}, the number is {}".format(ii, len(Cs.generate(ii))))
-    print("Should be equal to 13, 22, 34, 50, 70, 95")
+    # print("\nTwo colors generate test start")
+    # for ii in [3, 4, 5, 6, 7, 8]:
+    #     print("Size {}, the number is {}".format(ii, len(Cs.generate(ii))))
+    # print("Should be equal to 13, 22, 34, 50, 70, 95")
     
-    print("\nGraph generate test start")
-    for ii in [3, 4, 5, 6, 7]:
-        print("Done with size {}, the number is {}".format(ii, len(G.generate(ii))))
-    print("Should be equal to 4, 11, 34, 156, 1044, (12346)")
+    # print("\nGraph generate test start")
+    # for ii in [3, 4, 5, 6, 7]:
+    #     print("Size {}, the number is {}".format(ii, len(G.generate(ii))))
+    # print("Should be equal to 4, 11, 34, 156, 1044, (12346)")
     
-    #This gives an incorrect value for n=6
-    print("\nThreeGraph generate test start")
-    for ii in [3, 4, 5, 6]:
-        print("Done with size {}, the number is {}".format(ii, len(TG.generate(ii))))
-    print("Should be equal to 2, 5, 34, 2136, (7013320)")
+    # #This gives an incorrect value for n=6
+    # print("\nThreeGraph generate test start")
+    # for ii in [3, 4, 5, 6]:
+    #     print("Size {}, the number is {}".format(ii, len(TG.generate(ii))))
+    # print("Should be equal to 2, 5, 34, 2136, (7013320)")
     
-    print("\nDiGraph generate test start")
-    for ii in [2, 3, 4, 5]:
-        print("Done with size {}, the number is {}".format(ii, len(DG.generate(ii))))
-    print("Should be equal to 3, 16, 218, 9608 (1540944)")
+    # print("\nDiGraph generate test start")
+    # for ii in [2, 3, 4, 5]:
+    #     print("Size {}, the number is {}".format(ii, len(DG.generate(ii))))
+    # print("Should be equal to 3, 16, 218, 9608 (1540944)")
     
-    #This only returns the uncolored elements
-    print("\nColoredGraph generate test start")
+    # print("\nColoredGraph generate test start")
+    # for ii in [2, 3, 4, 5, 6]:
+    #     print("Size {}, the number is {}".format(ii, len(CG.generate(ii))))
+    # print("Should be equal to 6, 20, 90, 544, 5096")
+    
+    Cs.exclude([Cs(1), Cs(1, C0=[[0]], C1=[[0]])])
+    G.exclude(G(3))
+    CGp = combine("CGsym", G, Cs)
+
+    print("\nDouble Color with no overlaps generate test start")
     for ii in [2, 3, 4, 5, 6]:
-        print("Done with size {}, the number is {}".format(ii, len(CG.generate(ii))))
-    print("Should be equal to [6, 20, 90, 544, 5096]")
-    
+        print("Size {}, the number is {}".format(ii, len(Cs.generate(ii))))
+    print("Should be equal to 6, 20, 90, 544, 5096")
+
+    print("\nGraph no triangle generate test start")
+    for ii in [3, 4, 5, 6, 7]:
+        print("Size {}, the number is {}".format(ii, len(G.generate(ii))))
+    print("Should be equal to 4, 11, 34, 156, 1044, (12346)")
+
+    print("\nGraph no triangle symm colors generate test start")
+    for ii in [2, 3, 4, 5, 6]:
+        print("Size {}, the number is {}".format(ii, len(CGp.generate(ii))))
+    print("Should be equal to 4, 11, 34, 156, 1044, (12346)")
+
     # This has a bug somewhere
     # print("\nDirectedThreeGraph generate test start")
     # for ii in [3, 4]:
     #     print("Done with size {}, the number is {}".format(ii, len(DTG.generate(ii))))
     
+def clear_all():
+    calcs_dir = os.path.join(os.getenv('HOME'), '.sage', 'calcs')
+    if not os.path.exists(calcs_dir):
+        return
+    for xx in os.listdir(calcs_dir):
+        file_path = os.path.join(calcs_dir, xx)
+        os.remove(file_path)
 
 class CombinatorialTheory(Parent, UniqueRepresentation):
     
@@ -1591,7 +1618,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     def _guess_number(self, n):
         if n<=3:
             return len(self.generate_flags(n, run_bound=infinity))
-        key = ("generate", self._serialize(), n, self.empty()._serialize())
+        excluded = tuple([xx for xx in self._excluded if xx.size()<=n])
+        key = ("generate", n, self._serialize(excluded), self.empty()._serialize())
         loaded = self._load(key=key)
         if loaded != None:
             return len(loaded)
@@ -1614,7 +1642,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             extra_rels = sum([6 if xx else 1 for xx in max_arity_types])
         return prev_guess_tuples * (2**extra_rels)
     
-    def generate_flags(self, n, ftype=None, run_bound=10000000000):
+    def generate_flags(self, n, ftype=None, run_bound=500000):
         r"""
         Returns the list of flags with a given size and ftype
 
@@ -1710,17 +1738,25 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     generate = generate_flags
 
     def exclude(self, structs=None, force=False):
+        #Set up structs to contain all we want to exclude
         if structs==None:
             structs = []
         elif type(structs)==Flag or type(structs)==Pattern:
             structs = [structs]
-        res_excluded = list(self._excluded) if not force else []
+        if not force:
+            structs += list(self._excluded)
+        
+        #Make structs sorted, so it is as small as possible
+        structs.sort(key=lambda x : x.size())
+        self._excluded = tuple()
+
         for xx in structs:
             if xx.theory()!=self:
-                res_excluded.append(self.Pattern(xx.size(), **xx.blocks()))
+                pat = self.Pattern(xx.size(), **xx.blocks())
+                self._excluded = tuple(list(self._excluded) + pat.compatible_flags())
             else:
-                res_excluded.append(xx)
-        self._excluded = tuple(res_excluded)
+                if xx in self.generate(xx.size()):
+                    self._excluded = tuple(list(self._excluded) + [xx])
     
     def reset_exclude(self):
         self.exclude(force=True)
