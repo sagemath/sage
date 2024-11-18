@@ -621,8 +621,8 @@ class Rings(CategoryWithAxiom):
 
             INPUT:
 
-            - `x`, an object to multiply with.
-            - `switch_sides` (optional bool): If ``False``,
+            - ``x``, an object to multiply with.
+            - ``switch_sides`` (optional bool): If ``False``,
               the product is ``self*x``; if ``True``, the
               product is ``x*self``.
 
