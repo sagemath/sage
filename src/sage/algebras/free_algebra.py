@@ -648,13 +648,24 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
             1.00000000000000*x^2 * 1.00000000000000*y^3
             sage: F(f)
             1.00000000000000*x^2*y^3
+
+        Check for extended coercion::
+
+            sage: A = algebras.Free(QQ,['x','y'])
+            sage: B = algebras.Free(QQ,['y'])
+            sage: y, = B.gens()
+            sage: A(4+y)
+            4 + y
         """
         if isinstance(x, FreeAlgebraElement):
             P = x.parent()
             if P is self:
                 return x
-            if P is not self.base_ring():
-                return self.element_class(self, x)
+            # from another FreeAlgebra:
+            if x not in self.base_ring():
+                D = {self.monoid()(T): cf
+                     for T, cf in x.monomial_coefficients().items()}
+                return self.element_class(self, D)
         elif hasattr(x, 'letterplace_polynomial'):
             P = x.parent()
             if self.has_coerce_map_from(P):  # letterplace versus generic
