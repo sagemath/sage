@@ -47,11 +47,7 @@ foreach name, pyx : extension_data
       inc_pynac,
       inc_rings,
     ],
-    dependencies: [
-      py_dep,
-      cysignals,
-      gmp,
-    ],
+    dependencies: [py_dep, cysignals, gmp],
   )
 endforeach
 
@@ -128,13 +124,7 @@ foreach name, pyx : extension_data_cpp
       inc_rings,
       include_directories('../libs/gmp'),
     ],
-    dependencies: [
-      py_dep,
-      cysignals,
-      gmp,
-      gsl,
-      singular_factory,
-    ],
+    dependencies: [py_dep, cysignals, gmp, gsl, singular],
   )
 endforeach
 

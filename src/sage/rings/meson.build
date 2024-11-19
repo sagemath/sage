@@ -72,6 +72,7 @@ py.install_sources(
   'ring_extension_element.pxd',
   'ring_extension_homset.py',
   'ring_extension_morphism.pxd',
+  'species.py',
   'sum_of_squares.pxd',
   'tate_algebra.py',
   'tate_algebra_element.pxd',
@@ -124,13 +125,20 @@ extension_data = {
 foreach name, pyx : extension_data
   deps = [py_dep, cysignals, gmp]
   if name == 'complex_arb'
-    deps += [flint, mpfi]
+    deps += [
+      flint,
+      mpfi,
+      gsl,  # Runtime dependency
+    ]
   elif name == 'complex_conversion'
     deps += [gsl, mpfr]
   elif name == 'complex_double'
     deps += [gmpy2, gsl]
   elif name == 'complex_interval'
-    deps += [mpfi]
+    deps += [
+      mpfi,
+      flint,  # Runtime dependency
+    ]
   elif name == 'complex_mpc'
     deps += [gmpy2, mpfr, mpc]
   elif name == 'complex_mpfr'

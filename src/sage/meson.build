@@ -6,7 +6,7 @@ conf_data = configuration_data()
 conf_data.set('PACKAGE_VERSION', '1.2.3')
 conf_data.set('SAGE_ROOT', meson.current_source_dir() / '..' / '..')
 # We use Python's prefix here to make it work with conda
-prefix = py.get_variable('prefix', '').replace('\\', '/')
+prefix = fs.as_posix(py.get_variable('prefix', ''))
 conf_data.set('prefix', prefix)
 datadir = fs.expanduser(get_option('datadir'))
 if not fs.is_absolute(datadir)
@@ -86,7 +86,6 @@ foreach package : no_processing
 endforeach
 
 py.install_sources(
-  config_file,
   'all.py',
   'all__sagemath_bliss.py',
   'all__sagemath_categories.py',

@@ -36,7 +36,7 @@ foreach name, pyx : extension_data
   deps = [py_dep, gmp]
   if name == 'group_element_gap'
     deps += [gap]
-  endif    
+  endif
 
   py.extension_module(
     name,

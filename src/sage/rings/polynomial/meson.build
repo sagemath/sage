@@ -92,11 +92,7 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
-  deps = [
-      py_dep,
-      cysignals,
-      gmp,
-    ]
+  deps = [py_dep, cysignals, gmp]
   if name == 'evaluation_flint'
     deps += [flint, mpfi]
   elif name == 'polynomial_complex_arb'

@@ -96,11 +96,7 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
-  dependencies = [
-    py_dep,
-    cysignals,
-    gmp,
-  ]
+  dependencies = [py_dep, cysignals, gmp]
   if name == 'matrix_gfpn_dense'
     dependencies += [mtx, meataxe]
   elif name == 'matrix_gap'

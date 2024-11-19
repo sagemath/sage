@@ -248,7 +248,7 @@ def ProjectiveSpace(n, R=None, names=None):
         sage: P.gens() == R.gens()
         True
     """
-    if (isinstance(n, MPolynomialRing_base) or isinstance(n, PolynomialRing_general)) and R is None:
+    if isinstance(n, (MPolynomialRing_base, PolynomialRing_general)) and R is None:
         if names is not None:
             # Check for the case that the user provided a variable name
             # That does not match what we wanted to use from R

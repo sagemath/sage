@@ -262,13 +262,12 @@ class AlternatingSignMatrix(Element,
             True
         """
         n = self._matrix.nrows()
-        triangle = [None] * n
-        prev = zero_vector(ZZ, n)
+        triangle = [0] * n
+        add_row = zero_vector(ZZ, n)
         for j, row in enumerate(self._matrix):
-            add_row = row + prev
+            add_row = row + add_row
             triangle[n - 1 - j] = [i + 1 for i in range(n - 1, -1, -1)
                                    if add_row[i] == 1]
-            prev = add_row
         return MonotoneTriangles(n)(triangle)
 
     @combinatorial_map(name='rotate counterclockwise')

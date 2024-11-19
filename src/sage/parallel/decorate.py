@@ -110,7 +110,7 @@ class Parallel:
             <sage.parallel.decorate.ParallelFunction object at ...>
 
             sage: P = sage.parallel.decorate.Parallel()
-            sage: def g(n,m): return n+m
+            sage: def g(n, m): return n+m
             sage: h = P(g)          # indirect doctest
             sage: list(h([(2,3)]))
             [(((2, 3), {}), 5)]
@@ -358,7 +358,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
     when calling the parallel function::
 
         sage: @parallel
-        ....: def f(a,b): return a*b
+        ....: def f(a, b): return a*b
         sage: for X, Y in sorted(list(f([(2,3),(3,5),(5,7)]))): print((X, Y))
         (((2, 3), {}), 6)
         (((3, 5), {}), 15)
@@ -456,7 +456,7 @@ class Fork:
         EXAMPLES::
 
             sage: F = sage.parallel.decorate.Fork(timeout=3)
-            sage: def g(n,m): return n+m
+            sage: def g(n, m): return n+m
             sage: h = F(g)     # indirect doctest
             sage: h(2,3)
             5

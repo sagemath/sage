@@ -499,7 +499,6 @@ class SimplicialSets(Category_singleton):
                             for g in G:
                                 cell = AbstractSimplex(d, name="({}, {})".format(s, g))
                                 cells_dict[(s, g)] = cell
-                                fd = []
                                 faces = self.faces(s)
                                 f0 = faces[0]
                                 for h in G:
@@ -612,7 +611,6 @@ class SimplicialSets(Category_singleton):
                     Quotient of Univariate Laurent Polynomial Ring in F1 over Integer Ring by the ideal (-1 + F1^2)
                 """
                 G, d = self._universal_cover_dict()
-                phi = G.abelianization_map()
                 abelG, R, I, images = G.abelianization_to_algebra(ZZ)
                 QRP = R.quotient_ring(I)
                 res = {}
@@ -908,7 +906,6 @@ class SimplicialSets(Category_singleton):
                 singred = singular_function("reduce")
                 singlift = singular_function("lift")
                 G, d = self._universal_cover_dict()
-                phi = G.abelianization_map()
                 abelG, R, I, images = G.abelianization_to_algebra(ZZ)
                 CC = self.twisted_chain_complex()
                 M1 = CC.differential(n).T
