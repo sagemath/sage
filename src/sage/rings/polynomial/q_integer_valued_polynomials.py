@@ -119,7 +119,11 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
     The quantum-valued polynomial ring over a base ring.
 
     Quantum-valued polynomial rings are commutative and associative
-    algebras, with a basis indexed by integers.
+    algebras, with a basis indexed by nonnegative integers.
+
+    The elements are polynomials in one variable `x` with coefficients in
+    the field of rational functions in `q`, such that the value at
+    every nonegative `q`-integer is a polynomial in `q`.
 
     This algebra is endowed with two bases, named ``B`` or ``Binomial``
     and ``S`` or ``Shifted``.
