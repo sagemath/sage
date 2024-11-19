@@ -127,7 +127,7 @@ singular_factory = disabler()
 if singular.found()
   singular_factory = singular
 else
-  singular_proj = subproject('factory')
+  singular_proj = subproject('singular')
   singular_factory = singular_proj.get_variable('factory_dep')
 endif
 maxima = find_program('maxima', required: not is_windows, disabler: true)
