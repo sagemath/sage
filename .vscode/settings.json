@@ -31,5 +31,7 @@
         "sagemath"
     ],
     "editor.formatOnType": true,
-    "esbonio.sphinx.confDir": ""
+    "esbonio.sphinx.confDir": "",
+    "C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild",
+    "C_Cpp.default.compileCommands": "builddir/compile_commands.json"
 }

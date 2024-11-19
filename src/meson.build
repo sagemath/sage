@@ -63,13 +63,19 @@ else
 endif
 pari = cc.find_library('pari', required: not is_windows, disabler: true)
 
-mpfr = cc.find_library('mpfr')
+mpfr = dependency('mpfr')
 
-flint = dependency('flint', version: '>=3.0.0')
-if flint.version().version_compare('<3.1')
-  # In older versions of flint, pkg-config file is broken, so we manually use find_library
-  # This has been fixed in flint v3.1: https://github.com/flintlib/flint/pull/1647
-  flint = cc.find_library('flint')
+if is_windows
+  # Flint on conda currently actives FLINT_USES_PTHREAD, which is not available under msvc
+  # https://github.com/conda-forge/libflint-feedstock/issues/38
+  flint = disabler()
+else
+  flint = dependency('flint', version: '>=3.0.0')
+  if flint.version().version_compare('<3.1')
+    # In older versions of flint, pkg-config file is broken, so we manually use find_library
+    # This has been fixed in flint v3.1: https://github.com/flintlib/flint/pull/1647
+    flint = cc.find_library('flint')
+  endif
 endif
 
 blas_order = []
@@ -84,17 +90,21 @@ endif
 blas_order += ['cblas', 'openblas', 'OpenBLAS', 'flexiblas', 'blis', 'blas']
 blas = dependency(blas_order)
 gsl = dependency('gsl', version: '>=2.5', required: true)
-gd = cc.find_library('gd')
+gd = dependency('gdlib', required: false)
+if not gd.found()
+  # Doesn't have a pkg-config file on some systems (https://github.com/conda-forge/libgd-feedstock/issues/55)
+  gd = cc.find_library('gd')
+endif
 # Only some platforms have a standalone math library (https://mesonbuild.com/howtox.html#add-math-library-lm-portably)
 m = cc.find_library('m', required: false)
-m4ri = cc.find_library('m4ri')
+m4ri = dependency('m4ri')
 m4rie = cc.find_library('m4rie', required: not is_windows, disabler: true)
 mtx = cc.find_library('mtx', required: false, disabler: true)
-png = cc.find_library('png', required: false)
+png = dependency('libpng', required: false)
 if not png.found()
-  png = cc.find_library('png16')
+  png = dependency('libpng16')
 endif
-zlib = cc.find_library('z')
+zlib = dependency('zlib')
 # Cannot be found via pkg-config
 ec = cc.find_library('ec', required: not is_windows, disabler: true)
 ecm = cc.find_library('ecm', required: not is_windows, disabler: true)
