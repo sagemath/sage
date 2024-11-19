@@ -39,7 +39,7 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-def q_int_x(n):
+def q_int_x(n, q=None):
     """
     Return the interpolating polynomial of `q`-integers.
 
@@ -47,19 +47,30 @@ def q_int_x(n):
 
     - ``n`` -- a positive integer
 
+    - ``q`` -- optional variable
+
     EXAMPLES::
 
         sage: from sage.rings.polynomial.q_integer_valued_polynomials import q_int_x
         sage: q_int_x(3)
         q^2*x + q + 1
+
+    TESTS::
+
+        sage: from sage.rings.polynomial.q_integer_valued_polynomials import q_int_x
+        sage: q_int_x(3, 1)
+        x + 2
     """
-    ring_q = PolynomialRing(ZZ, 'q')
-    q = ring_q.gen()
+    if q is None:
+        ring_q = PolynomialRing(ZZ, 'q')
+        q = ring_q.gen()
+    else:
+        ring_q = q.parent()
     x = polygen(ring_q, 'x')
-    return q_int(n - 1) + q**(n - 1) * x
+    return q_int(n - 1, q) + q**(n - 1) * x
 
 
-def q_binomial_x(m, n):
+def q_binomial_x(m, n, q=None):
     r"""
     Return a `q`-analogue of ``binomial(m + x, n)``.
 
@@ -69,6 +80,8 @@ def q_binomial_x(m, n):
     INPUT:
 
     - ``m`` and ``n`` -- positive integers
+
+    - ``q`` -- optional variable
 
     EXAMPLES::
 
@@ -83,11 +96,22 @@ def q_binomial_x(m, n):
         sage: q_binomial_x(2,0).parent()
         Univariate Polynomial Ring in x over Fraction Field of
         Univariate Polynomial Ring in q over Integer Ring
+
+    TESTS::
+
+        sage: from sage.rings.polynomial.q_integer_valued_polynomials import q_binomial_x
+        sage: q_binomial_x(4,2,1)
+        1/2*x^2 + 7/2*x + 6
     """
-    ring = PolynomialRing(PolynomialRing(ZZ, 'q').fraction_field(), 'x')
+    if q is None:
+        ring_q = PolynomialRing(ZZ, 'q')
+    else:
+        ring_q = q.parent()
+    ring = PolynomialRing(ring_q.fraction_field(), 'x')
     if n == 0:
         return ring.one()
-    return ring.prod(q_int_x(m + 2 - i) / q_int(i) for i in range(1, n + 1))
+    return ring.prod(q_int_x(m + 2 - i, q) / q_int(i, q)
+                     for i in range(1, n + 1))
 
 
 class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
