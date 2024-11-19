@@ -315,6 +315,11 @@ builddir-*
 build-install
 build/cp*
 
+# Meson subprojects
+/subprojects/*
+!/subprojects/*.wrap
+!/subprojects/packagefiles
+
 # Meson temporary files
 subprojects/wrapdb.json
 src/sage/interfaces/__init__.py
