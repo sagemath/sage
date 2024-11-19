@@ -128,8 +128,16 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
 
     - ``R`` -- commutative ring
 
-    The ring ``R`` is not containing the variable `q`. Instead the
-    Laurent polynomial ring over ``R`` is built and used.
+    - ``q`` -- optional variable
+
+    There are two possible input formats:
+
+    - If the argument ``q`` is not given, then the ring ``R`` is
+      taken as a base ring and the ring of Laurent polynomials in `q`
+      over ``R`` is built and used.
+
+    - If the argument ``q`` is given, then it should belong to the ring ``R``
+      and be invertible in this ring.
 
     EXAMPLES::
 
@@ -168,7 +176,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
         S[0] - (1/2*q^-3)*S[2] + (1/2*q^-4+q^-3+q^-2+1/2*q^-1)*S[3]
         - (1/2*q^-4+1/2*q^-3+q^-2+1/2*q^-1+1/2)*S[4]
     """
-    def __init__(self, R) -> None:
+    def __init__(self, R, q=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -176,6 +184,10 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
 
             sage: F = QuantumValuedPolynomialRing(QQ); F
             Quantum-Valued Polynomial Ring over Rational Field
+            sage: TestSuite(F).run()
+
+            sage: F = QuantumValuedPolynomialRing(QQ, 1); F
+            Quantum-Valued Polynomial Ring over Integer Ring
             sage: TestSuite(F).run()
 
         TESTS::
@@ -188,9 +200,16 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
         if R not in Rings().Commutative():
             msg = "argument R must be a commutative ring"
             raise TypeError(msg)
-        laurent = LaurentPolynomialRing(R, 'q')
-        self._ground_ring = R
-        self._q = laurent.gen()
+
+        if q is None:
+            laurent = LaurentPolynomialRing(R, 'q')
+            self._ground_ring = R
+            self._q = laurent.gen()
+        else:
+            laurent = q.parent()
+            self._ground_ring = laurent.base_ring()
+            self._q = q
+
         cat = Algebras(laurent).Commutative().WithBasis()
         Parent.__init__(self, base=laurent, category=cat.WithRealizations())
 
