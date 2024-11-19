@@ -124,7 +124,7 @@ mpfi = cc.find_library('mpfi', required: not is_windows, disabler: true)
 gap = cc.find_library('gap', has_headers: ['gap/common.h'], required: not is_windows, disabler: true)
 singular = dependency('Singular', required: not is_windows, disabler: true)
 singular_factory = disabler()
-if singular.is_found()
+if singular.found()
   singular_factory = singular
 else
   singular_proj = subproject('factory')
