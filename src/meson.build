@@ -26,7 +26,7 @@ import cysignals
 print(cysignals.__file__.replace('__init__.py', ''))
     '''.strip(),
   ],
-  check: false,
+  check: true,
 ).stdout().strip()
 cysignals = declare_dependency(include_directories: inc_cysignals)
 
@@ -53,8 +53,8 @@ else
     [
       '-c',
       '''
-  import cypari2
-  print(cypari2.__file__.replace('__init__.py', ''))
+import cypari2
+print(cypari2.__file__.replace('__init__.py', ''))
       '''.strip(),
     ],
     check: true,
