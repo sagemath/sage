@@ -142,7 +142,6 @@ cpdef tuple possible_mergings(int n, theory, tuple smaller_structures, dict sign
     cdef int ii, jj, kk
     cdef tuple patt
 
-    #print("calc max arity={}, extensions are={}".format(max_arity, extensions))
     if max_arity==0:
         #This essentially means all relation symbol is larger than arity, 
         #so just return the empty element
@@ -194,7 +193,7 @@ cpdef tuple possible_mergings(int n, theory, tuple smaller_structures, dict sign
                         FG_overlap = _merge_blocks_1(F._blocks, G_permed._blocks, n-2, n-1)
                         
                         #F and G_permed are compatible
-
+                        
                         for kk in range(jj, sslen):
                             for H_permed in all_perms[kk]:
                                 if G_subf.strong_equal(H_permed.subflag(minustwo)):
@@ -213,7 +212,10 @@ cpdef tuple possible_mergings(int n, theory, tuple smaller_structures, dict sign
                                                     ret[patt] = [final_flag]
                                                 elif final_flag not in ret[patt]:
                                                     ret[patt].append(final_flag)
-    return tuple(itertools.chain.from_iterable(ret.values()))
+    combined_tuple = tuple(itertools.chain.from_iterable(
+        [ret[key] for key in sorted(ret.keys())]
+    ))
+    return combined_tuple
 
 cdef dict _merge_blocks_0(dict block0, dict block1):
     cdef dict merged = {}

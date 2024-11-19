@@ -357,7 +357,7 @@ def test_generate():
     print("\nDirected ThreeGraph generate test start")
     for ii in [3]:
         print("Done with size {}, the number is {}".format(ii, len(DTG.generate(ii))))
-    print("Unconfirmed numbers here are 16 ()")
+    print("Unconfirmed numbers here are 16 (?)")
 
     print("\nColoredGraph generate test start")
     for ii in [2, 3, 4, 5, 6]:
