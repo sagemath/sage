@@ -3,10 +3,10 @@ build-backend = 'mesonpy'
 # Minimum requirements for the build system to execute.
 requires = [
     'meson-python',
-    'cypari2 >=2.1.1',
+    'cypari2 >=2.1.1; sys_platform != "win32"',
     # cysignals 1.11.2 is the newest version that is available on conda:
     # https://github.com/conda-forge/cysignals-feedstock/pull/49
-    'cysignals >=1.11.2',
+    'cysignals >=1.11.2; sys_platform != "win32"',
     # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
     'cython >=3.0, != 3.0.3',
     'gmpy2 ~=2.1.b999',
@@ -20,16 +20,16 @@ description = "Sage: Open Source Mathematics Software: Standard Python Library"
 dependencies = [
     'six >=1.15.0',
     'conway-polynomials >=0.8',
-    'cypari2 >=2.1.1',
-    'cysignals >=1.10.2',
+    'cypari2 >=2.1.1; sys_platform != "win32"',
+    'cysignals >=1.10.2; sys_platform != "win32"',
     'cython >=3.0, != 3.0.3',
     'gmpy2 ~=2.1.b999',
-    'lrcalc ~=2.1',
+    'lrcalc ~=2.1; sys_platform != "win32"',
     'memory_allocator',
     'numpy >=1.19',
     # Issue #30922: pplpy 0.8.4 and earlier do not declare dependencies correctly
-    'pplpy >=0.8.6',
-    'primecountpy',
+    'pplpy >=0.8.6; sys_platform != "win32"',
+    'primecountpy; sys_platform != "win32"',
     'requests >=2.13.0',
     # According to https://github.com/python/typing_extensions/blob/main/CHANGELOG.md,
     # version 4.4.0 adds another Python 3.11 typing backport
@@ -54,7 +54,7 @@ dependencies = [
     'ipykernel >=5.2.1',
     'jupyter-client',
     'ipywidgets >=7.5.1',
-    'fpylll >=0.5.9',
+    'fpylll >=0.5.9; sys_platform != "win32"',
     'ptyprocess > 0.5',
     # TODO: Remove this once the migration to meson is complete
     'pkgconfig'
@@ -175,4 +175,9 @@ lint = [
   "ruff",
   "pycodestyle",
   "flake8-rst-docstrings",
+]
+dev = [
+  "toml",
+  "grayskull",
+  "conda-lock",
 ]

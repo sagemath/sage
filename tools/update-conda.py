@@ -25,7 +25,7 @@ platforms = {
     "linux-aarch64": "linux-aarch64",
     "osx-64": "macos-x86_64",
     "osx-arm64": "macos",
-    # "win-64": "win",
+    "win-64": "win",
 }
 pythons = ["3.9", "3.10", "3.11"]
 tags = [""]
@@ -44,10 +44,23 @@ dependencies:
     print(f"Conda environment file written to {env_file}")
 
 
-def filter_requirements(dependencies: set[str], python: str) -> set[str]:
+def filter_requirements(dependencies: set[str], python: str, platform: str) -> set[str]:
+    sys_platform = {
+        "linux-64": "linux",
+        "linux-aarch64": "linux",
+        "osx-64": "darwin",
+        "osx-arm64": "darwin",
+        "win-64": "win32",
+    }[platform]
+
     def filter_dep(dep: str):
+        # gmpy2 has to be installed via pip on Windows at the moment until the following PR is merged:
+        # https://github.com/conda-forge/gmpy2-feedstock/pull/43
+        if "gmpy2" in dep and sys_platform == "win32":
+            return None
+
         req = Requirement(dep)
-        env = {"python_version": python}
+        env = {"python_version": python, "sys_platform": sys_platform}
         if not req.marker or req.marker.evaluate(env):
             # Serialize the requirement without the marker
             req.marker = None
@@ -65,18 +78,18 @@ def update_conda(source_dir: Path) -> None:
 
     for platform_key, platform_value in platforms.items():
         for python in pythons:
-            dependencies = get_dependencies(pyproject_toml, python)
+            dependencies = get_dependencies(pyproject_toml, python, platform_key)
             for tag in tags:
                 # Pin Python version
                 pinned_dependencies = {
                     f"python={python}" if dep == "python" else dep
                     for dep in dependencies
                 }
-                
+
                 dev_dependencies = get_dev_dependencies(pyproject_toml)
                 print(f"Adding dev dependencies: {dev_dependencies}")
                 pinned_dependencies = pinned_dependencies.union(dev_dependencies)
-                
+
                 pinned_dependencies = sorted(pinned_dependencies)
 
                 env_file = source_dir / f"environment{tag}-{python}.yml"
@@ -115,31 +128,91 @@ def update_conda(source_dir: Path) -> None:
                     f.write(f"name: sage{tag or '-dev'}\n{content}")
 
 
-def get_dependencies(pyproject_toml: Path, python: str) -> list[str]:
+def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[str]:
     grayskull_config = Configuration("sagemath")
     pyproject_metadata = merge_setup_toml_metadata(
         {}, get_all_toml_info(pyproject_toml)
     )
     requirements = extract_requirements(pyproject_metadata, grayskull_config, {})
-    all_requirements = (
-        requirements.get("build", [])
-        + requirements.get("host", [])
-        + requirements.get("run", [])
+    all_requirements: set[str] = (
+        set(requirements.get("build", {}))
+        | set(requirements.get("host", {}))
+        | set(requirements.get("run", {}))
     )
 
     # Specify concrete package for some virtual packages
     all_requirements.remove("{{ blas }}")
-    all_requirements.append("blas=2.*=openblas")
+    all_requirements.add("blas=2.*=openblas")
     all_requirements.remove("{{ compiler('c') }}")
-    all_requirements.append("c-compiler")
     all_requirements.remove("{{ compiler('cxx') }}")
-    all_requirements.append("cxx-compiler")
+    if platform == "win-64":
+        all_requirements.add("vs2022_win-64")
+        # For mingw:
+        # all_requirements.add("gcc_win-64 >= 14.2.0")
+        # all_requirements.add("gxx_win-64")
+    else:
+        all_requirements.add("c-compiler")
+        all_requirements.add("cxx-compiler")
+
+    # Filter out packages that are not available on Windows
+    if platform == "win-64":
+        # gmpy2 has to be installed via pip on Windows at the moment until the following PR is merged:
+        # https://github.com/conda-forge/gmpy2-feedstock/pull/43
+        all_requirements.remove("gmpy2 ~=2.1.b999")
+        # Remove packages that are not available on Windows
+        all_requirements.difference_update(
+            (
+                "bc",
+                "bdw-gc",
+                "brial",
+                "cddlib",
+                "cliquer",
+                "ecl",
+                "eclib",
+                "ecm",
+                "fflas-ffpack",
+                "fplll",
+                "gap-defaults",
+                "gengetopt",
+                "gfan",
+                "giac",
+                "givaro",
+                "gmp",
+                "gmpy2",
+                "iml",
+                "lcalc",
+                "libatomic_ops",
+                "libbraiding",
+                "libhomfly",
+                "linbox",
+                "lrcalc",
+                "m4",
+                "m4rie",
+                "maxima",
+                "mpfi",
+                "ncurses",
+                "ntl",
+                "palp",
+                "pari",
+                "patch",
+                "ppl",
+                "primecount",
+                "readline",
+                "rw",
+                "singular",
+                "sympow",
+                "tachyon",
+                "tar",
+                "texinfo",
+            )
+        )
 
     # Correct pypi name for some packages
     python_requirements = set(pyproject_metadata.get("install_requires", []))
     # Specify concrete packages for some packages not yet in grayskull
     python_requirements.remove("pkg:generic/tachyon")
-    python_requirements.add("tachyon")
+    if platform != "win-64":
+        python_requirements.add("tachyon")
     python_requirements.remove("pkg:generic/sagemath-elliptic-curves")
     python_requirements.add("sagemath-db-elliptic-curves")
     python_requirements.remove("pkg:generic/sagemath-polytopes-db")
@@ -152,9 +225,9 @@ def get_dependencies(pyproject_toml: Path, python: str) -> list[str]:
     python_requirements = {
         req.replace("lrcalc", "python-lrcalc") for req in python_requirements
     }
-    python_requirements = filter_requirements(python_requirements, python)
-    all_requirements += normalize_requirements_list(
-        python_requirements, grayskull_config
+    python_requirements = filter_requirements(python_requirements, python, platform)
+    all_requirements.update(
+        normalize_requirements_list(python_requirements, grayskull_config)
     )
     all_requirements.remove("<{ pin_compatible('numpy') }}")
     all_requirements.remove("memory_allocator")
@@ -164,8 +237,10 @@ def get_dependencies(pyproject_toml: Path, python: str) -> list[str]:
 def get_dev_dependencies(pyproject_toml: Path) -> list[str]:
     pyproject = tomllib.load(pyproject_toml)
     dependency_groups = pyproject.get("dependency-groups", {})
-    dev_dependencies = dependency_groups.get("test", []) + dependency_groups.get(
-        "docs", []
+    dev_dependencies = (
+        dependency_groups.get("test", [])
+        + dependency_groups.get("docs", [])
+        + dependency_groups.get("dev", [])
     )
     return dev_dependencies
 
