@@ -520,7 +520,7 @@ cdef class ntl_mat_GF2():
         sig_off()
         return r
 
-    def IsIdent(self, n = -1):
+    def IsIdent(self, n=-1):
         """
         Test if this matrix is the n x n identity matrix.
 

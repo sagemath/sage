@@ -1380,7 +1380,7 @@ def _biseq_stresstest():
     cdef int branch
     cdef Py_ssize_t x, y, z
     from sage.misc.prandom import randint
-    cdef list L = [BoundedIntegerSequence(6, [randint(0,5) for z in range(randint(4,10))]) for y in range(100)]
+    cdef list L = [BoundedIntegerSequence(6, [randint(0, 5) for z in range(randint(4, 10))]) for y in range(100)]
     cdef BoundedIntegerSequence S, T
     while True:
         branch = randint(0,4)

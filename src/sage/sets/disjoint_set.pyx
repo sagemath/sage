@@ -833,7 +833,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         cdef int r = <int> OP_find(self._nodes, i)
         return self._int_to_el[r]
 
-    cpdef void union(self, e, f) noexcept:
+    cpdef void union(self, e, f) except *:
         r"""
         Combine the set of ``e`` and the set of ``f`` into one.
 
@@ -861,8 +861,9 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: e
             {{'a', 'b', 'c', 'e'}, {'d'}}
             sage: e.union('a', 2**10)
-            KeyError: 1024
+            Traceback (most recent call last):
             ...
+            KeyError: 1024
         """
         cdef int i = <int> self._el_to_int[e]
         cdef int j = <int> self._el_to_int[f]
