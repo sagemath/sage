@@ -1,4 +1,3 @@
-fs = import('fs')
 sage_install_dir = py.get_install_dir() / 'sage'
 
 # Generate the configuration file

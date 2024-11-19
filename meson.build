@@ -12,6 +12,8 @@ py_module = import('python')
 py = py_module.find_installation(pure: false)
 py_dep = py.dependency()
 
+fs = import('fs')
+
 is_windows = host_machine.system() == 'windows'
 
 # Additional targets
@@ -206,7 +208,7 @@ file_paths = [
   'src/sage/calculus/__init__.py',
 ]
 for path in file_paths:
-    resolved_path = Path("''' + meson.current_source_dir() + '''") / path
+    resolved_path = Path("''' + fs.as_posix(meson.current_source_dir()) + '''") / path
     resolved_path.parent.mkdir(parents=True, exist_ok=True)
     resolved_path.write_text(content)
   ''',
