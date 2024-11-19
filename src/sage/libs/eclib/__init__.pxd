@@ -55,7 +55,7 @@ cdef extern from "eclib/matrix.h":
     cdef cppclass mat:
         mat()
         mat(mat m)
-        scalar* get_entries()
+        vector[scalar] get_entries()
         scalar sub(long, long)
         long nrows()
         long ncols()
@@ -67,7 +67,7 @@ cdef extern from "eclib/smatrix.h":
     cdef cppclass smat:
         smat()
         smat(smat m)
-        scalar* get_entries()
+        vector[scalar] get_entries()
         scalar sub(long, long)
         long nrows()
         long ncols()
