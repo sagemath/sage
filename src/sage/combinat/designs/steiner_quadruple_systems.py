@@ -540,7 +540,7 @@ def P(alpha, m):
             return pairs
 
 
-def _missing_pair(n,l):
+def _missing_pair(n, l):
     r"""
     Return the smallest `(x,x+1)` that is not contained in `l`.
 

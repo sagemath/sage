@@ -198,7 +198,7 @@ class pAdicGeneric(LocalGeneric):
     # def ngens(self):
     #     return 1
 
-    # def gen(self, n = 0):
+    # def gen(self, n=0):
     #     if n != 0:
     #         raise IndexError, "only one generator"
     #     return self(self.prime())

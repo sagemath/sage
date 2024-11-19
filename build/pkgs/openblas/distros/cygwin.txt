@@ -1,2 +1,0 @@
-liblapack-devel
-libopenblas
