@@ -6796,7 +6796,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                 # Same thing, except when we're given a lattice.
                 max_rays = 2*(lattice.dimension() - 1)
 
-    def random_min_max(l,u):
+    def random_min_max(l, u):
         r"""
         We need to handle two cases for the upper bounds, and we need
         to do the same thing for max_ambient_dim/max_rays. So we consolidate
