@@ -16,7 +16,8 @@ called *matching* *covered* if each edge participates in some perfect matching.
 REFERENCES:
 
 - This methods of this module has been adopted and inspired by the book of
-  Lucchesi and Murty [LM2024]_.
+  Lucchesi and Murty --- *Perfect Matchings: a theory of matching covered
+  graphs* [LM2024]_.
 
 AUTHORS:
 
@@ -27,48 +28,115 @@ AUTHORS:
     The following methods are to be incorporated in
     :class:`~MatchingCoveredGraph`:
 
-    Overwritten Methods:
+    .. csv-table::
+        :class: contentstable
+        :widths: 30, 70
+        :delim: |
 
-    - ``delete_edge()`` | Delete the edge from ``u`` to ``v``.
-    - ``delete_edges()`` | Delete edges from an iterable container.
+        ``__hash__()`` | Compute a hash for ``self``, if ``self`` is immutable.
+        ``_subgraph_by_deleting()`` | Return the matching covered subgraph containing the provided vertices and edges.
 
-    Bricks, braces and tight cut decomposition:
+    **Overwritten Methods**
 
-    - ``bricks_and_braces()`` | Return the list of (underlying simple graph of)
-      the bricks and braces of the (matching covered) graph.
-    - ``is_brace()`` | Check if the (matching covered) graph is a brace.
-    - ``is_brick()`` | Check if the (matching covered) graph is a brick.
-    - ``number_of_braces()`` | Return the number of braces.
-    - ``number_of_bricks()`` | Return the number of bricks.
-    - ``number_of_petersen_bricks()`` | Return the number of Petersen bricks.
-    - ``tight_cut_decomposition()`` | Return a tight cut decomposition.
+    .. csv-table::
+        :class: contentstable
+        :widths: 30, 70
+        :delim: |
 
-    Removability and ear decomposition:
+        ``add_clique()`` | Add a clique to the graph with the provided vertices.
+        ``add_cycle()`` | Add a cycle to the graph with the provided vertices.
+        ``add_path()`` | Add a path to the graph with the provided vertices.
+        ``cartesian_product()`` | Return the Cartesian product of ``self`` and ``other``.
+        ``clear()`` | Empties the graph of vertices and edges and removes name, associated objects, and position information.
+        ``complement()`` | Return the complement of the graph.
+        ``contract_edge()`` | Contract an edge from ``u`` to ``v``.
+        ``contract_edges()`` | Contract edges from an iterable container.
+        ``degree_constrained_subgraph()`` | Return a degree-constrained matching covered subgraph.
+        ``delete_edge()`` | Delete the edge from ``u`` to ``v``.
+        ``delete_edges()`` | Delete edges from an iterable container.
+        ``delete_multiedge()`` | Delete all edges from ``u`` to ``v``.
+        ``disjoint_union()`` | Return the disjoint union of ``self`` and ``other``.
+        ``disjunctive_product()`` | Return the disjunctive product of ``self`` and ``other``.
+        ``has_loops()`` | Return whether there are loops in the matching covered graph.
+        ``is_biconnected()`` | Check if the matching covered graph is biconnected.
+        ``is_block_graph()`` | Check whether the matching covered graph is a block graph.
+        ``is_cograph()`` | Check whether the matching covered graph is cograph.
+        ``is_forest()`` | Check if the matching covered graph is a forest, i.e. a disjoint union of trees.
+        ``is_matching_covered()`` | Check if the graph is matching covered.
+        ``is_path()`` | Check whether the graph is a path.
+        ``is_subgraph()`` | Check whether the matching covered graph is a subgraph of ``other``.
+        ``is_tree()`` | Check whether the matching covered graph is a tree.
+        ``join()`` | Return the join of ``self`` and ``other``.
+        ``lexicographic_product()`` | Return the lexicographic product of ``self`` and ``other``.
+        ``load_afile()`` | Load the matching covered graph specified in the given file into the current object.
+        ``loop_edges()`` | Return a list of all loops in the matching covered graph.
+        ``loop_vertices()`` | Return a list of vertices with loops.
+        ``merge_vertices()`` | Merge vertices.
+        ``number_of_loops()`` | Return the number of edges that are loops.
+        ``random_subgraph()`` | Return a random matching covered subgraph containing each vertex with probability ``p``.
+        ``remove_loops()`` | Remove loops on vertices in ``vertices``.
+        ``save_afile()`` | Save the graph to file in alist format.
+        ``strong_product()`` | Return the strong product of ``self`` and ``other``.
+        ``subdivide_edge()`` | Subdivide an edge `k` times.
+        ``subdivide_edges()`` | Subdivide `k` times edges from an iterable container.
+        ``subgraph()`` | Return the matching covered subgraph containing the given vertices and edges.
+        ``subgraph_search()`` | Return a copy of (matching covered) ``G`` in ``self``.
+        ``subgraph_search_count()`` | Return the number of labelled occurrences of (matching covered) ``G`` in ``self``.
+        ``subgraph_search_iterator()`` | Return an iterator over the labelled copies of (matching covered) ``G`` in ``self``.
+        ``tensor_product()`` | Return the tensor product of ``self`` and ``other``.
+        ``to_undirected()`` | Return an undirected Graph instance of the matching covered graph.
+        ``transitive_closure()`` | Return the transitive closure of the matching covered graph.
+        ``transitive_reduction()`` | Return a transitive reduction of the matching covered graph.
+        ``union()`` | Return the union of ``self`` and ``other``.
 
-    - ``efficient_ear_decomposition()`` | Return a matching covered ear
-      decomposition computed at the fastest possible time.
-    - ``is_removable_double_ear()`` | Check whether the pair of ears form a
-      removable double ear.
-    - ``is_removable_doubleton()`` | Check whether the pair of edges constitute
-      a removable doubleton.
-    - ``is_removable_ear()`` | Check whether the ear is removable.
-    - ``is_removable_edge()`` | Check whether the edge is removable.
-    - ``optimal_ear_decomposition()`` | Return an optimal ear decomposition.
-    - ``removable_double_ears()`` | Return a list of removable double ears.
-    - ``removable_doubletons()`` | Return a list of removable doubletons.
-    - ``removable_ears()`` | Return a list of removable ears.
-    - ``removable_edges()`` | Return a :class:`~EdgesView` of removable edges.
-    - ``retract()`` | Compute the retract of the (matching covered) graph.
+    **Bricks, braces and tight cut decomposition**
 
-    Generating bricks and braces:
+    .. csv-table::
+        :class: contentstable
+        :widths: 30, 70
+        :delim: |
 
-    - ``brace_generation_sequence()`` | Return a McCuaig brace generation
-      sequence of the (given) brace.
-    - ``brick_generation_sequence()`` | Return a Norine-Thomas brick generation
-      sequence of the (given) brick.
-    - ``is_mccuaig_brace()`` | Check if the brace is a McCuaig brace.
-    - ``is_norine_thomas_brick()`` | Check if the brick is a Norine-Thomas
-      brick.
+        ``bricks_and_braces()`` | Return the list of (underlying simple graph of) the bricks and braces of the (matching covered) graph.
+        ``is_brace()`` | Check if the (matching covered) graph is a brace.
+        ``is_brick()`` | Check if the (matching covered) graph is a brick.
+        ``number_of_braces()`` | Return the number of braces.
+        ``number_of_bricks()`` | Return the number of bricks.
+        ``number_of_petersen_bricks()`` | Return the number of Petersen bricks.
+        ``tight_cut_decomposition()`` | Return a tight cut decomposition.
+
+    **Removability and ear decomposition**
+
+    .. csv-table::
+        :class: contentstable
+        :widths: 30, 70
+        :delim: |
+
+        ``add_ear()`` | Add an ear to the graph with the provided end vertices number of internal vertices.
+        ``bisubdivide_edge()`` | Bisubdivide an edge `k` times.
+        ``bisubdivide_edges()`` | Bisubdivide `k` times edges from an iterable container.
+        ``efficient_ear_decomposition()`` | Return a matching covered ear decomposition computed at the fastest possible time.
+        ``is_removable_double_ear()`` | Check whether the pair of ears form a removable double ear.
+        ``is_removable_doubleton()`` | Check whether the pair of edges constitute a removable doubleton.
+        ``is_removable_ear()`` | Check whether the ear is removable.
+        ``is_removable_edge()`` | Check whether the edge is removable.
+        ``optimal_ear_decomposition()`` | Return an optimal ear decomposition.
+        ``removable_double_ears()`` | Return a list of removable double ears.
+        ``removable_doubletons()`` | Return a list of removable doubletons.
+        ``removable_ears()`` | Return a list of removable ears.
+        ``removable_edges()`` | Return a :class:`~EdgesView` of removable edges.
+        ``retract()`` | Compute the retract of the (matching covered) graph.
+
+    **Generating bricks and braces**
+
+    .. csv-table::
+        :class: contentstable
+        :widths: 30, 70
+        :delim: |
+
+        ``brace_generation_sequence()`` | Return a McCuaig brace generation sequence of the (provided) brace.
+        ``brick_generation_sequence()`` | Return a Norine-Thomas brick generation sequence of the (provided) brick.
+        ``is_mccuaig_brace()`` | Check if the brace is a McCuaig brace.
+        ``is_norine_thomas_brick()`` | Check if the brick is a Norine-Thomas brick.
 
 
 Methods
@@ -84,8 +152,9 @@ Methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .graph import Graph
-from sage.misc.rest_index_of_methods import doc_index
+from sage.graphs.graph import Graph
+from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
+
 
 class MatchingCoveredGraph(Graph):
     r"""
@@ -296,6 +365,21 @@ class MatchingCoveredGraph(Graph):
         sage: sorted(H.get_matching()) == sorted(M)
         True
 
+    One may specify some keyword arguments::
+
+        sage: G = Graph([(0, 1, 5)], {'weighted': True})
+        sage: kwds = {
+        ....:   'loops': False,
+        ....:   'multiedges': True,
+        ....:   'pos': {0: (0, 0), 1: (1, 1)}
+        ....: }
+        sage: H = MatchingCoveredGraph(G, **kwds)
+        sage: H
+        Matching covered multi-graph on 2 vertices
+        sage: H.add_edge(0, 1)
+        sage: H.edges()
+        [(0, 1, None), (0, 1, 5)]
+
     TESTS:
 
     An empty graph is not matching covered::
@@ -324,6 +408,11 @@ class MatchingCoveredGraph(Graph):
     Make sure that self-loops are not allowed for a matching covered graph::
 
         sage: P = graphs.PetersenGraph()
+        sage: kwds = {'loops': True}
+        sage: G = MatchingCoveredGraph(P, **kwds)
+        Traceback (most recent call last):
+        ...
+        ValueError: loops are not allowed in matching covered graphs
         sage: G = MatchingCoveredGraph(P)
         sage: G.allows_loops()
         False
@@ -526,7 +615,7 @@ class MatchingCoveredGraph(Graph):
         """
         success = False
 
-        if kwds is None:
+        if not kwds:
             kwds = {'loops': False}
         else:
             if 'loops' in kwds and kwds['loops']:
@@ -538,12 +627,8 @@ class MatchingCoveredGraph(Graph):
             raise ValueError('the graph is trivial')
 
         elif isinstance(data, MatchingCoveredGraph):
-            try:
-                Graph.__init__(self, data, *args, **kwds)
-                success = True
-
-            except Exception as exception:
-                raise exception
+            Graph.__init__(self, data, *args, **kwds)
+            success = True
 
         elif isinstance(data, Graph):
             try:
@@ -559,21 +644,9 @@ class MatchingCoveredGraph(Graph):
 
         if success:
             if matching:
-                # The input matching must be a valid perfect matching of the graph
-                M = Graph(matching)
-
-                if any(d != 1 for d in M.degree()):
-                    raise ValueError("the input is not a matching")
-
-                G = Graph(self, multiedges=False)
-
-                if any(not G.has_edge(edge) for edge in M.edge_iterator()):
-                    raise ValueError("the input is not a matching of the graph")
-
-                if (G.order() != M.order()):
-                    raise ValueError("the input is not a perfect matching of the graph")
-
+                # The input matching is a valid perfect matching of the graph
                 self._matching = matching
+
             else:
                 self._matching = Graph(self).matching()
 
@@ -623,7 +696,6 @@ class MatchingCoveredGraph(Graph):
             return s.capitalize()
         return "".join(["Matching covered ", s])
 
-    @doc_index('Overwritten methods')
     def _subgraph_by_adding(self, vertices=None, edges=None, edge_property=None, immutable=None):
         r"""
         Return the matching covered subgraph containing the given vertices and edges.
@@ -666,8 +738,8 @@ class MatchingCoveredGraph(Graph):
 
         EXAMPLES:
 
-        Ladder graphs are subgraphs of a staircase graph, that is
-        matching covered::
+        Ladder graphs are matching covered subgraphs of a staircase graph,
+        which is also matching covered::
 
             sage: G = MatchingCoveredGraph(graphs.StaircaseGraph(4))
             sage: H = G._subgraph_by_adding(vertices=[0..5])
@@ -678,8 +750,8 @@ class MatchingCoveredGraph(Graph):
             sage: H.is_isomorphic(graphs.LadderGraph(3))
             True
 
-        Cycle graphs are subgraphs of a biwheel graph, that is
-        matching covered::
+        Cycle graphs are matching covered subgraphs of a biwheel graph, which
+        is also matching covered::
 
             sage: G = MatchingCoveredGraph(graphs.BiwheelGraph(5))
             sage: H = G._subgraph_by_adding(vertices=[0..7],
@@ -689,6 +761,15 @@ class MatchingCoveredGraph(Graph):
             sage: H
             Matching covered subgraph of (biwheel graph): graph on 8 vertices
             sage: H.is_isomorphic(graphs.CycleGraph(8))
+            True
+
+        One may pass no value for any of the input arguments; in such a case,
+        the whole matching covered graph will be returned::
+
+            sage: T = graphs.TwinplexGraph()
+            sage: G = MatchingCoveredGraph(T)
+            sage: J = G._subgraph_by_adding()
+            sage: G == J
             True
 
         One may use the ``edge_property`` argument::
@@ -725,6 +806,14 @@ class MatchingCoveredGraph(Graph):
             sage: H.is_isomorphic(graphs.CycleGraph(8))
             True
             sage: H.is_immutable()
+            True
+            sage: C = graphs.CubeplexGraph()
+            sage: D = MatchingCoveredGraph(C)
+            sage: I = D._subgraph_by_adding(immutable=True)
+            sage: (I == D) and (I.is_immutable())
+            True
+            sage: J = D._subgraph_by_adding(vertices=D.vertices(), immutable=True)
+            sage: (J == D) and (J.is_immutable())
             True
 
         An error is thrown if the subgraph is not matching covered::
@@ -920,6 +1009,21 @@ class MatchingCoveredGraph(Graph):
              (3, 6, None), (4, 5, None), (4, 6, 'label'), (4, 7, 'label'),
              (5, 7, None), (6, 7, None)]
 
+        Note that the ``weight`` of the edge shall be input as the ``label``::
+
+            sage: G.add_edge((1, 3), label=5)
+            sage: G.edges()
+            [(0, 1, None), (0, 3, None), (0, 4, None), (0, 5, None),
+             (0, 6, None), (1, 2, None), (1, 3, 5), (1, 4, None),
+             (2, 3, None), (2, 4, 'label'), (2, 5, None), (2, 7, None),
+             (3, 4, None), (3, 6, None), (4, 5, None), (4, 6, 'label'),
+             (4, 7, 'label'), (5, 7, None), (6, 7, None)]
+            sage: G.add_edge((2, 4, 6), label=6)
+            Traceback (most recent call last):
+            ...
+            ValueError: the graph obtained after the addition of edge
+            (((2, 4, 6), None, 6)) is not matching covered
+
         Vertex name cannot be ``None``, so::
 
             sage: W = graphs.WheelGraph(6)
@@ -952,6 +1056,12 @@ class MatchingCoveredGraph(Graph):
             sage: G.add_edge(next(G.edge_iterator()))
             sage: P == G
             True
+            sage: G.size()
+            15
+            sage: G.allow_multiple_edges(True)
+            sage: G.add_edge(0, 1)
+            sage: G.size()
+            16
 
         Adding an edge such that the resulting graph is matching covered::
 
@@ -1166,8 +1276,13 @@ class MatchingCoveredGraph(Graph):
 
             sage: H = graphs.HexahedralGraph()
             sage: G = MatchingCoveredGraph(H)
-            sage: F = {(0, 5), (2, 7)}
+            sage: F = [(3, 8), (6, 9), (8, 9)]
             sage: G.add_edges(F)
+            Traceback (most recent call last):
+            ...
+            ValueError: the resulting graph after the addition ofthe edges is not matching covered
+            sage: I = [(0, 8), (1, 9)]
+            sage: G.add_edges(I)
             Traceback (most recent call last):
             ...
             ValueError: the resulting graph after the addition ofthe edges is not matching covered
@@ -1654,6 +1769,10 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: vertex (100) not in the graph
+            sage: G.delete_vertex(vertex=u, in_order=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: vertex (100) not in the graph
 
         Deleting an existing vertex::
 
@@ -1664,12 +1783,16 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: odd order is not allowed for matching covered graphs
+            sage: G.delete_vertex(vertex=u, in_order=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: odd order is not allowed for matching covered graphs
         """
-        if in_order:
-            vertex = self.vertices(sort=True)[vertex]
-
         if vertex not in self:
             raise ValueError('vertex (%s) not in the graph' % str(vertex))
+
+        if in_order:
+            vertex = self.vertices(sort=True)[vertex]
 
         raise ValueError('odd order is not allowed for '
                          'matching covered graphs')
@@ -1826,11 +1949,10 @@ class MatchingCoveredGraph(Graph):
             raise ValueError('the resulting graph after the removal of '
                              'the vertices is not matching covered')
 
-    @doc_index('Overwritten methods')
+    @doc_index('Miscellaneous methods')
     def get_matching(self):
         r"""
-        Return a :class:`~EdgesView` of ``self._matching`` (a perfect matching
-        of the (matching covered) graph computed at the initialization).
+        Return an :class:`~EdgesView` of ``self._matching``.
 
         OUTPUT:
 
@@ -2053,6 +2175,91 @@ class MatchingCoveredGraph(Graph):
 
         return B
 
+    @doc_index('Overwritten methods')
+    def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
+                             *, integrality_tolerance=1e-3):
+        r"""
+        Check whether the graph has a perfect matching.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.graph.Graph.has_perfect_matching` method in
+            order to return ``True`` (provided the input arguments are valid)
+            as matching covered graphs always admit a perfect matching.
+
+        INPUT:
+
+        - ``algorithm`` -- string (default: ``'Edmonds'``)
+
+          - ``'Edmonds'`` uses Edmonds' algorithm as implemented in NetworkX to
+            find a matching of maximal cardinality, then check whether this
+            cardinality is half the number of vertices of the graph.
+
+          - ``'LP_matching'`` uses a Linear Program to find a matching of
+            maximal cardinality, then check whether this cardinality is half the
+            number of vertices of the graph.
+
+          - ``'LP'`` uses a Linear Program formulation of the perfect matching
+            problem: put a binary variable ``b[e]`` on each edge `e`, and for
+            each vertex `v`, require that the sum of the values of the edges
+            incident to `v` is 1.
+
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
+          Linear Programming (MILP) solver to be used. If set to ``None``, the
+          default one is used. For more information on MILP solvers and which
+          default solver is used, see the method :meth:`solve
+          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+          :class:`MixedIntegerLinearProgram
+          <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+        - ``verbose`` -- integer (default: 0); sets the level of verbosity:
+          set to 0 by default, which means quiet (only useful when
+          ``algorithm == "LP_matching"`` or ``algorithm == "LP"``)
+
+        - ``integrality_tolerance`` -- float; parameter for use with MILP
+          solvers over an inexact base ring; see
+          :meth:`MixedIntegerLinearProgram.get_values`.
+
+        OUTPUT:
+
+        - If the input arguments are valid, a boolean (``True``) is returned as
+          a maximum matching of a matching covered graph is always a perfect
+          matching, otherwise a :exc:`~ValueError` is raised.
+
+        EXAMPLES:
+
+        Note that regardless of the algorithm (as long as the input arguments
+        are in valid format), the method always returns the boolean ``True``::
+
+            sage: P = graphs.PetersenGraph()
+            sage: P.has_perfect_matching()  # Calls Graph.has_perfect_matching()
+            True
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.has_perfect_matching()  # Calls MatchingCoveredGraph.has_perfect_matching()
+            True
+            sage: W = graphs.WheelGraph(6)
+            sage: H = MatchingCoveredGraph(W)
+            sage: H.has_perfect_matching(algorithm='LP_matching')
+            True
+
+        Providing with an algorithm, that is not one of ``'Edmonds'``,
+        ``'LP_matching'`` or ``'LP'``::
+
+            sage: S = graphs.StaircaseGraph(4)
+            sage: J = MatchingCoveredGraph(S)
+            sage: J.has_perfect_matching(algorithm='algorithm')
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm must be set to 'Edmonds',
+            'LP_matching' or 'LP'
+        """
+        if algorithm in ['Edmonds', 'LP_matching', 'LP']:
+            return True
+
+        raise ValueError('algorithm must be set to \'Edmonds\', '
+                         '\'LP_matching\' or \'LP\'')
+
     @doc_index('Miscellaneous methods')
     def update_matching(self, matching):
         r"""
@@ -2138,3 +2345,6 @@ class MatchingCoveredGraph(Graph):
 
         except Exception as exception:
             raise exception
+
+
+__doc__ = __doc__.replace('{INDEX_OF_METHODS}', gen_thematic_rest_table_index(MatchingCoveredGraph, only_local_functions=False))

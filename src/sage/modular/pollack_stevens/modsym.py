@@ -1574,7 +1574,7 @@ class PSModularSymbolElement_dist(PSModularSymbolElement):
         return self.__class__(self._map.specialize(new_base_ring),
                               self.parent()._specialize_parent_space(new_base_ring), construct=True)
 
-    def padic_lseries(self,*args, **kwds):
+    def padic_lseries(self, *args, **kwds):
         """
         Return the `p`-adic `L`-series of this modular symbol.
 

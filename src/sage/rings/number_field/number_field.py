@@ -10415,7 +10415,7 @@ class NumberField_absolute(NumberField_generic):
         from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
 
         # input checks
-        if not type(S) is list:
+        if not isinstance(S, list):
             raise TypeError("first argument must be a list")
         if b not in self:
             raise TypeError("second argument must be an element of this field")
