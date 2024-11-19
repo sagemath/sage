@@ -45,6 +45,14 @@ jobs:
         if: runner.os == 'windows'
         uses: ilammy/msvc-dev-cmd@v1
 
+        
+      - name: Remove Git link.exe
+        if: runner.os == 'windows'
+        # It conflicts with the vs linker 
+        # So we delete it, following the advice on https://github.com/ilammy/msvc-dev-cmd?tab=readme-ov-file#name-conflicts-with-shell-bash 
+        run: rm -f "C:/Program Files/Git/usr/bin/link.exe"
+        shell: bash
+
       - name: Compiler cache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
