@@ -125,6 +125,7 @@ cpdef tuple possible_mergings(int n, theory, tuple smaller_structures, dict sign
     #
     # For 3-graphs debug what is lost (is the lost graph considered to be equal to something else?)
     # I.e. the generator or the identifier has an issue.
+    #print("\n\nrunnning poss mergings with n={}, sig={}\nexcluded={}".format(n, signature, excluded))
     cdef int max_arity = _get_max_arity(signature, n)
     cdef tuple extensions = _get_extensions(n, signature)
     cdef dict ret = {}
@@ -140,6 +141,8 @@ cpdef tuple possible_mergings(int n, theory, tuple smaller_structures, dict sign
     
     cdef int ii, jj, kk
     cdef tuple patt
+
+    #print("calc max arity={}, extensions are={}".format(max_arity, extensions))
     if max_arity==0:
         #This essentially means all relation symbol is larger than arity, 
         #so just return the empty element
@@ -155,14 +158,14 @@ cpdef tuple possible_mergings(int n, theory, tuple smaller_structures, dict sign
                 final_overlap = _merge_blocks_0(F._blocks, ext)
                 final_flag = Flag(theory, n, tuple(), **final_overlap)
                 if _excluded_compatible(n, final_flag, excluded, 1):
-                    patt = final_flag._relation_pattern()
+                    patt = final_flag._relation_list()
                     if patt not in ret:
                         ret[patt] = [final_flag]
                     elif final_flag not in ret[patt]:
                         ret[patt].append(final_flag)
     elif max_arity==2:
         for ii, F in enumerate(smaller_structures):
-            F_perms = F.nonequal_permutations()
+            F_perms = F.nonequal_permutations(True)
             for G in smaller_structures[ii:]:
                 G_subf = G.subflag(range(n-2))
                 for F_permed in F_perms:
@@ -173,13 +176,13 @@ cpdef tuple possible_mergings(int n, theory, tuple smaller_structures, dict sign
                             final_overlap = _merge_blocks_0(FG_overlap, ext)
                             final_flag = Flag(theory, n, tuple(), **final_overlap)
                             if _excluded_compatible(n, final_flag, excluded, 2):
-                                patt = final_flag._relation_pattern()
+                                patt = final_flag._relation_list()
                                 if patt not in ret:
                                     ret[patt] = [final_flag]
                                 elif final_flag not in ret[patt]:
                                     ret[patt].append(final_flag)
     elif max_arity==3:
-        all_perms = tuple([F.nonequal_permutations() for F in smaller_structures])
+        all_perms = tuple([F.nonequal_permutations(True) for F in smaller_structures])
         for ii, F in enumerate(smaller_structures):
             F_subf = F.subflag(range(n-2))
             F_subf_m2 = F.subflag(minustwo)
@@ -205,7 +208,7 @@ cpdef tuple possible_mergings(int n, theory, tuple smaller_structures, dict sign
                                             final_overlap = _merge_blocks_0(FGH_overlap, ext)
                                             final_flag = Flag(theory, n, tuple(), **final_overlap)
                                             if _excluded_compatible(n, final_flag, excluded, 3):
-                                                patt = final_flag._relation_pattern()
+                                                patt = final_flag._relation_list()
                                                 if patt not in ret:
                                                     ret[patt] = [final_flag]
                                                 elif final_flag not in ret[patt]:
@@ -274,6 +277,13 @@ cdef dict _standardize_blocks(dict blocks, dict signature, bint pattern):
                 ret[xx] = tuple(sorted([tuple(sorted(yy)) for yy in blocks[xx]]))
     return ret
 
+cdef tuple _generate_all(int n, dict relation):
+    cdef int arity = relation["arity"]
+    cdef bint is_ordered = relation["ordered"]
+    if is_ordered:
+        return tuple(itertools.permutations(range(n), r=arity))
+    return tuple(itertools.combinations(range(n), arity))
+
 cdef class Flag(Element):
     
     cdef int _n
@@ -299,7 +309,7 @@ cdef class Flag(Element):
         Element.__init__(self, theory)
     
     def _repr_(self):
-        blocks = self.blocks()
+        blocks = self._blocks
         blocks_reps = []
         for xx in blocks.keys():
             brx = xx + '=('
@@ -316,12 +326,12 @@ cdef class Flag(Element):
     
     def _serialize(self):
         ret = [self.size(), self.ftype_points()]
-        blocks = self.blocks()
+        blocks = self._blocks
         for kk in blocks:
             ret.append(blocks[kk])
         return tuple(ret)
 
-    cpdef tuple _relation_pattern(self):
+    cpdef tuple _relation_list(self):
         cdef dict ret = {}
         cdef dict signature = self.parent().signature()
         cdef int group
@@ -333,6 +343,23 @@ cdef class Flag(Element):
                 ret[group] = [len(self._blocks[xx])]
         return tuple([tuple(sorted(xx)) for xx in ret.values()])
     
+    cpdef Pattern as_pattern(self):
+        if self.ftype().size() != 0:
+            import warnings
+            warnings.warn("Transforming Flag to Pattern with nonempty ftype. Ftype will be ignored!")
+        cdef dict pat_blocks = dict(self._blocks)
+        cdef str xx
+        cdef dict rel
+        cdef tuple sx
+        cdef list mx
+        cdef int n = self.size()
+        for xx in self.parent().signature():
+            rel = self.parent().signature()[xx]
+            sx = self._blocks[xx]
+            mx = [tup for tup in _generate_all(n, rel) if tup not in sx]
+            pat_blocks[xx+"_m"] = tuple(mx)
+        return Pattern(self.theory(), n, tuple(), **pat_blocks)
+
     # Basic properties
 
     def combinatorial_theory(self):
@@ -350,7 +377,7 @@ cdef class Flag(Element):
     
     theory = combinatorial_theory
     
-    cpdef size(self):
+    cpdef int size(self):
         r"""
         Returns the size of the vertex set of this Flag.
 
@@ -602,13 +629,17 @@ cdef class Flag(Element):
                 Vout += conns
                 Vin += [tuple_vertices[rel_name][block]] * len(conns)
                 if ordered and arity!=1:
-                    labels += list(range(len(conns)))
+                    labels.append(0)
+                    labels += list(range(arity))
                 elif labels!=None:
                     labels += [0] * len(conns)
         
         cdef tuple ret = (next_vertex, Vout, Vin, edge_label_num, labels, partition)
         #print(ret)
         return ret
+
+    def symmgraph(self, weak=False):
+        return self._symmetry_graph(weak)
 
     def sage_symmetry_graph(self):
         symmetry_graph_data = self._symmetry_graph()
@@ -697,7 +728,7 @@ cdef class Flag(Element):
                     ret.append(newflag)
         return ret
 
-    cpdef tuple nonequal_permutations(self):
+    cpdef tuple nonequal_permutations(self, include_signature=False):
         cdef list ret = []
         cdef tuple perm
         cdef Flag newflag
@@ -712,8 +743,27 @@ cdef class Flag(Element):
                     can_add = False
                     break
             if can_add:
-                ret.append(newflag)
+                if include_signature:
+                    ret += newflag.signature_changes()
+                else:
+                    ret.append(newflag)
         return tuple(ret)
+    
+    cpdef list signature_changes(self):
+        cdef list ret = []
+        cdef tuple perms = self.parent()._signature_perms()
+        cdef tuple perm
+        cdef dict nblocks
+        cdef str xx
+        cdef int ii
+        if len(perms)==1:
+            return [self]
+        for perm in perms:
+            nblocks = {}
+            for ii, xx in enumerate(self._blocks.keys()):
+                nblocks[perm[ii]] = self._blocks[xx]
+            ret.append(Flag(self.parent(), self.size(), self._ftype_points, **nblocks))
+        return ret
     
     cpdef densities(self, int n1, tuple n1flgs, int n2, tuple n2flgs, \
     list ftype_remap, Flag large_ftype, Flag small_ftype):
@@ -1232,7 +1282,7 @@ cdef class Pattern(Element):
         Element.__init__(self, theory)
     
     def _repr_(self):
-        blocks = self.blocks()
+        blocks = self._blocks
         blocks_reps = []
         for xx in blocks.keys():
             brx = xx + '=('
@@ -1267,7 +1317,7 @@ cdef class Pattern(Element):
     
     vertex_number = size
 
-    cpdef blocks(self, str key=None, bint missing=False):
+    cpdef blocks(self, str key=None, bint missing=True):
         if key!=None:
             if missing:
                 key += "_m"
@@ -1330,7 +1380,8 @@ cdef class Pattern(Element):
 
     cpdef list compatible_flags(self):
         aflags = self.parent().generate(self.size())
-        return [xx for xx in aflags if self.is_compatible(xx)]
+        ret = [xx for xx in aflags if self.is_compatible(xx)]
+        return ret
 
     def as_flag_algebra_element(self, basis=QQ):
         from sage.algebras.flag_algebras import FlagAlgebra

@@ -236,6 +236,7 @@ from sage.matrix.special import diagonal_matrix
 from sage.misc.prandom import randint
 from sage.arith.misc import falling_factorial, binomial, factorial
 from sage.misc.functional import round
+from functools import lru_cache
 #from sage.misc.lazy_import import lazy_import
 #from sage.misc.persist import save, load
 
@@ -324,72 +325,65 @@ def _serialize_data(data):
     return (sered_signature, sered_symms)
 
 def test_generate():
-    C0 = Theory("C0", relation_name="C0", arity=1)
-    C1 = Theory("C1", relation_name="C1", arity=1)
-    G = Theory("Graph")
     CG = combine("CGraph", C0, G)
     Cs = combine("Cs", C0, C1, symmetric=True)
-    TG = Theory("ThreeGraph", arity=3)
-    DG = Theory("DiGraph", arity=2, is_ordered=True)
-    DTG = Theory("DiThreeGraph", arity=3, is_ordered=True)
     
-    
-    # print("\nSingle color generate test start")
-    # for ii in [5, 6, 7, 8, 9, 10]:
-    #     print("Size {}, the number is {}".format(ii, len(C0.generate(ii))))
-    # print("Should be equal to 6, 7, 8, 9, 10, 11")
+    print("\nSingle color generate test start")
+    for ii in [5, 6, 7, 8, 9, 10]:
+        print("Size {}, the number is {}".format(ii, len(C0.generate(ii))))
+    print("Should be equal to 6, 7, 8, 9, 10, 11")
 
-    # print("\nTwo colors generate test start")
-    # for ii in [3, 4, 5, 6, 7, 8]:
-    #     print("Size {}, the number is {}".format(ii, len(Cs.generate(ii))))
-    # print("Should be equal to 13, 22, 34, 50, 70, 95")
+    print("\nTwo colors generate test start")
+    for ii in [3, 4, 5, 6, 7, 8]:
+        print("Size {}, the number is {}".format(ii, len(Cs.generate(ii))))
+    print("Should be equal to 13, 22, 34, 50, 70, 95")
     
-    # print("\nGraph generate test start")
-    # for ii in [3, 4, 5, 6, 7]:
-    #     print("Size {}, the number is {}".format(ii, len(G.generate(ii))))
-    # print("Should be equal to 4, 11, 34, 156, 1044, (12346)")
+    print("\nGraph generate test start")
+    for ii in [3, 4, 5, 6, 7]:
+        print("Size {}, the number is {}".format(ii, len(G.generate(ii))))
+    print("Should be equal to 4, 11, 34, 156, 1044, (12346)")
     
-    # #This gives an incorrect value for n=6
-    # print("\nThreeGraph generate test start")
-    # for ii in [3, 4, 5, 6]:
-    #     print("Size {}, the number is {}".format(ii, len(TG.generate(ii))))
-    # print("Should be equal to 2, 5, 34, 2136, (7013320)")
+    #This gives an incorrect value for n=6
+    print("\nThreeGraph generate test start")
+    for ii in [3, 4, 5, 6]:
+        print("Size {}, the number is {}".format(ii, len(TG.generate(ii))))
+    print("Should be equal to 2, 5, 34, 2136, (7013320)")
     
-    # print("\nDiGraph generate test start")
-    # for ii in [2, 3, 4, 5]:
-    #     print("Size {}, the number is {}".format(ii, len(DG.generate(ii))))
-    # print("Should be equal to 3, 16, 218, 9608 (1540944)")
+    print("\nDiGraph generate test start")
+    for ii in [2, 3, 4, 5]:
+        print("Size {}, the number is {}".format(ii, len(DG.generate(ii))))
+    print("Should be equal to 3, 16, 218, 9608 (1540944)")
     
-    # print("\nColoredGraph generate test start")
-    # for ii in [2, 3, 4, 5, 6]:
-    #     print("Size {}, the number is {}".format(ii, len(CG.generate(ii))))
-    # print("Should be equal to 6, 20, 90, 544, 5096")
+    print("\nDirected ThreeGraph generate test start")
+    for ii in [3]:
+        print("Done with size {}, the number is {}".format(ii, len(DTG.generate(ii))))
+    print("Unconfirmed numbers here are 16 ()")
+
+    print("\nColoredGraph generate test start")
+    for ii in [2, 3, 4, 5, 6]:
+        print("Size {}, the number is {}".format(ii, len(CG.generate(ii))))
+    print("Should be equal to 6, 20, 90, 544, 5096")
     
     Cs.exclude([Cs(1), Cs(1, C0=[[0]], C1=[[0]])])
     G.exclude(G(3))
     CGp = combine("CGsym", G, Cs)
 
     print("\nDouble Color with no overlaps generate test start")
-    for ii in [2, 3, 4, 5, 6]:
+    for ii in [4, 5, 6, 7, 8]:
         print("Size {}, the number is {}".format(ii, len(Cs.generate(ii))))
-    print("Should be equal to 6, 20, 90, 544, 5096")
+    print("Should be equal to 3, 3, 4, 4, 5")
 
     print("\nGraph no triangle generate test start")
     for ii in [3, 4, 5, 6, 7]:
         print("Size {}, the number is {}".format(ii, len(G.generate(ii))))
-    print("Should be equal to 4, 11, 34, 156, 1044, (12346)")
+    print("Should be equal to 3, 7, 14, 38, 107, (410)")
 
     print("\nGraph no triangle symm colors generate test start")
-    for ii in [2, 3, 4, 5, 6]:
+    for ii in [2, 3, 4, 5]:
         print("Size {}, the number is {}".format(ii, len(CGp.generate(ii))))
-    print("Should be equal to 4, 11, 34, 156, 1044, (12346)")
-
-    # This has a bug somewhere
-    # print("\nDirectedThreeGraph generate test start")
-    # for ii in [3, 4]:
-    #     print("Done with size {}, the number is {}".format(ii, len(DTG.generate(ii))))
+    print("Should be equal to 4, 8, 32, 106")
     
-def clear_all():
+def clear_all_calculations():
     calcs_dir = os.path.join(os.getenv('HOME'), '.sage', 'calcs')
     if not os.path.exists(calcs_dir):
         return
@@ -473,7 +467,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         blocks = {}
         for xx in self._signature.keys():
             blocks[xx] = tuple()
-            blocks[xx+"_n"] = tuple()
+            blocks[xx+"_m"] = tuple()
 
             if xx in kwds:
                 blocks[xx] = kwds[xx]
@@ -700,7 +694,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             "name": self._name,
             "signature": self._signature,
             "symmetries": self._symmetries,
-            "excluded": [xx._serialize() for xx in excluded]
+            "excluded": tuple([xx._serialize() for xx in excluded])
         }
 
     #Optimizing and rounding
@@ -1616,8 +1610,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     #Generating flags
     def _guess_number(self, n):
-        if n<=3:
-            return len(self.generate_flags(n, run_bound=infinity))
+        if n==0:
+            return 1
         excluded = tuple([xx for xx in self._excluded if xx.size()<=n])
         key = ("generate", n, self._serialize(excluded), self.empty()._serialize())
         loaded = self._load(key=key)
@@ -1699,7 +1693,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         if ftype.size()==0:
             # Not ftype generation needed, just generate inductively
-            if run_bound==infinity:
+            if run_bound==infinity or n<=3:
                 prev = self.generate_flags(n-1, run_bound=run_bound)
                 ret = possible_mergings(n, self, prev, self._signature, excluded)
             else:
@@ -1751,13 +1745,21 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         self._excluded = tuple()
 
         for xx in structs:
-            if xx.theory()!=self:
-                pat = self.Pattern(xx.size(), **xx.blocks())
-                self._excluded = tuple(list(self._excluded) + pat.compatible_flags())
-            else:
-                if xx in self.generate(xx.size()):
-                    self._excluded = tuple(list(self._excluded) + [xx])
-    
+            if isinstance(xx, Pattern):
+                if xx.theory()!=self:
+                    xx = self.Pattern(xx.size(), **xx.blocks())
+                extension = xx.compatible_flags()
+                self._excluded = tuple(list(self._excluded) + extension)
+            elif isinstance(xx, Flag):
+                if xx.theory()!=self:
+                    xxpat = xx.as_pattern()
+                    selfpat = self.Pattern(xxpat.size(), **xxpat.blocks())
+                    extension = selfpat.compatible_flags()
+                    self._excluded = tuple(list(self._excluded) + extension)
+                else:
+                    if xx in self.generate(xx.size()):
+                        self._excluded = tuple(list(self._excluded) + [xx])
+
     def reset_exclude(self):
         self.exclude(force=True)
 
@@ -1770,6 +1772,31 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return [xx for xx in self.generate_flags(ss.size(), ss.ftype()) if ss.is_compatible(xx)]
     
     match = match_pattern
+
+    @lru_cache(maxsize=None)
+    def _signature_perms(self):
+        terms = self._signature.keys()
+        groups = [self._signature[xx]["group"] for xx in terms]
+
+        grouped_terms = {}
+        for group, term in zip(groups, terms):
+            grouped_terms.setdefault(group, []).append(term)
+
+        group_permutations = {
+            group: list(itertools.permutations(terms)) for group, terms in grouped_terms.items()
+            }
+        grouped_permutations = itertools.product(
+            *(group_permutations[group] for group in sorted(grouped_terms.keys()))
+            )
+
+        all_permutations = []
+        for grouped_perm in grouped_permutations:
+            flat_perm = []
+            for perm in grouped_perm:
+                flat_perm.extend(perm)
+            all_permutations.append(tuple(flat_perm))
+        return tuple(all_permutations)
+
 
     #Generating tables
     def _try_load_table(self, N, n1, n2, large_ftype, ftype_inj):
@@ -1913,6 +1940,20 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
 
 Theory = CombinatorialTheory
+
+#Pre-defined theories
+G = Theory("Graph")
+DG = Theory("DiGraph", arity=2, is_ordered=True)
+TG = Theory("ThreeGraph", arity=3)
+C0 = Theory("Color", relation_name="C0", arity=1)
+C1 = Theory("Color", relation_name="C1", arity=1)
+C2 = Theory("Color", relation_name="C2", arity=1)
+C3 = Theory("Color", relation_name="C3", arity=1)
+C4 = Theory("Color", relation_name="C4", arity=1)
+C5 = Theory("Color", relation_name="C5", arity=1)
+C6 = Theory("Color", relation_name="C6", arity=1)
+C7 = Theory("Color", relation_name="C7", arity=1)
+DTG = Theory("DiThreeGraph", arity=3, is_ordered=True)
 
 #Primitive rounding methods
 def _flatten_matrix(mat, doubled=False):
