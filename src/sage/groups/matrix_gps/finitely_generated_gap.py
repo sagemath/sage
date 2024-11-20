@@ -924,6 +924,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
                     break
         return list(inv)
 
+
 def _new_invariant_is_linearly_independent(F, invariants):
     """
     EXAMPLES::

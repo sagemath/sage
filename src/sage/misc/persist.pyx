@@ -456,14 +456,14 @@ def register_unpickle_override(module, name, callable, call_name=None):
     ::
 
         sage: class A():
-        ....:    def __init__(self,value):
+        ....:    def __init__(self, value):
         ....:        self.original_attribute = value
         ....:    def __repr__(self):
         ....:        return 'A(%s)' % self.original_attribute
         sage: class B():
-        ....:    def __init__(self,value):
+        ....:    def __init__(self, value):
         ....:        self.new_attribute = value
-        ....:    def __setstate__(self,state):
+        ....:    def __setstate__(self, state):
         ....:        try:
         ....:            self.new_attribute = state['new_attribute']
         ....:        except KeyError:      # an old pickle
@@ -1232,7 +1232,7 @@ def db(name):
     The database directory is ``$HOME/.sage/db``.
     """
     from sage.misc.misc import SAGE_DB
-    return load('%s/%s'%(SAGE_DB,name))
+    return load('%s/%s' % (SAGE_DB, name))
 
 
 def db_save(x, name=None):
@@ -1245,4 +1245,4 @@ def db_save(x, name=None):
         x.db(name)
     except AttributeError:
         from sage.misc.misc import SAGE_DB
-        save(x, '%s/%s'%(SAGE_DB,name))
+        save(x, '%s/%s' % (SAGE_DB, name))
