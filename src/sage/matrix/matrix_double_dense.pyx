@@ -2392,7 +2392,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         self.cache(key, unitary)
         return unitary
 
-    def _is_hermitian_orthonormal(self, tol = 1e-12, skew=False):
+    def _is_hermitian_orthonormal(self, tol=1e-12, skew=False):
         r"""
         Return ``True`` if the matrix is (skew-)Hermitian.
 
@@ -2513,7 +2513,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         self.cache(key, hermitian)
         return hermitian
 
-    def is_hermitian(self, tol=1e-12, algorithm = "naive"):
+    def is_hermitian(self, tol=1e-12, algorithm="naive"):
         r"""
         Return ``True`` if the matrix is equal to its conjugate-transpose.
 
@@ -2640,7 +2640,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         else:
             raise ValueError("algorithm must be 'naive' or 'orthonormal', not {0}".format(algorithm))
 
-    def is_skew_hermitian(self, tol = 1e-12, algorithm = 'orthonormal'):
+    def is_skew_hermitian(self, tol=1e-12, algorithm='orthonormal'):
         r"""
         Return ``True`` if the matrix is equal to the negative of its
         conjugate transpose.
@@ -3582,7 +3582,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             posdef = self.fetch(cache_str)
         return posdef
 
-    cdef _vector_times_matrix_(self,Vector v):
+    cdef _vector_times_matrix_(self, Vector v):
         if self._nrows == 0 or self._ncols == 0:
             return self.row_ambient_module().zero_vector()
         global numpy
@@ -3595,7 +3595,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         ans = numpy.dot(v_numpy,self._matrix_numpy)
         return M(ans)
 
-    cdef _matrix_times_vector_(self,Vector v):
+    cdef _matrix_times_vector_(self, Vector v):
         if self._nrows == 0 or self._ncols == 0:
             return self.column_ambient_module().zero_vector()
 
@@ -3609,7 +3609,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         ans = numpy.dot(self._matrix_numpy, v_numpy)
         return M(ans)
 
-    def _replace_self_with_numpy32(self,numpy_matrix):
+    def _replace_self_with_numpy32(self, numpy_matrix):
         """
 
         EXAMPLES::

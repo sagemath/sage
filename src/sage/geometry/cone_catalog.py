@@ -530,7 +530,7 @@ def rearrangement(p, ambient_dim=None, lattice=None):
     cone should sum to a nonnegative number. In other words, the
     generators really are what we think they are::
 
-        sage: def _has_rearrangement_property(v,p):
+        sage: def _has_rearrangement_property(v, p):
         ....:     return sum( sorted(v)[0:p] ) >= 0
         sage: all(
         ....:   _has_rearrangement_property(
@@ -713,7 +713,7 @@ def schur(ambient_dim=None, lattice=None):
         sage: ambient_dim = ZZ.random_element(10)
         sage: V = VectorSpace(QQ, ambient_dim)
         sage: rearrange = lambda z: V(sorted(z.list(),reverse=True))
-        sage: def majorized_by(x,y):
+        sage: def majorized_by(x, y):
         ....:     x = rearrange(x)
         ....:     y = rearrange(y)
         ....:     return (all(sum(x[0:i]) <= sum(y[0:i])
@@ -755,7 +755,7 @@ def schur(ambient_dim=None, lattice=None):
 
     ambient_dim, lattice = _preprocess_args(ambient_dim, lattice)
 
-    def _f(i,j):
+    def _f(i, j):
         if i == j:
             return 1
         elif j - i == 1:
