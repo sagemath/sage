@@ -279,6 +279,57 @@ cdef tuple _generate_all(int n, dict relation):
         return tuple(itertools.permutations(range(n), r=arity))
     return tuple(itertools.combinations(range(n), arity))
 
+cdef find_coset_representatives(tuple generators_large, tuple generators_small, int n, int k):
+    cdef list extended_generators_small = []
+    cdef tuple gen
+    cdef list extended_gen
+    cdef int n_minus_one = n - 1
+    cdef set G_large, G_small
+    cdef list coset_reps
+    for gen in generators_small:
+        extended_gen = list(gen)
+        extended_gen.insert(k, k)
+        extended_generators_small.append(tuple(extended_gen))
+    G_large = generate_group(generators_large, n)
+    G_small = generate_group(tuple(extended_generators_small), n)
+    return compute_coset_reps(G_small, G_large & G_small, n)
+
+cdef set generate_group(tuple generators, int n):
+    cdef set group = set()
+    cdef list to_check = [tuple(range(n))]
+    cdef tuple perm, gen, new_perm
+    cdef int i
+    while to_check:
+        perm = to_check.pop()
+        if perm in group:
+            continue
+        group.add(perm)
+        for gen in generators:
+            new_perm = tuple(gen[perm[i]] for i in range(n))
+            if new_perm not in group:
+                to_check.append(new_perm)
+    return group
+
+cdef list compute_coset_reps(set G, set H, int n):
+    cdef list coset_reps = []
+    cdef tuple g, c, h_tuple
+    cdef int i
+    cdef bint in_existing_coset
+    cdef list h
+    for g in G:
+        in_existing_coset = False
+        for c in coset_reps:
+            h = [0] * n
+            for i in range(n):
+                h[c[i]] = g[i]
+            h_tuple = tuple(h)
+            if h_tuple in H:
+                in_existing_coset = True
+                break
+        if not in_existing_coset:
+            coset_reps.append(g)
+    return coset_reps
+
 cdef class Flag(Element):
     
     cdef int _n
@@ -503,8 +554,7 @@ cdef class Flag(Element):
             symmetry_graph_data[2],
             symmetry_graph_data[3],
             symmetry_graph_data[4],
-            symmetry_graph_data[5], 
-            True
+            symmetry_graph_data[5]
         )
         cdef list new_edges = sorted(result[0])
         cdef tuple uniret = tuple([len(self.ftype_points()), weak] + new_edges)
@@ -681,7 +731,7 @@ cdef class Flag(Element):
         if self._aut_gens!=None:
             return self._aut_gens
         cdef tuple symmetry_graph_data = self._symmetry_graph()
-        cdef list result = automorphism_group_gens_from_edge_list(
+        cdef tuple result = automorphism_group_gens_from_edge_list(
             symmetry_graph_data[0],
             symmetry_graph_data[1],
             symmetry_graph_data[2],
@@ -689,7 +739,7 @@ cdef class Flag(Element):
             symmetry_graph_data[4],
             symmetry_graph_data[5]
         )
-        self._aut_gens = tuple(result)
+        self._aut_gens = result
         return self._aut_gens
 
     # Core loops
