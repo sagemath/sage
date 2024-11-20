@@ -8838,7 +8838,7 @@ class OrderedPartitions(Partitions):
 # Partitions_parts_length_restricted #
 ######################################
 
-class Partitions_parts_length_restricted(UniqueRepresentation, IntegerListsLex):
+class Partitions_parts_length_restricted(Partitions):
     r"""
     The class of all integer partitions having parts and length in a
     given range.
@@ -8877,13 +8877,12 @@ class Partitions_parts_length_restricted(UniqueRepresentation, IntegerListsLex):
             sage: p = Partitions_parts_length_restricted(10, 2, 5, 3, 4)
             sage: TestSuite(p).run()
         """
+        Partitions.__init__(self)
         self._n = n
-        IntegerListsLex.__init__(self, self._n, max_slope=0,
-                                 min_part=min_part,
-                                 max_part=max_part,
-                                 min_length=min_length,
-                                 max_length=max_length,
-                                 check=False)
+        self._min_part = min_part
+        self._max_part = max_part
+        self._min_length = min_length
+        self._max_length = max_length
 
     def _repr_(self):
         """
@@ -8897,27 +8896,27 @@ class Partitions_parts_length_restricted(UniqueRepresentation, IntegerListsLex):
             sage: Partitions_parts_length_restricted(9, 2, 9, 3, 5)
             Partitions of 9 having length between 3 and 5 and whose parts are at least 2
         """
-        if not self.min_length and self.max_length == self._n:
+        if not self._min_length and self._max_length == self._n:
             length_str = ""
-        elif self.min_length == self.max_length:
-            length_str = f"having length {self.min_length}"
-        elif not self.min_length:
-            length_str = f"having length at most {self.max_length}"
-        elif self.max_length == self._n:
-            length_str = f"having length at least {self.min_length}"
+        elif self._min_length == self._max_length:
+            length_str = f"having length {self._min_length}"
+        elif not self._min_length:
+            length_str = f"having length at most {self._max_length}"
+        elif self._max_length == self._n:
+            length_str = f"having length at least {self._min_length}"
         else:
-            length_str = f"having length between {self.min_length} and {self.max_length}"
+            length_str = f"having length between {self._min_length} and {self._max_length}"
 
-        if self.min_part == ZZ.one() and self.max_part == self._n:
+        if self._min_part == ZZ.one() and self._max_part == self._n:
             parts_str = ""
-        elif self.min_part == self.max_part:
-            parts_str = f"having parts equal to {self.min_part}"
-        elif self.min_part == ZZ.one():
-            parts_str = f"whose parts are at most {self.max_part}"
-        elif self.max_part == self._n:
-            parts_str = f"whose parts are at least {self.min_part}"
+        elif self._min_part == self._max_part:
+            parts_str = f"having parts equal to {self._min_part}"
+        elif self._min_part == ZZ.one():
+            parts_str = f"whose parts are at most {self._max_part}"
+        elif self._max_part == self._n:
+            parts_str = f"whose parts are at least {self._min_part}"
         else:
-            parts_str = f"whose parts are between {self.min_part} and {self.max_part}"
+            parts_str = f"whose parts are between {self._min_part} and {self._max_part}"
 
         if length_str:
             if parts_str:
@@ -8926,6 +8925,48 @@ class Partitions_parts_length_restricted(UniqueRepresentation, IntegerListsLex):
         if parts_str:
             return f"Partitions of {self._n} " + parts_str
         return f"Partitions of {self._n}"
+
+    def __contains__(self, x):
+        """
+        Check if ``x`` is contained in ``self``.
+
+        TESTS::
+
+            sage: P = Partitions(10, min_part=2, max_part=5, min_length=2, max_length=4)
+            sage: Partition([]) in P
+            False
+
+            sage: Partition([3]) in P
+            False
+
+            sage: Partition([5, 3, 2]) in P
+            True
+        """
+        try:
+            mu = Partition(x)
+        except ValueError:
+            return False
+        return (mu.size() == self._n
+                and (not mu
+                     or (min(mu) >= self._min_part
+                         and max(mu) <= self._max_part
+                         and self._min_length <= len(mu) <= self._max_length)))
+
+    def __iter__(self):
+        """
+        Iterator over the set of partitions in ``self``.
+
+        EXAMPLES::
+
+            sage: list(Partitions(9, min_part=2, max_part=4, min_length=3, max_length=4))
+            [[4, 3, 2], [3, 3, 3], [3, 2, 2, 2]]
+        """
+        yield from IntegerListsLex(self._n, max_slope=0,
+                                   min_part=self._min_part,
+                                   max_part=self._max_part,
+                                   min_length=self._min_length,
+                                   max_length=self._max_length,
+                                   element_constructor=Partition)
 
     def cardinality(self):
         """
@@ -8949,18 +8990,15 @@ class Partitions_parts_length_restricted(UniqueRepresentation, IntegerListsLex):
             True
         """
         n = self._n
-        a = self.min_part - 1
-        if not self.min_length and self.max_length == n and not a:
+        a = self._min_part - 1
+        if not self._min_length and self._max_length == n and not a:
             # unrestricted length, parts smaller max_part
             return ZZ.sum(number_of_partitions_length(n, i)
-                          for i in range(self.max_part + 1))
+                          for i in range(self._max_part + 1))
 
-        m = self.max_part - self.min_part + 1
+        m = self._max_part - a
         return ZZ.sum(number_of_partitions_length_max_part(n - a * ell, ell, m)
-                      for ell in range(self.min_length, self.max_length + 1))
-
-    Element = Partition
-    options = Partitions.options
+                      for ell in range(self._min_length, self._max_length + 1))
 
 
 ##########################
