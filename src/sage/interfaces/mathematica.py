@@ -315,7 +315,7 @@ For more details, see the documentation for ``._sage_()``.
 
 OTHER Examples::
 
-    sage: def math_bessel_K(nu,x):
+    sage: def math_bessel_K(nu, x):
     ....:     return mathematica(nu).BesselK(x).N(20)
     sage: math_bessel_K(2,I)                      # optional - mathematica
     -2.59288617549119697817 + 0.18048997206696202663*I

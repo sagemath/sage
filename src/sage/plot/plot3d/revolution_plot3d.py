@@ -27,7 +27,7 @@ from sage.plot.plot3d.parametric_plot3d import parametric_plot3d
 
 
 @rename_keyword(alpha='opacity')
-def revolution_plot3d(curve,trange,phirange=None,parallel_axis='z',axis=(0,0),print_vector=False,show_curve=False,**kwds):
+def revolution_plot3d(curve, trange, phirange=None, parallel_axis='z', axis=(0, 0), print_vector=False, show_curve=False, **kwds):
     r"""
     Return a plot of a revolved curve.
 
@@ -196,7 +196,7 @@ def revolution_plot3d(curve,trange,phirange=None,parallel_axis='z',axis=(0,0),pr
     function must take values in the interval `[0,1]`. ::
 
         sage: u, phi = var('u,phi')
-        sage: def cf(u,phi): return sin(phi+u) ^ 2
+        sage: def cf(u, phi): return sin(phi+u) ^ 2
         sage: curve = (1+u^2/4, 0, u)
         sage: revolution_plot3d(curve, (u,-2,2), (0,2*pi), parallel_axis='z',
         ....:                   color=(cf, colormaps.PiYG)).show(aspect_ratio=(1,1,1))

@@ -11,7 +11,7 @@ environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
     sage: module_name = "sage.all"   # hide .all import from the linter
     sage: cmd  = f"from {module_name} import SAGE_ROOT, SAGE_LOCAL;"
     sage: cmd +=  "from os.path import samefile;"
-    sage: cmd += f"s1 = samefile(SAGE_ROOT, '{SAGE_ROOT}');"
+    sage: cmd += f"s1 = samefile(SAGE_ROOT, '{SAGE_ROOT}') if SAGE_ROOT else True;"
     sage: cmd += f"s2 = samefile(SAGE_LOCAL, '{SAGE_LOCAL}');"
     sage: cmd += "print(s1 and s2);"
     sage: out = check_output([sys.executable, "-c", cmd], env=env).decode().strip()   # long time
@@ -36,6 +36,7 @@ AUTHORS:
 
 from typing import Optional
 import sage
+import platform
 import os
 import socket
 import sys
@@ -165,7 +166,6 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
 
 
 # system info
-UNAME = var("UNAME", os.uname()[0])
 HOSTNAME = var("HOSTNAME", socket.gethostname())
 LOCAL_IDENTIFIER = var("LOCAL_IDENTIFIER", "{}.{}".format(HOSTNAME, os.getpid()))
 

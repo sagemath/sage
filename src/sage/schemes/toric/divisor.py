@@ -954,7 +954,7 @@ class ToricDivisor_generic(Divisor_generic):
             sage: fan = Fan(cones=[(0,1), (1,2), (2,3), (3,0)],
             ....:           rays=[(-1,2), (0,1), (1,0), (0,-1)])
             sage: F2 = ToricVariety(fan,'u1, u2, u3, u4')
-            sage: def D(a,b): return a*F2.divisor(2) + b*F2.divisor(3)
+            sage: def D(a, b): return a*F2.divisor(2) + b*F2.divisor(3)
             sage: [ (a,b) for a,b in product(range(-3,3), repeat=2)
             ....:         if D(a,b).is_ample() ]
             [(1, 1), (1, 2), (2, 1), (2, 2)]
@@ -1031,7 +1031,7 @@ class ToricDivisor_generic(Divisor_generic):
             sage: fan = Fan(cones=[(0,1), (1,2), (2,3), (3,0)],
             ....:           rays=[(-1,2), (0,1), (1,0), (0,-1)])
             sage: F2 = ToricVariety(fan,'u1, u2, u3, u4')
-            sage: def D(a,b): return a*F2.divisor(2) + b*F2.divisor(3)
+            sage: def D(a, b): return a*F2.divisor(2) + b*F2.divisor(3)
             sage: [ (a,b) for a,b in product(range(-3,3), repeat=2)
             ....:         if D(a,b).is_ample() ]
             [(1, 1), (1, 2), (2, 1), (2, 2)]
