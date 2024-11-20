@@ -1967,6 +1967,18 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             True
             sage: matrix(GF(2), 2, 2).solve_right(matrix(GF(2), 2, 0)) == matrix(GF(2), 2, 0)
             True
+
+        Check that it can be interrupted::
+
+            sage: set_random_seed(12345)
+            sage: n, m = 20000, 19968
+            sage: A = random_matrix(GF(2), n, m)
+            sage: x = random_vector(GF(2), m)
+            sage: B = A*x
+            sage: alarm(0.5); sol = A.solve_right(B)
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
         """
         cdef mzd_t *B_entries = (<Matrix_mod2_dense>B)._entries
 
