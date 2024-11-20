@@ -21,7 +21,7 @@ import itertools
 from sage.rings.rational_field import QQ
 from cysignals.signals cimport sig_check
 from sage.structure.element cimport Element
-from blisspy cimport canonical_form_from_edge_list
+from blisspy cimport canonical_form_from_edge_list, automorphism_group_gens_from_edge_list
 
 cdef tuple _subblock_helper(tuple points, tuple block):
     if len(block)==0:
@@ -38,13 +38,6 @@ cdef tuple _subblock_helper(tuple points, tuple block):
         if gd:
             ret.append([points.index(ii) for ii in xx])
     return tuple(ret)
-
-# cdef bint _block_consistency(tuple block, tuple missing):
-#     cdef tuple xx
-#     for xx in block:
-#         if xx in missing:
-#             return False
-#     return True
 
 cdef bint _block_refinement(tuple block_flag, tuple block_pattern, tuple missing_pattern):
     cdef tuple xx
@@ -295,6 +288,7 @@ cdef class Flag(Element):
     cdef tuple _not_ftype_points
     cdef dict _blocks
     cdef tuple _unique
+    cdef tuple _aut_gens
     cdef tuple _weak_unique
     
     cdef Flag _ftype
@@ -306,6 +300,7 @@ cdef class Flag(Element):
         self._not_ftype_points = None
         self._blocks = _standardize_blocks(params, theory._signature, False)
         self._unique = None
+        self._aut_gens = None
         self._weak_unique = None
         self._ftype = None
         Element.__init__(self, theory)
@@ -639,10 +634,7 @@ cdef class Flag(Element):
         cdef tuple ret = (next_vertex, Vout, Vin, edge_label_num, labels, partition)
         #print(ret)
         return ret
-
-    def symmgraph(self, weak=False):
-        return self._symmetry_graph(weak)
-
+    
     def sage_symmetry_graph(self):
         symmetry_graph_data = self._symmetry_graph()
         Vnr, Vout, Vin, Lnr, labels, partition = symmetry_graph_data
@@ -685,6 +677,20 @@ cdef class Flag(Element):
             return False
         return self._blocks == other._blocks
     
+    cpdef tuple aut_generators(self):
+        if self._aut_gens!=None:
+            return self._aut_gens
+        cdef tuple symmetry_graph_data = self._symmetry_graph()
+        cdef list result = automorphism_group_gens_from_edge_list(
+            symmetry_graph_data[0],
+            symmetry_graph_data[1],
+            symmetry_graph_data[2],
+            symmetry_graph_data[3],
+            symmetry_graph_data[4],
+            symmetry_graph_data[5]
+        )
+        self._aut_gens = tuple(result)
+        return self._aut_gens
 
     # Core loops
 

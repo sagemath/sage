@@ -1,14 +1,10 @@
 r"""
-TODO for this:
--approximate generator loads
--pick optimal, warn if it seems to be really long
--save and load generator outputs
-
-Perhaps if some of the methods are parallelized, then run those from here? 
-Can cython run things parallel?
-
-
-
+TODO
+-fix 3-graph generation
+-fix 3-graphs not saving loading (key is different between runs)
+-expose aut groups from bliss
+-calculate aut groups for flags
+-merge structures smarter using aut groups
 """
 
 r"""
@@ -382,14 +378,33 @@ def test_generate():
     for ii in [2, 3, 4, 5]:
         print("Size {}, the number is {}".format(ii, len(CGp.generate(ii))))
     print("Should be equal to 4, 8, 32, 106")
-    
-def clear_all_calculations():
+
+def clear_all_calculations(theory_name=None):
+    calcs_dir = os.path.join(os.getenv('HOME'), '.sage', 'calcs')
+    if not os.path.exists(calcs_dir):
+        return
+    for xx in os.listdir(calcs_dir):
+        if theory_name==None or str(xx).startswith(theory_name):
+            file_path = os.path.join(calcs_dir, xx)
+            os.remove(file_path)
+
+def show_all_calculations(theory_name=None):
     calcs_dir = os.path.join(os.getenv('HOME'), '.sage', 'calcs')
     if not os.path.exists(calcs_dir):
         return
     for xx in os.listdir(calcs_dir):
         file_path = os.path.join(calcs_dir, xx)
-        os.remove(file_path)
+        file_theory = str(xx).split(".")[0]
+        if theory_name==None:
+            with open(file_path , "rb") as file:
+                data = pickle.load(file)
+            if data != None:
+                print(file_theory + ": " + str(data["key"][:2]))
+        elif str(xx).startswith(theory_name):
+            with open(file_path , "rb") as file:
+                data = pickle.load(file)
+            if data != None:
+                print(data["key"][:2])
 
 class CombinatorialTheory(Parent, UniqueRepresentation):
     
