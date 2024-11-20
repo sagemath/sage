@@ -17,7 +17,7 @@ foreach name, pyx : extension_data_cpp
     subdir: 'sage/libs/coxeter3',
     install: true,
     override_options: ['cython_language=cpp'],
-    include_directories: [],
+    include_directories: [inc_cpython],
     dependencies: [py_dep, cysignals, coxeter3],
   )
 endforeach

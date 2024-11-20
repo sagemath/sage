@@ -1353,7 +1353,6 @@ class KnotInfoBase(Enum):
             return True
         if not cosmetic_crossing or cosmetic_crossing == 'Unknown':
             return False
-        verified = not knotinfo_bool(cosmetic_crossing)
         if not knotinfo_bool(cosmetic_crossing):
             return True
         raise AssertionError(f'{self} is a counterexample to the cosmetic crossing conjecture')
