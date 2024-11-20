@@ -1222,27 +1222,3 @@ def load_sage_element(cls, parent, dic_pic):
     X._set_parent(parent)
     X.__dict__ = SageUnpickler.loads(dic_pic)
     return X
-
-
-def db(name):
-    r"""
-    Load object with given name from the Sage database. Use x.db(name)
-    or db_save(x, name) to save objects to the database.
-
-    The database directory is ``$HOME/.sage/db``.
-    """
-    from sage.misc.misc import SAGE_DB
-    return load('%s/%s' % (SAGE_DB, name))
-
-
-def db_save(x, name=None):
-    r"""
-    Save x to the Sage database.
-
-    The database directory is ``$HOME/.sage/db``.
-    """
-    try:
-        x.db(name)
-    except AttributeError:
-        from sage.misc.misc import SAGE_DB
-        save(x, '%s/%s' % (SAGE_DB, name))

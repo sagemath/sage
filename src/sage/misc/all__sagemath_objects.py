@@ -20,7 +20,7 @@ from sage.misc.repr import repr_lincomb
 
 from sage.misc.flatten import flatten
 
-from sage.misc.persist import save, load, dumps, loads, db, db_save
+from sage.misc.persist import save, load, dumps, loads
 
 from sage.misc.constant_function import ConstantFunction
 
