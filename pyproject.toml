@@ -85,6 +85,9 @@ R = [
 file = "README.md"
 content-type = "text/markdown"
 
+[project.scripts]
+sage = "sage.cli:main"
+
 [tool.conda-lock]
 platforms = [
     'osx-64', 'linux-64', 'linux-aarch64', 'osx-arm64'

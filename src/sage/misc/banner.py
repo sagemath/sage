@@ -27,6 +27,9 @@ def version():
        sage: version()
        'SageMath version ..., Release Date: ...'
     """
+    from sage.misc.superseded import deprecation
+
+    deprecation(1, "Use sage.version instead.")
     return SAGE_VERSION_BANNER
 
 
