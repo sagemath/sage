@@ -684,7 +684,7 @@ cdef class CAElement(pAdicTemplateElement):
         """
         return ciszero(self.value, self.prime_pow)
 
-    def is_zero(self, absprec = None):
+    def is_zero(self, absprec=None):
         r"""
         Determine whether this element is zero modulo
         `\pi^{\mbox{absprec}}`.
