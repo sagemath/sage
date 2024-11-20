@@ -515,8 +515,8 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: algebras.Free(QQ,4,'x,y,z,t').construction()
-            (Associative[x,y,z,t], Rational Field)
+            sage: F, R = algebras.Free(QQ,4,'x,y,z,t').construction(); F
+            Associative[x,y,z,t]
         """
         return AssociativeFunctor(self.variable_names(), self._degrees), self.base_ring()
 
@@ -703,21 +703,23 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
             return self.element_class(self, {})
         return self.element_class(self, {self.one_basis(): x})
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         """
         Return ``True`` if there is a coercion from ``R`` into ``self`` and
-        ``False`` otherwise.  The things that coerce into ``self`` are:
+        ``False`` otherwise.
+
+        The things that coerce into ``self`` are:
 
         - This free algebra.
 
-        - Anything with a coercion into ``self.monoid()``.
+        - The PBW basis of ``self``.
 
-        - Free algebras in the same variables over a base with a coercion
-          map into ``self.base_ring()``.
+        - Free algebras in some subset of variables
+          over a base with a coercion map into ``self.base_ring()``.
 
         - The underlying monoid.
 
-        - The PBW basis of ``self``.
+        - Anything with a coercion into ``self.monoid()``.
 
         - Anything with a coercion into ``self.base_ring()``.
 
@@ -833,7 +835,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
         return Family(self.variable_names(), lambda i: ret[i])
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -1624,12 +1626,12 @@ class AssociativeFunctor(ConstructionFunctor):
             sage: S = algebras.Free(QQ, 2, 'z,t')
             sage: z,t = S.gens()
             sage: x + t
-            B[t[]] + B[x[]]
+            t + x
             sage: parent(x + t)
-            Free Algebra on 4 generators ['z', 't', 'x', 'y'] over Rational Field
+            Free Algebra on 4 generators (z, t, x, y) over Rational Field
         """
         if isinstance(other, AssociativeFunctor):
-            if self.vars == other.vars:
+            if self.vars == other.vars and self.degs == other.degs:
                 return self
             ret = list(self.vars)
             cur_vars = set(ret)
@@ -1646,4 +1648,5 @@ class AssociativeFunctor(ConstructionFunctor):
             sage: algebras.Free(QQ,4,'x,y,z,t').construction()[0]
             Associative[x,y,z,t]
         """
+        # should we add the degree there ?
         return "Associative[%s]" % ','.join(self.vars)
