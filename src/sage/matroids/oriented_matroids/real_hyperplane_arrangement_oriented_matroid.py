@@ -57,7 +57,7 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
         - :class:`~sage.oriented_matroids.covector_oriented_matroid.CovectorOrientedMatroid`
         - :class:`sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement`
     """
-    def __init__(self, data, groundset=None, category=None):
+    def __init__(self, data, groundset=None):
         """
         Return a ``RealHyperplaneArrangementOrientedMatroid`` object.
 
@@ -77,7 +77,7 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
         # Set up our covectors after our groundset is made
         faces = [i[0] for i in self._arrangement.closed_faces()]
 
-        CovectorOrientedMatroid.__init__(self, data=faces, groundset=groundset, category=category)
+        CovectorOrientedMatroid.__init__(self, data=faces, groundset=groundset)
 
     def _repr_(self) -> str:
         """

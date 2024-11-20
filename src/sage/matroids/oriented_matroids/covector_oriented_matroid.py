@@ -19,6 +19,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
 
 
 class CovectorOrientedMatroid(OrientedMatroid):
@@ -69,7 +70,7 @@ class CovectorOrientedMatroid(OrientedMatroid):
 
         - :class:`~sage.oriented_matroids.oriented_matroid.OrientedMatroid`
     """
-    def __init__(self, data, groundset=None, category=None):
+    def __init__(self, data, groundset=None):
         """
         Return a ``CovectorOrientedMatroid`` object.
 
@@ -80,13 +81,13 @@ class CovectorOrientedMatroid(OrientedMatroid):
             Covector oriented matroid of rank 1
             sage: TestSuite(M).run()
         """
-        OrientedMatroid.__init__(self, category=category)
+        OrientedMatroid.__init__(self)
 
         # Set up our covectors
         covectors = []
         for d in data:
             # Ensure we're using the right type.
-            covectors.append(self.element_class(self, data=d, groundset=groundset))
+            covectors.append(SignedSubsetElement(self, data=d, groundset=groundset))
         # If our groundset is None, make sure the groundsets are the same for
         # all elements
         if groundset is None and len(covectors) > 0:

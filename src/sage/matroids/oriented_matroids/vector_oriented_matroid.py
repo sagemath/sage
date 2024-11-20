@@ -19,6 +19,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
 
 
 class VectorOrientedMatroid(OrientedMatroid):
@@ -67,7 +68,7 @@ class VectorOrientedMatroid(OrientedMatroid):
         - :class:`~sage.oriented_matroids.oriented_matroid.OrientedMatroid`
         - :class:`~sage.oriented_matroids.signed_subset_element.SignedSubsetElement`
     """
-    def __init__(self, data, groundset=None, category=None):
+    def __init__(self, data, groundset=None):
         """
         Return a ``VectorOrientedMatroid`` object.
 
@@ -78,14 +79,15 @@ class VectorOrientedMatroid(OrientedMatroid):
             Vector oriented matroid of rank 0
             sage: TestSuite(M).run()
         """
-        OrientedMatroid.__init__(self, category=category)
+        OrientedMatroid.__init__(self)
 
         # Set up our vectors
         vectors = []
         for d in data:
             # Use the appropriate element
-            vectors.append(self.element_class(
-                self, data=d, groundset=groundset))
+            vectors.append(
+                SignedSubsetElement(self, data=d, groundset=groundset)
+                )
 
         # If our groundset is none, make sure the groundsets are the same for
         # all elements

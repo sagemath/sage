@@ -18,11 +18,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.element import Element
+from sage.structure.sage_object import SageObject
 import copy
 
 
-class SignedSubsetElement(Element):
+class SignedSubsetElement(SageObject):
     r"""
     Implement a basic signed subset element which is used for the
     oriented matroids class.
@@ -98,18 +98,14 @@ class SignedSubsetElement(Element):
             -:
             0: 0
         """
+        self._parent = parent
+
         # If our groundset isn't set but our parent has one, use its groundset
         if groundset is None:
             try:
-                groundset = parent.groundset()
+                groundset = self._parent.groundset()
             except AttributeError:
                 groundset = None
-
-        # remove parent if data not present
-        if parent is None or (data is None and groundset is None and positives is None):
-            from sage.structure.parent import Parent
-            data = parent
-            parent = Parent()
 
         # instantiate!
         self._p = set([])
@@ -209,8 +205,6 @@ class SignedSubsetElement(Element):
             self._g = groundset
 
         self._g = list(self._g)
-
-        Element.__init__(self, parent)
 
     def __call__(self, var):
         """
@@ -443,7 +437,7 @@ class SignedSubsetElement(Element):
 
     def __deepcopy__(self, memo):
         """
-        Return a copy of the element.    
+        Return a copy of the element.
 
         EXAMPLES::
 
@@ -455,6 +449,21 @@ class SignedSubsetElement(Element):
             True
         """
         return SignedSubsetElement(parent=self.parent(), groundset=self.groundset(), positives=self.positives(), negatives=self.negatives(), zeros=self.zeros())
+
+    def parent(self):
+        """
+        Return parent of ``self``.
+
+        EXAMPLES::
+        
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E = M.elements()[0]
+            sage: E.parent() == M
+            True
+        """
+        return self._parent
 
     def to_list(self):
         """

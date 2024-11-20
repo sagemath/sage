@@ -19,7 +19,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-
+from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
 
 class CircuitOrientedMatroid(OrientedMatroid):
     r"""
@@ -74,9 +74,8 @@ class CircuitOrientedMatroid(OrientedMatroid):
     .. SEEALSO::
 
         - :class:`~sage.oriented_matroids.oriented_matroid.OrientedMatroid`
-        - :class:`~sage.oriented_matroids.oriented_matroids_category.OrientedMatroids`
     """
-    def __init__(self, data, groundset=None, category=None):
+    def __init__(self, data, groundset=None):
         """
         Return a ``CircuitOrientedMatroid`` object.
 
@@ -87,14 +86,14 @@ class CircuitOrientedMatroid(OrientedMatroid):
             Circuit oriented matroid of rank 0
             sage: TestSuite(M).run()
         """
-        OrientedMatroid.__init__(self, category=category)
+        OrientedMatroid.__init__(self)
 
         # Set up our circuits
         circuits = []
         if data:
             for d in data:
                 # Convert to the appropriate element class
-                circuits.append(self.element_class(self, data=d, groundset=groundset))
+                circuits.append(SignedSubsetElement(self, data=d, groundset=groundset))
 
         # If our groundset is none, make sure the groundsets are the same for
         # all elements

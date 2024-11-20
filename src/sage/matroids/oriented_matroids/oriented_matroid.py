@@ -54,12 +54,10 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass
+from sage.structure.sage_object import SageObject
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
-from sage.structure.parent import Parent
-from sage.categories.sets_cat import Sets
 from sage.structure.global_options import GlobalOptions
-from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
 
 from sage.geometry.hyperplane_arrangement.arrangement import HyperplaneArrangementElement
 from sage.geometry.triangulation.point_configuration import PointConfiguration
@@ -68,7 +66,7 @@ from sage.structure.element import Matrix
 import copy
 
 
-class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
+class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
     r"""
     Construct an oriented matroid.
 
@@ -167,8 +165,6 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
     # List of all possible keys
     keys = ['circuit', 'covector', 'vector', 'real_hyperplane_arrangement']
 
-    Element = SignedSubsetElement
-
     class options(GlobalOptions):
         r"""
         Options for oriented matroids.
@@ -195,33 +191,33 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
             sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
             sage: type(M)
-            <class 'sage.matroids.oriented_matroids.covector_oriented_matroid.CovectorOrientedMatroid_with_category'>
+            <class 'sage.matroids.oriented_matroids.covector_oriented_matroid.CovectorOrientedMatroid'>
             
             sage: M = OrientedMatroid([[1], [-1]], key='circuit')
             sage: type(M)
-            <class 'sage.matroids.oriented_matroids.circuit_oriented_matroid.CircuitOrientedMatroid_with_category'>
+            <class 'sage.matroids.oriented_matroids.circuit_oriented_matroid.CircuitOrientedMatroid'>
 
             sage: V = [[1,1], [-1,-1], [0,0]]
             sage: M = OrientedMatroid(V, key='vector')
             sage: type(M)
-            <class 'sage.matroids.oriented_matroids.vector_oriented_matroid.VectorOrientedMatroid_with_category'>
+            <class 'sage.matroids.oriented_matroids.vector_oriented_matroid.VectorOrientedMatroid'>
 
             sage: A = hyperplane_arrangements.braid(3)
             sage: M = OrientedMatroid(A)
             sage: type(M)
-            <class 'sage.matroids.oriented_matroids.real_hyperplane_arrangement_oriented_matroid.RealHyperplaneArrangementOrientedMatroid_with_category'>
+            <class 'sage.matroids.oriented_matroids.real_hyperplane_arrangement_oriented_matroid.RealHyperplaneArrangementOrientedMatroid'>
 
             sage: P = PointConfiguration([[0,1], [1/2,1/2],[1,0]])
             sage: M = OrientedMatroid(P)
             sage: type(M)
-            <class 'sage.matroids.oriented_matroids.circuit_oriented_matroid.CircuitOrientedMatroid_with_category'>
+            <class 'sage.matroids.oriented_matroids.circuit_oriented_matroid.CircuitOrientedMatroid'>
 
             sage: D = DiGraph({'v1': {'v2': 1, 'v3': 2,'v4': 3},
             ....:              'v2': {'v3': 4, 'v4': 5},
             ....:              'v3': {'v4': 6}})
             sage: M = OrientedMatroid(D, key="circuit")
             sage: type(M)
-            <class 'sage.matroids.oriented_matroids.circuit_oriented_matroid.CircuitOrientedMatroid_with_category'>
+            <class 'sage.matroids.oriented_matroids.circuit_oriented_matroid.CircuitOrientedMatroid'>
         """
         OM = None
 
@@ -324,7 +320,7 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
 
         return OM
 
-    def __init__(self, category=None):
+    def __init__(self):
         """
         Return an ``OrientedMatroid`` object.OrientedMatroid
         
@@ -337,9 +333,7 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
             sage: M = OrientedMatroid(C, key='covector')
             sage: TestSuite(M).run()
         """
-        if category is None:
-            category = Sets()
-        Parent.__init__(self, category=category)
+        pass
 
     def __eq__(self, other):
         """
@@ -372,6 +366,46 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
         fse = frozenset(self.elements())
         fsgs = frozenset(self.groundset())
         return hash((fsgs, fse))
+
+    def __contains__(self, x):
+        r"""
+        Determine if ``x`` may be viewed as belonging to ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: E = M.an_element()
+            sage: E in M
+            True
+        """
+        try:
+            if x in self.elements():
+                return True
+            return False
+        except ValueError:
+            return False
+
+    def __call__(self, x):
+        r"""
+        Return ``x`` as an element of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: E = M.an_element()
+            sage: M(E) == E
+            True
+        """
+        try:
+            if x in self.elements():
+                return x
+            return None
+        except ValueError:
+            return None
 
     @abstract_method
     def is_valid(self, certificate=False) -> bool | tuple[bool, dict]:
@@ -996,29 +1030,6 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
                 if not u.is_orthogonal_with(v):
                     return False
         return True
-
-    def _element_constructor_(self, x):
-        r"""
-        Determine if ``x`` may be viewed as belonging to ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: A = hyperplane_arrangements.braid(3)
-            sage: M = OrientedMatroid(A)
-            sage: E = M.an_element()
-            sage: E in M
-            True
-            sage: M(E) == E
-            True
-        """
-        try:
-            if x in self.elements():
-                return x
-            return False
-        except ValueError:
-            return False
-
 
 def deep_tupler(obj):
     r"""
