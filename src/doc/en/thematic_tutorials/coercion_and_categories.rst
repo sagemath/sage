@@ -133,8 +133,6 @@ This base class provides a lot more methods than a general parent::
      'is_commutative',
      'is_field',
      'is_integrally_closed',
-     'is_prime_field',
-     'is_subring',
      'krull_dimension',
      'localization',
      'ngens',
