@@ -1692,7 +1692,7 @@ class TopologicalManifold(ManifoldSubset):
         r"""
         Get the preferred orientation of ``self`` if available.
 
-        An *orientation* of an `n`-dimensional topologial manifold is an
+        An *orientation* of an `n`-dimensional topological manifold is an
         atlas of charts whose transition maps are orientation preserving. A
         homeomorphism `f \colon U \to V` for open subsets `U, V \subset \RR^n`
         is called *orientation preserving* if for each `x \in U` the

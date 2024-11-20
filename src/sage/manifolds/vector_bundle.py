@@ -796,7 +796,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
                 resu._init_from_family(sections)
             except ArithmeticError as err:
                 linked = str(err) in ["non-invertible matrix",
-                                      "input matrix must be nonsingular"]
+                                      "input matrix must be non-singular"]
             if linked:
                 raise ValueError("the provided sections are not linearly "
                                  "independent")
