@@ -132,9 +132,9 @@ class AffineGroupElement(MultiplicativeGroupElement):
             # Note: the coercion framework expects that we raise TypeError for invalid input
             if not isinstance(A, Matrix):
                 raise TypeError('A must be a matrix')
-            if not (A.parent() is parent.matrix_space()):
+            if A.parent() is not parent.matrix_space():
                 raise TypeError('A must be an element of ' + str(parent.matrix_space()))
-            if not (b.parent() is parent.vector_space()):
+            if b.parent() is not parent.vector_space():
                 raise TypeError('b must be an element of ' + str(parent.vector_space()))
             parent._element_constructor_check(A, b)
         super().__init__(parent)

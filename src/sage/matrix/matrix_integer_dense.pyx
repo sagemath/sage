@@ -868,7 +868,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [ 9 11 13]
             [ 9 11 13]
         """
-        cdef Matrix_integer_dense M = self._new(self._nrows,self._ncols)
+        cdef Matrix_integer_dense M = self._new(self._nrows, self._ncols)
 
         sig_on()
         fmpz_mat_add(M._matrix,self._matrix,(<Matrix_integer_dense> right)._matrix)
@@ -888,7 +888,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [-2  0  2]
             [ 4  6  8]
         """
-        cdef Matrix_integer_dense M = self._new(self._nrows,self._ncols)
+        cdef Matrix_integer_dense M = self._new(self._nrows, self._ncols)
 
         sig_on()
         fmpz_mat_sub(M._matrix,self._matrix,(<Matrix_integer_dense> right)._matrix)
@@ -4164,7 +4164,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             raise ArithmeticError("non-invertible matrix")
         return A
 
-    def _solve_right_nonsingular_square(self, B, check_rank=True, algorithm = 'iml'):
+    def _solve_right_nonsingular_square(self, B, check_rank=True, algorithm='iml'):
         r"""
         If ``self`` is a matrix `A` of full rank, then this function
         returns a vector or matrix `X` such that `A X = B`.
@@ -4606,7 +4606,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             M,d = self.transpose()._solve_flint(B.transpose(), right=True)
             return M.transpose(),d
 
-    def _rational_echelon_via_solve(self, solver = 'iml'):
+    def _rational_echelon_via_solve(self, solver='iml'):
         r"""
         Compute information that gives the reduced row echelon form (over
         QQ!) of a matrix with integer entries.
@@ -5029,7 +5029,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         t = verbose('hermite mod %s' % D, caller_name='matrix_integer_dense')
         if self._nrows != self._ncols:
             raise ValueError("matrix is not square")
-        cdef Matrix_integer_dense res = self._new(self._nrows,self._ncols)
+        cdef Matrix_integer_dense res = self._new(self._nrows, self._ncols)
         self._hnf_modn(res, D)
         verbose('finished hnf mod', t, caller_name='matrix_integer_dense')
         return res
