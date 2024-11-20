@@ -645,7 +645,7 @@ cdef class SBox(SageObject):
             [0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 2]
             [0 2 0 0 0 0 0 0 0 0 0 0 2 0 0 0]
 
-        TESTS::
+        TESTS:
 
         Testing square SBoxes::
 

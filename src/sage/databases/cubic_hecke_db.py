@@ -663,7 +663,7 @@ class CubicHeckeFileCache(SageObject):
           in the case of cubic Hecke algebras on more than 4 strands
         - ``markov_trace`` -- file cache for intermediate results of long
           calculations in order to recover the results already obtained by
-          preboius attemps of calculation until the corresponding intermediate
+          previous attemps of calculation until the corresponding intermediate
           step
 
         EXAMPLES::

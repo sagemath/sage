@@ -232,7 +232,7 @@ def get_flag(t=None, subsystem=None):
     return t
 
 
-class WithProof():
+class WithProof:
     """
     Use :class:`WithProof` to temporarily set the value of one of the proof
     systems for a block of code, with a guarantee that it will be set

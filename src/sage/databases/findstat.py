@@ -1784,7 +1784,7 @@ class FindStatFunction(SageObject):
         EXAMPLES::
 
             sage: q = findstat([(d, randint(1,1000)) for d in DyckWords(4)])              # optional -- internet
-            sage: q.set_sage_code("def statistic(x):\n    return randint(1,1000)")        # optional -- internet
+            sage: q.set_sage_code("def statistic(x):\n    return randint(1, 1000)")        # optional -- internet
             sage: print(q.sage_code())                                                    # optional -- internet
             def statistic(x):
                 return randint(1,1000)
@@ -4352,7 +4352,7 @@ class FindStatCollection(Element,
                 g = (x for x in self._sageconstructor_overridden
                      if self.element_level(x) == level)
 
-        return lazy_list(((x, function(x)) for x in g))
+        return lazy_list((x, function(x)) for x in g)
 
     def id(self):
         r"""

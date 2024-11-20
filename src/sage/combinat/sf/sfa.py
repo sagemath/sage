@@ -1982,7 +1982,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         # Convert to the power sum
         p = self.realization_of().power()
         p_x = p(x)
-        expr_k = lambda k: expr.subs(**dict([(str(x),x**k) for x in deg_one]))
+        expr_k = lambda k: expr.subs(**{str(x): x**k for x in deg_one})
         f = lambda m,c: (m, c*prod([expr_k(k) for k in m]))
         return self(p_x.map_item(f))
 
@@ -3783,7 +3783,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
     omega_involution = omega
 
-    def theta(self,a):
+    def theta(self, a):
         r"""
         Return the image of ``self`` under the theta endomorphism which sends
         `p_k` to `a \cdot p_k` for every positive integer `k`.

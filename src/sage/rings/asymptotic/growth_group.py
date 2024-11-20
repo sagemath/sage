@@ -3671,6 +3671,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
         J = ImaginaryGroup(self.base())
         return self._non_growth_group_class_(J, self._var_)
 
+
 class MonomialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
     r"""
     A :class:`construction functor <sage.categories.pushout.ConstructionFunctor>`

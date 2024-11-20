@@ -8,6 +8,7 @@ from sage.groups.galois_group import GaloisGroup_cyc
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic, FrobeniusEndomorphism_finite_field
 
+
 class GaloisGroup_GFElement(AbelianGroupElement):
     def as_hom(self):
         r"""
@@ -51,6 +52,7 @@ class GaloisGroup_GFElement(AbelianGroupElement):
             True
         """
         return self.as_hom().fixed_field()
+
 
 class GaloisGroup_GF(GaloisGroup_cyc):
     r"""
@@ -140,7 +142,7 @@ class GaloisGroup_GF(GaloisGroup_cyc):
             else:
                 raise RuntimeError("Automorphism was not a power of Frobenius")
         elif isinstance(x, FrobeniusEndomorphism_finite_field):
-            if check and not x.domain() is k:
+            if check and x.domain() is not k:
                 raise ValueError("Not an automorphism of the correct finite field")
             n = x.power()
         elif isinstance(x, list) and len(x) == 1 and x[0] in ZZ:

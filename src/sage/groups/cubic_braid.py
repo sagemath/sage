@@ -284,7 +284,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
         EXAMPLES::
 
             sage: CBG3 = CubicBraidGroup(3)
-            sage: sorted(CBG3)    # indirect doctest
+            sage: sorted(CBG3)    # indirect doctest, random output
             [(c0*c1^-1)^2, c0*c1^-1*c0, c0^-1*c1*c0^-1, c0^-1*c1^-1*c0,
              c1*c0^-1*c1, c0^-1*c1^-1*c0^-1, c0^-1*c1^-1, c1^-1*c0*c1^-1,
              c0*c1^-1*c0^-1, c0^-1*c1, c0^-1*c1*c0, c0*c1^-1, c1*c0^-1,

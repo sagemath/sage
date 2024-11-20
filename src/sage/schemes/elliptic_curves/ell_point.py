@@ -142,7 +142,6 @@ lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 
 try:
     from sage.libs.pari.all import pari, PariError
-    from cypari2.pari_instance import prec_words_to_bits
 except ImportError:
     PariError = ()
 
@@ -1148,12 +1147,19 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
           3
           sage: [(Q,Q._order) for Q in P.division_points(4)]
           [((-2 : -7 : 1), 6), ((1 : 2 : 1), 6), ((4 : -7 : 1), 3), ((13 : 38 : 1), 6)]
+
+        Check for :issue:`38796`::
+
+            sage: E = EllipticCurve(GF(127), [1,1])
+            sage: P = E(72, 24)
+            sage: [-1*Q for Q in P.division_points(-1)]
+            [(72 : 24 : 1)]
         """
         # Coerce the input m to an integer
         m = Integer(m)
         # Check for trivial cases of m = 1, -1 and 0.
         if m == 1 or m == -1:
-            return [self]
+            return [m*self]
         if m == 0:
             if self == 0:  # then every point Q is a solution, but...
                 return [self]
@@ -2551,6 +2557,101 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             return False
         return self.order() == oo
 
+    def _has_order_at_least(self, bound, *, attempts=999):
+        r"""
+        Return ``True`` if this point definitely has order at least ``bound``
+        on the elliptic curve, ``False`` if the point has smaller order, and
+        ``None`` if the result of this test is inconclusive.
+
+        This method can be much faster than calling :meth:`has_infinite_order`
+        if all that is needed is a lower bound on the order.
+
+        ALGORITHM: Compute the order of the point modulo various small primes
+        and combine that information using CRT.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('11a3')
+            sage: P = next(filter(bool, E.torsion_points()))
+            sage: P._has_order_at_least(5)
+            True
+            sage: P._has_order_at_least(6)
+            sage: P.order()
+            5
+            sage: Q = E.lift_x(10^42, extend=True)
+            sage: Q._has_order_at_least(10^100)
+            True
+
+        ::
+
+            sage: x = polygen(ZZ)
+            sage: K.<a> = NumberField(x^2 - x + 2)
+            sage: E = EllipticCurve([1, a-1, a+1, -2*a-2, -5*a+7])  # 2.0.7.1-268.3-b1
+            sage: P = next(filter(bool, E.torsion_points()))
+            sage: P._has_order_at_least(11)
+            True
+            sage: P._has_order_at_least(12)
+            False
+            sage: P.order()
+            11
+            sage: Q = E.lift_x(123*a + 456, extend=True)
+            sage: Q._has_order_at_least(10^100)
+            True
+        """
+        n = getattr(self, '_order', None)
+        if n is not None:
+            return n >= bound
+
+        from sage.sets.primes import Primes
+        from sage.rings.finite_rings.finite_field_constructor import GF
+        field_deg = self.curve().base_field().absolute_degree()
+        if field_deg > 1:
+            K = self.curve().base_field().absolute_field('T')
+            _, iso = K.structure()
+            E = self.curve().change_ring(iso)
+            P = self.change_ring(iso)
+            poly = lambda elt: elt.polynomial()
+            if field_deg == 2:
+                # Kamienny-Kenku-Momose
+                bound = min(bound, 18 + 1)
+        else:
+            K, E, P = QQ, self.curve(), self
+            poly = lambda elt: QQ['x'](elt)
+            # Mazur / Ogg's torsion conjecture
+            # Torsion points can only have order <= 12, so order of > 12 -> infinite order
+            bound = min(bound, 12 + 1)
+        assert P.curve() is E
+
+        n = ZZ.one()
+        no_progress = 0
+        for p in Primes():
+            try:
+                f,_ = K.defining_polynomial().change_ring(GF(p)).factor()[0]
+            except ZeroDivisionError:
+                continue
+            F = GF(p).extension(f,'t')
+            red = lambda elt: F(f.parent()(poly(elt)).change_ring(GF(p)) % f)
+
+            try:
+                Ered = E.change_ring(red)
+                Pred = Ered(*map(red, P))
+            except (ZeroDivisionError, ArithmeticError):
+                continue
+
+            o = Pred.order()
+            if not o.divides(n):
+                n = n.lcm(o)
+                no_progress = 0
+            else:
+                no_progress += 1
+
+            if n >= bound:
+                return True
+            if no_progress >= attempts:
+                return
+
+        assert False  # unreachable unless there are only finitely many primes
+
     def is_on_identity_component(self, embedding=None):
         r"""
         Return ``True`` iff this point is on the identity component of
@@ -3705,7 +3806,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         E_pari = E_work.pari_curve()
         log_pari = E_pari.ellpointtoz(pt_pari, precision=working_prec)
 
-        while prec_words_to_bits(log_pari.precision()) < precision:
+        while log_pari.bitprecision() < precision:
             # result is not precise enough, re-compute with double
             # precision. if the base field is not QQ, this
             # requires modifying the precision of the embedding,
@@ -4162,7 +4263,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
                            ' methods in Sage uniform. Please update your code.')
         return Q.log(self)
 
-    def padic_elliptic_logarithm(self,Q, p):
+    def padic_elliptic_logarithm(self, Q, p):
         r"""
         Return the discrete logarithm of `Q` to base `P` = ``self``,
         that is, an integer `x` such that `xP = Q` only for anomalous curves.

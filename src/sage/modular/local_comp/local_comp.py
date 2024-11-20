@@ -987,7 +987,7 @@ class ImprimitiveLocalComponent(LocalComponentBase):
     component and a character to twist by.
     """
 
-    def __init__(self,newform, prime, twist_factor, min_twist, chi):
+    def __init__(self, newform, prime, twist_factor, min_twist, chi):
         r"""
         EXAMPLES::
 

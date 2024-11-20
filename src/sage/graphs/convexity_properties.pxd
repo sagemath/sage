@@ -12,4 +12,4 @@ cdef class ConvexityProperties:
     cdef _bitset_convex_hull(self, bitset_t hull)
     cpdef hull(self, list vertices)
     cdef _greedy_increase(self, bitset_t bs)
-    cpdef hull_number(self, value_only = *, verbose = *)
+    cpdef hull_number(self, value_only=*, verbose=*)

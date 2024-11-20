@@ -1122,10 +1122,10 @@ class MiniCremonaDatabase(SQLDatabase):
             if N == 990:
                 for c in self.__connection__.cursor().execute('SELECT class '
                     + 'FROM t_class WHERE conductor=990'):
-                    if c[0][-1] == u'h':
-                        yield self.elliptic_curve(c[0]+u'3')
+                    if c[0][-1] == 'h':
+                        yield self.elliptic_curve(c[0]+'3')
                     else:
-                        yield self.elliptic_curve(c[0]+u'1')
+                        yield self.elliptic_curve(c[0]+'1')
                 continue
             for c in self.__connection__.cursor().execute('SELECT curve '
                 + 'FROM t_curve,t_class USING(class) WHERE curve=class||1 '
@@ -1651,7 +1651,7 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
 _db = None
 
 
-def CremonaDatabase(name=None,mini=None,set_global=None):
+def CremonaDatabase(name=None, mini=None, set_global=None):
     """
     Initialize the Cremona database with name ``name``. If ``name`` is
     ``None`` it instead initializes large Cremona database (named 'cremona'),

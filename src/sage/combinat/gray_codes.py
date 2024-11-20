@@ -103,7 +103,7 @@ def product(m):
         j = f[0]
 
 
-def combinations(n,t):
+def combinations(n, t):
     r"""
     Iterator through the switches of the revolving door algorithm.
 
@@ -177,7 +177,7 @@ def combinations(n,t):
 
     TESTS::
 
-        sage: def check_sets_from_iter(n,k):
+        sage: def check_sets_from_iter(n, k):
         ....:     l = []
         ....:     s = set(range(k))
         ....:     l.append(frozenset(s))
@@ -209,7 +209,7 @@ def combinations(n,t):
         return _revolving_door_even(n,t)
 
 
-def _revolving_door_odd(n,t):
+def _revolving_door_odd(n, t):
     r"""
     Revolving door switch for odd `t`.
 
@@ -255,7 +255,7 @@ def _revolving_door_odd(n,t):
             break
 
 
-def _revolving_door_even(n,t):
+def _revolving_door_even(n, t):
     r"""
     Revolving door algorithm for even `t`.
 

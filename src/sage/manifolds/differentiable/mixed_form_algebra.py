@@ -37,6 +37,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.symbolic.ring import SR
 from sage.manifolds.differentiable.mixed_form import MixedForm
 
+
 class MixedFormAlgebra(Parent, UniqueRepresentation):
     r"""
     An instance of this class represents the graded algebra of mixed forms.

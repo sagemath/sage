@@ -2719,7 +2719,7 @@ cdef class RingElement(ModuleElement):
         Exponent overflow should throw an :exc:`OverflowError` (:issue:`2956`)::
 
             sage: K.<x,y> = AA[]                                                        # needs sage.rings.number_field
-            sage: x^(2^64 + 12345)                                                      # needs sage.rings.number_field
+            sage: x^(2^64 + 12345)  # known bug: macos                                  # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             OverflowError: exponent overflow (2147483648)
@@ -4699,7 +4699,7 @@ def coerce_binop(method):
 
         sage: from sage.structure.element import coerce_binop
         sage: class MyRational(Rational):
-        ....:     def __init__(self,value):
+        ....:     def __init__(self, value):
         ....:         self.v = value
         ....:     @coerce_binop
         ....:     def test_add(self, other, keyword='z'):

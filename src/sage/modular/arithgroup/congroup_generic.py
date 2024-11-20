@@ -332,7 +332,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
         """
         return CongruenceSubgroup_constructor, (self.image_mod_n(),)
 
-    def _contains_sl2(self, a,b,c,d):
+    def _contains_sl2(self, a, b, c, d):
         r"""
         Test whether ``[a,b;c,d]`` is an element of ``self``.
 
@@ -455,7 +455,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
         """
         raise NotImplementedError
 
-    def __init__(self,*args, **kwds):
+    def __init__(self, *args, **kwds):
         r"""
         Bypass the init function of the CongruenceSubgroupFromGroup class.
 

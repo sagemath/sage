@@ -223,7 +223,7 @@ class LinearCodeAutGroupCanLabel:
         from sage.coding.linear_code import LinearCode, AbstractLinearCode
 
         if not isinstance(C, AbstractLinearCode):
-            raise TypeError("%s is not a linear code"%C)
+            raise TypeError("%s is not a linear code" % C)
 
         self.C = C
         mat = C.generator_matrix()

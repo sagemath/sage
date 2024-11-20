@@ -26,7 +26,7 @@ from sage.env import (
 )
 
 
-class SageKernelSpec():
+class SageKernelSpec:
 
     def __init__(self, prefix=None):
         """

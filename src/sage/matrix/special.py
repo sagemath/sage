@@ -3050,7 +3050,7 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
 
 
 @matrix_method
-def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
+def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
     """
     Create a random matrix that diagonalizes nicely.
 

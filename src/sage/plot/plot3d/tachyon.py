@@ -559,7 +559,7 @@ class Tachyon(WithEqualityById, SageObject):
             sage: h = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
             ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: h.light((4.4,-4.4,4.4), 0.2, (1,1,1))
-            sage: def f(x,y): return float(sin(x*y))
+            sage: def f(x, y): return float(sin(x*y))
             sage: h.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
             sage: h.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
@@ -577,7 +577,7 @@ class Tachyon(WithEqualityById, SageObject):
             sage: s = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
             ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: s.light((4.4,-4.4,4.4), 0.2, (1,1,1))
-            sage: def f(x,y): return float(sin(x*y))
+            sage: def f(x, y): return float(sin(x*y))
             sage: s.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
             sage: s.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
@@ -600,7 +600,7 @@ class Tachyon(WithEqualityById, SageObject):
             sage: d = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
             ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: d.light((4.4,-4.4,4.4), 0.2, (1,1,1))
-            sage: def f(x,y): return float(sin(x*y))
+            sage: def f(x, y): return float(sin(x*y))
             sage: d.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
             sage: d.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3,              # needs sage.symbolic
@@ -1004,7 +1004,7 @@ class Tachyon(WithEqualityById, SageObject):
             sage: t = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
             ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: t.light((4.4,-4.4,4.4), 0.2, (1,1,1))
-            sage: def f(x,y): return float(sin(x*y))
+            sage: def f(x, y): return float(sin(x*y))
             sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
             sage: t.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
@@ -1020,8 +1020,8 @@ class Tachyon(WithEqualityById, SageObject):
             sage: t = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
             ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: t.light((4.4,-4.4,4.4), 0.2, (1,1,1))
-            sage: def f(x,y): return float(sin(x*y))
-            sage: def g(x,y): return (float(y*cos(x*y)), float(x*cos(x*y)), 1)
+            sage: def f(x, y): return float(sin(x*y))
+            sage: def g(x, y): return (float(y*cos(x*y)), float(x*cos(x*y)), 1)
             sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
             sage: t.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic

@@ -13,7 +13,7 @@ Parser For gambit And lrs Nash Equilibria
 # ****************************************************************************
 
 
-class Parser():
+class Parser:
     r"""
     A class for parsing the outputs of different algorithms called in other
     software packages.

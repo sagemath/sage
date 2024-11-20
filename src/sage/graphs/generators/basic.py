@@ -407,7 +407,7 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
     Return a correlation graph with a node per sequence in ``seqs``.
 
     Edges are added between nodes where the corresponding sequences have a
-    correlation coeffecient greater than alpha.
+    correlation coefficient greater than alpha.
 
     If ``include_anticorrelation`` is ``True``, then edges are also added
     between nodes with correlation coefficient less than ``-alpha``.
@@ -440,7 +440,7 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
     from numpy import corrcoef
     from sage.matrix.constructor import Matrix
 
-    # compute pairwise correlation coeffecients
+    # compute pairwise correlation coefficients
     corrs = corrcoef(seqs)
 
     # compare against alpha to get adjacency matrix

@@ -293,7 +293,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
 
         INPUT:
 
-        -  ``max_cr`` -- max number of crorssing to stop searching
+        -  ``max_cr`` -- max number of crossing to stop searching
         -  ``knot`` -- instance of :class:`~sage.knots.knot.Knot`
         -  ``hpoly`` -- Homfly polynomial to search for a component
 

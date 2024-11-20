@@ -286,7 +286,7 @@ def transvectant(f, g, h=1, scale='default'):
             dg = g.form().derivative(x,h-j).derivative(y,j)
             return (-1)**j * binomial(h,j) * df * dg
         tv = scalar * sum([diff(j) for j in range(h+1)])
-        if not tv.parent() is R:
+        if tv.parent() is not R:
             S = tv.parent()
             x = S(x)
             y = S(y)
@@ -3498,7 +3498,7 @@ class TwoTernaryQuadratics(TwoAlgebraicForms):
 
             sage: R.<x,y,z> = QQ[]
             sage: monomials = [x^2, x*y, y^2, x*z, y*z, z^2]
-            sage: def q_rnd():  return sum(randint(-1000,1000)*m for m in monomials)
+            sage: def q_rnd():  return sum(randint(-1000, 1000)*m for m in monomials)
             sage: biquadratic = invariant_theory.ternary_biquadratic(q_rnd(), q_rnd(), [x,y,z])
             sage: Delta = biquadratic.Delta_invariant()
             sage: Theta = biquadratic.Theta_invariant()
@@ -3880,7 +3880,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
 
             sage: R.<w,x,y,z> = QQ[]
             sage: monomials = [x^2, x*y, y^2, x*z, y*z, z^2, x*w, y*w, z*w, w^2]
-            sage: def q_rnd():  return sum(randint(-1000,1000)*m for m in monomials)
+            sage: def q_rnd():  return sum(randint(-1000, 1000)*m for m in monomials)
             sage: biquadratic = invariant_theory.quaternary_biquadratic(q_rnd(), q_rnd())
             sage: Delta = biquadratic.Delta_invariant()
             sage: Theta = biquadratic.Theta_invariant()
@@ -3959,7 +3959,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
 
 ######################################################################
 
-class InvariantTheoryFactory():
+class InvariantTheoryFactory:
     """
     Factory object for invariants of multilinear forms.
 

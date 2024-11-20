@@ -250,14 +250,14 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             s = self.real().str(base=base, style=style)
         if not self.imag().is_zero():
             y  =  self.imag()
-            if s!="":
+            if s:
                 if y < 0:
-                    s = s+" - "
+                    s += " - "
                     y = -y
                 else:
-                    s = s+" + "
-            s = s+"%s*I"%y.str(base=base, style=style)
-        if len(s) == 0:
+                    s += " + "
+            s += "%s*I" % y.str(base=base, style=style)
+        if not s:
             s = "0"
         return s
 
@@ -321,7 +321,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         g = polygon2d([(x0, y0), (x1, y0), (x1, y1), (x0, y1), (x0, y0)],
                 thickness=pointsize/4, **kwds)
         # Nearly empty polygons don't show up.
-        g += self.center().plot(pointsize= pointsize, **kwds)
+        g += self.center().plot(pointsize=pointsize, **kwds)
         return g
 
     def _latex_(self):
@@ -2218,7 +2218,7 @@ cdef _circle_invert_standard(
     # crosses the x-Axis, the north east or south east diagonal, respectively.
     #
     # Given standard form, the input also has to cross the north east
-    # diagonal and x-Axis if it corsses the south east diagonal.
+    # diagonal and x-Axis if it crosses the south east diagonal.
     #
     # Thus, we are left with five cases:
     #

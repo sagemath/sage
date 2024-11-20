@@ -2511,101 +2511,6 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         return mx, my
 
-    def multiplication_by_m_isogeny(self, m):
-        r"""
-        Return the ``EllipticCurveIsogeny`` object associated to the
-        multiplication-by-`m` map on this elliptic curve.
-
-        The resulting isogeny will
-        have the associated rational maps (i.e., those returned by
-        :meth:`multiplication_by_m`) already computed.
-
-        NOTE: This function is currently *much* slower than the
-        result of ``self.multiplication_by_m()``, because
-        constructing an isogeny precomputes a significant amount
-        of information. See :issue:`7368` and :issue:`8014` for the
-        status of improving this situation.
-
-        INPUT:
-
-        - ``m`` -- nonzero integer
-
-        OUTPUT:
-
-        - An ``EllipticCurveIsogeny`` object associated to the
-          multiplication-by-`m` map on this elliptic curve.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve('11a1')
-            sage: E.multiplication_by_m_isogeny(7)
-            doctest:warning ... DeprecationWarning: ...
-            Isogeny of degree 49
-             from Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20
-                   over Rational Field
-             to   Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20
-                   over Rational Field
-
-        TESTS:
-
-        Tests for :issue:`32490`::
-
-            sage: E = EllipticCurve(QQbar, [1,0])                                       # needs sage.rings.number_field
-            sage: E.multiplication_by_m_isogeny(1).rational_maps()                      # needs sage.rings.number_field
-            (x, y)
-
-        ::
-
-            sage: E = EllipticCurve_from_j(GF(31337).random_element())                  # needs sage.rings.finite_rings
-            sage: P = E.random_point()                                                  # needs sage.rings.finite_rings
-            sage: [E.multiplication_by_m_isogeny(m)(P) == m*P for m in (1,2,3,5,7,9)]   # needs sage.rings.finite_rings
-            [True, True, True, True, True, True]
-
-        ::
-
-            sage: E = EllipticCurve('99.a1')
-            sage: E.multiplication_by_m_isogeny(5)
-            Isogeny of degree 25 from Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 17*x + 30 over Rational Field to Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 17*x + 30 over Rational Field
-            sage: E.multiplication_by_m_isogeny(2).rational_maps()
-            ((1/4*x^4 + 33/4*x^2 - 121/2*x + 363/4)/(x^3 - 3/4*x^2 - 33/2*x + 121/4),
-             (-1/256*x^7 + 1/128*x^6*y - 7/256*x^6 - 3/256*x^5*y - 105/256*x^5 - 165/256*x^4*y + 1255/256*x^4 + 605/128*x^3*y - 473/64*x^3 - 1815/128*x^2*y - 10527/256*x^2 + 2541/128*x*y + 4477/32*x - 1331/128*y - 30613/256)/(1/16*x^6 - 3/32*x^5 - 519/256*x^4 + 341/64*x^3 + 1815/128*x^2 - 3993/64*x + 14641/256))
-
-        Test for :issue:`34727`::
-
-            sage: E = EllipticCurve([5,5])
-            sage: E.multiplication_by_m_isogeny(-1)
-            Isogeny of degree 1
-             from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Rational Field
-             to Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Rational Field
-            sage: E.multiplication_by_m_isogeny(-2)
-            Isogeny of degree 4
-             from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Rational Field
-             to Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Rational Field
-            sage: E.multiplication_by_m_isogeny(-3)
-            Isogeny of degree 9
-             from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Rational Field
-             to Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Rational Field
-            sage: mu = E.multiplication_by_m_isogeny
-            sage: all(mu(-m) == -mu(m) for m in (1,2,3,5,7))
-            True
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(32826, 'The .multiplication_by_m_isogeny() method is superseded by .scalar_multiplication().')
-
-        mx, my = self.multiplication_by_m(m)
-
-        torsion_poly = self.torsion_polynomial(abs(m)).monic()
-        phi = self.isogeny(torsion_poly, codomain=self)
-        phi._EllipticCurveIsogeny__initialize_rational_maps(precomputed_maps=(mx, my))
-
-        # trac 32490: using codomain=self can give a wrong isomorphism
-        for aut in self.automorphisms():
-            psi = aut * phi
-            if psi.rational_maps() == (mx, my):
-                return psi
-
-        assert False, 'bug in multiplication_by_m_isogeny()'
-
     def scalar_multiplication(self, m):
         r"""
         Return the scalar-multiplication map `[m]` on this elliptic
@@ -2618,7 +2523,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve('77a1')
             sage: m = E.scalar_multiplication(-7); m
             Scalar-multiplication endomorphism [-7]
-            of Elliptic Curve defined by y^2 + y = x^3 + 2*x over Rational Field
+             of Elliptic Curve defined by y^2 + y = x^3 + 2*x over Rational Field
             sage: m.degree()
             49
             sage: P = E(2,3)
@@ -2626,6 +2531,38 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             (-26/225 : -2132/3375 : 1)
             sage: m.rational_maps() == E.multiplication_by_m(-7)
             True
+
+        ::
+
+            sage: E = EllipticCurve('11a1')
+            sage: E.scalar_multiplication(7)
+            Scalar-multiplication endomorphism [7]
+             of Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+
+        TESTS:
+
+        Tests for :issue:`32490`::
+
+            sage: E = EllipticCurve(QQbar, [1,0])                                       # needs sage.rings.number_field
+            sage: E.scalar_multiplication(1).rational_maps()                      # needs sage.rings.number_field
+            (x, y)
+
+        ::
+
+            sage: E = EllipticCurve_from_j(GF(31337).random_element())                  # needs sage.rings.finite_rings
+            sage: P = E.random_point()                                                  # needs sage.rings.finite_rings
+            sage: [E.scalar_multiplication(m)(P) == m*P for m in (1,2,3,5,7,9)]   # needs sage.rings.finite_rings
+            [True, True, True, True, True, True]
+
+        ::
+
+            sage: E = EllipticCurve('99.a1')
+            sage: E.scalar_multiplication(5)
+            Scalar-multiplication endomorphism [5]
+             of Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 17*x + 30 over Rational Field
+            sage: E.scalar_multiplication(2).rational_maps()
+            ((x^4 + 33*x^2 - 242*x + 363)/(4*x^3 - 3*x^2 - 66*x + 121),
+             (-4*x^7 + 8*x^6*y - 28*x^6 - 12*x^5*y - 420*x^5 - 660*x^4*y + 5020*x^4 + 4840*x^3*y - 7568*x^3 - 14520*x^2*y - 42108*x^2 + 20328*x*y + 143264*x - 10648*y - 122452)/(64*x^6 - 96*x^5 - 2076*x^4 + 5456*x^3 + 14520*x^2 - 63888*x + 58564))
         """
         from sage.schemes.elliptic_curves.hom_scalar import EllipticCurveHom_scalar
         return EllipticCurveHom_scalar(self, m)

@@ -2739,7 +2739,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
         return M
 
 
-class pAdicLatticeElementWeakProxy():
+class pAdicLatticeElementWeakProxy:
     r"""
     The implementations of :class:`DifferentialPrecisionGeneric` hold
     weak references to :class:`pAdicLatticeElement`. They are stored in

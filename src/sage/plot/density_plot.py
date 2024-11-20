@@ -212,7 +212,7 @@ def density_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x,y = var('x,y')
-        def f(x,y): return x**2 * cos(x*y)
+        def f(x, y): return x**2 * cos(x*y)
         g = density_plot(f, (x,-10,5), (y,-5,5), interpolation='sinc', plot_points=100)
         sphinx_plot(g)
 
@@ -296,7 +296,7 @@ def density_plot(f, xrange, yrange, **options):
 
     Check that :issue:`17684` is fixed, i.e., symbolic values can be plotted::
 
-        sage: def f(x,y):
+        sage: def f(x, y):
         ....:     return SR(x)
         sage: density_plot(f, (0,1), (0,1))
         Graphics object consisting of 1 graphics primitive

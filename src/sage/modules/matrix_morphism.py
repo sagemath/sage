@@ -578,7 +578,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
                     Codomain: Vector space of dimension 2 over Rational Field
 
 
-        We can test interraction between morphisms with different ``side``::
+        We can test interaction between morphisms with different ``side``::
 
             sage: V = ZZ^2
             sage: m = matrix(2, [1,1,0,1])

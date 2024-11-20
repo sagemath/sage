@@ -101,7 +101,7 @@ def _coords_in_C_p(I, C, p):
     ALGORITHM:
 
     Find the coordinates of `[I]` with respect to generators of `C` as
-    an abelian group, check that coordidates are 0 in cyclic factors
+    an abelian group, check that coordinates are 0 in cyclic factors
     of order prime to `p`, and return the list of `c/(n/p)` (mod `p`)
     for coordinates `c` for each cyclic factor of order `n` which is a
     multiple of `p`.
@@ -133,7 +133,7 @@ def _coords_in_C_p(I, C, p):
     raise ValueError("The {} power of {} is not principal".format(p.ordinal_str(),I))
 
 
-def _coords_in_C_mod_p(I,C,p):
+def _coords_in_C_mod_p(I, C, p):
     r"""
     Return coordinates of the ideal ``I`` with respect to a basis of
     the `p`-cotorsion of the ideal class group ``C``.

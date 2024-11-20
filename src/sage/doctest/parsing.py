@@ -652,7 +652,7 @@ def reduce_hex(fingerprints):
     return "%032x" % res
 
 
-class OriginalSource():
+class OriginalSource:
     r"""
     Context swapping out the pre-parsed source with the original for
     better reporting.
@@ -1516,6 +1516,21 @@ class SageOutputChecker(doctest.OutputChecker):
             pythran_numpy_warning_regex = re.compile(r'WARNING: Overriding pythran description with argspec information for: numpy\.random\.[a-z_]+')
             got = pythran_numpy_warning_regex.sub('', got)
             did_fixup = True
+
+        if "ld_classic is deprecated" in got:
+            # New warnings as of Oct '24, Xcode 16.
+            ld_warn_regex = re.compile("ld: warning: -ld_classic is deprecated and will be removed in a future release")
+            got = ld_warn_regex.sub('', got)
+            did_fixup = True
+
+        if "duplicate libraries" in got:
+            # New warnings as of Sept '23, OS X 13.6, new command-line
+            # tools. In particular, these seem to come from ld in
+            # Xcode 15.
+            dup_lib_regex = re.compile("ld: warning: ignoring duplicate libraries: .*")
+            got = dup_lib_regex.sub('', got)
+            did_fixup = True
+
         return did_fixup, want, got
 
     def output_difference(self, example, got, optionflags):

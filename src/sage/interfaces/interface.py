@@ -275,7 +275,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
         Check conversion of Booleans (:issue:`28705`)::
 
-            sage: giac(True)
+            sage: giac(True)  # needs giac
             true
             sage: maxima(True)
             true
@@ -343,7 +343,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
         Check that python type ``complex`` can be converted (:issue:`31775`)::
 
-            sage: giac(complex(I))**2  # should not return `j^2`
+            sage: giac(complex(I))**2  # should not return `j^2`  # needs giac
             -1
         """
         if isinstance(x, bool):
@@ -444,9 +444,12 @@ class Interface(WithEqualityById, ParentWithBase):
             sage: symbols[operator.eq]
             '=='
         """
-        return dict([(operator.eq, self._equality_symbol()), (operator.ne, self._inequality_symbol()),
-                     (operator.lt, self._lessthan_symbol()), (operator.le, "<="),
-                     (operator.gt, self._greaterthan_symbol()), (operator.ge, ">=")])
+        return {operator.eq: self._equality_symbol(),
+                operator.ne: self._inequality_symbol(),
+                operator.lt: self._lessthan_symbol(),
+                operator.le: "<=",
+                operator.gt: self._greaterthan_symbol(),
+                operator.ge: ">="}
 
     def _exponent_symbol(self):
         """
@@ -1193,12 +1196,12 @@ class InterfaceElement(Element):
             sage: gap(2)
             2
             sage: x = var('x')
-            sage: giac(x)
+            sage: giac(x)  # needs giac
             sageVARx
-            sage: giac(5)
+            sage: giac(5)  # needs giac
             5
             sage: M = matrix(QQ,2,range(4))
-            sage: giac(M)
+            sage: giac(M)  # needs giac
             [[0,1],[2,3]]
             sage: x = var('x')                  # optional - maple
             sage: maple(x)                      # optional - maple
@@ -1338,7 +1341,7 @@ class InterfaceElement(Element):
         By default this returns ``True`` for elements that are considered to be
         not ``False`` by the interface (:issue:`28705`)::
 
-            sage: bool(giac('"a"'))
+            sage: bool(giac('"a"'))  # needs giac
             True
         """
         P = self._check_valid()

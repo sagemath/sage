@@ -37,7 +37,7 @@ from sage.repl.prompts import SagePrompts
 SAGE_EXTENSION = 'sage'
 
 
-class SageIpythonConfiguration():
+class SageIpythonConfiguration:
 
     def _doctest_mode(self):
         """

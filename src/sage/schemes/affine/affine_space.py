@@ -109,7 +109,7 @@ def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
         ...
         NameError: variable names passed to AffineSpace conflict with names in ring
     """
-    if (isinstance(n, MPolynomialRing_base) or isinstance(n, PolynomialRing_general)) and R is None:
+    if isinstance(n, (MPolynomialRing_base, PolynomialRing_general)) and R is None:
         R = n
         if names is not None:
             # Check for the case that the user provided a variable name

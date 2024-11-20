@@ -93,6 +93,7 @@ from sage.data_structures.stream import (
 
 from types import GeneratorType
 
+
 class LazySeriesRing(UniqueRepresentation, Parent):
     """
     Abstract base class for lazy series.
@@ -1232,6 +1233,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                 # tester.assertEqual(e1, self.gen())
         # we want to test at least 2 elements
         tester.assertGreater(count, 1, msg="only %s elements in %s.some_elements() have a compositional inverse" % (count, self))
+
 
 class LazyLaurentSeriesRing(LazySeriesRing):
     r"""
@@ -2612,7 +2614,6 @@ class LazyPowerSeriesRing(LazySeriesRing):
             BR = R.base_ring()
             args = f.arguments()
             subs = {str(va): ZZ.zero() for va in args}
-            gens = R.gens()
             ell = len(subs)
             from sage.combinat.integer_vector import integer_vectors_nk_fast_iter
             from sage.arith.misc import factorial
@@ -3040,6 +3041,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
 ######################################################################
 
+
 class LazySymmetricFunctions(LazyCompletionGradedAlgebra):
     """
     The ring of lazy symmetric functions.
@@ -3416,6 +3418,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
             return L(c) * L(n) ** -L(self.variable_name())
         except (ValueError, TypeError):
             return '({})/{}^{}'.format(self.base_ring()(c), n, self.variable_name())
+
 
 def _skip_leading_zeros(iterator):
     """

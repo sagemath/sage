@@ -313,11 +313,11 @@ class ode_solver():
           from sage.libs.gsl.all cimport *
 
           cdef class van_der_pol(sage.calculus.ode.ode_system):
-              cdef int c_f(self,double t, double *y,double *dydt):
+              cdef int c_f(self, double t, double *y, double *dydt):
                   dydt[0]=y[1]
                   dydt[1]=-y[0]-1000*y[1]*(y[0]*y[0]-1)
                   return GSL_SUCCESS
-              cdef int c_j(self, double t,double *y,double *dfdy,double *dfdt):
+              cdef int c_j(self, double t, double *y, double *dfdy, double *dfdt):
                   dfdy[0]=0
                   dfdy[1]=1.0
                   dfdy[2]=-2.0*1000*y[0]*y[1]-1.0

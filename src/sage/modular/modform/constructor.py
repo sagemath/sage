@@ -310,8 +310,8 @@ def ModularForms(group=1,
     if base_ring is None:
         base_ring = QQ
 
-    if isinstance(group, dirichlet.DirichletCharacter) \
-           or isinstance(group, arithgroup.CongruenceSubgroupBase):
+    if isinstance(group, (dirichlet.DirichletCharacter,
+                          arithgroup.CongruenceSubgroupBase)):
         level = group.level()
     else:
         level = group

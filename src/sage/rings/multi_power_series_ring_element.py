@@ -671,7 +671,7 @@ class MPowerSeries(PowerSeries):
         else:
             return codomain(self._subs_formal(*im_gens, base_map=base_map))
 
-    def __getitem__(self,n):
+    def __getitem__(self, n):
         """
         Return summand of total degree ``n``.
 
@@ -2105,7 +2105,7 @@ class MPowerSeries(PowerSeries):
         raise NotImplementedError("laurent_series not defined for multivariate power series.")
 
 
-class MO():
+class MO:
     """
     Object representing a zero element with given precision.
 
@@ -2130,7 +2130,7 @@ class MO():
         sage: w^2
         1 + 2*a + O(a, b, c)^2
     """
-    def __init__(self,x):
+    def __init__(self, x):
         """
         Initialize ``self``.
 

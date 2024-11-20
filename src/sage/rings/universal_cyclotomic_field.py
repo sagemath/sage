@@ -1656,7 +1656,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
         if f.degree() == 1:
             return Factorization([(f, 1)], unit)
 
-        # From now on, we restrict to polynomial with rational cofficients. The
+        # From now on, we restrict to polynomial with rational coefficients. The
         # factorization is provided only in the case it is a product of
         # cyclotomic polynomials and quadratic polynomials. In this situation
         # the roots belong to UCF and the polynomial factorizes as a product of

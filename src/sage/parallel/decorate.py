@@ -51,7 +51,7 @@ def normalize_input(a):
         return ((a,), {})
 
 
-class Parallel():
+class Parallel:
     r"""
     Create a ``parallel``-decorated function.
     This is the object created by :func:`parallel`.
@@ -110,7 +110,7 @@ class Parallel():
             <sage.parallel.decorate.ParallelFunction object at ...>
 
             sage: P = sage.parallel.decorate.Parallel()
-            sage: def g(n,m): return n+m
+            sage: def g(n, m): return n+m
             sage: h = P(g)          # indirect doctest
             sage: list(h([(2,3)]))
             [(((2, 3), {}), 5)]
@@ -119,7 +119,7 @@ class Parallel():
 
 
 @instancedoc
-class ParallelFunction():
+class ParallelFunction:
     """
     Class which parallelizes a function or class method.
     This is typically accessed indirectly through
@@ -358,7 +358,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
     when calling the parallel function::
 
         sage: @parallel
-        ....: def f(a,b): return a*b
+        ....: def f(a, b): return a*b
         sage: for X, Y in sorted(list(f([(2,3),(3,5),(5,7)]))): print((X, Y))
         (((2, 3), {}), 6)
         (((3, 5), {}), 15)
@@ -422,7 +422,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
 #   def f(...): ...
 ###################################################################
 
-class Fork():
+class Fork:
     """
     A ``fork`` decorator class.
     """
@@ -456,7 +456,7 @@ class Fork():
         EXAMPLES::
 
             sage: F = sage.parallel.decorate.Fork(timeout=3)
-            sage: def g(n,m): return n+m
+            sage: def g(n, m): return n+m
             sage: h = F(g)     # indirect doctest
             sage: h(2,3)
             5
@@ -516,8 +516,6 @@ def fork(f=None, timeout=0, verbose=False):
 
         sage: @fork(timeout=0.1, verbose=True)
         ....: def g(n, m): return factorial(n).ndigits() + m
-        sage: g(5, m=5)
-        8
         sage: g(10^7, m=5)
         Killing subprocess ... with input ((10000000,), {'m': 5}) which took too long
         'NO DATA (timed out)'

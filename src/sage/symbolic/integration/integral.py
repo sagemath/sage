@@ -111,8 +111,10 @@ class IndefiniteIntegral(BuiltinFunction):
             sage: integrate(1/(x^4 + x^3 + 1), x)
             integrate(1/(x^4 + x^3 + 1), x)
 
-        Check that :issue:`32002` is fixed::
+        Check that :issue:`32002` is fixed. This needs giac since only
+        giac can integrate it in any case::
 
+            sage: # needs sage.libs.giac
             sage: result = integral(2*min_symbolic(x,2*x),x)
             ...
             sage: result
@@ -947,39 +949,10 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
     Some integrals are now working (:issue:`27958`, using giac or sympy)::
 
-        sage: result = integrate(1/(1 + abs(x)), x)
-        ...
-        sage: result
-        log(abs(x*sgn(x) + 1))/sgn(x)
-
-        sage: result = integrate(cos(x + abs(x)), x)
-        ...
-        sage: result
-        sin(x*sgn(x) + x)/(sgn(x) + 1)
-
         sage: result = integrate(abs(x^2 - 1), x, -2, 2)
         ...
         sage: result
         4
-
-        sage: f = sqrt(x + 1/x^2)
-        sage: actual = integrate(f, x)
-        ...
-        sage: expected = (1/3*(2*sqrt(x^3 + 1) - log(sqrt(x^3 + 1) + 1)
-        ....:             + log(abs(sqrt(x^3 + 1) - 1)))*sgn(x))
-        sage: bool(actual == expected)
-        True
-
-        sage: g = abs(sin(x)*cos(x))
-        sage: result = g.integrate(x, 0, 2*pi)
-        ...
-        sage: result
-        2
-
-        sage: result = integrate(1/sqrt(abs(x)), x)
-        ...
-        sage: result
-        2*sqrt(x*sgn(x))/sgn(x)
 
         sage: result = integrate(sgn(x) - sgn(1-x), x)
         ...
@@ -991,20 +964,70 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: result
         log(11) + log(2)
 
-        sage: result = integrate(1/(1 + abs(x)), x)
+        sage: result = integrate(abs(x^2 - 1), x, -2, 2)
         ...
         sage: result
-        log(abs(x*sgn(x) + 1))/sgn(x)
+        4
 
+    Examples that only giac can correctly integrate (for now)::
+
+        sage: # needs sage.libs.giac
+        sage: g = abs(sin(x)*cos(x))
+        sage: result = g.integrate(x, 0, 2*pi)
+        ...
+        sage: result
+        2
+
+    ::
+
+        sage: # needs sage.libs.giac
+        sage: f = sqrt(x + 1/x^2)
+        sage: actual = integrate(f, x)
+        ...
+        sage: expected = (1/3*(2*sqrt(x^3 + 1) - log(sqrt(x^3 + 1) + 1)
+        ....:             + log(abs(sqrt(x^3 + 1) - 1)))*sgn(x))
+        sage: bool(actual == expected)
+        True
+
+    ::
+
+        sage: # needs sage.libs.giac
         sage: result = integrate(cos(x + abs(x)), x)
         ...
         sage: result
         sin(x*sgn(x) + x)/(sgn(x) + 1)
 
-        sage: result = integrate(abs(x^2 - 1), x, -2, 2)
+    ::
+
+        sage: # needs sage.libs.giac
+        sage: result = integrate(1/(1 + abs(x)), x)
         ...
         sage: result
-        4
+        log(abs(x*sgn(x) + 1))/sgn(x)
+
+    ::
+
+        sage: # needs sage.libs.giac
+        sage: result = integrate(1/sqrt(abs(x)), x)
+        ...
+        sage: result
+        2*sqrt(x*sgn(x))/sgn(x)
+
+    ::
+
+        sage: # needs sage.libs.giac
+        sage: result = integrate(1/(1 + abs(x)), x)
+        ...
+        sage: result
+        log(abs(x*sgn(x) + 1))/sgn(x)
+
+    ::
+
+        sage: # needs sage.libs.giac
+        sage: result = integrate(cos(x + abs(x)), x)
+        ...
+        sage: result
+        sin(x*sgn(x) + x)/(sgn(x) + 1)
 
     Some tests for :issue:`17468`::
 

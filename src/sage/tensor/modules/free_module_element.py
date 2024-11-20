@@ -196,8 +196,8 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
     def __init__(
         self,
         fmodule: FiniteRankFreeModule,
-        name: Optional[str] = None,
-        latex_name: Optional[str] = None,
+        name: str | None = None,
+        latex_name: str | None = None,
     ):
         r"""
         TESTS::

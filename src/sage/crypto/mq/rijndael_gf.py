@@ -613,8 +613,8 @@ class RijndaelGF(SageObject):
         elif algorithm == 'decrypt':
             return self.decrypt(text, key, format)
         else:
-            raise ValueError(("keyword 'algorithm' must be either 'encrypt' "
-                             "or 'decrypt'"))
+            raise ValueError("keyword 'algorithm' must be either 'encrypt' "
+                             "or 'decrypt'")
 
     def __repr__(self):
         r"""
@@ -981,8 +981,8 @@ class RijndaelGF(SageObject):
             key_state = self._bin_to_GF(key)
             roundKeys = self.expand_key(key_state)
         else:
-            raise ValueError(("'format' keyword must be either 'hex' or "
-                             "'binary'"))
+            raise ValueError("'format' keyword must be either 'hex' or "
+                             "'binary'")
 
         state = self.add_round_key(state, roundKeys[0])
         for r in range(self._Nr-1):
@@ -1057,8 +1057,8 @@ class RijndaelGF(SageObject):
         elif format == 'binary':
             if not isinstance(ciphertext, str) or \
                any(c not in '01' for c in ciphertext):
-                raise TypeError(("'ciphertext' keyword must be a binary "
-                                 "string"))
+                raise TypeError("'ciphertext' keyword must be a binary "
+                                 "string")
             if len(ciphertext) != 32 * self._Nb:
                 msg = "'ciphertext' keyword's length must be {0}, not {1}"
                 raise ValueError(msg.format(32 * self._Nb, len(ciphertext)))
@@ -1072,8 +1072,8 @@ class RijndaelGF(SageObject):
             key_state = self._bin_to_GF(key)
             roundKeys = self.expand_key(key_state)
         else:
-            raise ValueError(("'format' keyword must be either \'hex\' or "
-                             "'binary'"))
+            raise ValueError("'format' keyword must be either \'hex\' or "
+                             "'binary'")
 
         state = self.add_round_key(state, roundKeys[self._Nr])
         state = self.shift_rows(state, algorithm='decrypt')
@@ -1874,8 +1874,8 @@ class RijndaelGF(SageObject):
             else:
                 return result ** 254
         else:
-            raise ValueError(("keyword 'algorithm' must be either 'encrypt' "
-                             "or 'decrypt'"))
+            raise ValueError("keyword 'algorithm' must be either 'encrypt' "
+                             "or 'decrypt'")
 
     def _srd(self, el, algorithm='encrypt'):
         r"""
@@ -1910,8 +1910,8 @@ class RijndaelGF(SageObject):
             state = [el] + [self._F.zero()]*((4 * self._Nb)-1)
             return p(state) ** 254
         else:
-            raise ValueError(("keyword 'algorithm' must be either 'encrypt' "
-                             "or 'decrypt'"))
+            raise ValueError("keyword 'algorithm' must be either 'encrypt' "
+                             "or 'decrypt'")
 
     def sub_bytes(self, state, algorithm='encrypt'):
         r"""
@@ -2010,8 +2010,8 @@ class RijndaelGF(SageObject):
         elif algorithm == 'decrypt':
             coeffs = self._mixcols_D
         else:
-            raise ValueError(("keyword 'algorithm' must be either 'encrypt' "
-                             "or 'decrypt'"))
+            raise ValueError("keyword 'algorithm' must be either 'encrypt' "
+                             "or 'decrypt'")
         return sum([coeffs[row,k] * self.state_vrs[k,col] for k in range(4)])
 
     def mix_columns(self, state, algorithm='encrypt'):
@@ -2109,8 +2109,8 @@ class RijndaelGF(SageObject):
         elif algorithm == 'decrypt':
             offs = self._shiftrows_offsets_D
         else:
-            raise ValueError(("keyword 'algorithm' must be either 'encrypt' "
-                             "or 'decrypt'"))
+            raise ValueError("keyword 'algorithm' must be either 'encrypt' "
+                             "or 'decrypt'")
         return self.state_vrs[row, (col + offs[4 - self._Nb][row]) % 4]
 
     def shift_rows(self, state, algorithm='encrypt'):

@@ -587,6 +587,7 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
 
 #***********************************************************************
 
+
 class TensorFieldFreeModule(TensorFreeModule):
     r"""
     Free module of tensor fields of a given type `(k,l)` along a

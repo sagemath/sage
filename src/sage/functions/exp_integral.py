@@ -800,7 +800,7 @@ class Function_sin_integral(BuiltinFunction):
             Si(x)
             sage: sin_integral(x)._fricas_init_()
             'Si(x)'
-            sage: sin_integral(x)._giac_()                                              # needs sage.libs.giac
+            sage: sin_integral(x)._giac_()                                              # needs giac
             Si(sageVARx)
         """
         BuiltinFunction.__init__(self, "sin_integral", nargs=1,
@@ -975,7 +975,7 @@ class Function_cos_integral(BuiltinFunction):
             Ci(x)
             sage: cos_integral(x)._fricas_init_()
             'Ci(x)'
-            sage: cos_integral(x)._giac_()                                              # needs sage.libs.giac
+            sage: cos_integral(x)._giac_()                                              # needs giac
             Ci(sageVARx)
         """
         BuiltinFunction.__init__(self, "cos_integral", nargs=1,

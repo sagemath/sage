@@ -172,6 +172,7 @@ from sage.symbolic.expression import Expression
 if TYPE_CHECKING:
     from sage.manifolds.differentiable.metric import DegenerateMetric
 
+
 class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
     r"""
     Degenerate submanifolds.

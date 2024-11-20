@@ -37,6 +37,7 @@ from sage.misc.decorators import options
 from sage.manifolds.point import ManifoldPoint
 from sage.manifolds.differentiable.diff_map import DiffMap
 
+
 class DifferentiableCurve(DiffMap):
     r"""
     Curve in a differentiable manifold.

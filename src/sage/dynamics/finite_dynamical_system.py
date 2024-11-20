@@ -678,6 +678,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
             return True
         return orbavgs[0] == average
 
+
 class InvertibleDiscreteDynamicalSystem(DiscreteDynamicalSystem):
     r"""
     An invertible discrete dynamical system.
@@ -969,6 +970,7 @@ class InvertibleDiscreteDynamicalSystem(DiscreteDynamicalSystem):
         """
         return self.orbit(x)[-1]
 
+
 class FiniteDynamicalSystem(DiscreteDynamicalSystem):
     r"""
     A finite discrete dynamical system.
@@ -1112,6 +1114,7 @@ class FiniteDynamicalSystem(DiscreteDynamicalSystem):
                     # removed from ``l`` is closed under ``phi``).
                     break
         return cycs
+
 
 class InvertibleFiniteDynamicalSystem(InvertibleDiscreteDynamicalSystem, FiniteDynamicalSystem):
     r"""

@@ -584,16 +584,11 @@ class ReedMullerVectorEncoder(Encoder):
             ...
             ValueError: the code has to be a Reed-Muller code
         """
-        if not (
-            isinstance(
-                code,
-                QAryReedMullerCode) or isinstance(
-                code,
-                BinaryReedMullerCode)):
+        if not isinstance(code, (QAryReedMullerCode, BinaryReedMullerCode)):
             raise ValueError("the code has to be a Reed-Muller code")
         super().__init__(code)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -775,9 +770,7 @@ class ReedMullerPolynomialEncoder(Encoder):
             ...
             ValueError: The Polynomial ring should be on Finite Field of size 59 and should have 3 variables
         """
-        if not (
-            isinstance(code, QAryReedMullerCode)
-                or isinstance(code, BinaryReedMullerCode)):
+        if not isinstance(code, (QAryReedMullerCode, BinaryReedMullerCode)):
             raise ValueError("the code has to be a Reed-Muller code")
         super().__init__(code)
         if polynomial_ring is None:

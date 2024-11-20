@@ -419,6 +419,7 @@ from sage.manifolds.differentiable.pseudo_riemannian import \
 
 ###############################################################################
 
+
 class EuclideanSpace(PseudoRiemannianManifold):
     r"""
     Euclidean space.
@@ -1040,6 +1041,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
                       coordinates=coordinates, names=names)
 
 ###############################################################################
+
 
 class EuclideanPlane(EuclideanSpace):
     r"""

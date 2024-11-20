@@ -3533,8 +3533,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
 
         liste = clockwise_labelling(graph0, -1)[1:]
         relabelling = {l: i for i, l in enumerate(liste)}
-        for l in [-1, -2, -3]:
-            relabelling[l] = l
+        relabelling.update((i, i) for i in [-1, -2, -3])
         new_graph = graph.relabel(relabelling, inplace=False)
 
         dyckword_top = []

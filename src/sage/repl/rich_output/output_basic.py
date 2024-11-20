@@ -264,9 +264,9 @@ class OutputUnicodeArt(OutputBase):
             ⎜  3  -1   0⎟
             ⎝ -1  -1   0⎠
         """
-        return cls(u'⎛-11   0   1⎞\n'
-                   u'⎜  3  -1   0⎟\n'
-                   u'⎝ -1  -1   0⎠')
+        return cls('⎛-11   0   1⎞\n'
+                   '⎜  3  -1   0⎟\n'
+                   '⎝ -1  -1   0⎠')
 
     def print_to_stdout(self):
         """

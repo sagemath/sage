@@ -24,7 +24,7 @@ from sage.repl.display.util import format_list
 _baseclass_reprs = (object.__repr__,)
 
 
-class ObjectReprABC():
+class ObjectReprABC:
     """
     The abstract base class of an object representer.
 

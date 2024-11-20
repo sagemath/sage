@@ -271,7 +271,7 @@ class FastCrystal(UniqueRepresentation, Parent):
         """
         return self._digraph
 
-    def cmp_elements(self, x,y):
+    def cmp_elements(self, x, y):
         r"""
         Return ``True`` if and only if there is a path from `x` to `y` in the
         crystal graph.
