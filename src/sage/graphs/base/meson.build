@@ -44,7 +44,7 @@ foreach name, pyx : extension_data_cpp
     #    [
     #        _Ty1=v_index
     #    ]
-    continue  
+    continue
   endif
 
   py.extension_module(

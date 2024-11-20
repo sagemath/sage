@@ -3,7 +3,12 @@ sirocco = cc.find_library('sirocco', required: false, disabler: true)
 ecl = cc.find_library('ecl', required: not is_windows, disabler: true)
 braiding = cc.find_library('braiding', required: not is_windows, disabler: true)
 gc = cc.find_library('gc', required: not is_windows, disabler: true)
-homfly = cc.find_library('homfly', has_headers: ['homfly.h'], required: not is_windows, disabler: true)
+homfly = cc.find_library(
+  'homfly',
+  has_headers: ['homfly.h'],
+  required: not is_windows,
+  disabler: true,
+)
 
 py.install_sources(
   'all.py',
