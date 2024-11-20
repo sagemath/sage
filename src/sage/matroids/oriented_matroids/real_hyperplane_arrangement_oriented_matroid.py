@@ -18,8 +18,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.matroids.oriented_matroids.covector_oriented_matroid import CovectorOrientedMatroid
 from __future__ import annotations
+from sage.matroids.oriented_matroids.covector_oriented_matroid import CovectorOrientedMatroid
 
 
 class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
