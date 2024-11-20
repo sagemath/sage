@@ -65,7 +65,7 @@ ctypedef np.complex128_t COMPLEX_T
 
 cdef FLOAT_T PI = pi
 cdef FLOAT_T TWOPI = 2*PI
-cdef COMPLEX_T I = complex(0,1)
+cdef COMPLEX_T I = complex(0, 1)
 
 cdef class Riemann_Map:
     r"""
@@ -1263,7 +1263,7 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
     return rgb
 
 
-cpdef complex_to_rgb(np.ndarray[COMPLEX_T, ndim = 2] z_values):
+cpdef complex_to_rgb(np.ndarray[COMPLEX_T, ndim=2] z_values):
     r"""
     Convert from a (Numpy) array of complex numbers to its corresponding
     matrix of RGB values.  For internal use of :meth:`~Riemann_Map.plot_colored`

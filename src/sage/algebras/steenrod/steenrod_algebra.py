@@ -2533,7 +2533,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 return self.monomial(((1, 2),))
             return self.term(((), (((1,2), 1),)), GF(p)(p-1))
 
-    def pst(self,s,t):
+    def pst(self, s, t):
         r"""
         The Margolis element `P^s_t`.
 
