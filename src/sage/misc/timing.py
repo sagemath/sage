@@ -1,3 +1,4 @@
+# pyright: strict
 # sage_setup: distribution = sagemath-objects
 r"""
 Timing functions
@@ -17,23 +18,33 @@ Timing functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
 
-import resource
 import time
+from typing import TYPE_CHECKING, overload
+
+if TYPE_CHECKING:
+    from weakref import ReferenceType
+
+    from sage.interfaces.expect import Expect
 
 
-def cputime(t=0, subprocesses=False):
+@overload
+def cputime(t: float = 0, subprocesses: bool = False) -> float: ...
+@overload
+def cputime(t: GlobalCputime, subprocesses: bool) -> GlobalCputime: ...
+def cputime(
+    t: float | GlobalCputime = 0, subprocesses: bool = False
+) -> float | GlobalCputime:
     """
     Return the time in CPU seconds since Sage started, or with
     optional argument ``t``, return the time since ``t``. This is how
-    much time Sage has spent using the CPU.  If ``subprocesses=False``
+    much time Sage has spent using the CPU (to be precise, the sum of the system
+    and user CPU times of the process).  If ``subprocesses=False``
     this does not count time spent in subprocesses spawned by Sage
     (e.g., Gap, Singular, etc.). If ``subprocesses=True`` this
     function tries to take all subprocesses with a working
     ``cputime()`` implementation into account.
-
-    The measurement for the main Sage process is done via a call to
-    :func:`resource.getrusage()`.
 
     INPUT:
 
@@ -81,39 +92,39 @@ def cputime(t=0, subprocesses=False):
             t = float(t)
         except TypeError:
             t = 0.0
-        u, s = resource.getrusage(resource.RUSAGE_SELF)[:2]
-        return u + s - t
-    else:
-        try:
-            from sage.interfaces.quit import expect_objects
-        except ImportError:
-            expect_objects = ()
-        if t == 0:
-            ret = GlobalCputime(cputime())
-            for s in expect_objects:
-                S = s()
-                if S and S.is_running():
-                    try:
-                        ct = S.cputime()
-                        ret.total += ct
-                        ret.interfaces[s] = ct
-                    except NotImplementedError:
-                        pass
-            return ret
-        else:
-            if not isinstance(t, GlobalCputime):
-                t = GlobalCputime(t)
-            ret = GlobalCputime(cputime() - t.local)
-            for s in expect_objects:
-                S = s()
-                if S and S.is_running():
-                    try:
-                        ct = S.cputime() - t.interfaces.get(s, 0.0)
-                        ret.total += ct
-                        ret.interfaces[s] = ct
-                    except NotImplementedError:
-                        pass
-            return ret
+        return time.process_time() - t
+
+    try:
+        from sage.interfaces.quit import expect_objects
+    except ImportError:
+        expect_objects = ()
+
+    if t == 0:
+        ret = GlobalCputime(cputime())
+        for reference in expect_objects:
+            process = reference()
+            if process and process.is_running():
+                try:
+                    ct = process.cputime()
+                    ret.total += ct
+                    ret.interfaces[reference] = ct
+                except NotImplementedError:
+                    pass
+        return ret
+
+    if not isinstance(t, GlobalCputime):
+        t = GlobalCputime(t)
+    ret = GlobalCputime(cputime() - t.local)
+    for reference in expect_objects:
+        process = reference()
+        if process and process.is_running():
+            try:
+                ct = process.cputime() - t.interfaces.get(reference, 0.0)
+                ret.total += ct
+                ret.interfaces[reference] = ct
+            except NotImplementedError:
+                pass
+    return ret
 
 
 class GlobalCputime:
@@ -153,7 +164,8 @@ class GlobalCputime:
 
       :func:`cputime`
     """
-    def __init__(self, t):
+
+    def __init__(self, t: float) -> None:
         """
         Create a new CPU time object which also keeps track of
         subprocesses.
@@ -164,11 +176,11 @@ class GlobalCputime:
             sage: ct = GlobalCputime(0.0); ct
             0.0...
         """
-        self.total = t
-        self.local = t
-        self.interfaces = {}
+        self.total: float = t
+        self.local: float = t
+        self.interfaces: dict[ReferenceType[Expect], float] = {}
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -177,7 +189,7 @@ class GlobalCputime:
         """
         return str(self.total)
 
-    def __add__(self, other):
+    def __add__(self, other: GlobalCputime | float) -> GlobalCputime:
         """
         EXAMPLES::
 
@@ -193,7 +205,7 @@ class GlobalCputime:
         ret = GlobalCputime(self.total + other.total)
         return ret
 
-    def __sub__(self, other):
+    def __sub__(self, other: GlobalCputime | float) -> GlobalCputime:
         """
         EXAMPLES::
 
@@ -209,7 +221,7 @@ class GlobalCputime:
         ret = GlobalCputime(self.total - other.total)
         return ret
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         EXAMPLES::
 
@@ -220,7 +232,7 @@ class GlobalCputime:
         return float(self.total)
 
 
-def walltime(t=0):
+def walltime(t: float = 0) -> float:
     """
     Return the wall time in second, or with optional argument ``t``, return
     the wall time since time ``t``. "Wall time" means the time on a wall
