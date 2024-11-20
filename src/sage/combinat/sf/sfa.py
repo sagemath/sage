@@ -3786,7 +3786,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
     omega_involution = omega
 
-    def theta(self,a):
+    def theta(self, a):
         r"""
         Return the image of ``self`` under the theta endomorphism which sends
         `p_k` to `a \cdot p_k` for every positive integer `k`.
