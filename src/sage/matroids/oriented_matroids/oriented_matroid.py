@@ -78,7 +78,7 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
     INPUT:
 
     - ``data`` -- (default: ``None``) the data that defines the oriented
-      matroid. It can be one of the following:
+      matroid; it can be one of the following:
 
       + Objects
 
