@@ -19,6 +19,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.matroids.oriented_matroids.covector_oriented_matroid import CovectorOrientedMatroid
+from __future__ import annotations
 
 
 class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):

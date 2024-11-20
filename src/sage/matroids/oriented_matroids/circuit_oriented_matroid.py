@@ -20,6 +20,7 @@ AUTHORS:
 
 from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
 from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
+from __future__ import annotations
 
 class CircuitOrientedMatroid(OrientedMatroid):
     r"""

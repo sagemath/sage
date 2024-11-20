@@ -58,6 +58,7 @@ from sage.structure.sage_object import SageObject
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.structure.global_options import GlobalOptions
+from __future__ import annotations
 
 from sage.geometry.hyperplane_arrangement.arrangement import HyperplaneArrangementElement
 from sage.geometry.triangulation.point_configuration import PointConfiguration
