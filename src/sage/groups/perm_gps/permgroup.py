@@ -2748,6 +2748,25 @@ class PermutationGroup_generic(FiniteGroup):
             raise TypeError("{0} does not convert to a permutation group element".format(g))
         return PermutationGroup(gap_group=libgap.ConjugateGroup(self, g))
 
+    def are_conjugate(self, H1, H2):
+        r"""
+        Return whether ``H1`` and ``H2`` are conjugate subgroups in ``G``.
+
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(3)
+            sage: H1 = PermutationGroup([(1,2)])
+            sage: H2 = PermutationGroup([(2,3)])
+            sage: G.are_conjugate(H1, H2)
+            True
+            sage: G = SymmetricGroup(4)
+            sage: H1 = PermutationGroup([[(1,3),(2,4)], [(1,2),(3,4)]])
+            sage: H2 = PermutationGroup([[(1,2)], [(1,2),(3,4)]])
+            sage: G.are_conjugate(H1, H2)
+            False
+        """
+        return libgap.IsConjugate(self, H1, H2).sage()
+
     def direct_product(self, other, maps=True):
         """
         Wraps GAP's ``DirectProduct``, ``Embedding``, and ``Projection``.

@@ -2598,7 +2598,7 @@ class DegenerateMetric(TensorField):
             m
             sage: Int = M.open_subset('Int')
             sage: X.<t,r,th,ph>=Int.chart(r"t r:(0,2*m) th:(0,pi):\theta ph:(0,2*pi):\phi")
-            sage: XM = M.vector_field_module(); e= X.frame()
+            sage: XM = M.vector_field_module(); e = X.frame()
             sage: from sage.manifolds.differentiable.metric import \
             ....:                                        DegenerateMetric
             sage: g = DegenerateMetric(XM, 'g', signature=(2,1,1)); g

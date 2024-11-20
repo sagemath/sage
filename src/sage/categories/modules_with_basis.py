@@ -1395,7 +1395,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             we can find a random element in a trivial module::
 
                 sage: class Foo(CombinatorialFreeModule):                               # needs sage.modules
-                ....:     def _element_constructor_(self,x):
+                ....:     def _element_constructor_(self, x):
                 ....:         if x in self:
                 ....:             return x
                 ....:         else:
@@ -2535,7 +2535,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 and `f` the bilinear morphism `(a,b) \mapsto b \otimes a`
                 from `A \times B` to `B \otimes A`::
 
-                    sage: def f(a,b):
+                    sage: def f(a, b):
                     ....:     return tensor([b,a])
 
                 Now, calling applying `f` on `a \otimes b` returns the same
@@ -2564,7 +2564,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 Mind the `0` in the sums above; otherwise `f` would
                 not return `0` in `\ZZ`::
 
-                    sage: def f(a,b):
+                    sage: def f(a, b):
                     ....:     return sum(a.coefficients()) * sum(b.coefficients())
                     sage: type(f(A.zero(), B.zero()))                                   # needs sage.modules
                     <... 'int'>

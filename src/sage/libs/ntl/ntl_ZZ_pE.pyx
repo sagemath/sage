@@ -328,7 +328,7 @@ cdef class ntl_ZZ_pE():
         [1 1 1]
         """
         self.c.restore_c()
-        cdef ntl_ZZ_pX r = ntl_ZZ_pX(v = None, modulus=self.c.pc)
+        cdef ntl_ZZ_pX r = ntl_ZZ_pX(v=None, modulus=self.c.pc)
         r.x = (<ntl_ZZ_pX>self.c.f).x
         return r
 

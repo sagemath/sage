@@ -2776,7 +2776,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         We verify that 0 rows or columns works::
 
-            sage: x = matrix(QQ,2,0); y= matrix(QQ,0,2); x*y
+            sage: x = matrix(QQ,2,0); y = matrix(QQ,0,2); x*y
             [0 0]
             [0 0]
             sage: matrix(ZZ, 0, 0) * matrix(QQ, 0, 5)
