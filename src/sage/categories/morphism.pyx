@@ -619,7 +619,7 @@ cdef class SetMorphism(Morphism):
 
             sage: from sage.categories.morphism import SetMorphism
             sage: R.<x> = QQ[]
-            sage: def foo(x,*args,**kwds):
+            sage: def foo(x, *args, **kwds):
             ....:     print('foo called with {} {}'.format(args, kwds))
             ....:     return x
             sage: f = SetMorphism(Hom(R,R,Rings()), foo)

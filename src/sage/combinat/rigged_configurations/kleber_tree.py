@@ -122,11 +122,11 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
         start = [0., 0.]
     if rpos is None:
         rpos = [0., 0.]
-    draw_point = lambda point: '(%.3f, %.3f)' % (point[0],point[1])
+
     if not tree_node.children:
         r = ''
         node_name = node_prefix + str(node_id)
-        r = "\\node (%s) at %s" % (node_name, draw_point(start))
+        r = "\\node (%s) at (%.3f, %.3f)" % (node_name, *start)
         if node_label:
             r += "{$%s$};\n" % tree_node._latex_()
         else:
@@ -149,7 +149,7 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
     nb_children = len(tree_node.children)
     half = nb_children // 2
     children_str = ''
-    pos = [start[0],start[1]]
+    pos = [start[0], start[1]]
     start[1] += vspace
     lines_str = ''
 
@@ -184,7 +184,7 @@ def _draw_tree(tree_node, node_label=True, style_point=None, style_node='fill=wh
     rpos[0] = pos[0]
     rpos[1] = pos[1]
     point_str = ''
-    node_str = "\\node%s (%s) at %s" % (style_node, node_name, draw_point(pos))
+    node_str = "\\node%s (%s) at (%.3f, %.3f)" % (style_node, node_name, *pos)
     if node_label:
         node_str += "{$%s$};\n" % tree_node._latex_()
     else:
@@ -269,7 +269,7 @@ class KleberTreeNode(Element):
             sage: n2.depth
             1
         """
-        depth = -1 # Offset
+        depth = -1  # Offset
         cur = self
         while cur is not None:
             depth += 1
@@ -337,7 +337,7 @@ class KleberTreeNode(Element):
         mult = Integer(1)
         for a, m in self.up_root:
             p = self.weight[a]
-            for r,s in self.parent().B:
+            for r, s in self.parent().B:
                 if r == a and s > self.depth:
                     p -= s - self.depth
             mult *= binomial(m + p, m)
@@ -346,7 +346,7 @@ class KleberTreeNode(Element):
         cur = self.parent_node
         while cur.parent_node is not None:
             root_diff = cur.up_root - prev_up_root
-            for a,m in root_diff:
+            for a, m in root_diff:
                 p = cur.weight[a]
                 for r, s in self.parent().B:
                     if r == a and s > cur.depth:
@@ -636,7 +636,8 @@ class KleberTree(UniqueRepresentation, Parent):
         self._CM = self._classical_ct.cartan_matrix().dense_matrix()
         self._build_tree()
         self._latex_options = dict(edge_labels=True, use_vector_notation=False,
-                                  hspace=2.5, vspace=min(-2.5, -0.75*self._classical_ct.rank()))
+                                   hspace=2.5,
+                                   vspace=min(-2.5, -0.75*self._classical_ct.rank()))
 
     def latex_options(self, **options):
         """
@@ -705,21 +706,19 @@ class KleberTree(UniqueRepresentation, Parent):
         # Create an empty node at first step
         self.root = KleberTreeNode(self, P.zero(),
                                    self._classical_ct.root_system().root_lattice().zero())
-        full_list = [self.root] # The list of tree nodes
+        full_list = [self.root]  # The list of tree nodes
 
         n = self._classical_ct.rank()
 
         # Convert the B values into an L matrix
-        L = []
         I = self._classical_ct.index_set()
-        for i in range(n):
-            L.append([0])
+        L = [[0] for _ in range(n)]
 
-        for r,s in self.B:
-            while len(L[0]) < s: # Add more columns if needed
+        for r, s in self.B:
+            while len(L[0]) < s:  # Add more columns if needed
                 for row in L:
                     row.append(0)
-            L[I.index(r)][s - 1] += 1 # The -1 is for indexing
+            L[I.index(r)][s - 1] += 1  # The -1 is for indexing
 
         # Perform a special case of the algorithm for the root node
         weight_basis = P.basis()
@@ -751,7 +750,7 @@ class KleberTree(UniqueRepresentation, Parent):
                 for x in full_list:
                     growth = True
                     for a in range(n):
-                        for i in range(depth - 1, len(L[a])): # Subtract 1 for indexing
+                        for i in range(depth - 1, len(L[a])):  # Subtract 1 for indexing
                             x.weight += L[a][i] * weight_basis[I[a]]
 
             new_children = [new_child
@@ -824,16 +823,16 @@ class KleberTree(UniqueRepresentation, Parent):
         # Construct the shifted weight cone
         root_weight = node.weight.to_vector()
         ieqs = [[root_weight[i]] + list(col)
-                for i,col in enumerate(self._CM.columns())]
+                for i, col in enumerate(self._CM.columns())]
         # Construct the negative weight cone
         for i in range(n):
             v = [0] * (n+1)
             v[i+1] = -1
             ieqs.append(v)
-        ieqs.append([-1]*(n+1)) # For avoiding the origin
+        ieqs.append([-1]*(n+1))  # For avoiding the origin
         # Construct the bounds for the non-root nodes
         if node != self.root:
-            for i,c in enumerate(node.up_root.to_vector()):
+            for i, c in enumerate(node.up_root.to_vector()):
                 v = [0] * (n+1)
                 v[0] = c
                 v[i+1] = 1
@@ -849,9 +848,9 @@ class KleberTree(UniqueRepresentation, Parent):
         # Build the nodes from the polytope
         # Sort for a consistent ordering (it is typically a small list)
         for pt in sorted(poly.integral_points(), reverse=True):
-            up_root = Q._from_dict({I[i]: -val for i,val in enumerate(pt) if val != 0},
+            up_root = Q._from_dict({I[i]: -val for i, val in enumerate(pt) if val != 0},
                                    remove_zeros=False)
-            wt = node.weight + sum(val * P.simple_root(I[i]) for i,val in enumerate(pt))
+            wt = node.weight + sum(val * P.simple_root(I[i]) for i, val in enumerate(pt))
             yield KleberTreeNode(self, wt, up_root, node)
 
     def _children_iter_vector(self, node):
@@ -895,9 +894,9 @@ class KleberTree(UniqueRepresentation, Parent):
             converted_root = sum(cols[i] * c for i, c in enumerate(root)
                                  if c != 0)
 
-            if all(wt[i] >= val for i,val in enumerate(converted_root)):
-                wd = {I[i]: wt[i] - val for i,val in enumerate(converted_root)}
-                rd = {I[i]: val for i,val in enumerate(root) if val != 0}
+            if all(wt[i] >= val for i, val in enumerate(converted_root)):
+                wd = {I[i]: wt[i] - val for i, val in enumerate(converted_root)}
+                rd = {I[i]: val for i, val in enumerate(root) if val != 0}
                 yield KleberTreeNode(self,
                                      P._from_dict(wd),
                                      Q._from_dict(rd, remove_zeros=False),
@@ -1171,14 +1170,12 @@ class VirtualKleberTree(KleberTree):
             sage: TestSuite(KT).run(skip='_test_elements')
         """
         self._folded_ct = cartan_type.as_folding()
-        virtual_dims = []
         self.base_dims = B
         sigma = self._folded_ct.folding_orbit()
         gamma = self._folded_ct.scaling_factors()
         classical_ct = self._folded_ct.folding_of().classical()
-        for r,s in B:
-            for i in sigma[r]:
-                virtual_dims.append([i, s * gamma[r]])
+        virtual_dims = [[i, s * gamma[r]]
+                        for r, s in B for i in sigma[r]]
 
         KleberTree.__init__(self, cartan_type, virtual_dims, classical_ct)
 
@@ -1229,8 +1226,9 @@ class VirtualKleberTree(KleberTree):
                 return True
         gamma = self._folded_ct.scaling_factors()
         for a in range(1, len(gamma)):
-            if (depth - 1) % gamma[a] != 0 and new_child.up_root[sigma[a][0]] \
-              != new_child.parent_node.up_root[sigma[a][0]]:
+            s = sigma[a][0]
+            if ((depth - 1) % gamma[a] != 0 and
+                    new_child.up_root[s] != new_child.parent_node.up_root[s]):
                 return True
         return False
 
@@ -1371,12 +1369,11 @@ class KleberTreeTypeA2Even(VirtualKleberTree):
         self.base_dims = B
         sigma = self._folded_ct.folding_orbit()
         classical_ct = self._folded_ct.folding_of().classical()
-        for r,s in B:
+        for r, s in B:
             if r == n:
                 virtual_dims.extend([[n, s], [n, s]])
             else:
-                for i in sigma[r]:
-                    virtual_dims.append([i, s])
+                virtual_dims.extend([i, s] for i in sigma[r])
 
         KleberTree.__init__(self, cartan_type, virtual_dims, classical_ct)
 
