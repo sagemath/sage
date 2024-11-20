@@ -97,6 +97,14 @@ class SignedSubsetElement(SageObject):
             +:
             -:
             0: 0
+
+        TESTS::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
+            sage: M = OrientedMatroid([[1],[-1]], key='circuit');
+            sage: E = SignedSubsetElement(M,data = (0,))
+            sage: TestSuite(E).run()
         """
         self._parent = parent
 

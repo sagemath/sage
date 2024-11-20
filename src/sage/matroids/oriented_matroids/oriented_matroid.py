@@ -218,6 +218,12 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             sage: M = OrientedMatroid(D, key="circuit")
             sage: type(M)
             <class 'sage.matroids.oriented_matroids.circuit_oriented_matroid.CircuitOrientedMatroid'>
+
+        TESTS::
+
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: TestSuite(M).run()
         """
         OM = None
 
@@ -319,21 +325,6 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
                 f"oriented matroid of type {key} is not implemented")
 
         return OM
-
-    def __init__(self):
-        """
-        Return an ``OrientedMatroid`` object.OrientedMatroid
-        
-        This class acts as the abstract class that all oriented matroid
-        objects will extend from.
-
-        TESTS::
-
-            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
-            sage: M = OrientedMatroid(C, key='covector')
-            sage: TestSuite(M).run()
-        """
-        pass
 
     def __eq__(self, other):
         """
