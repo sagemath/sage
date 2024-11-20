@@ -375,7 +375,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         """
         n,k = n_k_params(C, n_k)
 
-        def get_tau(s,l):
+        def get_tau(s, l):
             "Return the decoding radius given this s and l"
             if s <= 0 or l <= 0:
                 return -1
