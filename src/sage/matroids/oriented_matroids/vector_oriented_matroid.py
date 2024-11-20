@@ -117,7 +117,7 @@ class VectorOrientedMatroid(OrientedMatroid):
             sage: M2.is_valid(certificate=True)
             (False,
              {'elt': +: 0,1
-               -: 
+               -:
                0: ,
               'msg': 'every element needs an opposite'})
 
@@ -125,11 +125,11 @@ class VectorOrientedMatroid(OrientedMatroid):
             sage: M3 = OrientedMatroid(V3, key='vector')
             sage: M3.is_valid(certificate=True)
             (False,
-             {'elt': (+: 
+             {'elt': (+:
                -: 1
                0: 0,
                +: 0,1
-               -: 
+               -:
                0: ),
               'msg': 'composition must be in vectors'})
 
@@ -138,9 +138,9 @@ class VectorOrientedMatroid(OrientedMatroid):
             sage: M4.is_valid(certificate=True)
             (False,
              {'elt': (+: 0,1
-               -: 
+               -:
                0: ,
-               +: 
+               +:
                -: 0,1
                0: ),
               'msg': 'vector elimination failed'})

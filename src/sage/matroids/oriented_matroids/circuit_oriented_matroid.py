@@ -148,8 +148,8 @@ class CircuitOrientedMatroid(OrientedMatroid):
             sage: M3 = OrientedMatroid(C3, key='circuit', groundset=[1,2,3,4])
             sage: M3.is_valid(certificate=True)
             (False,
-             {'elt': +: 
-               -: 
+             {'elt': +:
+               -:
                0: 1,2,3,4,
               'msg': 'empty set not allowed'})
 
@@ -158,7 +158,7 @@ class CircuitOrientedMatroid(OrientedMatroid):
             sage: M4.is_valid(certificate=True)
             (False,
              {'elt': +: 1
-               -: 
+               -:
                0: 2,3,4,
               'msg': 'every element needs an opposite'})
         """

@@ -137,7 +137,7 @@ class CovectorOrientedMatroid(OrientedMatroid):
             sage: M2.is_valid(certificate=True)
             (False,
              {'elt': +: 0,1
-               -: 
+               -:
                0: ,
               'msg': 'every element needs an opposite'})
 
@@ -146,9 +146,9 @@ class CovectorOrientedMatroid(OrientedMatroid):
             sage: M3.is_valid(certificate=True)
             (False,
              {'elt': (+: 1
-               -: 
+               -:
                0: 0,
-               +: 
+               +:
                -: 0,1
                0: ),
               'msg': 'composition must be in vectors'})
@@ -158,7 +158,7 @@ class CovectorOrientedMatroid(OrientedMatroid):
             sage: M4.is_valid(certificate=True)
             (False,
              {'elt': (+: 0,1
-               -: 
+               -:
                0: ,
                +: 0
                -: 1

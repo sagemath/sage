@@ -87,7 +87,7 @@ class SignedSubsetElement(SageObject):
     def __init__(self, parent=None, data=None, groundset=None, positives=None, negatives=None, zeros=None):
         """
         Return a ``SignedSubsetElement`` object.
-        
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -242,7 +242,7 @@ class SignedSubsetElement(SageObject):
     def __hash__(self):
         """
         Return hashed string of signed subset.
-        
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -260,7 +260,7 @@ class SignedSubsetElement(SageObject):
     def __neg__(self):
         """
         Return the opposite signed subset.
-                
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -283,7 +283,7 @@ class SignedSubsetElement(SageObject):
     def __eq__(self, other):
         """
         Return whether two elements are equal.
-                        
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -305,7 +305,7 @@ class SignedSubsetElement(SageObject):
 
     def __ne__(self, other):
         """
-        Return whether two elements are not equal.        
+        Return whether two elements are not equal.
 
         EXAMPLES::
 
@@ -340,7 +340,7 @@ class SignedSubsetElement(SageObject):
         For an oriented matroid, we consider the empty set
         `\emptyset = (\emptyset,\emptyset)` to be a zero as
         it is the same as the all zero vector.
-        
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -353,8 +353,8 @@ class SignedSubsetElement(SageObject):
             sage: bool(E1)
             True
             sage: E3 = M.elements()[2]; E3
-            +: 
-            -: 
+            +:
+            -:
             0: 0,1,2
             sage: bool(E3)
             False
@@ -431,7 +431,7 @@ class SignedSubsetElement(SageObject):
     def __copy__(self):
         """
         Return a copy of the element.
-        
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -463,7 +463,7 @@ class SignedSubsetElement(SageObject):
         Return parent of ``self``.
 
         EXAMPLES::
-        
+
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
             sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
@@ -476,7 +476,7 @@ class SignedSubsetElement(SageObject):
     def to_list(self):
         """
         Convert object to a list.
-        
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -607,7 +607,7 @@ class SignedSubsetElement(SageObject):
 
         The separation set of two elements `X` and `Y`
         is given by `S(X, Y) = \left\{e \mid X(e) = -Y(e) \neq 0 \right\}`
-                
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -627,7 +627,7 @@ class SignedSubsetElement(SageObject):
         The reorientation of `X` by some `A \subseteq E` is
         the signed subset (covector) given by `{}_{-A}X` where
         `{}_{-A}X^+ = (X^+ \backslash A) \cup (X^- \cap A)` and similarly for
-        `{}_{-A}X^-`.  
+        `{}_{-A}X^-`.
 
         EXAMPLES::
 
@@ -694,7 +694,7 @@ class SignedSubsetElement(SageObject):
         Two elements `X` and `Y` are *conformal* if
         `S(X,Y) = \emptyset`. This is true if and only if `X^+ \subseteq Y^+`
         and `X^- \subseteq Y^-`.
-        
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -746,7 +746,7 @@ class SignedSubsetElement(SageObject):
         A signed subset `X` is a *restriction* of a signed subset `Y` if
         `X^+ \subseteq Y^+` and `X^- \subseteq Y^-`. If `X` is a restriction of
         `Y` we sometimes say `X` conforms to `Y`. This should not be mistaken
-        with *is conformal with*.  
+        with *is conformal with*.
 
         EXAMPLES::
 
@@ -805,7 +805,7 @@ class SignedSubsetElement(SageObject):
         elements. In other words, if `[0,T]` has `2^n` elements and
         the breadth of `[0,T]` is `n` then the interval is boolean
         and thus `T` is simplicial.
-        
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -832,7 +832,7 @@ class SignedSubsetElement(SageObject):
     def is_zero(self):
         """
         Return whether or not element is 0.
- 
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
