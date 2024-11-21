@@ -1651,7 +1651,7 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
 _db = None
 
 
-def CremonaDatabase(name=None,mini=None,set_global=None):
+def CremonaDatabase(name=None, mini=None, set_global=None):
     """
     Initialize the Cremona database with name ``name``. If ``name`` is
     ``None`` it instead initializes large Cremona database (named 'cremona'),

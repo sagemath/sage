@@ -14285,7 +14285,7 @@ class GenericGraph(GenericGraph_pyx):
                                  or (v, u) in edges_to_keep_unlabeled)):
                             edges_to_keep.append((u, v, l))
             else:
-                s_vertices = set(vertices)
+                s_vertices = set(G.vertices()) if vertices is None else set(vertices)
                 edges_to_keep = [e for e in self.edges(vertices=vertices, sort=False, sort_vertices=False)
                                  if e[0] in s_vertices and e[1] in s_vertices]
 
