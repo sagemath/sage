@@ -842,7 +842,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         cdef list indices = <list>sample(range(1, m+1), m)
 
         cdef unit = self.leading_coefficient()
-        cdef SkewPolynomial_finite_field_dense left = self._new_c(self._coeffs[:],skew_ring)
+        cdef SkewPolynomial_finite_field_dense left = self._new_c(self._coeffs[:], skew_ring)
         left = left.right_monic()
         cdef SkewPolynomial_finite_field_dense right = <SkewPolynomial_finite_field_dense>skew_ring.one()
         cdef SkewPolynomial_finite_field_dense L, R

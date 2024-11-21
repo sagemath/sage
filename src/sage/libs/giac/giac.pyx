@@ -642,7 +642,7 @@ cdef class GiacSetting(Pygen):
         def __get__(self):
             return (self.cas_setup()[6])._val
 
-        def __set__(self,value):
+        def __set__(self, value):
             l = Pygen('cas_setup()').eval()
             pl = [ i for i in l ]
             pl[6] = value
@@ -655,7 +655,7 @@ cdef class GiacSetting(Pygen):
         def __get__(self):
             return (self.cas_setup()[9])._val == 1
 
-        def __set__(self,value):
+        def __set__(self, value):
             l = Pygen('cas_setup()').eval()
             pl = [ i for i in l ]
             if value:
@@ -683,7 +683,7 @@ cdef class GiacSetting(Pygen):
         def __get__(self):
             return (self.cas_setup()[2])._val == 1
 
-        def __set__(self,value):
+        def __set__(self, value):
             l = Pygen('cas_setup()').eval()
             pl = [ i for i in l ]
             if value:
@@ -712,7 +712,7 @@ cdef class GiacSetting(Pygen):
         def __get__(self):
             return (self.cas_setup()[7][3])._val
 
-        def __set__(self,value):
+        def __set__(self, value):
             l = Pygen('cas_setup()').eval()
             pl = [ i for i in l ]
             pl[7] = [l[7][0],l[7][1],l[7][2], value]
@@ -736,7 +736,7 @@ cdef class GiacSetting(Pygen):
         def __get__(self):
             return (self.cas_setup()[5][1])._double
 
-        def __set__(self,value):
+        def __set__(self, value):
             l = Pygen('cas_setup()').eval()
             pl = [ i for i in l ]
             pl[5] = [l[5][0],value]
@@ -759,7 +759,7 @@ cdef class GiacSetting(Pygen):
         def __get__(self):
             return (self.cas_setup()[5][0])._double
 
-        def __set__(self,value):
+        def __set__(self, value):
             l = Pygen('cas_setup()').eval()
             pl = [ i for i in l ]
             pl[5] = [value,l[5][1]]
@@ -772,7 +772,7 @@ cdef class GiacSetting(Pygen):
         def __get__(self):
             return (self.cas_setup()[7][0])._val
 
-        def __set__(self,value):
+        def __set__(self, value):
             Pygen('threads:=%s' % str(value)).eval()
 
 ########################################################
@@ -1222,8 +1222,8 @@ cdef class Pygen(GiacMethods_base):
         return self
 
     # To be able to use the eval function before the GiacMethods initialisation
-    def cas_setup(self,*args):
-        return Pygen('cas_setup')(self,*args)
+    def cas_setup(self, *args):
+        return Pygen('cas_setup')(self, *args)
 
     def savegen(self, str filename):
         """
@@ -1337,7 +1337,7 @@ cdef class Pygen(GiacMethods_base):
         sig_off()
         return result
 
-    def _integer_(self,Z=None):
+    def _integer_(self, Z=None):
         """
         Convert giac integers or modular integers to sage Integers (via gmp).
 
@@ -1798,7 +1798,7 @@ cdef  vecteur _wrap_pylist(L) except +:
 #################################
 #  slice wrapper for a giac list
 #################################
-cdef  vecteur _getgiacslice(Pygen L,slice sl) except +:
+cdef  vecteur _getgiacslice(Pygen L, slice sl) except +:
     cdef vecteur  * V
     cdef int u
 
@@ -2038,7 +2038,7 @@ class GiacInstance:
     def __init__(self):
         self.__dict__.update(GiacMethods)
 
-    def __call__(self,s):
+    def __call__(self, s):
         return _giac(s)
 
     def _sage_doc_(self):

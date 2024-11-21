@@ -134,11 +134,11 @@ cdef class ntl_ZZ_pEContext_class():
         self.pc.restore_c()
         self.x.restore()
 
-    #def ZZ_pX(self,v = None):
+    #def ZZ_pX(self, v=None):
     #    from ntl_ZZ_pX import ntl_ZZ_pX
     #    return ntl_ZZ_pX(v,modulus=self)
 
-    def ZZ_pE(self, v = None):
+    def ZZ_pE(self, v=None):
         """
         Return a ZZ_pE object with modulus ``self`` out of the data v.
 
@@ -151,7 +151,7 @@ cdef class ntl_ZZ_pEContext_class():
         from sage.libs.ntl.ntl_ZZ_pE import ntl_ZZ_pE
         return ntl_ZZ_pE(v,modulus=self)
 
-    def ZZ_pEX(self, v = None):
+    def ZZ_pEX(self, v=None):
         """
         Return a ZZ_pE object with modulus ``self`` out of the data v.
 

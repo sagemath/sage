@@ -1372,7 +1372,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
                 h = matrix(m).echelon_form()
                 return cut_last_zero_rows(h)
 
-            def add(Ib,Jb):
+            def add(Ib, Jb):
                 m = block_matrix([[Ib], [Jb]])
                 h = m.echelon_form()
                 return cut_last_zero_rows(h)

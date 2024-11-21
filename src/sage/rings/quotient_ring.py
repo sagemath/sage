@@ -35,7 +35,7 @@ form of an element `x` with respect to `I` (i.e., we have
     ....:         self._power = n
     ....:         self._power = n
     ....:         Ideal_nc.__init__(self, R, [R.prod(m) for m in product(R.gens(), repeat=n)])
-    ....:     def reduce(self,x):
+    ....:     def reduce(self, x):
     ....:         R = self.ring()
     ....:         return add([c*R(m) for m,c in x if len(m)<self._power],R(0))
     sage: F.<x,y,z> = FreeAlgebra(QQ, 3)                                                # needs sage.combinat sage.modules
@@ -793,7 +793,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             return self.lifting_map()
         return self.lifting_map()(x)
 
-    def retract(self,x):
+    def retract(self, x):
         """
         The image of an element of the cover ring under the quotient map.
 

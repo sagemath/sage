@@ -36,6 +36,7 @@ AUTHORS:
 
 from typing import Optional
 import sage
+import platform
 import os
 import socket
 import sys
@@ -165,7 +166,6 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
 
 
 # system info
-UNAME = var("UNAME", os.uname()[0])
 HOSTNAME = var("HOSTNAME", socket.gethostname())
 LOCAL_IDENTIFIER = var("LOCAL_IDENTIFIER", "{}.{}".format(HOSTNAME, os.getpid()))
 

@@ -92,6 +92,19 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, gmp]
+  if name == 'evaluation_flint'
+    deps += [flint, mpfi]
+  elif name == 'polynomial_complex_arb'
+    deps += [flint, mpfi]
+  elif name == 'polynomial_real_mpfr_dense'
+    deps += [mpfr]
+  elif name == 'real_roots'
+    deps += [mpfi]
+  elif name == 'hilbert'
+    deps += [mpfi]
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
@@ -106,18 +119,7 @@ foreach name, pyx : extension_data
       inc_rings,
       inc_rings_finite,
     ],
-    dependencies: [
-      py_dep,
-      cypari2,
-      cysignals,
-      flint,
-      givaro,
-      gmp,
-      mpfi,
-      mpfr,
-      ntl,
-      pari,
-    ],
+    dependencies: deps,
   )
 endforeach
 

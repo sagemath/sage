@@ -25,7 +25,7 @@ AUTHORS:
 - Ben Hutz (2017) relocate code and create new class
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu.au>
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -34,8 +34,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.fields import Fields
 from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
@@ -255,7 +255,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             if isinstance(R, FiniteField):
                 return DynamicalSystem_affine_finite_field(polys, domain)
             return DynamicalSystem_affine_field(polys, domain)
-        elif isinstance(morphism_or_polys,(list, tuple)):
+        elif isinstance(morphism_or_polys, (list, tuple)):
             polys = list(morphism_or_polys)
         else:
             polys = [morphism_or_polys]
@@ -321,7 +321,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         L = polys_or_rat_fncts
         # Next attribute needed for _fast_eval and _fastpolys
         R = L[0].base_ring()
-        self._is_prime_finite_field = isinstance(R, FiniteField) and R.is_prime_field()
+        self._is_prime_finite_field = isinstance(R, FiniteField) and R.degree() == 1
         DynamicalSystem.__init__(self, L, domain)
 
     def __copy__(self):
@@ -535,7 +535,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         if isinstance(F.parent(), sage.rings.abc.SymbolicRing):
             from sage.symbolic.ring import var
             u = var(self.domain().coordinate_ring().variable_name())
-            return F.subs({F.variables()[0]:u,F.variables()[1]:1})
+            return F.subs({F.variables()[0]: u, F.variables()[1]: 1})
         elif T(F.denominator()).degree() == 0:
             R = F.parent()
             phi = R.hom([S.gen(0), 1], S)
@@ -543,7 +543,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         else:
             R = F.numerator().parent()
             phi = R.hom([S.gen(0), 1], S)
-            return phi(F.numerator())/phi(F.denominator())
+            return phi(F.numerator()) / phi(F.denominator())
 
     def nth_iterate_map(self, n):
         r"""
@@ -612,8 +612,8 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         for i in range(len(D)):
             for k in range(D[i]):
                 PHI = [poly(F) for poly in PHI]
-            if i != len(D)-1: #avoid extra iterate
-                F = [R(poly(F)) for poly in F] #'square'
+            if i != len(D) - 1:  # avoid extra iterate
+                F = [R(poly(F)) for poly in F]  # 'square'
         return DynamicalSystem_affine(PHI, domain=self.domain())
 
     def nth_iterate(self, P, n):
@@ -724,11 +724,11 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         if isinstance(n, (list, tuple)):
             bounds = list(n)
         else:
-            bounds = [0,n]
-        for i in range(1, bounds[0]+1):
+            bounds = [0, n]
+        for i in range(1, bounds[0] + 1):
             Q = self(Q)
         orb = [Q]
-        for i in range(bounds[0]+1, bounds[1]+1):
+        for i in range(bounds[0] + 1, bounds[1] + 1):
             Q = self(Q)
             orb.append(Q)
         return orb
@@ -802,7 +802,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         J = self.jacobian()
         for i in range(0, n):
             R = self(Q)
-            l = J(tuple(Q))*l #chain rule matrix multiplication
+            l = J(tuple(Q)) * l  # chain rule matrix multiplication
             Q = R
         return l
 

@@ -3520,7 +3520,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
             w = w.e(i)
             return P.element_class(P, (w, breaks))
 
-        def f(self,i):
+        def f(self, i):
             r"""
             Return `f_i` on ``self``.
 

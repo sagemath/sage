@@ -1261,7 +1261,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         gammaC = n+1-k-d
         return gammaC
 
-    def is_permutation_equivalent(self,other,algorithm=None):
+    def is_permutation_equivalent(self, other, algorithm=None):
         """
         Return ``True`` if ``self`` and ``other`` are permutation equivalent
         codes and ``False`` otherwise.

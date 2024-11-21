@@ -78,7 +78,7 @@ cdef class CategoryObject(SageObject):
     """
     An object in some category.
     """
-    def __init__(self, category = None, base = None):
+    def __init__(self, category=None, base=None):
         """
         Initialize an object in a category.
 
@@ -722,7 +722,7 @@ cdef class CategoryObject(SageObject):
 
         return d
 
-    def __setstate__(self,d):
+    def __setstate__(self, d):
         try:
             version = d['_pickle_version']
         except KeyError:

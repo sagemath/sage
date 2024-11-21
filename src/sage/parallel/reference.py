@@ -26,7 +26,7 @@ def parallel_iter(f, inputs):
 
     EXAMPLES::
 
-        sage: def f(N,M=10): return N*M
+        sage: def f(N, M=10): return N*M
         sage: inputs = [((2,3),{}),  (tuple(), {'M':5,'N':3}), ((2,),{})]
         sage: set_random_seed(0)
         sage: for a, val in sage.parallel.reference.parallel_iter(f, inputs):

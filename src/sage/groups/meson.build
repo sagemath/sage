@@ -43,7 +43,7 @@ foreach name, pyx : extension_data
     subdir: 'sage/groups',
     install: true,
     include_directories: [inc_cpython],
-    dependencies: [py_dep, gmp],
+    dependencies: [py_dep, gmp, gap],
   )
 endforeach
 

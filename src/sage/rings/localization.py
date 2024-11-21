@@ -685,9 +685,9 @@ class Localization(IntegralDomain, UniqueRepresentation):
             sage: L = R.localization(x**2 + 1)                                          # needs sage.libs.pari
             sage: TestSuite(L).run()
         """
-        if type(extra_units) is tuple:
+        if isinstance(extra_units, tuple):
             extra_units = list(extra_units)
-        if not type(extra_units) is list:
+        elif not isinstance(extra_units, list):
             extra_units = [extra_units]
 
         from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic

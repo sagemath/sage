@@ -29,7 +29,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
     cdef list _int_to_el
     cdef dict _el_to_int
     cpdef find(self, e)
-    cpdef void union(self, e, f) noexcept
+    cpdef void union(self, e, f) except *
     cpdef root_to_elements_dict(self)
     cpdef element_to_root_dict(self)
     cpdef to_digraph(self)

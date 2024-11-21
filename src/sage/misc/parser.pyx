@@ -204,7 +204,7 @@ cdef class Tokenizer:
             token = self.next()
         return all
 
-    cpdef reset(self, int pos = 0):
+    cpdef reset(self, int pos=0):
         """
         Reset the tokenizer to a given position.
 

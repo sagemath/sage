@@ -506,7 +506,7 @@ class Subsets_s(Parent):
         else:
             return Parent.__call__(self, el)
 
-    def _element_constructor_(self,X):
+    def _element_constructor_(self, X):
         """
         TESTS::
 
@@ -1148,7 +1148,7 @@ class SubMultiset_s(Parent):
         else:
             return Parent.__call__(self, el)
 
-    def _element_constructor_(self,X):
+    def _element_constructor_(self, X):
         """
         TESTS::
 
