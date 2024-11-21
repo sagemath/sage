@@ -417,13 +417,20 @@ To check that :issue:`27092` is fixed::
     2
 """
 
+import math
 import re
 from sage.arith.misc import algdep
+from sage.rings.complex_arb import ComplexBallField
+from sage.rings.complex_interval_field import ComplexIntervalField_class
+from sage.rings.complex_mpfr import ComplexField_class
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
+from sage.rings.real_arb import RealBallField
+from sage.rings.real_mpfi import RealIntervalField_class
 from sage.rings.real_double import RealDoubleElement
-from sage.rings.real_mpfr import RR, create_RealNumber
+from sage.rings.real_mpfr import RR, create_RealNumber, RealField_class
 from sage.rings.cc import CC
+from sage.structure.element import parent
 
 from sage.misc.latex import latex
 from sage.misc.parser import Parser, LookupNameMaker
@@ -1105,7 +1112,45 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
        Of course, failure to produce a minimal polynomial does not
        necessarily indicate that this number is transcendental.
     """
+    if isinstance(ex, Expression):
+        try:
+            ex = ex.pyobject()
+        except TypeError:
+            pass
+
     if algorithm is None or algorithm.startswith('numeric'):
+        def estimated_bit_length(f):
+            return sum(x.numer().bit_length() + x.denom().bit_length() + 1 for x in f)
+
+        if parent(ex) is float or isinstance(parent(ex),
+                                             (RealBallField, ComplexBallField, RealIntervalField_class,
+                                              ComplexIntervalField_class, RealField_class, ComplexField_class)):
+            best_f = None
+            cur_degree = degree or 2  # ``algdep(CC(I), 1)`` just return ``x``
+            prec = parent(ex).prec()
+            while True:
+                if best_f is not None and cur_degree > estimated_bit_length(best_f) / 4:
+                    break
+                if cur_degree > prec / 6:
+                    # experimentally algdep(RealField(500)(2^(1/100)), 100) returns the wrong answer
+                    break
+                try:
+                    f = algdep(ex, cur_degree)
+                except ValueError:
+                    pass
+                else:
+                    f = QQ[var](f)
+                    if best_f is None or estimated_bit_length(f) < estimated_bit_length(best_f):
+                        best_f = f
+                    if degree:
+                        # user-specified, do not try any other degree value
+                        break
+                cur_degree = math.ceil(cur_degree*1.2)
+
+            if best_f is not None:
+                return best_f
+            raise ValueError("Could not find minimal polynomial")
+
         bits_list = [bits] if bits else [100,200,500,1000]
         degree_list = [degree] if degree else [2,4,8,12,24]
 

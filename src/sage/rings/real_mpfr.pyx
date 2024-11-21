@@ -3932,6 +3932,29 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         return gmpy2.GMPy_MPFR_From_mpfr(self.value)
 
+    def minpoly(self, *args, **kwargs):
+        """
+        Finds some polynomial with integer coefficients that has a root
+        approximately equal to ``self``.
+
+        TESTS::
+
+            sage: RR(1).minpoly()
+            x - 1
+            sage: RR(1/2).minpoly()
+            2*x - 1
+            sage: RR(sqrt(2)).minpoly()
+            x^2 - 2
+            sage: RR(pi).minpoly()  # transcendental, might return arbitrary polynomial or error
+            6201*x^2 + 3606*x - 72530
+            sage: minpoly(RR(2^(1/50)))  # insufficient precision
+            x - 1
+            sage: minpoly(RealField(400)(2^(1/50)))
+            x^50 - 2
+        """
+        from sage.calculus.calculus import minpoly
+        return minpoly(self, *args, **kwargs)
+
     ###########################################
     # Comparisons: ==, !=, <, <=, >, >=
     ###########################################

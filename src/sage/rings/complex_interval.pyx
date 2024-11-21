@@ -2124,6 +2124,32 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         return ComplexBallField(self.prec())(self).zeta(a).\
             _complex_mpfi_(self._parent)
 
+    def minpoly(self, *args, **kwargs):
+        """
+        Finds some polynomial with integer coefficients that has a root inside the interval.
+
+        TESTS::
+
+            sage: CIF(1).minpoly()
+            x - 1
+            sage: CIF(1/2).minpoly()
+            2*x - 1
+            sage: CIF(sqrt(-1)).minpoly()
+            x^2 + 1
+            sage: CIF(sin(1)).minpoly()
+            Traceback (most recent call last):
+            ...
+            ValueError: Could not find minimal polynomial
+            sage: minpoly(CIF((-1)^(1/50)))  # insufficient precision
+            Traceback (most recent call last):
+            ...
+            ValueError: Could not find minimal polynomial
+            sage: minpoly(ComplexIntervalField(400)((-1)^(1/50)))
+            x^40 - x^30 + x^20 - x^10 + 1
+        """
+        from sage.calculus.calculus import minpoly
+        return minpoly(self, *args, **kwargs)
+
 cdef _negate_interval(mpfr_ptr xmin, mpfr_ptr xmax):
     """
     Negate interval with endpoints xmin and xmax in place.
