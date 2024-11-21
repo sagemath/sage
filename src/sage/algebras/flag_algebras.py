@@ -221,7 +221,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.algebras.flag import Flag, Pattern, possible_mergings
+from sage.algebras.flag import Flag, Pattern, inductive_generator
 
 from sage.categories.sets_cat import Sets
 
@@ -1710,12 +1710,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             # Not ftype generation needed, just generate inductively
             if run_bound==infinity or n<=3:
                 prev = self.generate_flags(n-1, run_bound=run_bound)
-                ret = possible_mergings(n, self, prev, self._signature, excluded)
+                ret = inductive_generator(n, self, prev, self._signature, excluded)
             else:
                 guess = self._guess_number(n)
                 if guess < run_bound:
                     prev = self.generate_flags(n-1, run_bound=run_bound)
-                    ret = possible_mergings(n, self, prev, self._signature, excluded)
+                    ret = inductive_generator(n, self, prev, self._signature, excluded)
                 else:
                     confirm = input("This might take a while: {}. Continue? y/n\n".format(guess))
                     if "y" in confirm.lower():

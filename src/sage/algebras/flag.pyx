@@ -23,33 +23,119 @@ from cysignals.signals cimport sig_check
 from sage.structure.element cimport Element
 from blisspy cimport canonical_form_from_edge_list, automorphism_group_gens_from_edge_list
 
+# Elementary block operations
 cdef tuple _subblock_helper(tuple points, tuple block):
     if len(block)==0:
         return tuple()
-    cdef bint gd = False
+    cdef set points_set = set(points)
+    cdef dict points_index = {p: i for i, p in enumerate(points)}
     cdef list ret = []
-    cdef int ii
+    cdef bint gd
+    cdef int yy
     for xx in block:
         gd = True
         for yy in xx:
-            if yy not in points:
+            if yy not in points_set:
                 gd = False
                 break
         if gd:
-            ret.append([points.index(ii) for ii in xx])
+            ret.append(tuple([points_index[yy] for yy in xx]))
     return tuple(ret)
 
-cdef bint _block_refinement(tuple block_flag, tuple block_pattern, tuple missing_pattern):
-    cdef tuple xx
-    for xx in block_pattern:
-        if xx not in block_flag:
-            return False
-    for xx in missing_pattern:
-        if xx in block_flag:
-            return False
-    return True
+cdef dict _merge_blocks(dict block0, dict block1):
+    cdef dict merged = {}
+    cdef str key
+    for key in block0:
+        merged[key] = tuple(itertools.chain(block0[key], block1[key]))
+    return merged
 
-cpdef tuple _single_relation(dict relation):
+cdef dict _perm_blocks(dict blocks, tuple perm):
+    cdef dict ret
+    cdef str xx
+    ret = {
+        xx: _subblock_helper(perm, blocks[xx]) 
+        for xx in blocks.keys()
+    }
+    return blocks
+
+cdef dict _standardize_blocks(dict blocks, dict signature, bint pattern):
+    cdef dict ret = {}
+    cdef str xx, kk
+    for xx in blocks:
+        if not pattern:
+            if signature[xx]["ordered"]:
+                ret[xx] = tuple(sorted([tuple(yy) for yy in blocks[xx]]))
+            else:
+                ret[xx] = tuple(sorted([tuple(sorted(yy)) for yy in blocks[xx]]))
+        else:
+            kk = xx
+            if xx not in signature:
+                kk = xx[:-2]
+            if signature[kk]["ordered"]:
+                ret[xx] = tuple(sorted([tuple(yy) for yy in blocks[xx]]))
+            else:
+                ret[xx] = tuple(sorted([tuple(sorted(yy)) for yy in blocks[xx]]))
+    return ret
+
+
+# Automorphism operations
+
+cdef set _generate_group(tuple generators, int n):
+    cdef set group = set()
+    cdef list to_check = [tuple(range(n))]
+    cdef tuple perm, gen, new_perm
+    cdef int i
+    try:
+        while to_check:
+            perm = to_check.pop()
+            if perm in group:
+                continue
+            group.add(perm)
+            for gen in generators:
+                new_perm = tuple(gen[perm[i]] for i in range(n))
+                if new_perm not in group:
+                    to_check.append(new_perm)
+    except:
+        print("error occurred with running this on ", generators, " n=", n)
+        raise RuntimeError("Stop here")
+    return group
+
+cdef list _compute_coset_reps(set G, set H, int n):
+    cdef list coset_reps = []
+    cdef tuple g, c, h_tuple
+    cdef int i
+    cdef bint in_existing_coset
+    cdef list h
+    for g in G:
+        in_existing_coset = False
+        for c in coset_reps:
+            h = [0] * n
+            for i in range(n):
+                h[c[i]] = g[i]
+            h_tuple = tuple(h)
+            if h_tuple in H:
+                in_existing_coset = True
+                break
+        if not in_existing_coset:
+            coset_reps.append(g)
+    return coset_reps
+
+# Helpers for the inductive generator
+
+cdef int _get_max_arity(dict signature, int n=1000):
+    cdef int max_arity = 0
+    cdef int curr_arity
+    cdef str xx
+    for xx in signature:
+        curr_arity = signature[xx]['arity']
+        if curr_arity<1 or curr_arity>3:
+            raise ValueError("For each relation, the arity must be between 1 and 3")
+        if curr_arity>n:
+            continue
+        max_arity = max(max_arity, curr_arity)
+    return max_arity
+
+cpdef tuple _get_single_extensions(dict relation):
     cdef int arity = relation['arity']
     cdef bint ordered = relation['ordered']
     cdef tuple base = tuple(range(arity))
@@ -65,20 +151,7 @@ cpdef tuple _single_relation(dict relation):
         [itertools.combinations(ord_base, r) for r in range(len(ord_base) + 1)]
     ))
 
-cdef int _get_max_arity(dict signature, int n=1000):
-    cdef int max_arity = 0
-    cdef int curr_arity
-    cdef str xx
-    for xx in signature:
-        curr_arity = signature[xx]['arity']
-        if curr_arity<1 or curr_arity>3:
-            raise ValueError("For each relation, the arity must be between 1 and 3")
-        if curr_arity>n:
-            continue
-        max_arity = max(max_arity, curr_arity)
-    return max_arity
-
-cdef tuple _get_extensions(dict signature, int arity):
+cdef tuple _get_all_extensions(dict signature, int arity):
     cdef list terms = []
     cdef str xx
 
@@ -86,7 +159,7 @@ cdef tuple _get_extensions(dict signature, int arity):
         if signature[xx]["arity"] != arity:
             terms.append(tuple([tuple()]))
         else:
-            terms.append(_single_relation(signature[xx]))
+            terms.append(_get_single_extensions(signature[xx]))
     
     cdef tuple poss
     cdef list ret = []
@@ -110,141 +183,35 @@ cdef bint _excluded_compatible(int n, Flag flag, tuple excluded, int max_signatu
                 return False
     return True
 
-cdef dict _merge_blocks_0(dict block0, dict block1):
-    cdef dict merged = {}
-    cdef str key
-    for key in block0:
-        merged[key] = tuple(itertools.chain(block0[key], block1[key]))
-    return merged
-
-cdef dict _merge_blocks_1(dict block0, dict block1, int from0, int to0):
-    cdef dict merged = {}
-    cdef str key
-    cdef object terms_remapped
-    cdef tuple term
-
-    for key in block0:
-        terms_remapped = (
-            tuple((xx if xx != from0 else to0) for xx in term)
-            for term in block1[key] if from0 in term
-        )
-        merged[key] = tuple(itertools.chain(block0[key], terms_remapped))
-    return merged
-
-cdef dict _merge_blocks_2(dict block0, dict block1, int from0, int to0, int from1, int to1):
-    cdef dict merged = {}
-    cdef str key
-    cdef object terms_remapped
-    cdef tuple term
-
-    for key in block0:
-        terms_remapped = (
-            tuple(
-                    (
-                    xx if (xx != from0 and xx != from1) else (to1 if xx == from1 else to0)
-                    )
-                    for xx in term
-                )
-            for term in block1[key] if 
-            (
-                from0 in term and from1 in term
-            )
-        )
-        merged[key] = tuple(itertools.chain(block0[key], terms_remapped))
-    return merged
-
-cdef dict _standardize_blocks(dict blocks, dict signature, bint pattern):
-    cdef dict ret = {}
-    cdef str xx, kk
-    for xx in blocks:
-        if not pattern:
-            if signature[xx]["ordered"]:
-                ret[xx] = tuple(sorted([tuple(yy) for yy in blocks[xx]]))
-            else:
-                ret[xx] = tuple(sorted([tuple(sorted(yy)) for yy in blocks[xx]]))
-        else:
-            kk = xx
-            if xx not in signature:
-                kk = xx[:-2]
-            if signature[kk]["ordered"]:
-                ret[xx] = tuple(sorted([tuple(yy) for yy in blocks[xx]]))
-            else:
-                ret[xx] = tuple(sorted([tuple(sorted(yy)) for yy in blocks[xx]]))
-    return ret
-
-cdef tuple _generate_all_relations(int n, dict relation):
-    cdef int arity = relation["arity"]
-    cdef bint is_ordered = relation["ordered"]
-    if is_ordered:
-        return tuple(itertools.permutations(range(n), r=arity))
-    return tuple(itertools.combinations(range(n), arity))
-
-cdef set _generate_group(tuple generators, int n):
-    cdef set group = set()
-    cdef list to_check = [tuple(range(n))]
-    cdef tuple perm, gen, new_perm
-    cdef int i
-    while to_check:
-        perm = to_check.pop()
-        if perm in group:
-            continue
-        group.add(perm)
-        for gen in generators:
-            new_perm = tuple(gen[perm[i]] for i in range(n))
-            if new_perm not in group:
-                to_check.append(new_perm)
-    return group
-
-cdef list _compute_coset_reps(set G, set H, int n):
-    cdef list coset_reps = []
-    cdef tuple g, c, h_tuple
-    cdef int i
-    cdef bint in_existing_coset
-    cdef list h
-    for g in G:
-        in_existing_coset = False
-        for c in coset_reps:
-            h = [0] * n
-            for i in range(n):
-                h[c[i]] = g[i]
-            h_tuple = tuple(h)
-            if h_tuple in H:
-                in_existing_coset = True
-                break
-        if not in_existing_coset:
-            coset_reps.append(g)
-    return coset_reps
-
-cpdef tuple possible_mergings(int n, theory, tuple smaller_structures, dict signature, tuple excluded):
-    cdef int max_arity = _get_max_arity(signature, n)
-    cdef tuple extensions = _get_extensions(signature, max_arity)
-    cdef dict ret = {}
-
-    cdef Flag F_subf, F_subf_m2, G_subf #each with size n-2
-    cdef Flag F, G, F_permed, G_permed, H_permed #each with size n-1
-    cdef Flag final_flag #each with size n
-    cdef tuple F_perms, G_perms, H_perms
-    cdef dict ext
-    cdef dict FG_overlap, FGH_overlap, final_overlap
-    cdef tuple all_perms
-    cdef tuple minustwo = tuple(list(range(n-2)) + [n-1])
+cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, dict signature, tuple excluded):
     
-    cdef int ii, jj, kk
-    cdef tuple patt
-
+    cdef int max_arity = _get_max_arity(signature, n)
+    #Handle the trivial case, when only the empty structure is possible
+    cdef dict final_overlap
     if max_arity==0:
-        #This essentially means all relation symbol is larger than size, 
-        #so just return the empty element
         final_overlap = {}
         for xx in signature:
             final_overlap[xx] = tuple()
         return tuple([Flag(theory, n, tuple(), **final_overlap)])
-    cdef int sslen = len(smaller_structures)
+    
+
+
+    #Handle the unary case
+    cdef Flag F, final_flag
+    cdef dict F_canonical_blocks
+
+    cdef tuple perm_0 = tuple([n-1] + list(range(n-1)))
+    cdef tuple extensions = _get_all_extensions(signature, max_arity)
+    cdef dict ext
+    cdef dict ret = {}
+    cdef tuple patt
+
     if max_arity==1:
         for F in smaller_structures:
+            F_canonical_blocks = _perm_blocks(F._blocks, perm_0)
             for ext in extensions:
                 sig_check()
-                final_overlap = _merge_blocks_0(F._blocks, ext)
+                final_overlap = _merge_blocks(F_canonical_blocks, ext)
                 final_flag = Flag(theory, n, tuple(), **final_overlap)
                 if _excluded_compatible(n, final_flag, excluded, 1):
                     patt = final_flag._relation_list()
@@ -252,28 +219,67 @@ cpdef tuple possible_mergings(int n, theory, tuple smaller_structures, dict sign
                         ret[patt] = [final_flag]
                     elif final_flag not in ret[patt]:
                         ret[patt].append(final_flag)
-    elif max_arity==2:
-        subf_classes = {}
-        for F in smaller_structures:
-            for missing_point in range(n-1):
-                sig_check()
-                S_F = [ii for ii in range(n-1) if ii!=missing_point]
-                F_subf = F.subflag(points=S_F)
-                F_subf_cosets = F._find_coset_representatives(F_subf, (missing_point, ))
-                F_subf_relabel = F_subf.unique()[1]
-                data = (F, S_F, missing_point, F_subf_cosets, F_subf_relabel)
-                if F_subf in subf_classes:
-                    subf_classes[F_subf].append(data)
-                else:
-                    subf_classes[F_subf] = [data]
-        for F_subf in subf_classes:
-            for ii,F_data in enumerate(subf_classes[F_subf]):
-                for G_data in subf_classes[F_subf][ii:]:
-                    for G_perm in G_data[3]:
-                        FG_overlap = merge_somehow(F_data, G_data, G_perm)
+        combined_tuple = tuple(itertools.chain.from_iterable(
+            [ret[key] for key in sorted(ret.keys())]
+        ))
+        return combined_tuple
+    
+
+
+    #General precalculation for the higher arity cases
+    cdef dict subf_classes, key_lookup
+    cdef int missing_point
+    cdef list included_points
+    cdef int ii
+    cdef Flag Fs, Fs_canonical, F_canonical
+    cdef tuple Fs_relabel, F_relabel
+    cdef list Fs_cosets
+
+    subf_classes = {}
+    key_lookup = {}
+
+
+    for F in smaller_structures:
+        for missing_point in range(n-1):
+            sig_check()
+            included_points = [ii for ii in range(n-1) if ii!=missing_point]
+            Fs = F.subflag(points=included_points)
+            
+            Fs_relabel = Fs.unique()[1]
+            Fs_canonical = Fs.subflag(points=Fs_relabel)
+
+            if Fs_canonical in key_lookup.keys():
+                Fs_canonical = key_lookup[Fs_canonical]
+            else:
+                key_lookup[Fs_canonical] = Fs_canonical
+                subf_classes[Fs_canonical] = []
+
+            F_relabel = tuple([missing_point] + [included_points[ii] for ii in Fs_relabel])
+            F_canonical = F.subflag(points=F_relabel)
+            
+            Fs_cosets = F_canonical._find_coset_representatives(Fs_canonical, (0, ))
+            subf_classes[Fs_canonical].append((F_canonical._blocks, Fs_cosets))
+
+    #Now do the calculation when max arity is 2
+    cdef dict G_canonical_blocks, FG_overlap
+    cdef tuple dummy_1
+    cdef tuple G_perm
+    cdef list G_perm_list
+
+    if max_arity==2:
+        for Fs_canonical in subf_classes:
+            for ii, (F_canonical_blocks, _) in enumerate(subf_classes[Fs_canonical]):
+
+                F_canonical_blocks = _perm_blocks(F_canonical_blocks, perm_0)
+                for G_canonical_blocks, Gs_cosets in subf_classes[Fs_canonical][ii:]:
+                    for G_perm in Gs_cosets:
+                        G_perm_list = list(G_perm)
+                        G_perm_list.insert(1, n-1)
+                        G_canonical_blocks = _perm_blocks(G_canonical_blocks, tuple(G_perm_list))
+                        FG_overlap = _merge_blocks(F_canonical_blocks, G_canonical_blocks)
                         for ext in extensions:
                             sig_check()
-                            final_overlap = merge_somehow(FG_overlap, ext)
+                            final_overlap = _merge_blocks(FG_overlap, ext)
                             final_flag = Flag(theory, n, tuple(), **final_overlap)
                             if _excluded_compatible(n, final_flag, excluded, 2):
                                 patt = final_flag._relation_list()
@@ -281,38 +287,10 @@ cpdef tuple possible_mergings(int n, theory, tuple smaller_structures, dict sign
                                     ret[patt] = [final_flag]
                                 elif final_flag not in ret[patt]:
                                     ret[patt].append(final_flag)
+    
     elif max_arity==3:
-        all_perms = tuple([F.nonequal_permutations(True) for F in smaller_structures])
-        for ii, F in enumerate(smaller_structures):
-            F_subf = F.subflag(range(n-2))
-            F_subf_m2 = F.subflag(minustwo)
-            for jj in range(ii, sslen):
-                G_perms = all_perms[jj]
-                for G_permed in G_perms:
-                    G_subf = G_permed.subflag(minustwo)
-                    if G_permed.subflag(range(n-2)).strong_equal(F_subf):
-                        FG_overlap = _merge_blocks_1(F._blocks, G_permed._blocks, n-2, n-1)
-                        
-                        #F and G_permed are compatible
-                        
-                        for kk in range(jj, sslen):
-                            for H_permed in all_perms[kk]:
-                                if G_subf.strong_equal(H_permed.subflag(minustwo)):
-                                    if F_subf_m2.strong_equal(H_permed.subflag(range(n-2))):
-                                        
-                                        #F, G_permed, H_permed are compatible
-                                        
-                                        FGH_overlap = _merge_blocks_2(FG_overlap, H_permed._blocks, n-2, n-1, n-3, n-2)
-                                        for ext in extensions:
-                                            sig_check()
-                                            final_overlap = _merge_blocks_0(FGH_overlap, ext)
-                                            final_flag = Flag(theory, n, tuple(), **final_overlap)
-                                            if _excluded_compatible(n, final_flag, excluded, 3):
-                                                patt = final_flag._relation_list()
-                                                if patt not in ret:
-                                                    ret[patt] = [final_flag]
-                                                elif final_flag not in ret[patt]:
-                                                    ret[patt].append(final_flag)
+        ret = {}
+    
     combined_tuple = tuple(itertools.chain.from_iterable(
         [ret[key] for key in sorted(ret.keys())]
     ))
@@ -546,8 +524,7 @@ cdef class Flag(Element):
         )
         cdef list new_edges = sorted(result[0])
         cdef tuple uniret = tuple([len(self.ftype_points()), weak] + new_edges)
-        cdef tuple relabel = result[1]
-        relabel = tuple([relabel[i] for i in range(self.size())])
+        cdef tuple relabel =tuple([result[1][i] for i in range(self.size())])
         cdef tuple ret = (uniret, relabel)
         if weak:
             self._weak_unique = ret
@@ -727,7 +704,11 @@ cdef class Flag(Element):
             symmetry_graph_data[4],
             symmetry_graph_data[5]
         )
-        self._automorphisms = _generate_group(result, self.size())
+        try:
+            self._automorphisms = _generate_group(result, self.size())
+        except:
+            print("The error occurred at ", self)
+            raise RuntimeError("Stop here")
         return self._automorphisms
 
     cdef list _find_coset_representatives(self, Flag subflag, tuple points_missing):
@@ -1325,6 +1306,24 @@ cdef class Flag(Element):
         oafae = safae.parent(other)
         return self.afae().density(oafae)
     
+
+
+cdef tuple _generate_all_relations(int n, dict relation):
+    cdef int arity = relation["arity"]
+    cdef bint is_ordered = relation["ordered"]
+    if is_ordered:
+        return tuple(itertools.permutations(range(n), r=arity))
+    return tuple(itertools.combinations(range(n), arity))
+
+cdef bint _block_refinement(tuple block_flag, tuple block_pattern, tuple missing_pattern):
+    cdef tuple xx
+    for xx in block_pattern:
+        if xx not in block_flag:
+            return False
+    for xx in missing_pattern:
+        if xx in block_flag:
+            return False
+    return True
 
 cdef class Pattern(Element):
     
