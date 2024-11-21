@@ -42,11 +42,15 @@ cdef tuple _subblock_helper(tuple points, tuple block):
             ret.append(tuple([points_index[yy] for yy in xx]))
     return tuple(ret)
 
-cdef dict _merge_blocks(dict block0, dict block1):
+cdef dict _merge_blocks(dict block0, dict block1, tuple only_include):
     cdef dict merged = {}
     cdef str key
+    cdef tuple tp
+    cdef int xx
     for key in block0:
-        merged[key] = tuple(itertools.chain(block0[key], block1[key]))
+        merged[key] = tuple(list(block0[key]) + [
+            tp for tp in block1[key] if all([(xx in tp) for xx in only_include])
+        ])
     return merged
 
 cdef dict _perm_blocks(dict blocks, tuple perm):
@@ -56,7 +60,7 @@ cdef dict _perm_blocks(dict blocks, tuple perm):
         xx: _subblock_helper(perm, blocks[xx]) 
         for xx in blocks.keys()
     }
-    return blocks
+    return ret
 
 cdef dict _standardize_blocks(dict blocks, dict signature, bint pattern):
     cdef dict ret = {}
@@ -168,7 +172,7 @@ cdef tuple _get_all_extensions(dict signature, int arity):
     return tuple(ret)
 
 cdef bint _excluded_compatible(int n, Flag flag, tuple excluded, int max_signature):
-    cdef list base_points = list(range(n-max_signature, n))
+    cdef list base_points = list(range(max_signature))
     cdef Flag fexclii
     cdef Pattern pexclii
     cdef tuple extra_points
@@ -178,13 +182,12 @@ cdef bint _excluded_compatible(int n, Flag flag, tuple excluded, int max_signatu
         sii = fexclii.size()
         if sii<max_signature:
             continue
-        for extra_points in itertools.combinations(range(n-max_signature), sii-max_signature):
+        for extra_points in itertools.combinations(range(max_signature, n), sii-max_signature):
             if flag.subflag(points=base_points+list(extra_points))==fexclii:
                 return False
     return True
 
 cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, dict signature, tuple excluded):
-    
     cdef int max_arity = _get_max_arity(signature, n)
     #Handle the trivial case, when only the empty structure is possible
     cdef dict final_overlap
@@ -211,7 +214,7 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, dict si
             F_canonical_blocks = _perm_blocks(F._blocks, perm_0)
             for ext in extensions:
                 sig_check()
-                final_overlap = _merge_blocks(F_canonical_blocks, ext)
+                final_overlap = _merge_blocks(F_canonical_blocks, ext, tuple())
                 final_flag = Flag(theory, n, tuple(), **final_overlap)
                 if _excluded_compatible(n, final_flag, excluded, 1):
                     patt = final_flag._relation_list()
@@ -226,7 +229,7 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, dict si
     
 
 
-    #General precalculation for the higher arity cases
+    #For the pre-calculation
     cdef dict subf_classes, key_lookup
     cdef int missing_point
     cdef list included_points
@@ -234,52 +237,56 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, dict si
     cdef Flag Fs, Fs_canonical, F_canonical
     cdef tuple Fs_relabel, F_relabel
     cdef list Fs_cosets
-
     subf_classes = {}
     key_lookup = {}
-
-
-    for F in smaller_structures:
-        for missing_point in range(n-1):
-            sig_check()
-            included_points = [ii for ii in range(n-1) if ii!=missing_point]
-            Fs = F.subflag(points=included_points)
-            
-            Fs_relabel = Fs.unique()[1]
-            Fs_canonical = Fs.subflag(points=Fs_relabel)
-
-            if Fs_canonical in key_lookup.keys():
-                Fs_canonical = key_lookup[Fs_canonical]
-            else:
-                key_lookup[Fs_canonical] = Fs_canonical
-                subf_classes[Fs_canonical] = []
-
-            F_relabel = tuple([missing_point] + [included_points[ii] for ii in Fs_relabel])
-            F_canonical = F.subflag(points=F_relabel)
-            
-            Fs_cosets = F_canonical._find_coset_representatives(Fs_canonical, (0, ))
-            subf_classes[Fs_canonical].append((F_canonical._blocks, Fs_cosets))
-
-    #Now do the calculation when max arity is 2
-    cdef dict G_canonical_blocks, FG_overlap
+    cdef set already_checked = set()
+    cdef Flag pointed_flag
+    
+    #For the merging
+    cdef dict G_canonical_blocks, FG_overlap, G_canonical_blocks_permed
     cdef tuple dummy_1
     cdef tuple G_perm
     cdef list G_perm_list
 
     if max_arity==2:
+        #Pre calculate the cosets
+        for F in smaller_structures:
+            for missing_point in range(n-1):
+                sig_check()
+                pointed_flag = F.subflag(ftype_points=[missing_point])
+                if pointed_flag in already_checked:
+                    continue
+                already_checked.add(pointed_flag)
+
+                included_points = [ii for ii in range(n-1) if ii!=missing_point]
+                Fs = F.subflag(points=included_points)
+                Fs_relabel = Fs.unique()[1]
+                Fs_canonical = Fs.subflag(points=Fs_relabel)
+
+                if Fs_canonical in key_lookup.keys():
+                    Fs_canonical = key_lookup[Fs_canonical]
+                else:
+                    key_lookup[Fs_canonical] = Fs_canonical
+                    subf_classes[Fs_canonical] = []
+
+                F_relabel = tuple([missing_point] + [included_points[ii] for ii in Fs_relabel])
+                F_canonical = F.subflag(points=F_relabel)
+                Fs_cosets = F_canonical._find_coset_representatives(Fs_canonical, (0, ))
+                subf_classes[Fs_canonical].append((F_canonical._blocks, Fs_cosets))
+
+        #Check ways to combine
         for Fs_canonical in subf_classes:
             for ii, (F_canonical_blocks, _) in enumerate(subf_classes[Fs_canonical]):
-
                 F_canonical_blocks = _perm_blocks(F_canonical_blocks, perm_0)
                 for G_canonical_blocks, Gs_cosets in subf_classes[Fs_canonical][ii:]:
                     for G_perm in Gs_cosets:
                         G_perm_list = list(G_perm)
                         G_perm_list.insert(1, n-1)
-                        G_canonical_blocks = _perm_blocks(G_canonical_blocks, tuple(G_perm_list))
-                        FG_overlap = _merge_blocks(F_canonical_blocks, G_canonical_blocks)
+                        G_canonical_blocks_permed = _perm_blocks(G_canonical_blocks, tuple(G_perm_list))
+                        FG_overlap = _merge_blocks(F_canonical_blocks, G_canonical_blocks_permed, (0, ))
                         for ext in extensions:
                             sig_check()
-                            final_overlap = _merge_blocks(FG_overlap, ext)
+                            final_overlap = _merge_blocks(FG_overlap, ext, tuple())
                             final_flag = Flag(theory, n, tuple(), **final_overlap)
                             if _excluded_compatible(n, final_flag, excluded, 2):
                                 patt = final_flag._relation_list()
@@ -412,7 +419,7 @@ cdef class Flag(Element):
     cpdef dict signature(self):
         return self.theory().signature()
 
-    cpdef dict blocks(self, key=None):
+    cpdef blocks(self, key=None):
         r"""
         Returns the blocks
 
@@ -525,6 +532,7 @@ cdef class Flag(Element):
         cdef list new_edges = sorted(result[0])
         cdef tuple uniret = tuple([len(self.ftype_points()), weak] + new_edges)
         cdef tuple relabel =tuple([result[1][i] for i in range(self.size())])
+        relabel = tuple([relabel.index(ii) for ii in range(self.size())])
         cdef tuple ret = (uniret, relabel)
         if weak:
             self._weak_unique = ret
