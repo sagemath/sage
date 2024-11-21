@@ -1,7 +1,7 @@
 r"""
 Quantum-valued polynomial rings
 
-This provide a `q`-analogue of the :class:`~sage.rings.polynomials.integer_valued_polynomials.IntegerValuedPolynomialRing`.
+This provides a `q`-analogue of the :class:`~sage.rings.polynomials.integer_valued_polynomials.IntegerValuedPolynomialRing`.
 
 AUTHORS:
 
@@ -180,7 +180,23 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
         S[0] - (1/2*q^-3)*S[2] + (1/2*q^-4+q^-3+q^-2+1/2*q^-1)*S[3]
         - (1/2*q^-4+1/2*q^-3+q^-2+1/2*q^-1+1/2)*S[4]
     """
-    def __init__(self, R, q=None) -> None:
+    @staticmethod
+    def __classcall_private__(cls, R, q=None) -> None:
+        """
+        Normalize the input.
+        """
+        if R not in Rings().Commutative():
+            msg = "argument R must be a commutative ring"
+            raise TypeError(msg)
+
+        if q is None:
+            laurent = LaurentPolynomialRing(R, 'q')
+            q = laurent.gen()
+        else:
+            laurent = q.parent()
+        return super().__classcall__(cls, laurent, q)
+
+    def __init__(self, R, q) -> None:
         r"""
         Initialize ``self``.
 
@@ -201,21 +217,10 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
             ...
             TypeError: argument R must be a commutative ring
         """
-        if R not in Rings().Commutative():
-            msg = "argument R must be a commutative ring"
-            raise TypeError(msg)
-
-        if q is None:
-            laurent = LaurentPolynomialRing(R, 'q')
-            self._ground_ring = R
-            self._q = laurent.gen()
-        else:
-            laurent = q.parent()
-            self._ground_ring = laurent.base_ring()
-            self._q = q
-
-        cat = Algebras(laurent).Commutative().WithBasis()
-        Parent.__init__(self, base=laurent, category=cat.WithRealizations())
+        self._ground_ring = R.base_ring()
+        self._q = q
+        cat = Algebras(R).Commutative().WithBasis()
+        Parent.__init__(self, base=R, category=cat.WithRealizations())
 
     _shorthands = ["B", "S"]
 
