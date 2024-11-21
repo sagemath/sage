@@ -384,11 +384,12 @@ def eisenstein_series_lseries(weight, prec=53,
                               max_imaginary_part=0,
                               max_asymp_coeffs=40):
     r"""
-    Return the `L`-series of the weight `2k` Eisenstein series
+    Return the `L`-series of the weight `2k` Eisenstein series `E_{2k}`
     on `\SL_2(\ZZ)`.
 
     This actually returns an interface to Tim Dokchitser's program
-    for computing with the `L`-series of the Eisenstein series
+    for computing with the `L`-series of the Eisenstein series.
+    See :class:`~sage.lfunctions.dokchitser.Dokchitser`.
 
     INPUT:
 
@@ -400,18 +401,22 @@ def eisenstein_series_lseries(weight, prec=53,
 
     - ``max_asymp_coeffs`` -- integer
 
-    OUTPUT: the `L`-series of the Eisenstein series
+    OUTPUT: the `L`-series of the Eisenstein series. This can be
+    evaluated at argument `s`, or have
+    :meth:`~sage.lfunctions.dokchitser.Dokchitser.derivative` called, etc.
 
     EXAMPLES:
 
     We compute with the `L`-series of `E_{16}` and then `E_{20}`::
 
-       sage: L = eisenstein_series_lseries(16)
-       sage: L(1)
-       -0.291657724743874
-      sage: L = eisenstein_series_lseries(20)
-       sage: L(2)
-       -5.02355351645998
+        sage: L = eisenstein_series_lseries(16)
+        sage: L(1)
+        -0.291657724743874
+        sage: L.derivative(1)
+        0.0756072194360656
+        sage: L = eisenstein_series_lseries(20)
+        sage: L(2)
+        -5.02355351645998
 
     Now with higher precision::
 
