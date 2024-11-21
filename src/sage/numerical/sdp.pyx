@@ -459,7 +459,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         return self._backend.base_ring()
 
-    def set_problem_name(self,name):
+    def set_problem_name(self, name):
         r"""
         Set the name of the ``SemidefiniteProgram``.
 
@@ -1049,7 +1049,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         return self._backend.slack(i, sparse=sparse)
 
-    def solver_parameter(self, name, value = None):
+    def solver_parameter(self, name, value=None):
         """
         Return or define a solver parameter.
 

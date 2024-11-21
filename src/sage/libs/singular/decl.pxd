@@ -983,7 +983,7 @@ cdef extern from "singular/Singular/libsingular.h":
     void setFlag(leftv *A, int F)
     void resetFlag(leftv *A, int F)
 
-    ctypedef number* (*nMapFunc)(number *c,const n_Procs_s* src,const n_Procs_s* dst)
+    ctypedef number* (*nMapFunc)(number *c, const n_Procs_s* src, const n_Procs_s* dst)
 
 cdef extern from "singular/coeffs/coeffs.h":
 

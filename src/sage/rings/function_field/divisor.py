@@ -922,7 +922,7 @@ class FunctionFieldDivisor(ModuleElement):
                 if e != 0:
                     return (i,e.numerator().degree() - e.denominator().degree())
 
-        def greater(v,w): # v and w are not equal
+        def greater(v, w): # v and w are not equal
             return v[0] < w[0] or v[0] == w[0] and v[1] > w[1]
 
         # collate rows by their pivot position

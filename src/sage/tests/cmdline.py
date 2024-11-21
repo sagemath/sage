@@ -776,4 +776,13 @@ def test_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False
                 p.stderr.close()
             err.append(s)
 
-    return (''.join(out), ''.join(err), p.wait())
+    # In case out or err contains a quoted string, force the use of
+    # double quotes so that the output is enclosed in single
+    # quotes. This avoids some doctest failures with some versions of
+    # OS X and Xcode.
+    out = ''.join(out)
+    out = out.replace("'", '"')
+    err = ''.join(err)
+    err = err.replace("'", '"')
+
+    return (out, err, p.wait())

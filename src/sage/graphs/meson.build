@@ -36,6 +36,7 @@ py.install_sources(
   'isgci.py',
   'lovasz_theta.py',
   'matching.py',
+  'matching_covered_graph.py',
   'mcqd.pxd',
   'orientations.py',
   'partial_cube.py',

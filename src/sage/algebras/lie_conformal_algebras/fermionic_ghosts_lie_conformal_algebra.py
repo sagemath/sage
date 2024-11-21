@@ -72,7 +72,7 @@ class FermionicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
         sage: R.structure_coefficients()
         Finite family {('a', 'c'): ((0, K),),  ('b', 'd'): ((0, K),),  ('c', 'a'): ((0, K),),  ('d', 'b'): ((0, K),)}
     """
-    def __init__(self,R,ngens=2,names=None,index_set=None):
+    def __init__(self, R, ngens=2, names=None, index_set=None):
         """
         Initialize ``self``.
 

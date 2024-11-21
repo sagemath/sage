@@ -246,7 +246,7 @@ class SchemeMorphism(Element):
         converter = D._internal_coerce_map_from(P)
         if converter is None:
             try:
-                return self.pushforward(x,*args,**kwds)
+                return self.pushforward(x, *args, **kwds)
             except (AttributeError, TypeError, NotImplementedError):
                 pass # raise TypeError, "%s must be coercible into %s"%(x, self.domain())
             # Here, we would like to do

@@ -321,7 +321,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         g = polygon2d([(x0, y0), (x1, y0), (x1, y1), (x0, y1), (x0, y0)],
                 thickness=pointsize/4, **kwds)
         # Nearly empty polygons don't show up.
-        g += self.center().plot(pointsize= pointsize, **kwds)
+        g += self.center().plot(pointsize=pointsize, **kwds)
         return g
 
     def _latex_(self):

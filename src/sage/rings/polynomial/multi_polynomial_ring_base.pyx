@@ -392,21 +392,21 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         EXAMPLES::
 
-            sage: def F(a,b,c):
+            sage: def F(a, b, c):
             ....:     return a^3*b + b + c^2 + 25
             ....:
             sage: R.<x,y,z> = PolynomialRing(QQ)
             sage: R.interpolation(4, F)                                                 # needs sage.modules
             x^3*y + z^2 + y + 25
 
-            sage: def F(a,b,c):
+            sage: def F(a, b, c):
             ....:     return a^3*b + b + c^2 + 25
             ....:
             sage: R.<x,y,z> = PolynomialRing(QQ)
             sage: R.interpolation([3,1,2], F)                                           # needs sage.modules
             x^3*y + z^2 + y + 25
 
-            sage: def F(a,b,c):
+            sage: def F(a, b, c):
             ....:     return a^3*b + b + c^2 + 25
             ....:
             sage: R.<x,y,z> = PolynomialRing(QQ)
@@ -444,7 +444,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
             as well. So if you give wrong bounds, you will get a wrong answer
             without any warning. ::
 
-                sage: def F(a,b,c):
+                sage: def F(a, b, c):
                 ....:     return a^3*b + b + c^2 + 25
                 ....:
                 sage: R.<x,y,z> = PolynomialRing(QQ)

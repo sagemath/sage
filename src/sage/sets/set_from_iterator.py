@@ -39,7 +39,7 @@ The module also provides decorator for functions and methods::
     sage: from sage.sets.set_from_iterator import set_from_method
     sage: class A:
     ....:     @set_from_method
-    ....:     def f(self,n):
+    ....:     def f(self, n):
     ....:         return xsrange(n)
     sage: a = A()
     sage: a.f(3)
@@ -776,7 +776,7 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
             sage: from sage.sets.set_from_iterator import set_from_method
             sage: class A:
             ....:  @set_from_method(name = lambda self,n: str(self)*n)
-            ....:  def f(self,n):
+            ....:  def f(self, n):
             ....:      return xsrange(n)
             ....:  def __repr__(self):
             ....:      return "A"

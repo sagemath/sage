@@ -1177,7 +1177,7 @@ class GaloisGroup(SageObject):
         """
         EXAMPLES::
 
-            sage: E = EllipticCurve('389a'); F= E.heegner_point(-7,5).ring_class_field()
+            sage: E = EllipticCurve('389a'); F = E.heegner_point(-7,5).ring_class_field()
             sage: G = F.galois_group(F.quadratic_field())
             sage: G[0]
             Class field automorphism defined by x^2 + x*y + 44*y^2
@@ -1666,7 +1666,7 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('389a'); F= E.heegner_point(-20,3).ring_class_field()
+            sage: E = EllipticCurve('389a'); F = E.heegner_point(-20,3).ring_class_field()
             sage: G = F.galois_group(F.quadratic_field())
             sage: G[1].ideal()
             Fractional ideal (2, 1/2*sqrt_minus_20 + 1)
@@ -4283,7 +4283,7 @@ class KolyvaginPoint(HeegnerPoint):
             if not P:
                 # point at infinity
                 return Graphics()
-            return point((P[0].real(), P[1].real()),*args, **kwds)
+            return point((P[0].real(), P[1].real()), *args, **kwds)
         else:
             raise NotImplementedError
 

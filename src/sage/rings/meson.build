@@ -1,5 +1,3 @@
-pthread = cc.find_library('pthread')
-
 py.install_sources(
   'abc.pxd',
   'algebraic_closure_finite_field.py',
@@ -124,6 +122,43 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, gmp]
+  if name == 'complex_arb'
+    deps += [
+      flint,
+      mpfi,
+      gsl,  # Runtime dependency
+    ]
+  elif name == 'complex_conversion'
+    deps += [gsl, mpfr]
+  elif name == 'complex_double'
+    deps += [gmpy2, gsl]
+  elif name == 'complex_interval'
+    deps += [
+      mpfi,
+      flint,  # Runtime dependency
+    ]
+  elif name == 'complex_mpc'
+    deps += [gmpy2, mpfr, mpc]
+  elif name == 'complex_mpfr'
+    deps += [gmpy2, mpfr]
+  elif name == 'factorint_flint'
+    deps += [flint]
+  elif name == 'integer'
+    deps += [gmpy2]
+  elif name == 'power_series_pari'
+    deps += [cypari2]
+  elif name == 'real_arb'
+    deps += [flint, mpfi]
+  elif name == 'real_double'
+    deps += [gmpy2]
+  elif name == 'real_double_element_gsl'
+    deps += [gsl]
+  elif name == 'real_mpfi'
+    deps += [mpfi]
+  elif name == 'real_mpfr'
+    deps += [gmpy2, mpfr]
+  endif
   py.extension_module(
     name,
     sources: pyx,
@@ -138,22 +173,7 @@ foreach name, pyx : extension_data
       inc_rings,
       inc_rings_finite,
     ],
-    dependencies: [
-      py_dep,
-      cypari2,
-      cysignals,
-      flint,
-      gmp,
-      gmpy2,
-      gsl,
-      m,
-      mpc,
-      mpfi,
-      mpfr,
-      ntl,
-      pari,
-      pthread,
-    ],
+    dependencies: deps,
   )
 endforeach
 
@@ -170,6 +190,17 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  deps = [py_dep, cysignals, gmp]
+  if name == 'bernmm'
+    deps += [ntl]
+  elif name == 'bernoulli_mod_p'
+    deps += [ntl]
+  elif name == 'fraction_field_FpT'
+    deps += [flint]
+  elif name == 'rational'
+    deps += [gmpy2]
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
@@ -186,22 +217,7 @@ foreach name, pyx : extension_data_cpp
       inc_rings,
       inc_rings_finite,
     ],
-    dependencies: [
-      py_dep,
-      cypari2,
-      cysignals,
-      flint,
-      gmp,
-      gmpy2,
-      gsl,
-      m,
-      mpc,
-      mpfi,
-      mpfr,
-      ntl,
-      pari,
-      pthread,
-    ],
+    dependencies: deps,
   )
 endforeach
 

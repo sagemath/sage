@@ -70,12 +70,6 @@ SAGE_SPKG_CONFIGURE([python3], [
           sage_spkg_install_python3=yes
       ])
     ])
-    AS_CASE([$host],
-            [*-*-cygwin*], [AS_VAR_IF([sage_spkg_install_python3], [yes], [
-                                AS_VAR_APPEND([SAGE_SPKG_ERRORS], ["
-  On Cygwin, python3 must be installed as a system package. This is an error."])
-                            ])
-                           ])
 ],, [
     dnl PRE
 ], [
