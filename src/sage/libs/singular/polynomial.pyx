@@ -254,45 +254,51 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
 
         sage: (2/3*x^2 + 1/2*y + 3) > (2/3*x^2 + 1/4*y + 10)
         True
+
+    TESTS:
+
+    Ensure comparison is transitive::
+
+        sage: P.<x, y> = GF(5)[]
+        sage: P(1)>P(4)
+        False
+        sage: P(4)>P(2)
+        True
+        sage: P(2)>P(1)
+        True
+
+    More tests for :issue:`35681`::
+
+        sage: P.<x, y> = ZZ[]
+        sage: P(0) > P(-1)
+        True
     """
     cdef number *h
-    cdef int ret = 0
+    cdef int ret
 
     if r != currRing:
         rChangeCurrRing(r)
 
-    # handle special cases first (slight slowdown, as special cases
-    # are - well - special
-    if p == NULL:
-        if q == NULL:
-            # compare 0, 0
-            return 0
-        elif p_IsConstant(q,r):
-            # compare 0, const
-            return 1-2*r.cf.cfGreaterZero(p_GetCoeff(q,r), r.cf) # -1: <, 1: > #
-    elif q == NULL:
-        if p_IsConstant(p,r):
-            # compare const, 0
-            return -1+2*r.cf.cfGreaterZero(p_GetCoeff(p,r), r.cf) # -1: <, 1: >
-
-    while ret==0 and p!=NULL and q!=NULL:
+    while p!=NULL and q!=NULL:
         ret = p_Cmp( p, q, r)
+        if ret != 0:
+            return ret
 
-        if ret==0:
-            h = r.cf.cfSub(p_GetCoeff(p, r),p_GetCoeff(q, r),r.cf)
-            # compare coeffs
-            ret = -1+r.cf.cfIsZero(h,r.cf)+2*r.cf.cfGreaterZero(h, r.cf) # -1: <, 0:==, 1: >
-            n_Delete(&h, r.cf)
+        # compare coeffs
+        ret = (-1+r.cf.cfEqual(p_GetCoeff(p, r),p_GetCoeff(q, r),r.cf)
+               +2*r.cf.cfGreater(p_GetCoeff(p, r),p_GetCoeff(q, r),r.cf)) # -1: <, 0:==, 1: >
+        if ret != 0:
+            return ret
+
         p = pNext(p)
         q = pNext(q)
 
-    if ret==0:
-        if p==NULL and q != NULL:
-            ret = -1
-        elif p!=NULL and q==NULL:
-            ret = 1
+    if p==NULL and q != NULL:
+        return 1-2*r.cf.cfGreaterZero(p_GetCoeff(q,r), r.cf) # -1: <, 1: >
+    elif p!=NULL and q==NULL:
+        return -1+2*r.cf.cfGreaterZero(p_GetCoeff(p,r), r.cf)
 
-    return ret
+    return 0
 
 cdef int singular_polynomial_mul(poly** ret, poly *p, poly *q, ring *r) except -1:
     """
