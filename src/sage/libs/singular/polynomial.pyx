@@ -279,26 +279,24 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
     if r != currRing:
         rChangeCurrRing(r)
 
-    while p!=NULL and q!=NULL:
+    while True:
+        if p == NULL:
+            if q == NULL:
+                return 0
+            return -1 if r.cf.cfGreaterZero(p_GetCoeff(q,r), r.cf) else 1
+        elif q == NULL:
+            return 1 if r.cf.cfGreaterZero(p_GetCoeff(p,r), r.cf) else -1
+
         ret = p_Cmp( p, q, r)
         if ret != 0:
             return ret
 
         # compare coeffs
-        ret = (-1+r.cf.cfEqual(p_GetCoeff(p, r),p_GetCoeff(q, r),r.cf)
-               +2*r.cf.cfGreater(p_GetCoeff(p, r),p_GetCoeff(q, r),r.cf)) # -1: <, 0:==, 1: >
-        if ret != 0:
-            return ret
+        if not r.cf.cfEqual(p_GetCoeff(p, r),p_GetCoeff(q, r),r.cf):
+            return 1 if r.cf.cfGreater(p_GetCoeff(p, r),p_GetCoeff(q, r),r.cf) else -1
 
         p = pNext(p)
         q = pNext(q)
-
-    if p==NULL and q != NULL:
-        return 1-2*r.cf.cfGreaterZero(p_GetCoeff(q,r), r.cf) # -1: <, 1: >
-    elif p!=NULL and q==NULL:
-        return -1+2*r.cf.cfGreaterZero(p_GetCoeff(p,r), r.cf)
-
-    return 0
 
 cdef int singular_polynomial_mul(poly** ret, poly *p, poly *q, ring *r) except -1:
     """
