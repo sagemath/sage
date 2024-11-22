@@ -212,14 +212,13 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
         sage: T1 * L1 * T2 * L3 * T1 * T2
         -(q-q^2)*L2*L3*T[2] + q*L1*L2*T[2,1] - (1-q)*L1*L2*T[2,1,2]
         sage: L1^3
-        u0*u1*u2 + ((-u0*u1-u0*u2-u1*u2))*L1 + ((u0+u1+u2))*L1^2
+        u0*u1*u2 - ((u0*u1+u0*u2+u1*u2))*L1 + ((u0+u1+u2))*L1^2
         sage: L3 * L2 * L1
         L1*L2*L3
         sage: u = LT.u()
         sage: q = LT.q()
         sage: (q + 2*u[0]) * (T1 * T2) * L3
-        (-2*u0+(2*u0-1)*q+q^2)*L3*T[1] + (-2*u0+(2*u0-1)*q+q^2)*L2*T[2]
-         + (2*u0+q)*L1*T[1,2]
+        -(2*u0+(-2*u0+1)*q-q^2)*L3*T[1] - (2*u0+(-2*u0+1)*q-q^2)*L2*T[2] + (2*u0+q)*L1*T[1,2]
 
     We check the defining relations::
 
@@ -789,11 +788,9 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
 
                 sage: LT = algebras.ArikiKoike(1, 3).LT()
                 sage: LT.L(2)
-                u + (-u*q^-1+u)*T[1]
+                u - (u*q^-1-u)*T[1]
                 sage: LT.L()
-                [u,
-                 u + (-u*q^-1+u)*T[1],
-                 u + (-u*q^-1+u)*T[2] + (-u*q^-2+u*q^-1)*T[2,1,2]]
+                [u, u - (u*q^-1-u)*T[1], u - (u*q^-1-u)*T[2] - (u*q^-2-u*q^-1)*T[2,1,2]]
             """
             G = self.algebra_generators()
             if i is None:
@@ -824,15 +821,14 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 sage: L1^2 * T1 * L1^2 * T1
                 q*L1^2*L2^2 + (1-q)*L1^3*L2*T[1]
                 sage: L1^3 * T1 * L1^2 * T1
-                (-u0*u1*u2*u3+u0*u1*u2*u3*q)*L2*T[1]
+                -(u0*u1*u2*u3-u0*u1*u2*u3*q)*L2*T[1]
                  + ((u0*u1*u2+u0*u1*u3+u0*u2*u3+u1*u2*u3)+(-u0*u1*u2-u0*u1*u3-u0*u2*u3-u1*u2*u3)*q)*L1*L2*T[1]
-                 + ((-u0*u1-u0*u2-u1*u2-u0*u3-u1*u3-u2*u3)+(u0*u1+u0*u2+u1*u2+u0*u3+u1*u3+u2*u3)*q)*L1^2*L2*T[1]
+                 - ((u0*u1+u0*u2+u1*u2+u0*u3+u1*u3+u2*u3)+(-u0*u1-u0*u2-u1*u2-u0*u3-u1*u3-u2*u3)*q)*L1^2*L2*T[1]
                  + ((u0+u1+u2+u3)+(-u0-u1-u2-u3)*q)*L1^3*L2*T[1] + q*L1^3*L2^2
 
                 sage: L1^2 * T1 * L1^3 * T1
-                (-u0*u1*u2*u3+u0*u1*u2*u3*q)*L2*T[1]
-                 + ((u0*u1*u2+u0*u1*u3+u0*u2*u3+u1*u2*u3)+(-u0*u1*u2-u0*u1*u3-u0*u2*u3-u1*u2*u3)*q)*L1*L2*T[1]
-                 + ((-u0*u1-u0*u2-u1*u2-u0*u3-u1*u3-u2*u3)+(u0*u1+u0*u2+u1*u2+u0*u3+u1*u3+u2*u3)*q)*L1^2*L2*T[1]
+                -(u0*u1*u2*u3-u0*u1*u2*u3*q)*L2*T[1]
+                 + ((u0*u1*u2+u0*u1*u3+u0*u2*u3+u1*u2*u3)+(-u0*u1*u2-u0*u1*u3-u0*u2*u3-u1*u2*u3)*q)*L1*L2*T[1] - ((u0*u1+u0*u2+u1*u2+u0*u3+u1*u3+u2*u3)+(-u0*u1-u0*u2-u1*u2-u0*u3-u1*u3-u2*u3)*q)*L1^2*L2*T[1]
                  + q*L1^2*L2^3
                  + ((u0+u1+u2+u3)+(-u0-u1-u2-u3)*q)*L1^3*L2*T[1]
                  + (1-q)*L1^3*L2^2*T[1]
@@ -1063,7 +1059,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     sage: H = algebras.ArikiKoike(3, 2).LT()
                     sage: L2 = H.L(2)
                     sage: H._Li_power(2, 4)
-                    ((u0^2*u1*u2+u0*u1^2*u2+u0*u1*u2^2)) + ...
+                    ((u0^2*u1*u2+u0*u1^2*u2+u0*u1*u2^2)) ...
                      - (q^-1-1)*L1*L2^3*T[1] ...
                      - (q^-1-1)*L1^3*L2*T[1]
                     sage: H._Li_power(2, 4) == L2^4
@@ -1080,20 +1076,20 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 L_1^0 = 1
                 L_1^1 = L1
                 L_1^2 = L1^2
-                L_1^3 = u0*u1*u2 + ((-u0*u1-u0*u2-u1*u2))*L1 + ((u0+u1+u2))*L1^2
+                L_1^3 = u0*u1*u2 - ((u0*u1+u0*u2+u1*u2))*L1 + ((u0+u1+u2))*L1^2
                 L_2^0 = 1
                 L_2^1 = L2
                 L_2^2 = L2^2
-                L_2^3 = u0*u1*u2 + (-u0*u1*u2*q^-1+u0*u1*u2)*T[1]
-                 + ((-u0*u1-u0*u2-u1*u2))*L2 + ((u0+u1+u2))*L2^2
+                L_2^3 = u0*u1*u2 - (u0*u1*u2*q^-1-u0*u1*u2)*T[1]
+                 - ((u0*u1+u0*u2+u1*u2))*L2 + ((u0+u1+u2))*L2^2
                  + ((u0+u1+u2)*q^-1+(-u0-u1-u2))*L1*L2*T[1]
                  - (q^-1-1)*L1*L2^2*T[1] - (q^-1-1)*L1^2*L2*T[1]
                 L_3^0 = 1
                 L_3^1 = L3
                 L_3^2 = L3^2
-                L_3^3 = u0*u1*u2 + (-u0*u1*u2*q^-1+u0*u1*u2)*T[2]
-                + (-u0*u1*u2*q^-2+u0*u1*u2*q^-1)*T[2,1,2]
-                + ((-u0*u1-u0*u2-u1*u2))*L3 + ((u0+u1+u2))*L3^2
+                L_3^3 = u0*u1*u2 - (u0*u1*u2*q^-1-u0*u1*u2)*T[2]
+                - (u0*u1*u2*q^-2-u0*u1*u2*q^-1)*T[2,1,2]
+                - ((u0*u1+u0*u2+u1*u2))*L3 + ((u0+u1+u2))*L3^2
                 + ((u0+u1+u2)*q^-1+(-u0-u1-u2))*L2*L3*T[2]
                 - (q^-1-1)*L2*L3^2*T[2] - (q^-1-1)*L2^2*L3*T[2]
                 + ((u0+u1+u2)*q^-2+(-2*u0-2*u1-2*u2)*q^-1+(u0+u1+u2))*L1*L3*T[1,2]
@@ -1378,11 +1374,9 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
 
                 sage: T = algebras.ArikiKoike(1, 3).T()
                 sage: T.L(2)
-                u + (-u*q^-1+u)*T[1]
+                u - (u*q^-1-u)*T[1]
                 sage: T.L()
-                [u,
-                 u + (-u*q^-1+u)*T[1],
-                 u + (-u*q^-1+u)*T[2] + (-u*q^-2+u*q^-1)*T[2,1,2]]
+                [u, u - (u*q^-1-u)*T[1], u - (u*q^-1-u)*T[2] - (u*q^-2-u*q^-1)*T[2,1,2]]
 
             TESTS:
 
@@ -1434,10 +1428,9 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 sage: T2 * (T2 * T1 * T0)
                 -(1-q)*T[2,1,0] + q*T[1,0]
                 sage: (T1 * T0 * T1 * T0) * T0
-                (-u0*u1)*T[1,0,1] + ((u0+u1))*T[0,1,0,1]
+                -u0*u1*T[1,0,1] + ((u0+u1))*T[0,1,0,1]
                 sage: (T0 * T1 * T0 * T1) * (T0 * T1)
-                (-u0*u1*q)*T[1,0] + (u0*u1-u0*u1*q)*T[1,0,1]
-                 + ((u0+u1)*q)*T[0,1,0] + ((-u0-u1)+(u0+u1)*q)*T[0,1,0,1]
+                -u0*u1*q*T[1,0] + (u0*u1-u0*u1*q)*T[1,0,1] + ((u0+u1)*q)*T[0,1,0] - ((u0+u1)+(-u0-u1)*q)*T[0,1,0,1]
                 sage: T1 * (T0 * T2 * T1 * T0)
                 T[1,0,2,1,0]
                 sage: (T1 * T2) * (T2 * T1 * T0)
@@ -1464,7 +1457,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 sage: T = algebras.ArikiKoike(2, 3).T()
                 sage: T0, T1, T2 = T.T()
                 sage: (T1 * T0 * T1) * (T0 * T0)
-                (-u0*u1)*T[1,0,1] + ((u0+u1))*T[0,1,0,1]
+                -u0*u1*T[1,0,1] + ((u0+u1))*T[0,1,0,1]
                 sage: T1 * T.L(3) * T2 * T1 * T0 - T1 * (T.L(3) * T2 * T1 * T0)
                 0
 
@@ -1676,19 +1669,19 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 sage: T._product_TT(1, 2, 0, 1)
                 T[1,0,0,0]
                 sage: T._product_TT(1, 3, 0, 1)
-                (-u0*u1*u2*u3)*T[1]
+                -u0*u1*u2*u3*T[1]
                  + ((u0*u1*u2+u0*u1*u3+u0*u2*u3+u1*u2*u3))*T[1,0]
-                 + ((-u0*u1-u0*u2-u1*u2-u0*u3-u1*u3-u2*u3))*T[1,0,0]
+                 - ((u0*u1+u0*u2+u1*u2+u0*u3+u1*u3+u2*u3))*T[1,0,0]
                  + ((u0+u1+u2+u3))*T[1,0,0,0]
                 sage: T._product_TT(1, 2, 0, 2)
-                (-u0*u1*u2*u3)*T[1]
+                -u0*u1*u2*u3*T[1]
                  + ((u0*u1*u2+u0*u1*u3+u0*u2*u3+u1*u2*u3))*T[1,0]
-                 + ((-u0*u1-u0*u2-u1*u2-u0*u3-u1*u3-u2*u3))*T[1,0,0]
+                 - ((u0*u1+u0*u2+u1*u2+u0*u3+u1*u3+u2*u3))*T[1,0,0]
                  + ((u0+u1+u2+u3))*T[1,0,0,0]
                 sage: T._product_TT(2, 1, 0, 3)
-                (-u0*u1*u2*u3)*T[2,1]
+                -u0*u1*u2*u3*T[2,1]
                  + ((u0*u1*u2+u0*u1*u3+u0*u2*u3+u1*u2*u3))*T[2,1,0]
-                 + ((-u0*u1-u0*u2-u1*u2-u0*u3-u1*u3-u2*u3))*T[2,1,0,0]
+                 - ((u0*u1+u0*u2+u1*u2+u0*u3+u1*u3+u2*u3))*T[2,1,0,0]
                  + ((u0+u1+u2+u3))*T[2,1,0,0,0]
 
             TESTS::
@@ -1696,22 +1689,19 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 sage: H = algebras.ArikiKoike(3, 4)
                 sage: T = H.T()
                 sage: T._product_TT(1, 2, 1, 2)
-                (-u0*u1*u2+u0*u1*u2*q)*T[1,0]
-                 + (u0*u1*u2-u0*u1*u2*q)*T[0,1]
+                -(u0*u1*u2-u0*u1*u2*q)*T[1,0] + (u0*u1*u2-u0*u1*u2*q)*T[0,1]
                  + ((u0+u1+u2)+(-u0-u1-u2)*q)*T[0,1,0,0]
-                 + ((-u0-u1-u2)+(u0+u1+u2)*q)*T[0,0,1,0]
-                 + T[0,0,1,0,0,1]
+                 - ((u0+u1+u2)+(-u0-u1-u2)*q)*T[0,0,1,0] + T[0,0,1,0,0,1]
                 sage: T._product_TT(2,2,2,2)
-                (-u0*u1*u2+u0*u1*u2*q)*T[2,1,0,2]
+                -(u0*u1*u2-u0*u1*u2*q)*T[2,1,0,2]
                  + (u0*u1*u2-u0*u1*u2*q)*T[1,0,2,1]
                  + ((u0+u1+u2)+(-u0-u1-u2)*q)*T[1,0,2,1,0,0]
-                 + ((-u0-u1-u2)+(u0+u1+u2)*q)*T[1,0,0,2,1,0]
-                 + T[1,0,0,2,1,0,0,1]
+                 - ((u0+u1+u2)+(-u0-u1-u2)*q)*T[1,0,0,2,1,0] + T[1,0,0,2,1,0,0,1]
                 sage: T._product_TT(3,2,3,2)
-                (-u0*u1*u2+u0*u1*u2*q)*T[3,2,1,0,3,2]
+                -(u0*u1*u2-u0*u1*u2*q)*T[3,2,1,0,3,2]
                  + (u0*u1*u2-u0*u1*u2*q)*T[2,1,0,3,2,1]
                  + ((u0+u1+u2)+(-u0-u1-u2)*q)*T[2,1,0,3,2,1,0,0]
-                 + ((-u0-u1-u2)+(u0+u1+u2)*q)*T[2,1,0,0,3,2,1,0]
+                 - ((u0+u1+u2)+(-u0-u1-u2)*q)*T[2,1,0,0,3,2,1,0]
                  + T[2,1,0,0,3,2,1,0,0,1]
             """
             # Quadratic relation: S_i^2 - (q - 1) S_i - q == 0
