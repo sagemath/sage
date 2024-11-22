@@ -6056,7 +6056,7 @@ class Partitions(UniqueRepresentation, Parent):
         sage: Partitions(length=2, max_slope=-1).list()
         Traceback (most recent call last):
         ...
-        ValueError: the size must be specified with any keyword argument
+        NotImplementedError: cannot list an infinite set
 
         sage: Partitions(max_part=3)
         3-Bounded Partitions
@@ -6089,9 +6089,8 @@ class Partitions(UniqueRepresentation, Parent):
         ...
         ValueError: the parameters 'parts_in', 'starting', 'ending', 'regular' and 'restricted' cannot be combined with anything else
         sage: Partitions(NN, length=2)
-        Traceback (most recent call last):
-        ...
-        ValueError: the size must be specified with any keyword argument
+        Partitions satisfying constraints length=2
+
         sage: Partitions(('la','la','laaaa'), max_part=8)
         Traceback (most recent call last):
         ...
@@ -6260,7 +6259,10 @@ class Partitions(UniqueRepresentation, Parent):
                         return RegularPartitions_bounded(kwargs['regular'], kwargs['max_part'])
                     if 'max_length' in kwargs:
                         return RegularPartitions_truncated(kwargs['regular'], kwargs['max_length'])
-            raise ValueError("the size must be specified with any keyword argument")
+                elif 'max_part' in kwargs and 'max_length' in kwargs:
+                    return PartitionsInBox(kwargs['max_length'], kwargs['max_part'])
+
+            return Partitions_all_restricted(**kwargs)
 
         raise ValueError("n must be an integer or be equal to one of "
                          "None, NN, NonNegativeIntegers()")
@@ -6776,6 +6778,70 @@ class Partitions_all(Partitions):
             new_w += [w[i][j] for j in range(lq, lw)]
         new_w.sort(reverse=True)
         return self.element_class(self, [new_w[i]+i for i in range(len(new_w))])
+
+
+class Partitions_all_restricted(Partitions):
+    def __init__(self, **kwargs):
+        """
+        TESTS::
+
+            sage: TestSuite(sage.combinat.partition.Partitions_all_restricted(max_length=3)).run() # long time
+        """
+        self._restrictions = kwargs
+        Partitions.__init__(self, is_infinite=True)
+
+    def __contains__(self, x):
+        """
+        TESTS::
+
+            sage: P = Partitions(max_part=3, max_length=2)
+            sage: Partition([2,1]) in P
+            True
+            sage: [2,1] in P
+            True
+            sage: [3,2,1] in P
+            False
+            sage: [1,2] in P
+            False
+            sage: [5,1] in P
+            False
+            sage: [0] in P
+            True
+            sage: [] in P
+            True
+        """
+        try:
+            mu = Partition(x)
+        except ValueError:
+            return False
+        return mu in Partitions(mu.size(), **self._restrictions)
+
+    def _repr_(self):
+        """
+        EXAMPLES::
+
+            sage: Partitions(max_part=3, max_length=4, min_length=2)
+            Partitions satisfying constraints max_length=4, max_part=3, min_length=2
+        """
+        return "Partitions satisfying constraints " + ", ".join(["{}={}".format(key, value)
+                                                                 for key, value in sorted(self._restrictions.items())])
+
+    def __iter__(self):
+        """
+        An iterator for partitions with various restrictions.
+
+        EXAMPLES::
+
+            sage: P = Partitions(max_length=2)
+            sage: it = iter(P)
+            sage: [next(it) for i in range(10)]
+            [[], [1], [2], [1, 1], [3], [2, 1], [4], [3, 1], [2, 2], [5]]
+        """
+        n = 0
+        while True:
+            for p in Partitions(n, **self._restrictions):
+                yield self.element_class(self, p)
+            n += 1
 
 
 class Partitions_all_bounded(Partitions):
@@ -8021,8 +8087,10 @@ class PartitionsInBox(Partitions):
         Integer partitions which fit in a 2 x 2 box
         sage: PartitionsInBox(2, 2).list()
         [[], [1], [1, 1], [2], [2, 1], [2, 2]]
-    """
 
+        sage: Partitions(max_part=2, max_length=3)
+        Integer partitions which fit in a 3 x 2 box
+    """
     def __init__(self, h, w):
         """
         Initialize ``self``.
