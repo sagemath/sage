@@ -6171,39 +6171,39 @@ class Partitions(UniqueRepresentation, Parent):
 
             if len(kwargs) == 1:
                 if 'max_part' in kwargs:
-                    return PartitionsGreatestLE(n, kwargs['max_part'])
+                    return Partitions_parts_length_restricted(n, ZZ.one(), kwargs['max_part'],
+                                                              ZZ.zero(), n)
                 if 'min_part' in kwargs:
-                    return Partitions_parts_length_restricted(n, kwargs['min_part'], n, ZZ.zero(), n)
+                    return Partitions_parts_length_restricted(n, kwargs['min_part'], n,
+                                                              ZZ.zero(), n)
                 if 'length' in kwargs:
                     return Partitions_nk(n, kwargs['length'])
+                if 'parts_in' in kwargs:
+                    return Partitions_parts_in(n, kwargs['parts_in'])
+                if 'starting' in kwargs:
+                    return Partitions_starting(n, kwargs['starting'])
+                if 'ending' in kwargs:
+                    return Partitions_ending(n, kwargs['ending'])
+                if 'regular' in kwargs:
+                    return RegularPartitions_n(n, kwargs['regular'])
+                if 'restricted' in kwargs:
+                    return RestrictedPartitions_n(n, kwargs['restricted'])
 
-            if (len(kwargs) > 1 and
-                ('parts_in' in kwargs or
-                 'starting' in kwargs or
-                 'ending' in kwargs or
-                 'regular' in kwargs or
-                 'restricted' in kwargs)):
-                raise ValueError("the parameters 'parts_in', 'starting', "
-                                 + "'ending', 'regular' and 'restricted' "
-                                 + "cannot be combined with anything else")
+            else:
+                if ('parts_in' in kwargs or
+                    'starting' in kwargs or
+                    'ending' in kwargs or
+                    'regular' in kwargs or
+                    'restricted' in kwargs):
+                    raise ValueError("the parameters 'parts_in', 'starting', "
+                                     + "'ending', 'regular' and 'restricted' "
+                                     + "cannot be combined with anything else")
 
-            if 'parts_in' in kwargs:
-                return Partitions_parts_in(n, kwargs['parts_in'])
-            elif 'starting' in kwargs:
-                return Partitions_starting(n, kwargs['starting'])
-            elif 'ending' in kwargs:
-                return Partitions_ending(n, kwargs['ending'])
-            elif 'regular' in kwargs:
-                return RegularPartitions_n(n, kwargs['regular'])
-            elif 'restricted' in kwargs:
-                return RestrictedPartitions_n(n, kwargs['restricted'])
-
-            if 'length' in kwargs and ('min_length' in kwargs or 'max_length' in kwargs):
-                raise ValueError("do not specify the length together with the minimal or maximal length")
+                if 'length' in kwargs and ('min_length' in kwargs or 'max_length' in kwargs):
+                    raise ValueError("do not specify the length together with the minimal or maximal length")
 
             if set(kwargs).issubset(['length', 'min_part', 'max_part',
                                      'min_length', 'max_length']):
-
                 min_part = max(kwargs.get('min_part', ZZ.one()), ZZ.one())
                 max_part = max(min(kwargs.get('max_part', n), n), ZZ.zero())
                 if 'length' in kwargs:
@@ -6240,25 +6240,27 @@ class Partitions(UniqueRepresentation, Parent):
                                            kwargs.get('min_length', 0))
                 del kwargs['inner']
             return Partitions_with_constraints(n, **kwargs)
-        elif n is None or n is NN or n is NonNegativeIntegers():
-            if len(kwargs) > 0:
-                if len(kwargs) == 1:
+
+        if n is None or n is NN or n is NonNegativeIntegers():
+            if not kwargs:
+                return Partitions_all()
+
+            if len(kwargs) == 1:
+                if 'max_part' in kwargs:
+                    return Partitions_all_bounded(kwargs['max_part'])
+                if 'regular' in kwargs:
+                    return RegularPartitions_all(kwargs['regular'])
+                if 'restricted' in kwargs:
+                    return RestrictedPartitions_all(kwargs['restricted'])
+            elif len(kwargs) == 2:
+                if 'regular' in kwargs:
+                    if kwargs['regular'] < 1 or kwargs['regular'] not in ZZ:
+                        raise ValueError("the regularity must be a positive integer")
                     if 'max_part' in kwargs:
-                        return Partitions_all_bounded(kwargs['max_part'])
-                    if 'regular' in kwargs:
-                        return RegularPartitions_all(kwargs['regular'])
-                    if 'restricted' in kwargs:
-                        return RestrictedPartitions_all(kwargs['restricted'])
-                elif len(kwargs) == 2:
-                    if 'regular' in kwargs:
-                        if kwargs['regular'] < 1 or kwargs['regular'] not in ZZ:
-                            raise ValueError("the regularity must be a positive integer")
-                        if 'max_part' in kwargs:
-                            return RegularPartitions_bounded(kwargs['regular'], kwargs['max_part'])
-                        if 'max_length' in kwargs:
-                            return RegularPartitions_truncated(kwargs['regular'], kwargs['max_length'])
-                raise ValueError("the size must be specified with any keyword argument")
-            return Partitions_all()
+                        return RegularPartitions_bounded(kwargs['regular'], kwargs['max_part'])
+                    if 'max_length' in kwargs:
+                        return RegularPartitions_truncated(kwargs['regular'], kwargs['max_length'])
+            raise ValueError("the size must be specified with any keyword argument")
 
         raise ValueError("n must be an integer or be equal to one of "
                          "None, NN, NonNegativeIntegers()")
