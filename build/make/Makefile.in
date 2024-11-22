@@ -111,12 +111,15 @@ GCC_DEP = @SAGE_GCC_DEP@
 OPTIONAL_INSTALLED_PACKAGES = @SAGE_OPTIONAL_INSTALLED_PACKAGES@
 INSTALLED_PACKAGES = $(OPTIONAL_INSTALLED_PACKAGES)
 INSTALLED_PACKAGE_INSTS = \
-    $(foreach pkgname,$(INSTALLED_PACKAGES),$(inst_$(pkgname)))
+    $(foreach pkgname,$(INSTALLED_PACKAGES),inst_$(pkgname))
 
 # All previously installed standard/optional/experimental packages that are to be uninstalled
 OPTIONAL_UNINSTALLED_PACKAGES = @SAGE_OPTIONAL_UNINSTALLED_PACKAGES@
 UNINSTALLED_PACKAGES = $(OPTIONAL_UNINSTALLED_PACKAGES)
-UNINSTALLED_PACKAGES_UNINSTALLS = $(UNINSTALLED_PACKAGES:%=%-uninstall)
+UNINSTALLED_PACKAGE_UNINSTALLS = \
+    $(foreach pkgname,$(UNINSTALLED_PACKAGES),$(pkgname)-uninstall)
+
+.PHONY: $(INSTALLED_PACKAGE_INSTS) $(UNINSTALLED_PACKAGE_UNINSTALLS)
 
 # All packages which should be downloaded
 SDIST_PACKAGES = @SAGE_SDIST_PACKAGES@
@@ -207,7 +210,7 @@ $(foreach tree,SAGE_LOCAL SAGE_VENV SAGE_DOCS, \
     $(eval $(tree)_UNINSTALLED_PACKAGE_UNINSTALLS = \
                $(foreach pkgname,$(UNINSTALLED_PACKAGES), \
                          $(if $(findstring $(tree),$(trees_$(pkgname))), \
-                              $($(pkgname)-uninstall)))))
+                              $(pkgname)-uninstall))))
 
 # ==============================================================================
 
@@ -286,8 +289,8 @@ base-toolchain: _clean-broken-gcc base
 
 # All targets except for the base packages and except the documentation
 all-sage: \
-	$(SAGE_LOCAL_INSTALLED_PACKAGE_INSTS) $(SAGE_LOCAL_UNINSTALLED_PACKAGES_UNINSTALLS) \
-	$(SAGE_VENV_INSTALLED_PACKAGE_INSTS) $(SAGE_VENV_UNINSTALLED_PACKAGES_UNINSTALLS)
+	$(SAGE_LOCAL_INSTALLED_PACKAGE_INSTS) $(SAGE_LOCAL_UNINSTALLED_PACKAGE_UNINSTALLS) \
+	$(SAGE_VENV_INSTALLED_PACKAGE_INSTS) $(SAGE_VENV_UNINSTALLED_PACKAGE_UNINSTALLS)
 
 # Same but filtered by installation trees:
 all-build-local: toolchain-deps
