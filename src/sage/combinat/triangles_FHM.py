@@ -667,6 +667,25 @@ class F_triangle(Triangle):
         polym = step.numerator()
         return M_triangle(polym, variables=(x, y))
 
+    def parabolic(self):
+        """
+        Return a parabolic version of the F-triangle.
+
+        This is obtained by replacing the variable `y` by `y-1`.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.triangles_FHM import H_triangle
+            sage: x, y = polygens(ZZ,'x,y')
+            sage: H_triangle(1+x*y).f()
+            F: x + y + 1
+            sage: _.parabolic()
+            F: x + y
+        """
+        x, y = self._vars
+        polyf = self._poly(y=y - 1)
+        return F_triangle(polyf, variables=(x, y))
+
     def vector(self):
         """
         Return the f-vector as a polynomial in one variable.
