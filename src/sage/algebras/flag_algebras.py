@@ -1,7 +1,6 @@
 r"""
 TODO
--fix the symmetric relation bug
--? fix 3-graphs not saving loading (key is different between runs)
+-add relation symmetry support
 """
 
 r"""
@@ -207,7 +206,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-#from functools import lru_cache
 import itertools
 
 from sage.structure.richcmp import richcmp
@@ -230,8 +228,6 @@ from sage.misc.prandom import randint
 from sage.arith.misc import falling_factorial, binomial, factorial
 from sage.misc.functional import round
 from functools import lru_cache
-#from sage.misc.lazy_import import lazy_import
-#from sage.misc.persist import save, load
 
 import hashlib
 import pickle
@@ -265,7 +261,8 @@ def combine(name, *theories, symmetric=False):
             if can_symmetry:
                 for ll in result_signature:
                     tll = result_signature[ll]
-                    if tll!=tkk:
+                    if tll["arity"]!=tkk["arity"] or tll["ordered"]!=tkk["ordered"]:
+                        print(tll, tkk, ll)
                         can_symmetry = False
             next_group_increment = max(next_group_increment, tkk["group"]+1)
             tkk["group"] += next_group
@@ -431,6 +428,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             #This perhaps needs to be sanity checked
             sered_signature = _from_data[0]
             self._signature = {}
+            max_group = -1
             for ll in sered_signature:
                 key = ll[0]
                 val = {
@@ -438,8 +436,13 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                     "ordered": ll[1][1],
                     "group": ll[1][2]
                 }
+                max_group = max(max_group, val["group"])
                 self._signature[key] = val
             self._symmetries = _from_data[1]
+            if len(self._symmetries) != max_group+1:
+                print(self._symmetries)
+                print(self._signature)
+                raise ValueError("Provided data has different symmetry set size than group number")
         else:
             if arity < 1 or (arity not in NN):
                 raise ValueError("Arity must be a positive integer!")
@@ -1632,21 +1635,22 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         max_arity = -1
         for xx in self._signature:
             max_arity = max(max_arity, self._signature[xx]["arity"])
-        max_arity_types = []
-        for xx in self._signature:
-            if self._signature[xx]["arity"] == max_arity:
-                max_arity_types.append(self._signature[xx]["ordered"])
+        if max_arity==1 or n<max_arity:
+            return 1
         
-        prev_guess = self._guess_number(n-1)
-        prev_guess_tuples = binomial(prev_guess + max_arity - 1, max_arity)
-        extra_rels = 0
-        if max_arity==1:
-            extra_rels = len(max_arity_types)
-        elif max_arity==2:
-            extra_rels = sum([2 if xx else 1 for xx in max_arity_types])
-        elif max_arity==3:
-            extra_rels = sum([6 if xx else 1 for xx in max_arity_types])
-        return prev_guess_tuples * (2**extra_rels)
+        
+        
+        check_bits = 0
+        for xx in self._signature:
+            arity =self._signature[xx]["arity"]
+            if arity != 1:
+                factor = 1
+                if self._signature[xx]["ordered"]:
+                    factor = factorial(arity)
+                check_bits += factor*(binomial(n-2, arity-2))
+        
+        prev_guess = len(self.generate(n-1))
+        return binomial(prev_guess + 2 - 1, 2) * (2**check_bits)
     
     def generate_flags(self, n, ftype=None, run_bound=500000):
         r"""
@@ -1785,7 +1789,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     match = match_pattern
 
-    @lru_cache(maxsize=None)
     def _signature_perms(self):
         terms = self._signature.keys()
         groups = [self._signature[xx]["group"] for xx in terms]
@@ -1807,7 +1810,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             for perm in grouped_perm:
                 flat_perm.extend(perm)
             all_permutations.append(tuple(flat_perm))
-        return tuple(all_permutations)
+        return all_permutations
 
     #Generating tables
     def _try_load_table(self, N, n1, n2, large_ftype, ftype_inj):

@@ -81,6 +81,13 @@ cdef dict _standardize_blocks(dict blocks, dict signature, bint pattern):
                 ret[xx] = tuple(sorted([tuple(sorted(yy)) for yy in blocks[xx]]))
     return ret
 
+cdef dict _perm_signature(dict blocks, tuple perm):
+    cdef dict ret = {}
+    cdef int ii
+    cdef str xx
+    for ii, xx in enumerate(blocks.keys()):
+        ret[xx] = blocks[perm[ii]]
+    return ret
 
 # Automorphism operations
 
@@ -189,7 +196,7 @@ cdef bint _excluded_compatible(int n, Flag flag, tuple excluded, int max_signatu
         fexclii = ii
         sii = fexclii.size()
         if sii<max_signature:
-            continue
+            continue 
         for extra_points in itertools.combinations(range(max_signature, n), sii-max_signature):
             if flag.subflag(points=base_points+list(extra_points))==fexclii:
                 return False
@@ -204,8 +211,6 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, dict si
         for xx in signature:
             final_overlap[xx] = tuple()
         return tuple([Flag(theory, n, tuple(), **final_overlap)])
-    
-
 
     #Handle the unary case
     cdef Flag F, final_flag
@@ -237,6 +242,7 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, dict si
         return combined_tuple
     
     extensions = _get_all_extensions(signature, n, 2)
+    cdef list signature_perms = theory._signature_perms()
 
     #For the pre-calculation
     cdef dict subf_classes, key_lookup
@@ -251,6 +257,12 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, dict si
     cdef set already_checked = set()
     cdef Flag pointed_flag
     
+    cdef dict tad
+    cdef list to_add
+    cdef bint gd
+    cdef dict F_can_perm_blocks
+    cdef tuple sign_perm
+
     #Pre calculate the cosets and Fs classes
     for F in smaller_structures:
         for missing_point in range(n-1):
@@ -274,7 +286,23 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, dict si
             F_relabel = tuple([missing_point] + [included_points[ii] for ii in Fs_relabel])
             F_canonical = F.subflag(points=F_relabel)
             Fs_cosets = F_canonical._find_coset_representatives(Fs_canonical, (0, ))
-            subf_classes[Fs_canonical].append((F_canonical._blocks, Fs_cosets))
+            F_canonical_blocks = F_canonical._blocks
+
+            if len(signature_perms)<=1:
+                subf_classes[Fs_canonical].append((F_canonical_blocks, Fs_cosets))
+            else:
+                to_add = []
+                gd = True
+                for sign_perm in signature_perms:
+                    if Fs._blocks==_perm_signature(Fs._blocks, sign_perm):
+                        F_can_perm_blocks = _perm_signature(F_canonical_blocks, sign_perm)
+                        for tad in to_add:
+                            if tad==F_can_perm_blocks:
+                                gd = False
+                                break
+                        if gd:
+                            to_add.append(F_can_perm_blocks)
+                subf_classes[Fs_canonical] += [(tad, Fs_cosets) for tad in to_add]
 
     #For the merging
     cdef dict G_canonical_blocks, FG_overlap, G_canonical_blocks_permed
@@ -660,7 +688,6 @@ cdef class Flag(Element):
                     labels += [0] * len(conns)
         
         cdef tuple ret = (next_vertex, Vout, Vin, edge_label_num, labels, partition)
-        #print(ret)
         return ret
     
     def sage_symmetry_graph(self):
