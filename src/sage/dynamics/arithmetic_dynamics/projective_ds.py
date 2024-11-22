@@ -385,7 +385,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             polys = list(morphism_or_polys)
             if len(polys) == 1:
                 raise ValueError("list/tuple must have at least 2 polynomials")
-            test = lambda x: isinstance(x, PolynomialRing_general) or isinstance(x, MPolynomialRing_base)
+            test = lambda x: isinstance(x, (PolynomialRing_general, MPolynomialRing_base))
             if not all(test(poly.parent()) for poly in polys):
                 try:
                     polys = [poly.lift() for poly in polys]
@@ -450,7 +450,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             msg = 'polys (={}) must be of the same degree'
             raise ValueError(msg.format(polys))
 
-        if not isinstance(domain, ProjectiveSpace_ring) and not isinstance(domain, AlgebraicScheme_subscheme_projective):
+        if not isinstance(domain, (ProjectiveSpace_ring,
+                                   AlgebraicScheme_subscheme_projective)):
             raise ValueError('"domain" must be a projective scheme')
         if R not in Fields():
             return typecall(cls, polys, domain)
@@ -3530,7 +3531,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                         if hyperplane_found:
                             break
                 else:
-                    if isinstance(R, PolynomialRing_general) or isinstance(R, MPolynomialRing_base) or isinstance(R, FractionField_generic):
+                    if isinstance(R, (PolynomialRing_general,
+                                      MPolynomialRing_base,
+                                      FractionField_generic)):
                         # for polynomial rings, we can get an infinite family of hyperplanes
                         # by increasing the degree
                         var = R.gen()
@@ -4592,7 +4595,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     for k in ZZ(n).divisors():
                         if ZZ(n/k).is_prime():
                             Sn.append(k)
-                    if (isinstance(R, PolynomialRing_general) or isinstance(R, MPolynomialRing_base)):
+                    if isinstance(R, (PolynomialRing_general,
+                                      MPolynomialRing_base)):
                         phi = FlatteningMorphism(CR)
                         flatCR = phi.codomain()
                         Ik = flatCR.ideal(1)
@@ -4946,9 +4950,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     elif minimal:
                         Sn = []
                         for k in ZZ(n).divisors():
-                            if ZZ(n/k).is_prime():
+                            if ZZ(n//k).is_prime():
                                 Sn.append(k)
-                        if (isinstance(R, PolynomialRing_general) or isinstance(R, MPolynomialRing_base)):
+                        if isinstance(R, (PolynomialRing_general,
+                                          MPolynomialRing_base)):
                             phi = FlatteningMorphism(CR)
                             flatCR = phi.codomain()
                             Ik = flatCR.ideal(1)
@@ -5239,7 +5244,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             # if we are already using an algebraic closure, we move the
             # map into a finite extension and set use_algebraic_closure to True
             # in order to get a scheme defined over a finite extension
-            if isinstance(K, sage.rings.abc.AlgebraicField) or isinstance(K, AlgebraicClosureFiniteField_generic):
+            if isinstance(K, (sage.rings.abc.AlgebraicField,
+                              AlgebraicClosureFiniteField_generic)):
                 f = self.reduce_base_field()
                 K = f.base_ring()
                 use_algebraic_closure = True
@@ -5780,7 +5786,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 else:
                     F = base_ring
                     if isinstance(base_ring, FractionField_generic):
-                        if isinstance(base_ring.ring(), MPolynomialRing_base) or isinstance(base_ring.ring(), PolynomialRing_general):
+                        if isinstance(base_ring.ring(), (MPolynomialRing_base,
+                                                         PolynomialRing_general)):
                             f.normalize_coordinates()
                             f_ring = f.change_ring(base_ring.ring())
                             X = f_ring.periodic_points(n, minimal=False, formal=formal, return_scheme=True)
@@ -5883,7 +5890,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         base_ring = dom.base_ring()
         if isinstance(base_ring, FractionField_generic):
             base_ring = base_ring.ring()
-        if (isinstance(base_ring, PolynomialRing_general) or isinstance(base_ring, MPolynomialRing_base)):
+        if isinstance(base_ring, (PolynomialRing_general,
+                                  MPolynomialRing_base)):
             base_ring = base_ring.base_ring()
         elif base_ring in FunctionFields():
             base_ring = base_ring.constant_base_field()
