@@ -184,6 +184,14 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
     def __classcall_private__(cls, R, q=None) -> None:
         """
         Normalize the input.
+
+        EXAMPLES::
+
+            sage: q = LaurentPolynomialRing(QQ, 'q').gen()
+            sage: F1 = QuantumValuedPolynomialRing(QQ)
+            sage: F2 = QuantumValuedPolynomialRing(q.parent(), q)
+            sage: F1 is F2
+            True
         """
         if R not in Rings().Commutative():
             msg = "argument R must be a commutative ring"
