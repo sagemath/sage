@@ -132,38 +132,46 @@ cdef int _get_max_arity(dict signature, int n=1000):
     cdef str xx
     for xx in signature:
         curr_arity = signature[xx]['arity']
-        if curr_arity<1 or curr_arity>3:
-            raise ValueError("For each relation, the arity must be between 1 and 3")
         if curr_arity>n:
             continue
         max_arity = max(max_arity, curr_arity)
     return max_arity
 
-cpdef tuple _get_single_extensions(dict relation):
+cpdef tuple _get_single_extensions(dict relation, int n, int fix):
     cdef int arity = relation['arity']
+    if n<fix or fix>arity or n<arity:
+        return tuple([tuple()])
     cdef bint ordered = relation['ordered']
-    cdef tuple base = tuple(range(arity))
+    cdef tuple extension_tuples = tuple(itertools.combinations(range(fix, n), r=arity-fix))
     cdef tuple ord_base
-    cdef int ii
+    cdef tuple xx
+    cdef int r
 
     if ordered:
-        ord_base = tuple(itertools.permutations(base))
+        ord_base = tuple(
+            itertools.chain.from_iterable([
+                itertools.permutations(
+                    list(range(fix))+list(xx)
+                    ) for xx in extension_tuples
+                ])
+            )
     else:
-        ord_base = (base, )
+        ord_base = tuple([
+            tuple(
+                list(range(fix))+list(xx)
+                ) for xx in extension_tuples
+        ])
     
     return tuple(itertools.chain.from_iterable(
         [itertools.combinations(ord_base, r) for r in range(len(ord_base) + 1)]
     ))
 
-cdef tuple _get_all_extensions(dict signature, int arity):
-    cdef list terms = []
+cdef tuple _get_all_extensions(dict signature, int n, int fix):
     cdef str xx
 
-    for xx in signature:
-        if signature[xx]["arity"] != arity:
-            terms.append(tuple([tuple()]))
-        else:
-            terms.append(_get_single_extensions(signature[xx]))
+    cdef list terms = [
+        _get_single_extensions(signature[xx], n, fix) for xx in signature
+    ]
     
     cdef tuple poss
     cdef list ret = []
@@ -204,12 +212,13 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, dict si
     cdef dict F_canonical_blocks
 
     cdef tuple perm_0 = tuple([n-1] + list(range(n-1)))
-    cdef tuple extensions = _get_all_extensions(signature, max_arity)
+    cdef tuple extensions
     cdef dict ext
     cdef dict ret = {}
     cdef tuple patt
 
     if max_arity==1:
+        extensions = _get_all_extensions(signature, n, 1)
         for F in smaller_structures:
             F_canonical_blocks = _perm_blocks(F._blocks, perm_0)
             for ext in extensions:
@@ -227,7 +236,7 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, dict si
         ))
         return combined_tuple
     
-
+    extensions = _get_all_extensions(signature, n, 2)
 
     #For the pre-calculation
     cdef dict subf_classes, key_lookup
@@ -242,61 +251,57 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, dict si
     cdef set already_checked = set()
     cdef Flag pointed_flag
     
+    #Pre calculate the cosets and Fs classes
+    for F in smaller_structures:
+        for missing_point in range(n-1):
+            sig_check()
+            pointed_flag = F.subflag(ftype_points=[missing_point])
+            if pointed_flag in already_checked:
+                continue
+            already_checked.add(pointed_flag)
+
+            included_points = [ii for ii in range(n-1) if ii!=missing_point]
+            Fs = F.subflag(points=included_points)
+            Fs_relabel = Fs.unique()[1]
+            Fs_canonical = Fs.subflag(points=Fs_relabel)
+
+            if Fs_canonical in key_lookup.keys():
+                Fs_canonical = key_lookup[Fs_canonical]
+            else:
+                key_lookup[Fs_canonical] = Fs_canonical
+                subf_classes[Fs_canonical] = []
+
+            F_relabel = tuple([missing_point] + [included_points[ii] for ii in Fs_relabel])
+            F_canonical = F.subflag(points=F_relabel)
+            Fs_cosets = F_canonical._find_coset_representatives(Fs_canonical, (0, ))
+            subf_classes[Fs_canonical].append((F_canonical._blocks, Fs_cosets))
+
     #For the merging
     cdef dict G_canonical_blocks, FG_overlap, G_canonical_blocks_permed
     cdef tuple dummy_1
     cdef tuple G_perm
     cdef list G_perm_list
 
-    if max_arity==2:
-        #Pre calculate the cosets
-        for F in smaller_structures:
-            for missing_point in range(n-1):
-                sig_check()
-                pointed_flag = F.subflag(ftype_points=[missing_point])
-                if pointed_flag in already_checked:
-                    continue
-                already_checked.add(pointed_flag)
-
-                included_points = [ii for ii in range(n-1) if ii!=missing_point]
-                Fs = F.subflag(points=included_points)
-                Fs_relabel = Fs.unique()[1]
-                Fs_canonical = Fs.subflag(points=Fs_relabel)
-
-                if Fs_canonical in key_lookup.keys():
-                    Fs_canonical = key_lookup[Fs_canonical]
-                else:
-                    key_lookup[Fs_canonical] = Fs_canonical
-                    subf_classes[Fs_canonical] = []
-
-                F_relabel = tuple([missing_point] + [included_points[ii] for ii in Fs_relabel])
-                F_canonical = F.subflag(points=F_relabel)
-                Fs_cosets = F_canonical._find_coset_representatives(Fs_canonical, (0, ))
-                subf_classes[Fs_canonical].append((F_canonical._blocks, Fs_cosets))
-
-        #Check ways to combine
-        for Fs_canonical in subf_classes:
-            for ii, (F_canonical_blocks, _) in enumerate(subf_classes[Fs_canonical]):
-                F_canonical_blocks = _perm_blocks(F_canonical_blocks, perm_0)
-                for G_canonical_blocks, Gs_cosets in subf_classes[Fs_canonical][ii:]:
-                    for G_perm in Gs_cosets:
-                        G_perm_list = list(G_perm)
-                        G_perm_list.insert(1, n-1)
-                        G_canonical_blocks_permed = _perm_blocks(G_canonical_blocks, tuple(G_perm_list))
-                        FG_overlap = _merge_blocks(F_canonical_blocks, G_canonical_blocks_permed, (0, ))
-                        for ext in extensions:
-                            sig_check()
-                            final_overlap = _merge_blocks(FG_overlap, ext, tuple())
-                            final_flag = Flag(theory, n, tuple(), **final_overlap)
-                            if _excluded_compatible(n, final_flag, excluded, 2):
-                                patt = final_flag._relation_list()
-                                if patt not in ret:
-                                    ret[patt] = [final_flag]
-                                elif final_flag not in ret[patt]:
-                                    ret[patt].append(final_flag)
-    
-    elif max_arity==3:
-        ret = {}
+    #Check ways to combine
+    for Fs_canonical in subf_classes:
+        for ii, (F_canonical_blocks, _) in enumerate(subf_classes[Fs_canonical]):
+            F_canonical_blocks = _perm_blocks(F_canonical_blocks, perm_0)
+            for G_canonical_blocks, Gs_cosets in subf_classes[Fs_canonical][ii:]:
+                for G_perm in Gs_cosets:
+                    G_perm_list = list(G_perm)
+                    G_perm_list.insert(1, n-1)
+                    G_canonical_blocks_permed = _perm_blocks(G_canonical_blocks, tuple(G_perm_list))
+                    FG_overlap = _merge_blocks(F_canonical_blocks, G_canonical_blocks_permed, (0, ))
+                    for ext in extensions:
+                        sig_check()
+                        final_overlap = _merge_blocks(FG_overlap, ext, tuple())
+                        final_flag = Flag(theory, n, tuple(), **final_overlap)
+                        if _excluded_compatible(n, final_flag, excluded, 2):
+                            patt = final_flag._relation_list()
+                            if patt not in ret:
+                                ret[patt] = [final_flag]
+                            elif final_flag not in ret[patt]:
+                                ret[patt].append(final_flag)
     
     combined_tuple = tuple(itertools.chain.from_iterable(
         [ret[key] for key in sorted(ret.keys())]

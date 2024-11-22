@@ -1,10 +1,7 @@
 r"""
 TODO
--fix 3-graph generation
--fix 3-graphs not saving loading (key is different between runs)
--expose aut groups from bliss
--calculate aut groups for flags
--merge structures smarter using aut groups
+-fix the symmetric relation bug
+-? fix 3-graphs not saving loading (key is different between runs)
 """
 
 r"""
@@ -444,8 +441,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 self._signature[key] = val
             self._symmetries = _from_data[1]
         else:
-            if arity not in [1, 2, 3]:
-                raise ValueError("Only arity 1, 2, or 3 supported!")
+            if arity < 1 or (arity not in NN):
+                raise ValueError("Arity must be a positive integer!")
             self._signature = {relation_name: {
                 "arity": arity,
                 "ordered": is_ordered,
@@ -1811,7 +1808,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 flat_perm.extend(perm)
             all_permutations.append(tuple(flat_perm))
         return tuple(all_permutations)
-
 
     #Generating tables
     def _try_load_table(self, N, n1, n2, large_ftype, ftype_inj):
