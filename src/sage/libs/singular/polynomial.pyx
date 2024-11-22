@@ -274,7 +274,7 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
         True
     """
     cdef number *h
-    cdef int ret
+    cdef int tmp
 
     if r != currRing:
         rChangeCurrRing(r)
@@ -283,17 +283,20 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
         if p == NULL:
             if q == NULL:
                 return 0
-            return -1 if r.cf.cfGreaterZero(p_GetCoeff(q,r), r.cf) else 1
+            return -1 if r.cf.cfGreaterZero(p_GetCoeff(q, r), r.cf) else 1
         elif q == NULL:
-            return 1 if r.cf.cfGreaterZero(p_GetCoeff(p,r), r.cf) else -1
+            return 1 if r.cf.cfGreaterZero(p_GetCoeff(p, r), r.cf) else -1
 
-        ret = p_Cmp( p, q, r)
-        if ret != 0:
-            return ret
+        tmp = p_Cmp(p, q, r)
+        if tmp != 0:
+            if tmp < 0:
+                return -1 if r.cf.cfGreaterZero(p_GetCoeff(q, r), r.cf) else 1
+            else:
+                return 1 if r.cf.cfGreaterZero(p_GetCoeff(p, r), r.cf) else -1
 
         # compare coeffs
-        if not r.cf.cfEqual(p_GetCoeff(p, r),p_GetCoeff(q, r),r.cf):
-            return 1 if r.cf.cfGreater(p_GetCoeff(p, r),p_GetCoeff(q, r),r.cf) else -1
+        if not r.cf.cfEqual(p_GetCoeff(p, r), p_GetCoeff(q, r), r.cf):
+            return 1 if r.cf.cfGreater(p_GetCoeff(p, r), p_GetCoeff(q, r), r.cf) else -1
 
         p = pNext(p)
         q = pNext(q)
