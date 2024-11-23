@@ -19,6 +19,8 @@ from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 from sage.interfaces.process import ContainChildren
 from sage.misc.timing import walltime
 
+from sage.misc.randstate import set_random_seed
+from sage.misc.prandom import getrandbits
 
 class WorkerData:
     """
@@ -68,6 +70,7 @@ class p_iter_fork:
       about what the iterator does (e.g., killing subprocesses)
     - ``reset_interfaces`` -- boolean (default: ``True``); whether to reset all
       pexpect interfaces
+    - ``reseed_rng`` -- booolean (default: ``False``); whether or not to reseed the rng in the subprocesses
 
     EXAMPLES::
 
@@ -80,7 +83,7 @@ class p_iter_fork:
         sage: X.verbose
         False
     """
-    def __init__(self, ncpus, timeout=0, verbose=False, reset_interfaces=True):
+    def __init__(self, ncpus, timeout=0, verbose=False, reset_interfaces=True, reseed_rng=False):
         """
         Create a ``fork()``-based parallel iterator.
 
@@ -103,6 +106,8 @@ class p_iter_fork:
         self.timeout = float(timeout)  # require a float
         self.verbose = verbose
         self.reset_interfaces = reset_interfaces
+        self.reseed_rng = reseed_rng
+        self.worker_seed = None
 
     def __call__(self, f, inputs):
         """
@@ -148,8 +153,6 @@ class p_iter_fork:
             sage: list(Polygen([QQ,QQ]))
             [(((Rational Field,), {}), x), (((Rational Field,), {}), x)]
         """
-        n = self.ncpus
-        v = list(inputs)
         import os
         import sys
         import signal
@@ -158,12 +161,19 @@ class p_iter_fork:
         dir = tmp_dir()
         timeout = self.timeout
 
+        n = self.ncpus
+        inputs = list(inputs)
+        if self.reseed_rng:
+            seeds = [getrandbits(512) for _ in range(0, len(inputs))]
+            vs = list(zip(inputs, seeds))
+        else:
+            vs = list(zip(inputs, [None]*len(inputs)))
         workers = {}
         try:
-            while v or workers:
+            while vs or workers:
                 # Spawn up to n subprocesses
-                while v and len(workers) < n:
-                    v0 = v.pop(0)  # Input value for the next subprocess
+                while vs and len(workers) < n:
+                    (v0, seed0) = vs.pop(0)  # Input value and seed for the next subprocess
                     with ContainChildren():
                         pid = os.fork()
                         # The way fork works is that pid returns the
@@ -171,8 +181,8 @@ class p_iter_fork:
                         # process and returns 0 for the subprocess.
                         if not pid:
                             # This is the subprocess.
+                            self.worker_seed = seed0 if self.reseed_rng else None
                             self._subprocess(f, dir, *v0)
-
                     workers[pid] = WorkerData(v0)
 
                 if len(workers) > 0:
@@ -303,6 +313,11 @@ class p_iter_fork:
                 pass
             else:
                 invalidate_all()
+
+        # Reseed rng, if requested.
+        if self.reseed_rng == True:
+            set_random_seed(self.worker_seed)
+
 
         # Now evaluate the function f.
         value = f(*args, **kwds)

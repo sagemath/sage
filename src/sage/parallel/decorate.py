@@ -308,6 +308,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
     - ``ncpus`` -- integer; maximal number of subprocesses to use at the same time
     - ``timeout`` -- number of seconds until each subprocess is killed (only supported
       by ``'fork'``; zero means not at all)
+    - ``reseed_rng``: reseed the rng in each subprocess
 
     .. warning::
 
@@ -397,6 +398,16 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
         [(((2,), {}), 4), (((3,), {}), 9)]
         sage: Foo.square_classmethod(3)
         9
+
+    
+    By default, all subprocesses use the same random seed and therefore the same deterministic randomness.
+    For functions that should be randomized, we can reseed the random seed in each subprocess::
+
+        sage: @parallel(reseed_rng = True)
+        ....: def unif(n): return ZZ.random_element(x = 0, y = n)
+        sage: set_random_seed(42)
+        sage: sorted(unif([1000]*3))
+        [(((1000,), {}), 444), (((1000,), {}), 597), (((1000,), {}), 640)]
 
     .. warning::
 
