@@ -1,9 +1,4 @@
 r"""
-TODO
--add relation symmetry support
-"""
-
-r"""
 Implementation of flag algebras, with a class for combinatorial theories
 
 
@@ -282,16 +277,23 @@ def combine(name, *theories, symmetric=False):
             result_signature[xx]["group"] = 0
         if symmetric is True:
             #This case symmetry is trivial for the entire group
-            result_symmetry = [[]]
+            result_symmetry = [(len(theories), len(theories), tuple())]
         else:
             #This case symmetry is as provided by the parameter
-            result_symmetry = [symmetric]
+            m = 0
+            formatted_sym = []
+            for edge in symmetric:
+                m = max(m, edge[0], edge[1])
+                formatted_sym.append(tuple(sorted(list(edge))))
+            formatted_sym = tuple(sorted(formatted_sym))
+            result_symmetry = [(len(theories), m+1, formatted_sym)]
     #Note that otherwise we use each symmetry from the combined pieces
     theory_data = {
         "signature": result_signature, 
         "symmetries": result_symmetry
         }
-    ret_theory = CombinatorialTheory(name, _from_data=_serialize_data(theory_data))
+    ser_data = _serialize_data(theory_data)
+    ret_theory = CombinatorialTheory(name, _from_data=ser_data)
     ret_theory.exclude(result_excluded, force=True)
     return ret_theory
 
@@ -303,75 +305,40 @@ def _serialize_data(data):
         ll = tuple(signature[xx].values())
         sered_signature.append((xx, ll))
     sered_signature = tuple(sered_signature)
-
-    #For the symmetries
-    symms = data["symmetries"]
-    sered_symms = []
-    for group_graph in symms:
-        group_graph = [tuple(sorted(list(edge))) for edge in group_graph]
-        sered_symms.append(tuple(sorted(group_graph)))
-    sered_symms = tuple(sered_symms)
-
-    return (sered_signature, sered_symms)
+    return (sered_signature, tuple(data["symmetries"]))
 
 def test_generate():
+    def test_theory(TT, nstart, nend, vals):
+        print("\nTesting theory {}".format(str(TT)))
+        for ii,jj in enumerate(range(nstart, nend+1)):
+            print("Size {}, the number is {} (should be {})".format(
+                jj, 
+                len(TT.generate(jj)), 
+                vals[ii]
+                ))
+    
     CG = combine("CGraph", C0, G)
     Cs = combine("Cs", C0, C1, symmetric=True)
-    
-    print("\nSingle color generate test start")
-    for ii in [5, 6, 7, 8, 9, 10]:
-        print("Size {}, the number is {}".format(ii, len(C0.generate(ii))))
-    print("Should be equal to 6, 7, 8, 9, 10, 11")
-
-    print("\nTwo colors generate test start")
-    for ii in [3, 4, 5, 6, 7, 8]:
-        print("Size {}, the number is {}".format(ii, len(Cs.generate(ii))))
-    print("Should be equal to 13, 22, 34, 50, 70, 95")
-    
-    print("\nGraph generate test start")
-    for ii in [3, 4, 5, 6, 7]:
-        print("Size {}, the number is {}".format(ii, len(G.generate(ii))))
-    print("Should be equal to 4, 11, 34, 156, 1044, (12346)")
-    
-    #This gives an incorrect value for n=6
-    print("\nThreeGraph generate test start")
-    for ii in [3, 4, 5, 6]:
-        print("Size {}, the number is {}".format(ii, len(TG.generate(ii))))
-    print("Should be equal to 2, 5, 34, 2136, (7013320)")
-    
-    print("\nDiGraph generate test start")
-    for ii in [2, 3, 4, 5]:
-        print("Size {}, the number is {}".format(ii, len(DG.generate(ii))))
-    print("Should be equal to 3, 16, 218, 9608 (1540944)")
-    
-    print("\nDirected ThreeGraph generate test start")
-    for ii in [3]:
-        print("Done with size {}, the number is {}".format(ii, len(DTG.generate(ii))))
-    print("Unconfirmed numbers here are 16 (?)")
-
-    print("\nColoredGraph generate test start")
-    for ii in [2, 3, 4, 5, 6]:
-        print("Size {}, the number is {}".format(ii, len(CG.generate(ii))))
-    print("Should be equal to 6, 20, 90, 544, 5096")
-    
+    test_theory(C0, 5, 10, [6, 7, 8, 9, 10, 11])
+    test_theory(Cs, 3, 8, [13, 22, 34, 50, 70, 95])
+    test_theory(G, 3, 7, [4, 11, 34, 156, 1044])
+    test_theory(TG, 3, 6, [2, 5, 34, 2136])
+    test_theory(DG, 2, 5, [3, 16, 218, 9608])
+    test_theory(DTG, 3, 3, [16])
+    test_theory(CG, 2, 6, [6, 20, 90, 544, 5096])
     Cs.exclude([Cs(1), Cs(1, C0=[[0]], C1=[[0]])])
     G.exclude(G(3))
     CGp = combine("CGsym", G, Cs)
-
-    print("\nDouble Color with no overlaps generate test start")
-    for ii in [4, 5, 6, 7, 8]:
-        print("Size {}, the number is {}".format(ii, len(Cs.generate(ii))))
-    print("Should be equal to 3, 3, 4, 4, 5")
-
-    print("\nGraph no triangle generate test start")
-    for ii in [3, 4, 5, 6, 7]:
-        print("Size {}, the number is {}".format(ii, len(G.generate(ii))))
-    print("Should be equal to 3, 7, 14, 38, 107, (410)")
-
-    print("\nGraph no triangle symm colors generate test start")
-    for ii in [2, 3, 4, 5]:
-        print("Size {}, the number is {}".format(ii, len(CGp.generate(ii))))
-    print("Should be equal to 4, 8, 32, 106")
+    test_theory(Cs, 4, 8, [3, 3, 4, 4, 5])
+    test_theory(G, 3, 8, [3, 7, 14, 38, 107, 410])
+    test_theory(CGp, 2, 5, [4, 8, 32, 106])
+    Css = combine("Colors3Sym", C0, C1, C2, symmetric=True)
+    pe = Css(1)
+    p0 = Css.p(1, C2=[0], C1=[0])
+    p1 = Css.p(1, C0=[0], C2=[0])
+    p2 = Css.p(1, C0=[0], C1=[0])
+    Css.exclude([pe, p0, p1, p2])
+    test_theory(Css, 3, 8, [3, 4, 5, 7, 8, 10])
 
 def clear_all_calculations(theory_name=None):
     calcs_dir = os.path.join(os.getenv('HOME'), '.sage', 'calcs')
@@ -451,7 +418,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 "ordered": is_ordered,
                 "group": 0
             }}
-            self._symmetries = tuple([tuple([])])
+            self._symmetries = ((1, 1, tuple()), )
         self._excluded = tuple()
         Parent.__init__(self, category=(Sets(), ))
         self._populate_coercion_lists_()
@@ -469,30 +436,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             Theory for Graph
         """
         return 'Theory for {}'.format(self._name)
-    
-    def Pattern(self, n, **kwds):
-        ftype_points = tuple()
-        if 'ftype_points' in kwds:
-            ftype_points = tuple(kwds['ftype_points'])
-        elif 'ftype' in kwds:
-            ftype_points = tuple(kwds['ftype'])
-        if len(ftype_points)==n:
-            return self._element_constructor_(n, **kwds)
-
-        blocks = {}
-        for xx in self._signature.keys():
-            blocks[xx] = tuple()
-            blocks[xx+"_m"] = tuple()
-
-            if xx in kwds:
-                blocks[xx] = kwds[xx]
-            
-            for xx_missing in [xx+"_m", xx+"_missing", xx+"_miss"]:
-                if xx_missing in kwds:
-                    blocks[xx+"_m"] = kwds[xx_missing]
-        return Pattern(self, n, ftype_points, **blocks)
-    
-    P = Pattern
 
     def signature(self):
         return self._signature
@@ -558,15 +501,32 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         
         ftype_points = tuple()
         if 'ftype_points' in kwds:
-            ftype_points = tuple(kwds['ftype_points'])
+            try:
+                ftype_points = tuple(kwds['ftype_points'])
+            except:
+                raise ValueError("The provided {} must be iterable".format('ftype_points'))
         elif 'ftype' in kwds:
-            ftype_points = tuple(kwds['ftype'])
+            try:
+                ftype_points = tuple(kwds['ftype'])
+            except:
+                raise ValueError("The provided {} must be iterable".format('ftype'))
         
         blocks = {}
         for xx in self._signature.keys():
             blocks[xx] = tuple()
+            unary = (self._signature[xx]["arity"]==1)
             if xx in kwds:
-                blocks[xx] = kwds[xx]
+                try:
+                    blocks[xx] = tuple(kwds[xx])
+                except:
+                    raise ValueError("The provided {} must be iterable".format(xx))
+                if unary:
+                    if len(blocks[xx])>0:
+                        try:
+                            tuple(blocks[xx][0])
+                        except:
+                            blocks[xx] = tuple([[aa] for aa in blocks[xx]])
+                        
         return self.element_class(self, n, ftype_points, **blocks)
     
     def empty_element(self):
@@ -598,6 +558,61 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     empty = empty_element
     
+    def pattern(self, n, **kwds):
+        ftype_points = tuple()
+        if 'ftype_points' in kwds:
+            try:
+                ftype_points = tuple(kwds['ftype_points'])
+            except:
+                raise ValueError("The provided {} must be iterable".format('ftype_points'))
+        elif 'ftype' in kwds:
+            try:
+                ftype_points = tuple(kwds['ftype'])
+            except:
+                raise ValueError("The provided {} must be iterable".format('ftype'))
+        if len(ftype_points)==n:
+            return self._element_constructor_(n, **kwds)
+        
+        blocks = {}
+        for xx in self._signature.keys():
+            blocks[xx] = tuple()
+            blocks[xx+"_m"] = tuple()
+            unary = (self._signature[xx]["arity"]==1)
+
+
+            if xx in kwds:
+                try:
+                    blocks[xx] = tuple(kwds[xx])
+                except:
+                    raise ValueError("The provided {} must be iterable".format(xx))
+                if unary:
+                    if len(blocks[xx])>0:
+                        try:
+                            tuple(blocks[xx][0])
+                        except:
+                            blocks[xx] = tuple([[aa] for aa in blocks[xx]])
+            
+            for xx_missing in [xx+"_m", xx+"_missing", xx+"_miss"]:
+                if xx_missing in kwds:
+                    blocks[xx+"_m"] = kwds[xx_missing]
+
+
+                    try:
+                        blocks[xx+"_m"] = tuple(kwds[xx_missing])
+                    except:
+                        raise ValueError("The provided {} must be iterable".format(xx_missing))
+                    if unary:
+                        if len(blocks[xx])>0:
+                            try:
+                                tuple(blocks[xx][0])
+                            except:
+                                blocks[xx+"_m"] = tuple([[aa] for aa in blocks[xx+"_m"]])
+        return Pattern(self, n, ftype_points, **blocks)
+    
+    p = pattern
+    P = pattern
+    Pattern = pattern
+
     def _an_element_(self, n=0, ftype=None):
         r"""
         Returns a random element
@@ -1812,6 +1827,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             all_permutations.append(tuple(flat_perm))
         return all_permutations
 
+    
     #Generating tables
     def _try_load_table(self, N, n1, n2, large_ftype, ftype_inj):
         excluded = tuple([xx for xx in self._excluded if xx.size()<=N])
@@ -1968,6 +1984,16 @@ C5 = Theory("Color", relation_name="C5", arity=1)
 C6 = Theory("Color", relation_name="C6", arity=1)
 C7 = Theory("Color", relation_name="C7", arity=1)
 DTG = Theory("DiThreeGraph", arity=3, is_ordered=True)
+
+#Pre-defined symmetries
+Cyclic3 = [
+    [0, 1], [1, 2], [2, 0],
+    [3, 4], [5, 6], [7, 8],
+    [1, 7], [1, 6],
+    [2, 4], [2, 5],
+    [0, 8], [0, 3],
+    [2, 3], [1, 5], [0, 7]
+]
 
 #Primitive rounding methods
 def _flatten_matrix(mat, doubled=False):

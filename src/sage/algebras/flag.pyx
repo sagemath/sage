@@ -584,7 +584,6 @@ cdef class Flag(Element):
         cdef dict blocks = self._blocks
         cdef int next_vertex = self.size()
         cdef dict signature = self.signature()
-        cdef tuple symmetries = self.parent()._symmetries
 
         #Data for relations
         cdef dict rel_info
@@ -601,6 +600,9 @@ cdef class Flag(Element):
         cdef dict groups = {}
         cdef list group_relation_vertices
         cdef tuple t
+
+        cdef dict all_symmetry_vertices_remap = {}
+
         for rel_name in signature:
             rel_info = signature[rel_name]
             arity = rel_info['arity']
@@ -617,14 +619,29 @@ cdef class Flag(Element):
                     tuple_vertices[rel_name][t] = next_vertex
                     next_vertex += 1
             
-            #Creating groups
-            if group not in groups:
-                groups[group] = [rel_name]
-            else:
-                groups[group].append(rel_name)
             #Layer 2 vertices
             group_vertices[rel_name] = next_vertex
+            #Creating groups
+            if group not in groups:
+                #This is the first time we see this group number
+                #Initiaize the group list with it's name
+                groups[group] = [rel_name]
+                all_symmetry_vertices_remap[group] = [next_vertex]
+            else:
+                #This group number was seen before so just update the lists
+                groups[group].append(rel_name)
+                all_symmetry_vertices_remap[group].append(next_vertex)
             next_vertex += 1
+        
+
+        #Adding the remaining layer 2 vertices for the symmetry graphs
+        cdef tuple symmetries = self.parent()._symmetries
+        cdef int n_sym, m_sym, ii
+        cdef tuple edges_sym
+        for group in groups:
+            n_sym, m_sym, edges_sym = symmetries[group]
+            all_symmetry_vertices_remap[group] += list(range(next_vertex, next_vertex+m_sym-n_sym))
+            next_vertex += m_sym - n_sym
 
         #Creating the partition, first the vertices from layer 0
         cdef list partition
@@ -635,9 +652,20 @@ cdef class Flag(Element):
             partition = [[ii] for ii in self.ftype_points()]
             partition.append(self.not_ftype_points())
 
+        #For groups also add the symmetry edges
+        cdef list Vout = []
+        cdef list Vin = []
+        cdef tuple edge
+        cdef list group_symmetry_remap
         for group in groups:
             #Layer 2 partition
             partition.append([group_vertices[rel_name] for rel_name in groups[group]])
+            n_sym, m_sym, edges_sym = symmetries[group]
+            group_symmetry_remap = all_symmetry_vertices_remap[group]
+            partition.append(group_symmetry_remap[n_sym:])
+            for edge in edges_sym:
+                Vin.append(group_symmetry_remap[edge[0]])
+                Vout.append(group_symmetry_remap[edge[1]])
 
             #Layer 1 partition
             group_relation_vertices = []
@@ -648,9 +676,7 @@ cdef class Flag(Element):
                     group_relation_vertices += list(tuple_vertices[rel_name].values())
             partition.append(group_relation_vertices)
 
-        # Build the edge lists
-        cdef list Vout = []
-        cdef list Vin = []
+        # Build the edge lists for the rest
         cdef list labels = None
         cdef int edge_label_num = 1
         cdef list conns
