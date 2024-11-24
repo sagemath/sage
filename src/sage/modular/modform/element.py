@@ -219,6 +219,38 @@ class ModularForm_abstract(ModuleElement):
         """
         return str(self.q_expansion())
 
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        TESTS::
+
+            sage: M = EisensteinForms(96, 2)
+            sage: M.6
+            O(q^6)
+            sage: M.7
+            O(q^6)
+            sage: pari(M.6) == pari(M.7)
+            False
+            sage: pari(M.6).mfcoefs(10)
+            [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]
+
+            sage: M = ModularForms(DirichletGroup(17).0^2, 2)
+            sage: pari(M.0).mfcoefs(5)
+            [0, 1, Mod(-t^3 + t^2 - 1, t^4 + 1), Mod(t^3 - t^2 - t - 1, t^4 + 1), Mod(2*t^3 - t^2 + 2*t, t^4 + 1), Mod(-t^3 - t^2, t^4 + 1)]
+            sage: M.0.qexp(5)
+            q + (-zeta8^3 + zeta8^2 - 1)*q^2 + (zeta8^3 - zeta8^2 - zeta8 - 1)*q^3 + (2*zeta8^3 - zeta8^2 + 2*zeta8)*q^4 + O(q^5)
+        """
+        from sage.libs.pari import pari
+        from sage.rings.number_field.number_field_element import NumberFieldElement
+        M = pari(self.parent())
+        f = self.qexp(self.parent().sturm_bound())
+        coefficients = [
+            x.__pari__('t') if isinstance(x, NumberFieldElement) else x
+            for x in f]
+        # we cannot compute pari(f) directly because we need to set the variable name as t
+        return M.mflinear(M.mftobasis(coefficients + [0] * (f.prec() - len(coefficients))))
+
     def __call__(self, x, prec=None):
         """
         Evaluate the `q`-expansion of this modular form at x.
@@ -233,8 +265,110 @@ class ModularForm_abstract(ModuleElement):
 
             sage: f(0)
             0
+
+        Evaluate numerically::
+
+            sage: f = ModularForms(1, 12).0
+            sage: f(0.3)  # rel tol 1e-12
+            2.3452457654859093943911095448677943331e-6
+            sage: f = EisensteinForms(1, 4).0
+            sage: f(0.9)  # rel tol 1e-12
+            1.2647594220924141255379137476604196202e7
+
+        TESTS::
+
+            sage: f = ModularForms(96, 2).0
+            sage: f(0.3)  # rel tol 1e-12
+            0.299999997396191
+            sage: f(0.0+0.0*I)
+            0
+
+        Higher precision::
+
+            sage: f(ComplexField(1024)(0.3))  # rel tol 1e-300
+            0.299999997396191310292851660587501640585287966606926712372685051052183848485101271417891225951099656119402111562859500035032541015715233392211176407057239620967660312966086779337994327624536037187214146041831261633868799976346085552246983798477217725916938994733822571999849908529513379575860920140944745353698614348900664409173
+            sage: f(ComplexField(1024)(1+2*I)/3)  # rel tol 1e-300
+            0.321653845723568825567905326693899006909160675826045434571915911867833071589696569615194893689901721899490426373845744862497953969333193682758406183041097473225418603897622369265087989491842075279034290073993079800285909375526425931622610153626461152157393613063055863371355916362145445869467929251660349223775541765403069287756 + 0.670612446383675863028207907112577773897857202143717552376205630684889727243085419317012486309756101468259545944957593645365938699136657674117927754488042563377649540662343013944001734211314704342435690945950614217421684269575557390763317106676805075226392963322227027538349081598725382171963223815408532667527371217267163311545*I
+
+        Confirm numerical evaluation matches the q-expansion::
+
+            sage: f = EisensteinForms(1, 4).0
+            sage: f(0.3)  # rel tol 1e-12
+            741.741819297986
+            sage: f.qexp(50).polynomial()(0.3)  # rel tol 1e-12
+            741.741819297986
+
+        With a nontrivial character::
+
+            sage: M = ModularForms(DirichletGroup(17).0^2, 2)
+            sage: M.0(0.5)  # rel tol 1e-12
+            0.166916655031616406 + 0.0111529051752428267*I
+            sage: M.0.qexp(50).polynomial()(0.5)  # rel tol 1e-12
+            0.166916655031612 + 0.0111529051752446*I
+
+        Higher precision::
+
+            sage: f(ComplexField(1024)(1+2*I)/3)  # rel tol 1e-300
+            429.199948322062942786880853990563596327120079065066254109432103144473221199829480785902664748868493907769441449473555229387561526629665655661427945472113572803307694967838236473063580602746440482717293005228669958745844625512025507948139637569777953993158796185335086681612581007434046175713336414282554064647719988594288913120 - 786.157362841882433511538308248529749947718853411006076221833170249528876337224355907958857459245137532046109965098912535988424738933052981899295555982842062176345159766720738928291892050139943952864992573038108609831401219671626805315734950245686731132797235451098295774853868203027469066869512246697946206845252244686704009880*I
+            sage: f.qexp(3000).polynomial()(ComplexField(1024)(1+2*I)/3)  # rel tol 1e-300
+            429.1999483220629427868808539905635963271200790650662541094321031444732211998294807859026647488684939077694414494735552293875615266296656556614279454721135728033076949678382364730635806027464404827172930052286699587458446255120255079481396375697779539931587961853350866816125810074340461757133364142825540647 - 786.1573628418824335115383082485297499477188534110060762218331702495288763372243559079588574592451375320461099650989125359884247389330529818992955559828420621763451597667207389282918920501399439528649925730381086098314012196716268053157349502456867311327972354510982957748538682030274690668695122466979462069*I
+
+        Check ``SR`` does not make the result lose precision::
+
+            sage: f(ComplexField(1024)(1+2*I)/3 + x - x)  # rel tol 1e-300
+            429.199948322062942786880853990563596327120079065066254109432103144473221199829480785902664748868493907769441449473555229387561526629665655661427945472113572803307694967838236473063580602746440482717293005228669958745844625512025507948139637569777953993158796185335086681612581007434046175713336414282554064647719988594288913120 - 786.157362841882433511538308248529749947718853411006076221833170249528876337224355907958857459245137532046109965098912535988424738933052981899295555982842062176345159766720738928291892050139943952864992573038108609831401219671626805315734950245686731132797235451098295774853868203027469066869512246697946206845252244686704009880*I
         """
+        from sage.rings.integer import Integer
+        from sage.misc.functional import log
+        from sage.structure.element import parent
+        from sage.rings.complex_mpfr import ComplexNumber
+        from sage.rings.cc import CC
+        from sage.rings.real_mpfr import RealNumber
+        from sage.symbolic.constants import pi
+        from sage.rings.imaginary_unit import I  # import from here instead of sage.symbolic.constants to avoid cast to SR
+        from sage.symbolic.expression import Expression
+        if isinstance(x, Expression):
+            try:
+                x = x.pyobject()
+            except TypeError:
+                pass
+        if x in CC:
+            if x == 0:
+                return self.qexp(1)[0]
+            if not isinstance(x, (RealNumber, ComplexNumber)):
+                x = CC(x)  # might lose precision if this is done unconditionally (TODO what about interval and ball types?)
+        if isinstance(x, (RealNumber, ComplexNumber)):
+            return self.eval_at_tau(log(x)/(2*parent(x)(pi)*I))  # cast to parent(x) to force numerical evaluation of pi
         return self.q_expansion(prec)(x)
+
+    def eval_at_tau(self, tau):
+        r"""
+        Evaluate this modular form at the half-period ratio `\tau`.
+        This is related to `q` by `q = e^{2\pi i \tau}`.
+
+        TESTS:
+
+        Check ``SR`` does not make the result lose precision::
+
+            sage: f = EisensteinForms(1, 4).0
+            sage: f.eval_at_tau(ComplexField(1024)(1+2*I)/3 + x - x)  # rel tol 1e-300
+            -1.04515705822020600561978783142860369660026850501222224469267227428610961984014327083815700740447933744582038996915609186529679911598578009500436771124828467825291523495268250908979376807788900006209591385867335039616941215684551066086395842278498086825793727621839992525301493298760414972421090964300343066954661155411439536627 + 2.72251120985198030982039335832865902741427458369769410157055618486577347595364447691251370354689965324163927321325893070988471497088161774220563106128912211718551704485285953814944589707973769813648021661388772620343922776832791016518443400344473023932887976990908175600815202111437107948718799541078554987252368104803278882956*I
+        """
+        from sage.libs.pari.convert_sage import gen_to_sage
+        from sage.libs.pari import pari
+        from sage.rings.complex_mpfr import ComplexNumber
+        from sage.rings.real_mpfr import RealNumber
+        from sage.symbolic.expression import Expression
+        if isinstance(tau, Expression):
+            try:
+                tau = tau.pyobject()
+            except TypeError:
+                pass
+        if isinstance(tau, (RealNumber, ComplexNumber)):
+            precision = tau.prec()
+        else:
+            precision = 53
+        return gen_to_sage(pari(self.parent()).mfeval(self, tau, precision=precision))
 
     @cached_method
     def valuation(self):
