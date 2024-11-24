@@ -117,10 +117,12 @@ class SomeIPythonRepr(ObjectReprABC):
         del type_repr[types.BuiltinFunctionType]
         del type_repr[types.FunctionType]
         del type_repr[str]
+        from sage.structure.sequence import Sequence_generic
+        type_repr[Sequence_generic] = type_repr[list]
         self._type_repr = type_repr
 
     def __call__(self, obj, p, cycle):
-        """
+        r"""
         Format object.
 
         INPUT:
@@ -142,6 +144,11 @@ class SomeIPythonRepr(ObjectReprABC):
             sage: pp = SomeIPythonRepr()
             sage: pp.format_string(set([1, 2, 3]))
             '{1, 2, 3}'
+
+        TESTS::
+
+            sage: pp.format_string(Sequence([[1]*20, [2]*20]))
+            '[[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],\n [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]]'
         """
         try:
             pretty_repr = self._type_repr[type(obj)]
@@ -218,7 +225,7 @@ class PlainPythonRepr(ObjectReprABC):
 
     def __call__(self, obj, p, cycle):
         r"""
-        Format matrix.
+        Format object.
 
         INPUT:
 
