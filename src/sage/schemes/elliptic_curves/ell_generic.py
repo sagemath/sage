@@ -191,7 +191,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: 4*P
             (23 : 26 : 1)
             sage: 9*P
-            (30 : 33 : 15)
+            (10 : 11 : 5)
             sage: E.assume_base_ring_is_field()
             sage: P = E(-5, 9)
             sage: 4*P
@@ -199,7 +199,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: 9*P
             Traceback (most recent call last):
             ...
-            ZeroDivisionError: Inverse of 30 does not exist (modulus = 35 = 5*7)
+            ZeroDivisionError: Inverse of 5 does not exist (characteristic = 35 = 5*7)
 
         .. NOTE::
 

@@ -81,7 +81,7 @@ Arithmetic over `\ZZ/N\ZZ` with composite `N` is supported::
     sage: E = EllipticCurve(Integers(N), [3,-13])
     sage: P = E(2,1)
     sage: LCM([2..60])*P
-    (1048079621 : 789440415 : 1590093204)
+    (1643112467 : 9446995 : 26927)
 
 However, some algorithms (e.g., toy examples of ECM) involve performing
 elliptic-curve operations as if the base ring were a field even when it
@@ -95,7 +95,7 @@ Example::
     sage: LCM([2..60])*P
     Traceback (most recent call last):
     ...
-    ZeroDivisionError: Inverse of 1520944668 does not exist
+    ZeroDivisionError: Inverse of 26927 does not exist
     (characteristic = 1715761513 = 26927*63719)
 
 AUTHORS:
@@ -155,10 +155,6 @@ from sage.schemes.curves.projective_curve import Hasse_bounds
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.projective.projective_point import (SchemeMorphism_point_projective_ring,
                                                       SchemeMorphism_point_abelian_variety_field)
-from sage.structure.coerce_actions import IntegerMulAction
-from sage.structure.element import AdditiveGroupElement
-from sage.structure.richcmp import richcmp
-from sage.structure.sequence import Sequence
 
 lazy_import('sage.rings.padics.factory', 'Qp')
 lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
@@ -174,6 +170,28 @@ class EllipticCurvePoint(AdditiveGroupElement,
     """
     A point on an elliptic curve.
     """
+    def __init__(self, *args, **kwds):
+        r"""
+        Initialize this elliptic-curve point.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(Zmod(77), [1,1,1,1,1])
+            sage: E(0)
+            (0 : 1 : 0)
+            sage: E(3, 9)
+            (3 : 9 : 1)
+            sage: E(6, 18, 2)
+            (3 : 9 : 1)
+            sage: E(66, 23, 22)
+            (33 : 50 : 11)
+        """
+        super().__init__(*args, **kwds)
+        try:
+            self.normalize_coordinates()
+        except NotImplementedError:
+            pass
+
     def curve(self):
         """
         Return the curve that this point is on.
@@ -251,7 +269,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
             ....:     y, z = (Zmod(N)^2).random_element()
             ....:     f = E.defining_polynomial()(X, y, z)
             ....:     xs = f.roots(multiplicities=False)
-            ....:     xs = [x for x in xs if 1 in Ideal([x,y,z])]
+            ....:     xs = [x for x in xs if 1 in Zmod(N).ideal([x,y,z])]
             ....:     if xs:
             ....:         pts.append(E(choice(xs), y, z))
             sage: P, Q = pts
@@ -325,7 +343,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
                         if not mod_2nd.is_one():
                             pt = CRT_vectors([pt, [x2.lift(), y2.lift(), z2.lift()]], [mod, mod_2nd])
 
-                        return E.point(pt, check=False)
+                        return E.point(Sequence(pt, E.base_ring()), check=False)
 
         from sage.schemes.elliptic_curves.addition_formulas_ring import add
         from sage.modules.free_module_element import vector
@@ -352,13 +370,108 @@ class EllipticCurvePoint(AdditiveGroupElement,
 
         assert False, 'bug: failed to compute elliptic-curve point addition'
 
+    def _neg_(self):
+        """
+        Return the negative of this elliptic-curve point, over a general ring.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('389a')
+            sage: P = E([-1,1])
+            sage: Q = -P; Q
+            (-1 : -2 : 1)
+            sage: Q + P
+            (0 : 1 : 0)
+
+        ::
+
+            sage: N = 1113121
+            sage: E = EllipticCurve(Zmod(N), [1,0])
+            sage: R = E(301098, 673883, 644675)
+            sage: -R
+            (136211 : 914033 : 107)
+            sage: ((-R) + R) == 0
+            True
+        """
+        if self.is_zero():
+            return self
+        E = self.curve()
+        a1, _, a3, _, _ = E.a_invariants()
+        x, y, z = self
+        return E.point([x, -y -a1*x - a3*z, z], check=False)
+
     def _sub_(self, other):
         """
-        Subtract another point on the same elliptic curve from this point.
+        Subtract ``other`` from ``self``.
 
-        This method computes point subtractions for fairly general rings.
+        ALGORITHM: :meth:`_add_` and :meth:`_neg_`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('389a')
+            sage: P = E([-1,1]); Q = E([0,0])
+            sage: P - Q
+            (4 : 8 : 1)
+            sage: P - Q == P._sub_(Q)
+            True
+            sage: (P - Q) + Q
+            (-1 : 1 : 1)
+            sage: P
+            (-1 : 1 : 1)
+
+        ::
+
+            sage: N = 1113121
+            sage: E = EllipticCurve(Zmod(N), [1,0])
+            sage: R1 = E(301098, 673883, 644675)
+            sage: R2 = E(411415, 758555, 255837)
+            sage: R3 = E(983009, 342673, 207687)
+            sage: R1 == R3 - R2
+            True
         """
         return self + (-other)
+
+    def _acted_upon_(self, other, side):
+        r"""
+        We implement ``_acted_upon_`` to provide scalar multiplications.
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: N = 1113121
+            sage: E = EllipticCurve(Zmod(N), [1,0])
+            sage: R = E(301098, 673883, 644675)
+            sage: 123*R
+            (703739 : 464106 : 107)
+            sage: 70200*R
+            (0 : 1 : 0)
+        """
+        return IntegerMulAction(ZZ, self.parent())._act_(other, self)
+
+    def __bool__(self):
+        r"""
+        Test whether this elliptic-curve point equals the neutral
+        element of the group (i.e., the point at infinity).
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(7), [1,1])
+            sage: bool(E(0))
+            False
+            sage: bool(E.lift_x(2))
+            True
+
+        sage:
+
+            sage: E = EllipticCurve(Zmod(77), [1,1,1,1,1])
+            sage: bool(E(0))
+            False
+            sage: P = E(66, 23, 22); P
+            (33 : 50 : 11)
+            sage: bool(P)
+            True
+        """
+        return bool(self[2])
 
 
 class EllipticCurvePoint_field(EllipticCurvePoint,
@@ -891,6 +1004,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
             sage: N = 1715761513
             sage: E = EllipticCurve(Integers(N), [3,-13])
+            sage: E.assume_base_ring_is_field()
             sage: P = E(2,1)
             sage: LCM([2..60])*P
             Traceback (most recent call last):
@@ -900,6 +1014,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
             sage: N = 35
             sage: E = EllipticCurve(Integers(N), [5,1])
+            sage: E.assume_base_ring_is_field()
             sage: P = E(0,1)
             sage: 4*P
             Traceback (most recent call last):
@@ -952,7 +1067,35 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         return E.point([x3, y3, E.base_ring().one()], check=False)
 
     _sub_ = EllipticCurvePoint._sub_
-    _neg_ = EllipticCurvePoint._neg_
+
+    def _neg_(self):
+        """
+        Return the additive inverse of this point.
+
+        Same as :meth:`EllipticCurvePoint._neg_`, but specialized
+        to points over fields, which are normalized to satisfy `z=1`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('389a')
+            sage: P = E([-1,1])
+            sage: Q = -P; Q
+            (-1 : -2 : 1)
+            sage: Q + P
+            (0 : 1 : 0)
+
+        Example to show that bug :issue:`4820` is fixed::
+
+            sage: [type(c) for c in -EllipticCurve('37a1').gen(0)]
+            [<... 'sage.rings.rational.Rational'>,
+             <... 'sage.rings.rational.Rational'>,
+             <... 'sage.rings.rational.Rational'>]
+        """
+        if self.is_zero():
+            return self
+        E, x, y = self.curve(), self[0], self[1]
+        # See trac #4820 for why we need to coerce 1 into the base ring here:
+        return E.point([x, -y - E.a1()*x - E.a3(), E.base_ring().one()], check=False)
 
     def xy(self):
         """
@@ -2714,7 +2857,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P = next(filter(bool, E.torsion_points()))
             sage: P._has_order_at_least(5)
             True
-            sage: P._has_order_at_least(6)
+            sage: P._has_order_at_least(6)  # long time -- 5s
             sage: P.order()
             5
             sage: Q = E.lift_x(10^42, extend=True)
@@ -4131,8 +4274,9 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
     def _acted_upon_(self, other, side):
         r"""
-        We implement ``_acted_upon_`` to keep track of cached
-        point orders when scalar multiplications are applied.
+        We implement ``_acted_upon_`` to make use of the specialized faster
+        scalar multiplication from PARI, and to keep track of cached point
+        orders when scalar multiplications are applied.
 
         EXAMPLES::
 
