@@ -8400,8 +8400,9 @@ class Graph(GenericGraph):
         try:
             solution = M.solve(log=verbose)
         except MIPSolverException as msg:
-            if str(msg) == "PPL : There is no feasible solution":
+            if str(msg).endswith("no feasible solution"):
                 return False
+            raise msg
         return solution > 0
 
     @doc_index("Graph properties")
