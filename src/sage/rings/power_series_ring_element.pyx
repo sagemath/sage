@@ -839,7 +839,7 @@ cdef class PowerSeries(AlgebraElement):
         v = [a[i] for i in range(min(prec, len(a)))]
         return self._parent(v, prec)
 
-    def __getitem__(self,n):
+    def __getitem__(self, n):
         r"""
         Return the coefficient of `t^n` in this power series, where
         `t` is the indeterminate of the power series ring.
@@ -1045,7 +1045,7 @@ cdef class PowerSeries(AlgebraElement):
         else:
             n = int(n)
             v = {}
-            for k, x in self.dict().iteritems():
+            for k, x in self.monomial_coefficients().items():
                 if k >= n:
                     v[k-n] = x
         return self._parent(v, self.prec()-n)
@@ -2317,7 +2317,7 @@ cdef class PowerSeries(AlgebraElement):
         coeffs = self[:prec]
         return self._parent(coeffs, prec)
 
-    def solve_linear_de(self, prec = infinity, b = None, f0 = None):
+    def solve_linear_de(self, prec=infinity, b=None, f0=None):
         r"""
         Obtain a power series solution to an inhomogeneous linear
         differential equation of the form:
@@ -2915,7 +2915,7 @@ def _solve_linear_de(R, N, L, a, b, f0):
     g = _solve_linear_de(R, N, L2, a, b, f0)
 
     term1 = R(g)  # we must not have check=False, since otherwise [..., 0, 0] is not stripped
-    term2 = R(a[:L]) #, check=False)
+    term2 = R(a[:L])  # , check=False)
     product = (term1 * term2).list()
 
     # todo: perhaps next loop could be made more efficient

@@ -1307,7 +1307,7 @@ class DiGraphGenerators:
                 raise ValueError("degree must be greater than or equal to one")
 
             # We start building the set of vertices
-            V = [i for i in my_alphabet]
+            V = list(my_alphabet)
             for i in range(D - 1):
                 VV = []
                 for w in V:
@@ -1657,7 +1657,7 @@ class DiGraphGenerators:
         if is_dense:
             for u in range(n):
                 for v in range(n):
-                    if ((u != v) or loops) and (not (v in adj[u])):
+                    if ((u != v) or loops) and (v not in adj[u]):
                         D.add_edge(u, v)
 
         return D

@@ -26,6 +26,7 @@ Here is what the module can do:
     :meth:`is_cut_edge` | Check whether the input edge is a cut-edge or a bridge.
     :meth:`is_edge_cut` | Check whether the input edges form an edge cut.
     :meth:`is_cut_vertex` | Check whether the input vertex is a cut-vertex.
+    :meth:`is_vertex_cut` | Check whether the input vertices form a vertex cut.
     :meth:`edge_connectivity` | Return the edge connectivity of the graph.
     :meth:`vertex_connectivity` | Return the vertex connectivity of the graph.
 
@@ -971,12 +972,158 @@ def is_cut_edge(G, u, v=None, label=None):
     return sol
 
 
+def is_vertex_cut(G, cut, weak=False):
+    r"""
+    Check whether the input vertices form a vertex cut.
+
+    A set of vertices is a vertex cut if its removal from the (di)graph
+    increases the number of (strongly) connected components. This function works
+    with simple graphs as well as graphs with loops and multiple edges.
+
+    INPUT:
+
+    - ``G`` -- a Sage (Di)Graph
+
+    - ``cut`` -- a set of vertices
+
+    - ``weak`` -- boolean (default: ``False``); whether the connectivity of
+      directed graphs is to be taken in the weak sense, that is ignoring edges
+      orientations
+
+    EXAMPLES:
+
+    Giving a cycle graph of order 4::
+
+        sage: from sage.graphs.connectivity import is_vertex_cut
+        sage: G = graphs.CycleGraph(4)
+        sage: is_vertex_cut(G, [0, 1])
+        False
+        sage: is_vertex_cut(G, [0, 2])
+        True
+
+    Giving a disconnected graph::
+
+        sage: from sage.graphs.connectivity import is_vertex_cut
+        sage: G = graphs.CycleGraph(4) * 2
+        sage: G.connected_components()
+        [[0, 1, 2, 3], [4, 5, 6, 7]]
+        sage: is_vertex_cut(G, [0, 2])
+        True
+        sage: is_vertex_cut(G, [4, 6])
+        True
+        sage: is_vertex_cut(G, [0, 6])
+        False
+        sage: is_vertex_cut(G, [0, 4, 6])
+        True
+
+    Comparing the weak and strong connectivity of a digraph::
+
+        sage: D = digraphs.Circuit(6)
+        sage: D.is_strongly_connected()
+        True
+        sage: is_vertex_cut(D, [2])
+        True
+        sage: is_vertex_cut(D, [2], weak=True)
+        False
+
+    Giving a vertex that is not in the graph::
+
+        sage: G = graphs.CompleteGraph(4)
+        sage: is_vertex_cut(G, [7])
+        Traceback (most recent call last):
+        ...
+        ValueError: vertex (7) is not a vertex of the graph
+
+    TESTS:
+
+    If ``G`` is not a Sage graph, an error is raised::
+
+        sage: is_vertex_cut('I am not a graph', [0])
+        Traceback (most recent call last):
+        ...
+        TypeError: the input must be a Sage graph
+    """
+    from sage.graphs.generic_graph import GenericGraph
+    if not isinstance(G, GenericGraph):
+        raise TypeError("the input must be a Sage graph")
+
+    cdef set cutset = set(cut)
+    for u in cutset:
+        if u not in G:
+            raise ValueError("vertex ({0}) is not a vertex of the graph".format(repr(u)))
+
+    if len(cutset) >= G.order() - 1:
+        # A vertex cut must be of size at most n - 2
+        return False
+
+    # We deal with graphs with multiple (strongly) connected components
+    cdef list CC
+    if G.is_directed() and not weak:
+        CC = G.strongly_connected_components()
+    else:
+        CC = G.connected_components(sort=False)
+    if len(CC) > 1:
+        for comp in CC:
+            subcut = cutset.intersection(comp)
+            if subcut and is_vertex_cut(G.subgraph(comp), subcut, weak=weak):
+                return True
+        return False
+
+    cdef list boundary = G.vertex_boundary(cutset)
+    if not boundary:
+        # We need at least 1 vertex in the boundary of the cut
+        return False
+
+    cdef list cases = [(G.neighbor_iterator, boundary)]
+    if not weak and G.is_directed():
+        # Strong connectivity for digraphs.
+        # We perform two DFS starting from an out neighbor of cut and avoiding
+        # cut. The first DFS follows the edges directions, and the second is
+        # in the reverse order. If both allow to reach all neighbors of cut,
+        # then it is not a vertex cut.
+        # We set data for the reverse order
+        in_boundary = set()
+        for u in cutset:
+            in_boundary.update(G.neighbor_in_iterator(u))
+        in_boundary.difference_update(cutset)
+        if not in_boundary:
+            return False
+        cases.append((G.neighbor_in_iterator, list(in_boundary)))
+
+    cdef list queue
+    cdef set seen
+    cdef set targets
+    start = boundary[0]
+
+    for neighbors, this_boundary in cases:
+
+        # We perform a DFS starting from start and avoiding cut
+        queue = [start]
+        seen = set(cutset)
+        seen.add(start)
+        targets = set(this_boundary)
+        targets.discard(start)
+        while queue:
+            v = queue.pop()
+            for w in neighbors(v):
+                if w not in seen:
+                    seen.add(w)
+                    queue.append(w)
+                    targets.discard(w)
+
+        # If some neighbors cannot be reached, we have a vertex cut
+        if targets:
+            return True
+
+    return False
+
+
 def is_cut_vertex(G, u, weak=False):
     r"""
     Check whether the input vertex is a cut-vertex.
 
     A vertex is a cut-vertex if its removal from the (di)graph increases the
-    number of (strongly) connected components. Isolated vertices or leafs are
+    number of (strongly) connected components. Isolated vertices or leaves are
     not cut-vertices. This function works with simple graphs as well as graphs
     with loops and multiple edges.
 
@@ -1010,9 +1157,8 @@ def is_cut_vertex(G, u, weak=False):
 
     Comparing the weak and strong connectivity of a digraph::
 
-        sage: from sage.graphs.connectivity import is_strongly_connected
         sage: D = digraphs.Circuit(6)
-        sage: is_strongly_connected(D)
+        sage: D.is_strongly_connected()
         True
         sage: is_cut_vertex(D, 2)
         True
@@ -1036,70 +1182,7 @@ def is_cut_vertex(G, u, weak=False):
         ...
         TypeError: the input must be a Sage graph
     """
-    from sage.graphs.generic_graph import GenericGraph
-    if not isinstance(G, GenericGraph):
-        raise TypeError("the input must be a Sage graph")
-
-    if u not in G:
-        raise ValueError("vertex ({0}) is not a vertex of the graph".format(repr(u)))
-
-    # Initialization
-    cdef set CC
-    cdef list neighbors_func
-    if not G.is_directed() or weak:
-        # Weak connectivity
-
-        if G.degree(u) < 2:
-            # An isolated or a leaf vertex is not a cut vertex
-            return False
-
-        neighbors_func = [G.neighbor_iterator]
-        start = next(G.neighbor_iterator(u))
-        CC = set(G)
-
-    else:
-        # Strong connectivity for digraphs
-
-        if not G.out_degree(u) or not G.in_degree(u):
-            # A vertex without in or out neighbors is not a cut vertex
-            return False
-
-        # We consider only the strongly connected component containing u
-        CC = set(strongly_connected_component_containing_vertex(G, u))
-
-        # We perform two DFS starting from an out neighbor of u and avoiding
-        # u. The first DFS follows the edges directions, and the second is
-        # in the reverse order. If both allow to reach all neighbors of u,
-        # then u is not a cut vertex
-        neighbors_func = [G.neighbor_out_iterator, G.neighbor_in_iterator]
-        start = next(G.neighbor_out_iterator(u))
-
-    CC.discard(u)
-    CC.discard(start)
-    cdef list queue
-    cdef set seen
-    cdef set targets
-
-    for neighbors in neighbors_func:
-
-        # We perform a DFS starting from a neighbor of u and avoiding u
-        queue = [start]
-        seen = set(queue)
-        targets = CC.intersection(G.neighbor_iterator(u))
-        targets.discard(start)
-        while queue and targets:
-            v = queue.pop()
-            for w in neighbors(v):
-                if w not in seen and w in CC:
-                    seen.add(w)
-                    queue.append(w)
-                    targets.discard(w)
-
-        # If some neighbors cannot be reached, u is a cut vertex.
-        if targets:
-            return True
-
-    return False
+    return is_vertex_cut(G, [u], weak=weak)
 
 
 def edge_connectivity(G,
@@ -1608,6 +1691,16 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
         sage: G.add_edge(0, 1)
         sage: G.vertex_connectivity(value_only=False, verbose=1)                        # needs sage.numerical.mip
         (3, [])
+
+    Check that :issue:`38723` is fixed::
+
+        sage: G = graphs.SierpinskiGasketGraph(3)
+        sage: G.vertex_connectivity(k=1)                                                # needs sage.numerical.mip
+        True
+        sage: G.vertex_connectivity(k=2)                                                # needs sage.numerical.mip
+        True
+        sage: G.vertex_connectivity(k=3)                                                # needs sage.numerical.mip
+        False
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
@@ -1622,8 +1715,8 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
             # We follow the convention of is_connected, is_biconnected and
             # is_strongly_connected
             return k == 1
-        if (g.is_directed() and k > min(min(g.in_degree()), min(g.out_degree()))) \
-           or (not g.is_directed() and (k > min(g.degree()))):
+        if ((g.is_directed() and k > min(min(g.in_degree()), min(g.out_degree())))
+                or (not g.is_directed() and (k > min(g.degree())))):
             return False
         value_only = True
         sets = False
@@ -1655,7 +1748,7 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
                 return 1 if k is None else (k == 1)
 
             if not G.is_triconnected():
-                return 2 if k is None else (k == 2)
+                return 2 if k is None else (k <= 2)
             elif k == 3:
                 return True
 

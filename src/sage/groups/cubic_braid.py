@@ -91,6 +91,8 @@ from sage.groups.finitely_presented import FinitelyPresentedGroup, FinitelyPrese
 from sage.groups.braid import BraidGroup
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
+from sage.structure.unique_representation import UniqueRepresentation
+
 
 try:
     from sage.libs.gap.element import GapElement
@@ -282,7 +284,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
         EXAMPLES::
 
             sage: CBG3 = CubicBraidGroup(3)
-            sage: sorted(CBG3)    # indirect doctest
+            sage: sorted(CBG3)    # indirect doctest, random output
             [(c0*c1^-1)^2, c0*c1^-1*c0, c0^-1*c1*c0^-1, c0^-1*c1^-1*c0,
              c1*c0^-1*c1, c0^-1*c1^-1*c0^-1, c0^-1*c1^-1, c1^-1*c0*c1^-1,
              c0*c1^-1*c0^-1, c0^-1*c1, c0^-1*c1*c0, c0*c1^-1, c1*c0^-1,
@@ -565,7 +567,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
 #                  Class CubicBraidGroup
 #
 ##############################################################################
-class CubicBraidGroup(FinitelyPresentedGroup):
+class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
     r"""
     Factor groups of the Artin braid group mapping their generators to elements
     of order 3.
@@ -750,7 +752,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         n = Integer(len(names))
         if n < 1:
             raise ValueError("the number of strands must be an integer larger than one")
-
         if cbg_type is None:
             cbg_type = CubicBraidGroup.type.Coxeter
         if not isinstance(cbg_type, CubicBraidGroup.type):

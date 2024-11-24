@@ -211,7 +211,7 @@ def cantor_reduction(a, b, f, h, genus):
     return (a, b)
 
 
-def cantor_composition_simple(D1,D2,f,genus):
+def cantor_composition_simple(D1, D2, f, genus):
     r"""
     Given `D_1` and `D_2` two reduced Mumford
     divisors on the Jacobian of the curve `y^2 = f(x)`,
@@ -270,7 +270,7 @@ def cantor_composition_simple(D1,D2,f,genus):
     return (a, b)
 
 
-def cantor_composition(D1,D2,f,h,genus):
+def cantor_composition(D1, D2, f, h, genus):
     r"""
     EXAMPLES::
 
@@ -808,7 +808,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             D = (polys[0],-polys[1]-(h+polys[0]) % (polys[0]))
         return JacobianMorphism_divisor_class_field(X, D, check=False)
 
-    def _add_(self,other):
+    def _add_(self, other):
         r"""
         Return a Mumford representative of the divisor ``self + other``.
 

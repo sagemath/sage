@@ -981,9 +981,9 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
 
             numfield_polynomial_flat = numfield.polynomial()(nf_gen)
 
-            polynomial_flat = sum(flat_ring({(0,)+tuple(k):1})
+            polynomial_flat = sum(flat_ring({(0,) + tuple(k): 1})
                                   * v.polynomial()(nf_gen)
-                                  for k,v in numfield_f.dict().items())
+                                  for k, v in numfield_f.monomial_coefficients().items())
 
             norm_flat = polynomial_flat.resultant(numfield_polynomial_flat, nf_gen)
             norm_f = norm_flat((0,)+norm_ring.gens())
@@ -2556,7 +2556,8 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
     - ``same_field`` -- boolean (default: ``False``); see below
 
     - ``embedded`` -- boolean (default: ``False``); whether to make the
-      NumberField embedded
+      NumberField embedded, note that this has no effect when the
+      resulting field is ``QQ`` because there is only one ``QQ`` instance
 
     - ``name`` -- string (default: ``'a'``); name of the primitive element
 
@@ -2827,6 +2828,69 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
            To:   Algebraic Real Field
            Defn: 1 |--> 1)
 
+    Test ``embedded`` for quadratic and cyclotomic fields::
+
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(2/3))], embedded=False, minimal=True); v
+        (Number Field in zeta6 with defining polynomial x^2 - x + 1,
+         [zeta6 - 1],
+         Ring morphism:
+           From: Number Field in zeta6 with defining polynomial x^2 - x + 1
+           To:   Algebraic Field
+           Defn: zeta6 |--> 0.500000000000000? + 0.866025403784439?*I)
+        sage: v[0].coerce_embedding()
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(2/3))], embedded=True, minimal=True); v
+        (Cyclotomic Field of order 6 and degree 2,
+         [zeta6 - 1],
+         Ring morphism:
+           From: Cyclotomic Field of order 6 and degree 2
+           To:   Algebraic Field
+           Defn: zeta6 |--> 0.500000000000000? + 0.866025403784439?*I)
+        sage: v[0].coerce_embedding()
+        Generic morphism:
+          From: Cyclotomic Field of order 6 and degree 2
+          To:   Complex Lazy Field
+          Defn: zeta6 -> 0.500000000000000? + 0.866025403784439?*I
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/2))], embedded=False, minimal=True); v
+        (Number Field in I with defining polynomial x^2 + 1,
+         [I],
+         Ring morphism:
+           From: Number Field in I with defining polynomial x^2 + 1
+           To:   Algebraic Field
+           Defn: I |--> 1*I)
+        sage: v[0].coerce_embedding()
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/2))], embedded=True, minimal=True); v
+        (Number Field in I with defining polynomial x^2 + 1 with I = 1*I,
+         [I],
+         Ring morphism:
+           From: Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+           To:   Algebraic Field
+           Defn: I |--> 1*I)
+        sage: v[0].coerce_embedding()
+        Generic morphism:
+          From: Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+          To:   Complex Lazy Field
+          Defn: I -> 1*I
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/5))], embedded=False, minimal=True); v
+        (Number Field in zeta10 with defining polynomial x^4 - x^3 + x^2 - x + 1,
+         [zeta10],
+         Ring morphism:
+           From: Number Field in zeta10 with defining polynomial x^4 - x^3 + x^2 - x + 1
+           To:   Algebraic Field
+           Defn: zeta10 |--> 0.8090169943749474? + 0.5877852522924731?*I)
+        sage: v[0].coerce_embedding()
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/5))], embedded=True, minimal=True); v
+        (Cyclotomic Field of order 10 and degree 4,
+         [zeta10],
+         Ring morphism:
+           From: Cyclotomic Field of order 10 and degree 4
+           To:   Algebraic Field
+           Defn: zeta10 |--> 0.8090169943749474? + 0.5877852522924731?*I)
+        sage: v[0].coerce_embedding()
+        Generic morphism:
+          From: Cyclotomic Field of order 10 and degree 4
+          To:   Complex Lazy Field
+          Defn: zeta10 -> 0.809016994374948? + 0.587785252292473?*I
+
     Tests more complicated combinations::
 
         sage: # needs sage.libs.gap sage.symbolic
@@ -2841,6 +2905,18 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
         sage: res[0]
         Number Field in a with defining polynomial y^24 - 107010*y^22 - 24*y^21 + ...
         + 250678447193040618624307096815048024318853254384 with a = 93.32530798172420?
+
+    Test that the semantic of ``AA`` constructor does not affect this function (:issue:`36735`)::
+
+        sage: AA((-1)^(2/3))
+        1
+        sage: number_field_elements_from_algebraics([(-1)^(2/3)])
+        (Number Field in zeta6 with defining polynomial x^2 - x + 1,
+         [zeta6 - 1],
+         Ring morphism:
+           From: Number Field in zeta6 with defining polynomial x^2 - x + 1
+           To:   Algebraic Field
+           Defn: zeta6 |--> 0.500000000000000? + 0.866025403784439?*I)
     """
     gen = qq_generator
 
@@ -2862,15 +2938,10 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
             return x
         return QQbar(x)
 
-    # Try to cast into AA
-    try:
-        aa_numbers = [AA(_) for _ in numbers]
-        numbers = aa_numbers
-        real_case = True
-    except (ValueError, TypeError):
-        real_case = False
-    # Make the numbers algebraic
     numbers = [mk_algebraic(_) for _ in numbers]
+    real_case = all(x in AA for x in numbers)
+    if real_case:
+        numbers = [AA(x) for x in numbers]
 
     # Make the numbers have a real exact underlying field
     real_numbers = []
@@ -2898,17 +2969,23 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
     exact_generator = gen.root_as_algebraic()
     hom = fld.hom([exact_generator])
 
-    if fld is not QQ and embedded:
-        # creates the embedded field
-        embedded_field = NumberField(fld.defining_polynomial(), fld.variable_name(), embedding=exact_generator)
+    if fld is not QQ:
+        # ignore the embedded parameter for QQ
+        # cyclotomic fields are embedded by default
+        # number fields are not embedded by default
+        # if the default embedding is different from what is expected then modify the field
+        if embedded != (fld.coerce_embedding() is not None):
+            # creates the modified field
+            modified_field = NumberField(fld.defining_polynomial(), fld.variable_name(),
+                                         embedding=exact_generator if embedded else None)
 
-        # embeds the numbers
-        inter_hom = fld.hom([embedded_field.gen(0)])
-        nums = [inter_hom(n) for n in nums]
+            # embeds the numbers
+            inter_hom = fld.hom([modified_field.gen(0)])
+            nums = [inter_hom(n) for n in nums]
 
-        # get the field and homomorphism
-        hom = embedded_field.hom([exact_generator])
-        fld = embedded_field
+            # get the field and homomorphism
+            hom = modified_field.hom([exact_generator])
+            fld = modified_field
 
     if single_number:
         nums = nums[0]

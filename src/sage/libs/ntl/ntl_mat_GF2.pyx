@@ -409,7 +409,7 @@ cdef class ntl_mat_GF2():
             [0 0 0 0 0 0 0 0 0 0]
             ]
 
-        ``Abar`` is in row echolon form now::
+        ``Abar`` is in row echelon form now::
 
             sage: first_nonzero_indices = [Abar._sage_().row(i).nonzero_positions()[0] for i in range(A.rank())]
             sage: all(first_nonzero_indices[i] < first_nonzero_indices[i+1] for i in range(A.rank()-1))
@@ -520,7 +520,7 @@ cdef class ntl_mat_GF2():
         sig_off()
         return r
 
-    def IsIdent(self, n = -1):
+    def IsIdent(self, n=-1):
         """
         Test if this matrix is the n x n identity matrix.
 
@@ -573,7 +573,7 @@ cdef class ntl_mat_GF2():
             sage: A_image.row_space() == Abar_image.row_space()
             True
 
-        X is in row echolon form::
+        X is in row echelon form::
 
             sage: first_nonzero_indices = [row.nonzero_positions()[0] for row in Abar_image.rows()]
             sage: all(first_nonzero_indices[i] < first_nonzero_indices[i+1] for i in range(Abar_image.nrows() - 1))

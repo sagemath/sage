@@ -567,8 +567,8 @@ def cremona_to_lmfdb(cremona_label, CDB=None):
     if CDB is None:
         CDB = CremonaDatabase()
     classes = CDB.isogeny_classes(N)
-    ft = int(53)
-    tff = int(255) # This should be enough to distinguish between curves (using heuristics from Sato-Tate for example)
+    ft = 53
+    tff = 255 # This should be enough to distinguish between curves (using heuristics from Sato-Tate for example)
     isos = []
     for i, iso in enumerate(classes):
         alist = iso[0][0]
@@ -617,8 +617,8 @@ def lmfdb_to_cremona(lmfdb_label, CDB=None):
     if CDB is None:
         CDB = CremonaDatabase()
     classes = CDB.isogeny_classes(N)
-    ft = int(53)
-    tff = int(255) # This should be enough to distinguish between curves (using heuristics from Sato-Tate for example)
+    ft = 53
+    tff = 255 # This should be enough to distinguish between curves (using heuristics from Sato-Tate for example)
     isos = []
     for i, iso in enumerate(classes):
         alist = iso[0][0]
@@ -818,7 +818,7 @@ class MiniCremonaDatabase(SQLDatabase):
             ret[iso+str(num)] = [eval(c[1]),c[2],c[3]]
         if N == 990:
             del ret['h1']
-            ret['h3'] = [[1,-1,1,-1568,-4669],int(1),int(6)]
+            ret['h3'] = [[1,-1,1,-1568,-4669],1,6]
         return ret
 
     def coefficients_and_data(self, label):
@@ -1122,10 +1122,10 @@ class MiniCremonaDatabase(SQLDatabase):
             if N == 990:
                 for c in self.__connection__.cursor().execute('SELECT class '
                     + 'FROM t_class WHERE conductor=990'):
-                    if c[0][-1] == u'h':
-                        yield self.elliptic_curve(c[0]+u'3')
+                    if c[0][-1] == 'h':
+                        yield self.elliptic_curve(c[0]+'3')
                     else:
-                        yield self.elliptic_curve(c[0]+u'1')
+                        yield self.elliptic_curve(c[0]+'1')
                 continue
             for c in self.__connection__.cursor().execute('SELECT curve '
                 + 'FROM t_curve,t_class USING(class) WHERE curve=class||1 '
@@ -1651,7 +1651,7 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
 _db = None
 
 
-def CremonaDatabase(name=None,mini=None,set_global=None):
+def CremonaDatabase(name=None, mini=None, set_global=None):
     """
     Initialize the Cremona database with name ``name``. If ``name`` is
     ``None`` it instead initializes large Cremona database (named 'cremona'),

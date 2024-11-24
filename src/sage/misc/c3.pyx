@@ -177,7 +177,7 @@ cpdef list C3_algorithm(object start, str bases, str attribute, bint proper):
         out = []
     else:
         out = [start]
-    cdef list args = getattr(start,bases)
+    cdef list args = getattr(start, bases)
     if not args:
         return out
     # Data structure / invariants:

@@ -28,14 +28,14 @@ Classes and Methods
 #                  https://www.gnu.org/licenses/
 ##############################################################################
 
-import os
+from pathlib import Path
 import sys
 import subprocess
 import shlex
+from time import sleep
 
 from sage.sat.solvers.satsolver import SatSolver
 from sage.misc.temporary_file import tmp_filename
-from time import sleep
 
 
 class DIMACS(SatSolver):
@@ -44,7 +44,7 @@ class DIMACS(SatSolver):
 
     .. NOTE::
 
-        Usually, users won't have to use this class directly but some
+        Usually, users will not have to use this class directly but some
         class which inherits from this class.
 
     .. automethod:: __init__
@@ -136,10 +136,9 @@ class DIMACS(SatSolver):
         """
         if not self._tail.closed:
             self._tail.close()
-        if os.path.exists(self._tail.name):
-            os.unlink(self._tail.name)
-        if self._headname_file_created_during_init and os.path.exists(self._headname):
-            os.unlink(self._headname)
+        Path(self._tail.name).unlink(missing_ok=True)
+        if self._headname_file_created_during_init:
+            Path(self._headname).unlink(missing_ok=True)
 
     def var(self, decision=None):
         """
@@ -209,7 +208,7 @@ class DIMACS(SatSolver):
                 self.var()
             l.append(str(lit))
         l.append("0\n")
-        self._tail.write(" ".join(l) )
+        self._tail.write(" ".join(l))
         self._lit += 1
 
     def write(self, filename=None):
@@ -246,19 +245,19 @@ class DIMACS(SatSolver):
         headname = self._headname if filename is None else filename
         head = open(headname, "w")
         head.truncate(0)
-        head.write("p cnf %d %d\n" % (self._var,self._lit))
+        head.write("p cnf %d %d\n" % (self._var, self._lit))
         head.close()
 
         tail = self._tail
         tail.close()
 
-        head = open(headname,"a")
-        tail = open(self._tail.name,"r")
+        head = open(headname, "a")
+        tail = open(self._tail.name)
         head.write(tail.read())
         tail.close()
         head.close()
 
-        self._tail = open(self._tail.name,"a")
+        self._tail = open(self._tail.name, "a")
         return headname
 
     def clauses(self, filename=None):
@@ -301,7 +300,7 @@ class DIMACS(SatSolver):
         else:
             tail = self._tail
             tail.close()
-            tail = open(self._tail.name,"r")
+            tail = open(self._tail.name)
 
             clauses = []
             for line in tail.readlines():
@@ -313,7 +312,7 @@ class DIMACS(SatSolver):
                     if lit == 0:
                         break
                     clause.append(lit)
-                clauses.append( ( tuple(clause), False, None ) )
+                clauses.append((tuple(clause), False, None))
             tail.close()
             self._tail = open(self._tail.name, "a")
             return clauses
@@ -362,20 +361,19 @@ class DIMACS(SatSolver):
             1 2 -3 0
             <BLANKLINE>
         """
-        fh = open(filename, "w")
-        fh.write("p cnf %d %d\n" % (nlits,len(clauses)))
-        for clause in clauses:
-            if len(clause) == 3 and clause[1] in (True, False) and clause[2] in (True,False,None):
-                lits, is_xor, rhs = clause
-            else:
-                lits, is_xor, rhs = clause, False, None
+        with open(filename, "w") as fh:
+            fh.write("p cnf %d %d\n" % (nlits, len(clauses)))
+            for clause in clauses:
+                if len(clause) == 3 and clause[1] in (True, False) and clause[2] in (True, False, None):
+                    lits, is_xor, rhs = clause
+                else:
+                    lits, is_xor, rhs = clause, False, None
 
-            if is_xor:
-                closing = lits[-1] if rhs else -lits[-1]
-                fh.write("x" + " ".join(map(str, lits[:-1])) + " %d 0\n" % closing)
-            else:
-                fh.write(" ".join(map(str, lits)) + " 0\n")
-        fh.close()
+                if is_xor:
+                    closing = lits[-1] if rhs else -lits[-1]
+                    fh.write("x" + " ".join(map(str, lits[:-1])) + " %d 0\n" % closing)
+                else:
+                    fh.write(" ".join(map(str, lits)) + " 0\n")
 
     def _run(self):
         r"""

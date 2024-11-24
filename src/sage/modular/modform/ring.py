@@ -10,7 +10,7 @@ AUTHORS:
 - William Stein (2007-08-24): first version
 - David Ayotte (2021-06): implemented category and Parent/Element frameworks
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein
 #                     2021 David Ayotte
 #
@@ -18,8 +18,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from random import shuffle
 
@@ -142,6 +142,7 @@ def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=Fals
         W = V.span(G)
         verbose('span has dimension %s' % W.rank(), t)
         return W
+
 
 @richcmp_method
 class ModularFormsRing(Parent):

@@ -48,6 +48,7 @@ from sage.manifolds.differentiable.vectorfield_module import (VectorFieldModule,
 from sage.manifolds.differentiable.automorphismfield import (AutomorphismField,
                                                              AutomorphismFieldParal)
 
+
 class AutomorphismFieldGroup(UniqueRepresentation, Parent):
     r"""
     General linear group of the module of vector fields along a differentiable

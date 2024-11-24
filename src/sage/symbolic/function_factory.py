@@ -150,7 +150,7 @@ def unpickle_function(name, nargs, latex_name, conversions, evalf_params_first,
     return function_factory(*args)
 
 
-def function(s, **kwds) -> Union[SymbolicFunction, list[SymbolicFunction]]:
+def function(s, **kwds) -> SymbolicFunction | list[SymbolicFunction]:
     r"""
     Create a formal symbolic function with the name *s*.
 
@@ -270,7 +270,7 @@ def function(s, **kwds) -> Union[SymbolicFunction, list[SymbolicFunction]]:
         sage: foo(x).conjugate()
         2*x
 
-        sage: def deriv(self, *args,**kwds):
+        sage: def deriv(self, *args, **kwds):
         ....:     print("{} {}".format(args, kwds))
         ....:     return args[kwds['diff_param']]^2
         sage: foo = function("foo", nargs=2, derivative_func=deriv)

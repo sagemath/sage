@@ -2,13 +2,13 @@ r"""
 Congruence subgroup `\Gamma(N)`
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.misc import gcd
 from sage.groups.matrix_gps.finitely_generated import MatrixGroup
@@ -26,6 +26,8 @@ from .congroup_sl2z import SL2Z
 
 
 _gamma_cache = {}
+
+
 def Gamma_constructor(N):
     r"""
     Return the congruence subgroup `\Gamma(N)`.
@@ -138,7 +140,7 @@ class Gamma_class(CongruenceSubgroup):
         """
         return prod([p**(3*e-2)*(p*p-1) for (p,e) in self.level().factor()])
 
-    def _contains_sl2(self, a,b,c,d):
+    def _contains_sl2(self, a, b, c, d):
         r"""
         EXAMPLES::
 
@@ -324,7 +326,7 @@ def is_Gamma(x):
     return isinstance(x, Gamma_class)
 
 
-def _lift_pair(U,V,N):
+def _lift_pair(U, V, N):
     r"""
     Utility function. Given integers ``U, V, N``, with `N \ge 1` and `{\rm
     gcd}(U, V, N) = 1`, return a pair `(u, v)` congruent to `(U, V) \bmod N`,

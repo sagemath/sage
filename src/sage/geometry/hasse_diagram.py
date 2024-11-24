@@ -188,9 +188,7 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
                 if required_atoms is None or atom in required_atoms)
     new_order = head + [n for n in new_order if n not in head]
     # "Invert" this list to a dictionary
-    labels = {}
-    for new, old in enumerate(new_order):
-        labels[old] = new
+    labels = {old: new for new, old in enumerate(new_order)}
     L.relabel(labels)
     # Construct the actual poset elements
     elements = [None] * next_index
@@ -198,6 +196,6 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
         atoms, coatoms = face
         elements[labels[index]] = face_constructor(
                         tuple(sorted(atoms)), tuple(sorted(coatoms)), **kwds)
-    D = {i: f for i, f in enumerate(elements)}
+    D = dict(enumerate(elements))
     L.relabel(D)
     return FiniteLatticePoset(L, elements, key=key)
