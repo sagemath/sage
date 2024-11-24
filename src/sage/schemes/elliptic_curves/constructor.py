@@ -524,6 +524,100 @@ class EllipticCurveFactory(UniqueFactory):
         from .ell_generic import EllipticCurve_generic
         return EllipticCurve_generic(R, x)
 
+    @staticmethod
+    def _eisenstein_series_e_eval(weight, tau, prec):
+        r"""
+        Private method to evaluate `E_{2k}`.
+
+        INPUT:
+
+        - prec -- precision in bits
+
+        OUTPUT:
+
+        Element of ``ComplexField(prec)`` equal to  `E_{2k}(\tau)` where ``2k == weight``.
+
+        TESTS:
+
+        Example values::
+
+            sage: tau = CC(2/3*I+4/5)
+            sage: weight = 6
+
+        Evaluating using our method::
+
+            sage: EllipticCurve._eisenstein_series_e_eval(weight, tau, 53) # abs tol 1e-10
+            2.06948373064822 + 9.23822630732235*I
+
+        Approximately evaluate using convergent sum::
+
+            sage: sum((a+b*tau)^-weight for a in (-50..50) for b in (-50..50) if gcd(a, b)==1)/2 # abs tol 1e-10
+            2.06948373572619 + 9.23822632418512*I
+
+        Higher precision::
+
+            sage: EllipticCurve._eisenstein_series_e_eval(weight, tau, 200) # abs tol 1e-60
+            2.0694837306482189422343628966349567015465461257928410093613 + 9.2382263073223530637169893909058439360384065238856673719976*I
+        """
+        from sage.modular.modform.constructor import EisensteinForms
+        M = EisensteinForms(1, weight)
+        f = M.gen(0)
+        from sage.rings.complex_mpfr import ComplexField
+        F = ComplexField(prec)
+        return F(f.eval_at_tau(F(tau))/f.qexp(1)[0])
+
+    @staticmethod
+    def _eisenstein_series_g_eval(weight, tau, prec):
+        r"""
+        Similar to :meth:`_eisenstein_series_e_eval`, but evaluates `G_{2k}`.
+
+        TESTS::
+
+            sage: tau = CC(2/3*I+4/5)
+            sage: weight = 6
+            sage: EllipticCurve._eisenstein_series_g_eval(weight, tau, 53) # abs tol 1e-10
+            4.21074983052932 + 18.7968908775932*I
+
+        Higher precision::
+
+            sage: EllipticCurve._eisenstein_series_g_eval(weight, tau, 200) # abs tol 1e-60
+            4.2107498305293201023614384183445982620640708046199904172058 + 18.796890877593226640592176459453734505169430012077274805656*I
+        """
+        from sage.functions.transcendental import zeta
+        e = EllipticCurve._eisenstein_series_e_eval(weight, tau, prec)
+        return e.parent()(zeta(weight) * 2 * e)
+
+    @staticmethod
+    def from_period_lattice_basis(w1, w2):
+        r"""
+        Construct an elliptic curve from a period lattice basis.
+
+        INPUT:
+
+        - ``w1``, ``w2`` -- basis elements, must be element of ``ComplexField(prec)`` for some ``prec``
+
+        OUTPUT:
+
+        ``EllipticCurve`` instance with base ring ``ComplexField(prec)``
+
+        EXAMPLES::
+
+            sage: F = ComplexField(53)
+            sage: w1 = F(1)
+            sage: w2 = F(I * sqrt(7))
+            sage: E = EllipticCurve.from_period_lattice_basis(w1, w2)
+            sage: E.period_lattice().basis() # abs tol 1e-10
+            (-2.64575131106483*I, -1.00000000000000)
+        """
+        F = w1.parent()
+        if F != w2.parent():
+            raise ValueError("basis elements must have the same parent")
+        prec = F.precision()
+        tau = w2/w1
+        g2 = -60*EllipticCurve._eisenstein_series_g_eval(4, tau, prec)/w1**4
+        g3 = -140*EllipticCurve._eisenstein_series_g_eval(6, tau, prec)/w1**6
+        return EllipticCurve(F, [(g2/4).real(), (g3/4).real()])
+
 
 EllipticCurve = EllipticCurveFactory('sage.schemes.elliptic_curves.constructor.EllipticCurve')
 
