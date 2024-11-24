@@ -315,9 +315,8 @@ class p_iter_fork:
                 invalidate_all()
 
         # Reseed rng, if requested.
-        if self.reseed_rng == True:
+        if self.reseed_rng:
             set_random_seed(self.worker_seed)
-
 
         # Now evaluate the function f.
         value = f(*args, **kwds)

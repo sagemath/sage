@@ -399,7 +399,6 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
         sage: Foo.square_classmethod(3)
         9
 
-    
     By default, all subprocesses use the same random seed and therefore the same deterministic randomness.
     For functions that should be randomized, we can reseed the random seed in each subprocess::
 
