@@ -398,7 +398,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
         E = self.curve()
         a1, _, a3, _, _ = E.a_invariants()
         x, y, z = self
-        return E.point([x, -y -a1*x - a3*z, z], check=False)
+        return E.point([x, -y - a1*x - a3*z, z], check=False)
 
     def _sub_(self, other):
         """
