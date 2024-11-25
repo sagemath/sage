@@ -25,6 +25,7 @@ AUTHORS:
 
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
+from sage.rings.finite_rings.integer_mod import Mod
 
 lazy_import('sage.rings.complex_mpfr', 'ComplexNumber')
 
@@ -687,7 +688,6 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
     a3 = -l_1 + l_2 + l_3
     if a3 < 0:
         return 0
-    from sage.rings.finite_rings.integer_mod import Mod
     if Mod(2 * bigL, 2) != 0:
         return 0
     if (m_1 + m_2 + m_3) != 0:
