@@ -1,3 +1,12 @@
+"""
+TODO:
+
+-pattern matching with ftypes broken
+-think if noneq permutations changeing dict order can break things
+-write code to overlap generate
+-write better nonequal permutations, figure out what makes the most sense for typed flags
+"""
+
 r"""
 Implementation of flag algebras, with a class for combinatorial theories
 
@@ -229,7 +238,7 @@ import pickle
 import os
 from tqdm import tqdm
 
-def combine(name, *theories, symmetric=False):
+def combine(name, *theories, symmetries=False):
     #Sanity checks
     if len(theories)==0:
         raise ValueError("At least one theory is expected!")
@@ -266,23 +275,23 @@ def combine(name, *theories, symmetric=False):
         result_excluded += list(theory._excluded)
         next_group += next_group_increment
 
-    if not can_symmetry and (symmetric is not False):
+    if not can_symmetry and (symmetries is not False):
         import warnings
         warnings.warn("Warning, the combination can not be symmetric. The symmetries are ignored!", RuntimeWarning)
-        symmetric = False
+        symmetries = False
 
-    if symmetric is not False:
+    if symmetries is not False:
         #Make everything in the same group
         for xx in result_signature:
             result_signature[xx]["group"] = 0
-        if symmetric is True:
+        if symmetries is True:
             #This case symmetry is trivial for the entire group
             result_symmetry = [(len(theories), len(theories), tuple())]
         else:
             #This case symmetry is as provided by the parameter
             m = 0
             formatted_sym = []
-            for edge in symmetric:
+            for edge in symmetries:
                 m = max(m, edge[0], edge[1])
                 formatted_sym.append(tuple(sorted(list(edge))))
             formatted_sym = tuple(sorted(formatted_sym))
@@ -317,27 +326,25 @@ def test_generate():
                 vals[ii]
                 ))
     
-    CG = combine("CGraph", C0, G)
-    Cs = combine("Cs", C0, C1, symmetric=True)
-    test_theory(C0, 5, 10, [6, 7, 8, 9, 10, 11])
+    CG = combine("CGraph", Color0, GraphTheory)
+    Cs = combine("Cs", Color0, Color1, symmetries=True)
+    test_theory(Color0, 5, 10, [6, 7, 8, 9, 10, 11])
     test_theory(Cs, 3, 8, [13, 22, 34, 50, 70, 95])
-    test_theory(G, 3, 7, [4, 11, 34, 156, 1044])
-    test_theory(TG, 3, 6, [2, 5, 34, 2136])
-    test_theory(DG, 2, 5, [3, 16, 218, 9608])
-    test_theory(DTG, 3, 3, [16])
+    test_theory(GraphTheory, 3, 7, [4, 11, 34, 156, 1044])
+    test_theory(ThreeGraphTheory, 3, 6, [2, 5, 34, 2136])
+    test_theory(DiGraphTheory, 2, 5, [3, 16, 218, 9608])
+    test_theory(DiThreeGraphTheory, 3, 3, [16])
     test_theory(CG, 2, 6, [6, 20, 90, 544, 5096])
     Cs.exclude([Cs(1), Cs(1, C0=[[0]], C1=[[0]])])
-    G.exclude(G(3))
-    CGp = combine("CGsym", G, Cs)
+    GraphTheory.exclude(GraphTheory(3))
+    CGp = combine("CGsym", GraphTheory, Cs)
     test_theory(Cs, 4, 8, [3, 3, 4, 4, 5])
-    test_theory(G, 3, 8, [3, 7, 14, 38, 107, 410])
+    test_theory(GraphTheory, 3, 8, [3, 7, 14, 38, 107, 410])
     test_theory(CGp, 2, 5, [4, 8, 32, 106])
-    Css = combine("Colors3Sym", C0, C1, C2, symmetric=True)
+    Css = combine("Colors3Sym", Color0, Color1, Color2, symmetries=True)
     pe = Css(1)
     p0 = Css.p(1, C2=[0], C1=[0])
-    p1 = Css.p(1, C0=[0], C2=[0])
-    p2 = Css.p(1, C0=[0], C1=[0])
-    Css.exclude([pe, p0, p1, p2])
+    Css.exclude([pe, p0])
     test_theory(Css, 3, 8, [3, 4, 5, 7, 8, 10])
 
 def clear_all_calculations(theory_name=None):
@@ -804,7 +811,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 res += self(target_size, **blocks).afae() * coeff
         return res
     
-    def _adjust_table_phi(self, table_constructor, phi_vectors_exact, test=False):
+    def _adjust_table_phi(self, table_constructor, phi_vectors_exact, test=False, ring=QQ):
         r"""
         Helper to modify a table constructor, incorporating extra data from
         constructions (phi_vectors_exact)
@@ -838,7 +845,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 Zk = Z.kernel()
                 Zkern = Zk.basis_matrix()
                 if Zkern.nrows()>0:
-                    new_bases.append(matrix(QQ, Zkern * table_constructor[param][ii], sparse=True))
+                    new_bases.append(matrix(ring, Zkern * table_constructor[param][ii], sparse=True))
             table_constructor[param] = new_bases
 
         return table_constructor
@@ -888,7 +895,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                         for cc in range(len(iinds)):
                             if iinds[cc]>=jinds[cc]:
                                 mat_inds.extend([gg+1, block_index + plus_index, iinds[cc]+1, jinds[cc]+1])
-                                mat_vals.append(values[cc])
+                                mat_vals.append(values[cc].n())
             block_index += len(table_constructor[params])
         return block_sizes, target, mat_inds, mat_vals
     
@@ -1128,7 +1135,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         bound_exact = target_vector_exact*phi_vector_exact 
         # the constraints for the flags that are exact
-        corrected_target_relevant_exact = vector([target_vector_exact[FF] - bound_exact for FF in c_zero_inds])
+        corrected_target_relevant_exact = vector(QQ, [target_vector_exact[FF] - bound_exact for FF in c_zero_inds])
         # the d^f_F matrix, but only the relevant parts for the rounding
         # so F where c_F = 0 and f where e_f != 0
         positives_matrix_relevant_exact = matrix(QQ, len(e_nonzero_inds), len(c_zero_inds), \
@@ -1653,8 +1660,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         if max_arity==1 or n<max_arity:
             return 1
         
-        
-        
         check_bits = 0
         for xx in self._signature:
             arity =self._signature[xx]["arity"]
@@ -1665,7 +1670,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 check_bits += factor*(binomial(n-2, arity-2))
         
         prev_guess = len(self.generate(n-1))
-        return binomial(prev_guess + 2 - 1, 2) * (2**check_bits)
+        sign_perm = len(self._signature_perms())
+        return binomial(prev_guess + 1, 2) * (2**check_bits) * sign_perm
     
     def generate_flags(self, n, ftype=None, run_bound=500000):
         r"""
@@ -1726,12 +1732,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             # Not ftype generation needed, just generate inductively
             if run_bound==infinity or n<=3:
                 prev = self.generate_flags(n-1, run_bound=run_bound)
-                ret = inductive_generator(n, self, prev, self._signature, excluded)
+                ret = inductive_generator(n, self, prev, excluded)
             else:
                 guess = self._guess_number(n)
                 if guess < run_bound:
                     prev = self.generate_flags(n-1, run_bound=run_bound)
-                    ret = inductive_generator(n, self, prev, self._signature, excluded)
+                    ret = inductive_generator(n, self, prev, excluded)
                 else:
                     confirm = input("This might take a while: {}. Continue? y/n\n".format(guess))
                     if "y" in confirm.lower():
@@ -1804,6 +1810,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     match = match_pattern
 
+    @lru_cache(maxsize=None)
     def _signature_perms(self):
         terms = self._signature.keys()
         groups = [self._signature[xx]["group"] for xx in terms]
@@ -1972,18 +1979,19 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 Theory = CombinatorialTheory
 
 #Pre-defined theories
-G = Theory("Graph")
-DG = Theory("DiGraph", arity=2, is_ordered=True)
-TG = Theory("ThreeGraph", arity=3)
-C0 = Theory("Color", relation_name="C0", arity=1)
-C1 = Theory("Color", relation_name="C1", arity=1)
-C2 = Theory("Color", relation_name="C2", arity=1)
-C3 = Theory("Color", relation_name="C3", arity=1)
-C4 = Theory("Color", relation_name="C4", arity=1)
-C5 = Theory("Color", relation_name="C5", arity=1)
-C6 = Theory("Color", relation_name="C6", arity=1)
-C7 = Theory("Color", relation_name="C7", arity=1)
-DTG = Theory("DiThreeGraph", arity=3, is_ordered=True)
+GraphTheory = Theory("Graph")
+DiGraphTheory = Theory("DiGraph", arity=2, is_ordered=True)
+ThreeGraphTheory = Theory("ThreeGraph", arity=3)
+DiThreeGraphTheory = Theory("DiThreeGraph", arity=3, is_ordered=True)
+FourGraphTheory = Theory("FourGraph", arity=4)
+Color0 = Theory("Color0", relation_name="C0", arity=1)
+Color1 = Theory("Color1", relation_name="C1", arity=1)
+Color2 = Theory("Color2", relation_name="C2", arity=1)
+Color3 = Theory("Color3", relation_name="C3", arity=1)
+Color4 = Theory("Color4", relation_name="C4", arity=1)
+Color5 = Theory("Color5", relation_name="C5", arity=1)
+Color6 = Theory("Color6", relation_name="C6", arity=1)
+Color7 = Theory("Color7", relation_name="C7", arity=1)
 
 #Pre-defined symmetries
 Cyclic3 = [
@@ -1994,6 +2002,8 @@ Cyclic3 = [
     [0, 8], [0, 3],
     [2, 3], [1, 5], [0, 7]
 ]
+FullSymmetry = True
+NoSymmetry = False
 
 #Primitive rounding methods
 def _flatten_matrix(mat, doubled=False):
@@ -2467,6 +2477,9 @@ class FlagAlgebraElement(Element):
         vals = (self<<(nm-self.size())).values() - (other<<(nm-other.size())).values()
         return self.__class__(self.parent(), nm, vals)
     
+    def _neg_(self):
+        return self.__class__(self.parent(), self.size(), self.values()*(-1))
+
     def _mul_(self, other):
         r"""
         Multiplies two elements together
@@ -2732,7 +2745,7 @@ class FlagAlgebraElement(Element):
         nvec = vector([xx.subs(repl) for xx in valvec])
         return self.parent()(self.size(), nvec)
 
-    def subs(self, args):
+    def subs(self, args, ring=QQ):
         r"""
         Symbolic substitution.
         """
@@ -2746,7 +2759,7 @@ class FlagAlgebraElement(Element):
             return self
         repl = {gs[ii]:args[ii] for ii in range(min(len(args), len(gs)))}
         nvec = vector([xx.subs(repl) for xx in valvec])
-        retalg = FlagAlgebra(QQ, self.parent().theory())
+        retalg = FlagAlgebra(ring, self.parent().theory())
         return retalg(self.size(), nvec)
 
     def derivative(self, times):
@@ -2772,7 +2785,7 @@ class FlagAlgebraElement(Element):
             rvec.append(aval)
         return self.parent()(self.size(), vector(rvec))
 
-    def derivatives(self, point):
+    def derivatives(self, point, ring=QQ):
         r"""
         Returns all symbolic derivatives evaluated at a given point.
         """
@@ -2798,7 +2811,7 @@ class FlagAlgebraElement(Element):
                         times.append(ll)
         res = []
         for xx in times:
-            der = self.derivative(xx).subs(point)
+            der = self.derivative(xx).subs(point, ring=ring)
             minnz = 1000000
             for xx in der.values():
                 if int(xx)!=0:

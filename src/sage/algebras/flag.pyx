@@ -53,7 +53,7 @@ cdef dict _merge_blocks(dict block0, dict block1, tuple only_include):
         ])
     return merged
 
-cdef dict _perm_blocks(dict blocks, tuple perm):
+cdef dict _perm_blocks(dict blocks, tuple perm, dict signature=None):
     cdef dict ret
     cdef str xx
     ret = {
@@ -87,6 +87,15 @@ cdef dict _perm_signature(dict blocks, tuple perm):
     cdef str xx
     for ii, xx in enumerate(blocks.keys()):
         ret[xx] = blocks[perm[ii]]
+    return ret
+
+cdef dict _perm_pattern_signature(dict blocks, tuple perm, dict orig_sign):
+    cdef dict ret = {}
+    cdef int ii
+    cdef str xx
+    for ii, xx in enumerate(orig_sign.keys()):
+        ret[xx] = blocks[perm[ii]]
+        ret[xx+"_m"] = blocks[perm[ii]+"_m"]
     return ret
 
 # Automorphism operations
@@ -202,7 +211,8 @@ cdef bint _excluded_compatible(int n, Flag flag, tuple excluded, int max_signatu
                 return False
     return True
 
-cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, dict signature, tuple excluded):
+cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, tuple excluded):
+    cdef dict signature = theory.signature()
     cdef int max_arity = _get_max_arity(signature, n)
     #Handle the trivial case, when only the empty structure is possible
     cdef dict final_overlap
@@ -335,6 +345,49 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, dict si
         [ret[key] for key in sorted(ret.keys())]
     ))
     return combined_tuple
+
+# cpdef tuple overlap_generator(int n, theoryR, theory0, theory1, tuple small0, tuple small1, tuple excluded):
+#     cdef dict signatureR = theoryR.signature()
+#     cdef dict signature0 = theory0.signature()
+#     cdef dict signature1 = theory1.signature()
+
+#     cdef dict ret = {}
+
+#     cdef list sm_0_auts = []
+#     for fl0 in small0:
+
+
+#     #For the merging
+#     cdef dict G_canonical_blocks, FG_overlap, G_canonical_blocks_permed
+#     cdef tuple dummy_1
+#     cdef tuple G_perm
+#     cdef list G_perm_list
+
+#     #Check ways to combine
+#     for Fs_canonical in subf_classes:
+#         for ii, (F_canonical_blocks, _) in enumerate(subf_classes[Fs_canonical]):
+#             F_canonical_blocks = _perm_blocks(F_canonical_blocks, perm_0)
+#             for G_canonical_blocks, Gs_cosets in subf_classes[Fs_canonical][ii:]:
+#                 for G_perm in Gs_cosets:
+#                     G_perm_list = list(G_perm)
+#                     G_perm_list.insert(1, n-1)
+#                     G_canonical_blocks_permed = _perm_blocks(G_canonical_blocks, tuple(G_perm_list))
+#                     FG_overlap = _merge_blocks(F_canonical_blocks, G_canonical_blocks_permed, (0, ))
+#                     for ext in extensions:
+#                         sig_check()
+#                         final_overlap = _merge_blocks(FG_overlap, ext, tuple())
+#                         final_flag = Flag(theory, n, tuple(), **final_overlap)
+#                         if _excluded_compatible(n, final_flag, excluded, 2):
+#                             patt = final_flag._relation_list()
+#                             if patt not in ret:
+#                                 ret[patt] = [final_flag]
+#                             elif final_flag not in ret[patt]:
+#                                 ret[patt].append(final_flag)
+    
+#     combined_tuple = tuple(itertools.chain.from_iterable(
+#         [ret[key] for key in sorted(ret.keys())]
+#     ))
+#     return combined_tuple
 
 cdef class Flag(Element):
     
@@ -647,10 +700,10 @@ cdef class Flag(Element):
         cdef list partition
 
         if weak:
-            partition = [self.ftype_points(), self.not_ftype_points()]
+            partition = [self.not_ftype_points(), self.ftype_points()]
         else:
-            partition = [[ii] for ii in self.ftype_points()]
-            partition.append(self.not_ftype_points())
+            partition = [self.not_ftype_points()]
+            partition += [[ii] for ii in self.ftype_points()]
 
         #For groups also add the symmetry edges
         cdef list Vout = []
@@ -771,7 +824,7 @@ cdef class Flag(Element):
             symmetry_graph_data[5]
         )
         try:
-            self._automorphisms = _generate_group(result, self.size())
+            self._automorphisms = _generate_group(result, len(self.not_ftype_points()))
         except:
             print("The error occurred at ", self)
             raise RuntimeError("Stop here")
@@ -794,7 +847,55 @@ cdef class Flag(Element):
                 extended_perm.insert(ii, ii)
             G_subf.add(tuple(extended_perm))
         return _compute_coset_reps(G_subf, G_self & G_subf, self.size())
+    
+    cpdef list nonequal_permutations(self):
+        if len(self.ftype_points())==0:
+            return self._typeless_nonequal_permutations()
+        else:
+            return self._typed_nonequal_permutations()
+    
+    cpdef list _typeless_nonequal_permutations(self):
+        cdef list ssc = self.signature_changes()
+        cdef set G_self = self.automorphisms()
+        cdef set G_all = set(itertools.permutations(self.size()))
+        cdef list cosreps = _compute_coset_reps(G_all, G_self, self.size())
+        cdef Flag xx
+        cdef tuple perm
+        return [xx.subflag(points=perm) for perm in cosreps for xx in ssc]
 
+    cpdef list _typed_nonequal_permutations(self):
+        cdef list ssc = self.signature_changes()
+        cdef list ret = []
+        cdef Flag xx, yy, zz
+        cdef bint gd
+        for zz in ssc:
+            for perm in itertools.permutations(self.size()):
+                xx = zz.subflag(points=perm)
+                gd = True
+                for yy in ret:
+                    if yy.strong_equal(xx):
+                        gd = False
+                        break
+                if gd:
+                    ret.append(xx)
+        return ret
+
+    cpdef list _generate_overlaps(self, other_theory, result_theory):
+        if self.ftype().size() != 0:
+            raise ValueError("Ftype must be empty")
+        cdef list result = []
+        cdef list result_partial = []
+        cdef tuple other_flags = other_theory.generate(self.size())
+        cdef Flag other, other_permed, overlap
+        
+        for other in other_flags:
+            result_partial = []
+            for other_permed in other.nonequal_permutations():
+                overlap = Flag(result_theory, self.size(), **self._blocks, **other_permed._blocks)
+                if overlap not in result_partial:
+                    result_partial.append(overlap)
+            result += result_partial
+        return result
 
     # Core loops
 
@@ -839,31 +940,10 @@ cdef class Flag(Element):
                 if newflag not in ret:
                     ret.append(newflag)
         return ret
-
-    cpdef tuple nonequal_permutations(self, include_signature=False):
-        cdef list ret = []
-        cdef tuple perm
-        cdef Flag newflag
-        cdef Flag xx
-        cdef bint can_add
-        for perm in itertools.permutations(range(self.size())):
-            sig_check()
-            newflag = self.subflag(points=perm)
-            can_add = True
-            for xx in ret:
-                if xx.strong_equal(newflag):
-                    can_add = False
-                    break
-            if can_add:
-                if include_signature:
-                    ret += newflag.signature_changes()
-                else:
-                    ret.append(newflag)
-        return tuple(ret)
     
     cpdef list signature_changes(self):
         cdef list ret = []
-        cdef tuple perms = self.parent()._signature_perms()
+        cdef list perms = self.parent()._signature_perms()
         cdef tuple perm
         cdef dict nblocks
         cdef str xx
@@ -1391,6 +1471,28 @@ cdef bint _block_refinement(tuple block_flag, tuple block_pattern, tuple missing
             return False
     return True
 
+cdef bint _pattern_consistency(tuple ftype_points, dict blocks, dict signature):
+    cdef str xx
+    cdef tuple blxx, msxx, tp, alrel, fttp
+    for xx in signature:
+        blxx = blocks[xx]
+        msxx = blocks[xx+"_m"]
+        #Check they are disjoint
+        for tp in blxx:
+            if tp in msxx:
+                return False
+        for tp in msxx:
+            if tp in blxx:
+                return False
+        
+        #Check ftype has no undefined edges
+        alrel = _generate_all_relations(len(ftype_points), signature[xx])
+        for tp in alrel:
+            fttp = tuple([ftype_points[ii] for ii in tp])
+            if (fttp not in blxx) and (fttp not in msxx):
+                return False
+    return True
+
 cdef class Pattern(Element):
     
     cdef int _n
@@ -1408,6 +1510,9 @@ cdef class Pattern(Element):
         self._ftype_size = len(self._ftype_points)
         self._not_ftype_points = None
         self._blocks = _standardize_blocks(params, theory._signature, True)
+        if not _pattern_consistency(self._ftype_points, self._blocks, theory._signature):
+            raise ValueError("Patterns must have the required edges disjoint from the missing edges," + 
+            " and every edge in the ftype must be either required or missing")
         self._ftype = None
         Element.__init__(self, theory)
     
@@ -1441,7 +1546,6 @@ cdef class Pattern(Element):
     
     theory = combinatorial_theory
     
-
     def size(self):
         return self._n
     
@@ -1462,13 +1566,13 @@ cdef class Pattern(Element):
             self._ftype = Flag(self.parent(), len(self._ftype_points), self._ftype_points, **blocks)
         return self._ftype
     
-    cpdef ftype_points(self):
+    cpdef tuple ftype_points(self):
         return self._ftype_points
     
-    cpdef not_ftype_points(self):
+    cpdef tuple not_ftype_points(self):
         if self._not_ftype_points != None:
             return self._not_ftype_points
-        self._not_ftype_points = [ii for ii in range(self.size()) if ii not in self._ftype_points]
+        self._not_ftype_points = tuple([ii for ii in range(self.size()) if ii not in self._ftype_points])
         return self._not_ftype_points
     
     def is_ftype(self):
@@ -1484,12 +1588,34 @@ cdef class Pattern(Element):
         if self.ftype() != other.ftype():
             return False
         
-        cdef dict sb = self._blocks
-        cdef dict ob
-        for operm in other.nonequal_permutations():
-            ob = operm.blocks()
-            if all([_block_refinement(ob[xx], sb[xx], sb[xx+"_m"]) for xx in self.parent().signature().keys()]):
-                return True
+        cdef dict signature = self.theory().signature()
+
+        cdef dict oblocks = _perm_blocks(
+            other._blocks, 
+            tuple(itertools.chain(other.not_ftype_points(), other.ftype_points()))
+        )
+        oblocks = _standardize_blocks(oblocks, signature, False)
+        
+        cdef dict sblocks = _perm_blocks(
+            self._blocks,
+            tuple(itertools.chain(self.not_ftype_points(), self.ftype_points()))
+        )
+
+        cdef tuple rems = tuple(range(len(self.not_ftype_points()), self.size()))
+        cdef dict tsblocks, chsblocks
+
+        cdef list signperms = self.theory()._signature_perms()
+
+        for notftype_perm in itertools.permutations(range(len(self.not_ftype_points()))):
+            tsblocks = _perm_blocks(sblocks, tuple(itertools.chain(notftype_perm, rems)))
+            for sperm in signperms:
+                chsblocks = _perm_pattern_signature(tsblocks, sperm, self.theory().signature())
+                chsblocks = _standardize_blocks(chsblocks, signature, True)
+                if all([
+                _block_refinement(oblocks[xx], chsblocks[xx], chsblocks[xx+"_m"]) 
+                for xx in self.theory().signature().keys()
+                ]):
+                    return True
         return False
 
     cpdef subpattern(self, points=None, ftype_points=None):
@@ -1509,7 +1635,7 @@ cdef class Pattern(Element):
     #Compatibility with flag algebras
 
     cpdef list compatible_flags(self):
-        aflags = self.parent().generate(self.size())
+        aflags = self.parent().generate(self.size(), self.ftype())
         ret = [xx for xx in aflags if self.is_compatible(xx)]
         return ret
 
@@ -1518,7 +1644,7 @@ cdef class Pattern(Element):
         from sage.modules.free_module_element import vector
 
         targ_alg = FlagAlgebra(basis, self.theory(), self.ftype())
-        aflags = self.parent().generate(self.size())
+        aflags = self.parent().generate(self.size(), self.ftype())
         targ_vec = {}
         for ii,xx in enumerate(aflags):
             if self.is_compatible(xx):
