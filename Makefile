@@ -351,7 +351,7 @@ ptestoptionallong-nodoc:
 # CONFIGURE_DEPENDENCIES is the list of files that influence the generation of 'configure'.
 CONFIGURE_DEPENDENCIES =							\
 	configure.ac src/bin/sage-version.sh m4/*.m4				\
-	src/pyproject.toml							\
+	pyproject.toml							\
 	build/pkgs/*/spkg-configure.m4						\
 	build/pkgs/*/type build/pkgs/*/SPKG.rst					\
 	build/pkgs/*/checksums.ini build/pkgs/*/requirements.txt		\

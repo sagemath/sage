@@ -228,9 +228,6 @@ save () {
 	$(find src/doc/en/reference/spkg -name index.rst -prune -o -maxdepth 1 -name "*.rst" -print) \
 	environment-3.[89].yml environment-3.1[0-9].yml \
 	src/Pipfile \
-	src/pyproject.toml \
-	src/requirements.txt \
-	src/setup.cfg \
 	build/pkgs/cypari/version_requirements.txt \
 	build/pkgs/cysignals/version_requirements.txt \
 	build/pkgs/cython/version_requirements.txt \
