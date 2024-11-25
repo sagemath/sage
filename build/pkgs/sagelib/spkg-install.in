@@ -1,15 +1,14 @@
 if [ "$SAGE_EDITABLE" = yes ]; then
-    cd "$SAGE_SRC"
+    cd ../../..
 else
-    cd src
+    cd ../../..
     # Issue #34181: Do not allow scripts with shebang lines from old
     # venvs leak into new venvs. (Changes only seem to be necessary
     # for non-editable builds.)
     rm -rf build/scripts-*
 fi
-## All sagelib-building is done by setup.py.
-## This is so that sagelib can be installed by standard Python procedures,
-## such as "./setup.py install" or "pip install ."
+## All sagelib-building is using standard Python procedures,
+## such as "pip install ."
 ##
 ## We poison all environment variables that have paths to the sage source and build directories.
 ## In this way we make sure that all of the sagelib build's source paths are communicated through
