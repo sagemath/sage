@@ -9,6 +9,7 @@ lazy_import("sage.graphs.graph_database", [
 from sage.graphs.graph import Graph
 from sage.graphs.digraph import DiGraph
 from sage.graphs.bipartite_graph import BipartiteGraph
+from sage.graphs.matching_covered_graph import MatchingCoveredGraph
 import sage.graphs.weakly_chordal
 import sage.graphs.lovasz_theta
 import sage.graphs.partial_cube
@@ -18,7 +19,6 @@ lazy_import("sage.graphs.graph_database", "graph_db_info")
 lazy_import("sage.graphs.graph_editor", "graph_editor")
 
 from sage.graphs.isgci import graph_classes
-
 """
 TESTS:
 

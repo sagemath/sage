@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Discrete Valuation Rings (DVR) and Fields (DVF)
 """
@@ -17,7 +18,7 @@ from sage.categories.fields import Fields
 
 class DiscreteValuationRings(Category_singleton):
     """
-    The category of discrete valuation rings
+    The category of discrete valuation rings.
 
     EXAMPLES::
 
@@ -96,10 +97,10 @@ class DiscreteValuationRings(Category_singleton):
                 sage: M.charpoly()
                 x^3 + (4 + 4*t^2 + 4*t^4 + O(t^25))*x^2 + (4*t + O(t^24))*x
 
-            Another example over the p-adics::
+            Another example over the `p`-adics::
 
                 sage: # needs sage.modules sage.rings.padics
-                sage: R = Zp(5, print_mode="digits", prec=5)
+                sage: R = Zp(5, print_mode='digits', prec=5)
                 sage: M = matrix(R, 3, 3, range(9))
                 sage: M
                 [        0  ...00001  ...00002]
@@ -137,7 +138,6 @@ class DiscreteValuationRings(Category_singleton):
                 Traceback (most recent call last):
                 ...
                 ValueError: Euclidean degree of the zero element not defined
-
             """
             if not self:
                 raise ValueError("Euclidean degree of the zero element not defined")
@@ -196,9 +196,9 @@ class DiscreteValuationRings(Category_singleton):
             """
             return self.valuation() == 0
 
-        def gcd(self,other):
+        def gcd(self, other):
             """
-            Return the greatest common divisor of self and other,
+            Return the greatest common divisor of ``self`` and ``other``,
             normalized so that it is a power of the distinguished
             uniformizer.
             """
@@ -209,9 +209,9 @@ class DiscreteValuationRings(Category_singleton):
             else:
                 return self.parent().uniformizer() ** val
 
-        def lcm(self,other):
+        def lcm(self, other):
             """
-            Return the least common multiple of self and other,
+            Return the least common multiple of ``self`` and ``other``,
             normalized so that it is a power of the distinguished
             uniformizer.
             """
@@ -225,7 +225,7 @@ class DiscreteValuationRings(Category_singleton):
 
 class DiscreteValuationFields(Category_singleton):
     """
-    The category of discrete valuation fields
+    The category of discrete valuation fields.
 
     EXAMPLES::
 
@@ -294,10 +294,10 @@ class DiscreteValuationFields(Category_singleton):
                 [                  O(t^10)                   O(t^10)                   O(t^10)                   O(t^10)]
                 [                  O(t^10)                   O(t^10)                   O(t^10)                   O(t^10)]
 
-            Another example over the p-adics::
+            Another example over the `p`-adics::
 
                 sage: # needs sage.modules sage.rings.padics
-                sage: K = Qp(5, print_mode="digits", prec=5)
+                sage: K = Qp(5, print_mode='digits', prec=5)
                 sage: H = matrix(K, 3, 3, range(9)); H
                 [        0  ...00001  ...00002]
                 [ ...00003  ...00004 ...000010]

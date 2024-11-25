@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # Subset of sage.misc.all that is made available by the sage-objects distribution
 
 import sage.structure.all   # to break a cyclic import

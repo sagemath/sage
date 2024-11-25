@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-repl
+
 # Set up warning filters before importing Sage stuff
 
 import sys
@@ -20,7 +22,7 @@ else:
 warnings.filterwarnings('ignore', category=DeprecationWarning,
                         module='(IPython|ipykernel|jupyter_client|jupyter_core|nbformat|notebook|ipywidgets|storemagic|jedi)')
 
-# scipy 1.18 introduced reprecation warnings on a number of things they are moving to
+# scipy 1.18 introduced deprecation warnings on a number of things they are moving to
 # numpy, e.g. DeprecationWarning: scipy.array is deprecated
 #             and will be removed in SciPy 2.0.0, use numpy.array instead
 # This affects networkx 2.2 up and including 2.4 (cf. :issue:29766)

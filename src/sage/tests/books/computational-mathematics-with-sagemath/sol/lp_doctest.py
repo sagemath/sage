@@ -43,5 +43,4 @@ Sage example in ./sol/lp.tex, line 64::
   3
   sage: all((v in dom or any(g.has_edge(x,v) for x in dom)) for v in g)
   True
-
 """

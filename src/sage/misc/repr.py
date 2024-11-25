@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Repr formatting support
 """
@@ -11,9 +12,7 @@ def coeff_repr(c, is_latex=False):
 
     - ``c`` -- a coefficient (i.e., an element of a ring)
 
-    OUTPUT:
-
-    A string
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -46,7 +45,7 @@ def coeff_repr(c, is_latex=False):
     return s
 
 
-def repr_lincomb(terms, is_latex=False, scalar_mult="*", strip_one=False,
+def repr_lincomb(terms, is_latex=False, scalar_mult='*', strip_one=False,
                  repr_monomial=None, latex_scalar_mult=None):
     """
     Compute a string representation of a linear combination of some
@@ -56,14 +55,10 @@ def repr_lincomb(terms, is_latex=False, scalar_mult="*", strip_one=False,
 
     - ``terms`` -- list of terms, as pairs (support, coefficient)
     - ``is_latex`` -- whether to produce latex (default: ``False``)
-    - ``scalar_mult`` -- string representing the multiplication (default:``'*'``)
+    - ``scalar_mult`` -- string representing the multiplication (default: ``'*'``)
     - ``latex_scalar_mult`` -- latex string representing the multiplication
       (default: a space if ``scalar_mult`` is ``'*'``; otherwise ``scalar_mult``)
     - ``coeffs`` -- for backward compatibility
-
-    OUTPUT:
-
-    -  ``str`` -- a string
 
     EXAMPLES::
 

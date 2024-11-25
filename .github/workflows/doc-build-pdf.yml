@@ -30,7 +30,7 @@ env:
   EXTRA_CONFIGURE_ARGS:   --enable-fat-binary
 
 jobs:
-  build-docs-pdf:
+  build-doc-pdf:
     runs-on: ubuntu-latest
     services:
       # https://docs.docker.com/build/ci/github-actions/local-registry/
@@ -84,7 +84,7 @@ jobs:
 
       - name: Build Docker image
         id: image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           # push and load may not be set together at the moment
           push:       true
@@ -101,15 +101,22 @@ jobs:
             TARGETS=ci-build-with-fallback
 
       - name: Start container
+        id: container
+        # Try to continue when "exporting to GitHub Actions Cache" failed with timeout
+        if: (success() || failure())
         run: |
           docker run --name BUILD -dit \
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
                      --workdir $(pwd) \
                      ${{ env.BUILD_IMAGE }} /bin/sh
 
-      # Docs
+      #
+      # On PRs and pushes to branches
+      #
 
       - name: Update system packages
+        id: packages
+        if: (success() || failure()) && steps.container.outcome == 'success'
         run: |
           export PATH="build/bin:$PATH"
           eval $(sage-print-system-package-command auto update)
@@ -117,28 +124,27 @@ jobs:
           eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git texlive texlive_luatex free_fonts xindy)
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
-      - name: Build docs (PDF)
+      - name: Build doc (PDF)
         id: docbuild
+        if: (success() || failure()) && steps.packages.outcome == 'success'
         run: |
           export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           make doc-clean doc-uninstall; make sagemath_doc_html-build-deps sagemath_doc_pdf-no-deps
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
-      - name: Copy docs
+      - name: Copy doc
         id: copy
         if: (success() || failure()) && steps.docbuild.outcome == 'success'
         run: |
-          # For some reason the deploy step below cannot find /sage/...
-          # So copy everything from there to local folder
-          mkdir -p ./docs
-          cp -r -L /sage/local/share/doc/sage/pdf ./docs
+          mkdir -p ./doc
+          # We copy everything to a local folder
+          docker cp BUILD:/sage/local/share/doc/sage/pdf doc
           # Zip everything for increased performance
-          zip -r docs-pdf.zip docs
-        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
+          zip -r doc-pdf.zip doc
 
-      - name: Upload docs
+      - name: Upload doc
         if: (success() || failure()) && steps.copy.outcome == 'success'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: docs-pdf
-          path: docs-pdf.zip
+          name: doc-pdf
+          path: doc-pdf.zip

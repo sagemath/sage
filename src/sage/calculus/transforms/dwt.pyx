@@ -8,7 +8,6 @@ AUTHOR:
 
 - Josh Kantor (2006-10-07)  - initial version
 - David Joyner (2006-10-09) - minor changes to docstrings and examples.
-
 """
 
 # ****************************************************************************
@@ -29,7 +28,7 @@ def WaveletTransform(n, wavelet_type, wavelet_k):
 
     INPUT:
 
-    - ``n`` --  a power of 2
+    - ``n`` -- a power of 2
     - ``T`` -- the data in the GSLDoubleArray must be real
     - ``wavelet_type`` -- the name of the type of wavelet, valid choices are:
 
@@ -104,11 +103,11 @@ cdef class DiscreteWaveletTransform(GSLDoubleArray):
     """
     Discrete wavelet transform class.
     """
-    def __cinit__(self,size_t n,size_t stride, wavelet_type, size_t wavelet_k):
+    def __cinit__(self, size_t n, size_t stride, wavelet_type, size_t wavelet_k):
         self.wavelet = NULL
         self.workspace = NULL
 
-    def __init__(self,size_t n,size_t stride, wavelet_type, size_t wavelet_k):
+    def __init__(self, size_t n, size_t stride, wavelet_type, size_t wavelet_k):
         if not is2pow(n):
             raise NotImplementedError("discrete wavelet transform only implemented when n is a 2-power")
         GSLDoubleArray.__init__(self,n,stride)

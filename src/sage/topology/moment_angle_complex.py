@@ -18,9 +18,9 @@ AUTHORS:
 from itertools import combinations
 
 from sage.categories.fields import Fields
-from sage.homology.homology_group import HomologyGroup
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
@@ -28,6 +28,8 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.topology import simplicial_complex_catalog as simplicial_complexes
 from sage.topology.cubical_complex import CubicalComplex, cubical_complexes
 from sage.topology.simplicial_complex import SimplicialComplex, copy
+
+lazy_import('sage.homology.homology_group', 'HomologyGroup')
 
 
 def _cubical_complex_union(c1, c2):
@@ -130,11 +132,11 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
     We can perform a number of operations, such as find the dimension or
     compute the homology::
 
-        sage: M.homology()
+        sage: M.homology()                                                              # needs sage.modules
         {0: 0, 1: 0, 2: 0, 3: Z}
         sage: Z.dimension()
         6
-        sage: Z.homology()
+        sage: Z.homology()                                                              # needs sage.modules
         {0: 0, 1: 0, 2: 0, 3: Z x Z, 4: Z, 5: Z, 6: Z}
 
     If the associated simplicial complex is an `n`-simplex, then the
@@ -198,7 +200,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             immutable_complex = SimplicialComplex(is_mutable=False)
         return super().__classcall__(cls, immutable_complex)
 
-    def __init__(self, simplicial_complex):
+    def __init__(self, simplicial_complex) -> None:
         """
         Initialize ``self``.
 
@@ -293,7 +295,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         .. WARNING::
 
-            The construction can be very slow, it is not reccomended unless
+            The construction can be very slow, it is not recommended unless
             the corresponding simplicial complex has 5 or less vertices.
 
         EXAMPLES::
@@ -341,14 +343,14 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         """
         return self._simplicial_complex
 
-    def components(self):
+    def components(self) -> dict:
         r"""
         Return the dictionary of components of ``self``, indexed by facets
         of the associated simplicial complex.
 
         OUTPUT:
 
-        A dictonary, whose values are lists, representing spheres
+        A dictionary, whose values are lists, representing spheres
         and disks described in the construction of the moment-angle
         complex. ``The 2-simplex`` represents a 2-disk, and
         ``Minimal triangulation of the 1-sphere`` represents a 1-sphere.
@@ -403,9 +405,9 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
             sage: S3 = simplicial_complexes.Sphere(3)
             sage: product_of_spheres = S3.product(S3)
-            sage: Z.cohomology()
+            sage: Z.cohomology()                                                        # needs sage.modules
             {0: 0, 1: 0, 2: 0, 3: Z x Z, 4: 0, 5: 0, 6: Z}
-            sage: Z.cohomology() == product_of_spheres.cohomology()  # long time
+            sage: Z.cohomology() == product_of_spheres.cohomology()  # long time        # needs sage.modules
             True
         """
         return self._components
@@ -453,6 +455,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: Z = MomentAngleComplex([[0,1,2], [1,2,3]]); Z
             Moment-angle complex of Simplicial complex with vertex set
             (0, 1, 2, 3) and facets {(0, 1, 2), (1, 2, 3)}
@@ -504,13 +507,13 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         return HomologyGroup(m, base_ring, invfac)
 
     def homology(self, dim=None, base_ring=ZZ, cohomology=False,
-                 algorithm='pari', verbose=False, reduced=True):
+                 algorithm='pari', verbose=False, reduced=True) -> dict:
         r"""
         The (reduced) homology of ``self``.
 
         INPUT:
 
-        - ``dim`` -- integer, or a list of integers; represents the
+        - ``dim`` -- integer or a list of integers; represents the
           homology (or homologies) we want to compute
         - ``base_ring`` -- commutative ring (default: ``ZZ``); must be ``ZZ``
           or a field
@@ -550,6 +553,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: Z = MomentAngleComplex([[0,1,2], [1,2,3], [3,0]]); Z
             Moment-angle complex of Simplicial complex with vertex set
             (0, 1, 2, 3) and facets {(0, 3), (0, 1, 2), (1, 2, 3)}
@@ -580,13 +584,14 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}
             sage: Z.cubical_complex()
             Cubical complex with 64 vertices and 729 cubes
-            sage: Z.cubical_complex().homology() == Z.homology()
+            sage: Z.cubical_complex().homology() == Z.homology()                        # needs sage.modules
             True
 
         Meanwhile, the homology computation used here is quite efficient
         and works well even with significantly larger underlying simplicial
         complexes::
 
+            sage: # needs sage.modules
             sage: Z = MomentAngleComplex([[0,1,2,3,4,5], [0,1,2,3,4,6],
             ....:                         [0,1,2,3,5,7], [0,1,2,3,6,8,9]])
             sage: Z.homology()  # long time
@@ -610,15 +615,15 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
              17: 0}
             sage: Z = MomentAngleComplex([[0,1,2,3], [0,1,2,4], [0,1,3,5],
             ....:                         [0,1,4,5], [0,2,3,6], [0,2,4,6]])
-            sage: Z.homology(dim=range(0,5), reduced=True)
+            sage: Z.homology(dim=range(5), reduced=True)
             {0: 0, 1: 0, 2: 0, 3: Z x Z x Z x Z, 4: Z x Z}
-            sage: Z.homology(dim=range(0,5), reduced=False)
+            sage: Z.homology(dim=range(5), reduced=False)
             {0: Z, 1: 0, 2: 0, 3: Z x Z x Z x Z, 4: Z x Z}
             sage: all(Z.homology(i,reduced=True) == Z.homology(i,reduced=False)
             ....:     for i in range(1, dim(Z)))
             True
             sage: all(Z.homology(i,reduced=True) == Z.homology(i,reduced=False)
-            ....:     for i in range(0, dim(Z)))
+            ....:     for i in range(dim(Z)))
             False
         """
         if dim is not None:
@@ -636,7 +641,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
                                         algorithm=algorithm, verbose=verbose, reduced=reduced) for i in dims}
 
     def cohomology(self, dim=None, base_ring=ZZ, algorithm='pari',
-                   verbose=False, reduced=True):
+                   verbose=False, reduced=True) -> dict:
         r"""
         The reduced cohomology of ``self``.
 
@@ -656,6 +661,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         to a product of two 3-spheres (which can be seen by looking at the
         output of ``components()``)::
 
+            sage: # needs sage.modules
             sage: S3 = simplicial_complexes.Sphere(3)
             sage: product_of_spheres = S3.product(S3)
             sage: Z.cohomology()
@@ -666,7 +672,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         return self.homology(dim=dim, cohomology=True, base_ring=base_ring,
                              algorithm=algorithm, verbose=verbose, reduced=reduced)
 
-    def betti(self, dim=None):
+    def betti(self, dim=None) -> dict:
         r"""
         Return the Betti number (or numbers) of ``self``.
 
@@ -684,6 +690,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: Z = MomentAngleComplex([[0,1], [1,2], [2,0], [1,2,3]])
             sage: Z.betti()
             {0: 1, 1: 0, 2: 0, 3: 1, 4: 0, 5: 1, 6: 1, 7: 0}
@@ -691,16 +698,17 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             sage: Z.betti(dim=6)
             {6: 2}
         """
-        dict = {}
+        dic = {}
         H = self.homology(dim=dim, base_ring=QQ)
         try:
             for n in H:
-                dict[n] = H[n].dimension()
+                dic[n] = H[n].dimension()
                 if n == 0:
-                    dict[n] += 1
-            return dict
+                    dic[n] += 1
         except AttributeError:
             return H.dimension()
+        else:
+            return dic
 
     def euler_characteristic(self):
         """
@@ -714,6 +722,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: X = SimplicialComplex([[0,1,2,3,4,5], [0,1,2,3,4,6],
             ....:                        [0,1,2,3,5,7], [0,1,2,3,6,8,9]])
             sage: M = MomentAngleComplex(X)
@@ -754,7 +763,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         simplicial_complex = self._simplicial_complex.join(other._simplicial_complex, rename_vertices=True)
         return MomentAngleComplex(simplicial_complex)
 
-    def has_trivial_lowest_deg_massey_product(self):
+    def has_trivial_lowest_deg_massey_product(self) -> bool:
         """
         Return whether ``self`` has a non-trivial lowest degree
         triple Massey product.

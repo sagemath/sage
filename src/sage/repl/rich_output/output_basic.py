@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Basic Output Types
 
@@ -54,9 +55,7 @@ class OutputBase(SageObject):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -70,14 +69,12 @@ class OutputBase(SageObject):
     @classmethod
     def example(cls):
         """
-        Construct a sample instance
+        Construct a sample instance.
 
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of the :class:`OutputBase` subclass.
+        OUTPUT: an instance of the :class:`OutputBase` subclass
 
         EXAMPLES::
 
@@ -94,7 +91,7 @@ class OutputPlainText(OutputBase):
 
     def __init__(self, plain_text):
         """
-        Plain Text Output
+        Plain Text Output.
 
         INPUT:
 
@@ -121,14 +118,12 @@ class OutputPlainText(OutputBase):
     @classmethod
     def example(cls):
         """
-        Construct a sample plain text output container
+        Construct a sample plain text output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputPlainText`.
+        OUTPUT: an instance of :class:`OutputPlainText`
 
         EXAMPLES::
 
@@ -160,7 +155,7 @@ class OutputAsciiArt(OutputBase):
 
     def __init__(self, ascii_art):
         """
-        ASCII Art Output
+        ASCII Art Output.
 
         INPUT:
 
@@ -182,14 +177,12 @@ class OutputAsciiArt(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample ascii art output container
+        Construct a sample ascii art output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputAsciiArt`.
+        OUTPUT: an instance of :class:`OutputAsciiArt`
 
         EXAMPLES::
 
@@ -225,7 +218,7 @@ class OutputUnicodeArt(OutputBase):
 
     def __init__(self, unicode_art):
         """
-        Unicode Art Output
+        Unicode Art Output.
 
         Similar to :class:`OutputAsciiArt` but using the entire
         unicode range.
@@ -254,14 +247,12 @@ class OutputUnicodeArt(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample unicode art output container
+        Construct a sample unicode art output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputUnicodeArt`.
+        OUTPUT: an instance of :class:`OutputUnicodeArt`
 
         EXAMPLES::
 
@@ -273,9 +264,9 @@ class OutputUnicodeArt(OutputBase):
             ⎜  3  -1   0⎟
             ⎝ -1  -1   0⎠
         """
-        return cls(u'⎛-11   0   1⎞\n'
-                   u'⎜  3  -1   0⎟\n'
-                   u'⎝ -1  -1   0⎠')
+        return cls('⎛-11   0   1⎞\n'
+                   '⎜  3  -1   0⎟\n'
+                   '⎝ -1  -1   0⎠')
 
     def print_to_stdout(self):
         """
@@ -299,9 +290,9 @@ class OutputLatex(OutputBase):
 
     def __init__(self, latex):
         """
-        LaTeX Output
+        LaTeX Output.
 
-        .. note::
+        .. NOTE::
 
             The LaTeX commands will only use a subset of LaTeX that
             can be displayed by MathJax.
@@ -326,11 +317,9 @@ class OutputLatex(OutputBase):
 
     def display_equation(self):
         r"""
-        Return the LaTeX code for a display equation
+        Return the LaTeX code for a display equation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -348,11 +337,9 @@ class OutputLatex(OutputBase):
 
     def inline_equation(self):
         r"""
-        Return the LaTeX code for an inline equation
+        Return the LaTeX code for an inline equation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -370,14 +357,12 @@ class OutputLatex(OutputBase):
     @classmethod
     def example(cls):
         r"""
-        Construct a sample LaTeX output container
+        Construct a sample LaTeX output container.
 
         This static method is meant for doctests, so they can easily
         construct an example.
 
-        OUTPUT:
-
-        An instance of :class:`OutputLatex`.
+        OUTPUT: an instance of :class:`OutputLatex`
 
         EXAMPLES::
 

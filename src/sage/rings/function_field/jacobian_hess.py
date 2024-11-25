@@ -48,7 +48,6 @@ divisor. Hence a point of the Jacobian group is represented by `D`.
 AUTHORS:
 
 - Kwankyu Lee (2022-01-24): initial version
-
 """
 
 # ****************************************************************************
@@ -833,7 +832,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
 class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base):
     """
-    Jacobian groups of function fields over finite fields
+    Jacobian groups of function fields over finite fields.
 
     INPUT:
 

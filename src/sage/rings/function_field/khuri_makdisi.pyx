@@ -50,7 +50,6 @@ preimage `W_D` such that `\mu_{n,m}(W_D,W_E)=W_F` of the expected codimension
 AUTHORS:
 
 - Kwankyu Lee (2022-01): initial version
-
 """
 
 # ****************************************************************************
@@ -473,7 +472,7 @@ cdef class KhuriMakdisi_large(KhuriMakdisi_base):
 
     cpdef Matrix addflip(self, Matrix wd1, Matrix wd2):
         """
-        Theorem 4.3 (addflip)
+        Theorem 4.3 (addflip).
 
         TESTS::
 

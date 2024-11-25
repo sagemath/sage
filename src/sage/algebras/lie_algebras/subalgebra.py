@@ -24,6 +24,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.sets.family import Family
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.structure.parent import Parent
+from sage.structure.element import parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 
@@ -34,8 +35,8 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
     INPUT:
 
     - ``ambient`` -- the Lie algebra containing the subalgebra
-    - ``gens`` -- a list of generators of the subalgebra
-    - ``ideal`` -- (default: ``False``) a boolean; if ``True``, then ``gens``
+    - ``gens`` -- list of generators of the subalgebra
+    - ``ideal`` -- boolean (default: ``False``); if ``True``, then ``gens``
       is interpreted as the generating set of an ideal instead of a subalgebra
     - ``order`` -- (optional) the key used to sort the indices of ``ambient``
     - ``category`` -- (optional) a subcategory of subobjects of finite
@@ -310,7 +311,6 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: I = L.subalgebra(x)
             sage: I(x) in I
             True
-
         """
         if x in self._ambient:
             x = self._ambient(x)
@@ -388,7 +388,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: S._an_element_()
             X
         """
-        return self.element_class(self, self.lie_algebra_generators()[0])
+        return self.lie_algebra_generators()[0]
 
     def _element_constructor_(self, x):
         """
@@ -425,14 +425,13 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: S([S(x), S(y)]) == S(L[x, y])
             True
         """
-        try:
-            P = x.parent()
-            if P is self:
-                return x
-            if P == self._ambient:
-                return self.retract(x)
-        except AttributeError:
-            pass
+        P = parent(x)
+        if P is self:
+            return x
+        if P == self._ambient:
+            return self.retract(x)
+        if isinstance(P, type(self)) and P._ambient == self._ambient:
+            return self.retract(x.value)
 
         if x in self.module():
             return self.from_vector(x)
@@ -770,7 +769,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
 
     def from_vector(self, v, order=None, coerce=False):
         r"""
-        Return the element of ``self`` corresponding to the vector ``v``
+        Return the element of ``self`` corresponding to the vector ``v``.
 
         INPUT:
 

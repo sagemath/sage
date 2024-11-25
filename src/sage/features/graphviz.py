@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of ``graphviz``
 """
@@ -35,9 +36,9 @@ class dot(Executable):
             sage: isinstance(dot(), dot)
             True
         """
-        Executable.__init__(self, "dot", executable="dot",
-                            spkg="graphviz",
-                            url="https://www.graphviz.org/")
+        Executable.__init__(self, 'dot', executable='dot',
+                            spkg='graphviz',
+                            url='https://www.graphviz.org/')
 
 
 class neato(Executable):
@@ -58,9 +59,9 @@ class neato(Executable):
             sage: isinstance(neato(), neato)
             True
         """
-        Executable.__init__(self, "neato", executable="neato",
-                            spkg="graphviz",
-                            url="https://www.graphviz.org/")
+        Executable.__init__(self, 'neato', executable='neato',
+                            spkg='graphviz',
+                            url='https://www.graphviz.org/')
 
 
 class twopi(Executable):
@@ -81,9 +82,9 @@ class twopi(Executable):
             sage: isinstance(twopi(), twopi)
             True
         """
-        Executable.__init__(self, "twopi", executable="twopi",
-                            spkg="graphviz",
-                            url="https://www.graphviz.org/")
+        Executable.__init__(self, 'twopi', executable='twopi',
+                            spkg='graphviz',
+                            url='https://www.graphviz.org/')
 
 
 class Graphviz(JoinFeature):
@@ -106,10 +107,10 @@ class Graphviz(JoinFeature):
             sage: isinstance(Graphviz(), Graphviz)
             True
         """
-        JoinFeature.__init__(self, "graphviz",
+        JoinFeature.__init__(self, 'graphviz',
                              [dot(), neato(), twopi()],
-                             spkg="graphviz",
-                             url="https://www.graphviz.org/")
+                             spkg='graphviz',
+                             url='https://www.graphviz.org/')
 
 
 def all_features():

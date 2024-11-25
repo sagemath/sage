@@ -72,7 +72,11 @@ if any(x in sys.argv
 # TODO: This should be quiet by default
 print("Discovering Python/Cython source code....")
 t = time.time()
-distributions = ['']
+distributions = ['sagemath-categories',
+                 'sagemath-environment',
+                 'sagemath-objects',
+                 'sagemath-repl',
+                 '']
 log.warn('distributions = {0}'.format(distributions))
 from sage_setup.find import find_python_sources
 python_packages, python_modules, cython_modules = find_python_sources(

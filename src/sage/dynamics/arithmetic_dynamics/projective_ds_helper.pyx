@@ -6,7 +6,6 @@ This is the helper file providing functionality for projective_ds.py.
 AUTHORS:
 
 - Dillon Rose (2014-01):  Speed enhancements
-
 """
 
 # ****************************************************************************
@@ -35,7 +34,7 @@ cpdef _fast_possible_periods(self, return_points=False):
 
     INPUT:
 
-    - ``return_points`` -- (default: ``False``) boolean; if ``True``, then
+    - ``return_points`` -- boolean (default: ``False``); if ``True``, then
       return the points as well as the possible periods
 
     OUTPUT:
@@ -133,7 +132,7 @@ cpdef _fast_possible_periods(self, return_points=False):
                     for r in rvalues:
                         periods.add(period*r)
                         points_periods.append([P_proj, period*r])
-                        if p == 2 or p == 3: #need e=1 for N=1, QQ
+                        if p == 2 or p == 3:  # need e=1 for N=1, QQ
                             periods.add(period*r*p)
                             points_periods.append([P_proj, period*r*p])
                 else:
@@ -142,7 +141,7 @@ cpdef _fast_possible_periods(self, return_points=False):
                         periods.add(period*r*p)
                         points_periods.append([P_proj, period*r])
                         points_periods.append([P_proj, period*r*p])
-                        if p == 2:  #need e=3 for N>1, QQ
+                        if p == 2:  # need e=3 for N>1, QQ
                             periods.add(period*r*4)
                             points_periods.append([P_proj, period*r*4])
                             periods.add(period*r*8)
@@ -188,7 +187,6 @@ cpdef int _hash(list Point, int prime) noexcept:
         sage: from sage.dynamics.arithmetic_dynamics.projective_ds_helper import _hash
         sage: _hash([1, 2, 1], 3)
         16
-
     """
     cdef int hash_q
     cdef int coefficient

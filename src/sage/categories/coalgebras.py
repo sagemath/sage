@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat
 r"""
 Coalgebras
@@ -26,7 +27,7 @@ from sage.misc.lazy_import import LazyImport
 
 class Coalgebras(Category_over_base_ring):
     """
-    The category of coalgebras
+    The category of coalgebras.
 
     EXAMPLES::
 
@@ -48,7 +49,7 @@ class Coalgebras(Category_over_base_ring):
         """
         return [Modules(self.base_ring())]
 
-    WithBasis = LazyImport('sage.categories.coalgebras_with_basis',  'CoalgebrasWithBasis')
+    WithBasis = LazyImport('sage.categories.coalgebras_with_basis', 'CoalgebrasWithBasis')
     Graded = LazyImport('sage.categories.graded_coalgebras', 'GradedCoalgebras')
 
     class ParentMethods:

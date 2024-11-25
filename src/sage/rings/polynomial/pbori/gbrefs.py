@@ -38,7 +38,7 @@ def load_ref_raw(s):
     return res
 
 
-def load_ref(s, ordering="lp", blocks=SINGLE):
+def load_ref(s, ordering='lp', blocks=SINGLE):
     return load_ref_gz_uu(s, ordering, blocks)
 
 
@@ -68,7 +68,7 @@ def load_ref_gz_uu(s, o, b):
     uu.decode(ref_file, res)
     res = res.getvalue()
     res = StringIO(res)
-    res = gzip.GzipFile(fileobj=res, mode="r").read()
+    res = gzip.GzipFile(fileobj=res, mode='r').read()
     res = res.replace(" ", "")
     return res
 
@@ -77,7 +77,7 @@ def convert_refs(ref_file_orig):
     with open(ref_file_orig) as file:
         content = file.read()
     buf_out = StringIO()
-    zipped = gzip.GzipFile(filename=ref_file_orig, mode="w", fileobj=buf_out)
+    zipped = gzip.GzipFile(filename=ref_file_orig, mode='w', fileobj=buf_out)
     zipped.write(content)
     zipped.close()
     val = buf_out.getvalue()
@@ -107,7 +107,7 @@ def clean_data(data):
             delattr(data, a)
 
 
-def load_data(file_name, base_dir="./"):
+def load_data(file_name, base_dir='./'):
     in_file = file_name
     if not re.match("^data", in_file):
         in_file = "data/" + in_file

@@ -64,9 +64,9 @@ class VirtualCrystal(Subcrystal):
     INPUT:
 
     - ``ambient`` -- the ambient crystal
-    - ``virtualization`` -- a dictionary whose key `i` corresponds
+    - ``virtualization`` -- dictionary whose key `i` corresponds
       to the set `\sigma_i`
-    - ``scaling_factors`` -- a dictionary whose key `i` corresponds to
+    - ``scaling_factors`` -- dictionary whose key `i` corresponds to
       the scaling factor `\gamma_i`
     - ``contained`` -- (optional) a set (or function) which specifies when an
       element is contained in the subcrystal; the default is everything

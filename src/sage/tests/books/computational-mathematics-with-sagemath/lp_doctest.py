@@ -230,5 +230,4 @@ Sage example in ./lp.tex, line 906::
   ....:     h.add_edges( [(u,v)
   ....:                   for u,v in g.edges(sort=True, labels = False)
   ....:                   if p.get_values(B(u,v), convert=ZZ, tolerance=1e-3) == 1] )
-
 """

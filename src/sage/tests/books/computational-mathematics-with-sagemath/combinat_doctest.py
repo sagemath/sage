@@ -704,7 +704,7 @@ Sage example in ./combinat.tex, line 2116::
 
 Sage example in ./combinat.tex, line 2130::
 
-  sage: def words(alphabet,l):
+  sage: def words(alphabet, l):
   ....:    if l == 0: yield []
   ....:    else:
   ....:        for word in words(alphabet, l-1):
@@ -1049,5 +1049,4 @@ Sage example in ./combinat.tex, line 3214::
   ....:                    for c in CC) / factorial(n)
   sage: Z.expand(2, [q,t])(q=1,t=1)  # long time
   645490122795799841856164638490742749440
-
 """

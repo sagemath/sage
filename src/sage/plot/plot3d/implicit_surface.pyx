@@ -468,6 +468,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
             sage: cube_marcher.y_vertices.tolist()
             [[[<1.0, 0.5, 0.0>, None]], [[None, None]]]
             sage: cube_marcher.x_vertices.any() # This shouldn't affect the X vertices.
+            ...
         """
         (self.y_vertices, self.y_vertices_swapped) = \
             (self.y_vertices_swapped, self.y_vertices)
@@ -574,6 +575,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
             sage: cube_marcher.x_vertices.tolist()
             [[None, None], [None, <1.5, 1.0, 1.0>]]
             sage: cube_marcher.y_vertices.any() or cube_marcher.z_vertices.any() # This shouldn't affect the Y or Z vertices.
+            ...
         """
         cdef bint has_prev = (_prev is not None)
         cdef bint has_next = (_next is not None)
@@ -849,18 +851,18 @@ cpdef render_implicit(f, xrange, yrange, zrange, plot_points, cube_marchers):
     """
     INPUT:
 
-    -  ``f`` -- a (fast!) callable function
+    - ``f`` -- a (fast!) callable function
 
-    -  ``xrange`` -- a 2-tuple (x_min, x_max)
+    - ``xrange`` -- a 2-tuple (x_min, x_max)
 
-    -  ``yrange`` -- a 2-tuple (y_min, y_may)
+    - ``yrange`` -- a 2-tuple (y_min, y_may)
 
-    -  ``zrange`` -- a 2-tuple (z_min, z_maz)
+    - ``zrange`` -- a 2-tuple (z_min, z_maz)
 
-    -  ``plot_points`` -- a triple of integers indicating the number of
-       function evaluations in each direction.
+    - ``plot_points`` -- a triple of integers indicating the number of
+      function evaluations in each direction
 
-    -  ``cube_marchers`` -- a list of cube marchers, one for each contour.
+    - ``cube_marchers`` -- list of cube marchers, one for each contour
 
     OUTPUT:
 
@@ -945,7 +947,7 @@ cdef class ImplicitSurface(IndexFaceSet):
     cdef readonly tuple plot_points
 
     def __init__(self, f, xrange, yrange, zrange,
-                 contour=0, plot_points="automatic",
+                 contour=0, plot_points='automatic',
                  region=None, smooth=True, gradient=None,
                  **kwds):
         """
@@ -1197,7 +1199,6 @@ cdef class ImplicitSurface(IndexFaceSet):
             sage: len(G.vertex_list()) > 0, len(G.face_list()) > 0
             (True, True)
             sage: G.show() # This should be fast, since the mesh is already triangulated.
-
         """
         if self.fcount != 0 and not force:
             # The mesh is already triangulated

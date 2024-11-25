@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Base Class for Backends
 
@@ -56,13 +57,11 @@ class BackendBase(SageObject):
 
     def _repr_(self):
         """
-        Return string representation of the backend
+        Return string representation of the backend.
 
         Every backend must implement this method.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -77,7 +76,7 @@ class BackendBase(SageObject):
 
     def get_display_manager(self):
         """
-        Return the display manager singleton
+        Return the display manager singleton.
 
         This is a convenience method to access the display manager
         singleton.
@@ -136,7 +135,7 @@ class BackendBase(SageObject):
 
     def default_preferences(self):
         """
-        Return the backend's display preferences
+        Return the backend's display preferences.
 
         Override this method to change the default preferences when
         using your backend.
@@ -190,15 +189,13 @@ class BackendBase(SageObject):
 
     def is_in_terminal(self):
         """
-        Test whether the UI is meant to run in a terminal
+        Test whether the UI is meant to run in a terminal.
 
         See
         :meth:`sage.repl.rich_output.display_manager.DisplayManager.is_in_terminal`
         for details.
 
-        OUTPUT:
-
-        Defaults to ``False``.
+        OUTPUT: defaults to ``False``
 
         EXAMPLES::
 
@@ -211,11 +208,9 @@ class BackendBase(SageObject):
 
     def max_width(self):
         """
-        Return the number of characters that fit into one output line
+        Return the number of characters that fit into one output line.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -230,9 +225,7 @@ class BackendBase(SageObject):
         r"""
         Return the newline string.
 
-        OUTPUT:
-
-        String for starting a new line of output.
+        OUTPUT: string for starting a new line of output
 
         EXAMPLES::
 
@@ -245,18 +238,16 @@ class BackendBase(SageObject):
 
     def _apply_pretty_printer(self, pretty_printer_class, obj):
         """
-        Helper method to format ``obj`` as text
+        Helper method to format ``obj`` as text.
 
         INPUT:
 
         - ``pretty_printer_class`` -- subclass of
-          :class:`sage.repl.display.pretty_print.SagePrettyPrinter`.
+          :class:`sage.repl.display.pretty_print.SagePrettyPrinter`
 
-        - ``obj`` -- anything.
+        - ``obj`` -- anything
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -284,12 +275,12 @@ class BackendBase(SageObject):
 
         INPUT:
 
-        - ``obj`` -- anything.
+        - ``obj`` -- anything
 
         - ``**kwds`` -- optional keyword arguments to control the
           formatting. Supported are:
 
-            * ``concatenate`` -- boolean (default: ``False``). If
+            * ``concatenate`` -- boolean (default: ``False``); if
               ``True``, the argument ``obj`` must be iterable and its
               entries will be concatenated. There is a single
               whitespace between entries.
@@ -334,12 +325,12 @@ class BackendBase(SageObject):
 
         INPUT:
 
-        - ``obj`` -- anything.
+        - ``obj`` -- anything
 
         - ``**kwds`` -- optional keyword arguments to control the
           formatting. Supported are:
 
-            * ``concatenate`` -- boolean (default: ``False``). If
+            * ``concatenate`` -- boolean (default: ``False``); if
               ``True``, the argument ``obj`` must be iterable and its
               entries will be concatenated. There is a single
               whitespace between entries.
@@ -382,12 +373,12 @@ class BackendBase(SageObject):
 
         INPUT:
 
-        - ``obj`` -- anything.
+        - ``obj`` -- anything
 
         - ``**kwds`` -- optional keyword arguments to control the
           formatting. Supported are:
 
-            * ``concatenate`` -- boolean (default: ``False``). If
+            * ``concatenate`` -- boolean (default: ``False``); if
               ``True``, the argument ``obj`` must be iterable and its
               entries will be concatenated. There is a single
               whitespace between entries.
@@ -431,12 +422,12 @@ class BackendBase(SageObject):
 
         INPUT:
 
-        - ``obj`` -- anything.
+        - ``obj`` -- anything
 
         - ``**kwds`` -- optional keyword arguments to control the
           formatting. Supported are:
 
-            * ``concatenate`` -- boolean (default: ``False``). If
+            * ``concatenate`` -- boolean (default: ``False``); if
               ``True``, the argument ``obj`` must be iterable and its
               entries will be concatenated. There is a single
               whitespace between entries.
@@ -488,7 +479,7 @@ class BackendBase(SageObject):
 
         INPUT:
 
-        - ``obj`` -- result of the most recent evaluation.
+        - ``obj`` -- result of the most recent evaluation
 
         EXAMPLES::
 
@@ -507,7 +498,7 @@ class BackendBase(SageObject):
 
     def displayhook(self, plain_text, rich_output):
         """
-        Backend implementation of the displayhook
+        Backend implementation of the displayhook.
 
         The value of the last statement on a REPL input line or
         notebook cell are usually handed to the Python displayhook and
@@ -589,7 +580,7 @@ class BackendBase(SageObject):
 
 class BackendSimple(BackendBase):
     """
-    Simple Backend
+    Simple Backend.
 
     This backend only supports plain text.
 
@@ -602,11 +593,9 @@ class BackendSimple(BackendBase):
 
     def _repr_(self):
         r"""
-        Return string representation of the backend
+        Return string representation of the backend.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -645,9 +634,7 @@ class BackendSimple(BackendBase):
 
         Same as :meth:`~BackendBase.displayhook`.
 
-        OUTPUT:
-
-        This backend returns nothing, it just prints to stdout.
+        OUTPUT: this backend returns nothing, it just prints to stdout
 
         EXAMPLES::
 

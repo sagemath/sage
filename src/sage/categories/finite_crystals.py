@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Finite Crystals
@@ -75,7 +76,7 @@ class FiniteCrystals(CategoryWithAxiom):
 
     def example(self, n=3):
         """
-        Returns an example of highest weight crystals, as per
+        Return an example of highest weight crystals, as per
         :meth:`Category.example`.
 
         EXAMPLES::

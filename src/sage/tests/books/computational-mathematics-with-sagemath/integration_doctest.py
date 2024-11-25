@@ -226,12 +226,12 @@ Sage example in ./integration.tex, line 1228::
 
 Sage example in ./integration.tex, line 1244::
 
-  sage: def f_1(t,y,params): return [y[1],params[0]*(1-y[0]^2)*y[1]-y[0]]
+  sage: def f_1(t, y, params): return [y[1],params[0]*(1-y[0]^2)*y[1]-y[0]]
   sage: T.function = f_1
 
 Sage example in ./integration.tex, line 1266::
 
-  sage: def j_1(t,y,params):
+  sage: def j_1(t, y, params):
   ....:     return [[0, 1],
   ....:             [-2*params[0]*y[0]*y[1]-1, params[0]*(1-y[0]^2)],
   ....:             [0,0]]
@@ -286,5 +286,4 @@ Sage example in ./integration.tex, line 1497::
   sage: mpmath.mp.prec = 100
   sage: sol(1)
   mpf('2.7135204235459511323824699502438')
-
 """

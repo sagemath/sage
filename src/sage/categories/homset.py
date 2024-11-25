@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Homsets
 
@@ -93,11 +94,11 @@ def Hom(X, Y, category=None, check=True):
 
     - ``Y`` -- an object of a category
 
-    - ``category`` -- a category in which the morphisms must be.
-      (default: the meet of the categories of ``X`` and ``Y``)
-      Both ``X`` and ``Y`` must belong to that category.
+    - ``category`` -- a category in which the morphisms must be
+      (default: the meet of the categories of ``X`` and ``Y``);
+      both ``X`` and ``Y`` must belong to that category
 
-    - ``check`` -- a boolean (default: ``True``): whether to check the
+    - ``check`` -- boolean (default: ``True``); whether to check the
       input, and in particular that ``X`` and ``Y`` belong to
       ``category``.
 
@@ -178,7 +179,7 @@ def Hom(X, Y, category=None, check=True):
     A parent (or a parent class of a category) may specify how to
     construct certain homsets by implementing a method ``_Hom_(self,
     codomain, category)``. This method should either construct the
-    requested homset or raise a :class:`TypeError`. This hook is currently
+    requested homset or raise a :exc:`TypeError`. This hook is currently
     mostly used to create homsets in some specific subclass of
     :class:`Homset` (e.g. :class:`sage.rings.homset.RingHomset`)::
 
@@ -302,7 +303,7 @@ def Hom(X, Y, category=None, check=True):
     category. Case of a non parent::
 
         sage: # needs sage.graphs
-        sage: S = SimplicialComplex([[1,2], [1,4]]); S.rename("S")
+        sage: S = SimplicialComplex([[1,2], [1,4]]); S.rename('S')
         sage: Hom(S, S, SimplicialComplexes())
         Set of Morphisms from S to S in Category of finite simplicial complexes
         sage: Hom(Set(), S, Sets())
@@ -322,7 +323,7 @@ def Hom(X, Y, category=None, check=True):
         sage: class PermissiveCategory(Category):
         ....:     def super_categories(self): return [Objects()]
         ....:     def __contains__(self, X): return True
-        sage: C = PermissiveCategory(); C.rename("Permissive category")
+        sage: C = PermissiveCategory(); C.rename('Permissive category')
         sage: S.category().is_subcategory(C)
         False
         sage: S in C
@@ -499,13 +500,11 @@ def End(X, category=None):
 
     INPUT:
 
-    -  ``X`` -- anything
+    - ``X`` -- anything
 
-    -  ``category`` -- (optional) category in which to coerce ``X``
+    - ``category`` -- (optional) category in which to coerce ``X``
 
-    OUTPUT:
-
-    A set of endomorphisms in category
+    OUTPUT: a set of endomorphisms in category
 
     EXAMPLES::
 
@@ -612,8 +611,8 @@ class Homset(Set_generic):
         r"""
         TESTS::
 
-            sage: X = ZZ['x']; X.rename("X")
-            sage: Y = ZZ['y']; Y.rename("Y")
+            sage: X = ZZ['x']; X.rename('X')
+            sage: Y = ZZ['y']; Y.rename('Y')
             sage: f = X.hom([0], Y)
             sage: class MyHomset(Homset):
             ....:     def _an_element_(self):
@@ -930,7 +929,7 @@ class Homset(Set_generic):
              Set of Morphisms from Free Group on generators {x, y, z}
              to Free Group on generators {x, y, z} in Category of infinite groups
             sage: HH = Hom(H, H)
-            sage: HH(HH.identity(), foo="bar")
+            sage: HH(HH.identity(), foo='bar')
             Traceback (most recent call last):
             ...
             NotImplementedError: no keywords are implemented for
@@ -1269,8 +1268,8 @@ class HomsetWithBase(Homset):
         r"""
         TESTS::
 
-            sage: X = ZZ['x']; X.rename("X")
-            sage: Y = ZZ['y']; Y.rename("Y")
+            sage: X = ZZ['x']; X.rename('X')
+            sage: Y = ZZ['y']; Y.rename('Y')
             sage: f = X.hom([0], Y)
             sage: class MyHomset(HomsetWithBase):
             ....:     def _an_element_(self):

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite dimensional bialgebras with basis
 """
@@ -12,7 +13,7 @@ Finite dimensional bialgebras with basis
 
 def FiniteDimensionalBialgebrasWithBasis(base_ring):
     """
-    The category of finite dimensional bialgebras with a distinguished basis
+    The category of finite dimensional bialgebras with a distinguished basis.
 
     EXAMPLES::
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 IPython Displayhook Formatters
 
@@ -6,7 +7,7 @@ formatters. It has two main features, by default the displayhook
 contains a new facility for displaying lists of matrices in an easier
 to read format::
 
-    sage: [identity_matrix(i) for i in range(2,5)]
+    sage: [identity_matrix(i) for i in range(2, 5)]                                     # needs sage.modules
     [
                     [1 0 0 0]
            [1 0 0]  [0 1 0 0]
@@ -83,11 +84,9 @@ class SageDisplayFormatter(DisplayFormatter):
 
     def __init__(self, *args, **kwds):
         """
-        This is where the Sage rich objects are translated to IPython
+        This is where the Sage rich objects are translated to IPython.
 
-        INPUT/OUTPUT:
-
-        See the IPython documentation.
+        INPUT/OUTPUT: see the IPython documentation
 
         EXAMPLES:
 
@@ -112,11 +111,9 @@ class SageDisplayFormatter(DisplayFormatter):
 
     def format(self, obj, include=None, exclude=None):
         r"""
-        Use the Sage rich output instead of IPython
+        Use the Sage rich output instead of IPython.
 
-        INPUT/OUTPUT:
-
-        See the IPython documentation.
+        INPUT/OUTPUT: see the IPython documentation
 
         EXAMPLES::
 
@@ -235,19 +232,23 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: shell.run_cell('matrix.options.precision')  # indirect doctest        # needs sage.modules
             None
         """
-        from sage.matrix.constructor import options
-        s = change.new
-        if not s:
-            # unset the precision
-            options.precision = None
+        try:
+            from sage.matrix.constructor import options
+        except ImportError:
+            pass
         else:
-            try:
-                prec = int(s)
-                if prec >= 0:
-                    options.precision = prec
-                # otherwise ignore the change
-            except ValueError:
-                pass
+            s = change.new
+            if not s:
+                # unset the precision
+                options.precision = None
+            else:
+                try:
+                    prec = int(s)
+                    if prec >= 0:
+                        options.precision = prec
+                    # otherwise ignore the change
+                except ValueError:
+                    pass
 
 
 class SagePlainTextFormatter(PlainTextFormatter):
@@ -267,9 +268,7 @@ class SagePlainTextFormatter(PlainTextFormatter):
             rich output system that is more flexible and supports
             different backends.
 
-        INPUT/OUTPUT:
-
-        See the IPython documentation.
+        INPUT/OUTPUT: see the IPython documentation
 
         EXAMPLES::
 
@@ -289,11 +288,9 @@ class SagePlainTextFormatter(PlainTextFormatter):
 
         INPUT:
 
-        - ``obj`` -- anything.
+        - ``obj`` -- anything
 
-        OUTPUT:
-
-        String. The plain text representation.
+        OUTPUT: string; the plain text representation
 
         EXAMPLES::
 

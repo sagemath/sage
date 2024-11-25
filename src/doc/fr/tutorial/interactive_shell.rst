@@ -366,9 +366,9 @@ qui mérite d'être examiné.
     sage: time g = maple('1938^99484')
     CPU times: user 0.00 s, sys: 0.00 s, total: 0.00 s
     Wall time: 0.11
-    sage: gap(0)
+    sage: libgap(0)
     0
-    sage: time g = gap.eval('1938^99484;;')
+    sage: time g = libgap.eval('1938^99484;')
     CPU times: user 0.00 s, sys: 0.00 s, total: 0.00 s
     Wall time: 1.02
 
@@ -561,7 +561,6 @@ Si vous cherchez à savoir ce que fait une fonction, par exemple la
 fonction coordinates, ``V.coordinates?`` affiche un message d'aide et
 ``V.coordinates??`` le code source de la fonction, comme expliqué dans
 la section suivante.
-
 
 
 Aide en ligne
@@ -810,7 +809,7 @@ reconstruire, mais d'autres non, aussi la reconstruction d'objets GAP
 
 ::
 
-    sage: a = gap(2)
+    sage: a = libgap(2)
     sage: a.save('a')
     sage: load('a')
     Traceback (most recent call last):

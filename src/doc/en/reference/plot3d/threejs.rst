@@ -144,7 +144,6 @@ An :meth:`~sage.plot.animate.Animation.interactive` animation::
     :file: threejs_examples/animation.html
 
 
-
 .. RAW:: html
 
     <script>

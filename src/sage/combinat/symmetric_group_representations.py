@@ -12,10 +12,10 @@ Representations of the Symmetric Group
 
     This code uses a different convention than in Sagan's book "The Symmetric
     Group"
-
 """
 # ****************************************************************************
 #       Copyright (C) 2009 Franco Saliola <saliola@gmail.com>
+#                     2024 Travis Scrimshaw <tcscrims at gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -45,14 +45,14 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSets
 
 lazy_import("sage.combinat.yang_baxter_graph", "YangBaxterGraph_partition")
-lazy_import("sage.groups.perm_gps.constructor", "PermutationGroupElement", as_="PermutationConstructor")
+lazy_import("sage.groups.perm_gps.constructor", "PermutationGroupElement", as_='PermutationConstructor')
 lazy_import("sage.symbolic.ring", "SR")
 
 
 # #### Constructor function ################################################
 
 
-def SymmetricGroupRepresentation(partition, implementation="specht",
+def SymmetricGroupRepresentation(partition, implementation='specht',
         ring=None, cache_matrices=True):
     r"""
     The irreducible representation of the symmetric group corresponding to
@@ -62,15 +62,15 @@ def SymmetricGroupRepresentation(partition, implementation="specht",
 
     - ``partition`` -- a partition of a positive integer
 
-    - ``implementation`` -- string (default: ``"specht"``), one of:
+    - ``implementation`` -- string (default: ``'specht'``); one of:
 
-      * ``"seminormal"`` -- for Young's seminormal representation
-      * ``"orthogonal"`` -- for Young's orthogonal representation
-      * ``"specht"`` -- for Specht's representation
+      * ``'seminormal'`` -- for Young's seminormal representation
+      * ``'orthogonal'`` -- for Young's orthogonal representation
+      * ``'specht'`` -- for Specht's representation
 
     - ``ring`` -- the ring over which the representation is defined
 
-    - ``cache_matrices`` -- boolean (default: ``True``) if ``True``, then any
+    - ``cache_matrices`` -- boolean (default: ``True``); if ``True``, then any
       representation matrices that are computed are cached
 
     EXAMPLES:
@@ -179,7 +179,7 @@ def SymmetricGroupRepresentation(partition, implementation="specht",
     return Rep(partition)
 
 
-def SymmetricGroupRepresentations(n, implementation="specht", ring=None,
+def SymmetricGroupRepresentations(n, implementation='specht', ring=None,
         cache_matrices=True):
     r"""
     Irreducible representations of the symmetric group.
@@ -188,15 +188,15 @@ def SymmetricGroupRepresentations(n, implementation="specht", ring=None,
 
     - ``n`` -- positive integer
 
-    - ``implementation`` -- string (default: ``"specht"``), one of:
+    - ``implementation`` -- string (default: ``'specht'``); one of:
 
-      * ``"seminormal"`` -- for Young's seminormal representation
-      * ``"orthogonal"`` -- for Young's orthogonal representation
-      * ``"specht"`` -- for Specht's representation
+      * ``'seminormal'`` -- for Young's seminormal representation
+      * ``'orthogonal'`` -- for Young's orthogonal representation
+      * ``'specht'`` -- for Specht's representation
 
     - ``ring`` -- the ring over which the representation is defined
 
-    - ``cache_matrices`` -- boolean (default: ``True``) if ``True``, then any
+    - ``cache_matrices`` -- boolean (default: ``True``); if ``True``, then any
       representation matrices that are computed are cached
 
     EXAMPLES:
@@ -1018,3 +1018,570 @@ def partition_to_vector_of_contents(partition, reverse=False):
     if reverse:
         return tuple(v)[::-1]
     return tuple(v)
+
+
+# #### Garsia-Procesi modules ################################################
+
+from sage.rings.quotient_ring import QuotientRing_generic
+from sage.combinat.specht_module import SymmetricGroupRepresentation as SymmetricGroupRepresentation_mixin
+
+
+class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricGroupRepresentation_mixin):
+    r"""
+    A Garsia-Procesi module.
+
+    Let `\lambda` be a partition of `n` and `R` be a commutative
+    ring. The *Garsia-Procesi module* is defined by `R_{\lambda}
+    := R[x_1, \ldots, x_n] / I_{\lambda}`, where
+
+    .. MATH::
+
+        I_{\lambda} := \langle e_r(x_{i_1}, \ldots, x_{i_k}) \mid
+        \{i_1, \ldots, i_k\} \subseteq [n] \text{ and }
+        k \geq r > k - d_k(\lambda) \rangle,
+
+    with `e_r` being the `r`-the elementary symmetric function and
+    `d_k(\lambda) = \lambda'_n + \cdots + \lambda'_{n+1-k}`, is the
+    *Tanisaki ideal*.
+
+    If we consider `R = \QQ`, then the Garsia-Procesi module has the
+    following interpretation. Let `\mathcal{F}_n = GL_n / B` denote
+    the (complex type A) flag variety. Consider the Springer fiber
+    `F_{\lambda} \subseteq \mathcal{F}_n` associated to a nilpotent
+    matrix with Jordan blocks sizes `\lambda`. Springer showed that
+    the cohomology ring `H^*(F_{\lambda})` admits a graded `S_n`-action
+    that agrees with the induced representation of the sign representation
+    of the Young subgroup `S_{\lambda}`. From work of De Concini
+    and Procesi, this `S_n`-representation is isomorphic to `R_{\lambda}`.
+    Moreover, the graded Frobenius image is known to be a modified
+    Hall-Littlewood polynomial.
+
+    EXAMPLES::
+
+        sage: SGA = SymmetricGroupAlgebra(QQ, 7)
+        sage: GP421 = SGA.garsia_procesi_module([4, 2, 1])
+        sage: GP421.dimension()
+        105
+        sage: v = GP421.an_element(); v
+        -gp1 - gp2 - gp3 - gp4 - gp5 - gp6
+        sage: SGA.an_element() * v
+        -6*gp1 - 6*gp2 - 6*gp3 - 6*gp4 - 6*gp5 - 5*gp6
+
+    We verify the result is a modified Hall-Littlewood polynomial by using
+    the `Q'` Hall-Littlewood polynomials, replacing `q \mapsto q^{-1}` and
+    multiplying by the smallest power of `q` so the coefficients are again
+    polynomials::
+
+        sage: GP421.graded_frobenius_image()
+        q^4*s[4, 2, 1] + q^3*s[4, 3] + q^3*s[5, 1, 1] + (q^3+q^2)*s[5, 2]
+         + (q^2+q)*s[6, 1] + s[7]
+        sage: R.<q> = QQ[]
+        sage: Sym = SymmetricFunctions(R)
+        sage: s = Sym.s()
+        sage: Qp = Sym.hall_littlewood(q).Qp()
+        sage: mHL = s(Qp[4,2,1]); mHL
+        s[4, 2, 1] + q*s[4, 3] + q*s[5, 1, 1] + (q^2+q)*s[5, 2]
+         + (q^3+q^2)*s[6, 1] + q^4*s[7]
+        sage: mHL.map_coefficients(lambda c: R(q^4*c(q^-1)))
+        q^4*s[4, 2, 1] + q^3*s[4, 3] + q^3*s[5, 1, 1] + (q^3+q^2)*s[5, 2]
+         + (q^2+q)*s[6, 1] + s[7]
+
+    We show that the maximal degree component corresponds to the Yamanouchi
+    words of content `\lambda`::
+
+        sage: B = GP421.graded_decomposition(4).basis()
+        sage: top_deg = [Word([i+1 for i in b.lift().lift().exponents()[0]]) for b in B]
+        sage: yamanouchi = [P.to_packed_word() for P in OrderedSetPartitions(range(7), [4, 2, 1])
+        ....:               if P.to_packed_word().reversal().is_yamanouchi()]
+        sage: set(top_deg) == set(yamanouchi)
+        True
+    """
+    @staticmethod
+    def __classcall_private__(cls, SGA, shape):
+        """
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: from sage.combinat.symmetric_group_representations import GarsiaProcesiModule
+            sage: GP1 = GarsiaProcesiModule(SGA, [2, 2, 1])
+            sage: GP2 = GarsiaProcesiModule(SGA, Partitions(5)([2, 2, 1]))
+            sage: GP1 is GP2
+            True
+            sage: GarsiaProcesiModule(SGA, [3])
+            Traceback (most recent call last):
+            ...
+            ValueError: [3] is not a partition of 5
+        """
+        shape = Partition(shape)
+        if sum(shape) != SGA.n:
+            raise ValueError(f"{shape} is not a partition of {SGA.n}")
+        return super().__classcall__(cls, SGA, shape)
+
+    def __init__(self, SGA, shape):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: GP = SGA.garsia_procesi_module([2, 2])
+            sage: TestSuite(GP).run()
+
+            sage: SGA = SymmetricGroupAlgebra(GF(2), 5)
+            sage: GP = SGA.garsia_procesi_module([3, 1, 1])
+            sage: TestSuite(GP).run()
+        """
+        self._shape = shape
+        SymmetricGroupRepresentation_mixin.__init__(self, SGA)
+
+        # Construct the Tanisaki ideal
+        from sage.combinat.sf.sf import SymmetricFunctions
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from itertools import combinations
+        n = SGA.n
+
+        conj = list(shape.conjugate())
+        conj += [0]*(n - len(conj))
+
+        def p(k):
+            return sum(conj[i] for i in range(n-k, n))
+
+        BR = SGA.base_ring()
+        R = PolynomialRing(BR, 'x', n)
+        gens = R.gens()
+        e = SymmetricFunctions(BR).e()
+        I = R.ideal([e[d].expand(k)(*S)
+                     for k in range(n+1) for d in range(k-p(k)+1, k+1)
+                     for S in combinations(gens, k)])
+
+        # Finalize the initialization
+        names = tuple([f"gp{i}" for i in range(n)])
+        from sage.categories.commutative_rings import CommutativeRings
+        from sage.categories.algebras import Algebras
+        cat = CommutativeRings().Quotients() & Algebras(SGA.base_ring()).Graded().WithBasis().FiniteDimensional()
+        QuotientRing_generic.__init__(self, R, I, names=names, category=cat)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: SGA.garsia_procesi_module([2, 2])
+            Garsia-Procesi module of shape [2, 2] over Rational Field
+        """
+        return "Garsia-Procesi module of shape {} over {}".format(self._shape, self.base_ring())
+
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: GP = SGA.garsia_procesi_module([2, 2])
+            sage: latex(GP)
+            R_{{\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+            \raisebox{-.6ex}{$\begin{array}[b]{*{2}c}\cline{1-2}
+            \lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{1-2}
+            \lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{1-2}
+            \end{array}$}
+            }}^{\Bold{Q}}
+        """
+        from sage.misc.latex import latex
+        return "R_{{{}}}^{{{}}}".format(latex(self._shape), latex(self.base_ring()))
+
+    def _coerce_map_from_base_ring(self):
+        r"""
+        Disable the coercion from the base ring from the category.
+
+        TESTS::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: GP = SGA.garsia_procesi_module([2, 2])
+            sage: GP._coerce_map_from_base_ring() is None
+            True
+        """
+        return None  # don't need anything special
+
+    @cached_method
+    def get_order(self):
+        """
+        Return the order of the elements in the basis.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: GP = SGA.garsia_procesi_module([2, 2])
+            sage: GP.get_order()
+            (0, 1, 2, 3, 4, 5)
+        """
+        return tuple(self.basis().keys())
+
+    @cached_method
+    def basis(self):
+        r"""
+        Return a basis of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: GP = SGA.garsia_procesi_module([2, 2])
+            sage: GP.basis()
+            Family (gp2*gp3, gp1*gp3, gp3, gp2, gp1, 1)
+        """
+        from sage.sets.family import Family
+        B = self.defining_ideal().normal_basis()
+        return Family([self.retract(b) for b in B])
+
+    @cached_method
+    def one_basis(self):
+        r"""
+        Return the index of the basis element `1`.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: GP = SGA.garsia_procesi_module([2, 2])
+            sage: GP.one_basis()
+            5
+        """
+        B = self.defining_ideal().normal_basis()
+        for i, b in enumerate(B):
+            if b.is_one():
+                return ZZ(i)
+
+    @cached_method
+    def dimension(self):
+        r"""
+        Return the dimension of ``self``.
+
+        The graded Frobenius character of the Garsia-Procesi module
+        `R_{\lambda}` is given by the modified Hall-Littlewood polynomial
+        `\widetilde{H}_{\lambda'}(x; q)`.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: s = Sym.s()
+            sage: Qp = Sym.hall_littlewood(1).Qp()
+            sage: for la in Partitions(5):
+            ....:     print(SGA.garsia_procesi_module(la).dimension(),
+            ....:           sum(c * StandardTableaux(la).cardinality()
+            ....:               for la, c in s(Qp[la])))
+            1 1
+            5 5
+            10 10
+            20 20
+            30 30
+            60 60
+            120 120
+        """
+        return self.defining_ideal().vector_space_dimension()
+
+    @cached_method
+    def graded_frobenius_image(self):
+        r"""
+        Return the graded Frobenius image of ``self``.
+
+        The graded Frobenius image is the sum of the :meth:`frobenius_image`
+        of each graded component, which is known to result in the modified
+        Hall-Littlewood polynomial `\widetilde{H}_{\lambda}(x; q)`.
+
+        EXAMPLES:
+
+        We verify that the result is the modified Hall-Littlewood polynomial
+        for `n = 5`::
+
+            sage: R.<q> = QQ[]
+            sage: Sym = SymmetricFunctions(R)
+            sage: s = Sym.s()
+            sage: Qp = Sym.hall_littlewood(q).Qp()
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: for la in Partitions(5):
+            ....:     f = SGA.garsia_procesi_module(la).graded_frobenius_image()
+            ....:     d = f[la].degree()
+            ....:     assert f.map_coefficients(lambda c: R(c(~q)*q^d)) == s(Qp[la])
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        R = QQ['q']
+        q = R.gen()
+        Sym = SymmetricFunctions(R)
+        p = Sym.p()
+        s = Sym.s()
+        G = self._semigroup
+        CCR = [(elt, elt.cycle_type()) for elt in G.conjugacy_classes_representatives()]
+        B = self.basis()
+        return s(p._from_dict({la: coeff / la.centralizer_size() for elt, la in CCR
+                               if (coeff := sum(q**b.degree() * (elt * b).lift().monomial_coefficient(b.lift())
+                                                for b in B))},
+                              remove_zeros=False))
+
+    @cached_method
+    def graded_character(self):
+        r"""
+        Return the graded character of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: GP = SGA.garsia_procesi_module([2, 2, 1])
+            sage: gchi = GP.graded_character(); gchi
+            (5*q^4 + 11*q^3 + 9*q^2 + 4*q + 1, -q^4 + q^3 + 3*q^2 + 2*q + 1,
+             q^4 - q^3 + q^2 + 1, -q^4 - q^3 + q + 1, -q^4 + q^3 - q + 1,
+             q^4 - q^3 - q^2 + 1, q^3 - q^2 - q + 1)
+            sage: R.<q> = QQ[]
+            sage: gchi == sum(q^d * D.character()
+            ....:             for d, D in GP.graded_decomposition().items())
+            True
+        """
+        q = QQ['q'].gen()
+        G = self._semigroup
+        B = self.basis()
+        from sage.modules.free_module_element import vector
+        return vector([sum(q**b.degree() * (g * b).lift().monomial_coefficient(b.lift()) for b in B)
+                       for g in G.conjugacy_classes_representatives()],
+                      immutable=True)
+
+    @lazy_attribute
+    def _graded_decomposition(self):
+        """
+        Construct the (internal) dictionary that encodes the graded
+        decomposition of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(2), 5)
+            sage: GP32 = SGA.garsia_procesi_module([3, 2])
+            sage: GP32._graded_decomposition
+            {0: Subrepresentation with basis {0} of Garsia-Procesi ...,
+             1: Subrepresentation with basis {0, 1, 2, 3} of Garsia-Procesi ...,
+             2: Subrepresentation with basis {0, 1, 2, 3, 4} of Garsia-Procesi ...}
+        """
+        d = {}
+        for b in self.basis():
+            deg = b.degree()
+            if deg not in d:
+                d[deg] = [b]
+            else:
+                d[deg].append(b)
+        return {deg: self.subrepresentation(gens, is_closed=True)
+                for deg, gens in sorted(d.items())}
+
+    def graded_decomposition(self, k=None):
+        r"""
+        Return the decomposition of ``self`` as a direct sum of
+        representations given by a fixed grading.
+
+        INPUT:
+
+        - ``k`` -- (optional) integer; if given, return the `k`-th graded part
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(2), 5)
+            sage: GP32 = SGA.garsia_procesi_module([3, 2])
+            sage: decomp = GP32.graded_decomposition(); decomp
+            {0: Subrepresentation with basis {0} of Garsia-Procesi ...,
+             1: Subrepresentation with basis {0, 1, 2, 3} of Garsia-Procesi ...,
+             2: Subrepresentation with basis {0, 1, 2, 3, 4} of Garsia-Procesi ...}
+            sage: decomp[2] is GP32.graded_decomposition(2)
+            True
+            sage: GP32.graded_decomposition(10)
+            Subrepresentation with basis {} of Garsia-Procesi module
+             of shape [3, 2] over Finite Field of size 2
+        """
+        if k is None:
+            # make a copy since mutable
+            return dict(self._graded_decomposition)
+        if k < 0 or k not in self._graded_decomposition:
+            return self.subrepresentation([], is_closed=True)
+        return self._graded_decomposition[k]
+
+    def graded_representation_matrix(self, elt, q=None):
+        r"""
+        Return the matrix corresponding to the left action of the symmetric
+        group (algebra) element ``elt`` on ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 3)
+            sage: GP = SGA.garsia_procesi_module([1, 1, 1])
+            sage: elt = SGA.an_element(); elt
+            [1, 2, 3] + 2*[1, 3, 2] + [3, 1, 2]
+            sage: X = GP.graded_representation_matrix(elt); X
+            [  0   0   0   0   0   0]
+            [  0 q^2   0   0   0   0]
+            [  0 q^2   0   0   0   0]
+            [  0   0   0   q   0   0]
+            [  0   0   0   q   0   0]
+            [  0   0   0   0   0   1]
+            sage: X.parent()
+            Full MatrixSpace of 6 by 6 dense matrices over
+             Univariate Polynomial Ring in q over Finite Field of size 3
+            sage: R.<q> = GF(3)[]
+            sage: t = R.quotient([q^2+2*q+1]).gen()
+            sage: GP.graded_representation_matrix(elt, t)
+            [       0        0        0        0        0        0]
+            [       0 qbar + 2        0        0        0        0]
+            [       0 qbar + 2        0        0        0        0]
+            [       0        0        0     qbar        0        0]
+            [       0        0        0     qbar        0        0]
+            [       0        0        0        0        0        1]
+        """
+        if q is None:
+            q = self.base_ring()['q'].gen()
+        R = q.parent()
+        return matrix(R, [q**b.degree() * (elt * b).to_vector().change_ring(R)
+                          for b in self.basis()])
+
+    def graded_brauer_character(self):
+        r"""
+        Return the graded Brauer character of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(2), 5)
+            sage: GP311 = SGA.garsia_procesi_module([3, 1, 1])
+            sage: GP311.graded_brauer_character()
+            (6*q^3 + 9*q^2 + 4*q + 1, q + 1, q^3 - q^2 - q + 1)
+        """
+        q = QQ['q'].gen()
+        return sum(q**d * SM.brauer_character() for d, SM in self._graded_decomposition.items())
+
+    class Element(QuotientRing_generic.Element):
+        def _acted_upon_(self, scalar, self_on_left=True):
+            r"""
+            Return the action of ``scalar`` on ``self``.
+
+            EXAMPLES::
+
+                sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+                sage: GP22 = SGA.garsia_procesi_module([2, 2])
+                sage: x = SGA.an_element(); x
+                [1, 2, 3, 4] + 2*[1, 2, 4, 3] + [4, 1, 2, 3]
+                sage: v = GP22.an_element(); v
+                -gp1 - gp2 - gp3
+                sage: g = SGA.group().an_element(); g
+                [4, 1, 2, 3]
+                sage: g * v  # indirect doctest
+                gp3
+                sage: x * v  # indirect doctest
+                gp3
+                sage: 2 * v  # indirect doctest
+                gp1 + gp2 + gp3
+            """
+            P = self.parent()
+            if scalar in P.base_ring():
+                return super()._acted_upon_(scalar, self_on_left)
+            if scalar in P._semigroup:
+                gens = P.ambient().gens()
+                return P.retract(self.lift().subs({g: gens[scalar(i+1)-1] for i, g in enumerate(gens)}))
+            if not self_on_left and scalar in P._semigroup_algebra:
+                scalar = P._semigroup_algebra(scalar)
+                gens = P.ambient().gens()
+                return P.sum(c * P.retract(self.lift().subs({g: gens[sigma(i+1)-1] for i, g in enumerate(gens)}))
+                             for sigma, c in scalar.monomial_coefficients(copy=False).items())
+            return super()._acted_upon_(scalar, self_on_left)
+
+        def to_vector(self, order=None):
+            r"""
+            Return ``self`` as a (dense) free module vector.
+
+            EXAMPLES::
+
+                sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+                sage: GP22 = SGA.garsia_procesi_module([2, 2])
+                sage: v = GP22.an_element(); v
+                -gp1 - gp2 - gp3
+                sage: v.to_vector()
+                (0, 0, 2, 2, 2, 0)
+            """
+            P = self.parent()
+            B = P.basis()
+            FM = P._dense_free_module()
+            f = self.lift()
+            return FM([f.monomial_coefficient(b.lift()) for b in B])
+
+        _vector_ = to_vector
+
+        def monomial_coefficients(self, copy=None):
+            r"""
+            Return the monomial coefficients of ``self``.
+
+            EXAMPLES::
+
+                sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+                sage: GP31 = SGA.garsia_procesi_module([3, 1])
+                sage: v = GP31.an_element(); v
+                -gp1 - gp2 - gp3
+                sage: v.monomial_coefficients()
+                {0: 2, 1: 2, 2: 2, 3: 0}
+            """
+            B = self.parent().basis()
+            f = self.lift()
+            return {i: f.monomial_coefficient(b.lift()) for i, b in enumerate(B)}
+
+        def degree(self):
+            r"""
+            Return the degree of ``self``.
+
+            EXAMPLES::
+
+                sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+                sage: GP22 = SGA.garsia_procesi_module([2, 2])
+                sage: for b in GP22.basis():
+                ....:     print(b, b.degree())
+                gp2*gp3 2
+                gp1*gp3 2
+                gp3 1
+                gp2 1
+                gp1 1
+                1 0
+                sage: v = sum(GP22.basis())
+                sage: v.degree()
+                2
+            """
+            return self.lift().degree()
+
+        def homogeneous_degree(self):
+            r"""
+            Return the (homogeneous) degree of ``self`` if homogeneous
+            otherwise raise an error.
+
+            EXAMPLES::
+
+                sage: SGA = SymmetricGroupAlgebra(GF(2), 4)
+                sage: GP31 = SGA.garsia_procesi_module([3, 1])
+                sage: for b in GP31.basis():
+                ....:     print(b, b.homogeneous_degree())
+                gp3 1
+                gp2 1
+                gp1 1
+                1 0
+                sage: v = sum(GP31.basis()); v
+                gp1 + gp2 + gp3 + 1
+                sage: v.homogeneous_degree()
+                Traceback (most recent call last):
+                ...
+                ValueError: element is not homogeneous
+
+            TESTS::
+
+                sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+                sage: GP4 = SGA.garsia_procesi_module([4])
+                sage: GP4.zero().homogeneous_degree()
+                Traceback (most recent call last):
+                ...
+                ValueError: the zero element does not have a well-defined degree
+            """
+            if not self:
+                raise ValueError("the zero element does not have a well-defined degree")
+            f = self.lift()
+            if not f.is_homogeneous():
+                raise ValueError("element is not homogeneous")
+            return f.degree()

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Algebras With Basis
 """
@@ -71,6 +72,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_monomial_coefficients() . . . pass
           running ._test_new() . . . pass
           running ._test_nonzero_equal() . . . pass
           running ._test_not_implemented_methods() . . . pass
@@ -307,7 +309,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             @cached_method
             def one_basis(self):
                 """
-                Returns the index of the one of this tensor product of
+                Return the index of the one of this tensor product of
                 algebras, as per ``AlgebrasWithBasis.ParentMethods.one_basis``
 
                 It is the tuple whose operands are the indices of the
@@ -370,6 +372,6 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
         class ElementMethods:
             """
-            Implements operations on elements of tensor products of algebras with basis
+            Implement operations on elements of tensor products of algebras with basis
             """
             pass

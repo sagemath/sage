@@ -3,7 +3,7 @@ r"""
 Calculus functions
 """
 from sage.misc.lazy_import import lazy_import
-from sage.structure.element import is_Matrix, is_Vector, Expression
+from sage.structure.element import Matrix, Vector, Expression
 
 lazy_import('sage.matrix.constructor', 'matrix')
 
@@ -25,7 +25,7 @@ def wronskian(*args):
     function.
 
     The Wronskian of a list of functions is a determinant of derivatives.
-    The nth row (starting from 0) is a list of the nth derivatives of the
+    The `n`-th row (starting from 0) is a list of the `n`-th derivatives of the
     given functions.
 
     For two functions::
@@ -138,13 +138,13 @@ def jacobian(functions, variables):
         [ cos(x)*cos(y) -sin(x)*sin(y)]
         [             0            e^x]
     """
-    if is_Matrix(functions) and (functions.nrows() == 1
-                                 or functions.ncols() == 1):
+    if isinstance(functions, Matrix) and (functions.nrows() == 1
+                                          or functions.ncols() == 1):
         functions = functions.list()
-    elif not (isinstance(functions, (tuple, list)) or is_Vector(functions)):
+    elif not isinstance(functions, (tuple, list, Vector)):
         functions = [functions]
 
-    if not isinstance(variables, (tuple, list)) and not is_Vector(variables):
+    if not isinstance(variables, (tuple, list, Vector)):
         variables = [variables]
 
     return matrix([[diff(f, v) for v in variables] for f in functions])

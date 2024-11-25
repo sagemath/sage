@@ -27,40 +27,52 @@ from sage.plot.plot3d.parametric_plot3d import parametric_plot3d
 
 
 @rename_keyword(alpha='opacity')
-def revolution_plot3d(curve,trange,phirange=None,parallel_axis='z',axis=(0,0),print_vector=False,show_curve=False,**kwds):
+def revolution_plot3d(curve, trange, phirange=None, parallel_axis='z', axis=(0, 0), print_vector=False, show_curve=False, **kwds):
     r"""
     Return a plot of a revolved curve.
 
     There are three ways to call this function:
 
-    - ``revolution_plot3d(f,trange)`` where `f` is a function located in the `x z` plane.
+    - ``revolution_plot3d(f,trange)`` where `f` is a function located in the
+      `x z` plane.
 
-    - ``revolution_plot3d((f_x,f_z),trange)`` where `(f_x,f_z)` is a parametric curve on the `x z` plane.
+    - ``revolution_plot3d((f_x,f_z),trange)`` where `(f_x,f_z)` is a parametric
+      curve on the `x z` plane.
 
-    - ``revolution_plot3d((f_x,f_y,f_z),trange)`` where `(f_x,f_y,f_z)` can be any parametric curve.
+    - ``revolution_plot3d((f_x,f_y,f_z),trange)`` where `(f_x,f_y,f_z)` can be
+      any parametric curve.
 
     INPUT:
 
-    - ``curve`` -- A curve to be revolved, specified as a function, a 2-tuple or a 3-tuple.
+    - ``curve`` -- a curve to be revolved, specified as a function, a 2-tuple
+      or a 3-tuple
 
-    - ``trange`` -- A 3-tuple `(t,t_{\min},t_{\max})` where t is the independent variable of the curve.
+    - ``trange`` -- a 3-tuple `(t,t_{\min},t_{\max})` where t is the
+      independent variable of the curve
 
-    - ``phirange`` -- A 2-tuple of the form `(\phi_{\min},\phi_{\max})`, (default `(0,\pi)`) that specifies the angle in which the curve is to be revolved.
+    - ``phirange`` -- a 2-tuple of the form `(\phi_{\min},\phi_{\max})`
+      (default: `(0,\pi)`) that specifies the angle in which the curve is to be
+      revolved
 
-    - ``parallel_axis`` -- A string (one of ``'x'``, ``'y'``, ``'z'``) that specifies the coordinate axis parallel to the revolution axis.
+    - ``parallel_axis`` -- string (one of ``'x'``, ``'y'``, ``'z'``) that
+      specifies the coordinate axis parallel to the revolution axis
 
-    - ``axis`` -- A 2-tuple that specifies the position of the revolution axis. If ``parallel_axis`` is:
+    - ``axis`` -- a 2-tuple that specifies the position of the revolution axis.
+      If ``parallel_axis`` is:
 
-      - ``'z'`` -- then ``axis`` is the point in which the revolution axis intersects the  `x` `y` plane.
+      - ``'z'`` -- then ``axis`` is the point in which the revolution axis
+        intersects the  `x` `y` plane
 
-      - ``'x'`` -- then ``axis`` is the point in which the revolution axis intersects the  `y` `z` plane.
+      - ``'x'`` -- then ``axis`` is the point in which the revolution axis
+        intersects the  `y` `z` plane
 
-      - ``'y'`` -- then ``axis`` is the point in which the revolution axis intersects the `x` `z` plane.
+      - ``'y'`` -- then ``axis`` is the point in which the revolution axis
+        intersects the `x` `z` plane
 
-    - ``print_vector`` -- If ``True``, the parametrization of the surface of revolution will be printed.
+    - ``print_vector`` -- if ``True``, the parametrization of the surface of
+      revolution will be printed
 
-    - ``show_curve`` -- If ``True``, the curve will be displayed.
-
+    - ``show_curve`` -- if ``True``, the curve will be displayed
 
     EXAMPLES:
 
@@ -184,7 +196,7 @@ def revolution_plot3d(curve,trange,phirange=None,parallel_axis='z',axis=(0,0),pr
     function must take values in the interval `[0,1]`. ::
 
         sage: u, phi = var('u,phi')
-        sage: def cf(u,phi): return sin(phi+u) ^ 2
+        sage: def cf(u, phi): return sin(phi+u) ^ 2
         sage: curve = (1+u^2/4, 0, u)
         sage: revolution_plot3d(curve, (u,-2,2), (0,2*pi), parallel_axis='z',
         ....:                   color=(cf, colormaps.PiYG)).show(aspect_ratio=(1,1,1))

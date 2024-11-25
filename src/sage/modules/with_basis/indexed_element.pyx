@@ -31,7 +31,7 @@ from sage.categories.modules import _Fields
 
 cdef class IndexedFreeModuleElement(ModuleElement):
     r"""
-    Element class for :class:`~sage.combinat.free_module.CombinatorialFreeModule`
+    Element class for :class:`~sage.combinat.free_module.CombinatorialFreeModule`.
 
     TESTS::
 
@@ -235,10 +235,10 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         INPUT:
 
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
-          represented by a dictionary ``d``, then make a copy of ``d``;
-          if ``False``, then this can cause undesired behavior by
-          mutating ``d``
+        - ``copy`` -- boolean (default: ``True``); if ``self`` is internally
+          represented by a dictionary ``d``, then make a copy of ``d``.
+          If ``False``, then this can cause undesired behavior by
+          mutating ``d``.
 
         EXAMPLES::
 
@@ -405,7 +405,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             pass
 
         for monomial, c in terms:
-            b = repr_monomial(monomial) # PCR
+            b = repr_monomial(monomial)  # PCR
             if c != 0:
                 break_points = []
                 coeff = coeff_repr(c, False)
@@ -416,17 +416,17 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                         coeff = "-"
                     elif b._l > 0:
                         if one_basis is not None and len(coeff) > 0 and monomial == one_basis and strip_one:
-                            b = empty_ascii_art # ""
+                            b = empty_ascii_art  # ""
                         else:
                             b = AsciiArt([scalar_mult]) + b
                     if not first:
                         if len(coeff) > 0 and coeff[0] == "-":
-                            coeff = " - %s"%coeff[1:]
+                            coeff = " - %s" % coeff[1:]
                         else:
-                            coeff = " + %s"%coeff
+                            coeff = " + %s" % coeff
                         break_points = [2]
                     else:
-                        coeff = "%s"%coeff
+                        coeff = "%s" % coeff
                 if coeff:
                     chunks.append(AsciiArt([coeff], break_points))
                 if b._l:
@@ -435,10 +435,9 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         s = ascii_art(*chunks)
         if first:
             return AsciiArt(["0"])
-        elif s == empty_ascii_art:
+        if s == empty_ascii_art:
             return AsciiArt(["1"])
-        else:
-            return s
+        return s
 
     def _unicode_art_(self):
         r"""
@@ -786,7 +785,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         - ``new_base_ring`` -- a ring (default: ``None``)
         - ``order`` -- (optional) an ordering of the support of ``self``
-        - ``sparse`` -- (default: ``False``) whether to return a sparse
+        - ``sparse`` -- boolean (default: ``False``); whether to return a sparse
           vector or a dense vector
 
         OUTPUT: a :func:`FreeModule` vector
@@ -1034,6 +1033,7 @@ def _unpickle_element(C, d):
         -2*B[1] - 12*B[3]
     """
     return C._from_dict(d, coerce=False, remove_zeros=False)
+
 
 # Handle old CombinatorialFreeModuleElement pickles, see Issue #22632
 from sage.misc.persist import register_unpickle_override

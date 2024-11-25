@@ -340,7 +340,7 @@ Sage example in ./recequadiff.tex, line 1568::
 
 Sage example in ./recequadiff.tex, line 1582::
 
-  sage: def cloud(u,n):
+  sage: def cloud(u, n):
   ....:     L = [[0,u(0)]];
   ....:     for k in [1..n]:
   ....:         L += [[k,u(k)]]
@@ -352,7 +352,7 @@ Sage example in ./recequadiff.tex, line 1598::
 
 Sage example in ./recequadiff.tex, line 1619::
 
-  sage: def snail(f,x,u0,n,xmin,xmax):
+  sage: def snail(f, x, u0, n, xmin, xmax):
   ....:     u = u0
   ....:     P = plot(x, x, xmin, xmax, color='gray')
   ....:     for i in range(n):
@@ -388,5 +388,4 @@ Sage example in ./recequadiff.tex, line 1798::
   sage: from sympy.abc import n
   sage: rsolve_hyper([-2,1],2**(n+2),n)
   2**n*C0 + 2**(n + 1)*n
-
 """

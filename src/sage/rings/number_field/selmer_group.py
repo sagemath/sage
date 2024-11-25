@@ -19,8 +19,8 @@ the short exact sequence
 where `O^*_{K,S}` is the group of `S`-units of `K` and `Cl_{K,S}` the
 `S`-class group.  When `m=p` is prime, `K(S,p)` is a
 finite-dimensional vector space over `GF(p)`.  Its generators come
-from three sources: units (modulo `p`'th powers); generators of the
-`p`'th powers of ideals which are not principal but whose `p`'the
+from three sources: units (modulo `p`-th powers); generators of the
+`p`-th powers of ideals which are not principal but whose `p`-th
 powers are principal; and generators coming from the prime ideals in
 `S`.
 
@@ -32,7 +32,6 @@ of the NumberField class.
 AUTHORS:
 
 - John Cremona (2005-2021)
-
 """
 
 # ****************************************************************************
@@ -52,18 +51,17 @@ from sage.misc.misc_c import prod
 # A utility function to allow the same code to be used over QQ and
 # over number fields:
 
+
 def _ideal_generator(I):
     r"""
     Return the generator of a principal ideal.
 
     INPUT:
 
-    - ``I`` (fractional ideal or integer) -- either a fractional ideal of a
-      number field, which must be principal, or a rational integer.
+    - ``I`` -- either a fractional ideal of a number field, which must be
+      principal, or a rational integer
 
-    OUTPUT:
-
-    A generator of `I` when `I` is a principal ideal, else `I` itself.
+    OUTPUT: a generator of `I` when `I` is a principal ideal, else `I` itself
 
     EXAMPLES::
 
@@ -74,26 +72,26 @@ def _ideal_generator(I):
         sage: K.<a> = QuadraticField(-11)
         sage: [_ideal_generator(K.prime_above(p)) for p in primes(25)]
         [2, 1/2*a - 1/2, -1/2*a - 3/2, 7, -a, 13, 17, 19, 1/2*a + 9/2]
-
     """
     try:
         return I.gens_reduced()[0]
     except AttributeError:
         return I.abs()
 
+
 def _coords_in_C_p(I, C, p):
     r"""
     Return coordinates of the ideal ``I`` with respect to a basis of
-    the ``p``-torsion of the ideal class group ``C``.
+    the `p`-torsion of the ideal class group ``C``.
 
     INPUT:
 
-    - ``I`` (ideal) -- a fractional ideal of a number field ``K``,
-      whose ``p``'th power is principal.
+    - ``I`` -- ideal; a fractional ideal of a number field ``K``, whose
+      `p`-th power is principal
 
-    - ``C`` (class group) -- the ideal class group of ``K``.
+    - ``C`` -- (class group) the ideal class group of ``K``
 
-    - ``p`` (prime) -- a prime number.
+    - ``p`` -- prime number
 
     OUTPUT:
 
@@ -103,7 +101,7 @@ def _coords_in_C_p(I, C, p):
     ALGORITHM:
 
     Find the coordinates of `[I]` with respect to generators of `C` as
-    an abelian group, check that coordidates are 0 in cyclic factors
+    an abelian group, check that coordinates are 0 in cyclic factors
     of order prime to `p`, and return the list of `c/(n/p)` (mod `p`)
     for coordinates `c` for each cyclic factor of order `n` which is a
     multiple of `p`.
@@ -124,7 +122,6 @@ def _coords_in_C_p(I, C, p):
         Traceback (most recent call last):
         ...
         ValueError: The 3rd power of Fractional ideal (2, a + 1) is not principal
-
     """
     cyclic_orders = C.gens_orders()
     non_p_indices = [i for i,n in enumerate(cyclic_orders) if not p.divides(n)]
@@ -135,18 +132,19 @@ def _coords_in_C_p(I, C, p):
         return [(coords[i] // n) % p for i, n in p_indices]
     raise ValueError("The {} power of {} is not principal".format(p.ordinal_str(),I))
 
-def _coords_in_C_mod_p(I,C,p):
+
+def _coords_in_C_mod_p(I, C, p):
     r"""
     Return coordinates of the ideal ``I`` with respect to a basis of
-    the ``p``-cotorsion of the ideal class group ``C``.
+    the `p`-cotorsion of the ideal class group ``C``.
 
     INPUT:
 
-    - ``I`` (ideal) -- a fractional ideal of a number field ``K``.
+    - ``I`` -- ideal; a fractional ideal of a number field ``K``
 
-    - ``C`` (class group) -- the ideal class group of ``K``.
+    - ``C`` -- (class group) the ideal class group of ``K``
 
-    - ``p`` (prime) -- a prime number.
+    - ``p`` -- prime number
 
     OUTPUT:
 
@@ -180,29 +178,27 @@ def _coords_in_C_mod_p(I,C,p):
         [[1, 0], [1, 1], [1, 1], [0, 1], [1, 0], [0, 1], [0, 0], [0, 1], [0, 0]]
         sage: [_coords_in_C_mod_p(K.prime_above(p), C, 3) for p in primes(25)]
         [[2], [0], [1], [0], [0], [1], [0], [2], [0]]
-
     """
     cyclic_orders = C.gens_orders()
     p_indices = [i for i, n in enumerate(cyclic_orders) if p.divides(n)]
     coords = C(I).exponents()
     return [coords[i] % p for i in p_indices]
 
+
 def _root_ideal(I, C, p):
     r"""
-    Return a ``p``'th root of an ideal with respect to the class group.
+    Return a `p`-th root of an ideal with respect to the class group.
 
     INPUT:
 
-    - ``I`` (ideal) -- a fractional ideal of a number field ``K``,
-      whose ideal class is a ``p``'th power.
+    - ``I`` -- ideal; a fractional ideal of a number field ``K``,
+      whose ideal class is a `p`-th power
 
-    - ``C`` (class group) -- the ideal class group of ``K``.
+    - ``C`` -- (class group) the ideal class group of ``K``
 
-    - ``p`` (prime) -- a prime number.
+    - ``p`` -- prime number
 
-    OUTPUT:
-
-    An ideal `J` such that `J^p` is in the same ideal class as `I`.
+    OUTPUT: an ideal `J` such that `J^p` is in the same ideal class as `I`
 
     EXAMPLES::
 
@@ -223,7 +219,6 @@ def _root_ideal(I, C, p):
         sage: J = _root_ideal(I, C, 3)
         sage: C(J^3) == C(I)
         True
-
     """
     cyclic_orders = C.gens_orders()
     cyclic_gens = C.gens_ideals()
@@ -239,18 +234,19 @@ def _root_ideal(I, C, p):
 
     return prod([gen ** wi for wi, gen in zip(w, cyclic_gens)], C.number_field().ideal(1))
 
+
 def coords_in_U_mod_p(u, U, p):
     r"""
     Return coordinates of a unit ``u`` with respect to a basis of the
-    ``p``-cotorsion `U/U^p` of the unit group ``U``.
+    `p`-cotorsion `U/U^p` of the unit group ``U``.
 
     INPUT:
 
-    - ``u`` (algebraic unit) -- a unit in a number field ``K``.
+    - ``u`` -- (algebraic unit) a unit in a number field ``K``
 
-    - ``U`` (unit group) -- the unit group of ``K``.
+    - ``U`` -- (unit group) the unit group of ``K``
 
-    - ``p`` (prime) -- a prime number.
+    - ``p`` -- prime number
 
     OUTPUT:
 
@@ -281,34 +277,34 @@ def coords_in_U_mod_p(u, U, p):
         [1, 1, 0, 1]
         sage: coords_in_U_mod_p(u,U,3)
         [1, 2, 0]
-
     """
     coords = U.log(u)
     start = 1 - int(p.divides(U.zeta_order())) # 0 or 1
     return [c % p for c in coords[start:]]
 
+
 def basis_for_p_cokernel(S, C, p):
     r"""
     Return a basis for the group of ideals supported on ``S`` (mod
-    ``p``'th-powers) whose class in the class group ``C`` is a ``p``'th power,
+    `p`-th-powers) whose class in the class group ``C`` is a `p`-th power,
     together with a function which takes the ``S``-exponents of such an
     ideal and returns its coordinates on this basis.
 
     INPUT:
 
-    - ``S`` (list) -- a list of prime ideals in a number field ``K``.
+    - ``S`` -- list of prime ideals in a number field ``K``
 
-    - ``C`` (class group) -- the ideal class group of ``K``.
+    - ``C`` -- (class group) the ideal class group of ``K``
 
-    - ``p`` (prime) -- a prime number.
+    - ``p`` -- prime number
 
     OUTPUT:
 
     (tuple) (``b``, ``f``) where
 
     - ``b`` is a list of ideals which is a basis for the group of
-      ideals supported on ``S`` (modulo ``p``'th powers) whose ideal
-      class is a ``p``'th power;
+      ideals supported on ``S`` (modulo `p`-th powers) whose ideal
+      class is a `p`-th power;
 
     - ``f`` is a function which takes such an ideal and returns its
       coordinates with respect to this basis.
@@ -342,7 +338,6 @@ def basis_for_p_cokernel(S, C, p):
         Fractional ideal (3, a + 1),
         Fractional ideal (5, a + 1),
         Fractional ideal (5, a + 3)]
-
     """
     from sage.matrix.constructor import Matrix
     M = Matrix(GF(p), [_coords_in_C_mod_p(P, C, p) for P in S])
@@ -361,18 +356,18 @@ def pSelmerGroup(K, S, p, proof=None, debug=False):
 
     INPUT:
 
-    - ``K`` -- a number field or `\QQ`.
+    - ``K`` -- a number field or `\QQ`
 
-    - ``S`` -- a list of prime ideals in `K`, or prime
-      numbers when `K` is `\QQ`.
+    - ``S`` -- list of prime ideals in `K`, or prime
+      numbers when `K` is `\QQ`
 
-    - ``p`` -- a prime number.
+    - ``p`` -- a prime number
 
     - ``proof`` -- if ``True``, compute the class group provably
       correctly. Default is ``True``. Call :meth:`proof.number_field` to
       change this default globally.
 
-    - ``debug`` -- (boolean, default ``False``) debug flag.
+    - ``debug`` -- boolean (default: ``False``); debug flag
 
     OUTPUT:
 
@@ -402,14 +397,14 @@ def pSelmerGroup(K, S, p, proof=None, debug=False):
       of the group of roots of unity if its order is divisible by `p`.
       These have valuation `0` at all primes.
 
-    - ``betalist`` is a list of the generators of the `p`'th powers of
+    - ``betalist`` is a list of the generators of the `p`-th powers of
       ideals which generate the `p`-torsion in the class group (so is
       empty if the class number is prime to `p`).  These have
       valuation divisible by `p` at all primes.
 
     - ``alphalist`` is a list of generators for each ideal `A` in a
-      basis of those ideals supported on `S` (modulo `p`'th powers of
-      ideals) which are `p`'th powers in the class group.  We find `B`
+      basis of those ideals supported on `S` (modulo `p`-th powers of
+      ideals) which are `p`-th powers in the class group.  We find `B`
       such that `A/B^p` is principal and take a generator of it, for
       each `A` in a generating set.  As a special case, if all the
       ideals in `S` are principal then ``alphalist`` is a list of
@@ -418,16 +413,16 @@ def pSelmerGroup(K, S, p, proof=None, debug=False):
     The map from the abstract space to `K^*` is easy: we just take the
     product of the generators to powers given by the coefficient
     vector.  No attempt is made to reduce the resulting product modulo
-    `p`'th powers.
+    `p`-th powers.
 
     The reverse map is more complicated.  Given `a\in K^*`:
 
     - write the principal ideal `(a)` in the form `AB^p` with `A`
-      supported by `S` and `p`'th power free.  If this fails, then `a`
+      supported by `S` and `p`-th power free.  If this fails, then `a`
       does not represent an element of `K(S,p)` and an error is
       raised.
 
-    - set `I_S` to be the group of ideals spanned by `S` mod `p`'th
+    - set `I_S` to be the group of ideals spanned by `S` mod `p`-th
       powers, and `I_{S,p}` the subgroup of `I_S` which maps to `0` in
       `C/C^p`.
 
@@ -436,7 +431,7 @@ def pSelmerGroup(K, S, p, proof=None, debug=False):
       ``alphalist``.
 
     - after dividing out by `A`, now `(a)=B^p` (with a different `a`
-      and `B`).  Write the ideal class `[B]`, whose `p`'th power is
+      and `B`).  Write the ideal class `[B]`, whose `p`-th power is
       trivial, in terms of the generators of `C[p]`; then `B=(b)B_1`,
       where the coefficients of `B_1` with respect to generators of
       `C[p]` give the coordinates of the result with respect to the

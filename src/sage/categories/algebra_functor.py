@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # sage.doctest: needs sage.groups sage.modules
 r"""
 Group algebras and beyond: the Algebra functorial construction
@@ -127,7 +128,6 @@ additional features::
      Category of semigroup algebras over Rational Field,
      ...
      Category of unital magma algebras over Rational Field,
-     ...
      Category of magma algebras over Rational Field,
      ...
      Category of set algebras over Rational Field,
@@ -591,9 +591,7 @@ class GroupAlgebraFunctor(ConstructionFunctor):
 
         - ``base_ring`` -- the base ring of the group algebra
 
-        OUTPUT:
-
-        A group algebra.
+        OUTPUT: a group algebra
 
         EXAMPLES::
 
@@ -614,9 +612,7 @@ class GroupAlgebraFunctor(ConstructionFunctor):
 
         - ``f`` -- a morphism of rings
 
-        OUTPUT:
-
-        A morphism of group algebras.
+        OUTPUT: a morphism of group algebras
 
         EXAMPLES::
 

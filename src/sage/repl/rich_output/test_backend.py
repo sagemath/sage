@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Test Backend
 
@@ -94,11 +95,9 @@ class TestObject(SageObject):
 
     def _repr_(self):
         """
-        Return string representation
+        Return string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -111,7 +110,7 @@ class TestObject(SageObject):
 
     def _rich_repr_(self, display_manager):
         """
-        Rich Output Magic Method
+        Rich Output Magic Method.
 
         See :mod:`sage.repl.rich_output` for details.
 
@@ -134,11 +133,9 @@ class BackendTest(BackendBase):
 
     def _repr_(self):
         """
-        Return the string representation
+        Return the string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 

@@ -163,7 +163,7 @@ class HeckeAlgebraElement(AlgebraElement):
 
     def _add_(self, other):
         """
-        Add self to other.
+        Add ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -230,8 +230,8 @@ class HeckeAlgebraElement(AlgebraElement):
 
     def _sub_(self, other):
         """
-        Compute the difference of self and other, where other has already been
-        coerced into the parent of self.
+        Compute the difference of ``self`` and ``other``, where ``other`` has
+        already been coerced into the parent of ``self``.
 
         EXAMPLES::
 
@@ -273,11 +273,9 @@ class HeckeAlgebraElement(AlgebraElement):
 
         INPUT:
 
+        - ``var`` -- string (default: ``'x'``)
 
-        -  ``var`` -- string (default: 'x')
-
-
-        OUTPUT: a monic polynomial in the given variable.
+        OUTPUT: a monic polynomial in the given variable
 
         EXAMPLES::
 
@@ -424,7 +422,7 @@ class HeckeAlgebraElement_matrix(HeckeAlgebraElement):
     def __init__(self, parent, A):
         r"""
         Initialise an element from a matrix. This *must* be over the base ring
-        of self and have the right size.
+        of ``self`` and have the right size.
 
         This is a bit overkill as similar checks will be performed by the call
         and coerce methods of the parent of self, but it can't hurt to be
@@ -451,8 +449,8 @@ class HeckeAlgebraElement_matrix(HeckeAlgebraElement):
             TypeError: A must be a square matrix of rank 3
         """
         HeckeAlgebraElement.__init__(self, parent)
-        from sage.structure.element import is_Matrix
-        if not is_Matrix(A):
+        from sage.structure.element import Matrix
+        if not isinstance(A, Matrix):
             raise TypeError("A must be a matrix")
         if not A.base_ring() == self.parent().base_ring():
             raise TypeError("base ring of matrix (%s) does not match base ring of space (%s)" % (A.base_ring(), self.parent().base_ring()))
@@ -462,8 +460,8 @@ class HeckeAlgebraElement_matrix(HeckeAlgebraElement):
 
     def _richcmp_(self, other, op):
         r"""
-        Compare self to other, where the coercion model has already ensured
-        that other has the same parent as self.
+        Compare ``self`` to ``other``, where the coercion model has already ensured
+        that ``other`` has the same parent as ``self``.
 
         EXAMPLES::
 
@@ -486,7 +484,7 @@ class HeckeAlgebraElement_matrix(HeckeAlgebraElement):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -500,7 +498,7 @@ class HeckeAlgebraElement_matrix(HeckeAlgebraElement):
 
     def _latex_(self):
         r"""
-        Latex representation of self (just prints the matrix)
+        Latex representation of ``self`` (just prints the matrix).
 
         EXAMPLES::
 
@@ -527,8 +525,8 @@ class HeckeAlgebraElement_matrix(HeckeAlgebraElement):
 
     def _mul_(self, other):
         r"""
-        Multiply self by other (which has already been coerced into an element
-        of the parent of self).
+        Multiply ``self`` by ``other`` (which has already been coerced into an element
+        of the parent of ``self``).
 
         EXAMPLES::
 
@@ -625,8 +623,8 @@ class HeckeOperator(HeckeAlgebraElement):
 
     def _richcmp_(self, other, op):
         r"""
-        Compare self and other (where the coercion model has already ensured
-        that self and other have the same parent). Hecke operators on the same
+        Compare ``self`` and ``other`` (where the coercion model has already ensured
+        that ``self`` and ``other`` have the same parent). Hecke operators on the same
         space compare as equal if and only if their matrices are equal, so we
         check if the indices are the same and if not we compute the matrices
         (which is potentially expensive).
@@ -661,7 +659,7 @@ class HeckeOperator(HeckeAlgebraElement):
 
     def _repr_(self):
         r"""
-        String representation of self
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -672,7 +670,7 @@ class HeckeOperator(HeckeAlgebraElement):
 
     def _latex_(self):
         r"""
-        LaTeX representation of self
+        LaTeX representation of ``self``.
 
         EXAMPLES::
 

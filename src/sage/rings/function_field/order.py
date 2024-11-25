@@ -96,7 +96,6 @@ AUTHORS:
 - Kwankyu Lee (2017-04-30): added maximal orders of global function fields
 
 - Brent Baccala (2019-12-20): support orders in characteristic zero
-
 """
 
 # ****************************************************************************
@@ -275,7 +274,7 @@ class FunctionFieldMaximalOrderInfinite(FunctionFieldMaximalOrder, FunctionField
 
             sage: K.<x> = FunctionField(GF(2)); R.<t> = PolynomialRing(K)
             sage: F.<y> = K.extension(t^3 - x^2*(x^2+x+1)^2)                            # needs sage.rings.function_field
-            sage: F.maximal_order_infinite()                                            # needs sage.modules sage.rings.function_field
+            sage: F.maximal_order_infinite()                                            # needs sage.rings.function_field
             Maximal infinite order of Function field in y defined by y^3 + x^6 + x^4 + x^2
         """
         return "Maximal infinite order of %s" % (self.function_field(),)

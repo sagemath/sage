@@ -353,9 +353,9 @@ indicar algum problema de performance que vale a pena investigar.
     sage: time g = maple('1938^99484')
     CPU times: user 0.00 s, sys: 0.00 s, total: 0.00 s
     Wall time: 0.11
-    sage: gap(0)
+    sage: libgap(0)
     0
-    sage: time g = gap.eval('1938^99484;;')
+    sage: time g = libgap.eval('1938^99484;')
     CPU times: user 0.00 s, sys: 0.00 s, total: 0.00 s
     Wall time: 1.02
 
@@ -540,7 +540,6 @@ coordinates, digite ``V.coordinates?`` para ajuda ou
 sessão.
 
 
-
 Sistema de Ajuda Integrado
 ==========================
 
@@ -701,7 +700,6 @@ computacionais de álgebra adotam para salvar objetos individuais.
    interpretador (por exemplo, Singular, PARI).
 
 
-
 Como o Sage usa o Python, ele adota uma estratégia diferente, que se
 baseia no fato de que qualquer objeto pode ser "serializado", isto é,
 transformado em uma string a partir da qual o objeto pode ser
@@ -783,7 +781,7 @@ representações impressas não é permitido.
 
 ::
 
-    sage: a = gap(2)
+    sage: a = libgap(2)
     sage: a.save('a')
     sage: load('a')
     Traceback (most recent call last):

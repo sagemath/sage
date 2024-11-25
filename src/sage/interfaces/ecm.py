@@ -68,116 +68,116 @@ class ECM(SageObject):
 
         INPUT:
 
-        - ``B1`` -- integer. Stage 1 bound
+        - ``B1`` -- integer; Stage 1 bound
 
-        - ``B2`` -- integer. Stage 2 bound (or interval B2min-B2max)
+        - ``B2`` -- integer; Stage 2 bound (or interval B2min-B2max)
 
         In addition the following keyword arguments can be used:
 
-        - ``x0`` -- integer `x`. use `x` as initial point
+        - ``x0`` -- integer `x`; use `x` as initial point
 
-        - ``sigma`` -- integer `s`. Use s as curve generator [ecm]
+        - ``sigma`` -- integer `s`; use s as curve generator [ecm]
 
-        - ``A`` -- integer `a`. Use a as curve parameter [ecm]
+        - ``A`` -- integer `a`; use a as curve parameter [ecm]
 
-        - ``k`` -- integer `n`. Perform `>= n` steps in stage 2
+        - ``k`` -- integer `n`; perform `>= n` steps in stage 2
 
-        - ``power`` -- integer `n`. Use `x^n` for Brent-Suyama's
+        - ``power`` -- integer `n`; use `x^n` for Brent-Suyama's
           extension
 
-        - ``dickson`` -- integer `n`. Use `n`-th Dickson's polynomial
+        - ``dickson`` -- integer `n`; use `n`-th Dickson's polynomial
           for Brent-Suyama's extension
 
-        - ``c`` -- integer `n`. Perform `n` runs for each input
+        - ``c`` -- integer `n`; perform `n` runs for each input
 
-        - ``pm1`` --  boolean. perform P-1 instead of ECM
+        - ``pm1`` -- boolean; perform P-1 instead of ECM
 
-        - ``pp1`` --  boolean. perform P+1 instead of ECM
+        - ``pp1`` -- boolean; perform P+1 instead of ECM
 
-        - ``q`` -- boolean. quiet mode
+        - ``q`` -- boolean; quiet mode
 
-        - ``v`` -- boolean. verbose mode
+        - ``v`` -- boolean; verbose mode
 
-        - ``timestamp`` --  boolean. print a time stamp with each number
+        - ``timestamp`` -- boolean; print a time stamp with each number
 
-        - ``mpzmod`` -- boolean. use GMP's mpz_mod for mod reduction
+        - ``mpzmod`` -- boolean; use GMP's mpz_mod for mod reduction
 
-        - ``modmuln`` -- boolean. use Montgomery's MODMULN for mod reduction
+        - ``modmuln`` -- boolean; use Montgomery's MODMULN for mod reduction
 
-        - ``redc`` -- boolean. use Montgomery's REDC for mod reduction
+        - ``redc`` -- boolean; use Montgomery's REDC for mod reduction
 
-        - ``nobase2`` -- boolean. Disable special base-2 code
+        - ``nobase2`` -- boolean; disable special base-2 code
 
-        - ``base2`` -- integer `n`. Force base 2 mode with 2^n+1 (n>0)
+        - ``base2`` -- integer `n`; force base 2 mode with 2^n+1 (n>0)
           or 2^n-1 (n<0)
 
-        - ``save`` -- string filename. Save residues at end of stage 1
+        - ``save`` -- string filename; save residues at end of stage 1
           to file
 
-        - ``savea`` -- string filename. Like -save, appends to
+        - ``savea`` -- string filename; Like -save, appends to
           existing files
 
-        - ``resume`` -- string filename. Resume residues from file,
+        - ``resume`` -- string filename; resume residues from file,
           reads from stdin if file is "-"
 
-        - ``primetest`` -- boolean. Perform a primality test on input
+        - ``primetest`` -- boolean; perform a primality test on input
 
-        - ``treefile`` -- string. Store product tree of F in files f.0
+        - ``treefile`` -- string; store product tree of F in files f.0
           f.1 ...
 
-        - ``i`` -- integer. increment B1 by this constant on each run
+        - ``i`` -- integer; increment B1 by this constant on each run
 
-        - ``I`` -- integer `f`. auto-calculated increment for B1
-          multiplied by `f` scale factor.
+        - ``I`` -- integer `f`; auto-calculated increment for B1
+          multiplied by `f` scale factor
 
-        - ``inp`` -- string. Use file as input (instead of redirecting
+        - ``inp`` -- string; use file as input (instead of redirecting
           stdin)
 
-        - ``b`` -- boolean. Use breadth-first mode of file processing
+        - ``b`` -- boolean; use breadth-first mode of file processing
 
-        - ``d`` -- boolean. Use depth-first mode of file processing
+        - ``d`` -- boolean; use depth-first mode of file processing
           (default)
 
-        - ``one`` -- boolean. Stop processing a candidate if a factor
+        - ``one`` -- boolean; stop processing a candidate if a factor
           is found (looping mode )
 
-        - ``n`` -- boolean. Run ecm in 'nice' mode (below normal
+        - ``n`` -- boolean; run ecm in 'nice' mode (below normal
           priority)
 
-        - ``nn`` -- boolean. Run ecm in 'very nice' mode (idle
+        - ``nn`` -- boolean; run ecm in 'very nice' mode (idle
           priority)
 
-        - ``t`` -- integer `n`. Trial divide candidates before P-1,
-          P+1 or ECM up to `n`.
+        - ``t`` -- integer `n`; trial divide candidates before P-1,
+          P+1 or ECM up to `n`
 
-        - ``ve`` -- integer `n`. Verbosely show short (`< n`
+        - ``ve`` -- integer `n`; verbosely show short (`< n`
           character) expressions on each loop
 
-        - ``B2scale`` -- integer. Multiplies the default B2 value
+        - ``B2scale`` -- integer; multiplies the default B2 value
 
-        - ``go`` -- integer. Preload with group order val, which can
+        - ``go`` -- integer; preload with group order val, which can
           be a simple expression, or can use N as a placeholder for
-          the number being factored.
+          the number being factored
 
-        - ``prp`` -- string. use shell command cmd to do large
+        - ``prp`` -- string; use shell command cmd to do large
           primality tests
 
-        - ``prplen`` -- integer.  only candidates longer than this
+        - ``prplen`` -- integer; only candidates longer than this
           number of digits are 'large'
 
-        - ``prpval`` -- integer. value>=0 which indicates the prp
-          command foundnumber to be PRP.
+        - ``prpval`` -- integer; value>=0 which indicates the prp
+          command foundnumber to be PRP
 
-        - ``prptmp`` -- file. outputs n value to temp file prior to
+        - ``prptmp`` -- file; outputs n value to temp file prior to
           running (NB. gets deleted)
 
-        - ``prplog`` -- file. otherwise get PRP results from this file
+        - ``prplog`` -- file; otherwise get PRP results from this file
           (NB. gets deleted)
 
-        - ``prpyes`` -- string. Literal string found in prplog file
+        - ``prpyes`` -- string; literal string found in prplog file
           when number is PRP
 
-        - ``prpno`` -- string. Literal string found in prplog file
+        - ``prpno`` -- string; literal string found in prplog file
           when number is composite
         """
         self._cmd = self._make_cmd(B1, B2, kwds)
@@ -203,14 +203,12 @@ class ECM(SageObject):
 
         INPUT:
 
-        - ``cmd`` -- list of strings. The command.
+        - ``cmd`` -- list of strings; the command
 
-        - ``n`` -- integer suitable for ECM. No argument checking is
-          performed.
+        - ``n`` -- integer suitable for ECM; no argument checking is
+          performed
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -233,11 +231,9 @@ class ECM(SageObject):
 
         INPUT:
 
-        - ``n`` -- integer.
+        - ``n`` -- integer
 
-        OUTPUT:
-
-        String. The ECM output.
+        OUTPUT: string; the ECM output
 
         EXAMPLES::
 
@@ -277,28 +273,25 @@ class ECM(SageObject):
                             65: 850000000,
                             70: 2900000000}
 
-    def _B1_table_value(self, factor_digits, min=15, max=70):
+    def _B1_table_value(self, factor_digits, min_val=15, max_val=70):
         """
         Return key in ``_recommended_B1_list``.
 
         INPUT:
 
-        - ``factor_digits`` -- integer. Number of digits.
+        - ``factor_digits`` -- integer; number of digits
 
-        - ``min``, ``max`` -- integer. Min and max values.
+        - ``min``, ``max`` -- integer; min and max values
 
-        OUTPUT:
-
-        Integer. A key in _recommended_B1_list.
+        OUTPUT: integer; a key in ``_recommended_B1_list``
 
         EXAMPLES::
 
             sage: ecm._B1_table_value(33)
             35
         """
-        if factor_digits < min:
-            factor_digits = min
-        if factor_digits > max:
+        factor_digits = max(factor_digits, min_val)
+        if factor_digits > max_val:
             raise ValueError('too many digits')
         step = 5
         return ((factor_digits + step - 1) // step) * step
@@ -309,7 +302,7 @@ class ECM(SageObject):
 
         INPUT:
 
-        - ``factor_digits`` -- integer. Number of digits.
+        - ``factor_digits`` -- integer; number of digits
 
         OUTPUT:
 
@@ -340,9 +333,9 @@ class ECM(SageObject):
 
         INPUT:
 
-        - ``n`` -- integer. The ECM input number.
+        - ``n`` -- integer; the ECM input number
 
-        - ``out`` -- string. The stdout from the ECM invocation.
+        - ``out`` -- string; the stdout from the ECM invocation
 
         OUTPUT:
 
@@ -420,7 +413,7 @@ class ECM(SageObject):
                 return result
         raise ValueError('failed to parse ECM output')
 
-    def one_curve(self, n, factor_digits=None, B1=2000, algorithm="ECM", **kwds):
+    def one_curve(self, n, factor_digits=None, B1=2000, algorithm='ECM', **kwds):
         """
         Run one single ECM (or P-1/P+1) curve on input n.
 
@@ -430,18 +423,18 @@ class ECM(SageObject):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
-        - ``factor_digits`` -- integer. Decimal digits estimate of the
-          wanted factor.
+        - ``factor_digits`` -- integer; decimal digits estimate of the
+          wanted factor
 
-        - ``B1`` -- integer. Stage 1 bound (default 2000)
+        - ``B1`` -- integer; Stage 1 bound (default: 2000)
 
-        - ``algorithm`` -- either "ECM" (default), "P-1" or "P+1"
+        - ``algorithm`` -- either "ECM" (default); "P-1" or "P+1"
 
         OUTPUT:
 
-        a list ``[p, q]`` where p and q are integers and n = p * q.
+        A list ``[p, q]`` where p and q are integers and n = p * q.
         If no factor was found, then p = 1 and q = n.
 
         .. WARNING::
@@ -457,10 +450,10 @@ class ECM(SageObject):
             sage: f.one_curve(n, B1=10000, sigma=1022170541)
             [79792266297612017, 6366805760909027985741435139224233]
             sage: n = 432132887883903108009802143314445113500016816977037257
-            sage: f.one_curve(n, B1=500000, algorithm="P-1")
+            sage: f.one_curve(n, B1=500000, algorithm='P-1')
             [67872792749091946529, 6366805760909027985741435139224233]
             sage: n = 2088352670731726262548647919416588631875815083
-            sage: f.one_curve(n, B1=2000, algorithm="P+1", x0=5)
+            sage: f.one_curve(n, B1=2000, algorithm='P+1', x0=5)
             [328006342451, 6366805760909027985741435139224233]
         """
         n = self._validate(n)
@@ -509,7 +502,6 @@ class ECM(SageObject):
         """
         n = self._validate(n)
         kwds.setdefault('c', 1000000000)
-        kwds.setdefault('I', 1)
         if factor_digits is not None:
             B1 = self.recommended_B1(factor_digits)
         kwds['one'] = True
@@ -526,15 +518,15 @@ class ECM(SageObject):
 
         INPUT:
 
-        - ``n`` -- a positive integer,
+        - ``n`` -- positive integer
 
-        - ``factor_digits`` -- integer or ``None`` (default). Decimal
-          digits estimate of the wanted factor.
+        - ``factor_digits`` -- integer or ``None`` (default); decimal
+          digits estimate of the wanted factor
 
-        - ``B1`` -- integer. Stage 1 bound (default 2000). This is
-          used as bound if ``factor_digits`` is not specified.
+        - ``B1`` -- integer; Stage 1 bound (default: 2000). This is
+          used as bound if ``factor_digits`` is not specified
 
-        - ``kwds`` -- optional keyword parameters.
+        - ``kwds`` -- optional keyword parameters
 
         OUTPUT:
 
@@ -587,23 +579,21 @@ class ECM(SageObject):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
-        - ``factor_digits`` -- integer or ``None`` (default). Optional
-          guess at how many digits are in the smallest factor.
+        - ``factor_digits`` -- integer or ``None`` (default); optional
+          guess at how many digits are in the smallest factor
 
         - ``B1`` -- initial lower bound, defaults to 2000 (15 digit
-          factors). Used if ``factor_digits`` is not specified.
+          factors); used if ``factor_digits`` is not specified
 
-        - ``proof`` -- boolean (default: ``False``). Whether to prove
-          that the factors are prime.
+        - ``proof`` -- boolean (default: ``False``); whether to prove
+          that the factors are prime
 
-        - ``kwds`` -- keyword arguments to pass to ecm-gmp. See help
-          for :class:`ECM` for more details.
+        - ``kwds`` -- keyword arguments to pass to ecm-gmp; see help
+          for :class:`ECM` for more details
 
-        OUTPUT:
-
-        A list of integers whose product is n.
+        OUTPUT: list of integers whose product is `n`
 
         .. NOTE::
 
@@ -697,7 +687,7 @@ class ECM(SageObject):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         - ``factor_digits`` -- the (estimated) number of digits of the
           smallest factor
@@ -792,14 +782,13 @@ class ECM(SageObject):
 
         INPUT:
 
-        - ``n`` -- integer.
+        - ``n`` -- integer
 
         OUTPUT:
 
-        The integer as a Sage integer.  This function raises a
-        ValueError if the two conditions listed above are not both
-        satisfied.  It is here because GMP-ECM silently ignores all
-        digits of input after the 4095th!
+        The integer as a Sage integer. This function raises a :exc:`ValueError`
+        if the two conditions listed above are not both satisfied. It is here
+        because GMP-ECM silently ignores all digits of input after the 4095th!
 
         EXAMPLES::
 

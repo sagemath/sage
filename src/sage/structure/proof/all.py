@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 
 
 def arithmetic(t=None):
@@ -7,7 +8,7 @@ def arithmetic(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -45,7 +46,7 @@ def elliptic_curve(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -83,7 +84,7 @@ def linear_algebra(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -121,7 +122,7 @@ def number_field(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -158,7 +159,7 @@ def polynomial(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 
@@ -195,7 +196,7 @@ def all(t=None):
 
     INPUT:
 
-    t -- boolean or ``None``
+    - ``t`` -- boolean or ``None``
 
     OUTPUT:
 

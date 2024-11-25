@@ -110,7 +110,7 @@ cdef class Group(Parent):
             if not isinstance(category, tuple):
                 category = (category,)
             if not any(cat.is_subcategory(Groups()) for cat in category):
-                raise ValueError("%s is not a subcategory of %s"%(category, Groups()))
+                raise ValueError("%s is not a subcategory of %s" % (category, Groups()))
         Parent.__init__(self, base=base, category=category)
 
     def is_abelian(self):
@@ -218,7 +218,6 @@ cdef class Group(Parent):
         """
         return self.order() == 1
 
-
     def is_multiplicative(self):
         r"""
         Return ``True`` if the group operation is given by ``*`` (rather than ``+``).
@@ -287,7 +286,7 @@ cdef class FiniteGroup(Group):
 
     def __init__(self, base=None, category=None):
         """
-        The Python constructor
+        The Python constructor.
 
         TESTS::
 

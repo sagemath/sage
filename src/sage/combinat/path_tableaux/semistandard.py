@@ -97,7 +97,7 @@ from sage.rings.semirings.non_negative_integer_semiring import NN
 
 class SemistandardPathTableau(PathTableau):
     r"""
-    An instance is a sequence of lists. Usually the entries will be non-negative integers
+    An instance is a sequence of lists. Usually the entries will be nonnegative integers
     in which case this is the chain of partitions of a (skew) semistandard tableau.
     In general the entries are elements of an ordered abelian group; each list is weakly
     decreasing and successive lists are interleaved.
@@ -173,7 +173,7 @@ class SemistandardPathTableau(PathTableau):
         elif isinstance(st, GelfandTsetlinPattern):
             w = list(st)
             w.reverse()
-            w = [(),*w]
+            w = [(), *w]
 
         elif isinstance(st, (Tableau,SkewTableau)):
             w = st.to_chain()
@@ -255,7 +255,7 @@ class SemistandardPathTableau(PathTableau):
 
     def is_integral(self) -> bool:
         """
-        Return ``True`` if all entries are non-negative integers.
+        Return ``True`` if all entries are nonnegative integers.
 
         EXAMPLES::
 

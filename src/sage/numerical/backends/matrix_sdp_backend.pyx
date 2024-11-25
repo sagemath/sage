@@ -6,7 +6,6 @@ and can store either floating-point SDPs or exact SDPs with rational or algebrai
 
 The class does not provide a solver method.  It can be used as a base class for
 other classes implementing solvers.
-
 """
 
 #*****************************************************************************
@@ -20,20 +19,19 @@ other classes implementing solvers.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.matrix.constructor import Matrix
+from sage.matrix.constructor import matrix
 from sage.numerical.backends.generic_sdp_backend cimport GenericSDPBackend
 
 cdef class MatrixSDPBackend(GenericSDPBackend):
 
     def __init__(self, maximization=True, base_ring=None):
         """
-        Cython constructor
+        Cython constructor.
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
             sage: p = get_solver(solver = "CVXOPT")
-
         """
         self.objective_function = []
         self.name = ""
@@ -57,7 +55,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
     cpdef base_ring(self):
         """
-        The base ring
+        The base ring.
 
         TESTS::
 
@@ -69,11 +67,11 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
     def get_matrix(self):
         """
-        Get a block of a matrix coefficient
+        Get a block of a matrix coefficient.
 
         EXAMPLES::
 
-            sage: p = SemidefiniteProgram(solver="cvxopt")
+            sage: p = SemidefiniteProgram(solver='cvxopt')
             sage: x = p.new_variable()
             sage: a1 = matrix([[1, 2.], [2., 3.]])
             sage: a2 = matrix([[3, 4.], [4., 5.]])
@@ -84,7 +82,6 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
                 [-1.0 -2.0]
             -1, [-2.0 -3.0]
             )
-
         """
         return self.coeffs_matrix
 
@@ -97,11 +94,13 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
         INPUT:
 
-        - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0.0)
+        - ``obj`` -- (optional) coefficient of this variable in the objective
+          function (default: 0.0)
 
-        - ``name`` -- an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default:
+          ``None``)
 
-        OUTPUT: The index of the newly created variable
+        OUTPUT: the index of the newly created variable
 
         EXAMPLES::
 
@@ -125,14 +124,13 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
         i = 0
         for row in self.coeffs_matrix:
             if self.matrices_dim.get(i) is not None:
-                row.append( Matrix.zero(self.matrices_dim[i], self.matrices_dim[i]) )
+                row.append( matrix.zero(self.matrices_dim[i], self.matrices_dim[i]) )
             else:
                 row.append(0)
-            i+=1
+            i += 1
         self.col_name_var.append(name)
         self.objective_function.append(obj)
         return len(self.objective_function) - 1
-
 
     cpdef int add_variables(self, int n, names=None) except -1:
         """
@@ -145,9 +143,9 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
         - ``n`` -- the number of new variables (must be > 0)
 
-        - ``names`` -- optional list of names (default: ``None``)
+        - ``names`` -- list of names (default: ``None``)
 
-        OUTPUT: The index of the variable created last.
+        OUTPUT: the index of the variable created last
 
         EXAMPLES::
 
@@ -172,7 +170,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
         INPUT:
 
-        - ``sense`` (integer)
+        - ``sense`` -- integer:
 
             * +1 => Maximization
             * -1 => Minimization
@@ -199,9 +197,9 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- integer; the variable's id
 
-        - ``coeff`` (double) -- its coefficient
+        - ``coeff`` -- double; its coefficient
 
         EXAMPLES::
 
@@ -226,10 +224,11 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
         INPUT:
 
-        - ``coeff`` -- a list of real values, whose ith element is the
-          coefficient of the ith variable in the objective function.
+        - ``coeff`` -- list of real values, whose i-th element is the
+          coefficient of the i-th variable in the objective function
 
-        - ``d`` (double) -- the constant term in the linear function (set to `0` by default)
+        - ``d`` -- double; the constant term in the linear function (set to `0`
+          by default)
 
         EXAMPLES::
 
@@ -274,15 +273,15 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
             [-7.00000000000000 -11.0000000000000]
             [-11.0000000000000  3.00000000000000]
             ])
-            sage: p.add_linear_constraint(  [(0, matrix([[33., -9.], [-9., 26.]])) , (1,  matrix([[-7., -11.] ,[ -11., 3.]]) )],name="fun")
+            sage: p.add_linear_constraint(  [(0, matrix([[33., -9.], [-9., 26.]])) , (1,  matrix([[-7., -11.] ,[ -11., 3.]]) )],name='fun')
             sage: p.row_name(-1)
             'fun'
         """
         coefficients = list(coefficients)
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
         for t in coefficients:
             m = t[1]
-            if not is_Matrix(m):
+            if not isinstance(m, Matrix):
                 raise ValueError("The coefficients must be matrices")
             if not m.is_square():
                 raise ValueError("The matrix has to be a square")
@@ -298,7 +297,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
         INPUT:
 
-        - ``number`` (integer) -- the number of constraints to add.
+        - ``number`` -- integer; the number of constraints to add
 
         - ``names`` -- an optional list of names (default: ``None``)
 
@@ -313,9 +312,8 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
             ([], [])
         """
         for i in range(number):
-            self.add_linear_constraint(zip(range(self.ncols()+1),[Matrix.zero(1,1) for i in range(self.ncols()+1)]),
+            self.add_linear_constraint(zip(range(self.ncols()+1),[matrix.zero(1,1) for i in range(self.ncols()+1)]),
                                        name=None if names is None else names[i])
-
 
     cpdef int ncols(self) noexcept:
         """
@@ -353,7 +351,6 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
         """
         return len(self.matrices_dim)
 
-
     cpdef bint is_maximization(self) noexcept:
         """
         Test whether the problem is a maximization
@@ -375,11 +372,11 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
     cpdef problem_name(self, name=None):
         """
-        Return or define the problem's name
+        Return or define the problem's name.
 
         INPUT:
 
-        - ``name`` (``str``) -- the problem's name. When set to
+        - ``name`` -- string; the problem's name. When set to
           ``NULL`` (default), the method returns the problem's name.
 
         EXAMPLES::
@@ -395,14 +392,13 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
         self.name = name
 
-
     cpdef row(self, int i):
         """
-        Return a row
+        Return a row.
 
         INPUT:
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
         OUTPUT:
 
@@ -431,27 +427,26 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
         indices = []
         matrices = []
         for index,m in self.coeffs_matrix[i]:
-            if m != Matrix.zero(self.matrices_dim[i],self.matrices_dim[i]):
+            if m != matrix.zero(self.matrices_dim[i],self.matrices_dim[i]):
                 indices.append(index)
                 matrices.append(m)
         return (indices, matrices)
 
     cpdef row_name(self, int index):
         """
-        Return the ``index`` th row name
+        Return the ``index``-th row name.
 
         INPUT:
 
-        - ``index`` (integer) -- the row's id
+        - ``index`` -- integer; the row's id
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
             sage: p = get_solver(solver = "CVXOPT")
-            sage: p.add_linear_constraints(1, names="A")
+            sage: p.add_linear_constraints(1, names='A')
             sage: p.row_name(0)
             'A'
-
         """
         if self.row_name_var[index] is not None:
             return self.row_name_var[index]
@@ -459,14 +454,14 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
 
     cpdef col_name(self, int index):
         """
-        Return the ``index`` th col name
+        Return the ``index``-th col name.
 
         INPUT:
 
-        - ``index`` (integer) -- the col's id
+        - ``index`` -- integer; the col's id
 
-        - ``name`` (``char *``) -- its name. When set to ``NULL``
-          (default), the method returns the current name.
+        - ``name`` -- (``char *``) its name; when set to ``NULL``
+          (default), the method returns the current name
 
         EXAMPLES::
 

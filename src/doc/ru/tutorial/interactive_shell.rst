@@ -341,9 +341,9 @@ Wall time. Однако, если существует существенная 
     sage: time g = maple('1938^99484')
     CPU times: user 0.00 s, sys: 0.00 s, total: 0.00 s
     Wall time: 0.11
-    sage: gap(0)
+    sage: libgap(0)
     0
-    sage: time g = gap.eval('1938^99484;;')
+    sage: time g = libgap.eval('1938^99484;')
     CPU times: user 0.00 s, sys: 0.00 s, total: 0.00 s
     Wall time: 1.02
 
@@ -483,7 +483,6 @@ GNU/Linux.
 Если вам интересно, что делает какая-нибудь функция, например coordinates,
 введите ``V.coordinates?`` для получения справки или ``V.coordinates??`` для
 получения исходного кода (объясняется в следующем разделе).
-
 
 
 Встроенная справочная система
@@ -721,7 +720,7 @@ Sage не может сохранять и загружать объекты, с
 
 ::
 
-    sage: a = gap(2)
+    sage: a = libgap(2)
     sage: a.save('a')
     sage: load('a')
     Traceback (most recent call last):

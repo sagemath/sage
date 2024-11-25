@@ -21,5 +21,4 @@ Sage example in ./sol/linsolve.tex, line 84::
   sage: all(abs(M[i,j]) < 10^-13
   ....:     for i in range(4) for j in range(4) )
   True
-
 """

@@ -18,7 +18,6 @@ manifold is the tensor bundle (see :class:`TensorBundle`)
 AUTHORS:
 
 - Michael Jung (2019) : initial version
-
 """
 
 #******************************************************************************
@@ -37,6 +36,7 @@ from sage.manifolds.vector_bundle import TopologicalVectorBundle
 from sage.rings.infinity import infinity
 from sage.misc.superseded import deprecated_function_alias
 from sage.rings.rational_field import QQ
+
 
 class DifferentiableVectorBundle(TopologicalVectorBundle):
     r"""
@@ -86,7 +86,6 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
 
         sage: M.diff_degree() == E.diff_degree()
         True
-
     """
     def __init__(self, rank, name, base_space, field='real', latex_name=None,
                  category=None, unique_tag=None):
@@ -100,7 +99,6 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
             sage: DifferentiableVectorBundle(2, 'E', M)
             Differentiable real vector bundle E -> M of rank 2 over the base
              space 2-dimensional differentiable manifold M
-
         """
         diff_degree = base_space._diff_degree
         if category is None:
@@ -131,7 +129,6 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
             sage: E._repr_()
             'Differentiable real vector bundle E -> M of rank 1 over the base
              space 2-dimensional differentiable manifold M'
-
         """
         desc = "Differentiable "
         return desc + TopologicalVectorBundle._repr_object_name(self)
@@ -160,7 +157,6 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
 
             Further examples can be found in
             :class:`~sage.manifolds.differentiable.bundle_connection.BundleConnection`.
-
         """
         from .bundle_connection import BundleConnection
         return BundleConnection(self, name, latex_name)
@@ -189,7 +185,6 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
             sage: 1 + p1
             Characteristic cohomology class (1 + p_1)(TM) of the Tangent bundle
              TM over the 4-dimensional differentiable manifold M
-
         """
         from .characteristic_cohomology_class import CharacteristicCohomologyClassRing
 
@@ -272,7 +267,6 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
 
             More examples can be found in
             :class:`~sage.manifolds.differentiable.characteristic_class.CharacteristicClass`.
-
         """
         base_ring = kwargs.get('base_ring', QQ)
         R = self.characteristic_cohomology_class_ring(base_ring)
@@ -300,7 +294,6 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
             sage: E = M.vector_bundle(2, 'E')
             sage: E.diff_degree()
             3
-
         """
         return self._diff_degree
 
@@ -323,7 +316,6 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
             sage: E = M.vector_bundle(2, 'E')
             sage: E.total_space()
             6-dimensional differentiable manifold E
-
         """
         if self._total_space is None:
             from sage.manifolds.manifold import Manifold
@@ -341,6 +333,7 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
         return self._total_space
 
 # *****************************************************************************
+
 
 class TensorBundle(DifferentiableVectorBundle):
     r"""
@@ -432,7 +425,6 @@ class TensorBundle(DifferentiableVectorBundle):
         sage: R_tensor_module = R.tensor_field_module((1,0), dest_map=Phi)
         sage: R_tensor_module is PhiTM.section_module()
         True
-
     """
     def __init__(self, base_space, k, l, dest_map=None):
         r"""
@@ -449,7 +441,6 @@ class TensorBundle(DifferentiableVectorBundle):
              manifold M along the Differentiable map Phi from the 2-dimensional
              differentiable manifold M to the 2-dimensional differentiable
              manifold N
-
         """
         if dest_map is None:
             self._dest_map = base_space.identity_map()
@@ -495,7 +486,6 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: M = Manifold(2, 'M')
             sage: TM = M.tangent_bundle()
             sage: TM._init_derived()
-
         """
         self._def_frame = None
 
@@ -521,7 +511,6 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: T12M._repr_()
             'Tensor bundle T^(1,2)M over the 2-dimensional differentiable
              manifold M'
-
         """
         if self._tensor_type == (1, 0):
             desc = "Tangent bundle "
@@ -572,7 +561,6 @@ class TensorBundle(DifferentiableVectorBundle):
              on the 3-dimensional differentiable manifold M
             sage: T11M.fiber(p) is M.tangent_space(p).tensor_module(1,1)
             True
-
         """
         amb_point = self._dest_map(point)
         return self._ambient_domain.tangent_space(amb_point).tensor_module(*self._tensor_type)
@@ -598,7 +586,6 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: TM = M.tangent_bundle()
             sage: TM.atlas()
             [Chart (M, (x, y)), Chart (M, (u, v))]
-
         """
         return self._base_space.atlas()
 
@@ -640,7 +627,6 @@ class TensorBundle(DifferentiableVectorBundle):
              2-dimensional differentiable manifold M
             sage: TUM is U.tensor_field_module((1,0))
             True
-
         """
         if domain is None:
             base_space = self.base_space()
@@ -731,7 +717,6 @@ class TensorBundle(DifferentiableVectorBundle):
              differentiable manifold M
             sage: w.display()
             -y ∂/∂x + x ∂/∂y
-
         """
         nargs = [self._tensor_type[0], self._tensor_type[1]]
         nargs.extend(args)
@@ -768,7 +753,7 @@ class TensorBundle(DifferentiableVectorBundle):
           :class:`~sage.tensor.modules.free_module_automorphism.FreeModuleAutomorphism`
           describing the automorphism `P` that relates the basis `(e_i)` to
           the basis `(f_i)` according to `f_i = P(e_i)`
-        - ``compute_inverse`` (default: ``True``) -- if set to ``True``, the inverse
+        - ``compute_inverse`` -- boolean (default: ``True``); if set to ``True``, the inverse
           automorphism is computed and the change from basis `(f_i)` to `(e_i)`
           is set to it in the internal dictionary ``self._frame_changes``
 
@@ -793,7 +778,6 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: TM.change_of_frame(e,f)[e,:]
             [1 2]
             [0 3]
-
         """
         if not frame1._domain.is_subset(self._ambient_domain):
             raise ValueError("the frames must be defined on a subset of "
@@ -854,7 +838,6 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: TM.change_of_frame(c_uv.frame(), c_xy.frame()) == \
             ....:       M.change_of_frame(c_xy.frame(), c_uv.frame()).inverse()
             True
-
         """
         return self._base_space.change_of_frame(frame1=frame1, frame2=frame2)
 
@@ -913,7 +896,6 @@ class TensorBundle(DifferentiableVectorBundle):
             True
             sage: TM.changes_of_frame()[(f,e)] == a^(-1)
             True
-
         """
         base_cof = self._base_space.changes_of_frame()
         # Filter out all frames with respect to dest_map:
@@ -933,9 +915,7 @@ class TensorBundle(DifferentiableVectorBundle):
             For further details on frames on ``self`` see
             :meth:`local_frame`.
 
-        OUTPUT:
-
-        - list of local frames defined on ``self``
+        OUTPUT: list of local frames defined on ``self``
 
         EXAMPLES:
 
@@ -984,7 +964,6 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: PhiT11.frames()
             [Vector frame (R, (∂/∂x,∂/∂y)) with values on the 2-dimensional
              differentiable manifold M]
-
         """
         if self._dest_map.is_identity():
             return self._base_space.frames()
@@ -1006,9 +985,7 @@ class TensorBundle(DifferentiableVectorBundle):
             For further details on frames on ``self`` see
             :meth:`local_frame`.
 
-        OUTPUT:
-
-        - list of coframes defined on ``self``
+        OUTPUT: list of coframes defined on ``self``
 
         EXAMPLES:
 
@@ -1035,7 +1012,6 @@ class TensorBundle(DifferentiableVectorBundle):
              Coframe (R^2, (e^0,e^1)),
              Coordinate coframe (U, (dx,dy)),
              Coframe (U, (e^0,e^1))]
-
         """
         if self._dest_map.is_identity():
             return self._base_space.coframes()
@@ -1063,7 +1039,7 @@ class TensorBundle(DifferentiableVectorBundle):
 
         INPUT:
 
-        - ``coordinates`` --  (default: ``''`` (empty string)) string
+        - ``coordinates`` -- (default: ``''`` (empty string)) string
           defining the coordinate symbols, ranges and possible periodicities,
           see below
         - ``names`` -- (default: ``None``) unused argument, except if
@@ -1131,7 +1107,6 @@ class TensorBundle(DifferentiableVectorBundle):
             y
             sage: X[:]
             (x, y)
-
         """
         return self._ambient_domain.chart(coordinates=coordinates, names=names,
                                           calc_method=calc_method)
@@ -1197,7 +1172,6 @@ class TensorBundle(DifferentiableVectorBundle):
              (Chart (M, (x, y)),
               Chart (M, (r, s))): Change of coordinates from Chart (M, (x, y))
                to Chart (M, (r, s))}
-
         """
         return self._ambient_domain.coord_changes()
 
@@ -1240,7 +1214,6 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: TM = M.tangent_bundle()
             sage: TM.transition(c_xy, c_uv) # returns the coord. change above
             Change of coordinates from Chart (M, (x, y)) to Chart (M, (u, v))
-
         """
         return self._ambient_domain.coord_change(chart1, chart2)
 
@@ -1316,7 +1289,6 @@ class TensorBundle(DifferentiableVectorBundle):
              differentiable manifold S^2
             sage: PhiTU.is_manifestly_trivial()
             True
-
         """
         if self._dest_map.is_identity():
             # The standard case:
@@ -1438,7 +1410,6 @@ class TensorBundle(DifferentiableVectorBundle):
             For more options, in particular for the choice of symbols and
             indices, see
             :class:`~sage.manifolds.differentiable.vectorframe.VectorFrame`.
-
         """
         domain = kwargs.pop('domain', None)
         if domain is None:
@@ -1479,7 +1450,6 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: PhiT11 = R.tensor_bundle(1, 1, dest_map=Phi)
             sage: PhiT11.ambient_domain()
             2-dimensional differentiable manifold M
-
         """
         return self._ambient_domain
 
@@ -1509,7 +1479,6 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: PhiT11.destination_map()
             Differentiable map Phi from the 1-dimensional differentiable
              manifold R to the 2-dimensional differentiable manifold M
-
         """
         return self._dest_map
 
@@ -1543,7 +1512,6 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: TM = M.tangent_bundle()
             sage: TM.default_frame()
             Coordinate frame (M, (∂/∂x,∂/∂y))
-
         """
         def_bframe = self._base_space.default_frame()
         if self._def_frame is None and def_bframe is not None:
@@ -1582,7 +1550,6 @@ class TensorBundle(DifferentiableVectorBundle):
             Vector frame (M, (e_0,e_1))
             sage: M.default_frame()
             Vector frame (M, (e_0,e_1))
-
         """
         from sage.manifolds.differentiable.vectorframe import VectorFrame
         if not isinstance(frame, VectorFrame):
@@ -1643,7 +1610,6 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: T12.set_orientation([e, f])
             sage: T12.orientation()
             [Vector frame (U, (e_0,e_1)), Vector frame (V, (f_0,f_1))]
-
         """
         if self._dest_map.is_identity():
             base_space = self._base_space
@@ -1678,7 +1644,7 @@ class TensorBundle(DifferentiableVectorBundle):
 
         EXAMPLES:
 
-        In the trivial case, i.e. if the destination map is the identitiy
+        In the trivial case, i.e. if the destination map is the identity
         and the tangent bundle is covered by one frame, the orientation is
         easily obtained::
 
@@ -1742,7 +1708,6 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: T11.orientation()
             [Coordinate frame (U, (∂/∂t,∂/∂z)),
              Coordinate frame (V, (∂/∂u,∂/∂v))]
-
         """
         if self._dest_map.is_identity():
             self._orientation = self._base_space.orientation()

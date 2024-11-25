@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Detecting external software
 
@@ -31,12 +32,12 @@ AUTHORS:
 #*****************************************************************************
 
 import multiprocessing
-import os
+import platform
 
 # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork' in
 # multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
 # trac #27754.
-if os.uname().sysname == 'Darwin':
+if platform.system() == 'Darwin':
     multiprocessing.set_start_method('fork', force=True)
 Array = multiprocessing.Array
 
@@ -274,7 +275,7 @@ def has_ffmpeg():
 
 def has_imagemagick():
     """
-    Test if ImageMagick (command convert) is available.
+    Test if ImageMagick (command magick or convert) is available.
 
     EXAMPLES::
 
@@ -355,7 +356,9 @@ def external_features():
     import sage.features.ffmpeg
     yield from sage.features.ffmpeg.all_features()
     import sage.features.interfaces
-    yield from sage.features.interfaces.all_features()
+    for feature in sage.features.interfaces.all_features():
+        if feature.name != 'mathics':
+            yield feature
     from sage.features.mip_backends import CPLEX, Gurobi
     yield CPLEX()
     yield Gurobi()
@@ -376,7 +379,7 @@ def external_software() -> list[str]:
 external_software = external_software()
 
 
-class AvailableSoftware():
+class AvailableSoftware:
     """
     This class keeps the set of available software whose availability is detected lazily
     from the list of external software.

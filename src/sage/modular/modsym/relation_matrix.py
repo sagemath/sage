@@ -27,7 +27,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.search import search
 from sage.misc.verbose import verbose
 from sage.modular.modsym.manin_symbol_list import ManinSymbolList
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.categories.rings import Rings
 
 
@@ -69,10 +69,8 @@ def modS_relations(syms):
 
     OUTPUT:
 
-
-    -  ``rels`` -- set of pairs of pairs (j, s), where if
-       mod[i] = (j,s), then x_i = s\*x_j (mod S relations)
-
+    - ``rels`` -- set of pairs of pairs (j, s), where if
+      mod[i] = (j,s), then x_i = s\*x_j (mod S relations)
 
     EXAMPLES::
 
@@ -138,12 +136,12 @@ def modI_relations(syms, sign):
 
     - ``syms`` -- :class:`ManinSymbolList`
 
-    -  ``sign`` -- int (either -1, 0, or 1)
+    - ``sign`` -- integer (either -1, 0, or 1)
 
     OUTPUT:
 
-    -  ``rels`` -- set of pairs of pairs (j, s), where if
-       mod[i] = (j,s), then x_i = s\*x_j (mod S relations)
+    - ``rels`` -- set of pairs of pairs (j, s), where if
+      mod[i] = (j,s), then x_i = s\*x_j (mod S relations)
 
     EXAMPLES::
 
@@ -204,16 +202,16 @@ def T_relation_matrix_wtk_g0(syms, mod, field, sparse):
 
     - ``syms`` -- :class:`ManinSymbolList`
 
-    -  ``mod`` -- list that gives quotient modulo some two-term relations, i.e.,
-       the S relations, and if sign is nonzero, the I relations.
+    - ``mod`` -- list that gives quotient modulo some two-term relations, i.e.,
+      the S relations, and if sign is nonzero, the I relations
 
-    -  ``field`` -- base_ring
+    - ``field`` -- ``base_ring``
 
-    -  ``sparse`` -- (True or False) whether to use sparse rather than dense
-       linear algebra
+    - ``sparse`` -- boolean; whether to use sparse rather than dense
+      linear algebra
 
-    OUTPUT: A sparse matrix whose rows correspond to the reduction of
-    the T relations modulo the S and I relations.
+    OUTPUT: a sparse matrix whose rows correspond to the reduction of
+    the `T` relations modulo the `S` and `I` relations.
 
     EXAMPLES::
 
@@ -266,25 +264,23 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
 
     - ``syms`` -- :class:`ManinSymbolList`
 
-    -  ``relation_matrix`` -- as output by
-       ``__compute_T_relation_matrix(self, mod)``
+    - ``relation_matrix`` -- as output by
+      ``__compute_T_relation_matrix(self, mod)``
 
-    -  ``mod`` -- quotient of modular symbols modulo the
-       2-term S (and possibly I) relations
+    - ``mod`` -- quotient of modular symbols modulo the
+      2-term S (and possibly I) relations
 
-    -  ``field`` -- base field
+    - ``field`` -- base field
 
-    -  ``sparse`` -- (bool): whether or not matrix should be
-       sparse
+    - ``sparse`` -- boolean; whether or not matrix should be sparse
 
     OUTPUT:
 
-    -  ``matrix`` -- a matrix whose ith row expresses the
-       Manin symbol generators in terms of a basis of Manin symbols
-       (modulo the S, (possibly I,) and T rels) Note that the entries of
-       the matrix need not be integers.
+    ``matrix`` -- a matrix whose `i`-th row expresses the Manin symbol
+    generators in terms of a basis of Manin symbols (modulo the S, (possibly
+    I,) and T rels). Note that the entries of the matrix need not be integers.
 
-    -  ``list`` -- integers i, such that the Manin symbols `x_i` are a basis.
+    - ``list`` -- integers `i`, such that the Manin symbols `x_i` are a basis
 
     EXAMPLES::
 
@@ -294,8 +290,8 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
         sage: gens_to_basis_matrix(L, T_relation_matrix_wtk_g0(L, modS, GF(3), 24), modS, GF(3), True)
         (24 x 2 sparse matrix over Finite Field of size 3, [13, 23])
     """
-    from sage.structure.element import is_Matrix
-    if not is_Matrix(relation_matrix):
+    from sage.structure.element import Matrix
+    if not isinstance(relation_matrix, Matrix):
         raise TypeError("relation_matrix must be a matrix")
     if not isinstance(mod, list):
         raise TypeError("mod must be a list")
@@ -370,21 +366,20 @@ def compute_presentation(syms, sign, field, sparse=None):
 
     - ``syms`` -- :class:`ManinSymbolList`
 
-    -  ``sign`` -- integer (-1, 0, 1)
+    - ``sign`` -- integer (-1, 0, 1)
 
-    -  ``field`` -- a field
-
+    - ``field`` -- a field
 
     OUTPUT:
 
-    -  sparse matrix whose rows give each generator
-       in terms of a basis for the quotient
+    - sparse matrix whose rows give each generator
+      in terms of a basis for the quotient
 
-    -  list of integers that give the basis for the
-       quotient
+    - list of integers that give the basis for the
+      quotient
 
-    -  mod: list where mod[i]=(j,s) means that x_i
-       = s\*x_j modulo the 2-term S (and possibly I) relations.
+    - mod: list where mod[i]=(j,s) means that x_i
+      = s\*x_j modulo the 2-term S (and possibly I) relations.
 
 
     ALGORITHM:
@@ -421,7 +416,6 @@ def compute_presentation(syms, sign, field, sparse=None):
        uniquely expresses each of the n Manin symbols in terms of a subset
        of Manin symbols, modulo the relations. This subset of Manin
        symbols is a basis for the quotient by the relations.
-
 
     EXAMPLES::
 
@@ -462,11 +456,11 @@ def relation_matrix_wtk_g0(syms, sign, field, sparse):
 
     - ``syms`` -- :class:`ManinSymbolList`
 
-    - ``sign``: integer (0, 1 or -1)
+    - ``sign`` -- integer (0, 1 or -1)
 
-    - ``field``: the base field (non-field base rings not supported at present)
+    - ``field`` -- the base field (non-field base rings not supported at present)
 
-    - ``sparse``: (True or False) whether to use sparse arithmetic.
+    - ``sparse`` -- boolean; whether to use sparse arithmetic
 
     Note that ManinSymbolList objects already have a specific weight, so there
     is no need for an extra ``weight`` parameter.
@@ -498,7 +492,7 @@ def relation_matrix_wtk_g0(syms, sign, field, sparse):
     rels = sorted(rels)
     # required for stability of doctests with python3
 
-    if syms._apply_S_only_0pm1() and is_RationalField(field):
+    if syms._apply_S_only_0pm1() and isinstance(field, RationalField):
         from . import relation_matrix_pyx
         mod = relation_matrix_pyx.sparse_2term_quotient_only_pm1(rels, len(syms))
     else:
@@ -519,30 +513,26 @@ def sparse_2term_quotient(rels, n, F):
 
     INPUT:
 
-    -  ``rels`` -- iterable made of pairs ((i,s), (j,t)). The pair
-       represents the relation s\*x_i + t\*x_j = 0, where the i, j must
-       be Python int's.
+    - ``rels`` -- iterable made of pairs ((i,s), (j,t)). The pair
+      represents the relation `s x_i + t x_j = 0`, where the `i, j` must
+      be Python int's.
 
-    -  ``n`` -- int, the x_i are x_0, ..., x_n-1.
+    - ``n`` -- integer, the `x_i` are `x_0, \ldots, x_{n-1}`
 
-    -  ``F`` -- base field
+    - ``F`` -- base field
 
     OUTPUT:
 
-    -  ``mod`` -- list such that mod[i] = (j,s), which means
-       that x_i is equivalent to s\*x_j, where the x_j are a basis for
-       the quotient.
+    ``mod`` -- list such that ``mod[i] = (j,s)``, which means that `x_i` is
+    equivalent to `s x_j`, where the `x_j` are a basis for the quotient.
 
     EXAMPLES: We quotient out by the relations
 
     .. MATH::
 
-                    3*x0 - x1 = 0,\qquad  x1 + x3 = 0,\qquad   x2 + x3 = 0,\qquad  x4 - x5 = 0
+        3*x0 - x1 = 0,\qquad  x1 + x3 = 0,\qquad   x2 + x3 = 0,\qquad  x4 - x5 = 0
 
-
-    to get
-
-    ::
+    to get::
 
         sage: rels = [((int(0),3), (int(1),-1)), ((int(1),1), (int(3),1)), ((int(2),1),(int(3),1)), ((int(4),1),(int(5),-1))]
         sage: n = 6

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Check for poppler features
 
@@ -50,8 +51,8 @@ class pdftocairo(Executable):
             sage: isinstance(pdftocairo(), pdftocairo)
             True
         """
-        Executable.__init__(self, "pdftocairo", executable="pdftocairo",
-                            url="https://poppler.freedesktop.org/")
+        Executable.__init__(self, "pdftocairo", executable='pdftocairo',
+                            url='https://poppler.freedesktop.org/')
 
 def all_features():
     return [pdftocairo()]

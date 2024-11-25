@@ -329,7 +329,7 @@ class OreFunctionField(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``var`` -- a string representing the name of the new variable.
+        - ``var`` -- string representing the name of the new variable
 
         EXAMPLES::
 
@@ -375,7 +375,7 @@ class OreFunctionField(Parent, UniqueRepresentation):
 
         INPUT:
 
-        -  ``n`` -- an integer (default: 1)
+        - ``n`` -- integer (default: 1)
 
         EXAMPLES::
 
@@ -438,8 +438,8 @@ class OreFunctionField(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``n`` -- index of generator to return (default: 0). Exists for
-          compatibility with other polynomial rings.
+        - ``n`` -- index of generator to return (default: 0); exists for
+          compatibility with other polynomial rings
 
         EXAMPLES::
 
@@ -579,11 +579,11 @@ class OreFunctionField(Parent, UniqueRepresentation):
         - ``degree`` -- (default: 2) an integer or a list of
           two integers; the degrees of the denominator and numerator
 
-        - ``monic`` -- (default: ``False``) if ``True``, return a monic
+        - ``monic`` -- boolean (default: ``False``); if ``True``, return a monic
           Ore function with monic numerator and denominator
 
-        - ``*args, **kwds`` -- passed in to the ``random_element`` method
-          for the base ring
+        - ``*args``, ``**kwds`` -- passed in to the :meth:`random_element`
+          method for the base ring
 
         EXAMPLES::
 
@@ -917,10 +917,10 @@ class OreFunctionField_with_large_center(OreFunctionField):
 
         INPUT:
 
-        - ``name`` -- a string or ``None`` (default: ``None``);
+        - ``name`` -- string or ``None`` (default: ``None``);
           the name for the central variable
 
-        - ``default`` -- a boolean (default: ``False``); if ``True``,
+        - ``default`` -- boolean (default: ``False``); if ``True``,
           set the default variable name for the center to ``name``
 
         EXAMPLES::

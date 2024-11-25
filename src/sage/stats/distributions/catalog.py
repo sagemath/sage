@@ -16,7 +16,6 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
 To import these names into the global namespace, use::
 
     sage: from sage.stats.distributions.catalog import *
-
 """
 #*****************************************************************************
 #       Copyright (C) 2024 Gareth Ma <grhkm21@gmail.com>

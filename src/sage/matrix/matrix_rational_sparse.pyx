@@ -76,14 +76,14 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
         INPUT:
 
-        - ``parent`` -- a matrix space over ``QQ``
+        - ``parent`` -- a matrix space over `\QQ`
 
         - ``entries`` -- see :func:`matrix`
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
-          entries are of type :class:`Rational`.
+        - ``coerce`` -- if ``False``, assume without checking that the
+          entries are of type :class:`Rational`
         """
         ma = MatrixArgs_init(parent, entries)
         cdef Rational z
@@ -150,7 +150,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_add(z, z, (<Rational>elt).value)
         mpq_vector_set_entry(&self._matrix[i], j, z)
         mpq_clear(z)
-
 
     ########################################################################
     # LEVEL 2 functionality
@@ -357,9 +356,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         multiple of all numerators and denominators of elements of
         this matrix.
 
-        OUTPUT:
-
-            -- Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -410,9 +407,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         """
         Return the denominator of this matrix.
 
-        OUTPUT:
-
-        - Sage Integer
+        OUTPUT: Sage Integer
 
         EXAMPLES::
 
@@ -428,13 +423,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
     def _clear_denom(self):
         """
-        INPUT:
-
-        self -- a matrix
-
-        OUTPUT:
-
-        D*self, D
+        OUTPUT: ``d*self, D``
 
         The product D*self is a matrix over ZZ
 
@@ -484,8 +473,8 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
         INPUT:
 
-        ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
-        algorithm; ignored by the p-adic algorithm.
+        - ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
+          algorithm; ignored by the `p`-adic algorithm
 
         OUTPUT:
 
@@ -531,12 +520,10 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         """
         INPUT:
 
-        ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
-        algorithm; ignored by the p-adic algorithm.
+        - ``height_guess``, ``proof``, ``**kwds`` -- all passed to the multimodular
+          algorithm; ignored by the `p`-adic algorithm
 
-        OUTPUT:
-
-            self is no in reduced row echelon form.
+        OUTPUT: ``self`` is no in reduced row echelon form
 
         EXAMPLES::
 
@@ -575,13 +562,13 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 
     def _echelon_form_multimodular(self, height_guess=None, proof=True):
         """
-        Returns reduced row-echelon form using a multi-modular
-        algorithm.  Does not change self.
+        Return reduced row-echelon form using a multi-modular
+        algorithm.  Does not change ``self``.
 
         INPUT:
 
-        - height_guess -- integer or None
-        - proof -- boolean (default: ``True``)
+        - ``height_guess`` -- integer or ``None``
+        - ``proof`` -- boolean (default: ``True``)
         """
         from sage.matrix.misc import matrix_rational_echelon_form_multimodular
         cdef Matrix E
@@ -589,7 +576,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
                                  height_guess=height_guess, proof=proof)
         E._parent = self._parent
         return E, pivots
-
 
     def set_row_to_multiple_of_row(self, i, j, s):
         """
@@ -663,17 +649,17 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
                                                                  Py_ssize_t r, cols,
                                                                  cols_index=None):
         """
-        Set row i of self to -(row r of A), but where we only take the
+        Set row i of ``self`` to -(row r of A), but where we only take the
         given column positions in that row of A.  Note that we *DO*
-        zero out the other entries of self's row i.
+        zero out the other entries of ``self``'s row i.
 
         INPUT:
 
-        - i -- integer, index into the rows of self
-        - A -- a sparse matrix
-        - r -- integer, index into rows of A
-        - cols -- a *sorted* list of integers.
-        - cols_index -- (optional).  But set it to this to vastly speed up
+        - ``i`` -- integer, index into the rows of self
+        - ``A`` -- a sparse matrix
+        - ``r`` -- integer, index into rows of A
+        - ``cols`` -- a *sorted* list of integers
+        - ``cols_index`` -- (optional) set it to this to vastly speed up
           calls to this function::
 
                 dict([(cols[i], i) for i in range(len(cols))])
@@ -712,7 +698,6 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         v = &self._matrix[i]
         w = &_A._matrix[r]
 
-
         if cols_index is None:
             cols_index = dict([(cols[i], i) for i in range(len(cols))])
 
@@ -725,14 +710,13 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         v.num_nonzero = n
         v.degree = self._ncols
 
-
         for l from 0 <= l < n:
             v.positions[l] = cols_index[w.positions[pos[l]]]
             mpq_mul(v.entries[l], w.entries[pos[l]], minus_one)
 
     def _right_kernel_matrix(self, **kwds):
         r"""
-        Returns a pair that includes a matrix of basis vectors
+        Return a pair that includes a matrix of basis vectors
         for the right kernel of ``self``.
 
         INPUT:

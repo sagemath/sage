@@ -52,5 +52,4 @@ Sage example in ./sol/integration.tex, line 74::
   sage: [N(QuadNC(lambda x: sqrt(1-x^2), 0, 1, n) - pi/4)    # abs tol 1e-13
   ....:  for n in [2, 8, 16]]
   [-0.285398163397448, -0.00524656673640445, -0.00125482109302663]
-
 """

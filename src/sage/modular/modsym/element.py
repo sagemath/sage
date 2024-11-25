@@ -31,35 +31,42 @@ _print_mode = "manin"
 
 def is_ModularSymbolsElement(x) -> bool:
     r"""
-    Return True if x is an element of a modular symbols space.
+    Return ``True`` if x is an element of a modular symbols space.
 
     EXAMPLES::
 
         sage: sage.modular.modsym.element.is_ModularSymbolsElement(ModularSymbols(11, 2).0)
+        doctest:warning...
+        DeprecationWarning: The function is_ModularSymbolsElement is deprecated;
+        use 'isinstance(..., ModularSymbolsElement)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
         sage: sage.modular.modsym.element.is_ModularSymbolsElement(13)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_ModularSymbolsElement is deprecated; "
+                "use 'isinstance(..., ModularSymbolsElement)' instead.")
     return isinstance(x, ModularSymbolsElement)
 
 
-def set_modsym_print_mode(mode="manin"):
+def set_modsym_print_mode(mode='manin'):
     r"""
     Set the mode for printing of elements of modular symbols spaces.
 
     INPUT:
 
-    -  ``mode`` -- a string. The possibilities are as
-       follows:
+    - ``mode`` -- string; the possibilities are as follows:
 
-    -  ``'manin'`` -- (the default) formal sums of Manin
-       symbols [P(X,Y),(u,v)]
+      - ``'manin'`` -- (the default) formal sums of Manin
+        symbols [P(X,Y),(u,v)]
 
-    -  ``'modular'`` -- formal sums of Modular symbols
-       P(X,Y)\*alpha,beta, where alpha and beta are cusps
+      - ``'modular'`` -- formal sums of Modular symbols
+        P(X,Y)\*alpha,beta, where alpha and beta are cusps
 
-    -  ``'vector'`` -- as vectors on the basis for the
-       ambient space
+      - ``'vector'`` -- as vectors on the basis for the
+        ambient space
 
     OUTPUT: none
 
@@ -99,8 +106,8 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
         - ``parent`` -- a space of modular symbols
 
         - ``x`` -- a free module element that represents the modular
-           symbol in terms of a basis for the ambient space (not in
-           terms of a basis for parent!)
+          symbol in terms of a basis for the ambient space (not in
+          terms of a basis for parent!)
 
         EXAMPLES::
 
@@ -124,7 +131,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
 
     def _repr_(self):
         r"""
-        String representation of self. The output will depend on the global
+        String representation of ``self``. The output will depend on the global
         modular symbols print mode setting controlled by the function
         ``set_modsym_print_mode``.
 
@@ -149,7 +156,8 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
 
     def _latex_(self):
         r"""
-        LaTeX representation of self. The output will be determined by the print mode setting set using ``set_modsym_print_mode``.
+        LaTeX representation of ``self``. The output will be determined by the
+        print mode setting set using ``set_modsym_print_mode``.
 
         EXAMPLES::
 
@@ -178,7 +186,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
 
     def _add_(self, right):
         r"""
-        Sum of self and other.
+        Sum of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -192,7 +200,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
 
     def _rmul_(self, other):
         r"""
-        Right-multiply self by other.
+        Right-multiply ``self`` by ``other``.
 
         EXAMPLES::
 
@@ -211,7 +219,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
 
     def _lmul_(self, left):
         r"""
-        Left-multiply self by other.
+        Left-multiply ``self`` by ``other``.
 
         EXAMPLES::
 
@@ -244,7 +252,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
 
     def _sub_(self, other):
         r"""
-        Subtract other from self.
+        Subtract ``other`` from ``self``.
 
         EXAMPLES::
 
@@ -264,7 +272,8 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
 
     def list(self):
         r"""
-        Return a list of the coordinates of self in terms of a basis for the ambient space.
+        Return a list of the coordinates of ``self`` in terms of a basis for
+        the ambient space.
 
         EXAMPLES::
 
@@ -275,7 +284,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
 
     def manin_symbol_rep(self):
         """
-        Return a representation of self as a formal sum of Manin symbols.
+        Return a representation of ``self`` as a formal sum of Manin symbols.
 
         EXAMPLES::
 

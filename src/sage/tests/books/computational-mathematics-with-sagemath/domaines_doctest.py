@@ -439,5 +439,4 @@ Sage example in ./domaines.tex, line 1698::
   4*x^4 + x^3 + 3*x^2 + 3*x + 3
   sage: factor(q)
   (4) * (x + 2)^2 * (x^2 + 3)
-
 """

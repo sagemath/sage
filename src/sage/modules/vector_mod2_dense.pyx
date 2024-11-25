@@ -201,13 +201,13 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
                 xi = x[i]
                 if isinstance(xi, (IntegerMod_int, int, Integer)):
                     # the if/else statement is because in some compilers, (-1)%2 is -1
-                    mzd_write_bit(self._entries, 0, i, 1 if xi%2 else 0)
+                    mzd_write_bit(self._entries, 0, i, 1 if xi % 2 else 0)
                 elif isinstance(xi, Rational):
                     if not (xi.denominator() % 2):
                         raise ZeroDivisionError("inverse does not exist")
                     mzd_write_bit(self._entries, 0, i, 1 if (xi.numerator() % 2) else 0)
                 else:
-                    mzd_write_bit(self._entries, 0, i, xi%2)
+                    mzd_write_bit(self._entries, 0, i, xi % 2)
         elif x != 0:
             raise TypeError("can't initialize vector from nonzero non-list")
         elif self._degree:
@@ -289,7 +289,6 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         """
         mzd_write_bit(self._entries, 0, i, value)
 
-
     def __reduce__(self):
         """
         EXAMPLES::
@@ -347,7 +346,6 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         for i from 0 <= i < self._entries.width:
             res += Integer(row[i]).popcount()
         return res
-
 
     cpdef _dot_product_(self, Vector right):
         """
@@ -504,8 +502,8 @@ def unpickle_v0(parent, entries, degree, is_immutable):
     for i in range(degree):
         if isinstance(entries[i], (IntegerMod_int, int, Integer)):
             xi = entries[i]
-            mzd_write_bit(v._entries, 0, i, xi%2)
+            mzd_write_bit(v._entries, 0, i, xi % 2)
         else:
-            mzd_write_bit(v._entries, 0, i, entries[i]%2)
+            mzd_write_bit(v._entries, 0, i, entries[i] % 2)
     v._is_immutable = int(is_immutable)
     return v

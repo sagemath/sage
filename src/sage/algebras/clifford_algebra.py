@@ -991,9 +991,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         - ``names`` -- (default: ``'e'``) the names of the generators of the
           Clifford algebra of the domain of (the map represented by) ``m``
 
-        OUTPUT:
-
-        The algebra morphism `Cl(m)` from `Cl(W, m(Q))` to ``self``.
+        OUTPUT: the algebra morphism `Cl(m)` from `Cl(W, m(Q))` to ``self``
 
         EXAMPLES::
 
@@ -1142,9 +1140,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
           the Clifford algebra of the codomain of (the map represented by)
           ``m``
 
-        OUTPUT:
-
-        The algebra morphism `Cl(m)` from ``self`` to `Cl(W, m^{-1}(Q))`.
+        OUTPUT: the algebra morphism `Cl(m)` from ``self`` to `Cl(W, m^{-1}(Q))`
 
         EXAMPLES::
 
@@ -1416,7 +1412,7 @@ class ExteriorAlgebra(CliffordAlgebra):
     - ``R`` -- the base ring, *or* the free module whose exterior algebra
       is to be computed
 
-    - ``names`` -- a list of strings to name the generators of the
+    - ``names`` -- list of strings to name the generators of the
       exterior algebra; this list can either have one entry only (in which
       case the generators will be called ``e + '0'``, ``e + '1'``, ...,
       ``e + 'n-1'``, with ``e`` being said entry), or have ``n`` entries
@@ -1599,9 +1595,8 @@ class ExteriorAlgebra(CliffordAlgebra):
           the Clifford algebra of the domain of (the map represented by)
           ``phi``
 
-        OUTPUT:
-
-        The algebra morphism `\Lambda(\phi)` from ``self`` to `\Lambda(W)`.
+        OUTPUT: the algebra morphism `\Lambda(\phi)` from ``self`` to
+        `\Lambda(W)`
 
         EXAMPLES::
 
@@ -1707,7 +1702,7 @@ class ExteriorAlgebra(CliffordAlgebra):
 
         INPUT:
 
-        - ``s_coeff`` -- a dictionary whose keys are in `I \times I`, where
+        - ``s_coeff`` -- dictionary whose keys are in `I \times I`, where
           `I` is the index set of the underlying vector space `V`, and whose
           values can be coerced into 1-forms (degree 1 elements) in ``E``
           (usually, these values will just be elements of `V`)
@@ -1730,7 +1725,7 @@ class ExteriorAlgebra(CliffordAlgebra):
 
         INPUT:
 
-        - ``s_coeff`` -- a dictionary whose keys are in `I \times I`, where
+        - ``s_coeff`` -- dictionary whose keys are in `I \times I`, where
           `I` is the index set of the underlying vector space `V`, and whose
           values can be coerced into 1-forms (degree 1 elements) in ``E``
           (usually, these values will just be elements of `V`)
@@ -1795,7 +1790,6 @@ class ExteriorAlgebra(CliffordAlgebra):
             sage: E.coproduct_on_basis((0,1,2))
             1 # x*y*z + x # y*z - y # x*z + x*y # z
              + z # x*y - x*z # y + y*z # x + x*y*z # 1
-
         """
         from sage.combinat.combinat import unshuffle_iterator
         one = self.base_ring().one()
@@ -2139,7 +2133,7 @@ class ExteriorAlgebraDifferential(ModuleMorphismByLinearity,
         We skip the pickling test as there is an infinite recursion when
         doing equality checks::
 
-            sage: TestSuite(par).run(skip="_test_pickling")
+            sage: TestSuite(par).run(skip='_test_pickling')
 
         Check that it knows it is a finite-dimensional algebra
         morphism (:issue:`25339`):;
@@ -2207,7 +2201,7 @@ class ExteriorAlgebraBoundary(ExteriorAlgebraDifferential):
     INPUT:
 
     - ``E`` -- an exterior algebra of a vector space `L`
-    - ``s_coeff`` -- a dictionary whose keys are in `I \times I`, where
+    - ``s_coeff`` -- dictionary whose keys are in `I \times I`, where
       `I` is the index set of the basis of the vector space `L`, and whose
       values can be coerced into 1-forms (degree 1 elements) in ``E``;
       this dictionary will be used to define the Lie algebra structure
@@ -2452,7 +2446,7 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
     INPUT:
 
     - ``E`` -- an exterior algebra of a vector space `L`
-    - ``s_coeff`` -- a dictionary whose keys are in `I \times I`, where
+    - ``s_coeff`` -- dictionary whose keys are in `I \times I`, where
       `I` is the index set of the basis of the vector space `L`, and whose
       values can be coerced into 1-forms (degree 1 elements) in ``E``;
       this dictionary will be used to define the Lie algebra structure
@@ -2736,7 +2730,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         sage: xbar * ybar
         0
     """
-    def __init__(self, ring, gens, coerce=True, side="twosided"):
+    def __init__(self, ring, gens, coerce=True, side='twosided'):
         """
         Initialize ``self``.
 
@@ -2747,13 +2741,13 @@ class ExteriorAlgebraIdeal(Ideal_nc):
 
             sage: E.<y, x> = ExteriorAlgebra(QQ)
             sage: I = E.ideal([x*y - x, x*y - 1])
-            sage: TestSuite(I).run(skip="_test_category")
+            sage: TestSuite(I).run(skip='_test_category')
 
             sage: I = E.ideal([x*y - 3, 0, 2*3])
-            sage: TestSuite(I).run(skip="_test_category")
+            sage: TestSuite(I).run(skip='_test_category')
 
             sage: I = E.ideal([])
-            sage: TestSuite(I).run(skip="_test_category")
+            sage: TestSuite(I).run(skip='_test_category')
         """
         self._groebner_strategy = None
         self._reduced = False
@@ -2795,7 +2789,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         EXAMPLES::
 
             sage: E.<x,y,z> = ExteriorAlgebra(QQ)
-            sage: I = E.ideal([x, x*y*z + 2*x*z + 3*y*z], side="left")
+            sage: I = E.ideal([x, x*y*z + 2*x*z + 3*y*z], side='left')
             sage: I.groebner_basis()
             (x, y*z)
             sage: x in I
@@ -2848,9 +2842,9 @@ class ExteriorAlgebraIdeal(Ideal_nc):
 
             sage: E.<a,b,c,d> = ExteriorAlgebra(QQ)
             sage: p = a + b*c
-            sage: IT = E.ideal([p], side="twosided")
-            sage: IR = E.ideal([p], side="right")
-            sage: IL = E.ideal([p], side="left")
+            sage: IT = E.ideal([p], side='twosided')
+            sage: IR = E.ideal([p], side='right')
+            sage: IL = E.ideal([p], side='left')
             sage: IR == IL
             False
             sage: IR <= IL
@@ -2920,7 +2914,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
             return contained and contains
         if op == op_NE:
             return not (contained and contains)
-         # remaining case <
+        # remaining case <
         return contained and not contains
 
     def __mul__(self, other):
@@ -2936,7 +2930,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
 
             sage: E.<a,b,c,d> = ExteriorAlgebra(QQ)
 
-            sage: I = E.ideal([a + 1], side="left")
+            sage: I = E.ideal([a + 1], side='left')
             sage: J = I * I; J
             Left Ideal (2*a + 1, a, b, c, d, a*b, a*c, a*d, 2*a*b*c + b*c, 2*a*b*d + b*d,
                         2*a*c*d + c*d, a*b*c, a*b*d, a*c*d, b*c*d, a*b*c*d)
@@ -2955,10 +2949,10 @@ class ExteriorAlgebraIdeal(Ideal_nc):
             sage: K = J * I
             sage: K
             Left Ideal (-a*b - a*c + b + c) of The exterior algebra of rank 4 over Rational Field
-            sage: E.ideal([J.gen(0) * d * I.gen(0)], side="left") <= K
+            sage: E.ideal([J.gen(0) * d * I.gen(0)], side='left') <= K
             True
 
-            sage: J = E.ideal([b + c*d], side="right")
+            sage: J = E.ideal([b + c*d], side='right')
             sage: I * J
             Twosided Ideal (a*c*d + a*b + c*d + b) of The exterior algebra of rank 4 over Rational Field
             sage: X = J * I; X
@@ -2971,7 +2965,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
             sage: a * p  # not a left ideal
             a*c*d + a*b
 
-            sage: I = E.ideal([a + 1], side="right")
+            sage: I = E.ideal([a + 1], side='right')
             sage: E.ideal([1]) * I
             Twosided Ideal (a + 1) of The exterior algebra of rank 4 over Rational Field
             sage: I * E.ideal([1])
@@ -2991,9 +2985,9 @@ class ExteriorAlgebraIdeal(Ideal_nc):
 
         if self.side() == "left" or self.side() == "twosided":
             if other.side() == "right" or other.side() == "twosided":
-                return self.ring().ideal(gens, side="twosided")
-            return self.ring().ideal(gens, side="left")
-        return self.ring().ideal(gens, side="right")
+                return self.ring().ideal(gens, side='twosided')
+            return self.ring().ideal(gens, side='left')
+        return self.ring().ideal(gens, side='right')
 
     def groebner_basis(self, term_order=None, reduced=True):
         r"""
@@ -3004,12 +2998,12 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         - ``term_order`` -- the term order used to compute the Gröbner basis;
           must be one of the following:
 
-          * ``"neglex"`` -- (default) negative (read right-to-left) lex order
-          * ``"degrevlex"`` -- degree reverse lex order
-          * ``"deglex"`` -- degree lex order
+          * ``'neglex'`` -- (default) negative (read right-to-left) lex order
+          * ``'degrevlex'`` -- degree reverse lex order
+          * ``'deglex'`` -- degree lex order
 
-        - ``reduced`` -- (default: ``True``) whether or not to return the
-          reduced Gröbner basis
+        - ``reduced`` -- boolean (default: ``True``); whether or not to return
+          the reduced Gröbner basis
 
         EXAMPLES:
 
@@ -3043,7 +3037,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
              -a*c*d + a*c*e - a*d*e + c*d*e)
 
         The example above was computed first using M2, which agrees with
-        the ``"degrevlex"`` ordering::
+        the ``'degrevlex'`` ordering::
 
             E = QQ[a..e, SkewCommutative => true]
             I = ideal( c*d*e - b*d*e + b*c*e - b*c*d,

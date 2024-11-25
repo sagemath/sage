@@ -1,5 +1,4 @@
 #!/usr/bin/env sage-python
-
 """
 Given the output of doctest and a file, adjust the doctests so they won't fail.
 
@@ -39,6 +38,7 @@ import subprocess
 import sys
 
 from argparse import ArgumentParser
+from collections import defaultdict
 from pathlib import Path
 
 from sage.doctest.control import DocTestDefaults, DocTestController
@@ -460,6 +460,8 @@ def process_grouped_blocks(grouped_iterator, distribution=None, venv=None, envir
         src_in_lines = src_in.splitlines()
         shallow_copy_of_src_in_lines = list(src_in_lines)
         file_optional_tags = set(parse_file_optional_tags(enumerate(src_in_lines)))
+        persistent_tags_counts = defaultdict(int)
+        tags_counts = defaultdict(int)
 
         for block in blocks:
             try:
@@ -475,6 +477,7 @@ def process_grouped_blocks(grouped_iterator, distribution=None, venv=None, envir
 
         # Remove duplicate optional tags and rewrite all '# optional' that should be '# needs'
         persistent_optional_tags = {}
+        persistent_optional_tags_counted = False
         for i, line in enumerate(src_in_lines):
             if m := re.match(' *sage: *(.*)#', line):
                 tags, line_sans_tags, is_persistent = parse_optional_tags(line, return_string_sans_tags=True)
@@ -482,6 +485,7 @@ def process_grouped_blocks(grouped_iterator, distribution=None, venv=None, envir
                     persistent_optional_tags = {tag: explanation
                                                 for tag, explanation in tags.items()
                                                 if explanation or tag not in file_optional_tags}
+                    persistent_optional_tags_counted = False
                     line = update_optional_tags(line, tags=persistent_optional_tags, force_rewrite='standard')
                     if re.fullmatch(' *sage: *', line):
                         # persistent (block-scoped or file-scoped) tag was removed, so remove the whole line
@@ -492,9 +496,19 @@ def process_grouped_blocks(grouped_iterator, distribution=None, venv=None, envir
                             if explanation or (tag not in file_optional_tags
                                                and tag not in persistent_optional_tags)}
                     line = update_optional_tags(line, tags=tags, force_rewrite='standard')
+                    if not persistent_optional_tags_counted:
+                        persistent_tags_counts[frozenset(persistent_optional_tags)] += 1
+                        persistent_optional_tags_counted = True
+                    tags_counts[frozenset(tags)] += 1
                 src_in_lines[i] = line
             elif line.strip() in ['', '"""', "'''"]:    # Blank line or end of docstring
                 persistent_optional_tags = {}
+                persistent_optional_tags_counted = False
+            elif re.match(' *sage: ', line):
+                if not persistent_optional_tags_counted:
+                    persistent_tags_counts[frozenset(persistent_optional_tags)] += 1
+                    persistent_optional_tags_counted = True
+                tags_counts[frozenset()] += 1
 
         if src_in_lines != shallow_copy_of_src_in_lines:
             if (output := output_filename(input)) is None:
@@ -523,6 +537,21 @@ def process_grouped_blocks(grouped_iterator, distribution=None, venv=None, envir
                 venv_files[distribution].discard(input)
 
         unprocessed_files.discard(input)
+
+        if args.verbose:
+            if file_optional_tags:
+                print(f"File tags: ")
+                print(f"       {' '.join(sorted(file_optional_tags))}")
+            if persistent_tags_counts:
+                print(f"Doctest blocks by persistent tags: ")
+                for tags, count in sorted(persistent_tags_counts.items(),
+                                          key=lambda i: i[1], reverse=True):
+                    print(f"{count:6} {' '.join(sorted(tags)) or '(untagged)'}")
+            if tags_counts:
+                print(f"Doctest examples by tags: ")
+                for tags, count in sorted(tags_counts.items(),
+                                          key=lambda i: i[1], reverse=True):
+                    print(f"{count:6} {' '.join(sorted(tags)) or '(untagged)'}")
 
 
 def fix_with_distribution(file_set, distribution=None, verbose=False):

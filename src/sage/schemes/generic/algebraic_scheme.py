@@ -98,7 +98,6 @@ AUTHORS:
 - Ben Hutz (2014): subschemes of Cartesian products of projective space
 
 - Ben Hutz (2017): split subschemes types into respective folders
-
 """
 
 # ****************************************************************************
@@ -117,9 +116,9 @@ import sage.rings.abc
 
 from sage.categories.number_fields import NumberFields
 
-from sage.rings.ideal import is_Ideal
+from sage.rings.ideal import Ideal_generic
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.rings.finite_rings.finite_field_base import FiniteField
 
 from sage.misc.latex import latex
@@ -135,17 +134,18 @@ import sage.schemes.affine
 from . import ambient_space
 from . import scheme
 
+
 def is_AlgebraicScheme(x):
     """
     Test whether ``x`` is an algebraic scheme.
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
     OUTPUT:
 
-    Boolean. Whether ``x`` is an algebraic scheme, that is, a
+    boolean; whether ``x`` is an algebraic scheme, that is, a
     subscheme of an ambient space over a ring defined by polynomial
     equations.
 
@@ -249,18 +249,16 @@ class AlgebraicScheme(scheme.Scheme):
             sage: S = AlgebraicScheme(P); S
             Subscheme of Projective Space of dimension 3 over Integer Ring
             sage: S._latex_()
-            '\\text{Subscheme of ${\\mathbf P}_{\\Bold{Z}}^3$}'
+            '\\text{Subscheme of ${\\mathbf P}_{\\Bold{Z}}^{3}$}'
         """
         return r"\text{{Subscheme of ${}$}}".format(latex(self.__A))
 
     def is_projective(self):
         """
-        Return True if self is presented as a subscheme of an ambient
+        Return ``True`` if ``self`` is presented as a subscheme of an ambient
         projective space.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -376,7 +374,7 @@ class AlgebraicScheme(scheme.Scheme):
           or neighborhood of a point then the embedding is the
           embedding into the original scheme.
 
-        * A :class:`NotImplementedError` is raised if the construction of
+        * A :exc:`NotImplementedError` is raised if the construction of
           the embedding morphism is not implemented yet.
 
         EXAMPLES::
@@ -470,7 +468,7 @@ class AlgebraicScheme(scheme.Scheme):
 
         OUTPUT:
 
-        A point of ``self``. This raises :class:`AttributeError` if there
+        A point of ``self``. This raises :exc:`AttributeError` if there
         is no distinguished point, depending on how ``self`` was constructed.
 
         EXAMPLES::
@@ -535,15 +533,13 @@ class AlgebraicScheme(scheme.Scheme):
 
     def _homset(self, *args, **kwds):
         """
-        Construct the Hom-set
+        Construct the Hom-set.
 
         INPUT:
 
         Same as :class:`sage.schemes.generic.homset.SchemeHomset_generic`.
 
-        OUTPUT:
-
-        The Hom-set of the ambient space.
+        OUTPUT: the Hom-set of the ambient space
 
         EXAMPLES::
 
@@ -605,9 +601,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
         preferred method to construct such subschemes is to use
         :meth:`complement` method of algebraic schemes.
 
-    OUTPUT:
-
-    An instance of :class:`AlgebraicScheme_quasi`.
+    OUTPUT: an instance of :class:`AlgebraicScheme_quasi`
 
     EXAMPLES::
 
@@ -629,7 +623,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
 
         INPUT:
 
-        - ``X``, ``Y`` -- two subschemes of the same ambient space.
+        - ``X``, ``Y`` -- two subschemes of the same ambient space
 
         TESTS::
 
@@ -676,7 +670,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
                x - y
             sage: U._latex_()
             '\\text{Quasi-projective subscheme }
-             (X\\setminus Y)\\subset {\\mathbf P}_{\\Bold{Z}}^2,\\text{ where }
+             (X\\setminus Y)\\subset {\\mathbf P}_{\\Bold{Z}}^{2},\\text{ where }
              X \\text{ is defined by }\\text{no polynomials},\\text{ and }
              Y \\text{ is defined by } x - y.'
         """
@@ -725,7 +719,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
 
     def X(self):
         """
-        Return the scheme `X` such that self is represented as `X - Y`.
+        Return the scheme `X` such that ``self`` is represented as `X - Y`.
 
         EXAMPLES::
 
@@ -740,7 +734,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
 
     def Y(self):
         """
-        Return the scheme `Y` such that self is represented as `X - Y`.
+        Return the scheme `Y` such that ``self`` is represented as `X - Y`.
 
         EXAMPLES::
 
@@ -756,7 +750,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
     def _check_satisfies_equations(self, v):
         """
         Verify that the coordinates of v define a point on this scheme, or
-        raise a TypeError.
+        raise a :exc:`TypeError`.
 
         EXAMPLES::
 
@@ -835,16 +829,13 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
         Return the set of rational points on this algebraic scheme
         over the field `F`.
 
-        INPUT:
+        INPUT: keyword arguments:
 
-        kwds:
+        - ``bound`` -- integer (default: 0); the bound for the coordinates for
+          subschemes with dimension at least 1
 
-        - ``bound`` -- integer (default: 0). The bound for the coordinates for
-          subschemes with dimension at least 1.
-
-        - ``F`` -- field (default: base ring). The field to compute
-          the rational points over.
-
+        - ``F`` -- field (default: base ring); the field to compute
+          the rational points over
 
         EXAMPLES::
 
@@ -874,7 +865,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
             F = self.base_ring()
 
         if bound == 0:
-            if is_RationalField(F):
+            if isinstance(F, RationalField):
                 raise TypeError("A positive bound (= %s) must be specified." % bound)
             if not isinstance(F, FiniteField):
                 raise TypeError("Argument F (= %s) must be a finite field." % F)
@@ -899,16 +890,14 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
     INPUT:
 
-    -  ``A`` -- ambient space (e.g. affine or projective `n`-space)
+    - ``A`` -- ambient space (e.g. affine or projective `n`-space)
 
-    -  ``polynomials`` -- single polynomial, ideal or iterable of defining
-       polynomials; in any case polynomials must belong to the coordinate
-       ring of the ambient space and define valid polynomial functions (e.g.
-       they should be homogeneous in the case of a projective space)
+    - ``polynomials`` -- single polynomial, ideal or iterable of defining
+      polynomials; in any case polynomials must belong to the coordinate
+      ring of the ambient space and define valid polynomial functions (e.g.
+      they should be homogeneous in the case of a projective space)
 
-    OUTPUT:
-
-    - algebraic scheme
+    OUTPUT: algebraic scheme
 
     EXAMPLES::
 
@@ -937,17 +926,17 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
               x^2 - y*z
         """
-        from sage.rings.polynomial.multi_polynomial_sequence import is_PolynomialSequence
+        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_generic
 
         AlgebraicScheme.__init__(self, A, category=category)
         self._base_ring = A.base_ring()
         R = A.coordinate_ring()
-        if is_Ideal(polynomials):
+        if isinstance(polynomials, Ideal_generic):
             I = polynomials
             polynomials = I.gens()
-            if I.ring() is R: # Otherwise we will recompute I later after
+            if I.ring() is R:  # Otherwise we will recompute I later after
                 self.__I = I  # converting generators to the correct ring
-        if isinstance(polynomials, tuple) or is_PolynomialSequence(polynomials) or is_iterator(polynomials):
+        if isinstance(polynomials, (tuple, PolynomialSequence_generic)) or is_iterator(polynomials):
             polynomials = list(polynomials)
         elif not isinstance(polynomials, list):
             # Looks like we got a single polynomial
@@ -964,7 +953,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
     def _check_satisfies_equations(self, v):
         """
         Verify that the coordinates of v define a point on this scheme, or
-        raise a TypeError.
+        raise a :exc:`TypeError`.
 
         EXAMPLES::
 
@@ -1048,13 +1037,13 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             Closed subscheme of Projective Space of dimension 2 over Finite Field of size 11 defined by:
               x^2 - y*z
             sage: S._latex_()
-            '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^2 \\text{ defined by } x^{2} - y z'
+            '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^{2} \\text{ defined by } x^{2} - y z'
             sage: S = P.subscheme([x^2 - y*z, x^5]); S
             Closed subscheme of Projective Space of dimension 2 over Finite Field of size 11 defined by:
               x^2 - y*z,
               x^5
             sage: S._latex_()
-            '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^2 \\text{ defined by } x^{2} - y z, x^{5}'
+            '\\text{Closed subscheme of } {\\mathbf P}_{\\Bold{F}_{11}}^{2} \\text{ defined by } x^{2} - y z, x^{5}'
         """
         polynomials = ', '.join(latex(f) for f in self.defining_polynomials())
         if not polynomials:
@@ -1123,7 +1112,6 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: S.normalize_defining_polynomials()
             sage: S.defining_polynomials()
             (x^2 + 2*x*y, 3*x + 8*y)
-
         """
         BR = self.base_ring()
         if (BR == ZZ
@@ -1153,9 +1141,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         Return the ideal that defines this scheme as a subscheme
         of its ambient space.
 
-        OUTPUT:
-
-        An ideal in the coordinate ring of the ambient space.
+        OUTPUT: an ideal in the coordinate ring of the ambient space
 
         EXAMPLES::
 
@@ -1177,9 +1163,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         r"""
         Return the codimension of the algebraic subscheme.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1278,7 +1262,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         r"""
         Return whether this subscheme is or is not irreducible.
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1313,9 +1297,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         Return the matrix `\frac{\partial f_i}{\partial x_j}` of
         (formal) partial derivatives.
 
-        OUTPUT:
-
-        A matrix of polynomials.
+        OUTPUT: a matrix of polynomials
 
         EXAMPLES::
 
@@ -1356,9 +1338,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
           Jacobian ideal. An example of a reference that does include
           the defining equations is [Laz2004]_, p. 181.
 
-        OUTPUT:
-
-        An ideal in the coordinate ring of the ambient space.
+        OUTPUT: an ideal in the coordinate ring of the ambient space
 
         EXAMPLES::
 
@@ -1436,7 +1416,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
     def union(self, other):
         """
-        Return the scheme-theoretic union of self and other in their common
+        Return the scheme-theoretic union of ``self`` and ``other`` in their common
         ambient space.
 
         EXAMPLES: We construct the union of a line and a tripled-point on
@@ -1483,9 +1463,11 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         """
         Return the Cartesian power of this space.
 
-        INPUT: ``m`` -- integer.
+        INPUT:
 
-        OUTPUT: subscheme of product of ambient spaces.
+        - ``m`` -- integer
+
+        OUTPUT: subscheme of product of ambient spaces
 
         EXAMPLES::
 
@@ -1548,7 +1530,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         - ``right`` -- a subscheme of similar type
 
-        OUTPUT: a subscheme of a the product of the ambient spaces.
+        OUTPUT: a subscheme of a the product of the ambient spaces
 
         EXAMPLES::
 
@@ -1742,18 +1724,16 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         modulo primes is used. See the documentation in homset for the details of the
         sieving algorithm.
 
-        INPUT:
+        INPUT: keyword arguments:
 
-        kwds:
+        - ``bound`` -- integer (default: 0); the bound for the coordinates for
+          subschemes with dimension at least 1
 
-        - ``bound`` -- integer (default: 0). The bound for the coordinates for
-          subschemes with dimension at least 1.
-
-        - ``prec`` -- integer (default: 53). The precision to use to
-          compute the elements of bounded height for number fields.
+        - ``prec`` -- integer (default: 53); the precision to use to
+          compute the elements of bounded height for number fields
 
         - ``F`` -- field (default: base ring). The field to compute
-          the rational points over.
+          the rational points over
 
         - ``point_tolerance`` -- positive real number (default: 10^(-10)).
           For numerically inexact fields, two points are considered the same
@@ -1763,7 +1743,8 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
-        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
+        - ``tolerance`` -- a rational number in (0,1] used in Doyle-Krumm
+          algorithm-4
 
         OUTPUT: list of points in subscheme or ambient space
 
@@ -1788,7 +1769,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         over the rationals::
 
             sage: E = EllipticCurve('37a')                                              # needs sage.schemes
-            sage: E.rational_points(bound=8)                                            # needs sage.schemes
+            sage: E.rational_points(bound=8)                                            # needs sage.libs.singular sage.schemes
             [(-1 : -1 : 1), (-1 : 0 : 1), (0 : -1 : 1), (0 : 0 : 1), (0 : 1 : 0),
              (1/4 : -5/8 : 1), (1/4 : -3/8 : 1), (1 : -1 : 1), (1 : 0 : 1),
              (2 : -3 : 1), (2 : 2 : 1)]
@@ -1797,8 +1778,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         enumerated. ::
 
             sage: Etilde = E.base_extend(GF(3))                                         # needs sage.schemes
-            sage: Etilde.rational_points()                                              # needs sage.schemes
-            [(0 : 1 : 0), (0 : 0 : 1), (0 : 2 : 1), (1 : 0 : 1), (1 : 2 : 1), (2 : 0 : 1), (2 : 2 : 1)]
+            sage: Etilde.rational_points()                                              # needs sage.libs.singular sage.schemes
+            [(0 : 1 : 0), (0 : 0 : 1), (0 : 2 : 1), (1 : 0 : 1),
+             (1 : 2 : 1), (2 : 0 : 1), (2 : 2 : 1)]
 
         The class of hyperelliptic curves does not (yet) support
         desingularization of the places at infinity into two points::
@@ -1806,27 +1788,27 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: FF = FiniteField(7)
             sage: P.<x> = PolynomialRing(FiniteField(7))
             sage: C = HyperellipticCurve(x^8 + x + 1)                                   # needs sage.schemes
-            sage: C.rational_points()                                                   # needs sage.schemes
+            sage: C.rational_points()                                                   # needs sage.libs.singular sage.schemes
             [(0 : 1 : 0), (0 : 1 : 1), (0 : 6 : 1), (2 : 0 : 1),
              (4 : 0 : 1), (6 : 1 : 1), (6 : 6 : 1)]
 
         ::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field sage.rings.real_mpfr
             sage: K.<v> = QuadraticField(-3)
             sage: P.<x,y,z> = ProjectiveSpace(K, 2)
             sage: X = P.subscheme([x^2 - v^2*x*z, y*x - v*z^2])
-            sage: X.rational_points(F=CC)
+            sage: X.rational_points(F=CC)                                               # needs sage.libs.singular
             [(-3.00000000000000 : -0.577350269189626*I : 1.00000000000000),
              (0.000000000000000 : 1.00000000000000 : 0.000000000000000)]
 
         ::
 
-            sage: # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field sage.rings.real_mpfr
             sage: K.<v> = QuadraticField(3)
             sage: A.<x,y> = AffineSpace(K, 2)
             sage: X = A.subscheme([x^2 - v^2*y, y*x - v])
-            sage: X.rational_points(F=RR)
+            sage: X.rational_points(F=RR)                                               # needs sage.libs.singular
             [(1.73205080756888, 1.00000000000000)]
 
         .. TODO::
@@ -1856,15 +1838,13 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
     def change_ring(self, R):
         r"""
-        Returns a new algebraic subscheme which is this subscheme coerced to ``R``.
+        Return a new algebraic subscheme which is this subscheme coerced to ``R``.
 
         INPUT:
 
-        - ``R`` -- ring or morphism.
+        - ``R`` -- ring or morphism
 
-        OUTPUT:
-
-        - A new algebraic subscheme which is this subscheme coerced to ``R``.
+        OUTPUT: a new algebraic subscheme which is this subscheme coerced to ``R``
 
         EXAMPLES::
 
@@ -2007,7 +1987,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         If the input and the output ideals are radical, this is
         equivalent to the statement about algebraic varieties above.
 
-        OUTPUT: Affine subscheme - the Weil restriction of ``self``.
+        OUTPUT: affine subscheme; the Weil restriction of ``self``
 
         EXAMPLES::
 

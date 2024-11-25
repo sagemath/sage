@@ -30,6 +30,7 @@ from sage.rings.ring import CommutativeRing
 from sage.structure.parent import Parent
 from sage.combinat.integer_vector import IntegerVectors
 
+
 class LaurentPolynomialRing_generic(CommutativeRing, Parent):
     """
     Laurent polynomial ring (base class).
@@ -42,11 +43,12 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         sage: R.<x1,x2> = LaurentPolynomialRing(QQ)
         sage: R.category()
         Join of Category of unique factorization domains
+            and Category of algebras with basis
+                over (number fields and quotient fields and metric spaces)
             and Category of commutative algebras
                 over (number fields and quotient fields and metric spaces)
             and Category of infinite sets
         sage: TestSuite(R).run()
-
     """
     def __init__(self, R):
         """
@@ -85,7 +87,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def gen(self, i=0):
         r"""
-        Returns the `i^{th}` generator of self.  If i is not specified, then
+        Return the `i`-th generator of ``self``.  If `i` is not specified, then
         the first generator will be returned.
 
         EXAMPLES::
@@ -119,11 +121,9 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         INPUT:
 
-        - ``depth`` -- an integer or :mod:`Infinity <sage.rings.infinity>`.
+        - ``depth`` -- integer or :mod:`Infinity <sage.rings.infinity>`
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -147,7 +147,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def is_integral_domain(self, proof=True):
         """
-        Return ``True`` if self is an integral domain.
+        Return ``True`` if ``self`` is an integral domain.
 
         EXAMPLES::
 
@@ -165,7 +165,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def is_noetherian(self):
         """
-        Return ``True`` if self is Noetherian.
+        Return ``True`` if ``self`` is Noetherian.
 
         EXAMPLES::
 
@@ -183,7 +183,6 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: LaurentPolynomialRing(QQ, 2, 'x,y').construction()
             (LaurentPolynomialFunctor,
              Univariate Laurent Polynomial Ring in x over Rational Field)
-
         """
         from sage.categories.pushout import LaurentPolynomialFunctor
         from .laurent_polynomial_ring import LaurentPolynomialRing
@@ -421,13 +420,12 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def term_order(self):
         """
-        Returns the term order of self.
+        Return the term order of ``self``.
 
         EXAMPLES::
 
             sage: LaurentPolynomialRing(QQ, 2, 'x').term_order()
             Degree reverse lexicographic term order
-
         """
         return self._R.term_order()
 
@@ -437,7 +435,6 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
             sage: LaurentPolynomialRing(QQ, 2, 'x').is_finite()
             False
-
         """
         return False
 
@@ -452,7 +449,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def polynomial_ring(self):
         """
-        Returns the polynomial ring associated with self.
+        Return the polynomial ring associated with ``self``.
 
         EXAMPLES::
 
@@ -465,7 +462,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def characteristic(self):
         """
-        Returns the characteristic of the base ring.
+        Return the characteristic of the base ring.
 
         EXAMPLES::
 
@@ -473,7 +470,6 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             0
             sage: LaurentPolynomialRing(GF(3), 2, 'x').characteristic()
             3
-
         """
         return self.base_ring().characteristic()
 
@@ -498,13 +494,13 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         INPUT:
 
-        - ``min_valuation`` -- integer (default: ``-2``); the
+        - ``min_valuation`` -- integer (default: `-2`); the
           minimal allowed valuation of the polynomial
 
-        - ``max_degree`` -- integer (default: ``2``); the
+        - ``max_degree`` -- integer (default: `2`); the
           maximal allowed degree of the polynomial
 
-        - ``*args, **kwds`` -- passed to the random element generator of the
+        - ``*args``, ``**kwds`` -- passed to the random element generator of the
           base polynomial ring and base ring itself
 
         EXAMPLES::
@@ -625,7 +621,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         abs_deg = (max_degree - min_valuation)
         f_rand = self._R.random_element(degree=abs_deg, *args, **kwds)
 
-        # Cast this polynomial back the `self``
+        # Cast this polynomial back the ``self``
         f = self(f_rand)
 
         # For the univariate case we simply shift by x**min_valuation

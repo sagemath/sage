@@ -49,21 +49,22 @@ AUTHORS:
 - Ivo Maffei (2020-07-09): initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2020 Ivo Maffei <ivomaffei@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.matrix.constructor import matrix
 from sage.coding.linear_code import (AbstractLinearCode,
                                      LinearCodeGeneratorMatrixEncoder)
 from sage.arith.misc import is_prime_power, gcd
+
 
 class KasamiCode(AbstractLinearCode):
     r"""
@@ -89,10 +90,10 @@ class KasamiCode(AbstractLinearCode):
 
     INPUT:
 
-    - ``s,t`` -- (integer) the parameters of the Kasami code
+    - ``s``, ``t`` -- integer; the parameters of the Kasami code
 
-    - ``extended`` -- (default: ``True``) if set to ``True``,
-      creates an extended Kasami code.
+    - ``extended`` -- boolean (default: ``True``); if set to ``True``,
+      creates an extended Kasami code
 
     EXAMPLES::
 

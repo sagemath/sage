@@ -35,6 +35,7 @@ from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.data_structures.bitset_base cimport *
+from sage.matrix.constructor import matrix
 from sage.matrix.matrix2 cimport Matrix
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
@@ -42,7 +43,6 @@ from sage.rings.rational_field import QQ
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.libs.gmp.mpq cimport *
-import sage.matrix.constructor
 
 
 cdef class LeanMatrix:
@@ -105,7 +105,7 @@ cdef class LeanMatrix:
             True
         """
         cdef long r, c
-        M = sage.matrix.constructor.Matrix(self.base_ring(), self._nrows, self._ncols)
+        M = matrix(self.base_ring(), self._nrows, self._ncols)
         for r in range(self._nrows):
             for c in range(self._ncols):
                 M[r, c] = self.get_unsafe(r, c)
@@ -494,13 +494,13 @@ cdef class LeanMatrix:
     cdef shifting_all(self, P_rows, P_cols, Q_rows, Q_cols, int m):
         r"""
         Given a partial matrix `M`. If the submatrix `M` using rows
-        `P_rows` columns `P_cols` and submatrix using rows `Q_rows` columns
-        `Q_cols` can be extended to a ``m``-separator, then it returns
-        `True, E`, where `E` is a ``m``-separator. Otherwise it returns
-        `False, None`
+        ``P_rows`` columns ``P_cols`` and submatrix using rows ``Q_rows``
+        columns ``Q_cols`` can be extended to an ``m``-separator, then it
+        returns ``True, E``, where `E` is an ``m``-separator. Otherwise it
+        returns ``False, None``.
 
-        `P_rows` and `Q_rows` must be disjoint subsets of row indices.
-        `P_cols` and `Q_cols` must be disjoint subsets of column indices.
+        ``P_rows`` and ``Q_rows`` must be disjoint subsets of row indices.
+        ``P_cols`` and ``Q_cols`` must be disjoint subsets of column indices.
 
         Internal version does not verify the above properties hold.
 
@@ -514,8 +514,9 @@ cdef class LeanMatrix:
 
         OUTPUT:
 
-        - `False, None`  -- if the input submatrices does not induce a `m``-separator.
-        - `True, E` -- if there exist a ``m``-separator ``E``.
+        - ``False, None`` -- if the input submatrices does not induce an
+          ``m``-separator
+        - ``True, E`` -- if there exists an ``m``-separator ``E``
         """
         for z in range(self.ncols()):
             if z in P_cols+Q_cols:
@@ -540,9 +541,9 @@ cdef class LeanMatrix:
         optional column `z2` attached.
         Let `E_2` be the submatrix using rows `U_2` and columns `V_1` with
         optional column `z1` attached.
-        If `E_1` and `E_2` can be extended to a ``m``-separator, then it
-        returns `True, E`, where `E` is a ``m``-separator. Otherwise it
-        returns `False, None`
+        If `E_1` and `E_2` can be extended to an ``m``-separator, then it
+        returns ``True, E``, where `E` is an ``m``-separator. Otherwise it
+        returns ``False, None``.
 
         `U_1` and `U_2` must be disjoint subsets of row indices.
         `V_1` and `V_2` must be disjoint subsets of column indices.
@@ -555,14 +556,16 @@ cdef class LeanMatrix:
         - ``V_2`` -- list of column indices of the first submatrix
         - ``U_2`` -- list of row indices of the second submatrix
         - ``V_1`` -- list of column indices of the second submatrix
-        - ``z2``  -- start by add an additional column with index `z2` to `V_2`
-        - ``z1``  -- start by add an additional column with index `z1` to `V_1`
+        - ``z2`` -- start by add an additional column with index `z2` to `V_2`
+        - ``z1`` -- start by add an additional column with index `z1` to `V_1`
         - ``m`` -- separation size
 
         OUTPUT:
 
-        - `False, None`  -- if the input submatrices does not induce a `m``-separator.
-        - `True, (X,Y)` -- row indices `X` and column indices `Y` defines a ``m``-separator.
+        - ``False, None`` -- if the input submatrices does not induce an
+          ``m``-separator
+        - ``True, (X,Y)`` -- row indices `X` and column indices `Y` defines an
+          ``m``-separator
         """
         # make copy because of destructive updates
         cdef list X_1 = list(U_1)
@@ -590,8 +593,8 @@ cdef class LeanMatrix:
 
         cdef list lU_2 = sorted(list(U_2))
         cdef list lV_2 = sorted(list(V_2))
-        cdef dict rU = dict(zip(lU_2,range(len(U_2))))
-        cdef dict rV = dict(zip(lV_2,range(len(V_2))))
+        cdef dict rU = dict(zip(lU_2, range(len(U_2))))
+        cdef dict rV = dict(zip(lV_2, range(len(V_2))))
 
         # find a unique representation of every column in U_1xY_3 using columns in U_1xV_2
         B = self.matrix_from_rows_and_columns(list(U_1), range(len(Y)))
@@ -644,8 +647,8 @@ cdef class GenericMatrix(LeanMatrix):
     - ``nrows`` -- number of rows
     - ``ncols`` -- number of columns
     - ``M`` -- (default: ``None``) a ``Matrix`` or ``GenericMatrix`` of
-      dimensions at most ``m*n``.
-    - ``ring`` -- (default: ``None``) a Sage ring.
+      dimensions at most ``m*n``
+    - ``ring`` -- (default: ``None``) a Sage ring
 
     .. NOTE::
 
@@ -935,11 +938,11 @@ cdef class BinaryMatrix(LeanMatrix):
 
     INPUT:
 
-    - ``m`` -- Number of rows.
-    - ``n`` -- Number of columns.
-    - ``M`` -- (default: ``None``) Matrix or BinaryMatrix instance.
+    - ``m`` -- number of rows
+    - ``n`` -- number of columns
+    - ``M`` -- (default: ``None``) ``Matrix`` or ``BinaryMatrix`` instance.
       Assumption: dimensions of ``M`` are at most ``m`` by ``n``.
-    - ``ring`` -- (default: ``None``) ignored.
+    - ``ring`` -- (default: ``None``) ignored
 
     EXAMPLES::
 
@@ -1018,7 +1021,7 @@ cdef class BinaryMatrix(LeanMatrix):
 
     def __repr__(self):
         r"""
-        Return representation string
+        Return representation string.
 
         EXAMPLES::
 
@@ -1049,7 +1052,7 @@ cdef class BinaryMatrix(LeanMatrix):
             True
         """
         cdef long i, j
-        M = sage.matrix.constructor.Matrix(GF(2), self._nrows, self._ncols)
+        M = matrix(GF(2), self._nrows, self._ncols)
         for i in range(self._nrows):
             for j in range(self._ncols):
                 if bitset_in(self._M[i], j):
@@ -1544,11 +1547,11 @@ cdef class TernaryMatrix(LeanMatrix):
 
     INPUT:
 
-    - ``m`` -- Number of rows.
-    - ``n`` -- Number of columns.
+    - ``m`` -- number of rows
+    - ``n`` -- number of columns
     - ``M`` -- (default: ``None``) ``Matrix`` or ``TernaryMatrix`` instance.
       Assumption: dimensions of ``M`` are at most ``m`` by ``n``.
-    - ``ring`` -- (default: ``None``) ignored.
+    - ``ring`` -- (default: ``None``) ignored
 
     EXAMPLES::
 
@@ -1646,7 +1649,7 @@ cdef class TernaryMatrix(LeanMatrix):
 
     def __repr__(self):
         r"""
-        Return representation string
+        Return representation string.
 
         EXAMPLES::
 
@@ -1686,7 +1689,7 @@ cdef class TernaryMatrix(LeanMatrix):
             True
         """
         cdef int i, j
-        M = sage.matrix.constructor.Matrix(GF(3), self._nrows, self._ncols)
+        M = matrix(GF(3), self._nrows, self._ncols)
         for i in range(self._nrows):
             for j in range(self._ncols):
                 M[i, j] = self.get(i, j)
@@ -2101,13 +2104,13 @@ cdef class QuaternaryMatrix(LeanMatrix):
 
     INPUT:
 
-    - ``m`` -- Number of rows
-    - ``n`` -- Number of columns
-    - ``M`` -- (default: ``None``) A QuaternaryMatrix or LeanMatrix or (Sage)
-      Matrix instance. If not given, new matrix will be filled with zeroes.
-      Assumption: ``M`` has dimensions at most ``m`` times ``n``.
-    - ``ring`` -- (default: ``None``) A copy of GF(4). Useful for specifying
-      generator name.
+    - ``m`` -- number of rows
+    - ``n`` -- number of columns
+    - ``M`` -- (default: ``None``) ``QuaternaryMatrix`` or ``LeanMatrix`` or
+      (Sage) ``Matrix`` instance. If not given, new matrix will be filled with
+      zeroes. Assumption: ``M`` has dimensions at most ``m`` times ``n``.
+    - ``ring`` -- (default: ``None``) a copy of GF(4); useful for specifying
+      generator name
 
     EXAMPLES::
 
@@ -2222,7 +2225,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
 
     def __repr__(self):
         r"""
-        Return representation string
+        Return representation string.
 
         EXAMPLES::
 
@@ -2264,7 +2267,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
             [0 0 0]
             [0 0 0]
         """
-        M = sage.matrix.constructor.Matrix(self._gf4, self._nrows, self._ncols)
+        M = matrix(self._gf4, self._nrows, self._ncols)
         for i in range(self._nrows):
             for j in range(self._ncols):
                 M[i, j] = self.get(i, j)
@@ -2547,7 +2550,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
         Return a submatrix indexed by indicated rows and columns, as well as
         the column order of the resulting submatrix.
         """
-        cdef QuaternaryMatrix A = QuaternaryMatrix(len(rows), len(columns), ring = self._gf4)
+        cdef QuaternaryMatrix A = QuaternaryMatrix(len(rows), len(columns), ring=self._gf4)
         cdef long r, c, lc, lg
         cdef mp_bitcnt_t *cols
         # deal with trivial case

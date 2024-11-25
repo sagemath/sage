@@ -1,3 +1,6 @@
+from pathlib import Path
+from warnings import warn
+
 from sage.rings.polynomial.pbori.pbori import mod_mon_set
 from .pbori import (BooleSet, GroebnerStrategy, ReductionStrategy,
                     parallel_reduce, easy_linear_factors)
@@ -6,8 +9,6 @@ from .PyPolyBoRi import (Monomial, Polynomial, Variable,
 from .easy_polynomials import (easy_linear_polynomials as
                                easy_linear_polynomials_func)
 from .statistics import used_vars_set
-from warnings import warn
-import os
 
 
 class GeneratorLimitExceeded(Exception):
@@ -69,9 +70,8 @@ def build_and_print_matrices(v, strat):
             assert j < cols
             im.putpixel((j, i), 0)
 
-    file_name = strat.matrix_prefix + str(mat_counter) + ".png"
-    if os.path.exists(file_name):
-        os.remove(file_name)
+    file_name = Path(strat.matrix_prefix + str(mat_counter) + ".png")
+    file_name.unlink(missing_ok=True)
     im.save(file_name)
     del im
 
@@ -84,8 +84,8 @@ def multiply_polynomials(l, ring):
     TESTS::
 
         sage: from sage.rings.polynomial.pbori import *
-        sage: r=Ring(1000)
-        sage: x=r.variable
+        sage: r = Ring(1000)
+        sage: x = r.variable
         sage: from sage.rings.polynomial.pbori.nf import multiply_polynomials
         sage: multiply_polynomials([x(3), x(2)+x(5)*x(6), x(0), x(0)+1], r)
         0
@@ -149,9 +149,8 @@ def build_and_print_matrices_deg_colored(v, strat):
             assert j < cols
             hsl = str(270 - (270 * i2deg[j]) / max_deg)
             im.putpixel((j, i), ImageColor.getrgb("hsl(" + hsl + ",100%,50%)"))
-    file_name = strat.matrix_prefix + str(mat_counter) + ".png"
-    if os.path.exists(file_name):
-        os.remove(file_name)
+    file_name = Path(strat.matrix_prefix + str(mat_counter) + ".png")
+    file_name.unlink(missing_ok=True)
     im.save(file_name)
     del im
 
@@ -591,7 +590,7 @@ def symmGB_F2_C(G, opt_exchange=True,
                 opt_allow_recursion=False, use_noro=False, use_faugere=False,
                 ll=False, opt_linear_algebra_in_last_block=True,
                 max_generators=None, red_tail_deg_growth=True,
-                modified_linear_algebra=True, matrix_prefix="",
+                modified_linear_algebra=True, matrix_prefix='',
                 draw_matrices=False):
     if use_noro:
         raise NotImplementedError("noro not implemented for symmgb")

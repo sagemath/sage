@@ -165,7 +165,6 @@ REFERENCES:
   <http://familygamesamerica.com/mainsite/consumers/productview.php?pro_id=274&search=quantumino>`_
 - [2] `Quantumino - How to Play <http://www.youtube.com/watch?v=jX_VKzakZi8>`_ on Youtube
 - [3] Knuth, Donald (2000). *Dancing links*. :arxiv:`cs/0011047`.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2011 Sebastien Labbe <slabqc@gmail.com>
@@ -206,7 +205,7 @@ pentaminos.append(Polyomino([(0,0,0), (1,0,0), (1,1,0), (2,1,0), (2,1,1)], color
 pentaminos.append(Polyomino([(0,0,0), (0,1,0), (1,1,0), (1,2,0), (1,2,1)], color='purple'))
 pentaminos.append(Polyomino([(0,1,0), (1,0,0), (1,1,0), (1,1,1), (1,2,0)], color='gray'))
 
-def show_pentaminos(box=(5,8,2)):
+def show_pentaminos(box=(5, 8, 2)):
     r"""
     Show the 17 3-D pentaminos included in the game and the `5 \times 8
     \times 2` box where 16 of them must fit.
@@ -216,9 +215,7 @@ def show_pentaminos(box=(5,8,2)):
     - ``box`` -- tuple of size three (default: ``(5,8,2)``),
       size of the box
 
-    OUTPUT:
-
-    3D Graphic object
+    OUTPUT: 3D Graphic object
 
     EXAMPLES::
 
@@ -281,7 +278,7 @@ class QuantuminoState(SageObject):
         Quantumino state where the following pentamino is put aside :
         Polyomino: [(0, 0, 0), (0, 1, 0), (0, 2, 0), (1, 0, 0), (1, 0, 1)], Color: green
     """
-    def __init__(self, pentos, aside, box=(5,8,2)):
+    def __init__(self, pentos, aside, box=(5, 8, 2)):
         r"""
         EXAMPLES::
 
@@ -349,9 +346,7 @@ class QuantuminoState(SageObject):
         r"""
         Return the solution as a 3D Graphic object.
 
-        OUTPUT:
-
-            3D Graphic Object
+        OUTPUT: 3D Graphic Object
 
         EXAMPLES::
 
@@ -430,7 +425,7 @@ class QuantuminoSolver(SageObject):
 
     def __repr__(self):
         r"""
-        String representation
+        String representation.
 
         EXAMPLES::
 
@@ -485,9 +480,7 @@ class QuantuminoSolver(SageObject):
           - ``'common'`` -- common part between two consecutive solutions
           - ``'incremental'`` -- one piece change at a time
 
-        OUTPUT:
-
-            iterator of QuantuminoState
+        OUTPUT: iterator of :class:`QuantuminoState`
 
         EXAMPLES:
 
@@ -575,9 +568,7 @@ class QuantuminoSolver(SageObject):
         r"""
         Return the number of solutions.
 
-        OUTPUT:
-
-            integer
+        OUTPUT: integer
 
         EXAMPLES::
 

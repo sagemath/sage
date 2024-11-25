@@ -1,4 +1,5 @@
 from sage.structure.sage_object cimport SageObject
+from sage.matroids.set_system cimport SetSystem
 
 cdef class Matroid(SageObject):
     cdef public _SageObject__custom_name
@@ -7,29 +8,29 @@ cdef class Matroid(SageObject):
     cdef int _stored_size
 
     # virtual methods
-    cpdef groundset(self)
-    cpdef _rank(self, X)
+    cpdef frozenset groundset(self)
+    cpdef int _rank(self, frozenset X) except? -1
 
     # internal methods, assuming verified input
-    cpdef _max_independent(self, X)
-    cpdef _circuit(self, X)
-    cpdef _fundamental_circuit(self, B, e)
-    cpdef _closure(self, X)
-    cpdef _corank(self, X)
-    cpdef _max_coindependent(self, X)
-    cpdef _cocircuit(self, X)
-    cpdef _fundamental_cocircuit(self, B, e)
-    cpdef _coclosure(self, X)
-    cpdef _augment(self, X, Y)
+    cpdef frozenset _max_independent(self, frozenset X)
+    cpdef frozenset _circuit(self, frozenset X)
+    cpdef frozenset _fundamental_circuit(self, frozenset B, e)
+    cpdef frozenset _closure(self, frozenset X)
+    cpdef int _corank(self, frozenset X) noexcept
+    cpdef frozenset _max_coindependent(self, frozenset X)
+    cpdef frozenset _cocircuit(self, frozenset X)
+    cpdef frozenset _fundamental_cocircuit(self, frozenset B, e)
+    cpdef frozenset _coclosure(self, frozenset X)
+    cpdef frozenset _augment(self, frozenset X, frozenset Y)
 
-    cpdef _is_independent(self, X)
-    cpdef _is_basis(self, X)
-    cpdef _is_circuit(self, X)
-    cpdef _is_closed(self, X)
-    cpdef _is_coindependent(self, X)
-    cpdef _is_cobasis(self, X)
-    cpdef _is_cocircuit(self, X)
-    cpdef _is_coclosed(self, X)
+    cpdef bint _is_independent(self, frozenset X) noexcept
+    cpdef bint _is_basis(self, frozenset X) noexcept
+    cpdef bint _is_circuit(self, frozenset X) noexcept
+    cpdef bint _is_closed(self, frozenset X) noexcept
+    cpdef bint _is_coindependent(self, frozenset X) noexcept
+    cpdef bint _is_cobasis(self, frozenset X) noexcept
+    cpdef bint _is_cocircuit(self, frozenset X) noexcept
+    cpdef bint _is_coclosed(self, frozenset X) noexcept
 
     cpdef _minor(self, contractions, deletions)
     cpdef _has_minor(self, N, bint certificate=*)
@@ -104,30 +105,30 @@ cdef class Matroid(SageObject):
     cpdef is_coclosed(self, X)
 
     # verification
-    cpdef is_valid(self)
+    cpdef is_valid(self, certificate=*)
 
     # enumeration
-    cpdef circuits(self)
-    cpdef nonspanning_circuits(self)
-    cpdef cocircuits(self)
-    cpdef noncospanning_cocircuits(self)
-    cpdef circuit_closures(self)
-    cpdef nonspanning_circuit_closures(self)
-    cpdef bases(self)
-    cpdef independent_sets(self)
-    cpdef independent_r_sets(self, long r)
-    cpdef nonbases(self)
-    cpdef dependent_r_sets(self, long r)
-    cpdef _extend_flags(self, flags)
-    cpdef _flags(self, r)
-    cpdef flats(self, r)
-    cpdef coflats(self, r)
-    cpdef hyperplanes(self)
-    cpdef f_vector(self)
-    cpdef whitney_numbers(self)
-    cpdef whitney_numbers2(self)
-    cpdef broken_circuits(self, ordering=*)
-    cpdef no_broken_circuits_sets(self, ordering=*)
+    cpdef SetSystem circuits(self, k=*)
+    cpdef SetSystem nonspanning_circuits(self)
+    cpdef SetSystem cocircuits(self)
+    cpdef SetSystem noncospanning_cocircuits(self)
+    cpdef dict circuit_closures(self)
+    cpdef dict nonspanning_circuit_closures(self)
+    cpdef SetSystem bases(self)
+    cpdef SetSystem independent_sets(self, long k=*)
+    cdef SetSystem _independent_sets(self)
+    cpdef SetSystem nonbases(self)
+    cpdef SetSystem dependent_sets(self, long k)
+    cpdef list _extend_flags(self, list flags)
+    cpdef list _flags(self, long k)
+    cpdef SetSystem flats(self, long k)
+    cpdef SetSystem coflats(self, long k)
+    cpdef SetSystem hyperplanes(self)
+    cpdef list f_vector(self)
+    cpdef list whitney_numbers(self)
+    cpdef list whitney_numbers2(self)
+    cpdef SetSystem broken_circuits(self, ordering=*)
+    cpdef SetSystem no_broken_circuits_sets(self, ordering=*)
 
     # polytopes
     cpdef matroid_polytope(self)
@@ -183,8 +184,8 @@ cdef class Matroid(SageObject):
     cpdef _is_3connected_CE(self, certificate=*)
     cpdef _is_3connected_BC(self, certificate=*)
     cpdef _is_3connected_BC_recursion(self, basis, fund_cocircuits)
-    cpdef is_paving(self)
-    cpdef is_sparse_paving(self)
+    cpdef bint is_paving(self) noexcept
+    cpdef bint is_sparse_paving(self) noexcept
     cpdef girth(self)
 
     # representability
@@ -194,8 +195,8 @@ cdef class Matroid(SageObject):
     cpdef _local_ternary_matroid(self, basis=*)
     cpdef ternary_matroid(self, randomized_tests=*, verify=*)
     cpdef is_ternary(self, randomized_tests=*)
-    cpdef is_regular(self)
-    cpdef is_graphic(self)
+    cpdef bint is_regular(self) noexcept
+    cpdef bint is_graphic(self) noexcept
 
     # matroid k-closed
     cpdef is_k_closed(self, int k)
@@ -233,9 +234,9 @@ cdef class Matroid(SageObject):
     cpdef broken_circuit_complex(self, ordering=*)
 
     # visualization
-    cpdef plot(self,B=*,lineorders=*,pos_method=*,pos_dict=*,save_pos=*)
-    cpdef show(self,B=*,lineorders=*,pos_method=*,pos_dict=*,save_pos=*,lims=*)
-    cpdef _fix_positions(self,pos_dict=*,lineorders=*)
+    cpdef plot(self, B=*, lineorders=*, pos_method=*, pos_dict=*, save_pos=*)
+    cpdef show(self, B=*, lineorders=*, pos_method=*, pos_dict=*, save_pos=*, lims=*)
+    cpdef _fix_positions(self, pos_dict=*, lineorders=*)
 
     # construction
     cpdef direct_sum(self, matroids)

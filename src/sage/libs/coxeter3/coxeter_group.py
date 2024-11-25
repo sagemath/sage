@@ -1,6 +1,5 @@
 # sage_setup: distribution = sagemath-coxeter3
 # sage.doctest: optional - coxeter3
-
 """
 Coxeter Groups implemented with Coxeter3
 """
@@ -37,7 +36,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             Coxeter group of type ['B', 2] implemented by Coxeter3
             sage: CoxeterGroup(CartanType(['B', 3]).relabel({1: 3, 2: 2, 3: 1}))
             Coxeter group of type ['B', 3] relabelled by {1: 3, 2: 2, 3: 1} implemented by Coxeter3
-
         """
         from sage.combinat.root_system.cartan_type import CartanType
         ct = CartanType(cartan_type)
@@ -147,7 +145,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
             sage: W.one()
             []
-
         """
         return self.element_class(self, [])
 
@@ -195,7 +192,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
     def is_finite(self):
         """
-        Return True if this is a finite Coxeter group.
+        Return ``True`` if this is a finite Coxeter group.
 
         EXAMPLES::
 
@@ -217,7 +214,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             2
             sage: W.length(W([1,1]))
             0
-
         """
         return x.length()
 
@@ -238,7 +234,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             [2 3 1]
             sage: m.index_set() == W.index_set()
             True
-
         """
         return CoxeterMatrix(self._coxgroup.coxeter_matrix(), self.index_set())
 
@@ -266,7 +261,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
             sage: W._an_element_()
             []
-
         """
         return self.element_class(self, [])
 
@@ -294,8 +288,9 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         INPUT:
 
         - ``u``, ``v`` -- elements of the underlying Coxeter group
-        - ``constant_term_one`` -- (default: ``True``) True uses the constant equals one convention,
-           False uses the Leclerc-Thibon convention
+        - ``constant_term_one`` -- boolean (default: ``True``); ``True`` uses
+          the constant equals one convention, ``False`` uses the Leclerc-Thibon
+          convention
 
         .. SEEALSO::
 
@@ -346,7 +341,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         We check that Coxeter3 and Sage's implementation give the same results::
 
             sage: C = CoxeterGroup(['B', 3], implementation='coxeter3')
-            sage: W = WeylGroup("B3",prefix="s")
+            sage: W = WeylGroup("B3",prefix='s')
             sage: [s1,s2,s3] = W.simple_reflections()
             sage: R.<q> = LaurentPolynomialRing(QQ)
             sage: KL = KazhdanLusztigPolynomial(W,q)
@@ -541,7 +536,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
                 1
                 sage: w0[1]
                 2
-
             """
             # Allow the error message to be raised by the underlying element
             return self.value[i]
@@ -626,7 +620,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
         def has_left_descent(self, i):
             """
-            Return True if ``i`` is a left descent of this element.
+            Return ``True`` if ``i`` is a left descent of this element.
 
             EXAMPLES::
 

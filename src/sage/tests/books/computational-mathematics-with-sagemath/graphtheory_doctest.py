@@ -158,7 +158,7 @@ Sage example in ./graphtheory.tex, line 644::
 
   sage: L = [graphs.CompleteGraph(i) for i in range(3,3+10)]
   sage: for number, G in enumerate(L):
-  ....:     G.plot().save(tmp_filename(ext=".png"))
+  ....:     G.plot().save(tmp_filename(ext='.png'))
 
 Sage example in ./graphtheory.tex, line 782::
 
@@ -414,5 +414,4 @@ Sage example in ./graphtheory.tex, line 2260::
 
   sage: g = graphs.CompleteGraph(10)
   sage: g.show(edge_colors=edge_coloring(g, hex_colors=True))
-
 """

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Miscellaneous functions
 
@@ -86,10 +87,10 @@ def try_read(obj, splitlines=False):
     INPUT:
 
     - ``obj`` -- typically a `file` or `io.BaseIO` object, but any other
-      object with a ``read()`` method is accepted.
+      object with a ``read()`` method is accepted
 
-    - ``splitlines`` -- `bool`, optional; if True, return a list of lines
-      instead of a string.
+    - ``splitlines`` -- boolean (default: ``False``); if ``True``, return a
+      list of lines instead of a string
 
     EXAMPLES::
 
@@ -186,9 +187,7 @@ def exactly_one_is_true(iterable):
 
     - ``iterable`` -- an iterable object
 
-    OUTPUT:
-
-    A boolean.
+    OUTPUT: boolean
 
     .. NOTE::
 
@@ -246,9 +245,7 @@ def newton_method_sizes(N):
 
     INPUT:
 
-
-    -  ``N`` -- positive integer
-
+    - ``N`` -- positive integer
 
     EXAMPLES::
 
@@ -285,16 +282,16 @@ def newton_method_sizes(N):
 
 def compose(f, g):
     r"""
-    Return the composition of one-variable functions: `f \circ g`
+    Return the composition of one-variable functions: `f \circ g`.
 
     See also :func:`nest()`
 
     INPUT:
-        - `f` -- a function of one variable
-        - `g` -- another function of one variable
 
-    OUTPUT:
-        A function, such that compose(f,g)(x) = f(g(x))
+    - ``f`` -- a function of one variable
+    - ``g`` -- another function of one variable
+
+    OUTPUT: a function, such that compose(f,g)(x) = f(g(x))
 
     EXAMPLES::
 
@@ -314,7 +311,6 @@ def compose(f, g):
         sage: _ = var('x')                                                              # needs sage.symbolic
         sage: compose(f, g)(x)                                                          # needs sage.symbolic
         f(g(x))
-
     """
     return lambda x: f(g(x))
 
@@ -326,12 +322,12 @@ def nest(f, n, x):
     See also :func:`compose()` and :func:`self_compose()`
 
     INPUT:
-        - `f` -- a function of one variable
-        - `n` -- a nonnegative integer
-        - `x` -- any input for `f`
 
-    OUTPUT:
-        `f(f(...f(x)...))`, where the composition occurs n times
+    - ``f`` -- a function of one variable
+    - ``n`` -- nonnegative integer
+    - ``x`` -- any input for `f`
+
+    OUTPUT: `f(f(...f(x)...))`, where the composition occurs n times
 
     EXAMPLES::
 
@@ -353,7 +349,6 @@ def nest(f, n, x):
         sage: _ = var('x')                                                              # needs sage.symbolic
         sage: nest(f, 0, x)                                                             # needs sage.symbolic
         x
-
     """
     from sage.rings.integer import Integer
     n = Integer(n)
@@ -372,7 +367,7 @@ def nest(f, n, x):
 
 class BackslashOperator:
     r"""
-    Implements Matlab-style backslash operator for solving systems::
+    Implement Matlab-style backslash operator for solving systems::
 
         A \ b
 
@@ -457,7 +452,7 @@ class BackslashOperator:
 #################################################################
 def is_iterator(it) -> bool:
     """
-    Tests if it is an iterator.
+    Test if it is an iterator.
 
     The mantra ``if hasattr(it, 'next')`` was used to tests if ``it`` is an
     iterator. This is not quite correct since ``it`` could have a ``next``
@@ -516,11 +511,9 @@ def random_sublist(X, s):
 
     INPUT:
 
+    - ``X`` -- list
 
-    -  ``X`` -- list
-
-    -  ``s`` -- floating point number between 0 and 1
-
+    - ``s`` -- floating point number between 0 and 1
 
     OUTPUT: list
 
@@ -575,12 +568,12 @@ def some_tuples(elements, repeat, bound, max_samples=None):
     INPUT:
 
     - ``elements`` -- an iterable
-    - ``repeat`` -- integer (default ``None``), the length of the tuples to be returned.
+    - ``repeat`` -- integer (default: ``None``); the length of the tuples to be returned.
       If ``None``, just returns entries from ``elements``.
     - ``bound`` -- the maximum number of tuples returned (ignored if ``max_samples`` given)
-    - ``max_samples`` -- non-negative integer (default ``None``).  If given,
+    - ``max_samples`` -- nonnegative integer (default: ``None``); if given,
       then a sample of the possible tuples will be returned,
-      instead of the first few in the standard order.
+      instead of the first few in the standard order
 
     OUTPUT:
 
@@ -660,8 +653,8 @@ def _some_tuples_sampling(elements, repeat, max_samples, n):
 
 def exists(S, P):
     """
-    If S contains an element x such that P(x) is True, this function
-    returns True and the element x. Otherwise it returns False and
+    If S contains an element x such that P(x) is ``True``, this function
+    returns ``True`` and the element x. Otherwise it returns ``False`` and
     None.
 
     Note that this function is NOT suitable to be used in an
@@ -672,20 +665,16 @@ def exists(S, P):
 
     INPUT:
 
+    - ``S`` -- object (that supports enumeration)
 
-    -  ``S`` -- object (that supports enumeration)
-
-    -  ``P`` -- function that returns True or False
-
+    - ``P`` -- function that returns ``True`` or ``False``
 
     OUTPUT:
 
+    - ``bool`` -- whether or not P is ``True`` for some element
+      x of S
 
-    -  ``bool`` -- whether or not P is True for some element
-       x of S
-
-    -  ``object`` -- x
-
+    - ``object`` -- x
 
     EXAMPLES: lambda functions are very useful when using the exists
     function::
@@ -712,8 +701,8 @@ def exists(S, P):
 
 def forall(S, P):
     """
-    If P(x) is true every x in S, return True and None. If there is
-    some element x in S such that P is not True, return False and x.
+    If `P(x)` is true every x in S, return ``True`` and ``None``. If there is
+    some element x in S such that P is not ``True``, return ``False`` and `x`.
 
     Note that this function is NOT suitable to be used in an
     if-statement or in any place where a boolean expression is
@@ -723,18 +712,16 @@ def forall(S, P):
 
     INPUT:
 
-    -  ``S`` -- object (that supports enumeration)
+    - ``S`` -- object (that supports enumeration)
 
-    -  ``P`` -- function that returns True or False
+    - ``P`` -- function that returns ``True`` or ``False``
 
     OUTPUT:
 
+    - ``bool`` -- whether or not P is ``True`` for all elements
+      of S
 
-    -  ``bool`` -- whether or not P is True for all elements
-       of S
-
-    -  ``object`` -- x
-
+    - ``object`` -- x
 
     EXAMPLES: lambda functions are very useful when using the forall
     function. As a toy example we test whether certain integers are
@@ -927,9 +914,9 @@ def inject_variable(name, value, warn=True):
 
     INPUT:
 
-    - ``name``  -- a string
+    - ``name`` -- string
     - ``value`` -- anything
-    - ``warn`` -- a boolean (default: :obj:`False`)
+    - ``warn`` -- boolean (default: ``False``)
 
     EXAMPLES::
 
@@ -977,7 +964,7 @@ def inject_variable(name, value, warn=True):
 
 def inject_variable_test(name, value, depth):
     """
-    A function for testing deep calls to inject_variable
+    A function for testing deep calls to ``inject_variable``.
 
     EXAMPLES::
 
@@ -1005,7 +992,7 @@ def inject_variable_test(name, value, depth):
 # from https://stackoverflow.com/questions/4103773/efficient-way-of-having-a-function-only-execute-once-in-a-loop
 def run_once(func):
     """
-    Runs a function (successfully) only once.
+    Run a function (successfully) only once.
 
     The running can be reset by setting the ``has_run`` attribute to False
 
@@ -1043,7 +1030,7 @@ def increase_recursion_limit(increment):
 
     INPUT:
 
-    - `increment`: increment to add to the current limit
+    - ``increment`` -- increment to add to the current limit
 
     EXAMPLES::
 

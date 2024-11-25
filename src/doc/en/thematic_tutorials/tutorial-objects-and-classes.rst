@@ -368,7 +368,6 @@ define the methods and the attributes of the object.
    variable where information about the object is stored.
 
 
-
 An example: glass of beverage in a restaurant
 ---------------------------------------------
 
