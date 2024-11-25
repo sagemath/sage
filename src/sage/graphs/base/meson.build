@@ -38,15 +38,6 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
-  if name == 'boost_graph' and is_windows
-    # ..\src\sage\graphs\base\boost_interface.cpp(119): error C2398: Element '1': conversion from 'unsigned __int64' to 'const _Ty1 &' requires a narrowing conversion
-    #    with
-    #    [
-    #        _Ty1=v_index
-    #    ]
-    continue
-  endif
-
   py.extension_module(
     name,
     sources: pyx,
