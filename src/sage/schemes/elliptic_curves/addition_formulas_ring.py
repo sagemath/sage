@@ -9,7 +9,7 @@ def add(E, P, Q):
     These formulas were derived by Bosma and Lenstra [BL1995]_,
     with corrections by Best [Best2021]_ (Appendix A).
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.addition_formulas_ring import add
         sage: M = Zmod(13*17*19)

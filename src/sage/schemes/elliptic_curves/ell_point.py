@@ -993,8 +993,6 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         Example to show that bug :issue:`4820` is fixed::
 
-        Example to show that bug :trac:`4820` is fixed::
-
             sage: [type(c) for c in 2*EllipticCurve('37a1').gen(0)]
             [<... 'sage.rings.rational.Rational'>,
             <... 'sage.rings.rational.Rational'>,
