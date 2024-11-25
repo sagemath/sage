@@ -45,7 +45,6 @@ jobs:
         if: runner.os == 'windows'
         uses: ilammy/msvc-dev-cmd@v1
 
-        
       - name: Remove Git link.exe
         if: runner.os == 'windows'
         # It conflicts with the vs linker 
@@ -73,8 +72,7 @@ jobs:
         shell: bash -l {0}
         if: runner.os == 'windows'
         run: |
-          pip install gmpy2
-          pip install git+https://github.com/tobiasdiez/cysignals@win-support
+          pip install gmpy2 cysignals
 
       - name: Print Conda environment
         shell: bash -l {0}
