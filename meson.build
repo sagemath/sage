@@ -1,7 +1,7 @@
 project(
   'SageMath',
   ['c', 'cpp', 'cython'],
-  version: files('src/VERSION.txt'),
+  version: files('VERSION.txt'),
   license: 'GPL v3',
   default_options: ['c_std=c17', 'cpp_std=c++17'],
 )

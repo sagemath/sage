@@ -1,1 +1,1 @@
-src/VERSION.txt
+VERSION.txt

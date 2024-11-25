@@ -164,7 +164,7 @@ jobs:
             mathjax_path_from="[-./A-Za-z_]*/tex-chtml[.]js?v=[0-9a-f]*"
             # mathjax path in new doc
             mathjax_path_to=$(docker exec -e SAGE_USE_CDNS=yes BUILD /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
-            new_version=$(docker exec BUILD cat src/VERSION.txt)
+            new_version=$(docker exec BUILD cat VERSION.txt)
             # Wipe out chronic diffs between old doc and new doc
             (cd doc && \
              find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \

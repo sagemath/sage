@@ -131,7 +131,6 @@ fi
 git commit -m "Updated SageMath version to $SAGE_VERSION" -- \
     "$SAGE_ROOT/VERSION.txt" \
     "$SAGE_SRC/sage/version.py" \
-    "$SAGE_SRC/VERSION.txt" \
     "$SAGE_ROOT/CITATION.cff" \
     "$SAGE_SRC/bin/sage-version.sh" \
     "$SAGE_ROOT/build/pkgs/configure/checksums.ini" \
