@@ -84,14 +84,14 @@ jobs:
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
-      - name: Bootstrap with sage-update-version
+      - name: Bootstrap with update-version
         # We set SAGE_ROOT and SAGE_SRC by hand
         # because 'sage -sh' does not work with an unconfigured tree,
         # giving: Error: SAGE_SCRIPTS_DIR is set to a bad value
         run: |
           git config --global user.email "nobody@example.com"
           git config --global user.name "Sage GitHub CI"
-          SAGE_ROOT=. SAGE_SRC=./src src/bin/sage-update-version $(cat src/VERSION.txt).dev0 || echo "(ignoring error)"
+          SAGE_ROOT=. SAGE_SRC=./src tools/update-version $(cat src/VERSION.txt).dev0 || echo "(ignoring error)"
       - name: make dist
         run: |
           ./configure --enable-download-from-upstream-url && make dist
