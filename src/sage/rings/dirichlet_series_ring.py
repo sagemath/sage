@@ -76,7 +76,7 @@ class DirichletSeriesRing(CommutativeRing, Parent):
         self.__precision = precision
         self.__is_sparse = sparse
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -88,9 +88,9 @@ class DirichletSeriesRing(CommutativeRing, Parent):
         """
         return "Dirichlet Series Ring over {} with fixed precision {}".format(self.base_ring(), self.__precision)
 
-    def is_sparse(self):
+    def is_sparse(self) -> bool:
         """
-        Return `True` if this ring uses sparse internal representation.
+        Return ``True`` if this ring uses sparse internal representation.
 
         EXAMPLES::
 
