@@ -501,11 +501,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
             :func:`__init__` of :class:`Flag`
         """
-        if n==0:
-            #this is needed for sum to work
-            alg = FlagAlgebra(QQ, self)
-            return alg(0)
-        
         ftype_points = tuple()
         if 'ftype_points' in kwds:
             try:
@@ -646,7 +641,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         res = [self._an_element_()]
         return res
 
-
     #Persistend data management
     def _calcs_dir(self):
         calcs_dir = os.path.join(os.getenv('HOME'), '.sage', 'calcs')
@@ -735,7 +729,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         }
 
     #Optimizing and rounding
-
 
     def blowup_construction(self, target_size, pattern_size, symbolic=False, symmetric=True, unordered=False, **kwargs):
         r"""
@@ -1092,19 +1085,19 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return result, X_matrices_rounded, e_vector_rounded, slacks, [phi_vector_rounded]
     
     def _round_sdp_solution_phi(self, sdp_result, sdp_data, table_constructor, \
-                            constraints_data, phi_vectors_exact, denom=1024):
+                            constraints_data, phi_vectors_exact, denom=1024, ring=QQ):
         r"""
         Round the SDP results output to get something exact.
         """
         
         #unpack variables
         block_sizes, target_list_exact, mat_inds, mat_vals = sdp_data
-        target_vector_exact = vector(target_list_exact)
+        target_vector_exact = vector(ring, target_list_exact)
         flags_num, constraints_vals, positives_list_exact, one_vector = constraints_data
-        positives_matrix_exact = matrix(QQ, len(positives_list_exact), flags_num, positives_list_exact)
+        positives_matrix_exact = matrix(ring, len(positives_list_exact), flags_num, positives_list_exact)
         
         no_constr = len(phi_vectors_exact)==0
-        phi_vector_exact = vector([0]*positives_matrix_exact.ncols()) if no_constr else phi_vectors_exact[0]
+        phi_vector_exact = vector(ring, [0]*positives_matrix_exact.ncols()) if no_constr else phi_vectors_exact[0]
         
         one_vector_exact = positives_matrix_exact.rows()[-2] # find the one_vector from the equality constraint
         positives_matrix_exact = positives_matrix_exact[:-2, :] # remove the equality constraints
@@ -1112,7 +1105,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         flags_num = -block_sizes[-2] # same as |F_n|
 
         c_vector_approx = vector(sdp_result['X'][-2]) # dim: |F_n|, c vector, primal slack for flags
-        c_vector_rounded = vector(_round_list(c_vector_approx, method=0, denom=denom)) # as above but rounded
+        c_vector_rounded = vector(QQ, _round_list(c_vector_approx, method=0, denom=denom)) # as above but rounded
 
         # The F (FF) flag indecies where the c vector is zero/nonzero
         c_zero_inds = [FF for FF, xx in enumerate(c_vector_approx) if (abs(xx)<1e-6 or phi_vector_exact[FF]!=0)]
@@ -1125,7 +1118,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         phi_pos_vector_exact = positives_matrix_exact*phi_vector_exact # dim: m, witness that phi is positive
 
         e_vector_approx = vector(sdp_result['X'][-1][:-2]) # dim: m, the e vector, primal slack for positivitives
-        e_vector_rounded = vector(_round_list(e_vector_approx, method=0, denom=denom)) # as above but rounded
+        e_vector_rounded = vector(QQ, _round_list(e_vector_approx, method=0, denom=denom)) # as above but rounded
 
         # The f (ff) positivity constraints where the e vector is zero/nonzero
         e_zero_inds = [ff for ff, xx in enumerate(e_vector_approx) if (abs(xx)<1e-6 or phi_pos_vector_exact[ff]!=0)]
@@ -1135,10 +1128,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         bound_exact = target_vector_exact*phi_vector_exact 
         # the constraints for the flags that are exact
-        corrected_target_relevant_exact = vector(QQ, [target_vector_exact[FF] - bound_exact for FF in c_zero_inds])
+        corrected_target_relevant_exact = vector(ring, [target_vector_exact[FF] - bound_exact for FF in c_zero_inds])
         # the d^f_F matrix, but only the relevant parts for the rounding
         # so F where c_F = 0 and f where e_f != 0
-        positives_matrix_relevant_exact = matrix(QQ, len(e_nonzero_inds), len(c_zero_inds), \
+        positives_matrix_relevant_exact = matrix(ring, len(e_nonzero_inds), len(c_zero_inds), \
                                                  [[positives_matrix_exact[ff][FF] for FF in c_zero_inds] for ff in e_nonzero_inds])
         # the e vector, but only the nonzero entries
         e_nonzero_list_rounded = [e_vector_rounded[ff] for ff in e_nonzero_inds]
@@ -1160,7 +1153,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         
         print("Rounding X matrices")
         
-        M_flat_relevant_matrix_exact = matrix(QQ, len(c_zero_inds), 0, 0, sparse=True)
+        M_flat_relevant_matrix_exact = matrix(ring, len(c_zero_inds), 0, 0, sparse=True)
         X_flat_vector_rounded = [] # The rounded X values flattened to a list
         block_index = 0
         block_info = []
@@ -1179,7 +1172,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                     M_FF = table[FF]
                     M_extra.append(_flatten_matrix((base * M_FF * base.T).rows(), doubled=True))
 
-                M_flat_relevant_matrix_exact = M_flat_relevant_matrix_exact.augment(matrix(M_extra))
+                M_flat_relevant_matrix_exact = M_flat_relevant_matrix_exact.augment(matrix(ring, M_extra))
             block_index += len(table_constructor[params])
 
 
@@ -1191,7 +1184,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # 
 
         M_matrix_final = M_flat_relevant_matrix_exact.augment(positives_matrix_relevant_exact.T)
-        x_vector_final = vector(X_flat_vector_rounded+e_nonzero_list_rounded)
+        x_vector_final = vector(ring, X_flat_vector_rounded+e_nonzero_list_rounded)
 
 
         # Correct the values of the x vector, based on the minimal L_2 norm
@@ -1204,7 +1197,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         #
 
         e_nonzero_vector_corr = x_vector_corr[-len(e_nonzero_inds):]
-        e_vector_corr = vector(QQ, positives_num, dict(zip(e_nonzero_inds, e_nonzero_vector_corr)))
+        e_vector_corr = vector(ring, positives_num, dict(zip(e_nonzero_inds, e_nonzero_vector_corr)))
         if len(e_vector_corr)>0 and min(e_vector_corr)<0:
             print("Linear coefficient is negative: {}".format(min(e_vector_corr)))
             return None
@@ -1219,7 +1212,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             for plus_index, base in enumerate(table_constructor[params]):
                 block_dim = block_sizes[block_index + plus_index]
                 X_ii_small, x_vector_corr = _unflatten_matrix(x_vector_corr, block_dim)
-                X_ii_small = matrix(X_ii_small)
+                X_ii_small = matrix(ring, X_ii_small)
                 
                 # verify semidefiniteness
                 if not X_ii_small.is_positive_semidefinite():
@@ -1347,7 +1340,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return cert_dict
     
     def optimize_problem(self, target_element, target_size, maximize=True, positives=None, \
-                         construction=None, file=None, exact=False, denom=1024):
+                         construction=None, file=None, exact=False, denom=1024, ring=QQ):
         r"""
         Try to maximize or minimize the value of `target_element`
         
@@ -1489,7 +1482,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         #
 
         print("Adjusting table with kernels from construction")
-        table_constructor = self._adjust_table_phi(table_constructor, phi_vectors_exact)
+        table_constructor = self._adjust_table_phi(table_constructor, phi_vectors_exact, ring=ring)
         sdp_data = self._target_to_sdp_data(target_vector_exact)
         sdp_data = self._tables_to_sdp_data(table_constructor, prev_data=sdp_data)
         sdp_data = self._constraints_to_sdp_data(constraints_data, prev_data=sdp_data)
@@ -1512,7 +1505,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         
         print("Starting the rounding of the result")
         rounding_output = self._round_sdp_solution_phi(final_sol, sdp_data, table_constructor, \
-                                                                         constraints_data, phi_vectors_exact, denom=denom)
+                                                                         constraints_data, phi_vectors_exact, denom=denom, ring=ring)
         if rounding_output==None:
             print("Rounding based on construction was unsuccessful")
             rounding_output = self._round_sdp_solution_no_phi(final_sol, sdp_data, table_constructor, \
@@ -1833,8 +1826,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 flat_perm.extend(perm)
             all_permutations.append(tuple(flat_perm))
         return all_permutations
-
-    
+ 
     #Generating tables
     def _try_load_table(self, N, n1, n2, large_ftype, ftype_inj):
         excluded = tuple([xx for xx in self._excluded if xx.size()<=N])
@@ -2986,7 +2978,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
                         return self.element_class(self, v.size(), vals)
             elif v in base:
                 return self.element_class(self, self.ftype().size(), vector(base, [v], sparse=True))
-            raise ValueError('Can\'t construct an element from {}'.format(v))
+            raise ValueError('Can\'t construct an element from {} for the theory\n{}'.format(v, self))
         return self.element_class(self, *args, **kwds)
     
     def _coerce_map_from_(self, S):

@@ -105,19 +105,15 @@ cdef set _generate_group(tuple generators, int n):
     cdef list to_check = [tuple(range(n))]
     cdef tuple perm, gen, new_perm
     cdef int i
-    try:
-        while to_check:
-            perm = to_check.pop()
-            if perm in group:
-                continue
-            group.add(perm)
-            for gen in generators:
-                new_perm = tuple(gen[perm[i]] for i in range(n))
-                if new_perm not in group:
-                    to_check.append(new_perm)
-    except:
-        print("error occurred with running this on ", generators, " n=", n)
-        raise RuntimeError("Stop here")
+    while to_check:
+        perm = to_check.pop()
+        if perm in group:
+            continue
+        group.add(perm)
+        for gen in generators:
+            new_perm = tuple(gen[perm[i]] for i in range(n))
+            if new_perm not in group:
+                to_check.append(new_perm)
     return group
 
 cdef list _compute_coset_reps(set G, set H, int n):
