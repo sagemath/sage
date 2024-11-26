@@ -169,6 +169,7 @@ class NodeType(IntEnum):
 
     __str__ = __repr__
 
+
 class Node:
     """
     Node class stores information about the node type.
@@ -583,6 +584,7 @@ def habib_maurer_algorithm(graph, g_classes=None):
                      for sg in g_comp.connected_components(sort=False)]
     return root
 
+
 ################################################################################
 #                   Exported modular_decomposition function                    #
 ################################################################################
@@ -645,10 +647,10 @@ def modular_decomposition(G, algorithm=None):
     else: # algorithm == "corneil_habib_paul_tedder"
         return corneil_habib_paul_tedder_algorithm(G)
 
+
 # ============================================================================
 # Below functions are implemented to test the modular decomposition tree
 # ============================================================================
-
 # Function implemented for testing
 def test_modular_decomposition(tree_root, graph):
     """
