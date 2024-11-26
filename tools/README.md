@@ -12,7 +12,7 @@ This command is used to update the Conda environment files in the project. It au
 - `external.host-requires`: External dependencies required for running
 
 
-Within an active virtual environment where `grayskull` and `conda-lock` is installed, run the following command:
+Within an active virtual environment where `grayskull`, `conda-lock` and `toml` are installed, run the following command:
 
 ```bash
 tools/update-conda.py
