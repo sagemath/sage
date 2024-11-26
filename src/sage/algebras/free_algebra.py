@@ -1647,6 +1647,10 @@ class AssociativeFunctor(ConstructionFunctor):
 
             sage: algebras.Free(QQ,4,'x,y,z,t').construction()[0]
             Associative[x,y,z,t]
+            sage: algebras.Free(QQ,4,'x,y,z,t',degrees=(1,2,3,4)).construction()[0]
+            Associative[x,y,z,t] with degrees {x: 1, y: 2, z: 3, t: 4}
         """
-        # should we add the degree there ?
-        return "Associative[%s]" % ','.join(self.vars)
+        vars = ','.join(self.vars)
+        if self.degs is None:
+            return f"Associative[{vars}]"
+        return f"Associative[{vars}] with degrees {self.degs}"
