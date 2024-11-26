@@ -72,11 +72,11 @@ def update_conda(source_dir: Path) -> None:
                     f"python={python}" if dep == "python" else dep
                     for dep in dependencies
                 }
-                
+
                 dev_dependencies = get_dev_dependencies(pyproject_toml)
                 print(f"Adding dev dependencies: {dev_dependencies}")
                 pinned_dependencies = pinned_dependencies.union(dev_dependencies)
-                
+
                 pinned_dependencies = sorted(pinned_dependencies)
 
                 env_file = source_dir / f"environment{tag}-{python}.yml"
@@ -158,6 +158,10 @@ def get_dependencies(pyproject_toml: Path, python: str) -> list[str]:
     )
     all_requirements.remove("<{ pin_compatible('numpy') }}")
     all_requirements.remove("memory_allocator")
+    # Needed to run configure/bootstrap, can be deleted once we fully migrated to meson
+    all_requirements.append("autoconf")
+    all_requirements.append("automake")
+    all_requirements.append("m4")
     return all_requirements
 
 
