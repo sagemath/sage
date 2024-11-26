@@ -651,7 +651,7 @@ ex power::eval(int level) const
 
 
 	// Reduce x^(c/log(x)) to exp(c) if x is positive
-	if (ebasis.is_positive()) {
+	if (ebasis.is_positive() && (log(ebasis) != 0)) {
 		if (eexponent.is_equal(1/log(ebasis)))
 			return exp(log(basis)*exponent);
 		if (is_exactly_a<mul>(eexponent) and
