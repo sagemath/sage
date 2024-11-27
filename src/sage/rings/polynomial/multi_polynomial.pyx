@@ -208,8 +208,58 @@ cdef class MPolynomial(CommutativePolynomial):
             return R(self.polynomial(self._parent(var)))
         return R([self])
 
-    def coefficients(self):
+    def leading_support(self, *args, **kwds):
         r"""
+        Return the maximal element of the support of ``self``,
+        according to the term order.
+
+        If the term ordering of the basis elements is not what is
+        desired, a comparison key, ``key(x)``, can be provided.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = PolynomialRing(QQ)
+            sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_support()
+            (0, 4, 0)
+            sage: R.<x,y,z> = PolynomialRing(QQ, order='lex')
+            sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_support()
+            (1, 2, 0)
+            sage: R.<x,y,z> = PolynomialRing(QQ, order='invlex')
+            sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_support()
+            (0, 1, 3)
+        """
+        if 'key' in kwds:
+            return max(self.support(), *args, **kwds)
+        kwds['key'] = self._parent.term_order().sortkey
+        return max(self.support(), *args, **kwds)
+
+    def trailing_support(self, *args, **kwds):
+        r"""
+        Return the minimal element of the support of ``self``,
+        according to the term order.
+
+        If the term ordering of the basis elements is not what is
+        desired, a comparison key, ``key(x)``, can be provided.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = PolynomialRing(QQ)
+            sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_support()
+            (1, 1, 1)
+            sage: R.<x,y,z> = PolynomialRing(QQ, order='lex')
+            sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_support()
+            (0, 1, 3)
+            sage: R.<x,y,z> = PolynomialRing(QQ, order='invlex')
+            sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_support()
+            (1, 2, 0)
+        """
+        if 'key' in kwds:
+            return min(self.support(), *args, **kwds)
+        kwds['key'] = self._parent.term_order().sortkey
+        return min(self.support(), *args, **kwds)
+
+    def coefficients(self):
+        """
         Return the nonzero coefficients of this polynomial in a list.
 
         The returned list is decreasingly ordered by the term ordering
