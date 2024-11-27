@@ -4047,7 +4047,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         Differentiate with respect to var by differentiating each element
         with respect to var.
 
-        .. seealso:
+        .. SEEALSO::
 
            :meth:`derivative`
 

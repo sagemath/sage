@@ -808,16 +808,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         - ``selmer_only`` -- boolean (default: ``False``); selmer_only switch
 
-        - ``first_limit`` -- (default: 20) firstlim is bound
-          on x+z second_limit- (default: 8) secondlim is bound on log max
-          x,z , i.e. logarithmic
-
-        - ``n_aux`` -- (default: -1) n_aux only relevant for
-          general 2-descent when 2-torsion trivial; n_aux=-1 causes default
-          to be used (depends on method)
-
-        - ``second_descent`` -- (default: ``True``)
-          second_descent only relevant for descent via 2-isogeny
+        - ``first_limit``, ``second_limit``, ``n_aux``, ``second_descent`` --
+          see :meth:`~sage.libs.eclib.interface.mwrank_EllipticCurve.two_descent`
 
         OUTPUT:
 
@@ -2256,9 +2248,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         - ``algorithm`` -- one of the following:
 
-          - ``'mwrank_shell'`` -- default; call mwrank shell command
+          - ``'mwrank_lib'`` -- default; call mwrank C library
 
-          - ``'mwrank_lib'`` -- call mwrank C library
+          - ``'mwrank_shell'`` -- call mwrank shell command
 
           - ``'pari'`` -- use ellrank in pari
 
@@ -2268,7 +2260,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         - ``use_database`` -- boolean (default: ``True``); if ``True``, attempts to
           find curve and gens in the (optional) database
 
-        - ``descent_second_limit`` -- (default: 12) used in 2-descent
+        - ``descent_second_limit`` -- (default: 12) used in 2-descent.  See ``second_limit``
+          in :meth:`~sage.libs.eclib.interface.mwrank_EllipticCurve.two_descent`
 
         - ``sat_bound`` -- (default: 1000) bound on primes used in
           saturation.  If the computed bound on the index of the
