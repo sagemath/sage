@@ -186,7 +186,7 @@ cdef inline PairingHeapNode * _merge(PairingHeapNode * a, PairingHeapNode * b) e
     """
     if _compare(a, b):  # True if a.value <= b.value
         _link(a, b)
-        return a        
+        return a
     _link(b, a)
     return b
 
@@ -206,7 +206,7 @@ cdef inline _link(PairingHeapNode * a, PairingHeapNode * b) except *:
     b.prev = a
     a.child = b
 
-    
+
 cdef inline _unlink(PairingHeapNode * p) except *:
     r"""
     Remove ``p`` from the list of children of its parent.
