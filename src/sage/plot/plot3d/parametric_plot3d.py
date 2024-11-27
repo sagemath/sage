@@ -989,7 +989,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points='automatic',
     if isinstance(f, Vector):
         f = tuple(f)
 
-    if isinstance(f, (list, tuple)) and len(f) > 0 and isinstance(f[0], (list, tuple)):
+    if isinstance(f, (list, tuple)) and f and isinstance(f[0], (list, tuple)):
         return sum([parametric_plot3d(v, urange, vrange, plot_points=plot_points, **kwds) for v in f])
 
     if not isinstance(f, (tuple, list)) or len(f) != 3:
@@ -1121,7 +1121,9 @@ def _parametric_plot3d_surface(f, urange, vrange, plot_points, boundary_style, *
 
     if boundary_style is not None:
         for u in (urange[0], urange[-1]):
-            G += line3d([(g[0](u,v), g[1](u,v), g[2](u,v)) for v in vrange], **boundary_style)
+            G += line3d([(g[0](u, v), g[1](u, v), g[2](u, v)) for v in vrange],
+                        **boundary_style)
         for v in (vrange[0], vrange[-1]):
-            G += line3d([(g[0](u,v), g[1](u,v), g[2](u,v)) for u in urange], **boundary_style)
+            G += line3d([(g[0](u, v), g[1](u, v), g[2](u, v)) for u in urange],
+                        **boundary_style)
     return G

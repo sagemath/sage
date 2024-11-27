@@ -155,7 +155,7 @@ from sage.plot.plot3d.index_face_set import IndexFaceSet
 from sage.plot.plot3d.shapes import arrow3d
 from sage.plot.plot3d.texture import Texture
 from sage.plot.plot3d.tri_plot import TrianglePlot
-
+from . import parametric_plot3d
 lazy_import("sage.functions.trig", ["cos", "sin"])
 
 
@@ -191,7 +191,7 @@ class _Coordinates:
         """
         all_vars = sage_getargspec(self.transform).args[1:]
         if set(all_vars) != set(indep_vars + [dep_var]):
-            raise ValueError('variables were specified incorrectly for this coordinate system; incorrect variables were %s' % list(set(all_vars).symmetric_difference(set(indep_vars+[dep_var]))))
+            raise ValueError('variables were specified incorrectly for this coordinate system; incorrect variables were %s' % list(set(all_vars).symmetric_difference(set(indep_vars + [dep_var]))))
         self.dep_var = dep_var
         self.indep_vars = indep_vars
 
@@ -790,10 +790,7 @@ class TrivialTriangleFactory:
             sage: sm_tri
             [[0, 0, 0], [0, 0, 1], [1, 1, 0]]
         """
-        return [a,b,c]
-
-
-from . import parametric_plot3d
+        return [a, b, c]
 
 
 def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
@@ -1083,7 +1080,7 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
             params = f.variables()
 
         from sage.modules.vector_callable_symbolic_dense import Vector_callable_symbolic_dense
-        if isinstance(transformation, (tuple, list,Vector_callable_symbolic_dense)):
+        if isinstance(transformation, (tuple, list, Vector_callable_symbolic_dense)):
             if len(transformation) == 3:
                 if params is None:
                     raise ValueError("must specify independent variable names in the ranges when using generic transformation")
@@ -1095,7 +1092,7 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
                 raise ValueError("unknown transformation type")
             # find out which variable is the function variable by
             # eliminating the parameter variables.
-            all_vars = set(sum([list(s.variables()) for s in transformation],[]))
+            all_vars = set(sum([list(s.variables()) for s in transformation], []))
             dep_var = all_vars - set(indep_vars)
             if len(dep_var) == 1:
                 dep_var = dep_var.pop()
@@ -1173,11 +1170,11 @@ def plot3d_adaptive(f, x_range, y_range, color='automatic',
     max_depth = max(max_depth, initial_depth)
 
     from sage.plot.misc import setup_for_eval_on_grid
-    g, ranges = setup_for_eval_on_grid(f, [x_range,y_range], plot_points=2)
-    xmin,xmax = ranges[0][:2]
-    ymin,ymax = ranges[1][:2]
+    g, ranges = setup_for_eval_on_grid(f, [x_range, y_range], plot_points=2)
+    xmin, xmax = ranges[0][:2]
+    ymin, ymax = ranges[1][:2]
 
-    opacity = float(kwds.get('opacity',1))
+    opacity = float(kwds.get('opacity', 1))
 
     if color == "automatic":
         texture = rainbow(num_colors, 'rgbtuple')
@@ -1197,9 +1194,9 @@ def plot3d_adaptive(f, x_range, y_range, color='automatic',
     if isinstance(texture, (list, tuple)):
         if len(texture) == 2:
             # do a grid coloring
-            xticks = (xmax - xmin)/2**initial_depth
-            yticks = (ymax - ymin)/2**initial_depth
-            parts = P.partition(lambda x,y,z: (int((x-xmin)/xticks) + int((y-ymin)/yticks)) % 2)
+            xticks = (xmax - xmin) / 2**initial_depth
+            yticks = (ymax - ymin) / 2**initial_depth
+            parts = P.partition(lambda x, y, z: (int((x - xmin) / xticks) + int((y - ymin) / yticks)) % 2)
         else:
             # do a topo coloring
             bounds = P.bounding_box()
@@ -1208,8 +1205,8 @@ def plot3d_adaptive(f, x_range, y_range, color='automatic',
             if max_z == min_z:
                 span = 0
             else:
-                span = (len(texture)-1) / (max_z - min_z)    # max to avoid dividing by 0
-            parts = P.partition(lambda x, y, z: int((z-min_z)*span))
+                span = (len(texture) - 1) / (max_z - min_z)  # max to avoid dividing by 0
+            parts = P.partition(lambda x, y, z: int((z - min_z) * span))
         all = []
         for k, G in parts.items():
             G.set_texture(texture[k], opacity=opacity)
