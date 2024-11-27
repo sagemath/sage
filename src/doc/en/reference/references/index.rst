@@ -2762,9 +2762,9 @@ REFERENCES:
             Cambridge University Press, Cambridge, 2009.
             See also the `Errata list <http://ac.cs.princeton.edu/errata/>`_.
 
-.. [FSST1986] Michael L. Fredman, Robert Sedgewick, Daniel D. Sleator, and
-              Robert E. Tarjan. *The pairing heap: A new form of self-adjusting
-              heap*, Algorithmica 1 (1986), 111-129.
+.. [FSST1986] Michael L. Fredman, Robert Sedgewick, Daniel D. Sleator,
+              and Robert E. Tarjan. *The pairing heap: A new form of
+              self-adjusting heap*, Algorithmica, 1:111-129, 1986.
              :doi:`10.1007/BF01840439`
 
 .. [FST2012] \A. Felikson, \M. Shapiro, and \P. Tumarkin, *Cluster Algebras of
