@@ -85,10 +85,6 @@ AUTHORS:
 
 - David Coudert (2024) - Initial version.
 
-
-[1] M. L. Fredman, R. Sedgewick, D. D. Sleator, and R. E. Tarjan.
-    "The pairing heap: a new form of self-adjusting heap".
-    Algorithmica. 1 (1): 111-129, 1986. doi:10.1007/BF01840439.
 """
 # ******************************************************************************
 # Copyright (C) 2024 David Coudert <david.coudert@inria.fr>
