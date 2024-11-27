@@ -67,7 +67,7 @@ LOCAL_IDENTIFIER = '%s.%s' % (HOSTNAME, os.getpid())
 # restrictive permissions, since otherwise possibly just anybody can easily see
 # every command you type.
 
-#os.makedirs(DOT_SAGE, mode=0o700, exist_ok=True)
+os.makedirs(DOT_SAGE, mode=0o700, exist_ok=True)
 
 
 def try_read(obj, splitlines=False):
@@ -169,8 +169,8 @@ def try_read(obj, splitlines=False):
     return data
 
 
-#SAGE_DB = os.path.join(DOT_SAGE, 'db')
-#os.makedirs(SAGE_DB, exist_ok=True)
+SAGE_DB = os.path.join(DOT_SAGE, 'db')
+os.makedirs(SAGE_DB, exist_ok=True)
 
 try:
     # Create the matplotlib config directory.

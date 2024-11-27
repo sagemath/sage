@@ -134,6 +134,10 @@ foreach name, pyx : extension_data
     deps += [gsl, mpfr]
   elif name == 'complex_double'
     deps += [gmpy2, gsl]
+    if is_windows
+      # Has some compilation errors: https://github.com/cython/cython/issues/6524
+      continue
+    endif
   elif name == 'complex_interval'
     deps += [
       mpfi,

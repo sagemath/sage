@@ -124,7 +124,7 @@ foreach name, pyx : extension_data_cpp
       inc_rings,
       include_directories('../libs/gmp'),
     ],
-    dependencies: [py_dep, cysignals, gmp, gsl, singular],
+    dependencies: [py_dep, cysignals, gmp, gsl, singular_factory],
   )
 endforeach
 

@@ -200,7 +200,11 @@ SAGE_DOC_SERVER_URL = var("SAGE_DOC_SERVER_URL")
 SAGE_DOC_LOCAL_PORT = var("SAGE_DOC_LOCAL_PORT", "0")
 
 # ~/.sage
-DOT_SAGE = var("DOT_SAGE", join(os.environ.get("HOME"), ".sage"))
+if sys.platform == 'win32':
+    home_dir = os.environ.get("USERPROFILE")
+else:  # Unix-like systems (Linux, macOS, etc.)
+    home_dir = os.environ.get("HOME")
+DOT_SAGE = var("DOT_SAGE", join(home_dir, ".sage"))
 SAGE_STARTUP_FILE = var("SAGE_STARTUP_FILE", join(DOT_SAGE, "init.sage"))
 
 # for sage_setup.setenv

@@ -8,7 +8,9 @@ fs = import('fs')
 gen_headers = []
 conf = configuration_data()
 # Use no streamio (C++)
-conf.set('NOSTREAMIO', not cpp.has_header('iostream.h'))#, 'strstream.h', 'fstream.h', 'iostream', 'string', 'fstream', 'ctype.h'))
+has_iostream_h = cpp.has_header('iostream.h')
+conf.set('NOSTREAMIO', not has_iostream_h)#, 'strstream.h', 'fstream.h', 'iostream', 'string', 'fstream', 'ctype.h'))
+conf.set('HAVE_IOSTREAM_H', has_iostream_h)
 conf.set('FACTORYVERSION', meson.project_version())
 factory_configuration = '@0@ in @1@'.format(meson.project_version(), meson.project_source_root())
 conf.set_quoted('FACTORYCONFIGURATION', factory_configuration)
@@ -17,7 +19,12 @@ gen_headers += fs.copyfile('factory.template', 'factory.h')#, install: true, ins
 gen_headers += fs.copyfile('factoryconf.template', 'factoryconf.h')#, install: true, install_dir: 'factory')
 
 # https://mesonbuild.com/Wrap-best-practices-and-tips.html#do-not-put-configh-in-external-search-path
-subdir('internal')
+#subdir('internal')
+gen_headers += configure_file(
+  output: 'config.h',
+  configuration: conf
+)
+
 internal_inc = include_directories('internal')
 
 # Include directories
