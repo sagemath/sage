@@ -138,7 +138,7 @@ cdef inline PairingHeapNode * _pair(PairingHeapNode * p) except *:
     """
     if p == NULL:
         return NULL
-    
+
     # Move toward the end of the list, counting elements along the way.
     # This is done in order to:
     # - know whether the list has odd or even number of nodes
@@ -148,7 +148,7 @@ cdef inline PairingHeapNode * _pair(PairingHeapNode * p) except *:
     while it.succ != NULL:
         it = it.succ
         children += 1
-    
+
     cdef PairingHeapNode * result
     cdef PairingHeapNode * a
     cdef PairingHeapNode * b
@@ -164,7 +164,7 @@ cdef inline PairingHeapNode * _pair(PairingHeapNode * p) except *:
         it = it.prev.prev
         a.prev = a.succ = b.prev = b.succ = NULL
         result = _merge(a, b)
-    
+
     for _ in range((children - 1) // 2):
         a = it
         b = it.prev
@@ -647,7 +647,7 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
         return bitset_in(self.active, item)
 
     contains = __contains__
-    
+
     cpdef object value(self, size_t item) except *:
         r"""
         Return the value associated with the item.
@@ -1025,7 +1025,7 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
         return item in self._item_to_int
 
     contains = __contains__
-    
+
     cpdef object value(self, object item) except *:
         r"""
         Return the value associated with the item.
@@ -1211,7 +1211,7 @@ def _test_PairingHeap_from_C(n=100):
         L.append(HH.top())
         HH.pop()
         sig_check()
-    
+
     for (u, cu), (v, cv) in zip(L, L[1:]):
         if cu > cv:
             print(u, cu, v, cv)
@@ -1248,7 +1248,6 @@ def _test_PairingHeap_from_C(n=100):
         pass
 
 
-    
 def _test_PairingHeap_of_n_integers(n=100):
     r"""
     Test :class:`~sage.data_structures.pairing_heap.PairingHeap_of_n_integers`.
@@ -1435,7 +1434,7 @@ def _test_PairingHeap_of_n_hashables(n=100):
     try:
         _ = P.top()
         print("something goes wrong, the error has not been raised")
-    except:
+    except ValueError, msg:
         # The error has been properly handled
         pass
 
