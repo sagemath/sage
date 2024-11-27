@@ -95,7 +95,7 @@ class LibSingularGBDefaultContext:
               b - 3*d^6 + 2*d^4 + d^3 + 2*d^2 - 3*d,
               a - 2*d^6 + d^5 - 2*d^4 + 3*d^3 + 3*d^2 - 2*d - 1]
         """
-        self.libsingular_option_context.__exit__(typ,value,tb)
+        self.libsingular_option_context.__exit__(typ, value, tb)
 
 def libsingular_gb_standard_options(func):
     r"""
