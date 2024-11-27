@@ -2765,7 +2765,7 @@ REFERENCES:
 .. [FSST1986] Michael L. Fredman, Robert Sedgewick, Daniel D. Sleator,
               and Robert E. Tarjan. *The pairing heap: A new form of
               self-adjusting heap*, Algorithmica, 1:111-129, 1986.
-             :doi:`10.1007/BF01840439`
+              :doi:`10.1007/BF01840439`
 
 .. [FST2012] \A. Felikson, \M. Shapiro, and \P. Tumarkin, *Cluster Algebras of
             Finite Mutation Type Via Unfoldings*, Int Math Res Notices (2012)
