@@ -10,7 +10,7 @@ conf = configuration_data()
 # Use no streamio (C++)
 conf.set('NOSTREAMIO', not cpp.has_header('iostream.h'))#, 'strstream.h', 'fstream.h', 'iostream', 'string', 'fstream', 'ctype.h'))
 conf.set('FACTORYVERSION', meson.project_version())
-factory_configuration = '@0@ in @1@'.format(meson.project_version(), meson.source_root())
+factory_configuration = '@0@ in @1@'.format(meson.project_version(), meson.project_source_root())
 conf.set_quoted('FACTORYCONFIGURATION', factory_configuration)
 
 gen_headers += fs.copyfile('factory.template', 'factory.h')#, install: true, install_dir: 'factory')
