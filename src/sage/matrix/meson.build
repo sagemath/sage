@@ -105,11 +105,8 @@ foreach name, pyx : extension_data
     dependencies += [mpfr]
   elif name == 'matrix_complex_ball_dense'
     dependencies += [mpfi]
-  elif name == 'misc_flint' or name == 'matrix_rational_sparse'
+  elif name == 'misc_flint' or name == 'matrix_rational_sparse' or name == 'change_ring'
     dependencies += [flint]
-  elif name == 'change_ring' and is_windows
-    # Has some compilation errors
-    continue
   endif
 
   py.extension_module(
