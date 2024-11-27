@@ -1919,6 +1919,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: f = 2*s[1] + 3*s[2,1] - 5*s[3]                                    # needs sage.combinat sage.modules
                 sage: f.leading_coefficient()                                           # needs sage.combinat sage.modules
                 -5
+
+                sage: P.<x,y> = QQ[]
+                sage: (3*x^2*y + y^2*x).leading_coefficient()
+                3
             """
             return self.leading_item(*args, **kwds)[1]
 
