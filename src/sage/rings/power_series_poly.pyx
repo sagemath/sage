@@ -814,7 +814,7 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: f.dict()
             {0: 1, 10: 1}
         """
-        return self.__f.monomial_coefficients(coyp=copy)
+        return self.__f.monomial_coefficients(copy=copy)
 
     dict = monomial_coefficients
 
