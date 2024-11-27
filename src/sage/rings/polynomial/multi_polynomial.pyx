@@ -259,7 +259,7 @@ cdef class MPolynomial(CommutativePolynomial):
         return min(self.support(), *args, **kwds)
 
     def coefficients(self):
-        """
+        r"""
         Return the nonzero coefficients of this polynomial in a list.
 
         The returned list is decreasingly ordered by the term ordering
@@ -479,7 +479,7 @@ cdef class MPolynomial(CommutativePolynomial):
              for e, val in self.monomial_coefficients().items() if not e[ind]}
         v = [B(w)]  # coefficients that don't involve var
         z = var
-        for i in range(1,d+1):
+        for i in range(1, d+1):
             c = <dict> self.coefficient(z).monomial_coefficients()
             w = {remove_from_tuple(e, ind): val for e, val in c.items()}
             v.append(B(w))
@@ -537,7 +537,7 @@ cdef class MPolynomial(CommutativePolynomial):
         elif my_vars[-1] not in vars:
             x = base_ring(self) if base_ring is not None else self
             const_ix = ETuple((0,)*len(vars))
-            return { const_ix: x }
+            return {const_ix: x}
         elif not set(my_vars).issubset(set(vars)):
             # we need to split it up
             p = self.polynomial(self._parent.gen(len(my_vars)-1))
@@ -819,7 +819,7 @@ cdef class MPolynomial(CommutativePolynomial):
             subclasses.
         """
         M = self.monomials()
-        if M==[]:
+        if M == []:
             return True
         d = M.pop().degree()
         for m in M:
@@ -1149,14 +1149,14 @@ cdef class MPolynomial(CommutativePolynomial):
         g = R.gen_names()
         v = []
         for m, c in zip(self.monomials(), self.coefficients()):
-            v.append('(%s)*%s'%( c._magma_init_(magma),
-                                 m._repr_with_changed_varnames(g)))
+            v.append('(%s)*%s' % (c._magma_init_(magma),
+                                  m._repr_with_changed_varnames(g)))
         if len(v) == 0:
             s = '0'
         else:
             s = '+'.join(v)
 
-        return '%s!(%s)'%(R.name(), s)
+        return '%s!(%s)' % (R.name(), s)
 
     def _giac_init_(self):
         r"""
@@ -1233,7 +1233,7 @@ cdef class MPolynomial(CommutativePolynomial):
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
         e = self.exponents()
-        P = Polyhedron(vertices = e, base_ring=ZZ)
+        P = Polyhedron(vertices=e, base_ring=ZZ)
         return P
 
     def __iter__(self):
@@ -1449,7 +1449,7 @@ cdef class MPolynomial(CommutativePolynomial):
             raise TypeError("k must be a finite field")
         p = k.characteristic()
         e = k.degree()
-        v = [self] + [self.map_coefficients(k.hom([k.gen()**(p**i)])) for i in range(1,e)]
+        v = [self] + [self.map_coefficients(k.hom([k.gen()**(p**i)])) for i in range(1, e)]
         return prod(v).change_ring(k.prime_subfield())
 
     def sylvester_matrix(self, right, variable=None):
@@ -1904,7 +1904,7 @@ cdef class MPolynomial(CommutativePolynomial):
             for y in x:
                 d = d.lcm(y.denominator())
             return d
-        except(AttributeError):
+        except AttributeError:
             return self.base_ring().one()
 
     def numerator(self):
@@ -2025,7 +2025,7 @@ cdef class MPolynomial(CommutativePolynomial):
            ArithmeticError: element is non-invertible
         """
         P = self.parent()
-        B  = I.gens()
+        B = I.gens()
         try:
             XY = P.one().lift((self,) + tuple(B))
             return P(XY[0])
@@ -2111,7 +2111,7 @@ cdef class MPolynomial(CommutativePolynomial):
             #Corner case, note that the degree of zero is an Integer
             return Integer(-1)
 
-        if len(weights) ==  1:
+        if len(weights) == 1:
             # First unwrap it if it is given as one element argument
             weights = weights[0]
 
@@ -2132,9 +2132,9 @@ cdef class MPolynomial(CommutativePolynomial):
         for i in range(n):
             l += weights[i]*m[i]
         deg = l
-        for j in range(1,len(A)):
+        for j in range(1, len(A)):
             l = Integer(0)
-            m = <tuple>A[j]
+            m = <tuple> A[j]
             for i in range(n):
                 l += weights[i]*m[i]
             if deg < l:
@@ -2560,12 +2560,12 @@ cdef class MPolynomial(CommutativePolynomial):
         from sage.rings.real_mpfr import RealField
 
         if self.parent().ngens() != 2:
-            raise ValueError("(=%s) must have two variables"%self)
+            raise ValueError("(=%s) must have two variables" % self)
         if not self.is_homogeneous():
-            raise ValueError("(=%s) must be homogeneous"%self)
+            raise ValueError("(=%s) must be homogeneous" % self)
 
         prec = kwds.get('prec', 300)
-        return_conjugation  =kwds.get('return_conjugation', True)
+        return_conjugation = kwds.get('return_conjugation', True)
         error_limit = kwds.get('error_limit', 0.000001)
         emb = kwds.get('emb', None)
 
@@ -2573,14 +2573,14 @@ cdef class MPolynomial(CommutativePolynomial):
         CF = ComplexIntervalField(prec=prec)  # keeps trac of our precision error
         RF = RealField(prec=prec)
         R = self.parent()
-        x,y = R.gens()
+        x, y = R.gens()
 
         # finding quadratic Q_0, gives us our covariant, z_0
         from sage.rings.polynomial.binary_form_reduce import covariant_z0
         try:
             z, th = covariant_z0(self, prec=prec, emb=emb, z0_cov=True)
         except ValueError:# multiple roots
-            F = self.lc()*prod([p for p,e in self.factor()])
+            F = self.lc()*prod([p for p, e in self.factor()])
             z, th = covariant_z0(F, prec=prec, emb=emb, z0_cov=True)
         z = CF(z)
         # this moves z_0 to our fundamental domain using the three steps laid
@@ -2594,11 +2594,11 @@ cdef class MPolynomial(CommutativePolynomial):
                 # moves z into fundamental domain by m
                 m = zc.real().round() # finds amount to move z's real part by
                 Qm = QQ(m)
-                M = M * matrix(QQ, [[1,Qm], [0,1]]) # move
+                M = M * matrix(QQ, [[1, Qm], [0, 1]]) # move
                 z -= m  # M.inverse()*z is supposed to move z by m
             elif (zc.real() <= RF(0) and zc.abs() < RF(1)) or (zc.real() > RF(0) and zc.abs() <= RF(1)): # flips z
                 z = -1/z
-                M = M * matrix(QQ, [[0,-1], [1,0]])# multiply on left because we are taking inverse matrices
+                M = M * matrix(QQ, [[0, -1], [1, 0]])# multiply on left because we are taking inverse matrices
             zc = z.center()
 
         smallest_coeffs = kwds.get('smallest_coeffs', True)
