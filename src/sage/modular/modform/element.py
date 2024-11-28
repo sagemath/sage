@@ -265,6 +265,7 @@ class ModularForm_abstract(ModuleElement):
 
             sage: f(0)
             0
+        EXAMPLES:
 
         Evaluate numerically::
 
