@@ -190,8 +190,12 @@ class _Coordinates:
             Arbitrary Coordinates coordinate transform (z in terms of x, y)
         """
         all_vars = sage_getargspec(self.transform).args[1:]
-        if set(all_vars) != set(indep_vars + [dep_var]):
-            raise ValueError('variables were specified incorrectly for this coordinate system; incorrect variables were %s' % list(set(all_vars).symmetric_difference(set(indep_vars + [dep_var]))))
+        A = set(all_vars)
+        B = set(indep_vars + [dep_var])
+        if A != B:
+            raise ValueError('variables were specified incorrectly for this '
+                             'coordinate system; incorrect variables '
+                             'were %s' % list(A.symmetric_difference(B)))
         self.dep_var = dep_var
         self.indep_vars = indep_vars
 

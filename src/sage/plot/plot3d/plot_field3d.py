@@ -150,10 +150,12 @@ def plot_vector_field3d(functions, xrange, yrange, zrange,
     scaled_vectors = [v / max_len for v in vectors]
 
     if center_arrows:
-        G = sum([plot(v, color=cm(v.norm()), **kwds).translate(p - v / 2) for v, p in zip(scaled_vectors, points)])
+        G = sum(plot(v, color=cm(v.norm()), **kwds).translate(p - v / 2)
+                for v, p in zip(scaled_vectors, points))
         G._set_extra_kwds(kwds)
         return G
     else:
-        G = sum([plot(v, color=cm(v.norm()), **kwds).translate(p) for v, p in zip(scaled_vectors, points)])
+        G = sum(plot(v, color=cm(v.norm()), **kwds).translate(p)
+                for v, p in zip(scaled_vectors, points))
         G._set_extra_kwds(kwds)
         return G

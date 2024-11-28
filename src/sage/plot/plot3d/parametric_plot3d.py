@@ -990,7 +990,7 @@ def parametric_plot3d(f, urange, vrange=None, plot_points='automatic',
         f = tuple(f)
 
     if isinstance(f, (list, tuple)) and f and isinstance(f[0], (list, tuple)):
-        return sum([parametric_plot3d(v, urange, vrange, plot_points=plot_points, **kwds) for v in f])
+        return sum(parametric_plot3d(v, urange, vrange, plot_points=plot_points, **kwds) for v in f)
 
     if not isinstance(f, (tuple, list)) or len(f) != 3:
         raise ValueError("f must be a list, tuple, or vector of length 3")
