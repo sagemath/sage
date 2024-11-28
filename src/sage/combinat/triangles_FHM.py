@@ -427,7 +427,8 @@ class M_triangle(Triangle):
         """
         x, y = self._vars
         n = self._n
-        step = self._poly(x=y / (y - 1), y=(y - 1) * x / (1 + (y - 1) * x))
+        step = self._poly.subs({x: y / (y - 1),
+                                y: (y - 1) * x / (1 + (y - 1) * x)})
         step *= (1 + (y - 1) * x)**n
         polyh = step.numerator()
         return H_triangle(polyh, variables=(x, y))
@@ -503,7 +504,8 @@ class H_triangle(Triangle):
         """
         x, y = self._vars
         n = self._n
-        step = self._poly(x=(x - 1) * y / (1 - y), y=x / (x - 1)) * (1 - y)**n
+        step = self._poly.subs({x: (x - 1) * y / (1 - y),
+                                y: x / (x - 1)}) * (1 - y)**n
         polym = step.numerator()
         return M_triangle(polym, variables=(x, y))
 
@@ -536,8 +538,8 @@ class H_triangle(Triangle):
         """
         x, y = self._vars
         n = self._n
-        step1 = self._poly(x=x / (1 + x), y=y) * (x + 1)**n
-        step2 = step1(x=x, y=y / x)
+        step1 = self._poly.subs({x: x / (1 + x), y: y}) * (x + 1)**n
+        step2 = step1.subs({x: x, y: y / x})
         polyf = step2.numerator()
         return F_triangle(polyf, variables=(x, y))
 
@@ -585,8 +587,9 @@ class H_triangle(Triangle):
             sage: H_triangle(ht).vector()
             x^2 + 3*x + 1
         """
-        anneau = PolynomialRing(ZZ, 'x')
-        return anneau(self._poly(y=1))
+        x, y = self._vars
+        anneau = PolynomialRing(ZZ, "x")
+        return anneau(self._poly.subs({y: 1}))
 
 
 class F_triangle(Triangle):
@@ -617,7 +620,8 @@ class F_triangle(Triangle):
         """
         x, y = self._vars
         n = self._n
-        step = (1 - x)**n * self._poly(x=x / (1 - x), y=x * y / (1 - x))
+        step = (1 - x)**n * self._poly.subs({x: x / (1 - x),
+                                             y: x * y / (1 - x)})
         polyh = step.numerator()
         return H_triangle(polyh, variables=(x, y))
 
@@ -662,7 +666,8 @@ class F_triangle(Triangle):
         """
         x, y = self._vars
         n = self._n
-        step = self._poly(x=y * (x - 1) / (1 - x * y), y=x * y / (1 - x * y))
+        step = self._poly.subs({x: y * (x - 1) / (1 - x * y),
+                                y: x * y / (1 - x * y)})
         step *= (1 - x * y)**n
         polym = step.numerator()
         return M_triangle(polym, variables=(x, y))
@@ -681,9 +686,17 @@ class F_triangle(Triangle):
             F: x + y + 1
             sage: _.parabolic()
             F: x + y
+
+        TESTS::
+
+            sage: a, b = polygens(ZZ,'a,b')
+            sage: H_triangle(1+a*b).f()
+            F: a + b + 1
+            sage: _.parabolic()
+            F: a + b
         """
         x, y = self._vars
-        polyf = self._poly(y=y - 1)
+        polyf = self._poly.subs({y: y - 1})
         return F_triangle(polyf, variables=(x, y))
 
     def vector(self):
@@ -700,9 +713,10 @@ class F_triangle(Triangle):
             sage: F_triangle(ft).vector()
             5*x^2 + 5*x + 1
         """
-        anneau = PolynomialRing(ZZ, 'x')
-        x = anneau.gen()
-        return anneau(self._poly(y=x))
+        x, y = self._vars
+        anneau = PolynomialRing(ZZ, "x")
+        nx = anneau.gen()
+        return anneau(self._poly.subs({x: nx, y: nx}))
 
 
 class Gamma_triangle(Triangle):
