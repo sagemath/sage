@@ -137,7 +137,7 @@ cdef object md_tree_node_to_md_tree(const md_tree_node *n, CGraphBackend Gb):
     This function deals with the case of an empty tree and then delegates the
     actual conversion to :func:`_md_tree_node_to_md_tree_inner_rec`.
 
-    TESTS
+    TESTS:
 
     Indirect doctests::
 
