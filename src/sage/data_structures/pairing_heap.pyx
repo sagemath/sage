@@ -16,7 +16,8 @@ min-heap data structure.
 
 - ``PairingHeap``: interface to a pairing heap data structure written in C++.
   The advantages of this data structure are that: its capacity is unbounded;
-  items can be of any hashable type; values can be of any specified type
+  items can be of any hashable type equipped with a hashing method that can be
+  supported by ``std::unordered_map``; values can be of any specified type
   equipped with a comparison method (``<=``). This data structure is for
   internal use and therefore cannot be accessed from a shell.
 
@@ -1130,76 +1131,14 @@ def _test_PairingHeap_from_C(n=100):
     sig_free(PH)
     sig_off()
 
-    sig_on()
-    cdef PairingHeap[pair[size_t, size_t], size_t] * Q = new PairingHeap[pair[size_t, size_t], size_t]()
-    sig_off()
-
-    # Initialize a list of tuples (value, item) randomly ordered
-    items = [(i, i + 1) for i in range(n)]
-    values = list(range(n))
-    shuffle(items)
-    shuffle(values)
-    Lref = list(zip(values, items))
-
-    for value, item in Lref:
-        Q.push(item, value)
-        sig_check()
-
-    L = []
-    while not Q.empty():
-        item, value = Q.top()
-        L.append((value, item))
-        Q.pop()
-        sig_check()
-
-    if L != sorted(Lref):
-        raise ValueError('the order is not good')
-
-    # Test decrease key operations. We first push items in the heap with an
-    # excess of k in the value. Then we decrease the keys in a random order by
-    # random values until returning to the origianl values. We finally check the
-    # validity of the resulting ordering.
-    k = 10
-    dec = {item: k for item in items}
-    shuffle(Lref)
-    for value, item in Lref:
-        Q.push(item, value + k)
-        sig_check()
-
-    L = list(items)
-    while L:
-        i = randint(0, len(L) - 1)
-        item = L[i]
-        d = randint(1, dec[item])
-        dec[item] -= d
-        if not dec[item]:
-            L[i] = L[-1]
-            L.pop()
-        Q.decrease(item, Q.value(item) - d)
-        sig_check()
-
-    L = []
-    while not Q.empty():
-        item, value = Q.top()
-        L.append((value, item))
-        Q.pop()
-        sig_check()
-
-    if L != sorted(Lref):
-        raise ValueError('the order is not good')
-
-    sig_on()
-    sig_free(Q)
-    sig_off()
-
     # Different cost function
     from sage.functions.trig import sin, cos
     sig_on()
-    cdef PairingHeap[pair[size_t, size_t], pair[size_t, size_t]] * HH = new PairingHeap[pair[size_t, size_t], pair[size_t, size_t]]()
+    cdef PairingHeap[size_t, pair[size_t, size_t]] * HH = new PairingHeap[size_t, pair[size_t, size_t]]()
     sig_off()
 
     for i in range(n):
-        HH.push((i, i + 1), (sin(i), cos(i)))
+        HH.push(i, (sin(i), cos(i)))
         sig_check()
 
     L = []
@@ -1237,7 +1176,7 @@ def _test_PairingHeap_from_C(n=100):
 
     # Or to get the value associated to an item that is not in the heap
     try:
-        _ = HH.value((123, 456))
+        _ = HH.value(123)
         print("something goes wrong, the error has not been raised")
     except ValueError, msg:
         # The error has been properly handled
@@ -1481,13 +1420,13 @@ def compare_heaps(n=100, verbose=False):
         sage: from sage.data_structures.pairing_heap import compare_heaps
         sage: compare_heaps(n=100)
         sage: compare_heaps(n=100, verbose=True)  # random
-        PairingHeap_of_n_integers: 7.300000000043383e-05
-        PairingHeap_of_n_hashables: 9.70000000037885e-05
-        PairingHeap (C++): 9.599999999920783e-05
+        PairingHeap_of_n_integers: 7.800000000024454e-05
+        PairingHeap_of_n_hashables: 9.400000000026054e-05
+        PairingHeap (C++): 6.899999999987472e-05
         sage: compare_heaps(1000000, verbose=True)  # not tested (long time), random
-        PairingHeap_of_n_integers: 1.5988719999999996
-        PairingHeap_of_n_hashables: 5.039089999999998
-        PairingHeap (C++): 3.3256689999999995
+        PairingHeap_of_n_integers: 1.5106779999999995
+        PairingHeap_of_n_hashables: 4.998040000000001
+        PairingHeap (C++): 1.7841750000000012
     """
     from sage.misc.prandom import shuffle
     from sage.misc.timing import cputime

@@ -5,9 +5,11 @@
  * for more details.
  *
  * This implementation is templated by the type TI of items and the type TV of
- * the value associated with an item. The top of the heap is the item with
- * smallest value, i.e., this is a min heap data structure. The number of items
- * in the heap is not fixed. It supports the following operations:
+ * the value associated with an item. The type TI must be either a standard type
+ * (int, size_t, etc.) or a type equipped with a has function as supported by
+ * std::unordered_map. The top of the heap is the item with smallest value,
+ * i.e., this is a min heap data structure. The number of items in the heap is
+ * not fixed. It supports the following operations:
  *
  * - empty(): return true if the heap is empty, and false otherwise.
  *
@@ -53,9 +55,8 @@
 #define PAIRING_HEAP_H
 
 #include <iostream>
-#include <map>
+#include <unordered_map>
 #include <stdexcept>
-#include <assert.h>
 
 
 namespace pairing_heap {
@@ -140,7 +141,7 @@ namespace pairing_heap {
       PairingHeapNode<TI, TV> *root;
 
       // Map used to access stored items
-      std::map<TI, PairingHeapNode<TI, TV> *> nodes;
+      std::unordered_map<TI, PairingHeapNode<TI, TV> *> nodes;
 
       // Pair list of heaps and return pointer to the top of resulting heap
       PairingHeapNode<TI, TV> *_pair(PairingHeapNode<TI, TV> *p);
