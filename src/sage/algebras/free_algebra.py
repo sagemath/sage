@@ -1515,6 +1515,10 @@ class AssociativeFunctor(ConstructionFunctor):
             Free Algebra on 2 generators (x, y)  over Integer Ring
         """
         Functor.__init__(self, Rings(), Rings())
+        if not isinstance(vars, (list, tuple)):
+            raise TypeError("vars must be a list or tuple")
+        if degs is not None and not isinstance(degs, (list, tuple, dict)):
+            raise TypeError("degs must be a list, tuple or dict")
         self.vars = vars
         self.degs = degs
 
@@ -1613,6 +1617,16 @@ class AssociativeFunctor(ConstructionFunctor):
             sage: F.merge(F)
             Associative[x,y]
 
+        With degrees::
+
+            sage: F = AssociativeFunctor(['x','y'], (2,3))
+            sage: G = AssociativeFunctor(['t'], (4,))
+            sage: H = AssociativeFunctor(['z','y'], (5,3))
+            sage: F.merge(G)
+            Associative[x,y,t] with degrees (2, 3, 4)
+            sage: F.merge(H)
+            Associative[x,y,z] with degrees (2, 3, 5)
+
         Now some actual use cases::
 
             sage: R = algebras.Free(ZZ, 3, 'x,y,z')
@@ -1628,15 +1642,42 @@ class AssociativeFunctor(ConstructionFunctor):
             t + x
             sage: parent(x + t)
             Free Algebra on 4 generators (z, t, x, y) over Rational Field
+
+        TESTS::
+
+            sage: F = AssociativeFunctor(['x','y'], (2,3))
+            sage: H = AssociativeFunctor(['z','y'], (5,4))
+            sage: F.merge(H)
         """
         if isinstance(other, AssociativeFunctor):
             if self.vars == other.vars and self.degs == other.degs:
                 return self
+
             ret = list(self.vars)
-            cur_vars = set(ret)
-            ret.extend(v for v in other.vars if v not in cur_vars)
-            # degrees are ignored for the moment ; TODO
-            return AssociativeFunctor(tuple(ret))
+            self_vars = set(ret)
+            ret.extend(v for v in other.vars if v not in self_vars)
+
+            # first case: no degrees
+            if self.degs is None and other.degs is None:
+                return AssociativeFunctor(tuple(ret))
+
+            # second case: merge the degrees
+            if self.degs is None:
+                deg = [1] * len(self.vars)
+            else:
+                deg = list(self.degs)
+            if other.degs is None:
+                o_degs = [1] * len(other.vars)
+            else:
+                o_degs = list(other.degs)
+            self_table = {w: d for w, d in zip(self.vars, deg)}
+            for v, d in zip(other.vars, o_degs):
+                if v not in self_vars:
+                    deg.append(d)
+                elif d != self_table[v]:
+                    # incompatible degrees
+                    return None
+            return AssociativeFunctor(tuple(ret), tuple(deg))
 
         return None
 
