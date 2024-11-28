@@ -1069,7 +1069,7 @@ def _test_PairingHeap_from_C(n=100):
     """
     from sage.misc.prandom import randint, shuffle
     sig_on()
-    cdef PairingHeap[size_t, size_t] *PH = new PairingHeap[size_t, size_t]()
+    cdef PairingHeap[size_t, size_t] * PH = new PairingHeap[size_t, size_t]()
     sig_off()
 
     # Initialize a list of tuples (value, item) randomly ordered
@@ -1131,7 +1131,7 @@ def _test_PairingHeap_from_C(n=100):
     sig_off()
 
     sig_on()
-    cdef PairingHeap[pair[size_t, size_t], size_t] *Q = new PairingHeap[pair[size_t, size_t], size_t]()
+    cdef PairingHeap[pair[size_t, size_t], size_t] * Q = new PairingHeap[pair[size_t, size_t], size_t]()
     sig_off()
 
     # Initialize a list of tuples (value, item) randomly ordered
@@ -1195,7 +1195,7 @@ def _test_PairingHeap_from_C(n=100):
     # Different cost function
     from sage.functions.trig import sin, cos
     sig_on()
-    cdef PairingHeap[pair[size_t, size_t], pair[size_t, size_t]] HH = PairingHeap[pair[size_t, size_t], pair[size_t, size_t]]()
+    cdef PairingHeap[pair[size_t, size_t], pair[size_t, size_t]] * HH = new PairingHeap[pair[size_t, size_t], pair[size_t, size_t]]()
     sig_off()
 
     for i in range(n):
