@@ -283,6 +283,25 @@ class ModularForm_abstract(ModuleElement):
             sage: f(0.0+0.0*I)
             0
 
+        For simplicity, ``float`` or ``complex`` input are converted to ``CC``, except for
+        input ``0`` where exact result is returned::
+
+            sage: result = f(0.3r); result  # rel tol 1e-12
+            0.299999997396191
+            sage: result.parent()
+            Complex Field with 53 bits of precision
+            sage: result = f(0.3r + 0.3jr); result  # rel tol 1e-12
+            0.299999359878484 + 0.299999359878484*I
+            sage: result.parent()
+            Complex Field with 53 bits of precision
+
+        Symbolic numerical values use precision of ``CC`` by default::
+
+            sage: f(sqrt(1/2))  # rel tol 1e-12
+            0.700041406692037
+            sage: f(sqrt(1/2)*QQbar.zeta(8))  # rel tol 1e-12
+            0.496956554651376 + 0.496956554651376*I
+
         Higher precision::
 
             sage: f(ComplexField(128)(0.3))  # rel tol 1e-36
@@ -354,6 +373,20 @@ class ModularForm_abstract(ModuleElement):
 
         TESTS:
 
+        Symbolic numerical values use precision of ``CC`` by default::
+
+            sage: f.eval_at_tau(sqrt(1/5)*I)  # rel tol 1e-12
+            0.0123633234207127
+            sage: f.eval_at_tau(sqrt(1/2)*QQbar.zeta(8))  # rel tol 1e-12
+            -0.114263670441098
+
+        For simplicity, ``complex`` input are converted to ``CC``::
+
+            sage: result = f.eval_at_tau(0.3jr); result  # rel tol 1e-12
+            0.00150904633897550
+            sage: result.parent()
+            Complex Field with 53 bits of precision
+
         Check ``SR`` does not make the result lose precision::
 
             sage: f = EisensteinForms(1, 4).0
@@ -362,6 +395,7 @@ class ModularForm_abstract(ModuleElement):
         """
         from sage.libs.pari.convert_sage import gen_to_sage
         from sage.libs.pari import pari
+        from sage.rings.cc import CC
         from sage.rings.complex_mpfr import ComplexNumber, ComplexField
         from sage.rings.real_mpfr import RealNumber
         from sage.symbolic.expression import Expression
@@ -370,16 +404,10 @@ class ModularForm_abstract(ModuleElement):
                 tau = tau.pyobject()
             except TypeError:
                 pass
-        if isinstance(tau, (RealNumber, ComplexNumber)):
-            precision = tau.prec()
-        else:
-            precision = 53
-        result = gen_to_sage(pari(self.parent()).mfeval(self, tau, precision=precision))
-        if isinstance(tau, (float, complex)):
-            result = complex(result)
-        elif isinstance(tau, (RealNumber, ComplexNumber)):
-            result = ComplexField(precision)(result)
-        return result
+        if not isinstance(tau, (RealNumber, ComplexNumber)):
+            tau = CC(tau)
+        precision = tau.prec()
+        return ComplexField(precision)(pari.mfeval(self.parent(), self, tau, precision=precision))
 
     @cached_method
     def valuation(self):
