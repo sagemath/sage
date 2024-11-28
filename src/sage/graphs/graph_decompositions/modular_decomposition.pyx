@@ -106,6 +106,9 @@ def corneil_habib_paul_tedder_algorithm(G):
 
 cdef object _md_tree_node_to_md_tree_inner_rec(const md_tree_node *n,
                                                CGraphBackend Gb):
+    """
+    Utility function for :func:`md_tree_node_to_md_tree`.
+    """
     cdef md_tree_node *c
     if deref(n).is_leaf():
         return Node.create_leaf(Gb.vertex_label(deref(n).vertex))
@@ -123,6 +126,29 @@ cdef object _md_tree_node_to_md_tree_inner_rec(const md_tree_node *n,
 
 
 cdef object md_tree_node_to_md_tree(const md_tree_node *n, CGraphBackend Gb):
+    """
+    This function converts a modular decomposition tree (given as a pointer to a
+    md_tree_node) into an object of the Python class Node (which is then
+    converted into the correct output by :meth:`Graph.modular_decomposition`).
+
+    The graph backend is needed to convert the int stored into the md_tree_node
+    into the corresponding vertex of the Python graph.
+
+    This function deals with the case of an empty tree and then delegates the
+    actual conversion to :func:`_md_tree_node_to_md_tree_inner_rec`.
+
+    TESTS
+
+    Indirect doctests::
+
+        sage: from sage.graphs.graph_decompositions.modular_decomposition import *
+        sage: corneil_habib_paul_tedder_algorithm(Graph(1))
+        NORMAL [0]
+        sage: corneil_habib_paul_tedder_algorithm(Graph(2))
+        PARALLEL [NORMAL [0], NORMAL [1]]
+        sage: corneil_habib_paul_tedder_algorithm(graphs.CompleteGraph(3))
+        SERIES [NORMAL [1], NORMAL [2], NORMAL [0]]
+    """
     if n == NULL:
         return Node(NodeType.EMPTY)
     else:
