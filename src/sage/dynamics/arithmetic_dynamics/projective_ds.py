@@ -2119,8 +2119,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                                 h = max([R(v)**(-R(c.valuation(v)))  for c in poly.coefficients()])
                             else:
                                 h = max([R(c.abs_non_arch(v, prec=prec)) for c in poly.coefficients()])
-                        if h > maxh:
-                            maxh = h
+                        maxh = max(h, maxh)
             if maxh == 0:
                 maxh = 1  #avoid division by 0
             if isinstance(v, RingHomomorphism_im_gens): #archimedean
