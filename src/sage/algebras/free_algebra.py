@@ -168,7 +168,6 @@ from sage.categories.pushout import (ConstructionFunctor,
                                      IdentityConstructionFunctor)
 from sage.categories.rings import Rings
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.words.alphabet import Alphabet
 from sage.combinat.words.word import Word
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
@@ -1637,7 +1636,7 @@ class AssociativeFunctor(ConstructionFunctor):
             cur_vars = set(ret)
             ret.extend(v for v in other.vars if v not in cur_vars)
             # degrees are ignored for the moment ; TODO
-            return AssociativeFunctor(Alphabet(ret))
+            return AssociativeFunctor(tuple(ret))
 
         return None
 
