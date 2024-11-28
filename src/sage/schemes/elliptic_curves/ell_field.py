@@ -1150,12 +1150,23 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E = EllipticCurve(GF(19), [1,0])
             sage: type(E._Hom_(E))
             <class 'sage.schemes.elliptic_curves.homset.EllipticCurveHomset_with_category'>
+
+        TESTS::
+
+            sage: E.Hom(E, Sets())
+            Set of Morphisms from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 19 to Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 19 in Category of sets
+            sage: E.Hom(E, Sets())(lambda x: x + E(3, 7))(E(4, 7))
+            (12 : 12 : 1)
         """
-        if isinstance(other, ell_generic.EllipticCurve_generic) and self.base_ring() == other.base_ring():
-            from . import homset
-            return homset.EllipticCurveHomset(self, other, category=category)
-        from sage.schemes.generic.homset import SchemeHomset_generic
-        return SchemeHomset_generic(self, other, category=category)
+        from sage.categories.schemes import Schemes
+        if category is None or category.is_subcategory(Schemes()):
+            if isinstance(other, ell_generic.EllipticCurve_generic) and self.base_ring() == other.base_ring():
+                from . import homset
+                return homset.EllipticCurveHomset(self, other, category=category)
+            from sage.schemes.generic.homset import SchemeHomset_generic
+            return SchemeHomset_generic(self, other, category=category)
+        from sage.categories.homset import Homset
+        return Homset(self, other, category=category)
 
     def isogeny(self, kernel, codomain=None, degree=None, model=None, check=True, algorithm=None, velu_sqrt_bound=None):
         r"""
