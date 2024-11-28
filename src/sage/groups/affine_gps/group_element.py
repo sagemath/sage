@@ -30,15 +30,15 @@ AUTHORS:
 - Volker Braun
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from copy import copy
 
@@ -46,6 +46,7 @@ from sage.structure.element import Matrix
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.richcmp import richcmp, richcmp_not_equal
+
 
 class AffineGroupElement(MultiplicativeGroupElement):
     r"""
