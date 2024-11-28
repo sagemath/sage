@@ -196,7 +196,7 @@ class Node:
 
     def is_prime(self):
         r"""
-        Return ``True`` if the node is a prime node, ``False`` otherwise.
+        Check whether ``self`` is a prime node.
 
         EXAMPLES::
 
@@ -213,7 +213,7 @@ class Node:
 
     def is_series(self):
         r"""
-        Return ``True`` if the node is series, ``False`` otherwise.
+        Check whether ``self`` is a series node.
 
         EXAMPLES::
 
@@ -230,7 +230,7 @@ class Node:
 
     def is_empty(self):
         r"""
-        Return ``True`` if the node is empty, ``False`` otherwise.
+        Check whether ``self`` is an empty node.
 
         EXAMPLES::
 
@@ -244,7 +244,7 @@ class Node:
 
     def is_leaf(self):
         r"""
-        Return ``True`` if the node is a leaf, ``False`` otherwise.
+        Check whether ``self`` is a leaf.
 
         EXAMPLES::
 
@@ -638,14 +638,13 @@ def modular_decomposition(G, algorithm=None):
 
     if not G.order():
         return Node(NodeType.EMPTY)
-    elif G.order() == 1:
+    if G.order() == 1:
         D = Node(NodeType.NORMAL)
         D.children.append(next(G.vertex_iterator()))
         return D
-    elif algorithm == "habib_maurer":
+    if algorithm == "habib_maurer":
         return habib_maurer_algorithm(G)
-    else: # algorithm == "corneil_habib_paul_tedder"
-        return corneil_habib_paul_tedder_algorithm(G)
+    return corneil_habib_paul_tedder_algorithm(G)
 
 
 # ============================================================================
@@ -1400,9 +1399,8 @@ def md_tree_to_graph(root, prime_node_generator=None):
 
     if root.is_empty():
         return Graph()
-    else:
-        vs, es = tree_to_vertices_and_edges(root)
-        return Graph([vs, es], format='vertices_and_edges')
+    vs, es = tree_to_vertices_and_edges(root)
+    return Graph([vs, es], format='vertices_and_edges')
 
 
 @random_testing

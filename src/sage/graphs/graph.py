@@ -7186,7 +7186,7 @@ class Graph(GenericGraph):
     @doc_index("Modules")
     def is_module(self, vertices):
         r"""
-        Return whether ``vertices`` is a module of ``self``.
+        Check whether ``vertices`` is a module of ``self``.
 
         A subset `M` of the vertices of a graph is a module if for every
         vertex `v` outside of `M`, either all vertices of `M` are neighbors of
@@ -7267,11 +7267,11 @@ class Graph(GenericGraph):
         if len(M) == 0 or len(M) == 1 or len(M) == self.order():
             return True
 
-        N = None # will contains the neighborhood of M
+        N = None  # will contains the neighborhood of M
         for v in M:
             if N is None:
                 # first iteration, the neighborhood N must be computed
-                N = { u for u in self.neighbor_iterator(v) if u not in M }
+                N = {u for u in self.neighbor_iterator(v) if u not in M}
             else:
                 # check that the neighborhood of v is N
                 n = 0
