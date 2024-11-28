@@ -954,16 +954,17 @@ class SagecodeTransform(SphinxTransform):
 
     def apply(self):
         if self.app.builder.tags.has('html') or self.app.builder.tags.has('inventory'):
-            for node in self.document.findall(nodes.literal_block):
+            for node in list(self.document.findall(nodes.literal_block)):
                 if node.get('language') is None and node.astext().startswith('sage:'):
                     from docutils.nodes import container as Container, label as Label, literal_block as LiteralBlock, Text
                     from sphinx_inline_tabs._impl import TabContainer
                     parent = node.parent
                     index = parent.index(node)
                     prev_node = node.previous_sibling()
-                    if isinstance(node.previous_sibling(), TabContainer):
+                    if isinstance(prev_node, TabContainer):
                         # Make sure not to merge inline tabs for adjacent literal blocks
-                        parent.insert(index, Text(''))
+                        parent.insert(index, nodes.paragraph())
+                        prev_node = parent[index]
                         index += 1
                     parent.remove(node)
                     # Tab for Sage code

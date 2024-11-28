@@ -449,12 +449,12 @@ def latin_square_product(M, N, *others):
     P = Matrix(D)
 
     if others:
-        return latin_square_product(P, others[0],*others[1:])
+        return latin_square_product(P, others[0], *others[1:])
     else:
         return P
 
 
-def MOLS_table(start,stop=None,compare=False,width=None):
+def MOLS_table(start, stop=None, compare=False, width=None):
     r"""
     Print the MOLS table that Sage can produce.
 

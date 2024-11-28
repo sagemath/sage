@@ -676,7 +676,7 @@ def compute_gevp_M(gs, hs):
         True
         sage: G = matrix.column(gs)
         sage: H = matrix.column(hs)
-        sage: def _test_indexing(I,J):
+        sage: def _test_indexing(I, J):
         ....:      G_I = G.matrix_from_columns(I)
         ....:      H_J = H.matrix_from_columns(J)
         ....:      return (G_I.transpose()*H_J == M[I,J]
