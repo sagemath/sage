@@ -272,7 +272,7 @@ class mwrank_EllipticCurve(SageObject):
           testing local solubility; very simple search with no
           overheads).
 
-        - ``second_limit`` -- integer (default: 8); naive height bound on
+        - ``second_limit`` -- integer (default: 8); logarithmic height bound on
           second point search on quartic homogeneous spaces (after
           testing local solubility; sieve-assisted search)
 
