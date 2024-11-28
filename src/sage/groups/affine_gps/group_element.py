@@ -40,12 +40,12 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from copy import copy
+
 from sage.structure.element import Matrix
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.richcmp import richcmp, richcmp_not_equal
-
-from copy import copy
 
 class AffineGroupElement(MultiplicativeGroupElement):
     r"""
@@ -531,8 +531,8 @@ class AffineGroupElement(MultiplicativeGroupElement):
             sage: hash(g) == hash(copy(g))
             True
             sage: f = g * h
-            sage: hash(f) == hash((f.A(), f.b()))
-            True
+            sage: hash(f) == hash(~f)
+            False
         """
         return hash((self._A, self._b))
 
