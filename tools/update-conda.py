@@ -134,6 +134,8 @@ def get_dependencies(pyproject_toml: Path, python: str) -> list[str]:
     all_requirements.append("c-compiler")
     all_requirements.remove("{{ compiler('cxx') }}")
     all_requirements.append("cxx-compiler")
+    # all_requirements.remove("{{ compiler('fortran') }}")
+    all_requirements.append("fortran-compiler")
 
     # Correct pypi name for some packages
     python_requirements = set(pyproject_metadata.get("install_requires", []))
