@@ -25,12 +25,12 @@ where `(a, b)\in S`
 
     S_a^b := \{(x,y) \in S \mid x = a, y = b\}.
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012 Florent Hivert <florent.hivert at lri.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
@@ -100,7 +100,7 @@ class XYPairsFactory(SetFactory):
                 return SingletonPair(x, y, policy)
             return PairsX_(x, policy)
         elif isinstance(y, (Integer, int)):
-                return Pairs_Y(y, policy)
+            return Pairs_Y(y, policy)
         return AllPairs(policy)
 
     def add_constraints(self, cons, args_opts):
