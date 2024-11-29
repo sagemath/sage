@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Trigger Workflow in website repo
         env:
-          GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          GH_TOKEN: ${{ secrets.WEBSITE_ACCESS_TOKEN }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           curl -L \
