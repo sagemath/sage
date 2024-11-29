@@ -104,7 +104,7 @@ namespace pairing_heap {
       virtual ~PairingHeap();
 
       // Return true if the heap is empty, else false
-      bool empty()  { return root == nullptr; }
+      bool empty() const { return root == nullptr; }
 
       // Return true if the heap is empty, else false
       explicit operator bool() const { return root != nullptr; }
@@ -113,13 +113,13 @@ namespace pairing_heap {
       void push(const TI &some_item, const TV &some_value);
 
       // Return the top pair (item, value) of the heap
-      std::pair<TI, TV> top();
+      std::pair<TI, TV> top() const;
 
       // Return the top item of the heap
-      TI top_item();
+      TI top_item() const;
 
       // Return the top value of the heap
-      TV top_value();
+      TV top_value() const;
 
       // Remove the top element from the heap
       void pop();
@@ -128,13 +128,15 @@ namespace pairing_heap {
       void decrease(const TI &some_item, const TV &new_value);
 
       // Check if specified item is in the heap
-      bool contains(TI const& some_item);
+      bool contains(TI const& some_item) const {
+	return nodes.find(some_item) != nodes.end();
+      }
 
       // Return the value associated with the item
       TV value(const TI &some_item);
 
       // Return the number of items in the heap
-      size_t size() { return nodes.size(); }
+      size_t size() const { return nodes.size(); }
 
     private:
       // Pointer to the top of the heap
@@ -162,7 +164,6 @@ namespace pairing_heap {
     PairingHeap<TI, TV>::PairingHeap():
   root(nullptr)
   {
-    nodes.clear();
   }
 
   // Copy constructor
@@ -170,7 +171,6 @@ namespace pairing_heap {
     PairingHeap<TI, TV>::PairingHeap(PairingHeap<TI, TV> const *other):
   root(nullptr)
   {
-    nodes.clear();
     for (auto const& it:other->nodes)
       push(it.first, it.second->value);
   }
@@ -181,8 +181,6 @@ namespace pairing_heap {
     {
       for (auto const& it: nodes)
         delete it.second;
-      root = nullptr;
-      nodes.clear();
     }
 
   // Insert an item into the heap with specified value (priority)
@@ -199,7 +197,7 @@ namespace pairing_heap {
 
   // Return the top pair (value, item) of the heap
   template<typename TI, typename TV>
-    inline std::pair<TI, TV> PairingHeap<TI, TV>::top()
+    inline std::pair<TI, TV> PairingHeap<TI, TV>::top() const
     {
       if (root ==  nullptr) {
 	throw std::domain_error("trying to access the top of an empty heap");
@@ -209,7 +207,7 @@ namespace pairing_heap {
 
   // Return the top item of the heap
   template<typename TI, typename TV>
-    inline TI PairingHeap<TI, TV>::top_item()
+    inline TI PairingHeap<TI, TV>::top_item() const
     {
       if (root == nullptr) {
 	throw std::domain_error("trying to access the top of an empty heap");
@@ -219,7 +217,7 @@ namespace pairing_heap {
 
   // Return the top value of the heap
   template<typename TI, typename TV>
-    inline TV PairingHeap<TI, TV>::top_value()
+    inline TV PairingHeap<TI, TV>::top_value() const
     {
       if (root == nullptr) {
 	throw std::domain_error("trying to access the top of an empty heap");
@@ -257,14 +255,6 @@ namespace pairing_heap {
       } else {
         push(some_item, new_value);
       }
-    }
-
-  // Check if specified item is in the heap
-  template<typename TI, typename TV>
-    inline bool PairingHeap<TI, TV>::contains(TI const& some_item)
-    {
-      return nodes.find(some_item) != nodes.end();
-      // return nodes.count(some_item) > 0;
     }
 
   // Return the value associated with the item
