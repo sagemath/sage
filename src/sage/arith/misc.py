@@ -3574,6 +3574,21 @@ def CRT_list(values, moduli=None):
         sage: CRT_list([mpz(2),mpz(3),mpz(2)], [mpz(3),mpz(5),mpz(7)])
         23
 
+    Tests for call with one argument::
+
+        sage: x = CRT_list([mod(2,3)]); x
+        2
+        sage: x.parent()
+        Ring of integers modulo 3
+        sage: x = CRT_list([]); x
+        0
+        sage: x.parent()
+        Ring of integers modulo 1
+        sage: x = CRT_list([2]); x
+        Traceback (most recent call last):
+        ...
+        TypeError: if one argument is given, it should be a list of IntegerMod
+
     Make sure we are not mutating the input lists::
 
         sage: xs = [1,2,3]
@@ -3593,7 +3608,7 @@ def CRT_list(values, moduli=None):
         if not values:
             return Mod(0, 1)
         if not all(isinstance(v, IntegerMod_abstract) for v in values):
-            raise TypeError("arguments to CRT_list should be lists of IntegerMod")
+            raise TypeError("if one argument is given, it should be a list of IntegerMod")
         if len(values) == 1:
             return values[0]
         moduli = [v.modulus() for v in values]
