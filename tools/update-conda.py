@@ -162,6 +162,8 @@ def get_dependencies(pyproject_toml: Path, python: str) -> list[str]:
     all_requirements.append("autoconf")
     all_requirements.append("automake")
     all_requirements.append("m4")
+    # Needed to fix a bug on Macos with broken pkg-config
+    all_requirements.append("expat")
     return all_requirements
 
 
