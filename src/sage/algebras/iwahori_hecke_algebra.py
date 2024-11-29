@@ -1703,12 +1703,12 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 sage: R.<q1,q2> = QQ[]
                 sage: H = IwahoriHeckeAlgebra("A2", q1, q2=q2).T(prefix='x')
                 sage: sum(H.algebra_generators())^2
-                x[2,1] + x[1,2] + (q1+q2)*x[1] + (q1+q2)*x[2] + (-2*q1*q2)
+                x[2,1] + x[1,2] + (q1+q2)*x[1] + (q1+q2)*x[2] - 2*q1*q2
 
                 sage: H = IwahoriHeckeAlgebra("A2", q1, q2=q2).T(prefix='t')
                 sage: t1,t2 = H.algebra_generators()
                 sage: (t1-t2)^3
-                (q1^2-q1*q2+q2^2)*t[1] + (-q1^2+q1*q2-q2^2)*t[2]
+                (q1^2-q1*q2+q2^2)*t[1] - (q1^2-q1*q2+q2^2)*t[2]
 
                 sage: R.<q> = QQ[]
                 sage: H = IwahoriHeckeAlgebra("G2", q).T()
