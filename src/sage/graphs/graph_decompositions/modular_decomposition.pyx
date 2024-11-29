@@ -631,6 +631,11 @@ def modular_decomposition(G, algorithm=None):
         sage: modular_decomposition(Graph(1))
         NORMAL [0]
 
+        sage: check_algos_are_equivalent(5,\
+        ....:                   lambda : graphs.RandomProperIntervalGraph(100))
+
+        sage: check_algos_are_equivalent(5, lambda : graphs.RandomGNM(75, 1000))
+
         sage: modular_decomposition(DiGraph())
         Traceback (most recent call last):
         ...
@@ -1457,5 +1462,32 @@ def recreate_decomposition(trials, algorithm, max_depth, max_fan_out,
         if verbose:
             print_md_tree(reconstruction)
         assert equivalent_trees(rand_tree, reconstruction)
+        if verbose:
+            print("Passes!")
+
+@random_testing
+def check_algos_are_equivalent(trials, graph_gen, verbose=False):
+    r"""
+    Verify that both algorithms compute the same tree (up to equivalence) for
+    random graphs.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.graph_decompositions.modular_decomposition import *
+        sage: check_algos_are_equivalent(3, lambda : graphs.RandomGNP(10, 0.5))
+    """
+    for _ in range(trials):
+        graph = graph_gen()
+        if verbose:
+            print(graph.graph6_string())
+            print(graph.to_dictionary())
+        MD = []
+        for algo in ('habib_maurer', 'corneil_habib_paul_tedder'):
+            md = modular_decomposition(graph, algorithm=algo)
+            MD.append(md)
+            if verbose:
+                print(f'Using {algo}:')
+                print_md_tree(md)
+        assert equivalent_trees(MD[0], MD[1])
         if verbose:
             print("Passes!")
