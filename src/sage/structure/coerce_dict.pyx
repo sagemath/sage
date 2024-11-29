@@ -21,8 +21,7 @@ two parents (:issue:`715`) and to store homsets of pairs of objects of a
 category (:issue:`11521`). In both cases, it is essential that the parent
 structures remain garbage collectable, it is essential that the data access is
 faster than with a usual :class:`~weakref.WeakKeyDictionary`, and we enforce
-the "unique parent condition" in Sage (parent structures should be identical
-if they are equal).
+the "unique parent condition" in Sage.
 
 :class:`MonoDict` behaves similarly, but it takes a single item as a key. It
 is used for caching the parents which allow a coercion map into a fixed other
