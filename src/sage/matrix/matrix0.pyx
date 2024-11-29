@@ -2977,7 +2977,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         self.permute_rows(row_permutation)
         self.permute_columns(column_permutation)
 
-    def with_permuted_rows_and_columns(self,row_permutation,column_permutation):
+    def with_permuted_rows_and_columns(self, row_permutation, column_permutation):
         r"""
         Return the matrix obtained from permuting the rows and
         columns of ``self`` by applying the permutation group
@@ -3605,14 +3605,14 @@ cdef class Matrix(sage.structure.element.Matrix):
             [-4 -5  2]
             [ 3  4  5]
         """
-        self.check_row_bounds_and_mutability(i,i)
+        self.check_row_bounds_and_mutability(i, i)
         if r < 0 or r >= A.nrows():
             raise IndexError("invalid row")
         # this function exists just because it is useful for modular symbols presentations.
         cdef Py_ssize_t l
         l = 0
         for k in cols:
-            self.set_unsafe(i,l,-A.get_unsafe(r,k))               #self[i,l] = -A[r,k]
+            self.set_unsafe(i, l, -A.get_unsafe(r, k))  # self[i,l] = -A[r,k]
             l += 1
 
     def reverse_rows_and_columns(self):

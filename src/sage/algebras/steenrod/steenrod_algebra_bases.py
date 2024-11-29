@@ -887,7 +887,7 @@ def atomic_basis(n, basis, **kwds):
                 deg = 2**s * (2**t - 1)
         return dict
 
-    def sorting_pair(s,t,basis):   # pair used for sorting the basis
+    def sorting_pair(s, t, basis):   # pair used for sorting the basis
         if basis.find('wood') >= 0 and basis.find('z') >= 0:
             return (-s-t,-s)
         elif basis.find('wood') >= 0 or basis.find('wall') >= 0 or \

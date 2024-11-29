@@ -218,24 +218,24 @@ cdef class EvenlyDistributedSetsBacktracker:
             raise ValueError(f"{K} is not a field")
         cdef unsigned int q = K.cardinality()
         cdef unsigned int e = k*(k-1)/2
-        if (q-1) % (2*e) != 0:
+        if (q-1) % (2*e):
             raise ValueError("k(k-1)={} does not divide q-1={}".format(k*(k-1),q-1))
-        cdef unsigned int m = (q-1)/e
+        cdef unsigned int m = (q - 1) // e
 
         self.q = q
         self.e = e
         self.k = k
-        self.m = (q-1) / e
+        self.m = (q - 1) // e
         self.K = K
 
         self.diff    = <unsigned int **> check_calloc(q, sizeof(unsigned int *))
         self.diff[0] = <unsigned int *>  check_malloc(q*q*sizeof(unsigned int))
-        for i in range(1,self.q):
+        for i in range(1, self.q):
             self.diff[i] = self.diff[i-1] + q
 
         self.ratio    = <unsigned int **> check_calloc(q, sizeof(unsigned int *))
         self.ratio[0] = <unsigned int *>  check_malloc(q*q*sizeof(unsigned int))
-        for i in range(1,self.q):
+        for i in range(1, self.q):
             self.ratio[i] = self.ratio[i-1] + q
 
         self.B       = <unsigned int *> check_malloc(k*sizeof(unsigned int))
@@ -433,7 +433,7 @@ cdef class EvenlyDistributedSetsBacktracker:
             will be called only once.
         """
         cdef unsigned int i,j,k,tmp1,tmp2,verify
-        cdef list B = [self.B[i] for i in range(1,self.k)]
+        cdef list B = [self.B[i] for i in range(1, self.k)]
         B.append(self.q-1)
         cdef list BB = [None]*self.k
         cdef set relabs = set([tuple(B)])

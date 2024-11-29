@@ -670,7 +670,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         return self._backend.base_ring()
 
-    def set_problem_name(self,name):
+    def set_problem_name(self, name):
         r"""
         Set the name of the ``MixedIntegerLinearProgram``.
 
@@ -914,7 +914,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         return self._backend.ncols()
 
-    def constraints(self, indices = None):
+    def constraints(self, indices=None):
         r"""
         Return a list of constraints, as 3-tuples.
 
@@ -970,7 +970,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         solver used, we define a short function reordering it before it is
         printed. The output would look the same without this function applied::
 
-            sage: def reorder_constraint(lb,indcoef,ub):
+            sage: def reorder_constraint(lb, indcoef, ub):
             ....:    ind, coef = indcoef
             ....:    d = dict(zip(ind, coef))
             ....:    ind.sort()
@@ -1310,7 +1310,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
                 lb if lb is not None else "-oo",
                 ub if ub is not None else "+oo"))
 
-    def write_mps(self,filename,modern=True):
+    def write_mps(self, filename, modern=True):
         r"""
         Write the linear program as a MPS file.
 
@@ -1343,7 +1343,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         self._backend.write_mps(filename, modern)
 
-    def write_lp(self,filename):
+    def write_lp(self, filename):
         r"""
         Write the linear program as a LP file.
 
@@ -1782,7 +1782,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         else:
             return val
 
-    def set_objective(self,obj):
+    def set_objective(self, obj):
         r"""
         Set the objective of the ``MixedIntegerLinearProgram``.
 
@@ -1836,7 +1836,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         cdef int i
 
         if obj is None:
-            f = {-1 : 0}
+            f = {-1: 0}
         else:
             # See if it is a constant
             R = self.base_ring()
@@ -2492,7 +2492,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         return self._backend.is_variable_integer(self._variables[e])
 
-    def set_real(self,ee):
+    def set_real(self, ee):
         r"""
         Set a variable or a ``MIPVariable`` as real.
 
@@ -2778,7 +2778,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         except TypeError:
             return self._backend.variable_upper_bound(self._variables[v])
 
-    def solver_parameter(self, name, value = None):
+    def solver_parameter(self, name, value=None):
         """
         Return or define a solver parameter.
 
@@ -3026,7 +3026,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         """
         return self._backend.get_relative_objective_gap()
 
-    def interactive_lp_problem(self,form='standard'):
+    def interactive_lp_problem(self, form='standard'):
         r"""
         Return an InteractiveLPProblem and, if available, a basis.
 
@@ -3389,7 +3389,7 @@ cdef class MIPVariable(FiniteFamily):
             integer=(self._vtype == self._p.__INTEGER),
             obj=zero,
             name=name)
-        v = self._p.linear_functions_parent()({j : 1})
+        v = self._p.linear_functions_parent()({j: 1})
         self._p._variables[v] = j
         self._dictionary[i] = v
         return v

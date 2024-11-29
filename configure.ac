@@ -222,7 +222,7 @@ dnl Exit autoconf with exit code 16 in this case. This will be
 dnl caught by the bootstrap script.
 m4_exit(16)])
 
-PKG_PROG_PKG_CONFIG([0.29])
+PKG_PROG_PKG_CONFIG([0.29], [PKG_CONFIG=false])
 
 AC_CHECK_PROG(found_ranlib, ranlib, yes, no)
 if test x$found_ranlib != xyes
@@ -450,7 +450,7 @@ AC_ARG_ENABLE([cvxopt],
 AC_ARG_ENABLE([notebook],
   AS_HELP_STRING([--disable-notebook],
                  [disable build of the Jupyter notebook and related packages]), [
-    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi argon2_cffi_bindings webencodings tinycss2 ipympl soupsieve fastjsonschema anyio arrow async_lru fqdn isoduration json5 jsonpointer jsonschema_specifications jupyter_events jupyter_lsp jupyter_server jupyter_server_terminals jupyterlab jupyterlab_server jupyterlab_pygments jupyterlab_mathjax2 jupyter_sphinx notebook_shim overrides python_json_logger pyyaml referencing rfc3339_validator rfc3986_validator sniffio types_python_dateutil uri_template webcolors websocket_client; do
+    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi argon2_cffi_bindings webencodings tinycss2 ipympl soupsieve fastjsonschema anyio arrow async_lru fqdn isoduration json5 jsonpointer jsonschema_specifications jupyter_events jupyter_lsp jupyter_server jupyter_server_terminals jupyterlab jupyterlab_server jupyterlab_pygments jupyterlab_mathjax2 jupyter_sphinx notebook_shim overrides python_json_logger pyyaml referencing rfc3339_validator rfc3986_validator sniffio types_python_dateutil uri_template webcolors websocket_client httpx httpcore h11; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
@@ -461,6 +461,12 @@ AC_ARG_ENABLE([r],
     for pkg in r rpy2 r_jupyter tzlocal pytz_deprecation_shim tzdata; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
+  ])
+
+AC_ARG_ENABLE([sagetex],
+  AS_HELP_STRING([--disable-sagetex],
+                 [don't build SageTeX]), [
+    AS_VAR_SET([SAGE_ENABLE_sagetex], [$enableval])
   ])
 
 AC_ARG_ENABLE([doc],

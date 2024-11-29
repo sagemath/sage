@@ -187,9 +187,6 @@ plot_formats = ['svg', 'pdf', 'png']
 # Add any paths that contain templates here, relative to this directory.
 templates_path = [os.path.join(SAGE_DOC_SRC, 'common', 'templates'), 'templates']
 
-# The suffix of source filenames.
-source_suffix = '.rst'
-
 # The master toctree document.
 master_doc = 'index'
 
@@ -495,6 +492,7 @@ html_css_files = [
     'custom-furo.css',
     'custom-jupyter-sphinx.css',
     'custom-codemirror-monokai.css',
+    'custom-tabs.css',
 ]
 
 html_js_files = [
@@ -956,15 +954,17 @@ class SagecodeTransform(SphinxTransform):
 
     def apply(self):
         if self.app.builder.tags.has('html') or self.app.builder.tags.has('inventory'):
-            for node in self.document.traverse(nodes.literal_block):
+            for node in list(self.document.findall(nodes.literal_block)):
                 if node.get('language') is None and node.astext().startswith('sage:'):
                     from docutils.nodes import container as Container, label as Label, literal_block as LiteralBlock, Text
                     from sphinx_inline_tabs._impl import TabContainer
                     parent = node.parent
                     index = parent.index(node)
-                    if isinstance(node.previous_sibling(), TabContainer):
+                    prev_node = node.previous_sibling()
+                    if isinstance(prev_node, TabContainer):
                         # Make sure not to merge inline tabs for adjacent literal blocks
-                        parent.insert(index, Text(''))
+                        parent.insert(index, nodes.paragraph())
+                        prev_node = parent[index]
                         index += 1
                     parent.remove(node)
                     # Tab for Sage code
@@ -976,6 +976,10 @@ class SagecodeTransform(SphinxTransform):
                     content += node
                     container += content
                     parent.insert(index, container)
+                    index += 1
+                    if isinstance(prev_node, nodes.paragraph):
+                        prev_node['classes'].append('with-sage-tab')
+
                     if SAGE_PREPARSED_DOC == 'yes':
                         # Tab for preparsed version
                         from sage.repl.preparse import preparse
@@ -1006,7 +1010,10 @@ class SagecodeTransform(SphinxTransform):
                         preparsed_node = LiteralBlock(preparsed, preparsed, language='ipycon')
                         content += preparsed_node
                         container += content
-                        parent.insert(index + 1, container)
+                        parent.insert(index, container)
+                        index += 1
+                        if isinstance(prev_node, nodes.paragraph):
+                            prev_node['classes'].append('with-python-tab')
                     if SAGE_LIVE_DOC == 'yes':
                         # Tab for Jupyter-sphinx cell
                         from jupyter_sphinx.ast import JupyterCellNode, CellInputNode
@@ -1038,7 +1045,10 @@ class SagecodeTransform(SphinxTransform):
                         content = Container("", is_div=True, classes=["tab-content"])
                         content += cell_node
                         container += content
-                        parent.insert(index + 1, container)
+                        parent.insert(index, container)
+                        index += 1
+                        if isinstance(prev_node, nodes.paragraph):
+                            prev_node['classes'].append('with-sage-live-tab')
 
 
 class Ignore(SphinxDirective):

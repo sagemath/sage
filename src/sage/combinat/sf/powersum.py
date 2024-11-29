@@ -325,9 +325,9 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             parent = self.parent()
             x = parent(x)
             if zee is None:
-                f = lambda part1, part2:  sfa.zee(part1)
+                f = lambda part1, part2: sfa.zee(part1)
             else:
-                f = lambda part1, part2:  zee(part1)
+                f = lambda part1, part2: zee(part1)
             return parent._apply_multi_module_morphism(self, x, f, orthogonal=True)
 
         def _derivative(self, part):
@@ -933,4 +933,6 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.powersum', 'SymmetricFunctionAlgebraElement_power',  SymmetricFunctionAlgebra_power.Element)
+register_unpickle_override('sage.combinat.sf.powersum',
+                           'SymmetricFunctionAlgebraElement_power',
+                           SymmetricFunctionAlgebra_power.Element)

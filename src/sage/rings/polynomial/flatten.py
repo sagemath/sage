@@ -224,13 +224,13 @@ class FlatteningMorphism(Morphism):
             if isinstance(ring, PolynomialRing_general):
                 for mon, pp in p.items():
                     assert pp.parent() is ring
-                    for i, j in pp.dict().items():
-                        new_p[(i,)+(mon)] = j
+                    for i, j in pp.monomial_coefficients().items():
+                        new_p[(i,) + (mon)] = j
             elif isinstance(ring, MPolynomialRing_base):
                 for mon, pp in p.items():
                     assert pp.parent() is ring
-                    for mmon, q in pp.dict().items():
-                        new_p[tuple(mmon)+mon] = q
+                    for mmon, q in pp.monomial_coefficients().items():
+                        new_p[tuple(mmon) + mon] = q
             else:
                 raise RuntimeError
             p = new_p
@@ -642,7 +642,7 @@ class SpecializationMorphism(Morphism):
             # apply _sub_specialization to each coefficient
             # in the flattened polynomial
             tmp = {}
-            for exponent, coefficient in flat.dict().items():
+            for exponent, coefficient in flat.monomial_coefficients().items():
                 # Fix the type of exponent from (a,) to a
                 #     (necessary for R(tmp) later)
                 if isinstance(exponent, ETuple) and len(exponent) == 1:

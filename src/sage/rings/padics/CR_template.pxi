@@ -992,7 +992,7 @@ cdef class CRElement(pAdicTemplateElement):
         """
         return self.relprec == 0 and not exactzero(self.ordp)
 
-    def is_zero(self, absprec = None):
+    def is_zero(self, absprec=None):
         r"""
         Determine whether this element is zero modulo
         `\pi^{\mbox{absprec}}`.

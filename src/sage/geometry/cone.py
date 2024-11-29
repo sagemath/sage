@@ -1986,7 +1986,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         V = self.ambient_vector_space()
         r_iter = iter(self._rays)
-        p = V(0)
+        p = V.zero()
         yield p
         for i in range(5):
             try:
@@ -1995,7 +1995,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                 return
             yield p
 
-    def _sort_faces(self,  faces):
+    def _sort_faces(self, faces):
         r"""
         Return sorted (if necessary) ``faces`` as a tuple.
 
@@ -2109,7 +2109,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         if superfaces:
             for superface in superfaces:
                 for facet in facets:
-                    adjacent.update(L.open_interval(facet,  superface))
+                    adjacent.update(L.open_interval(facet, superface))
             if adjacent:
                 adjacent.remove(L(self))
             return self._sort_faces(adjacent)
@@ -2603,7 +2603,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                     faces.append(self)
                     for face in dfaces:
                         L.add_edge(face_to_index[face], next_index)
-                D = {i:f for i,f in enumerate(faces)}
+                D = dict(enumerate(faces))
                 L.relabel(D)
                 self._face_lattice = FinitePoset(L, faces, key=id(self))
         return self._face_lattice
@@ -6796,7 +6796,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                 # Same thing, except when we're given a lattice.
                 max_rays = 2*(lattice.dimension() - 1)
 
-    def random_min_max(l,u):
+    def random_min_max(l, u):
         r"""
         We need to handle two cases for the upper bounds, and we need
         to do the same thing for max_ambient_dim/max_rays. So we consolidate

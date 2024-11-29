@@ -35,7 +35,7 @@ from itertools import repeat
 from .orthogonal_arrays import orthogonal_array, wilson_construction, is_orthogonal_array
 
 
-def construction_3_3(k,n,m,i,explain_construction=False):
+def construction_3_3(k, n, m, i, explain_construction=False):
     r"""
     Return an `OA(k,nm+i)`.
 
@@ -97,7 +97,7 @@ def construction_3_3(k,n,m,i,explain_construction=False):
     return OA
 
 
-def construction_3_4(k,n,m,r,s,explain_construction=False):
+def construction_3_4(k, n, m, r, s, explain_construction=False):
     r"""
     Return a `OA(k,nm+rs)`.
 
@@ -180,7 +180,7 @@ def construction_3_4(k,n,m,r,s,explain_construction=False):
     return OA
 
 
-def construction_3_5(k,n,m,r,s,t,explain_construction=False):
+def construction_3_5(k, n, m, r, s, t, explain_construction=False):
     r"""
     Return an `OA(k,nm+r+s+t)`.
 
@@ -275,7 +275,7 @@ def construction_3_5(k,n,m,r,s,t,explain_construction=False):
     return OA
 
 
-def construction_3_6(k,n,m,i,explain_construction=False):
+def construction_3_6(k, n, m, i, explain_construction=False):
     r"""
     Return a `OA(k,nm+i)`.
 
@@ -537,9 +537,9 @@ def construction_q_x(k, q, x, check=True, explain_construction=False):
 
     # Add rows, extended with p1 and p2
     p1 = q**2
-    p2 = p1+1
-    TD.extend([[ii*q+i for ii in range(q)]+[p1] for i in range(1,q)])
-    TD.append( [ii*q   for ii in range(q)]+[p1,p2])
+    p2 = p1 + 1
+    TD.extend([ii*q + i for ii in range(q)] + [p1] for i in range(1, q))
+    TD.append([ii*q for ii in range(q)] + [p1, p2])
 
     # Add Columns. We do not add some columns which would have size 1 after we
     # delete points.
@@ -578,7 +578,7 @@ def construction_q_x(k, q, x, check=True, explain_construction=False):
     return OA
 
 
-def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False):
+def thwart_lemma_3_5(k, n, m, a, b, c, d=0, complement=False, explain_construction=False):
     r"""
     Return an `OA(k,nm+a+b+c+d)`.
 
@@ -757,7 +757,7 @@ def thwart_lemma_3_5(k,n,m,a,b,c,d=0,complement=False,explain_construction=False
     return wilson_construction(OA,k,n,m,sizes, check=False)
 
 
-def thwart_lemma_4_1(k,n,m,explain_construction=False):
+def thwart_lemma_4_1(k, n, m, explain_construction=False):
     r"""
     Return an `OA(k,nm+4(n-2))`.
 
@@ -886,7 +886,7 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
     return wilson_construction(OA,k,n,m,[n-2,]*4,check=False)
 
 
-def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
+def three_factor_product(k, n1, n2, n3, check=False, explain_construction=False):
     r"""
     Return an `OA(k+1,n_1n_2n_3)`.
 
@@ -1010,7 +1010,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
                 "   A three-factor product construction for mutually orthogonal latin squares,\n" +
                 "   https://arxiv.org/abs/1401.1466").format(n1, n2, n3)
 
-    def assert_c_partition(classs,k,n,c):
+    def assert_c_partition(classs, k, n, c):
         r"""
         Makes sure that ``classs`` contains blocks `B` of size `k` such that the list of
         ``B[i]`` covers `[n]` exactly `c` times for every index `i`.
@@ -1021,7 +1021,7 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
         for p in zip(*classs):
             assert all(x == i//c for i,x in enumerate(sorted(p))), "A class is not c(={})-parallel".format(c)
 
-    def product_with_parallel_classes(OA1,k,g1,g2,g1_parall,parall,check=True):
+    def product_with_parallel_classes(OA1, k, g1, g2, g1_parall, parall, check=True):
         r"""
         Return the product of two OA while keeping track of parallel classes.
 
@@ -1203,7 +1203,7 @@ def _reorder_matrix(matrix):
     return list(zip(*matrix))
 
 
-def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construction=False):
+def brouwer_separable_design(k, t, q, x, check=False, verbose=False, explain_construction=False):
     r"""
     Return a `OA(k,t(q^2+q+1)+x)` using Brouwer's result on separable designs.
 
@@ -1453,9 +1453,9 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
         else:
             partition_of_blocks_of_size_t[plane-t].append([relabel[xx] for xx in B if xx % m < t])
 
-    ###############################################################################
+    ###########################################################################
     # Separable design built !
-    #-------------------------
+    # ------------------------
     #
     # At this point we have a PBD on t*(q**2+q+1) points. Its blocks are
     # split into:
@@ -1466,7 +1466,7 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
     # - blocks_of_size_q_plus_t : contains all t*(q**2+q+1)blocks of size q+t,
     #                             covering the same number of points: it is a
     #                             symmetric design.
-    ###############################################################################
+    ###########################################################################
 
     ##############################################
     # Part 2: Build an OA on t(q^2+q+1)+x points #

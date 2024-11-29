@@ -431,7 +431,7 @@ cpdef __matrix_from_rows_of_matrices(X):
 
     T = X[0]
     m = T._nrows * T._ncols
-    cdef Matrix_modn_dense_template A = T.new_matrix(nrows = n, ncols = m)
+    cdef Matrix_modn_dense_template A = T.new_matrix(nrows=n, ncols=m)
 
     for i from 0 <= i < n:
         T = X[i]
@@ -854,7 +854,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             A.subdivide(*self.subdivisions())
         return A
 
-
     cpdef _add_(self, right):
         r"""
         Add two dense matrices over `\Z/n\Z`.
@@ -897,7 +896,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             M._entries[i] = k - (k >= p) * p
         sig_off()
         return M
-
 
     cpdef _sub_(self, right):
         r"""
@@ -1403,7 +1401,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         self.cache(cache_key, g)
         return g
-
 
     def minpoly(self, var='x', algorithm='linbox', proof=None):
         """
@@ -2810,7 +2807,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         cdef Py_ssize_t nrows = self._nrows
         cdef Py_ssize_t ncols = self._ncols
 
-        cdef Matrix_modn_dense_template M = self.new_matrix(nrows = ncols, ncols = nrows)
+        cdef Matrix_modn_dense_template M = self.new_matrix(nrows=ncols, ncols=nrows)
         cdef Py_ssize_t i,j
 
         for i from 0 <= i < ncols:
