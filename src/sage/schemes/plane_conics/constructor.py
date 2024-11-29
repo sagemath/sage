@@ -6,7 +6,6 @@ AUTHORS:
 - Marco Streng (2010-07-20)
 
 - Nick Alexander (2008-01-08)
-
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>
@@ -24,23 +23,23 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.matrix.constructor import Matrix
+from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.categories.integral_domains import IntegralDomains
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.rings.finite_rings.finite_field_base import FiniteField
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.polynomial.multi_polynomial import MPolynomial
-from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.affine.affine_point import SchemeMorphism_point_affine
 from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.all import Sequence
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 
 from .con_field import ProjectiveConic_field
 from .con_finite_field import ProjectiveConic_finite_field
@@ -60,9 +59,9 @@ def Conic(base_field, F=None, names=None, unique=True):
 
     INPUT:
 
-    - ``base_field`` -- The base field of the conic.
+    - ``base_field`` -- the base field of the conic
 
-    - ``names`` -- a list, tuple, or comma separated string
+    - ``names`` -- list, tuple, or comma separated string
       of three variable names specifying the names
       of the coordinate functions of the ambient
       space `\Bold{P}^3`. If not specified or read
@@ -90,13 +89,11 @@ def Conic(base_field, F=None, names=None, unique=True):
                    If ``F`` is a list of 5 points in the plane, then the output
                    is a conic through those points.
 
-    - ``unique`` -- Used only if ``F`` is a list of points in the plane.
-      If the conic through the points is not unique, then
-      raise :class:`ValueError` if and only if ``unique`` is ``True``
+    - ``unique`` -- used only if ``F`` is a list of points in the plane;
+      if the conic through the points is not unique, then
+      raise :exc:`ValueError` if and only if ``unique`` is ``True``
 
-    OUTPUT:
-
-    A plane projective conic curve defined by ``F`` over a field.
+    OUTPUT: a plane projective conic curve defined by ``F`` over a field
 
     EXAMPLES:
 
@@ -179,7 +176,7 @@ def Conic(base_field, F=None, names=None, unique=True):
                 L.append(Sequence([C[0]**2, C[0] * C[1],
                                    C[0] * C[2], C[1]**2,
                                    C[1] * C[2], C[2]**2], P.fraction_field()))
-            M = Matrix(L)
+            M = matrix(L)
             if unique and M.rank() != 5:
                 raise ValueError("points in F (=%s) do not define a unique "
                                  "conic" % F)
@@ -202,7 +199,7 @@ def Conic(base_field, F=None, names=None, unique=True):
 
     if isinstance(F, QuadraticForm):
         F = F.matrix()
-    if is_Matrix(F) and F.is_square() and F.ncols() == 3:
+    if isinstance(F, Matrix) and F.is_square() and F.ncols() == 3:
         if names is None:
             names = 'x,y,z'
         temp_ring = PolynomialRing(F.base_ring(), 3, names)
@@ -239,11 +236,11 @@ def Conic(base_field, F=None, names=None, unique=True):
         P2 = ProjectiveSpace(2, base_field, names)
         if isinstance(base_field, FiniteField):
             return ProjectiveConic_finite_field(P2, F)
-        if is_RationalField(base_field):
+        if isinstance(base_field, RationalField):
             return ProjectiveConic_rational_field(P2, F)
         if isinstance(base_field, NumberField):
             return ProjectiveConic_number_field(P2, F)
-        if is_FractionField(base_field) and (is_PolynomialRing(base_field.ring()) or is_MPolynomialRing(base_field.ring())):
+        if isinstance(base_field, FractionField_generic) and isinstance(base_field.ring(), (PolynomialRing_general, MPolynomialRing_base)):
             return ProjectiveConic_rational_function_field(P2, F)
 
         return ProjectiveConic_field(P2, F)

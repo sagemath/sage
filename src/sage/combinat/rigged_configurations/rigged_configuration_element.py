@@ -55,7 +55,7 @@ class RiggedConfigurationElement(ClonableArray):
 
     - ``parent`` -- the parent of this element
 
-    - ``rigged_partitions`` -- a list of rigged partitions
+    - ``rigged_partitions`` -- list of rigged partitions
 
     There are two optional arguments to explicitly construct a rigged
     configuration. The first is ``partition_list`` which gives a list of
@@ -199,9 +199,7 @@ class RiggedConfigurationElement(ClonableArray):
             if len(data) == 0:
                 # Create a size n array of empty rigged tableau since no tableau
                 #   were given
-                nu = []
-                for i in range(n):
-                    nu.append(RiggedPartition())
+                nu = [RiggedPartition() for _ in range(n)]
             else:
                 if len(data) != n:  # otherwise n should be equal to the number of tableaux
                     raise ValueError("incorrect number of partitions")
@@ -464,9 +462,7 @@ class RiggedConfigurationElement(ClonableArray):
         Return the list `\nu` of rigged partitions of this rigged
         configuration element.
 
-        OUTPUT:
-
-        The `\nu` array as a list.
+        OUTPUT: the `\nu` array as a list
 
         EXAMPLES::
 
@@ -505,9 +501,7 @@ class RiggedConfigurationElement(ClonableArray):
 
         - ``a`` -- the index of the partition to remove a box
 
-        OUTPUT:
-
-        The resulting rigged configuration element.
+        OUTPUT: the resulting rigged configuration element
 
         EXAMPLES::
 
@@ -627,9 +621,7 @@ class RiggedConfigurationElement(ClonableArray):
         - ``k`` -- the length of the string with the smallest negative
           rigging of smallest length
 
-        OUTPUT:
-
-        The constructed rigged partition.
+        OUTPUT: the constructed rigged partition
 
         TESTS::
 
@@ -679,9 +671,7 @@ class RiggedConfigurationElement(ClonableArray):
 
         - ``a`` -- the index of the partition to add a box
 
-        OUTPUT:
-
-        The resulting rigged configuration element.
+        OUTPUT: the resulting rigged configuration element
 
         EXAMPLES::
 
@@ -786,9 +776,7 @@ class RiggedConfigurationElement(ClonableArray):
         - ``k`` -- the length of the string with smallest nonpositive rigging
           of largest length
 
-        OUTPUT:
-
-        The constructed rigged partition.
+        OUTPUT: the constructed rigged partition
 
         TESTS::
 
@@ -1099,9 +1087,7 @@ class RCHighestWeightElement(RiggedConfigurationElement):
 
         - ``a`` -- the index of the partition to add a box
 
-        OUTPUT:
-
-        The resulting rigged configuration element.
+        OUTPUT: the resulting rigged configuration element
 
         EXAMPLES::
 
@@ -1308,9 +1294,8 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
             shape_data = data[0]
             rigging_data = data[1]
             vac_data = data[2]
-            nu = []
-            for i in range(n):
-                nu.append(RiggedPartition(shape_data[i], rigging_data[i], vac_data[i]))
+            nu = [RiggedPartition(a, b, c)
+                  for a, b, c in zip(shape_data, rigging_data, vac_data)]
             # Special display case
             if parent.cartan_type().type() == 'B':
                 nu[-1] = RiggedPartitionTypeB(nu[-1])
@@ -1357,9 +1342,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         - ``a`` -- the index of the partition to remove a box
 
-        OUTPUT:
-
-        The resulting rigged configuration element.
+        OUTPUT: the resulting rigged configuration element
 
         EXAMPLES::
 
@@ -1411,9 +1394,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         - ``a`` -- the index of the partition to add a box
 
-        OUTPUT:
-
-        The resulting rigged configuration element.
+        OUTPUT: the resulting rigged configuration element
 
         EXAMPLES::
 
@@ -1576,10 +1557,10 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         INPUT:
 
-        - ``display_steps`` -- (default: ``False``) boolean which indicates
-          if we want to print each step in the algorithm
-        - ``build_graph`` -- (default: ``False``) boolean which indicates
-          if we want to construct and return a graph of the bijection whose
+        - ``display_steps`` -- boolean (default: ``False``); indicates whether
+          to print each step in the algorithm
+        - ``build_graph`` -- boolean (default: ``False``); indicates whether
+          to construct and return a graph of the bijection whose
           vertices are rigged configurations obtained at each step and edges
           are labeled by either the return value of `\delta` or the
           doubling/halving map
@@ -1662,10 +1643,10 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         INPUT:
 
-        - ``display_steps`` -- (default: ``False``) boolean which indicates
-          if we want to print each step in the algorithm
-        - ``build_graph`` -- (default: ``False``) boolean which indicates
-          if we want to construct and return a graph of the bijection whose
+        - ``display_steps`` -- boolean (default: ``False``); indicates whether
+          to print each step in the algorithm
+        - ``build_graph`` -- boolean (default: ``False``); indicates whether
+          to construct and return a graph of the bijection whose
           vertices are rigged configurations obtained at each step and edges
           are labeled by either the return value of `\delta` or the
           doubling/halving map
@@ -1805,7 +1786,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         INPUT:
 
-        - ``return_b`` -- (default: ``False``) whether to return the
+        - ``return_b`` -- boolean (default: ``False``); whether to return the
           resulting letter from `\delta`
 
         OUTPUT:
@@ -1993,7 +1974,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         INPUT:
 
-        - ``reverse_factors`` -- (default: ``False``) if ``True``, then this
+        - ``reverse_factors`` -- boolean (default: ``False``); if ``True``, then this
           returns an element in `RC(B')` where `B'` is the tensor factors
           of ``self`` in reverse order
 

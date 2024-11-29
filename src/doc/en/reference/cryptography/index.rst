@@ -34,4 +34,8 @@ Cryptography
    sage/crypto/lattice
    sage/crypto/lwe
 
+   sage/crypto/key_exchange/catalog
+   sage/crypto/key_exchange/key_exchange_scheme
+   sage/crypto/key_exchange/diffie_hellman
+
 .. include:: ../footer.txt

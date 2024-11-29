@@ -21,33 +21,38 @@ py.install_sources(
   'kac_modules.py',
   'kirillov_reshetikhin.py',
   'kyoto_path_model.py',
+  'letters.pxd',
   'littelmann_path.py',
   'monomial_crystals.py',
   'multisegments.py',
   'mv_polytopes.py',
   'pbw_crystal.py',
+  'pbw_datum.pxd',
   'polyhedral_realization.py',
+  'spins.pxd',
   'star_crystal.py',
   'subcrystal.py',
   'tensor_product.py',
+  'tensor_product_element.pxd',
   'virtual_crystal.py',
-  subdir : 'sage/combinat/crystals'
+  subdir: 'sage/combinat/crystals',
 )
 
 extension_data = {
   'letters' : files('letters.pyx'),
   'pbw_datum' : files('pbw_datum.pyx'),
   'spins' : files('spins.pyx'),
-  'tensor_product_element' : files('tensor_product_element.pyx')
+  'tensor_product_element' : files('tensor_product_element.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/combinat/crystals',
-        install: true,
-        include_directories: [inc_cpython],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/combinat/crystals',
+    install: true,
+    include_directories: [inc_cpython],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 

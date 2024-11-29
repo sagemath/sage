@@ -19,22 +19,22 @@ py.install_sources(
   'rc_infinity.py',
   'rigged_configuration_element.py',
   'rigged_configurations.py',
+  'rigged_partition.pxd',
   'tensor_product_kr_tableaux.py',
   'tensor_product_kr_tableaux_element.py',
-  subdir : 'sage/combinat/rigged_configurations'
+  subdir: 'sage/combinat/rigged_configurations',
 )
 
-extension_data = {
-  'rigged_partition' : files('rigged_partition.pyx')
-}
+extension_data = {'rigged_partition' : files('rigged_partition.pyx')}
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/combinat/rigged_configurations',
-        install: true,
-        include_directories: [],
-        dependencies: [py_dep, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/combinat/rigged_configurations',
+    install: true,
+    include_directories: [],
+    dependencies: [py_dep, gmp],
+  )
 endforeach
 

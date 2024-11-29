@@ -1,6 +1,0 @@
-[wrap-file]
-directory=fflas-ffpack-2.5.0
-source_url=https://github.com/linbox-team/fflas-ffpack/releases/download/v2.5.0/fflas-ffpack-2.5.0.tar.gz
-source_filename=fflas-ffpack-2.5.0.tar.gz
-source_hash=dafb4c0835824d28e4f823748579be6e4c8889c9570c6ce9cce1e186c3ebbb23
-patch_directory=fflas-ffpack

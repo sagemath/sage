@@ -2,30 +2,36 @@ from sage.matroids.matroid cimport Matroid
 from sage.matroids.set_system cimport SetSystem
 
 cdef class CircuitsMatroid(Matroid):
-    cdef frozenset _groundset  # _E
-    cdef int _matroid_rank  # _R
-    cdef SetSystem _C  # circuits
+    cdef frozenset _groundset
+    cdef int _matroid_rank
+    cdef set _C  # circuits
     cdef dict _k_C  # k-circuits (k=len)
+    cdef list _sorted_C_lens
     cdef bint _nsc_defined
-    cpdef groundset(self) noexcept
-    cpdef _rank(self, X) noexcept
-    cpdef full_rank(self) noexcept
-    cpdef _is_independent(self, F) noexcept
-    cpdef _max_independent(self, F) noexcept
-    cpdef _circuit(self, F) noexcept
+    cpdef frozenset groundset(self)
+    cpdef int _rank(self, frozenset X) except? -1
+    cpdef full_rank(self)
+    cpdef bint _is_independent(self, frozenset X) noexcept
+    cpdef frozenset _max_independent(self, frozenset X)
+    cpdef frozenset _circuit(self, frozenset X)
+    cpdef frozenset _closure(self, frozenset X)
 
     # enumeration
-    cpdef bases(self) noexcept
-    cpdef circuits(self, k=*) noexcept
-    cpdef nonspanning_circuits(self) noexcept
-    cpdef no_broken_circuits_sets(self, ordering=*) noexcept
+    cpdef SetSystem independent_sets(self, long k=*)
+    cpdef SetSystem dependent_sets(self, long k)
+    cpdef SetSystem circuits(self, k=*)
+    cpdef SetSystem nonspanning_circuits(self)
+    cpdef SetSystem no_broken_circuits_facets(self, ordering=*, reduced=*)
+    cpdef SetSystem no_broken_circuits_sets(self, ordering=*, reduced=*)
+    cpdef broken_circuit_complex(self, ordering=*, reduced=*)
 
     # properties
-    cpdef girth(self) noexcept
-    cpdef is_paving(self) noexcept
+    cpdef girth(self)
+    cpdef bint is_paving(self) noexcept
 
-    # isomorphism
-    cpdef _is_isomorphic(self, other, certificate=*) noexcept
+    # isomorphism and relabeling
+    cpdef _is_isomorphic(self, other, certificate=*)
+    cpdef relabel(self, mapping)
 
     # verification
-    cpdef is_valid(self) noexcept
+    cpdef is_valid(self, certificate=*)

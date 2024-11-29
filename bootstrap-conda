@@ -18,10 +18,11 @@ SAGELIB_PACKAGES=
 SAGELIB_OPTIONAL_PACKAGES=
 DEVELOP_PACKAGES=
 
+eval $(sage-package properties --format=shell :all:)
+
 for PKG_BASE in $(sage-package list --has-file distros/conda.txt --exclude _sagemath); do
-    PKG_SCRIPTS=build/pkgs/$PKG_BASE
+    eval PKG_SCRIPTS=\$path_$PKG_BASE PKG_TYPE=\$type_$PKG_BASE
     SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/distros/conda.txt
-    PKG_TYPE=$(cat $PKG_SCRIPTS/type)
     PKG_SYSTEM_PACKAGES=$(echo $(${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE))
     if [ -n "$PKG_SYSTEM_PACKAGES" ]; then
         if [ -f $PKG_SCRIPTS/spkg-configure.m4 ]; then
@@ -83,7 +84,7 @@ unset ENABLE_SYSTEM_SITE_PACKAGES
 echo >&2 $0:$LINENO: generate conda environment files
 
     (
-        echo "name: sage-build"
+        echo "name: sage"
         echo "channels:"
         echo "  - conda-forge"
         echo "  - nodefaults"
@@ -105,59 +106,18 @@ echo >&2 $0:$LINENO: generate conda environment files
         for pkg in $SAGELIB_SYSTEM_PACKAGES; do
             echo "  - $pkg"
         done
-    ) > src/environment-template.yml
+    ) > environment-template.yml
 
     (
-        cat environment-template.yml
-        echo "  # optional packages"
-        for pkg in $OPTIONAL_SYSTEM_PACKAGES; do
-            echo "  - $pkg"
-        done
-    ) > environment-optional-template.yml
-
-    (
-        sed 's/name: sage/name: sage-dev/' src/environment-template.yml
+        sed 's/name: sage/name: sage-dev/' environment-template.yml
         echo "  # Additional dev tools"
         echo "  - conda-lock"
         for pkg in $DEVELOP_SYSTEM_PACKAGES; do
             echo "  - $pkg"
         done
-    ) > src/environment-dev-template.yml
+    ) > environment-dev-template.yml
 
-    (
-        cat src/environment-template.yml
-        echo "  # optional packages"
-        for pkg in $OPTIONAL_SYSTEM_PACKAGES $SAGELIB_OPTIONAL_SYSTEM_PACKAGES; do
-            echo "  - $pkg"
-        done
-    ) > src/environment-optional-template.yml
-
-    (
-        echo >&4 "  - pip:"
-        echo >&5 "  - pip:"
-        for PKG_BASE in $(sage-package list :standard: :optional: --has-file requirements.txt --no-file distros/conda.txt --no-file src; sage-package list :standard: :optional: --has-file install-requires.txt --no-file requirements.txt --no-file distros/conda.txt --no-file src); do
-            PKG_SCRIPTS=build/pkgs/$PKG_BASE
-            SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/requirements.txt
-            if [ ! -f $SYSTEM_PACKAGES_FILE ]; then
-                SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/install-requires.txt
-            fi
-            PKG_TYPE=$(cat $PKG_SCRIPTS/type)
-            if grep -q SAGERUNTIME $PKG_SCRIPTS/dependencies $PKG_SCRIPTS/dependencies_order_only 2>/dev/null; then
-                : # cannot install packages that depend on the Sage library
-            else
-                case "$PKG_BASE:$PKG_TYPE" in
-                    $DEVELOP_SPKG_PATTERN:*) FD=4;;
-                    *:standard)              FD="4 5";;
-                    *)                       FD=5;;
-                esac
-                ${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE | while read -r line; do
-                    [ -n "$line" ] && for fd in $FD; do echo >&$fd "    - $line"; done
-                done
-            fi
-        done
-    ) 4>> /dev/null 5>> src/environment-optional-template.yml
-
-for f in environment environment-optional src/environment src/environment-optional src/environment-dev; do
+for f in environment environment-dev; do
     for python_version in 3.9 3.10 3.11; do
         sed -E 's/^( *- *)python *$/\1python='$python_version'/' $f-template.yml > $f-$python_version.yml
     done

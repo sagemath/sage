@@ -28,12 +28,12 @@ from sage.rings.rational_field import QQ
 from sage.rings.rational_field import RationalField
 
 import sage.rings.abc
-from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.multi_polynomial import MPolynomial
-from sage.rings.ring import is_Ring
 
+from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 _Fields = Fields()
 
@@ -65,7 +65,7 @@ class EllipticCurveFactory(UniqueFactory):
 
     - ``EllipticCurve(label)``: Returns the elliptic curve over `\QQ`
       from the Cremona database with the given label. The label is a
-      string, such as ``"11a"`` or ``"37b2"``. The letters in the
+      string, such as ``'11a'`` or ``'37b2'``. The letters in the
       label *must* be lower case (Cremona's new labeling).
 
     - ``EllipticCurve(R, [a1,a2,a3,a4,a6])``: Create the elliptic
@@ -197,7 +197,7 @@ class EllipticCurveFactory(UniqueFactory):
     By default, when a rational value of `j` is given, the constructed
     curve is a minimal twist (minimal conductor for curves with that
     `j`-invariant).  This can be changed by setting the optional
-    parameter ``minimal_twist``, which is True by default, to False::
+    parameter ``minimal_twist``, which is ``True`` by default, to ``False``::
 
         sage: EllipticCurve(j=100)
         Elliptic Curve defined by y^2 = x^3 + x^2 + 3392*x + 307888 over Rational Field
@@ -405,8 +405,8 @@ class EllipticCurveFactory(UniqueFactory):
             True
         """
         R = None
-        if is_Ring(x):
-            (R, x) = (x, y)
+        if x in Rings():
+            R, x = (x, y)
 
         if j is not None:
             if R is not None:
@@ -438,6 +438,9 @@ class EllipticCurveFactory(UniqueFactory):
             # Interpret x as a Cremona or LMFDB label.
             from sage.databases.cremona import CremonaDatabase
             x, data = CremonaDatabase().coefficients_and_data(x)
+            # data is only valid for elliptic curves over QQ.
+            if R not in (None, QQ):
+                data = {}
             # User-provided keywords may override database entries.
             data.update(kwds)
             kwds = data
@@ -457,7 +460,7 @@ class EllipticCurveFactory(UniqueFactory):
 
         return (R, tuple(R(a) for a in x)), kwds
 
-    def create_object(self, version, key, **kwds):
+    def create_object(self, version, key, *, names=None, **kwds):
         r"""
         Create an object from a ``UniqueFactory`` key.
 
@@ -467,18 +470,46 @@ class EllipticCurveFactory(UniqueFactory):
             sage: type(E)
             <class 'sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field_with_category'>
 
+        ``names`` is ignored at the moment, however it is used to support a convenient way to get a generator::
+
+            sage: E.<P> = EllipticCurve(QQ, [1, 3])
+            sage: P
+            (-1 : 1 : 1)
+            sage: E.<P> = EllipticCurve(GF(5), [1, 3])
+            sage: P
+            (4 : 1 : 1)
+
         .. NOTE::
 
             Keyword arguments are currently only passed to the
             constructor for elliptic curves over `\QQ`; elliptic
             curves over other fields do not support them.
+
+        TESTS::
+
+            sage: E = EllipticCurve.create_object(0, (QQ, (1, 2, 0, 1, 2)), rank=2)
+            sage: E = EllipticCurve.create_object(0, (GF(3), (1, 2, 0, 1, 2)), rank=2)
+            Traceback (most recent call last):
+            ...
+            TypeError: unexpected keyword arguments: {'rank': 2}
+
+        Coverage tests::
+
+            sage: E = EllipticCurve(QQ, [2, 5], modular_degree=944, regulator=1)
+            sage: E.modular_degree()
+            944
+            sage: E.regulator()
+            1.00000000000000
         """
         R, x = key
 
         if R is QQ:
             from .ell_rational_field import EllipticCurve_rational_field
             return EllipticCurve_rational_field(x, **kwds)
-        elif isinstance(R, NumberField):
+        elif kwds:
+            raise TypeError(f"unexpected keyword arguments: {kwds}")
+
+        if isinstance(R, NumberField):
             from .ell_number_field import EllipticCurve_number_field
             return EllipticCurve_number_field(R, x)
         elif isinstance(R, sage.rings.abc.pAdicField):
@@ -504,10 +535,9 @@ def EllipticCurve_from_Weierstrass_polynomial(f):
 
     INPUT:
 
-    - ``f`` -- a inhomogeneous cubic polynomial in long Weierstrass
-      form.
+    - ``f`` -- a inhomogeneous cubic polynomial in long Weierstrass form
 
-    OUTPUT: The elliptic curve defined by it.
+    OUTPUT: the elliptic curve defined by it
 
     EXAMPLES::
 
@@ -536,6 +566,7 @@ def EllipticCurve_from_Weierstrass_polynomial(f):
         Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
     """
     return EllipticCurve(coefficients_from_Weierstrass_polynomial(f))
+
 
 def coefficients_from_Weierstrass_polynomial(f):
     r"""
@@ -613,9 +644,9 @@ def EllipticCurve_from_j(j, minimal_twist=True):
 
     INPUT:
 
-    - ``j`` -- an element of some field.
+    - ``j`` -- an element of some field
 
-    - ``minimal_twist`` (boolean, default True) -- If True and ``j``
+    - ``minimal_twist``-- boolean (default: ``True``); if ``True`` and ``j``
       is in `\QQ`, the curve returned is a minimal twist, i.e. has
       minimal conductor; when there is more than one curve with
       minimal conductor, the curve returned is the one whose label
@@ -623,9 +654,7 @@ def EllipticCurve_from_j(j, minimal_twist=True):
       the one whose minimal a-invariants are first lexicographically.
       If `j` is not in `\QQ` this parameter is ignored.
 
-    OUTPUT:
-
-    An elliptic curve with `j`-invariant `j`.
+    OUTPUT: an elliptic curve with `j`-invariant `j`
 
     EXAMPLES::
 
@@ -644,7 +673,7 @@ def EllipticCurve_from_j(j, minimal_twist=True):
         1
 
     The ``minimal_twist`` parameter (ignored except over `\QQ` and
-    True by default) controls whether or not a minimal twist is
+    ``True`` by default) controls whether or not a minimal twist is
     computed::
 
         sage: EllipticCurve_from_j(100)
@@ -685,7 +714,7 @@ def coefficients_from_j(j, minimal_twist=True):
         [1, 0, 0, 36, 3455]
 
     The ``minimal_twist`` parameter (ignored except over `\QQ` and
-    True by default) controls whether or not a minimal twist is
+    ``True`` by default) controls whether or not a minimal twist is
     computed::
 
         sage: coefficients_from_j(100)
@@ -777,15 +806,15 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
 
     - ``F`` -- a homogeneous cubic in three variables with rational
       coefficients, as a polynomial ring element, defining a smooth
-      plane cubic curve `C`.
+      plane cubic curve `C`
 
     - ``P`` -- a 3-tuple `(x,y,z)` defining a projective point on `C`,
       or ``None``.  If ``None`` then a rational flex will be used as a
       base point if one exists, otherwise an error will be raised.
 
-    - ``morphism`` -- boolean (default: ``True``).  If ``True``
+    - ``morphism`` -- boolean (default: ``True``); if ``True``
       returns a birational isomorphism from `C` to a Weierstrass
-      elliptic curve `E`, otherwise just returns `E`.
+      elliptic curve `E`, otherwise just returns `E`
 
     OUTPUT:
 
@@ -1098,7 +1127,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
     # check the input
     R = F.parent()
     K = R.base_ring()
-    if not is_MPolynomialRing(R):
+    if not isinstance(R, MPolynomialRing_base):
         raise TypeError('equation must be a polynomial')
     if R.ngens() != 3 or F.nvariables() != 3:
         raise TypeError('equation must be a polynomial in three variables')
@@ -1242,18 +1271,16 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         C, E, fwd_defining_poly, fwd_post, inv_defining_poly, inv_post)
 
 
-def tangent_at_smooth_point(C,P):
+def tangent_at_smooth_point(C, P):
     r"""Return the tangent at the smooth point `P` of projective curve `C`.
 
     INPUT:
 
-    - ``C`` -- a projective plane curve.
+    - ``C`` -- a projective plane curve
 
-    - ``P`` -- a 3-tuple `(x,y,z)` defining a projective point on `C`.
+    - ``P`` -- a 3-tuple `(x,y,z)` defining a projective point on `C`
 
-    OUTPUT:
-
-    The linear form defining the tangent at `P` to `C`.
+    OUTPUT: the linear form defining the tangent at `P` to `C`
 
     EXAMPLES::
 
@@ -1282,6 +1309,7 @@ def tangent_at_smooth_point(C,P):
     except NotImplementedError:
         return C.tangents(P,factor=False)[0]
 
+
 def chord_and_tangent(F, P):
     r"""Return the third point of intersection of a cubic with the tangent at one point.
 
@@ -1292,7 +1320,7 @@ def chord_and_tangent(F, P):
       plane cubic curve.
 
     - ``P`` -- a 3-tuple `(x,y,z)` defining a projective point on the
-      curve `F=0`.
+      curve `F=0`
 
     OUTPUT:
 
@@ -1333,7 +1361,7 @@ def chord_and_tangent(F, P):
     from sage.schemes.curves.constructor import Curve
     # check the input
     R = F.parent()
-    if not is_MPolynomialRing(R):
+    if not isinstance(R, MPolynomialRing_base):
         raise TypeError('equation must be a polynomial')
     if R.ngens() != 3:
         raise TypeError('{} is not a polynomial in three variables'.format(F))
@@ -1358,15 +1386,13 @@ def chord_and_tangent(F, P):
 
 def projective_point(p):
     r"""
-    Return equivalent point with denominators removed
+    Return equivalent point with denominators removed.
 
     INPUT:
 
-    - ``P``, ``Q`` -- list/tuple of projective coordinates.
+    - ``P``, ``Q`` -- list/tuple of projective coordinates
 
-    OUTPUT:
-
-    List of projective coordinates.
+    OUTPUT: list of projective coordinates
 
     EXAMPLES::
 
@@ -1394,11 +1420,11 @@ def are_projectively_equivalent(P, Q, base_ring):
 
     INPUT:
 
-    - ``P``, ``Q`` -- list/tuple of projective coordinates.
+    - ``P``, ``Q`` -- list/tuple of projective coordinates
 
-    - ``base_ring`` -- the base ring.
+    - ``base_ring`` -- the base ring
 
-    OUTPUT: A boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -1421,10 +1447,10 @@ def EllipticCurves_with_good_reduction_outside_S(S=[], proof=None, verbose=False
 
     - ``S`` -- list of primes (default: empty list)
 
-    - ``proof`` -- boolean (default ``True``): the MW basis for
+    - ``proof`` -- boolean (default: ``True``); the MW basis for
       auxiliary curves will be computed with this proof flag
 
-    - ``verbose`` -- boolean (default ``False``): if ``True``, some details
+    - ``verbose`` -- boolean (default: ``False``); if ``True``, some details
       of the computation will be output
 
     .. NOTE::

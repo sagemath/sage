@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.real_double
+# sage.doctest: needs sage.rings.real_double
 
 r"""
 The cdd backend for polyhedral computations, floating point version
@@ -22,15 +22,15 @@ from .base_RDF import Polyhedron_RDF
 
 class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
     """
-    Polyhedra over RDF with cdd
+    Polyhedra over RDF with cdd.
 
     INPUT:
 
-    - ``ambient_dim`` -- integer. The dimension of the ambient space.
+    - ``ambient_dim`` -- integer; the dimension of the ambient space
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``.
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
 
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``.
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 

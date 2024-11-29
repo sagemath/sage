@@ -7,37 +7,41 @@ py.install_sources(
   'fusion_ring.py',
   'poly_tup_engine.pxd',
   'shm_managers.pxd',
-  subdir : 'sage/algebras/fusion_rings'
+  subdir: 'sage/algebras/fusion_rings',
 )
 
 extension_data = {
-  'fast_parallel_fusion_ring_braid_repn' : files('fast_parallel_fusion_ring_braid_repn.pyx')
+  'fast_parallel_fusion_ring_braid_repn' : files(
+    'fast_parallel_fusion_ring_braid_repn.pyx',
+  ),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/algebras/fusion_rings',
-        install: true,
-        include_directories: [inc_cpython, inc_ntl, inc_numpy, inc_rings],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/algebras/fusion_rings',
+    install: true,
+    include_directories: [inc_cpython, inc_ntl, inc_numpy, inc_rings],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 
 extension_data_cpp = {
-    'fast_parallel_fmats_methods': files('fast_parallel_fmats_methods.pyx'),
-    'poly_tup_engine': files('poly_tup_engine.pyx'),
-    'shm_managers': files('shm_managers.pyx'),
+  'fast_parallel_fmats_methods': files('fast_parallel_fmats_methods.pyx'),
+  'poly_tup_engine': files('poly_tup_engine.pyx'),
+  'shm_managers': files('shm_managers.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/algebras/fusion_rings',
-        install: true,
-        override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_ntl, inc_numpy, inc_rings],
-        dependencies: [py_dep, cysignals, gmp, singular],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/algebras/fusion_rings',
+    install: true,
+    override_options: ['cython_language=cpp'],
+    include_directories: [inc_cpython, inc_ntl, inc_numpy, inc_rings],
+    dependencies: [py_dep, cysignals, gmp, singular],
+  )
 endforeach
 

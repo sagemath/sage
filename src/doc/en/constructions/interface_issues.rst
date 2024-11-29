@@ -92,7 +92,7 @@ Sage and other computer algebra systems
 
 If ``foo`` is a Pari, GAP ( without ending semicolon), Singular,
 Maxima command, resp., enter ``gp("foo")`` for Pari,
-``gap.eval("foo")}`` ``singular.eval("foo")``, ``maxima("foo")``, resp..
+``libgap.eval("foo")}`` ``singular.eval("foo")``, ``maxima("foo")``, resp..
 These programs merely send the command string to the external
 program, execute it, and read the result back into Sage. Therefore,
 these will not work if the external program is not installed and in
@@ -132,34 +132,23 @@ returns
 
 .. CODE-BLOCK:: text
 
-    Help on function Matrix in module sage.matrix.constructor:
+    Help on cython_function_or_method in module sage.matrix.constructor:
 
-    Matrix(R, nrows, ncols, entries = 0, sparse = False)
-        Create a matrix.
+    matrix(*args, **kwds)
+        matrix(*args, **kwds)
+        File: sage/matrix/constructor.pyx (starting at line 21)
 
-        INPUT:
-            R -- ring
-            nrows -- int; number of rows
-            ncols -- int; number of columns
-            entries -- list; entries of the matrix
-            sparse -- bool (default: False); whether or not to store matrices as sparse
-        OUTPUT:
-            a matrix
+            Create a matrix.
 
-        EXAMPLES:
-            sage: Matrix(RationalField(), 2, 2, [1,2,3,4])
-            [1 2]
-            [3 4]
+            This implements the ``matrix`` constructor::
 
-            sage: Matrix(FiniteField(5), 2, 3, range(6))
-            [0 1 2]
-            [3 4 0]
+                sage: matrix([[1,2],[3,4]])
+                [1 2]
+                [3 4]
 
-            sage: Matrix(IntegerRing(), 10, 10, range(100)).parent()
-            Full MatrixSpace of 10 by 10 dense matrices over Integer Ring
-
-            sage: Matrix(IntegerRing(), 10, 10, range(100), sparse = True).parent()
-            Full MatrixSpace of 10 by 10 sparse matrices over Integer Ring
+            It also contains methods to create special types of matrices, see
+            ``matrix.[tab]`` for more options. For example::
+    --More--
 
 in a new screen. Type q to return to the Sage screen.
 

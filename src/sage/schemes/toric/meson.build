@@ -13,21 +13,20 @@ py.install_sources(
   'weierstrass.py',
   'weierstrass_covering.py',
   'weierstrass_higher.py',
-  subdir : 'sage/schemes/toric'
+  subdir: 'sage/schemes/toric',
 )
 
-extension_data = {
-  'divisor_class' : files('divisor_class.pyx')
-}
+extension_data = {'divisor_class' : files('divisor_class.pyx')}
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/schemes/toric',
-        install: true,
-        include_directories: [inc_cpython, inc_rings],
-        dependencies: [py_dep, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/schemes/toric',
+    install: true,
+    include_directories: [inc_cpython, inc_rings],
+    dependencies: [py_dep, gmp],
+  )
 endforeach
 
 install_subdir('sheaf', install_dir: sage_install_dir / 'schemes/toric')

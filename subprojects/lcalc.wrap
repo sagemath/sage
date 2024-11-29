@@ -1,7 +1,0 @@
-[wrap-file]
-directory = lcalc-2.0.5
-source_url = https://gitlab.com/sagemath/lcalc/uploads/25f029f3c02fcb6c3174972e0ac0e192/lcalc-2.0.5.tar.xz
-source_filename = lcalc-2.0.5.tar.xz
-source_hash = d780c385579cc6ee45fa27ccd2d3a3c4157fbb5ef8cd1b8951d1028bbc64c035
-patch_directory = lcalc
-

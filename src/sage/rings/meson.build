@@ -1,7 +1,4 @@
-pthread = cc.find_library('pthread')
-
 py.install_sources(
-  '__init__.py',
   'abc.pxd',
   'algebraic_closure_finite_field.py',
   'all.py',
@@ -81,7 +78,7 @@ py.install_sources(
   'tate_algebra_ideal.pxd',
   'tests.py',
   'universal_cyclotomic_field.py',
-  subdir : 'sage/rings'
+  subdir: 'sage/rings',
 )
 
 extension_data = {
@@ -121,36 +118,107 @@ extension_data = {
   'ring_extension_morphism' : files('ring_extension_morphism.pyx'),
   'sum_of_squares' : files('sum_of_squares.pyx'),
   'tate_algebra_element' : files('tate_algebra_element.pyx'),
-  'tate_algebra_ideal' : files('tate_algebra_ideal.pyx')
+  'tate_algebra_ideal' : files('tate_algebra_ideal.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/rings',
-        install: true,
-        include_directories: [inc_cpython, inc_ext, inc_flint, inc_gsl, inc_ntl, inc_rings, inc_rings_finite],
-        dependencies: [py_dep, cypari2, cysignals, flint, gmp, gmpy2, gsl, m, mpc, mpfi, mpfr, ntl, pari, pthread],
-    )
+  deps = [py_dep, cysignals, gmp]
+  if name == 'complex_arb'
+    deps += [
+      flint,
+      mpfi,
+      gsl,  # Runtime dependency
+    ]
+  elif name == 'complex_conversion'
+    deps += [gsl, mpfr]
+  elif name == 'complex_double'
+    deps += [gmpy2, gsl]
+  elif name == 'complex_interval'
+    deps += [
+      mpfi,
+      flint,  # Runtime dependency
+    ]
+  elif name == 'complex_mpc'
+    deps += [gmpy2, mpfr, mpc]
+  elif name == 'complex_mpfr'
+    deps += [gmpy2, mpfr]
+  elif name == 'factorint_flint'
+    deps += [flint]
+  elif name == 'integer'
+    deps += [gmpy2]
+  elif name == 'power_series_pari'
+    deps += [cypari2]
+  elif name == 'real_arb'
+    deps += [flint, mpfi]
+  elif name == 'real_double'
+    deps += [gmpy2]
+  elif name == 'real_double_element_gsl'
+    deps += [gsl]
+  elif name == 'real_mpfi'
+    deps += [mpfi]
+  elif name == 'real_mpfr'
+    deps += [gmpy2, mpfr]
+  endif
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/rings',
+    install: true,
+    include_directories: [
+      inc_cpython,
+      inc_ext,
+      inc_flint,
+      inc_gsl,
+      inc_ntl,
+      inc_rings,
+      inc_rings_finite,
+    ],
+    dependencies: deps,
+  )
 endforeach
 
 extension_data_cpp = {
-    'bernmm': files('bernmm.pyx', 'bernmm/bern_modp.cpp', 'bernmm/bern_modp_util.cpp', 'bernmm/bern_rat.cpp'),
-    'bernoulli_mod_p': files('bernoulli_mod_p.pyx'),
-    'fraction_field_FpT': files('fraction_field_FpT.pyx'),
-    'rational': files('rational.pyx'),
+  'bernmm': files(
+    'bernmm.pyx',
+    'bernmm/bern_modp.cpp',
+    'bernmm/bern_modp_util.cpp',
+    'bernmm/bern_rat.cpp',
+  ),
+  'bernoulli_mod_p': files('bernoulli_mod_p.pyx'),
+  'fraction_field_FpT': files('fraction_field_FpT.pyx'),
+  'rational': files('rational.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/rings',
-        install: true,
-        cpp_args: ['-DUSE_THREADS=1','-DTHREAD_STACK_SIZE=4096'],
-        override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_ext, inc_flint, inc_gsl, inc_ntl, inc_rings, inc_rings_finite],
-        dependencies: [py_dep, cypari2, cysignals, flint, gmp, gmpy2, gsl, m, mpc, mpfi, mpfr, ntl, pari, pthread],
-    )
+  deps = [py_dep, cysignals, gmp]
+  if name == 'bernmm'
+    deps += [ntl]
+  elif name == 'bernoulli_mod_p'
+    deps += [ntl]
+  elif name == 'fraction_field_FpT'
+    deps += [flint]
+  elif name == 'rational'
+    deps += [gmpy2]
+  endif
+
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/rings',
+    install: true,
+    cpp_args: ['-DUSE_THREADS=1', '-DTHREAD_STACK_SIZE=4096'],
+    override_options: ['cython_language=cpp'],
+    include_directories: [
+      inc_cpython,
+      inc_ext,
+      inc_flint,
+      inc_gsl,
+      inc_ntl,
+      inc_rings,
+      inc_rings_finite,
+    ],
+    dependencies: deps,
+  )
 endforeach
 
 install_subdir('asymptotic', install_dir: sage_install_dir / 'rings')

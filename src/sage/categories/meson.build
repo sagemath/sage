@@ -1,5 +1,4 @@
 py.install_sources(
-  '__init__.py',
   'action.pxd',
   'additive_groups.py',
   'additive_magmas.py',
@@ -144,6 +143,7 @@ py.install_sources(
   'monoid_algebras.py',
   'monoids.py',
   'morphism.pxd',
+  'noetherian_rings.py',
   'number_fields.py',
   'objects.py',
   'partially_ordered_monoids.py',
@@ -197,7 +197,7 @@ py.install_sources(
   'vector_spaces.py',
   'weyl_groups.py',
   'with_realizations.py',
-  subdir : 'sage/categories'
+  subdir: 'sage/categories',
 )
 
 extension_data = {
@@ -207,17 +207,18 @@ extension_data = {
   'coercion_methods' : files('coercion_methods.pyx'),
   'functor' : files('functor.pyx'),
   'map' : files('map.pyx'),
-  'morphism' : files('morphism.pyx')
+  'morphism' : files('morphism.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/categories',
-        install: true,
-        include_directories: [inc_cpython, inc_ext],
-        dependencies: [py_dep, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/categories',
+    install: true,
+    include_directories: [inc_cpython, inc_ext],
+    dependencies: [py_dep, gmp],
+  )
 endforeach
 
 subdir('examples')

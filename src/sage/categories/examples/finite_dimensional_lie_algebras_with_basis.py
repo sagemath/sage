@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.modules
 r"""
 Examples of a finite dimensional Lie algebra with basis
@@ -95,6 +96,10 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
         self._ambient = ambient
         Parent.__init__(self, base=R, category=cat)
 
+        from sage.categories.lie_algebras import LiftMorphism
+        self._lift_uea = LiftMorphism(self, self._construct_UEA())
+        self._lift_uea.register_as_coercion()
+
     def _repr_(self):
         """
         EXAMPLES::
@@ -134,6 +139,57 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
         if isinstance(x, AbelianLieAlgebra.Element):
             x = x.value
         return self.element_class(self, self._M(x))
+
+    def lift(self, x):
+        r"""
+        Return the lift of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
+            sage: a, b, c = L.gens()
+            sage: L.lift(a)
+            b0
+            sage: L.lift(b).parent() is L.universal_enveloping_algebra()
+            True
+
+            sage: I = L.ideal([a + 2*b, b + 3*c])
+            sage: I.lift(I.basis()[0])
+            (1, 0, -6)
+        """
+        # FIXME: This method can likely be simplified or removed once we
+        #   disentangle the UEA lift from the generic lift
+        A = self._ambient
+        if A is self:
+            return self._lift_uea(x)
+        return A.element_class(A, A._M(x.value))
+
+    def universal_enveloping_algebra(self):
+        r"""
+        Return the universal enveloping algebra of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
+            sage: L.universal_enveloping_algebra()
+            Noncommutative Multivariate Polynomial Ring in b0, b1, b2
+             over Rational Field, nc-relations: {}
+        """
+        # FIXME: This method can likely be removed once we
+        #   disentangle the UEA lift from the generic lift
+        return self._lift_uea.codomain()
+
+    def _order(self, x):
+        r"""
+        Return a key for sorting for the index ``x``.
+
+        TESTS::
+
+            sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
+            sage: L._order(2)
+            2
+        """
+        return x
 
     @cached_method
     def zero(self):
@@ -194,6 +250,8 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
             [   1    0 -1/2]
             [   0    1    1]
         """
+        if isinstance(gens, AbelianLieAlgebra):
+            gens = [self(g) for g in gens.gens()]
         N = self._M.subspace([g.value for g in gens])
         return AbelianLieAlgebra(self.base_ring(), M=N, ambient=self._ambient)
 
@@ -252,7 +310,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
             sage: L.gens()
             ((1, 0, 0), (0, 1, 0), (0, 0, 1))
         """
-        return tuple(self._M.basis())
+        return tuple([self.element_class(self, b) for b in self._M.basis()])
 
     def module(self):
         """
@@ -302,7 +360,36 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
         """
         return self.element_class(self, self._M(v))
 
+    def leading_monomials(self):
+        r"""
+        Return the set of leading monomials of the basis of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
+            sage: a, b, c = L.lie_algebra_generators()
+            sage: I = L.ideal([2*a + b, b + c])
+            sage: I.leading_monomials()
+            ((1, 0, 0), (0, 1, 0))
+        """
+        # for free modules, the leading monomial is actually the trailing monomial
+        return tuple([self._ambient._M(b.value).trailing_monomial()
+                      for b in self.basis()])
+
     class Element(BaseExample.Element):
+        def __init__(self, parent, value):
+            """
+            Initialize ``self``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
+                sage: a, b, c = L.lie_algebra_generators()
+                sage: TestSuite(a).run()
+            """
+            value.set_immutable()
+            super().__init__(parent, value)
+
         def __iter__(self):
             """
             Iterate over ``self`` by returning pairs ``(i, c)`` where ``i``
@@ -363,7 +450,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: a, b, c = L.lie_algebra_generators()
                 sage: elt = 2*a + 2*b + 3*c
-                sage: elt.lift()                                                        # needs sage.combinat
+                sage: elt.lift()                                                        # needs sage.combinat sage.libs.singular
                 2*b0 + 2*b1 + 3*b2
             """
             UEA = self.parent().universal_enveloping_algebra()

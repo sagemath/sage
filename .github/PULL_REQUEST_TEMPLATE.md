@@ -15,7 +15,7 @@
 - [ ] The description explains in detail what this PR is about.
 - [ ] I have linked a relevant issue or discussion.
 - [ ] I have created tests covering the changes.
-- [ ] I have updated the documentation accordingly.
+- [ ] I have updated the documentation and checked the documentation preview.
 
 ### :hourglass: Dependencies
 

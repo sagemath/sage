@@ -1,6 +1,0 @@
-[wrap-file]
-directory=linbox-1.6.3
-source_url=https://github.com/linbox-team/linbox/releases/download/v1.6.3/linbox-1.6.3.tar.gz
-source_filename=linbox-1.6.3.tar.gz
-source_hash=a58a188307b07c57964e844bceb99321d3043a8a4a1fccc082a54928bb9a0057
-patch_directory=linbox

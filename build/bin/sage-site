@@ -8,8 +8,8 @@ usage() {
     echo "Sage-the-distribution options:"
     echo "  --optional          -- list all optional packages that can be installed"
     echo "  --experimental      -- list all experimental packages that can be installed"
-    echo "  --info [packages]   -- print the SPKG.txt or SPKG.rst of the given packages,"
-    echo "                         and some additional information."
+    echo "  --info [packages]   -- print the description (SPKG.rst) of the given packages"
+    echo "                         and some additional information"
     echo "  -i [packages]       -- install the given Sage packages"
 }
 

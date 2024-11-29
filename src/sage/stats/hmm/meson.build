@@ -1,19 +1,26 @@
-py.install_sources('all.py', subdir : 'sage/stats/hmm')
+py.install_sources(
+  'all.py',
+  'distributions.pxd',
+  'hmm.pxd',
+  'util.pxd',
+  subdir: 'sage/stats/hmm',
+)
 
 extension_data = {
   'chmm' : files('chmm.pyx'),
   'distributions' : files('distributions.pyx'),
   'hmm' : files('hmm.pyx'),
-  'util' : files('util.pyx')
+  'util' : files('util.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/stats/hmm',
-        install: true,
-        include_directories: [],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/stats/hmm',
+    install: true,
+    include_directories: [],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 

@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu, macos]
+        os: [ubuntu]
         python: ['3.9', '3.10', '3.11']
 
     steps:
@@ -35,11 +35,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - name: Cache conda packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/conda_pkgs_dir
           key:
-            ${{ runner.os }}-conda-${{ hashFiles('src/environment-3.11-linux.yml') }}
+            ${{ runner.os }}-conda-${{ hashFiles('environment-3.11-linux.yml') }}
 
       - name: Compiler cache
         uses: hendrikmuhs/ccache-action@v1.2
@@ -55,7 +55,7 @@ jobs:
           channels: conda-forge
           channel-priority: true
           activate-environment: sage
-          environment-file: src/environment-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && 'macos' || 'linux' }}.yml
+          environment-file: environment-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || 'linux' }}.yml
 
       - name: Print Conda environment
         shell: bash -l {0}
@@ -73,4 +73,7 @@ jobs:
 
       - name: Test
         shell: bash -l {0}
-        run: ./sage -t --all -p4
+        run: |
+          # We don't install sage_setup, so don't try to test it
+          rm -R ./src/sage_setup/
+          ./sage -t --all -p4

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Function fields
 """
@@ -14,6 +15,7 @@ Function fields
 from sage.categories.category import Category
 from sage.misc.cachefunc import cached_method
 from sage.categories.basic import Fields
+
 
 class FunctionFields(Category):
     r"""
@@ -34,7 +36,7 @@ class FunctionFields(Category):
     @cached_method
     def super_categories(self):
         """
-        Returns the Category of which this is a direct sub-Category
+        Return the Category of which this is a direct sub-Category
         For a list off all super categories see all_super_categories
 
         EXAMPLES::
@@ -46,8 +48,8 @@ class FunctionFields(Category):
 
     def _call_(self, x):
         r"""
-        Constructs an object in this category from the data in ``x``,
-        or throws a TypeError.
+        Construct an object in this category from the data in ``x``,
+        or throw a :exc:`TypeError`.
 
         EXAMPLES::
 

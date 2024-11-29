@@ -63,7 +63,7 @@ py.install_sources(
   'toy_buchberger.py',
   'toy_d_basis.py',
   'toy_variety.py',
-  subdir : 'sage/rings/polynomial'
+  subdir: 'sage/rings/polynomial',
 )
 
 extension_data = {
@@ -88,42 +88,87 @@ extension_data = {
   'skew_polynomial_element' : files('skew_polynomial_element.pyx'),
   'skew_polynomial_finite_field' : files('skew_polynomial_finite_field.pyx'),
   'skew_polynomial_finite_order' : files('skew_polynomial_finite_order.pyx'),
-  'symmetric_reduction' : files('symmetric_reduction.pyx')
+  'symmetric_reduction' : files('symmetric_reduction.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/rings/polynomial',
-        install: true,
-        include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_numpy, inc_rings, inc_rings_finite],
-        dependencies: [py_dep, cypari2, cysignals, flint, givaro, gmp, mpfi, mpfr, ntl, pari],
-    )
+  deps = [py_dep, cysignals, gmp]
+  if name == 'evaluation_flint'
+    deps += [flint, mpfi]
+  elif name == 'polynomial_complex_arb'
+    deps += [flint, mpfi]
+  elif name == 'polynomial_real_mpfr_dense'
+    deps += [mpfr]
+  elif name == 'real_roots'
+    deps += [mpfi]
+  elif name == 'hilbert'
+    deps += [mpfi]
+  endif
+
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/rings/polynomial',
+    install: true,
+    include_directories: [
+      inc_cpython,
+      inc_ext,
+      inc_flint,
+      inc_ntl,
+      inc_numpy,
+      inc_rings,
+      inc_rings_finite,
+    ],
+    dependencies: deps,
+  )
 endforeach
 
 extension_data_cpp = {
-    'evaluation_ntl': files('evaluation_ntl.pyx'),
-    'multi_polynomial_ideal_libsingular': files('multi_polynomial_ideal_libsingular.pyx'),
-    'multi_polynomial_libsingular': files('multi_polynomial_libsingular.pyx'),
-    'plural': files('plural.pyx'),
-    'polynomial_gf2x': files('polynomial_gf2x.pyx'),
-    'polynomial_integer_dense_flint': files('polynomial_integer_dense_flint.pyx'),
-    'polynomial_integer_dense_ntl': files('polynomial_integer_dense_ntl.pyx'),
-    'polynomial_modn_dense_ntl': files('polynomial_modn_dense_ntl.pyx'),
-    'polynomial_rational_flint': files('polynomial_rational_flint.pyx'),
-    'polynomial_zmod_flint': files('polynomial_zmod_flint.pyx'),
-    'polynomial_zz_pex': files('polynomial_zz_pex.pyx'),
+  'evaluation_ntl': files('evaluation_ntl.pyx'),
+  'multi_polynomial_ideal_libsingular': files(
+    'multi_polynomial_ideal_libsingular.pyx',
+  ),
+  'multi_polynomial_libsingular': files('multi_polynomial_libsingular.pyx'),
+  'plural': files('plural.pyx'),
+  'polynomial_gf2x': files('polynomial_gf2x.pyx'),
+  'polynomial_integer_dense_flint': files('polynomial_integer_dense_flint.pyx'),
+  'polynomial_integer_dense_ntl': files('polynomial_integer_dense_ntl.pyx'),
+  'polynomial_modn_dense_ntl': files('polynomial_modn_dense_ntl.pyx'),
+  'polynomial_rational_flint': files('polynomial_rational_flint.pyx'),
+  'polynomial_zmod_flint': files('polynomial_zmod_flint.pyx'),
+  'polynomial_zz_pex': files('polynomial_zz_pex.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/rings/polynomial',
-        install: true,
-        override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_numpy, inc_rings, inc_rings_finite],
-        dependencies: [py_dep, cypari2, cysignals, flint, givaro, gmp, mpfi, mpfr, ntl, pari, singular],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/rings/polynomial',
+    install: true,
+    override_options: ['cython_language=cpp'],
+    include_directories: [
+      inc_cpython,
+      inc_ext,
+      inc_flint,
+      inc_ntl,
+      inc_numpy,
+      inc_rings,
+      inc_rings_finite,
+    ],
+    dependencies: [
+      py_dep,
+      cypari2,
+      cysignals,
+      flint,
+      givaro,
+      gmp,
+      mpfi,
+      mpfr,
+      ntl,
+      pari,
+      singular,
+    ],
+  )
 endforeach
 
 install_subdir('padics', install_dir: sage_install_dir / 'rings/polynomial')

@@ -18,6 +18,7 @@ py.install_sources(
   'pieri_factors.py',
   'plot.py',
   'reflection_group_complex.py',
+  'reflection_group_element.pxd',
   'reflection_group_real.py',
   'root_lattice_realization_algebras.py',
   'root_lattice_realizations.py',
@@ -53,22 +54,28 @@ py.install_sources(
   'weight_space.py',
   'weyl_characters.py',
   'weyl_group.py',
-  subdir : 'sage/combinat/root_system'
+  subdir: 'sage/combinat/root_system',
 )
 
 extension_data = {
   'braid_orbit' : files('braid_orbit.pyx'),
   'reflection_group_c' : files('reflection_group_c.pyx'),
-  'reflection_group_element' : files('reflection_group_element.pyx')
+  'reflection_group_element' : files('reflection_group_element.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/combinat/root_system',
-        install: true,
-        include_directories: [inc_cpython, inc_rings],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  deps = [py_dep, cysignals, gmp]
+  if name.startswith('reflection_group')
+    deps += [gap]
+  endif
+
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/combinat/root_system',
+    install: true,
+    include_directories: [inc_cpython, inc_rings],
+    dependencies: deps,
+  )
 endforeach
 

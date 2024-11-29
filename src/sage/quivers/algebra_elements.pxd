@@ -83,14 +83,14 @@ cdef class PathAlgebraElement(RingElement):
     # functions.
     cdef path_order_t cmp_terms
     cdef long _hash
-    cpdef _add_(self, other) noexcept
-    cpdef _mul_(self, other) noexcept
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
     cpdef ssize_t degree(self) except -2
-    cpdef dict monomial_coefficients(self) noexcept
-    cpdef list coefficients(self) noexcept
-    cpdef list monomials(self) noexcept
-    cpdef list support(self) noexcept
-    cpdef list terms(self) noexcept
-    cpdef object coefficient(self, QuiverPath P) noexcept
-    cdef list _sorted_items_for_printing(self) noexcept
-    cdef inline PathAlgebraElement _new_(self, path_homog_poly_t *h) noexcept
+    cpdef dict monomial_coefficients(self)
+    cpdef list coefficients(self)
+    cpdef list monomials(self)
+    cpdef list support(self)
+    cpdef list terms(self)
+    cpdef object coefficient(self, QuiverPath P)
+    cdef list _sorted_items_for_printing(self)
+    cdef inline PathAlgebraElement _new_(self, path_homog_poly_t *h)

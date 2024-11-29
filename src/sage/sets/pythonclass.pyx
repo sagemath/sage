@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Set of all objects of a given Python class
 """
@@ -19,7 +20,7 @@ from sage.categories.sets_cat import Sets
 
 cdef dict _type_set_cache = {}
 
-cpdef Set_PythonType(typ) noexcept:
+cpdef Set_PythonType(typ):
     """
     Return the (unique) Parent that represents the set of Python objects
     of a specified type.
@@ -105,7 +106,7 @@ cdef class Set_PythonType_class(Set_generic):
 
     def __reduce__(self):
         r"""
-        Pickling support
+        Pickling support.
 
         TESTS::
 

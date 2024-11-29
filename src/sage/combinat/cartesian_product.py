@@ -112,6 +112,16 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
                                            category=category,
                                            cache=False)
 
+    def __hash__(self):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.combinat.cartesian_product import CartesianProduct_iters
+            sage: cp = CartesianProduct_iters((1,2), (3,4))
+            sage: hash(cp) == CartesianProduct_iters((1,2), (3,4))
+        """
+        return hash(tuple(self.iters))
+
     def __contains__(self, x):
         """
         EXAMPLES::
@@ -160,7 +170,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
     def cardinality(self):
         r"""
-        Returns the number of elements in the Cartesian product of
+        Return the number of elements in the Cartesian product of
         everything in \*iters.
 
         EXAMPLES::
@@ -190,7 +200,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
         An ``int``, the number of elements in the Cartesian product. If the
         number of elements is infinite or does not fit into a python ``int``, a
-        :class:`TypeError` is raised.
+        :exc:`TypeError` is raised.
 
         .. SEEALSO::
 
@@ -215,7 +225,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
     def list(self):
         """
-        Returns
+        Return.
 
         EXAMPLES::
 

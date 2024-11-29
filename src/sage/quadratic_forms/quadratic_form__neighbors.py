@@ -18,7 +18,7 @@ def find_primitive_p_divisible_vector__random(self, p):
     """
     Find a random `p`-primitive vector in `L/pL` whose value is `p`-divisible.
 
-    .. note::
+    .. NOTE::
 
         Since there are about `p^{(n-2)}` of these lines, we have a `1/p`
         chance of randomly finding an appropriate vector.
@@ -59,7 +59,7 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
     value is `p`-divisible, where the last vector returned was `v`.  For
     an initial call, no `v` needs to be passed.
 
-    Return vectors whose last non-zero entry is normalized to 0 or 1 (so no
+    Return vectors whose last nonzero entry is normalized to 0 or 1 (so no
     lines are counted repeatedly).  The ordering is by increasing the
     first non-normalized entry.  If we have tested all (lines of)
     vectors, then return None.
@@ -97,12 +97,12 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
     if n <= 1:
         raise NotImplementedError("Sorry -- Not implemented yet!")
 
-    # Look for the last non-zero entry (which must be 1)
+    # Look for the last nonzero entry (which must be 1)
     nz = n - 1
     while w[nz] == 0:
         nz += -1
 
-    # Test that the last non-zero entry is 1 (to detect tampering).
+    # Test that the last nonzero entry is 1 (to detect tampering).
     if w[nz] != 1:
         print("Warning: The input vector to QuadraticForm.find_primitive_p_divisible_vector__next() is not normalized properly.")
 
@@ -124,7 +124,7 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
                 w[j] = 0
 
             if nz != 0:
-                # Move the non-zero normalized index over by one, or
+                # Move the nonzero normalized index over by one, or
                 # return the zero vector
                 w[nz - 1] = 1
                 nz += -1
@@ -153,8 +153,8 @@ def find_p_neighbor_from_vec(self, p, y, return_matrix=False):
 
     - ``p`` -- a prime number
     - ``y`` -- a vector with `q(y) \in p \ZZ`
-    - ``odd`` -- (default: ``False``) if `p=2`, return also odd neighbors
-    - ``return_matrix`` -- (boolean, default ``False``) return
+    - ``odd`` -- boolean (default: ``False``); if `p=2`, return also odd neighbors
+    - ``return_matrix`` -- boolean (default: ``False``); return
       the transformation matrix instead of the quadratic form
 
     EXAMPLES::
@@ -188,7 +188,7 @@ def find_p_neighbor_from_vec(self, p, y, return_matrix=False):
     """
     p = ZZ(p)
     if not p.divides(self(y)):
-        raise ValueError("y=%s must be of square divisible by p=%s" % (y, p))
+        raise ValueError(f"y={y} must be of square divisible by p={p}")
     if self.base_ring() not in [ZZ, QQ]:
         raise NotImplementedError("the base ring of this form must be the integers or the rationals")
 
@@ -202,10 +202,10 @@ def find_p_neighbor_from_vec(self, p, y, return_matrix=False):
         odd = True
         if G.denominator() != 1:
             raise ValueError("the associated bilinear form q(x+y)-q(x)-q(y) must be integral.")
-    b = y*G*y
+    b = y * G * y
     if not b % p == 0:
         raise ValueError("y^2 must be divisible by p=%s" % p)
-    y_dual = y*G
+    y_dual = y * G
     if p != 2 and b % p**2 != 0:
         for k in range(n):
             if y_dual[k] % p != 0:
@@ -213,8 +213,8 @@ def find_p_neighbor_from_vec(self, p, y, return_matrix=False):
                 break
         else:
             raise ValueError("either y is not primitive or self is not maximal at %s" % p)
-        z *= (2*y*G*z).inverse_mod(p)
-        y = y - b*z
+        z *= (2 * y * G * z).inverse_mod(p)
+        y = y - b * z
         # assert y*G*y % p^2 == 0
     if p == 2:
         val = b.valuation(p)
@@ -228,14 +228,14 @@ def find_p_neighbor_from_vec(self, p, y, return_matrix=False):
                     break
             else:
                 raise ValueError("either y is not primitive or self is not even, maximal at 2")
-            y += 2*z
+            y += 2 * z
             # assert y*G*y % 8 == 0
 
-    y_dual = G*y
+    y_dual = G * y
     Ly = y_dual.change_ring(GF(p)).column().kernel().matrix().lift()
     B = Ly.stack(p * matrix.identity(n))
     # the rows of B now generate L_y = { x in L | (x,y)=0 mod p}
-    B = y.row().stack(p*B)
+    B = y.row().stack(p * B)
     B = B.hermite_form()[:n, :] / p
     # the rows of B generate ZZ * y/p + L_y
     # by definition this is the p-neighbor of L at y
@@ -243,13 +243,13 @@ def find_p_neighbor_from_vec(self, p, y, return_matrix=False):
 
     if return_matrix:
         return B.T
-    else:
-        QF = self.parent()
-        Gnew = (B*G*B.T).change_ring(R)
-        return QF(Gnew)
+
+    QF = self.parent()
+    Gnew = (B * G * B.T).change_ring(R)
+    return QF(Gnew)
 
 
-def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
+def neighbor_iteration(seeds, p, mass=None, max_classes=None,
                        algorithm=None, max_neighbors=1000, verbose=False):
     r"""
     Return all classes in the `p`-neighbor graph of ``self``.
@@ -259,7 +259,7 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
 
     INPUT:
 
-    - ``seeds`` -- a list of quadratic forms in the same genus
+    - ``seeds`` -- list of quadratic forms in the same genus
 
     - ``p`` -- a prime number
 
@@ -272,7 +272,7 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
     - ``max_random_trys`` -- (default: ``1000``) the maximum number of neighbors
       computed for a single lattice
 
-    OUTPUT: a list of quadratic forms
+    OUTPUT: list of quadratic forms
 
     EXAMPLES::
 
@@ -308,9 +308,11 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
         Warning: not all classes in the genus were found
         []
     """
-    p = ZZ(p)
     from sage.quadratic_forms.quadratic_form import QuadraticForm
     from warnings import warn
+    p = ZZ(p)
+    if max_classes is None:
+        max_classes = 1000
     if not all(isinstance(s, QuadraticForm) for s in seeds):
         raise ValueError("seeds must be a list of quadratic forms")
     if algorithm is None:
@@ -346,9 +348,9 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
         raise ValueError("unknown algorithm")
     waiting_list = list(seeds)
     isom_classes = []
-    mass_count = QQ(0)
-    n_isom_classes = ZZ(0)
-    while len(waiting_list) > 0 and mass != mass_count and n_isom_classes < max_classes:
+    mass_count = QQ.zero()
+    n_isom_classes = ZZ.zero()
+    while waiting_list and mass != mass_count and n_isom_classes < max_classes:
         # find all p-neighbors of Q
         Q = waiting_list.pop()
         for v in p_divisible_vectors(Q, max_neighbors):
@@ -384,7 +386,7 @@ def orbits_lines_mod_p(self, p):
 
     - ``p`` -- a prime number
 
-    OUTPUT: a list of vectors over ``GF(p)``
+    OUTPUT: list of vectors over ``GF(p)``
 
     EXAMPLES::
 

@@ -196,12 +196,6 @@ case $system:$command in
     slackware*:install)
         [ -n "$system_packages" ] && print_shell_command ${SUDO}slackpkg install $system_packages
         ;;
-    cygwin*:update)
-        print_comment "first install apt-cyg from https://github.com/transcode-open/apt-cyg"
-        ;;
-    cygwin*:install)
-        [ -n "$system_packages" ] && print_shell_command apt-cyg install $system_packages
-        ;;
     freebsd*:install)
         [ -n "$system_packages" ] && print_shell_command ${SUDO}pkg install $system_packages
         ;;

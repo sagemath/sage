@@ -1,14 +1,19 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Schemes
 """
+
 # ****************************************************************************
-#  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
+#       Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
-#                2008-2012 Nicolas M. Thiery <nthiery at users.sf.net>
+#                2008-2012 Nicolas M. Thiery <nthiery@users.sf.net>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-# *****************************************************************************
+# ****************************************************************************
 
 from sage.categories.category import Category
 from sage.categories.category_types import Category_over_base
@@ -18,6 +23,12 @@ from sage.categories.commutative_additive_groups import CommutativeAdditiveGroup
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 from sage.categories.homsets import HomsetsCategory
+from sage.misc.abstract_method import abstract_method
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.categories.map', 'Map')
+lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
+lazy_import('sage.schemes.generic.scheme', 'Scheme')
 
 
 class Schemes(Category):
@@ -55,7 +66,6 @@ class Schemes(Category):
         sage: Schemes().Homsets().super_categories()
         [Category of homsets]
     """
-
     @staticmethod
     def __classcall_private__(cls, X=None):
         """
@@ -73,8 +83,7 @@ class Schemes(Category):
             Category of schemes over Integer Ring
         """
         if X is not None:
-            from sage.schemes.generic.scheme import is_Scheme
-            if not is_Scheme(X):
+            if X not in Schemes():
                 X = Schemes()(X)
             return Schemes_over_base(X)
         return super().__classcall__(cls)
@@ -90,7 +99,7 @@ class Schemes(Category):
 
     def _call_(self, x):
         """
-        Construct a scheme from the data in ``x``
+        Construct a scheme from the data in ``x``.
 
         EXAMPLES:
 
@@ -134,17 +143,11 @@ class Schemes(Category):
               Defn: Natural morphism:
                       From: Integer Ring
                       To:   Rational Field
-
         """
-        from sage.schemes.generic.scheme import is_Scheme
-        if is_Scheme(x):
-            return x
-        from sage.schemes.generic.morphism import is_SchemeMorphism
-        if is_SchemeMorphism(x):
+        if isinstance(x, (SchemeMorphism, Scheme)):
             return x
         from sage.categories.commutative_rings import CommutativeRings
         from sage.schemes.generic.spec import Spec
-        from sage.categories.map import Map
         if x in CommutativeRings():
             return Spec(x)
         elif isinstance(x, Map) and x.category_for().is_subcategory(Rings()):
@@ -155,9 +158,6 @@ class Schemes(Category):
             raise TypeError("No way to create an object or morphism in %s from %s" % (self, x))
 
 
-#############################################################
-# Schemes over a given base scheme.
-#############################################################
 class Schemes_over_base(Category_over_base):
     """
     The category of schemes over a given base scheme.
@@ -172,7 +172,6 @@ class Schemes_over_base(Category_over_base):
         sage: C = Schemes(ZZ)
         sage: TestSuite(C).run()
     """
-
     def base_scheme(self):
         """
         EXAMPLES::
@@ -198,12 +197,12 @@ class Schemes_over_base(Category_over_base):
             sage: Schemes(Spec(ZZ)) # indirect doctest
             Category of schemes over Integer Ring
         """
-        # To work around the name of the class (schemes_over_base)
-        from sage.schemes.generic.scheme import is_AffineScheme
-        if is_AffineScheme(self.base_scheme()):
-            return "schemes over %s" % self.base_scheme().coordinate_ring()
-        else:
-            return "schemes over %s" % self.base_scheme()
+        from sage.schemes.generic.scheme import AffineScheme
+        base = self.base()
+        if isinstance(base, AffineScheme):
+            base = base.coordinate_ring()
+        return f"schemes over {base}"
+
 
 class AbelianVarieties(Schemes_over_base):
     r"""
@@ -229,12 +228,24 @@ class AbelianVarieties(Schemes_over_base):
             sage: AbelianVarieties(Spec(QQ))
             Category of abelian varieties over Rational Field
         """
-        from sage.schemes.generic.scheme import is_AffineScheme
-        if is_AffineScheme(base):
+        from sage.schemes.generic.scheme import AffineScheme
+        if isinstance(base, AffineScheme):
             base = base.coordinate_ring()
         if base not in Fields():
             raise ValueError('category of abelian varieties is only defined over fields')
         super().__init__(base)
+
+    def base_scheme(self):
+        """
+        EXAMPLES::
+
+            sage: Schemes(Spec(ZZ)).base_scheme()
+            Spectrum of Integer Ring
+        """
+        base = self.base()
+        if base not in Schemes():
+            base = Schemes()(base)
+        return base
 
     def super_categories(self):
         """
@@ -253,7 +264,7 @@ class AbelianVarieties(Schemes_over_base):
             sage: AbelianVarieties(Spec(QQ))  # indirect doctest
             Category of abelian varieties over Rational Field
         """
-        return "abelian varieties over %s" % self.base_scheme()
+        return "abelian varieties over %s" % self.base()
 
     class Homsets(HomsetsCategory):
         r"""
@@ -294,3 +305,87 @@ class AbelianVarieties(Schemes_over_base):
                     True
                 """
                 return [Rings()]
+
+
+class Jacobians(Schemes_over_base):
+    """
+    The category of Jacobians attached to curves or function fields.
+
+    EXAMPLES::
+
+        sage: Jacobians(QQ)
+        Category of Jacobians over Rational Field
+
+    TESTS::
+
+        sage: TestSuite(Jacobians(QQ)).run()
+    """
+    def __init__(self, base):
+        r"""
+        Constructor of this category.
+
+        EXAMPLES::
+
+            sage: Jacobians(QQ)
+            Category of Jacobians over Rational Field
+            sage: Jacobians(Spec(QQ))
+            Category of Jacobians over Rational Field
+        """
+        from sage.schemes.generic.scheme import AffineScheme
+        if isinstance(base, AffineScheme):
+            base = base.coordinate_ring()
+        if base not in Fields():
+            raise ValueError('category of Jacobians is only defined over fields')
+        super().__init__(base)
+
+    def base_scheme(self):
+        """
+        Return the base scheme of this Jacobians category.
+
+        EXAMPLES::
+
+            sage: Jacobians(QQ).base_scheme()
+            Spectrum of Rational Field
+        """
+        base = self.base()
+        if base not in Schemes():
+            base = Schemes()(base)
+        return base
+
+    def super_categories(self):
+        """
+        Return the super categories of this Jacobians category.
+
+        EXAMPLES::
+
+            sage: Jacobians(QQ).super_categories()
+            [Category of abelian varieties over Rational Field]
+        """
+        return [AbelianVarieties(self.base_scheme())]
+
+    def _repr_object_names(self):
+        """
+        Return the string representation of this category.
+
+        EXAMPLES::
+
+            sage: Jacobians(Spec(QQ))  # indirect doctest
+            Category of Jacobians over Rational Field
+        """
+        return "Jacobians over %s" % self.base()
+
+    class ParentMethods:
+
+        @abstract_method
+        def base_curve(self):
+            """
+            Return the curve to which this Jacobian is attached.
+
+            EXAMPLES::
+
+                sage: # needs sage.rings.function_field
+                sage: K.<x> = FunctionField(GF(2))
+                sage: J = K.jacobian()
+                sage: J.base_curve()
+                Rational function field in x over Finite Field of size 2
+            """

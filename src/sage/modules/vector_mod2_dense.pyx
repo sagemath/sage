@@ -50,7 +50,7 @@ cimport sage.modules.free_module_element as free_module_element
 from sage.libs.m4ri cimport *
 
 cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
-    cdef _new_c(self) noexcept:
+    cdef _new_c(self):
         """
         EXAMPLES::
 
@@ -105,7 +105,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             mzd_copy(y._entries, self._entries)
         return y
 
-    cdef _init(self, Py_ssize_t degree, parent) noexcept:
+    cdef _init(self, Py_ssize_t degree, parent):
         """
         EXAMPLES::
 
@@ -201,13 +201,13 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
                 xi = x[i]
                 if isinstance(xi, (IntegerMod_int, int, Integer)):
                     # the if/else statement is because in some compilers, (-1)%2 is -1
-                    mzd_write_bit(self._entries, 0, i, 1 if xi%2 else 0)
+                    mzd_write_bit(self._entries, 0, i, 1 if xi % 2 else 0)
                 elif isinstance(xi, Rational):
                     if not (xi.denominator() % 2):
                         raise ZeroDivisionError("inverse does not exist")
                     mzd_write_bit(self._entries, 0, i, 1 if (xi.numerator() % 2) else 0)
                 else:
-                    mzd_write_bit(self._entries, 0, i, xi%2)
+                    mzd_write_bit(self._entries, 0, i, xi % 2)
         elif x != 0:
             raise TypeError("can't initialize vector from nonzero non-list")
         elif self._degree:
@@ -227,7 +227,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         if self._entries:
             mzd_free(self._entries)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         EXAMPLES::
 
@@ -253,7 +253,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         c = mzd_cmp(left._entries, (<Vector_mod2_dense>right)._entries)
         return rich_to_bool(op, c)
 
-    cdef get_unsafe(self, Py_ssize_t i) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i):
         """
         EXAMPLES::
 
@@ -289,7 +289,6 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         """
         mzd_write_bit(self._entries, 0, i, value)
 
-
     def __reduce__(self):
         """
         EXAMPLES::
@@ -302,7 +301,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         return unpickle_v0, (self._parent, self.list(), self._degree,
                              self._is_immutable)
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         EXAMPLES::
 
@@ -317,7 +316,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             mzd_add(z._entries, self._entries, (<Vector_mod2_dense>right)._entries)
         return z
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         EXAMPLES::
 
@@ -348,8 +347,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             res += Integer(row[i]).popcount()
         return res
 
-
-    cpdef _dot_product_(self, Vector right) noexcept:
+    cpdef _dot_product_(self, Vector right):
         """
         EXAMPLES::
 
@@ -397,7 +395,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
         return n
 
-    cpdef _pairwise_product_(self, Vector right) noexcept:
+    cpdef _pairwise_product_(self, Vector right):
         """
         EXAMPLES::
 
@@ -419,7 +417,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             zrow[i] = (lrow[i] & rrow[i])
         return z
 
-    cpdef _lmul_(self, Element left) noexcept:
+    cpdef _lmul_(self, Element left):
         """
         EXAMPLES::
 
@@ -447,7 +445,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             return self.__copy__()
         return self._new_c()
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         """
         EXAMPLES::
 
@@ -464,7 +462,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
         INPUT:
 
-        - ``copy`` - always ``True``
+        - ``copy`` -- always ``True``
 
         EXAMPLES::
 
@@ -485,6 +483,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             v[i] = switch[mzd_read_bit(self._entries, 0, i)]
         return v
 
+
 def unpickle_v0(parent, entries, degree, is_immutable):
     """
     EXAMPLES::
@@ -500,11 +499,11 @@ def unpickle_v0(parent, entries, degree, is_immutable):
     v._init(degree, parent)
     cdef int xi
 
-    for i from 0 <= i < degree:
+    for i in range(degree):
         if isinstance(entries[i], (IntegerMod_int, int, Integer)):
             xi = entries[i]
-            mzd_write_bit(v._entries, 0, i, xi%2)
+            mzd_write_bit(v._entries, 0, i, xi % 2)
         else:
-            mzd_write_bit(v._entries, 0, i, entries[i]%2)
+            mzd_write_bit(v._entries, 0, i, entries[i] % 2)
     v._is_immutable = int(is_immutable)
     return v

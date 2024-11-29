@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Base class for parent objects
 
@@ -128,7 +129,7 @@ from sage.structure.coerce_maps cimport (NamedConvertMap, DefaultConvertMap,
 from sage.structure.element cimport parent
 
 
-cdef _record_exception() noexcept:
+cdef _record_exception():
     coercion_model._record_exception()
 
 cdef object _Integer
@@ -148,12 +149,18 @@ def is_Parent(x):
 
         sage: from sage.structure.parent import is_Parent
         sage: is_Parent(2/3)
+        doctest:warning...
+        DeprecationWarning: the function is_Parent is deprecated;
+        use 'isinstance(..., Parent)' instead
+        See https://github.com/sagemath/sage/issues/37922 for details.
         False
         sage: is_Parent(ZZ)
         True
         sage: is_Parent(Primes())
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(37922, "the function is_Parent is deprecated; use 'isinstance(..., Parent)' instead")
     return isinstance(x, Parent)
 
 
@@ -215,25 +222,22 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         INPUT:
 
-        - ``base`` -- An algebraic structure considered to be the
-          "base" of this parent (e.g. the base field for a vector
-          space).
+        - ``base`` -- an algebraic structure considered to be the "base" of
+          this parent (e.g. the base field for a vector space)
 
-        - ``category`` -- a category or list/tuple of categories. The
-          category in which this parent lies (or list or tuple
-          thereof).  Since categories support more general
-          super-categories, this should be the most specific category
-          possible. If category is a list or tuple, a JoinCategory is
-          created out of them.  If category is not specified, the
-          category will be guessed (see
-          :class:`~sage.structure.category_object.CategoryObject`),
-          but will not be used to inherit parent's or element's code from
-          this category.
+        - ``category`` -- a category or list/tuple of categories. The category
+          in which this parent lies (or list or tuple thereof). Since
+          categories support more general super-categories, this should be the
+          most specific category possible. If category is a list or tuple, a
+          ``JoinCategory`` is created out of them. If category is not
+          specified, the category will be guessed (see
+          :class:`~sage.structure.category_object.CategoryObject`), but will
+          not be used to inherit parent's or element's code from this category.
 
-        - ``names`` -- Names of generators.
+        - ``names`` -- names of generators
 
-        - ``normalize`` -- Whether to standardize the names (remove
-          punctuation, etc)
+        - ``normalize`` -- whether to standardize the names (remove
+          punctuation, etc.)
 
         - ``facade`` -- a parent, or tuple thereof, or ``True``
 
@@ -404,7 +408,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             True
             sage: hash(a) != h_a
             True
-
         """
         cdef Py_hash_t hash_old = -1
         if debug.refine_category_hash_check:
@@ -499,7 +502,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: P._init_category_(Rings())
             sage: type(P) == C
             True
-
         """
         self._category = None
         if can_assign_class(self):
@@ -534,7 +536,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
     @lazy_attribute
     def element_class(self):
         """
-        The (default) class for the elements of this parent
+        The (default) class for the elements of this parent.
 
         FIXME's and design issues:
 
@@ -558,7 +560,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         It used to be the case that this did not work for extension
         types, which used to never support a ``__dict__`` for instances.
         So for backwards compatibility, we only use dynamic classes by
-        default if the class has a non-zero ``__dictoffset__``. But it
+        default if the class has a nonzero ``__dictoffset__``. But it
         works regardless: just pass ``inherit=True`` to
         ``__make_element_class__``. See also :issue:`24715`.
 
@@ -805,8 +807,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         INPUT:
 
-        - ``key`` -- string. A key for different metadata informations
-          that can be inquired about.
+        - ``key`` -- string; a key for different metadata informations
+          that can be inquired about
 
         Valid ``key`` arguments are:
 
@@ -821,9 +823,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
           is, parenthesis are not required when *printing* out any of
           `x - y`, `x + y`, `x^y` and `x/y`.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -972,7 +972,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
               [0 2]
             )
              of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-
         """
         # generic multiplication method. It defers to
         # _mul_, which may be defined via categories.
@@ -1060,12 +1059,13 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
     #############################################################################
     def __contains__(self, x):
         r"""
-        True if there is an element of self that is equal to x under
-        ==, or if x is already an element of self.  Also, True in other
-        cases involving the Symbolic Ring, which is handled specially.
+        ``True`` if there is an element of ``self`` that is equal to ``x``
+        under ``==``, or if ``x`` is already an element of ``self``.  Also,
+        ``True`` in other cases involving the Symbolic Ring, which is handled
+        specially.
 
         For many structures we test this by using :meth:`__call__` and
-        then testing equality between x and the result.
+        then testing equality between ``x`` and the result.
 
         The Symbolic Ring is treated differently because it is
         ultra-permissive about letting other rings coerce in, but
@@ -1188,10 +1188,10 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         except (TypeError, ValueError, ArithmeticError):
             return False
 
-    cpdef coerce(self, x) noexcept:
+    cpdef coerce(self, x):
         """
-        Return x as an element of self, if and only if there is a canonical
-        coercion from the parent of x to self.
+        Return x as an element of ``self``, if and only if there is a
+        canonical coercion from the parent of x to ``self``.
 
         EXAMPLES::
 
@@ -1238,8 +1238,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
     # Should be moved and merged into the EnumeratedSets() category (#12955)
     def __getitem__(self, n):
         """
-        Returns the `n^{th}` item or slice `n` of self,
-        by getting self as a list.
+        Return the `n`-th item or slice `n` of ``self``,
+        by getting ``self`` as a list.
 
         EXAMPLES::
 
@@ -1288,12 +1288,12 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         r"""
-        Return True if ``im_gens`` defines a valid homomorphism
-        from self to codomain; otherwise return False.
+        Return ``True`` if ``im_gens`` defines a valid homomorphism
+        from ``self`` to ``codomain``; otherwise return ``False``.
 
         If determining whether or not a homomorphism is valid has not
-        been implemented for this ring, then a NotImplementedError exception
-        is raised.
+        been implemented for this ring, then a :exc:`NotImplementedError`
+        exception is raised.
         """
         raise NotImplementedError("Verification of correctness of homomorphisms from %s not yet implemented." % self)
 
@@ -1342,10 +1342,10 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     def hom(self, im_gens, codomain=None, check=None, base_map=None, category=None, **kwds):
         r"""
-        Return the unique homomorphism from self to codomain that
+        Return the unique homomorphism from ``self`` to ``codomain`` that
         sends ``self.gens()`` to the entries of ``im_gens``.
 
-        This raises a :class:`TypeError` if there is no such homomorphism.
+        This raises a :exc:`TypeError` if there is no such homomorphism.
 
         INPUT:
 
@@ -1354,15 +1354,13 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         - ``codomain`` -- the codomain of the homomorphism
 
-        - ``base_map`` -- a map from the base ring to the codomain.
-          If not given, coercion is used.
+        - ``base_map`` -- a map from the base ring to the codomain; if not
+          given, coercion is used
 
         - ``check`` -- whether to verify that the images of generators
-          extend to define a map (using only canonical coercions).
+          extend to define a map (using only canonical coercions)
 
-        OUTPUT:
-
-        A homomorphism self --> codomain
+        OUTPUT: a homomorphism ``self --> codomain``
 
         .. NOTE::
 
@@ -1411,7 +1409,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
               To:   Finite Field of size 5
 
         There might not be a natural morphism, in which case a
-        ``TypeError`` is raised::
+        :exc:`TypeError` is raised::
 
             sage: QQ.hom(ZZ)
             Traceback (most recent call last):
@@ -1459,24 +1457,23 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         INPUT:
 
-        - ``coerce_list`` -- a list of coercion Morphisms to self and
-          parents with canonical coercions to self
+        - ``coerce_list`` -- list of coercion Morphisms to ``self`` and
+          parents with canonical coercions to ``self``
 
-        - ``action_list`` -- a list of actions on and by self
+        - ``action_list`` -- list of actions on and by ``self``
 
-        - ``convert_list`` -- a list of conversion Maps to self and
-           parents with conversions to self
+        - ``convert_list`` -- list of conversion Maps to ``self`` and
+          parents with conversions to ``self``
 
-        - ``embedding`` -- a single Morphism from self
+        - ``embedding`` -- a single Morphism from ``self``
 
         - ``convert_method_name`` -- a name to look for that other elements
-          can implement to create elements of self (e.g. _integer_)
+          can implement to create elements of ``self`` (e.g. ``_integer_``)
 
-        - ``init_no_parent`` -- if True omit passing self in as the
+        - ``init_no_parent`` -- if ``True`` omit passing ``self`` in as the
           first argument of element_constructor for conversion. This
           is useful if parents are unique, or element_constructor is a
-          bound method (this latter case can be detected
-          automatically).
+          bound method (this latter case can be detected automatically).
         """
         self.init_coerce(False)
 
@@ -1578,7 +1575,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     def _remove_from_coerce_cache(self, domain):
         r"""
-        Remove the coercion and the conversion from ``domain`` to self from the cache.
+        Remove the coercion and the conversion from ``domain`` to ``self`` from
+        the cache.
 
         EXAMPLES::
 
@@ -1604,7 +1602,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         except KeyError:
             pass
 
-    cpdef register_coercion(self, mor) noexcept:
+    cpdef register_coercion(self, mor):
         r"""
         Update the coercion model to use `mor : P \to \text{self}` to coerce
         from a parent ``P`` into ``self``.
@@ -1664,9 +1662,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         self._registered_domains.append(D)
         self._coerce_from_hash.set(D, mor)
 
-    cpdef register_action(self, action) noexcept:
+    cpdef register_action(self, action):
         r"""
-        Update the coercion model to use ``action`` to act on self.
+        Update the coercion model to use ``action`` to act on ``self``.
 
         ``action`` should be of type ``sage.categories.action.Action``.
 
@@ -1682,7 +1680,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             ....:
             ....:     def _act_(self, g, a):
             ....:         D = {}
-            ....:         for k, v in a.dict().items():
+            ....:         for k, v in a.monomial_coefficients().items():
             ....:             nk = [0]*len(k)
             ....:             for i in range(len(k)):
             ....:                 nk[g(i+1)-1] = k[i]
@@ -1728,7 +1726,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             raise ValueError("action must involve self")
         self._action_list.append(action)
 
-    cpdef register_conversion(self, mor) noexcept:
+    cpdef register_conversion(self, mor):
         r"""
         Update the coercion model to use `\text{mor} : P \to \text{self}` to convert
         from ``P`` into ``self``.
@@ -1763,7 +1761,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         else:
             raise TypeError("conversions must be parents or maps")
 
-    cpdef register_embedding(self, embedding) noexcept:
+    cpdef register_embedding(self, embedding):
         r"""
         Add embedding to coercion model.
 
@@ -1900,9 +1898,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         """
         return copy(self._embedding)  # It might be overkill to make a copy here
 
-    cpdef _generic_coerce_map(self, S) noexcept:
+    cpdef _generic_coerce_map(self, S):
         r"""
-        Returns a default coercion map based on the data provided to
+        Return a default coercion map based on the data provided to
         :meth:`_populate_coercion_lists_`.
 
         This method differs from :meth:`_generic_convert_map` only in setting
@@ -1931,9 +1929,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             category = self.category()._meet_(S.category())
         return self._generic_convert_map(S, category=category)
 
-    cpdef _generic_convert_map(self, S, category=None) noexcept:
+    cpdef _generic_convert_map(self, S, category=None):
         r"""
-        Returns the default conversion map based on the data provided to
+        Return the default conversion map based on the data provided to
         :meth:`_populate_coercion_lists_`.
 
         This is called when :meth:`_coerce_map_from_` returns ``True``.
@@ -1989,7 +1987,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             method_name = self._convert_method_name
         return self.convert_method_map(S, method_name)
 
-    cdef convert_method_map(self, S, method_name) noexcept:
+    cdef convert_method_map(self, S, method_name):
         # Cython implementation of _convert_method_map()
         cdef Parent P
         if isinstance(S, Parent):
@@ -2007,20 +2005,20 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     def _coerce_map_via(self, v, S):
         """
-        This attempts to construct a morphism from S to self by passing through
-        one of the items in v (tried in order).
+        This attempts to construct a morphism from ``S`` to ``self`` by passing
+        through one of the items in ``v`` (tried in order).
 
-        S may appear in the list, in which case algorithm will never progress
-        beyond that point.
+        ``S`` may appear in the list, in which case algorithm will never
+        progress beyond that point.
 
-        This is useful when defining _coerce_map_from_.
+        This is useful when defining ``_coerce_map_from_``.
 
         INPUT:
 
-        - ``v`` - A list (iterator) of parents with coercions into self. There
-          MUST be maps provided from each item in the list to self.
+        - ``v`` -- list (iterator) of parents with coercions into ``self``;
+          there *must* be maps provided from each item in the list to ``self``
 
-        - ``S`` - the starting parent
+        - ``S`` -- the starting parent
 
         EXAMPLES:
 
@@ -2090,14 +2088,14 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             return True
         return self._internal_coerce_map_from(S) is not None
 
-    cpdef _coerce_map_from_(self, S) noexcept:
+    cpdef _coerce_map_from_(self, S):
         """
         Override this method to specify coercions beyond those specified
-        in coerce_list.
+        in ``coerce_list``.
 
-        If no such coercion exists, return None or False. Otherwise, it may
-        return either an actual Map to use for the coercion, a callable
-        (in which case it will be wrapped in a Map), or True (in which case
+        If no such coercion exists, return ``None`` or ``False``. Otherwise, it
+        may return either an actual Map to use for the coercion, a callable
+        (in which case it will be wrapped in a Map), or ``True`` (in which case
         a generic map will be provided).
         """
         try:
@@ -2107,7 +2105,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         except AttributeError:
             return None
 
-    cpdef coerce_map_from(self, S) noexcept:
+    cpdef coerce_map_from(self, S):
         """
         Return a :class:`Map` object to coerce from ``S`` to ``self`` if one
         exists, or ``None`` if no such coercion exists.
@@ -2136,7 +2134,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: # needs sage.combinat sage.modules
             sage: R = QQ['q,t'].fraction_field()
-            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)
+            sage: Sym = SymmetricFunctions(R)
             sage: H = Sym.macdonald().H()
             sage: P = Sym.macdonald().P()
             sage: m = Sym.monomial()
@@ -2145,7 +2143,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         """
         return copy(self._internal_coerce_map_from(S))
 
-    cpdef _internal_coerce_map_from(self, S) noexcept:
+    cpdef _internal_coerce_map_from(self, S):
         """
         Return the :class:`Map` object to coerce from ``S`` to ``self`` that
         is used internally by the coercion system if one exists, or ``None``
@@ -2173,7 +2171,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: # needs sage.combinat sage.modules
             sage: R = QQ['q,t'].fraction_field()
-            sage: Sym = sage.combinat.sf.sf.SymmetricFunctions(R)
+            sage: Sym = SymmetricFunctions(R)
             sage: P = Sym.macdonald().P()
             sage: Ht = Sym.macdonald().Ht()
             sage: Ht._internal_coerce_map_from(P)
@@ -2267,13 +2265,13 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         finally:
             _unregister_pair(self, S, "coerce")
 
-    cdef discover_coerce_map_from(self, S) noexcept:
+    cdef discover_coerce_map_from(self, S):
         """
-        Precedence for discovering a coercion S -> self goes as follows:
+        Precedence for discovering a coercion ``S -> self`` goes as follows:
 
-        1. If S has an embedding into self, return that embedding.
+        1. If ``S`` has an embedding into ``self``, return that embedding.
 
-        2. If self._coerce_map_from_(S) is NOT exactly one of
+        2. If ``self._coerce_map_from_(S)`` is not exactly one of
 
            - DefaultConvertMap
            - DefaultConvertMap_unique
@@ -2284,8 +2282,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         3. Traverse the coercion lists looking for another map
            returning the map from step (2) if none is found.
 
-        4. If S has an embedding into some parent T, look for T -> self and
-           return composition.
+        4. If ``S`` has an embedding into some parent ``T``, look for
+          ``T -> self`` and return composition.
 
         In the future, multiple paths may be discovered and compared.
 
@@ -2444,16 +2442,16 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             if connecting is not None:
                 return (<Parent>S)._embedding.post_compose(connecting)
 
-    cpdef convert_map_from(self, S) noexcept:
+    cpdef convert_map_from(self, S):
         """
-        This function returns a :class:`Map` from `S` to `self`,
+        This function returns a :class:`Map` from `S` to ``self``,
         which may or may not succeed on all inputs.
-        If a coercion map from S to self exists,
-        then the it will be returned. If a coercion from `self` to `S` exists,
+        If a coercion map from S to ``self`` exists,
+        then the it will be returned. If a coercion from ``self`` to `S` exists,
         then it will attempt to return a section of that map.
 
         Under the new coercion model, this is the fastest way to convert
-        elements of `S` to elements of `self` (short of manually constructing
+        elements of `S` to elements of ``self`` (short of manually constructing
         the elements) and is used by :meth:`__call__`.
 
         EXAMPLES::
@@ -2470,16 +2468,16 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         """
         return copy(self._internal_convert_map_from(S))
 
-    cpdef _internal_convert_map_from(self, S) noexcept:
+    cpdef _internal_convert_map_from(self, S):
         """
-        This function returns a :class:`Map` from `S` to `self`,
+        This function returns a :class:`Map` from `S` to ``self``,
         which may or may not succeed on all inputs.
-        If a coercion map from S to self exists,
-        then the it will be returned. If a coercion from `self` to `S` exists,
+        If a coercion map from S to ``self`` exists,
+        then the it will be returned. If a coercion from ``self`` to `S` exists,
         then it will attempt to return a section of that map.
 
         Under the new coercion model, this is the fastest way to convert
-        elements of `S` to elements of `self` (short of manually constructing
+        elements of `S` to elements of ``self`` (short of manually constructing
         the elements) and is used by :func:`__call__`.
 
         EXAMPLES::
@@ -2503,7 +2501,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             return self._convert_from_hash.get(S)
         except KeyError:
             mor = self.discover_convert_map_from(S)
-            # Before trac #14711, the morphism has been
+            # Before Issue #14711, the morphism has been
             # put both into _convert_from_list and into
             # _convert_from_hash. But there is no reason
             # to have a double book-keeping, specifically
@@ -2516,7 +2514,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                 mor._make_weak_references()
             return mor
 
-    cdef discover_convert_map_from(self, S) noexcept:
+    cdef discover_convert_map_from(self, S):
 
         cdef map.Map mor = self._internal_coerce_map_from(S)
         if mor is not None:
@@ -2544,23 +2542,23 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         mor = self._generic_convert_map(S)
         return mor
 
-    cpdef _convert_map_from_(self, S) noexcept:
+    cpdef _convert_map_from_(self, S):
         """
         Override this method to provide additional conversions beyond those
-        given in convert_list.
+        given in ``convert_list``.
 
         This function is called after coercions are attempted. If there is a
         coercion morphism in the opposite direction, one should consider
         adding a section method to that.
 
-        This MUST return a Map from S to self, or None. If None is returned
-        then a generic map will be provided.
+        This MUST return a Map from ``S`` to ``self``, or ``None``. If ``None``
+        is returned then a generic map will be provided.
         """
         return None
 
-    cpdef get_action(self, S, op=operator.mul, bint self_on_left=True, self_el=None, S_el=None) noexcept:
+    cpdef get_action(self, S, op=operator.mul, bint self_on_left=True, self_el=None, S_el=None):
         """
-        Returns an action of self on S or S on self.
+        Return an action of ``self`` on ``S`` or ``S`` on ``self``.
 
         To provide additional actions, override :meth:`_get_action_`.
 
@@ -2594,7 +2592,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         self._action_hash.set(S, op, self_on_left, action)
         return action
 
-    cdef discover_action(self, S, op, bint self_on_left, self_el=None, S_el=None) noexcept:
+    cdef discover_action(self, S, op, bint self_on_left, self_el=None, S_el=None):
         """
         TESTS::
 
@@ -2635,6 +2633,25 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: print(coercion_model.get_action(E, ZZ, operator.pow))                 # needs sage.schemes
             None
+
+        ::
+
+            With Pull Request #37369, registered multiplication actions by
+            `ZZ` are also discovered and used when a Python ``int`` is multiplied.
+            Previously, it was only discovering the generic Integer Multiplication
+            Action that all additive groups have. As a result, optimised
+            implementations, such as the use of Pari for scalar multiplication of points
+            on elliptic curves over Finite Fields, was not used if an ``int``
+            multiplied a point, resulting in a 10x slowdown for large characteristic::
+
+            sage: E = EllipticCurve(GF(17),[1,1])
+            sage: coercion_model.discover_action(ZZ, E, operator.mul)
+            Left action by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 17
+            sage: coercion_model.discover_action(int, E, operator.mul)
+            Left action by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 17
+            with precomposition on left by Native morphism:
+            From: Set of Python objects of class 'int'
+            To:   Integer Ring
         """
         # G acts on S, G -> G', R -> S => G' acts on R (?)
         # NO! ZZ[x,y] acts on Matrices(ZZ[x]) but ZZ[y] does not.
@@ -2678,6 +2695,33 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                     return action
 
                 if parent_is_integers(S) and not self.has_coerce_map_from(S):
+                    # Try the above again, but first coerce integer-like type to Integer
+                    # with a connecting coercion
+                    global _Integer
+                    if _Integer is None:
+                        from sage.rings.integer import Integer as _Integer
+                    ZZ_el = _Integer(S_el)
+                    ZZ = ZZ_el.parent()
+
+                    # Now we check if there's an element action from Integers
+                    action = detect_element_action(self, ZZ, self_on_left, self_el, ZZ_el)
+
+                    # When this is not None, we can do the Precomposed action
+                    if action is not None:
+                        # Compute the coercion from whatever S is to the Integer class
+                        # This should always work because parent_is_integers(S) is True
+                        # but it fails when S is gmpy2.mpz.
+                        # TODO: should we also patch _internal_coerce_map_from so that
+                        # there's a map from gmpy2.mpz to ZZ?
+                        connecting = ZZ._internal_coerce_map_from(S)
+                        if connecting is not None:
+                            if self_on_left:
+                                action = PrecomposedAction(action, None, connecting)
+                            else:
+                                action = PrecomposedAction(action, connecting, None)
+                            return action
+
+                    # Otherwise, we do the most basic IntegerMulAction
                     from sage.structure.coerce_actions import IntegerMulAction
                     try:
                         return IntegerMulAction(S, self, not self_on_left, self_el)
@@ -2704,25 +2748,25 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                 except TypeError:
                     _record_exception()
 
-    cpdef _get_action_(self, S, op, bint self_on_left) noexcept:
+    cpdef _get_action_(self, S, op, bint self_on_left):
         """
-        Override this method to provide an action of self on S or S on self
-        beyond what was specified in action_list.
+        Override this method to provide an action of ``self`` on ``S`` or ``S``
+        on ``self`` beyond what was specified in ``action_list``.
 
-        This must return an action which accepts an element of self and an
-        element of S (in the order specified by self_on_left).
+        This must return an action which accepts an element of ``self`` and an
+        element of ``S`` (in the order specified by ``self_on_left``).
         """
         return None
 
     # TODO: remove once all parents in Sage will inherit properly from
     # Sets().ParentMethods.an_element
-    cpdef an_element(self) noexcept:
+    cpdef an_element(self):
         r"""
-        Returns a (preferably typical) element of this parent.
+        Return a (preferably typical) element of this parent.
 
         This is used both for illustration and testing purposes. If
         the set ``self`` is empty, :meth:`an_element` raises the
-        exception :class:`EmptySetError`.
+        exception :exc:`EmptySetError`.
 
         This calls :meth:`_an_element_` (which see), and caches the
         result. Parent are thus encouraged to override :meth:`_an_element_`.
@@ -2734,7 +2778,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: ZZ[['t']].an_element()
             t
 
-        In case the set is empty, an :class:`EmptySetError` is raised::
+        In case the set is empty, an :exc:`EmptySetError` is raised::
 
             sage: Set([]).an_element()
             Traceback (most recent call last):
@@ -2827,7 +2871,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         OUTPUT:
 
-        Return True if elements of this ring are represented exactly, i.e.,
+        Return ``True`` if elements of this ring are represented exactly, i.e.,
         there is no precision loss when doing arithmetic.
 
         EXAMPLES::
@@ -2933,7 +2977,6 @@ cdef class Set_generic(Parent):
 
         sage: Set(QQ).category()
         Category of infinite sets
-
     """
     def object(self):
         """
@@ -2948,8 +2991,8 @@ cdef class Set_generic(Parent):
 
     def __bool__(self):
         """
-        A set is considered True unless it is empty, in which case it is
-        considered to be False.
+        A set is considered ``True`` unless it is empty, in which case it is
+        considered to be ``False``.
 
         EXAMPLES::
 

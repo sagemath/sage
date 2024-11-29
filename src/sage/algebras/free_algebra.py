@@ -136,6 +136,15 @@ Note that the letterplace implementation can only be used if the corresponding
     ...
     NotImplementedError: polynomials over Free Algebra on 2 generators (a, b)
     over Integer Ring are not supported in Singular
+
+Some tests for the category::
+
+    sage: R.<x> = FreeAlgebra(QQ,1)
+    sage: R.is_commutative()
+    True
+    sage: R.<x,y> = FreeAlgebra(QQ,2)
+    sage: R.is_commutative()
+    False
 """
 
 # ***************************************************************************
@@ -162,7 +171,6 @@ from sage.structure.factory import UniqueFactory
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.ring import Algebra
 from sage.rings.integer_ring import ZZ
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -290,7 +298,6 @@ class FreeAlgebraFactory(UniqueFactory):
             sage: FreeAlgebra.create_key(GF(5),3,'xyz',
             ....:                        implementation='letterplace', degrees=[1,2,3])
             ((1, 2, 3), Multivariate Polynomial Ring in x, y, z, x_ over Finite Field of size 5)
-
         """
         if arg1 is None and arg2 is None and names is None:
             # this is used for pickling
@@ -370,12 +377,16 @@ FreeAlgebra = FreeAlgebraFactory('FreeAlgebra')
 
 def is_FreeAlgebra(x) -> bool:
     """
-    Return True if x is a free algebra; otherwise, return False.
+    Return ``True`` if x is a free algebra; otherwise, return ``False``.
 
     EXAMPLES::
 
         sage: from sage.algebras.free_algebra import is_FreeAlgebra
         sage: is_FreeAlgebra(5)
+        doctest:warning...
+        DeprecationWarning: the function is_FreeAlgebra is deprecated;
+        use 'isinstance(..., (FreeAlgebra_generic, FreeAlgebra_letterplace))' instead
+        See https://github.com/sagemath/sage/issues/37896 for details.
         False
         sage: is_FreeAlgebra(ZZ)
         False
@@ -387,17 +398,19 @@ def is_FreeAlgebra(x) -> bool:
         ....:                            degrees=list(range(1,11))))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37896, "the function is_FreeAlgebra is deprecated; use 'isinstance(..., (FreeAlgebra_generic, FreeAlgebra_letterplace))' instead")
     return isinstance(x, (FreeAlgebra_generic, FreeAlgebra_letterplace))
 
 
-class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
+class FreeAlgebra_generic(CombinatorialFreeModule):
     """
     The free algebra on `n` generators over a base ring.
 
     INPUT:
 
     - ``R`` -- a ring
-    - ``n`` -- an integer
+    - ``n`` -- integer
     - ``names`` -- the generator names
     - ``degrees`` -- (optional) a tuple or list specifying the
       degrees of all the generators, if omitted, the algebra is not
@@ -479,6 +492,8 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         self.__ngens = n
         indices = FreeMonoid(n, names=names)
         cat = AlgebrasWithBasis(R)
+        if self.__ngens <= 1 and R.is_commutative():
+            cat = cat.Commutative()
         if degrees is not None:
             if len(degrees) != len(names) or not all(d in ZZ for d in degrees):
                 raise ValueError("argument degrees must specify an integer for each generator")
@@ -525,21 +540,6 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         if self.__ngens == 0:
             return self.base_ring().is_field(proof)
         return False
-
-    def is_commutative(self) -> bool:
-        """
-        Return ``True`` if this free algebra is commutative.
-
-        EXAMPLES::
-
-            sage: R.<x> = FreeAlgebra(QQ,1)
-            sage: R.is_commutative()
-            True
-            sage: R.<x,y> = FreeAlgebra(QQ,2)
-            sage: R.is_commutative()
-            False
-        """
-        return self.__ngens <= 1 and self.base_ring().is_commutative()
 
     def _repr_(self) -> str:
         """
@@ -648,13 +648,10 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
                 M = self._indices
 
                 def exp_to_monomial(T):
-                    out = []
-                    for i in range(len(T)):
-                        if T[i]:
-                            out.append((i % ngens, T[i]))
-                    return M(out)
+                    return M([(i % ngens, Ti) for i, Ti in enumerate(T) if Ti])
+
                 return self.element_class(self, {exp_to_monomial(T): c
-                                                 for T, c in x.letterplace_polynomial().dict().items()})
+                                                 for T, c in x.letterplace_polynomial().monomial_coefficients().items()})
         # ok, not a free algebra element (or should not be viewed as one).
         if isinstance(x, str):
             from sage.misc.sage_eval import sage_eval
@@ -745,13 +742,36 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             return True
 
         # free algebras in the same variable over any base that coerces in:
-        if is_FreeAlgebra(R):
+        if isinstance(R, (FreeAlgebra_generic, FreeAlgebra_letterplace)):
             if R.variable_names() == self.variable_names():
                 return self.base_ring().has_coerce_map_from(R.base_ring())
         if isinstance(R, PBWBasisOfFreeAlgebra):
             return self.has_coerce_map_from(R._alg)
 
         return self.base_ring().has_coerce_map_from(R)
+
+    def _is_valid_homomorphism_(self, other, im_gens, base_map=None):
+        """
+        Check that the number of given images is correct.
+
+        EXAMPLES::
+
+            sage: ring = algebras.Free(QQ, ['a', 'b'])
+            sage: a, b = ring.gens()
+            sage: A = matrix(QQ, 2, 2, [1, 5, 1, 5])
+            sage: B = matrix(QQ, 2, 2, [1, 4, 9, 2])
+            sage: C = matrix(QQ, 2, 2, [1, 7, 8, 9])
+            sage: f = ring.hom([A, B])
+            sage: f(a*b+1)
+            [47 14]
+            [46 15]
+
+            sage: ring.hom([A, B, C])
+            Traceback (most recent call last):
+            ...
+            ValueError: number of images must equal number of generators
+        """
+        return len(im_gens) == self.__ngens
 
     def gen(self, i):
         """
@@ -894,7 +914,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         """
         The `G`-Algebra derived from this algebra by relations.
 
-        By default is assumed, that two variables commute.
+        By default it is assumed that any two variables commute.
 
         .. TODO::
 
@@ -937,6 +957,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             (-t)*x*y + t*y + (t + 1)
         """
         from sage.matrix.constructor import Matrix
+        commutative = not relations
 
         base_ring = self.base_ring()
         polynomial_ring = PolynomialRing(base_ring, self.gens())
@@ -972,7 +993,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         from sage.rings.polynomial.plural import g_Algebra
         return g_Algebra(base_ring, cmat, dmat,
                          names=names or self.variable_names(),
-                         order=order, check=check)
+                         order=order, check=check, commutative=commutative)
 
     def poincare_birkhoff_witt_basis(self):
         """

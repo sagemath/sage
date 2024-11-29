@@ -52,7 +52,7 @@ class Profiler(SageObject):
 
     def __init__(self, filename=None):
         """
-        Interface to the gperftools profiler
+        Interface to the gperftools profiler.
 
         INPUT:
 
@@ -73,11 +73,9 @@ class Profiler(SageObject):
 
     def filename(self):
         """
-        Return the file name
+        Return the file name.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -90,11 +88,9 @@ class Profiler(SageObject):
 
     def _repr_(self):
         """
-        Return string representation
+        Return string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -104,37 +100,11 @@ class Profiler(SageObject):
         """
         return 'Profiler logging to {0}'.format(self.filename())
 
-    def _libc(self):
-        """
-        Return libc
-
-        OUTPUT:
-
-        A ctypes shared library handle.
-
-        EXAMPLES::
-
-            sage: from sage.misc.gperftools import Profiler
-            sage: Profiler()._libc()
-            <CDLL '...', handle ... at ...>
-        """
-        global libc
-        if libc is not None:
-            return libc
-        name = find_library('c')
-        if name:
-            libc = ctypes.CDLL(name)
-            return libc
-        else:
-            raise ImportError('failed to open libc')
-
     def _libprofiler(self):
         """
-        Return libprofiler
+        Return libprofiler.
 
-        OUTPUT:
-
-        A ctypes shared library handle.
+        OUTPUT: a ctypes shared library handle
 
         EXAMPLES::
 
@@ -155,7 +125,7 @@ class Profiler(SageObject):
 
     def start(self):
         """
-        Start profiling
+        Start profiling.
 
         EXAMPLES::
 
@@ -167,16 +137,17 @@ class Profiler(SageObject):
             PROFILE: interrupts/evictions/bytes = ...
         """
         from signal import SIGPROF, SIG_DFL
-        self._previous_sigprof_handler = self._libc().signal(SIGPROF, SIG_DFL)
+        from cysignals.pysignals import setossignal
+        self._previous_sigprof_handler = setossignal(SIGPROF, SIG_DFL)
         profiler = self._libprofiler()
         self._t_start = time.time()
-        rc = profiler.ProfilerStart(self.filename())
+        rc = profiler.ProfilerStart(str.encode(self.filename()))
         if rc < 0:
             raise ValueError('profiler failed to start')
 
     def stop(self):
         """
-        Stop the CPU profiler
+        Stop the CPU profiler.
 
         EXAMPLES::
 
@@ -203,7 +174,7 @@ class Profiler(SageObject):
         OUTPUT:
 
         String. The name of the gperftools ``pprof`` utility. A
-        ``OSError`` is raised if it cannot be found.
+        :exc:`OSError` is raised if it cannot be found.
 
         EXAMPLES::
 
@@ -235,9 +206,7 @@ class Profiler(SageObject):
         """
         Return the name of the Sage Python interpreter.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -250,14 +219,13 @@ class Profiler(SageObject):
 
     def _call_pprof(self, *args, **kwds):
         """
-        Run the pprof binary
+        Run the pprof binary.
 
         INPUT:
 
-        - ``args`` -- list of strings. The arguments to ``pprof``.
+        - ``args`` -- list of strings; the arguments to ``pprof``
 
-        - ``kwds`` -- keyword arguments passed to
-          ``subprocess.check_call``.
+        - ``kwds`` -- keyword arguments passed to ``subprocess.check_call``
 
         EXAMPLES::
 
@@ -273,11 +241,9 @@ class Profiler(SageObject):
 
     def top(self, cumulative=True):
         """
-        Print text report
+        Print text report.
 
-        OUTPUT:
-
-        Nothing. A textual report is printed to stdout.
+        OUTPUT: nothing; a textual report is printed to stdout
 
         EXAMPLES::
 
@@ -303,15 +269,15 @@ class Profiler(SageObject):
 
         INPUT:
 
-        - ``filename`` -- string. The filename to save at. Must end
+        - ``filename`` -- string; the filename to save at. Must end
           with one of ``.dot``, ``.ps``, ``.pdf``, ``.svg``, ``.gif``,
           or ``.txt`` to specify the output file format.
 
-        - ``cumulative`` -- boolean (optional, default:
-          ``True``). Whether to return cumulative timings.
+        - ``cumulative`` -- boolean (default: ``True``); whether to return
+          cumulative timings
 
-        - ``verbose`` -- boolean (optional, default:
-          ``True``). Whether to print informational messages.
+        - ``verbose`` -- boolean (default: ``True``); whether to print
+          informational messages
 
         EXAMPLES::
 
@@ -351,9 +317,9 @@ def crun(s, evaluator):
     """
     Profile single statement.
 
-    - ``s`` -- string. Sage code to profile.
+    - ``s`` -- string; Sage code to profile
 
-    - ``evaluator`` -- callable to evaluate.
+    - ``evaluator`` -- callable to evaluate
 
     EXAMPLES::
 

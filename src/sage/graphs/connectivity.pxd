@@ -16,9 +16,9 @@ cdef class _Component:
     cdef _LinkedList * edge_list
     cdef int component_type
 
-    cdef add_edge(self, Py_ssize_t e_index) noexcept
-    cdef finish_tric_or_poly(self, Py_ssize_t e_index) noexcept
-    cdef list get_edge_list(self) noexcept
+    cdef add_edge(self, Py_ssize_t e_index)
+    cdef finish_tric_or_poly(self, Py_ssize_t e_index)
+    cdef list get_edge_list(self)
 
 cdef class TriconnectivitySPQR:
     cdef MemoryAllocator mem
@@ -88,7 +88,7 @@ cdef class TriconnectivitySPQR:
 
     # === Methods ===
 
-    cdef inline __tstack_push(self, int h, int a, int b) noexcept:
+    cdef inline __tstack_push(self, int h, int a, int b):
         """
         Push ``(h, a, b)`` triple on ``Tstack``.
         """
@@ -97,7 +97,7 @@ cdef class TriconnectivitySPQR:
         self.t_stack_a[self.t_stack_top] = a
         self.t_stack_b[self.t_stack_top] = b
 
-    cdef inline __tstack_push_eos(self) noexcept:
+    cdef inline __tstack_push_eos(self):
         """
         Push end-of-stack marker on ``Tstack``.
         """
@@ -116,7 +116,7 @@ cdef class TriconnectivitySPQR:
         """
         return <int> self.e_stack.pop()
 
-    cdef inline __new_component(self, list edges, int type_c) noexcept:
+    cdef inline __new_component(self, list edges, int type_c):
         """
         Create a new component and add ``edges`` to it.
 
@@ -145,12 +145,12 @@ cdef class TriconnectivitySPQR:
     cdef int __new_virtual_edge(self, int u, int v) noexcept
     cdef _LinkedListNode * __new_LinkedListNode(self, Py_ssize_t e_index) noexcept
     cdef Py_ssize_t __high(self, Py_ssize_t v) noexcept
-    cdef __del_high(self, int e_index) noexcept
-    cdef __split_multiple_edges(self) noexcept
+    cdef __del_high(self, int e_index)
+    cdef __split_multiple_edges(self)
     cdef int __dfs1(self, int start, bint check=*) noexcept
-    cdef __build_acceptable_adj_struct(self) noexcept
-    cdef __path_finder(self, int start) noexcept
-    cdef __dfs2(self) noexcept
+    cdef __build_acceptable_adj_struct(self)
+    cdef __path_finder(self, int start)
+    cdef __dfs2(self)
     cdef int __path_search(self, int start) except -1
-    cdef __assemble_triconnected_components(self) noexcept
-    cdef __build_spqr_tree(self) noexcept
+    cdef __assemble_triconnected_components(self)
+    cdef __build_spqr_tree(self)

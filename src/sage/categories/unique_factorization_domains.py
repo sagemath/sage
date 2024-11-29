@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Unique factorization domains
 """
@@ -33,7 +34,6 @@ class UniqueFactorizationDomains(Category_singleton):
     TESTS::
 
         sage: TestSuite(UniqueFactorizationDomains()).run()
-
     """
 
     def super_categories(self):
@@ -126,7 +126,6 @@ class UniqueFactorizationDomains(Category_singleton):
                 sage: UFD = UniqueFactorizationDomains()
                 sage: Parent(QQ, category=UFD).is_unique_factorization_domain()
                 True
-
             """
             return True
 
@@ -136,7 +135,7 @@ class UniqueFactorizationDomains(Category_singleton):
 
             INPUT:
 
-            - ``f``, ``g`` -- two polynomials defined over this UFD.
+            - ``f``, ``g`` -- two polynomials defined over this UFD
 
             .. NOTE::
 
@@ -168,7 +167,6 @@ class UniqueFactorizationDomains(Category_singleton):
                 sage: g = 4*x + 2
                 sage: f.gcd(g).parent() is R
                 True
-
             """
             if f.degree() < g.degree():
                 A,B = g, f
@@ -293,7 +291,6 @@ class UniqueFactorizationDomains(Category_singleton):
 
                 sage: squarefree_part(pol)
                 37*x^3 - 1369/21*x^2 + 703/21*x - 37/7
-
             """
             decomp = self.squarefree_decomposition()
             return prod(fac for fac, mult in decomp if mult % 2 == 1)

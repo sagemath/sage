@@ -9,5 +9,5 @@ cdef class Matrix_numpy_dense(Matrix_dense):
     cdef object _python_dtype
     cdef object _sage_dtype
     cdef object _sage_vector_dtype
-    cdef Matrix_numpy_dense _new(self, int nrows=*, int ncols=*) noexcept
+    cdef Matrix_numpy_dense _new(self, int nrows=*, int ncols=*)
     cdef cnumpy.ndarray _matrix_numpy

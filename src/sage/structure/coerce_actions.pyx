@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Coerce actions
 """
@@ -26,10 +27,10 @@ from sage.categories.action cimport InverseAction, PrecomposedAction
 from sage.arith.long cimport integer_check_long
 
 
-cdef _record_exception() noexcept:
+cdef _record_exception():
     coercion_model._record_exception()
 
-cdef inline an_element(R) noexcept:
+cdef inline an_element(R):
     if isinstance(R, Parent):
         return R.an_element()
     else:
@@ -70,9 +71,8 @@ cdef class GenericAction(Action):
 
         This will break if we tried to use it::
 
-            sage: sage.structure.coerce_actions.GenericAction(QQ, Z6, True, check=False)
+            sage: GenericAction(QQ, Z6, True, check=False)
             Left action by Rational Field on Ring of integers modulo 6
-
         """
         Action.__init__(self, G, S, is_left, operator.mul)
         if check:
@@ -83,7 +83,7 @@ cdef class GenericAction(Action):
 
     def codomain(self):
         """
-        Returns the "codomain" of this action, i.e. the Parent in which the
+        Return the "codomain" of this action, i.e. the Parent in which the
         result elements live. Typically, this should be the same as the
         acted upon set.
 
@@ -106,7 +106,6 @@ cdef class GenericAction(Action):
             sage: A = sage.structure.coerce_actions.ActOnAction(S3, QQxyz, False)
             sage: A.codomain()
             Multivariate Polynomial Ring in x, y, z over Rational Field
-
         """
         if self._codomain is None:
             self._codomain = parent(self.act(an_element(self.G),
@@ -118,7 +117,7 @@ cdef class ActOnAction(GenericAction):
     """
     Class for actions defined via the _act_on_ method.
     """
-    cpdef _act_(self, g, x) noexcept:
+    cpdef _act_(self, g, x):
         """
         TESTS::
 
@@ -140,7 +139,7 @@ cdef class ActedUponAction(GenericAction):
     """
     Class for actions defined via the _acted_upon_ method.
     """
-    cpdef _act_(self, g, x) noexcept:
+    cpdef _act_(self, g, x):
         """
         TESTS::
 
@@ -172,7 +171,8 @@ def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
         sage: ZZx = ZZ['x']
         sage: M = MatrixSpace(ZZ, 2)                                                    # needs sage.modules
         sage: detect_element_action(ZZx, ZZ, False)
-        Left scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Integer Ring
+        Left scalar multiplication by Integer Ring
+         on Univariate Polynomial Ring in x over Integer Ring
         sage: detect_element_action(ZZx, QQ, True)
         Right scalar multiplication by Rational Field
          on Univariate Polynomial Ring in x over Integer Ring
@@ -251,12 +251,12 @@ cdef class ModuleAction(Action):
 
     INPUT:
 
-    - ``G`` -- the actor, an instance of :class:`~sage.structure.parent.Parent`.
-    - ``S`` -- the object that is acted upon.
-    - ``g`` -- optional, an element of ``G``.
-    - ``a`` -- optional, an element of ``S``.
-    - ``check`` -- if True (default), then there will be no consistency tests
-      performed on sample elements.
+    - ``G`` -- the actor, an instance of :class:`~sage.structure.parent.Parent`
+    - ``S`` -- the object that is acted upon
+    - ``g`` -- (optional) an element of ``G``
+    - ``a`` -- (optional) an element of ``S``
+    - ``check`` -- if ``True`` (default), then there will be no consistency tests
+      performed on sample elements
 
     NOTE:
 
@@ -273,7 +273,6 @@ cdef class ModuleAction(Action):
     assumption that the inputs lie exactly in the base ring and may
     segfault otherwise. Thus we handle all possible base extensions
     manually here.
-
     """
     def __init__(self, G, S, g=None, a=None, check=True):
         """
@@ -301,7 +300,8 @@ cdef class ModuleAction(Action):
             sage: LeftModuleAction(QQ, ZZx)
             Left scalar multiplication by Rational Field on Univariate Polynomial Ring in x over Integer Ring
             sage: LeftModuleAction(QQ, ZZxy)
-            Left scalar multiplication by Rational Field on Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Integer Ring
+            Left scalar multiplication by Rational Field
+             on Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Integer Ring
 
         The following tests against a problem that was relevant during work on
         :issue:`9944`::
@@ -313,6 +313,22 @@ cdef class ModuleAction(Action):
             sage: 1/S.0
             1/x
 
+        If there is a coercion from ``G`` to ``S``, we do not create
+        the module action of ``G`` on the pushout of ``G`` and ``S``::
+
+            sage: G = PolynomialRing(QQ, "x")
+            sage: S = PolynomialRing(MatrixSpace(QQ, 2), "x")
+            sage: G.gen() * S.gen()
+            [1 0]
+            [0 1]*x^2
+
+        Contrast the previous example with the following, where we
+        have no coercion from ``G`` to ``S``::
+
+            sage: S = PolynomialRing(MatrixSpace(QQ, 2), "y")
+            sage: G.gen() * S.gen()
+            [x 0]
+            [0 x]*y
         """
         Action.__init__(self, G, S, not isinstance(self, RightModuleAction), operator.mul)
         if not isinstance(G, Parent):
@@ -328,6 +344,8 @@ cdef class ModuleAction(Action):
             # first we try the easy case of coercing G to the base ring of S
             self.connecting = base._internal_coerce_map_from(G)
             if self.connecting is None:
+                if S._internal_coerce_map_from(G) is not None:
+                    raise CoercionException("Best viewed as standard coercion multiplication.")
                 # otherwise, we try and find a base extension
                 from sage.categories.pushout import pushout
                 # this may raise a type error, which we propagate
@@ -352,18 +370,18 @@ cdef class ModuleAction(Action):
         # At this point, we can assert it is safe to call _Xmul_
         the_ring = G if self.connecting is None else self.connecting.codomain()
         the_set = S if self.extended_base is None else self.extended_base
-        assert the_ring is the_set.base(), "BUG in coercion model\n    Apparently there are two versions of\n        %s\n    in the cache."%the_ring
+        assert the_ring is the_set.base(), "BUG in coercion model\n    Apparently there are two versions of\n        %s\n    in the cache." % the_ring
 
         if not check:
             return
         if g is None:
             g = G.an_element()
         if parent(g) is not G:
-            raise CoercionException("The parent of %s is not %s but %s"%(g,G,parent(g)))
+            raise CoercionException("The parent of %s is not %s but %s" % (g, G, parent(g)))
         if a is None:
             a = S.an_element()
         if parent(a) is not S:
-            raise CoercionException("The parent of %s is not %s but %s"%(a,S,parent(a)))
+            raise CoercionException("The parent of %s is not %s but %s" % (a, S, parent(a)))
         if not isinstance(g, Element) or not isinstance(a, ModuleElement):
             raise CoercionException("not an Element acting on a ModuleElement")
         res = self.act(g, a)
@@ -399,7 +417,8 @@ cdef class ModuleAction(Action):
             sage: from sage.structure.coerce_actions import LeftModuleAction, RightModuleAction
             sage: ZZx = ZZ['x']
             sage: A = LeftModuleAction(ZZ, ZZx); A
-            Left scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Integer Ring
+            Left scalar multiplication by Integer Ring
+             on Univariate Polynomial Ring in x over Integer Ring
             sage: A._repr_name_()
             'scalar multiplication'
 
@@ -408,7 +427,6 @@ cdef class ModuleAction(Action):
             sage: RightModuleAction(GF5, GF5t)
             Right scalar multiplication by Finite Field of size 5
              on Power Series Ring in t over Finite Field of size 5
-
         """
         return "scalar multiplication"
 
@@ -533,7 +551,8 @@ cdef class ModuleAction(Action):
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.explain(x, 1, operator.truediv)
             Action discovered.
-                Right inverse action by Symbolic Constants Subring on Univariate Polynomial Ring in x over Symbolic Constants Subring
+                Right inverse action by Symbolic Constants Subring
+                 on Univariate Polynomial Ring in x over Symbolic Constants Subring
                 with precomposition on right by Conversion via _symbolic_ method map:
                   From: Integer Ring
                   To:   Symbolic Constants Subring
@@ -586,7 +605,7 @@ cdef class ModuleAction(Action):
 
 
 cdef class LeftModuleAction(ModuleAction):
-    cpdef _act_(self, g, a) noexcept:
+    cpdef _act_(self, g, a):
         """
         A left module action is an action that takes the ring element as the
         first argument (the left side) and the module element as the second
@@ -623,7 +642,7 @@ cdef class LeftModuleAction(ModuleAction):
 
 
 cdef class RightModuleAction(ModuleAction):
-    cpdef _act_(self, g, a) noexcept:
+    cpdef _act_(self, g, a):
         """
         A right module action is an action that takes the module element as the
         first argument (the left side) and the ring element as the second
@@ -743,7 +762,7 @@ cdef class IntegerMulAction(IntegerAction):
         test = m + (-m)  # make sure addition and negation is allowed
         super().__init__(Z, M, is_left, operator.mul)
 
-    cpdef _act_(self, nn, a) noexcept:
+    cpdef _act_(self, nn, a):
         """
         EXAMPLES:
 
@@ -880,7 +899,7 @@ cdef class IntegerPowAction(IntegerAction):
             raise TypeError(f"no integer powering action defined on {M}")
         super().__init__(Z, M, False, operator.pow)
 
-    cpdef _act_(self, n, a) noexcept:
+    cpdef _act_(self, n, a):
         """
         EXAMPLES:
 
@@ -917,7 +936,7 @@ cdef class IntegerPowAction(IntegerAction):
         return "Integer Powering"
 
 
-cdef inline fast_mul(a, n) noexcept:
+cdef inline fast_mul(a, n):
     if n < 0:
         n = -n
         a = -a
@@ -936,7 +955,7 @@ cdef inline fast_mul(a, n) noexcept:
         n = n >> 1
     return sum
 
-cdef inline fast_mul_long(a, long s) noexcept:
+cdef inline fast_mul_long(a, long s):
     # It's important to change the signed s to an unsigned n,
     # since -LONG_MIN = LONG_MIN.  See Issue #17844.
     cdef unsigned long n

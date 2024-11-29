@@ -6,20 +6,19 @@ py.install_sources(
   'geometry.py',
   'library.py',
   'statistics.py',
-  subdir : 'sage/interacts'
+  subdir: 'sage/interacts',
 )
 
-extension_data = {
-  'library_cython' : files('library_cython.pyx')
-}
+extension_data = {'library_cython' : files('library_cython.pyx')}
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/interacts',
-        install: true,
-        include_directories: [],
-        dependencies: [py_dep, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/interacts',
+    install: true,
+    include_directories: [],
+    dependencies: [py_dep, gmp],
+  )
 endforeach
 

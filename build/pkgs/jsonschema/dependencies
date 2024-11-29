@@ -1,4 +1,4 @@
-jsonschema_specifications pyrsistent attrs importlib_metadata fqdn isoduration jsonpointer uri_template webcolors | $(PYTHON_TOOLCHAIN) hatchling hatch_vcs hatch_fancy_pypi_readme $(PYTHON)
+jsonschema_specifications pyrsistent attrs fqdn isoduration jsonpointer uri_template webcolors | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

@@ -8,6 +8,7 @@ from .quatalg.quaternion_algebra_element import (QuaternionAlgebraElement_generi
                                                 QuaternionAlgebraElement_rational_field,
                                                 QuaternionAlgebraElement_number_field)
 
+
 def unpickle_QuaternionAlgebraElement_generic_v0(*args):
     """
     EXAMPLES::
@@ -23,6 +24,7 @@ def unpickle_QuaternionAlgebraElement_generic_v0(*args):
     """
     return QuaternionAlgebraElement_generic(*args)
 
+
 def unpickle_QuaternionAlgebraElement_rational_field_v0(*args):
     """
     EXAMPLES::
@@ -34,6 +36,7 @@ def unpickle_QuaternionAlgebraElement_rational_field_v0(*args):
         61/6 + 5/7*i - 2/5*j
     """
     return QuaternionAlgebraElement_rational_field(*args)
+
 
 def unpickle_QuaternionAlgebraElement_number_field_v0(*args):
     """

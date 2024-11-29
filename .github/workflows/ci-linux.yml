@@ -45,6 +45,7 @@ jobs:
           - fedora:37
           - fedora:38
           #- fedora:39 # TODO: Could not build wheels for gmpy2 (python 3.12)
+          - fedora:40
           #- centos:centos7 # TODO: Upgrade Python to 3.9
           #- quay.io/centos/centos:stream8 # TODO: Upgrade Python to 3.9
           #- quay.io/centos/centos:stream9 # TODO (cypari): Figure out how to install pari

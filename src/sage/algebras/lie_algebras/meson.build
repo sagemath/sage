@@ -3,6 +3,9 @@ py.install_sources(
   'affine_lie_algebra.py',
   'all.py',
   'bch.py',
+  'bgg_dual_module.py',
+  'bgg_resolution.py',
+  'center_uea.py',
   'classical_lie_algebra.py',
   'examples.py',
   'free_lie_algebra.py',
@@ -21,20 +24,19 @@ py.install_sources(
   'symplectic_derivation.py',
   'verma_module.py',
   'virasoro.py',
-  subdir : 'sage/algebras/lie_algebras'
+  subdir: 'sage/algebras/lie_algebras',
 )
 
-extension_data = {
-  'lie_algebra_element' : files('lie_algebra_element.pyx')
-}
+extension_data = {'lie_algebra_element' : files('lie_algebra_element.pyx')}
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/algebras/lie_algebras',
-        install: true,
-        include_directories: [inc_cpython, inc_data_structures],
-        dependencies: [py_dep, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/algebras/lie_algebras',
+    install: true,
+    include_directories: [inc_cpython, inc_data_structures],
+    dependencies: [py_dep, gmp],
+  )
 endforeach
 

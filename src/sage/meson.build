@@ -6,7 +6,7 @@ conf_data = configuration_data()
 conf_data.set('PACKAGE_VERSION', '1.2.3')
 conf_data.set('SAGE_ROOT', meson.current_source_dir() / '..' / '..')
 # We use Python's prefix here to make it work with conda
-prefix = py.get_variable('prefix', '')
+prefix = fs.as_posix(py.get_variable('prefix', ''))
 conf_data.set('prefix', prefix)
 datadir = fs.expanduser(get_option('datadir'))
 if not fs.is_absolute(datadir)
@@ -14,7 +14,9 @@ if not fs.is_absolute(datadir)
 endif
 conf_data.set('SAGE_SHARE', datadir)
 if not fs.exists(datadir / 'cremona')
-  message('Warning: The specified datadir does not contain the necessary Cremona database. Either specify a different datadir or specify a correct the correct path via the environment variable SAGE_SHARE during runtime.')
+  message(
+    'Warning: The specified datadir does not contain the necessary Cremona database. Either specify a different datadir or specify a correct the correct path via the environment variable SAGE_SHARE during runtime.',
+  )
 endif
 conf_data.set('SAGE_MAXIMA', maxima.full_path())
 # Conda's ecl does not have any problems with Maxima, so nothing needs to be set here:
@@ -29,51 +31,61 @@ conf_data.set('SAGE_ECL_CONFIG', ecl_config.full_path())
 conf_data.set('SAGE_ARCHFLAGS', 'unset')
 # not needed when using conda, as we then don't build any pc files
 conf_data.set('SAGE_PKG_CONFIG_PATH', '')
-openmp = dependency('openmp', required : false)
+openmp = dependency('openmp', required: false, disabler: true)
 if openmp.found()
   conf_data.set('OPENMP_CFLAGS', '-fopenmp')
   conf_data.set('OPENMP_CXXFLAGS', '-fopenmp')
 endif
 gap_exe = find_program('gap')
 if gap_exe.found()
-  gaprun = run_command(gap_exe, '-r', '-q', '--bare', '--nointeract', '-c', 'Display(JoinStringsWithSeparator(GAPInfo.RootPaths,";"));', check: true)
+  gaprun = run_command(
+    gap_exe,
+    '-r',
+    '-q',
+    '--bare',
+    '--nointeract',
+    '-c',
+    'Display(JoinStringsWithSeparator(GAPInfo.RootPaths,";"));',
+    check: true,
+  )
   gap_root_paths = gaprun.stdout().strip()
   gap_root_paths = '${prefix}/lib/gap;${prefix}/share/gap;' + gaprun.stdout().strip()
 endif
 conf_data.set('GAP_ROOT_PATHS', gap_root_paths)
+ecm_bin = find_program(['ecm', 'gmp-ecm'], required: true)
+conf_data.set('SAGE_ECMBIN', ecm_bin.full_path())
 
-configure_file(
-    input: '../../pkgs/sage-conf_conda/_sage_conf/_conf.py.in',
-    output: 'config.py',
-    install_dir: py.get_install_dir() / 'sage',
-    install: true,
-    configuration: conf_data
+config_file = configure_file(
+  input: '../../pkgs/sage-conf/_sage_conf/_conf.py.in',
+  output: 'config.py',
+  install_dir: py.get_install_dir() / 'sage',
+  install: true,
+  configuration: conf_data,
 )
 
 # Packages that need no processing and can be installed directly
 no_processing = [
-    'databases',
-    'doctest',
-    'ext_data',
-    'features',
-    'game_theory',
-    'homology',
-    'knots',
-    'logic',
-    'manifolds',
-    'parallel',
-    'repl',
-    'sandpiles',
-    'tensor',
-    'topology',
-    'typeset',
+  'databases',
+  'doctest',
+  'ext_data',
+  'features',
+  'game_theory',
+  'homology',
+  'knots',
+  'logic',
+  'manifolds',
+  'parallel',
+  'repl',
+  'sandpiles',
+  'tensor',
+  'topology',
+  'typeset',
 ]
 foreach package : no_processing
-    install_subdir(package, install_dir: sage_install_dir)
+  install_subdir(package, install_dir: sage_install_dir)
 endforeach
 
 py.install_sources(
-  '__init__.py',
   'all.py',
   'all__sagemath_bliss.py',
   'all__sagemath_categories.py',
@@ -88,7 +100,7 @@ py.install_sources(
   'all_cmdline.py',
   'env.py',
   'version.py',
-  subdir : 'sage'
+  subdir: 'sage',
 )
 
 subdir('cpython')

@@ -39,15 +39,15 @@ try:
 except ImportError:
     pari_gen = ()
 
-from sage.structure.richcmp import richcmp, richcmp_item, rich_to_bool, rich_to_bool_sgn
 from sage.structure.element import coerce_binop, parent
+from sage.structure.factorization import Factorization
+from sage.structure.richcmp import richcmp, richcmp_item, rich_to_bool, rich_to_bool_sgn
 
 from sage.rings.infinity import infinity, Infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-from sage.structure.factorization import Factorization
-
 from sage.rings.padics.precision_error import PrecisionError
+
 
 class Polynomial_generic_sparse(Polynomial):
     """
@@ -80,7 +80,6 @@ class Polynomial_generic_sparse(Polynomial):
         s + Tbar
         sage: (s + T)**2
         s^2 + 2*Tbar*s + 4
-
     """
     def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
         """
@@ -100,18 +99,18 @@ class Polynomial_generic_sparse(Polynomial):
         R = parent.base_ring()
         if isinstance(x, Polynomial):
             if x.parent() == self.parent():
-                x = dict(x.dict())
+                x = x.monomial_coefficients()
             elif x.parent() == R:
-                x = {0:x}
+                x = {0: x}
             else:
                 w = {}
-                for n, c in x.dict().items():
+                for n, c in x.monomial_coefficients().items():
                     w[n] = R(c)
                 # The following line has been added in github issue #9944.
                 # Apparently, the "else" case has never occurred before.
                 x = w
         elif isinstance(x, (list, tuple)):
-            x = dict((i, c) for (i, c) in enumerate(x) if c)
+            x = {i: c for i, c in enumerate(x) if c}
         elif isinstance(x, pari_gen):
             y = {}
             for i in range(len(x)):
@@ -119,7 +118,7 @@ class Polynomial_generic_sparse(Polynomial):
             x = y
             check = True
         elif not isinstance(x, dict):
-            x = {0:x}   # constant polynomials
+            x = {0: x}   # constant polynomials
         if check:
             self.__coeffs = {}
             for i, z in x.items():
@@ -129,7 +128,7 @@ class Polynomial_generic_sparse(Polynomial):
         if check:
             self.__normalize()
 
-    def dict(self):
+    def monomial_coefficients(self):
         """
         Return a new copy of the dict of the underlying
         elements of ``self``.
@@ -139,13 +138,20 @@ class Polynomial_generic_sparse(Polynomial):
             sage: R.<w> = PolynomialRing(Integers(8), sparse=True)
             sage: f = 5 + w^1997 - w^10000; f
             7*w^10000 + w^1997 + 5
-            sage: d = f.dict(); d
+            sage: d = f.monomial_coefficients(); d
             {0: 5, 1997: 1, 10000: 7}
             sage: d[0] = 10
+            sage: f.monomial_coefficients()
+            {0: 5, 1997: 1, 10000: 7}
+
+        ``dict`` is an alias::
+
             sage: f.dict()
             {0: 5, 1997: 1, 10000: 7}
         """
         return dict(self.__coeffs)
+
+    dict = monomial_coefficients
 
     def coefficients(self, sparse=True):
         """
@@ -569,7 +575,6 @@ class Polynomial_generic_sparse(Polynomial):
             -3/2
             sage: f.quo_rem(1+2*x)
             (4*x^2 + 4*x + 5/2, -3/2)
-
         """
         P = self.parent()
         if P is parent(right):
@@ -801,10 +806,10 @@ class Polynomial_generic_sparse(Polynomial):
         Return the quotient and remainder of the Euclidean division of
         ``self`` and ``other``.
 
-        Raises :class:`ZeroDivisionError` if ``other`` is zero.
+        Raises :exc:`ZeroDivisionError` if ``other`` is zero.
 
-        Raises :class:`ArithmeticError` if ``other`` has a nonunit leading coefficient
-        and this causes the Euclidean division to fail.
+        Raises :exc:`ArithmeticError` if ``other`` has a nonunit leading
+        coefficient and this causes the Euclidean division to fail.
 
         EXAMPLES::
 
@@ -906,26 +911,26 @@ class Polynomial_generic_sparse(Polynomial):
         return (quo,rem)
 
     @coerce_binop
-    def gcd(self,other,algorithm=None):
+    def gcd(self, other, algorithm=None):
         r"""
-        Return the gcd of this polynomial and ``other``
+        Return the gcd of this polynomial and ``other``.
 
         INPUT:
 
         - ``other`` -- a polynomial defined over the same ring as this
-          polynomial.
+          polynomial
 
         ALGORITHM:
 
         Two algorithms are provided:
 
-        - ``generic`` -- Uses the generic implementation, which depends on the
-          base ring being a UFD or a field.
-        - ``dense`` -- The polynomials are converted to the dense representation,
-          their gcd is computed and is converted back to the sparse
-          representation.
+        - ``'generic'`` -- uses the generic implementation, which depends on the
+          base ring being a UFD or a field
+        - ``'dense'`` -- the polynomials are converted to the dense
+          representation, their gcd is computed and is converted back to the
+          sparse representation
 
-        Default is ``dense`` for polynomials over `\ZZ` and ``generic`` in the
+        Default is ``'dense'`` for polynomials over `\ZZ` and ``'generic'`` in the
         other cases.
 
         EXAMPLES::
@@ -935,11 +940,11 @@ class Polynomial_generic_sparse(Polynomial):
             sage: q = 2*x^4 - x^3 - 2*x^2 - 4*x - 1
             sage: gcd(p, q)
             x^2 + x + 1
-            sage: gcd(p, q, algorithm="dense")
+            sage: gcd(p, q, algorithm='dense')
             x^2 + x + 1
-            sage: gcd(p, q, algorithm="generic")
+            sage: gcd(p, q, algorithm='generic')
             x^2 + x + 1
-            sage: gcd(p, q, algorithm="foobar")
+            sage: gcd(p, q, algorithm='foobar')
             Traceback (most recent call last):
             ...
             ValueError: Unknown algorithm 'foobar'
@@ -1044,6 +1049,7 @@ class Polynomial_generic_sparse(Polynomial):
         """
         return len(self.__coeffs)
 
+
 class Polynomial_generic_domain(Polynomial, IntegralDomainElement):
     def __init__(self, parent, is_gen=False, construct=False):
         Polynomial.__init__(self, parent, is_gen=is_gen)
@@ -1076,6 +1082,7 @@ class Polynomial_generic_domain(Polynomial, IntegralDomainElement):
         if self.degree() > 0:
             return False
         return self[0].is_unit()
+
 
 class Polynomial_generic_field(Polynomial_singular_repr,
                                Polynomial_generic_domain,
@@ -1352,8 +1359,8 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
         """
         INPUT:
 
-        -  ``slope`` -- a rational number (default: the first slope
-           in the Newton polygon of ``self``)
+        - ``slope`` -- a rational number (default: the first slope
+          in the Newton polygon of ``self``)
 
         OUTPUT:
 
@@ -1494,17 +1501,15 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         INPUT:
 
-        - ``secure`` -- a boolean; whether we raise an error or
+        - ``secure`` -- boolean; whether we raise an error or
           not in case of multiple roots
 
-        - ``minval`` -- an integer
+        - ``minval`` -- integer
 
-        - ``hint`` -- a list or ``None``; if given, it must be the
+        - ``hint`` -- list or ``None``; if given, it must be the
           list of roots of the residual polynomial of slope ``minval``
 
-        OUTPUT:
-
-        A list of pairs ``(root, multiplicity)``
+        OUTPUT: list of pairs ``(root, multiplicity)``
 
         TESTS::
 
@@ -1513,13 +1518,12 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
             sage: S.<x> = R[]
             sage: P = (x-1) * (x-2) * (x-4) * (x-8) * (x-16)
             sage: Q = P^2
-            sage: Q.roots(algorithm="sage")  # indirect doctest
+            sage: Q.roots(algorithm='sage')  # indirect doctest
             [(2^4 + O(2^14), 2),
              (2^3 + O(2^13), 2),
              (2^2 + O(2^12), 2),
              (2 + O(2^11), 2),
              (1 + O(2^10), 2)]
-
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         K = self.base_ring()
@@ -1585,6 +1589,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
 class Polynomial_generic_dense_cdv(Polynomial_generic_dense_inexact, Polynomial_generic_cdv):
     pass
+
 
 class Polynomial_generic_sparse_cdv(Polynomial_generic_sparse, Polynomial_generic_cdv):
     pass

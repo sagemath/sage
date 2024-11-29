@@ -11,20 +11,19 @@ py.install_sources(
   'random.pxd',
   'randomize.pxd',
   'types.pxd',
-  subdir : 'sage/libs/gmp'
+  subdir: 'sage/libs/gmp',
 )
 
-extension_data = {
-  'pylong' : files('pylong.pyx')
-}
+extension_data = {'pylong' : files('pylong.pyx')}
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/libs/gmp',
-        install: true,
-        include_directories: [inc_cpython],
-        dependencies: [py_dep, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/libs/gmp',
+    install: true,
+    include_directories: [inc_cpython],
+    dependencies: [py_dep, gmp],
+  )
 endforeach
 

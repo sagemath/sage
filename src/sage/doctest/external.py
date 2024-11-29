@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Detecting external software
 
@@ -31,12 +32,12 @@ AUTHORS:
 #*****************************************************************************
 
 import multiprocessing
-import os
+import platform
 
 # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork' in
 # multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
 # trac #27754.
-if os.uname().sysname == 'Darwin':
+if platform.system() == 'Darwin':
     multiprocessing.set_start_method('fork', force=True)
 Array = multiprocessing.Array
 
@@ -274,7 +275,7 @@ def has_ffmpeg():
 
 def has_imagemagick():
     """
-    Test if ImageMagick (command convert) is available.
+    Test if ImageMagick (command magick or convert) is available.
 
     EXAMPLES::
 
@@ -355,7 +356,9 @@ def external_features():
     import sage.features.ffmpeg
     yield from sage.features.ffmpeg.all_features()
     import sage.features.interfaces
-    yield from sage.features.interfaces.all_features()
+    for feature in sage.features.interfaces.all_features():
+        if feature.name != 'mathics':
+            yield feature
     from sage.features.mip_backends import CPLEX, Gurobi
     yield CPLEX()
     yield Gurobi()
@@ -376,7 +379,7 @@ def external_software() -> list[str]:
 external_software = external_software()
 
 
-class AvailableSoftware():
+class AvailableSoftware:
     """
     This class keeps the set of available software whose availability is detected lazily
     from the list of external software.
@@ -429,6 +432,7 @@ class AvailableSoftware():
         self._features = sorted(features, key=lambda feature: feature.name)
         self._indices = {feature.name: idx for idx, feature in enumerate(self._features)}
         self._seen = Array('i', len(self._features)) # initialized to zeroes
+        self._hidden = Array('i', len(self._features)) # initialized to zeroes
 
     def __contains__(self, item):
         """
@@ -444,19 +448,26 @@ class AvailableSoftware():
             idx = self._indices[item]
         except KeyError:
             return False
-        if not self._seen[idx]:
-            if not self._allow_external and self._features[idx] in self._external_features:
-                self._seen[idx] = -1 # not available
-            elif self._features[idx].is_present():
-                self._seen[idx] = 1 # available
-            else:
-                self._seen[idx] = -1 # not available
-        if self._seen[idx] == 1:
-            return True
-        elif self._seen[idx] == -1:
-            return False
+        feature = self._features[idx]
+        if feature.is_hidden():
+            if not self._hidden[idx]:
+                self._hidden[idx] = 1
+            available = False  # a hidden feature is considered to be not available
         else:
-            raise AssertionError("Invalid value for self.seen")
+            if not self._allow_external and feature in self._external_features:
+                # an external feature is considered to be not available
+                # if this is not allowed
+                available = False
+            elif feature.is_present():
+                available = True
+            else:
+                available = False
+        if available:
+            if not self._seen[idx]:
+                self._seen[idx] = 1
+            return True
+        else:
+            return False
 
     def issuperset(self, other):
         """
@@ -494,6 +505,30 @@ class AvailableSoftware():
         return [feature.name
                 for feature, seen in zip(self._features, self._seen)
                 if seen > 0]
+
+    def hidden(self):
+        """
+        Return the list of detected hidden external software.
+
+        EXAMPLES::
+
+            sage: # needs conway_polynomials database_cremona_mini_ellcurve database_ellcurves database_graphs
+            sage: from sage.doctest.external import available_software
+            sage: from sage.features.databases import all_features
+            sage: for f in all_features():
+            ....:    f.hide()
+            ....:    if f._spkg_type() == 'standard':
+            ....:         test = f.name in available_software
+            ....:    f.unhide()
+            sage: sorted(available_software.hidden())
+            [...'conway_polynomials',...
+             'database_cremona_mini_ellcurve',...
+             'database_ellcurves',...
+             'database_graphs'...]
+        """
+        return [feature.name
+                for feature, hidden in zip(self._features, self._hidden)
+                if hidden > 0]
 
 
 available_software = AvailableSoftware()

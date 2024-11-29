@@ -25,11 +25,12 @@ from sage.plot.colors import hue
 from math import sqrt
 import random
 
+
 class Triangle:
     """
     A graphical triangle class.
     """
-    def __init__(self,a,b,c,color=0):
+    def __init__(self, a, b, c, color=0):
         """
         a, b, c : triples (x,y,z) representing corners on a triangle in 3-space.
 
@@ -50,7 +51,7 @@ class Triangle:
 
     def str(self):
         """
-        Returns a string representation of an instance of the Triangle
+        Return a string representation of an instance of the Triangle
         class of the form
 
             a b c color
@@ -64,7 +65,7 @@ class Triangle:
             sage: print(tri.str())
             [0, 0, 0] [-1, 2, 3] [0, 2, 0] 0
         """
-        return "%s %s %s %s" % (self._a, self._b, self._c, self._color)
+        return f"{self._a} {self._b} {self._c} {self._color}"
 
     def set_color(self, color):
         """
@@ -84,7 +85,7 @@ class Triangle:
 
     def get_vertices(self):
         """
-        Returns a tuple of vertex coordinates of the triangle.
+        Return a tuple of vertex coordinates of the triangle.
 
         TESTS::
 
@@ -95,11 +96,12 @@ class Triangle:
         """
         return (self._a, self._b, self._c)
 
+
 class SmoothTriangle(Triangle):
     """
     A class for smoothed triangles.
     """
-    def __init__(self,a,b,c,da,db,dc,color=0):
+    def __init__(self, a, b, c, da, db, dc, color=0):
         """
         a, b, c : triples (x,y,z) representing corners on a triangle in 3-space
         da, db, dc : triples (dx,dy,dz) representing the normal vector at each point a,b,c
@@ -121,7 +123,7 @@ class SmoothTriangle(Triangle):
 
     def str(self):
         """
-        Returns a string representation of the SmoothTriangle of the form
+        Return a string representation of the SmoothTriangle of the form.
 
             a b c color da db dc
 
@@ -135,11 +137,11 @@ class SmoothTriangle(Triangle):
             sage: print(t.str())
             [1, 2, 3] [2, 3, 4] [0, 0, 0] 0 [0, 0, 1] [0, 1, 0] [1, 0, 0]
         """
-        return "%s %s %s %s %s %s %s" % (self._a, self._b, self._c, self._color, self._da, self._db, self._dc)
+        return "{} {} {} {} {} {} {}".format(self._a, self._b, self._c, self._color, self._da, self._db, self._dc)
 
     def get_normals(self):
         """
-        Returns the normals to vertices a, b, and c.
+        Return the normals to vertices a, b, and c.
 
         TESTS::
 
@@ -219,7 +221,7 @@ class TriangleFactory:
 
 class TrianglePlot:
     """
-    Recursively plots a function of two variables by building squares of 4 triangles, checking at
+    Recursively plot a function of two variables by building squares of 4 triangles, checking at
     every stage whether or not each square should be split into four more squares.  This way,
     more planar areas get fewer triangles, and areas with higher curvature get more triangles.
     """
@@ -263,10 +265,10 @@ class TrianglePlot:
             raise ValueError('plot rectangle is really a line; make sure min_x != max_x and min_y != max_y')
         self._num_colors = num_colors
         if g is None:
-            def fcn(x,y):
+            def fcn(x, y):
                 return [self._f(x,y)]
         else:
-            def fcn(x,y):
+            def fcn(x, y):
                 return [self._f(x,y), self._g(x,y)]
 
         self._fcn = fcn
@@ -450,7 +452,7 @@ class TrianglePlot:
 
     def interface(self, n, p, p_c, q, q_c):
         """
-        Takes a pair of lists of points, and compares the (n)th coordinate, and
+        Take a pair of lists of points, and compares the (n)th coordinate, and
         "zips" the lists together into one.  The "centers", supplied in p_c and
         q_c are matched up such that the lists describe triangles whose sides
         are "perfectly" aligned.  This algorithm assumes that p and q start and
@@ -539,7 +541,7 @@ class TrianglePlot:
             self._max = max(list+[self._max])
 
 
-def crossunit(u,v):
+def crossunit(u, v):
     """
     This function computes triangle normal unit vectors by taking the
     cross-products of the midpoint-to-corner vectors.  It always goes

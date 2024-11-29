@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # Copyright (c) 2009, Tom Boothby <boothby@math.washington.edu>
 # All rights reserved.
 #
@@ -22,7 +23,6 @@
 # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 """
 
 Function Mangling
@@ -34,7 +34,6 @@ AUTHORS:
 
 - Tom Boothby (2009): Original version in Python
 - Simon King (2011): Use Cython. Speedup of ``fix_to_pos``, cleaning documentation.
-
 """
 
 from sage.misc.sageinspect import sage_getargspec
@@ -48,7 +47,7 @@ cdef class ArgumentFixer:
     watching the caller.  For example,
     ::
 
-        sage: def f(x = 10):
+        sage: def f(x=10):
         ....:     return min(1,x)
 
     the following calls are equivalent,
@@ -64,7 +63,7 @@ cdef class ArgumentFixer:
     but from the perspective of a wrapper, they are different::
 
         sage: def wrap(g):
-        ....:     def _g(*args,**kwargs):
+        ....:     def _g(*args, **kwargs):
         ....:         print("{} {}".format(args, kwargs))
         ....:         return g(*args, **kwargs)
         ....:     return _g
@@ -81,11 +80,10 @@ cdef class ArgumentFixer:
 
     INPUT:
 
-    - f           -- a function
-    - classmethod -- boolean (default False) -- True if the function
-      is a classmethod and therefore the first
-      argument is expected to be the class instance.
-      In that case, we ignore the first argument.
+    - ``f`` -- a function
+    - ``classmethod`` -- boolean (default: ``False``); ``True`` if the function
+      is a classmethod and therefore the first argument is expected to be the
+      class instance. In that case, we ignore the first argument.
 
     EXAMPLES::
 
@@ -94,7 +92,7 @@ cdef class ArgumentFixer:
         ....:     af = ArgumentFixer(g)
         ....:     def _g(*args, **kwargs):
         ....:         print(af.fix_to_pos())
-        ....:         return g(*args,**kwargs)
+        ....:         return g(*args, **kwargs)
         ....:     return _g
         sage: h2 = wrap2(f)
         sage: t = h2()
@@ -107,14 +105,13 @@ cdef class ArgumentFixer:
     ::
 
         sage: class one:
-        ....:    def __init__(self, x = 1):
+        ....:    def __init__(self, x=1):
         ....:       self.x = x
         sage: af = ArgumentFixer(one.__init__, classmethod=True)
         sage: af.fix_to_pos(1,2,3,a=31,b=2,n=3)
         ((1, 2, 3), (('a', 31), ('b', 2), ('n', 3)))
-
     """
-    def __init__(self, f, classmethod = False):
+    def __init__(self, f, classmethod=False):
         try:
             arg_names, varargs, varkw, defaults, kwonlyargs, kwonlydefaults, annotations = sage_getargspec(f)
         except AttributeError:
@@ -135,16 +132,16 @@ cdef class ArgumentFixer:
         else:
             self._default_tuple = tuple(defaults)
 
-        #code = f.__code__
+        # code = f.__code__
 
         self.f = f
         self._ndefault = len(defaults)
         if classmethod:
-            self._nargs = len(arg_names)-1 #code.co_argcount-1
-            self._arg_names = tuple(arg_names[1:]) #code.co_varnames[1:self._nargs+1]
+            self._nargs = len(arg_names)-1  # code.co_argcount-1
+            self._arg_names = tuple(arg_names[1:])  # code.co_varnames[1:self._nargs+1]
         else:
-            self._nargs = len(arg_names) #code.co_argcount
-            self._arg_names = tuple(arg_names) #code.co_varnames[:self._nargs]
+            self._nargs = len(arg_names)  # code.co_argcount
+            self._arg_names = tuple(arg_names)  # code.co_varnames[:self._nargs]
         self._classmethod = classmethod
 
         cdef dict default_map
@@ -160,9 +157,9 @@ cdef class ArgumentFixer:
             sage: g = ArgumentFixer(number_of_partitions); g                            # needs sage.combinat
             Argument Fixer of <function number_of_partitions at 0x...>
         """
-        return "Argument Fixer of %s"%self.f
+        return "Argument Fixer of %s" % self.f
 
-    def fix_to_named(self, *args,**kwargs):
+    def fix_to_named(self, *args, **kwargs):
         """
         Normalize the arguments with a preference for named arguments.
 
@@ -170,9 +167,7 @@ cdef class ArgumentFixer:
 
         - any positional and named arguments.
 
-        OUTPUT:
-
-        We return a tuple
+        OUTPUT: we return a tuple
 
             `(e_1, e_2, ..., e_k), ((n_1, v_1), ... , (n_m, v_m))`
 
@@ -190,7 +185,7 @@ cdef class ArgumentFixer:
         ::
 
             A,K = self.fix_to_pos(...)
-            self.f(*A,**dict(K))`
+            self.f(*A, **dict(K))`
 
         and
         ::
@@ -202,14 +197,13 @@ cdef class ArgumentFixer:
         EXAMPLES::
 
             sage: from sage.misc.function_mangling import ArgumentFixer
-            sage: def sum3(a,b,c=3,*args,**kwargs):
-            ....:     return a+b+c
+            sage: def sum3(a, b, c=3, *args, **kwargs):
+            ....:     return a + b + c
             sage: AF = ArgumentFixer(sum3)
-            sage: AF.fix_to_named(1,2,3,4,5,6,f=14,e=16)
+            sage: AF.fix_to_named(1, 2, 3, 4, 5, 6, f=14, e=16)
             ((4, 5, 6), (('a', 1), ('b', 2), ('c', 3), ('e', 16), ('f', 14)))
             sage: AF.fix_to_named(1,2,f=14)
             ((), (('a', 1), ('b', 2), ('c', 3), ('f', 14)))
-
         """
         cdef list ARGS = []
         cdef tuple arg_names = self._arg_names
@@ -239,11 +233,9 @@ cdef class ArgumentFixer:
 
         INPUT:
 
-        Any positional or named arguments
+        - ``*args``, ``**kwds`` -- any positional or named arguments
 
-        OUTPUT:
-
-        We return a tuple
+        OUTPUT: we return a tuple
 
             `(e_1, e_2, ..., e_k), ((n_1, v_1), ... , (n_m, v_m))`
 
@@ -255,7 +247,7 @@ cdef class ArgumentFixer:
         ::
 
             A,K = self.fix_to_pos(...)
-            self.f(*A,**dict(K))
+            self.f(*A, **dict(K))
 
         are equivalent to
         ::
@@ -284,7 +276,7 @@ cdef class ArgumentFixer:
         """
         return self.fix_to_pos_args_kwds(args, kwds)
 
-    cdef fix_to_pos_args_kwds(self, tuple args, dict kwds) noexcept:
+    cdef fix_to_pos_args_kwds(self, tuple args, dict kwds):
         """
         Fast Cython implementation of :meth:`fix_to_pos`.
         """
@@ -303,7 +295,7 @@ cdef class ArgumentFixer:
         cdef Py_ssize_t i
         for i in range(lenargs, nargs):
             # in addition to the positional arguments, we take the
-            # ones with default values, unless they are overridded by
+            # ones with default values, unless they are overridden by
             # the named arguments.
             name = arg_names[i]
             if name in kwargs:

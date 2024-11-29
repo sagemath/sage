@@ -20,7 +20,7 @@ py.install_sources(
   'set.py',
   'set_from_iterator.py',
   'totally_ordered_finite_set.py',
-  subdir : 'sage/sets'
+  subdir: 'sage/sets',
 )
 
 extension_data = {
@@ -28,16 +28,17 @@ extension_data = {
   'family' : files('family.pyx'),
   'finite_set_map_cy' : files('finite_set_map_cy.pyx'),
   'pythonclass' : files('pythonclass.pyx'),
-  'recursively_enumerated_set' : files('recursively_enumerated_set.pyx')
+  'recursively_enumerated_set' : files('recursively_enumerated_set.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/sets',
-        install: true,
-        include_directories: [inc_cpython, inc_data_structures],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/sets',
+    install: true,
+    include_directories: [inc_cpython, inc_data_structures],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 

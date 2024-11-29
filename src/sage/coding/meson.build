@@ -34,23 +34,24 @@ py.install_sources(
   'self_dual_codes.py',
   'subfield_subcode.py',
   'two_weight_db.py',
-  subdir : 'sage/coding'
+  subdir: 'sage/coding',
 )
 
 extension_data = {
   'ag_code_decoders' : files('ag_code_decoders.pyx'),
   'binary_code' : files('binary_code.pyx'),
-  'kasami_codes' : files('kasami_codes.pyx')
+  'kasami_codes' : files('kasami_codes.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/coding',
-        install: true,
-        include_directories: [inc_cpython, inc_data_structures, inc_rings],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/coding',
+    install: true,
+    include_directories: [inc_cpython, inc_data_structures, inc_rings],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 
 subdir('codecan')

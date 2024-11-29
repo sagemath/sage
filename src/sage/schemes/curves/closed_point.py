@@ -62,7 +62,6 @@ closed point is of degree one::
 AUTHORS:
 
 - Kwankyu Lee (2019-03): initial version
-
 """
 
 # *****************************************************************************
@@ -91,7 +90,7 @@ class IntegralCurveClosedPoint(CurveClosedPoint):
 
     INPUT:
 
-    - ``curve`` --  the curve to which the closed point belongs
+    - ``curve`` -- the curve to which the closed point belongs
 
     - ``prime_ideal`` -- a prime ideal
 
@@ -311,7 +310,7 @@ class IntegralAffineCurveClosedPoint(IntegralCurveClosedPoint):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -392,7 +391,7 @@ class IntegralProjectiveCurveClosedPoint(IntegralCurveClosedPoint):
 
         INPUT:
 
-        - ``i`` -- an integer; if not specified, it is chosen automatically.
+        - ``i`` -- integer; if not specified, it is chosen automatically
 
         EXAMPLES::
 

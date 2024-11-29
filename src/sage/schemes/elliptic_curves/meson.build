@@ -49,22 +49,23 @@ py.install_sources(
   'sha_tate.py',
   'weierstrass_morphism.py',
   'weierstrass_transform.py',
-  subdir : 'sage/schemes/elliptic_curves'
+  subdir: 'sage/schemes/elliptic_curves',
 )
 
 extension_data = {
   'descent_two_isogeny' : files('descent_two_isogeny.pyx'),
   'mod_sym_num' : files('mod_sym_num.pyx'),
-  'period_lattice_region' : files('period_lattice_region.pyx')
+  'period_lattice_region' : files('period_lattice_region.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/schemes/elliptic_curves',
-        install: true,
-        include_directories: [inc_cpython, inc_flint, inc_numpy, inc_rings],
-        dependencies: [py_dep, cypari2, cysignals, flint, gmp, mpfr, pari],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/schemes/elliptic_curves',
+    install: true,
+    include_directories: [inc_cpython, inc_flint, inc_numpy, inc_rings],
+    dependencies: [py_dep, cypari2, cysignals, flint, gmp, mpfr, pari],
+  )
 endforeach
 

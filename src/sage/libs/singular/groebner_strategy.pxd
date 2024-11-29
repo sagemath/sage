@@ -11,11 +11,11 @@ cdef class GroebnerStrategy(SageObject):
     cdef MPolynomialRing_libsingular _parent
     cdef object _ideal
 
-    cpdef MPolynomial_libsingular normal_form(self, MPolynomial_libsingular p) noexcept
+    cpdef MPolynomial_libsingular normal_form(self, MPolynomial_libsingular p)
 
 cdef class NCGroebnerStrategy(SageObject):
     cdef skStrategy *_strat
     cdef NCPolynomialRing_plural _parent
     cdef object _ideal
 
-    cpdef NCPolynomial_plural normal_form(self, NCPolynomial_plural p) noexcept
+    cpdef NCPolynomial_plural normal_form(self, NCPolynomial_plural p)

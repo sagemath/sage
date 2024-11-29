@@ -2,7 +2,7 @@
 The constant `e`
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008      William Stein <wstein@gmail.com>
 #       Copyright (C) 2008-2009 Burcin Erocal <burcin@erocal.org>
 #       Copyright (C) 2009-2012 Mike Hansen <mhansen@gmail.com>
@@ -13,8 +13,8 @@ The constant `e`
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 # keep exp(1) for fast access
 # this is initialized in the constructor of the class E below to prevent
@@ -159,7 +159,7 @@ cdef class E(Expression):
             [e 0]
             [0 e]
             sage: A = matrix(RDF, [[1,2],[3,4]])
-            sage: e^A  # rel tol 1e-14
+            sage: e^A  # rel tol 5e-14
             [51.968956198705044  74.73656456700327]
             [112.10484685050491 164.07380304920997]
         """

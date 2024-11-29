@@ -3,7 +3,6 @@ py.install_sources(
   'all.py',
   'all__sagemath_polyhedra.py',
   'axiom.py',
-  'chomp.py',
   'cleaner.py',
   'ecm.py',
   'expect.py',
@@ -41,6 +40,7 @@ py.install_sources(
   'phc.py',
   'polymake.py',
   'povray.py',
+  'process.pxd',
   'psage.py',
   'qepcad.py',
   'qsieve.py',
@@ -58,21 +58,22 @@ py.install_sources(
   'tachyon.py',
   'tests.py',
   'tides.py',
-  subdir : 'sage/interfaces'
+  subdir: 'sage/interfaces',
 )
 
 extension_data = {
   'process' : files('process.pyx'),
-  'sagespawn' : files('sagespawn.pyx')
+  'sagespawn' : files('sagespawn.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/interfaces',
-        install: true,
-        include_directories: [inc_cpython],
-        dependencies: [py_dep, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/interfaces',
+    install: true,
+    include_directories: [inc_cpython],
+    dependencies: [py_dep, gmp],
+  )
 endforeach
 

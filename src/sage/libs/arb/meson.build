@@ -15,20 +15,19 @@ py.install_sources(
   'bernoulli.pxd',
   'mag.pxd',
   'types.pxd',
-  subdir : 'sage/libs/arb'
+  subdir: 'sage/libs/arb',
 )
 
-extension_data = {
-  'arith' : files('arith.pyx')
-}
+extension_data = {'arith' : files('arith.pyx')}
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/libs/arb',
-        install: true,
-        include_directories: [inc_cpython, inc_flint, inc_rings],
-        dependencies: [py_dep, flint, gmp, mpfr],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/libs/arb',
+    install: true,
+    include_directories: [inc_cpython, inc_flint, inc_rings],
+    dependencies: [py_dep, flint, gmp, mpfr],
+  )
 endforeach
 

@@ -26,21 +26,22 @@ py.install_sources(
   'theta.py',
   'vm_basis.py',
   'weight1.py',
-  subdir : 'sage/modular/modform'
+  subdir: 'sage/modular/modform',
 )
 
 extension_data = {
   'eis_series_cython' : files('eis_series_cython.pyx'),
-  'l_series_gross_zagier_coeffs' : files('l_series_gross_zagier_coeffs.pyx')
+  'l_series_gross_zagier_coeffs' : files('l_series_gross_zagier_coeffs.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/modular/modform',
-        install: true,
-        include_directories: [inc_cpython, inc_flint, inc_rings],
-        dependencies: [py_dep, cysignals, flint, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/modular/modform',
+    install: true,
+    include_directories: [inc_cpython, inc_flint, inc_rings],
+    dependencies: [py_dep, cysignals, flint, gmp],
+  )
 endforeach
 

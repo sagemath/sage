@@ -170,7 +170,6 @@ class OreFunction(AlgebraElement):
             sage: D = K.random_element()
             sage: Q == 0 or D == 0 or (P*D) / (Q*D) == P/Q  # long time
             True
-
         """
         if self.parent()._simplification:
             return richcmp((self._numerator, self._denominator), (other._numerator, other._denominator), op)
@@ -614,7 +613,7 @@ class OreFunction(AlgebraElement):
 
         - ``s`` -- an element in the base ring
 
-        - ``var`` -- a string; the variable name
+        - ``var`` -- string; the variable name
 
         EXAMPLES::
 
@@ -708,13 +707,14 @@ class ConstantOreFunctionSection(Map):
             sage: F(g)                                                                  # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
-            TypeError: not a constant function
+            TypeError: (x + t^2)^(-1) * x is not a constant function
         """
         numerator = x._numerator
         denominator = x._denominator
         if numerator.degree() == denominator.degree() and denominator.right_divides(numerator):
             return numerator.leading_coefficient() / denominator.leading_coefficient()
-        raise TypeError("not a constant function")
+        raise TypeError(f"{x} is not a constant function")
+
 
 class OreFunctionBaseringInjection(Morphism):
     r"""
@@ -838,7 +838,7 @@ class OreFunction_with_large_center(OreFunction):
 
         INPUT:
 
-        - ``var`` -- a string or ``None`` (default: ``None``);
+        - ``var`` -- string or ``None`` (default: ``None``);
           the name of the central variable
 
         EXAMPLES::
@@ -901,7 +901,7 @@ class OreFunction_with_large_center(OreFunction):
 
         INPUT:
 
-        - ``var`` -- a string or ``None`` (default: ``None``);
+        - ``var`` -- string or ``None`` (default: ``None``);
           the name of the central variable
 
         EXAMPLES::

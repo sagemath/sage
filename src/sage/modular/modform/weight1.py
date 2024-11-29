@@ -20,6 +20,7 @@ from sage.structure.sequence import Sequence
 from sage.modular.arithgroup.all import Gamma0, GammaH
 from sage.modular.arithgroup.arithgroup_generic import ArithmeticSubgroup
 
+
 @cached_function
 def modular_ratio_space(chi):
     r"""
@@ -27,7 +28,7 @@ def modular_ratio_space(chi):
     level N and character chi such that f * E is a holomorphic cusp form for
     every Eisenstein series E of weight 1 and character 1/chi.
 
-    Elements are returned as q-expansions up to precision R, where R is one
+    Elements are returned as `q`-expansions up to precision R, where R is one
     greater than the weight 3 Sturm bound.
 
     EXAMPLES::
@@ -80,7 +81,7 @@ def modular_ratio_space(chi):
 
 def modular_ratio_to_prec(chi, qexp, prec):
     r"""
-    Given a q-expansion of a modular ratio up to sufficient precision to
+    Given a `q`-expansion of a modular ratio up to sufficient precision to
     determine it uniquely, compute it to greater precision.
 
     EXAMPLES::
@@ -100,12 +101,13 @@ def modular_ratio_to_prec(chi, qexp, prec):
     fB_elt = C(fB, check=False)
     return fB_elt.qexp(prec) / B
 
+
 @cached_function
 def hecke_stable_subspace(chi, aux_prime=ZZ(2)):
     r"""
-    Compute a q-expansion basis for S_1(chi).
+    Compute a `q`-expansion basis for `S_1(\chi)`.
 
-    Results are returned as q-expansions to a certain fixed (and fairly high)
+    Results are returned as `q`-expansions to a certain fixed (and fairly high)
     precision. If more precision is required this can be obtained with
     :func:`modular_ratio_to_prec`.
 
@@ -187,6 +189,7 @@ def hecke_stable_subspace(chi, aux_prime=ZZ(2)):
     qexps = Sequence(A(x.list()).add_bigoh(R) for x in J.gens())
     return qexps
 
+
 @cached_function
 def dimension_wt1_cusp_forms(chi):
     r"""
@@ -199,6 +202,7 @@ def dimension_wt1_cusp_forms(chi):
         1
     """
     return len(hecke_stable_subspace(chi))
+
 
 @cached_function
 def dimension_wt1_cusp_forms_gH(group):

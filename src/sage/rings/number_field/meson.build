@@ -25,7 +25,7 @@ py.install_sources(
   'totallyreal_phc.py',
   'totallyreal_rel.py',
   'unit_group.py',
-  subdir : 'sage/rings/number_field'
+  subdir: 'sage/rings/number_field',
 )
 
 extension_data = {
@@ -33,32 +33,39 @@ extension_data = {
   'number_field_element_base' : files('number_field_element_base.pyx'),
   'number_field_morphisms' : files('number_field_morphisms.pyx'),
   'totallyreal' : files('totallyreal.pyx'),
-  'totallyreal_data' : files('totallyreal_data.pyx')
+  'totallyreal_data' : files('totallyreal_data.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/rings/number_field',
-        install: true,
-        include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings],
-        dependencies: [py_dep, cypari2, cysignals, flint, gmp, mpfi, mpfr, ntl],
-    )
+  deps = [py_dep, cysignals, gmp]
+  if name == 'totallyreal'
+    deps += [cypari2]
+  endif
+
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/rings/number_field',
+    install: true,
+    include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings],
+    dependencies: deps,
+  )
 endforeach
 
 extension_data_cpp = {
-    'number_field_element': files('number_field_element.pyx'),
-    'number_field_element_quadratic': files('number_field_element_quadratic.pyx'),
+  'number_field_element': files('number_field_element.pyx'),
+  'number_field_element_quadratic': files('number_field_element_quadratic.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/rings/number_field',
-        install: true,
-        override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings],
-        dependencies: [py_dep, cypari2, cysignals, flint, gmp, mpfi, mpfr, ntl],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/rings/number_field',
+    install: true,
+    override_options: ['cython_language=cpp'],
+    include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings],
+    dependencies: [py_dep, cypari2, cysignals, flint, gmp, mpfi, mpfr, ntl],
+  )
 endforeach
 

@@ -40,7 +40,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.richcmp import richcmp, richcmp_not_equal
@@ -53,27 +53,27 @@ class AffineGroupElement(MultiplicativeGroupElement):
     INPUT:
 
     - ``A`` -- an invertible matrix, or something defining a
-      matrix if ``convert==True``.
+      matrix if ``convert==True``
 
-    - ``b``-- a vector, or something defining a vector if
+    - ``b`` -- a vector, or something defining a vector if
       ``convert==True`` (default: ``0``, defining the zero
-      vector).
+      vector)
 
-    - ``parent`` -- the parent affine group.
+    - ``parent`` -- the parent affine group
 
-    - ``convert`` - bool (default: ``True``). Whether to convert
+    - ``convert`` -- boolean (default: ``True``); whether to convert
       ``A`` into the correct matrix space and ``b`` into the
-      correct vector space.
+      correct vector space
 
-    - ``check`` - bool (default: ``True``). Whether to do some
-      checks or just accept the input as valid.
+    - ``check`` -- boolean (default: ``True``); whether to do some
+      checks or just accept the input as valid
 
     As a special case, ``A`` can be a matrix obtained from
     :meth:`matrix`, that is, one row and one column larger. In
     that case, the group element defining that matrix is
     reconstructed.
 
-    OUTPUT: The affine group element `x \mapsto Ax + b`
+    OUTPUT: the affine group element `x \mapsto Ax + b`
 
     EXAMPLES::
 
@@ -119,7 +119,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
             A = A.matrix()
         except AttributeError:
             pass
-        if is_Matrix(A) and A.nrows() == A.ncols() == parent.degree()+1:
+        if isinstance(A, Matrix) and A.nrows() == A.ncols() == parent.degree()+1:
             g = A
             d = parent.degree()
             A = g.submatrix(0, 0, d, d)
@@ -130,11 +130,11 @@ class AffineGroupElement(MultiplicativeGroupElement):
             b = parent.vector_space()(b)
         if check:
             # Note: the coercion framework expects that we raise TypeError for invalid input
-            if not is_Matrix(A):
+            if not isinstance(A, Matrix):
                 raise TypeError('A must be a matrix')
-            if not (A.parent() is parent.matrix_space()):
+            if A.parent() is not parent.matrix_space():
                 raise TypeError('A must be an element of ' + str(parent.matrix_space()))
-            if not (b.parent() is parent.vector_space()):
+            if b.parent() is not parent.vector_space():
                 raise TypeError('b must be an element of ' + str(parent.vector_space()))
             parent._element_constructor_check(A, b)
         super().__init__(parent)
@@ -145,7 +145,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the general linear part of an affine group element.
 
-        OUTPUT: The matrix `A` of the affine group element `Ax + b`.
+        OUTPUT: the matrix `A` of the affine group element `Ax + b`
 
         EXAMPLES::
 
@@ -162,7 +162,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the translation part of an affine group element.
 
-        OUTPUT: The vector `b` of the affine group element `Ax + b`.
+        OUTPUT: the vector `b` of the affine group element `Ax + b`
 
         EXAMPLES::
 
@@ -326,13 +326,10 @@ class AffineGroupElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``other`` -- another element of the same affine group.
+        - ``other`` -- another element of the same affine group
 
-        OUTPUT:
-
-        The product of the affine group elements ``self`` and
-        ``other`` defined by the composition of the two affine
-        transformations.
+        OUTPUT: the product of the affine group elements ``self`` and
+        ``other`` defined by the composition of the two affine transformations
 
         EXAMPLES::
 
@@ -357,9 +354,9 @@ class AffineGroupElement(MultiplicativeGroupElement):
         INPUT:
 
         - ``v`` -- a polynomial, a multivariate polynomial, a polyhedron, a
-          vector, or anything that can be converted into a vector.
+          vector, or anything that can be converted into a vector
 
-        OUTPUT: The image of ``v`` under the affine group element.
+        OUTPUT: the image of ``v`` under the affine group element
 
         EXAMPLES::
 
@@ -402,7 +399,6 @@ class AffineGroupElement(MultiplicativeGroupElement):
             sage: cube = polytopes.cube()                                               # needs sage.geometry.polyhedron
             sage: f(cube)                                                               # needs sage.geometry.polyhedron
             A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 8 vertices
-
         """
         parent = self.parent()
 
@@ -455,7 +451,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the inverse group element.
 
-        OUTPUT: Another affine group element.
+        OUTPUT: another affine group element
 
         EXAMPLES::
 

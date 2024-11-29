@@ -39,7 +39,6 @@ We check that :issue:`10453` is fixed::
     Modular Forms subspace of dimension 0 of Modular Forms space of dimension 10 for Congruence Subgroup Gamma1(11) of weight 2 over Rational Field
     sage: ModularForms(Gamma1(3), 12).old_submodule()
     Modular Forms subspace of dimension 4 of Modular Forms space of dimension 5 for Congruence Subgroup Gamma1(3) of weight 12 over Rational Field
-
 """
 
 #########################################################################
@@ -136,7 +135,7 @@ class ModularFormsAmbient_gH_Q(ambient.ModularFormsAmbient):
 
     def _compute_hecke_matrix(self, n):
         r"""
-        Compute the matrix of the Hecke operator T_n acting on this space.
+        Compute the matrix of the Hecke operator `T_n` acting on this space.
 
         EXAMPLES::
 

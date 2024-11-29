@@ -6,18 +6,17 @@ AUTHORS:
 - Joshua Kantor (2004-2006)
 
 - Robert Marik (2010 - fixed docstrings)
-
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004,2005,2006 Joshua Kantor <kantor.jm@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -33,7 +32,7 @@ cdef class PyFunctionWrapper:
     cdef object the_parameters
     cdef int y_n
 
-    cdef set_yn(self,x) noexcept:
+    cdef set_yn(self, x):
         self.y_n = x
 
 cdef class ode_system:
@@ -54,31 +53,28 @@ cdef int c_f_compiled(double t, const double *y, double *dydt, void *params) noe
     cdef int status
     cdef ode_system wrapper
     wrapper = <ode_system> params
-    status =  wrapper.c_f(t, y, dydt)  # Could add parameters
+    status = wrapper.c_f(t, y, dydt)  # Could add parameters
     return status
 
 cdef int c_jac(double t, const double *y, double *dfdy, double *dfdt, void *params) noexcept:
     cdef int i
     cdef int j
     cdef int y_n
-    cdef int param_n
     cdef PyFunctionWrapper wrapper
     wrapper = <PyFunctionWrapper > params
     y_n = wrapper.y_n
-    y_list = []
-    for i in range(y_n):
-        y_list.append(y[i])
+    y_list = [y[i] for i in range(y_n)]
     try:
-        if len(wrapper.the_parameters)==0:
-            jac_list=wrapper.the_jacobian(t,y_list)
+        if len(wrapper.the_parameters) == 0:
+            jac_list = wrapper.the_jacobian(t, y_list)
         else:
-            jac_list=wrapper.the_jacobian(t,y_list,wrapper.the_parameters)
+            jac_list = wrapper.the_jacobian(t, y_list, wrapper.the_parameters)
         for i in range(y_n):
             for j in range(y_n):
-                dfdy[i*y_n+j]=jac_list[i][j]
+                dfdy[i * y_n + j] = jac_list[i][j]
 
         for i in range(y_n):
-            dfdt[i]=jac_list[y_n][i]
+            dfdt[i] = jac_list[y_n][i]
 
         return GSL_SUCCESS
     except Exception:
@@ -87,7 +83,6 @@ cdef int c_jac(double t, const double *y, double *dfdy, double *dfdt, void *para
 cdef int c_f(double t, const double *y, double *dydt, void *params) noexcept:
     cdef int i
     cdef int y_n
-    cdef int param_n
 
     cdef PyFunctionWrapper wrapper
     wrapper = <PyFunctionWrapper> params
@@ -96,10 +91,10 @@ cdef int c_f(double t, const double *y, double *dydt, void *params) noexcept:
     for i in range(y_n):
         y_list.append(y[i])
     try:
-        if len(wrapper.the_parameters)!=0:
-            dydt_list=wrapper.the_function(t,y_list,wrapper.the_parameters)
+        if len(wrapper.the_parameters) != 0:
+            dydt_list = wrapper.the_function(t, y_list, wrapper.the_parameters)
         else:
-            dydt_list=wrapper.the_function(t,y_list)
+            dydt_list = wrapper.the_function(t, y_list)
         for i in range(y_n):
             dydt[i] = dydt_list[i]
         return GSL_SUCCESS
@@ -148,13 +143,13 @@ class ode_solver():
 
     - ``'rk2'`` -- embedded Runge-Kutta (2,3)
 
-    - ``'rk4'`` -- 4th order classical Runge-Kutta
+    - ``'rk4'`` -- `4`-th order classical Runge-Kutta
 
     - ``'rk8pd'`` -- Runge-Kutta Prince-Dormand (8,9)
 
     - ``'rk2imp'`` -- implicit 2nd order Runge-Kutta at gaussian points
 
-    - ``'rk4imp'`` -- implicit 4th order Runge-Kutta at gaussian points
+    - ``'rk4imp'`` -- implicit `4`-th order Runge-Kutta at gaussian points
 
     - ``'bsimp'`` -- implicit Burlisch-Stoer (requires jacobian)
 
@@ -247,7 +242,7 @@ class ode_solver():
         sage: T.jacobian = j_1
         sage: T.ode_solve(y_0=[1,0], t_span=[0,100], params=[10.0], num_points=1000)
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # needs sage.plot
+        sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:                     # needs sage.plot
         ....:     T.plot_solution(filename=f.name)
 
     The solver line is equivalent to::
@@ -272,7 +267,7 @@ class ode_solver():
 
     By default ``T.plot_solution()`` plots the `y_0`; to plot general `y_i`, use::
 
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # needs sage.plot
+        sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:                     # needs sage.plot
         ....:     T.plot_solution(i=0, filename=f.name)
         ....:     T.plot_solution(i=1, filename=f.name)
         ....:     T.plot_solution(i=2, filename=f.name)
@@ -297,7 +292,7 @@ class ode_solver():
     ode_solver.  The previous example can be rewritten as::
 
         sage: T = ode_solver(g_1, y_0=[0,1,1], scale_abs=[1e-4,1e-4,1e-5],
-        ....:                error_rel=1e-4, algorithm="rk8pd")
+        ....:                error_rel=1e-4, algorithm='rk8pd')
         sage: T.ode_solve(t_span=[0,12], num_points=100)
         sage: f = T.interpolate_solution()
         sage: f(pi)
@@ -318,11 +313,11 @@ class ode_solver():
           from sage.libs.gsl.all cimport *
 
           cdef class van_der_pol(sage.calculus.ode.ode_system):
-              cdef int c_f(self,double t, double *y,double *dydt):
+              cdef int c_f(self, double t, double *y, double *dydt):
                   dydt[0]=y[1]
                   dydt[1]=-y[0]-1000*y[1]*(y[0]*y[0]-1)
                   return GSL_SUCCESS
-              cdef int c_j(self, double t,double *y,double *dfdy,double *dfdt):
+              cdef int c_j(self, double t, double *y, double *dfdy, double *dfdt):
                   dfdy[0]=0
                   dfdy[1]=1.0
                   dfdy[2]=-2.0*1000*y[0]*y[1]-1.0
@@ -343,11 +338,10 @@ class ode_solver():
         sage: T.ode_solve(y_0=[1, 0], t_span=[0, 2000],
         ....:             num_points=1000)
         sage: from tempfile import NamedTemporaryFile
-        sage: with NamedTemporaryFile(suffix=".png") as f:
+        sage: with NamedTemporaryFile(suffix='.png') as f:
         ....:     T.plot_solution(i=0, filename=f.name)
-
     """
-    def __init__(self,function=None,jacobian=None,h = 1e-2,error_abs=1e-10,error_rel=1e-10, a=False,a_dydt=False,scale_abs=False,algorithm="rkf45",y_0=None,t_span=None,params = []):
+    def __init__(self, function=None, jacobian=None, h=1e-2, error_abs=1e-10, error_rel=1e-10, a=False, a_dydt=False, scale_abs=False, algorithm='rkf45', y_0=None, t_span=None, params=[]):
         self.function = function
         self.jacobian = jacobian
         self.h = h
@@ -377,9 +371,9 @@ class ode_solver():
 
         INPUT:
 
-        - ``i`` -- (non-negative integer) composant of the projection
+        - ``i`` -- nonnegative integer; composant of the projection
 
-        - ``filename`` -- (string or ``None``) whether to plot the picture or
+        - ``filename`` -- string or ``None``; whether to plot the picture or
           save it in a file
 
         - ``interpolate`` -- whether to interpolate between the points of the
@@ -404,23 +398,23 @@ class ode_solver():
             pts = self.interpolate_solution(i)
             G = line2d(pts, **kwds)
         else:
-            pts = [(t,y[i]) for t,y in self.solution]
+            pts = [(t, y[i]) for t, y in self.solution]
             from sage.plot.point import point2d
-            G = point2d([(t,y[i]) for t,y in self.solution], **kwds)
+            G = point2d([(t, y[i]) for t, y in self.solution], **kwds)
         if filename is None:
             G.show()
         else:
             G.save(filename=filename)
 
-    def ode_solve(self,t_span=False,y_0=False,num_points=False,params=[]):
-        cdef double h # step size
+    def ode_solve(self, t_span=False, y_0=False, num_points=False, params=[]):
+        cdef double h  # step size
         h = self.h
         cdef int i
         cdef int j
         cdef int type
         cdef int dim
-        cdef PyFunctionWrapper wrapper #struct to pass information into GSL C function
-        self.params=params
+        cdef PyFunctionWrapper wrapper  # struct to pass information into GSL C function
+        self.params = params
 
         if t_span:
             self.t_span = t_span
@@ -428,7 +422,7 @@ class ode_solver():
             self.y_0 = y_0
 
         dim = len(self.y_0)
-        type = isinstance(self.function,ode_system)
+        type = isinstance(self.function, ode_system)
         if type == 0:
             wrapper = PyFunctionWrapper()
             if self.function is not None:
@@ -439,11 +433,11 @@ class ode_solver():
                 wrapper.the_jacobian = None
             else:
                 wrapper.the_jacobian = self.jacobian
-            if self.params==[] and len(sage_getargspec(wrapper.the_function)[0])==2:
-                wrapper.the_parameters=[]
-            elif self.params==[] and len(sage_getargspec(wrapper.the_function)[0])>2:
+            if self.params == [] and len(sage_getargspec(wrapper.the_function)[0]) == 2:
+                wrapper.the_parameters = []
+            elif self.params == [] and len(sage_getargspec(wrapper.the_function)[0]) > 2:
                 raise ValueError("ODE system has a parameter but no parameters specified")
-            elif self.params!=[]:
+            elif self.params != []:
                 wrapper.the_parameters = self.params
             wrapper.y_n = dim
 
@@ -453,30 +447,30 @@ class ode_solver():
         cdef double * scale_abs_array
         scale_abs_array=NULL
 
-        y = <double*> sig_malloc(sizeof(double)*(dim))
+        y = <double*> sig_malloc(sizeof(double) * dim)
         if y == NULL:
             raise MemoryError("error allocating memory")
         result = []
-        v = [0]*dim
+        v = [0] * dim
         cdef gsl_odeiv_step_type * T
 
         for i in range(dim):  # copy initial conditions into C array
             y[i] = self.y_0[i]
 
         if self.algorithm == "rkf45":
-            T=gsl_odeiv_step_rkf45
+            T = gsl_odeiv_step_rkf45
         elif self.algorithm == "rk2":
-            T=gsl_odeiv_step_rk2
+            T = gsl_odeiv_step_rk2
         elif self.algorithm == "rk4":
-            T=gsl_odeiv_step_rk4
+            T = gsl_odeiv_step_rk4
         elif self.algorithm == "rkck":
-            T=gsl_odeiv_step_rkck
+            T = gsl_odeiv_step_rkck
         elif self.algorithm == "rk8pd":
-            T=gsl_odeiv_step_rk8pd
+            T = gsl_odeiv_step_rk8pd
         elif self.algorithm == "rk2imp":
-            T= gsl_odeiv_step_rk2imp
+            T = gsl_odeiv_step_rk2imp
         elif self.algorithm == "rk4imp":
-            T= gsl_odeiv_step_rk4imp
+            T = gsl_odeiv_step_rk4imp
         elif self.algorithm == "bsimp":
             T = gsl_odeiv_step_bsimp
             if not type and self.jacobian is None:
@@ -489,38 +483,38 @@ class ode_solver():
             raise TypeError("algorithm not valid")
 
         cdef gsl_odeiv_step * s
-        s  = gsl_odeiv_step_alloc (T, dim)
-        if s==NULL:
+        s = gsl_odeiv_step_alloc(T, dim)
+        if s == NULL:
             sig_free(y)
             raise MemoryError("error setting up solver")
 
         cdef gsl_odeiv_control * c
 
         if not self.a and not self.a_dydt:
-            c  = gsl_odeiv_control_y_new (self.error_abs, self.error_rel)
+            c = gsl_odeiv_control_y_new(self.error_abs, self.error_rel)
         elif self.a and self.a_dydt:
             if not self.scale_abs:
-                c = gsl_odeiv_control_standard_new(self.error_abs,self.error_rel,self.a,self.a_dydt)
-            elif hasattr(self.scale_abs,'__len__'):
+                c = gsl_odeiv_control_standard_new(self.error_abs, self.error_rel, self.a, self.a_dydt)
+            elif hasattr(self.scale_abs, '__len__'):
                 if len(self.scale_abs) == dim:
-                    scale_abs_array =<double *> sig_malloc(dim*sizeof(double))
+                    scale_abs_array = <double *> sig_malloc(dim * sizeof(double))
                     for i in range(dim):
-                        scale_abs_array[i]=self.scale_abs[i]
-                    c = gsl_odeiv_control_scaled_new(self.error_abs,self.error_rel,self.a,self.a_dydt,scale_abs_array,dim)
+                        scale_abs_array[i] = self.scale_abs[i]
+                    c = gsl_odeiv_control_scaled_new(self.error_abs, self.error_rel, self.a, self.a_dydt, scale_abs_array, dim)
 
         if c == NULL:
-            gsl_odeiv_control_free (c)
-            gsl_odeiv_step_free (s)
+            gsl_odeiv_control_free(c)
+            gsl_odeiv_step_free(s)
             sig_free(y)
             sig_free(scale_abs_array)
             raise MemoryError("error setting up solver")
 
         cdef gsl_odeiv_evolve * e
-        e  = gsl_odeiv_evolve_alloc(dim)
+        e = gsl_odeiv_evolve_alloc(dim)
 
         if e == NULL:
-            gsl_odeiv_control_free (c)
-            gsl_odeiv_step_free (s)
+            gsl_odeiv_control_free(c)
+            gsl_odeiv_step_free(s)
             sig_free(y)
             sig_free(scale_abs_array)
             raise MemoryError("error setting up solver")
@@ -541,59 +535,59 @@ class ode_solver():
         import copy
         cdef int n
 
-        if len(self.t_span)==2 and num_points:
+        if len(self.t_span) == 2 and num_points:
             try:
                 n = num_points
             except TypeError:
-                gsl_odeiv_evolve_free (e)
-                gsl_odeiv_control_free (c)
-                gsl_odeiv_step_free (s)
+                gsl_odeiv_evolve_free(e)
+                gsl_odeiv_control_free(c)
+                gsl_odeiv_step_free(s)
                 sig_free(y)
                 sig_free(scale_abs_array)
                 raise TypeError("numpoints must be integer")
             result.append((self.t_span[0], self.y_0))
-            delta = (self.t_span[1]-self.t_span[0])/(1.0*num_points)
+            delta = (self.t_span[1] - self.t_span[0]) / (1.0 * num_points)
             t = self.t_span[0]
-            t_end = self.t_span[0]+delta
+            t_end = self.t_span[0] + delta
             for i in range(1, n + 1):
-                while (t < t_end):
+                while t < t_end:
                     try:
                         sig_on()
-                        status = gsl_odeiv_evolve_apply (e, c, s, &sys, &t, t_end, &h, y)
+                        status = gsl_odeiv_evolve_apply(e, c, s, &sys, &t, t_end, &h, y)
                         sig_off()
-                        if (status != GSL_SUCCESS):
+                        if status != GSL_SUCCESS:
                             raise RuntimeError
                     except RuntimeError:
-                        gsl_odeiv_evolve_free (e)
-                        gsl_odeiv_control_free (c)
-                        gsl_odeiv_step_free (s)
+                        gsl_odeiv_evolve_free(e)
+                        gsl_odeiv_control_free(c)
+                        gsl_odeiv_step_free(s)
                         sig_free(y)
                         sig_free(scale_abs_array)
                         raise ValueError("error solving")
 
                 for j in range(dim):
-                    v[j]=<double> y[j]
-                result.append( (t,copy.copy(v)) )
+                    v[j] = <double> y[j]
+                result.append((t, copy.copy(v)))
                 t = t_end
-                t_end= t+delta
+                t_end = t + delta
 
         else:
             n = len(self.t_span)
             result.append((self.t_span[0], self.y_0))
             t = self.t_span[0]
             for i in range(1, n):
-                t_end=self.t_span[i]
-                while (t < t_end):
+                t_end = self.t_span[i]
+                while t < t_end:
                     try:
                         sig_on()
-                        status = gsl_odeiv_evolve_apply (e, c, s, &sys, &t, t_end, &h, y)
+                        status = gsl_odeiv_evolve_apply(e, c, s, &sys, &t, t_end, &h, y)
                         sig_off()
-                        if (status != GSL_SUCCESS):
+                        if status != GSL_SUCCESS:
                             raise RuntimeError
                     except RuntimeError:
-                        gsl_odeiv_evolve_free (e)
-                        gsl_odeiv_control_free (c)
-                        gsl_odeiv_step_free (s)
+                        gsl_odeiv_evolve_free(e)
+                        gsl_odeiv_control_free(c)
+                        gsl_odeiv_step_free(s)
                         sig_free(y)
                         sig_free(scale_abs_array)
                         raise ValueError("error solving")
@@ -604,9 +598,9 @@ class ode_solver():
 
                 t = self.t_span[i]
 
-        gsl_odeiv_evolve_free (e)
-        gsl_odeiv_control_free (c)
-        gsl_odeiv_step_free (s)
+        gsl_odeiv_evolve_free(e)
+        gsl_odeiv_control_free(c)
+        gsl_odeiv_step_free(s)
         sig_free(y)
         sig_free(scale_abs_array)
         self.solution = result

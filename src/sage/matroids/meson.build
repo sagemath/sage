@@ -1,19 +1,30 @@
 py.install_sources(
   'advanced.py',
   'all.py',
+  'basis_exchange_matroid.pxd',
+  'basis_matroid.pxd',
   'catalog.py',
+  'circuit_closures_matroid.pxd',
+  'circuits_matroid.pxd',
   'constructor.py',
   'database_collections.py',
   'database_matroids.py',
   'dual_matroid.py',
-  'graphic_matroid.py',
+  'extension.pxd',
+  'flats_matroid.pxd',
+  'graphic_matroid.pxd',
+  'lean_matrix.pxd',
+  'linear_matroid.pxd',
+  'matroid.pxd',
   'matroids_catalog.py',
   'matroids_plot_helpers.py',
   'minor_matroid.py',
   'named_matroids.py',
   'rank_matroid.py',
+  'set_system.pxd',
+  'union_matroid.pxd',
   'utilities.py',
-  subdir : 'sage/matroids'
+  subdir: 'sage/matroids',
 )
 
 extension_data = {
@@ -27,16 +38,19 @@ extension_data = {
   'matroid' : files('matroid.pyx'),
   'set_system' : files('set_system.pyx'),
   'union_matroid' : files('union_matroid.pyx'),
-  'unpickling' : files('unpickling.pyx')
+  'unpickling' : files('unpickling.pyx'),
+  'flats_matroid' : files('flats_matroid.pyx'),
+  'graphic_matroid' : files('graphic_matroid.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/matroids',
-        install: true,
-        include_directories: [inc_cpython, inc_data_structures, inc_rings],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/matroids',
+    install: true,
+    include_directories: [inc_cpython, inc_data_structures, inc_rings],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 

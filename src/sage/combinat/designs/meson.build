@@ -19,24 +19,27 @@ py.install_sources(
   'resolvable_bibd.py',
   'steiner_quadruple_systems.py',
   'twographs.py',
-  subdir : 'sage/combinat/designs'
+  subdir: 'sage/combinat/designs',
 )
 
 extension_data = {
   'designs_pyx' : files('designs_pyx.pyx'),
   'evenly_distributed_sets' : files('evenly_distributed_sets.pyx'),
   'gen_quadrangles_with_spread' : files('gen_quadrangles_with_spread.pyx'),
-  'orthogonal_arrays_find_recursive' : files('orthogonal_arrays_find_recursive.pyx'),
-  'subhypergraph_search' : files('subhypergraph_search.pyx')
+  'orthogonal_arrays_find_recursive' : files(
+    'orthogonal_arrays_find_recursive.pyx',
+  ),
+  'subhypergraph_search' : files('subhypergraph_search.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/combinat/designs',
-        install: true,
-        include_directories: [inc_cpython, inc_data_structures, inc_rings],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/combinat/designs',
+    install: true,
+    include_directories: [inc_cpython, inc_data_structures, inc_rings],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 

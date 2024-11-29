@@ -1,4 +1,4 @@
-tdlib = cc.find_library('tdlib', required: false)
+tdlib = cc.find_library('tdlib', required: false, disabler: true)
 # Cannot be found via pkg-config
 rw = cc.find_library('rw')
 
@@ -8,9 +8,10 @@ py.install_sources(
   'fast_digraph.pxd',
   'modular_decomposition.py',
   'rankwidth.pxd',
+  'slice_decomposition.pxd',
   'tree_decomposition.pxd',
   'vertex_separation.pxd',
-  subdir : 'sage/graphs/graph_decompositions'
+  subdir: 'sage/graphs/graph_decompositions',
 )
 
 extension_data = {
@@ -20,42 +21,44 @@ extension_data = {
   'graph_products' : files('graph_products.pyx'),
   'rankwidth' : files('rankwidth.pyx'),
   'tree_decomposition' : files('tree_decomposition.pyx'),
-  'vertex_separation' : files('vertex_separation.pyx')
+  'vertex_separation' : files('vertex_separation.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/graphs/graph_decompositions',
-        install: true,
-        include_directories: [inc_cpython, inc_data_structures],
-        dependencies: [py_dep, cysignals, gmp, rw],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/graphs/graph_decompositions',
+    install: true,
+    include_directories: [inc_cpython, inc_data_structures],
+    dependencies: [py_dep, cysignals, gmp, rw],
+  )
 endforeach
 
 extension_data_cpp = {
-    'clique_separators': files('clique_separators.pyx'),
+  'clique_separators': files('clique_separators.pyx'),
+  'slice_decomposition' : files('slice_decomposition.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/graphs/graph_decompositions',
-        install: true,
-        override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_data_structures],
-        dependencies: [py_dep, cysignals, gmp, rw],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/graphs/graph_decompositions',
+    install: true,
+    override_options: ['cython_language=cpp'],
+    include_directories: [inc_cpython, inc_data_structures],
+    dependencies: [py_dep, cysignals, gmp, rw],
+  )
 endforeach
 
-if tdlib.found()
-    py.extension_module('tdlib',
-        sources: 'tdlib.pyx',
-        subdir: 'sage/graphs/graph_decompositions',
-        install: true,
-        override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_data_structures],
-        dependencies: [py_dep, cysignals, tdlib],
-    )
-endif
+py.extension_module(
+  'tdlib',
+  sources: 'tdlib.pyx',
+  subdir: 'sage/graphs/graph_decompositions',
+  install: true,
+  override_options: ['cython_language=cpp'],
+  include_directories: [inc_cpython, inc_data_structures],
+  dependencies: [py_dep, cysignals, tdlib],
+)
 

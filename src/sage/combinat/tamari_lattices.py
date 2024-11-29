@@ -49,6 +49,7 @@ are also available directly using the catalogue of posets, as follows::
 from __future__ import annotations
 from sage.combinat.posets.lattices import LatticePoset, MeetSemilattice
 
+
 def paths_in_triangle(i, j, a, b) -> list[tuple[int, ...]]:
     r"""
     Return all Dyck paths from `(0,0)` to `(i,j)` in the `(a \times
@@ -61,14 +62,12 @@ def paths_in_triangle(i, j, a, b) -> list[tuple[int, ...]]:
 
     INPUT:
 
-    - `a` and `b` -- integers with `a \geq b`
+    - ``a``, ``b`` -- integers with `a \geq b`
 
-    - `i` and `j` -- nonnegative integers with `1 \geq \frac{j}{b} \geq
+    - ``i``, ``j`` -- nonnegative integers with `1 \geq \frac{j}{b} \geq
       \frac{i}{a} \geq 0`
 
-    OUTPUT:
-
-    - a list of paths
+    OUTPUT: list of paths
 
     EXAMPLES::
 
@@ -92,11 +91,11 @@ def paths_in_triangle(i, j, a, b) -> list[tuple[int, ...]]:
         return [tuple([1] * j)]
 
     if (j - 1) * a >= (i) * b:
-        result = [u + tuple([1]) for u in paths_in_triangle(i, j - 1, a, b)]
-        result += [u + tuple([0]) for u in paths_in_triangle(i - 1, j, a, b)]
+        result = [u + (1,) for u in paths_in_triangle(i, j - 1, a, b)]
+        result += [u + (0,) for u in paths_in_triangle(i - 1, j, a, b)]
         return result
 
-    return [u + tuple([0]) for u in paths_in_triangle(i - 1, j, a, b)]
+    return [u + (0,) for u in paths_in_triangle(i - 1, j, a, b)]
 
 
 def swap(p, i, m=1) -> tuple[int, ...]:
@@ -110,11 +109,9 @@ def swap(p, i, m=1) -> tuple[int, ...]:
 
     - ``p`` -- a Dyck path in the `(a \times b)`-rectangle
 
-    - ``i`` -- an integer between `0` and `a+b-1`
+    - ``i`` -- integer between `0` and `a+b-1`
 
-    OUTPUT:
-
-    - a Dyck path in the `(a \times b)`-rectangle
+    OUTPUT: a Dyck path in the `(a \times b)`-rectangle
 
     EXAMPLES::
 
@@ -156,7 +153,7 @@ def swap(p, i, m=1) -> tuple[int, ...]:
             height -= 1
         if height <= 0:
             found = True
-    q = [k for k in p]
+    q = list(p)
     for k in range(i, j):
         q[k] = p[k + 1]
     q[j] = 0
@@ -169,9 +166,9 @@ def GeneralizedTamariLattice(a, b, m=1):
 
     INPUT:
 
-    - `a` and `b` -- integers with `a \geq b`
+    - ``a``, ``b`` -- integers with `a \geq b`
 
-    - `m` -- a nonnegative rational number such that `a \geq b m`
+    - ``m`` -- a nonnegative rational number such that `a \geq b m`
 
     OUTPUT:
 
@@ -239,13 +236,11 @@ def TamariLattice(n, m=1):
 
     INPUT:
 
-    - `n` -- a nonnegative integer (the index)
+    - ``n`` -- nonnegative integer (the index)
 
-    - `m` -- an optional nonnegative integer (the slope, default to 1)
+    - ``m`` -- nonnegative integer (the slope, default: 1)
 
-    OUTPUT:
-
-    a finite lattice
+    OUTPUT: a finite lattice
 
     In the usual case, the elements of the lattice are :func:`Dyck
     paths<sage.combinat.dyck_word.DyckWord>` in the `(n+1 \times
@@ -284,7 +279,7 @@ def swap_dexter(p, i) -> list[tuple[int, ...]]:
 
     - ``p`` -- a Dyck path in the `(a \times b)`-rectangle
 
-    - ``i`` -- an integer between `0` and `a+b-1`
+    - ``i`` -- integer between `0` and `a+b-1`
 
     OUTPUT:
 
@@ -350,11 +345,9 @@ def DexterSemilattice(n):
 
     INPUT:
 
-    - ``n`` -- a nonnegative integer (the index)
+    - ``n`` -- nonnegative integer (the index)
 
-    OUTPUT:
-
-    a finite meet-semilattice
+    OUTPUT: a finite meet-semilattice
 
     The elements of the semilattice are :func:`Dyck
     paths<sage.combinat.dyck_word.DyckWord>` in the `(n+1 \times

@@ -77,11 +77,9 @@ def CyclicPresentation(n):
 
     INPUT:
 
-    - ``n`` -- The order of the cyclic presentation to be returned.
+    - ``n`` -- the order of the cyclic presentation to be returned
 
-    OUTPUT:
-
-    The cyclic group of order `n` as finite presentation.
+    OUTPUT: the cyclic group of order `n` as finite presentation
 
     EXAMPLES::
 
@@ -112,9 +110,9 @@ def FinitelyGeneratedAbelianPresentation(int_list):
 
     INPUT:
 
-    - ``int_list`` -- List of integers defining the group to be returned, the defining list
+    - ``int_list`` -- list of integers defining the group to be returned, the defining list
       is reduced to the invariants of the input list before generating the corresponding
-      group.
+      group
 
     OUTPUT:
 
@@ -204,6 +202,7 @@ def FinitelyGeneratedAbelianPresentation(int_list):
     ret_rls = ret_rls + [x[0]**(-1)*x[1]**(-1)*x[0]*x[1] for x in gen_pairs]
     return FinitelyPresentedGroup(F, tuple(ret_rls))
 
+
 def FinitelyGeneratedHeisenbergPresentation(n=1, p=0):
     r"""
     Return a finite presentation of the Heisenberg group.
@@ -219,10 +218,8 @@ def FinitelyGeneratedHeisenbergPresentation(n=1, p=0):
     - ``p`` -- (optional) a prime number, where we construct the
       Heisenberg group over the finite field `\ZZ/p\ZZ`
 
-    OUTPUT:
-
-    Finitely generated Heisenberg group over the finite field
-    of order ``p`` or over the integers.
+    OUTPUT: finitely generated Heisenberg group over the finite field
+    of order ``p`` or over the integers
 
     .. SEEALSO::
 
@@ -296,17 +293,16 @@ def FinitelyGeneratedHeisenbergPresentation(n=1, p=0):
         rls += [w**p for w in F.gens()]
     return FinitelyPresentedGroup(F, tuple(rls))
 
+
 def DihedralPresentation(n):
     r"""
     Build the Dihedral group of order `2n` as a finitely presented group.
 
     INPUT:
 
-    - ``n`` -- The size of the set that `D_n` is acting on.
+    - ``n`` -- the size of the set that `D_n` is acting on
 
-    OUTPUT:
-
-    Dihedral group of order `2n`.
+    OUTPUT: Dihedral group of order `2n`
 
     EXAMPLES::
 
@@ -333,6 +329,7 @@ def DihedralPresentation(n):
     rls = F([1])**n, F([2])**2, (F([1])*F([2]))**2
     return FinitelyPresentedGroup( F, rls )
 
+
 def DiCyclicPresentation(n):
     r"""
     Build the dicyclic group of order `4n`, for `n \geq 2`, as a finitely
@@ -341,11 +338,9 @@ def DiCyclicPresentation(n):
     INPUT:
 
     - ``n`` -- positive integer, 2 or greater, determining the order of
-      the group (`4n`).
+      the group (`4n`)
 
-    OUTPUT:
-
-    The dicyclic group of order `4n` is defined by the presentation
+    OUTPUT: the dicyclic group of order `4n` is defined by the presentation
 
     .. MATH::
 
@@ -392,8 +387,8 @@ def SymmetricPresentation(n):
 
     INPUT:
 
-    - ``n`` -- The size of the underlying set of arbitrary symbols being acted
-      on by the Symmetric group of order `n!`.
+    - ``n`` -- the size of the underlying set of arbitrary symbols being acted
+      on by the Symmetric group of order `n!`
 
     OUTPUT:
 
@@ -441,9 +436,7 @@ def QuaternionPresentation():
     r"""
     Build the Quaternion group of order 8 as a finitely presented group.
 
-    OUTPUT:
-
-    Quaternion group as a finite presentation.
+    OUTPUT: Quaternion group as a finite presentation
 
     EXAMPLES::
 
@@ -465,14 +458,15 @@ def QuaternionPresentation():
     rls = F([1])**4, F([2,2,-1,-1]), F([1,2,1,-2])
     return FinitelyPresentedGroup(F, rls)
 
+
 def AlternatingPresentation(n):
     r"""
     Build the Alternating group of order `n!/2` as a finitely presented group.
 
     INPUT:
 
-    - ``n`` -- The size of the underlying set of arbitrary symbols being acted
-      on by the Alternating group of order `n!/2`.
+    - ``n`` -- the size of the underlying set of arbitrary symbols being acted
+      on by the Alternating group of order `n!/2`
 
     OUTPUT:
 
@@ -520,9 +514,7 @@ def KleinFourPresentation():
     r"""
     Build the Klein group of order `4` as a finitely presented group.
 
-    OUTPUT:
-
-    Klein four group (`C_2 \times C_2`) as a finitely presented group.
+    OUTPUT: Klein four group (`C_2 \times C_2`) as a finitely presented group
 
     EXAMPLES::
 
@@ -532,6 +524,7 @@ def KleinFourPresentation():
     F = FreeGroup(['a','b'])
     rls = F([1])**2, F([2])**2, F([-1])*F([-2])*F([1])*F([2])
     return FinitelyPresentedGroup(F, rls)
+
 
 def BinaryDihedralPresentation(n):
     r"""
@@ -548,9 +541,7 @@ def BinaryDihedralPresentation(n):
 
     - ``n`` -- the value `n`
 
-    OUTPUT:
-
-    The binary dihedral group of order `4n` as finite presentation.
+    OUTPUT: the binary dihedral group of order `4n` as finite presentation
 
     EXAMPLES::
 
@@ -575,13 +566,12 @@ def BinaryDihedralPresentation(n):
     rls = (x**-2 * y**2, x**-2 * z**n, x**-2 * x*y*z)
     return FinitelyPresentedGroup(F, rls)
 
+
 def CactusPresentation(n):
     r"""
     Build the `n`-fruit cactus group as a finitely presented group.
 
-    OUTPUT:
-
-    Cactus group `J_n` as a finitely presented group.
+    OUTPUT: Cactus group `J_n` as a finitely presented group
 
     EXAMPLES::
 

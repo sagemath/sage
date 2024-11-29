@@ -1,5 +1,5 @@
-bliss = cc.find_library('bliss', required: false)
-mcqd = cc.find_library('mcqd', required: false)
+bliss = cc.find_library('bliss', required: false, disabler: true)
+mcqd = cc.find_library('mcqd', required: false, disabler: true)
 cliquer = cc.find_library('cliquer')
 
 # Cannot be found via pkg-config
@@ -12,6 +12,7 @@ py.install_sources(
   'all__sagemath_tdlib.py',
   'bipartite_graph.py',
   'cliquer.pxd',
+  'cographs.py',
   'connectivity.pxd',
   'convexity_properties.pxd',
   'digraph.py',
@@ -34,6 +35,8 @@ py.install_sources(
   'independent_sets.pxd',
   'isgci.py',
   'lovasz_theta.py',
+  'matching.py',
+  'matching_covered_graph.py',
   'mcqd.pxd',
   'orientations.py',
   'partial_cube.py',
@@ -43,7 +46,7 @@ py.install_sources(
   'traversals.pxd',
   'trees.pxd',
   'tutte_polynomial.py',
-  subdir : 'sage/graphs'
+  subdir: 'sage/graphs',
 )
 
 extension_data = {
@@ -68,56 +71,68 @@ extension_data = {
   'strongly_regular_db' : files('strongly_regular_db.pyx'),
   'trees' : files('trees.pyx'),
   'views' : files('views.pyx'),
-  'weakly_chordal' : files('weakly_chordal.pyx')
+  'weakly_chordal' : files('weakly_chordal.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/graphs',
-        install: true,
-        include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
-        dependencies: [py_dep, cysignals, cliquer, flint, gmp, planarity],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/graphs',
+    install: true,
+    include_directories: [
+      inc_cpython,
+      inc_data_structures,
+      inc_flint,
+      inc_rings,
+    ],
+    dependencies: [py_dep, cysignals, cliquer, flint, gmp, planarity],
+  )
 endforeach
 
 extension_data_cpp = {
-    'edge_connectivity': files('edge_connectivity.pyx'),
-    'graph_coloring': files('graph_coloring.pyx'),
-    'path_enumeration': files('path_enumeration.pyx'),
-    'traversals': files('traversals.pyx'),
+  'edge_connectivity': files('edge_connectivity.pyx'),
+  'graph_coloring': files('graph_coloring.pyx'),
+  'path_enumeration': files('path_enumeration.pyx'),
+  'traversals': files('traversals.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/graphs',
-        install: true,
-        override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
-        dependencies: [py_dep, cysignals, flint, gmp, planarity],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/graphs',
+    install: true,
+    override_options: ['cython_language=cpp'],
+    include_directories: [
+      inc_cpython,
+      inc_data_structures,
+      inc_flint,
+      inc_rings,
+    ],
+    dependencies: [py_dep, cysignals, flint, gmp, planarity],
+  )
 endforeach
-if bliss.found()
-    py.extension_module('bliss',
-        sources: files('bliss.pyx'),
-        subdir: 'sage/graphs',
-        install: true,
-        override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
-        dependencies: [py_dep, cysignals, bliss],
-    )
-endif
-if mcqd.found()
-    py.extension_module('mcqd',
-        sources: files('mcqd.pyx'),
-        subdir: 'sage/graphs',
-        install: true,
-        override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
-        dependencies: [py_dep, cysignals, mcqd],
-    )
-endif
+
+py.extension_module(
+  'bliss',
+  sources: files('bliss.pyx'),
+  subdir: 'sage/graphs',
+  install: true,
+  override_options: ['cython_language=cpp'],
+  include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
+  dependencies: [py_dep, cysignals, bliss],
+)
+
+py.extension_module(
+  'mcqd',
+  sources: files('mcqd.pyx'),
+  subdir: 'sage/graphs',
+  install: true,
+  override_options: ['cython_language=cpp'],
+  include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
+  dependencies: [py_dep, cysignals, mcqd],
+)
 
 subdir('base')
 subdir('generators')

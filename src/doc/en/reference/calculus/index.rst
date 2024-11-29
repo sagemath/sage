@@ -23,6 +23,7 @@ Using calculus
 
 - :doc:`More about symbolic variables and functions <sage/calculus/var>`
 - :doc:`Main operations on symbolic expressions <sage/symbolic/expression>`
+- :doc:`sage/calculus/expr`
 - :doc:`Assumptions about symbols and functions <sage/symbolic/assumptions>`
 - :doc:`sage/symbolic/relation`
 - :doc:`sage/symbolic/integration/integral`
@@ -65,6 +66,7 @@ Internal functionality supporting calculus
 
    sage/symbolic/expression
    sage/symbolic/callable
+   sage/calculus/expr
    sage/symbolic/assumptions
    sage/symbolic/relation
    sage/calculus/calculus
