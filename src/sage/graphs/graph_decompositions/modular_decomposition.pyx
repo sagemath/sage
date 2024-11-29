@@ -1465,6 +1465,7 @@ def recreate_decomposition(trials, algorithm, max_depth, max_fan_out,
         if verbose:
             print("Passes!")
 
+
 @random_testing
 def check_algos_are_equivalent(trials, graph_gen, verbose=False):
     r"""
