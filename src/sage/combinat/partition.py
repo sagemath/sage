@@ -9102,8 +9102,7 @@ class Partitions_length_and_parts_restricted(Partitions):
             if k == 1:
                 if m == n:
                     # unrestricted length, parts smaller max_part
-                    return ZZ.sum(number_of_partitions_length(n, i)
-                                  for i in range(b + 1))
+                    return number_of_partitions_length(n + b, b)
 
                 return number_of_partitions_max_length_max_part(n, m, b)
 
