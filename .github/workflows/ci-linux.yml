@@ -77,7 +77,11 @@ jobs:
       # We cannot use the setup python action because it doesn't support all containers
       # https://github.com/actions/setup-python/issues/527
       - name: Set up Python
-        run: uv python install
+        run: |
+          uv python install
+          uv venv
+          . .venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
 
       - name: Install dependencies
         run: |
