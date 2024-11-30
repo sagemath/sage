@@ -866,20 +866,20 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
         if name == "_Sequence_generic__cr" and hasattr(self, "_Sequence__cr"):
             self.__cr = self._Sequence__cr
             return self.__cr
-        elif name == "_Sequence_generic__cr_str" and hasattr(self, "_Sequence__cr_str"):
+        if name == "_Sequence_generic__cr_str" and hasattr(self, "_Sequence__cr_str"):
             self.__cr_str = self._Sequence__cr_str
             return self.__cr_str
-        elif name == "_Sequence_generic__immutable" and hasattr(self, "_Sequence__immutable"):
+        if name == "_Sequence_generic__immutable" and hasattr(self, "_Sequence__immutable"):
             self.__immutable = self._Sequence__immutable
             return self.__immutable
-        elif name == "_Sequence_generic__universe" and hasattr(self, "_Sequence__universe"):
+        if name == "_Sequence_generic__universe" and hasattr(self, "_Sequence__universe"):
             self.__universe = self._Sequence__universe
             return self.__universe
-        elif name == "_Sequence_generic__hash" and hasattr(self, "_Sequence__hash"):
+        if name == "_Sequence_generic__hash" and hasattr(self, "_Sequence__hash"):
             self.__hash = self._Sequence__hash
             return self.__hash
-        else:
-            raise AttributeError("'Sequence_generic' object has no attribute '%s'" % name)
+
+        raise AttributeError("'Sequence_generic' object has no attribute '%s'" % name)
 
 
 seq = Sequence

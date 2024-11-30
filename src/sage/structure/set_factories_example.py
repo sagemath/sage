@@ -99,7 +99,7 @@ class XYPairsFactory(SetFactory):
             if isinstance(y, (Integer, int)):
                 return SingletonPair(x, y, policy)
             return PairsX_(x, policy)
-        elif isinstance(y, (Integer, int)):
+        if isinstance(y, (Integer, int)):
             return Pairs_Y(y, policy)
         return AllPairs(policy)
 
