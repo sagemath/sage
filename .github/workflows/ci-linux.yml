@@ -50,6 +50,7 @@ jobs:
       tox_packages_factors: >-
         ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      logs_artifact: false
 
   # All platforms. This duplicates the default platform, but why not,
   # it makes it more robust regarding random timeouts.
