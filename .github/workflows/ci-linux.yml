@@ -86,7 +86,7 @@ jobs:
       - name: Install dependencies
         run: |
           SYSTEM=$(build/bin/sage-guess-package-system)
-          eval $(sage-print-system-package-command $SYSTEM update)
+          eval $(build/bin/sage-print-system-package-command $SYSTEM update)
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install $(build/bin/sage-get-system-packages $SYSTEM $(uv run --no-project build/bin/sage-package list :standard:)))
 
           # Needed to download and install fplll and lrcalc below
