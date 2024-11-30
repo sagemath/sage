@@ -6,7 +6,6 @@
 General Conventions
 ===================
 
-
 There are many ways to contribute to Sage, including sharing scripts
 and Jupyter notebooks that implement new functionality using Sage,
 improving to the Sage library, or to working on the many underlying
@@ -1256,17 +1255,38 @@ framework. Here is a comprehensive list:
      Neither of this applies to files or directories which are explicitly given
      as command line arguments: those are always tested.
 
-- **optional/needs:** A line tagged with ``optional - FEATURE``
-  or ``needs FEATURE`` is not tested unless the ``--optional=KEYWORD`` flag
-  is passed to ``sage -t`` (see
-  :ref:`section-optional-doctest-flag`). The main applications are:
+- **optional** or **needs:** A line tagged with ``optional - FEATURE`` or
+  ``needs FEATURE`` is tested if the feature is available in Sage. If
+  ``FEATURE`` starts with an exclamation point ``!``, then the condition is
+  negated, that is, the doctest runs only if the feature is not available.
+
+  If the feature is included in the ``--optional=KEYWORD`` flag passed to
+  ``sage -t`` (see :ref:`section-optional-doctest-flag`), then the line is
+  tested regardless of the feature availability.
+
+  The main applications are:
 
   - **optional packages:** When a line requires an optional package to be
-    installed (e.g. the ``sloane_database`` package)::
+    installed (e.g. the ``rubiks`` package)::
+
+      sage: C = RubiksCube("R*L")
+      sage: C.solve()                    # optional - rubiks (a hybrid algorithm is used)
+      'L R'
+      sage: C.solve()                    # optional - !rubiks (GAP is used)
+      'L*R'
+
+  - **features:** When a line requires a feature to be present::
 
       sage: SloaneEncyclopedia[60843]    # optional - sloane_database
+      [1, 6, 21, 107, 47176870]
 
-  - **internet:** For lines that require an internet connection::
+      sage: SloaneEncyclopedia[60843]    # optional - !sloane_database
+      Traceback (most recent call last):
+      ...
+      OSError: The Sloane Encyclopedia database must be installed. Use e.g.
+      'SloaneEncyclopedia.install()' to download and install it.
+
+    For lines that require an internet connection::
 
        sage: oeis(60843)                 # optional - internet
        A060843: Busy Beaver problem: a(n) = maximal number of steps that an
