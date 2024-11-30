@@ -23,9 +23,9 @@ jobs:
           #- ubuntu:jammy # TODO: Cannot find flint (only v.2.8.4)
           #- ubuntu:lunar # TODO: Some syntax error in the if statement below
           #- ubuntu:mantic # TODO: Some syntax error in the if statement below
-          #- ubuntu:noble # libbrial-groebner-dev is not available
-          #- ubuntu:oracular # libbrial-groebner-dev is not available
-          #- ubuntu:plucky # libbrial-groebner-dev is not available
+          - ubuntu:noble
+          - ubuntu:oracular
+          - ubuntu:plucky
           #- debian:buster # gmp is not available
           #- debian:bullseye # TODO: outdated singular
           #- debian:bookworm # flint is not available
