@@ -4965,6 +4965,15 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
             Requires computation of a Groebner basis, which can be a
             very expensive operation.
+
+        TESTS:
+
+        Check for :issue:`38560`::
+
+            sage: I.reduce(1)
+            1
+            sage: I.reduce(pi.n())  # unfortunate side effect
+            245850922/78256779
         """
         try:
             strat = self._groebner_strategy()
@@ -4973,7 +4982,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             pass
 
         gb = self.groebner_basis()
-        return f.reduce(gb)
+        return self.ring()(f).reduce(gb)
 
     def _contains_(self, f):
         r"""
