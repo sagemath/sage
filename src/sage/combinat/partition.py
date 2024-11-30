@@ -6162,19 +6162,29 @@ class Partitions(UniqueRepresentation, Parent):
             sage: list(P)
             [[5], [1, 1, 1, 1, 1]]
         """
-        if n == infinity:
+        if n is infinity:
             raise ValueError("n cannot be infinite")
         if isinstance(n, (int, Integer)):
             if not kwargs:
                 return Partitions_n(n)
+            if n < 0:
+                return Partitions_n(-1)
 
             if len(kwargs) == 1:
                 if 'max_part' in kwargs:
-                    return Partitions_parts_length_restricted(n, ZZ.one(), kwargs['max_part'],
-                                                              ZZ.zero(), n)
+                    if not n:
+                        return Partitions_n(0)
+                    max_part = min(kwargs['max_part'], n)
+                    if max_part < 1:
+                        return Partitions_n(-1)
+                    return Partitions_length_and_parts_restricted(n, 1, n, 1, max_part)
                 if 'min_part' in kwargs:
-                    return Partitions_parts_length_restricted(n, kwargs['min_part'], n,
-                                                              ZZ.zero(), n)
+                    if not n:
+                        return Partitions_n(0)
+                    min_part = max(kwargs['min_part'], 1)
+                    if min_part > n:
+                        return Partitions_n(-1)
+                    return Partitions_length_and_parts_restricted(n, 1, n, min_part, n)
                 if 'length' in kwargs:
                     return Partitions_nk(n, kwargs['length'])
                 if 'parts_in' in kwargs:
@@ -6203,15 +6213,31 @@ class Partitions(UniqueRepresentation, Parent):
 
             if set(kwargs).issubset(['length', 'min_part', 'max_part',
                                      'min_length', 'max_length']):
-                min_part = max(kwargs.get('min_part', ZZ.one()), ZZ.one())
-                max_part = max(min(kwargs.get('max_part', n), n), ZZ.zero())
                 if 'length' in kwargs:
-                    k = ZZ(kwargs['length'])
-                    return Partitions_parts_length_restricted(n, min_part, max_part, k, k)
+                    min_length = max_length = kwargs['length']
+                    if not n:
+                        if min_length:
+                            return Partitions_n(-1)
+                        return Partitions_n(0)
+                    if not (1 <= min_length <= n):
+                        return Partitions_n(-1)
+                else:
+                    max_length = min(kwargs.get('max_length', n), n)
+                    if not n:
+                        min_length = max(kwargs.get('min_length', 0), 0)
+                        if min_length <= 0 <= max_length:
+                            return Partitions_n(0)
+                        return Partitions_n(-1)
+                    min_length = max(kwargs.get('min_length', 1), 1)
+                    if min_length > max_length:
+                        return Partitions_n(-1)
 
-                min_length = max(kwargs.get('min_length', ZZ.zero()), ZZ.zero())
-                max_length = min(kwargs.get('max_length', n), n)
-                return Partitions_parts_length_restricted(n, min_part, max_part, min_length, max_length)
+                min_part = max(kwargs.get('min_part', 1), 1)
+                max_part = min(kwargs.get('max_part', n), n)
+                if min_part > max_part:
+                    return Partitions_n(-1)
+
+                return Partitions_length_and_parts_restricted(n, min_length, max_length, min_part, max_part)
 
             # FIXME: should inherit from IntegerListLex, and implement repr, or _name as a lazy attribute
             kwargs['name'] = "Partitions of the integer {} satisfying constraints {}".format(n, ", ".join(["{}={}".format(key, kwargs[key]) for key in sorted(kwargs)]))
@@ -8904,49 +8930,56 @@ class OrderedPartitions(Partitions):
         return ZZ(ans)
 
 
-######################################
-# Partitions_parts_length_restricted #
-######################################
+##########################################
+# Partitions_length_and_parts_restricted #
+##########################################
 
-class Partitions_parts_length_restricted(Partitions):
+class Partitions_length_and_parts_restricted(Partitions):
     r"""
     The class of all integer partitions having parts and length in a
     given range.
 
     This class is strictly more general than
-    :class:`PartitionsGreatestLE`.
+    :class:`PartitionsGreatestLE`, except that we insist that the
+    size of the partition is positive and that neither the
+    restrictions on the parts not on the length are contradictory.
 
     INPUT:
 
-    - ``n`` -- the size of the partition
-    - ``min_part`` -- the bound on the smallest part
-    - ``max_part`` -- the bound on the largest part
-    - ``min_length`` -- the lower bound on the number of parts
-    - ``max_length`` -- the upper bound on the number of parts
+    - ``n`` -- the size of the partition, positive
+    - ``min_length`` -- the lower bound on the number of parts, between 1 and n
+    - ``max_length`` -- the upper bound on the number of parts, between min_length and n
+    - ``min_part`` -- the bound on the smallest part, between 1 and n
+    - ``max_part`` -- the bound on the largest part, between min_part and n
 
     EXAMPLES::
 
-        sage: from sage.combinat.partition import Partitions_parts_length_restricted
-        sage: Partitions_parts_length_restricted(10, 2, 5, 0, 10)
+        sage: from sage.combinat.partition import Partitions_length_and_parts_restricted
+        sage: Partitions_length_and_parts_restricted(10, 1, 10, 2, 5)
         Partitions of 10 whose parts are between 2 and 5
-        sage: list(Partitions_parts_length_restricted(9, 2, 4, 3, 4))
+        sage: list(Partitions_length_and_parts_restricted(9, 3, 4, 2, 4))
         [[4, 3, 2], [3, 3, 3], [3, 2, 2, 2]]
 
-        sage: [4,3,2,1] in Partitions_parts_length_restricted(10, 2, 10, 0, 10)
+        sage: [4,3,2,1] in Partitions_length_and_parts_restricted(10, 1, 10, 2, 10)
         False
-        sage: [2,2,2,2,2] in Partitions_parts_length_restricted(10, 2, 10, 0, 10)
+        sage: [2,2,2,2,2] in Partitions_length_and_parts_restricted(10, 1, 10, 2, 10)
         True
+
     """
-    def __init__(self, n, min_part, max_part, min_length, max_length):
+    def __init__(self, n, min_length, max_length, min_part, max_part):
         """
         Initialize ``self``.
 
         TESTS::
 
-            sage: from sage.combinat.partition import Partitions_parts_length_restricted
-            sage: p = Partitions_parts_length_restricted(10, 2, 5, 3, 4)
+            sage: from sage.combinat.partition import Partitions_length_and_parts_restricted
+            sage: p = Partitions_length_and_parts_restricted(10, 2, 5, 3, 4)
             sage: TestSuite(p).run()
         """
+        if not (1 <= min_part <= max_part <= n):
+            raise ValueError(f"min_part (={min_part}) and max_part (={max_part}) should satisfy 1 <= min_part <= max_part <= n (={n})")
+        if not (1 <= min_length <= max_length <= n):
+            raise ValueError(f"min_length (={min_length}) and max_length (={max_length}) should satisfy 1 <= min_length <= max_length <= n (={n})")
         Partitions.__init__(self)
         self._n = n
         self._min_part = min_part
@@ -8960,28 +8993,28 @@ class Partitions_parts_length_restricted(Partitions):
 
         TESTS::
 
-            sage: from sage.combinat.partition import Partitions_parts_length_restricted
-            sage: Partitions_parts_length_restricted(9, 2, 9, 0, 9)
+            sage: from sage.combinat.partition import Partitions_length_and_parts_restricted
+            sage: Partitions_length_and_parts_restricted(9, 1, 9, 2, 9)
             Partitions of 9 whose parts are at least 2
-            sage: Partitions_parts_length_restricted(9, 2, 9, 3, 5)
+            sage: Partitions_length_and_parts_restricted(9, 3, 5, 2, 9)
             Partitions of 9 having length between 3 and 5 and whose parts are at least 2
         """
-        if not self._min_length and self._max_length == self._n:
+        if self._min_length == 1 and self._max_length == self._n:
             length_str = ""
         elif self._min_length == self._max_length:
             length_str = f"having length {self._min_length}"
-        elif not self._min_length:
+        elif self._min_length == 1:
             length_str = f"having length at most {self._max_length}"
         elif self._max_length == self._n:
             length_str = f"having length at least {self._min_length}"
         else:
             length_str = f"having length between {self._min_length} and {self._max_length}"
 
-        if self._min_part == ZZ.one() and self._max_part == self._n:
+        if self._min_part == 1 and self._max_part == self._n:
             parts_str = ""
         elif self._min_part == self._max_part:
             parts_str = f"having parts equal to {self._min_part}"
-        elif self._min_part == ZZ.one():
+        elif self._min_part == 1:
             parts_str = f"whose parts are at most {self._max_part}"
         elif self._max_part == self._n:
             parts_str = f"whose parts are at least {self._min_part}"
@@ -9044,31 +9077,42 @@ class Partitions_parts_length_restricted(Partitions):
 
         EXAMPLES::
 
-            sage: from sage.combinat.partition import Partitions_parts_length_restricted
-            sage: list(Partitions_parts_length_restricted(9, 3, 9, 0, 2))
+            sage: from sage.combinat.partition import Partitions_length_and_parts_restricted
+            sage: list(Partitions_length_and_parts_restricted(9, 1, 2, 3, 9))
             [[9], [6, 3], [5, 4]]
-            sage: Partitions_parts_length_restricted(9, 3, 9, 0, 2).cardinality()
+            sage: Partitions_length_and_parts_restricted(9, 1, 2, 3, 9).cardinality()
             3
 
         TESTS::
 
             sage: from itertools import product
             sage: P = Partitions
-            sage: all(P(n, min_part=a, max_part=b, min_length=k, max_length=m).cardinality()
-            ....:     == len(list(P(n, min_part=a, max_part=b, min_length=k, max_length=m)))
-            ....:     for n, a, b, k, m in product(range(-1, 5), repeat=5))
+            sage: all(P(n, min_length=k, max_length=m, min_part=a, max_part=b).cardinality()
+            ....:     == len(list(P(n, min_length=k, max_length=m, min_part=a, max_part=b)))
+            ....:     for n, k, m, a, b in product(range(-1, 5), repeat=5))
             True
         """
         n = self._n
-        a = self._min_part - 1
-        if not self._min_length and self._max_length == n and not a:
-            # unrestricted length, parts smaller max_part
-            return ZZ.sum(number_of_partitions_length(n, i)
-                          for i in range(self._max_part + 1))
+        a = self._min_part
+        b = self._max_part
+        k = self._min_length
+        m = self._max_length
+        if a == 1:
+            # unrestricted min_part
+            if k == 1:
+                if m == n:
+                    # unrestricted length, parts smaller max_part
+                    return ZZ.sum(number_of_partitions_length(n, i)
+                                  for i in range(b + 1))
 
-        m = self._max_part - a
-        return ZZ.sum(number_of_partitions_length_max_part(n - a * ell, ell, m)
-                      for ell in range(self._min_length, self._max_length + 1))
+                return number_of_partitions_max_length_max_part(n, m, b)
+
+            return (number_of_partitions_max_length_max_part(n, m, b)
+                    - number_of_partitions_max_length_max_part(n, k - 1, b))
+
+        d = b - a
+        return ZZ.sum(number_of_partitions_max_length_max_part(n1, min(ell, n1), min(d, n1))
+                      for ell in range(k, min(m, n // a) + 1) if (n1 := n - a * ell) is not None)
 
 
 ##########################
@@ -9693,30 +9737,62 @@ def number_of_partitions_length(n, k, algorithm='hybrid'):
 
 
 @cached_function
-def number_of_partitions_length_max_part(n, k, b):
+def number_of_partitions_max_length_max_part(n, k, b):
     r"""
-    Return the number of partitions of `n` with exactly `k` parts and
-    the largest part at most `b`.
+    Return the number of partitions of `n` with at most `k`
+    parts, all of which are at most `b`.
 
-    EXAMPLES::
+    EXAMPLES:
 
-        sage: from sage.combinat.partition import number_of_partitions_length_max_part
-        sage: number_of_partitions_length_max_part(10, 5, 3)
-        3
-        sage: list(Partitions(10, length=5, max_part=3))
-        [[3, 3, 2, 1, 1], [3, 2, 2, 2, 1], [2, 2, 2, 2, 2]]
+    This could also be computed using the `q`-binomial coefficient::
+
+        sage: from sage.combinat.partition import number_of_partitions_max_length_max_part as f
+        sage: all(f(n, k, b) == q_binomial(k + b, b)[n] for n in range(5) for k in range(n+1) for b in range(n+1))
+        True
+
+    However, although the `q`-binomial coefficient is faster for
+    individual invocations, it seems that the caching we use here is
+    essential for some computations::
+
+        sage: def A(n):
+        ....:     s1 = number_of_partitions(n)
+        ....:     s2 = sum(Partitions(m, max_part=l, length=k).cardinality()
+        ....:              * Partitions(n-m-l^2, min_length=k+2*l).cardinality()
+        ....:              for l in range(1, (n+1).isqrt())
+        ....:              for m in range((n-l^2-2*l)*l//(l+1)+1)
+        ....:              for k in range(ceil(m/l), min(m, n-m-l^2-2*l)+1))
+        ....:     return s1 + s2
+
+        sage: A(100)
+        10934714090
     """
+    assert n >= 0 and k >= 0 and b >= 0, f"{n, k, b} must be non-negative"
     if not n:
-        if not k:
-            return ZZ.one()
+        return ZZ.one()
+    # for best performance of the cache, it is better to pass bounds
+    # at most n - internally we make sure that this is the case
+    b = min(n, b)
+    k = min(n, k)
+    if n == k == b:
+        return number_of_partitions(n)
+    bk = b * k
+    if n > bk:
         return ZZ.zero()
-    if not k or k > n or n > b * k:
-        return ZZ.zero()
-    if b >= n:
-        return number_of_partitions_length(n, k)
+    if n == bk:
+        return ZZ.one()
+    if k < b:
+        b, k = k, b
+    # shortcut if k = n
+    if n == k:
+        return number_of_partitions_length(n + b, b)
 
-    return ZZ.sum(number_of_partitions_length_max_part(n - m, k - 1, m)
-                  for m in range(1, b+1))
+    # recurse on the size of the maximal part
+    # for optimal caching it would be nice to keep the second argument larger
+    # than the third
+    # since k >= b > 0 we have so min(k - 1, n1) >= min(m, n1)
+    # except maybe for m == k == b
+    return sum(number_of_partitions_max_length_max_part(n1, min(k - 1, n1), min(m, n1))
+               for m in range(1, b + 1) if (n1 := n - m) is not None)
 
 
 ##########
