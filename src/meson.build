@@ -87,7 +87,11 @@ endif
 # Only some platforms have a standalone math library (https://mesonbuild.com/howtox.html#add-math-library-lm-portably)
 m = cc.find_library('m', required: false)
 m4ri = dependency('m4ri', version: '>=20140914')
-m4rie = dependency('m4rie')
+m4rie = dependency('m4rie', required: false)
+if not m4rie.found()
+  # For some reason, m4rie is not found via pkg-config on some systems (eg Conda)
+  m4rie = cc.find_library('m4rie')
+endif
 # Cannot be found via pkg-config
 mtx = cc.find_library('mtx', required: false, disabler: true)
 png = dependency(['libpng', 'png', 'png16'], version: '>=1.2')
