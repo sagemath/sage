@@ -329,4 +329,3 @@ def sage_include_directories(use_sources=False):
     dirs.append(sysconfig.get_config_var('INCLUDEPY'))
 
     return dirs
-
