@@ -104,6 +104,7 @@ build-requires = [
 
 host-requires = [
   "virtual:interface/blas",
+  "virtual:compiler/fortran",
   "pkg:generic/boost",
   "pkg:generic/brial",
   "pkg:generic/cddlib",

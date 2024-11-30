@@ -58,7 +58,7 @@ ansi_escape_sequence = re.compile(r"(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])"
 special_optional_regex = (
     "py2|long time|not implemented|not tested|optional|needs|known bug"
 )
-tag_with_explanation_regex = r"((?:\w|[.])*)\s*(?:\((?P<cmd_explanation>.*?)\))?"
+tag_with_explanation_regex = r"((?:!?\w|[.])*)\s*(?:\((?P<cmd_explanation>.*?)\))?"
 optional_regex = re.compile(
     rf"[^ a-z]\s*(?P<cmd>{special_optional_regex})(?:\s|[:-])*(?P<tags>(?:(?:{tag_with_explanation_regex})\s*)*)",
     re.IGNORECASE,
@@ -1124,14 +1124,14 @@ class SageDocTestParser(doctest.DocTestParser):
                             continue
 
                     if self.optional_tags is not True:
-                        extra = {
-                            tag
-                            for tag in optional_tags
-                            if (
-                                tag not in self.optional_tags
-                                and tag not in available_software
-                            )
-                        }
+                        extra = set()
+                        for tag in optional_tags:
+                            if tag not in self.optional_tags:
+                                if tag.startswith('!'):
+                                    if tag[1:] in available_software:
+                                        extra.add(tag)
+                                elif tag not in available_software:
+                                    extra.add(tag)
                         if extra and any(tag in ["bug"] for tag in extra):
                             # Bug only occurs on a specific platform?
                             bug_platform = optional_tags_with_values.get("bug")
