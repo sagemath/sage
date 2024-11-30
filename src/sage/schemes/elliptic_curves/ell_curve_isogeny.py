@@ -83,6 +83,7 @@ AUTHORS:
 
 from copy import copy, deepcopy
 
+from sage.misc.cachefunc import cached_method
 from sage.structure.sequence import Sequence
 
 from sage.schemes.elliptic_curves.hom import EllipticCurveHom
@@ -955,11 +956,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
     __ratl_maps = None
 
     #
-    # The dual
-    #
-    __dual = None
-
-    #
     # Kernel Data
     #
 
@@ -986,6 +982,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
     __psi = None # psi polynomial
     __phi = None # phi polynomial
     __omega = None # omega polynomial, an element of k[x][y]
+
+    # Other members: __xfield, __xyfield
 
     #
     # Python Special Functions
@@ -1078,13 +1076,64 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         self.__setup_post_isomorphism(codomain, model)
 
         if pre_isom is not None:
-            self._set_pre_isomorphism(pre_isom)
+            self.__set_pre_isomorphism(pre_isom.domain(), pre_isom)
 
         if post_isom is not None:
             self.__set_post_isomorphism(old_codomain, post_isom)   #(trac #7096)
 
         # Inheritance house keeping
         self.__perform_inheritance_housekeeping()
+
+    def _compose_with_isomorphism(self, pre_isomorphism=None, post_isomorphism=None):
+        """
+        Returns a modified isogeny by pre-composing or post-composing with a
+        :class:`sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism`.
+        """
+        final_pre_isomorphism = self.__pre_isomorphism
+        final_post_isomorphism = self.__post_isomorphism
+        if pre_isomorphism is not None:
+            if not isinstance(pre_isomorphism, WeierstrassIsomorphism):
+                raise ValueError("invalid parameter: pre-isomorphism must be a WeierstrassIsomorphism")
+            if self._domain != pre_isomorphism.codomain():
+                raise ValueError("invalid parameter: pre-isomorphism must have codomain curve equal to this isogenies' domain")
+            final_pre_isomorphism = final_pre_isomorphism * pre_isomorphism if final_pre_isomorphism is not None else pre_isomorphism
+
+        if post_isomorphism is not None:
+            if not isinstance(post_isomorphism, (WeierstrassIsomorphism, type(None))):
+                raise ValueError("invalid parameter: post-isomorphism must be a WeierstrassIsomorphism")
+            if self._codomain != post_isomorphism.domain():
+                raise ValueError("invalid parameter: post-isomorphism must have domain curve equal to this isogenies' codomain")
+            final_post_isomorphism = post_isomorphism * final_post_isomorphism if final_post_isomorphism is not None else post_isomorphism
+
+        result = EllipticCurveIsogeny.__new__(EllipticCurveIsogeny)
+        # we're bypassing calling __init__, make sure we do an equivalent amount of work
+
+        for attr in ["_degree", "__algorithm", "__check", "__prei_ratl_maps",
+                     "__posti_ratl_maps", "__base_field", "__poly_ring",
+                     "__mpoly_ring", "__kernel_list", "__kernel_polynomial",
+                     "__inner_kernel_polynomial", "__kernel_mod_sign", "__v",
+                     "__w", "__psi", "__phi", "__omega", "__xfield",
+                     "__xyfield"]:
+            if attr.startswith("__"):
+                attr = "_EllipticCurveIsogeny" + attr
+            setattr(result, attr, getattr(self, attr))
+
+        if final_pre_isomorphism is not None:
+            result.__set_pre_isomorphism(
+                    self._domain if final_pre_isomorphism is None else final_pre_isomorphism.domain(),
+                    final_pre_isomorphism)
+        else:
+            result._domain = self._domain
+
+        if final_post_isomorphism is not None:
+            result.__set_post_isomorphism(
+                    self._codomain if final_post_isomorphism is None else final_post_isomorphism.codomain(),
+                    final_post_isomorphism)
+        else:
+            result._codomain = self._codomain
+
+        result.__perform_inheritance_housekeeping()
+        return result
 
     def _eval(self, P):
         r"""
@@ -1425,9 +1474,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: negphi.rational_maps()
             ((x^2 + (-a)*x - 2)/(x + (-a)), (-x^2*y + (2*a)*x*y - y)/(x^2 + (-2*a)*x - 1))
         """
-        output = deepcopy(self)
-        output._set_post_isomorphism(negation_morphism(output._codomain))
-        return output
+        return self._compose_with_isomorphism(post_isomorphism=negation_morphism(self._codomain))
 
     #
     # Sage Special Functions
@@ -1478,43 +1525,13 @@ class EllipticCurveIsogeny(EllipticCurveHom):
     # Private Common Functions
     ###########################
 
-    def __clear_cached_values(self):
-        r"""
-        A private function to clear the cache if the codomain has been
-        modified by a pre or post-isomorphism.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ[]
-            sage: E = EllipticCurve(QQ, [0,0,0,1,0])
-            sage: phi = EllipticCurveIsogeny(E, x)
-            sage: old_ratl_maps = phi.rational_maps()
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import negation_morphism
-            sage: phi._set_post_isomorphism(negation_morphism(phi.codomain()))
-            sage: old_ratl_maps == phi.rational_maps()
-            False
-            sage: old_ratl_maps[1] == -phi.rational_maps()[1]
-            True
-
-            sage: F = GF(127); R.<x> = F[]
-            sage: E = EllipticCurve(j=F(1728))
-            sage: f = x^5 + 43*x^4 + 97*x^3 + 81*x^2 + 42*x + 82
-            sage: phi = EllipticCurveIsogeny(E, f)
-            sage: old_ratl_maps = phi.rational_maps()
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-            sage: phi._set_post_isomorphism(WeierstrassIsomorphism(phi.codomain(),
-            ....:                                                  (-13,13,-13,13)))
-            sage: old_ratl_maps == phi.rational_maps()
-            False
-            sage: phi._EllipticCurveIsogeny__clear_cached_values()
-        """
-        self.__ratl_maps = None
-        self.__dual = None
-
     def __perform_inheritance_housekeeping(self):
         r"""
         Internal helper function, sets values on the super classes of
         this class.
+
+        This should only be called during :meth:`__init__`,
+        and should not be called more than once.
 
         EXAMPLES:
 
@@ -1524,14 +1541,13 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: E = EllipticCurve(GF(43), [2,3,5,7,11])
             sage: R.<x> = GF(43)[]; f = x + 42
             sage: phi = EllipticCurveIsogeny(E, f)
-            sage: phi._EllipticCurveIsogeny__perform_inheritance_housekeeping()
             sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
             sage: E2 = phi.codomain()
             sage: post_isom = WeierstrassIsomorphism(E2, (41, 37, 31, 29))
-            sage: phi._set_post_isomorphism(post_isom)
+            sage: phi = phi._compose_with_isomorphism(post_isomorphism=post_isom)
             sage: E1pr = WeierstrassIsomorphism(E, (-1, 2, -3, 4)).codomain()
             sage: pre_isom = E1pr.isomorphism_to(E)
-            sage: phi._set_pre_isomorphism(pre_isom)
+            sage: phi = phi._compose_with_isomorphism(pre_isomorphism=pre_isom)
         """
         EllipticCurveHom.__init__(self, self._domain, self._codomain)
 
@@ -1716,19 +1732,69 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         Private function to set the pre-isomorphism and domain (and
         keep track of the domain of the isogeny).
 
-        EXAMPLES::
+        This should only be called during initialization,
+        :meth:`__perform_inheritance_housekeeping` should be called after.
 
-            sage: E = EllipticCurve(GF(43), [2,3,5,7,11])
-            sage: R.<x> = GF(43)[]; f = x + 42
+        TESTS::
+
+            sage: E = EllipticCurve(GF(31), [1,1,0,1,-1])
+            sage: R.<x> = GF(31)[]
+            sage: f = x^3 + 9*x^2 + x + 30
             sage: phi = EllipticCurveIsogeny(E, f)
-            sage: phi._EllipticCurveIsogeny__perform_inheritance_housekeeping()
+            sage: Epr = E.short_weierstrass_model()
+            sage: isom = Epr.isomorphism_to(E)
+            sage: phi = phi._compose_with_isomorphism(isom)
+            sage: phi.rational_maps()
+            ((-6*x^4 - 3*x^3 + 12*x^2 + 10*x - 1)/(x^3 + x - 12),
+             (3*x^7 + x^6*y - 14*x^6 - 3*x^5 + 5*x^4*y + 7*x^4 + 8*x^3*y - 8*x^3 - 5*x^2*y + 5*x^2 - 14*x*y + 14*x - 6*y - 6)/(x^6 + 2*x^4 + 7*x^3 + x^2 + 7*x - 11))
+            sage: phi(Epr((0,22)))
+            (13 : 21 : 1)
+            sage: phi(Epr((3,7)))
+            (14 : 17 : 1)
+
+            sage: E = EllipticCurve(GF(29), [0,0,0,1,0])
+            sage: R.<x> = GF(29)[]
+            sage: f = x^2 + 5
+            sage: phi = EllipticCurveIsogeny(E, f)
+            sage: phi
+            Isogeny of degree 5
+             from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 29
+               to Elliptic Curve defined by y^2 = x^3 + 20*x over Finite Field of size 29
             sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-            sage: E1pr = WeierstrassIsomorphism(E, (-1, 2, -3, 4)).codomain()
-            sage: pre_isom = E1pr.isomorphism_to(E)
-            sage: phi._set_pre_isomorphism(pre_isom)
-            sage: phi._EllipticCurveIsogeny__set_pre_isomorphism(E, WeierstrassIsomorphism(E, (-1, 3, -3, 4)))
-            sage: E == phi.domain()
-            True
+            sage: inv_isom = WeierstrassIsomorphism(E, (1,-2,5,10))
+            sage: Epr = inv_isom.codomain()
+            sage: isom = Epr.isomorphism_to(E)
+            sage: phi = phi._compose_with_isomorphism(isom)
+            sage: phi
+            Isogeny of degree 5
+             from Elliptic Curve defined by y^2 + 10*x*y + 20*y = x^3 + 27*x^2 + 6 over Finite Field of size 29
+               to Elliptic Curve defined by y^2 = x^3 + 20*x over Finite Field of size 29
+            sage: phi(Epr((12,1)))
+            (26 : 0 : 1)
+            sage: phi(Epr((2,9)))
+            (0 : 0 : 1)
+            sage: phi(Epr((21,12)))
+            (3 : 0 : 1)
+            sage: phi.rational_maps()[0]
+            (x^5 - 10*x^4 - 6*x^3 - 7*x^2 - x + 3)/(x^4 - 8*x^3 + 5*x^2 - 14*x - 6)
+
+            sage: E = EllipticCurve('11a1')
+            sage: R.<x> = QQ[]
+            sage: f = x^2 - 21*x + 80
+            sage: phi = EllipticCurveIsogeny(E, f); phi
+            Isogeny of degree 5
+             from Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
+               to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 7820*x - 263580 over Rational Field
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+            sage: Epr = E.short_weierstrass_model()
+            sage: isom = Epr.isomorphism_to(E)
+            sage: phi = phi._compose_with_isomorphism(isom)
+            sage: phi
+            Isogeny of degree 5
+             from Elliptic Curve defined by y^2 = x^3 - 13392*x - 1080432 over Rational Field
+               to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 7820*x - 263580 over Rational Field
+            sage: phi(Epr((168,1188)))
+            (0 : 1 : 0)
         """
         self._domain = domain
         self.__pre_isomorphism = isomorphism
@@ -1751,26 +1817,49 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             ker_poly = ker_poly(self.__prei_ratl_maps[0])
             self.__kernel_polynomial = ker_poly.monic()
 
-        self.__perform_inheritance_housekeeping()
-
     def __set_post_isomorphism(self, codomain, isomorphism):
         r"""
         Private function to set the post-isomorphism and codomain (and
         keep track of the codomain of the isogeny).
 
-        EXAMPLES:
+        This should only be called during initialization,
+        :meth:`__perform_inheritance_housekeeping` should be called after.
 
-        The following examples inherently exercise this function::
+        TESTS::
 
-            sage: E = EllipticCurve(j=GF(7)(1728))
-            sage: phi = EllipticCurveIsogeny(E, E((0,0)))
+            sage: E = EllipticCurve(j=GF(31)(0))
+            sage: R.<x> = GF(31)[]
+            sage: phi = EllipticCurveIsogeny(E, x+18)
             sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+            sage: phi = phi._compose_with_isomorphism(post_isomorphism=WeierstrassIsomorphism(phi.codomain(), (6,8,10,12)))
+            sage: phi
+            Isogeny of degree 3
+             from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 31
+               to Elliptic Curve defined by y^2 + 24*x*y + 7*y = x^3 + 22*x^2 + 16*x + 20 over Finite Field of size 31
+
+            sage: E = EllipticCurve(j=GF(47)(0))
+            sage: f = E.torsion_polynomial(3)/3
+            sage: phi = EllipticCurveIsogeny(E, f)
             sage: E2 = phi.codomain()
-            sage: isom = WeierstrassIsomorphism(E2, (-1,2,-3,4))
-            sage: phi._set_post_isomorphism(isom)
-            sage: phi._EllipticCurveIsogeny__set_post_isomorphism(E2, WeierstrassIsomorphism(phi.codomain(), (1,-2,3,-4)))
-            sage: E2 == phi.codomain()
+            sage: post_isom = E2.isomorphism_to(E)
+            sage: phi = phi._compose_with_isomorphism(post_isomorphism=post_isom)
+            sage: phi.rational_maps() == E.multiplication_by_m(3)
+            False
+            sage: phi = -phi
+            sage: phi.rational_maps() == E.multiplication_by_m(3)
             True
+
+            sage: R.<x> = QQ[]
+            sage: K.<a> = NumberField(x^2 + 2)
+            sage: E = EllipticCurve(j=K(1728))
+            sage: ker_list = E.torsion_points()
+            sage: phi = EllipticCurveIsogeny(E, ker_list)
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+            sage: post_isom = WeierstrassIsomorphism(phi.codomain(), (a,2,3,5))
+            sage: phi
+            Isogeny of degree 4
+             from Elliptic Curve defined by y^2 = x^3 + x over Number Field in a with defining polynomial x^2 + 2
+               to Elliptic Curve defined by y^2 = x^3 + (-44)*x + 112 over Number Field in a with defining polynomial x^2 + 2
         """
         self._codomain = codomain
         self.__post_isomorphism = isomorphism
@@ -1786,8 +1875,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         y = self.__xyfield.gen(1)
 
         self.__posti_ratl_maps = (x - r) * uinv2, (y - s*(x-r) - t) * uinv3
-
-        self.__perform_inheritance_housekeeping()
 
     def __setup_post_isomorphism(self, codomain, model):
         r"""
@@ -2951,157 +3038,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         """
         return Integer(1)
 
-    def _set_pre_isomorphism(self, preWI):
-        """
-        Modify this isogeny by pre-composing with a
-        :class:`sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism`.
-
-        For internal use only.
-
-        TESTS::
-
-            sage: E = EllipticCurve(GF(31), [1,1,0,1,-1])
-            sage: R.<x> = GF(31)[]
-            sage: f = x^3 + 9*x^2 + x + 30
-            sage: phi = EllipticCurveIsogeny(E, f)
-            sage: Epr = E.short_weierstrass_model()
-            sage: isom = Epr.isomorphism_to(E)
-            sage: phi._set_pre_isomorphism(isom)
-            sage: phi.rational_maps()
-            ((-6*x^4 - 3*x^3 + 12*x^2 + 10*x - 1)/(x^3 + x - 12),
-             (3*x^7 + x^6*y - 14*x^6 - 3*x^5 + 5*x^4*y + 7*x^4 + 8*x^3*y - 8*x^3 - 5*x^2*y + 5*x^2 - 14*x*y + 14*x - 6*y - 6)/(x^6 + 2*x^4 + 7*x^3 + x^2 + 7*x - 11))
-            sage: phi(Epr((0,22)))
-            (13 : 21 : 1)
-            sage: phi(Epr((3,7)))
-            (14 : 17 : 1)
-
-            sage: E = EllipticCurve(GF(29), [0,0,0,1,0])
-            sage: R.<x> = GF(29)[]
-            sage: f = x^2 + 5
-            sage: phi = EllipticCurveIsogeny(E, f)
-            sage: phi
-            Isogeny of degree 5
-             from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 29
-               to Elliptic Curve defined by y^2 = x^3 + 20*x over Finite Field of size 29
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-            sage: inv_isom = WeierstrassIsomorphism(E, (1,-2,5,10))
-            sage: Epr = inv_isom.codomain()
-            sage: isom = Epr.isomorphism_to(E)
-            sage: phi._set_pre_isomorphism(isom)
-            sage: phi
-            Isogeny of degree 5
-             from Elliptic Curve defined by y^2 + 10*x*y + 20*y = x^3 + 27*x^2 + 6 over Finite Field of size 29
-               to Elliptic Curve defined by y^2 = x^3 + 20*x over Finite Field of size 29
-            sage: phi(Epr((12,1)))
-            (26 : 0 : 1)
-            sage: phi(Epr((2,9)))
-            (0 : 0 : 1)
-            sage: phi(Epr((21,12)))
-            (3 : 0 : 1)
-            sage: phi.rational_maps()[0]
-            (x^5 - 10*x^4 - 6*x^3 - 7*x^2 - x + 3)/(x^4 - 8*x^3 + 5*x^2 - 14*x - 6)
-
-            sage: E = EllipticCurve('11a1')
-            sage: R.<x> = QQ[]
-            sage: f = x^2 - 21*x + 80
-            sage: phi = EllipticCurveIsogeny(E, f); phi
-            Isogeny of degree 5
-             from Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
-               to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 7820*x - 263580 over Rational Field
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-            sage: Epr = E.short_weierstrass_model()
-            sage: isom = Epr.isomorphism_to(E)
-            sage: phi._set_pre_isomorphism(isom)
-            sage: phi
-            Isogeny of degree 5
-             from Elliptic Curve defined by y^2 = x^3 - 13392*x - 1080432 over Rational Field
-               to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 7820*x - 263580 over Rational Field
-            sage: phi(Epr((168,1188)))
-            (0 : 1 : 0)
-        """
-        WIdom = preWI.domain()
-        WIcod = preWI.codomain()
-
-        if not isinstance(preWI, WeierstrassIsomorphism):
-            raise ValueError("invalid parameter: isomorphism must be a WeierstrassIsomorphism")
-
-        if self._domain != WIcod:
-            raise ValueError("invalid parameter: isomorphism must have codomain curve equal to this isogenies' domain")
-
-        if self.__pre_isomorphism is None:
-            isom = preWI
-            domain = WIdom
-        else:
-            isom = self.__pre_isomorphism*preWI
-            domain = WIdom
-
-        self.__clear_cached_values()
-
-        self.__set_pre_isomorphism(domain, isom)
-
-    def _set_post_isomorphism(self, postWI):
-        """
-        Modify this isogeny by post-composing with a
-        :class:`sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism`.
-
-        For internal use only.
-
-        TESTS::
-
-            sage: E = EllipticCurve(j=GF(31)(0))
-            sage: R.<x> = GF(31)[]
-            sage: phi = EllipticCurveIsogeny(E, x+18)
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-            sage: phi._set_post_isomorphism(WeierstrassIsomorphism(phi.codomain(), (6,8,10,12)))
-            sage: phi
-            Isogeny of degree 3
-             from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 31
-               to Elliptic Curve defined by y^2 + 24*x*y + 7*y = x^3 + 22*x^2 + 16*x + 20 over Finite Field of size 31
-
-            sage: E = EllipticCurve(j=GF(47)(0))
-            sage: f = E.torsion_polynomial(3)/3
-            sage: phi = EllipticCurveIsogeny(E, f)
-            sage: E2 = phi.codomain()
-            sage: post_isom = E2.isomorphism_to(E)
-            sage: phi._set_post_isomorphism(post_isom)
-            sage: phi.rational_maps() == E.multiplication_by_m(3)
-            False
-            sage: phi = -phi
-            sage: phi.rational_maps() == E.multiplication_by_m(3)
-            True
-
-            sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(x^2 + 2)
-            sage: E = EllipticCurve(j=K(1728))
-            sage: ker_list = E.torsion_points()
-            sage: phi = EllipticCurveIsogeny(E, ker_list)
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
-            sage: post_isom = WeierstrassIsomorphism(phi.codomain(), (a,2,3,5))
-            sage: phi
-            Isogeny of degree 4
-             from Elliptic Curve defined by y^2 = x^3 + x over Number Field in a with defining polynomial x^2 + 2
-               to Elliptic Curve defined by y^2 = x^3 + (-44)*x + 112 over Number Field in a with defining polynomial x^2 + 2
-        """
-        WIdom = postWI.domain()
-        WIcod = postWI.codomain()
-
-        if not isinstance(postWI, WeierstrassIsomorphism):
-            raise ValueError("invalid parameter: isomorphism must be a WeierstrassIsomorphism")
-
-        if self._codomain != WIdom:
-            raise ValueError("invalid parameter: isomorphism must have domain curve equal to this isogenies' codomain")
-
-        if self.__post_isomorphism is None:
-            isom = postWI
-            codomain = WIcod
-        else:
-            isom = postWI*self.__post_isomorphism
-            codomain = WIcod
-
-        self.__clear_cached_values()
-
-        self.__set_post_isomorphism(codomain, isom)
-
+    @cached_method
     def dual(self):
         r"""
         Return the isogeny dual to this isogeny.
@@ -3171,7 +3108,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: z2 = GF(71^2).gen()
             sage: E = EllipticCurve(j=57*z2+51)
             sage: E.isogeny(3*E.lift_x(0)).dual()
-            Composite morphism of degree 71 = 71*1^2:
+            Composite morphism of degree 71 = 71*1:
               From: Elliptic Curve defined by y^2 = x^3 + (32*z2+67)*x + (24*z2+37)
                     over Finite Field in z2 of size 71^2
               To:   Elliptic Curve defined by y^2 = x^3 + (41*z2+56)*x + (18*z2+42)
@@ -3246,9 +3183,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi = E.isogenies_prime_degree(3)[0]
             sage: (-phi).dual() == -phi.dual()
             True
-            sage: phi._EllipticCurveIsogeny__clear_cached_values()  # forget the dual
-            sage: -phi.dual() == (-phi).dual()
-            True
 
         Check that :issue:`37168` is fixed::
 
@@ -3264,9 +3198,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         """
         if self.__base_field.characteristic() in (2, 3):
             raise NotImplementedError("computation of dual isogenies not yet implemented in characteristics 2 and 3")
-
-        if self.__dual is not None:
-            return self.__dual
 
         # trac 7096
         E1, E2pr, _, _ = compute_intermediate_curves(self.codomain(), self.domain())
@@ -3314,8 +3245,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             mult = self._domain.scalar_multiplication(d)
             rhs = phi_hat * self
             corr = find_post_isomorphism(mult, rhs)
-            self.__dual = corr * phi_hat
-            return self.__dual
+            return corr * phi_hat
 
         else:
             # trac 7096
@@ -3337,10 +3267,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             else:
                 assert "bug in dual()"
 
-            phi_hat._set_pre_isomorphism(pre_iso)
-            phi_hat._set_post_isomorphism(post_iso)
-            phi_hat.__perform_inheritance_housekeeping()
-            return phi_hat
+            return phi_hat._compose_with_isomorphism(pre_iso, post_iso)
 
     @staticmethod
     def _composition_impl(left, right):
@@ -3378,15 +3305,10 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             NotImplemented
         """
         if isinstance(left, WeierstrassIsomorphism) and isinstance(right, EllipticCurveIsogeny):
-            result = deepcopy(right)
-            result._set_post_isomorphism(left)
-            return result
+            return right._compose_with_isomorphism(post_isomorphism=left)
 
         if isinstance(left, EllipticCurveIsogeny) and isinstance(right, WeierstrassIsomorphism):
-            assert isinstance(left, EllipticCurveIsogeny)
-            result = deepcopy(left)
-            result._set_pre_isomorphism(right)
-            return result
+            return left._compose_with_isomorphism(pre_isomorphism=right)
 
         return NotImplemented
 

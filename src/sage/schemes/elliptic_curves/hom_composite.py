@@ -403,11 +403,11 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         if codomain is not None:
             if not isinstance(codomain, EllipticCurve_generic):
                 raise ValueError(f'not an elliptic curve: {codomain}')
-            iso = self._phis[-1].codomain().isomorphism_to(codomain)
-            if hasattr(self._phis[-1], '_set_post_isomorphism'):
-                self._phis[-1]._set_post_isomorphism(iso)
+            iso = self._phis[-1].codomain().isomorphism_to(codomain) * self._phis[-1]
+            if isinstance(iso, EllipticCurveHom_composite):
+                self._phis = self._phis[:-1] + iso._phis
             else:
-                self._phis.append(iso)
+                self._phis[-1] = iso
 
         self._phis = tuple(self._phis)  # make immutable
         self.__perform_inheritance_housekeeping()
@@ -668,19 +668,15 @@ class EllipticCurveHom_composite(EllipticCurveHom):
               To:   Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-4)*x + (-6*I)
                     over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         """
-        if isinstance(left, EllipticCurveHom_composite):
-            if isinstance(right, WeierstrassIsomorphism) and hasattr(left.factors()[0], '_set_pre_isomorphism'):    # XXX bit of a hack
-                return EllipticCurveHom_composite.from_factors((left.factors()[0] * right,) + left.factors()[1:], strict=False)
-            if isinstance(right, EllipticCurveHom_composite):
-                return EllipticCurveHom_composite.from_factors(right.factors() + left.factors())
-            if isinstance(right, EllipticCurveHom):
-                return EllipticCurveHom_composite.from_factors((right,) + left.factors())
-        if isinstance(right, EllipticCurveHom_composite):
-            if isinstance(left, WeierstrassIsomorphism) and hasattr(right.factors()[-1], '_set_post_isomorphism'):  # XXX bit of a hack
-                return EllipticCurveHom_composite.from_factors(right.factors()[:-1] + (left * right.factors()[-1],), strict=False)
-            if isinstance(left, EllipticCurveHom):
-                return EllipticCurveHom_composite.from_factors(right.factors() + (left,))
-        return NotImplemented
+        if not isinstance(left, EllipticCurveHom_composite) and not isinstance(right, EllipticCurveHom_composite):
+            return NotImplemented
+
+        left_factors = left._phis if isinstance(left, EllipticCurveHom_composite) else (left,)
+        right_factors = right._phis if isinstance(right, EllipticCurveHom_composite) else (right,)
+        tmp = left_factors[0] * right_factors[-1]
+        if not isinstance(tmp, EllipticCurveHom_composite):
+            return EllipticCurveHom_composite.from_factors(right_factors[:-1] + (tmp,) + left_factors[1:], strict=False)
+        return EllipticCurveHom_composite.from_factors(right_factors + left_factors)
 
     @staticmethod
     def _comparison_impl(left, right, op):
