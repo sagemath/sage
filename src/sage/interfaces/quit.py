@@ -12,6 +12,8 @@ Quitting interfaces
 #                  https://www.gnu.org/licenses/
 ################################################################################
 
+from __future__ import annotations
+
 import os
 import subprocess
 import sys
