@@ -134,7 +134,7 @@ jobs:
 
       - name: Build
         run: |
-          uv sync --locked --no-install-project --group test
+          uv sync --frozen --no-install-project --group test
           # Disable build isolation following the advice of https://mesonbuild.com/meson-python/how-to-guides/editable-installs.html#build-dependencies
           # Build manually using plain meson instead of using pip because of issues with subprojects
           # https://github.com/mesonbuild/meson-python/issues/598
