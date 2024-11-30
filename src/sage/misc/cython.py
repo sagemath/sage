@@ -47,16 +47,30 @@ def _standard_libs_libdirs_incdirs_aliases():
          {...})
     """
     aliases = {}
-    standard_libs = [
-        'mpfr', 'gmp', 'gmpxx', 'pari', 'm',
-        'ec', 'gsl',
-    ] + aliases["CBLAS_LIBRARIES"] + [
-        'ntl']
+    standard_libs = (
+        [
+            "mpfr",
+            "gmp",
+            "gmpxx",
+            "pari",
+            "m",
+            "ec",
+            "gsl",
+        ]
+        + aliases.get("CBLAS_LIBRARIES", "")
+        + ["ntl"]
+    )
     standard_libdirs = []
     if SAGE_LOCAL:
         standard_libdirs.append(os.path.join(SAGE_LOCAL, "lib"))
-    standard_libdirs.extend(aliases["CBLAS_LIBDIR"] + aliases["NTL_LIBDIR"])
-    standard_incdirs = sage_include_directories() + aliases["CBLAS_INCDIR"] + aliases["NTL_INCDIR"]
+    standard_libdirs.extend(
+        aliases.get("CBLAS_LIBDIR", "") + aliases.get("NTL_LIBDIR", "")
+    )
+    standard_incdirs = (
+        sage_include_directories()
+        + aliases.get("CBLAS_INCDIR", "")
+        + aliases.get("NTL_INCDIR", "")
+    )
     return standard_libs, standard_libdirs, standard_incdirs, aliases
 
 ################################################################
