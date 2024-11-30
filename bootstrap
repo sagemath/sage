@@ -139,7 +139,6 @@ EOF
     # ONLY stderr, and to re-output the results back to stderr leaving
     # stdout alone. Basically we swap the two descriptors using a
     # third, filter, and then swap them back.
-    ./bootstrap-conda && \
     aclocal -I m4 && \
     automake --add-missing --copy build/make/Makefile-auto 3>&1 1>&2 2>&3 \
         | sed "${QUIET_SED_FILTER}" 3>&1 1>&2 2>&3 && \
