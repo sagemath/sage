@@ -6,7 +6,7 @@ extension_data_cpp = {'giac': files('giac.pyx')}
 
 cpp_args = []
 if is_windows
-  # Giac doesn't compile with c++17 on Windows: https://github.com/sagemath/sage/issues/38985 
+  # Giac doesn't compile with c++17 on Windows: https://github.com/sagemath/sage/issues/38985
   cpp_args += '-std=c++11'
 endif
 
