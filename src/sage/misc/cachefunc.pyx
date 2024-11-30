@@ -147,7 +147,7 @@ that has generally a slower attribute access, but fully supports
 cached methods. We remark, however, that cached methods are
 *much* faster if attribute access works. So, we expect that
 :class:`~sage.structure.element.ElementWithCachedMethod` will
-hardly by used.
+hardly be used.
 ::
 
     sage: # needs sage.misc.cython
@@ -1882,7 +1882,7 @@ cdef class CachedMethodCaller(CachedFunction):
             sage: a.f(5) is a.f(y=1,x=5)
             True
 
-        The method can be called as a bound function using the same cache::
+        The method can be called as a unbound function using the same cache::
 
             sage: a.f(5) is Foo.f(a, 5)
             True
@@ -1940,7 +1940,7 @@ cdef class CachedMethodCaller(CachedFunction):
             True
         """
         if self._instance is None:
-            # cached method bound to a class
+            # cached method bound to a class i.e. unbound method, such as ``Foo.f``
             instance = args[0]
             args = args[1:]
             return self._cachedmethod.__get__(instance)(*args, **kwds)
@@ -1987,7 +1987,7 @@ cdef class CachedMethodCaller(CachedFunction):
             5
         """
         if self._instance is None:
-            # cached method bound to a class
+            # cached method bound to a class i.e. unbound method, such as ``CachedMethodTest.f``
             instance = args[0]
             args = args[1:]
             return self._cachedmethod.__get__(instance).cached(*args, **kwds)
@@ -2548,16 +2548,15 @@ cdef class CachedMethod():
         sage: a.f(3) is res
         True
 
-    Note, however, that the :class:`CachedMethod` is replaced by a
-    :class:`CachedMethodCaller` or :class:`CachedMethodCallerNoArgs`
-    as soon as it is bound to an instance or class::
+    Note, however, that accessing the attribute directly will call :meth:`__get__`,
+    and returns a :class:`CachedMethodCaller` or :class:`CachedMethodCallerNoArgs`.
 
         sage: P.<a,b,c,d> = QQ[]
         sage: I = P*[a,b]
         sage: type(I.__class__.gens)
         <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
-
-    So, you would hardly ever see an instance of this class alive.
+        sage: type(I.__class__.__dict__["gens"])
+        <class 'sage.misc.cachefunc.CachedMethod'>
 
     The parameter ``key`` can be used to pass a function which creates a
     custom cache key for inputs. In the following example, this parameter is
@@ -2640,13 +2639,17 @@ cdef class CachedMethod():
             sage: a.f0()
             4
 
-        The computations in method ``f`` are tried to store in a
-        dictionary assigned to the instance ``a``::
+        For methods with parameters, computations in method ``f`` are
+        tried to store in a dictionary assigned to the instance ``a``::
 
             sage: hasattr(a, '_cache__f')
             True
             sage: a._cache__f
             {((2,), ()): 4}
+            sage: a._cache_f0
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'Foo' object has no attribute '_cache_f0'...
 
         As a shortcut, useful to speed up internal computations,
         the same dictionary is also available as an attribute
@@ -2694,6 +2697,8 @@ cdef class CachedMethod():
     def __call__(self, inst, *args, **kwds):
         """
         Call the cached method as a function on an instance.
+        This code path is not used directly except in a few rare cases,
+        see examples for details.
 
         INPUT:
 
@@ -2745,20 +2750,48 @@ cdef class CachedMethod():
             ....:     def f(self, n=2):
             ....:         return self._x^n
             sage: a = Foo(2)
+
+        Initially ``_cache__f`` is not an attribute of ``a``::
+
+            sage: hasattr(a, "_cache__f")
+            False
+
+        When the attribute is accessed (thus ``__get__`` is called),
+        the cache is created and assigned to the attribute::
+
+            sage: a.f
+            Cached version of <function Foo.f at 0x...>
+            sage: a._cache__f
+            {}
             sage: a.f()
             4
-
-        Note that we cannot provide a direct test, since ``a.f`` is
-        an instance of :class:`CachedMethodCaller`.  But during its
-        initialisation, this method was called in order to provide the
-        cached method caller with its cache, and, if possible, assign
-        it to an attribute of ``a``.  So, the following is an indirect
-        doctest::
-
-            sage: a.f.cache    # indirect doctest
+            sage: a.f.cache
             {((2,), ()): 4}
             sage: a._cache__f
             {((2,), ()): 4}
+
+        Testing the method directly::
+
+            sage: a = Foo(2)
+            sage: hasattr(a, "_cache__f")
+            False
+            sage: Foo.__dict__["f"]._get_instance_cache(a)
+            {}
+            sage: a._cache__f
+            {}
+            sage: a.f()
+            4
+            sage: Foo.__dict__["f"]._get_instance_cache(a)
+            {((2,), ()): 4}
+
+        Using ``__dict__`` is needed to access this function because
+        ``Foo.f`` would call ``__get__`` and thus create a
+        :class:`CachedMethodCaller`::
+
+            sage: type(Foo.f)
+            <class 'sage.misc.cachefunc.CachedMethodCaller'>
+            sage: type(Foo.__dict__["f"])
+            <class 'sage.misc.cachefunc.CachedMethod'>
         """
         default = {} if self._cachedfunc.do_pickle else NonpicklingDict()
         try:
@@ -2868,8 +2901,9 @@ cdef class CachedSpecialMethod(CachedMethod):
 
     For new style classes ``C``, it is not possible to override a special
     method, such as ``__hash__``, in the ``__dict__`` of an instance ``c`` of
-    ``C``, because Python will for efficiency reasons always use what is
-    provided by the class, not by the instance.
+    ``C``, because Python will always use what is provided by the class, not
+    by the instance to avoid metaclass confusion. See
+    `<https://docs.python.org/3/reference/datamodel.html#special-method-lookup>`_.
 
     By consequence, if ``__hash__`` would be wrapped by using
     :class:`CachedMethod`, then ``hash(c)`` will access ``C.__hash__`` and bind
