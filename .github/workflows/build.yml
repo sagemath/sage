@@ -242,9 +242,8 @@ jobs:
           # The following command checks that all modules can be imported.
           # The output also includes a long list of modules together with the number of tests in each module.
           # This can be ignored.
-          ./sage -python -m pip install uv
-          ./sage -python -m uv sync --frozen --only-group test
-          ./sage -python -m uv run pytest -c tox.ini -qq --doctest --collect-only || true
+          ./sage -python -m pip install uv 
+          ./sage -python -m uv run --frozen --only-group test -- pytest -c tox.ini -qq --doctest --collect-only || true
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Test changed files (sage -t --new)
@@ -455,8 +454,7 @@ jobs:
           ln -s $(pwd)/.coverage /sage/
           cd /sage
           ./sage -python -m pip install uv
-          ./sage -python -m uv sync --frozen --only-group test
-          ./sage -python -m uv run coverage run --rcfile=src/tox.ini src/bin/sage-runtests --force-lib --long -p4 --format github --random-seed=286735480429121101562228604801325644303 ${{ matrix.tests }}
+          ./sage -python -m uv run --frozen --only-group test -- coverage run --rcfile=src/tox.ini src/bin/sage-runtests --force-lib --long -p4 --format github --random-seed=286735480429121101562228604801325644303 ${{ matrix.tests }}
         shell: sh .ci/docker-exec-script.sh BUILD . {0}
 
       - name: Combine coverage results
@@ -583,9 +581,8 @@ jobs:
           ln -s $(pwd)/.coverage /sage/
           cd /sage
           ./sage -python -m pip install uv
-          ./sage -python -m uv sync --frozen --only-group test
-          ./sage -python -m uv run coverage combine --rcfile=src/tox.ini .coverage/coverage-*/.coverage
-          ./sage -python -m uv run coverage xml --rcfile=src/tox.ini --omit="/tmp/*"
+          ./sage -python -m uv run --frozen --only-group test -- coverage combine --rcfile=src/tox.ini .coverage/coverage-*/.coverage
+          ./sage -python -m uv run --frozen --only-group test -- coverage xml --rcfile=src/tox.ini --omit="/tmp/*"
           mkdir -p .coverage/coverage-report
           mv coverage.xml .coverage/coverage-report/
         shell: sh .ci/docker-exec-script.sh BUILD . {0}
