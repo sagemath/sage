@@ -16,14 +16,14 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          #- ubuntu:trusty # TODO: Upgrade Python to 3.9
-          #- ubuntu:xenial # TODO: Upgrade Python to 3.9
-          #- ubuntu:bionic # TODO: Upgrade Python to 3.9
+          - ubuntu:trusty
+          - ubuntu:xenial
+          - ubuntu:bionic
           #- ubuntu:focal # TODO: Cannot find gap although installed
           - ubuntu:jammy
           - ubuntu:lunar
           - ubuntu:mantic
-          #- debian:buster # TODO: Upgrade Python to 3.9
+          - debian:buster
           #- debian:bullseye # TODO: outdated singular
           - debian:bookworm
           #- debian:trixie # libbrial-dev is not available (has been removed?)
@@ -35,21 +35,21 @@ jobs:
           - linuxmintd/mint21-amd64
           - linuxmintd/mint21.1-amd64
           - linuxmintd/mint21.2-amd64
-          #- fedora:30 # TODO: Upgrade Python to 3.9
-          #- fedora:31 # TODO: Upgrade Python to 3.9
-          #- fedora:32 # TODO: Upgrade Python to 3.9
+          - fedora:30
+          - fedora:31
+          - fedora:32
           #- fedora:33 # TODO: outdated singular
           - fedora:34
           - fedora:35
           - fedora:36
           - fedora:37
-          - fedora:38
-          #- fedora:39 # TODO: Could not build wheels for gmpy2 (python 3.12)
+          #- fedora:38 # Flint is not available
+          - fedora:39 # TODO: Could not build wheels for gmpy2 (python 3.12)
           - fedora:40
-          #- centos:centos7 # TODO: Upgrade Python to 3.9
-          #- quay.io/centos/centos:stream8 # TODO: Upgrade Python to 3.9
+          - centos:centos7
+          - quay.io/centos/centos:stream8
           #- quay.io/centos/centos:stream9 # TODO (cypari): Figure out how to install pari
-          #- almalinux:8 # TODO: Upgrade Python to 3.9
+          - almalinux:8
           #- almalinux:9 # TODO (cypari): Figure out how to install pari
           #- sheerluck/sage-on-gentoo-stage4: TODO: dependency (python?) installation takes ages
           - archlinux
