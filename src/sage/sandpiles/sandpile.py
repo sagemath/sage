@@ -682,71 +682,71 @@ class Sandpile(DiGraph):
             if name == '_max_stable_div':
                 self._set_max_stable_div()
                 return deepcopy(self.__dict__[name])
-            elif name == '_out_degrees':
+            if name == '_out_degrees':
                 self._set_out_degrees()
                 return deepcopy(self.__dict__[name])
-            elif name == '_in_degrees':
+            if name == '_in_degrees':
                 self._set_in_degrees()
                 return deepcopy(self.__dict__[name])
-            elif name in ['_burning_config', '_burning_script']:
+            if name in ['_burning_config', '_burning_script']:
                 self._set_burning_config()
                 return deepcopy(self.__dict__[name])
-            elif name == '_identity':
+            if name == '_identity':
                 self._set_identity()
                 return deepcopy(self.__dict__[name])
-            elif name == '_recurrents':
+            if name == '_recurrents':
                 self._set_recurrents()
                 return deepcopy(self.__dict__[name])
-            elif name == '_min_recurrents':
+            if name == '_min_recurrents':
                 self._set_min_recurrents()
                 return deepcopy(self.__dict__[name])
-            elif name == '_superstables':
+            if name == '_superstables':
                 self._set_superstables()
                 return deepcopy(self.__dict__[name])
-            elif name == '_group_gens':
+            if name == '_group_gens':
                 self._set_group_gens()
                 return deepcopy(self.__dict__[name])
             elif name == '_group_order':
                 self.__dict__[name] = det(self._reduced_laplacian.dense_matrix())
                 return self.__dict__[name]
-            elif name == '_invariant_factors':
+            if name == '_invariant_factors':
                 self._set_invariant_factors()
                 return deepcopy(self.__dict__[name])
-            elif name == '_smith_form':
+            if name == '_smith_form':
                 self._set_smith_form()
                 return deepcopy(self.__dict__[name])
-            elif name == '_jacobian_representatives':
+            if name == '_jacobian_representatives':
                 self._set_jacobian_representatives()
                 return deepcopy(self.__dict__[name])
-            elif name == '_avalanche_polynomial':
+            if name == '_avalanche_polynomial':
                 self._set_avalanche_polynomial()
                 return deepcopy(self.__dict__[name])
-            elif name == '_stationary_density':
+            if name == '_stationary_density':
                 self._set_stationary_density()
                 return self.__dict__[name]
-            elif name == '_betti_complexes':
+            if name == '_betti_complexes':
                 self._set_betti_complexes()
                 return deepcopy(self.__dict__[name])
             elif name in ['_postulation', '_h_vector', '_hilbert_function']:
                 self._set_hilbert_function()
                 return deepcopy(self.__dict__[name])
-            elif name in ['_ring', '_unsaturated_ideal']:
+            if name in ['_ring', '_unsaturated_ideal']:
                 self._set_ring()
                 return self.__dict__[name]
-            elif name == '_ideal':
+            if name == '_ideal':
                 self._set_ideal()
                 return self.__dict__[name]
-            elif name in ['_resolution', '_betti', '_singular_resolution']:
+            if name in ['_resolution', '_betti', '_singular_resolution']:
                 self._set_resolution()
                 return self.__dict__[name]
-            elif name == '_groebner':
+            if name == '_groebner':
                 self._set_groebner()
                 return self.__dict__[name]
-            elif name == '_points':
+            if name == '_points':
                 self._set_points()
                 return self.__dict__[name]
-            else:
-                raise AttributeError(name)
+
+            raise AttributeError(name)
 
     def __str__(self) -> str:
         r"""
@@ -2100,7 +2100,7 @@ class Sandpile(DiGraph):
             smax = self.max_stable().values()
         else:
             c = SandpileConfig(self, smax)
-            if not c <= self.max_stable():
+            if c > self.max_stable():
                 smax = [min(c[v], self.max_stable()[v])
                         for v in self.nonsink_vertices()]
             else:
