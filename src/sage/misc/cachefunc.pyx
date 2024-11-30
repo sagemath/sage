@@ -97,15 +97,6 @@ approach is still needed for cpdef methods::
     sage: O.direct_method(5) is O.direct_method(5)
     True
 
-In some cases, one would only want to keep the result in cache as long
-as there is any other reference to the result. By :issue:`12215`, this is
-enabled for :class:`~sage.structure.unique_representation.UniqueRepresentation`,
-which is used to create unique parents: If an algebraic structure, such
-as a finite field, is only temporarily used, then it will not stay in
-cache forever. That behaviour is implemented using ``weak_cached_function``,
-that behaves the same as ``cached_function``, except that it uses a
-:class:`~sage.misc.weak_dict.CachedWeakValueDictionary` for storing the results.
-
 By :issue:`11115`, even if a parent does not allow attribute
 assignment, it can inherit a cached method from the parent class of a
 category (previously, the cache would have been broken)::
