@@ -25,6 +25,7 @@ from _pytest.doctest import (
     get_optionflags,
 )
 from _pytest.pathlib import ImportMode, import_path
+
 from sage.doctest.forker import (
     init_sage,
     showwarning_with_traceback,
@@ -87,6 +88,7 @@ class SageDoctestModule(DoctestModule):
                 self.path,
                 self.config.getoption("importmode"),
                 rootpath=self.config.rootpath,
+                consider_namespace_packages=True,
             )
         else:
             try:
@@ -112,6 +114,7 @@ class SageDoctestModule(DoctestModule):
         finder = MockAwareDocTestFinder()
         optionflags = get_optionflags(self.config)
         from sage.features import FeatureNotPresentError
+
         runner = _get_runner(
             verbose=False,
             optionflags=optionflags,
@@ -205,6 +208,7 @@ def pytest_addoption(parser):
         dest="doctest",
     )
 
+
 # Monkey patch exception printing to replace the full qualified name of the exception by its short name
 # TODO: Remove this hack
 import traceback
@@ -240,10 +244,21 @@ init_sage()
 
 # Monkey patch doctest to use our custom printer etc
 old_run = doctest.DocTestRunner.run
-def doctest_run(self: doctest.DocTestRunner, test: doctest.DocTest, compileflags: Optional[int] = None, out: Any = None, clear_globs: bool = True) -> doctest.TestResults:
+
+
+def doctest_run(
+    self: doctest.DocTestRunner,
+    test: doctest.DocTest,
+    compileflags: Optional[int] = None,
+    out: Any = None,
+    clear_globs: bool = True,
+) -> doctest.TestResults:
     setattr(sys, "__displayhook__", get_display_manager().displayhook)
     return old_run(self, test, compileflags, out, clear_globs)
+
+
 doctest.DocTestRunner.run = doctest_run
+
 
 @pytest.fixture(autouse=True, scope="session")
 def add_imports(doctest_namespace: dict[str, Any]):
