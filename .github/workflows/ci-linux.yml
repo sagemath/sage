@@ -97,7 +97,7 @@ jobs:
           fi
 
           # Needed for lrcalc
-          python3 -m pip install --upgrade setuptools wheel
+          uv pip install --upgrade setuptools wheel
           if [ ${{ matrix.container }} = "ubuntu:jammy" ] || [ ${{ matrix.container }} = "ubuntu:lunar" ] || [ ${{ matrix.container }} = "ubuntu:mantic" ] || [ ${{ matrix.container }} = "debian:bookworm" ] || [ ${{ matrix.container }} = "debian:sid" ] || [ ${{ matrix.container }} = "debian:experimental" ] || [ ${{ matrix.container }} = "linuxmintd/mint21-amd64" ] || [ ${{ matrix.container }} = "linuxmintd/mint21.1-amd64" ] || [ ${{ matrix.container }} = "linuxmintd/mint21.2-amd64" ] || [ ${{ matrix.container }} = "fedora:34" ] || [ ${{ matrix.container }} = "fedora:35" ] || [ ${{ matrix.container }} = "fedora:38" ]; then
             wget math.rutgers.edu/~asbuch/lrcalc/lrcalc-2.1.tar.gz \
             && tar zxvf lrcalc-2.1.tar.gz \
@@ -126,7 +126,7 @@ jobs:
           # Disable build isolation following the advice of https://mesonbuild.com/meson-python/how-to-guides/editable-installs.html#build-dependencies
           # Build manually using plain meson instead of using pip because of issues with subprojects
           # https://github.com/mesonbuild/meson-python/issues/598
-          # python3 -m pip install --no-build-isolation . -v
+          # uv pip install --no-build-isolation . -v
           meson setup builddir -Dpython.install_env=auto
           meson compile -C builddir --verbose
           meson install -C builddir --no-rebuild 
