@@ -406,6 +406,30 @@ the parent as its first argument::
     sage: d = a.add_bigoh(1)                                                            # needs sage.rings.padics
     sage: b._cache_key() == d._cache_key()  # this would be True if the parents were not included
     False
+
+Note that shallow copy of mutable objects may behave unexpectedly::
+
+    sage: class Foo:
+    ....:     @cached_method
+    ....:     def f(self):
+    ....:         return self.x
+    sage: from copy import copy, deepcopy
+    sage: a = Foo()
+    sage: a.x = 1
+    sage: a.f()
+    1
+    sage: b = copy(a)
+    sage: b.x = 2
+    sage: b.f()  # incorrect!
+    1
+    sage: b.f is a.f  # this is the problem
+    True
+    sage: b = deepcopy(a)
+    sage: b.x = 2
+    sage: b.f()  # correct
+    2
+    sage: b.f is a.f
+    False
 """
 
 # ****************************************************************************
