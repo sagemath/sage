@@ -23,8 +23,9 @@ jobs:
           #- ubuntu:jammy # TODO: Cannot find flint (only v.2.8.4)
           - ubuntu:lunar
           - ubuntu:mantic
-          - ubuntu:noble
-          - ubuntu:oracular
+          #- ubuntu:noble # libbrial-groebner-dev is not available
+          #- ubuntu:oracular # libbrial-groebner-dev is not available
+          - ubuntu:plucky
           #- debian:buster # gmp is not available
           #- debian:bullseye # TODO: outdated singular
           #- debian:bookworm # flint is not available
@@ -87,7 +88,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          if [ [ ${{ matrix.container }} = "ubuntu:lunar" ] || [ ${{ matrix.container }} = "ubuntu:mantic" ] ]; then
+          if [[ "${{ matrix.container }}" = "ubuntu:lunar" || "${{ matrix.container }}" = "ubuntu:mantic" ]]; then
             # For EOL Ubuntu we need to use old-releases.ubuntu.com
             sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
           fi
@@ -145,9 +146,4 @@ jobs:
       - name: Test
         run: |
           uv run ./sage -t --all -p4 || true
-
-      - name: Meson Log
-        if: ${{ failure()  }}
-        run: |
-          cat builddir/meson-logs/meson-log.txt
         
