@@ -1566,7 +1566,7 @@ class GraphLatex(SageObject):
         For a complicated vertex, a TeX box is used. ::
 
             sage: B = crystals.Tableaux(['B', 2], shape=[1])
-            sage: latex(B)
+            sage: latex(B)  # optional - !dot2tex
             \begin{tikzpicture}
             ...
             \newsavebox{\vertex}
