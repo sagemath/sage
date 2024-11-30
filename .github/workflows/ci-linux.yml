@@ -20,36 +20,38 @@ jobs:
           #- ubuntu:xenial # git checkout fails (glibc)
           #- ubuntu:bionic # git checkout fails (glibc)
           #- ubuntu:focal # TODO: Cannot find gap although installed
-          - ubuntu:jammy
+          #- ubuntu:jammy # TODO: Cannot find flint (only v.2.8.4)
           - ubuntu:lunar
           - ubuntu:mantic
-          - debian:buster
+          - ubuntu:noble
+          - ubuntu:oracular
+          #- debian:buster # gmp is not available
           #- debian:bullseye # TODO: outdated singular
-          - debian:bookworm
+          #- debian:bookworm # flint is not available
           #- debian:trixie # libbrial-dev is not available (has been removed?)
           - debian:sid
           - debian:experimental
           #- linuxmintd/mint20.1-amd64 # TODO: Cannot find gap although installed
           #- linuxmintd/mint20.2-amd64 # TODO: Cannot find gap although installed
           #- linuxmintd/mint20.3-amd64 # TODO: Cannot find gap although installed
-          - linuxmintd/mint21-amd64
-          - linuxmintd/mint21.1-amd64
-          - linuxmintd/mint21.2-amd64
-          - fedora:30
-          - fedora:31
-          - fedora:32
+          #- linuxmintd/mint21-amd64 # Flint is not available (only v.2.8.4)
+          #- linuxmintd/mint21.1-amd64 # Flint is not available (only v.2.8.4)
+          #- linuxmintd/mint21.2-amd64 # Flint is not available (only v.2.8.4)
+          #- fedora:30 # gmp is not available
+          #- fedora:31 # gmp is not available
+          #- fedora:32 # gmp is not available
           #- fedora:33 # TODO: outdated singular
-          - fedora:34
-          - fedora:35
-          - fedora:36
-          - fedora:37
+          #- fedora:34 # Flint is not available
+          #- fedora:35 # Flint is not available
+          #- fedora:36 # Flint is not available
+          #- fedora:37 # Flint is not available
           #- fedora:38 # Flint is not available
-          - fedora:39 # TODO: Could not build wheels for gmpy2 (python 3.12)
+          #- fedora:39 # Flint is not available (only v.2.9)
           - fedora:40
-          - centos:centos7
-          - quay.io/centos/centos:stream8
+          #- centos:centos7 # git checkout fails (glibc)
+          #- quay.io/centos/centos:stream8 # problem with mirror list
           #- quay.io/centos/centos:stream9 # TODO (cypari): Figure out how to install pari
-          - almalinux:8
+          #- almalinux:8 # gmp is not available (only v6.1.2)
           #- almalinux:9 # TODO (cypari): Figure out how to install pari
           #- sheerluck/sage-on-gentoo-stage4: TODO: dependency (python?) installation takes ages
           - archlinux
