@@ -113,9 +113,8 @@ if not linbox.found()
 endif
 mpc = cc.find_library('mpc')
 mpfi = cc.find_library('mpfi')
-# Cannot be found via pkg-config (pkg-config file will be added in 4.13)
-# Test for common.h header that was added in 4.12 as a indirect version check
-gap = cc.find_library('gap', has_headers: ['gap/common.h'])
+
+gap = dependency('gap', version: '>=4.13.0')
 singular = dependency('Singular')
 maxima = find_program('maxima', required: true)
 # Cannot be found via pkg-config
