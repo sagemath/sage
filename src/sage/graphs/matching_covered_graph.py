@@ -2271,7 +2271,7 @@ class MatchingCoveredGraph(Graph):
         matching = set(self.get_matching())
         matching_neighbor = {x: y for u, v, *_ in self.get_matching() for x, y in [(u, v), (v, u)]}
 
-        for e in list(self.get_matching())[:]:
+        for e in matching:
             u, v, *_ = e
 
             # Let G denote the undirected graph self, and
@@ -2316,36 +2316,34 @@ class MatchingCoveredGraph(Graph):
                 visited_in = set()
                 dfs(root, visited_in, D.neighbor_in_iterator)
 
-                visited_out = set()
-                dfs(root, visited_out, D.neighbor_out_iterator)
-
-                # Note that by definition of D(e), it follows that C ⊆ E(H(e)) — M.
-                # Thus, C is a cut of H(e), which has a shore X such that every edge of C is
+                # Since D(e) is not strongly connected, it has a directed cut T(e).
+                # Note that by definition of D(e), it follows that T(e) ⊆ E(H(e)) — M.
+                # Thus, T(e) is a cut of H(e), which has a shore X such that every edge of T(e) is
                 # incident with a vertex in X ∩ B.
 
                 # Moreover, M — e is a perfect matching of H(e), and thus, |X ∩ A| = |X ∩ B|
                 # Consequently, Y := X + v is a shore of a nontrivial tight cut T of G
 
                 if len(visited_in) != D.order():
-                    X = {w for w in D if w in visited_in}
+                    X = visited_in
                 else:
-                    X = {w for w in D if w in visited_out}
+                    X = set()
+                    dfs(root, X, D.neighbor_out_iterator)
 
-                # Compute the directed cut C of D(e)
-                C = []
-                for a, b, *_ in H.edge_iterator():
-                    if (a in X) ^ (b in X):  # Exclusive OR: one in X, the other not
-                        x, y = (a, b) if a in A else (b, a)
-                        C.append([x, y])
+                for a, b in H.edge_iterator(labels=False):
+                    if (a in X) ^ (b in X):
+                        x = a if a in A else b
+                        color_class = x not in X
+                        break
 
-                # Obtain the color class Z ∈ {A, B} such that X ∩ Z is a vertex cover for C
-                color_class = 1 if C[0][0] not in X else 0
+                # Obtain the color class Z ∈ {A, B} such that X ∩ Z is a vertex cover for T(e)
+                # Thus, obtain Y := X + v
                 X.add(u if (not color_class and u in A) or (color_class and u in B) else v)
 
-                # Compute the nontrivial tight cut T := ∂(X)
-                T = [f for f in self.edge_iterator() if (f[0] in X) ^ (f[1] in X)]
+                # Compute the nontrivial tight cut C := ∂(Y)
+                C = [f for f in self.edge_iterator() if (f[0] in X) ^ (f[1] in X)]
 
-                return False, T, X
+                return False, C, X
 
         return (True, None, None) if coNP_certificate else True
 
