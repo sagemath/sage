@@ -1897,7 +1897,7 @@ cdef class CachedMethodCaller(CachedFunction):
             sage: a.f(5) is a.f(y=1,x=5)
             True
 
-        The method can be called as a unbound function using the same cache::
+        The method can be called as an unbound function using the same cache::
 
             sage: a.f(5) is Foo.f(a, 5)
             True
@@ -1955,7 +1955,7 @@ cdef class CachedMethodCaller(CachedFunction):
             True
         """
         if self._instance is None:
-            # cached method bound to a class i.e. unbound method, such as ``Foo.f``
+            # unbound cached method such as ``Foo.f``
             instance = args[0]
             args = args[1:]
             return self._cachedmethod.__get__(instance)(*args, **kwds)
@@ -2002,7 +2002,7 @@ cdef class CachedMethodCaller(CachedFunction):
             5
         """
         if self._instance is None:
-            # cached method bound to a class i.e. unbound method, such as ``CachedMethodTest.f``
+            # unbound cached method such as ``CachedMethodTest.f``
             instance = args[0]
             args = args[1:]
             return self._cachedmethod.__get__(instance).cached(*args, **kwds)
@@ -2654,8 +2654,8 @@ cdef class CachedMethod():
             sage: a.f0()
             4
 
-        For methods with parameters, computations in method ``f`` are
-        tried to store in a dictionary assigned to the instance ``a``::
+        For methods with parameters, the results of method ``f`` is attempted
+        to be stored in a dictionary attribute of the instance ``a``::
 
             sage: hasattr(a, '_cache__f')
             True
