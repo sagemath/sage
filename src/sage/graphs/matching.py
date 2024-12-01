@@ -1019,10 +1019,9 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
             if color[u]:
                 u, v = v, u
 
-            if M.has_edge(u, v):
-                H.add_edge(u, v)
-            else:
-                H.add_edge(v, u)
+            H.add_edge((u, v))
+            if next(M.neighbor_iterator(u)) == v:
+                H.add_edge((v, u))
 
         # Check if H is strongly connected using Kosaraju's algorithm
         def dfs(J, v, visited, orientation):
