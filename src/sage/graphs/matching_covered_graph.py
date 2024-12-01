@@ -72,6 +72,7 @@ AUTHORS:
         ``loop_edges()`` | Return a list of all loops in the matching covered graph.
         ``loop_vertices()`` | Return a list of vertices with loops.
         ``merge_vertices()`` | Merge vertices.
+        ``minor()`` | Return the vertices of a minor isomorphic to `H` in the current graph.
         ``number_of_loops()`` | Return the number of edges that are loops.
         ``random_subgraph()`` | Return a random matching covered subgraph containing each vertex with probability ``p``.
         ``remove_loops()`` | Remove loops on vertices in ``vertices``.
@@ -85,6 +86,7 @@ AUTHORS:
         ``subgraph_search_iterator()`` | Return an iterator over the labelled copies of (matching covered) ``G`` in ``self``.
         ``tensor_product()`` | Return the tensor product of ``self`` and ``other``.
         ``to_undirected()`` | Return an undirected Graph instance of the matching covered graph.
+        ``topological_minor()`` | Return a topological `H`-minor from ``self`` if one exists.
         ``transitive_closure()`` | Return the transitive closure of the matching covered graph.
         ``transitive_reduction()`` | Return a transitive reduction of the matching covered graph.
         ``union()`` | Return the union of ``self`` and ``other``.
