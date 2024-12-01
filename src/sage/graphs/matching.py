@@ -1024,38 +1024,28 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
                 H.add_edge((v, u))
 
         # Check if H is strongly connected using Kosaraju's algorithm
-        def dfs(J, v, visited, orientation):
+        def dfs(v, visited, neighbor_iterator):
             stack = [v]  # a stack of vertices
 
             while stack:
                 v = stack.pop()
+                visited.add(v)
 
-                if v not in visited:
-                    visited[v] = True
-
-                if orientation == 'in':
-                    for u in J.neighbors_out(v):
-                        if u not in visited:
-                            stack.append(u)
-
-                elif orientation == 'out':
-                    for u in J.neighbors_in(v):
-                        if u not in visited:
-                            stack.append(u)
-                else:
-                    raise ValueError('Unknown orientation')
+                for u in neighbor_iterator(v):
+                    if u not in visited:
+                        stack.append(u)
 
         root = next(H.vertex_iterator())
 
-        visited_in = {}
-        dfs(H, root, visited_in, 'in')
+        visited_in = set()
+        dfs(root, visited_in, H.neighbor_in_iterator)
 
-        visited_out = {}
-        dfs(H, root, visited_out, 'out')
+        visited_out = set()
+        dfs(root, visited_out, H.neighbor_out_iterator)
 
         for edge in H.edge_iterator():
             u, v, _ = edge
-            if (u not in visited_in) or (v not in visited_out):
+            if (u not in visited_out) or (v not in visited_in):
                 if not M.has_edge(edge):
                     return (False, edge) if coNP_certificate else False
 
