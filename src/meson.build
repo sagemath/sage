@@ -114,7 +114,12 @@ endif
 mpc = cc.find_library('mpc')
 mpfi = cc.find_library('mpfi')
 
-gap = dependency('gap', version: '>=4.13.0')
+gap = dependency('gap', version: '>=4.13.0', required: false)
+if not gap.found()
+  # Fallback in case pkg-config info is not available
+  # Test for common.h header that was added in 4.12 as a indirect version check
+  gap = cc.find_library('gap', has_headers: ['gap/common.h'])
+endif
 singular = dependency('Singular')
 maxima = find_program('maxima', required: true)
 # Cannot be found via pkg-config
