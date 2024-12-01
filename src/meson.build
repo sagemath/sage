@@ -96,7 +96,9 @@ endif
 mtx = cc.find_library('mtx', required: false, disabler: true)
 png = dependency(['libpng', 'png', 'png16'], version: '>=1.2')
 zlib = dependency('zlib', version: '>=1.2.11')
-ec = dependency('eclib', version: '>=20231212')
+# We actually want >= 20231212, but the version number is not updated in the pkgconfig
+# https://github.com/conda-forge/eclib-feedstock/issues/48
+ec = dependency('eclib', version: '>=20231211')
 # Cannot be found via pkg-config
 ecm = cc.find_library('ecm')
 # Cannot be found via pkg-config
