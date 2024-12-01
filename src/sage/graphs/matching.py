@@ -877,7 +877,7 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
         sage: H = graphs.PathGraph(20)
         sage: M = H.matching()
         sage: H.is_matching_covered(matching=M, coNP_certificate=True)
-        (False, (1, 2, None))
+        (False, (2, 1, None))
 
     TESTS:
 
