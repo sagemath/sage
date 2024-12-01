@@ -282,16 +282,16 @@ that our form actually represents the Euler class appropriately.
 
 from sage.algebras.finite_gca import FiniteGCAlgebra
 from sage.combinat.free_module import IndexedFreeModuleElement
-from sage.misc.fast_methods import Singleton
-from sage.structure.sage_object import SageObject
-from sage.misc.cachefunc import cached_method
+from sage.manifolds.differentiable.affine_connection import AffineConnection
+from sage.manifolds.differentiable.bundle_connection import BundleConnection
+from sage.manifolds.differentiable.levi_civita_connection import LeviCivitaConnection
 from sage.misc.abstract_method import abstract_method
-from .affine_connection import AffineConnection
-from .bundle_connection import BundleConnection
-from .levi_civita_connection import LeviCivitaConnection
-from sage.symbolic.expression import Expression
+from sage.misc.cachefunc import cached_method
+from sage.misc.fast_methods import Singleton
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.structure.sage_object import SageObject
+from sage.symbolic.expression import Expression
 
 
 class CharacteristicCohomologyClassRingElement(IndexedFreeModuleElement):
@@ -894,7 +894,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
 
         # predefined classes accessible via class names
         if isinstance(val, str):
-            from sage.arith.misc import factorial, bernoulli
+            from sage.arith.misc import bernoulli, factorial
 
             P = PolynomialRing(base_ring, 'x')
             x = P.gen()
@@ -1085,8 +1085,8 @@ def multiplicative_sequence(q, n=None):
         e[] + e[1] - e[1, 1] + 3*e[2] - e[2, 1] + e[2, 2] + 4*e[3] - 3*e[3, 1]
          + e[3, 2] + 7*e[4] - 4*e[4, 1] + 11*e[5]
     """
-    from sage.combinat.sf.sf import SymmetricFunctions
     from sage.combinat.partition import Partitions
+    from sage.combinat.sf.sf import SymmetricFunctions
     from sage.misc.misc_c import prod
 
     if n is None:
@@ -1140,8 +1140,8 @@ def additive_sequence(q, k, n=None):
         sage: sym_1 = additive_sequence(f, 2, 1); sym_1
         2*e[] + e[1]
     """
-    from sage.combinat.sf.sf import SymmetricFunctions
     from sage.combinat.partition import Partitions
+    from sage.combinat.sf.sf import SymmetricFunctions
 
     if n is None:
         n = q.degree()
@@ -1427,7 +1427,7 @@ class ChernAlgorithm(Singleton, Algorithm_generic):
             sage: algorithm.get_local(cmat)
             [2-form on the 2-dimensional Lorentzian manifold M]
         """
-        from sage.symbolic.constants import pi, I
+        from sage.symbolic.constants import I, pi
 
         dom = cmat[0][0]._domain
         rk = len(cmat)
