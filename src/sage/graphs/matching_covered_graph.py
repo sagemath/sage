@@ -2263,9 +2263,9 @@ class MatchingCoveredGraph(Graph):
             raise ValueError('the input graph is not bipartite')
 
         if self.order() < 6:
-            return (True, None) if coNP_certificate else True
+            return (True, None, None) if coNP_certificate else True
 
-        color = {u: 0 if u in self.bipartite_sets()[0] else 1 for u in self}
+        A, B =  self.bipartite_sets()
         matching = set(self.get_matching())
         matching_neighbor = {x: y for u, v, *_ in self.get_matching() for x, y in [(u, v), (v, u)]}
 
@@ -2289,45 +2289,33 @@ class MatchingCoveredGraph(Graph):
                 # For each edge (a, b) in E(H(e)) with a in A, a —> b in D(e).
                 for a, b, *_ in H.edge_iterator():
 
-                    if color[a]:
+                    if a in B:
                         a, b = b, a
 
                     D.add_edge((a, b))
                     if matching_neighbor[a] == b:
                         D.add_edge((b, a))
 
-                D.show()
-
                 # H(e) is matching covered iff D(e) is strongly connected.
                 # Check if D(e) is strongly connected using Kosaraju's algorithm
-                def dfs(J, v, visited, orientation):
+                def dfs(v, visited, neighbor_iterator):
                     stack = [v]  # a stack of vertices
 
                     while stack:
                         v = stack.pop()
+                        visited.add(v)
 
-                        if v not in visited:
-                            visited[v] = True
-
-                        if orientation == 'in':
-                            for u in J.neighbors_out(v):
-                                if u not in visited:
-                                    stack.append(u)
-
-                        elif orientation == 'out':
-                            for u in J.neighbors_in(v):
-                                if u not in visited:
-                                    stack.append(u)
-                        else:
-                            raise ValueError('Unknown orientation')
+                        for u in neighbor_iterator(v):
+                            if u not in visited:
+                                stack.append(u)
 
                 root = next(D.vertex_iterator())
 
-                visited_in = {}
-                dfs(D, root, visited_in, 'in')
+                visited_in = set()
+                dfs(root, visited_in, D.neighbor_in_iterator)
 
-                visited_out = {}
-                dfs(D, root, visited_out, 'out')
+                visited_out = set()
+                dfs(root, visited_out, D.neighbor_out_iterator)
 
                 # Note that by definition of D(e), it follows that C ⊆ E(H(e)) — M.
                 # Thus, C is a cut of H(e), which has a shore X such that every edge of C is
@@ -2336,7 +2324,7 @@ class MatchingCoveredGraph(Graph):
                 # Moreover, M — e is a perfect matching of H(e), and thus, |X ∩ A| = |X ∩ B|
                 # Consequently, Y := X + v is a shore of a nontrivial tight cut T of G
 
-                if not all(visited_in.values()):
+                if len(visited_in) != D.order():
                     X = {w for w in D if w in visited_in}
                 else:
                     X = {w for w in D if w in visited_out}
@@ -2345,12 +2333,12 @@ class MatchingCoveredGraph(Graph):
                 C = []
                 for a, b, *_ in H.edge_iterator():
                     if (a in X) ^ (b in X):  # Exclusive OR: one in X, the other not
-                        x, y = (a, b) if color[a] == 0 else (b, a)
+                        x, y = (a, b) if a in A else (b, a)
                         C.append([x, y])
 
                 # Obtain the color class Z ∈ {A, B} such that X ∩ Z is a vertex cover for C
                 color_class = 1 if C[0][0] not in X else 0
-                X.add(u if (not color_class and color[v]) or (color_class and color[u]) else v)
+                X.add(u if (not color_class and u in A) or (color_class and u in B) else v)
 
                 # Compute the nontrivial tight cut T := ∂(X)
                 T = [f for f in self.edge_iterator() if (f[0] in X) ^ (f[1] in X)]
