@@ -248,6 +248,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.noncommutative_ideals import Ideal_nc
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
+from sage.structure.element import parent
 from sage.structure.richcmp import (op_EQ, op_GE, op_GT, op_LE, op_LT, op_NE,
                                     rich_to_bool, richcmp_method)
 from sage.structure.sequence import Sequence
@@ -4972,8 +4973,12 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
             sage: I.reduce(1)
             1
-            sage: I.reduce(pi.n())  # unfortunate side effect
-            245850922/78256779
+            sage: I.reduce(1r)
+            1
+            sage: I.reduce(pi.n())
+            Traceback (most recent call last):
+            ...
+            TypeError: element belong to Real Field with 53 bits of precision, cannot coerce to Multivariate Polynomial Ring in x, y over Rational Field
         """
         try:
             strat = self._groebner_strategy()
@@ -4982,7 +4987,10 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             pass
 
         gb = self.groebner_basis()
-        return self.ring()(f).reduce(gb)
+        R = self.ring()
+        if not R.has_coerce_map_from(parent(f)):
+            raise TypeError(f"element belong to {parent(f)}, cannot coerce to {R}")
+        return R(f).reduce(gb)
 
     def _contains_(self, f):
         r"""
