@@ -81,7 +81,7 @@ SAGE_VERSION_BANNER='$SAGE_VERSION_BANNER'
 EOF
 
 # Create a top-level VERSION.txt file, which some external utilities rely on
-echo "$SAGE_VERSION_BANNER" > "$SAGE_ROOT/VERSION.txt"
+echo "$SAGE_VERSION" > "$SAGE_ROOT/VERSION.txt"
 
 # Add version to the front of GitHub release assets URLs.
 SAGE_MINOR_VERSION=${SAGE_VERSION//.alpha*/}
