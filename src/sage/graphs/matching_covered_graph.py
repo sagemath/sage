@@ -2265,7 +2265,7 @@ class MatchingCoveredGraph(Graph):
         if self.order() < 6:
             return (True, None, None) if coNP_certificate else True
 
-        A, B =  self.bipartite_sets()
+        A, B = self.bipartite_sets()
         matching = set(self.get_matching())
         matching_neighbor = {x: y for u, v, *_ in self.get_matching() for x, y in [(u, v), (v, u)]}
 
