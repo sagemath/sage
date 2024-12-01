@@ -2021,7 +2021,7 @@ class MatchingCoveredGraph(Graph):
         3. `G` is two extendable (any two nonadjacent distinct edges can be
            extended to some perfect matching of `G`).
         4. `|N(X)| \geq |X| + 2`, for all `X ⊂ A` such that `0 < |X| <
-           |A| - 1`, where `N(S) := \{b | (a, b) \in E ^ a \in S\}` is called
+           |A| - 1`, where `N(S) := \{b | (a, b) \in E \^ a \in S\}` is called
            the neighboring set of `S`.
         5. `G - a - b` is matching covered, for some perfect matching `M` of
            `G` and for each edge `ab` in `M`.
@@ -2092,9 +2092,11 @@ class MatchingCoveredGraph(Graph):
 
         Note that the union of the above mentioned four families of braces,
         that are:
+
         1. the biwheel graph ``BiwheelGraph(n)``,
         2. the circular ladder graph ``CircularLadderGraph(n)`` for even ``n``,
         3. the moebius ladder graph ``MoebiusLadderGraph(n)`` for odd ``n``,
+
         is referred to as the *McCuaig* *family* *of* *braces.*
 
         The only simple brace of order six is the complete graph of the same
@@ -2194,7 +2196,7 @@ class MatchingCoveredGraph(Graph):
 
         For a brace `G[A, B]` of order six or more, `|N(X)| \geq |X| + 2`, for
         all `X \subset A` such that `0 < |X| <|A| - 1`, where
-        `N(S) := \{b | (a, b) \in E ^ a \in S\}` is called the neighboring set
+        `N(S) := \{b | (a, b) \in E \^ a \in S\}` is called the neighboring set
         of `S`::
 
             sage: H = graphs.MoebiusLadderGraph(15)
