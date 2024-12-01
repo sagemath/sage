@@ -4987,10 +4987,8 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             pass
 
         gb = self.groebner_basis()
-        R = self.ring()
-        if not R.has_coerce_map_from(parent(f)):
-            raise TypeError(f"element belong to {parent(f)}, cannot coerce to {R}")
-        return R(f).reduce(gb)
+        f = self.ring().coerce(f)
+        return f.reduce(gb)
 
     def _contains_(self, f):
         r"""
