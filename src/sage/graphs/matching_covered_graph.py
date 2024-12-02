@@ -2269,7 +2269,7 @@ class MatchingCoveredGraph(Graph):
 
         A, B = self.bipartite_sets()
         matching = set(self.get_matching())
-        matching_neighbor = {x: y for u, v, *_ in self.get_matching() for x, y in [(u, v), (v, u)]}
+        matching_neighbor = {x: y for u, v, *_ in matching for x, y in [(u, v), (v, u)]}
 
         for e in matching:
             u, v, *_ = e
