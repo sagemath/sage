@@ -62,6 +62,10 @@ def corneil_habib_paul_tedder_algorithm(G):
     decomposition by calling itself recursively on the slices of the previously
     computed slice decomposition.
 
+    This functions is based on the last version of the paper [TCHP2008]_.
+    Previous versions of the paper and previous implementations were found to
+    contains errors, see [AP2024]_.
+
     .. SEEALSO::
 
         * :mod:`~sage.graphs.graph_decompositions.slice_decomposition` --
@@ -83,6 +87,13 @@ def corneil_habib_paul_tedder_algorithm(G):
         ....:                                                         4, 5, 0.2)
         sage: recreate_decomposition(3, corneil_habib_paul_tedder_algorithm,
         ....:                                                         6, 5, 0.2)
+
+        sage: H = Graph('Hv|mmjz', format='graph6')
+        sage: H.relabel('abcdefghi')  # counter-exemple graph from [AP2024]_
+        sage: H.modular_decomposition()
+        (SERIES,
+         [(PRIME, ['e', (PARALLEL, ['g', 'h']), 'b', 'c']),
+          (PARALLEL, [(SERIES, ['i', 'd', 'a']), 'f'])])
     """
     cdef CGraphBackend Gbackend = <CGraphBackend> G._backend
     cdef CGraph cg = Gbackend.cg()
