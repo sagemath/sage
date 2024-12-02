@@ -1,1 +1,1 @@
-/mnt/opt/Sage/sage-dev/VERSION.txt
+../../../VERSION.txt
