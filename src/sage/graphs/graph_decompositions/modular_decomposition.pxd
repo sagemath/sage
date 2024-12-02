@@ -14,8 +14,11 @@ cdef extern from "modular_decomposition.hpp":
         bool is_parallel() const
         bool is_series() const
         cpplist[md_tree_node *] children
-        # For a leaf, the corresponding vertex, for a internal node, any vertex
-        # corresponding to a any leaf below the node
+        # If is_leaf() is true, the attribute 'vertex' contains the id of the
+        # corresponding vertex. If is_leaf() is false, the attribute 'vertex'
+        # contains the id of a vertex corresponding to any leaf below
+        # the node (i.e., 'vertex' contains the id of a vertex belonging to the
+        # module corresponding to the node).
         int vertex
 
     void dealloc_md_tree_nodes_recursively(md_tree_node *)

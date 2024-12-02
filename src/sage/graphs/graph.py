@@ -7264,7 +7264,7 @@ class Graph(GenericGraph):
             if v not in self:
                 raise LookupError(f"vertex ({v}) is not a vertex of the graph")
 
-        if len(M) == 0 or len(M) == 1 or len(M) == self.order():
+        if len(M) <= 1 or len(M) == self.order():
             return True
 
         N = None  # will contains the neighborhood of M

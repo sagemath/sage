@@ -55,7 +55,7 @@ def corneil_habib_paul_tedder_algorithm(G):
     OUTPUT: an object of type Node representing the modular decomposition tree
     of the graph G
 
-    This function compute the modular decomposition of the given graph by the
+    This function computes the modular decomposition of the given graph by the
     algorithm of Corneil, Habib, Paul and Tedder [TCHP2008]_. It is a recursive,
     linear-time algorithm that first computes the slice decomposition of the
     graph (via the extended lexBFS algorithm) and then computes the modular
@@ -112,17 +112,16 @@ cdef object _md_tree_node_to_md_tree_inner_rec(const md_tree_node *n,
     cdef md_tree_node *c
     if deref(n).is_leaf():
         return Node.create_leaf(Gb.vertex_label(deref(n).vertex))
-    else:
-        if deref(n).is_series():
-            node = Node(NodeType.SERIES)
-        elif deref(n).is_parallel():
-            node = Node(NodeType.PARALLEL)
-        else:  # is_prime
-            node = Node(NodeType.PRIME)
-        node.children.extend(
-            _md_tree_node_to_md_tree_inner_rec(c, Gb)
-                                                  for c in deref(n).children)
-        return node
+
+    if deref(n).is_series():
+        node = Node(NodeType.SERIES)
+    elif deref(n).is_parallel():
+        node = Node(NodeType.PARALLEL)
+    else:  # is_prime
+        node = Node(NodeType.PRIME)
+    node.children.extend(_md_tree_node_to_md_tree_inner_rec(c, Gb)
+                                                    for c in deref(n).children)
+    return node
 
 
 cdef object md_tree_node_to_md_tree(const md_tree_node *n, CGraphBackend Gb):
@@ -151,8 +150,7 @@ cdef object md_tree_node_to_md_tree(const md_tree_node *n, CGraphBackend Gb):
     """
     if n == NULL:
         return Node(NodeType.EMPTY)
-    else:
-        return _md_tree_node_to_md_tree_inner_rec(n, Gb)
+    return _md_tree_node_to_md_tree_inner_rec(n, Gb)
 
 
 ################################################################################
@@ -321,7 +319,7 @@ class Node:
     @classmethod
     def create_leaf(cls, v):
         """
-        Return Node object that is a leaf corresponding to the vertex ``v``
+        Return Node object that is a leaf corresponding to the vertex ``v``.
 
         INPUT:
 
@@ -620,6 +618,21 @@ def modular_decomposition(G, algorithm=None):
 
     This function should not be used directly, it should be called via the
     ``modular_decomposition`` method of ``Graph``.
+
+    INPUT:
+
+    - ``G`` -- graph whose modular decomposition tree is to be computed
+
+    - ``algorithm`` -- string (default: ``None``); the algorithm to use among:
+
+      - ``None`` or ``'corneil_habib_paul_tedder'`` -- will use the
+        Corneil-Habib-Paul-Tedder algorithm from [TCHP2008]_, its complexity
+        is linear in the number of vertices and edges.
+
+      - ``'habib_maurer'`` -- will use the Habib-Maurer algorithm from
+        [HM1979]_, its complexity is cubic in the number of vertices.
+
+    OUTPUT: The modular decomposition tree, as an object of type ``Node``.
 
     TESTS::
 
@@ -1472,10 +1485,24 @@ def check_algos_are_equivalent(trials, graph_gen, verbose=False):
     Verify that both algorithms compute the same tree (up to equivalence) for
     random graphs.
 
+    INPUT:
+
+    - ``trials`` -- integer; the number of tests the function will run.
+
+    - ``graph_gen`` -- function; a function that can be called without argument
+      and returns a random graph.
+
+    - ``verbose`` -- boolean (defaul: ``False``); enable printing debug
+      information.
+
+    OUTPUT: ``None``. Raises an ``AssertionError`` on failure.
+
     EXAMPLES::
 
         sage: from sage.graphs.graph_decompositions.modular_decomposition import *
+        sage: check_algos_are_equivalent(3, lambda : graphs.RandomGNP(10, 0.1))
         sage: check_algos_are_equivalent(3, lambda : graphs.RandomGNP(10, 0.5))
+        sage: check_algos_are_equivalent(3, lambda : graphs.RandomGNP(10, 0.9))
     """
     for _ in range(trials):
         graph = graph_gen()
