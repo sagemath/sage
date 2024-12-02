@@ -69,9 +69,9 @@ os.chdir("..")
 import cypari2
 incdir = cypari2.__file__.replace('__init__.py', '')
 try:
-incdir = print(os.path.relpath(incdir))
+  incdir = print(os.path.relpath(incdir))
 except Exception:
-incdir = print(incdir)
+  incdir = print(incdir)
     '''.strip(),
   ],
   check: true,
