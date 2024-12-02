@@ -27,6 +27,9 @@
 #include <utility>
 #include <vector>
 
+/* Labels attached to nodes of a partitive forest. For the meaning of the
+ * different values, see algorithms 3 and 4 of [TCHP2008]_.
+ */
 enum class Label : uint8_t {
     EMPTY = 0b00,
     HOMOGENEOUS = 0b01,
@@ -34,19 +37,36 @@ enum class Label : uint8_t {
     DEAD = 0b11
 };
 
+/*
+ * Flags attached to nodes of a partitive forest. For the meaning of the flag,
+ * see algorithms 3 and 4 of [TCHP2008]_.
+ */
 enum class Flag : uint8_t {
     UNFLAGGED = 0b00,
     FLAGGED = 0b01
 };
 
-enum class Type_ : uint8_t {
+/*
+ * A node of a modular decomposition tree is either a leaf or an internal node.
+ * An internal node can be prime, series or parallel.
+ */
+enum class Type : uint8_t {
     PRIME = 0,
     SERIES = 1,
     PARALLEL = 2,
     LEAF = 3
 };
 
+/*
+ * This struct is used to have a nice interface to the data describing a slice
+ * decomposition. The slice decomposition is needed by the algorithm that
+ * compute the modular decomposition.
+ */
 struct SDData {
+    /*
+     * Set the members of the struct; it is useful to initialized the struct
+     * from the output of the extended_lex_BFS method.
+     */
     void set_from_data(size_t lex_label_offset_arg,
                        const int* sigma_arg,
                        const size_t *xslice_len_arg,
@@ -57,6 +77,10 @@ struct SDData {
         lex_label = lex_label_arg;
     }
 
+    /*
+     * Set the members of the struct to represent the subslice of sd starting at
+     * the given offset.
+     */
     void set_to_subslice(const SDData &sd, size_t offset) {
         lex_label_offset = sd.lex_label[offset].size();
         sigma = sd.sigma + offset;
@@ -64,6 +88,10 @@ struct SDData {
         lex_label = sd.lex_label + offset;
     }
 
+    /*
+     * Return the number of lexicographic labels of the ith vertex of the slice
+     * decomposition.
+     */
     size_t lex_label_size(size_t i) const {
         if (lex_label[i].size() <= lex_label_offset) {
             return 0;
@@ -72,6 +100,10 @@ struct SDData {
         }
     }
 
+    /*
+     * Return the pointer to the lexicographic labels of the ith vertex of the
+     * slice decomposition.
+     */
     const int * lex_label_ptr(size_t i) const {
         if (lex_label[i].size() <= lex_label_offset) {
             return nullptr;
@@ -80,18 +112,25 @@ struct SDData {
         }
     }
 
+    /* Return the index of the first slice (always 1). */
     size_t first_slice_index() const {
         return 1;
     }
 
+    /* Return the index of the slice following the one starting at idx. */
     size_t next_slice_index(size_t idx) const {
         return idx + xslice_len[idx];
     }
 
+    /* Return the number of vertices in the slice decomposition. */
     size_t size() const {
         return xslice_len[0];
     }
 
+    /*
+     * Check whether the pivot has any neighbor (i.e., the first slice has no
+     * lexicographic labels).
+     */
     bool is_pivot_isolated () const {
         return lex_label[1].size() <= lex_label_offset;
     }
@@ -102,43 +141,66 @@ struct SDData {
     const std::vector<int> *lex_label;
 };
 
+/*
+ * This struct represents a node of a modular decomposition tree. It contains a
+ * pointer to its parent (or nullptr for the root), a list of children (must be
+ * empty for leaf) and a type (from the enum Type).
+ * A leaf of a modular decomposition tree corresponds to a vertex of the graph.
+ * The id of the vertex is stored in the vertex attribute of the struct. For
+ * internal nodes, the vertex attribute is used to store the id of any vertex
+ * belonging to the corresponding module.
+ * The attributes label, flag, slice, cc_tag are used by the different parts of
+ * the algorithm that computes the modular decomposition tree.
+ */
 struct md_tree_node {
-    md_tree_node(Type_ type, Label label, Flag flag)
+    /* ctor for non-leaf node */
+    md_tree_node(Type type, Label label, Flag flag)
         : parent(nullptr), vertex(INT_MAX), type(type),
           label(label), flag(flag),
           slice(SIZE_MAX), cc_tag(SIZE_MAX) {
     }
 
+    /* ctor for leaf */
     md_tree_node(int vertex)
-        : parent(nullptr), vertex(vertex), type(Type_::LEAF),
+        : parent(nullptr), vertex(vertex), type(Type::LEAF),
           label(Label::EMPTY), flag(Flag::UNFLAGGED),
           slice(SIZE_MAX), cc_tag(SIZE_MAX) {
     }
 
-    md_tree_node(Type_ type)
+    /* ctor for non-leaf node, with default label and flag. */
+    md_tree_node(Type type)
         : md_tree_node(type, Label::EMPTY, Flag::UNFLAGGED) {
     }
 
+    /* check whether the node is a leaf. */
     bool is_leaf() const {
-        return type == Type_::LEAF;
+        return type == Type::LEAF;
     }
 
+    /* check whether the node is prime. */
     bool is_prime() const {
-        return type == Type_::PRIME;
+        return type == Type::PRIME;
     }
 
+    /* check whether the node is series. */
     bool is_series() const {
-        return type == Type_::SERIES;
+        return type == Type::SERIES;
     }
 
+    /* check whether the node is parallel. */
     bool is_parallel() const {
-        return type == Type_::PARALLEL;
+        return type == Type::PARALLEL;
     }
 
+    /* check whether the node is degenerate (i.e., series or parallel). */
     bool is_degenerate() const {
-        return type == Type_::SERIES || type == Type_::PARALLEL;
+        return type == Type::SERIES || type == Type::PARALLEL;
     }
 
+    /*
+     * The following methods are used to check the different possible status of
+     * the label of the node
+     */
     bool is_empty() const {
         return label == Label::EMPTY;
     }
@@ -163,6 +225,7 @@ struct md_tree_node {
         return static_cast<uint8_t>(label) >> 1U;
     }
 
+    /* add the node c at the beginning of the list of children. */
     void prepend_new_child(md_tree_node *c) {
         c->parent = this;
         if (children.empty()) {
@@ -171,6 +234,7 @@ struct md_tree_node {
         children.push_front(c);
     }
 
+    /* add the node c at the end of the list of children. */
     void append_new_child(md_tree_node *c) {
         c->parent = this;
         if (children.empty()) {
@@ -179,6 +243,11 @@ struct md_tree_node {
         children.push_back(c);
     }
 
+    /*
+     * "Stole" the children from the node n and add them at the end of the list
+     * of children. ("stole" here means that at the end of this method, the list
+     * of children of n will be empty).
+     */
     void append_stolen_children_from(md_tree_node *n) {
         if (!n->children.empty()) {
             for (md_tree_node *c: n->children) {
@@ -191,6 +260,7 @@ struct md_tree_node {
         }
     }
 
+    /* Set the label and flag for all nodes of the tree. */
     void set_label_and_flag_recursively(Label l, Flag f) {
         label = l;
         flag = f;
@@ -202,16 +272,28 @@ struct md_tree_node {
     md_tree_node *parent;
     std::list<md_tree_node *> children;
     int vertex;
-    Type_ type;
+    Type type;
     Label label;
     Flag flag;
     size_t slice;
     size_t cc_tag;
 };
 
+/* A forest is a list of tree */
 using md_forest = std::list<md_tree_node *>;
 
+/*
+ * This struct is used to gather data structures needed by the different parts
+ * of the algorithm computing the modular decomposition tree. It is created
+ * at the beginning of the algorithm and pass along to any function that needs
+ * it. The hope is that it will reduce the number of allocations/deallocations
+ * because the number of creations and destructions of objects will be reduced.
+ */
 struct ScratchData {
+    /*
+     * Sub structure containing objects needed by the implementation of
+     * algorithms 3 and 4 of [TCHP2008]_.
+     */
     struct MDSequences {
         std::unordered_map<int, md_tree_node *> leaves;
         std::unordered_set<md_tree_node *> Marked;
@@ -219,6 +301,10 @@ struct ScratchData {
         std::deque<md_tree_node *> Explore;
     };
 
+    /*
+     * Sub structure containing objects needed by the implementation of
+     * algorithms 5 and 6 of [TCHP2008]_.
+     */
     struct Clusters {
         /* Assumes i < p < j where p is the index of the "cluster" {x}. */
         bool are_clusters_non_adjacent(size_t i, size_t j) const {
@@ -250,6 +336,7 @@ struct ScratchData {
         std::unordered_map<int, size_t> cluster_of_v;
     };
 
+    /* Allocate the node corresponding to the vertex, and add it to the map */
     md_tree_node *new_leaf(int vertex) {
         return mdseq.leaves[vertex] = new md_tree_node(vertex);
     }
@@ -258,7 +345,11 @@ struct ScratchData {
     Clusters clusters;
 };
 
-
+/*
+ * This function deallocate (using delete) the node n and all of its
+ * descendants. It is needed to deallocate the modular decomposition tree
+ * computed by the function corneil_habib_paul_tedder_inner.
+ */
 void dealloc_md_tree_nodes_recursively(md_tree_node *n) {
     for (md_tree_node *c: n->children) {
         dealloc_md_tree_nodes_recursively(c);
@@ -266,13 +357,17 @@ void dealloc_md_tree_nodes_recursively(md_tree_node *n) {
     delete n;
 }
 
+/* Preprocess the trees in the forest: set the label to empty and the flag to
+ * unflagged for all the nodes, and set the cc_tag needed to compute the cluster
+ * later.
+ */
 void md_forest_preprocess(md_forest &MDi) {
-    Type_ one_cc_type = Type_::PARALLEL; /* only for first iteration */
+    Type one_cc_type = Type::PARALLEL; /* only for first iteration */
     size_t s = 0;
     for (md_tree_node *md: MDi) {
         md->set_label_and_flag_recursively(Label::EMPTY, Flag::UNFLAGGED);
         md->slice = s;
-        if (md->type == Type_::PRIME || md->type == one_cc_type) {
+        if (md->type == Type::PRIME || md->type == one_cc_type) {
             md->cc_tag = 0;
         } else {
             md->cc_tag = SIZE_MAX;
@@ -282,11 +377,16 @@ void md_forest_preprocess(md_forest &MDi) {
                 i++;
             }
         }
-        one_cc_type = Type_::SERIES;
+        one_cc_type = Type::SERIES;
         s += 1;
     }
 }
 
+/*
+ * This function set to BROKEN the ancestors of DEAD nodes and gather into one
+ * node the HOMOGENEOUS and EMPTY childrend of a broken and degenerate node.
+ * Corresponds to the end of algorithm 3 of [TCHP2008]_.
+ */
 void mark_partitive_forest_finish_inner_rec(md_tree_node *r) {
     size_t nb = 0; /* number of HOMOGENEOUS or EMPTY children */
 
@@ -323,6 +423,7 @@ void mark_partitive_forest_finish_inner_rec(md_tree_node *r) {
     }
 }
 
+/* This is an implementation of algorithm 3 of [TCHP2008]_. */
 void md_forest_mark_partitive_forest(md_forest &MDi, const SDData &sd,
                                      ScratchData::MDSequences &scratch) {
     size_t i = sd.first_slice_index();
@@ -369,7 +470,7 @@ void md_forest_mark_partitive_forest(md_forest &MDi, const SDData &sd,
              * (needed only if there is >= 2 such children).
              */
             if (n->is_degenerate() && n->children.size() > 2) {
-                Type_ t = n->type;
+                Type t = n->type;
                 md_tree_node *newnodes[2] = {
                         new md_tree_node(t, Label::HOMOGENEOUS, Flag::FLAGGED),
                         new md_tree_node(t, Label::EMPTY, Flag::UNFLAGGED)
@@ -406,6 +507,7 @@ void md_forest_mark_partitive_forest(md_forest &MDi, const SDData &sd,
     }
 }
 
+/* This function is needed by md_forest_extract_and_sort. */
 void sort_broken_nodes_recursively(md_tree_node *n,
                                    bool dead_and_broken_first) {
     if (n->is_dead_or_broken()) {
@@ -434,6 +536,7 @@ void sort_broken_nodes_recursively(md_tree_node *n,
     }
 }
 
+/* This function is needed by md_forest_extract_and_sort. */
 void sort_dead_nodes_recursively(md_tree_node *n, bool flagged_first) {
     if (n->is_dead_or_broken()) {
         /* If the label is not DEAD or BROKEN, no need to go deeper: they
@@ -459,6 +562,7 @@ void sort_dead_nodes_recursively(md_tree_node *n, bool flagged_first) {
     }
 }
 
+/* This is an implementation of algorithm 4 of [TCHP2008]_. */
 void md_forest_extract_and_sort(md_forest &MDi) {
     bool is_first_slice = true;
     auto it = MDi.begin();
@@ -494,6 +598,12 @@ void md_forest_extract_and_sort(md_forest &MDi) {
     }
 }
 
+/*
+ * This function gathers the trees of the forest in clusters. A cluster is a set
+ * of trees that belongs to the same slice and (co)connected components.
+ * It also computes the Left and Right of the clusters (see section 5.2 of
+ * [TCHP2008]_.
+ */
 void md_forest_clusters_computation(const md_forest &MDi, const SDData &sd,
                                     ScratchData::Clusters &scratch) {
     scratch.clusters.clear();
@@ -584,15 +694,14 @@ void md_forest_clusters_computation(const md_forest &MDi, const SDData &sd,
 
 }
 
-
-md_tree_node *md_forest_parse_and_assemble(md_tree_node *root,
-                            size_t p,
-                            const ScratchData::Clusters &scratch) {
+/* This is an implementation of algorithms 5 and 6 of [TCHP2008]_. */
+md_tree_node *md_forest_parse_and_assemble(md_tree_node *root, size_t p,
+                                        const ScratchData::Clusters &scratch) {
     size_t q = scratch.clusters.size();
     size_t l = p;
     size_t r = p;
     while (l > 0 || r+1 < q) {
-        Type_ t;
+        Type t;
         size_t i;
         size_t lp, old_l = l;
         size_t rp, old_r = r;
@@ -600,11 +709,11 @@ md_tree_node *md_forest_parse_and_assemble(md_tree_node *root,
         if (r+1 == q || (l>0 && scratch.are_clusters_non_adjacent(l-1, r+1))) {
             lp = l-1;
             rp = r;
-            t = Type_::SERIES;
+            t = Type::SERIES;
         } else {
             lp = l;
             rp = r+1;
-            t = Type_::PARALLEL;
+            t = Type::PARALLEL;
         }
 
         while (lp < l || r < rp) {
@@ -617,7 +726,7 @@ md_tree_node *md_forest_parse_and_assemble(md_tree_node *root,
             rp = std::max(rp, scratch.Right[i]);
         }
 
-        t = (r-l)-(old_r-old_l) > 1 ? Type_::PRIME : t;
+        t = (r-l)-(old_r-old_l) > 1 ? Type::PRIME : t;
         md_tree_node *old_root = root;
         root = new md_tree_node(t);
 
@@ -627,7 +736,7 @@ md_tree_node *md_forest_parse_and_assemble(md_tree_node *root,
                 i = old_r;
             } else {
                 for (md_tree_node *m: scratch.clusters[i]) {
-                    if (t != Type_::PRIME && m->type == t) {
+                    if (t != Type::PRIME && m->type == t) {
                         root->append_stolen_children_from(m);
                         delete m;
                     } else {
@@ -640,7 +749,7 @@ md_tree_node *md_forest_parse_and_assemble(md_tree_node *root,
     return root;
 }
 
-
+/* This is the main function: it corresponds to algorithms 7 of [TCHP2008]_. */
 md_tree_node *corneil_habib_paul_tedder_inner_rec(const SDData &sd,
                                                   ScratchData &scratch) {
     if (sd.size() == 0) { /* empty graph */
@@ -659,7 +768,7 @@ md_tree_node *corneil_habib_paul_tedder_inner_rec(const SDData &sd,
     } else if (sd.size() == 2) { /* graph with two vertices */
         int y = sd.sigma[1];
         /* root is SERIES if there is an edge between x and y, else PARALLEL */
-        Type_ t = sd.is_pivot_isolated() ? Type_::PARALLEL : Type_::SERIES;
+        Type t = sd.is_pivot_isolated() ? Type::PARALLEL : Type::SERIES;
         root = new md_tree_node(t);
         root->append_new_child(scratch.mdseq.leaves[x]);
         root->append_new_child(scratch.new_leaf(y));
@@ -680,10 +789,10 @@ md_tree_node *corneil_habib_paul_tedder_inner_rec(const SDData &sd,
 
     if (sd.is_pivot_isolated()) { /* x is isolated (i.e., has no neighbor) */
         md_tree_node *md = MDi.front(); /* only one slice in this case */
-        if (md->type == Type_::PARALLEL) {
+        if (md->type == Type::PARALLEL) {
             root = md;
         } else {
-            root = new md_tree_node(Type_::PARALLEL);
+            root = new md_tree_node(Type::PARALLEL);
             root->append_new_child(md);
         }
         root->prepend_new_child(scratch.mdseq.leaves[x]);
@@ -738,6 +847,10 @@ md_tree_node *corneil_habib_paul_tedder_inner_rec(const SDData &sd,
     return root;
 }
 
+/*
+ * It is the function exported in the pxd file. It creates the ScratchData
+ * struct before calling the algorithm.
+ */
 md_tree_node *corneil_habib_paul_tedder_inner(const SDData &sd) {
     ScratchData tmp;
     return corneil_habib_paul_tedder_inner_rec(sd, tmp);
