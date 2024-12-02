@@ -24,10 +24,11 @@
     ],
     "python.testing.unittestEnabled": false,
     "cSpell.words": [
-        "furo",
         "Conda",
-        "sagemath",
-        "Cython"
+        "Cython",
+        "furo",
+        "grayskull",
+        "sagemath"
     ],
     "editor.formatOnType": true,
     "esbonio.sphinx.confDir": ""
