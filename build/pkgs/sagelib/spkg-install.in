@@ -1,7 +1,7 @@
 if [ "$SAGE_EDITABLE" = yes ]; then
-    cd ../../..
+    cd $SAGE_ROOT
 else
-    cd ../../..
+    cd $SAGE_ROOT
     # Issue #34181: Do not allow scripts with shebang lines from old
     # venvs leak into new venvs. (Changes only seem to be necessary
     # for non-editable builds.)
