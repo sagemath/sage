@@ -4980,6 +4980,8 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             ...
             TypeError: no canonical coercion from Real Field with 53 bits of precision to Multivariate Polynomial Ring in x, y over Rational Field
             sage: I.reduce(float(pi.n()))
+            Traceback (most recent call last):
+            ...
             TypeError: no canonical coercion from <class 'float'> to Multivariate Polynomial Ring in x, y over Rational Field
         """
         try:
