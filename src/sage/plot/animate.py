@@ -432,7 +432,7 @@ class Animation(WithEqualityById, SageObject):
             sage: class MyAnimation(Animation):
             ....:    def make_image(self, frame, filename, **kwds):
             ....:        P = parametric_plot(frame[0], frame[1], **frame[2])
-            ....:        P.save_image(filename,**kwds)
+            ....:        P.save_image(filename, **kwds)
 
             sage: t = SR.var("t")
             sage: x = lambda t: cos(t)
@@ -552,7 +552,7 @@ class Animation(WithEqualityById, SageObject):
         nrows, rem = divmod(n,ncols)
         if rem > 0:
             nrows += 1
-        return plot.graphics_array(frame_list, nrows,  ncols)
+        return plot.graphics_array(frame_list, nrows, ncols)
 
     def gif(self, delay=20, savefile=None, iterations=0, show_path=False,
             use_ffmpeg=False):

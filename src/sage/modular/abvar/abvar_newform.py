@@ -22,7 +22,7 @@ from sage.modular.modform.element import Newform
 from sage.modular.arithgroup.all import Gamma0_class, Gamma1_class, GammaH_class
 
 from .abvar import ModularAbelianVariety_modsym_abstract
-from . import homspace
+from sage.modular.abvar import homspace
 lazy_import('sage.databases.cremona', 'cremona_letter_code')
 
 

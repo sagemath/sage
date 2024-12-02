@@ -307,6 +307,8 @@ FINDSTAT_FORM_FORMAT = '<input type="hidden" name="%s" value="%s" />'
 FINDSTAT_FORM_FOOTER = '</form>'
 
 ######################################################################
+
+
 class FindStat(UniqueRepresentation, SageObject):
     r"""
     The Combinatorial Statistic Finder.
@@ -437,6 +439,7 @@ def _get_json(url, **kwargs):
             raise ValueError(result["error"])
         return result
     raise ConnectionError(response.text)
+
 
 def _post_json(url, data, **kwargs):
     """
@@ -1781,7 +1784,7 @@ class FindStatFunction(SageObject):
         EXAMPLES::
 
             sage: q = findstat([(d, randint(1,1000)) for d in DyckWords(4)])              # optional -- internet
-            sage: q.set_sage_code("def statistic(x):\n    return randint(1,1000)")        # optional -- internet
+            sage: q.set_sage_code("def statistic(x):\n    return randint(1, 1000)")        # optional -- internet
             sage: print(q.sage_code())                                                    # optional -- internet
             def statistic(x):
                 return randint(1,1000)
@@ -1793,6 +1796,8 @@ class FindStatFunction(SageObject):
 ######################################################################
 # statistics
 ######################################################################
+
+
 class FindStatCombinatorialStatistic(SageObject):
     """
     A class providing methods to retrieve the first terms of a statistic.
@@ -2206,7 +2211,7 @@ class FindStatStatistic(Element,
 
         included = _get_json(url)["included"]
         # slightly simplify the representation
-        data = {key: val for key, val in included["Statistics"][self.id_str()].items()}
+        data = dict(included["Statistics"][self.id_str()].items())
         # we replace the list of identifiers in Bibliography with the dictionary
         data["Bibliography"] = included["References"]
         return data
@@ -2393,6 +2398,8 @@ class FindStatStatistic(Element,
 
 
 _all_statistics = {}
+
+
 class FindStatStatistics(UniqueRepresentation, Parent):
     r"""
     The class of FindStat statistics.
@@ -2740,6 +2747,7 @@ class FindStatStatisticQuery(FindStatStatistic):
         """
         return len(self._result)
 
+
 class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
     def __init__(self, id, domain=None, check=True):
         """
@@ -3036,12 +3044,15 @@ class FindStatMatchingStatistic(FindStatCompoundStatistic):
 ######################################################################
 # maps
 ######################################################################
+
+
 class FindStatCombinatorialMap(SageObject):
     """
     A class serving as common ancestor of :class:`FindStatStatistic`
     and :class:`FindStatCompoundStatistic`.
     """
     pass
+
 
 class FindStatMap(Element,
                   FindStatFunction,
@@ -3305,6 +3316,8 @@ class FindStatMap(Element,
 
 
 _all_maps = {}
+
+
 class FindStatMaps(UniqueRepresentation, Parent):
     r"""
     The class of FindStat maps.
@@ -3623,6 +3636,7 @@ class FindStatMapQuery(FindStatMap):
         """
         return len(self._result)
 
+
 class FindStatCompoundMap(Element, FindStatCombinatorialMap):
     def __init__(self, id, domain=None, codomain=None, check=True):
         """
@@ -3914,6 +3928,8 @@ def _finite_irreducible_cartan_types_by_rank(n):
     return cartan_types
 
 # helper for generation of PlanePartitions
+
+
 def _plane_partitions_by_size_aux(n, outer=None):
     """
     Iterate over the plane partitions with `n` boxes, as lists.
@@ -3940,6 +3956,7 @@ def _plane_partitions_by_size_aux(n, outer=None):
             for pp in _plane_partitions_by_size_aux(n-k, outer=la):
                 pp = [la] + pp
                 yield pp
+
 
 def _plane_partitions_by_size(n):
     """
@@ -3970,6 +3987,8 @@ def _plane_partitions_by_size(n):
         yield PlanePartition(pp)
 
 # helper for generation of Lattices
+
+
 def _finite_lattices(n):
     """
     Iterate over the lattices with `n` elements.
@@ -3983,16 +4002,17 @@ def _finite_lattices(n):
     TESTS::
 
         sage: from sage.databases.findstat import _finite_lattices
-        sage: [L.cover_relations() for L in _finite_lattices(4)]
-        [[['bottom', 0], ['bottom', 1], [0, 'top'], [1, 'top']],
-         [['bottom', 0], [0, 1], [1, 'top']]]
+        sage: sorted((L.cover_relations() for L in _finite_lattices(4)),
+        ....:        key=len)
+        [[['bottom', 0], [0, 1], [1, 'top']],
+         [['bottom', 0], ['bottom', 1], [0, 'top'], [1, 'top']]]
     """
     if n <= 2:
         for P in Posets(n):
             if P.is_lattice():
                 yield LatticePoset(P)
     else:
-        for P in Posets(n-2):
+        for P in Posets(n - 2):
             Q = P.with_bounds()
             if Q.is_lattice():
                 yield LatticePoset(Q)
@@ -4332,7 +4352,7 @@ class FindStatCollection(Element,
                 g = (x for x in self._sageconstructor_overridden
                      if self.element_level(x) == level)
 
-        return lazy_list(((x, function(x)) for x in g))
+        return lazy_list((x, function(x)) for x in g)
 
     def id(self):
         r"""

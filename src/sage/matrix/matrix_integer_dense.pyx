@@ -868,7 +868,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [ 9 11 13]
             [ 9 11 13]
         """
-        cdef Matrix_integer_dense M = self._new(self._nrows,self._ncols)
+        cdef Matrix_integer_dense M = self._new(self._nrows, self._ncols)
 
         sig_on()
         fmpz_mat_add(M._matrix,self._matrix,(<Matrix_integer_dense> right)._matrix)
@@ -888,7 +888,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [-2  0  2]
             [ 4  6  8]
         """
-        cdef Matrix_integer_dense M = self._new(self._nrows,self._ncols)
+        cdef Matrix_integer_dense M = self._new(self._nrows, self._ncols)
 
         sig_on()
         fmpz_mat_sub(M._matrix,self._matrix,(<Matrix_integer_dense> right)._matrix)
@@ -3297,7 +3297,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         else:
             return R
 
-    def is_LLL_reduced(self, delta=None, eta=None):
+    def is_LLL_reduced(self, delta=None, eta=None, algorithm='fpLLL'):
         r"""
         Return ``True`` if this lattice is `(\delta, \eta)`-LLL reduced.
         See ``self.LLL`` for a definition of LLL reduction.
@@ -3308,6 +3308,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``eta`` -- (default: `0.501`) parameter `\eta` as described above
 
+        - ``algorithm`` -- either ``'fpLLL'`` (default) or ``'sage'``
+
         EXAMPLES::
 
             sage: A = random_matrix(ZZ, 10, 10)
@@ -3316,6 +3318,15 @@ cdef class Matrix_integer_dense(Matrix_dense):
             False
             sage: L.is_LLL_reduced()
             True
+
+        The ``'sage'`` algorithm currently does not work for matrices with
+        linearly dependent rows::
+
+            sage: A = matrix(ZZ, [[1, 2, 3], [2, 4, 6]])
+            sage: A.is_LLL_reduced(algorithm='sage')
+            Traceback (most recent call last):
+            ...
+            ValueError: linearly dependent input for module version of Gram-Schmidt
         """
         if eta is None:
             eta = 0.501
@@ -3330,20 +3341,27 @@ cdef class Matrix_integer_dense(Matrix_dense):
         if eta < 0.5:
             raise TypeError("eta must be >= 0.5")
 
-        # this is pretty slow
-        import sage.modules.misc
-        G, mu = sage.modules.misc.gram_schmidt(self.rows())
-        #For any $i>j$, we have $|mu_{i, j}| <= \eta$
-        for e in mu.list():
-            if e.abs() > eta:
-                return False
+        if algorithm == 'fpLLL':
+            from fpylll import LLL, IntegerMatrix
+            A = IntegerMatrix.from_matrix(self)
+            return LLL.is_reduced(A, delta=delta, eta=eta)
+        elif algorithm == 'sage':
+            # This is pretty slow
+            import sage.modules.misc
+            G, mu = sage.modules.misc.gram_schmidt(self.rows())
+            # For any $i>j$, we have $|mu_{i, j}| <= \eta$
+            for e in mu.list():
+                if e.abs() > eta:
+                    return False
 
-        #For any $i<d$, we have $\delta |b_i^*|^2 <= |b_{i+1}^* + mu_{i+1, i} b_i^* |^2$
-        norms = [G[i].norm()**2 for i in range(len(G))]
-        for i in range(1,self.nrows()):
-            if norms[i] < (delta - mu[i,i-1]**2) * norms[i-1]:
-                return False
-        return True
+            # For any $i<d$, we have $\delta |b_i^*|^2 <= |b_{i+1}^* + mu_{i+1, i} b_i^* |^2$
+            norms = [G[i].norm()**2 for i in range(len(G))]
+            for i in range(1,self.nrows()):
+                if norms[i] < (delta - mu[i,i-1]**2) * norms[i-1]:
+                    return False
+            return True
+        else:
+            raise ValueError("algorithm must be one of 'fpLLL' or 'sage'")
 
     def prod_of_row_sums(self, cols):
         """
@@ -4146,7 +4164,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             raise ArithmeticError("non-invertible matrix")
         return A
 
-    def _solve_right_nonsingular_square(self, B, check_rank=True, algorithm = 'iml'):
+    def _solve_right_nonsingular_square(self, B, check_rank=True, algorithm='iml'):
         r"""
         If ``self`` is a matrix `A` of full rank, then this function
         returns a vector or matrix `X` such that `A X = B`.
@@ -4588,7 +4606,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             M,d = self.transpose()._solve_flint(B.transpose(), right=True)
             return M.transpose(),d
 
-    def _rational_echelon_via_solve(self, solver = 'iml'):
+    def _rational_echelon_via_solve(self, solver='iml'):
         r"""
         Compute information that gives the reduced row echelon form (over
         QQ!) of a matrix with integer entries.
@@ -5011,7 +5029,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         t = verbose('hermite mod %s' % D, caller_name='matrix_integer_dense')
         if self._nrows != self._ncols:
             raise ValueError("matrix is not square")
-        cdef Matrix_integer_dense res = self._new(self._nrows,self._ncols)
+        cdef Matrix_integer_dense res = self._new(self._nrows, self._ncols)
         self._hnf_modn(res, D)
         verbose('finished hnf mod', t, caller_name='matrix_integer_dense')
         return res
@@ -5137,7 +5155,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             T_i_i = T_rows[i][i]
             T_j_i = T_rows[j][i]
-            d = ai.c_xgcd_int(T_i_i , T_j_i, &u, &v)
+            d = ai.c_xgcd_int(T_i_i, T_j_i, &u, &v)
             if d != T_i_i:
                 for k from i <= k < ncols:
                     B[k] = ((<int64_t>u)*T_rows[i][k] + (<int64_t>v)*T_rows[j][k])%R
@@ -5697,12 +5715,12 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [4|1]
             [3|0]
         """
-        nr , nc = (self._nrows, self._ncols)
+        nr, nc = self._nrows, self._ncols
 
         cdef Matrix_integer_dense A
         A = self._new(nc,nr)
-        cdef Py_ssize_t i,j
-        cdef Py_ssize_t ri,rj # reversed i and j
+        cdef Py_ssize_t i, j
+        cdef Py_ssize_t ri, rj  # reversed i and j
         sig_on()
         ri = nr
         for i from 0 <= i < nr:
@@ -5710,7 +5728,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
             ri =  ri-1
             for j from 0 <= j < nc:
                 rj = rj-1
-                fmpz_init_set(fmpz_mat_entry(A._matrix,rj,ri),fmpz_mat_entry(self._matrix,i,j))
+                fmpz_init_set(fmpz_mat_entry(A._matrix, rj, ri),
+                              fmpz_mat_entry(self._matrix, i, j))
         sig_off()
 
         if self._subdivisions is not None:

@@ -2733,6 +2733,25 @@ class PermutationGroup_generic(FiniteGroup):
             raise TypeError("{0} does not convert to a permutation group element".format(g))
         return PermutationGroup(gap_group=libgap.ConjugateGroup(self, g))
 
+    def are_conjugate(self, H1, H2):
+        r"""
+        Return whether ``H1`` and ``H2`` are conjugate subgroups in ``G``.
+
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(3)
+            sage: H1 = PermutationGroup([(1,2)])
+            sage: H2 = PermutationGroup([(2,3)])
+            sage: G.are_conjugate(H1, H2)
+            True
+            sage: G = SymmetricGroup(4)
+            sage: H1 = PermutationGroup([[(1,3),(2,4)], [(1,2),(3,4)]])
+            sage: H2 = PermutationGroup([[(1,2)], [(1,2),(3,4)]])
+            sage: G.are_conjugate(H1, H2)
+            False
+        """
+        return libgap.IsConjugate(self, H1, H2).sage()
+
     def direct_product(self, other, maps=True):
         """
         Wraps GAP's ``DirectProduct``, ``Embedding``, and ``Projection``.
@@ -2974,20 +2993,21 @@ class PermutationGroup_generic(FiniteGroup):
                 raise ValueError(msg)
 
         # create a parallel list of the automorphisms of N in GAP
-        libgap.eval('N := Group({})'.format(list(N.gens())))
-        gens_string = ",".join(str(x) for x in N.gens())
-        homomorphism_cmd = 'alpha := GroupHomomorphismByImages(N, N, [{0}],[{1}])'
-        libgap.eval('morphisms := []')
+        N_gap = libgap.eval(f'Group({list(N.gens())})')
+        morphisms = libgap.eval('[]')
+        libgap_gens = N_gap.GeneratorsOfGroup()
         for alpha in mapping[1]:
-            images_string = ",".join(str(alpha(n)) for n in N.gens())
-            libgap.eval(homomorphism_cmd.format(gens_string, images_string))
-            libgap.eval('Add(morphisms, alpha)')
+            images = [alpha(g) for g in N.gens()]
+            alpha_gap = N_gap.GroupHomomorphismByImages(N_gap,
+                                                        libgap_gens, images)
+            morphisms.Add(alpha_gap)
         # create the necessary homomorphism from self into the
         # automorphism group of N in GAP
-        libgap.eval('H := Group({0})'.format(mapping[0]))
-        libgap.eval('phi := GroupHomomorphismByImages(H, AutomorphismGroup(N),{},morphisms)'.format(mapping[0]))
-        libgap.eval('sdp := SemidirectProduct(H, phi, N)')
-        return PermutationGroup(gap_group='sdp')
+        H = libgap.eval(f'Group({mapping[0]})')
+        phi = H.GroupHomomorphismByImages(N_gap.AutomorphismGroup(),
+                                          H.GeneratorsOfGroup(), morphisms)
+        sdp = H.SemidirectProduct(phi, N_gap)
+        return PermutationGroup(gap_group=sdp)
 
     def holomorph(self):
         r"""
@@ -3047,11 +3067,11 @@ class PermutationGroup_generic(FiniteGroup):
 
         - Kevin Halasz (2012-08-14)
         """
-        libgap.eval('G := Group({})'.format(list(self.gens())))
-        libgap.eval('aut := AutomorphismGroup(G)')
-        libgap.eval('alpha := InverseGeneralMapping(NiceMonomorphism(aut))')
-        libgap.eval('product := SemidirectProduct(NiceObject(aut),alpha,G)')
-        return PermutationGroup(gap_group='product')
+        G = libgap.eval(f'Group({list(self.gens())})')
+        aut = G.AutomorphismGroup()
+        alpha = aut.NiceMonomorphism().InverseGeneralMapping()
+        product = aut.NiceObject().SemidirectProduct(alpha, G)
+        return PermutationGroup(gap_group=product)
 
     def subgroup(self, gens=None, gap_group=None, domain=None, category=None, canonicalize=True, check=True):
         """

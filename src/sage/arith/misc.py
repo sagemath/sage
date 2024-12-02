@@ -4171,7 +4171,7 @@ def multinomial_coefficients(m, n):
     return r
 
 
-def kronecker_symbol(x,y):
+def kronecker_symbol(x, y):
     """
     The Kronecker symbol `(x|y)`.
 
@@ -6227,8 +6227,8 @@ def dedekind_sum(p, q, algorithm='default'):
         return flint_dedekind_sum(p, q)
 
     if algorithm == 'pari':
-        import sage.interfaces.gp
-        x = sage.interfaces.gp.gp('sumdedekind(%s,%s)' % (p, q))
+        from sage.libs.pari import pari
+        x = pari.sumdedekind(p, q)
         return Rational(x)
 
     raise ValueError('unknown algorithm')
@@ -6374,3 +6374,75 @@ def dedekind_psi(N):
     """
     N = Integer(N)
     return Integer(N * prod(1 + 1 / p for p in N.prime_divisors()))
+
+def smooth_part(x, base):
+    r"""
+    Given an element ``x`` of a Euclidean domain and a factor base ``base``,
+    return a :class:`~sage.structure.factorization.Factorization` object
+    corresponding to the largest divisor of ``x`` that splits completely
+    over ``base``.
+
+    The factor base can be specified in the following ways:
+
+    - A sequence of elements.
+
+    - A :class:`~sage.rings.generic.ProductTree` built from such a sequence.
+      (Caching the tree in the caller will speed things up if this function
+      is called multiple times with the same factor base.)
+
+    EXAMPLES::
+
+        sage: from sage.arith.misc import smooth_part
+        sage: from sage.rings.generic import ProductTree
+        sage: smooth_part(10^77+1, primes(1000))
+        11^2 * 23 * 463
+        sage: tree = ProductTree(primes(1000))
+        sage: smooth_part(10^77+1, tree)
+        11^2 * 23 * 463
+        sage: smooth_part(10^99+1, tree)
+        7 * 11^2 * 13 * 19 * 23
+    """
+    from sage.rings.generic import ProductTree
+    if isinstance(base, ProductTree):
+        tree = base
+    else:
+        tree = ProductTree(base)
+    fs = []
+    rems = tree.remainders(x)
+    for j,(p,r) in enumerate(zip(tree, rems)):
+        if not r:
+            x //= p
+            v = 1
+            while True:
+                y,r = divmod(x, p)
+                if r:
+                    break
+                x = y
+                v += 1
+            fs.append((p,v))
+    from sage.structure.factorization import Factorization
+    return Factorization(fs)
+
+def coprime_part(x, base):
+    r"""
+    Given an element ``x`` of a Euclidean domain and a factor base ``base``,
+    return the largest divisor of ``x`` that is not divisible by any element
+    of ``base``.
+
+    ALGORITHM: Divide `x` by the :func:`smooth_part`.
+
+    EXAMPLES::
+
+        sage: from sage.arith.misc import coprime_part, smooth_part
+        sage: from sage.rings.generic import ProductTree
+        sage: coprime_part(10^77+1, primes(10000))
+        2159827213801295896328509719222460043196544298056155507343412527
+        sage: tree = ProductTree(primes(10000))
+        sage: coprime_part(10^55+1, tree)
+        6426667196963538873896485804232411
+        sage: coprime_part(10^55+1, tree).factor()
+        20163494891 * 318727841165674579776721
+        sage: prod(smooth_part(10^55+1, tree)) * coprime_part(10^55+1, tree)
+        10000000000000000000000000000000000000000000000000000001
+    """
+    return x // prod(smooth_part(x, base))

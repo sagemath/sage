@@ -198,7 +198,7 @@ class pAdicGeneric(LocalGeneric):
     # def ngens(self):
     #     return 1
 
-    # def gen(self, n = 0):
+    # def gen(self, n=0):
     #     if n != 0:
     #         raise IndexError, "only one generator"
     #     return self(self.prime())
@@ -1743,6 +1743,7 @@ class ResidueReductionMap(Morphism):
 
 # A class for the Teichmüller lift would also be reasonable....
 
+
 class ResidueLiftingMap(Morphism):
     r"""
     Lifting map to a `p`-adic ring or field from its residue field or ring.
@@ -1874,6 +1875,7 @@ class ResidueLiftingMap(Morphism):
         if type(self) is not type(other):
             return NotImplemented
         return richcmp((self.domain(), self.codomain()), (other.domain(), other.codomain()), op)
+
 
 def local_print_mode(obj, print_options, pos=None, ram_name=None):
     r"""

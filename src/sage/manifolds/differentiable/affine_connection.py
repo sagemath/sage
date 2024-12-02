@@ -35,6 +35,7 @@ from sage.manifolds.differentiable.manifold import DifferentiableManifold
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
 
+
 class AffineConnection(SageObject):
     r"""
     Affine connection on a smooth manifold.
@@ -1607,7 +1608,7 @@ class AffineConnection(SageObject):
 
             # definition of the parallel function
             @parallel(p_iter='multiprocessing',ncpus=nproc)
-            def make_CovDerivative(ind_part,tc,gam,frame,n_con,rank,manif):
+            def make_CovDerivative(ind_part, tc, gam, frame, n_con, rank, manif):
                 partial = []
                 for ind in ind_part:
                     p = ind[-1]  # derivation index

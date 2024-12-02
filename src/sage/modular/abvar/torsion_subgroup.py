@@ -79,15 +79,15 @@ TESTS::
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.misc import divisors, gcd
 from sage.misc.misc_c import prod
@@ -468,7 +468,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
             return self._multiple_of_order_proof_false
 
         # The Gamma0 and Gamma1 case
-        if all((isinstance(G, Gamma0_class) or isinstance(G, Gamma1_class) for G in A.groups())):
+        if all(isinstance(G, (Gamma0_class, Gamma1_class)) for G in A.groups()):
             self._multiple_of_order = self.multiple_of_order_using_frobp()
             return self._multiple_of_order
 
@@ -566,13 +566,13 @@ class RationalTorsionSubgroup(FiniteSubgroup):
                 pass
         A = self.abelian_variety()
         if A.dimension() == 0:
-            T = ZZ(1)
+            T = ZZ.one()
             self.__multiple_of_order_using_frobp = T
             return T
-        if not all((isinstance(G, Gamma0_class) or isinstance(G, Gamma1_class) for G in A.groups())):
+        if not all(isinstance(G, (Gamma0_class, Gamma1_class)) for G in A.groups()):
             raise NotImplementedError("torsion multiple only implemented for Gamma0 and Gamma1")
 
-        bnd = ZZ(0)
+        bnd = ZZ.zero()
         N = A.level()
         cnt = 0
         if maxp is None:

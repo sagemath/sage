@@ -94,7 +94,7 @@ cdef class ConstantFunction(SageObject):
             sage: ConstantFunction(1)
             The constant function (...) -> 1
         """
-        return "The constant function (...) -> %s"%self._value
+        return "The constant function (...) -> %s" % self._value
 
     def __call__(self, *args):
         """

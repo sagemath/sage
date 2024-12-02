@@ -14,7 +14,7 @@ Indexed Generators
 from sage.structure.category_object import normalize_names
 
 
-class IndexedGenerators():
+class IndexedGenerators:
     r"""nodetex
     Abstract base class for parents whose elements consist of generators
     indexed by an arbitrary set.
@@ -649,6 +649,7 @@ class IndexedGenerators():
         if prefix == "":
             return left + s + right
         return "%s_{%s}" % (prefix, s)
+
 
 def split_index_keywords(kwds):
     """

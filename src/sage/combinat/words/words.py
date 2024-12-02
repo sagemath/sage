@@ -293,7 +293,7 @@ class AbstractLanguage(Parent):
         rk = self.alphabet().rank
         return rk(letter1)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         TESTS::
 
@@ -309,7 +309,7 @@ class AbstractLanguage(Parent):
         return self is other or (type(self) is type(other) and
                                  self.alphabet() == other.alphabet())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         TESTS::
 
@@ -479,7 +479,8 @@ class FiniteWords(AbstractLanguage):
                 return self._element_classes['list'](self, data)
 
         from sage.combinat.words.word_datatypes import (WordDatatype_str,
-                          WordDatatype_list, WordDatatype_tuple)
+                                                        WordDatatype_list,
+                                                        WordDatatype_tuple)
         if isinstance(data, WordDatatype_str):
             return self._element_classes['str'](self, data._data)
         if isinstance(data, WordDatatype_tuple):
@@ -487,8 +488,8 @@ class FiniteWords(AbstractLanguage):
         if isinstance(data, WordDatatype_list):
             return self._element_classes['list'](self, data._data)
 
-        from sage.combinat.words.word_infinite_datatypes import (WordDatatype_callable,
-                WordDatatype_iter)
+        from sage.combinat.words.word_infinite_datatypes import \
+            (WordDatatype_callable, WordDatatype_iter)
         if isinstance(data, WordDatatype_callable):
             length = data.length()
             data = data._func
@@ -849,7 +850,7 @@ class FiniteWords(AbstractLanguage):
             self._check(w)
         return w
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -875,14 +876,14 @@ class FiniteWords(AbstractLanguage):
         """
         try:
             some_letters = list(self.alphabet().some_elements())
-        except Exception:
+        except (TypeError, ValueError, AttributeError, NotImplementedError):
             return self([])
 
         if len(some_letters) == 1:
             return self([some_letters[0]] * 3)
-        else:
-            a, b = some_letters[:2]
-            return self([b, a, b])
+
+        a, b = some_letters[:2]
+        return self([b, a, b])
 
     def iterate_by_length(self, l=1):
         r"""
@@ -912,10 +913,20 @@ class FiniteWords(AbstractLanguage):
             Traceback (most recent call last):
             ...
             TypeError: the parameter l (='a') must be an integer
+
+        TESTS::
+
+            sage: W = FiniteWords(NN)
+            sage: list(W.iterate_by_length(1))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot iterate over words for infinite alphabets
         """
         if not isinstance(l, (int, Integer)):
             raise TypeError("the parameter l (=%r) must be an integer" % l)
         cls = self._element_classes['tuple']
+        if not self.alphabet().is_finite():
+            raise NotImplementedError("cannot iterate over words for infinite alphabets")
         for w in itertools.product(self.alphabet(), repeat=l):
             yield cls(self, w)
 
@@ -961,7 +972,7 @@ class FiniteWords(AbstractLanguage):
         for l in itertools.count():
             yield from self.iterate_by_length(l)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Test whether ``self`` contains ``x``.
 
@@ -1216,8 +1227,7 @@ class FiniteWords(AbstractLanguage):
             TypeError: codomain (=a) must be an instance of FiniteWords
         """
         n = self.alphabet().cardinality()
-        if min_length < 0:
-            min_length = 0
+        min_length = max(min_length, 0)
         # create an iterable of compositions (all "compositions" if arg is
         # None, or [arg] otherwise)
         if arg is None:

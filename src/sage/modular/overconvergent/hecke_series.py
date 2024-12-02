@@ -87,6 +87,7 @@ from sage.rings.integer_ring import ZZ
 
 # AUXILIARY CODE: SPACES OF MODULAR FORMS AND LINEAR ALGEBRA
 
+
 def compute_G(p, F):
     r"""
     Given a power series `F \in R[[q]]^\times`, for some ring `R`, and an
@@ -151,7 +152,8 @@ def low_weight_bases(N, p, m, NN, weightbound):
         generators.append(list(b))
     return generators
 
-def random_low_weight_bases(N,p,m,NN,weightbound):
+
+def random_low_weight_bases(N, p, m, NN, weightbound):
     r"""
     Return list of random integral bases of modular forms of level `N` and
     (even) weight at most weightbound with coefficients reduced modulo
@@ -194,7 +196,8 @@ def random_low_weight_bases(N,p,m,NN,weightbound):
 
     return RandomLWB
 
-def low_weight_generators(N,p,m,NN):
+
+def low_weight_generators(N, p, m, NN):
     r"""
     Return a list of lists of modular forms, and an even natural number.
 
@@ -244,7 +247,8 @@ def low_weight_generators(N,p,m,NN):
 
     return generators, weightbound
 
-def random_solution(B,K):
+
+def random_solution(B, K):
     r"""
     Return a random solution in nonnegative integers to the equation `a_1 + 2
     a_2 + 3 a_3 + ... + B a_B = K`, using a greedy algorithm.
@@ -398,6 +402,7 @@ def random_new_basis_modp(N, p, k, LWBModp, TotalBasisModp, elldash, bound):
 
     return NewBasisCode
 
+
 def complementary_spaces_modp(N, p, k0, n, elldash, LWBModp, bound):
     r"""
     Return a list of lists of lists of lists ``[j, a]``. The pairs ``[j, a]``
@@ -445,6 +450,7 @@ def complementary_spaces_modp(N, p, k0, n, elldash, LWBModp, bound):
         CompSpacesCode.append(NewBasisCodemi)
 
     return CompSpacesCode
+
 
 def complementary_spaces(N, p, k0, n, mdash, elldashp, elldash, modformsring, bound):
     r"""
@@ -523,6 +529,7 @@ def complementary_spaces(N, p, k0, n, mdash, elldashp, elldash, modformsring, bo
 
 # AUXILIARY CODE: KATZ EXPANSIONS
 
+
 def higher_level_katz_exp(p, N, k0, m, mdash, elldash, elldashp, modformsring, bound):
     r"""
     Return a matrix `e` of size ``ell x elldashp`` over the integers modulo
@@ -587,6 +594,7 @@ def higher_level_katz_exp(p, N, k0, m, mdash, elldash, elldashp, modformsring, b
 
     return M, Ep1
 
+
 def compute_elldash(p, N, k0, n):
     r"""
     Return the "Sturm bound" for the space of modular forms of level
@@ -614,6 +622,7 @@ def compute_elldash(p, N, k0, n):
     return ModularForms(N, k0 + n * (p - 1)).sturm_bound()
 
 # *** DEGREE BOUND ON HECKE SERIES ***
+
 
 def hecke_series_degree_bound(p, N, k, m):
     r"""
@@ -658,6 +667,7 @@ def hecke_series_degree_bound(p, N, k, m):
 # *** MAIN FUNCTION FOR LEVEL > 1 ***
 
 # Returns matrix A modulo p^m from Step 6 of Algorithm 2.
+
 
 def higher_level_UpGj(p, N, klist, m, modformsring, bound, extra_data=False):
     r"""
@@ -874,6 +884,7 @@ def compute_Wi(k, p, h, hj, E4, E6):
 
     return Wi, hj
 
+
 def katz_expansions(k0, p, ellp, mdash, n):
     r"""
     Return a list `e` of `q`-expansions, and the Eisenstein series `E_{p-1} = 1 +
@@ -925,6 +936,7 @@ def katz_expansions(k0, p, ellp, mdash, n):
     return e, Ep1
 
 # *** MAIN FUNCTION FOR LEVEL 1 ***
+
 
 def level1_UpGj(p, klist, m, extra_data=False):
     r"""
@@ -1038,6 +1050,7 @@ def level1_UpGj(p, klist, m, extra_data=False):
 
 # *** CODE FOR GENERAL LEVEL ***
 
+
 def is_valid_weight_list(klist, p):
     r"""
     This function checks that ``klist`` is a nonempty list of integers all of
@@ -1069,6 +1082,7 @@ def is_valid_weight_list(klist, p):
     for i in range(1,len(klist)):
         if (klist[i] % (p-1)) != k0:
             raise ValueError("List of weights must be all congruent modulo p-1 = %s, but given list contains %s and %s which are not congruent" % (p - 1, klist[0], klist[i]))
+
 
 def hecke_series(p, N, klist, m, modformsring=False, weightbound=6):
     r"""
@@ -1138,9 +1152,9 @@ def hecke_series(p, N, klist, m, modformsring=False, weightbound=6):
 
     oneweight = False
     # convert single weight to list
-    if ((isinstance(klist, int)) or (isinstance(klist, Integer))):
+    if isinstance(klist, (int, Integer)):
         klist = [klist]
-        oneweight = True # input is single weight
+        oneweight = True  # input is single weight
 
     # algorithm may finish with false output unless:
     is_valid_weight_list(klist, p)

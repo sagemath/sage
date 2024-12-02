@@ -204,7 +204,7 @@ from sage.misc.cachefunc import cached_function
 # Milnor, p=2
 
 
-def milnor_multiplication(r,s):
+def milnor_multiplication(r, s):
     r"""
     Product of Milnor basis elements r and s at the prime 2.
 
@@ -312,9 +312,9 @@ def milnor_multiplication(r,s):
                     else:
                         sum = sum + M[i][j] * 2**j
                 else:
-                        sum = sum + M[i][j] * 2**j
-                j = j + 1
-            i = i + 1
+                    sum = sum + M[i][j] * 2**j
+                j += 1
+            i += 1
     return result
 
 
@@ -372,7 +372,7 @@ def multinomial(list):
 # Milnor, p odd
 
 
-def milnor_multiplication_odd(m1,m2,p):
+def milnor_multiplication_odd(m1, m2, p):
     r"""
     Product of Milnor basis elements defined by m1 and m2 at the odd prime p.
 
@@ -568,7 +568,7 @@ def milnor_multiplication_odd(m1,m2,p):
     return result
 
 
-def multinomial_odd(list,p):
+def multinomial_odd(list, p):
     r"""
     Multinomial coefficient of list, mod p.
 
@@ -635,7 +635,7 @@ def multinomial_odd(list,p):
 # Adem relations, Serre-Cartan basis, admissible sequences
 
 
-def binomial_mod2(n,k):
+def binomial_mod2(n, k):
     r"""
     The binomial coefficient `\binom{n}{k}`, computed mod 2.
 
@@ -665,7 +665,7 @@ def binomial_mod2(n,k):
         return 0
 
 
-def binomial_modp(n,k,p):
+def binomial_modp(n, k, p):
     r"""
     The binomial coefficient `\binom{n}{k}`, computed mod `p`.
 
@@ -784,7 +784,7 @@ def adem(a, b, c=0, p=2, generic=None):
         return result
     # p odd
     if a == 0 and b == 0:
-            return {(c,): 1}
+        return {(c,): 1}
     if c == 0:
         bockstein = 0
         A = a

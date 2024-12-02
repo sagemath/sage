@@ -48,6 +48,7 @@ AUTHORS:
 
 
 import os
+import platform
 import sys
 import time
 import signal
@@ -80,7 +81,7 @@ from sage.cpython.string import bytes_to_str, str_to_bytes
 # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork' in
 # multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
 # trac #27754.
-if os.uname().sysname == 'Darwin':
+if platform.system() == 'Darwin':
     multiprocessing.set_start_method('fork', force=True)
 
 
@@ -150,14 +151,13 @@ def init_sage(controller=None):
         sage: from sympy.printing.pretty.pretty import PrettyPrinter
         sage: s = sympify('+x^'.join(str(i) for i in range(30)))
         sage: print(PrettyPrinter(settings={'wrap_line': True}).doprint(s))
-         29    28    27    26    25    24    23    22    21    20    19    18    17
-        x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   +
+         29    28    27    26    25    24    23    22    21    20    19    18    17...
+        x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x...
         <BLANKLINE>
-         16    15    14    13    12    11    10    9    8    7    6    5    4    3
-        x   + x   + x   + x   + x   + x   + x   + x  + x  + x  + x  + x  + x  + x  + x
+        ... 16    15    14    13    12    11    10    9    8    7    6    5    4    3...
+        ...x   + x   + x   + x   + x   + x   + x   + x  + x  + x  + x  + x  + x  + x...
         <BLANKLINE>
-        2
-          + x
+        ...
 
     The displayhook sorts dictionary keys to simplify doctesting of
     dictionary output::
@@ -710,27 +710,19 @@ class SageDocTestRunner(doctest.DocTestRunner):
             elif self.options.gc < 0:
                 gc.disable()
 
+            from cysignals.signals import SignalError
             try:
                 # Don't blink!  This is where the user's code gets run.
                 self.compile_and_execute(example, compiler, test.globs)
-            except SystemExit:
+            except (SignalError, SystemExit):
+                # Tests can be killed by signals in unexpected places.
                 raise
             except BaseException:
                 exception = sys.exc_info()
-                # On Python 2, the exception lives in sys.exc_info() as
-                # long we are in the same stack frame. To ensure that
-                # sig_occurred() works correctly, we need to clear the
-                # exception. This is not an issue on Python 3, where the
-                # exception is cleared as soon as we are outside of the
-                # "except" clause.
-                try:
-                    sys.exc_clear()
-                except AttributeError:
-                    pass  # Python 3
             finally:
                 if self.debugger is not None:
                     self.debugger.set_continue()  # ==== Example Finished ====
-            check_starttime = walltime()
+            check_timer = Timer().start()
             got = self._fakeout.getvalue()
 
             outcome = FAILURE   # guilty until proved innocent or insane
@@ -804,22 +796,22 @@ class SageDocTestRunner(doctest.DocTestRunner):
                                 f"and it succeeded (raised an exception as expected).")
                         outcome = SUCCESS
 
-            check_duration = walltime(check_starttime)
-            self.total_walltime += example.walltime + check_duration
+            check_timer.stop()
+            self.total_walltime += example.walltime + check_timer.walltime
 
             # Report the outcome.
             if example.warnings:
                 for warning in example.warnings:
                     out(self._failure_header(test, example, f'Warning: {warning}'))
             if outcome is SUCCESS:
-                if self.options.warn_long > 0 and example.walltime + check_duration > self.options.warn_long:
+                if self.options.warn_long > 0 and example.cputime + check_timer.cputime > self.options.warn_long:
                     self.report_overtime(out, test, example, got,
-                                         check_duration=check_duration)
+                                         check_timer=check_timer)
                 elif example.warnings:
                     pass
                 elif not quiet:
                     self.report_success(out, test, example, got,
-                                        check_duration=check_duration)
+                                        check_timer=check_timer)
             elif probed_tags:
                 pass
             elif outcome is FAILURE:
@@ -1327,7 +1319,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
                     start_txt += 'Expecting nothing\n'
                 out(start_txt)
 
-    def report_success(self, out, test, example, got, *, check_duration=0):
+    def report_success(self, out, test, example, got, *, check_timer=None):
         """
         Called when an example succeeds.
 
@@ -1341,8 +1333,9 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``got`` -- string; the result of running ``example``
 
-        - ``check_duration`` -- number (default: ``0``); time spent for checking
-          the test output
+        - ``check_timer`` -- a :class:`sage.doctest.util.Timer` (default:
+          ``None``) that measures the time spent checking whether or not
+          the output was correct
 
         OUTPUT: prints a report to ``out``; if in debugging mode, starts an
         IPython prompt at the point of the failure
@@ -1353,20 +1346,27 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
-            sage: from sage.misc.timing import walltime
+            sage: from sage.doctest.util import Timer
             sage: import doctest, sys, os
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: filename = sage.doctest.forker.__file__
             sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
-            sage: ex.walltime = 0.0r
-            sage: DTR.report_success(sys.stdout.write, doctests[0], ex, '1764')
-            ok [0.00 s]
+            sage: ex.cputime = 1.01
+            sage: ex.walltime = 1.12
+            sage: check = Timer()
+            sage: check.cputime = 2.14
+            sage: check.walltime = 2.71
+            sage: DTR.report_success(sys.stdout.write, doctests[0], ex, '1764',
+            ....:                    check_timer=check)
+            ok [3.83s wall]
         """
-        # We completely replace doctest.DocTestRunner.report_success so that we can include time taken for the test
+        # We completely replace doctest.DocTestRunner.report_success
+        # so that we can include time taken for the test
         if self._verbose:
-            out("ok [%.2f s]\n" % (example.walltime + check_duration))
+            out("ok [%.2fs wall]\n" %
+                (example.walltime + check_timer.walltime))
 
     def report_failure(self, out, test, example, got, globs):
         r"""
@@ -1496,7 +1496,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
                     self._fakeout.start_spoofing()
             return returnval
 
-    def report_overtime(self, out, test, example, got, *, check_duration=0):
+    def report_overtime(self, out, test, example, got, *, check_timer=None):
         r"""
         Called when the ``warn_long`` option flag is set and a doctest
         runs longer than the specified time.
@@ -1511,8 +1511,9 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``got`` -- string; the result of running ``example``
 
-        - ``check_duration`` -- number (default: ``0``); time spent for checking
-          the test output
+        - ``check_timer`` -- a :class:`sage.doctest.util.Timer` (default:
+          ``None``) that measures the time spent checking whether or not
+          the output was correct
 
         OUTPUT: prints a report to ``out``
 
@@ -1522,24 +1523,32 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
-            sage: from sage.misc.timing import walltime
+            sage: from sage.doctest.util import Timer
             sage: import doctest, sys, os
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: filename = sage.doctest.forker.__file__
             sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
-            sage: ex.walltime = 1.23r
-            sage: DTR.report_overtime(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n', check_duration=2.34r)
+            sage: ex.cputime = 1.23
+            sage: ex.walltime = 2.50
+            sage: check = Timer()
+            sage: check.cputime = 2.34
+            sage: check.walltime = 3.12
+            sage: DTR.report_overtime(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n', check_timer=check)
             **********************************************************************
             File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
-            Warning, slow doctest:
+            Warning: slow doctest:
                 doctest_var = 42; doctest_var^2
-            Test ran for 1.23 s, check ran for 2.34 s
+            Test ran for 1.23s cpu, 2.50s wall
+            Check ran for 2.34s cpu, 3.12s wall
         """
-        out(self._failure_header(test, example, 'Warning, slow doctest:') +
-            ('Test ran for %.2f s, check ran for %.2f s\n'
-             % (example.walltime, check_duration)))
+        out(self._failure_header(test, example, 'Warning: slow doctest:') +
+            ('Test ran for %.2fs cpu, %.2fs wall\nCheck ran for %.2fs cpu, %.2fs wall\n'
+             % (example.cputime,
+                example.walltime,
+                check_timer.cputime,
+                check_timer.walltime)))
 
     def report_unexpected_exception(self, out, test, example, exc_info):
         r"""
@@ -1742,9 +1751,9 @@ class DocTestDispatcher(SageObject):
             sage: DC.timer = Timer().start()
             sage: DD.serial_dispatch()
             sage -t .../rings/homset.py
-                [... tests, ... s]
+                [... tests, ...s wall]
             sage -t .../rings/ideal.py
-                [... tests, ... s]
+                [... tests, ...s wall]
         """
         for source in self.controller.sources:
             heading = self.controller.reporter.report_head(source)
@@ -1788,9 +1797,9 @@ class DocTestDispatcher(SageObject):
             sage: DC.timer = Timer().start()
             sage: DD.parallel_dispatch()
             sage -t .../databases/cremona.py
-                [... tests, ... s]
+                [... tests, ...s wall]
             sage -t .../rings/big_oh.py
-                [... tests, ... s]
+                [... tests, ...s wall]
 
         If the ``exitfirst=True`` option is given, the results for a failing
         module will be immediately printed and any other ongoing tests
@@ -1825,7 +1834,7 @@ class DocTestDispatcher(SageObject):
             **********************************************************************
             1 item had failures:
                1 of   1 in ...
-                [1 test, 1 failure, ... s]
+                [1 test, 1 failure, ...s wall]
             Killing test ...
         """
         opt = self.controller.options
@@ -1943,8 +1952,7 @@ class DocTestDispatcher(SageObject):
                                 # has the messages pipe open).
                                 # Adjust deadline to read all messages:
                                 newdeadline = now + die_timeout
-                                if w.deadline > newdeadline:
-                                    w.deadline = newdeadline
+                                w.deadline = min(w.deadline, newdeadline)
                             new_workers.append(w)
                         else:
                             # Save the result and output of the worker
@@ -2041,8 +2049,7 @@ class DocTestDispatcher(SageObject):
                     # The master pselect() call
                     rlist = [w.rmessages for w in workers if w.rmessages is not None]
                     tmout = min(w.deadline for w in workers) - now
-                    if tmout > 5:  # Wait at most 5 seconds
-                        tmout = 5
+                    tmout = min(tmout, 5)
                     rlist, _, _, _ = sel.pselect(rlist, timeout=tmout)
 
                     # Read messages
@@ -2121,9 +2128,9 @@ class DocTestDispatcher(SageObject):
             sage: DC.timer = Timer().start()
             sage: DD.dispatch()
             sage -t .../sage/modules/free_module_homspace.py
-                [... tests, ... s]
+                [... tests, ...s wall]
             sage -t .../sage/rings/big_oh.py
-                [... tests, ... s]
+                [... tests, ...s wall]
         """
         if self.controller.options.serial:
             self.serial_dispatch()
@@ -2173,7 +2180,7 @@ class DocTestWorker(multiprocessing.Process):
         sage: W.join()  # Wait for worker to finish
         sage: result = W.result_queue.get()
         sage: reporter.report(FDS, False, W.exitcode, result, "")
-            [... tests, ... s]
+            [... tests, ...s wall]
     """
     def __init__(self, source, options, funclist=[], baseline=None):
         """
@@ -2185,7 +2192,7 @@ class DocTestWorker(multiprocessing.Process):
             Running doctests with ID ...
             Doctesting 1 file.
             sage -t .../sage/rings/big_oh.py
-                [... tests, ... s]
+                [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -2232,7 +2239,7 @@ class DocTestWorker(multiprocessing.Process):
             Running doctests with ID ...
             Doctesting 1 file.
             sage -t .../sage/symbolic/units.py
-                [... tests, ... s]
+                [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -2470,7 +2477,7 @@ class DocTestWorker(multiprocessing.Process):
         return True
 
 
-class DocTestTask():
+class DocTestTask:
     """
     This class encapsulates the tests from a single source.
 
