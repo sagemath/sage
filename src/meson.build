@@ -65,7 +65,6 @@ inc_cypari2 = run_command(
   [
     '-c',
     '''import os
-os.chdir("..")
 import cypari2
 incdir = cypari2.__file__.replace('__init__.py', '')
 try:
