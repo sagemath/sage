@@ -4,6 +4,8 @@ py.install_sources(
   'basis_exchange_matroid.pxd',
   'basis_matroid.pxd',
   'catalog.py',
+  'chow_ring.py',
+  'chow_ring_ideal.py',
   'circuit_closures_matroid.pxd',
   'circuits_matroid.pxd',
   'constructor.py',
