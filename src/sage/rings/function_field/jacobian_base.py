@@ -666,8 +666,7 @@ class Jacobian_base(Parent):
         if x == 0:
             return self.group().zero()
         if x in F.divisor_group():
-            G = self.group()
-            return G.point(x)
+            return self.group()(x)
         raise ValueError(f"cannot create a point of the Jacobian from {x}")
 
     def curve(self):
