@@ -1,0 +1,2 @@
+from sage.schemes.hyperelliptic_curves_smooth_model.constructor import HyperellipticCurveSmoothModel
+

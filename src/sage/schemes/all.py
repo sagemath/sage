@@ -45,3 +45,5 @@ from sage.schemes.product_projective.all import *
 from sage.schemes.cyclic_covers.all import *
 
 from sage.schemes.berkovich.all import *
+
+from sage.schemes.hyperelliptic_curves_smooth_model.all import *
