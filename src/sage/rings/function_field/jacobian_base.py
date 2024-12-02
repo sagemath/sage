@@ -52,6 +52,7 @@ is simply represented by the divisor `D`. ::
 
 We can get the corresponding point in the Jacobian in a different model. ::
 
+    sage: # long time
     sage: p1km = J_km(p1)
     sage: p1km.order()
     5
@@ -111,6 +112,7 @@ class JacobianPoint_finite_field_base(JacobianPoint_base):
 
         EXAMPLES::
 
+            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(29), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: F = C.function_field()
@@ -640,6 +642,7 @@ class Jacobian_base(Parent):
 
         TESTS::
 
+            sage: # long time
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: F.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: J_hess = F.jacobian(model='hess')
