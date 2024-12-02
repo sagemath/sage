@@ -4978,7 +4978,9 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: I.reduce(pi.n())
             Traceback (most recent call last):
             ...
-            TypeError: element belong to Real Field with 53 bits of precision, cannot coerce to Multivariate Polynomial Ring in x, y over Rational Field
+            TypeError: no canonical coercion from Real Field with 53 bits of precision to Multivariate Polynomial Ring in x, y over Rational Field
+            sage: I.reduce(float(pi.n()))
+            TypeError: no canonical coercion from <class 'float'> to Multivariate Polynomial Ring in x, y over Rational Field
         """
         try:
             strat = self._groebner_strategy()
