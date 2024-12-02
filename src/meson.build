@@ -4,27 +4,39 @@ cpp = meson.get_compiler('cpp')
 cython = meson.get_compiler('cython')
 
 # Setup dependencies that are needed by many modules
-inc_numpy = run_command(
-  py,
-  [
-    '-c',
-    '''
-import numpy
-print(numpy.get_include())
-    '''.strip(),
-  ],
-  check: true,
-).stdout().strip()
-numpy = declare_dependency(include_directories: inc_numpy)
+numpy_dep = dependency('numpy', required: false)
+if not numpy_dep.found()
+  # Older versions of numpy don't have a pkg-config file
+  # Try to use relative path in case it is installed in a venv in the same directory
+  incdir_numpy = run_command(py3,
+    [
+      '-c',
+      '''import os
+import numpy as np
+incdir = np.get_include()
+try:
+  incdir = print(os.path.relpath(incdir))
+except Exception:
+  incdir = print(incdir)
+'''
+    ],
+    check: true
+  ).stdout().strip()
+  numpy = declare_dependency(include_directories: inc_numpy)
+endif
 
 inc_cysignals = run_command(
   py,
   [
     '-c',
-    '''
+    '''import os
 import cysignals
-print(cysignals.__file__.replace('__init__.py', ''))
-    '''.strip(),
+incdir = cysignals.__file__.replace('__init__.py', '')
+try:
+  incdir = print(os.path.relpath(incdir))
+except Exception:
+  incdir = print(incdir)
+'''.strip(),
   ],
   check: true,
 ).stdout().strip()
@@ -34,9 +46,13 @@ inc_gmpy2 = run_command(
   py,
   [
     '-c',
-    '''
+    '''import os
 import gmpy2
-print(gmpy2.__file__.replace('__init__.py', ''))
+incdir = gmpy2.__file__.replace('__init__.py', '')
+try:
+  incdir = print(os.path.relpath(incdir))
+except Exception:
+  incdir = print(incdir)
     '''.strip(),
   ],
   check: true,
@@ -48,9 +64,14 @@ inc_cypari2 = run_command(
   py,
   [
     '-c',
-    '''
+    '''import os
+os.chdir("..")
 import cypari2
-print(cypari2.__file__.replace('__init__.py', ''))
+incdir = cypari2.__file__.replace('__init__.py', '')
+try:
+incdir = print(os.path.relpath(incdir))
+except Exception:
+incdir = print(incdir)
     '''.strip(),
   ],
   check: true,
