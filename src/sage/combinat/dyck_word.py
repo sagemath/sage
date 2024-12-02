@@ -85,7 +85,7 @@ from .backtrack import GenericBacktracker
 
 from sage.structure.global_options import GlobalOptions
 from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.unique_representation import WithEqualityByArgs, UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.posets import Posets
@@ -3195,7 +3195,7 @@ class DyckWord_complete(DyckWord):
         return A.from_monotone_triangle(monotone_triangle)
 
 
-class DyckWords(UniqueRepresentation, Parent):
+class DyckWords(WithEqualityByArgs, Parent):
     r"""
     Dyck words.
 

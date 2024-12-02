@@ -285,7 +285,7 @@ from itertools import accumulate
 from sage.arith.misc import binomial, factorial, gcd, multinomial
 from sage.structure.global_options import GlobalOptions
 from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.unique_representation import UniqueRepresentation, WithEqualityByArgs
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.prandom import randrange
@@ -5813,8 +5813,7 @@ class Partition(CombinatorialElement):
 ##############
 # Partitions #
 ##############
-
-class Partitions(UniqueRepresentation, Parent):
+class Partitions(WithEqualityByArgs, Parent):
     r"""
     ``Partitions(n, **kwargs)`` returns the combinatorial class of
     integer partitions of `n` subject to the constraints given by the
