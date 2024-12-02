@@ -280,6 +280,8 @@ we have:
     x
     sage: R2(y)
     y
+    sage: R2.coerce(y)
+    y
 
 If there is no name preserving ring homomorphism, coercion is not
 defined. However, conversion may still be possible, namely by mapping
@@ -296,6 +298,10 @@ ring generators according to their position in the list of generators:
     z
     sage: R3(y)
     x
+    sage: R3.coerce(y)
+    Traceback (most recent call last):
+    ...
+    TypeError: no canonical coercion from Multivariate Polynomial Ring in x, y over Integer Ring to Multivariate Polynomial Ring in z, x over Integer Ring
 
 But such position preserving conversions do not qualify as coercion:
 By composing a name preserving map from ``ZZ['x','y']`` to ``ZZ['y','x']``

@@ -285,6 +285,8 @@ preservam nomes. Então temos:
     x
     sage: R2(y)
     y
+    sage: R2.coerce(y)
+    y
 
 Se não existir homomorfismo de anel que preserve nomes, coação não é
 definida. Todavia, conversão pode ainda ser possível, a saber,
@@ -302,6 +304,10 @@ geradores:
     z
     sage: R3(y)
     x
+    sage: R3.coerce(y)
+    Traceback (most recent call last):
+    ...
+    TypeError: no canonical coercion from Multivariate Polynomial Ring in x, y over Integer Ring to Multivariate Polynomial Ring in z, x over Integer Ring
 
 Mas essas conversões que preservam a posição não se qualificam como
 coação: Compondo um mapa que preserva nomes de ``ZZ['x','y']`` para
