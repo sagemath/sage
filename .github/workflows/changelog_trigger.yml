@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Generate Changelog Workflow in website repo
+        if: "!github.event.release.prerelease"
         env:
           GITHUB_PAT: ${{ secrets.WEBSITE_ACCESS_TOKEN }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
