@@ -52,7 +52,6 @@ def sigmas_from_uniform(list_of_counts):
     
     AUTHORS:
 
-    - Tom Draper, Natalie Durgin, Michelle Kerr, Nida Obatake (Feb 2024)
     '''
     num_samples = sum(list_of_counts)
     num_counts = len(list_of_counts)
