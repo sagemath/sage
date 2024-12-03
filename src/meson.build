@@ -8,7 +8,8 @@ numpy_dep = dependency('numpy', required: false)
 if not numpy_dep.found()
   # Older versions of numpy don't have a pkg-config file
   # Try to use relative path in case it is installed in a venv in the same directory
-  inc_numpy = run_command(py,
+  inc_numpy = run_command(
+    py,
     [
       '-c',
       '''import os
@@ -18,9 +19,8 @@ try:
   incdir = print(os.path.relpath(incdir))
 except Exception:
   incdir = print(incdir)
-'''
-    ],
-    check: true
+'''],
+    check: true,
   ).stdout().strip()
   numpy = declare_dependency(include_directories: inc_numpy)
 endif
