@@ -667,8 +667,7 @@ class Jacobian_base(Parent):
             sage: D2 = I.divisor()
             sage: J = F.jacobian(model='hess')
             sage: J(D1)
-            [Place (x + 1, y + 2)
-             + Place (x + 2, y + 2)]
+            [Place (x + 1, y + 2) + Place (x + 2, y + 2)]
             sage: J(D2)
             Traceback (most recent call last):
             ...
