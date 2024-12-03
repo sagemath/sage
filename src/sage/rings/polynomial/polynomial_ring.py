@@ -1777,35 +1777,8 @@ class PolynomialRing_generic(Ring):
         raise ValueError("you should pass exactly one of of_degree and max_degree")
 
 
-# Placeholder class for deprecation
-class PolynomialRing_general(PolynomialRing_generic):
-    """
-    Univariate polynomial ring over a ring.
-
-    This class is deprecated. Please use :class:`PolynomialRing_generic`.
-    """
-
-    def __init__(self, *args, **kwds):
-        """
-        This class is deprecated. Please use :class:`PolynomialRing_generic`.
-
-        TESTS::
-
-            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_general, PolynomialRing_generic
-            sage: PolynomialRing_general(QQ, name="a")
-            doctest:warning...DeprecationWarning:
-            The class PolynomialRing_general has been renamed to PolynomialRing_generic...
-            Univariate Polynomial Ring in a over Rational Field
-
-        Check they provide the same functionalities for backward compatability::
-
-            sage: dir(PolynomialRing_general(QQ, name="a")) == dir(PolynomialRing_generic(QQ, name="a"))
-            True
-        """
-        deprecation(
-            38207, "The class PolynomialRing_general has been renamed to PolynomialRing_generic."
-        )
-        super().__init__(*args, **kwds)
+# PolynomialRing_general is deprecated since 2024-12-03. See Issue 38207.
+PolynomialRing_general = PolynomialRing_generic
 
 
 class PolynomialRing_commutative(PolynomialRing_generic):
