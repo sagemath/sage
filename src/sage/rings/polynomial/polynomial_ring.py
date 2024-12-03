@@ -2670,6 +2670,34 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
             return [implementation]
         return NotImplemented
 
+    def enumerate_irreducible_elements(self, n):
+        """
+        Enumerate monic irreducible polynomials of degree `n` in the given finite ring ``self``
+
+        INPUT:
+
+        - ``n`` -- integer: degree of the polynomial to construct
+
+        OUTPUT:
+
+        An iterator of monic irreducible polynomials of degree `n`.
+
+        WARNING:
+
+        This method is exhaustive and will be very slow for even moderately-sized n or large rings.
+
+        EXAMPLES::
+
+            sage: # needs sage.modules sage.rings.finite_rings
+            sage: R = GF(2^2, 'a')['x']
+            sage: len(list(R.enumerate_irreducible_elements(3)))
+            20
+        """
+        for g in self.polynomials(max_degree=n-1):
+            f = self.gen()**n + g
+            if f.is_irreducible():
+                yield f
+
     def irreducible_element(self, n, algorithm=None):
         """
         Construct a monic irreducible polynomial of degree `n`.
@@ -2683,10 +2711,14 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
           - ``'random'`` or ``None``:
             try random polynomials until an irreducible one is found
 
+          - ``'uniform_random'`` or ``None``:
+            try random polynomials sampled from all monic n-degree
+            polynomials until an irreducible one is found.
+
           - ``'first_lexicographic'``: try polynomials in
             lexicographic order until an irreducible one is found
 
-        OUTPUT: a monic irreducible polynomial of degree `n` in ``self``
+        OUTPUT: A monic irreducible polynomial of degree `n` in the given finite ring ``self``.
 
         EXAMPLES::
 
@@ -2722,6 +2754,14 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
         elif algorithm == "first_lexicographic":
             for g in self.polynomials(max_degree=n-1):
                 f = self.gen()**n + g
+                if f.is_irreducible():
+                    return f 
+        elif algorithm == "uniform_random":
+            R = self.base_ring()
+            while True:
+                g = [R.random_element() for i in range(n)]
+                g.append(1)
+                f = self(g)
                 if f.is_irreducible():
                     return f
         else:
