@@ -302,6 +302,9 @@ cdef object si2sa_GFq_generic(number *n, ring *_ring, object base):
     cdef object ret
     cdef ring *cfRing = _ring.cf.extRing
 
+    if _ring.cf.type in (n_Zn, n_Znm):
+        return si2sa_ZZmod(n, _ring, base)
+
     if _ring.cf.cfIsZero(n,_ring.cf):
         return base.zero()
     elif _ring.cf.cfIsOne(n,_ring.cf):
@@ -1583,7 +1586,7 @@ cdef object si2sa(number *n, ring *_ring, object base):
 
     An element of ``base``
     """
-    if isinstance(base, FiniteField_prime_modn):
+    if isinstance(base, FiniteField_prime_modn) and _ring.cf.type == n_Zp:
         return base(_ring.cf.cfInt(n, _ring.cf))
 
     elif isinstance(base, RationalField):
@@ -1611,8 +1614,6 @@ cdef object si2sa(number *n, ring *_ring, object base):
         return si2sa_transext_FF(n, _ring, base)
 
     elif isinstance(base, IntegerModRing_generic):
-        if _ring.cf.type == n_unknown:
-            return base(_ring.cf.cfInt(n, _ring.cf))
         return si2sa_ZZmod(n, _ring, base)
 
     else:
