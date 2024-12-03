@@ -86,7 +86,7 @@ def cocliques_HoffmannSingleton():
         if len(c1.intersection(c2)) == 8:
             edges.append((c1, c2))
 
-    G = Graph(edges, format="list_of_edges")
+    G = Graph(edges, format='list_of_edges')
     return G
 
 
@@ -578,11 +578,11 @@ def LeonardGraph():
         if M[i, j] * M[i, l] * M[k, j] * M[k, l] == -1:
             edges.append(((i, j), (k, l)))
 
-    D = Graph(edges, format="list_of_edges")
+    D = Graph(edges, format='list_of_edges')
     blocks = [frozenset(cl) for cl in D.cliques_maximum()]
 
     edges = [(p, b) for b in blocks for p in b]
-    G = Graph(edges, format="list_of_edges")
+    G = Graph(edges, format='list_of_edges')
     return G
 
 
@@ -591,8 +591,9 @@ def UstimenkoGraph(const int m, const int q):
     Return the Ustimenko graph with parameters `(m, q)`.
 
     This is the distance 1 or 2 graph of the dual polar graph `C_{m-1}(q)`.
-    The graph is distance-regular with classical with parameters
-    `(d,q^2, qbinom(3,1,q) -1, qbinom(m+1,1,q) -1)`
+    The graph is distance-regular with parameters
+    `(d,q^2, \binom{3}{1}_q -1, \binom{m+1}{1}_q -1)`,
+    where `\binom{n}{k}_q` is the `q`-binomial coefficient.
 
     INPUT:
 
@@ -739,7 +740,7 @@ def AlternatingFormsGraph(const int n, const int q):
     matrices over `GF(q)` with zero diagonal. Two vertices are adjacent
     if and only if the difference of the two matrices has rank 2.
 
-    This grap is distance-regular with classical parameters
+    This graph is distance-regular with classical parameters
     `(\lfloor \frac n 2 \rfloor,  q^2, q^2 - 1, q^{2 \lceil \frac n 2 \rceil -1})`.
 
     INPUT:
@@ -833,7 +834,7 @@ def HermitianFormsGraph(const int n, const int r):
     r"""
     Return the Hermitian forms graph with the given parameters.
 
-    We build a graph whose vertices are all ``n``x``n`` Hermitian matrices
+    We build a graph whose vertices are all `n \times n` Hermitian matrices
     over ``GF(r^2)``. Two  vertices are adjacent if the difference of the two
     vertices has rank 1.
 
@@ -1128,7 +1129,7 @@ def DoubleGrassmannGraph(const int q, const int e):
     r"""
     Return the bipartite double of the distance-`e` graph of the Grassmann graph `J_q(n,e)`.
 
-    This graph can also be descirbed as follows:
+    This graph can also be described as follows:
     Let `V` be the vector space of dimension `n` over `GF(q)`.
     The vertex set is the set of `e+1` or `e` subspaces of `V`.
     Two vertices are adjacent if one subspace is contained in the other.
@@ -1300,7 +1301,7 @@ def graph_from_GQ_spread(const int s, const int t):
             sig_check()
             edges.append((p1, p2))
 
-    return Graph(edges, format="list_of_edges")
+    return Graph(edges, format='list_of_edges')
 
 
 def GeneralisedDodecagonGraph(const int s, const int t):
@@ -1422,14 +1423,14 @@ def GeneralisedOctagonGraph(const int s, const int t):
     EXAMPLES::
 
         sage: # needs sage.libs.gap
-        sage: G = graphs.GeneralisedOctagonGraph(1, 4)
-        sage: G.is_distance_regular(True)
+        sage: G = graphs.GeneralisedOctagonGraph(1, 4)          # optional - database_graphs
+        sage: G.is_distance_regular(True)                       # optional - database_graphs
         ([5, 4, 4, 4, None], [None, 1, 1, 1, 5])
         sage: G = graphs.GeneralisedOctagonGraph(2, 4)          # optional - gap_package_atlasrep internet
         sage: G.is_distance_regular(True)                       # optional - gap_package_atlasrep internet
         ([10, 8, 8, 8, None], [None, 1, 1, 1, 5])
-        sage: G = graphs.GeneralisedOctagonGraph(5, 1)
-        sage: G.is_distance_regular(True)
+        sage: G = graphs.GeneralisedOctagonGraph(5, 1)          # optional - database_graphs
+        sage: G.is_distance_regular(True)                       # optional - database_graphs
         ([10, 5, 5, 5, None], [None, 1, 1, 1, 2])
 
     .. NOTE::
@@ -1791,7 +1792,7 @@ def _line_graph_generalised_polygon(H):
             sig_check()
             edges.append((l1, l2))
 
-    return Graph(edges, format="list_of_edges")
+    return Graph(edges, format='list_of_edges')
 
 
 def _intersection_array_from_graph(G):
@@ -1805,7 +1806,7 @@ def _intersection_array_from_graph(G):
 
     INPUT:
 
-    - G -- a graph
+    - ``G`` -- a graph
 
     EXAMPLES::
 
@@ -1868,8 +1869,8 @@ def is_classical_parameters_graph(list array):
     graphs with classical parameters, then this function  returns a tuple
     consisting of the  parameters `(d, b, \alpha, \beta)` and a fourth parameter
     which is the enum ``CalssicalParametersGraph`` indicating the family with
-    the given itersection array.
-    If the array doesn't belong to any classical parameter graph, then this
+    the given intersection array.
+    If the array does not belong to any classical parameter graph, then this
     function returns ``False``.
     If the array belongs to a sporadic graph rather than a family of graphs,
     then the function returns ``False``. This is to reduce the overlap with
@@ -2538,10 +2539,10 @@ def near_polygon_graph(family, params):
 
     INPUT:
 
-    - ``family`` -- int; an element of the enum ``NearPolygonGraph``.
+    - ``family`` -- integer; an element of the enum ``NearPolygonGraph``
 
-    - ``params`` -- int or tuple; the parameters needed to construct a graph
-      of the family ``family``.
+    - ``params`` -- integer or tuple; the parameters needed to construct a graph
+      of the family ``family``
 
     EXAMPLES::
 
@@ -2706,7 +2707,7 @@ def distance_regular_graph(list arr, existence=False, check=True):
 
       - ``False`` -- if there is no graph with the given intersection array;
 
-      - ``Unknown`` -- if Sage doesn't know if such a graph exists.
+      - ``Unknown`` -- if Sage doesn't know if such a graph exists
 
     - ``check`` -- boolean (default: ``True``); if ``True``, then checks that the result
       of this function has the given intersection array
@@ -2740,7 +2741,7 @@ def distance_regular_graph(list arr, existence=False, check=True):
         Hamming Graph with parameters 7,3: Graph on 2187 vertices
         sage: graphs.distance_regular_graph([66, 45, 28, 1, 6, 30])
         Graph on 1024 vertices
-        sage: graphs.distance_regular_graph([6,5,5,5,1,1,1,6])
+        sage: graphs.distance_regular_graph([6,5,5,5,1,1,1,6])  # optional - database_graphs
         Generalised octagon of order (1, 5): Graph on 312 vertices
         sage: graphs.distance_regular_graph([64, 60, 1, 1, 15, 64], check=True)
         Graph on 325 vertices

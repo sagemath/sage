@@ -15,8 +15,8 @@ cdef struct iter_s:
     bint dual                  # if 1, then iterate over dual Polyhedron
     face_t face                # the current face of the iterator
     FaceStatus face_status
-    size_t *atom_rep           # a place where atom-representaion of face will be stored
-    size_t *coatom_rep         # a place where coatom-representaion of face will be stored
+    size_t *atom_rep           # a place where atom-representation of face will be stored
+    size_t *coatom_rep         # a place where coatom-representation of face will be stored
     int current_dimension      # dimension of current face, dual dimension if ``dual``
     int dimension              # dimension of the polyhedron
     int output_dimension       # only faces of this (dual?) dimension are considered
@@ -25,7 +25,7 @@ cdef struct iter_s:
     size_t _index              # this counts the number of seen faces, useful for hasing the faces
 
     # ``visited_all`` points to faces, of which we have visited all faces already.
-    # The number of faces in ``visited_all` might depend on the current dimension:
+    # The number of faces in ``visited_all`` might depend on the current dimension:
     #     Consider we visit the facets A,B of some face F.
     #     We will first visit all faces of A and then add A to visited_all.
     #     Then we visit all faces of B and add B to visited_all.

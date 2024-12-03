@@ -20,12 +20,37 @@ Graph traversals
     :meth:`~maximum_cardinality_search` | Return an ordering of the vertices according a maximum cardinality search.
     :meth:`~maximum_cardinality_search_M` | Return the ordering and the edges of the triangulation produced by MCS-M.
 
+
+ALGORITHM:
+
+For :meth:`~lex_BFS` with ``algorithm="slow"``, :meth:`~lex_DFS`,
+:meth:`~lex_UP` and :meth:`~lex_DOWN` the same generic implementation is used.
+It corresponds to an implementation the generic algorithm described in
+"Algorithm 1" of [Mil2017]_.
+
+This algorithm maintains for each vertex left in the graph a lexicographic label
+corresponding to the vertices already removed. The vertex of maximal
+lexicographic label is then removed, and the lexicographic labels of its
+neighbors are updated. Depending on how the update is done, it corresponds to
+LexBFS, LexUP, LexDFS or LexDOWN: during the `i`-th iteration of the algorithm
+`n-i` (for LexBFS and LexDOWN) or `i` (for LexDFS and LexUP) is appended (for
+LexBFS and LexUP) or prepended (for LexDFS and LexDOWN) to the lexicographic
+labels of all neighbors of the selected vertex that are left in the graph.
+
+The time complexity of the algorithm is `O(mn)` for ``SparseGraph`` and
+`O(\max\{mn, n^2\})` for ``DenseGraph``, where `n` is the number of vertices
+and `m` is the number of edges.
+
+See [CK2008]_ and [Mil2017]_ for more details on the algorithm and graphs
+searching.
+
 Methods
 -------
 """
 # ****************************************************************************
 # Copyright (C) 2019 Georgios Giapitzakis Tzintanos <giorgosgiapis@mail.com>
 #                    David Coudert <david.coudert@inria.fr>
+#               2024 Cyril Bouvier <cyril.bouvier@lirmm.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,15 +72,166 @@ from memory_allocator cimport MemoryAllocator
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
 from sage.graphs.base.static_sparse_graph cimport out_degree
+from sage.graphs.base.c_graph cimport CGraph, CGraphBackend
+from sage.graphs.graph_decompositions.slice_decomposition cimport \
+        extended_lex_BFS
+
+
+def _lex_order_common(G, algo, reverse, tree, initial_vertex):
+    r"""
+    Perform a lexicographic search (LexBFS, LexUP, LexDFS or LexDOWN) on the
+    graph.
+
+    INPUT:
+
+    - ``G`` -- a sage graph
+
+    - ``algo`` -- string; the name of the actual algorithm among:
+
+        - ``"lex_BFS"``
+
+        - ``"lex_UP"``
+
+        - ``"lex_DFS"``
+
+        - ``"lex_DOWN"``
+
+    - ``reverse`` -- whether to return the vertices in discovery order, or the
+      reverse
+
+    - ``tree`` -- whether to return the discovery directed tree (each vertex
+      being linked to the one that saw it last)
+
+    - ``initial_vertex`` -- the first vertex to consider, can be None
+
+    .. NOTE::
+
+        Loops and multiple edges are ignored and directed graphs are considered
+        as undirected graphs.
+
+    ALGORITHM:
+
+    See the documentation of the :mod:`~sage.graphs.traversals` module.
+
+    TESTS:
+
+    Lex ordering of a graph on one vertex::
+
+        sage: Graph(1).lex_BFS(tree=True, algorithm="slow")
+        ([0], Digraph on 1 vertex)
+        sage: Graph(1).lex_UP(tree=True)
+        ([0], Digraph on 1 vertex)
+        sage: Graph(1).lex_DFS(tree=True)
+        ([0], Digraph on 1 vertex)
+        sage: Graph(1).lex_DOWN(tree=True)
+        ([0], Digraph on 1 vertex)
+
+    Lex ordering of an empty (di)graph is an empty sequence::
+
+        sage: g = Graph()
+        sage: g.lex_BFS(algorithm="slow")
+        []
+        sage: g.lex_BFS(algorithm="slow", tree=True)
+        ([], Digraph on 0 vertices)
+        sage: g.lex_UP()
+        []
+        sage: g.lex_UP(tree=True)
+        ([], Digraph on 0 vertices)
+        sage: g.lex_DFS()
+        []
+        sage: g.lex_DFS(tree=True)
+        ([], Digraph on 0 vertices)
+        sage: g.lex_DOWN()
+        []
+        sage: g.lex_DFS(tree=True)
+        ([], Digraph on 0 vertices)
+
+    Lex UP ordering of a symmetric digraph should be the same as the Lex UP
+    ordering of the corresponding undirected graph::
+
+        sage: G = Graph([(1, 2), (1, 3), (2, 3), (2, 4), (2, 5), (3, 5), (3, 6), (4, 5), (5, 6)])
+        sage: H = DiGraph(G)
+        sage: G.lex_BFS(algorithm="slow") == H.lex_BFS(algorithm="slow")
+        True
+        sage: G.lex_UP() == H.lex_UP()
+        True
+        sage: G.lex_DFS() == H.lex_DFS()
+        True
+        sage: G.lex_DOWN() == H.lex_DOWN()
+        True
+
+    ``initial_vertex`` should be a valid graph vertex::
+
+        sage: G = graphs.CompleteGraph(6)
+        sage: G.lex_BFS(initial_vertex='foo', algorithm="slow")
+        Traceback (most recent call last):
+        ...
+        ValueError: 'foo' is not a graph vertex
+        sage: G.lex_UP(initial_vertex='foo')
+        Traceback (most recent call last):
+        ...
+        ValueError: 'foo' is not a graph vertex
+        sage: G.lex_DFS(initial_vertex='foo')
+        Traceback (most recent call last):
+        ...
+        ValueError: 'foo' is not a graph vertex
+        sage: G.lex_DOWN(initial_vertex='foo')
+        Traceback (most recent call last):
+        ...
+        ValueError: 'foo' is not a graph vertex
+    """
+    if initial_vertex is not None and initial_vertex not in G:
+        raise ValueError(f"'{initial_vertex}' is not a graph vertex")
+
+    if algo not in ("lex_BFS", "lex_UP", "lex_DFS", "lex_DOWN"):
+        raise ValueError(f"unknown algorithm '{algo}'")
+
+    cdef size_t n = G.order()
+    cdef list sigma = []
+    cdef dict predecessor = {}
+
+    cdef bint right = algo in ("lex_BFS", "lex_UP")
+    cdef bint decr = algo in ("lex_BFS", "lex_DOWN")
+
+    cdef size_t cur_label = n if decr else -1
+    cdef int label_incr = -1 if decr else 1
+
+    # Perform the search
+    lexicographic_label = {u: deque() for u in G}
+    if initial_vertex is not None:
+        # append or appendleft does not matter here, as the deque is empty
+        lexicographic_label[initial_vertex].append(cur_label)
+    while lexicographic_label:
+        u = max(lexicographic_label, key=lexicographic_label.get)
+        lexicographic_label.pop(u)
+        sigma.append(u)
+        cur_label += label_incr
+        for v in G.neighbor_iterator(u):  # graphs are considered undirected
+            if v in lexicographic_label:
+                if right:
+                    lexicographic_label[v].append(cur_label)
+                else:
+                    lexicographic_label[v].appendleft(cur_label)
+                predecessor[v] = u
+
+    if reverse:
+        sigma.reverse()
+
+    if tree:
+        from sage.graphs.digraph import DiGraph
+        edges = predecessor.items()
+        g = DiGraph([G, edges], format='vertices_and_edges', sparse=True)
+        return sigma, g
+    return sigma
 
 
 def _is_valid_lex_BFS_order(G, L):
     r"""
-    Check whether `L` is a valid lex BFS ordering of the vertices of `G`.
+    Check whether ``L`` is a valid LexBFS ordering of the vertices of ``G``.
 
     Given two vertices `a` and `b` of `G = (V, E)`, we write `a < b` if `a` has
     a smaller label than `b`, and so if `a` is after `b` in the ordering `L`.
-    It is proved in [DNB1996]_ that any lex BFS ordering satisfies that,
+    It is proved in [DNB1996]_ that any LexBFS ordering satisfies that,
     if `a < b < c` and `ac \in E` and `bc \not\in E`, then there exists `d\in V`
     such that `c < d`, `db \in E` and `da \not\in E`.
 
@@ -64,6 +240,21 @@ def _is_valid_lex_BFS_order(G, L):
     - ``G`` -- a sage Graph
 
     - ``L`` -- list; an ordering of the vertices of `G`
+
+    OUTPUT:
+
+    - ``True`` if ``L`` is a LexBFS ordering of ``G``; ``False`` otherwise
+
+    .. NOTE::
+
+        Loops and multiple edges are ignored for LexBFS ordering and directed
+        graphs are considered as undirected graphs.
+
+    .. SEEALSO::
+
+        * :wikipedia:`Lexicographic_breadth-first_search`
+        * :meth:`~sage.graphs.generic_graph.GenericGraph.lex_BFS` -- perform a
+          lexicographic depth first search (LexBFS) on the graph
 
     TESTS::
 
@@ -76,8 +267,19 @@ def _is_valid_lex_BFS_order(G, L):
 
         sage: G = DiGraph("I?O@??A?CCA?A??C??")
         sage: _is_valid_lex_BFS_order(G, [0, 7, 1, 2, 3, 4, 5, 8, 6, 9])
+        False
+        sage: _is_valid_lex_BFS_order(G, G.lex_BFS())
+        True
+        sage: H = G.to_undirected()
+        sage: _is_valid_lex_BFS_order(H, G.lex_BFS())
+        True
+        sage: _is_valid_lex_BFS_order(G, H.lex_BFS())
         True
     """
+    # Convert G to a simple undirected graph
+    if G.has_loops() or G.has_multiple_edges() or G.is_directed():
+        G = G.to_simple(immutable=False, to_undirected=True)
+
     cdef int n = G.order()
 
     if set(L) != set(G):
@@ -86,11 +288,9 @@ def _is_valid_lex_BFS_order(G, L):
     cdef dict L_inv = {u: i for i, u in enumerate(L)}
     cdef int pos_a, pos_b, pos_c
 
-    neighbors = G.neighbor_in_iterator if G.is_directed() else G.neighbor_iterator
-
     for pos_a in range(n - 1, -1, -1):
         a = L[pos_a]
-        for c in neighbors(a):
+        for c in G.neighbor_iterator(a):
             pos_c = L_inv[c]
             if pos_c > pos_a:
                 continue
@@ -99,130 +299,11 @@ def _is_valid_lex_BFS_order(G, L):
                 if G.has_edge(c, b):
                     continue
                 if any(L_inv[d] < pos_c and not G.has_edge(d, a)
-                       for d in neighbors(b)):
+                       for d in G.neighbor_iterator(b)):
                     # The condition is satisfied for a < b < c
                     continue
                 return False
     return True
-
-
-cdef lex_BFS_fast_short_digraph(short_digraph sd, uint32_t *sigma, uint32_t *pred):
-    r"""
-    Perform a lexicographic breadth first search (LexBFS) on the graph.
-
-    This method implements the `O(n+m)` time algorithm proposed in [HMPV2000]_.
-
-    The method assumes that the initial vertex is vertex `0` and feeds input
-    arrays ``sigma`` and ``pred`` with respectively the ordering of the vertices
-    and the predecessor in the traversal.
-
-    This algorithm uses the notion of *slices*, i.e., subsets of consecutive
-    vertices in the ordering, and iteratively refines the slices by subdividing
-    them into sub-slices to determine the exact position of the vertices in the
-    ordering.
-
-    Consider an ordering `\sigma` of the vertices. For a vertex `v`, we define
-    `N_i(v) = \{u | u \in N(v) \text{ and } \sigma(u) < i\}`, that is the subset
-    of neighbors of `v` appearing before the `i`-th vertex in the ordering
-    `\sigma`. Now, a slice of an ordering `\sigma` is a set of consecutive
-    vertices, `S = \{u | i \leq \sigma(u) \leq j\}`, such that for any `u \in
-    S`, we have `N_i(u) = N_i(\sigma^{-1}(i))` and for any `v` such that `j <
-    \sigma(v)`, `N_i(v) \neq N_i(\sigma^{-1}(i))`. The *head* of a slice is the
-    first position of its vertices.
-
-    The algorithm starts with a single slice containing all vertices. Then, when
-    the position of the `i`-th vertex `v` is fixed, it explores the neighbors of
-    `v` that have not yet been ordered. Consider a slice `S` such that `N(x)\cap
-    S \neq \emptyset`. The algorithm will rearrange the ordering of the vertices
-    in `S` so that the first vertices are the neighbors of `v`. The sub-slice
-    containing the neighbors of `v` is assigned a new slice name, and the head
-    of slice `S` is set to the position of the first vertex of `S \setminus
-    N(v)` in the ordering `\sigma`.
-
-    Observe that each arc of the graph can induce the subdivision of a
-    slice. Hence, the algorithm can use up to `m + 1` different slices.
-
-    INPUT:
-
-    - ``sd`` -- a ``short_digraph``
-
-    - ``sigma`` -- array of size ``n`` to store the ordering of the vertices
-      resulting from the LexBFS traversal from vertex 0. This method assumes
-      that this array has already been allocated. However, there is no need to
-      initialize it.
-
-    - ``pred`` -- array of size ``n`` to store the predecessor of a vertex in
-      the LexBFS traversal from vertex 0. This method assumes that this array
-      has already been allocated and initialized (e.g., ``pred[i] = i``).
-
-    EXAMPLES:
-
-    Lex BFS ordering of the 3-sun graph::
-
-        sage: g = Graph([(1, 2), (1, 3), (2, 3), (2, 4), (2, 5), (3, 5), (3, 6), (4, 5), (5, 6)])
-        sage: g.lex_BFS(algorithm="fast")
-        [1, 2, 3, 5, 4, 6]
-    """
-    cdef uint32_t n = sd.n
-    cdef uint32_t n_slice = sd.m + 1
-    cdef MemoryAllocator mem = MemoryAllocator()
-    cdef uint32_t *sigma_inv = <uint32_t *>mem.allocarray(n, sizeof(uint32_t))
-    cdef uint32_t *slice_of = <uint32_t *>mem.allocarray(n, sizeof(uint32_t))
-    cdef uint32_t *slice_head = <uint32_t *>mem.allocarray(n_slice, sizeof(uint32_t))
-    cdef uint32_t *subslice = <uint32_t *>mem.allocarray(n_slice, sizeof(uint32_t))
-    cdef uint32_t i, j, k, l, a, old_k, v
-    cdef int wi
-
-    # Initialize slices (slice_of, slice_head, subslice) to 0
-    memset(slice_of, 0, n * sizeof(uint32_t))
-    slice_head[0] = 0
-    subslice[0] = 0
-
-    # Initialize the position of vertices in sigma
-    for i in range(n):
-        sigma[i] = i
-        sigma_inv[i] = i
-
-    k = 1
-    for i in range(n):
-        old_k = k
-        v = sigma[i]
-
-        # We update the labeling of all unordered neighbors of v
-        for wi in range(out_degree(sd, v)):
-            w = sd.neighbors[v][wi]
-            j = sigma_inv[w]
-            if j <= i:
-                # w has already been ordered
-                continue
-
-            # Get the name of the slice for position j
-            a = slice_of[j]
-            if slice_head[a] <= i:
-                # This slice cannot start at a position less than i
-                slice_head[a] = i + 1
-
-            # Get the position of the head of the slice
-            l = slice_head[a]
-            if l < n - 1 and slice_of[l + 1] == a:
-                if l != j:
-                    # Place w at the position of the head of the slice
-                    u = sigma[l]
-                    sigma_inv[u], sigma_inv[w] = j, l
-                    sigma[j], sigma[l] = u, w
-                    j = l
-                slice_head[a] += 1
-            if subslice[a] < old_k:
-                # Form a new slice
-                subslice[a] = k
-                slice_head[k] = j
-                subslice[k] = 0
-                k += 1
-
-            # Finally, we update the name of the slice for position j and set v
-            # as predecessor of w
-            slice_of[j] = subslice[a]
-            pred[w] = v
 
 
 def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast"):
@@ -238,58 +319,38 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
 
     - ``tree`` -- boolean (default: ``False``); whether to return the
       discovery directed tree (each vertex being linked to the one that saw
-      it for the first time)
+      it last)
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider
 
-    - ``algorithm`` -- string (default: ``"fast"``); algorithm to use among:
+    - ``algorithm`` -- string (default: ``'fast'``); algorithm to use among:
 
-      - ``"slow"`` -- This algorithm maintains for each vertex left in the graph
-        a code corresponding to the vertices already removed. The vertex of
-        maximal code (according to the lexicographic order) is then removed, and
-        the codes are updated. See for instance [CK2008]_ for more details.  The
-        time complexity of this algorithm as described in [CK2008]_ is in
-        `O(n + m)`, where `n` is the number of vertices and `m` is the number of
-        edges, but our implementation is in `O(n^2)`.
+      - ``'slow'`` -- it use the generic algorithm for all the lexicographic
+        searchs. See the documentation of the :mod:`~sage.graphs.traversals`
+        module for more details.
 
-      - ``"fast"`` -- This algorithm uses the notion of *slices* to refine the
-        position of the vertices in the ordering. The time complexity of this
-        algorithm is in `O(n + m)`, and our implementation follows that
-        complexity. See [HMPV2000]_ and next section for more details.
+      - ``'fast'`` -- this algorithm uses the notion of *partition refinement*
+        to determine the position of the vertices in the ordering. The time
+        complexity of this algorithm is in `O(n + m)`, and our implementation
+        follows that complexity for ``SparseGraph``. For ``DenseGraph``,
+        the complexity is `O(n^2)`. See [HMPV2000]_ and [TCHP2008]_ for more
+        details. This algorithm is also used to compute slice decompositions of
+        undirected graphs, a more thorough description can be found in the
+        documentation of the
+        :mod:`~sage.graphs.graph_decompositions.slice_decomposition` module.
 
-    ALGORITHM:
+    .. NOTE::
 
-    The ``"fast"`` algorithm is the `O(n + m)` time algorithm proposed in
-    [HMPV2000]_, where `n` is the number of vertices and `m` is the number of
-    edges. It uses the notion of *slices*, i.e., subsets of consecutive vertices
-    in the ordering, and iteratively refines the slices by subdividing them into
-    sub-slices to determine the exact position of the vertices in the ordering.
-
-    Consider an ordering `\sigma` of the vertices. For a vertex `v`, we define
-    `N_i(v) = \{u | u \in N(v) \text{ and } \sigma(u) < i\}`, that is the subset
-    of neighbors of `v` appearing before the `i`-th vertex in the ordering
-    `\sigma`. Now, a slice of an ordering `\sigma` is a set of consecutive
-    vertices, `S = \{u | i \leq \sigma(u) \leq j\}`, such that for any `u \in
-    S`, we have `N_i(u) = N_i(\sigma^{-1}(i))` and for any `v` such that `j <
-    \sigma(v)`, `N_i(v) \neq N_i(\sigma^{-1}(i))`. The *head* of a slice is the
-    first position of its vertices.
-
-    The algorithm starts with a single slice containing all vertices. Then, when
-    the position of the `i`-th vertex `v` is fixed, it explores the neighbors of
-    `v` that have not yet been ordered. Consider a slice `S` such that `N(x)\cap
-    S \neq \emptyset`. The algorithm will rearrange the ordering of the vertices
-    in `S` so that the first vertices are the neighbors of `v`. The sub-slice
-    containing the neighbors of `v` is assigned a new slice name, and the head
-    of slice `S` is set to the position of the first vertex of `S \setminus
-    N(v)` in the ordering `\sigma`.
-
-    Observe that each arc of the graph can induce the subdivision of a
-    slice. Hence, the algorithm can use up to `m + 1` different slices.
+        Loops and multiple edges are ignored during the computation of
+        ``lex_BFS`` and directed graphs are converted to undirected graphs.
 
     .. SEEALSO::
 
         * :wikipedia:`Lexicographic_breadth-first_search`
+        * :mod:`~sage.graphs.graph_decompositions.slice_decomposition` module
+          and :meth:`~sage.graphs.graph.Graph.slice_decomposition` -- compute a
+          slice decomposition of the graph using an extended lex BFS algorithm
         * :meth:`~sage.graphs.generic_graph.GenericGraph.lex_DFS` -- perform a
           lexicographic depth first search (LexDFS) on the graph
         * :meth:`~sage.graphs.generic_graph.GenericGraph.lex_UP` -- perform a
@@ -302,7 +363,7 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     A Lex BFS is obviously an ordering of the vertices::
 
         sage: g = graphs.CompleteGraph(6)
-        sage: len(g.lex_BFS()) == g.order()
+        sage: set(g.lex_BFS()) == set(g)
         True
 
     Lex BFS ordering of the 3-sun graph::
@@ -314,10 +375,11 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     The method also works for directed graphs::
 
         sage: G = DiGraph([(1, 2), (2, 3), (1, 3)])
-        sage: G.lex_BFS(initial_vertex=2, algorithm="slow")
-        [2, 3, 1]
-        sage: G.lex_BFS(initial_vertex=2, algorithm="fast")
-        [2, 3, 1]
+        sage: correct_anwsers = [[2, 1, 3], [2, 3, 1]]
+        sage: G.lex_BFS(initial_vertex=2, algorithm='slow') in correct_anwsers
+        True
+        sage: G.lex_BFS(initial_vertex=2, algorithm='fast') in correct_anwsers
+        True
 
     For a Chordal Graph, a reversed Lex BFS is a Perfect Elimination Order::
 
@@ -339,9 +401,9 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
 
         sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
-        sage: G.lex_BFS(initial_vertex='000', algorithm="fast")
+        sage: G.lex_BFS(initial_vertex='000', algorithm='fast')
         ['000', '001', '100', '010', '011', '110', '101', '111']
-        sage: G.lex_BFS(initial_vertex='000', algorithm="slow")
+        sage: G.lex_BFS(initial_vertex='000', algorithm='slow')
         ['000', '001', '100', '010', '011', '110', '101', '111']
         sage: G.lex_DFS(initial_vertex='000')
         ['000', '001', '100', '010', '101', '110', '011', '111']
@@ -357,122 +419,94 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
         sage: from sage.graphs.traversals import _is_valid_lex_BFS_order
         sage: G = graphs.RandomChordalGraph(15)
         sage: v0 = ZZ.random_element(G.order())
-        sage: L = G.lex_BFS(initial_vertex=v0, algorithm="fast")
+        sage: L = G.lex_BFS(initial_vertex=v0, algorithm='fast')
         sage: _is_valid_lex_BFS_order(G, L)
         True
-        sage: L = G.lex_BFS(initial_vertex=v0, algorithm="slow")
+        sage: L = G.lex_BFS(initial_vertex=v0, algorithm='slow')
         sage: _is_valid_lex_BFS_order(G, L)
         True
         sage: G = digraphs.RandomDirectedGNP(15, .3)
         sage: v0 = ZZ.random_element(G.order())
-        sage: L = G.lex_BFS(initial_vertex=v0, algorithm="fast")
+        sage: L = G.lex_BFS(initial_vertex=v0, algorithm='fast')
         sage: _is_valid_lex_BFS_order(G, L)
         True
-        sage: L = G.lex_BFS(initial_vertex=v0, algorithm="slow")
+        sage: L = G.lex_BFS(initial_vertex=v0, algorithm='slow')
         sage: _is_valid_lex_BFS_order(G, L)
         True
 
     Lex BFS ordering of a graph on one vertex::
 
-        sage: Graph(1).lex_BFS(tree=True)
+        sage: Graph(1).lex_BFS(algorithm="fast", tree=True)
         ([0], Digraph on 1 vertex)
 
     Lex BFS ordering of an empty (di)graph is an empty sequence::
 
         sage: g = Graph()
-        sage: g.lex_BFS()
+        sage: g.lex_BFS(algorithm="fast")
         []
+        sage: g.lex_BFS(algorithm="fast", tree=True)
+        ([], Digraph on 0 vertices)
 
     Lex BFS ordering of a symmetric digraph should be the same as the Lex BFS
     ordering of the corresponding undirected graph::
 
         sage: G = Graph([(1, 2), (1, 3), (2, 3), (2, 4), (2, 5), (3, 5), (3, 6), (4, 5), (5, 6)])
         sage: H = DiGraph(G)
-        sage: G.lex_BFS() == H.lex_BFS()
+        sage: G.lex_BFS(algorithm="fast") == H.lex_BFS(algorithm="fast")
         True
 
     ``initial_vertex`` should be a valid graph vertex::
 
         sage: G = graphs.CompleteGraph(6)
-        sage: G.lex_BFS(initial_vertex='foo')
+        sage: G.lex_BFS(algorithm="fast", initial_vertex='foo')
         Traceback (most recent call last):
         ...
         ValueError: 'foo' is not a graph vertex
-
     """
     if initial_vertex is not None and initial_vertex not in G:
-        raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
-    if algorithm not in ['slow', 'fast']:
-        raise ValueError("unknown algorithm '{}'".format(algorithm))
-    if tree:
-        from sage.graphs.digraph import DiGraph
+        raise ValueError(f"'{initial_vertex}' is not a graph vertex")
 
-    # Loops and multiple edges are not needed in Lex BFS
-    if G.has_loops() or G.has_multiple_edges():
-        G = G.to_simple(immutable=False)
+    if algorithm == "slow":
+        return _lex_order_common(G, "lex_BFS", reverse, tree, initial_vertex)
+
+    if algorithm != "fast":
+        raise ValueError(f"unknown algorithm '{algorithm}'")
 
     cdef size_t n = G.order()
-    if not n:
-        return ([], DiGraph(sparse=True)) if tree else []
 
-    # Build adjacency list of G
-    cdef list int_to_v = list(G)
+    # For algorithm "fast" we need to convert G to an undirected graph
+    if G.is_directed():
+        G = G.to_undirected()
 
-    # If an initial vertex is given, we place it at first position
-    cdef size_t i
-    if initial_vertex is not None:
-        i = int_to_v.index(initial_vertex)
-        int_to_v[0], int_to_v[i] = int_to_v[i], int_to_v[0]
-
-    # Copying the whole graph to obtain the list of neighbors quicker than by
-    # calling out_neighbors. This data structure is well documented in the
-    # module sage.graphs.base.static_sparse_graph
-    cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
-                       sort_neighbors=False)
-
-    # Initialize the predecessors array
-    cdef MemoryAllocator mem = MemoryAllocator()
-    cdef uint32_t *sigma_int = <uint32_t *>mem.allocarray(n, sizeof(uint32_t))
-    cdef uint32_t *pred = <uint32_t *>mem.allocarray(n, sizeof(uint32_t))
-    for i in range(n):
-        pred[i] = i
-
+    # Initialize variables needed by the fast and slow algorithms
+    cdef CGraphBackend Gbackend = <CGraphBackend> G._backend
+    cdef CGraph cg = Gbackend.cg()
     cdef list sigma = []
-    cdef set vertices
-    cdef list code
-    cdef int now, v, vi, int_neighbor
+    cdef dict predecessor = {}
+    # Initialize variables needed by the fast algorithm
+    cdef vector[int] sigma_int
+    cdef vector[int] pred
+    # Initialize variables needed by the slow algorithm
+    cdef dict lexicographic_label
+    # Temporary variables
+    cdef int vi, i, initial_v_int
 
     # Perform Lex BFS
-    if algorithm is "fast":
-        lex_BFS_fast_short_digraph(sd, sigma_int, pred)
-        sigma = [int_to_v[sigma_int[i]] for i in range(n)]
-
-    else:  # "slow" algorithm
-        vertices = set(range(n))
-        code = [[] for i in range(n)]
-
-        # The initial_vertex is at position 0 and so named 0 in sd
-        code[0].append(n + 1)
-        now = 1
-        while vertices:
-            v = max(vertices, key=code.__getitem__)
-            vertices.remove(v)
-            sigma.append(int_to_v[v])
-            for vi in range(out_degree(sd, v)):
-                int_neighbor = sd.neighbors[v][vi]
-                if int_neighbor in vertices:
-                    code[int_neighbor].append(n - now)
-                    pred[int_neighbor] = v
-            now += 1
-
-    free_short_digraph(sd)
+    if initial_vertex is not None:
+        # we already checked that initial_vertex is in G
+        initial_v_int = Gbackend.get_vertex(initial_vertex)
+    else:
+        initial_v_int = -1
+    extended_lex_BFS(cg, sigma_int, NULL, initial_v_int, &pred, NULL, NULL)
+    sigma = [ Gbackend.vertex_label(vi) for vi in sigma_int ]
+    predecessor = { u: sigma[i] for u, i in zip(sigma, pred) if i != -1 }
 
     if reverse:
         sigma.reverse()
 
     if tree:
-        edges = [(int_to_v[i], int_to_v[pred[i]]) for i in range(n) if pred[i] != i]
+        from sage.graphs.digraph import DiGraph
+        edges = predecessor.items()
         g = DiGraph([G, edges], format='vertices_and_edges', sparse=True)
         return sigma, g
     return sigma
@@ -491,24 +525,15 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
 
     - ``tree`` -- boolean (default: ``False``); whether to return the
       discovery directed tree (each vertex being linked to the one that saw
-      it for the first time)
+      it last)
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider
 
-    ALGORITHM:
+    .. NOTE::
 
-    This algorithm maintains for each vertex left in the graph a code
-    corresponding to the vertices already removed. The vertex of maximal
-    code (according to the lexicographic order) is then removed, and the
-    codes are updated. During the `i`-th iteration of the algorithm `i` is
-    appended to the codes of all neighbors of the selected vertex that are left
-    in the graph.
-
-    Time complexity is `O(n+m)` where `n` is the number of vertices and `m` is
-    the number of edges.
-
-    See [Mil2017]_ for more details on the algorithm.
+        Loops and multiple edges are ignored during the computation of
+        ``lex_UP`` and directed graphs are converted to undirected graphs.
 
     .. SEEALSO::
 
@@ -519,12 +544,16 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
         * :meth:`~sage.graphs.generic_graph.GenericGraph.lex_DOWN` -- perform a
           lexicographic DOWN search (LexDOWN) on the graph
 
+    ALGORITHM:
+
+    See the documentation of the :mod:`~sage.graphs.traversals` module.
+
     EXAMPLES:
 
     A Lex UP is obviously an ordering of the vertices::
 
         sage: g = graphs.CompleteGraph(6)
-        sage: len(g.lex_UP()) == g.order()
+        sage: set(g.lex_UP()) == set(g)
         True
 
     Lex UP ordering of the 3-sun graph::
@@ -536,8 +565,9 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
     The method also works for directed graphs::
 
         sage: G = DiGraph([(1, 2), (2, 3), (1, 3)])
-        sage: G.lex_UP(initial_vertex=2)
-        [2, 3, 1]
+        sage: correct_anwsers = [[2, 1, 3], [2, 3, 1]]
+        sage: G.lex_UP(initial_vertex=2) in correct_anwsers
+        True
 
     Different orderings for different traversals::
 
@@ -551,104 +581,8 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
         ['000', '001', '010', '101', '110', '111', '011', '100']
         sage: G.lex_DOWN(initial_vertex='000')
         ['000', '001', '100', '011', '010', '110', '111', '101']
-
-    TESTS:
-
-    Lex UP ordering of a graph on one vertex::
-
-        sage: Graph(1).lex_UP(tree=True)
-        ([0], Digraph on 1 vertex)
-
-    Lex UP ordering of an empty (di)graph is an empty sequence::
-
-        sage: g = Graph()
-        sage: g.lex_UP()
-        []
-
-    Lex UP ordering of a symmetric digraph should be the same as the Lex UP
-    ordering of the corresponding undirected graph::
-
-        sage: G = Graph([(1, 2), (1, 3), (2, 3), (2, 4), (2, 5), (3, 5), (3, 6), (4, 5), (5, 6)])
-        sage: H = DiGraph(G)
-        sage: G.lex_UP() == H.lex_UP()
-        True
-
-    ``initial_vertex`` should be a valid graph vertex::
-
-        sage: G = graphs.CompleteGraph(6)
-        sage: G.lex_UP(initial_vertex='foo')
-        Traceback (most recent call last):
-        ...
-        ValueError: 'foo' is not a graph vertex
-
     """
-    if initial_vertex is not None and initial_vertex not in G:
-        raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
-
-    # Loops and multiple edges are not needed in Lex UP
-    if G.allows_loops() or G.allows_multiple_edges():
-        G = G.to_simple(immutable=False)
-
-    cdef int nV = G.order()
-
-    if not nV:
-        if tree:
-            from sage.graphs.digraph import DiGraph
-            g = DiGraph(sparse=True)
-            return [], g
-        return []
-
-    # Build adjacency list of G
-    cdef list int_to_v = list(G)
-
-    cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
-                       sort_neighbors=False)
-
-    # Perform Lex UP
-
-    cdef list code = [[] for i in range(nV)]
-
-    def l_func(x):
-        return code[x]
-
-    cdef list value = []
-
-    # Initialize the predecessors array
-    cdef MemoryAllocator mem = MemoryAllocator()
-    cdef int *pred = <int *>mem.allocarray(nV, sizeof(int))
-    memset(pred, -1, nV * sizeof(int))
-
-    cdef set vertices = set(range(nV))
-
-    cdef int source = 0 if initial_vertex is None else int_to_v.index(initial_vertex)
-    code[source].append(nV + 1)
-
-    cdef int now = 1, v, int_neighbor
-    while vertices:
-        v = max(vertices, key=l_func)
-        vertices.remove(v)
-        for i in range(0, out_degree(sd, v)):
-            int_neighbor = sd.neighbors[v][i]
-            if int_neighbor in vertices:
-                code[int_neighbor].append(now)
-                pred[int_neighbor] = v
-        value.append(int_to_v[v])
-        now += 1
-
-    free_short_digraph(sd)
-
-    if reverse:
-        value.reverse()
-
-    if tree:
-        from sage.graphs.digraph import DiGraph
-        g = DiGraph(sparse=True)
-        g.add_vertices(G)
-        edges = [(int_to_v[i], int_to_v[pred[i]]) for i in range(nV) if pred[i] != -1]
-        g.add_edges(edges)
-        return value, g
-    return value
+    return _lex_order_common(G, "lex_UP", reverse, tree, initial_vertex)
 
 
 def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
@@ -664,23 +598,15 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
 
     - ``tree`` -- boolean (default: ``False``); whether to return the
       discovery directed tree (each vertex being linked to the one that saw
-      it for the first time)
+      it last)
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider
 
-    ALGORITHM:
+    .. NOTE::
 
-    This algorithm maintains for each vertex left in the graph a code
-    corresponding to the vertices already removed. The vertex of maximal
-    code (according to the lexicographic order) is then removed, and the
-    codes are updated. Lex DFS differs from Lex BFS only in the way codes are
-    updated after each iteration.
-
-    Time complexity is `O(n+m)` where `n` is the number of vertices and `m` is
-    the number of edges.
-
-    See [CK2008]_ for more details on the algorithm.
+        Loops and multiple edges are ignored during the computation of
+        ``lex_DFS`` and directed graphs are converted to undirected graphs.
 
     .. SEEALSO::
 
@@ -691,12 +617,16 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
         * :meth:`~sage.graphs.generic_graph.GenericGraph.lex_DOWN` -- perform a
           lexicographic DOWN search (LexDOWN) on the graph
 
+    ALGORITHM:
+
+    See the documentation of the :mod:`~sage.graphs.traversals` module.
+
     EXAMPLES:
 
     A Lex DFS is obviously an ordering of the vertices::
 
         sage: g = graphs.CompleteGraph(6)
-        sage: len(g.lex_DFS()) == g.order()
+        sage: set(g.lex_DFS()) == set(g)
         True
 
     Lex DFS ordering of the 3-sun graph::
@@ -708,8 +638,9 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
     The method also works for directed graphs::
 
         sage: G = DiGraph([(1, 2), (2, 3), (1, 3)])
-        sage: G.lex_DFS(initial_vertex=2)
-        [2, 3, 1]
+        sage: correct_anwsers = [[2, 1, 3], [2, 3, 1]]
+        sage: G.lex_DFS(initial_vertex=2) in correct_anwsers
+        True
 
     Different orderings for different traversals::
 
@@ -723,105 +654,8 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
         ['000', '001', '010', '101', '110', '111', '011', '100']
         sage: G.lex_DOWN(initial_vertex='000')
         ['000', '001', '100', '011', '010', '110', '111', '101']
-
-    TESTS:
-
-    Lex DFS ordering of a graph on one vertex::
-
-        sage: Graph(1).lex_DFS(tree=True)
-        ([0], Digraph on 1 vertex)
-
-    Lex DFS ordering of an empty (di)graph is an empty sequence::
-
-        sage: g = Graph()
-        sage: g.lex_DFS()
-        []
-
-    Lex DFS ordering of a symmetric digraph should be the same as the Lex DFS
-    ordering of the corresponding undirected graph::
-
-        sage: G = Graph([(1, 2), (1, 3), (2, 3), (2, 4), (2, 5), (3, 5), (3, 6), (4, 5), (5, 6)])
-        sage: H = DiGraph(G)
-        sage: G.lex_DFS() == H.lex_DFS()
-        True
-
-    ``initial_vertex`` should be a valid graph vertex::
-
-        sage: G = graphs.CompleteGraph(6)
-        sage: G.lex_DFS(initial_vertex='foo')
-        Traceback (most recent call last):
-        ...
-        ValueError: 'foo' is not a graph vertex
-
     """
-    if initial_vertex is not None and initial_vertex not in G:
-        raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
-
-    # Loops and multiple edges are not needed in Lex DFS
-    if G.allows_loops() or G.allows_multiple_edges():
-        G = G.to_simple(immutable=False)
-
-    cdef int nV = G.order()
-
-    if not nV:
-        if tree:
-            from sage.graphs.digraph import DiGraph
-            g = DiGraph(sparse=True)
-            return [], g
-        return []
-
-    # Build adjacency list of G
-    cdef list int_to_v = list(G)
-
-    cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
-                       sort_neighbors=False)
-
-    # Perform Lex DFS
-
-    # We are using deque in order to prepend items in list efficiently
-    cdef list code = [deque([]) for i in range(nV)]
-
-    def l_func(x):
-        return code[x]
-
-    cdef list value = []
-
-    # initialize the predecessors array
-    cdef MemoryAllocator mem = MemoryAllocator()
-    cdef int *pred = <int *>mem.allocarray(nV, sizeof(int))
-    memset(pred, -1, nV * sizeof(int))
-
-    cdef set vertices = set(range(nV))
-
-    cdef int source = 0 if initial_vertex is None else int_to_v.index(initial_vertex)
-    code[source].appendleft(0)
-
-    cdef int now = 1, v, int_neighbor
-    while vertices:
-        v = max(vertices, key=l_func)
-        vertices.remove(v)
-        for i in range(0, out_degree(sd, v)):
-            int_neighbor = sd.neighbors[v][i]
-            if int_neighbor in vertices:
-                code[int_neighbor].appendleft(now)
-                pred[int_neighbor] = v
-        value.append(int_to_v[v])
-        now += 1
-
-    free_short_digraph(sd)
-
-    if reverse:
-        value.reverse()
-
-    if tree:
-        from sage.graphs.digraph import DiGraph
-        g = DiGraph(sparse=True)
-        g.add_vertices(G)
-        edges = [(int_to_v[i], int_to_v[pred[i]]) for i in range(nV) if pred[i] != -1]
-        g.add_edges(edges)
-        return value, g
-    return value
+    return _lex_order_common(G, "lex_DFS", reverse, tree, initial_vertex)
 
 
 def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
@@ -837,24 +671,15 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
 
     - ``tree`` -- boolean (default: ``False``); whether to return the
       discovery directed tree (each vertex being linked to the one that saw
-      it for the first time)
+      it)
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider
 
-    ALGORITHM:
+    .. NOTE::
 
-    This algorithm maintains for each vertex left in the graph a code
-    corresponding to the vertices already removed. The vertex of maximal
-    code (according to the lexicographic order) is then removed, and the
-    codes are updated. During the `i`-th iteration of the algorithm `n-i` is
-    prepended to the codes of all neighbors of the selected vertex that are left
-    in the graph.
-
-    Time complexity is `O(n+m)` where `n` is the number of vertices and `m` is
-    the number of edges.
-
-    See [Mil2017]_ for more details on the algorithm.
+        Loops and multiple edges are ignored during the computation of
+        ``lex_DOWN`` and directed graphs are converted to undirected graphs.
 
     .. SEEALSO::
 
@@ -865,12 +690,16 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
         * :meth:`~sage.graphs.generic_graph.GenericGraph.lex_UP` -- perform a
           lexicographic UP search (LexUP) on the graph
 
+    ALGORITHM:
+
+    See the documentation of the :mod:`~sage.graphs.traversals` module.
+
     EXAMPLES:
 
     A Lex DOWN is obviously an ordering of the vertices::
 
         sage: g = graphs.CompleteGraph(6)
-        sage: len(g.lex_DOWN()) == g.order()
+        sage: set(g.lex_DOWN()) == set(g)
         True
 
     Lex DOWN ordering of the 3-sun graph::
@@ -882,8 +711,9 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
     The method also works for directed graphs::
 
         sage: G = DiGraph([(1, 2), (2, 3), (1, 3)])
-        sage: G.lex_DOWN(initial_vertex=2)
-        [2, 3, 1]
+        sage: correct_anwsers = [[2, 1, 3], [2, 3, 1]]
+        sage: G.lex_DOWN(initial_vertex=2) in correct_anwsers
+        True
 
     Different orderings for different traversals::
 
@@ -897,105 +727,8 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
         ['000', '001', '010', '101', '110', '111', '011', '100']
         sage: G.lex_DOWN(initial_vertex='000')
         ['000', '001', '100', '011', '010', '110', '111', '101']
-
-    TESTS:
-
-    Lex DOWN ordering of a graph on one vertex::
-
-        sage: Graph(1).lex_DOWN(tree=True)
-        ([0], Digraph on 1 vertex)
-
-    Lex DOWN ordering of an empty (di)graph is an empty sequence::
-
-        sage: g = Graph()
-        sage: g.lex_DOWN()
-        []
-
-    Lex DOWN ordering of a symmetric digraph should be the same as the Lex DOWN
-    ordering of the corresponding undirected graph::
-
-        sage: G = Graph([(1, 2), (1, 3), (2, 3), (2, 4), (2, 5), (3, 5), (3, 6), (4, 5), (5, 6)])
-        sage: H = DiGraph(G)
-        sage: G.lex_DOWN() == H.lex_DOWN()
-        True
-
-    ``initial_vertex`` should be a valid graph vertex::
-
-        sage: G = graphs.CompleteGraph(6)
-        sage: G.lex_DOWN(initial_vertex='foo')
-        Traceback (most recent call last):
-        ...
-        ValueError: 'foo' is not a graph vertex
-
     """
-    if initial_vertex is not None and initial_vertex not in G:
-        raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
-
-    # Loops and multiple edges are not needed in Lex DOWN
-    if G.allows_loops() or G.allows_multiple_edges():
-        G = G.to_simple(immutable=False)
-
-    cdef int nV = G.order()
-
-    if not nV:
-        if tree:
-            from sage.graphs.digraph import DiGraph
-            g = DiGraph(sparse=True)
-            return [], g
-        return []
-
-    # Build adjacency list of G
-    cdef list int_to_v = list(G)
-
-    cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
-                       sort_neighbors=False)
-
-    # Perform Lex DOWN
-
-    # We are using deque in order to prepend items in list efficiently
-    cdef list code = [deque([]) for i in range(nV)]
-
-    def l_func(x):
-        return code[x]
-
-    cdef list value = []
-
-    # initialize the predecessors array
-    cdef MemoryAllocator mem = MemoryAllocator()
-    cdef int *pred = <int *>mem.allocarray(nV, sizeof(int))
-    memset(pred, -1, nV * sizeof(int))
-
-    cdef set vertices = set(range(nV))
-
-    cdef int source = 0 if initial_vertex is None else int_to_v.index(initial_vertex)
-    code[source].appendleft(0)
-
-    cdef int now = 1, v, int_neighbor
-    while vertices:
-        v = max(vertices, key=l_func)
-        vertices.remove(v)
-        for i in range(0, out_degree(sd, v)):
-            int_neighbor = sd.neighbors[v][i]
-            if int_neighbor in vertices:
-                code[int_neighbor].appendleft(nV - now)
-                pred[int_neighbor] = v
-        value.append(int_to_v[v])
-        now += 1
-
-    free_short_digraph(sd)
-
-    if reverse:
-        value.reverse()
-
-    if tree:
-        from sage.graphs.digraph import DiGraph
-        g = DiGraph(sparse=True)
-        g.add_vertices(G)
-        edges = [(int_to_v[i], int_to_v[pred[i]]) for i in range(nV) if pred[i] != -1]
-        g.add_edges(edges)
-        return value, g
-    return value
+    return _lex_order_common(G, "lex_DOWN", reverse, tree, initial_vertex)
 
 
 def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorithm=None):
@@ -1020,7 +753,7 @@ def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorith
     - ``labels`` -- boolean (default: ``False``); whether to return the labels
       assigned to each vertex
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider
 
     - ``algorithm`` -- string (default: ``None``); one of the following
@@ -1125,7 +858,6 @@ def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorith
         Traceback (most recent call last):
         ...
         ValueError: 'foo' is not a graph vertex
-
     """
     if initial_vertex is not None and initial_vertex not in self:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
@@ -1181,7 +913,7 @@ def lex_M_slow(G, triangulation=False, labels=False, initial_vertex=None):
     - ``labels`` -- boolean (default: ``False``); whether to return the labels
       assigned to each vertex
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to
       consider. If not specified, an arbitrary vertex is chosen.
 
     OUTPUT:
@@ -1248,7 +980,6 @@ def lex_M_slow(G, triangulation=False, labels=False, initial_vertex=None):
         Traceback (most recent call last):
         ...
         ValueError: 'foo' is not a graph vertex
-
     """
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
@@ -1335,7 +1066,7 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
     - ``triangulation`` -- boolean (default: ``False``); whether to return the
       triangulation of given graph produced by the method
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to consider
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to consider
 
     OUTPUT:
 
@@ -1396,7 +1127,6 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
         Traceback (most recent call last):
         ...
         ValueError: 'foo' is not a graph vertex
-
     """
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
@@ -1415,8 +1145,7 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
         int_to_v[0], int_to_v[i] = int_to_v[i], int_to_v[0]
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v,
-                       sort_neighbors=False)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
     cdef uint32_t* p_tmp
     cdef uint32_t* p_end
 
@@ -1582,6 +1311,10 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
     chosen at each step `i` to be placed in position `n - i` in `\alpha`. This
     ordering can be computed in time `O(n + m)`.
 
+    Time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)` for
+    ``DenseGraph`` where `n` is the number of vertices and `m` is the number of
+    edges.
+
     When the graph is chordal, the ordering returned by MCS is a *perfect
     elimination ordering*, like :meth:`~sage.graphs.traversals.lex_BFS`. So
     this ordering can be used to recognize chordal graphs. See [He2006]_ for
@@ -1593,7 +1326,7 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
 
     INPUT:
 
-    - ``G`` -- a Sage Graph
+    - ``G`` -- a Sage graph
 
     - ``reverse`` -- boolean (default: ``False``); whether to return the
       vertices in discovery order, or the reverse
@@ -1602,14 +1335,14 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
       discovery directed tree (each vertex being linked to the one that saw
       it for the first time)
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to consider
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to consider
 
     OUTPUT:
 
     By default, return the ordering `\alpha` as a list. When ``tree`` is
     ``True``, the method returns a tuple `(\alpha, T)`, where `T` is a directed
-    tree with the same set of vertices as `G`and a directed edge from `u` to `v`
-    if `u` was the first vertex to saw `v`.
+    tree with the same set of vertices as `G` and a directed edge from `u` to `v`
+    if `u` was the first vertex to see `v`.
 
     EXAMPLES:
 
@@ -1675,8 +1408,7 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
         raise ValueError("vertex ({0}) is not a vertex of the graph".format(initial_vertex))
 
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
-                       sort_neighbors=False)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
     cdef uint32_t** p_vertices = sd.neighbors
     cdef uint32_t* p_tmp
     cdef uint32_t* p_end
@@ -1734,7 +1466,7 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
     if tree:
         D = DiGraph([int_to_vertex, [(int_to_vertex[i], int_to_vertex[pred[i]])
                                      for i in range(N) if pred[i] != i]],
-                    format="vertices_and_edges")
+                    format='vertices_and_edges')
         return alpha, D
 
     return alpha
@@ -1778,7 +1510,7 @@ cdef maximum_cardinality_search_M_short_digraph(short_digraph sd, int initial_ve
     - ``sd`` -- a ``short_digraph`` as documented in
       :mod:`~sage.graphs.base.static_sparse_graph`
 
-    - ``initial_vertex`` -- int; initial vertex for the search
+    - ``initial_vertex`` -- integer; initial vertex for the search
 
     - ``alpha`` -- int array of size `N`; the computed ordering of MCS-M
 
@@ -1930,7 +1662,7 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
 
     - ``G`` -- a Sage graph
 
-    - ``initial_vertex`` -- (default: ``None``); the first vertex to consider
+    - ``initial_vertex`` -- (default: ``None``) the first vertex to consider
 
     OUTPUT: a tuple `(\alpha, F, X)`, where
 
@@ -2050,8 +1782,7 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
-                       sort_neighbors=False)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
 
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int* alpha = <int*>mem.calloc(N, sizeof(int))

@@ -121,7 +121,6 @@ def OP_represent(int n, merges, perm):
         8 -> 8, root: size=1, mcr=8, rank=0
         Deallocating OrbitPartition.
         Done.
-
     """
     cdef int i
     print("Allocating OrbitPartition...")
@@ -146,9 +145,9 @@ def OP_represent(int n, merges, perm):
     print("Finding:")
     for i in range(n):
         j = OP_find(OP, i)
-        s = "%d -> %d"%(i, j)
+        s = "%d -> %d" % (i, j)
         if i == j:
-            s += ", root: size=%d, mcr=%d, rank=%d"%\
+            s += ", root: size=%d, mcr=%d, rank=%d" % \
                    (OP.size[i], OP.mcr[i], OP.rank[i])
         print(s)
     print("Allocating array to test merge_perm.")
@@ -166,9 +165,9 @@ def OP_represent(int n, merges, perm):
     print("Finding:")
     for i in range(n):
         j = OP_find(OP, i)
-        s = "%d -> %d"%(i, j)
+        s = "%d -> %d" % (i, j)
         if i == j:
-            s += ", root: size=%d, mcr=%d, rank=%d"%\
+            s += ", root: size=%d, mcr=%d, rank=%d" % \
                    (OP.size[i], OP.mcr[i], OP.rank[i])
         print(s)
     print("Deallocating OrbitPartition.")
@@ -455,7 +454,6 @@ def PS_represent(partition, splits):
         0100000000
         Deallocating PartitionStacks.
         Done.
-
     """
     cdef int i, n = sum([len(cell) for cell in partition])
     cdef int *gamma
@@ -476,7 +474,7 @@ def PS_represent(partition, splits):
             print(PS.entries[i], PS.levels[i], i, n)
             good = False
     if not (PS.entries[n-1] == n-1 and PS.levels[n-1] == -1):
-        print("Failed at i = %d!"%(n-1))
+        print("Failed at i = %d!" % (n-1))
         good = False
     if not PS.degree == n or not PS.depth == 0:
         print("Incorrect degree or depth!")
@@ -488,8 +486,8 @@ def PS_represent(partition, splits):
     print("Creating PartitionStack from partition %s." % partition)
     PS = PS_from_list(partition)
     print("PartitionStack's data:")
-    print("entries -> %s"%[PS.entries[i] for i in range(n)])
-    print("levels -> %s"%[PS.levels[i] for i in range(n)])
+    print("entries -> %s" % [PS.entries[i] for i in range(n)])
+    print("levels -> %s" % [PS.levels[i] for i in range(n)])
     print("depth = %d, degree = %d" % (PS.depth,PS.degree))
     PS_print(PS)
     print("Checking PS_is_discrete:")
@@ -508,7 +506,7 @@ def PS_represent(partition, splits):
     good = True
     for i in range(n):
         if PS.entries[i] != PS2.entries[i] or PS.levels[i] != PS2.levels[i]:
-            print("Failed at i = %d!"%i)
+            print("Failed at i = %d!" % i)
             good = False
     if PS.degree != PS2.degree or PS.depth != PS2.depth:
         print("Failure with degree or depth!")
@@ -519,7 +517,7 @@ def PS_represent(partition, splits):
     PS_clear(PS2)
     PS_print(PS2)
     for s in splits:
-        print("Splitting point %d from original:"%s)
+        print("Splitting point %d from original:" % s)
         print(PS_split_point(PS, s))
         PS_print(PS)
     print("Getting permutation from PS2->PS:")
@@ -530,7 +528,7 @@ def PS_represent(partition, splits):
     print("Finding first smallest:")
     bitset_init(b, n)
     i = PS_first_smallest(PS, b)
-    print("Minimal element is %d, bitset is:"%i)
+    print("Minimal element is %d, bitset is:" % i)
     print(bitset_string(b))
     bitset_free(b)
     print("Finding element 1:")
@@ -779,7 +777,7 @@ cdef int SC_realloc_bitsets(StabilizerChain *SC, unsigned long size) noexcept:
 
 cdef StabilizerChain *SC_copy(StabilizerChain *SC, int level) noexcept:
     """
-    Creates a copy of the first `level` levels of SC. Must have 0 < level.
+    Create a copy of the first `level` levels of SC. Must have 0 < level.
 
     Return a null pointer in case of allocation failure.
     """
@@ -1189,7 +1187,7 @@ cdef bint SC_is_giant(int n, int num_perms, int *perms, float p, bitset_t suppor
     # get a bit lost in the group, so our random elements are more random:
     SC_identify(perm, n)
     for i from 0 <= i < 10:
-        SC_mult_perms(perm, perm, perms + n*(rand()%num_perms), n)
+        SC_mult_perms(perm, perm, perms + n*(rand() % num_perms), n)
 
     # look for elements with cycles of prime length q, m/2 < q < m-2
     num_steps = <int> ceil(-log(1-p)*log(m)/log(2))
@@ -1205,7 +1203,7 @@ cdef bint SC_is_giant(int n, int num_perms, int *perms, float p, bitset_t suppor
                         sig_free(perm)
                         OP_dealloc(OP)
                         return True
-        SC_mult_perms(perm, perm, perms + n*(rand()%num_perms), n)
+        SC_mult_perms(perm, perm, perms + n*(rand() % num_perms), n)
     OP_dealloc(OP)
     sig_free(perm)
     return False
@@ -1313,7 +1311,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         sage: def random_perm(x):
         ....:     shuffle(x)
         ....:     return x
-        sage: def test_stab_chain_fns_6(m,n,k, gap, contains):
+        sage: def test_stab_chain_fns_6(m, n, k, gap, contains):
         ....:     perms = []
         ....:     for i in range(k):
         ....:         perm = sum([random_perm(list(range(i*(n//m),min(n,(i+1)*(n//m))))) for i in range(m)], [])
@@ -1354,7 +1352,6 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:     test_stab_chain_fns_7(n, 0, 1, 1)
         sage: test_stab_chain_fns_7(20, 1, 1, 1)
         sage: test_stab_chain_fns_7(20, 0, 1, 1)
-
     """
     if gap:
         from sage.groups.perm_gps.permgroup import PermutationGroup
@@ -1424,21 +1421,21 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
             m = bitset_len(giant_support)
             from sage.arith.misc import factorial
             if not (order == factorial(m) or order == factorial(m)/2):
-                print("SC_is_giant failed: %s %s"%(str(L), order))
+                print("SC_is_giant failed: %s %s" % (str(L), order))
                 raise AssertionError
             if order == factorial(n):
                 SC_dealloc(SC)
                 SC = SC_symmetric_group(n)
                 SC_order(SC,0,order.value)
                 if not order == factorial(n):
-                    print("SC_symmetric_group failed: %s %s"%(str(L), order))
+                    print("SC_symmetric_group failed: %s %s" % (str(L), order))
                     raise AssertionError
             elif order == factorial(n)/2:
                 SC_dealloc(SC)
                 SC = SC_alternating_group(n)
                 SC_order(SC,0,order.value)
                 if not order == factorial(n)/2:
-                    print("SC_alternating_group failed: %s %s"%(str(L), order))
+                    print("SC_alternating_group failed: %s %s" % (str(L), order))
                     raise AssertionError
         order2 = Integer(0)
         SC_order(SCC,0,order2.value)
@@ -1543,8 +1540,8 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
             if SC_is_giant(n, len(L), perm, 0.9, giant_support):
                 from sage.arith.misc import factorial
                 m = bitset_len(giant_support)
-                if order != factorial(m) and order != factorial(m)/2:
-                    print("SC_is_giant failed: %s %s"%(str(L), order))
+                if order != factorial(m) and order != factorial(m)//2:
+                    print("SC_is_giant failed: %s %s" % (str(L), order))
                     raise AssertionError
             if order != G.order():
                 print("FAIL {}".format(L))
@@ -1575,13 +1572,13 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
                     if bool(SC_says) != bool(gap_says):
                         print("FAIL {}".format(L))
                         print('element {}'.format(permy))
-                        print('GAP says %d, SC_contains(modify=0) says %d'%(gap_says, SC_says))
+                        print('GAP says %d, SC_contains(modify=0) says %d' % (gap_says, SC_says))
                         raise AssertionError
                     SC_says = SC_contains(SC, 0, perm, 1)
                     if bool(SC_says) != bool(gap_says):
                         print("FAIL {}".format(L))
                         print('element {}'.format(permy))
-                        print('GAP says %d, SC_contains(modify=0) says %d'%(gap_says, SC_says))
+                        print('GAP says %d, SC_contains(modify=0) says %d' % (gap_says, SC_says))
                         raise AssertionError
                     SC_random_element(SC, 0, perm)
                     for j from 0 <= j < n:
@@ -1623,11 +1620,10 @@ cdef int sort_by_function(PartitionStack *PS, int start, int *degrees) noexcept:
 
     INPUT:
 
-    - PS -- the partition stack to be checked
-    - start -- beginning index of the cell to be sorted
-    - degrees -- the values to be sorted by, must have extra scratch space for a
+    - ``PS`` -- the partition stack to be checked
+    - ``start`` -- beginning index of the cell to be sorted
+    - ``degrees`` -- the values to be sorted by, must have extra scratch space for a
       total of `3*n+1`
-
     """
     cdef int n = PS.degree
     cdef int i, j, max, max_location

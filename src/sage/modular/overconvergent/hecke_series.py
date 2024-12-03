@@ -87,6 +87,7 @@ from sage.rings.integer_ring import ZZ
 
 # AUXILIARY CODE: SPACES OF MODULAR FORMS AND LINEAR ALGEBRA
 
+
 def compute_G(p, F):
     r"""
     Given a power series `F \in R[[q]]^\times`, for some ring `R`, and an
@@ -110,7 +111,7 @@ def compute_G(p, F):
 
     EXAMPLES::
 
-        sage: E = sage.modular.overconvergent.hecke_series.eisenstein_series_qexp(2, 12, Zmod(9),normalization="constant")
+        sage: E = sage.modular.overconvergent.hecke_series.eisenstein_series_qexp(2, 12, Zmod(9),normalization='constant')
         sage: sage.modular.overconvergent.hecke_series.compute_G(3, E)
         1 + 3*q + 3*q^4 + 6*q^7 + O(q^12)
     """
@@ -129,14 +130,12 @@ def low_weight_bases(N, p, m, NN, weightbound):
 
     INPUT:
 
-    - ``N`` -- positive integer (level).
-    - ``p`` -- prime.
-    - ``m``, ``NN`` -- positive integers.
-    - ``weightbound`` -- (even) positive integer.
+    - ``N`` -- positive integer (level)
+    - ``p`` -- prime
+    - ``m``, ``NN`` -- positive integers
+    - ``weightbound`` -- (even) positive integer
 
-    OUTPUT:
-
-    - list of lists of `q`-expansions modulo `(p^m,q^{NN})`.
+    OUTPUT: list of lists of `q`-expansions modulo `(p^m,q^{NN})`
 
     EXAMPLES::
 
@@ -145,7 +144,6 @@ def low_weight_bases(N, p, m, NN, weightbound):
         [[1 + 24*q + 24*q^2 + 96*q^3 + 24*q^4 + O(q^5)],
         [1 + 115*q^2 + 35*q^4 + O(q^5), q + 8*q^2 + 28*q^3 + 64*q^4 + O(q^5)],
         [1 + 121*q^2 + 118*q^4 + O(q^5), q + 32*q^2 + 119*q^3 + 24*q^4 + O(q^5)]]
-
     """
     generators = []
 
@@ -154,22 +152,21 @@ def low_weight_bases(N, p, m, NN, weightbound):
         generators.append(list(b))
     return generators
 
-def random_low_weight_bases(N,p,m,NN,weightbound):
+
+def random_low_weight_bases(N, p, m, NN, weightbound):
     r"""
-    Returns list of random integral bases of modular forms of level `N` and
+    Return list of random integral bases of modular forms of level `N` and
     (even) weight at most weightbound with coefficients reduced modulo
     `(p^m,q^{NN})`.
 
     INPUT:
 
-    - ``N`` -- positive integer (level).
-    - ``p`` -- prime.
-    - ``m``, ``NN`` -- positive integers.
-    - ``weightbound`` -- (even) positive integer.
+    - ``N`` -- positive integer (level)
+    - ``p`` -- prime
+    - ``m``, ``NN`` -- positive integers
+    - ``weightbound`` -- (even) positive integer
 
-    OUTPUT:
-
-    - list of lists of `q`-expansions modulo `(p^m,q^{NN})`.
+    OUTPUT: list of lists of `q`-expansions modulo `(p^m,q^{NN})`
 
     EXAMPLES::
 
@@ -185,7 +182,6 @@ def random_low_weight_bases(N,p,m,NN,weightbound):
         Power Series Ring in q over Ring of integers modulo 49
         sage: S[0][0].prec()
         5
-
     """
     LWB = low_weight_bases(N,p,m,NN,weightbound)
     # this is "approximately" row reduced (it's the mod p^n reduction of a
@@ -200,9 +196,10 @@ def random_low_weight_bases(N,p,m,NN,weightbound):
 
     return RandomLWB
 
-def low_weight_generators(N,p,m,NN):
+
+def low_weight_generators(N, p, m, NN):
     r"""
-    Returns a list of lists of modular forms, and an even natural number.
+    Return a list of lists of modular forms, and an even natural number.
 
     The first output is a list of lists of modular forms reduced modulo
     `(p^m,q^{NN})` which generate the `(\ZZ / p^m \ZZ)`-algebra of mod `p^m`
@@ -217,13 +214,11 @@ def low_weight_generators(N,p,m,NN):
 
     INPUT:
 
-    - ``N`` -- positive integer (level).
-    - ``p`` -- prime.
-    - ``m``, ``NN`` -- positive integers.
+    - ``N`` -- positive integer (level)
+    - ``p`` -- prime
+    - ``m``, ``NN`` -- positive integers
 
-    OUTPUT:
-
-    a tuple consisting of:
+    OUTPUT: a tuple consisting of:
 
     - a list of lists of `q`-expansions modulo `(p^m,q^{NN})`,
     - an even natural number (twice the length of the list).
@@ -252,9 +247,10 @@ def low_weight_generators(N,p,m,NN):
 
     return generators, weightbound
 
-def random_solution(B,K):
+
+def random_solution(B, K):
     r"""
-    Returns a random solution in non-negative integers to the equation `a_1 + 2
+    Return a random solution in nonnegative integers to the equation `a_1 + 2
     a_2 + 3 a_3 + ... + B a_B = K`, using a greedy algorithm.
 
     Note that this is *much* faster than using
@@ -262,11 +258,9 @@ def random_solution(B,K):
 
     INPUT:
 
-    - ``B``, ``K`` -- non-negative integers.
+    - ``B``, ``K`` -- nonnegative integers
 
-    OUTPUT:
-
-    - list.
+    OUTPUT: list
 
     EXAMPLES::
 
@@ -344,27 +338,23 @@ def ech_form(A, p):
 
 def random_new_basis_modp(N, p, k, LWBModp, TotalBasisModp, elldash, bound):
     r"""
-    Returns a list of lists of lists ``[j, a]`` encoding a choice of basis for
-    the ith complementary space `W_i`, as explained in the documentation for the
+    Return a list of lists of lists ``[j, a]`` encoding a choice of basis for
+    the `i`-th complementary space `W_i`, as explained in the documentation for the
     function :func:`complementary_spaces_modp`.
 
     INPUT:
 
-    - ``N`` -- positive integer at least 2 and not divisible by `p` (level).
-    - ``p`` -- prime at least 5.
-    - ``k`` -- non-negative integer.
-    - ``LWBModp`` -- list of list of `q`-expansions modulo
-      `(p,q^\text{elldash})`.
-    - ``TotalBasisModp`` -- matrix over `\mathrm{GF}(p)`.
-    - ``elldash`` -- positive integer.
-    - ``bound`` -- positive even integer (twice the length of the list
-      ``LWBModp``).
+    - ``N`` -- positive integer at least 2 and not divisible by `p` (level)
+    - ``p`` -- prime at least 5
+    - ``k`` -- nonnegative integer
+    - ``LWBModp`` -- list of list of `q`-expansions modulo `(p,q^\text{elldash})`
+    - ``TotalBasisModp`` -- matrix over `\mathrm{GF}(p)`
+    - ``elldash`` -- positive integer
+    - ``bound`` -- positive even integer (twice the length of the list ``LWBModp``)
 
-    OUTPUT:
+    OUTPUT: list of lists of lists ``[j, a]``
 
-    - A list of lists of lists ``[j, a]``.
-
-    .. note::
+    .. NOTE::
 
         As well as having a non-trivial return value, this function also
         modifies the input matrix ``TotalBasisModp``.
@@ -376,7 +366,6 @@ def random_new_basis_modp(N, p, k, LWBModp, TotalBasisModp, elldash, bound):
         sage: LWBModp = [ [f.change_ring(GF(5)) for f in x] for x in LWB]
         sage: complementary_spaces_modp(2, 5, 2, 3, 4, LWBModp, 4) # random, indirect doctest
         [[[[0, 0]]], [[[0, 0], [1, 1]]], [[[0, 0], [1, 0], [1, 1]]], [[[0, 0], [1, 0], [1, 1], [1, 1]]]]
-
     """
 
     R = LWBModp[0][0].parent()
@@ -413,17 +402,18 @@ def random_new_basis_modp(N, p, k, LWBModp, TotalBasisModp, elldash, bound):
 
     return NewBasisCode
 
+
 def complementary_spaces_modp(N, p, k0, n, elldash, LWBModp, bound):
     r"""
-    Returns a list of lists of lists of lists ``[j, a]``. The pairs ``[j, a]``
+    Return a list of lists of lists of lists ``[j, a]``. The pairs ``[j, a]``
     encode the choice of the `a`-th element in the `j`-th list of the input
     ``LWBModp``, i.e., the `a`-th element in a particular basis modulo
     `(p,q^\text{elldash})` for the space of modular forms of level
     `\Gamma_0(N)` and weight `2(j+1)`. The list ``[[j_1, a_1], ...,[j_r, a_r]]``
     then encodes the product of the r modular forms associated to each
     ``[j_i, a_i]``; this has weight `k + (p-1)i` for some `0 \le i \le n`; here
-    the `i` is such that this *list of lists* occurs in the ith list of the
-    output. The ith list of the output thus encodes a choice of basis for the
+    the `i` is such that this *list of lists* occurs in the `i`-th list of the
+    output. The `i`-th list of the output thus encodes a choice of basis for the
     complementary space `W_i` which occurs in Step 2 of Algorithm 2 in [Lau2011]_.
     The idea is that one searches for this space `W_i` first modulo
     `(p,q^\text{elldash})` and then, having found the correct products of
@@ -433,16 +423,14 @@ def complementary_spaces_modp(N, p, k0, n, elldash, LWBModp, bound):
 
     INPUT:
 
-    - ``N`` -- positive integer at least 2 and not divisible by `p` (level).
-    - ``p`` -- prime at least 5.
-    - ``k0`` -- integer in range 0 to `p-1`.
-    - ``n``, ``elldash`` -- positive integers.
-    - ``LWBModp`` -- list of lists of `q`-expansions over `GF(p)`.
-    - ``bound`` -- positive even integer (twice the length of the list ``LWBModp``).
+    - ``N`` -- positive integer at least 2 and not divisible by `p` (level)
+    - ``p`` -- prime at least 5
+    - ``k0`` -- integer in range 0 to `p-1`
+    - ``n``, ``elldash`` -- positive integers
+    - ``LWBModp`` -- list of lists of `q`-expansions over `GF(p)`
+    - ``bound`` -- positive even integer (twice the length of the list ``LWBModp``)
 
-    OUTPUT:
-
-    - list of list of list of lists.
+    OUTPUT: list of list of list of lists
 
     EXAMPLES::
 
@@ -463,10 +451,11 @@ def complementary_spaces_modp(N, p, k0, n, elldash, LWBModp, bound):
 
     return CompSpacesCode
 
+
 def complementary_spaces(N, p, k0, n, mdash, elldashp, elldash, modformsring, bound):
     r"""
-    Returns a list ``Ws``, each element in which is a list ``Wi`` of
-    q-expansions modulo `(p^\text{mdash},q^\text{elldashp})`. The list ``Wi`` is
+    Return a list ``Ws``, each element in which is a list ``Wi`` of
+    `q`-expansions modulo `(p^\text{mdash},q^\text{elldashp})`. The list ``Wi`` is
     a basis for a choice of complementary space in level `\Gamma_0(N)` and
     weight `k` to the image of weight `k - (p-1)` forms under multiplication by
     the Eisenstein series `E_{p-1}`.
@@ -486,16 +475,16 @@ def complementary_spaces(N, p, k0, n, mdash, elldashp, elldash, modformsring, bo
 
     INPUT:
 
-    - ``N`` -- positive integer at least 2 and not divisible by p (level).
-    - ``p`` -- prime at least 5.
-    - ``k0`` -- integer in range 0 to `p - 1`.
-    - ``n``, ``mdash``, ``elldashp``, ``elldash`` -- positive integers.
-    - ``modformsring`` -- ``True`` or ``False``.
-    - ``bound`` -- positive (even) integer (ignored if ``modformsring`` is True).
+    - ``N`` -- positive integer at least 2 and not divisible by p (level)
+    - ``p`` -- prime at least 5
+    - ``k0`` -- integer in range 0 to `p - 1`
+    - ``n``, ``mdash``, ``elldashp``, ``elldash`` -- positive integers
+    - ``modformsring`` -- boolean
+    - ``bound`` -- positive (even) integer (ignored if ``modformsring`` is True)
 
     OUTPUT:
 
-    - list of lists of q-expansions modulo
+    - list of lists of `q`-expansions modulo
       `(p^\text{mdash},q^\text{elldashp})`.
 
     EXAMPLES::
@@ -522,7 +511,7 @@ def complementary_spaces(N, p, k0, n, mdash, elldashp, elldash, modformsring, bo
     CompSpacesCode = complementary_spaces_modp(N, p, k0, n, elldash, LWBModp, bound)
 
     Ws = []
-    Epm1 = eisenstein_series_qexp(p - 1, prec=elldashp, K=Zmod(p**mdash), normalization="constant")
+    Epm1 = eisenstein_series_qexp(p - 1, prec=elldashp, K=Zmod(p**mdash), normalization='constant')
     for i in range(n + 1):
         CompSpacesCodemi = CompSpacesCode[i]
         Wi = []
@@ -540,9 +529,10 @@ def complementary_spaces(N, p, k0, n, mdash, elldashp, elldash, modformsring, bo
 
 # AUXILIARY CODE: KATZ EXPANSIONS
 
+
 def higher_level_katz_exp(p, N, k0, m, mdash, elldash, elldashp, modformsring, bound):
     r"""
-    Returns a matrix `e` of size ``ell x elldashp`` over the integers modulo
+    Return a matrix `e` of size ``ell x elldashp`` over the integers modulo
     `p^\text{mdash}`, and the Eisenstein series `E_{p-1} = 1 + .\dots \bmod
     (p^\text{mdash},q^\text{elldashp})`. The matrix `e` contains the coefficients
     of the elements `e_{i,s}` in the Katz expansions basis in Step 3 of
@@ -552,16 +542,14 @@ def higher_level_katz_exp(p, N, k0, m, mdash, elldash, elldashp, modformsring, b
 
     INPUT:
 
-    - ``p`` -- prime at least 5.
-    - ``N`` -- positive integer at least 2 and not divisible by `p` (level).
-    - ``k0`` -- integer in range 0 to `p-1`.
-    - ``m``, ``mdash, ``elldash``, ``elldashp`` -- positive integers.
-    - ``modformsring`` -- ``True`` or ``False``.
-    - ``bound`` -- positive (even) integer.
+    - ``p`` -- prime at least 5
+    - ``N`` -- positive integer at least 2 and not divisible by `p` (level)
+    - ``k0`` -- integer in range 0 to `p-1`
+    - ``m``, ``mdash, ``elldash``, ``elldashp`` -- positive integers
+    - ``modformsring`` -- boolean
+    - ``bound`` -- positive (even) integer
 
-    OUTPUT:
-
-    - matrix and `q`-expansion.
+    OUTPUT: matrix and `q`-expansion
 
     EXAMPLES::
 
@@ -579,7 +567,7 @@ def higher_level_katz_exp(p, N, k0, m, mdash, elldash, elldashp, modformsring, b
     """
     ordr = 1 / (p + 1)
     S = Zmod(p ** mdash)
-    Ep1 = eisenstein_series_qexp(p - 1, prec=elldashp, K=S, normalization="constant")
+    Ep1 = eisenstein_series_qexp(p - 1, prec=elldashp, K=S, normalization='constant')
 
     n = floor(((p + 1) / (p - 1)) * (m + 1))
     Wjs = complementary_spaces(N, p, k0, n, mdash, elldashp, elldash, modformsring, bound)
@@ -606,9 +594,10 @@ def higher_level_katz_exp(p, N, k0, m, mdash, elldash, elldashp, modformsring, b
 
     return M, Ep1
 
+
 def compute_elldash(p, N, k0, n):
     r"""
-    Returns the "Sturm bound" for the space of modular forms of level
+    Return the "Sturm bound" for the space of modular forms of level
     `\Gamma_0(N)` and weight `k_0 + n(p-1)`.
 
     .. SEEALSO::
@@ -617,13 +606,11 @@ def compute_elldash(p, N, k0, n):
 
     INPUT:
 
-    - ``p`` -- prime.
-    - ``N`` -- positive integer (level).
-    - ``k0``, ``n`` -- non-negative integers not both zero.
+    - ``p`` -- prime
+    - ``N`` -- positive integer (level)
+    - ``k0``, ``n`` -- nonnegative integers not both zero
 
-    OUTPUT:
-
-    - positive integer.
+    OUTPUT: positive integer
 
     EXAMPLES::
 
@@ -636,10 +623,11 @@ def compute_elldash(p, N, k0, n):
 
 # *** DEGREE BOUND ON HECKE SERIES ***
 
+
 def hecke_series_degree_bound(p, N, k, m):
     r"""
-    Returns the ``Wan bound`` on the degree of the characteristic series of the
-    Atkin operator on p-adic overconvergent modular forms of level
+    Return the ``Wan bound`` on the degree of the characteristic series of the
+    Atkin operator on `p`-adic overconvergent modular forms of level
     `\Gamma_0(N)` and weight `k` when reduced modulo `p^m`.
 
     This bound depends only upon `p, k \pmod{p-1}`, and `N`. It uses Lemma 3.1 in
@@ -647,14 +635,12 @@ def hecke_series_degree_bound(p, N, k, m):
 
     INPUT:
 
-    - ``p`` -- prime at least 5.
-    - ``N`` -- positive integer not divisible by `p`.
-    - ``k`` -- even integer.
-    - ``m`` -- positive integer.
+    - ``p`` -- prime at least 5
+    - ``N`` -- positive integer not divisible by `p`
+    - ``k`` -- even integer
+    - ``m`` -- positive integer
 
-    OUTPUT:
-
-    A non-negative integer.
+    OUTPUT: nonnegative integer
 
     EXAMPLES::
 
@@ -682,6 +668,7 @@ def hecke_series_degree_bound(p, N, k, m):
 
 # Returns matrix A modulo p^m from Step 6 of Algorithm 2.
 
+
 def higher_level_UpGj(p, N, klist, m, modformsring, bound, extra_data=False):
     r"""
     Return a list ``[A_k]`` of square matrices over ``IntegerRing(p^m)``
@@ -696,13 +683,13 @@ def higher_level_UpGj(p, N, klist, m, modformsring, bound, extra_data=False):
 
     INPUT:
 
-    - ``p`` -- prime at least 5.
-    - ``N`` -- integer at least 2 and not divisible by `p` (level).
-    - ``klist`` -- list of integers all congruent modulo `(p-1)` (the weights).
-    - ``m`` -- positive integer.
-    - ``modformsring`` -- ``True`` or ``False``.
-    - ``bound`` -- (even) positive integer.
-    - ``extra_data`` -- (default: ``False``) boolean.
+    - ``p`` -- prime at least 5
+    - ``N`` -- integer at least 2 and not divisible by `p` (level)
+    - ``klist`` -- list of integers all congruent modulo `(p-1)` (the weights)
+    - ``m`` -- positive integer
+    - ``modformsring`` -- boolean
+    - ``bound`` -- (even) positive integer
+    - ``extra_data`` -- boolean (default: ``False``)
 
     OUTPUT:
 
@@ -809,12 +796,12 @@ def higher_level_UpGj(p, N, klist, m, modformsring, bound, extra_data=False):
 
 def compute_Wi(k, p, h, hj, E4, E6):
     r"""
-    This function computes a list `W_i` of q-expansions, together with an
+    This function computes a list `W_i` of `q`-expansions, together with an
     auxiliary quantity `h^j` (see below) which is to be used on the next
-    call of this function. (The precision is that of input q-expansions.)
+    call of this function. (The precision is that of input `q`-expansions.)
 
     The list `W_i` is a certain subset of a basis of the modular forms of
-    weight `k` and level 1. Suppose `(a, b)` is the pair of non-negative
+    weight `k` and level 1. Suppose `(a, b)` is the pair of nonnegative
     integers with `4a + 6b = k` and `a` minimal among such pairs. Then this
     space has a basis given by
 
@@ -836,16 +823,16 @@ def compute_Wi(k, p, h, hj, E4, E6):
 
     INPUT:
 
-    - ``k`` -- non-negative integer.
-    - ``p`` -- prime at least 5.
-    - ``h`` -- q-expansion of `h` (to some finite precision).
-    - ``hj`` -- q-expansion of `h^j` where `j` is the dimension of the space of
+    - ``k`` -- nonnegative integer
+    - ``p`` -- prime at least 5
+    - ``h`` -- `q`-expansion of `h` (to some finite precision)
+    - ``hj`` -- `q`-expansion of `h^j` where `j` is the dimension of the space of
       modular forms of level 1 and weight `k - (p-1)` (to same finite
-      precision).
-    - ``E4`` -- `q`-expansion of `E_4` (to same finite precision).
-    - ``E6`` -- `q`-expansion of `E_6` (to same finite precision).
+      precision)
+    - ``E4`` -- `q`-expansion of `E_4` (to same finite precision)
+    - ``E6`` -- `q`-expansion of `E_6` (to same finite precision)
 
-    The Eisenstein series q-expansions should be normalized to have constant
+    The Eisenstein series `q`-expansions should be normalized to have constant
     term 1.
 
     OUTPUT:
@@ -859,8 +846,8 @@ def compute_Wi(k, p, h, hj, E4, E6):
         sage: prec = 10
         sage: k = 24
         sage: S = Zmod(17^3)
-        sage: E4 = eisenstein_series_qexp(4, prec, K=S, normalization="constant")
-        sage: E6 = eisenstein_series_qexp(6, prec, K=S, normalization="constant")
+        sage: E4 = eisenstein_series_qexp(4, prec, K=S, normalization='constant')
+        sage: E6 = eisenstein_series_qexp(6, prec, K=S, normalization='constant')
         sage: h = delta_qexp(prec, K=S) / E6^2
         sage: from sage.modular.dims import dimension_modular_forms
         sage: j = dimension_modular_forms(1, k - (p - 1))
@@ -897,9 +884,10 @@ def compute_Wi(k, p, h, hj, E4, E6):
 
     return Wi, hj
 
+
 def katz_expansions(k0, p, ellp, mdash, n):
     r"""
-    Returns a list `e` of `q`-expansions, and the Eisenstein series `E_{p-1} = 1 +
+    Return a list `e` of `q`-expansions, and the Eisenstein series `E_{p-1} = 1 +
     \dots`, all modulo `(p^\text{mdash},q^\text{ellp})`. The list `e` contains
     the elements `e_{i,s}` in the Katz expansions basis in Step 3 of Algorithm
     1 in [Lau2011]_ when one takes as input to that algorithm `p,m` and `k` and define
@@ -907,9 +895,9 @@ def katz_expansions(k0, p, ellp, mdash, n):
 
     INPUT:
 
-    - ``k0`` -- integer in range 0 to `p - 1`.
-    - ``p`` -- prime at least 5.
-    - ``ellp``, ``mdash``, ``n`` -- positive integers.
+    - ``k0`` -- integer in range 0 to `p - 1`
+    - ``p`` -- prime at least 5
+    - ``ellp``, ``mdash``, ``n`` -- positive integers
 
     OUTPUT:
 
@@ -925,9 +913,9 @@ def katz_expansions(k0, p, ellp, mdash, n):
     """
     S = Zmod(p ** mdash)
 
-    Ep1 = eisenstein_series_qexp(p - 1, ellp, K=S, normalization="constant")
-    E4 = eisenstein_series_qexp(4, ellp, K=S, normalization="constant")
-    E6 = eisenstein_series_qexp(6, ellp, K=S, normalization="constant")
+    Ep1 = eisenstein_series_qexp(p - 1, ellp, K=S, normalization='constant')
+    E4 = eisenstein_series_qexp(4, ellp, K=S, normalization='constant')
+    E6 = eisenstein_series_qexp(6, ellp, K=S, normalization='constant')
 
     delta = delta_qexp(ellp, K=S)
     h = delta / E6 ** 2
@@ -949,6 +937,7 @@ def katz_expansions(k0, p, ellp, mdash, n):
 
 # *** MAIN FUNCTION FOR LEVEL 1 ***
 
+
 def level1_UpGj(p, klist, m, extra_data=False):
     r"""
     Return a list `[A_k]` of square matrices over ``IntegerRing(p^m)``
@@ -963,10 +952,10 @@ def level1_UpGj(p, klist, m, extra_data=False):
 
     INPUT:
 
-    - ``p`` -- prime at least 5.
-    - ``klist`` -- list of integers congruent modulo `(p-1)` (the weights).
-    - ``m`` -- positive integer.
-    - ``extra_data`` -- (default: ``False``) boolean
+    - ``p`` -- prime at least 5
+    - ``klist`` -- list of integers congruent modulo `(p-1)` (the weights)
+    - ``m`` -- positive integer
+    - ``extra_data`` -- boolean (default: ``False``)
 
     OUTPUT:
 
@@ -987,7 +976,6 @@ def level1_UpGj(p, klist, m, extra_data=False):
         ]
         sage: len(level1_UpGj(7, [100], 5, extra_data=True))
         4
-
     """
     # Step 1
     t = cputime()
@@ -1062,15 +1050,17 @@ def level1_UpGj(p, klist, m, extra_data=False):
 
 # *** CODE FOR GENERAL LEVEL ***
 
+
 def is_valid_weight_list(klist, p):
     r"""
     This function checks that ``klist`` is a nonempty list of integers all of
-    which are congruent modulo `(p-1)`. Otherwise, it will raise a ValueError.
+    which are congruent modulo `(p-1)`. Otherwise, it will raise a
+    :exc:`ValueError`.
 
     INPUT:
 
-    - ``klist`` -- list of integers.
-    - ``p`` -- prime.
+    - ``klist`` -- list of integers
+    - ``p`` -- prime
 
     EXAMPLES::
 
@@ -1093,10 +1083,11 @@ def is_valid_weight_list(klist, p):
         if (klist[i] % (p-1)) != k0:
             raise ValueError("List of weights must be all congruent modulo p-1 = %s, but given list contains %s and %s which are not congruent" % (p - 1, klist[0], klist[i]))
 
+
 def hecke_series(p, N, klist, m, modformsring=False, weightbound=6):
     r"""
-    Returns the characteristic series modulo `p^m` of the Atkin operator `U_p`
-    acting upon the space of p-adic overconvergent modular forms of level
+    Return the characteristic series modulo `p^m` of the Atkin operator `U_p`
+    acting upon the space of `p`-adic overconvergent modular forms of level
     `\Gamma_0(N)` and weight ``klist``.
 
     The input ``klist`` may also be a list of weights congruent modulo `(p-1)`,
@@ -1108,7 +1099,7 @@ def hecke_series(p, N, klist, m, modformsring=False, weightbound=6):
     If ``modformsring`` is ``True``, then for `N > 1` the algorithm computes at one
     step ``ModularFormsRing(N).generators()``. This will often be faster but
     the algorithm will default to ``modformsring=False`` if the generators
-    found are not p-adically integral. Note that ``modformsring`` is ignored
+    found are not `p`-adically integral. Note that ``modformsring`` is ignored
     for `N = 1` and the ring structure of modular forms is *always* used in
     this case.
 
@@ -1122,18 +1113,15 @@ def hecke_series(p, N, klist, m, modformsring=False, weightbound=6):
 
     INPUT:
 
-    - ``p`` -- a prime greater than or equal to 5.
-    - ``N`` -- a positive integer not divisible by `p`.
-    - ``klist`` -- either a list of integers congruent modulo `(p-1)`, or a single integer.
-    - ``m`` -- a positive integer.
-    - ``modformsring`` -- ``True`` or ``False`` (default: ``False``).
-      Ignored if `N = 1`.
+    - ``p`` -- a prime greater than or equal to 5
+    - ``N`` -- positive integer not divisible by `p`
+    - ``klist`` -- either a list of integers congruent modulo `(p-1)`, or a single integer
+    - ``m`` -- positive integer
+    - ``modformsring`` -- boolean (default: ``False``); ignored if `N = 1`
     - ``weightbound`` -- a positive even integer (default: 6). Ignored
-      if `N = 1` or ``modformsring`` is ``True``.
+      if `N = 1` or ``modformsring`` is ``True``
 
-    OUTPUT:
-
-    Either a list of polynomials or a single polynomial over the integers modulo `p^m`.
+    OUTPUT: either a list of polynomials or a single polynomial over the integers modulo `p^m`
 
     EXAMPLES::
 
@@ -1164,9 +1152,9 @@ def hecke_series(p, N, klist, m, modformsring=False, weightbound=6):
 
     oneweight = False
     # convert single weight to list
-    if ((isinstance(klist, int)) or (isinstance(klist, Integer))):
+    if isinstance(klist, (int, Integer)):
         klist = [klist]
-        oneweight = True # input is single weight
+        oneweight = True  # input is single weight
 
     # algorithm may finish with false output unless:
     is_valid_weight_list(klist, p)

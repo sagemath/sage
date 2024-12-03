@@ -190,7 +190,7 @@ quartic over `\GF{2}` and gap numbers for ordinary places::
 
 The gap numbers for Weierstrass places are of course not ordinary::
 
-    sage: # needs sage.modules sage.rings.function_field
+    sage: # needs sage.rings.function_field
     sage: p1,p2,p3 = L.weierstrass_places()[:3]
     sage: p1.gaps()
     [1, 2, 4]
@@ -263,10 +263,17 @@ def is_FunctionField(x):
 
         sage: from sage.rings.function_field.function_field import is_FunctionField
         sage: is_FunctionField(QQ)
+        doctest:warning...
+        DeprecationWarning: The function is_FunctionField is deprecated; use '... in FunctionFields()' instead.
+        See https://github.com/sagemath/sage/issues/38289 for details.
         False
         sage: is_FunctionField(FunctionField(QQ, 't'))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38289,
+                "The function is_FunctionField is deprecated; "
+                "use '... in FunctionFields()' instead.")
     if isinstance(x, FunctionField):
         return True
     return x in FunctionFields()
@@ -438,9 +445,7 @@ class FunctionField(Field):
 
         - ``names`` -- string or tuple of length 1 that names the variable `y`
 
-        OUTPUT:
-
-        - a function field
+        OUTPUT: a function field
 
         EXAMPLES::
 
@@ -475,9 +480,7 @@ class FunctionField(Field):
           basis is really linearly independent and that the module it spans is
           closed under multiplication, and contains the identity element.
 
-        OUTPUT:
-
-        - an order in the function field
+        OUTPUT: an order in the function field
 
         EXAMPLES::
 
@@ -532,9 +535,9 @@ class FunctionField(Field):
             sage: O.basis()                                                             # needs sage.modules
             (1, y, y^2)
 
-            sage: Z = K.order(x); Z                                                     # needs sage.modules sage.rings.function_field
+            sage: Z = K.order(x); Z                                                     # needs sage.rings.function_field
             Order in Rational function field in x over Rational Field
-            sage: Z.basis()                                                             # needs sage.modules sage.rings.function_field
+            sage: Z.basis()                                                             # needs sage.rings.function_field
             (1,)
 
         Orders with multiple generators are not yet supported::
@@ -619,7 +622,7 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^3 + x^3 + 4*x + 1)                              # needs sage.rings.function_field
-            sage: L.order_infinite(y)           # not implemented                       # needs sage.modules sage.rings.function_field
+            sage: L.order_infinite(y)           # not implemented                       # needs sage.rings.function_field
 
             sage: Z = K.order(x); Z                                                     # needs sage.modules
             Order in Rational function field in x over Rational Field
@@ -800,17 +803,15 @@ class FunctionField(Field):
 
     def _intermediate_fields(self, base):
         """
-        Return the fields which lie in between base and the function field in the
-        tower of function fields.
+        Return the fields which lie in between base and the function field in
+        the tower of function fields.
 
         INPUT:
 
         - ``base`` -- function field, either this field or a field from which
           this field has been created as an extension
 
-        OUTPUT:
-
-        - a list of fields; the first entry is this field, the last entry is ``base``
+        OUTPUT: list of fields; the first entry is this field, the last entry is ``base``
 
         EXAMPLES::
 
@@ -846,7 +847,7 @@ class FunctionField(Field):
             ...
             TypeError: base must be a function field
         """
-        if not is_FunctionField(base):
+        if base not in FunctionFields():
             raise TypeError("base must be a function field")
 
         ret = [self]
@@ -999,7 +1000,6 @@ class FunctionField(Field):
 
             sage: v = L.valuation(x); v                                                 # needs sage.rings.function_field
             (x)-adic valuation
-
         """
         from sage.rings.function_field.valuation import FunctionFieldValuation
         return FunctionFieldValuation(self, prime)
@@ -1016,7 +1016,7 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.function_field
-            sage: L.space_of_differentials()                                            # needs sage.modules sage.rings.function_field
+            sage: L.space_of_differentials()                                            # needs sage.rings.function_field
             Space of differentials of Function field in y
              defined by y^3 + (4*x^3 + 1)/(x^3 + 3)
         """
@@ -1040,7 +1040,7 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.function_field
-            sage: L.space_of_holomorphic_differentials()                                # needs sage.modules sage.rings.function_field
+            sage: L.space_of_holomorphic_differentials()                                # needs sage.rings.function_field
             (Vector space of dimension 4 over Finite Field of size 5,
              Linear map:
                From: Vector space of dimension 4 over Finite Field of size 5
@@ -1067,7 +1067,7 @@ class FunctionField(Field):
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.function_field
-            sage: L.basis_of_holomorphic_differentials()                                # needs sage.modules sage.rings.function_field
+            sage: L.basis_of_holomorphic_differentials()                                # needs sage.rings.function_field
             [((x/(x^3 + 4))*y) d(x),
              ((1/(x^3 + 4))*y) d(x),
              ((x/(x^3 + 4))*y^2) d(x),
@@ -1089,12 +1089,12 @@ class FunctionField(Field):
 
             sage: _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 - (t^3 - 1)/(t^3 - 2))                        # needs sage.rings.function_field
-            sage: L.divisor_group()                                                     # needs sage.modules sage.rings.function_field
+            sage: L.divisor_group()                                                     # needs sage.rings.function_field
             Divisor group of Function field in y defined by y^3 + (-t^3 + 1)/(t^3 - 2)
 
             sage: K.<x> = FunctionField(GF(5)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 - (x^3 - 1)/(x^3 - 2))                        # needs sage.rings.function_field
-            sage: L.divisor_group()                                                     # needs sage.modules sage.rings.function_field
+            sage: L.divisor_group()                                                     # needs sage.rings.function_field
             Divisor group of Function field in y defined by y^3 + (4*x^3 + 1)/(x^3 + 3)
         """
         from .divisor import DivisorGroup
@@ -1235,7 +1235,7 @@ class FunctionField(Field):
 
         INPUT:
 
-        - ``a`` and ``b`` -- elements of this function field
+        - ``a``, ``b`` -- elements of this function field
 
         - ``P`` -- a place of this function field
 

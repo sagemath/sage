@@ -72,7 +72,7 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
 
     EXAMPLES::
 
-        sage: # needs sage.modules sage.rings.function_field
+        sage: # needs sage.rings.function_field
         sage: K.<x> = FunctionField(QQ); R.<y> = K[]
         sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
         sage: V, f, t = L.vector_space()
@@ -85,7 +85,7 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
 
         EXAMPLES::
 
-            sage: # needs sage.modules sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
             sage: V, f, t = L.vector_space()
@@ -109,7 +109,7 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
 
         EXAMPLES::
 
-            sage: # needs sage.modules sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
             sage: V, f, t = L.vector_space()
@@ -124,7 +124,7 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
 
         EXAMPLES::
 
-            sage: # needs sage.modules sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
             sage: V, f, t = L.vector_space()
@@ -157,7 +157,6 @@ class FunctionFieldVectorSpaceIsomorphism(Morphism):
             sage: g = K.coerce_map_from(L)
             sage: f == g
             False
-
         """
         if type(self) is not type(other):
             return NotImplemented
@@ -191,7 +190,7 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
 
     EXAMPLES::
 
-        sage: # needs sage.modules sage.rings.function_field
+        sage: # needs sage.rings.function_field
         sage: K.<x> = FunctionField(QQ); R.<y> = K[]
         sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
         sage: V, f, t = L.vector_space(); f
@@ -203,7 +202,7 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
         """
         EXAMPLES::
 
-            sage: # needs sage.modules sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
             sage: V, f, t = L.vector_space(); type(f)
@@ -224,7 +223,7 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.modules sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
@@ -236,7 +235,7 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
 
         Test that this map is a bijection for some random inputs::
 
-            sage: # needs sage.modules sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: R.<z> = L[]
             sage: M.<z> = L.extension(z^3 - y - x)
             sage: for F in [K, L, M]:
@@ -245,7 +244,6 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
             ....:         for i in range(100):
             ....:             a = F.random_element()
             ....:             assert(f(t(a)) == a)
-
         """
         fields = self._K._intermediate_fields(self._V.base_field())
         fields.pop()
@@ -270,7 +268,7 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.modules sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
             sage: V, f, t = L.vector_space()
@@ -285,7 +283,7 @@ class MapVectorSpaceToFunctionField(FunctionFieldVectorSpaceIsomorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.modules sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
             sage: V, f, t = L.vector_space()
@@ -301,7 +299,7 @@ class MapFunctionFieldToVectorSpace(FunctionFieldVectorSpaceIsomorphism):
 
     EXAMPLES::
 
-        sage: # needs sage.modules sage.rings.function_field
+        sage: # needs sage.rings.function_field
         sage: K.<x> = FunctionField(QQ); R.<y> = K[]
         sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
         sage: V, f, t = L.vector_space(); t
@@ -321,11 +319,11 @@ class MapFunctionFieldToVectorSpace(FunctionFieldVectorSpaceIsomorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.modules sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
             sage: V, f, t = L.vector_space()
-            sage: TestSuite(t).run(skip="_test_category")
+            sage: TestSuite(t).run(skip='_test_category')
         """
         self._V = V
         self._K = K
@@ -339,7 +337,7 @@ class MapFunctionFieldToVectorSpace(FunctionFieldVectorSpaceIsomorphism):
 
         EXAMPLES::
 
-            sage: # needs sage.modules sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ); R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x*y + 4*x^3)
             sage: V, f, t = L.vector_space()
@@ -350,7 +348,7 @@ class MapFunctionFieldToVectorSpace(FunctionFieldVectorSpaceIsomorphism):
 
         Test that this map is a bijection for some random inputs::
 
-            sage: # needs sage.modules sage.rings.function_field
+            sage: # needs sage.rings.function_field
             sage: R.<z> = L[]
             sage: M.<z> = L.extension(z^3 - y - x)
             sage: for F in [K, L, M]:
@@ -359,7 +357,6 @@ class MapFunctionFieldToVectorSpace(FunctionFieldVectorSpaceIsomorphism):
             ....:         for i in range(100):
             ....:             a = V.random_element()
             ....:             assert(t(f(a)) == a)
-
         """
         ret = [x]
         fields = self._K._intermediate_fields(self._V.base_field())
@@ -393,7 +390,7 @@ class FunctionFieldMorphism(RingHomomorphism):
             sage: f = K.hom(1/x); f
             Function Field endomorphism of Rational function field in x over Rational Field
               Defn: x |--> 1/x
-            sage: TestSuite(f).run(skip="_test_category")
+            sage: TestSuite(f).run(skip='_test_category')
         """
         RingHomomorphism.__init__(self, parent)
 
@@ -461,7 +458,7 @@ class FunctionFieldMorphism_polymod(FunctionFieldMorphism):
             sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
             sage: L.<y> = K.extension(y^3 + 6*x^3 + x)
             sage: f = L.hom(y*2)
-            sage: TestSuite(f).run(skip="_test_category")
+            sage: TestSuite(f).run(skip='_test_category')
         """
         FunctionFieldMorphism.__init__(self, parent, im_gen, base_morphism)
         # Verify that the morphism is valid:
@@ -579,7 +576,8 @@ class FunctionFieldConversionToConstantBaseField(Map):
 
     def _repr_type(self) -> str:
         r"""
-        Return the type of this map (a conversion), for the purposes of printing out self.
+        Return the type of this map (a conversion), for the purposes of
+        printing out ``self``.
 
         EXAMPLES::
 
@@ -588,7 +586,6 @@ class FunctionFieldConversionToConstantBaseField(Map):
             Conversion map:
               From: Rational function field in x over Rational Field
               To:   Rational Field
-
         """
         return "Conversion"
 
@@ -599,7 +596,6 @@ class FunctionFieldConversionToConstantBaseField(Map):
             sage: K.<x> = FunctionField(QQ)
             sage: QQ(K(1)) # indirect doctest
             1
-
         """
         return x.parent()._to_constant_base_field(x)
 
@@ -628,7 +624,6 @@ class FunctionFieldToFractionField(FunctionFieldVectorSpaceIsomorphism):
         sage: isinstance(f, FunctionFieldToFractionField)
         True
         sage: TestSuite(f).run()
-
     """
     def _call_(self, f):
         r"""
@@ -641,7 +636,6 @@ class FunctionFieldToFractionField(FunctionFieldVectorSpaceIsomorphism):
             sage: f = K.coerce_map_from(L)
             sage: f(~L.gen())
             1/x
-
         """
         return self.codomain()(f.numerator(), f.denominator())
 
@@ -832,7 +826,7 @@ class FunctionFieldCompletion(Map):
 
     def _call_(self, f):
         """
-        Call the completion for f
+        Call the completion for f.
 
         EXAMPLES::
 

@@ -64,7 +64,7 @@ that in pure Python this would be a syntax error)::
     4
     sage: 87.factor()
     3 * 29
-    sage: 15.10.sqrt()
+    sage: 15.10.sqrt()                                                                  # needs sage.rings.real_mpfr
     3.88587184554509
     sage: preparse('87.sqrt()')
     'Integer(87).sqrt()'
@@ -83,7 +83,7 @@ frequently request it::
 Symbolic functional notation::
 
     sage: # needs sage.symbolic
-    sage: a=10; f(theta, beta) = theta + beta; b = x^2 + theta
+    sage: a = 10; f(theta, beta) = theta + beta; b = x^2 + theta
     sage: f
     (theta, beta) |--> beta + theta
     sage: a
@@ -254,7 +254,7 @@ def implicit_multiplication(level=None):
 
     INPUT:
 
-    - ``level`` -- a boolean or integer (default: 5); how aggressive to be in
+    - ``level`` -- boolean or integer (default: 5); how aggressive to be in
       placing \*'s
 
       -  0 -- Do nothing
@@ -263,9 +263,7 @@ def implicit_multiplication(level=None):
       -  3 -- Spaces between alphanumeric
       - 10 -- Adjacent parentheses (may mangle call statements)
 
-    OUTPUT:
-
-    The current ``level`` if no argument is given.
+    OUTPUT: the current ``level`` if no argument is given
 
     EXAMPLES::
 
@@ -398,7 +396,7 @@ class QuoteStack:
         """
         Remove and return the frame that was most recently added to the stack.
 
-        Raise an IndexError if the stack is empty.
+        Raise an :exc:`IndexError` if the stack is empty.
 
         EXAMPLES::
 
@@ -491,11 +489,11 @@ class QuoteStackFrame(SimpleNamespace):
         - ``delim`` -- string; the quote character(s) used: ``'``, ``"``, ``'''``, or ``\"\"\"``
         - ``raw`` -- boolean (default: ``False``); whether we are in a raw string
         - ``f_string`` -- boolean (default: ``False``); whether we are in an F-string
-        - ``braces`` -- integer (default: ``0``); in an F-string,
+        - ``braces`` -- integer (default: 0); in an F-string,
           how many unclosed ``{``'s have we encountered?
-        - ``parens`` -- integer (default: ``0``); in a replacement section of an F-string
+        - ``parens`` -- integer (default: 0); in a replacement section of an F-string
           (``braces > 0``), how many unclosed ``(``'s have we encountered?
-        - ``brackets`` -- integer (default: ``0``); in a replacement section of an F-string
+        - ``brackets`` -- integer (default: 0); in a replacement section of an F-string
           (``braces > 0``), how many unclosed ``[``'s have we encountered?
         - ``fmt_spec`` -- boolean (default: ``False``); in the format specifier portion of a
           replacement section?
@@ -530,7 +528,7 @@ def strip_string_literals(code, state=None):
 
     INPUT:
 
-    - ``code`` -- a string; the input
+    - ``code`` -- string; the input
 
     - ``state`` -- a :class:`QuoteStack` (default: ``None``); state with which to
       continue processing, e.g., across multiple calls to this function
@@ -876,17 +874,17 @@ def containing_block(code, idx, delimiters=['()', '[]', '{}'], require_delim=Tru
 
     INPUT:
 
-    - ``code`` -- a string
+    - ``code`` -- string
 
-    - ``idx`` -- an integer; a starting position
+    - ``idx`` -- integer; a starting position
 
-    - ``delimiters`` -- a list of strings (default: ['()', '[]',
+    - ``delimiters`` -- list of strings (default: ['()', '[]',
       '{}']); the delimiters to balance. A delimiter must be a single
       character and no character can at the same time be opening and
       closing delimiter.
 
-    - ``require_delim`` -- a boolean (default: ``True``); whether to raise
-      a ``SyntaxError`` if delimiters are present. If the delimiters are
+    - ``require_delim`` -- boolean (default: ``True``); whether to raise
+      a :exc:`SyntaxError` if delimiters are present. If the delimiters are
       unbalanced, an error will be raised in any case.
 
     OUTPUT:
@@ -894,7 +892,7 @@ def containing_block(code, idx, delimiters=['()', '[]', '{}'], require_delim=Tru
     - a 2-tuple ``(a,b)`` of integers, such that ``code[a:b]`` is
       delimited by balanced delimiters, ``a<=idx<b``, and ``a``
       is maximal and ``b`` is minimal with that property. If that
-      does not exist, a ``SyntaxError`` is raised.
+      does not exist, a :exc:`SyntaxError` is raised.
 
     - If ``require_delim`` is false and ``a,b`` as above can not be
       found, then ``0, len(code)`` is returned.
@@ -1017,13 +1015,11 @@ def parse_ellipsis(code, preparse_step=True):
 
     INPUT:
 
-    - ``code`` -- a string
+    - ``code`` -- string
 
-    - ``preparse_step`` -- a boolean (default: ``True``)
+    - ``preparse_step`` -- boolean (default: ``True``)
 
-    OUTPUT:
-
-    - a string
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -1032,7 +1028,7 @@ def parse_ellipsis(code, preparse_step=True):
         '(ellipsis_range(1,2,Ellipsis,n))'
         sage: parse_ellipsis("for i in (f(x) .. L[10]):")
         'for i in (ellipsis_iter(f(x) ,Ellipsis, L[10])):'
-        sage: [1.0..2.0]
+        sage: [1.0..2.0]                                                                # needs sage.rings.real_mpfr
         [1.00000000000000, 2.00000000000000]
 
     TESTS:
@@ -1041,7 +1037,6 @@ def parse_ellipsis(code, preparse_step=True):
 
         sage: preparse('[1,..,2,..,len([1..3])]')
         '(ellipsis_range(Integer(1),Ellipsis,Integer(2),Ellipsis,len((ellipsis_range(Integer(1),Ellipsis,Integer(3))))))'
-
     """
     ix = code.find('..')
     while ix != -1:
@@ -1086,7 +1081,7 @@ def extract_numeric_literals(code):
 
     INPUT:
 
-    - ``code`` -- a string; a block of code
+    - ``code`` -- string; a block of code
 
     OUTPUT:
 
@@ -1129,7 +1124,7 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
       name-construction pairs
 
     - ``quotes`` -- string (default: ``"'"``); used to surround string
-      arguments to RealNumber and ComplexNumber. If None, will rebuild
+      arguments to RealNumber and ComplexNumber. If ``None``, will rebuild
       the string using a list of its Unicode code-points.
 
     OUTPUT:
@@ -1258,7 +1253,6 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
         'RealNumber(str().join(map(chr, [51, 46, 49, 52])))'
         sage: preparse_numeric_literals('5j', quotes=None)
         'ComplexNumber(0, str().join(map(chr, [53])))'
-
     """
     literals = {}
     last = 0
@@ -1356,11 +1350,9 @@ def strip_prompts(line):
 
     INPUT:
 
-    - ``line`` -- a string to process
+    - ``line`` -- string to process
 
-    OUTPUT:
-
-    - a string stripped of leading prompts
+    OUTPUT: string stripped of leading prompts
 
     EXAMPLES::
 
@@ -1522,11 +1514,9 @@ def preparse_generators(code):
 
     INPUT:
 
-    - ``code`` -- a string
+    - ``code`` -- string
 
-    OUTPUT:
-
-    - a string
+    OUTPUT: string
 
     LIMITATIONS:
 
@@ -1692,19 +1682,17 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
 
     INPUT:
 
-    - ``line`` -- a string
+    - ``line`` -- string
 
-    - ``reset`` -- a boolean (default: ``True``)
+    - ``reset`` -- boolean (default: ``True``)
 
-    - ``do_time`` -- a boolean (default: ``False``)
+    - ``do_time`` -- boolean (default: ``False``)
 
-    - ``ignore_prompts`` -- a boolean (default: ``False``)
+    - ``ignore_prompts`` -- boolean (default: ``False``)
 
-    - ``numeric_literals`` -- a boolean (default: ``True``)
+    - ``numeric_literals`` -- boolean (default: ``True``)
 
-    OUTPUT:
-
-    - a string
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -1877,24 +1865,21 @@ def preparse_file(contents, globals=None, numeric_literals=True):
     Special attentions are given to numeric literals and load/attach
     file directives.
 
-    .. note:: Temporarily, if @parallel is in the input, then
+    .. NOTE:: Temporarily, if @parallel is in the input, then
        numeric_literals is always set to False.
 
     INPUT:
 
-    - ``contents`` -- a string
+    - ``contents`` -- string
 
-    - ``globals`` -- dict or None (default: ``None``); if given, then
-      arguments to load/attach are evaluated in the namespace of this
-      dict.
+    - ``globals`` -- dictionary or ``None`` (default: ``None``); if given, then
+      arguments to load/attach are evaluated in the namespace of this dictionary
 
-    - ``numeric_literals`` -- bool (default: ``True``), whether to factor
+    - ``numeric_literals`` -- boolean (default: ``True``); whether to factor
       out wrapping of integers and floats, so they do not get created
       repeatedly inside loops
 
-    OUTPUT:
-
-    - a string
+    OUTPUT: string
 
     TESTS::
 
@@ -1914,7 +1899,7 @@ def preparse_file(contents, globals=None, numeric_literals=True):
         ....:     M = ModularSymbols(p^2,sign=1)
         ....:     w = M.atkin_lehner_operator(p)
         ....:     K = (w-1).kernel()'''
-        sage: t = tmp_filename(ext=".sage")
+        sage: t = tmp_filename(ext='.sage')
         sage: with open(t, 'w') as file:
         ....:     file.write(file_contents)
         137
@@ -1970,14 +1955,12 @@ def implicit_mul(code, level=5):
 
     INPUT:
 
-    - ``code``  -- a string; the code with missing \*'s
+    - ``code`` -- string; the code with missing \*'s
 
-    - ``level`` -- an integer (default: 5); see :func:`implicit_multiplication`
+    - ``level`` -- integer (default: 5); see :func:`implicit_multiplication`
       for a list
 
-    OUTPUT:
-
-    - a string
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -2059,12 +2042,10 @@ def _strip_quotes(s):
 
     INPUT:
 
-    - ``s`` -- a string
+    - ``s`` -- string
 
-    OUTPUT:
-
-    - a string with any single and double quotes on either side of
-      ``s`` removed
+    OUTPUT: string with any single and double quotes on either side of ``s``
+    removed
 
     EXAMPLES:
 

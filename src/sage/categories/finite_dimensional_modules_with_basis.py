@@ -21,7 +21,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 
 class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
     """
-    The category of finite dimensional modules with a distinguished basis
+    The category of finite dimensional modules with a distinguished basis.
 
     EXAMPLES::
 
@@ -44,9 +44,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             Return the generators of ``self``.
 
-            OUTPUT:
-
-            A tuple containing the basis elements of ``self``.
+            OUTPUT: a tuple containing the basis elements of ``self``
 
             EXAMPLES::
 
@@ -66,7 +64,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             - ``action`` -- a function (default: :obj:`operator.mul`)
 
-            - ``side`` -- 'left' or 'right' (default: 'right')
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
 
             - ``category`` -- a category
 
@@ -121,10 +119,10 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             Taking annihilator is order reversing for inclusion::
 
                 sage: # needs sage.modules
-                sage: A   = F.annihilator([]);    A  .rename("A")
-                sage: Ax  = F.annihilator([x]);   Ax .rename("Ax")
-                sage: Ay  = F.annihilator([y]);   Ay .rename("Ay")
-                sage: Axy = F.annihilator([x,y]); Axy.rename("Axy")
+                sage: A   = F.annihilator([]);    A  .rename('A')
+                sage: Ax  = F.annihilator([x]);   Ax .rename('Ax')
+                sage: Ay  = F.annihilator([y]);   Ay .rename('Ay')
+                sage: Axy = F.annihilator([x,y]); Axy.rename('Axy')
                 sage: P = Poset(([A, Ax, Ay, Axy], attrcall("is_submodule")))           # needs sage.graphs
                 sage: sorted(P.cover_relations(), key=str)                              # needs sage.graphs
                 [[Ax, A], [Axy, Ax], [Axy, Ay], [Ay, A]]
@@ -143,8 +141,8 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             - ``action`` -- a function (default: :obj:`operator.mul`)
 
-            - ``side`` -- 'left' or 'right' (default: 'right'):
-              on which side of ``self`` the elements of `S` acts.
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``):
+              on which side of ``self`` the elements of `S` acts
 
             See :meth:`annihilator` for the assumptions and definition
             of the annihilator.
@@ -198,15 +196,15 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             roles of `x` and `y`::
 
                 sage: # needs sage.graphs sage.modules
-                sage: F.annihilator_basis([y], side="left")
+                sage: F.annihilator_basis([y], side='left')
                 (x, a, b)
-                sage: F.annihilator_basis([a], side="left")
+                sage: F.annihilator_basis([a], side='left')
                 (x, a, b)
-                sage: F.annihilator_basis([b], side="left")
+                sage: F.annihilator_basis([b], side='left')
                 (x, a, b)
-                sage: F.annihilator_basis([x], side="left")
+                sage: F.annihilator_basis([x], side='left')
                 (y,)
-                sage: F.annihilator_basis([a + 3*b + 2*x], side="left")
+                sage: F.annihilator_basis([a + 3*b + 2*x], side='left')
                 (-1/2*a - 3/2*b + y,)
 
             By specifying an inner product, this method can be used to
@@ -214,7 +212,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: # needs sage.graphs sage.modules
                 sage: x,y,a,b = F.basis()
-                sage: def scalar(u,v):
+                sage: def scalar(u, v):
                 ....:     return vector([sum(u[i]*v[i] for i in F.basis().keys())])
                 sage: F.annihilator_basis([x + y, a + b], scalar)
                 (x - y, a - b)
@@ -310,9 +308,9 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``elements`` -- a list or finite iterable of elements of ``self``
-            - ``row_reduced`` -- (default: ``False``) whether to compute the
-              basis for the row reduced echelon form
+            - ``elements`` -- list or finite iterable of elements of ``self``
+            - ``row_reduced`` -- boolean (default: ``False``); whether to
+              compute the basis for the row reduced echelon form
             - ``order`` -- (optional) either something that can
               be converted into a tuple or a key function
 
@@ -325,7 +323,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: # needs sage.modules
-                sage: X = CombinatorialFreeModule(QQ, range(3), prefix="x")
+                sage: X = CombinatorialFreeModule(QQ, range(3), prefix='x')
                 sage: x = X.basis()
                 sage: V = X.echelon_form([x[0]-x[1], x[0]-x[2], x[1]-x[2]]); V
                 [x[0] - x[2], x[1] - x[2]]
@@ -394,7 +392,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             return ret
 
         def invariant_module(self, S, action=operator.mul, action_on_basis=None,
-                             side="left", **kwargs):
+                             side='left', **kwargs):
             r"""
             Return the submodule of ``self`` invariant under the action
             of ``S``.
@@ -415,9 +413,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             - ``action_on_basis`` -- (optional) define the action of ``S``
               on the basis of ``self``
 
-            OUTPUT:
-
-            - :class:`~sage.modules.with_basis.invariant.FiniteDimensionalInvariantModule`
+            OUTPUT: :class:`~sage.modules.with_basis.invariant.FiniteDimensionalInvariantModule`
 
             EXAMPLES:
 
@@ -485,7 +481,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             INPUT:
 
             - ``G`` -- a finitely-generated group
-            - ``chi`` -- a list/tuple of character values or an instance of
+            - ``chi`` -- list/tuple of character values or an instance of
               :class:`~sage.groups.class_function.ClassFunction_gap`
             - ``action`` -- a function (default: :obj:`operator.mul`)
             - ``action_on_basis`` -- (optional) define the action of ``g``
@@ -493,16 +489,14 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``);
               which side of ``self`` the elements of ``S`` acts
 
-            OUTPUT:
-
-            - :class:`~sage.modules.with_basis.invariant.FiniteDimensionalTwistedInvariantModule`
+            OUTPUT: :class:`~sage.modules.with_basis.invariant.FiniteDimensionalTwistedInvariantModule`
 
             EXAMPLES::
 
                 sage: # needs sage.combinat sage.groups sage.modules
                 sage: M = CombinatorialFreeModule(QQ, [1,2,3])
                 sage: G = SymmetricGroup(3)
-                sage: def action(g,x): return(M.term(g(x)))  # permute coordinates
+                sage: def action(g, x): return(M.term(g(x)))  # permute coordinates
                 sage: T = M.twisted_invariant_module(G, [2,0,-1],
                 ....:                                action_on_basis=action)
                 sage: import __main__; __main__.action = action
@@ -576,7 +570,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                                                    coerce=True, copy=False)
 
     class MorphismMethods:
-        def matrix(self, base_ring=None, side="left"):
+        def matrix(self, base_ring=None, side='left'):
             r"""
             Return the matrix of this morphism in the distinguished
             bases of the domain and codomain.
@@ -586,7 +580,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             - ``base_ring`` -- a ring (default: ``None``, meaning the
               base ring of the codomain)
 
-            - ``side`` -- "left" or "right" (default: "left")
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'left'``)
 
             If ``side`` is "left", this morphism is considered as
             acting on the left; i.e. each column of the matrix
@@ -609,7 +603,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: phi.matrix()
                 [1 2]
                 [3 5]
-                sage: phi.matrix(side="right")
+                sage: phi.matrix(side='right')
                 [1 3]
                 [2 5]
 
@@ -686,6 +680,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: M = matrix(ZZ, [[1, 0, 0], [0, 1, 0]],
                 ....:            column_keys=['a', 'b', 'c'],
                 ....:            row_keys=['v', 'w']); M
@@ -714,6 +709,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: M = matrix(ZZ, [[1, 0, 0], [0, 1, 0]],
                 ....:            column_keys=['a', 'b', 'c'],
                 ....:            row_keys=['v', 'w']); M
@@ -745,6 +741,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.modules
                 sage: M = matrix(ZZ, [[1, 0, 0], [0, 1, 0]],
                 ....:            column_keys=['a', 'b', 'c'],
                 ....:            row_keys=['v', 'w']); M
@@ -781,8 +778,8 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: # needs sage.modules
                 sage: category = FiniteDimensionalModulesWithBasis(ZZ)
-                sage: X = CombinatorialFreeModule(ZZ, [1,2], category=category); X.rename("X"); x = X.basis()
-                sage: Y = CombinatorialFreeModule(ZZ, [3,4], category=category); Y.rename("Y"); y = Y.basis()
+                sage: X = CombinatorialFreeModule(ZZ, [1,2], category=category); X.rename('X'); x = X.basis()
+                sage: Y = CombinatorialFreeModule(ZZ, [3,4], category=category); Y.rename('Y'); y = Y.basis()
                 sage: phi = X.module_morphism(on_basis={1: y[3] + 3*y[4], 2: 2*y[3] + 5*y[4]}.__getitem__,
                 ....:                         codomain=Y, category=category)
                 sage: psi = ~phi
@@ -910,6 +907,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                     EXAMPLES::
 
+                        sage: # needs sage.modules
                         sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
                         sage: phi.characteristic_polynomial()
                         x^2 - 3*x + 2
@@ -919,7 +917,6 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                         x^2 - 3*x + 2
                         sage: phi.charpoly('T')
                         T^2 - 3*T + 2
-
                         sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
                         sage: M = matrix(ZZ, [[1, 0], [1, 2]])
                         sage: psi = W.module_morphism(matrix=M, codomain=W)
@@ -939,12 +936,12 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                     EXAMPLES::
 
+                        sage: # needs sage.modules
                         sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
                         sage: phi.determinant()
                         2
                         sage: phi.det()
                         2
-
                         sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
                         sage: M = matrix(ZZ, [[1, 0], [1, 2]])
                         sage: psi = W.module_morphism(matrix=M, codomain=W)
@@ -966,12 +963,12 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                     EXAMPLES::
 
+                        sage: # needs sage.modules
                         sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
                         sage: phi.fcp()                                                         # needs sage.libs.pari
                         (x - 2) * (x - 1)
                         sage: phi.fcp('T')                                                      # needs sage.libs.pari
                         (T - 2) * (T - 1)
-
                         sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
                         sage: M = matrix(ZZ, [[1, 0], [1, 2]])
                         sage: psi = W.module_morphism(matrix=M, codomain=W)
@@ -995,6 +992,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                     Compute the minimal polynomial, and check it. ::
 
+                        sage: # needs sage.modules
                         sage: V = GF(7)^3
                         sage: H = V.Hom(V)([[0,1,2], [-1,0,3], [2,4,1]]); H
                         Vector space morphism represented by the matrix:
@@ -1015,7 +1013,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                         Domain:   Vector space of dimension 3 over Finite Field of size 7
                         Codomain: Vector space of dimension 3 over Finite Field of size 7
 
-                        sage: # needs sage.rings.finite_rings
+                        sage: # needs sage.modules sage.rings.finite_rings
                         sage: k = GF(9, 'c')
                         sage: V = CombinatorialFreeModule(k, ['x', 'y', 'z', 'w'])
                         sage: A = matrix(k, 4, [1,1,0,0, 0,1,0,0, 0,0,5,0, 0,0,0,5])
@@ -1038,10 +1036,10 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                     EXAMPLES::
 
+                        sage: # needs sage.modules
                         sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
                         sage: phi.trace()
                         3
-
                         sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
                         sage: M = matrix(ZZ, [[1, 0], [1, 2]])
                         sage: psi = W.module_morphism(matrix=M, codomain=W)
@@ -1065,6 +1063,5 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: C.FiniteDimensional()
                 Category of tensor products of
                  finite dimensional modules with basis over Integer Ring
-
             """
             return [self.base_category()]

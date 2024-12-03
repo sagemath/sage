@@ -319,7 +319,7 @@ For more details, see the documentation for ``._sage_()``.
 
 OTHER Examples::
 
-    sage: def math_bessel_K(nu,x):
+    sage: def math_bessel_K(nu, x):
     ....:     return mathics(nu).BesselK(x).N(20)
     sage: math_bessel_K(2,I)                      # optional - mathics
     -2.5928861754911969782 + 0.18048997206696202663 I
@@ -341,7 +341,7 @@ OTHER Examples::
 ::
 
     sage: mathics('10.^80')         # optional - mathics
-    1.*^80
+    1.×10^80
     sage: mathics('10.^80').sage()  # optional - mathics
     1.00000000000000e80
 
@@ -483,6 +483,7 @@ class Mathics(Interface):
         self._seed = seed
         self._initialized = False  # done lazily
         self._session = None
+        os.environ['MATHICS_CHARACTER_ENCODING'] = 'ASCII'  # see :issue:`37395`
 
     def _lazy_init(self):
         r"""
@@ -512,6 +513,8 @@ class Mathics(Interface):
         """
         if not self._session:
             from mathics.session import MathicsSession
+            from mathics.core.load_builtin import import_and_load_builtins
+            import_and_load_builtins()
             self._session = MathicsSession()
             from sage.interfaces.sympy import sympy_init
             sympy_init()
@@ -601,13 +604,13 @@ optional Sage package Mathics installed.
 
             sage: mathics.set('u', '2*x +E')        # optional - mathics
             sage: mathics.get('u')                  # optional - mathics
-            'E + 2 x'
+            '2 x + E'
         """
         return self.eval(var)
 
     def _function_call_string(self, function, args, kwds):
         """
-        Returns the string used to make function calls.
+        Return the string used to make function calls.
 
         EXAMPLES::
 
@@ -653,7 +656,7 @@ optional Sage package Mathics installed.
         return "]"
 
     # #########################################
-    # System -- change directory, etc
+    # System -- change directory, etc.
     # #########################################
     def chdir(self, dir):
         """
@@ -705,7 +708,7 @@ optional Sage package Mathics installed.
 
     def _exponent_symbol(self):
         r"""
-        Returns the symbol used to denote the exponent of a number in
+        Return the symbol used to denote the exponent of a number in
         Mathics.
 
         EXAMPLES::
@@ -717,9 +720,9 @@ optional Sage package Mathics installed.
 
             sage: bignum = mathics('10.^80')       # optional - mathics
             sage: repr(bignum)                     # optional - mathics
-            '1.*^80'
+            '1.×10^80'
             sage: repr(bignum).replace(mathics._exponent_symbol(), 'e').strip() # optional - mathics
-            '1.e80'
+            '1.×10^80'
         """
         return '*^'
 
@@ -732,7 +735,6 @@ optional Sage package Mathics installed.
 
             sage: mathics._object_class()
             <class 'sage.interfaces.mathics.MathicsElement'>
-
         """
         return MathicsElement
 
@@ -772,34 +774,25 @@ optional Sage package Mathics installed.
         EXAMPLES::
 
             sage: mathics.help('Sin')                   # optional - mathics
-            "\n  'Sin[z]'\n    returns the sine of z.\n"
+            'sine function\n'
 
             sage: print(_)                              # optional - mathics
-            <BLANKLINE>
-            'Sin[z]'
-              returns the sine of z.
+            sine function
             <BLANKLINE>
 
             sage: print(mathics.help('Sin', long=True)) # optional - mathics
-            <BLANKLINE>
-              'Sin[z]'
-                returns the sine of z.
+            sine function
             <BLANKLINE>
             Attributes[Sin] = {Listable, NumericFunction, Protected}
             <BLANKLINE>
 
             sage: print(mathics.Factorial.__doc__)  # optional - mathics
-            <BLANKLINE>
-            'Factorial[n]'
-              'n!'
-              computes the factorial of n.
+            factorial
             <BLANKLINE>
 
             sage: u = mathics('Pi')                 # optional - mathics
             sage: print(u.Cos.__doc__)              # optional - mathics
-            <BLANKLINE>
-            'Cos[z]'
-              returns the cosine of z.
+            cosine function
             <BLANKLINE>
         """
         if long:
@@ -852,7 +845,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         sage: expr = res.last_eval; expr
         <Symbol: System`E>
         sage: type(expr)
-        <class 'mathics.core.expression.Symbol'>
+        <class 'mathics.core.symbols.Symbol'>
 
     Applying Mathics methods::
 
@@ -863,8 +856,6 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         'System`E'
         sage: me.is_inexact()
         False
-        sage: me.is_symbol()
-        True
 
     Conversion to Sage::
 
@@ -876,7 +867,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         r"""
         Return a list of all methods of this object.
 
-        .. note::
+        .. NOTE::
 
            Currently returns all methods of :class:`mathics.expression.Expression`.
 
@@ -1056,7 +1047,6 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             bla
             sage: bla^2 - mb
             0
-
         """
         if locals:
             # if locals are given we use `_sage_repr`
@@ -1107,9 +1097,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         """
         Test whether the mathics expression is graphics.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1121,14 +1109,14 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
 
     def save_image(self, filename, ImageSize=600):
         r"""
-        Save a mathics graphics
+        Save a mathics graphics.
 
         INPUT:
 
-        - ``filename`` -- string. The filename to save as. The
-          extension determines the image file format.
+        - ``filename`` -- string; the filename to save as. The
+          extension determines the image file format
 
-        - ``ImageSize`` -- integer. The size of the resulting image.
+        - ``ImageSize`` -- integer; the size of the resulting image
 
         EXAMPLES::
 
@@ -1145,7 +1133,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
 
     def _rich_repr_(self, display_manager, **kwds):
         """
-        Rich Output Magic Method
+        Rich Output Magic Method.
 
         See :mod:`sage.repl.rich_output` for details.
 
@@ -1188,7 +1176,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``ImageSize`` -- integer. The size of the resulting image.
+        - ``ImageSize`` -- integer; the size of the resulting image
 
         OUTPUT:
 
@@ -1255,7 +1243,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
 
     def n(self, *args, **kwargs):
         r"""
-        Numerical approximation by converting to Sage object first
+        Numerical approximation by converting to Sage object first.
 
         Convert the object into a Sage object and return its numerical
         approximation. See documentation of the function

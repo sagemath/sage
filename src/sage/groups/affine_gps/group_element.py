@@ -61,11 +61,11 @@ class AffineGroupElement(MultiplicativeGroupElement):
 
     - ``parent`` -- the parent affine group
 
-    - ``convert`` -- bool (default: ``True``); whether to convert
+    - ``convert`` -- boolean (default: ``True``); whether to convert
       ``A`` into the correct matrix space and ``b`` into the
       correct vector space
 
-    - ``check`` -- bool (default: ``True``); whether to do some
+    - ``check`` -- boolean (default: ``True``); whether to do some
       checks or just accept the input as valid
 
     As a special case, ``A`` can be a matrix obtained from
@@ -73,7 +73,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
     that case, the group element defining that matrix is
     reconstructed.
 
-    OUTPUT: The affine group element `x \mapsto Ax + b`
+    OUTPUT: the affine group element `x \mapsto Ax + b`
 
     EXAMPLES::
 
@@ -132,9 +132,9 @@ class AffineGroupElement(MultiplicativeGroupElement):
             # Note: the coercion framework expects that we raise TypeError for invalid input
             if not isinstance(A, Matrix):
                 raise TypeError('A must be a matrix')
-            if not (A.parent() is parent.matrix_space()):
+            if A.parent() is not parent.matrix_space():
                 raise TypeError('A must be an element of ' + str(parent.matrix_space()))
-            if not (b.parent() is parent.vector_space()):
+            if b.parent() is not parent.vector_space():
                 raise TypeError('b must be an element of ' + str(parent.vector_space()))
             parent._element_constructor_check(A, b)
         super().__init__(parent)
@@ -145,7 +145,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the general linear part of an affine group element.
 
-        OUTPUT: The matrix `A` of the affine group element `Ax + b`
+        OUTPUT: the matrix `A` of the affine group element `Ax + b`
 
         EXAMPLES::
 
@@ -162,7 +162,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the translation part of an affine group element.
 
-        OUTPUT: The vector `b` of the affine group element `Ax + b`
+        OUTPUT: the vector `b` of the affine group element `Ax + b`
 
         EXAMPLES::
 

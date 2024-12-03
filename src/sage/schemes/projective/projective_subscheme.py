@@ -22,18 +22,18 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.misc import binomial
-
 from sage.categories.fields import Fields
 from sage.categories.homset import Hom
-
-from sage.matrix.constructor import matrix
-
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import is_RationalField
-
+from sage.rings.rational_field import RationalField
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 from sage.schemes.projective.projective_morphism import SchemeMorphism_polynomial_projective_subscheme_field
+
+lazy_import('sage.dynamics.arithmetic_dynamics.generic_ds', 'DynamicalSystem')
+lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.schemes.elliptic_curves.ell_generic', 'EllipticCurve_generic', as_='EllipticCurve')
 
 
 class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
@@ -51,10 +51,10 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
     INPUT:
 
     - ``A`` -- ambient :class:`projective space
-      <sage.schemes.projective.projective_space.ProjectiveSpace_field>`.
+      <sage.schemes.projective.projective_space.ProjectiveSpace_field>`
 
     - ``polynomials`` -- single polynomial, ideal or iterable of
-      defining homogeneous polynomials.
+      defining homogeneous polynomials
 
     EXAMPLES::
 
@@ -81,7 +81,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
-        OUTPUT: A point of the subscheme.
+        OUTPUT: a point of the subscheme
 
         EXAMPLES::
 
@@ -135,9 +135,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         - same as for
           :class:`~sage.schemes.projective.projective_morphism.SchemeMorphism_polynomial_projective_space`.
 
-        OUTPUT:
-
-        - :class:`~sage.schemes.projective.projective_morphism.SchemeMorphism_polynomial_projective_space`.
+        OUTPUT: :class:`~sage.schemes.projective.projective_morphism.SchemeMorphism_polynomial_projective_space`
 
         TESTS::
 
@@ -161,9 +159,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         """
         Return the dimension of the projective algebraic subscheme.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -183,8 +179,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         Something less obvious::
 
             sage: P3.<x,y,z,w,t> = ProjectiveSpace(4, QQ)
-            sage: X = P3.subscheme([x^2, x^2*y^2 + z^2*t^2, z^2 - w^2, 10*x^2 + w^2 - z^2])
-            sage: X
+            sage: X = P3.subscheme([x^2, x^2*y^2 + z^2*t^2,
+            ....:                   z^2 - w^2, 10*x^2 + w^2 - z^2]); X
             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
               x^2,
               x^2*y^2 + z^2*t^2,
@@ -201,17 +197,17 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
     def affine_patch(self, i, AA=None):
         r"""
-        Return the `i^{th}` affine patch of this projective scheme.
+        Return the `i`-th affine patch of this projective scheme.
 
-        This is the intersection with this `i^{th}` affine patch of
+        This is the intersection with this `i`-th affine patch of
         its ambient space.
 
         INPUT:
 
-        - ``i`` -- integer between 0 and dimension of ``self``, inclusive.
+        - ``i`` -- integer between 0 and dimension of ``self``, inclusive
 
         - ``AA`` -- (default: ``None``) ambient affine space, this
-          is constructed if it is not given.
+          is constructed if it is not given
 
         OUTPUT:
 
@@ -293,11 +289,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``point`` -- a point of the algebraic subscheme.
+        - ``point`` -- a point of the algebraic subscheme
 
-        OUTPUT:
-
-        Integer. The index of the patch. See :meth:`affine_patch`.
+        OUTPUT: integer. The index of the patch. See :meth:`affine_patch`
 
         EXAMPLES::
 
@@ -337,7 +331,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``point`` -- a point of the projective subscheme.
+        - ``point`` -- a point of the projective subscheme
 
         OUTPUT:
 
@@ -400,12 +394,12 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``point`` -- A point or ``None`` (default). The point to
-          test smoothness at.
+        - ``point`` -- a point or ``None`` (default); the point to
+          test smoothness at
 
         OUTPUT:
 
-        Boolean. If no point was specified, returns whether the
+        boolean; if no point was specified, returns whether the
         algebraic subscheme is smooth everywhere. Otherwise,
         smoothness at the specified point is tested.
 
@@ -461,11 +455,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         - ``f`` -- a :class:`DynamicalSystem_projective` with ``self`` in ``f.domain()``
 
-        - ``N`` -- a non-negative integer or list or tuple of two non-negative integers
+        - ``N`` -- nonnegative integer or list or tuple of two nonnegative integers
 
-        OUTPUT:
-
-        - a list of projective subschemes
+        OUTPUT: list of projective subschemes
 
         EXAMPLES::
 
@@ -507,9 +499,8 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: X.orbit(f, [-1,2])                                                    # needs sage.schemes
             Traceback (most recent call last):
             ...
-            TypeError: orbit bounds must be non-negative
+            TypeError: orbit bounds must be nonnegative
         """
-        from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
         if not isinstance(f, DynamicalSystem):
             raise TypeError("map must be a dynamical system for iteration")
         if not isinstance(N, (list, tuple)):
@@ -517,7 +508,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         N[0] = ZZ(N[0])
         N[1] = ZZ(N[1])
         if N[0] < 0 or N[1] < 0:
-            raise TypeError("orbit bounds must be non-negative")
+            raise TypeError("orbit bounds must be nonnegative")
         if N[0] > N[1]:
             return []
 
@@ -533,13 +524,13 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
     def nth_iterate(self, f, n):
         r"""
-        The nth forward image of this scheme by the map ``f``.
+        The `n`-th forward image of this scheme by the map ``f``.
 
         INPUT:
 
         - ``f`` -- a :class:`DynamicalSystem_projective` with ``self`` in ``f.domain()``
 
-        - ``n`` -- a positive integer.
+        - ``n`` -- positive integer
 
         OUTPUT:
 
@@ -607,11 +598,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         - ``f`` -- a map whose domain contains ``self``
 
-        - ``check`` -- Boolean, if `False` no input checking is done
+        - ``check`` -- boolean, if ``False`` no input checking is done
 
-        OUTPUT:
-
-         - a subscheme in the codomain of ``f``.
+        OUTPUT: a subscheme in the codomain of ``f``
 
         EXAMPLES::
 
@@ -753,11 +742,12 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             ...
             TypeError: subscheme must be in ambient space of domain of map
         """
-        dom = f.domain()
-        codom = f.codomain()
         if check:
             if not f.is_morphism():
                 raise TypeError("map must be a morphism")
+        dom = f.domain()
+        codom = f.codomain()
+        if check:
             if self.ambient_space() != dom:
                 raise TypeError("subscheme must be in ambient space of domain of map")
         CR_dom = dom.coordinate_ring()
@@ -793,13 +783,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         - ``f`` -- a map whose codomain contains this scheme
 
-        - ``k`` -- a positive integer
+        - ``k`` -- positive integer
 
-        - ``check`` -- Boolean, if ``False`` no input checking is done
+        - ``check`` -- boolean; if ``False`` no input checking is done
 
-        OUTPUT:
-
-        a subscheme in the domain of ``f``
+        OUTPUT: a subscheme in the domain of ``f``
 
         EXAMPLES::
 
@@ -907,13 +895,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``X`` -- A subscheme of projective space. At present, ``X`` is
+        - ``X`` -- a subscheme of projective space. At present, ``X`` is
           required to be an irreducible and reduced hypersurface defined
           over `\QQ` or a finite field.
 
-        OUTPUT:
-
-        - The dual of ``X`` as a subscheme of the dual projective space.
+        OUTPUT: the dual of ``X`` as a subscheme of the dual projective space
 
         EXAMPLES:
 
@@ -975,7 +961,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         from sage.libs.singular.function_factory import ff
 
         K = self.base_ring()
-        if not (is_RationalField(K) or K in Fields().Finite()):
+        if not (isinstance(K, RationalField) or K in Fields().Finite()):
             raise NotImplementedError("base ring must be QQ or a finite field")
         I = self.defining_ideal()
         m = I.ngens()
@@ -1023,7 +1009,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         If `P(t) = a_{m}t^m + \ldots + a_{0}` is the Hilbert
         polynomial of this subscheme, then the degree is `a_{m} m!`.
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1055,11 +1041,11 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``X`` -- subscheme in the same ambient space as this subscheme.
+        - ``X`` -- subscheme in the same ambient space as this subscheme
 
-        - ``P`` -- a point in the intersection of this subscheme with ``X``.
+        - ``P`` -- a point in the intersection of this subscheme with ``X``
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1125,11 +1111,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``P`` -- a point on this subscheme.
+        - ``P`` -- a point on this subscheme
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1185,18 +1169,19 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``d`` -- a positive integer.
+        - ``d`` -- positive integer
 
-        - ``CS`` -- a projective ambient space to embed into. If the projective ambient space of this subscheme
-          is of dimension `N`, the dimension of ``CS`` must be `\binom{N + d}{d} - 1`. This is constructed if
-          not specified. Default: ``None``.
+        - ``CS`` -- (default: ``None``) a projective ambient space to embed
+          into. If the projective ambient space of this subscheme is of
+          dimension `N`, the dimension of ``CS`` must be
+          `\binom{N + d}{d} - 1`. This is constructed if not specified.
 
-        - ``order`` -- a monomial order to use to arrange the monomials defining the embedding. The monomials
-          will be arranged from greatest to least with respect to this order. Default: ``'lex'``.
+        - ``order`` -- string (default: ``'lex'``); a monomial order to use to
+          arrange the monomials defining the embedding. The monomials will be
+          arranged from greatest to least with respect to this order.
 
-        OUTPUT:
-
-        - a scheme morphism from this subscheme to its image by the degree ``d`` Veronese embedding.
+        OUTPUT: a scheme morphism from this subscheme to its image by the
+        degree ``d`` Veronese embedding
 
         EXAMPLES::
 
@@ -1257,9 +1242,7 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         - same as for
           :class:`~sage.schemes.projective.projective_morphism.SchemeMorphism_polynomial_projective_space`.
 
-        OUTPUT:
-
-        - :class:`~sage.schemes.projective.projective_morphism.SchemeMorphism_polynomial_projective_space`.
+        OUTPUT: :class:`~sage.schemes.projective.projective_morphism.SchemeMorphism_polynomial_projective_space`
 
         TESTS::
 
@@ -1302,7 +1285,7 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         writing `R` as a polynomial in Plucker coordinates (i.e. bracket polynomials).
         [DS1994]_.
 
-        OUTPUT: a homogeneous polynomial.
+        OUTPUT: a homogeneous polynomial
 
         EXAMPLES::
 
@@ -1422,11 +1405,9 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default ``RealField`` precision).
+          default ``RealField`` precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1442,7 +1423,7 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme([z^2 - 101*y^2 - 3*x*z])
-            sage: X.global_height()  # long time                                        # needs sage.libs.singular
+            sage: X.global_height()             # long time                             # needs sage.libs.singular
             4.61512051684126
         """
         return self.Chow_form().global_height(prec)
@@ -1453,14 +1434,12 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
         INPUT:
 
-        - ``v`` -- a prime or prime ideal of the base ring.
+        - ``v`` -- a prime or prime ideal of the base ring
 
         - ``prec`` -- desired floating point precision (default:
-          default ``RealField`` precision).
+          default ``RealField`` precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1488,14 +1467,12 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
         INPUT:
 
-        - ``i`` -- an integer.
+        - ``i`` -- integer
 
         - ``prec`` -- desired floating point precision (default:
-          default ``RealField`` precision).
+          default ``RealField`` precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 

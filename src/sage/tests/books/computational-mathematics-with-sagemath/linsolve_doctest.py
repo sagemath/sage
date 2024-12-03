@@ -280,7 +280,7 @@ Sage example in ./linsolve.tex, line 2121::
 
 Sage example in ./linsolve.tex, line 2124::
 
-  sage: def eval(P,x):
+  sage: def eval(P, x):
   ....:     if len(P) == 0:
   ....:         return 0
   ....:     else:
@@ -288,12 +288,12 @@ Sage example in ./linsolve.tex, line 2124::
 
 Sage example in ./linsolve.tex, line 2133::
 
-  sage: def pscal(P,Q,lx):
+  sage: def pscal(P, Q, lx):
   ....:     return float(sum(eval(P,s)*eval(Q,s) for s in lx))
 
 Sage example in ./linsolve.tex, line 2139::
 
-  sage: def padd(P,a,Q):
+  sage: def padd(P, a, Q):
   ....:     for i in range(0,len(Q)):
   ....:         P[i] += a*Q[i]
 
@@ -309,7 +309,7 @@ Sage example in ./linsolve.tex, line 2149::
 
 Sage example in ./linsolve.tex, line 2160::
 
-  sage: def orthopoly(n,x):
+  sage: def orthopoly(n, x):
   ....:     if n > len(x):
   ....:         raise BadParamsforOrthop(n, len(x))
   ....:     orth = [[1./sqrt(float(len(x)))]]
@@ -384,7 +384,7 @@ Sage example in ./linsolve.tex, line 2828::
   sage: from numpy.linalg import *
   sage: from numpy import array
   sage: from numpy.random import rand
-  sage: def power(A,x,N):             # power iteration
+  sage: def power(A, x, N):             # power iteration
   ....:     for i in range(N):
   ....:         y = A*x
   ....:         z = y/norm(y)
@@ -398,7 +398,7 @@ Sage example in ./linsolve.tex, line 2828::
   sage: n = 1000
   sage: m = 5
   sage: # build a stochastic matrix of size n
-  sage: # with m non-zero coefficients per row
+  sage: # with m nonzero coefficients per row
   sage: A1 = sparse.lil_matrix((n, n))
   sage: for i in range(0,n):
   ....:     for j in range(0,m):

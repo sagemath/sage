@@ -116,9 +116,16 @@ def is_ChainComplexHomspace(x):
         sage: C = T.chain_complex(augmented=True, cochain=True)
         sage: G = Hom(C, C)
         sage: is_ChainComplexHomspace(G)
+        doctest:warning...
+        DeprecationWarning: The function is_ChainComplexHomspace is deprecated;
+        use 'isinstance(..., ChainComplexHomspace)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
-
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38184,
+                "The function is_ChainComplexHomspace is deprecated; "
+                "use 'isinstance(..., ChainComplexHomspace)' instead.")
     return isinstance(x, ChainComplexHomspace)
 
 
@@ -136,7 +143,6 @@ class ChainComplexHomspace(sage.categories.homset.Homset):
          from Chain complex with at most 5 nonzero terms over Integer Ring
            to Chain complex with at most 5 nonzero terms over Integer Ring
            in Category of chain complexes over Integer Ring
-
     """
     def __call__(self, f):
         """
@@ -154,6 +160,5 @@ class ChainComplexHomspace(sage.categories.homset.Homset):
             sage: y = G(f)
             sage: x == y
             True
-
         """
         return ChainComplexMorphism(f, self.domain(), self.codomain())

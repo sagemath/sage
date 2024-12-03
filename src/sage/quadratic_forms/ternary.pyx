@@ -13,7 +13,7 @@ Helper code for ternary quadratic forms
 # ****************************************************************************
 
 from sage.arith.misc import gcd, inverse_mod, xgcd
-from sage.matrix.constructor import matrix, identity_matrix, diagonal_matrix
+from sage.matrix.constructor import matrix
 from sage.misc.prandom import randint
 from sage.rings.finite_rings.integer_mod import mod
 from sage.rings.integer_ring import ZZ
@@ -27,7 +27,7 @@ def red_mfact(a, b):
 
     - ``a``, ``b`` -- integers
 
-    OUTPUT: Integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -594,7 +594,6 @@ def _find_zeros_mod_p_odd(long long a, long long b, long long c, long long r, lo
         (0, 32, 1)
         sage: Q((0, 32, 1))
         2018
-
     """
 
     cdef long long a_i

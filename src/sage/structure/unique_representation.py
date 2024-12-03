@@ -343,7 +343,7 @@ An example::
     ....:         return C(key)
 
 Now, we define an instance of the factory, stating that it can be found under
-the name ``"F"`` in the ``__main__`` module. By consequence, pickling works::
+the name ``'F'`` in the ``__main__`` module. By consequence, pickling works::
 
     sage: F = MyFactory("__main__.F")
     sage: __main__.F = F                # not needed in an interactive session
@@ -559,7 +559,110 @@ from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
 from sage.misc.fast_methods import WithEqualityById
 
 
-class CachedRepresentation(metaclass=ClasscallMetaclass):
+class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
+    r"""
+    Classes derived from :class:`WithPicklingByInitArgs` store the arguments
+    passed to :meth:`__init__` to implement pickling.
+
+    This class is for objects that are semantically immutable and determined
+    by the class and the arguments passed to :meth:`__init__`.
+    The class also provides implementations of :meth:`__copy__` and
+    :func:`__deepcopy__`, which simply return the object.
+    """
+
+    @staticmethod
+    def __classcall__(cls, *args, **options):
+        """
+        Construct a new object of this class and store the arguments passed to ``__init__``.
+
+        TESTS::
+
+            sage: from sage.structure.unique_representation import WithPicklingByInitArgs
+            sage: class MyClass(WithPicklingByInitArgs):
+            ....:     def __init__(self, value):
+            ....:         self.value = value
+            ....:     def __eq__(self, other):
+            ....:         if type(self) != type(other):
+            ....:             return False
+            ....:         return self.value == other.value
+            sage: import __main__
+            sage: __main__.MyClass = MyClass  # This is only needed in doctests
+            sage: x = MyClass(1)
+            sage: x == loads(dumps(x))
+            True
+            sage: y = MyClass(1)
+            sage: x is y                # No Cached/UniqueRepresentation behavior
+            False
+        """
+        instance = typecall(cls, *args, **options)
+        assert isinstance(instance, cls)
+        if instance.__class__.__reduce__ == WithPicklingByInitArgs.__reduce__:
+            instance._reduction = (cls, args, options)
+        return instance
+
+    def __reduce__(self):
+        """
+        Return the arguments that have been passed to
+        :meth:`__new__<object.__new__>` to construct this object,
+        as per the pickle protocol.
+
+        See also :class:`CachedRepresentation` and
+        :class:`UniqueRepresentation` for a discussion.
+
+        EXAMPLES::
+
+            sage: x = UniqueRepresentation()
+            sage: x.__reduce__()          # indirect doctest
+            (<function unreduce at ...>, (<class 'sage.structure.unique_representation.UniqueRepresentation'>, (), {}))
+        """
+        return (unreduce, self._reduction)
+
+    def __copy__(self):
+        """
+        Return ``self``, as a semantic copy of ``self``.
+
+        This assumes that the object is semantically immutable.
+
+        EXAMPLES::
+
+            sage: x = UniqueRepresentation()
+            sage: x is copy(x)    # indirect doctest
+            True
+        """
+        return self
+
+    def __deepcopy__(self, memo):
+        """
+        Return ``self``, as a semantic deep copy of ``self``.
+
+        This assumes that the object is semantically immutable.
+
+        EXAMPLES::
+
+            sage: from copy import deepcopy
+            sage: x = UniqueRepresentation()
+            sage: x is deepcopy(x)      # indirect doctest
+            True
+        """
+        return self
+
+
+def unreduce(cls, args, keywords):
+    """
+    Calls a class on the given arguments::
+
+        sage: sage.structure.unique_representation.unreduce(Integer, (1,), {})
+        1
+
+    .. TODO::
+
+        should reuse something preexisting ...
+
+    """
+    return cls(*args, **keywords)
+
+
+class CachedRepresentation(WithPicklingByInitArgs):
     """
     Classes derived from CachedRepresentation inherit a weak cache for their
     instances.
@@ -660,7 +763,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
     implementation does not work::
 
         sage: class MyClass3(CachedRepresentation):
-        ....:     def __init__(self, value = 3):
+        ....:     def __init__(self, value=3):
         ....:         self.value = value
         sage: MyClass3(3) is MyClass3()
         False
@@ -669,7 +772,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
 
         sage: class MyClass3(UniqueRepresentation):
         ....:     @staticmethod
-        ....:     def __classcall__(cls, value = 3):
+        ....:     def __classcall__(cls, value=3):
         ....:         return super().__classcall__(cls, value)
         ....:
         ....:     def __init__(self, value):
@@ -1007,11 +1110,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
             sage: x is y   # indirect doctest
             True
         """
-        instance = typecall(cls, *args, **options)
-        assert isinstance(instance, cls)
-        if instance.__class__.__reduce__ == CachedRepresentation.__reduce__:
-            instance._reduction = (cls, args, options)
-        return instance
+        return super().__classcall__(cls, *args, **options)
 
     @classmethod
     def _clear_cache_(cls):
@@ -1031,7 +1130,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
             sage: class B(A):
             ....:     @staticmethod
             ....:     def __classcall__(cls, *args, **kwds):
-            ....:          return super().__classcall__(cls,*args,**kwds)
+            ....:          return super().__classcall__(cls, *args, **kwds)
             sage: class C(B): pass
             sage: a = A(1)
             sage: b = B(2)
@@ -1064,7 +1163,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
             ....:     @staticmethod
             ....:     def __classcall_private__(cls, *args, **kwds):
             ....:         print("Private B")
-            ....:         return super().__classcall__(cls,*args,**kwds)
+            ....:         return super().__classcall__(cls, *args, **kwds)
             sage: class C(B): pass
             sage: a = A(1)
             sage: b = B(2)
@@ -1101,69 +1200,8 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
         for k in del_list:
             del cache[k]
 
-    def __reduce__(self):
-        """
-        Return the arguments that have been passed to
-        :meth:`__new__<object.__new__>` to construct this object,
-        as per the pickle protocol.
 
-        See also :class:`CachedRepresentation` and
-        :class:`UniqueRepresentation` for a discussion.
-
-        EXAMPLES::
-
-            sage: x = UniqueRepresentation()
-            sage: x.__reduce__()          # indirect doctest
-            (<function unreduce at ...>, (<class 'sage.structure.unique_representation.UniqueRepresentation'>, (), {}))
-        """
-        return (unreduce, self._reduction)
-
-    def __copy__(self):
-        """
-        Return ``self``, as a semantic copy of ``self``.
-
-        This assumes that the object is semantically immutable.
-
-        EXAMPLES::
-
-            sage: x = UniqueRepresentation()
-            sage: x is copy(x)    # indirect doctest
-            True
-        """
-        return self
-
-    def __deepcopy__(self, memo):
-        """
-        Return ``self``, as a semantic deep copy of ``self``.
-
-        This assumes that the object is semantically immutable.
-
-        EXAMPLES::
-
-            sage: from copy import deepcopy
-            sage: x = UniqueRepresentation()
-            sage: x is deepcopy(x)      # indirect doctest
-            True
-        """
-        return self
-
-
-def unreduce(cls, args, keywords):
-    """
-    Calls a class on the given arguments::
-
-        sage: sage.structure.unique_representation.unreduce(Integer, (1,), {})
-        1
-
-    .. TODO::
-
-        should reuse something preexisting ...
-
-    """
-    return cls(*args, **keywords)
-
-
-class UniqueRepresentation(CachedRepresentation, WithEqualityById):
+class UniqueRepresentation(WithEqualityById, CachedRepresentation):
     r"""
     Classes derived from ``UniqueRepresentation`` inherit a unique
     representation behavior for their instances.

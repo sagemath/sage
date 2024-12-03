@@ -9,21 +9,20 @@ Simplicial Sets
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.functions.generalized import sign
-from sage.matrix.special import identity_matrix
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_import import lazy_import
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom
-from sage.categories.sets_cat import Sets
 from sage.categories.homsets import HomsetsCategory
-from sage.matrix.constructor import matrix
+from sage.categories.sets_cat import Sets
+from sage.functions.generalized import sign
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 
 lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.matrix.special', 'identity_matrix')
 
 
 class SimplicialSets(Category_singleton):
@@ -31,7 +30,7 @@ class SimplicialSets(Category_singleton):
     The category of simplicial sets.
 
     A simplicial set `X` is a collection of sets `X_i`, indexed by
-    the non-negative integers, together with maps
+    the nonnegative integers, together with maps
 
     .. math::
 
@@ -204,7 +203,7 @@ class SimplicialSets(Category_singleton):
         class ParentMethods:
             def base_point(self):
                 """
-                Return this simplicial set's base point
+                Return this simplicial set's base point.
 
                 EXAMPLES::
 
@@ -230,11 +229,11 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``domain`` -- optional, default ``None``. Use
-                  this to specify a particular one-point space as
-                  the domain. The default behavior is to use the
-                  :func:`sage.topology.simplicial_set.Point`
-                  function to use a standard one-point space.
+                - ``domain`` -- (default: ``None``) use this to specify a
+                  particular one-point space as the domain. The default
+                  behavior is to use the
+                  :func:`sage.topology.simplicial_set.Point` function to use a
+                  standard one-point space.
 
                 EXAMPLES::
 
@@ -279,7 +278,7 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``simplify`` (bool, optional ``True``) -- if
+                - ``simplify`` -- boolean (default: ``True``); if
                   ``False``, then return a presentation of the group
                   in terms of generators and relations. If ``True``,
                   the default, simplify as much as GAP is able to.
@@ -362,10 +361,10 @@ class SimplicialSets(Category_singleton):
 
                 TESTS::
 
-                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                  # needs sage.groups
-                    sage: RP2._universal_cover_dict()                                   # needs sage.groups
+                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                  # needs sage.graphs sage.groups
+                    sage: RP2._universal_cover_dict()                                   # needs sage.graphs sage.groups
                     (Finitely presented group < e | e^2 >, {f: e})
-                    sage: RP2.nondegenerate_simplices()                                 # needs sage.groups
+                    sage: RP2.nondegenerate_simplices()                                 # needs sage.graphs sage.groups
                     [1, f, f * f]
                 """
                 from sage.groups.free_group import FreeGroup
@@ -407,21 +406,20 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                  # needs sage.groups
-                    sage: phi = RP2.universal_cover_map(); phi                          # needs sage.groups
+                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                  # needs sage.graphs sage.groups
+                    sage: phi = RP2.universal_cover_map(); phi                          # needs sage.graphs sage.groups gap_package_polenta
                     Simplicial set morphism:
                       From: Simplicial set with 6 non-degenerate simplices
                       To:   RP^2
                       Defn: [(1, 1), (1, e), (f, 1), (f, e), (f * f, 1), (f * f, e)]
                             --> [1, 1, f, f, f * f, f * f]
-                    sage: phi.domain().face_data()                                      # needs sage.groups
+                    sage: phi.domain().face_data()                                      # needs sage.graphs sage.groups gap_package_polenta
                         {(1, 1): None,
                          (1, e): None,
                          (f, 1): ((1, e), (1, 1)),
                          (f, e): ((1, 1), (1, e)),
                          (f * f, 1): ((f, e), s_0 (1, 1), (f, 1)),
                          (f * f, e): ((f, 1), s_0 (1, e), (f, e))}
-
                 """
                 edges = self.n_cells(1)
                 if not edges:
@@ -440,8 +438,7 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``character`` -- a dictionary
-
+                - ``character`` -- dictionary
 
                 EXAMPLES::
 
@@ -487,7 +484,7 @@ class SimplicialSets(Category_singleton):
                         char[s] = G.one()
 
                 for d in range(1, self.dimension() + 1):
-                    for s in self.n_cells(d):
+                    for s in self.all_n_simplices(d):
                         if s not in char.keys():
                             if d == 1 and s.is_degenerate():
                                 char[s] = G.one()
@@ -502,7 +499,6 @@ class SimplicialSets(Category_singleton):
                             for g in G:
                                 cell = AbstractSimplex(d, name="({}, {})".format(s, g))
                                 cells_dict[(s, g)] = cell
-                                fd = []
                                 faces = self.faces(s)
                                 f0 = faces[0]
                                 for h in G:
@@ -528,7 +524,7 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``character`` -- a dictionary
+                - ``character`` -- dictionary
 
                 EXAMPLES::
 
@@ -563,11 +559,11 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: # needs sage.groups
+                    sage: # needs sage.graphs sage.groups
                     sage: RP3 = simplicial_sets.RealProjectiveSpace(3)
                     sage: C = RP3.universal_cover(); C
                     Simplicial set with 8 non-degenerate simplices
-                    sage: C.face_data()
+                    sage: C.face_data()  # needs gap_package_polenta
                     {(1, 1): None,
                      (1, e): None,
                      (f, 1): ((1, e), (1, 1)),
@@ -578,6 +574,16 @@ class SimplicialSets(Category_singleton):
                      (f * f * f, e): ((f * f, 1), s_0 (f, e), s_1 (f, e), (f * f, e))}
                     sage: C.fundamental_group()
                     Finitely presented group <  |  >
+
+                TESTS::
+
+                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)
+                    sage: S3 = simplicial_sets.Sphere(3)
+                    sage: X = S3.wedge(RP2)
+                    sage: XU = X.universal_cover()
+                    sage: [XU.homology(i) for i in range(5)]
+                    [0, 0, Z, Z x Z, 0]
+
                 """
                 return self.universal_cover_map().domain()
 
@@ -590,22 +596,21 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
+                    sage: # needs sage.graphs
                     sage: X = simplicial_sets.Torus()
                     sage: d = X._canonical_twisting_operator()
                     sage: d
-                    {(s_0 v_0, sigma_1): f3, (sigma_1, s_0 v_0): f2*f3^-1, (sigma_1, sigma_1): f2}
+                    {(s_0 v_0, sigma_1): f2, (sigma_1, s_0 v_0): f1*f2^-1, (sigma_1, sigma_1): f1}
                     sage: list(d.values())[0].parent()
-                    Multivariate Laurent Polynomial Ring in f2, f3 over Integer Ring
+                    Multivariate Laurent Polynomial Ring in f1, f2 over Integer Ring
                     sage: Y = simplicial_sets.RealProjectiveSpace(2)
                     sage: d2 = Y._canonical_twisting_operator()
                     sage: d2
                     {f: F1bar}
                     sage: list(d2.values())[0].parent()
                     Quotient of Univariate Laurent Polynomial Ring in F1 over Integer Ring by the ideal (-1 + F1^2)
-
                 """
                 G, d = self._universal_cover_dict()
-                phi = G.abelianization_map()
                 abelG, R, I, images = G.abelianization_to_algebra(ZZ)
                 QRP = R.quotient_ring(I)
                 res = {}
@@ -624,7 +629,7 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``twisting_operator`` -- a dictionary, associating the twist of each
+                - ``twisting_operator`` -- dictionary, associating the twist of each
                   simplex. If it is not given, the canonical one (associated to the
                   laurent polynomial ring abelianization of the fundamental group, ignoring
                   torsion) is used.
@@ -634,20 +639,20 @@ class SimplicialSets(Category_singleton):
                   chain complex in those dimensions, setting the chain groups
                   in all other dimensions to zero.
 
-                - ``augmented`` (default: ``False``) -- if ``True``,
+                - ``augmented`` -- boolean (default: ``False``); if ``True``,
                   return the augmented chain complex (that is, include a class
                   in dimension `-1` corresponding to the empty cell).
 
-                - ``cochain`` (default: ``False``) -- if ``True``,
+                - ``cochain`` -- boolean (default: ``False``); if ``True``,
                   return the cochain complex (that is, the dual of the chain
                   complex).
 
-                - ``verbose`` (default: ``False``) -- ignored.
+                - ``verbose`` -- boolean (default: ``False``); ignored
 
-                - ``subcomplex`` (default: ``None``) -- if present,
-                  compute the chain complex relative to this subcomplex.
+                - ``subcomplex`` -- (default: ``None``) if present,
+                  compute the chain complex relative to this subcomplex
 
-                - ``check`` (default: ``False``) -- If ``True``, make
+                - ``check`` -- boolean (default: ``False``); if ``True``, make
                   sure that the chain complex is actually a chain complex:
                   the differentials are composable and their product is zero.
 
@@ -658,6 +663,7 @@ class SimplicialSets(Category_singleton):
 
                 EXAMPLES::
 
+                    sage: # needs sage.graphs
                     sage: W = simplicial_sets.Sphere(1).wedge(simplicial_sets.Sphere(2))
                     sage: W.nondegenerate_simplices()
                     [*, sigma_1, sigma_2]
@@ -672,19 +678,21 @@ class SimplicialSets(Category_singleton):
 
                 ::
 
+                    sage: # needs sage.graphs
                     sage: X = simplicial_sets.Torus()
                     sage: C = X.twisted_chain_complex()
                     sage: C.differential(1)
-                    [      f3 - 1 f2*f3^-1 - 1       f2 - 1]
+                    [      f2 - 1 f1*f2^-1 - 1       f1 - 1]
                     sage: C.differential(2)
-                    [       1 f2*f3^-1]
-                    [      f3        1]
+                    [       1 f1*f2^-1]
+                    [      f2        1]
                     [      -1       -1]
                     sage: C.differential(3)
                     []
 
                 ::
 
+                    sage: # needs sage.graphs
                     sage: Y = simplicial_sets.RealProjectiveSpace(2)
                     sage: C = Y.twisted_chain_complex()
                     sage: C.differential(1)
@@ -693,7 +701,6 @@ class SimplicialSets(Category_singleton):
                     [1 + F1]
                     sage: C.differential(3)
                     []
-
                 """
                 from sage.homology.chain_complex import ChainComplex
                 from sage.structure.element import get_coercion_model
@@ -822,13 +829,14 @@ class SimplicialSets(Category_singleton):
 
                 INPUT:
 
-                - ``n`` -- a positive integer.
+                - ``n`` -- positive integer
 
-                - ``reduced`` -- (default: ``False``) if set to True, the presentation matrix
-                  will be reduced.
+                - ``reduced`` -- boolean (default: ``False``); if set to True,
+                  the presentation matrix will be reduced
 
                 EXAMPLES::
 
+                    sage: # needs sage.graphs
                     sage: X = simplicial_sets.Sphere(1).wedge(simplicial_sets.Sphere(2))
                     sage: X.twisted_homology(1)
                     Quotient module by Submodule of Ambient free module of rank 0 over the integral domain Multivariate Polynomial Ring in f1, f1inv over Integer Ring
@@ -841,31 +849,32 @@ class SimplicialSets(Category_singleton):
 
                 ::
 
+                    sage: # needs sage.graphs
                     sage: Y = simplicial_sets.Torus()
                     sage: Y.twisted_homology(1)
-                    Quotient module by Submodule of Ambient free module of rank 5 over the integral domain Multivariate Polynomial Ring in f2, f2inv, f3, f3inv over Integer Ring
+                    Quotient module by Submodule of Ambient free module of rank 5 over the integral domain Multivariate Polynomial Ring in f1, f1inv, f2, f2inv over Integer Ring
                     Generated by the rows of the matrix:
                     [           1            0            0            0            0]
                     [           0            1            0            0            0]
                     [           0            0            1            0            0]
                     [           0            0            0            1            0]
                     [           0            0            0            0            1]
+                    [f1*f1inv - 1            0            0            0            0]
+                    [           0 f1*f1inv - 1            0            0            0]
+                    [           0            0 f1*f1inv - 1            0            0]
+                    [           0            0            0 f1*f1inv - 1            0]
+                    [           0            0            0            0 f1*f1inv - 1]
                     [f2*f2inv - 1            0            0            0            0]
                     [           0 f2*f2inv - 1            0            0            0]
                     [           0            0 f2*f2inv - 1            0            0]
                     [           0            0            0 f2*f2inv - 1            0]
                     [           0            0            0            0 f2*f2inv - 1]
-                    [f3*f3inv - 1            0            0            0            0]
-                    [           0 f3*f3inv - 1            0            0            0]
-                    [           0            0 f3*f3inv - 1            0            0]
-                    [           0            0            0 f3*f3inv - 1            0]
-                    [           0            0            0            0 f3*f3inv - 1]
                     sage: Y.twisted_homology(2)
-                    Quotient module by Submodule of Ambient free module of rank 0 over the integral domain Multivariate Polynomial Ring in f2, f2inv, f3, f3inv over Integer Ring
+                    Quotient module by Submodule of Ambient free module of rank 0 over the integral domain Multivariate Polynomial Ring in f1, f1inv, f2, f2inv over Integer Ring
                     Generated by the rows of the matrix:
                     []
                     sage: Y.twisted_homology(1, reduced=True)
-                    Quotient module by Submodule of Ambient free module of rank 5 over the integral domain Multivariate Polynomial Ring in f2, f2inv, f3, f3inv over Integer Ring
+                    Quotient module by Submodule of Ambient free module of rank 5 over the integral domain Multivariate Polynomial Ring in f1, f1inv, f2, f2inv over Integer Ring
                     Generated by the rows of the matrix:
                     [1 0 0 0 0]
                     [0 1 0 0 0]
@@ -875,6 +884,7 @@ class SimplicialSets(Category_singleton):
 
                 TESTS::
 
+                    sage: # needs sage.graphs
                     sage: X = simplicial_sets.PresentationComplex(groups.presentation.FGAbelian((3,2)))
                     sage: TW2 = X.twisted_homology(2, reduced=True)
                     sage: M = TW2.relations_matrix()
@@ -887,7 +897,6 @@ class SimplicialSets(Category_singleton):
                     sage: X.universal_cover().homology(2)
                     Z^5
                     sage: from sage.libs.singular.function import singular_function
-
                 """
                 from sage.libs.singular.function import singular_function
                 from sage.libs.singular.option import opt_verb
@@ -897,7 +906,6 @@ class SimplicialSets(Category_singleton):
                 singred = singular_function("reduce")
                 singlift = singular_function("lift")
                 G, d = self._universal_cover_dict()
-                phi = G.abelianization_map()
                 abelG, R, I, images = G.abelianization_to_algebra(ZZ)
                 CC = self.twisted_chain_complex()
                 M1 = CC.differential(n).T

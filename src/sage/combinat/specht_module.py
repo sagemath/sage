@@ -37,6 +37,7 @@ from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModu
 from sage.modules.free_module_element import vector
 from sage.categories.modules_with_basis import ModulesWithBasis
 
+
 class SymmetricGroupRepresentation(Representation_abstract):
     """
     Mixin class for symmetric group (algebra) representations.
@@ -747,14 +748,15 @@ class SpechtModuleTableauxBasis(SpechtModule):
         B = self.basis()
         COB = matrix([b.lift().to_vector() for b in B]).T
         P, L, U = COB.LU()
-        # Since U is upper triangular, the nonzero entriesm must be in the
-        #   upper square portiion of the matrix
+        # Since U is upper triangular, the nonzero entries must be in the
+        # upper square portion of the matrix
         n = len(B)
 
         Uinv = U.matrix_from_rows(range(n)).inverse()
-        # This is a slight abuse as the codomain should be a module with a different
-        #    S_n action, but we only use it internally, so there isn't any problems
-        PLinv = (P*L).inverse()
+        # This is a slight abuse as the codomain should be a module
+        # with a different
+        #  S_n action, but we only use it internally, so there is no problem
+        PLinv = (P * L).inverse()
 
         def retraction(elt):
             vec = PLinv * elt.to_vector(order=self._support_order)
@@ -849,6 +851,102 @@ class SpechtModuleTableauxBasis(SpechtModule):
         if self.base_ring().characteristic() == 0:
             return self
         return SimpleModule(self)
+
+    def intrinsic_arrangement(self, base_ring=None):
+        r"""
+        Return the intrinsic arrangement of ``self``.
+
+        Consider the Specht module `S^{\lambda}` with `\lambda` a
+        (integer) partition of `n` (i.e., `S^{\lambda}` is an `S_n`-module).
+        The *intrinsic arrangement* of `S^{\lambda}` is the central hyperplane
+        arrangement in `S^{\lambda}` given by the hyperplanes `H_{\alpha}`,
+        indexed by a set partition `\alpha` of `\{1, \ldots, n\}` of size
+        `\lambda`, defined by
+
+        .. MATH::
+
+            H_{\alpha} := \bigoplus_{\tau \in T_{\alpha}} (S^{\lambda})^{\tau},
+
+        where `T_{\alpha}` is some set of generating transpositions
+        of the Young subgroup `S_{\alpha}` and `V^{\tau}` denotes the
+        `\tau`-invariant subspace of `V`. (These hyperplanes do not
+        depend on the choice of `T_{\alpha}`.)
+
+        This was introduced in [TVY2020]_ as a generalization of the
+        braid arrangement, which is the case when `\lambda = (n-1, 1)`
+        (equivalently, for the irreducible representation of `S_n`
+        given by the type `A_{n-1}` root system).
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: SM = SGA.specht_module([2, 1, 1])
+            sage: A = SM.intrinsic_arrangement()
+            sage: A.hyperplanes()
+            (Hyperplane T0 - T1 - 3*T2 + 0,
+             Hyperplane T0 - T1 + T2 + 0,
+             Hyperplane T0 + 3*T1 + T2 + 0,
+             Hyperplane 3*T0 + T1 - T2 + 0)
+            sage: A.is_free()
+            False
+
+        We reproduce Example 3 of [TVY2020]_::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: for la in Partitions(5):
+            ....:     SM = SGA.specht_module(la)
+            ....:     A = SM.intrinsic_arrangement()
+            ....:     print(la, A.characteristic_polynomial())
+            [5] 1
+            [4, 1] x^4 - 10*x^3 + 35*x^2 - 50*x + 24
+            [3, 2] x^5 - 15*x^4 + 90*x^3 - 260*x^2 + 350*x - 166
+            [3, 1, 1] x^6 - 10*x^5 + 45*x^4 - 115*x^3 + 175*x^2 - 147*x + 51
+            [2, 2, 1] x^5 - 10*x^4 + 45*x^3 - 105*x^2 + 120*x - 51
+            [2, 1, 1, 1] x^4 - 5*x^3 + 10*x^2 - 10*x + 4
+            [1, 1, 1, 1, 1] 1
+
+            sage: A = SGA.specht_module([4, 1]).intrinsic_arrangement()
+            sage: A.characteristic_polynomial().factor()
+            (x - 4) * (x - 3) * (x - 2) * (x - 1)
+        """
+        from sage.geometry.hyperplane_arrangement.arrangement import HyperplaneArrangements
+        from sage.combinat.set_partition import SetPartitions
+        if base_ring is None:
+            base_ring = self.base_ring()
+
+        if self.dimension() == 1:  # corner case
+            HA = HyperplaneArrangements(base_ring, 'T')
+            return HA()
+
+        SGA = self._semigroup_algebra
+        G = self._semigroup
+
+        def t(i, j):
+            ret = list(range(1, SGA.n + 1))
+            ret[i - 1] = j
+            ret[j - 1] = i
+            return SGA(G(ret))
+
+        # Construct the hyperplanes
+        fixed_spaces = {}
+        norms = []
+        for alpha in SetPartitions(SGA.n, self._diagram.conjugate()):
+            span = []
+            for a in alpha:
+                a = list(a)
+                for i in range(len(a)-1):
+                    elt = t(a[i], a[i+1])
+                    if elt not in fixed_spaces:
+                        fixed_spaces[elt] = self.annihilator_basis([elt - SGA.one()], side='left')
+                    span.extend(fixed_spaces[elt])
+            H = self.echelon_form(span)
+            N = matrix([v.to_vector() for v in H]).right_kernel_matrix()
+            assert N.nrows() == 1
+            norms.append(N[0])
+
+        # Convert the data to an arrangement
+        HA = HyperplaneArrangements(base_ring, tuple([f'T{i}' for i in range(self.dimension())]))
+        return HA([[0] + list(N) for N in norms])
 
 
 class MaximalSpechtSubmodule(SymmetricGroupRepresentation, SubmoduleWithBasis):
@@ -1049,18 +1147,12 @@ def _to_diagram(D):
     if isinstance(D, Diagram):
         return D
     if D in _Partitions:
-        D = _Partitions(D).cells()
-    elif D in SkewPartitions():
-        D = SkewPartitions()(D).cells()
-    elif D in IntegerVectors():
-        cells = []
-        for i, row in enumerate(D):
-            for j in range(row):
-                cells.append((i, j))
-        D = cells
-    else:
-        D = [tuple(cell) for cell in D]
-    return D
+        return _Partitions(D).cells()
+    if D in SkewPartitions():
+        return SkewPartitions()(D).cells()
+    if D in IntegerVectors():
+        return [(i, j) for i, row in enumerate(D) for j in range(row)]
+    return [tuple(cell) for cell in D]
 
 
 def specht_module_spanning_set(D, SGA=None):
@@ -1069,8 +1161,8 @@ def specht_module_spanning_set(D, SGA=None):
 
     INPUT:
 
-    - ``D`` -- a list of cells ``(r,c)`` for row ``r`` and column ``c``
-    - ``SGA`` -- optional; a symmetric group algebra
+    - ``D`` -- list of cells ``(r,c)`` for row ``r`` and column ``c``
+    - ``SGA`` -- (optional) a symmetric group algebra
 
     EXAMPLES::
 

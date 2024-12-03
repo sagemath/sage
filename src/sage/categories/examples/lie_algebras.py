@@ -71,7 +71,7 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
+            sage: # needs sage.combinat sage.groups
             sage: S3 = SymmetricGroupAlgebra(QQ, 3)
             sage: L1 = LieAlgebras(QQ).example()
             sage: gens = list(S3.algebra_generators())
@@ -85,8 +85,8 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
         """
         EXAMPLES::
 
-            sage: L = LieAlgebras(QQ).example()                                         # needs sage.combinat
-            sage: TestSuite(L).run()                                                    # needs sage.combinat
+            sage: L = LieAlgebras(QQ).example()                                         # needs sage.combinat sage.groups
+            sage: TestSuite(L).run()                                                    # needs sage.combinat sage.groups
         """
         if not gens:
             raise ValueError("need at least one generator")
@@ -216,7 +216,7 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
 
         def __bool__(self) -> bool:
             """
-            Check non-zero.
+            Check nonzero.
 
             EXAMPLES::
 

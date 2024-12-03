@@ -1,5 +1,5 @@
-# sage.doctest: optional - sage.rings.finite_rings               (because all doctests use finite fields)
-# sage.doctest: optional - sage.rings.function_field    (because almost all doctests use function field extensions)
+# sage.doctest: needs sage.rings.finite_rings               (because all doctests use finite fields)
+# sage.doctest: needs sage.rings.function_field    (because almost all doctests use function field extensions)
 """
 Divisors of function fields
 
@@ -74,6 +74,7 @@ from sage.rings.integer import Integer
 
 from .place import PlaceSet
 
+
 def divisor(field, data):
     """
     Construct a divisor from the data.
@@ -97,6 +98,7 @@ def divisor(field, data):
     """
     divisor_group = field.divisor_group()
     return divisor_group.element_class(divisor_group, data)
+
 
 def prime_divisor(field, place, m=1):
     """
@@ -132,7 +134,7 @@ class FunctionFieldDivisor(ModuleElement):
 
     - ``parent`` -- divisor group
 
-    - ``data`` -- dict of place and multiplicity pairs
+    - ``data`` -- dictionary of place and multiplicity pairs
 
     EXAMPLES::
 
@@ -467,7 +469,7 @@ class FunctionFieldDivisor(ModuleElement):
 
     def is_effective(self):
         """
-        Return ``True`` if this divisor has non-negative multiplicity at all
+        Return ``True`` if this divisor has nonnegative multiplicity at all
         places.
 
         EXAMPLES::
@@ -920,7 +922,7 @@ class FunctionFieldDivisor(ModuleElement):
                 if e != 0:
                     return (i,e.numerator().degree() - e.denominator().degree())
 
-        def greater(v,w): # v and w are not equal
+        def greater(v, w): # v and w are not equal
             return v[0] < w[0] or v[0] == w[0] and v[1] > w[1]
 
         # collate rows by their pivot position

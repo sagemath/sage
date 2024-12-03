@@ -210,7 +210,8 @@ def cantor_reduction(a, b, f, h, genus):
         return cantor_reduction(a, b, f, h, genus)
     return (a, b)
 
-def cantor_composition_simple(D1,D2,f,genus):
+
+def cantor_composition_simple(D1, D2, f, genus):
     r"""
     Given `D_1` and `D_2` two reduced Mumford
     divisors on the Jacobian of the curve `y^2 = f(x)`,
@@ -268,7 +269,8 @@ def cantor_composition_simple(D1,D2,f,genus):
     a = a.monic()
     return (a, b)
 
-def cantor_composition(D1,D2,f,h,genus):
+
+def cantor_composition(D1, D2, f, h, genus):
     r"""
     EXAMPLES::
 
@@ -361,11 +363,10 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         INPUT:
 
-        - parent -- the parent Homset
-        - polys -- Mumford's `u` and `v` polynomials
-        - check (default: ``True``) -- if ``True``, ensure that
-          polynomials define a divisor on the appropriate curve and are
-          reduced
+        - ``parent`` -- the parent Homset
+        - ``polys`` -- Mumford's `u` and `v` polynomials
+        - ``check`` -- boolean (default: ``True``); if ``True``, ensure that
+          polynomials define a divisor on the appropriate curve and are reduced
 
         .. warning::
 
@@ -589,7 +590,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
     def __list__(self):
         r"""
         Return a list `(a(x), b(x))` of the polynomials giving the
-        Mumford representation of self.
+        Mumford representation of ``self``.
 
         TESTS::
 
@@ -613,7 +614,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
     def __tuple__(self):
         r"""
         Return a tuple `(a(x), b(x))` of the polynomials giving the
-        Mumford representation of self.
+        Mumford representation of ``self``.
 
         TESTS::
 
@@ -637,7 +638,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
     def __getitem__(self, n):
         r"""
         Return the `n`-th item of the pair `(a(x), b(x))`
-        of polynomials giving the Mumford representation of self.
+        of polynomials giving the Mumford representation of ``self``.
 
         TESTS::
 
@@ -667,7 +668,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
     def _richcmp_(self, other, op):
         r"""
-        Compare self and other.
+        Compare ``self`` and ``other``.
 
         TESTS::
 
@@ -789,7 +790,6 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             (u^2 - t, v + u + 1)
             sage: Q + (-Q)  # indirect doctest
             (1)
-
         """
         if self.is_zero():
             return self
@@ -808,9 +808,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             D = (polys[0],-polys[1]-(h+polys[0]) % (polys[0]))
         return JacobianMorphism_divisor_class_field(X, D, check=False)
 
-    def _add_(self,other):
+    def _add_(self, other):
         r"""
-        Return a Mumford representative of the divisor self + other.
+        Return a Mumford representative of the divisor ``self + other``.
 
         EXAMPLES::
 
@@ -841,7 +841,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
     def _sub_(self, other):
         r"""
-        Return a Mumford representative of the divisor self - other.
+        Return a Mumford representative of the divisor ``self - other``.
 
         EXAMPLES::
 

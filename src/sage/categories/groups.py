@@ -60,7 +60,7 @@ class Groups(CategoryWithAxiom):
         - ``index_set`` -- (optional) an index set for the generators; if
           an integer, then this represents `\{0, 1, \ldots, n-1\}`
 
-        - ``names`` -- a string or list/tuple/iterable of strings
+        - ``names`` -- string or list/tuple/iterable of strings
           (default: ``'x'``); the generator names or name prefix
 
         When the index set is an integer or only variable names are given,
@@ -70,7 +70,7 @@ class Groups(CategoryWithAxiom):
 
         EXAMPLES::
 
-            sage: # needs sage.groups
+            sage: # needs sage.combinat sage.groups
             sage: Groups.free(index_set=ZZ)
             Free group indexed by Integer Ring
             sage: Groups().free(ZZ)
@@ -155,7 +155,7 @@ class Groups(CategoryWithAxiom):
 
         def semidirect_product(self, N, mapping, check=True):
             r"""
-            The semi-direct product of two groups
+            The semi-direct product of two groups.
 
             EXAMPLES::
 
@@ -171,7 +171,7 @@ class Groups(CategoryWithAxiom):
 
         def holomorph(self):
             r"""
-            The holomorph of a group
+            The holomorph of a group.
 
             The holomorph of a group `G` is the semidirect product
             `G \rtimes_{id} Aut(G)`, where `id` is the identity function
@@ -195,7 +195,7 @@ class Groups(CategoryWithAxiom):
             Return the "multiplication" table of this multiplicative group,
             which is also known as the "Cayley table".
 
-            .. note:: The order of the elements in the row and column
+            .. NOTE:: The order of the elements in the row and column
               headings is equal to the order given by the table's
               :meth:`~sage.matrix.operation_table.OperationTable.column_keys`
               method.  The association between the actual elements and the
@@ -225,7 +225,7 @@ class Groups(CategoryWithAxiom):
               * a list - a list of strings, where the length
                 of the list equals the number of elements.
 
-            - ``elements`` -- (default = ``None``);  A list of
+            - ``elements`` -- (default: ``None``) a list of
               elements of the group, in forms that can be
               coerced into the structure, eg. their string
               representations. This may be used to impose an
@@ -273,7 +273,7 @@ class Groups(CategoryWithAxiom):
             ::
 
                 sage: M = SL(2, 2)                                                      # needs sage.modules
-                sage: M.cayley_table()                                                  # needs sage.modules
+                sage: M.cayley_table()                                                  # needs sage.libs.gap sage.modules
                 *  a b c d e f
                  +------------
                 a| a b c d e f
@@ -430,7 +430,6 @@ class Groups(CategoryWithAxiom):
             AUTHOR:
 
             - Rob Beezer (2010-03-15)
-
             """
             from sage.matrix.operation_table import OperationTable
             import operator
@@ -477,8 +476,8 @@ class Groups(CategoryWithAxiom):
                 )
 
                 sage: G = SL(2, GF(2))                                                  # needs sage.modules
-                sage: g = G.gens()[0]                                                   # needs sage.modules
-                sage: g.conjugacy_class()                                               # needs sage.modules
+                sage: g = G.gens()[0]                                                   # needs sage.groups sage.modules
+                sage: g.conjugacy_class()                                               # needs sage.groups sage.modules
                 Conjugacy class of [1 1]
                 [0 1] in Special Linear Group of degree 2 over Finite Field of size 2
 
@@ -510,12 +509,12 @@ class Groups(CategoryWithAxiom):
             - ``index_set`` -- (optional) an index set for the generators; if
               an integer, then this represents `\{0, 1, \ldots, n-1\}`
 
-            - ``names`` -- a string or list/tuple/iterable of strings
+            - ``names`` -- string or list/tuple/iterable of strings
               (default: ``'x'``); the generator names or name prefix
 
             EXAMPLES::
 
-                sage: # needs sage.groups
+                sage: # needs sage.combinat sage.groups
                 sage: Groups.Commutative.free(index_set=ZZ)
                 Free abelian group indexed by Integer Ring
                 sage: Groups().Commutative().free(ZZ)
@@ -592,13 +591,13 @@ class Groups(CategoryWithAxiom):
 
                 We check the other portion of :issue:`16718` is fixed::
 
-                    sage: len(C.j_classes())                                            # needs sage.groups
+                    sage: len(C.j_classes())                                            # needs sage.graphs sage.groups
                     1
 
                 An example with an infinitely generated group (a better output
                 is needed)::
 
-                    sage: # needs sage.groups
+                    sage: # needs sage.combinat sage.groups
                     sage: G = Groups.free([1,2])
                     sage: H = Groups.free(ZZ)
                     sage: C = cartesian_product([G, H])
@@ -627,21 +626,21 @@ class Groups(CategoryWithAxiom):
                 gens_prod = cartesian_product([Family(G.group_generators(),
                                                       lambda g: (i, g))
                                                for i, G in enumerate(F)])
-                return Family(gens_prod, lift, name="gen")
+                return Family(gens_prod, lift, name='gen')
 
             def order(self):
                 r"""
-                Return the cardinality of self.
+                Return the cardinality of ``self``.
 
                 EXAMPLES::
 
-                    sage: C = cartesian_product([SymmetricGroup(10), SL(2, GF(3))])     # needs sage.groups sage.rings.finite_rings
-                    sage: C.order()                                                     # needs sage.groups sage.rings.finite_rings
+                    sage: C = cartesian_product([SymmetricGroup(10), SL(2, GF(3))])     # needs sage.groups sage.modules
+                    sage: C.order()                                                     # needs sage.groups sage.modules
                     87091200
 
                 TESTS::
 
-                    sage: C.order.__module__                                            # needs sage.groups sage.rings.finite_rings
+                    sage: C.order.__module__                                            # needs sage.groups sage.modules
                     'sage.categories.groups'
 
                 .. TODO::

@@ -79,13 +79,13 @@ import sage.categories.pushout
 
 def matrix_method(func=None, name=None):
     """
-    Allows a function to be tab-completed on the global matrix
+    Allow a function to be tab-completed on the global matrix
     constructor object.
 
     INPUT:
 
-    - ``*function`` -- a single argument. The function that is being
-      decorated.
+    - ``*function`` -- a single argument; the function that is being
+      decorated
 
     - ``**kwds`` -- a single optional keyword argument
       ``name=<string>``. The name of the corresponding method in the
@@ -128,7 +128,7 @@ def column_matrix(*args, **kwds):
     r"""
     Construct a matrix, and then swap rows for columns and columns for rows.
 
-    .. note::
+    .. NOTE::
 
         Linear algebra in Sage favors rows over columns.  So,
         generally, when creating a matrix, input vectors and lists are
@@ -155,7 +155,7 @@ def column_matrix(*args, **kwds):
     The most compelling use of this function is when you have a
     collection of lists or vectors that you would like to become the
     columns of a matrix. In almost any other situation, the
-    :func:`matrix`` constructor can probably do the
+    :func:`matrix` constructor can probably do the
     job just as easily, or easier. ::
 
         sage: col_1 = [1,2,3]
@@ -217,40 +217,39 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
 
     INPUT:
 
-    -  ``ring`` -- base ring for entries of the matrix
+    - ``ring`` -- base ring for entries of the matrix
 
-    -  ``nrows`` -- Integer; number of rows
+    - ``nrows`` -- integer; number of rows
 
-    -  ``ncols`` -- (default: ``None``); number of columns; if ``None``
-       defaults to ``nrows``
+    - ``ncols`` -- (default: ``None``) number of columns. If ``None``
+      defaults to ``nrows``.
 
-    -  ``algorithm`` -- (default: ``randomize``); determines what properties
-       the matrix will have.  See examples below for possible additional
-       arguments.
+    - ``algorithm`` -- (default: ``'randomize'``) determines what properties
+      the matrix will have.  See examples below for possible additional
+      arguments.
 
-       -  ``randomize`` -- create a matrix of random elements from the
-          base ring, possibly controlling the density of non-zero entries.
+      - ``'randomize'`` -- create a matrix of random elements from the
+        base ring, possibly controlling the density of nonzero entries
 
-       -  ``echelon_form`` -- creates a matrix in echelon form
+      - ``'echelon_form'`` -- creates a matrix in echelon form
 
-       -  ``echelonizable`` -- creates a matrix that has a predictable
-          echelon form
+      - ``'echelonizable'`` -- creates a matrix that has a predictable
+        echelon form
 
-       - ``subspaces`` -- creates a matrix whose four subspaces, when
-         explored, have reasonably sized, integral valued, entries.
+      - ``'subspaces'`` -- creates a matrix whose four subspaces, when
+        explored, have reasonably sized, integral valued, entries
 
-       - ``unimodular`` -- creates a matrix of determinant 1.
+      - ``'unimodular'`` -- creates a matrix of determinant 1
 
-       - ``diagonalizable`` -- creates a diagonalizable matrix whose
-         eigenvectors, if computed by hand, will have only integer
-         entries.
+      - ``'diagonalizable'`` -- creates a diagonalizable matrix whose
+        eigenvectors, if computed by hand, will have only integer entries
 
     - ``implementation`` -- (``None`` or string or a matrix class) a possible
       implementation. See the documentation of the constructor of
       :class:`~sage.matrix.matrix_space.MatrixSpace`.
 
-    -  ``*args, **kwds`` -- arguments and keywords to describe additional
-       properties. See more detailed documentation below.
+    - ``*args, **kwds`` -- arguments and keywords to describe additional
+      properties. See more detailed documentation below
 
     .. warning::
 
@@ -265,11 +264,11 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         An upper bound on the absolute value of the entries may be set
         when the ``algorithm`` is ``echelonizable`` or ``unimodular``.
         In these cases it is possible for this constructor to fail with
-        a :class:`ValueError`.  If you *must* have this routine return
+        a :exc:`ValueError`.  If you *must* have this routine return
         successfully, do not set ``upper_bound``.  This behavior can
         be partially controlled by a ``max_tries`` keyword.
 
-    .. note::
+    .. NOTE::
 
         When constructing matrices with random entries and no
         additional properties (i.e. when ``algorithm='randomize'``),
@@ -404,7 +403,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: K.<a> = FiniteField(2^8)                                                  # needs sage.rings.finite_rings
         sage: type(random_matrix(K, 2, 5))                                              # needs sage.libs.m4ri sage.rings.finite_rings
         <class 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
-        sage: type(random_matrix(K, 2, 5, implementation="generic"))                    # needs sage.rings.finite_rings
+        sage: type(random_matrix(K, 2, 5, implementation='generic'))                    # needs sage.rings.finite_rings
         <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
 
     Random rational matrices.  Now ``num_bound`` and ``den_bound`` control the
@@ -488,7 +487,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: TestSuite(A).run()
 
     Random matrices in echelon form.  The ``algorithm='echelon_form'`` keyword,
-    along with a requested number of non-zero rows (``num_pivots``) will return
+    along with a requested number of nonzero rows (``num_pivots``) will return
     a random matrix in echelon form.  When the base ring is ``QQ`` the result has integer
     entries.  Other exact rings may be also specified. ::
 
@@ -696,8 +695,8 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
       diagonal entries.  This may not be specified in
       combination with a NumPy array.
 
-    - ``sparse`` -- (default: ``True``); whether or not
-      the result has a sparse implementation.
+    - ``sparse`` -- boolean (default: ``True``); whether or not
+      the result has a sparse implementation
 
     OUTPUT:
 
@@ -1000,11 +999,23 @@ def zero_matrix(ring, nrows=None, ncols=None, sparse=False):
         [0 0 0 0 0]
         [0 0 0 0 0]
 
+    TESTS:
+
+    Check that :issue:`38221` is fixed::
+
+        sage: # needs sage.groups
+        sage: G = CyclicPermutationGroup(7)
+        sage: R = GF(2)
+        sage: A = G.algebra(R)
+        sage: zero_matrix(A, 3, 3)
+        [0 0 0]
+        [0 0 0]
+        [0 0 0]
     """
     if isinstance(ring, (Integer, int)):
         nrows, ncols = (ring, nrows)
         ring = ZZ
-    return matrix_space.MatrixSpace(ring, nrows, ncols, sparse)(0)
+    return matrix_space.MatrixSpace(ring, nrows, ncols, sparse).matrix(None)
 
 
 @matrix_method
@@ -1023,11 +1034,11 @@ def ones_matrix(ring, nrows=None, ncols=None, sparse=False):
 
     INPUT:
 
-    - ``ring`` -- (default: ``ZZ``); base ring for the matrix.
-    - ``nrows`` -- number of rows in the matrix.
-    - ``ncols`` -- number of columns in the matrix.
-      If omitted, defaults to the number of rows, producing a square matrix.
-    - ``sparse`` -- (default: ``False``); if ``True`` creates a sparse representation.
+    - ``ring`` -- (default: ``ZZ``) base ring for the matrix
+    - ``nrows`` -- number of rows in the matrix
+    - ``ncols`` -- number of columns in the matrix;
+      if omitted, defaults to the number of rows, producing a square matrix
+    - ``sparse`` -- (default: ``False``) if ``True`` creates a sparse representation
 
     OUTPUT:
 
@@ -1103,7 +1114,7 @@ def ones_matrix(ring, nrows=None, ncols=None, sparse=False):
 @matrix_method
 def elementary_matrix(arg0, arg1=None, **kwds):
     r"""
-    Creates a square matrix that corresponds to a row operation or a column operation.
+    Create a square matrix that corresponds to a row operation or a column operation.
 
     FORMATS:
 
@@ -1269,7 +1280,7 @@ def elementary_matrix(arg0, arg1=None, **kwds):
         sage: E3 = elementary_matrix(QQ, 4, row1=3, scale=0)
         Traceback (most recent call last):
         ...
-        ValueError: scale parameter of row of elementary matrix must be non-zero
+        ValueError: scale parameter of row of elementary matrix must be nonzero
 
         sage: E4 = elementary_matrix(QQ, 4, row1=3, row2=3, scale=12)
         Traceback (most recent call last):
@@ -1405,7 +1416,7 @@ def elementary_matrix(arg0, arg1=None, **kwds):
         sage: E = elementary_matrix(ZZ, 5, col1=3, scale=0)
         Traceback (most recent call last):
         ...
-        ValueError: scale parameter of column of elementary matrix must be non-zero
+        ValueError: scale parameter of column of elementary matrix must be nonzero
 
     AUTHOR:
 
@@ -1489,7 +1500,7 @@ def elementary_matrix(arg0, arg1=None, **kwds):
         elem[row2, row1] = 1
     elif row2 is None and scale is not None:
         if scale == 0:
-            raise ValueError('scale parameter of {0} of elementary matrix must be non-zero'.format(opstring))
+            raise ValueError('scale parameter of {0} of elementary matrix must be nonzero'.format(opstring))
         elem[row1, row1] = scale
     if rowop:
         return elem
@@ -1500,14 +1511,14 @@ def elementary_matrix(arg0, arg1=None, **kwds):
 @matrix_method
 def circulant(v, sparse=None):
     r"""
-    Return the circulant matrix specified by its 1st row `v`
+    Return the circulant matrix specified by its 1st row `v`.
 
     A circulant `n \times n` matrix specified by the 1st row `v=(v_0...v_{n-1})` is
     the matrix `(c_{ij})_{0 \leq i,j\leq n-1}`, where `c_{ij}=v_{j-i \mod b}`.
 
     INPUT:
 
-    - ``v`` -- a list or a vector of values
+    - ``v`` -- list or a vector of values
 
     - ``sparse`` -- ``None`` by default; if ``sparse`` is set to ``True``, the output
       will be sparse.  Respectively, setting it to ``False`` produces dense output.
@@ -1562,7 +1573,7 @@ def _determine_block_matrix_grid(sub_matrices):
     Non-zero scalars are considered to be square matrices of any size,
     and zeroes are considered to be zero matrices of any size.
 
-    A :class:`ValueError` is raised if there is insufficient or
+    A :exc:`ValueError` is raised if there is insufficient or
     conflicting information.
 
     TESTS::
@@ -1600,7 +1611,7 @@ def _determine_block_matrix_grid(sub_matrices):
                 if isinstance(M, Matrix):
                     sub_width = M.ncols()
                     sub_height = M.nrows()
-                elif M:  # non-zero scalar is interpreted as a square matrix
+                elif M:  # nonzero scalar is interpreted as a square matrix
                     if row_heights[i] is None:
                         sub_width = col_widths[j]
                     else:
@@ -1641,7 +1652,7 @@ def _determine_block_matrix_rows(sub_matrices):
     Non-zero scalars are considered to be square matrices of any size,
     and zeroes are considered to be zero matrices of any size.
 
-    A ``ValueError`` is raised if there is insufficient or
+    A :exc:`ValueError` is raised if there is insufficient or
     conflicting information.
 
     TESTS::
@@ -1679,14 +1690,14 @@ def _determine_block_matrix_rows(sub_matrices):
             height = 0
 
         # If we have a height, then we know the dimensions of any
-        # non-zero scalars, and can maybe compute the width
+        # nonzero scalars, and can maybe compute the width
         if height is not None and not found_zeroes:
             width = 0
             for M in R:
                 if isinstance(M, Matrix):
                     width += M.ncols()
                 else:
-                    # non-zero scalar
+                    # nonzero scalar
                     width += height
             if total_width is None:
                 total_width = width
@@ -1711,7 +1722,7 @@ def _determine_block_matrix_rows(sub_matrices):
             zero_state = 0
             # 0: no zeroes found
             # 1: consecutive zeroes found
-            # 2: consecutive zeroes followed by non-zero found
+            # 2: consecutive zeroes followed by nonzero found
             # 3: non-consecutive zeroes found
             scalars = 0
             width = 0
@@ -1733,7 +1744,7 @@ def _determine_block_matrix_rows(sub_matrices):
 
             remaining_width = total_width - width
             # This remaining width has to be split over the
-            # zeroes and (non-zero) scalars
+            # zeroes and (nonzero) scalars
 
             if height is not None:
                 remaining_width -= scalars * height
@@ -1783,19 +1794,18 @@ def block_matrix(*args, **kwds):
     ``nrows`` and ``ncols`` to determine their layout), or a list
     of lists of matrices, where each list forms a row.
 
-    -  ``ring`` -- the base ring
+    - ``ring`` -- the base ring
 
-    -  ``nrows`` -- the number of block rows
+    - ``nrows`` -- the number of block rows
 
-    -  ``ncols`` -- the number of block cols
+    - ``ncols`` -- the number of block cols
 
-    -  ``sub_matrices`` -- matrices (see below for syntax)
+    - ``sub_matrices`` -- matrices (see below for syntax)
 
-    -  ``subdivide`` -- boolean, whether or not to add
-       subdivision information to the matrix
+    - ``subdivide`` -- boolean, whether or not to add
+      subdivision information to the matrix
 
-    -  ``sparse`` -- boolean, whether to make the resulting matrix sparse
-
+    - ``sparse`` -- boolean, whether to make the resulting matrix sparse
 
     EXAMPLES::
 
@@ -2165,9 +2175,9 @@ def jordan_block(eigenvalue, size, sparse=False):
 
     INPUT:
 
-    -  ``eigenvalue`` -- eigenvalue for the diagonal entries of the block
-    -  ``size`` -- size of the square matrix
-    -  ``sparse`` -- (default: ``False``); if ``True``, return a sparse matrix
+    - ``eigenvalue`` -- eigenvalue for the diagonal entries of the block
+    - ``size`` -- size of the square matrix
+    - ``sparse`` -- (default: ``False``) if ``True``, return a sparse matrix
 
     EXAMPLES::
 
@@ -2185,7 +2195,7 @@ def jordan_block(eigenvalue, size, sparse=False):
         sage: jordan_block(6.2, -1)
         Traceback (most recent call last):
         ...
-        ValueError: size of Jordan block must be non-negative, not -1
+        ValueError: size of Jordan block must be nonnegative, not -1
     """
     try:
         size = ZZ(size)
@@ -2193,7 +2203,7 @@ def jordan_block(eigenvalue, size, sparse=False):
         msg = "size of Jordan block needs to be an integer, not {0}"
         raise TypeError(msg.format(size))
     if size < 0:
-        msg = "size of Jordan block must be non-negative, not {0}"
+        msg = "size of Jordan block must be nonnegative, not {0}"
         raise ValueError(msg.format(size))
     block = diagonal_matrix([eigenvalue] * size, sparse=sparse)
     for i in range(size - 1):
@@ -2215,10 +2225,10 @@ def companion_matrix(poly, format='right'):
       A symbolic expression that might also be a polynomial is not
       proper input, see examples below.
 
-    - ``format`` -- (default: 'right'); specifies one of four
+    - ``format`` -- (default: ``'right'``) specifies one of four
       variations of a companion matrix.  Allowable values are
-      'right', 'left', 'top' and 'bottom', which indicates which
-      border of the matrix contains the negatives of the coefficients.
+      ``'right'``, ``'left'``, ``'top'`` and ``'bottom'``, which indicates
+      which border of the matrix contains the negatives of the coefficients.
 
     OUTPUT:
 
@@ -2382,7 +2392,7 @@ def companion_matrix(poly, format='right'):
         M = sage.matrix.constructor.matrix(poly.universe(), n, n)
     except TypeError:
         raise TypeError("unable to find common ring for coefficients from polynomial")
-    # 1's below diagonal, or above diagonal
+    # 1s below diagonal, or above diagonal
     if format in ['right', 'top']:
         for i in range(n - 1):
             M[i+1, i] = 1
@@ -2408,21 +2418,21 @@ def companion_matrix(poly, format='right'):
 @matrix_method
 def random_rref_matrix(parent, num_pivots):
     r"""
-    Generate a matrix in reduced row-echelon form with a specified number of non-zero rows.
+    Generate a matrix in reduced row-echelon form with a specified number of nonzero rows.
 
     INPUT:
 
-    - ``parent`` -- A matrix space specifying the base ring, dimensions and
+    - ``parent`` -- a matrix space specifying the base ring, dimensions and
       representation (dense/sparse) for the result.  The base ring must be exact.
 
-    - ``num_pivots`` -- The number of non-zero rows in the result, i.e. the rank.
+    - ``num_pivots`` -- the number of nonzero rows in the result, i.e. the rank
 
     OUTPUT:
 
-    A matrix in reduced row echelon form with ``num_pivots`` non-zero rows. If the
+    A matrix in reduced row echelon form with ``num_pivots`` nonzero rows. If the
     base ring is `ZZ` or `QQ` then the entries are all integers.
 
-    .. note::
+    .. NOTE::
 
         It is easiest to use this function via a call to the
         :func:`~sage.matrix.constructor.random_matrix`
@@ -2583,32 +2593,31 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
 
     INPUT:
 
-    - ``parent`` -- A matrix space specifying the base ring, dimensions and
+    - ``parent`` -- a matrix space specifying the base ring, dimensions and
       representation (dense/sparse) for the result.  The base ring must be exact.
 
-    - ``rank`` -- Rank of result, i.e the number of non-zero rows in the
-      reduced row echelon form.
+    - ``rank`` -- rank of result, i.e the number of nonzero rows in the
+      reduced row echelon form
 
-    - ``upper_bound`` -- If designated, size control of the matrix entries is desired.
+    - ``upper_bound`` -- if designated, size control of the matrix entries is desired
       Set ``upper_bound`` to 1 more than the maximum value entries can achieve.
-      If None, no size control occurs. But see the warning below.  (default: None)
+      If ``None``, no size control occurs. But see the warning below.  (default: ``None``)
 
-    - ``max_tries`` -- If designated, number of tries used to generate each new random row;
+    - ``max_tries`` -- if designated, number of tries used to generate each new random row;s
       only matters when upper_bound!=None. Used to prevent endless looping. (default: 100)
 
-    OUTPUT:
-
-    A matrix not in reduced row-echelon form with the desired dimensions and properties.
+    OUTPUT: a matrix not in reduced row-echelon form with the desired
+    dimensions and properties
 
     .. warning::
 
         When ``upper_bound`` is set, it is possible for this constructor to
-        fail with a ``ValueError``.  This may happen when the ``upper_bound``,
+        fail with a :exc:`ValueError`.  This may happen when the ``upper_bound``,
         ``rank`` and/or matrix dimensions are all so small that it becomes
         infeasible or unlikely to create the requested matrix.  If you *must*
         have this routine return successfully, do not set ``upper_bound``.
 
-    .. note::
+    .. NOTE::
 
         It is easiest to use this function via a call to the
         :func:`~sage.matrix.constructor.random_matrix`
@@ -2798,17 +2807,17 @@ def random_subspaces_matrix(parent, rank=None):
 
     INPUT:
 
-    - ``parent`` -- A matrix space specifying the base ring, dimensions, and
+    - ``parent`` -- a matrix space specifying the base ring, dimensions, and
       representation (dense/sparse) for the result.  The base ring must be exact.
 
-    - ``rank`` -- The desired rank of the return matrix (default: None).
+    - ``rank`` -- the desired rank of the return matrix (default: ``None``)
 
     OUTPUT:
 
     A matrix whose natural basis vectors for its four subspaces, when
     computed, have reasonably sized, integral valued, entries.
 
-    .. note::
+    .. NOTE::
 
         It is easiest to use this function via a call to the
         :func:`~sage.matrix.constructor.random_matrix`
@@ -2945,32 +2954,30 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
 
     INPUT:
 
-    - ``parent`` -- A matrix space specifying the base ring, dimensions
+    - ``parent`` -- a matrix space specifying the base ring, dimensions
       and representation (dense/sparse) for the result.  The base ring
       must be exact.
 
-    - ``upper_bound`` -- For large matrices over QQ or ZZ,
+    - ``upper_bound`` -- for large matrices over QQ or ZZ,
       ``upper_bound`` is the largest value matrix entries can achieve.  But
       see the warning below.
 
-    - ``max_tries`` -- If designated, number of tries used to generate each new random row;
+    - ``max_tries`` -- if designated, number of tries used to generate each new random row;
       only matters when upper_bound!=None. Used to prevent endless looping. (default: 100)
 
     A matrix not in reduced row-echelon form with the desired dimensions and properties.
 
-    OUTPUT:
-
-    An invertible matrix with the desired properties and determinant 1.
+    OUTPUT: an invertible matrix with the desired properties and determinant 1
 
     .. warning::
 
         When ``upper_bound`` is set, it is possible for this constructor to
-        fail with a ``ValueError``.  This may happen when the ``upper_bound``,
+        fail with a :exc:`ValueError`.  This may happen when the ``upper_bound``,
         ``rank`` and/or matrix dimensions are all so small that it becomes
         infeasible or unlikely to create the requested matrix.  If you *must*
         have this routine return successfully, do not set ``upper_bound``.
 
-    .. note::
+    .. NOTE::
 
         It is easiest to use this function via a call to the
         :func:`~sage.matrix.constructor.random_matrix`
@@ -3043,7 +3050,7 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
 
 
 @matrix_method
-def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
+def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
     """
     Create a random matrix that diagonalizes nicely.
 
@@ -3055,12 +3062,12 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
     If eigenvalues and dimensions are not specified in a list,
     they will be assigned randomly.
 
-    - ``parent`` -- the desired size of the square matrix.
+    - ``parent`` -- the desired size of the square matrix
 
-    - ``eigenvalues`` -- the list of desired eigenvalues (default=None).
+    - ``eigenvalues`` -- the list of desired eigenvalues (default=None)
 
     - ``dimensions`` -- the list of dimensions corresponding to each
-      eigenspace (default=None).
+      eigenspace (default=None)
 
     OUTPUT:
 
@@ -3068,7 +3075,7 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
     eigenspaces of this matrix, if computed by hand, give basis
     vectors with only integer entries.
 
-    .. note::
+    .. NOTE::
 
         It is easiest to use this function via a call to the
         :func:`~sage.matrix.constructor.random_matrix`
@@ -3271,7 +3278,7 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
 def vector_on_axis_rotation_matrix(v, i, ring=None):
     r"""
     Return a rotation matrix `M` such that `det(M)=1` sending the vector
-    `v` on the i-th axis so that all other coordinates of `Mv` are zero.
+    `v` on the `i`-th axis so that all other coordinates of `Mv` are zero.
 
     .. NOTE::
 
@@ -3284,9 +3291,7 @@ def vector_on_axis_rotation_matrix(v, i, ring=None):
     - ``i`` -- integer
     - ``ring`` -- ring (default: ``None``) of the resulting matrix
 
-    OUTPUT:
-
-    A matrix
+    OUTPUT: a matrix
 
     EXAMPLES::
 
@@ -3346,8 +3351,8 @@ def vector_on_axis_rotation_matrix(v, i, ring=None):
 @matrix_method
 def ith_to_zero_rotation_matrix(v, i, ring=None):
     r"""
-    Return a rotation matrix that sends the i-th coordinates of the
-    vector v to zero by doing a rotation with the (i-1)-th coordinate.
+    Return a rotation matrix that sends the `i`-th coordinates of the
+    vector v to zero by doing a rotation with the `(i-1)`-th coordinate.
 
     INPUT:
 
@@ -3355,9 +3360,7 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
     - ``i`` -- integer
     - ``ring`` -- ring (default: ``None``) of the resulting matrix
 
-    OUTPUT:
-
-    A matrix
+    OUTPUT: a matrix
 
     EXAMPLES::
 
@@ -3471,9 +3474,9 @@ def hilbert(dim, ring=QQ):
 
     INPUT:
 
-    - ``dim`` -- integer, the dimension of the Hilbert matrix
+    - ``dim`` -- integer; the dimension of the Hilbert matrix
 
-    - ``ring`` -- base ring (default: \\QQ) of the resulting matrix
+    - ``ring`` -- base ring (default: `\QQ`) of the resulting matrix
 
     EXAMPLES::
 
@@ -3507,7 +3510,7 @@ def vandermonde(v, ring=None):
 
     - ``v`` -- vector, the second column of the Vandermonde matrix
 
-    - ``ring`` -- base ring (default: None) of the resulting matrix
+    - ``ring`` -- base ring (default: ``None``) of the resulting matrix
 
     EXAMPLES:
 
@@ -3542,7 +3545,7 @@ def toeplitz(c, r, ring=None):
     - ``r`` -- vector, first row of the Toeplitz matrix, counting from the
       second column
 
-    - ``ring`` -- base ring (default: None) of the resulting matrix
+    - ``ring`` -- base ring (default: ``None``) of the resulting matrix
 
     EXAMPLES:
 
@@ -3591,10 +3594,10 @@ def hankel(c, r=None, ring=None):
 
     - ``c`` -- vector, first column of the Hankel matrix
 
-    - ``r`` -- vector (default: None), last row of the Hankel matrix, from
+    - ``r`` -- vector (default: ``None``); last row of the Hankel matrix, from
       the second to the last column
 
-    - ``ring`` -- base ring (default: None) of the resulting matrix
+    - ``ring`` -- base ring (default: ``None``) of the resulting matrix
 
     EXAMPLES:
 

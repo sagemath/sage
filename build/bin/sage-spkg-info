@@ -54,14 +54,7 @@ echo
 echo "Version Information"
 echo "-------------------"
 echo
-for a in package-version.txt requirements.txt version_requirements.txt; do
-    if [ -f "$PKG_SCRIPTS"/"$a" ]; then
-        echo "$a::"
-        echo
-        sed 's/^/    /' "$PKG_SCRIPTS/$a"
-        echo
-    fi
-done
+sage-get-system-packages versions $PKG_BASE
 echo
 echo "Equivalent System Packages"
 echo "--------------------------"
@@ -92,7 +85,6 @@ for system in $systems; do
             alpine)     tab "Alpine";;
             arch)       tab "Arch Linux";;
             conda)      tab "conda-forge";;
-            cygwin)     tab "Cygwin";;
             debian)     tab "Debian/Ubuntu";;
             fedora)     tab "Fedora/Redhat/CentOS";;
             freebsd)    tab "FreeBSD";;

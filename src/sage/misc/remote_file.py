@@ -10,7 +10,7 @@ def get_remote_file(filename, verbose=True) -> Path:
     INPUT:
 
     - ``filename`` -- the URL of a file on the web, e.g.,
-      ``"http://modular.math.washington.edu/myfile.txt"``
+      ``'http://modular.math.washington.edu/myfile.txt'``
 
     - ``verbose`` -- whether to display download status
 
@@ -27,7 +27,6 @@ def get_remote_file(filename, verbose=True) -> Path:
         print("hi from the net")
         <BLANKLINE>
         print(2 + 3)
-
     """
     if verbose:
         print("Attempting to load remote file: " + filename)

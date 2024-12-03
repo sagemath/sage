@@ -73,12 +73,13 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
 
     - ``B1`` -- bound for step 1 of ECM
 
-    - ``verbose`` (default: ``False``) -- print some debugging information
+    - ``verbose`` -- boolean (default: ``False``); print some debugging
+      information
 
     OUTPUT:
 
     Either ``(False, None)`` if no factor was found, or ``(True, f)``
-    if the factor ``f`` was found.
+    if the factor `f` was found.
 
     EXAMPLES::
 
@@ -150,11 +151,13 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
     Some special cases::
 
         sage: ecmfactor(1, 100)
-        (True, 1, ...)
+        Traceback (most recent call last):
+        ...
+        ValueError: Input number (1) must be greater than 1
         sage: ecmfactor(0, 100)
         Traceback (most recent call last):
         ...
-        ValueError: Input number (0) must be positive
+        ValueError: Input number (0) must be greater than 1
     """
     cdef mpz_t n, f
     cdef int res
@@ -165,8 +168,8 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
     sage_int_number = Integer(number)
     sage_int_sigma = Integer(sigma)
 
-    if number <= 0:
-        raise ValueError("Input number (%s) must be positive"%number)
+    if number <= 1:
+        raise ValueError("Input number (%s) must be greater than 1" % number)
 
     if verbose:
         print("Performing one curve with B1=%1.0f" % B1)

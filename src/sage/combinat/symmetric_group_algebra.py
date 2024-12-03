@@ -18,6 +18,7 @@ from sage.combinat.permutation import Permutation, Permutations, from_permutatio
 from sage.combinat.permutation_cython import (left_action_same_n, right_action_same_n)
 from sage.combinat.partition import _Partitions, Partitions, Partitions_n
 from sage.combinat.tableau import Tableau, StandardTableaux_size, StandardTableaux_shape, StandardTableaux
+from sage.combinat.skew_tableau import SkewTableau
 from sage.algebras.group_algebra import GroupAlgebra_class
 from sage.algebras.cellular_basis import CellularBasis
 from sage.categories.weyl_groups import WeylGroups
@@ -139,7 +140,7 @@ def SymmetricGroupAlgebra(R, W, category=None):
 
     This allows for mixed expressions::
 
-        sage: x4  = 3*QS4([3, 1, 4, 2])
+        sage: x4  = 3 * QS4([3, 1, 4, 2])
         sage: x3 + x4
         2*[2, 3, 1, 4] + [3, 1, 2, 4] + 3*[3, 1, 4, 2]
 
@@ -246,7 +247,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
             sage: S = SymmetricGroup(4)
             sage: SGA = S.algebra(QQ)
-            sage: TestSuite(SGA).run(skip="_test_cellular")
+            sage: TestSuite(SGA).run(skip='_test_cellular')
             sage: SGA._test_cellular() # long time
 
         Checking that coercion works between equivalent indexing sets::
@@ -1042,10 +1043,8 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
             - :meth:`central_orthogonal_idempotent`
         """
-        out = []
-        for key in sorted(self._blocks_dictionary, reverse=True):
-            out.append(self.central_orthogonal_idempotent(key))
-        return out
+        return [self.central_orthogonal_idempotent(key)
+                for key in sorted(self._blocks_dictionary, reverse=True)]
 
     def central_orthogonal_idempotent(self, la, block=True):
         r"""
@@ -1985,7 +1984,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         INPUT:
 
-        - ``mult`` -- string (default: ``'l2r'``). If set to ``'r2l'``,
+        - ``mult`` -- string (default: ``'l2r'``); if set to ``'r2l'``,
           this causes the method to return the list of the
           antipodes (:meth:`antipode`) of all `\epsilon(T, S)`
           instead of the `\epsilon(T, S)` themselves.
@@ -2015,9 +2014,9 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         basis = []
         for part in Partitions_n(self.n):
             stp = StandardTableaux_shape(part)
-            for t1 in stp:
-                for t2 in stp:
-                    basis.append(self.epsilon_ik(t1, t2, mult=mult))
+            basis.extend(self.epsilon_ik(t1, t2, mult=mult)
+                         for t1 in stp
+                         for t2 in stp)
         return basis
 
     def dft(self, form=None, mult='l2r'):
@@ -2031,7 +2030,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         INPUT:
 
-        - ``mult`` -- string (default: `l2r`). If set to `r2l`,
+        - ``mult`` -- string (default: `l2r`); if set to `r2l`,
           this causes the method to use the antipodes
           (:meth:`antipode`) of the seminormal basis instead of
           the seminormal basis.
@@ -2075,7 +2074,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         INPUT:
 
-        - ``mult`` -- string (default: `l2r`). If set to `r2l`,
+        - ``mult`` -- string (default: `l2r`); if set to `r2l`,
           this causes the method to use the antipodes
           (:meth:`antipode`) of the seminormal basis instead of
           the seminormal basis.
@@ -2132,11 +2131,11 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         INPUT:
 
-        - ``itab``, ``ktab`` -- two standard tableaux of size `n`.
+        - ``itab``, ``ktab`` -- two standard tableaux of size `n`
 
-        - ``star`` -- integer (default: `0`).
+        - ``star`` -- integer (default: `0`)
 
-        - ``mult`` -- string (default: `l2r`). If set to `r2l`,
+        - ``mult`` -- string (default: `l2r`); if set to `r2l`,
           this causes the method to return the antipode
           (:meth:`antipode`) of `\epsilon(I, K)` instead of
           `\epsilon(I, K)` itself.
@@ -2367,6 +2366,72 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         G = self.group()
         return self.sum_of_monomials(G(list(w.tuple())) for w in la.young_subgroup())
 
+    @cached_method
+    def _column_antistabilizer(self, la):
+        """
+        Return the column antistabilizer element of a canonical standard tableau
+        of shape ``la``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 3)
+            sage: for la in Partitions(3):
+            ....:     print(la, SGA._column_antistabilizer(la))
+            [3] [1, 2, 3]
+            [2, 1] [1, 2, 3] - [3, 2, 1]
+            [1, 1, 1] [1, 2, 3] - [1, 3, 2] - [2, 1, 3] + [2, 3, 1] + [3, 1, 2] - [3, 2, 1]
+        """
+        T = []
+        total = 1 # make it 1-based
+        for r in la:
+            T.append(list(range(total, total+r)))
+            total += r
+        T = Tableau(T)
+        G = self.group()
+        R = self.base_ring()
+        return self._from_dict({G(list(w.tuple())): R(w.sign()) for w in T.column_stabilizer()},
+                               remove_zeros=False)
+
+    @cached_method
+    def _young_symmetrizer(self, la):
+        """
+        Return the Young symmetrizer of shape ``la`` of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 3)
+            sage: for la in Partitions(3):
+            ....:     print(la, SGA._young_symmetrizer(la))
+            [3] [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1]
+            [2, 1] [1, 2, 3] + [2, 1, 3] - [3, 1, 2] - [3, 2, 1]
+            [1, 1, 1] [1, 2, 3] - [1, 3, 2] - [2, 1, 3] + [2, 3, 1] + [3, 1, 2] - [3, 2, 1]
+        """
+        return self._column_antistabilizer(la) * self._row_stabilizer(la)
+
+    def young_symmetrizer(self, la):
+        """
+        Return the Young symmetrizer of shape ``la`` of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, SymmetricGroup(3))
+            sage: SGA.young_symmetrizer([2,1])
+            () + (1,2) - (1,3,2) - (1,3)
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: SGA.young_symmetrizer([2,1,1])
+            [1, 2, 3, 4] - [1, 2, 4, 3] + [2, 1, 3, 4] - [2, 1, 4, 3]
+             - [3, 1, 2, 4] + [3, 1, 4, 2] - [3, 2, 1, 4] + [3, 2, 4, 1]
+             + [4, 1, 2, 3] - [4, 1, 3, 2] + [4, 2, 1, 3] - [4, 2, 3, 1]
+            sage: SGA.young_symmetrizer([5,1,1])
+            Traceback (most recent call last):
+            ...
+            ValueError: the partition [5, 1, 1] is not of size 4
+        """
+        la = _Partitions(la)
+        if la.size() != self.n:
+            raise ValueError("the partition {} is not of size {}".format(la, self.n))
+        return self._young_symmetrizer(la)
+
     def kazhdan_lusztig_cellular_basis(self):
         r"""
         Return the Kazhdan-Lusztig basis (at `q = 1`) of ``self``
@@ -2440,9 +2505,9 @@ def epsilon_ik(itab, ktab, star=0):
 
     INPUT:
 
-    - ``itab``, ``ktab`` -- two standard tableaux of same size.
+    - ``itab``, ``ktab`` -- two standard tableaux of same size
 
-    - ``star`` -- integer (default: `0`).
+    - ``star`` -- integer (default: `0`)
 
     OUTPUT:
 
@@ -2542,23 +2607,32 @@ def pi_ik(itab, ktab):
     algebra.
 
     This assumes that ``itab`` and ``ktab`` are tableaux (possibly
-    given just as lists of lists) of the same shape.
+    given just as lists of lists) of the same shape. Both
+    tableaux are allowed to be skew.
 
     EXAMPLES::
 
         sage: from sage.combinat.symmetric_group_algebra import pi_ik
         sage: pi_ik([[1,3],[2]], [[1,2],[3]])
         [1, 3, 2]
-    """
-    it = Tableau(itab)
-    kt = Tableau(ktab)
 
-    p = [None] * kt.size()
+    The same with skew tableaux::
+
+        sage: from sage.combinat.symmetric_group_algebra import pi_ik
+        sage: pi_ik([[None,1,3],[2]], [[None,1,2],[3]])
+        [1, 3, 2]
+    """
+    it = SkewTableau(itab)
+    kt = SkewTableau(ktab)
+    n = kt.size()
+
+    p = [None] * n
     for i in range(len(kt)):
         for j in range(len(kt[i])):
-            p[it[i][j] - 1] = kt[i][j]
+            if it[i][j] is not None:
+                p[it[i][j] - 1] = kt[i][j]
 
-    QSn = SymmetricGroupAlgebra(QQ, it.size())
+    QSn = SymmetricGroupAlgebra(QQ, n)
     p = Permutation(p)
     return QSn(p)
 
@@ -2571,7 +2645,7 @@ def kappa(alpha):
 
     INPUT:
 
-    - ``alpha`` -- integer partition (can be encoded as a list).
+    - ``alpha`` -- integer partition (can be encoded as a list)
 
     OUTPUT:
 
@@ -2608,15 +2682,15 @@ def a(tableau, star=0, base_ring=QQ):
     INPUT:
 
     - ``tableau`` -- Young tableau which contains every integer
-      from `1` to its size precisely once.
+      from `1` to its size precisely once
 
-    - ``star`` -- nonnegative integer (default: `0`). When this
+    - ``star`` -- nonnegative integer (default: `0`); when this
       optional variable is set, the method computes not the row
       projection operator of ``tableau``, but the row projection
       operator of the restriction of ``tableau`` to the entries
       ``1, 2, ..., tableau.size() - star`` instead.
 
-    - ``base_ring`` -- commutative ring (default: ``QQ``). When this
+    - ``base_ring`` -- commutative ring (default: ``QQ``); when this
       optional variable is set, the row projection operator is
       computed over a user-determined base ring instead of `\QQ`.
       (Note that symmetric group algebras currently don't preserve
@@ -2637,8 +2711,13 @@ def a(tableau, star=0, base_ring=QQ):
         [1, 2, 3, 4, 5] + [1, 3, 2, 4, 5] + [5, 2, 3, 4, 1] + [5, 3, 2, 4, 1]
         sage: a([[1,4], [2,3]], base_ring=ZZ)
         [1, 2, 3, 4] + [1, 3, 2, 4] + [4, 2, 3, 1] + [4, 3, 2, 1]
+
+    The same with a skew tableau::
+
+        sage: a([[None,1,4], [2,3]], base_ring=ZZ)
+        [1, 2, 3, 4] + [1, 3, 2, 4] + [4, 2, 3, 1] + [4, 3, 2, 1]
     """
-    t = Tableau(tableau)
+    t = SkewTableau(tableau)
     if star:
         t = t.restrict(t.size() - star)
 
@@ -2654,7 +2733,7 @@ def a(tableau, star=0, base_ring=QQ):
     # being [1] rather than [] (which seems to have its origins in
     # permutation group code).
     # TODO: Fix this.
-    if len(tableau) == 0:
+    if n <= 1:
         return sgalg.one()
 
     rd = dict((P(h), one) for h in rs)
@@ -2676,7 +2755,7 @@ def b(tableau, star=0, base_ring=QQ):
     INPUT:
 
     - ``tableau`` -- Young tableau which contains every integer
-      from `1` to its size precisely once.
+      from `1` to its size precisely once
 
     - ``star`` -- nonnegative integer (default: `0`). When this
       optional variable is set, the method computes not the column
@@ -2708,6 +2787,11 @@ def b(tableau, star=0, base_ring=QQ):
         sage: b([[1, 4], [2, 3]], base_ring=Integers(5))
         [1, 2, 3, 4] + 4*[1, 2, 4, 3] + 4*[2, 1, 3, 4] + [2, 1, 4, 3]
 
+    The same with a skew tableau::
+
+        sage: b([[None, 2, 4], [1, 3], [5]])
+        [1, 2, 3, 4, 5] - [1, 3, 2, 4, 5] - [5, 2, 3, 4, 1] + [5, 3, 2, 4, 1]
+
     With the ``l2r`` setting for multiplication, the unnormalized
     Young symmetrizer ``e(tableau)`` should be the product
     ``b(tableau) * a(tableau)`` for every ``tableau``. Let us check
@@ -2717,7 +2801,7 @@ def b(tableau, star=0, base_ring=QQ):
         sage: all( e(t) == b(t) * a(t) for t in StandardTableaux(5) )
         True
     """
-    t = Tableau(tableau)
+    t = SkewTableau(tableau)
     if star:
         t = t.restrict(t.size() - star)
 
@@ -2733,7 +2817,7 @@ def b(tableau, star=0, base_ring=QQ):
     # being [1] rather than [] (which seems to have its origins in
     # permutation group code).
     # TODO: Fix this.
-    if len(tableau) == 0:
+    if n <= 1:
         return sgalg.one()
 
     cd = dict((P(v), v.sign() * one) for v in cs)
@@ -2793,6 +2877,12 @@ def e(tableau, star=0):
         sage: QS3.antipode(e([[1,2],[3]]))
         [1, 2, 3] + [2, 1, 3] - [2, 3, 1] - [3, 2, 1]
 
+    And here is an example for a skew tableau::
+
+        sage: e([[None, 2, 1], [4, 3]])
+        [1, 2, 3, 4] + [1, 2, 4, 3] - [1, 3, 2, 4] - [1, 4, 2, 3]
+         + [2, 1, 3, 4] + [2, 1, 4, 3] - [2, 3, 1, 4] - [2, 4, 1, 3]
+
     .. SEEALSO::
 
         :func:`e_hat`
@@ -2802,7 +2892,7 @@ def e(tableau, star=0):
     # a way to compute them over other base rings as well. Be careful
     # with the cache.
 
-    t = Tableau(tableau)
+    t = SkewTableau(tableau)
     if star:
         t = t.restrict(t.size() - star)
 
@@ -2830,8 +2920,8 @@ def e(tableau, star=0):
         # being [1] rather than [] (which seems to have its origins in
         # permutation group code).
         # TODO: Fix this.
-        if not tableau:
-            res = QSn.one()
+        if n <= 1:
+            return QSn.one()
 
         e_cache[t] = res
 
@@ -2889,7 +2979,10 @@ def e_hat(tab, star=0):
 
         :func:`e`
     """
-    t = Tableau(tab)
+    t = SkewTableau(tab)
+    # This is for consistency's sake. This method is NOT meant
+    # to be applied to skew tableaux, since the meaning of
+    # \kappa is unclear in that case.
     if star:
         t = t.restrict(t.size() - star)
     if t in ehat_cache:
@@ -2912,8 +3005,8 @@ def e_ik(itab, ktab, star=0):
         sage: e_ik([[1,2,3]], [[1,2,3]], star=1)
         [1, 2] + [2, 1]
     """
-    it = Tableau(itab)
-    kt = Tableau(ktab)
+    it = SkewTableau(itab)
+    kt = SkewTableau(ktab)
     if star:
         it = it.restrict(it.size() - star)
         kt = kt.restrict(kt.size() - star)
@@ -3147,7 +3240,7 @@ class KLCellularBasis(SGACellularBasis):
         from sage.combinat.rsk import RSK_inverse
         S = ind[1]
         T = ind[2]
-        w = RSK_inverse(T, S, output="permutation")
+        w = RSK_inverse(T, S, output='permutation')
         return self._algebra.kazhdan_lusztig_basis_element(w)
 
 
@@ -3340,7 +3433,7 @@ class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
         """
         HeckeAlgebraSymmetricGroup_generic.__init__(self, R, n, q)
         self._name += " on the T basis"
-        self.print_options(prefix="T")
+        self.print_options(prefix='T')
 
     def t_action_on_basis(self, perm, i):
         r"""

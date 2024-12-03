@@ -64,14 +64,14 @@ cdef class EvenlyDistributedSetsBacktracker:
 
     - ``K`` -- a finite field of cardinality `q`
 
-    - ``k`` -- a positive integer such that `k(k-1)` divides `q-1`
+    - ``k`` -- positive integer such that `k(k-1)` divides `q-1`
 
-    - ``up_to_isomorphism`` -- (boolean, default ``True``) whether only consider
+    - ``up_to_isomorphism`` -- boolean (default: ``True``); whether only consider
       evenly distributed sets up to automorphisms of the field of the form
       `x \mapsto ax + b`. If set to ``False`` then the iteration is over all
       evenly distributed sets that contain ``0`` and ``1``.
 
-    - ``check`` -- boolean (default is ``False``). Whether you want to check
+    - ``check`` -- boolean (default: ``False``); whether you want to check
       intermediate steps of the iterator. This is mainly intended for debugging
       purpose. Setting it to ``True`` will considerably slow the iteration.
 
@@ -218,24 +218,24 @@ cdef class EvenlyDistributedSetsBacktracker:
             raise ValueError(f"{K} is not a field")
         cdef unsigned int q = K.cardinality()
         cdef unsigned int e = k*(k-1)/2
-        if (q-1) % (2*e) != 0:
+        if (q-1) % (2*e):
             raise ValueError("k(k-1)={} does not divide q-1={}".format(k*(k-1),q-1))
-        cdef unsigned int m = (q-1)/e
+        cdef unsigned int m = (q - 1) // e
 
         self.q = q
         self.e = e
         self.k = k
-        self.m = (q-1) / e
+        self.m = (q - 1) // e
         self.K = K
 
         self.diff    = <unsigned int **> check_calloc(q, sizeof(unsigned int *))
         self.diff[0] = <unsigned int *>  check_malloc(q*q*sizeof(unsigned int))
-        for i in range(1,self.q):
+        for i in range(1, self.q):
             self.diff[i] = self.diff[i-1] + q
 
         self.ratio    = <unsigned int **> check_calloc(q, sizeof(unsigned int *))
         self.ratio[0] = <unsigned int *>  check_malloc(q*q*sizeof(unsigned int))
-        for i in range(1,self.q):
+        for i in range(1, self.q):
             self.ratio[i] = self.ratio[i-1] + q
 
         self.B       = <unsigned int *> check_malloc(k*sizeof(unsigned int))
@@ -284,7 +284,7 @@ cdef class EvenlyDistributedSetsBacktracker:
 
         - ``B`` -- an evenly distributed set
 
-        - ``check`` -- (boolean, default ``True``) whether to check the result
+        - ``check`` -- boolean (default: ``True``); whether to check the result
 
         EXAMPLES::
 
@@ -410,9 +410,7 @@ cdef class EvenlyDistributedSetsBacktracker:
         This is an internal function and should only be call by the backtracker
         implemented in the method `__iter__`.
 
-        OUTPUT:
-
-        - ``False`` if ``self.B`` is not minimal
+        OUTPUT: ``False`` if ``self.B`` is not minimal
 
         - the list of evenly distributed sets isomorphic to ``self.B``
           given as a list of tuples if ``self.up_to_isom=0`` or list
@@ -435,7 +433,7 @@ cdef class EvenlyDistributedSetsBacktracker:
             will be called only once.
         """
         cdef unsigned int i,j,k,tmp1,tmp2,verify
-        cdef list B = [self.B[i] for i in range(1,self.k)]
+        cdef list B = [self.B[i] for i in range(1, self.k)]
         B.append(self.q-1)
         cdef list BB = [None]*self.k
         cdef set relabs = set([tuple(B)])

@@ -40,6 +40,7 @@ try:
 except ImportError:
     pass
 
+
 def cyclotomic_coeffs(nn, sparse=None):
     """
     Return the coefficients of the `n`-th cyclotomic polynomial
@@ -57,7 +58,7 @@ def cyclotomic_coeffs(nn, sparse=None):
     form `1-x^n` can be done very quickly in a single pass.
 
     If ``sparse`` is ``True``, the result is returned as a dictionary of
-    the non-zero entries, otherwise the result is returned as a list
+    the nonzero entries, otherwise the result is returned as a list
     of python ints.
 
     EXAMPLES::
@@ -208,9 +209,7 @@ def cyclotomic_value(n, x):
 
     - ``x`` -- an element of a ring
 
-    OUTPUT:
-
-    - the value of the cyclotomic polynomial `\Phi_n` at `x`
+    OUTPUT: the value of the cyclotomic polynomial `\Phi_n` at `x`
 
     ALGORITHM:
 

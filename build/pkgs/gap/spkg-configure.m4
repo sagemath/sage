@@ -2,20 +2,22 @@ SAGE_SPKG_CONFIGURE([gap], [
   # Default to installing the SPKG, if the check is run at all.
   sage_spkg_install_gap=yes
 
-  m4_pushdef([GAP_MINVER],["4.12.2"])
+  m4_pushdef([GAP_MINVER],["4.13.0"])
+  m4_pushdef([GAP_LTVER],["5.0.0"])
 
   SAGE_SPKG_DEPCHECK([ncurses readline zlib], [
     AC_PATH_PROG(GAP, gap)
     AS_IF([test -n "${GAP}"], [
-      AC_MSG_CHECKING([for gap version GAP_MINVER or newer])
-
-      # GAP will later add the "user" path to the list of root paths
-      # so long as we don't initialize GAP with -r in Sage. But we
-      # don't want to include it in the hard-coded list.
+      AC_MSG_CHECKING([for gap version >= GAP_MINVER, < GAP_LTVER])
+      dnl GAP will later add the "user" path to the list of root paths
+      dnl so long as we don't initialize GAP with -r in Sage. But we
+      dnl don't want to include it in the hard-coded list.
       GAPRUN="${GAP} -r -q --bare --nointeract -c"
       _cmd='Display(GAPInfo.KernelInfo.KERNEL_VERSION);'
       GAP_VERSION=$( ${GAPRUN} "${_cmd}" 2>/dev/null )
-      AX_COMPARE_VERSION(["${GAP_VERSION}"], [ge], [GAP_MINVER], [
+      AX_COMPARE_VERSION(["${GAP_VERSION}"], [ge], [GAP_MINVER], [dnl
+       AC_MSG_RESULT([yes])
+       AX_COMPARE_VERSION(["${GAP_VERSION}"], [lt], [GAP_LTVER], [dnl
         AC_MSG_RESULT([yes])
         AC_MSG_CHECKING([for gap root paths])
         _cmd='Display(JoinStringsWithSeparator(GAPInfo.RootPaths,";"));'
@@ -66,18 +68,20 @@ SAGE_SPKG_CONFIGURE([gap], [
                 AC_LANG_POP
                 LIBS="${_old_libs}"
             ])
-          ], [
-            # The gap command itself failed
+          ], [dnl The gap command itself failed
             AC_MSG_RESULT([no (package check command failed)])
           ])
         ])
-      ],[
-        # Version too old
+      ], [dnl Version too new
         AC_MSG_RESULT([no])
       ])
+     ], [dnl Version too old
+       AC_MSG_RESULT([no])
+     ])
     ])
   ])
 
+  m4_popdef([GAP_LTVER])
   m4_popdef([GAP_MINVER])
 ],[],[],[
   # This is the post-check phase, where we make sage-conf

@@ -139,10 +139,18 @@ def is_FreeModuleElement(x):
     EXAMPLES::
 
         sage: sage.modules.free_module_element.is_FreeModuleElement(0)
+        doctest:warning...
+        DeprecationWarning: The function is_FreeModuleElement is deprecated;
+        use 'isinstance(..., FreeModuleElement)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         False
         sage: sage.modules.free_module_element.is_FreeModuleElement(vector([1,2,3]))
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38184,
+                       "The function is_FreeModuleElement is deprecated; "
+                       "use 'isinstance(..., FreeModuleElement)' instead.")
     return isinstance(x, FreeModuleElement)
 
 
@@ -170,14 +178,14 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
 
     INPUT:
 
-    - ``object`` -- a list, dictionary, or other
+    - ``object`` -- list, dictionary, or other
       iterable containing the entries of the vector, including
       any object that is palatable to the ``Sequence`` constructor
 
     - ``ring`` -- a base ring (or field) for the vector space or free module,
       which contains all of the elements
 
-    - ``degree`` -- an integer specifying the number of
+    - ``degree`` -- integer specifying the number of
       entries in the vector or free module element
 
     - ``sparse`` -- boolean, whether the result should be a sparse vector
@@ -478,6 +486,16 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         sage: vector(S, 3)                                                              # needs sage.rings.finite_rings
         ...
         (0, 0, 0)
+
+    We check that ``sparse`` is respected for numpy arrays::
+
+        sage: # needs numpy
+        sage: import numpy
+        sage: a = numpy.array([1,2,3], dtype=numpy.float64)
+        sage: v = vector(a, sparse=True); v
+        (1.0, 2.0, 3.0)
+        sage: v.is_sparse()
+        True
     """
     from sage.modules.free_module import FreeModule
     # We first efficiently handle the important special case of the zero vector
@@ -547,11 +565,15 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         R = None
 
     try:
+        import numpy
         from numpy import ndarray
+        if int(numpy.version.short_version[0]) > 1:
+            numpy.set_printoptions(legacy="1.25")
+
     except ImportError:
         pass
     else:
-        if isinstance(v, ndarray):
+        if isinstance(v, ndarray) and not sparse:
             if len(v.shape) != 1:
                 raise TypeError("cannot convert %r-dimensional array to a vector" % len(v.shape))
             from sage.modules.free_module import VectorSpace
@@ -598,20 +620,18 @@ free_module_element = vector
 
 def prepare(v, R, degree=None):
     r"""
-    Converts an object describing elements of a vector into a list of entries in a common ring.
+    Convert an object describing elements of a vector into a list of entries in a common ring.
 
     INPUT:
 
-    - ``v`` -- a dictionary with non-negative integers as keys,
+    - ``v`` -- dictionary with nonnegative integers as keys,
       or a list or other object that can be converted by the ``Sequence``
       constructor
     - ``R`` -- a ring containing all the entries, possibly given as ``None``
-    - ``degree`` --  a requested size for the list when the input is a dictionary,
+    - ``degree`` -- a requested size for the list when the input is a dictionary,
       otherwise ignored
 
-    OUTPUT:
-
-    A pair.
+    OUTPUT: a pair
 
     The first item is a list of the values specified in the object ``v``.
     If the object is a dictionary , entries are placed in the list
@@ -628,7 +648,6 @@ def prepare(v, R, degree=None):
     :class:`~sage.structure.sequence.Sequence` object.  When ``v``
     has no elements and ``R`` is ``None``, the ring returned is
     the integers.
-
 
     EXAMPLES::
 
@@ -694,7 +713,7 @@ def prepare(v, R, degree=None):
 
 def zero_vector(arg0, arg1=None):
     r"""
-    Returns a vector or free module element with a specified number of zeros.
+    Return a vector or free module element with a specified number of zeros.
 
     CALL FORMATS:
 
@@ -707,7 +726,7 @@ def zero_vector(arg0, arg1=None):
     - ``degree`` -- the number of zero entries in the vector or
       free module element
 
-    - ``ring`` -- (default: ``ZZ``); the base ring of the vector
+    - ``ring`` -- (default: ``ZZ``) the base ring of the vector
       space or module containing the constructed zero vector
 
     OUTPUT:
@@ -772,14 +791,14 @@ def zero_vector(arg0, arg1=None):
 
 def random_vector(ring, degree=None, *args, **kwds):
     r"""
-    Returns a vector (or module element) with random entries.
+    Return a vector (or module element) with random entries.
 
     INPUT:
 
-    - ring -- (default: ``ZZ``); the base ring for the entries
-    - degree -- a non-negative integer for the number of entries in the vector
-    - sparse -- (default: ``False``); whether to use a sparse implementation
-    - args, kwds -- additional arguments and keywords are passed
+    - ``ring`` -- (default: ``ZZ``) the base ring for the entries
+    - ``degree`` -- nonnegative integer for the number of entries in the vector
+    - ``sparse`` -- (default: ``False``) whether to use a sparse implementation
+    - ``*args``, ``**kwds`` -- additional arguments and keywords are passed
       to the ``random_element()`` method of the ring
 
     OUTPUT:
@@ -878,13 +897,13 @@ def random_vector(ring, degree=None, *args, **kwds):
         sage: from sage.misc.randstate import current_randstate
         sage: seed = current_randstate().seed()
         sage: set_random_seed(seed)
-        sage: v1 = random_vector(ZZ, 20, distribution="1/n")
+        sage: v1 = random_vector(ZZ, 20, distribution='1/n')
         sage: v2 = random_vector(ZZ, 15, x=-1000, y=1000)
         sage: v3 = random_vector(QQ, 10)
         sage: v4 = random_vector(FiniteField(17), 10)
         sage: v5 = random_vector(RR, 10)
         sage: set_random_seed(seed)
-        sage: w1 = vector(ZZ.random_element(distribution="1/n") for _ in range(20))
+        sage: w1 = vector(ZZ.random_element(distribution='1/n') for _ in range(20))
         sage: w2 = vector(ZZ.random_element(x=-1000, y=1000) for _ in range(15))
         sage: w3 = vector(QQ.random_element() for _ in range(10))
         sage: [v1, v2, v3] == [w1, w2, w3]
@@ -911,7 +930,7 @@ def random_vector(ring, degree=None, *args, **kwds):
         sage: random_vector(ZZ, -9)
         Traceback (most recent call last):
         ...
-        ValueError: degree of a random vector must be non-negative, not -9
+        ValueError: degree of a random vector must be nonnegative, not -9
     """
     if isinstance(ring, (Integer, int)):
         if degree is not None:
@@ -923,7 +942,7 @@ def random_vector(ring, degree=None, *args, **kwds):
     if not isinstance(degree, (Integer, int)):
         raise TypeError("degree of a random vector must be an integer, not %s" % degree)
     if degree < 0:
-        raise ValueError("degree of a random vector must be non-negative, not %s" % degree)
+        raise ValueError("degree of a random vector must be nonnegative, not %s" % degree)
     if ring not in Rings():
         raise TypeError("elements of a vector, or module element, must come from a ring, not %s" % ring)
     if not hasattr(ring, "random_element"):
@@ -958,10 +977,10 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
-          represented by a dictionary ``d``, then make a copy of ``d``;
-          if ``False``, then this can cause undesired behavior by
-          mutating ``d``
+        - ``copy`` -- boolean (default: ``True``); if ``self`` is internally
+          represented by a dictionary ``d``, then make a copy of ``d``.
+          If ``False``, then this can cause undesired behavior by
+          mutating ``d``.
 
         EXAMPLES::
 
@@ -998,20 +1017,20 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         EXAMPLES::
 
             sage: v = vector(ZZ, 4, range(4))
-            sage: giac(v) + v                                                           # needs sage.libs.giac
+            sage: giac(v) + v                                                           # needs giac
             [0,2,4,6]
 
         ::
 
             sage: v = vector(QQ, 3, [2/3, 0, 5/4])
-            sage: giac(v)                                                               # needs sage.libs.giac
+            sage: giac(v)                                                               # needs giac
             [2/3,0,5/4]
 
         ::
 
             sage: P.<x> = ZZ[]
             sage: v = vector(P, 3, [x^2 + 2, 2*x + 1, -2*x^2 + 4*x])
-            sage: giac(v)                                                               # needs sage.libs.giac
+            sage: giac(v)                                                               # needs giac
             [sageVARx^2+2,2*sageVARx+1,-2*sageVARx^2+4*sageVARx]
         """
         return self.list()
@@ -1020,9 +1039,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         Convert ``self`` to a PARI vector.
 
-        OUTPUT:
-
-        A PARI ``gen`` of type ``t_VEC``.
+        OUTPUT: a PARI ``gen`` of type ``t_VEC``
 
         EXAMPLES::
 
@@ -1046,9 +1063,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         Give a string which, when evaluated in GP, gives a PARI
         representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1059,7 +1074,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         Create the multiplication table of `GF(4)` using GP::
 
             sage: # needs sage.libs.pari
-            sage: k.<a> = GF(4, impl="pari_ffelt")
+            sage: k.<a> = GF(4, impl='pari_ffelt')
             sage: v = gp(vector(list(k)))
             sage: v
             [0, 1, a, a + 1]
@@ -1073,7 +1088,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def _magma_init_(self, magma):
         r"""
-        Convert self to Magma.
+        Convert ``self`` to Magma.
 
         EXAMPLES::
 
@@ -1119,7 +1134,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def numpy(self, dtype=object):
         """
-        Convert self to a numpy array.
+        Convert ``self`` to a numpy array.
 
         INPUT:
 
@@ -1180,7 +1195,11 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             over Rational Field to numpy array of type <... 'float'>:
             setting an array element with a sequence.
         """
+        import numpy
         from numpy import array
+        if int(numpy.version.short_version[0]) > 1:
+            numpy.set_printoptions(legacy="1.25")
+
         try:
             return array(self, dtype=dtype)
         except ValueError as e:
@@ -1208,7 +1227,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def _vector_(self, R=None):
         r"""
-        Return self as a vector.
+        Return ``self`` as a vector.
 
         EXAMPLES::
 
@@ -1639,7 +1658,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def additive_order(self):
         """
-        Return the additive order of self.
+        Return the additive order of ``self``.
 
         EXAMPLES::
 
@@ -1716,8 +1735,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``p`` -- default: 2 -- ``p`` can be a real number greater than 1,
-          infinity (``oo`` or ``Infinity``), or a symbolic expression.
+        - ``p`` -- (default: 2) ``p`` can be a real number greater than 1,
+          infinity (``oo`` or ``Infinity``), or a symbolic expression:
 
           - `p=1`: the taxicab (Manhattan) norm
           - `p=2`: the usual Euclidean norm (the default)
@@ -1858,7 +1877,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def __getitem__(self, i):
         """
-        Return `i`-th entry or slice of self.
+        Return `i`-th entry or slice of ``self``.
 
         EXAMPLES::
 
@@ -1890,7 +1909,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     cdef get_unsafe(self, Py_ssize_t i):
         """
-        Cython function to get the `i`'th entry of this vector.
+        Cython function to get the `i`-th entry of this vector.
 
         Used as building block for a generic ``__getitem__``.
         """
@@ -1910,7 +1929,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def __setitem__(self, i, value):
         """
-        Set the `i`-th entry or slice of self to ``value``.
+        Set the `i`-th entry or slice of ``self`` to ``value``.
 
         EXAMPLES::
 
@@ -1951,7 +1970,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     cdef int set_unsafe(self, Py_ssize_t i, value) except -1:
         """
-        Cython function to set the `i`'th entry of this vector to
+        Cython function to set the `i`-th entry of this vector to
         ``value``.
 
         Used as building block for a generic ``__setitem__``.
@@ -2022,12 +2041,12 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def list(self, copy=True):
         """
-        Return list of elements of self.
+        Return list of elements of ``self``.
 
         INPUT:
 
-            - copy -- bool, whether returned list is a copy that is
-              safe to change, is ignored.
+        - ``copy`` -- boolean (default: ``True``); whether returned list is a
+          copy that is safe to change (ignored)
 
         EXAMPLES::
 
@@ -2057,8 +2076,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-            - positions -- iterable of ints
-
+        - ``positions`` -- iterable of integers
 
         EXAMPLES::
 
@@ -2075,7 +2093,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         OUTPUT:
 
-        Return a lift of self to the covering ring of the base ring `R`,
+        Return a lift of ``self`` to the covering ring of the base ring `R`,
         which is by definition the ring returned by calling
         :meth:`~sage.rings.quotient_ring.QuotientRing_nc.cover_ring`
         on `R`, or just `R` itself if the
@@ -2135,7 +2153,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def __pos__(self):
         """
-        Always returns self, since +self == self.
+        Always returns ``self``, since ``+self == self``.
 
         EXAMPLES::
 
@@ -2149,7 +2167,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def __pow__(self, n, dummy):
         """
-        Raises a NotImplementedError, since powering doesn't make
+        Raises a :exc:`NotImplementedError`, since powering doesn't make
         sense for vectors.
 
         EXAMPLES::
@@ -2223,7 +2241,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: maple(v)  # optional - maple
             Vector[row](3, [x^2+2,2*x+1,-2*x^2+4*x])
         """
-        return "Vector[row](%s)"%(str(self.list()))
+        return "Vector[row](%s)" % str(self.list())
 
     def degree(self):
         """
@@ -2242,7 +2260,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
     def denominator(self):
         """
         Return the least common multiple of the denominators of the
-        entries of self.
+        entries of ``self``.
 
         EXAMPLES::
 
@@ -2288,14 +2306,12 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
-          represented by a dictionary ``d``, then make a copy of ``d``;
-          if ``False``, then this can cause undesired behavior by
-          mutating ``d``
+        - ``copy`` -- boolean (default: ``True``); if ``self`` is internally
+          represented by a dictionary ``d``, then make a copy of ``d``.
+          If ``False``, then this can cause undesired behavior by
+          mutating ``d``.
 
-        OUTPUT:
-
-        - Python dictionary
+        OUTPUT: Python dictionary
 
         EXAMPLES::
 
@@ -2345,7 +2361,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
           more than 3 dimensions.
 
         - ``start`` -- (default: origin in correct dimension) may be a tuple,
-          list, or vector.
+          list, or vector
 
         EXAMPLES:
 
@@ -2482,22 +2498,21 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         r"""
         INPUT:
 
-        -  ``xmin`` -- (default: 0) start x position to start
-           plotting
+        - ``xmin`` -- (default: 0) start x position to start
+          plotting
 
-        -  ``xmax`` -- (default: 1) stop x position to stop
-           plotting
+        - ``xmax`` -- (default: 1) stop x position to stop
+          plotting
 
-        -  ``eps`` -- (default: determined by xmax) we view this
-           vector as defining a function at the points xmin, xmin + eps, xmin
-           + 2\*eps, ...,
+        - ``eps`` -- (default: determined by xmax) we view this
+          vector as defining a function at the points xmin, xmin + eps, xmin
+          + 2\*eps, ...,
 
-        -  ``res`` -- (default: all points) total number of
-           points to include in the graph
+        - ``res`` -- (default: all points) total number of
+          points to include in the graph
 
-        -  ``connect`` -- (default: ``True``) if True draws a line;
-           otherwise draw a list of points.
-
+        - ``connect`` -- boolean (default: ``True``); if ``True`` draws a line,
+          otherwise draw a list of points
 
         EXAMPLES::
 
@@ -2680,19 +2695,19 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                 return self._parent.coordinate_ring().zero()
             return self._dot_product_(r)
         if self._degree != r._degree:
-            raise ArithmeticError("degrees (%s and %s) must be the same"%(self.degree(), right.degree()))
+            raise ArithmeticError("degrees (%s and %s) must be the same" % (self.degree(), right.degree()))
         # Base rings are not equal => use dot product with coercion
         return self._dot_product_coerce_(r)
 
     def cross_product(self, right):
         """
-        Return the cross product of self and right, which is only defined
+        Return the cross product of ``self`` and ``right``, which is only defined
         for vectors of length 3 or 7.
 
         INPUT:
 
-        - ``right`` -- A vector of the same size as ``self``, either
-          degree three or degree seven.
+        - ``right`` -- a vector of the same size as ``self``, either
+          degree three or degree seven
 
         OUTPUT:
 
@@ -2807,9 +2822,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         and also `w \cdot \hat{v} = w \times v` for all vectors `w`.
         The basis vectors are assumed to be orthonormal.
 
-        OUTPUT:
-
-        The cross product matrix of this vector.
+        OUTPUT: the cross product matrix of this vector
 
         EXAMPLES::
 
@@ -2881,16 +2894,14 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def pairwise_product(self, right):
         """
-        Return the pairwise product of self and right, which is a vector of
+        Return the pairwise product of ``self`` and ``right``, which is a vector of
         the products of the corresponding entries.
 
         INPUT:
 
-
-        -  ``right`` -- vector of the same degree as self. It
-           need not be in the same vector space as self, as long as the
-           coefficients can be multiplied.
-
+        - ``right`` -- vector of the same degree as ``self``. It
+          need not be in the same vector space as ``self``, as long as the
+          coefficients can be multiplied.
 
         EXAMPLES::
 
@@ -3065,7 +3076,6 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             of vector fields on Euclidean spaces (and more generally
             pseudo-Riemannian manifolds), in particular for computing the
             divergence in curvilinear coordinates.
-
         """
         if variables is None:
             variables = self._variables()
@@ -3119,7 +3129,6 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             of vector fields on Euclidean spaces (and more generally
             pseudo-Riemannian manifolds), in particular for computing the curl
             in curvilinear coordinates.
-
         """
         if len(self) == 3:
             if variables is None:
@@ -3145,8 +3154,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def element(self):
         """
-        Simply returns self.  This is useful, since for many objects,
-        self.element() returns a vector corresponding to self.
+        Simply return ``self``.  This is useful, since for many objects,
+        ``self.element()`` returns a vector corresponding to ``self``.
 
         EXAMPLES::
 
@@ -3183,7 +3192,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         INPUT:
 
-        * "p" - default: 2 - p value for the norm
+        - ``p`` -- (default: 2) p value for the norm
 
         EXAMPLES::
 
@@ -3205,7 +3214,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def conjugate(self):
         r"""
-        Returns a vector where every entry has been replaced by its complex conjugate.
+        Return a vector where every entry has been replaced by its complex conjugate.
 
         OUTPUT:
 
@@ -3294,7 +3303,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def inner_product(self, right):
         r"""
-        Returns the inner product of ``self`` and ``right``,
+        Return the inner product of ``self`` and ``right``,
         possibly using an inner product matrix from the parent of ``self``.
 
         INPUT:
@@ -3399,7 +3408,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def outer_product(self, right):
         r"""
-        Returns a matrix, the outer product of two vectors ``self`` and ``right``.
+        Return a matrix, the outer product of two vectors ``self`` and ``right``.
 
         INPUT:
 
@@ -3517,7 +3526,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def hermitian_inner_product(self, right):
         r"""
-        Returns the dot product, but with the entries of the first vector
+        Return the dot product, but with the entries of the first vector
         conjugated beforehand.
 
         INPUT:
@@ -3824,7 +3833,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         OUTPUT:
 
-        If self is the free module element (1,2,3,4),
+        If ``self`` is the free module element (1,2,3,4),
         then a string with the following latex is returned:
         "\left(1,\,2,\,3,\,4\right)" (without the quotes).
         The vector is enclosed in parentheses by default,
@@ -3855,8 +3864,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def dense_vector(self):
         """
-        Return dense version of self.  If self is dense, just return
-        self; otherwise, create and return correspond dense vector.
+        Return dense version of ``self``.  If ``self`` is dense, just return
+        ``self``; otherwise, create and return correspond dense vector.
 
         EXAMPLES::
 
@@ -3874,7 +3883,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def sparse_vector(self):
         """
-        Return sparse version of self.  If self is sparse, just return
+        Return sparse version of ``self``.  If ``self`` is sparse, just return
         self; otherwise, create and return correspond sparse vector.
 
         EXAMPLES::
@@ -3898,16 +3907,13 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         automatically determine the base ring of the resulting element.
 
         INPUT:
-            sparse -- True or False will control whether the result
-              is sparse.  By default, the result is sparse iff self
-              is sparse.
 
+        - ``sparse`` -- boolean; will control whether the result is sparse.
+          By default, the result is sparse iff self is sparse.
 
-        -  ``phi`` -- arbitrary Python function or callable
-           object
+        - ``phi`` -- arbitrary Python function or callable object
 
-        -  ``R`` -- (optional) ring
-
+        - ``R`` -- (optional) ring
 
         OUTPUT: a free module element over R
 
@@ -3937,7 +3943,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: n.parent()                                                            # needs sage.rings.finite_rings
             Vector space of dimension 9 over Finite Field in a of size 3^2
 
-        If your map sends 0 to a non-zero value, then your resulting
+        If your map sends 0 to a nonzero value, then your resulting
         vector is not mathematically sparse::
 
             sage: v = vector([0] * 6 + [1], sparse=True); v
@@ -4017,7 +4023,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                 # OK, we have some zero entries.
                 zero_res = phi(self.base_ring()(0))
                 if not zero_res.is_zero():
-                    # And phi maps 0 to a non-zero value.
+                    # And phi maps 0 to a nonzero value.
                     v = [zero_res] * self._degree
                     for i,z in self.dict(copy=False).items():
                         v[i] = phi(z)
@@ -4118,7 +4124,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def integral(self, *args, **kwds):
         """
-        Returns a symbolic integral of the vector, component-wise.
+        Return a symbolic integral of the vector, component-wise.
 
         :meth:`integrate` is an alias of the function.
 
@@ -4133,16 +4139,15 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             (1/2*t^2, 1/3*t^3, -cos(t))
             sage: r.integrate(t, 0, 1)
             (1/2, 1/3, -cos(1) + 1)
-
         """
         from sage.misc.functional import integral
-        return self.apply_map(lambda x: integral(x,*args, **kwds))
+        return self.apply_map(lambda x: integral(x, *args, **kwds))
 
     integrate = integral
 
     def nintegral(self, *args, **kwds):
         """
-        Returns a numeric integral of the vector, component-wise, and
+        Return a numeric integral of the vector, component-wise, and
         the result of the nintegral command on each component of the
         input.
 
@@ -4169,17 +4174,16 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             ((0.5, 0.0, 1.0),
              {0: (0.5, 5.55111512312578...e-15, 21, 0),
               2: (1.0, 1.11022302462515...e-14, 21, 0)})
-
         """
         # If Cython supported lambda functions, we would just do
         # return self.apply_map(lambda x: x.nintegral(*args, **kwds) for x in self)
 
         if self.is_sparse():
-            v = [(i,z.nintegral(*args,**kwds)) for i,z in self.dict(copy=False).items()]
+            v = [(i,z.nintegral(*args, **kwds)) for i,z in self.dict(copy=False).items()]
             answers = dict([(i,a[0]) for i,a in v])
             v=dict(v)
         else:
-            v = [z.nintegral(*args,**kwds) for z in self.list()]
+            v = [z.nintegral(*args, **kwds) for z in self.list()]
             answers = [a[0] for a in v]
 
         return (vector(answers,sparse=self.is_sparse()), v)
@@ -4357,8 +4361,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 
         INPUT:
 
-        - ``v`` -- a list which is used as the new entries (without
-          copying)
+        - ``v`` -- list which is used as the new entries (without copying)
         """
         cdef type t = type(self)
         cdef FreeModuleElement_generic_dense x = t.__new__(t)
@@ -4643,11 +4646,11 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 
     def list(self, copy=True):
         """
-        Return list of elements of self.
+        Return list of elements of ``self``.
 
         INPUT:
 
-            - copy -- bool, return list of underlying entries
+        - ``copy`` -- boolean; return list of underlying entries
 
         EXAMPLES::
 
@@ -4808,7 +4811,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
 
         INPUT:
 
-        - ``v`` -- a dict which is used as the new entries (without
+        - ``v`` -- dictionary which is used as the new entries (without
           copying)
         """
         cdef type t = type(self)
@@ -4847,7 +4850,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         We can initialize with dicts, lists, tuples and derived types::
 
             sage: from sage.modules.free_module_element import FreeModuleElement_generic_sparse
-            sage: def S(R,n):
+            sage: def S(R, n):
             ....:     return FreeModule(R, n, sparse=True)
 
             sage: # needs sage.symbolic
@@ -5293,7 +5296,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
     def denominator(self):
         """
         Return the least common multiple of the denominators of the
-        entries of self.
+        entries of ``self``.
 
         EXAMPLES::
 
@@ -5322,14 +5325,12 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
 
         INPUT:
 
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
-          represented by a dictionary ``d``, then make a copy of ``d``;
-          if ``False``, then this can cause undesired behavior by
-          mutating ``d``
+        - ``copy`` -- boolean (default: ``True``); if ``self`` is internally
+          represented by a dictionary ``d``, then make a copy of ``d``.
+          If ``False``, then this can cause undesired behavior by
+          mutating ``d``.
 
-        OUTPUT:
-
-        - Python dictionary
+        OUTPUT: Python dictionary
 
         EXAMPLES::
 
@@ -5375,7 +5376,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
 
     def nonzero_positions(self):
         """
-        Returns the list of numbers ``i`` such that ``self[i] != 0``.
+        Return the list of numbers ``i`` such that ``self[i] != 0``.
 
         EXAMPLES::
 
@@ -5390,7 +5391,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
 
     cpdef int hamming_weight(self) noexcept:
         """
-        Returns the number of positions ``i`` such that ``self[i] != 0``.
+        Return the number of positions ``i`` such that ``self[i] != 0``.
 
         EXAMPLES::
 

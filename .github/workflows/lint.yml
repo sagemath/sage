@@ -28,14 +28,12 @@ jobs:
         GH_TOKEN: ${{ github.token }}
         SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: 3.9
-
-    - name: Install dependencies
+    - name: Install test prerequisites
       id: deps
-      run: pip install tox
+      # From docker.yml
+      run: |
+        sudo DEBIAN_FRONTEND=noninteractive apt-get update
+        sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
 
     - name: Code style check with ruff-minimal
       if: (success() || failure()) && steps.deps.outcome == 'success'
