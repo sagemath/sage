@@ -1795,7 +1795,7 @@ class PolynomialRing_generic(Ring):
         raise ValueError("you should pass exactly one of of_degree and max_degree")
 
 
-# PolynomialRing_general is deprecated since 2024-12-03. See Issue 38207.
+# PolynomialRing_general is deprecated since 2024-12-03. See Issue #38207.
 PolynomialRing_general = PolynomialRing_generic
 
 
