@@ -886,7 +886,7 @@ cdef number *sa2si_QQ(Rational r, ring *_ring) noexcept:
 
     - ``r`` -- a sage rational number
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -916,7 +916,7 @@ cdef number *sa2si_GFqGivaro(int quo, ring *_ring) noexcept:
 
     - ``quo`` -- sage integer
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -984,7 +984,7 @@ cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring) noexcept:
 
     - ``elem`` -- a sage element of a ntl_gf2e finite field
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1049,7 +1049,7 @@ cdef number *sa2si_GFq_generic(object elem, ring *_ring) noexcept:
 
     - ``elem`` -- a sage element of a generic finite field
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1075,6 +1075,9 @@ cdef number *sa2si_GFq_generic(object elem, ring *_ring) noexcept:
     cdef number *coeff
     cdef number *apow1
     cdef number *apow2
+
+    if _ring.cf.type in (n_Zn, n_Znm):
+        return sa2si_ZZmod(elem, _ring)
     elem = elem.polynomial()
 
     if _ring != currRing: rChangeCurrRing(_ring)
@@ -1115,7 +1118,7 @@ cdef number *sa2si_transext_QQ(object elem, ring *_ring) noexcept:
 
     - ``elem`` -- a sage element of a FractionField of polynomials over the rationals
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1265,7 +1268,7 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring) noexcept:
 
     - ``elem`` -- a sage element of a FractionField of polynomials over the rationals
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1365,7 +1368,7 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
 
     - ``elem`` -- a sage element of a NumberField
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1457,7 +1460,7 @@ cdef number *sa2si_ZZ(Integer d, ring *_ring) noexcept:
 
     - ``elem`` -- a sage Integer
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1488,7 +1491,7 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
 
     - ``elem`` -- a sage IntegerMod
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     TESTS::
 
@@ -1533,6 +1536,9 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
     cdef char **_ext_names
 
     cdef nMapFunc nMapFuncPtr = NULL
+
+    if _ring.cf.type == n_unknown:
+        return n_Init(int(d),_ring.cf)
 
     if _ring.cf.type == n_Z2m:
         _d = long(d)
@@ -1628,7 +1634,8 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
     a (pointer to) a singular number
     """
     cdef int i = 0
-    if isinstance(elem._parent, FiniteField_prime_modn):
+
+    if isinstance(elem._parent, FiniteField_prime_modn) and _ring.cf.type == n_Zp:
         return n_Init(int(elem),_ring.cf)
 
     elif isinstance(elem._parent, RationalField):
@@ -1649,8 +1656,6 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
     elif isinstance(elem._parent, NumberField) and elem._parent.is_absolute():
         return sa2si_NF(elem, _ring)
     elif isinstance(elem._parent, IntegerModRing_generic):
-        if _ring.cf.type == n_unknown:
-            return n_Init(int(elem),_ring.cf)
         return sa2si_ZZmod(elem, _ring)
     elif isinstance(elem._parent, FractionField_generic) and isinstance(elem._parent.base(), (MPolynomialRing_libsingular, PolynomialRing_field)):
         if isinstance(elem._parent.base().base_ring(), RationalField):
