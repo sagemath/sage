@@ -431,7 +431,7 @@ AS_IF([test "x$enable_download_from_upstream_url" = "xyes"], [
 ])
 AC_SUBST([SAGE_SPKG_OPTIONS])
 
-AC_ARG_ENABLE([sagelib],
+AC_ARG_ENABLE([sage_conf],
   AS_HELP_STRING([--disable-sage_conf],
                  [disable build of the sage_conf package]), [
     for pkg in sage_conf; do
