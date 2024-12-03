@@ -205,11 +205,29 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         //                  : names    a b
         //        block   2 : ordering C
 
+    When ``Zmod`` is used, use a different Singular type
+    (note that the print is wrong, the field in fact doesn't have zero-divisors)::
+
+        sage: R = PolynomialRing(Zmod(2), ("a", "b"), implementation="singular"); print(sing_print(R))
+        polynomial ring, over a ring (with zero-divisors), global ordering
+        // coefficients: ZZ/(2)
+        // number of vars : 2
+        //        block   1 : ordering dp
+        //                  : names    a b
+        //        block   2 : ordering C
+        sage: R = PolynomialRing(Zmod(3), ("a", "b"), implementation="singular"); print(sing_print(R))
+        polynomial ring, over a ring (with zero-divisors), global ordering
+        // coefficients: ZZ/(3)
+        // number of vars : 2
+        //        block   1 : ordering dp
+        //                  : names    a b
+        //        block   2 : ordering C
+
     Large prime (note that the print is wrong, the field in fact doesn't have zero-divisors)::
 
         sage: R = PolynomialRing(GF(2^128+51), ("a", "b"), implementation="singular"); print(sing_print(R))
         polynomial ring, over a ring (with zero-divisors), global ordering
-        // coefficients: ZZ/(bigint(340282366920938463463374607431768211507)^1)
+        // coefficients: ZZ/bigint(340282366920938463463374607431768211507)
         // number of vars : 2
         //        block   1 : ordering dp
         //                  : names    a b
@@ -487,8 +505,8 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         isprime = ch.is_prime()
 
-        if isprime and ch <= 2147483647:
-            # base_ring might be an instance of FiniteField_generic (but Zmod(5) is not)
+        if isprime and ch <= 2147483647 and isinstance(base_ring, FiniteField_generic):
+            # don't use this branch for e.g. Zmod(5)
             characteristic = base_ring.characteristic()
 
             # example for simpler ring creation interface without monomial orderings:
@@ -499,10 +517,10 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         else:
             modbase, cexponent = ch.perfect_power()
 
-            if modbase == 2:
+            if modbase == 2 and cexponent > 1:
                 _cf = nInitChar(n_Z2m, <void *>cexponent)
 
-            elif modbase.is_prime():
+            elif modbase.is_prime() and cexponent > 1:
                 _info.base = <__mpz_struct*>omAlloc(sizeof(__mpz_struct))
                 mpz_init_set(_info.base, modbase.value)
                 _info.exp = cexponent
