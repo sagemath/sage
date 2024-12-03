@@ -488,7 +488,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         isprime = ch.is_prime()
 
         if isprime and ch <= 2147483647:
-            assert isinstance(base_ring, FiniteField_generic)
+            # base_ring might be an instance of FiniteField_generic (but Zmod(5) is not)
             characteristic = base_ring.characteristic()
 
             # example for simpler ring creation interface without monomial orderings:
