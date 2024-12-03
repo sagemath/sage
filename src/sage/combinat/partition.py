@@ -5813,7 +5813,8 @@ class Partition(CombinatorialElement):
 ##############
 # Partitions #
 ##############
-class Partitions(WithEqualityByArgs, Parent):
+from sage.misc.classcall_metaclass import ClasscallMetaclass
+class Partitions(Parent, metaclass=ClasscallMetaclass):
     r"""
     ``Partitions(n, **kwargs)`` returns the combinatorial class of
     integer partitions of `n` subject to the constraints given by the
@@ -6534,7 +6535,7 @@ class Partitions(WithEqualityByArgs, Parent):
         return self
 
 
-class Partitions_all(Partitions):
+class Partitions_all(UniqueRepresentation, Partitions):
     """
     Class of all partitions.
 
@@ -6805,7 +6806,7 @@ class Partitions_all(Partitions):
         return self.element_class(self, [new_w[i]+i for i in range(len(new_w))])
 
 
-class Partitions_all_restricted(Partitions):
+class Partitions_all_restricted(WithEqualityByArgs, Partitions):
     def __init__(self, **kwargs):
         """
         TESTS::
@@ -6869,7 +6870,7 @@ class Partitions_all_restricted(Partitions):
             n += 1
 
 
-class Partitions_all_bounded(Partitions):
+class Partitions_all_bounded(UniqueRepresentation, Partitions):
     def __init__(self, k):
         """
         TESTS::
@@ -6929,7 +6930,7 @@ class Partitions_all_bounded(Partitions):
             n += 1
 
 
-class Partitions_n(Partitions):
+class Partitions_n(UniqueRepresentation, Partitions):
     """
     Partitions of the integer `n`.
 
@@ -7330,7 +7331,7 @@ class Partitions_n(Partitions):
         return Partitions(self.n, **kwargs)
 
 
-class Partitions_nk(Partitions):
+class Partitions_nk(WithEqualityByArgs, Partitions):
     """
     Partitions of the integer `n` of length equal to `k`.
 
@@ -7546,7 +7547,7 @@ class Partitions_nk(Partitions):
         return Partitions(self.n, length=self.k, **kwargs)
 
 
-class Partitions_parts_in(Partitions):
+class Partitions_parts_in(WithEqualityByArgs, Partitions):
     """
     Partitions of `n` with parts in a given set `S`.
 
@@ -7862,7 +7863,7 @@ class Partitions_parts_in(Partitions):
                        for pi, multi in zip(sorted_parts, vec)), [])
 
 
-class Partitions_starting(Partitions):
+class Partitions_starting(WithEqualityByArgs, Partitions):
     """
     All partitions with a given start.
     """
@@ -7987,7 +7988,7 @@ class Partitions_starting(Partitions):
         return next(part)
 
 
-class Partitions_ending(Partitions):
+class Partitions_ending(WithEqualityByArgs, Partitions):
     """
     All partitions with a given ending.
     """
@@ -8102,7 +8103,7 @@ class Partitions_ending(Partitions):
         return mu
 
 
-class PartitionsInBox(Partitions):
+class PartitionsInBox(WithEqualityByArgs, Partitions):
     r"""
     All partitions which fit in an `h \times w` box.
 
@@ -8226,7 +8227,7 @@ class PartitionsInBox(Partitions):
         return binomial(self.h + self.w, self.w)
 
 
-class Partitions_constraints(IntegerListsLex):
+class Partitions_constraints(WithEqualityByArgs, IntegerListsLex):
     """
     For unpickling old constrained ``Partitions_constraints`` objects created
     with sage <= 3.4.1. See :class:`Partitions`.
@@ -8250,7 +8251,7 @@ class Partitions_constraints(IntegerListsLex):
         self.__init__(n, **constraints)
 
 
-class Partitions_with_constraints(IntegerListsLex):
+class Partitions_with_constraints(WithEqualityByArgs, IntegerListsLex):
     """
     Partitions which satisfy a set of constraints.
 
@@ -8384,7 +8385,7 @@ class RegularPartitions(Partitions):
                     yield [i] + p
 
 
-class RegularPartitions_all(RegularPartitions):
+class RegularPartitions_all(WithEqualityByArgs, RegularPartitions):
     r"""
     The class of all `\ell`-regular partitions.
 
@@ -8453,7 +8454,7 @@ class RegularPartitions_all(RegularPartitions):
             n += 1
 
 
-class RegularPartitions_truncated(RegularPartitions):
+class RegularPartitions_truncated(WithEqualityByArgs, RegularPartitions):
     r"""
     The class of `\ell`-regular partitions with max length `k`.
 
@@ -8575,7 +8576,7 @@ class RegularPartitions_truncated(RegularPartitions):
                     yield [i] + p
 
 
-class RegularPartitions_bounded(RegularPartitions):
+class RegularPartitions_bounded(WithEqualityByArgs, RegularPartitions):
     r"""
     The class of `\ell`-regular `k`-bounded partitions.
 
@@ -8786,7 +8787,7 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
 # Ordered Partitions #
 ######################
 
-class OrderedPartitions(Partitions):
+class OrderedPartitions(WithEqualityByArgs, Partitions):
     """
     The class of ordered partitions of `n`. If `k` is specified, then this
     contains only the ordered partitions of length `k`.
@@ -8933,7 +8934,7 @@ class OrderedPartitions(Partitions):
 # Partitions_length_and_parts_restricted #
 ##########################################
 
-class Partitions_length_and_parts_restricted(Partitions):
+class Partitions_length_and_parts_restricted(WithEqualityByArgs, Partitions):
     r"""
     The class of all integer partitions having parts and length in a
     given range.
@@ -9401,7 +9402,7 @@ class RestrictedPartitions_generic(Partitions):
                 yield [i] + p
 
 
-class RestrictedPartitions_all(RestrictedPartitions_generic):
+class RestrictedPartitions_all(UniqueRepresentation, RestrictedPartitions_generic):
     r"""
     The class of all `\ell`-restricted partitions.
 
