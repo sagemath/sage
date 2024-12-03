@@ -643,7 +643,7 @@ class PolynomialRing_generic(Ring):
         """
         from .multi_polynomial_ring import MPolynomialRing_base
         base = self.base_ring()
-        if isinstance(base, PolynomialRing_general) or isinstance(base, MPolynomialRing_base):
+        if isinstance(base, PolynomialRing_generic) or isinstance(base, MPolynomialRing_base):
             from .flatten import FlatteningMorphism
             return FlatteningMorphism(self)
         else:
@@ -828,7 +828,7 @@ class PolynomialRing_generic(Ring):
 
         # polynomial rings in the same variable over a base that canonically
         # coerces into self.base_ring()
-        if isinstance(P, PolynomialRing_general):
+        if isinstance(P, PolynomialRing_generic):
             if self.construction()[0] != P.construction()[0]:
                 # Construction (including variable names) must be the
                 # same to allow coercion
@@ -1618,7 +1618,7 @@ class PolynomialRing_generic(Ring):
             0
         """
         base_ring = self.base_ring()
-        if isinstance(base_ring, PolynomialRing_general):
+        if isinstance(base_ring, PolynomialRing_generic):
             return 0
         try:
             from sage.matrix.matrix_space import MatrixSpace

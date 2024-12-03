@@ -1745,9 +1745,9 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         # The following block can be removed once #19269 is fixed.
         from sage.rings.integer_ring import ZZ
         from sage.rings.rational_field import QQ
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         if base is ZZ or base is QQ or \
-                isinstance(base, PolynomialRing_general) and \
+                isinstance(base, PolynomialRing_generic) and \
                 (base.base_ring() is ZZ or base.base_ring() is QQ):
             return Posets()
         else:

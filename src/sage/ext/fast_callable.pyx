@@ -475,9 +475,9 @@ def fast_callable(x, domain=None, vars=None,
             x = x.function(*vars)
 
         if vars is None:
-            from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
             from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
-            if isinstance(x.parent(), PolynomialRing_general) or isinstance(x.parent(), MPolynomialRing_base):
+            if isinstance(x.parent(), PolynomialRing_generic) or isinstance(x.parent(), MPolynomialRing_base):
                 vars = x.parent().variable_names()
             else:
                 # constant
