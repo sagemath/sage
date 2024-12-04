@@ -74,6 +74,4 @@ jobs:
       - name: Test
         shell: bash -l {0}
         run: |
-          # We don't install sage_setup, so don't try to test it
-          rm -R ./src/sage_setup/
           ./sage -t --all -p4

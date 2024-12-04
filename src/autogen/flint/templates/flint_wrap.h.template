@@ -1,5 +1,5 @@
 /* WARNING: src/sage/libs/flint/flint_wrap.h is generated from
- * src/sage_setup/autogen/flint/templates/flint_wrap.h.template
+ * src/autogen/flint/templates/flint_wrap.h.template
  * please make sure that you are modifying the correct file! */
 
 #ifndef SAGE_FLINT_WRAP_H

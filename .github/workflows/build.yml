@@ -368,7 +368,7 @@ jobs:
           - "src/sage/[a-f]*"
           - "src/sage/[g-o]*"
           - "src/sage/[p-z]*"
-          - "src/doc src/sage_docbuild src/sage_setup"
+          - "src/doc src/sage_docbuild"
     steps:
       - name: Maximize build disk space
         uses: easimon/maximize-build-space@v10

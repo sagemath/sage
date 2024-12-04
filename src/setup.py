@@ -47,7 +47,8 @@ Distribution._removed = staticmethod(lambda ep: True)
 
 import sage.env
 sage.env.SAGE_SRC = os.getcwd()
-from sage.env import *
+from sage.env import sage_include_directories
+from sage_setup.cython_options import cython_aliases
 
 sys.excepthook = excepthook
 
@@ -102,7 +103,6 @@ else:
     log.info(f"Cythonizing with {nthreads} threads...")
     try:
         from Cython.Build import cythonize
-        from sage.env import cython_aliases, sage_include_directories
         from sage.misc.package_dir import cython_namespace_package_support
         with cython_namespace_package_support():
             extensions = cythonize(

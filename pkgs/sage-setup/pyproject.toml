@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sage-setup"
-description = "Sage: Open Source Mathematics Software: Build system of the Sage library"
+description = "Sage: Open Source Mathematics Software: Old build system of the Sage library"
 license = {text = "GNU General Public License (GPL) v2 or later"}
 authors = [{name = "The Sage Developers", email = "sage-support@googlegroups.com"}]
 classifiers = [
