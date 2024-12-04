@@ -1,2 +1,2 @@
 # This file is updated on every release by the sage-update-version script
-sagemath-mcqd ~= 10.5rc2
+sagemath-mcqd ~= 10.5

@@ -1,2 +1,2 @@
 # This file is updated on every release by the sage-update-version script
-sage-setup ~= 10.5rc2
+sage-setup ~= 10.5
