@@ -97,7 +97,7 @@ from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_g
 from sage.libs.singular.decl cimport *
 from sage.libs.singular.option import opt_ctx
 from sage.libs.singular.polynomial cimport singular_vector_maximal_component
-from sage.libs.singular.singular cimport sa2si, si2sa, si2sa_intvec, si2sa_bigintvec
+from sage.libs.singular.singular cimport sa2si, si2sa, si2sa_intvec, si2sa_bigintvec, start_catch_error, check_error
 from sage.libs.singular.singular import error_messages
 
 from sage.interfaces.singular import get_docstring
@@ -1453,7 +1453,6 @@ cdef inline call_function(SingularFunction self, tuple args, object R, bint sign
     global errorreported
     global currentVoice
     global myynest
-    global error_messages
 
     cdef ring *si_ring
     if isinstance(R, MPolynomialRing_libsingular):
@@ -1474,10 +1473,7 @@ cdef inline call_function(SingularFunction self, tuple args, object R, bint sign
 
     currentVoice = NULL
     myynest = 0
-    errorreported = 0
-
-    while error_messages:
-        error_messages.pop()
+    start_catch_error()
 
     with opt_ctx: # we are preserving the global options state here
         if signal_handler:
@@ -1493,10 +1489,10 @@ cdef inline call_function(SingularFunction self, tuple args, object R, bint sign
     if currentVoice:
         currentVoice = NULL
 
-    if errorreported:
-        errorreported = 0
+    s = check_error()
+    if s:
         raise RuntimeError("error in Singular function call %r:\n%s" %
-            (self._name, "\n".join(error_messages)))
+            (self._name, "\n".join(s)))
 
     res = argument_list.to_python(_res)
 

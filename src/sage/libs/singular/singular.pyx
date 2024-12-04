@@ -25,6 +25,7 @@ cdef extern from "limits.h":
     long INT_MIN
 
 import os
+from warnings import warn
 
 from libc.stdint cimport int64_t
 from sage.libs.singular.decl cimport *
@@ -1812,10 +1813,63 @@ saved_PATH = os.environ["PATH"]
 init_libsingular()
 os.environ["PATH"] = saved_PATH
 
+cdef bint catching_error = False
+
 cdef void libsingular_error_callback(const_char_ptr s) noexcept:
     _s = char_to_str(s)
-    error_messages.append(_s)
+    if catching_error:
+        error_messages.append(_s)
+    else:
+        warn(f"error in Singular ignored: {_s}")
 
+cdef int start_catch_error() except -1:
+    """
+    Helper function to convert Singular errors to Python exceptions.
+
+    Must be used as follows::
+
+        start_catch_error()
+        ...
+        s = check_error()  # nonempty tuple[str, ...] (error messages) or None
+        if s:
+            # at this point global variable ``error_messages`` is cleared
+            raise RuntimeError(...)
+
+    Return value is ignored, only used for exception handling.
+
+    Note that :func:`check_error` can only be called exactly once.
+    """
+    global errorreported, catching_error, error_messages
+    if catching_error:
+        raise RuntimeError("internal error: previous start_catch_error not ended with check_error")
+    catching_error = True
+
+    if errorreported:
+        warn(f"error in Singular ignored: {', '.join(error_messages)}")
+        errorreported = False
+        error_messages.clear()
+    else:
+        assert not error_messages
+    return 0
+
+cdef object check_error():
+    """
+    See :func:`start_catch_error`.
+    """
+    global errorreported, catching_error, error_messages
+    if not catching_error:
+        raise RuntimeError("check_error must be preceded with start_catch_error")
+    catching_error = False
+
+    if errorreported:
+        result = tuple(error_messages)
+        assert result
+        errorreported = False
+        error_messages.clear()
+        return result
+    else:
+        assert not error_messages
+        return None
 
 def get_resource(id):
     """
