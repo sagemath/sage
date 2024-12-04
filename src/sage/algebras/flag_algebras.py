@@ -457,7 +457,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``n`` -- integer; number of points of the flag
+        - ``n`` -- the size of the flag
         - ``**kwds`` -- can contain ftype_points, listing
             the points that will form part of the ftype;
             and can contain the blocks for each signature.
@@ -501,6 +501,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
             :func:`__init__` of :class:`Flag`
         """
+
         ftype_points = tuple()
         if 'ftype_points' in kwds:
             try:
@@ -727,7 +728,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             "symmetries": self._symmetries,
             "excluded": tuple([xx._serialize() for xx in excluded])
         }
-
+    
     #Optimizing and rounding
 
     def blowup_construction(self, target_size, pattern_size, symbolic=False, symmetric=True, unordered=False, **kwargs):
@@ -888,7 +889,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                         for cc in range(len(iinds)):
                             if iinds[cc]>=jinds[cc]:
                                 mat_inds.extend([gg+1, block_index + plus_index, iinds[cc]+1, jinds[cc]+1])
-                                mat_vals.append(values[cc].n())
+                                mat_vals.append(values[cc])
             block_index += len(table_constructor[params])
         return block_sizes, target, mat_inds, mat_vals
     
@@ -928,6 +929,25 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         prev_data[1] = list(target)
         return prev_data
     
+    def _make_sdp_data_integer(self, sdp_data):
+        from sage.arith.functions import lcm
+        from sage.rings.integer import Integer
+        block_sizes, target, mat_inds, mat_vals = sdp_data
+
+        mat_vals_factor = 1
+        for xx in mat_vals:
+            if xx!=0:
+                mat_vals_factor = lcm(mat_vals_factor, QQ(xx).denominator())
+        mat_vals = [Integer(xx*mat_vals_factor) for xx in mat_vals]
+        
+        target_factor = 1
+        for xx in target:
+            if xx!=0:
+                target_factor = lcm(target_factor, QQ(xx).denominator())
+        target = [Integer(xx*target_factor) for xx in target]
+
+        return (block_sizes, target, mat_inds, mat_vals)
+
     def _get_relevant_ftypes(self, target_size):
         r"""
         Returns the ftypes useful for optimizing up to `target_size`
@@ -989,7 +1009,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         r"""
         Creates the data that holds the linear constraints
         """
-        
         
         base_flags = self.generate_flags(target_size)
         
@@ -1387,8 +1406,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             -OEGraphTheory: 4
         """
         from csdpy import solve_sdp
-        import sys
-        import io
         import time
 
         #
@@ -1519,6 +1536,81 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     optimize = optimize_problem
     
+    def external_optimize(self, target_element, target_size, maximize=True, positives=None, \
+                         construction=None, file=None):
+        if (not isinstance(file, str)) or file=="":
+            raise ValueError("File name is invalid.")
+        if not file.endswith(".dat-s"):
+            if file.endswith(".dat"):
+                file += "-s"
+            else:
+                file += ".dat-s"
+        #
+        # Initial setup
+        #
+        base_flags = self.generate_flags(target_size)
+        print("Base flags generated, their number is {}".format(len(base_flags)))
+        mult = -1 if maximize else 1
+        target_vector_exact = (target_element.project()*(mult)<<(target_size - target_element.size())).values()
+        sdp_data = self._target_to_sdp_data(target_vector_exact)
+        
+        #
+        # Create the relevant ftypes
+        #
+        
+        ftype_data = self._get_relevant_ftypes(target_size)
+        print("The relevant ftypes are constructed, their number is {}".format(len(ftype_data)))
+        flags = [self.generate_flags(dat[0], dat[1]) for dat in ftype_data]
+        flag_sizes = [len(xx) for xx in flags]
+        print("Block sizes before symmetric/asymmetric change is applied: {}".format(flag_sizes))
+        
+        #
+        # Create the table constructor and add it to sdp_data
+        #
+        
+        table_constructor = self._create_table_constructor(ftype_data, target_size)
+        if not (construction==None or construction==[]):
+            if isinstance(construction, FlagAlgebraElement):
+                phi_vectors_exact = [construction.values()]
+            else:
+                phi_vectors_exact = [xx.values() for xx in construction]
+            print("Adjusting table with kernels from construction")
+            table_constructor = self._adjust_table_phi(table_constructor, phi_vectors_exact)
+        sdp_data = self._tables_to_sdp_data(table_constructor, prev_data=sdp_data)
+        print("Tables finished")
+
+        #
+        # Create constraints data and add it to sdp_data
+        #
+        
+        constraints_data = self._create_constraints_data(positives, target_element, target_size)
+        sdp_data = self._constraints_to_sdp_data(constraints_data, prev_data=sdp_data)
+        print("Constraints finished")
+
+
+        #
+        # Make sdp data integer and write it to a file
+        #
+        sdp_data = self._make_sdp_data_integer(sdp_data)
+        
+        with open(file, "a") as file:
+            block_sizes, target, mat_inds, mat_vals = sdp_data
+
+            file.write("{}\n{}\n".format(len(target), len(block_sizes)))
+            file.write(" ".join(map(str, block_sizes)) + "\n")
+            for xx in target:
+                file.write("%.1e " % xx)
+            file.write("\n")
+
+            for ii in range(len(mat_vals)):
+                file.write("{} {} {} {} {}\n".format(
+                    mat_inds[ii*4 + 0],
+                    mat_inds[ii*4 + 1],
+                    mat_inds[ii*4 + 2],
+                    mat_inds[ii*4 + 3],
+                    "%.1e" % mat_vals[ii]
+                ))
+
     def verify_certificate(self, file_or_cert, target_element, target_size, maximize=True, positives=None, construction=None):
         r"""
         Verifies the certificate provided by the optimizer written to `file`
@@ -1828,11 +1920,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return all_permutations
  
     #Generating tables
-    def _try_load_table(self, N, n1, n2, large_ftype, ftype_inj):
-        excluded = tuple([xx for xx in self._excluded if xx.size()<=N])
-        key = ("table", self._serialize(excluded=excluded), \
-               N, n1, n2, large_ftype._serialize(), ftype_inj)
-        return self._load(key=key)
 
     def mul_project_table(self, n1, n2, large_ftype, ftype_inj=None, target_size=None):
         r"""
@@ -1928,7 +2015,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         norm = falling_factorial(N - small_size, large_size - small_size) 
         norm *= binomial(N - large_size, n1 - large_size)
-        
         ret = tuple([ \
             MatrixArgs(QQ, mat[0], mat[1], entries=mat[2]).matrix()/norm for mat in mats])
         
