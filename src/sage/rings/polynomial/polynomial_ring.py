@@ -2683,7 +2683,7 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
           - ``'random'`` or ``None``:
             try random polynomials until an irreducible one is found
 
-          - ``'uniform_random'`` or ``None``:
+          - ``'uniform_random'``:
             try random polynomials sampled from all monic n-degree
             polynomials until an irreducible one is found.
 
