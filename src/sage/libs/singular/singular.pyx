@@ -1871,6 +1871,7 @@ cdef object check_error():
         assert not error_messages
         return None
 
+
 def get_resource(id):
     """
     Return a Singular "resource".

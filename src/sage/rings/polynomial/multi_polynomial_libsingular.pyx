@@ -4572,7 +4572,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             del iv
             id_Delete(&I, _ring)
 
-
     def lift(self, I):
         """
         Given an ideal ``I = (f_1,...,f_r)`` and some ``g (== self)`` in ``I``,
