@@ -180,9 +180,12 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         Set a flag to pretend that this elliptic curve is defined over a
         field while doing arithmetic, which is useful in some algorithms.
 
-        The flag affects all points created while the flag is set. Note
-        that elliptic curves are unique parents, hence setting this flag
-        may break seemingly unrelated parts of Sage.
+
+        .. WARNING::
+        
+            The flag affects all points created while the flag is set. Note
+            that elliptic curves are unique parents, hence setting this flag
+            may break seemingly unrelated parts of Sage.
 
         EXAMPLES::
 
