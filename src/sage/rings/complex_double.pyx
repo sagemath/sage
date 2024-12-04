@@ -1,5 +1,6 @@
 # distutils: extra_compile_args = -D_XPG6
 # distutils: libraries = m
+# distutils: language = c++
 r"""
 Double precision floating point complex numbers
 
@@ -74,9 +75,9 @@ from sage.misc.randstate cimport randstate, current_randstate
 
 from sage.libs.gsl.complex cimport *
 
-cdef extern from "<complex.h>":
-    double complex csqrt(double complex)
-    double cabs(double complex)
+cdef extern from "<complex>" namespace "std" nogil:
+    double abs (double complex x)
+    double complex sqrt (double complex x)
 
 import sage.rings.abc
 cimport sage.rings.integer
@@ -2324,10 +2325,10 @@ cdef class ComplexDoubleElement(FieldElement):
         if algorithm=="optimal":
             while True:
                 a1 = (a+b)/2
-                b1 = csqrt(a*b)
+                b1 = sqrt(a*b)
                 r = b1/a1
-                d  = cabs(r-1)
-                e  = cabs(r+1)
+                d  = abs(r-1)
+                e  = abs(r+1)
                 if e < d:
                     b1=-b1
                     d = e
@@ -2337,8 +2338,8 @@ cdef class ComplexDoubleElement(FieldElement):
         elif algorithm=="principal":
             while True:
                 a1 = (a+b)/2
-                b1 = csqrt(a*b)
-                if cabs((b1/a1)-1) < eps: return ComplexDoubleElement_from_doubles(a1.real, a1.imag)
+                b1 = sqrt(a*b)
+                if abs((b1/a1)-1) < eps: return ComplexDoubleElement_from_doubles(a1.real, a1.imag)
                 a, b = a1, b1
 
         else:

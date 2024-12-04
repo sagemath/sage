@@ -1,6 +1,6 @@
 bliss = cc.find_library('bliss', required: false, disabler: true)
 mcqd = cc.find_library('mcqd', required: false, disabler: true)
-cliquer = cc.find_library('cliquer')
+cliquer = cc.find_library('cliquer', required: not is_windows, disabler: true)
 
 # Cannot be found via pkg-config
 planarity = cc.find_library('planarity')

@@ -44,27 +44,38 @@ print(gmpy2.__file__.replace('__init__.py', ''))
 gmpy2 = declare_dependency(include_directories: inc_gmpy2)
 gmp = dependency('gmp')
 
-inc_cypari2 = run_command(
-  py,
-  [
-    '-c',
-    '''
+if is_windows
+  # Not yet available on Windows
+  cypari2 = disabler()
+else
+  inc_cypari2 = run_command(
+    py,
+    [
+      '-c',
+      '''
 import cypari2
 print(cypari2.__file__.replace('__init__.py', ''))
-    '''.strip(),
-  ],
-  check: true,
-).stdout().strip()
-cypari2 = declare_dependency(include_directories: inc_cypari2)
-pari = cc.find_library('pari')
+      '''.strip(),
+    ],
+    check: true,
+  ).stdout().strip()
+  cypari2 = declare_dependency(include_directories: inc_cypari2)
+endif
+pari = cc.find_library('pari', required: not is_windows, disabler: true)
 
-mpfr = cc.find_library('mpfr')
+mpfr = dependency('mpfr')
 
-flint = dependency('flint', version: '>=3.0.0')
-if flint.version().version_compare('<3.1')
-  # In older versions of flint, pkg-config file is broken, so we manually use find_library
-  # This has been fixed in flint v3.1: https://github.com/flintlib/flint/pull/1647
-  flint = cc.find_library('flint')
+if is_windows
+  # Flint on conda currently actives FLINT_USES_PTHREAD, which is not available under msvc
+  # https://github.com/conda-forge/libflint-feedstock/issues/38
+  flint = disabler()
+else
+  flint = dependency('flint', version: '>=3.0.0')
+  if flint.version().version_compare('<3.1')
+    # In older versions of flint, pkg-config file is broken, so we manually use find_library
+    # This has been fixed in flint v3.1: https://github.com/flintlib/flint/pull/1647
+    flint = cc.find_library('flint')
+  endif
 endif
 
 blas_order = []
@@ -79,38 +90,60 @@ endif
 blas_order += ['cblas', 'openblas', 'OpenBLAS', 'flexiblas', 'blis', 'blas']
 blas = dependency(blas_order)
 gsl = dependency('gsl', version: '>=2.5', required: true)
-gd = cc.find_library('gd')
+gd = dependency('gdlib', required: false)
+if not gd.found()
+  # Doesn't have a pkg-config file on some systems (https://github.com/conda-forge/libgd-feedstock/issues/55)
+  gd = cc.find_library('gd')
+endif
 # Only some platforms have a standalone math library (https://mesonbuild.com/howtox.html#add-math-library-lm-portably)
 m = cc.find_library('m', required: false)
-m4ri = cc.find_library('m4ri')
-m4rie = cc.find_library('m4rie')
-mtx = cc.find_library('mtx', required: false, disabler: true)
-png = cc.find_library('png', required: false)
-if not png.found()
-  png = cc.find_library('png16')
+if is_windows
+  # Compilation errors on Windows (https://github.com/conda-forge/m4ri-feedstock/issues/15)
+  m4ri = disabler()
+else
+  m4ri = dependency('m4ri', version: '>=20140914')
 endif
-zlib = cc.find_library('z')
+
+m4rie = cc.find_library('m4rie', required: not is_windows, disabler: true)
+mtx = cc.find_library('mtx', required: false, disabler: true)
+png = dependency('libpng', required: false)
+if not png.found()
+  png = dependency('libpng16')
+endif
+zlib = dependency('zlib')
 # Cannot be found via pkg-config
-ec = cc.find_library('ec')
-ecm = cc.find_library('ecm')
-ppl = cc.find_library('ppl')
-gmpxx = cc.find_library('gmpxx')
-fflas = dependency('fflas-ffpack')
-fplll = dependency('fplll')
-givaro = cc.find_library('givaro')
+ec = cc.find_library('ec', required: not is_windows, disabler: true)
+ecm = cc.find_library('ecm', required: not is_windows, disabler: true)
+ppl = cc.find_library('ppl', required: not is_windows, disabler: true)
+gmpxx = cc.find_library('gmpxx', required: not is_windows, disabler: true)
+fflas = dependency('fflas-ffpack', required: not is_windows, disabler: true)
+fplll = dependency('fplll', required: not is_windows, disabler: true)
+givaro = cc.find_library('givaro', required: not is_windows, disabler: true)
 linbox = dependency('linbox', required: false)
 if not linbox.found()
-  linbox = cc.find_library('linbox')
+  linbox = cc.find_library('linbox', required: not is_windows, disabler: true)
 endif
 mpc = cc.find_library('mpc')
-mpfi = cc.find_library('mpfi')
+mpfi = cc.find_library('mpfi', required: not is_windows, disabler: true)
 # Cannot be found via pkg-config (pkg-config file will be added in 4.13)
 # Test for common.h header that was added in 4.12 as a indirect version check
-gap = cc.find_library('gap', has_headers: ['gap/common.h'])
-singular = dependency('Singular')
-maxima = find_program('maxima', required: true)
+gap = cc.find_library(
+  'gap',
+  has_headers: ['gap/common.h'],
+  required: not is_windows,
+  disabler: true,
+)
+singular = dependency('Singular', required: not is_windows, disabler: true)
+singular_factory = disabler()
+if singular.found()
+  singular_factory = singular
+else
+  singular_proj = subproject('singular')
+  singular_factory = singular_proj.get_variable('factory_dep')
+endif
+maxima = find_program('maxima', required: not is_windows, disabler: true)
 # Cannot be found via pkg-config
-ntl = cc.find_library('ntl')
+ntl = cc.find_library('ntl', required: not is_windows, disabler: true)
 # Cannot be found via pkg-config
 meataxe = cc.find_library('meataxe', required: false, disabler: true)
 

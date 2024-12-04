@@ -1,0 +1,6 @@
+[wrap-git]
+url = https://github.com/Singular/Singular.git
+revision = head
+depth = 1
+patch_directory = singular
+diff_files = singular/include_config.patch

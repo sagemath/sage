@@ -1,6 +1,6 @@
 tdlib = cc.find_library('tdlib', required: false, disabler: true)
 # Cannot be found via pkg-config
-rw = cc.find_library('rw')
+rw = cc.find_library('rw', required: not is_windows, disabler: true)
 
 py.install_sources(
   'all.py',
