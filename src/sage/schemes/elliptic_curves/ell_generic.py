@@ -182,7 +182,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
 
         .. WARNING::
-        
+
             The flag affects all points created while the flag is set. Note
             that elliptic curves are unique parents, hence setting this flag
             may break seemingly unrelated parts of Sage.
