@@ -187,6 +187,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             that elliptic curves are unique parents, hence setting this flag
             may break seemingly unrelated parts of Sage.
 
+        .. NOTE::
+
+            This method is a **hack** provided for educational purposes.
+
         EXAMPLES::
 
             sage: E = EllipticCurve(Zmod(35), [1,1])
@@ -203,10 +207,6 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             Traceback (most recent call last):
             ...
             ZeroDivisionError: Inverse of 5 does not exist (characteristic = 35 = 5*7)
-
-        .. NOTE::
-
-            This method is a **hack** provided for educational purposes.
         """
         if flag:
             if self.__base_ring.is_finite():
