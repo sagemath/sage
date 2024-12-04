@@ -598,7 +598,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             raise NotImplementedError
 
         from sage.misc.profiler import Profiler
-        from sage.schemes.hyperelliptic_curves import monsky_washnitzer
+        from sage.schemes.hyperelliptic_curves_smooth_model import monsky_washnitzer
 
         prof = Profiler()
         prof("setup")
@@ -866,7 +866,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         """
         # TODO: exceptions for general curve form
         # TODO: implement Jacobians and show the relationship directly
-        from sage.schemes.hyperelliptic_curves import monsky_washnitzer
+        from sage.schemes.hyperelliptic_curves_smooth_model import monsky_washnitzer
 
         K = self.base_ring()
         prec = K.precision_cap()
@@ -1275,7 +1275,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         FS = self.frobenius(S)
         FS = (FS[0], FS[1])
         FQ = self.frobenius(Q)
-        from sage.schemes.hyperelliptic_curves import monsky_washnitzer
+        from sage.schemes.hyperelliptic_curves_smooth_model import monsky_washnitzer
 
         try:
             M_frob, forms = self._frob_calc
@@ -1362,7 +1362,7 @@ class HyperellipticCurveSmoothModel_padic_field(
 
         - Jennifer Balakrishnan
         """
-        from sage.schemes.hyperelliptic_curves import monsky_washnitzer
+        from sage.schemes.hyperelliptic_curves_smooth_model import monsky_washnitzer
 
         K = self.base_ring()
         R = monsky_washnitzer.SpecialHyperellipticQuotientRing(self, K)
