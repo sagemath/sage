@@ -797,7 +797,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             sage: H = HyperellipticCurveSmoothModel(x*(x-1)*(x+9))
             sage: K = Qp(7,10)
             sage: HK = H.change_ring(K)
-            sage: import monsky_washnitzer as mw
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model import monsky_washnitzer as mw
             sage: M_frob, forms = mw.matrix_of_frobenius_hyperelliptic(HK)
             sage: w = HK.invariant_differential()
             sage: x,y = HK.monsky_washnitzer_gens()

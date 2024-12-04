@@ -75,7 +75,7 @@ r"""
         sage: D2 = J(P); D2
         (x, 0 : 0)
         sage: P0 = H.distinguished_point(); P0
-        [1 : 0 : 0]
+        (1 : 0 : 0)
         sage: D2 == J(P, P0)
         True
 

@@ -42,7 +42,7 @@ r"""
         sage: K.<alpha> = QQ.extension(x^2+x-1)
         sage: HK = H.change_ring(K)
         sage: HK.points_at_infinity()
-        [[1 : alpha : 0], [1 : -alpha - 1 : 0]]
+        [(1 : alpha : 0), (1 : -alpha - 1 : 0)]
         sage: HK.is_split()
         True
 
@@ -59,7 +59,7 @@ r"""
         sage: H5 = HyperellipticCurveSmoothModel(x^7 + 1); H5
         Hyperelliptic Curve over 5-adic Field with capped relative precision 10 defined by y^2 = x^7 + 1 + O(5^10)
         sage: type(H5)
-        <class 'hyperelliptic_padic_field.HyperellipticCurveSmoothModel_padic_field_with_category'>
+        <class 'sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_padic_field.HyperellipticCurveSmoothModel_padic_field_with_category'>
 
     The input polynomials need not be monic::
         sage: R.<x> = QQ[]
@@ -183,7 +183,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         sage: K.<alpha> = QQ.extension(x^2+x-1)
         sage: HK = H.change_ring(K)
         sage: HK.points_at_infinity()
-        [[1 : alpha : 0], [1 : -alpha - 1 : 0]]
+        [(1 : alpha : 0), (1 : -alpha - 1 : 0)]
         sage: HK.is_split()
         True
 
@@ -200,7 +200,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         sage: H5 = HyperellipticCurveSmoothModel(x^7 + 1); H5
         Hyperelliptic Curve over 5-adic Field with capped relative precision 10 defined by y^2 = x^7 + 1 + O(5^10)
         sage: type(H5)
-        <class 'hyperelliptic_padic_field.HyperellipticCurveSmoothModel_padic_field_with_category'>
+        <class 'sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_padic_field.HyperellipticCurveSmoothModel_padic_field_with_category'>
 
     The input polynomials need not be monic::
         sage: R.<x> = QQ[]

@@ -46,7 +46,7 @@ class HyperellipticCurveSmoothModel_rational_field(
             [  2*3 + O(3^2)         O(3^2)         O(3^2)    3^-1 + O(3)]
             [        O(3^2)         O(3^2)     3 + O(3^2)         O(3^2)]
         """
-        import monsky_washnitzer  # TODO fix this
+        from sage.schemes.hyperelliptic_curves_smooth_model import monsky_washnitzer
 
         if isinstance(p, (sage.rings.abc.pAdicField, sage.rings.abc.pAdicRing)):
             K = p
@@ -99,6 +99,7 @@ def lfun_genus2(C):
     EXAMPLES::
 
         sage: from sage.lfunctions.pari import LFunction
+        sage: from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_rational_field import lfun_genus2
         sage: x = polygen(QQ, 'x')
         sage: C = HyperellipticCurveSmoothModel(x^5 + x + 1)
         sage: L = LFunction(lfun_genus2(C))

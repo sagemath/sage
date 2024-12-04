@@ -35,7 +35,7 @@ class HyperellipticCurveSmoothModel_finite_field(
             sage: C.random_point() # random
             (4 : 1 : 1)
             sage: type(C.random_point())
-            <class 'weighted_projective_point.SchemeMorphism_point_weighted_projective_ring'>
+            <class 'sage.schemes.hyperelliptic_curves_smooth_model.weighted_projective_point.SchemeMorphism_point_weighted_projective_ring'>
         """
         k = self.base_ring()
         n = 2 * k.order() + 1
@@ -101,15 +101,19 @@ class HyperellipticCurveSmoothModel_finite_field(
             sage: C.points()
             [(1 : 1 : 0), (1 : 6 : 0), (1 : 0 : 1), (2 : 0 : 1), (3 : 0 : 1),
              (4 : 0 : 1), (5 : 0 : 1), (6 : 0 : 1)]
+            sage: C.points_at_infinity()
+            [(1 : 1 : 0), (1 : 6 : 0)]
 
-        Conics are allowed (the issue reported at :issue:`11800`
-        has been resolved)::
+        This method works even for hyperelliptic curves with no rational points
+        at infinity::
 
-            sage: R.<x> = GF(7)[]
-            sage: H = HyperellipticCurveSmoothModel(3*x^2 + 5*x + 1)
-            sage: H.points()
-            [(0 : 1 : 1), (0 : 6 : 1), (1 : 3 : 1), (1 : 4 : 1), (2 : 3 : 1),
-             (2 : 4 : 1), (3 : 1 : 1), (3 : 6 : 1)]
+            sage: C = HyperellipticCurveSmoothModel(3 * x^6 - 1)
+            sage: C.points()
+            [(1 : 3 : 1), (1 : 4 : 1), (2 : 3 : 1), (2 : 4 : 1), (3 : 3 : 1),
+             (3 : 4 : 1), (4 : 3 : 1), (4 : 4 : 1), (5 : 3 : 1), (5 : 4 : 1),
+             (6 : 3 : 1), (6 : 4 : 1)]
+            sage: C.points_at_infinity()
+            []
 
         .. SEEALSO:: :meth:`rational_points_iterator`
         """
