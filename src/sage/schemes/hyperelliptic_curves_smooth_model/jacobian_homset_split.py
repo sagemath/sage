@@ -5,12 +5,12 @@ from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic impo
 from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_morphism import (
     MumfordDivisorClassFieldSplit,
 )
-from sage.structure.element import parent
 
 # TODO: move this
 from sage.schemes.hyperelliptic_curves_smooth_model.weighted_projective_point import (
     SchemeMorphism_point_weighted_projective_ring,
 )
+from sage.structure.element import parent
 
 
 class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
