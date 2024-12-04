@@ -1,4 +1,4 @@
-ipython numpy ipython_genutils pillow traitlets ipywidgets matplotlib | $(PYTHON_TOOLCHAIN) $(PYTHON)
+ipython numpy pillow traitlets ipywidgets matplotlib | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
