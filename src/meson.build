@@ -4,8 +4,8 @@ cpp = meson.get_compiler('cpp')
 cython = meson.get_compiler('cython')
 
 # Setup dependencies that are needed by many modules
-numpy_dep = dependency('numpy', required: false)
-if not numpy_dep.found()
+numpy = dependency('numpy', required: false)
+if not numpy.found()
   # Older versions of numpy don't have a pkg-config file
   # Try to use relative path in case it is installed in a venv in the same directory
   inc_numpy = run_command(
