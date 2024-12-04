@@ -1090,8 +1090,9 @@ class HyperellipticCurveSmoothModel_padic_field(
         - Jennifer Balakrishnan
 
         """
-        # TODO: fix this import for sage
-        from hyperelliptic_constructor import HyperellipticCurveSmoothModel
+        from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_constructor import (
+            HyperellipticCurveSmoothModel,
+        )
 
         K = self.base_ring()
         p = K.prime()

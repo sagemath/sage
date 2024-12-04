@@ -128,7 +128,9 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             ...
             ValueError: not a hyperelliptic curve: singularity in the provided affine patch
         """
-        from hyperelliptic_constructor import HyperellipticCurveSmoothModel
+        from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_constructor import (
+            HyperellipticCurveSmoothModel,
+        )
 
         f, h = self._hyperelliptic_polynomials
         fR = f.change_ring(R)
@@ -779,7 +781,9 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
         Returns the Jacobian of the hyperelliptic curve.
         """
-        from jacobian_generic import HyperellipticJacobian_generic
+        from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_generic import (
+            HyperellipticJacobian_generic,
+        )
 
         return HyperellipticJacobian_generic(self)
 
@@ -976,7 +980,9 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: HyperellipticCurveSmoothModel(x^5 + 1).odd_degree_model()
             Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + 1
         """
-        from hyperelliptic_constructor import HyperellipticCurveSmoothModel
+        from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_constructor import (
+            HyperellipticCurveSmoothModel,
+        )
 
         f, h = self._hyperelliptic_polynomials
         if f.base_ring().characteristic() == 2:

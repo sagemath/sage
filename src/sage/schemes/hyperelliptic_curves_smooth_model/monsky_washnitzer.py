@@ -111,8 +111,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing, SpecialCubicQuotientRingElement
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing, SpecialCubicQuotientRingElement
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: SpecialCubicQuotientRingElement(R, 2, 3, 4)
             (2) + (3)*x + (4)*x^2
@@ -120,8 +119,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
         TESTS::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: TestSuite(R).run()
             sage: p = R.create_element(t, t^2 - 2, 3)
@@ -152,8 +150,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: p = R.create_element(t, t^2 - 2, 3)
             sage: p.coeffs()
@@ -171,8 +168,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: x, T = R.gens()
             sage: not x
@@ -204,8 +200,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: x, T = R.gens()
             sage: x + T*x - 2*T^2
@@ -218,8 +213,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: x, T = R.gens()
             sage: f = x + T*x - 2*T^2
@@ -235,8 +229,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: f = R.create_element(2, t, t^2 - 3)
             sage: g = R.create_element(3 + t, -t, t)
@@ -257,8 +250,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: f = R.create_element(2, t, t^2 - 3)
             sage: g = R.create_element(3 + t, -t, t)
@@ -281,8 +273,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: f = R.create_element(2, t, t^2 - 3)
             sage: f
@@ -314,8 +305,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: x, T = R.gens()
             sage: f = R.create_element(2, t, t^2 - 3)
@@ -343,8 +333,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: x, T = R.gens()
 
@@ -363,8 +352,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: x, T = R.gens()
 
@@ -465,8 +453,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
     EXAMPLES::
 
         sage: B.<t> = PolynomialRing(Integers(125))
-        sage: # TODO change import for sage
-        sage: from monsky_washnitzer import SpecialCubicQuotientRing
+        sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
         sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
         sage: R
         SpecialCubicQuotientRing over Ring of integers modulo 125
@@ -534,8 +521,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: R
             SpecialCubicQuotientRing over Ring of integers modulo 125
@@ -543,8 +529,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
 
         ::
 
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 + 2*t^2 - t + B(1/4))
             Traceback (most recent call last):
             ...
@@ -553,8 +538,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
         ::
 
             sage: B.<t> = PolynomialRing(Integers(10))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + 1)
             Traceback (most recent call last):
             ...
@@ -601,8 +585,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: R
             SpecialCubicQuotientRing over Ring of integers modulo 125
@@ -620,8 +603,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: R.poly_ring()
             Univariate Polynomial Ring in T over Ring of integers modulo 125
@@ -641,8 +623,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: x, T = R.gens()
             sage: x
@@ -673,8 +654,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: A, z = R.poly_ring().objgen()
             sage: R.create_element(z^2, z+1, 3)  # indirect doctest
@@ -697,8 +677,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: B.<t> = PolynomialRing(Integers(125))
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: R.one()
             (1) + (0)*x + (0)*x^2
@@ -714,8 +693,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
 
             sage: Z125 = Integers(125)
             sage: B.<t> = PolynomialRing(Z125)
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialCubicQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialCubicQuotientRing
             sage: R = SpecialCubicQuotientRing(t^3 - t + B(1/4))
             sage: R.has_coerce_map_from(Z125)
             True
@@ -735,8 +713,7 @@ def transpose_list(input) -> list[list]:
 
     EXAMPLES::
 
-        sage: # TODO change import for sage
-        sage: from monsky_washnitzer import transpose_list
+        sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import transpose_list
         sage: L = [[1, 2], [3, 4], [5, 6]]
         sage: transpose_list(L)
         [[1, 3, 5], [2, 4, 6]]
@@ -767,8 +744,7 @@ def helper_matrix(Q):
     EXAMPLES::
 
         sage: t = polygen(QQ,'t')
-        sage: # TODO change import for sage
-        sage: from monsky_washnitzer import helper_matrix
+        sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import helper_matrix
         sage: helper_matrix(t**3-4*t-691)
         [     64/12891731  -16584/12891731 4297329/12891731]
         [   6219/12891731     -32/12891731    8292/12891731]
@@ -809,8 +785,7 @@ def lift(x):
     EXAMPLES::
 
         sage: # needs sage.rings.padics
-        sage: # TODO change import for sage
-        sage: from monsky_washnitzer import lift
+        sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import lift
         sage: l = lift(Qp(13)(131)); l
         131
         sage: l.parent()
@@ -1189,8 +1164,7 @@ def frobenius_expansion_by_newton(Q, p, M):
 
     EXAMPLES::
 
-        sage: # TODO change import for sage
-        sage: from monsky_washnitzer import frobenius_expansion_by_newton
+        sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import frobenius_expansion_by_newton
         sage: R.<x> = Integers(5^3)['x']
         sage: Q = x^3 - x + R(1/4)
         sage: frobenius_expansion_by_newton(Q,5,3)
@@ -1380,8 +1354,7 @@ def frobenius_expansion_by_series(Q, p, M):
 
     EXAMPLES::
 
-        sage: # TODO change import for sage
-        sage: from monsky_washnitzer import frobenius_expansion_by_series
+        sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import frobenius_expansion_by_series
         sage: R.<x> = Integers(5^3)['x']
         sage: Q = x^3 - x + R(1/4)
         sage: frobenius_expansion_by_series(Q,5,3)                                      # needs sage.libs.pari
@@ -1461,8 +1434,7 @@ def adjusted_prec(p, prec):
 
     EXAMPLES::
 
-        sage: # TODO change import for sage
-        sage: from monsky_washnitzer import adjusted_prec
+        sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import adjusted_prec
         sage: adjusted_prec(5,2)
         3
     """
@@ -2477,8 +2449,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
 
             sage: R.<x> = QQ['x']
             sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialHyperellipticQuotientRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialHyperellipticQuotientRing
             sage: HQR = SpecialHyperellipticQuotientRing(E)
             sage: TestSuite(HQR).run()                                                  # needs sage.rings.real_interval_field
 
@@ -2900,9 +2871,8 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             sage: R.<x> = QQ['x']
             sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
-            sage: # TODO fix me when in sage
             sage: type(x.parent().monsky_washnitzer())
-            <class 'monsky_washnitzer.MonskyWashnitzerDifferentialRing_with_category'>
+            <class 'sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer.MonskyWashnitzerDifferentialRing_with_category'>
         """
         return self._monsky_washnitzer
 
@@ -3639,8 +3609,7 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
 
             sage: R.<x> = QQ['x']
             sage: E = HyperellipticCurveSmoothModel(x^5 - 3*x + 1)
-            sage: # TODO change import for sage
-            sage: from monsky_washnitzer import SpecialHyperellipticQuotientRing, MonskyWashnitzerDifferentialRing
+            sage: from sage.schemes.hyperelliptic_curves_smooth_model.monsky_washnitzer import SpecialHyperellipticQuotientRing, MonskyWashnitzerDifferentialRing
             sage: S = SpecialHyperellipticQuotientRing(E)
             sage: DR = MonskyWashnitzerDifferentialRing(S)
             sage: TestSuite(DR).run()                                                   # needs sage.rings.real_interval_field

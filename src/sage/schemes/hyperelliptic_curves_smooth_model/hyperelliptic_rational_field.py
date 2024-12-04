@@ -121,7 +121,7 @@ def lfun_genus2(C):
         ValueError: curve must be hyperelliptic of genus 2
     """
     from sage.libs.pari import pari
-    import hyperelliptic_g2
+    from sage.schemes.hyperelliptic_curves_smooth_model import hyperelliptic_g2
 
     if not isinstance(C, hyperelliptic_g2.HyperellipticCurveSmoothModel_g2):
         raise ValueError("curve must be hyperelliptic of genus 2")
