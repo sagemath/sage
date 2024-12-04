@@ -170,6 +170,8 @@ AUTHORS:
 #   * pNext and pIter don't need currRing
 #   * p_Normalize apparently needs currRing
 
+from warnings import warn
+
 from cpython.object cimport Py_NE
 from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -183,7 +185,6 @@ from sage.libs.singular.decl cimport (ring, poly, ideal, intvec, number,
 
 # singular functions
 from sage.libs.singular.decl cimport (
-    errorreported,
     n_Invers, n_GetChar,
     p_ISet, rChangeCurrRing, p_Copy, p_Init, p_SetCoeff, p_Setm, p_SetExp, p_Add_q,
     p_NSet, p_GetCoeff, p_Delete, p_GetExp, pNext, rRingVar, omAlloc0, omStrDup,
@@ -4635,8 +4636,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: foo[0][0]
             Ideal (x1 + 1, x2^2 - 3) of Multivariate Polynomial Ring in x1, x2 over Rational Field
         """
-        global errorreported
-
         cdef ideal *fI = idInit(1, 1)
         cdef ideal *_I
         cdef MPolynomialRing_libsingular parent = self._parent
@@ -4667,15 +4666,15 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         if r != currRing:
             rChangeCurrRing(r)  # idLift
+        start_catch_error()
         sig_on()
         res = idLift(_I, fI, NULL, 0, 0, 0)
         sig_off()
-        if errorreported != 0:
-            errorcode = errorreported
-            errorreported = 0
-            if errorcode == 1:
-                raise ValueError("polynomial is not in the ideal")
-            raise RuntimeError
+        s = check_error()
+        if s:
+            if s != ('2nd module does not lie in the first',):
+                warn(f'unexpected error from singular: {s}')
+            raise ValueError("polynomial is not in the ideal")
 
         l = []
         for i from 0 <= i < IDELEMS(res):
