@@ -325,7 +325,9 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         For internal use only. See :mod:`morphism` for details.
         """
-        from weighted_projective_point import SchemeMorphism_point_weighted_projective_ring
+        from sage.schemes.hyperelliptic_curves_smooth_model.weighted_projective_point import (
+            SchemeMorphism_point_weighted_projective_ring,
+        )
         return SchemeMorphism_point_weighted_projective_ring(*args, **kwds)
 
     def _repr_(self) -> str:
