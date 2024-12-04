@@ -606,7 +606,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         """
         Construct an element of ``self`` from ``x``.
 
-        If ``x`` is an effective divisor, then it is assumed to be of
+        If ``x`` is an effective divisor, then it must be of
         degree `g`, the genus of the function field.
 
         EXAMPLES::
