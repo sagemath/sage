@@ -34,7 +34,7 @@ def add(E, P, Q):
     X1, Y1, Z1 = P
     X2, Y2, Z2 = Q
 
-    #TODO: I've made a half-hearted attempt at simplifying the formulas
+    # TODO: I've made a half-hearted attempt at simplifying the formulas
     # by caching common subexpressions. This could almost certainly be
     # sped up significantly with some more serious optimization effort.
 
