@@ -559,6 +559,23 @@ from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
 from sage.misc.fast_methods import WithEqualityById
 
 
+class WithEqualityByArgs(metaclass=ClasscallMetaclass):
+    @staticmethod
+    def __classcall__(cls, *args, **options):
+        instance = typecall(cls, *args, **options)
+        instance._reduction = (cls, args, options)
+        return instance
+
+    def __eq__(self, other):
+        try:
+            return self._reduction == other._reduction
+        except AttributeError:
+            return False
+
+    def __hash__(self):
+        return hash(self._reduction[:2])
+
+
 class WithPicklingByInitArgs(metaclass=ClasscallMetaclass):
     r"""
     Classes derived from :class:`WithPicklingByInitArgs` store the arguments
