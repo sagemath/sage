@@ -21,10 +21,10 @@ parser.add_argument(
 options = parser.parse_args()
 
 platforms = {
-    "linux-64": "linux",
-    "linux-aarch64": "linux-aarch64",
-    "osx-64": "macos-x86_64",
-    "osx-arm64": "macos",
+    # "linux-64": "linux",
+    # "linux-aarch64": "linux-aarch64",
+    # "osx-64": "macos-x86_64",
+    # "osx-arm64": "macos",
     "win-64": "win",
 }
 pythons = ["3.9", "3.10", "3.11"]
@@ -78,7 +78,7 @@ def update_conda(source_dir: Path) -> None:
 
     for platform_key, platform_value in platforms.items():
         for python in pythons:
-            dependencies = get_dependencies(pyproject_toml, python)
+            dependencies = get_dependencies(pyproject_toml, python, platform_key)
             for tag in tags:
                 # Pin Python version
                 pinned_dependencies = {
@@ -128,25 +128,25 @@ def update_conda(source_dir: Path) -> None:
                     f.write(f"name: sage{tag or '-dev'}\n{content}")
 
 
-def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> list[str]:
+def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[str]:
     grayskull_config = Configuration("sagemath")
     pyproject_metadata = merge_setup_toml_metadata(
         {}, get_all_toml_info(pyproject_toml)
     )
     requirements = extract_requirements(pyproject_metadata, grayskull_config, {})
-    all_requirements = (
-        requirements.get("build", [])
-        + requirements.get("host", [])
-        + requirements.get("run", [])
+    all_requirements: set[str] = (
+        set(requirements.get("build", {}))
+        | set(requirements.get("host", {}))
+        | set(requirements.get("run", {}))
     )
 
     # Specify concrete package for some virtual packages
     all_requirements.remove("{{ blas }}")
-    all_requirements.append("blas=2.*=openblas")
-    all_requirements.append("c-compiler")
-    all_requirements.append("cxx-compiler")
+    all_requirements.add("blas=2.*=openblas")
+    all_requirements.remove("{{ compiler('c') }}")
+    all_requirements.remove("{{ compiler('cxx') }}")
     # all_requirements.remove("{{ compiler('fortran') }}")
-    all_requirements.append("fortran-compiler")
+    all_requirements.add("fortran-compiler")
     if platform == "win-64":
         all_requirements.add("vs2022_win-64")
         # For mingw:
@@ -213,7 +213,6 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> list[s
     python_requirements = set(pyproject_metadata.get("install_requires", []))
     # Specify concrete packages for some packages not yet in grayskull
     python_requirements.remove("pkg:generic/tachyon")
-    python_requirements.add("tachyon")
     if platform != "win-64":
         python_requirements.add("tachyon")
     python_requirements.remove("pkg:generic/sagemath-elliptic-curves")
@@ -234,12 +233,13 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> list[s
     )
     all_requirements.remove("<{ pin_compatible('numpy') }}")
     all_requirements.remove("memory_allocator")
-    # Needed to run configure/bootstrap, can be deleted once we fully migrated to meson
-    all_requirements.append("autoconf")
-    all_requirements.append("automake")
-    all_requirements.append("m4")
+    if platform != "win-64":
+        # Needed to run configure/bootstrap, can be deleted once we fully migrated to meson
+        all_requirements.add("autoconf")
+        all_requirements.add("automake")
+        all_requirements.add("m4")
     # Needed to fix a bug on Macos with broken pkg-config
-    all_requirements.append("expat")
+    all_requirements.add("expat")
     return all_requirements
 
 
