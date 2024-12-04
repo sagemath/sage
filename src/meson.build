@@ -78,11 +78,7 @@ endif
 # that too to make the fallback detection with CMake work
 blas_order += ['cblas', 'openblas', 'OpenBLAS', 'flexiblas', 'blis', 'blas']
 blas = dependency(blas_order)
-gsl = dependency(
-  'gsl',
-  version: '>=2.5',
-  required: true,
-)
+gsl = dependency('gsl', version: '>=2.5', required: true)
 gd = cc.find_library('gd')
 # Only some platforms have a standalone math library (https://mesonbuild.com/howtox.html#add-math-library-lm-portably)
 m = cc.find_library('m', required: false)
