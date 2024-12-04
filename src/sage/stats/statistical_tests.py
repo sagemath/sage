@@ -8,14 +8,14 @@ This module is intended to hold such statistical tests.
 import warnings
 
 def sigmas_from_uniform(list_of_counts):
-    '''Approximation for the likelihood of the observations given a uniform distribution.
+    '''Approximation for the likelihood of the observations given a uniform distribution. 
 
     Given $n$ possible outcomes and $k$ samples, the expected number of occurrences of each outcome is $k/n$.
     Let $x_i$ be the number of occurences for outcome $i$.
 
     For sufficiently large $k,n$:
     chi_square = $sum_i (x_i-k/n)**2/(k/n)$ is approximately distributed as a chi squared with $k-1$ degrees of freedom.
-    sigmas = $(chi_square_stat-(k-1))/(2k-2)**.5$ is approximately distributed as Gaussian with mean 0 and variance 1.
+    sigmas = $(chi_square_stat-(k-1))/(2k-2)**.5$ is approximately distributed as Gaussian with mean 0 and variance 1. Sigma refers to standard deviation.
 
     Negative sigmas indicates that the counts are *more* uniform than you would expect at random.
     Positive sigmas indicates that the counts are *less* uniform than you would expect at random.
