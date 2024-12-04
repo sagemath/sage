@@ -10,7 +10,6 @@ from sage.rings.integer_ring import ZZ
 from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.rings.integer cimport Integer
-from libcpp.vector cimport vector
 
 cdef class Matrix:
     """
@@ -212,8 +211,7 @@ cdef class Matrix:
             <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
         """
         cdef long n = self.nrows()
-        cdef long i, j, k
-        cdef vector[scalar] v = <vector[scalar]> self.M.get_entries()   # coercion needed to deal with const
+        cdef long i, j
 
         cdef Matrix_integer_dense Td
         cdef Matrix_integer_sparse Ts
@@ -221,21 +219,19 @@ cdef class Matrix:
         # Ugly code...
         if sparse:
             Ts = MatrixSpace(ZZ, n, sparse=sparse).zero_matrix().__copy__()
-            k = 0
             for i from 0 <= i < n:
                 for j from 0 <= j < n:
-                    if v[k]:
-                        Ts.set_unsafe(i, j, Integer(v[k]))
-                    k += 1
+                    Mij = Integer(self.M.sub(i+1,j+1));
+                    if Mij:
+                        Ts.set_unsafe(i, j, Mij)
             return Ts
         else:
             Td = MatrixSpace(ZZ, n, sparse=sparse).zero_matrix().__copy__()
-            k = 0
             for i from 0 <= i < n:
                 for j from 0 <= j < n:
-                    if v[k]:
-                        Td.set_unsafe(i, j, Integer(v[k]))
-                    k += 1
+                    Mij = Integer(self.M.sub(i+1,j+1));
+                    if Mij:
+                        Td.set_unsafe(i, j, Mij)
             return Td
 
 
