@@ -525,7 +525,7 @@ class BackendIPythonNotebook(BackendIPython):
         elif isinstance(rich_output, OutputLatex):
             return ({'text/latex': rich_output.latex.get_str(),
                      'text/plain': plain_text.text.get_str(),
-            }, {})
+                     }, {})
         elif isinstance(rich_output, OutputHtml):
             data = {'text/html': rich_output.html.get_str(),
                     'text/plain': plain_text.text.get_str()}
@@ -535,29 +535,29 @@ class BackendIPythonNotebook(BackendIPython):
         elif isinstance(rich_output, OutputImagePng):
             return ({'image/png': rich_output.png.get(),
                      'text/plain': plain_text.text.get_str(),
-            }, {})
+                     }, {})
         elif isinstance(rich_output, OutputImageGif):
             return ({'text/html': rich_output.html_fragment(),
                      'text/plain': plain_text.text.get_str(),
-            }, {})
+                     }, {})
         elif isinstance(rich_output, OutputImageJpg):
             return ({'image/jpeg': rich_output.jpg.get(),
                      'text/plain': plain_text.text.get_str(),
-            }, {})
+                     }, {})
         elif isinstance(rich_output, OutputImageSvg):
             return ({'image/svg+xml': rich_output.svg.get(),
                      'text/plain': plain_text.text.get_str(),
-            }, {})
+                     }, {})
         elif isinstance(rich_output, OutputImagePdf):
             return ({'image/png': rich_output.png.get(),
                      'text/plain': plain_text.text.get_str(),
-            }, {})
+                     }, {})
         elif isinstance(rich_output, OutputSceneJmol):
             from sage.repl.display.jsmol_iframe import JSMolHtml
             jsmol = JSMolHtml(rich_output, height=500)
             return ({'text/html': jsmol.iframe(),
                      'text/plain': plain_text.text.get_str(),
-            }, {})
+                     }, {})
         elif isinstance(rich_output, OutputSceneThreejs):
             escaped_html = html.escape(rich_output.html.get_str())
             iframe = IFRAME_TEMPLATE.format(
@@ -567,7 +567,7 @@ class BackendIPythonNotebook(BackendIPython):
             )
             return ({'text/html': iframe,
                      'text/plain': plain_text.text.get_str(),
-            }, {})
+                     }, {})
         else:
             raise TypeError('rich_output type not supported')
 

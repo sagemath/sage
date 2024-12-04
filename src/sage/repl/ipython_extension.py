@@ -302,7 +302,7 @@ class SageMagics(Magics):
                 max_width = 0
             if max_width <= 0:
                 raise ValueError(
-                        "max width must be a positive integer")
+                    "max width must be a positive integer")
             import sage.typeset.character_art as character_art
             character_art.MAX_WIDTH = max_width
             dm.preferences.text = arg0
@@ -435,7 +435,7 @@ class SageCustomizations:
         self.init_line_transforms()
 
         try:
-            import sage.all # until sage's import hell is fixed
+            import sage.all  # until sage's import hell is fixed
         except ImportError:
             import sage.all__sagemath_repl
 
