@@ -75,7 +75,7 @@ Arithmetic with a point over an extension of a finite field::
     sage: P*(n+1)-P*n == P
     True
 
-Arithmetic over `\ZZ/N\ZZ` with composite `N` is supported::
+Arithmetic over `\Zmod{N}` with composite `N` is supported::
 
     sage: N = 1715761513
     sage: E = EllipticCurve(Integers(N), [3,-13])
