@@ -30,6 +30,7 @@ from sage.rings.ring import CommutativeRing
 from sage.structure.parent import Parent
 from sage.combinat.integer_vector import IntegerVectors
 
+
 class LaurentPolynomialRing_generic(CommutativeRing, Parent):
     """
     Laurent polynomial ring (base class).

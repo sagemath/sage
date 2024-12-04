@@ -78,18 +78,17 @@ endif
 # that too to make the fallback detection with CMake work
 blas_order += ['cblas', 'openblas', 'OpenBLAS', 'flexiblas', 'blis', 'blas']
 blas = dependency(blas_order)
-gsl = dependency(
-  'gsl',
-  fallback: ['gsl', 'gsl_dep'],
-  version: '>=2.5',
-  required: true,
-)
+gsl = dependency('gsl', version: '>=2.5', required: true)
 gd = cc.find_library('gd')
-m = cc.find_library('m')
+# Only some platforms have a standalone math library (https://mesonbuild.com/howtox.html#add-math-library-lm-portably)
+m = cc.find_library('m', required: false)
 m4ri = cc.find_library('m4ri')
 m4rie = cc.find_library('m4rie')
 mtx = cc.find_library('mtx', required: false, disabler: true)
-png = cc.find_library('png')
+png = cc.find_library('png', required: false)
+if not png.found()
+  png = cc.find_library('png16')
+endif
 zlib = cc.find_library('z')
 # Cannot be found via pkg-config
 ec = cc.find_library('ec')

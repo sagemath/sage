@@ -17,13 +17,12 @@ AUTHOR:
 # ****************************************************************************
 
 from sage.groups.perm_gps.permgroup_named import CyclicPermutationGroup
-from sage.libs.singular.function import lib, singular_function
+from sage.libs.singular.function import lib
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from cpython.object cimport PyObject_RichCompare
 
 # Define some singular functions
 lib("freegb.lib")
-poly_reduce = singular_function("NF")
 
 #####################
 # Free algebra elements
@@ -695,6 +694,8 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         bck = (libsingular_options['redTail'], libsingular_options['redSB'])
         libsingular_options['redTail'] = True
         libsingular_options['redSB'] = True
+        from sage.libs.singular.function import singular_function
+        poly_reduce = singular_function("NF")
         poly = poly_reduce(C(self._poly), gI, ring=C,
                            attributes={gI: {"isSB": 1}})
         libsingular_options['redTail'] = bck[0]

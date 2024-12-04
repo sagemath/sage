@@ -173,7 +173,7 @@ class Category(UniqueRepresentation, SageObject):
         ....:          pass
         ....:
         ....:     class ElementMethods:# holds the generic operations on elements
-        ....:          def gcd(x,y):
+        ....:          def gcd(x, y):
         ....:              # Euclid algorithms
         ....:              pass
         ....:

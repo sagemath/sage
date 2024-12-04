@@ -69,7 +69,7 @@ from .orthogonal_arrays import wilson_construction
 cyclic_shift = lambda l,i : l[-i:]+l[:-i]
 
 
-def _MOLS_from_string(s,k):
+def _MOLS_from_string(s, k):
     r"""
     Return MOLS from a string.
 
@@ -3829,13 +3829,13 @@ def DM_52_6_1():
 
     from itertools import product
 
-    def t1(i,R):
+    def t1(i, R):
         if i > 1:
             return t1(1,t1(i-1,R))
         ((x1,y1),(x2,y2),(x3,y3),(x4,y4),(x5,y5),(x6,y6)) = R
         return [(z*x3, 3*y3), (z*x1, 3*y1), (z*x2, 3*y2), (z*x6, 3*y6), (z*x4, 3*y4), (z*x5, 3*y5)]
 
-    def t2(i,R):
+    def t2(i, R):
         if i > 1:
             return t2(1,t2(i-1,R))
         ((x1,y1),(x2,y2),(x3,y3),(x4,y4),(x5,y5),(x6,y6)) = R
