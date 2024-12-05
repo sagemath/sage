@@ -29,8 +29,10 @@ def add(E, P, Q):
     a1, a2, a3, a4, a6 = E.a_invariants()
     b2, b4, b6, b8 = E.b_invariants()
 
-    assert P in E
-    assert Q in E
+    if P not in E:
+        raise ValueError('P must be in E')
+    if Q not in E:
+        raise ValueError('Q must be in E')
     X1, Y1, Z1 = P
     X2, Y2, Z2 = Q
 
