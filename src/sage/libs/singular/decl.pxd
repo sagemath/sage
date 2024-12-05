@@ -3,7 +3,7 @@
 # distutils: libraries = SINGULAR_LIBRARIES
 # distutils: library_dirs = SINGULAR_LIBDIR
 # distutils: language = c++
-# distutils: extra_compile_args = -std=c++11
+# distutils: extra_compile_args = -std=c++17
 """
 Declarations of Singular's C/C++ Functions
 
