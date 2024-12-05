@@ -17,7 +17,7 @@ Linear algebra underpins a lot of Sage's algorithms, so it is fast,
 robust and comprehensive.  We've already seen some basic linear algebra,
 including matrices, determinants, and the ``.rref()`` method for
 row-reduced echelon form in the :doc:`Programming Tutorial
-<../Programming>`, so the content here continues from there to some
+<../programming>`, so the content here continues from there to some
 extent.
 
 Matrices and Vectors
@@ -292,7 +292,7 @@ As you might expect, random matrices are random.
     sage: H.eigenvalues() # random
     [-10.08361801792048?, -2.682220984496031?, 4.739405672111427?, -1.320116668180795? - 10.88676412262347?*I, -1.320116668180795? + 10.88676412262347?*I]
 
-According to the :doc:`Numerical analysis quickstart <NumAnalysis>`,
+According to the :doc:`Numerical analysis quickstart <numerical-analysis>`,
 the question marks indicate that the actual
 number is inside the interval found by incrementing and
 decrementing the last digit of the printed number.  So 9.1? is a number
