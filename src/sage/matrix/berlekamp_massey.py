@@ -29,7 +29,7 @@ def berlekamp_massey(a):
     of a linear recurrence sequence `a`.
 
     The minimal polynomial of a linear recurrence `\{a_r\}` is
-    by definition the unique monic polynomial `g`, such that if
+    by definition the monic polynomial `g`, such that if
     `\{a_r\}` satisfies a linear recurrence
     `a_{j+k} + b_{j-1} a_{j-1+k} + \cdots + b_0 a_k=0`
     (for all `k\geq 0`), then `g` divides the
