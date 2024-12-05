@@ -121,6 +121,8 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         ...
         The polyhedron is unbounded.
     """
+    Latte_count().require()
+
     arg = str_to_bytes(arg)
 
     args = [Latte_count().absolute_filename()]
@@ -336,6 +338,8 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
         ...
         determinant: nonsquare matrix
     """
+    Latte_integrate().require()
+
     arg = str_to_bytes(arg)
 
     from sage.rings.rational import Rational
