@@ -857,8 +857,7 @@ class GraphClasses(UniqueRepresentation):
         Depending on the credentials of the user running Sage when this command
         is run, one attempt is made at saving the result in Sage's directory so
         that all users can benefit from it. If the credentials are not
-        sufficient, the XML file are saved instead in the user's directory (in
-        the SAGE_DB folder).
+        sufficient, the XML file are saved instead in the user's directory.
 
         EXAMPLES::
 
