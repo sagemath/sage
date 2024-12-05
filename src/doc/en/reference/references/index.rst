@@ -973,7 +973,7 @@ REFERENCES:
             Anal. Appl. 15 (1994) 804-823.
             :doi:`10.1137/S0895479892230031`
 
-.. [BL1995] W. Bosma, H.W. Lenstra: Complete Systems of Addition Laws for
+.. [BL1995] W. Bosma, H.W. Lenstra: Complete Systems of Two Addition Laws for
             Elliptic Curves. Journal of Number Theory, volume 53, issue 2,
             pages 229-240. 1995.
 
