@@ -4524,12 +4524,29 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             Traceback (most recent call last):
             ...
             NotImplementedError: Factorization of multivariate polynomials over Ring of integers modulo 49 is not implemented.
+
+        Ensure interrupt does not make the internal state inconsistent::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: n = 11  # chosen so that the computation takes > 1 second but not excessively long.
+            ....: # when Singular improves the algorithm or hardware gets faster, increase n.
+            sage: alarm(0.5); h = (x^2^n-y^2^n).factor()
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+            sage: alarm(0.5); h = (x^2^n-y^2^n).factor()
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+            sage: h = (x^2^n-y^2^n).factor()
+            sage: h
+            (x - y) * (x + y) * (x^2 + y^2) * (x^4 + y^4) * (x^8 + y^8) * (x^16 + y^16) * (x^32 + y^32) * (x^64 + y^64) * (x^128 + y^128) * (x^256 + y^256) * (x^512 + y^512) * (x^1024 + y^1024)
         """
         cdef ring *_ring = self._parent_ring
         cdef poly *ptemp
         cdef intvec *iv
         cdef int *ivv
-        cdef ideal *I
+        cdef ideal *I = NULL
         cdef MPolynomialRing_libsingular parent = self._parent
         cdef int i
 
@@ -4552,13 +4569,14 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         if _ring != currRing:
             rChangeCurrRing(_ring)   # singclap_factorize
         start_catch_error()
-        sig_on()
-        I = singclap_factorize(p_Copy(self._poly, _ring), &iv, 0, _ring)
-        sig_off()
-
         try:
-            if check_error():
-                raise NotImplementedError("Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
+            try:
+                sig_on()
+                I = singclap_factorize(p_Copy(self._poly, _ring), &iv, 0, _ring)
+                sig_off()
+            finally:
+                if check_error():
+                    raise NotImplementedError("Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
 
             ivv = iv.ivGetVec()
             v = [(new_MP(parent, p_Copy(I.m[i], _ring)), ivv[i])
@@ -4621,7 +4639,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: M
             [y^7, x^7*y^2 + x^8 + x^5*y^3 + x^6*y + x^3*y^4 + x^4*y^2 + x*y^5 + x^2*y^3 + y^4]
 
-
         TESTS:
 
         Check that :issue:`13714` is fixed::
@@ -4635,6 +4652,24 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: foo = I.complete_primary_decomposition() # indirect doctest
             sage: foo[0][0]
             Ideal (x1 + 1, x2^2 - 3) of Multivariate Polynomial Ring in x1, x2 over Rational Field
+
+        Ensure interrupt does not make the internal state inconsistent::
+
+            sage: R.<x,y> = QQ[]
+            sage: n = 15  # chosen so that the computation takes > 1 second but not excessively long.
+            ....: # when Singular improves the algorithm or hardware gets faster, increase n.
+            sage: I = R.ideal([(x-i)*(y-j) for i in (0..n) for j in (0..n)])
+            sage: f = prod((x-i)*(y-j) for i in (0..n) for j in (0..n))
+            sage: alarm(0.5); f.lift(I)
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+            sage: alarm(0.5); f.lift(I)
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+            sage: f.lift(I)
+            Polynomial Sequence with 256 Polynomials in 2 Variables
         """
         cdef ideal *fI = idInit(1, 1)
         cdef ideal *_I
@@ -4642,7 +4677,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         cdef int i = 0
         cdef int j
         cdef ring *r = self._parent_ring
-        cdef ideal *res
+        cdef ideal *res = NULL
 
         if isinstance(I, MPolynomialIdeal):
             I = I.gens()
@@ -4666,24 +4701,27 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         if r != currRing:
             rChangeCurrRing(r)  # idLift
-        start_catch_error()
-        sig_on()
-        res = idLift(_I, fI, NULL, 0, 0, 0)
-        sig_off()
-        s = check_error()
-        if s:
-            if s != ('2nd module does not lie in the first',):
-                warn(f'unexpected error from singular: {s}')
-            raise ValueError("polynomial is not in the ideal")
+        try:
+            start_catch_error()
+            try:
+                sig_on()
+                res = idLift(_I, fI, NULL, 0, 0, 0)
+                sig_off()
+            finally:
+                s = check_error()
+            if s:
+                if s != ('2nd module does not lie in the first',):
+                    warn(f'unexpected error from singular: {s}')
+                raise ValueError("polynomial is not in the ideal")
 
-        l = []
-        for i from 0 <= i < IDELEMS(res):
-            for j from 1 <= j <= IDELEMS(_I):
-                l.append( new_MP(parent, pTakeOutComp(&res.m[i], 1)) )
-
-        id_Delete(&fI, r)
-        id_Delete(&_I, r)
-        id_Delete(&res, r)
+            l = []
+            for i from 0 <= i < IDELEMS(res):
+                for j from 1 <= j <= IDELEMS(_I):
+                    l.append( new_MP(parent, pTakeOutComp(&res.m[i], 1)) )
+        finally:
+            id_Delete(&fI, r)
+            id_Delete(&_I, r)
+            id_Delete(&res, r)
         return Sequence(l, check=False, immutable=True)
 
     def reduce(self, I):
@@ -4828,10 +4866,12 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         if r != currRing:
             rChangeCurrRing(r)
-        sig_on()
-        rem = kNF(_I, NULL, other._poly, 0, 1)
-        sig_off()
-        id_Delete(&_I, r)
+        try:
+            sig_on()
+            rem = kNF(_I, NULL, other._poly, 0, 1)
+            sig_off()
+        finally:
+            id_Delete(&_I, r)
         res = new_MP(parent, rem).is_zero()
         return res
 
@@ -5169,6 +5209,27 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             Traceback (most recent call last):
             ...
             NotImplementedError: Division of multivariate polynomials over non fields by non-monomials not implemented.
+
+        Ensure interrupt does not make the internal state inconsistent::
+
+            sage: R.<x,y,z> = PolynomialRing(QQ, order="lex")
+            sage: n = 250  # chosen so that the computation takes > 1 second but not excessively long.
+            ....: # when Singular improves the algorithm or hardware gets faster, increase n.
+            sage: f = z^n-2
+            sage: g = z^2-z-x^2*y-x*y^3
+            sage: alarm(0.5); f.quo_rem(g)
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+            sage: alarm(0.5); f.quo_rem(g)
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+            sage: h = f.quo_rem(g)
+            sage: len(dict(h))
+            Traceback (most recent call last):
+            ...
+            ValueError: dictionary update sequence element #0 has length 658875; 2 is required
         """
         cdef poly *quo
         cdef poly *rem
@@ -5184,17 +5245,16 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             py_rem = self - right*py_quo
             return py_quo, py_rem
 
-        cdef int count = singular_polynomial_length_bounded(self._poly, 15)
-        if count >= 15:  # note that _right._poly must be of shorter length than self._poly for us to care about this call
-            sig_on()
         if r!=currRing: rChangeCurrRing(r)   # singclap_pdivide
         start_catch_error()
-        quo = singclap_pdivide( self._poly, right._poly, r )
-        if check_error():
-            raise NotImplementedError("Division of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
-        rem = p_Add_q(p_Copy(self._poly, r), p_Neg(pp_Mult_qq(right._poly, quo, r), r), r)
-        if count >= 15:
+        try:
+            sig_on()
+            quo = singclap_pdivide( self._poly, right._poly, r )
             sig_off()
+        finally:
+            if check_error():
+                raise NotImplementedError("Division of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
+        rem = p_Add_q(p_Copy(self._poly, r), p_Neg(pp_Mult_qq(right._poly, quo, r), r), r)
         return new_MP(parent, quo), new_MP(parent, rem)
 
     def _singular_init_(self, singular=None):
@@ -5650,6 +5710,34 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             Traceback (most recent call last):
             ...
             NotImplementedError: Resultants require base fields or integer base ring.
+
+        Sometimes simple-looking computations can take a long time::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: n = 21  # chosen so that the computation takes > 1 second but not excessively long.
+            ....: # when Singular improves the algorithm or hardware gets faster, increase n.
+            sage: f = x^n+y^(n-1)+z^(n-2)+y^3*z^2
+            sage: g = x^(n-3)+y^(n-4)+z^(n-5)+y*z
+            sage: h = f.resultant(g, x)
+            sage: len(dict(h))
+            1308
+
+        As such we test the computation is interruptible (previously it wasn't)::
+
+            sage: alarm(1); h = f.resultant(g, x)
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+
+        Test again to ensure interrupt does not make the internal state inconsistent::
+
+            sage: alarm(0.5); h = f.resultant(g, x); cancel_alarm()
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+            sage: h = f.resultant(g, x)
+            sage: len(dict(h))
+            1308
         """
         cdef ring *_ring = self._parent_ring
         cdef poly *rt
@@ -5664,24 +5752,21 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                                                  variable.change_ring(QQ))
             return ret.change_ring(ZZ)
 
-        cdef int count = singular_polynomial_length_bounded(self._poly, 20) \
-            + singular_polynomial_length_bounded(other._poly,20)
         start_catch_error()
-        if count >= 20:
+        try:
             sig_on()
-        if _ring != currRing: rChangeCurrRing(_ring)   # singclap_resultant
-        rt =  singclap_resultant(p_Copy(self._poly, _ring),
-                                 p_Copy(other._poly, _ring),
-                                 p_Copy((<MPolynomial_libsingular>variable)._poly, _ring ),
-                                 _ring)
-        if count >= 20:
+            if _ring != currRing: rChangeCurrRing(_ring)   # singclap_resultant
+            rt =  singclap_resultant(p_Copy(self._poly, _ring),
+                                     p_Copy(other._poly, _ring),
+                                     p_Copy((<MPolynomial_libsingular>variable)._poly, _ring ),
+                                     _ring)
             sig_off()
-
-        if check_error():
-            if isinstance(self._parent._base, FiniteField_prime_modn):
-                raise NotImplementedError("Resultants of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
-            else:
-                raise NotImplementedError("Resultants require base fields or integer base ring.")
+        finally:
+            if check_error():
+                if isinstance(self._parent._base, FiniteField_prime_modn):
+                    raise NotImplementedError("Resultants of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
+                else:
+                    raise NotImplementedError("Resultants require base fields or integer base ring.")
 
         return new_MP(self._parent, rt)
 

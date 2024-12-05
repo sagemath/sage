@@ -1838,10 +1838,47 @@ cdef int start_catch_error() except -1:
     Return value is ignored, only used for exception handling.
 
     Note that :func:`check_error` can only be called exactly once.
+
+    Note that this *must not* be used in conjunction with :func:`sig_on` as follows::
+
+        start_catch_error()
+        sig_on()
+        ...
+        sig_off()
+        if check_error():
+            raise RuntimeError(...)
+
+    because if the code is interrupted, then :func:`check_error` is never called.
+
+    Use the following instead::
+
+        start_catch_error()
+        try:
+            sig_on()
+            ...  # long time
+            sig_off()
+        finally:
+            if check_error():
+                raise RuntimeError(...)
+
+    If the code inside (marked `# long time`) can also raise a Python exception,
+    the above is still wrong --- :func:`sig_off` may not be called. In this case
+    use a nested ``try`` as suggested in ``cysignals`` documentation::
+
+        start_catch_error()
+        try:
+            sig_on()  # This must be OUTSIDE the inner try
+            try:
+                ...  # long time
+            finally:
+                sig_off()
+        finally:
+            if check_error():
+                raise RuntimeError(...)
     """
     global errorreported, catching_error, error_messages
     if catching_error:
-        raise RuntimeError("internal error: previous start_catch_error not ended with check_error")
+        warn("internal error: previous start_catch_error not ended with check_error")
     catching_error = True
 
     if errorreported:
@@ -1858,7 +1895,7 @@ cdef object check_error():
     """
     global errorreported, catching_error, error_messages
     if not catching_error:
-        raise RuntimeError("check_error must be preceded with start_catch_error")
+        warn("internal error: check_error not preceded with start_catch_error")
     catching_error = False
 
     if errorreported:
