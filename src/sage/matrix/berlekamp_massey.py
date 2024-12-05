@@ -37,7 +37,7 @@ def berlekamp_massey(a):
 
     INPUT:
 
-    - ``a`` -- list of even length of elements of a field (or domain)
+    - ``a`` -- list of elements of a field (or domain)
 
     OUTPUT:
 
@@ -46,7 +46,7 @@ def berlekamp_massey(a):
 
     .. WARNING::
 
-         The result is only guaranteed to be correct on the full
+         The result is only guaranteed to be unique on the full
          sequence if there exists a linear recurrence of length less
          than half the length of `a`.
 
@@ -68,17 +68,9 @@ def berlekamp_massey(a):
         Traceback (most recent call last):
         ...
         TypeError: argument must be a list or tuple
-        sage: berlekamp_massey([1,2,5])
-        Traceback (most recent call last):
-        ...
-        ValueError: argument must have an even number of terms
     """
     if not isinstance(a, (list, tuple)):
         raise TypeError("argument must be a list or tuple")
-    if len(a) % 2:
-        raise ValueError("argument must have an even number of terms")
-
-    M = len(a) // 2
 
     try:
         K = a[0].parent().fraction_field()
@@ -86,9 +78,12 @@ def berlekamp_massey(a):
         K = sage.rings.rational_field.RationalField()
 
     R, x = K['x'].objgen()
-    f0, f1 = R(a), x**(2 * M)
-    s0, s1 = 1, 0
-    while f1.degree() >= M:
-        f0, (q, f1) = f1, f0.quo_rem(f1)
-        s0, s1 = s1, s0 - q * s1
-    return s1.reverse().monic()
+    f0, f1 = R(x**(len(a)-1) * R(a)(x^(-1))), x**(len(a))
+    s0, s1 = 0, 1
+    k = len(a)
+    while True:
+        f1, (q, f0) = f0, f1.quo_rem(f0)
+        s0, s1 = s1, s0 + q * s1
+        if f0.degree() - f1.degree() < -k + 2 * q.degree():
+            return s1.monic()
+        k -= 2 * q.degree()
