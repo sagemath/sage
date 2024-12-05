@@ -291,20 +291,19 @@ def generalised_quadrangle_hermitian_with_ovoid(const int q):
 
     e1 = [one, zero, zero, zero]  # isotropic point
 
-    points = list(libgap.Orbit(GU, e1, libgap.OnLines))  # all isotropic points
-    pointInt = { x: int(i + 1) for i, x in enumerate(points) }
-    # above we sum 1 because GAP starts at 1
+    points = libgap.Orbit(GU, e1, libgap.OnLines)  # all isotropic points
+    pointInt = {tuple(x): i for i, x in enumerate(points)}
 
     GUp = libgap.Action(GU, points, libgap.OnLines)
 
     e2 = [zero, one, zero, zero]  # another isotropic point
     line = V.Subspace([e1, e2])  # totally isotropic line
-    lineAsPoints = [libgap.Elements(libgap.Basis(b))[0]
+    lineAsPoints = [tuple(libgap.Elements(libgap.Basis(b))[0])
                     for b in libgap.Elements(line.Subspaces(1))]
-    line = libgap.Set([pointInt[p] for p in lineAsPoints])
+    line = libgap.Set([pointInt[p] + 1 for p in lineAsPoints])
 
     lines = libgap.Orbit(GUp, line, libgap.OnSets)  # all isotropic lines
-    lines = [list(map(lambda x: int(x - 1), b)) for b in lines]  # convert to int
+    lines = [[int(x)-1 for x in b] for b in lines]  # convert to int
     # lines defines the GQ H(3, q^2)
 
     # to find an ovoid, we embed H(3,q^2) in H(4,q^2)
@@ -330,9 +329,9 @@ def generalised_quadrangle_hermitian_with_ovoid(const int q):
     # note that p'Jp^q = bx^q + c where p' = (a,b,0,c,d) and p = (0,1,y,x,0)
     ovoid = []
     xq = p[3]**q
-    for p2 in points:
+    for p2, i in pointInt.items():
         if p2[1]*xq + p2[2] == zero:  # p collinear to p2
-            ovoid.append(pointInt[p2] - 1)
+            ovoid.append(i)
 
     D = IncidenceStructure(lines)
     return (D, ovoid)
