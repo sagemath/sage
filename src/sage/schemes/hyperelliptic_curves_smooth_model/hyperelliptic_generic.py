@@ -15,14 +15,6 @@ from sage.schemes.hyperelliptic_curves_smooth_model.weighted_projective_space im
 )
 
 
-def is_HyperellipticCurveSmoothModel(C):
-    """
-    TODO: we probably don't want this at all, this way of working
-    is the "old" sagemath way of doing things.
-    """
-    return isinstance(C, HyperellipticCurveSmoothModel_generic)
-
-
 class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
     def __init__(self, defining_polynomial, f, h, genus):
         self._genus = genus
