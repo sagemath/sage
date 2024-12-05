@@ -6,6 +6,7 @@ AUTHOR:
 - Martin Albrecht
 """
 
+
 class LibSingularGBDefaultContext:
     def __init__(self):
         """
@@ -96,6 +97,7 @@ class LibSingularGBDefaultContext:
               a - 2*d^6 + d^5 - 2*d^4 + 3*d^3 + 3*d^2 - 2*d - 1]
         """
         self.libsingular_option_context.__exit__(typ,value,tb)
+
 
 def libsingular_gb_standard_options(func):
     r"""
