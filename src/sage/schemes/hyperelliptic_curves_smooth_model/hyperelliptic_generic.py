@@ -765,7 +765,6 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         raise ValueError("distinguished point not found")
 
-
     def set_distinguished_point(self, P0):
         """
         Change the distinguished point of the hyperelliptic curve to P0.
