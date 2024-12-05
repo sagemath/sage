@@ -222,7 +222,7 @@ dnl Exit autoconf with exit code 16 in this case. This will be
 dnl caught by the bootstrap script.
 m4_exit(16)])
 
-PKG_PROG_PKG_CONFIG([0.29], [PKG_CONFIG=false])
+PKG_PROG_PKG_CONFIG([0.29], [PKG_CONFIG=])
 
 AC_CHECK_PROG(found_ranlib, ranlib, yes, no)
 if test x$found_ranlib != xyes
