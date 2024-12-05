@@ -658,7 +658,7 @@ def generic_factory_unpickle(factory, *args):
     (somewhere in the library of an old Sage version) a unique factory; in our
     example below, it returns polynomial rings. Now suppose that we want to
     replace the factory by something else, say, a class that provides the
-    unique parent behaviour using
+    unique representation behaviour using
     :class:`~sage.structure.unique_representation.UniqueRepresentation`. We
     show here how to make it possible to unpickle a pickle created with the
     factory, automatically turning it into an instance of the new class.
