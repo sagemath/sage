@@ -177,8 +177,8 @@ Packaging
    packaging_sage_library
 
 
-Indices and tables
-==================
+Index and Search
+================
 
 * :ref:`genindex`
 * :ref:`search`
