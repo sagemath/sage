@@ -860,7 +860,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         `169.a.169.1 <https://www.lmfdb.org/Genus2Curve/Q/169/a/169/1>`_::
 
             sage: C = HyperellipticCurveSmoothModel(R([0, 0, 0, 0, 1, 1]), R([1, 1, 0, 1]))
-            sage: C.rational_points(bound=10)
+            sage: C.rational_points(bound=10) # long time (6s)
             [(1 : 0 : 0), (1 : -1 : 0), (-1 : 0 : 1), (-1 : 1 : 1), (0 : -1 : 1), (0 : 0 : 1)]
 
          An example over a number field::
