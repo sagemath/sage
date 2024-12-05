@@ -659,7 +659,7 @@ cdef class LibSingularOptionsContext:
             sage: opt_ctx
             general options context for libSingular
         """
-        return "%s options context for libSingular"%(self.opt.name)
+        return "%s options context for libSingular" % (self.opt.name)
 
 
 opt = LibSingularOptions()
