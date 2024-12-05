@@ -1066,7 +1066,7 @@ class IdealMonoid(UniqueRepresentation, Parent):
             sage: M = O.ideal_monoid()
             sage: TestSuite(M).run()
         """
-        self.Element = R._ideal_class
+        self.Element = R._ideal_class_
         Parent.__init__(self, category=Monoids())
 
         self.__R = R
