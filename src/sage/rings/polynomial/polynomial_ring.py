@@ -642,7 +642,7 @@ class PolynomialRing_general(Ring):
         """
         from .multi_polynomial_ring import MPolynomialRing_base
         base = self.base_ring()
-        if isinstance(base, PolynomialRing_general) or isinstance(base, MPolynomialRing_base):
+        if isinstance(base, (PolynomialRing_general, MPolynomialRing_base)):
             from .flatten import FlatteningMorphism
             return FlatteningMorphism(self)
         else:

@@ -795,7 +795,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
             Characteristic cohomology class pontr(TM) of the Tangent bundle
              TM over the 8-dimensional differentiable manifold M
         """
-        if isinstance(x, (str, Expression)) or isinstance(x, Polynomial):
+        if isinstance(x, (str, Expression, Polynomial)):
             return self._build_element(x, **kwargs)
 
         R = self.base_ring()

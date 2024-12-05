@@ -257,7 +257,7 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
     except ImportError:
         pass
     else:
-        if isinstance(universe, MPolynomialRing_base) or isinstance(universe, BooleanMonomialMonoid) or (isinstance(universe, QuotientRing_nc) and isinstance(universe.cover_ring(), MPolynomialRing_base)):
+        if isinstance(universe, (MPolynomialRing_base, BooleanMonomialMonoid)) or (isinstance(universe, QuotientRing_nc) and isinstance(universe.cover_ring(), MPolynomialRing_base)):
             return PolynomialSequence(x, universe, immutable=immutable, cr=cr, cr_str=cr_str)
 
     return Sequence_generic(x, universe, check, immutable, cr, cr_str, use_sage_types)

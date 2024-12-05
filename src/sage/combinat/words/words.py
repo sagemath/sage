@@ -90,10 +90,10 @@ def Words(alphabet=None, length=None, finite=True, infinite=True):
         sage: Words('natural numbers')
         Finite and infinite words over Non negative integers
     """
-    if isinstance(alphabet, FiniteWords) or \
-       isinstance(alphabet, InfiniteWords) or \
-       isinstance(alphabet, FiniteOrInfiniteWords) or \
-       isinstance(alphabet, Words_n):
+    if isinstance(alphabet, (FiniteWords,
+                             InfiniteWords,
+                             FiniteOrInfiniteWords,
+                             Words_n)):
         return alphabet
 
     if length is None:
