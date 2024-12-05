@@ -371,7 +371,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
         - ``root_bur`` -- six (resp. twelfth) root of unity in some field
           (default: root of unity over `\QQ`)
         - ``domain`` -- (default: cyclotomic field of order 3 and degree 2, resp.
-          the domain of `root_bur` if given) base ring for the Burau matrix
+          the domain of ``root_bur`` if given) base ring for the Burau matrix
         - ``characteristic`` -- integer giving the characteristic of the
           domain (default: 0 or the characteristic of ``domain`` if given)
         - ``var`` -- string used for the indeterminate name in case ``root_bur``

@@ -685,7 +685,7 @@ class HypergeometricData:
         Count ``alpha``'s at most ``x`` minus ``beta``'s at most ``x``.
 
         This function is used to compute the weight and the Hodge numbers.
-        With `flip_beta` set to ``True``, replace each `b` in `\beta`
+        With ``flip_beta`` set to ``True``, replace each `b` in `\beta`
         with `1-b`.
 
         .. SEEALSO::
@@ -1317,7 +1317,7 @@ class HypergeometricData:
         If left unspecified, `prec` is set to the minimum `p`-adic precision
         needed to recover the Euler factor.
 
-        If `cache_p` is ``True``, then the function caches an intermediate
+        If ``cache_p`` is ``True``, then the function caches an intermediate
         result which depends only on `p` and `f`. This leads to a significant
         speedup when iterating over `t`.
 

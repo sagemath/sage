@@ -381,7 +381,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
         TESTS:
 
-        We have to exclude `_test_graded_components`, because
+        We have to exclude ``_test_graded_components``, because
         :meth:`~sage.combinat.integer_vector.IntegerVectors.some_elements`
         yields degrees that are too large::
 
@@ -834,7 +834,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
         TESTS:
 
-        We have to exclude `_test_graded_components`, because
+        We have to exclude ``_test_graded_components``, because
         :meth:`~sage.combinat.integer_vector.IntegerVectors.some_elements`
         yields degrees that are too large::
 

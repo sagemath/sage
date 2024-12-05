@@ -218,7 +218,7 @@ cdef class Ring(ParentWithGens):
         sage: CDF._repr_option('element_is_atomic')                                     # needs sage.rings.complex_double
         False
 
-    Check that categories correctly implement `is_finite` and `cardinality`::
+    Check that categories correctly implement ``is_finite`` and ``cardinality``::
 
         sage: QQ.is_finite()
         False
