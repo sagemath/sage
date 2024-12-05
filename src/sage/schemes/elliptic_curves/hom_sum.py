@@ -210,7 +210,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: E = EllipticCurve(GF(101), [5,5])
             sage: phi = E.isogenies_prime_degree(7)[0]
             sage: (phi + phi).to_isogeny_chain()
-            Composite morphism of degree 28 = 4*1*7:
+            Composite morphism of degree 28 = 4*7:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101
               To:   Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101
 
@@ -224,7 +224,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: endo.degree()
             420
             sage: endo.to_isogeny_chain()
-            Composite morphism of degree 420 = 4*1*3*5*7:
+            Composite morphism of degree 420 = 4*3*5*7:
               From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 419^2
               To:   Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 419^2
 
@@ -245,7 +245,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
             sage: m2 = E.scalar_multiplication(2)
             sage: m3 = E.scalar_multiplication(3)
             sage: (m2 - m3).to_isogeny_chain()
-            Composite morphism of degree 1 = 1^2:
+            Composite morphism of degree 1:
               From: Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
               To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
             sage: (m2 - m3).rational_maps()
@@ -320,7 +320,11 @@ class EllipticCurveHom_sum(EllipticCurveHom):
 
         from sage.schemes.elliptic_curves.hom import find_post_isomorphism
         iso = find_post_isomorphism(phi, self)
-        return iso * phi
+        result = iso * phi
+
+        if not isinstance(result, EllipticCurveHom_composite):
+            result = EllipticCurveHom_composite.from_factors((result,))
+        return result
 
     # EllipticCurveHom methods
 
