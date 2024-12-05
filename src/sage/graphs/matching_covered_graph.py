@@ -72,6 +72,7 @@ AUTHORS:
         ``loop_edges()`` | Return a list of all loops in the matching covered graph.
         ``loop_vertices()`` | Return a list of vertices with loops.
         ``merge_vertices()`` | Merge vertices.
+        ``minor()`` | Return the vertices of a minor isomorphic to `H` in the current graph.
         ``number_of_loops()`` | Return the number of edges that are loops.
         ``random_subgraph()`` | Return a random matching covered subgraph containing each vertex with probability ``p``.
         ``remove_loops()`` | Remove loops on vertices in ``vertices``.
@@ -85,6 +86,7 @@ AUTHORS:
         ``subgraph_search_iterator()`` | Return an iterator over the labelled copies of (matching covered) ``G`` in ``self``.
         ``tensor_product()`` | Return the tensor product of ``self`` and ``other``.
         ``to_undirected()`` | Return an undirected Graph instance of the matching covered graph.
+        ``topological_minor()`` | Return a topological `H`-minor from ``self`` if one exists.
         ``transitive_closure()`` | Return the transitive closure of the matching covered graph.
         ``transitive_reduction()`` | Return a transitive reduction of the matching covered graph.
         ``union()`` | Return the union of ``self`` and ``other``.
@@ -107,7 +109,6 @@ AUTHORS:
         :delim: |
 
         ``bricks_and_braces()`` | Return the list of (underlying simple graph of) the bricks and braces of the (matching covered) graph.
-        ``is_brace()`` | Check if the (matching covered) graph is a brace.
         ``is_brick()`` | Check if the (matching covered) graph is a brick.
         ``number_of_braces()`` | Return the number of braces.
         ``number_of_bricks()`` | Return the number of bricks.
@@ -2002,6 +2003,349 @@ class MatchingCoveredGraph(Graph):
 
         raise ValueError('algorithm must be set to \'Edmonds\', '
                          '\'LP_matching\' or \'LP\'')
+
+    @doc_index('Bricks, braces and tight cut decomposition')
+    def is_brace(self, coNP_certificate=False):
+        r"""
+        Check if the (matching covered) graph is a brace.
+
+        A matching covered graph which is free of nontrivial tight cuts is
+        called a *brace* if it is bipartite. Let `G := (A \cup B, E)` be a
+        bipartite matching covered graph on six or more vertices. The
+        following statements are equivalent [LM2024]_:
+
+        1. `G` is a brace (aka free of nontrivial tight cuts).
+        2. `G - a_1 - a_2 - b_1 - b_2` has a perfect matching for any two
+           distinct vertices `a_1` and `a_2` in `A` and any two distinct
+           vertices `b_1` and `b_2` in `B`.
+        3. `G` is two extendable (any two nonadjacent distinct edges can be
+           extended to some perfect matching of `G`).
+        4. `|N(X)| \geq |X| + 2`, for all `X ⊂ A` such that `0 < |X| <
+           |A| - 1`, where `N(S) := \{b \mid (a, b) \in E ∧ a \in S\}` is called
+           the neighboring set of `S`.
+        5. `G - a - b` is matching covered, for some perfect matching `M` of
+           `G` and for each edge `ab` in `M`.
+
+        We shall be using the 5th characterization mentioned above in order
+        to determine whether the provided bipartite matching covered graph
+        is a brace or not using *M*-alternating tree search [LZ2001]_.
+
+        INPUT:
+
+        - ``coNP_certificate`` -- boolean (default: ``False``)
+
+        OUTPUT:
+
+        - If the input matching covered graph is not bipartite, a
+          :exc:`ValueError` is returned.
+
+        - If the input bipartite matching covered graph is a brace, a boolean
+          ``True`` is returned if ``coNP_certificate`` is set to ``False``
+          otherwise a pair ``(True, None, None)`` is returned.
+
+        - If the input bipartite matching covered graph is not a brace, a
+          boolean ``False`` is returned if ``coNP_certificate`` is set to
+          ``False`` otherwise a tuple of boolean ``False``, a list of
+          edges constituting a nontrivial tight cut and a set of vertices of
+          one of the shores of the nontrivial tight cut is returned.
+
+        EXAMPLES:
+
+        The complete graph on two vertices `K_2` is the smallest brace::
+
+            sage: K = graphs.CompleteGraph(2)
+            sage: G = MatchingCoveredGraph(K)
+            sage: G.is_brace()
+            True
+
+        The cycle graph on four vertices `C_4` is a brace::
+
+            sage: C = graphs.CycleGraph(4)
+            sage: G = MatchingCoveredGraph(C)
+            sage: G.is_brace()
+            True
+
+        Each graph that is isomorphic to a biwheel is a brace::
+
+            sage: B = graphs.BiwheelGraph(15)
+            sage: G = MatchingCoveredGraph(B)
+            sage: G.is_brace()
+            True
+
+        A circular ladder graph on `2n` vertices for `n \equiv 0 (\mod 2)` is
+        a brace::
+
+            sage: n = 10
+            sage: CL = graphs.CircularLadderGraph(n)
+            sage: G = MatchingCoveredGraph(CL)
+            sage: G.is_brace()
+            True
+
+        A moebius ladder graph on `2n` vertices for `n \equiv 1 (\mod 2)` is
+        a brace::
+
+            sage: n = 11
+            sage: ML = graphs.MoebiusLadderGraph(n)
+            sage: G = MatchingCoveredGraph(ML)
+            sage: G.is_brace()
+            True
+
+        Note that the union of the above mentioned four families of braces,
+        that are:
+
+        1. the biwheel graph ``BiwheelGraph(n)``,
+        2. the circular ladder graph ``CircularLadderGraph(n)`` for even ``n``,
+        3. the moebius ladder graph ``MoebiusLadderGraph(n)`` for odd ``n``,
+
+        is referred to as the *McCuaig* *family* *of* *braces.*
+
+        The only simple brace of order six is the complete graph of the same
+        order, that is `K_{3, 3}`::
+
+            sage: L = list(graphs(6,
+            ....:          lambda G: G.size() <= 15 and
+            ....:                    G.is_bipartite())
+            ....: )
+            sage: L = list(G for G in L if G.is_connected() and
+            ....:                          G.is_matching_covered()
+            ....: )
+            sage: M = list(MatchingCoveredGraph(G) for G in L)
+            sage: B = list(G for G in M if G.is_brace())
+            sage: K = graphs.CompleteBipartiteGraph(3, 3)
+            sage: G = MatchingCoveredGraph(K)
+            sage: next(iter(B)).is_isomorphic(G)
+            True
+
+        The nonplanar `K_{3, 3}`-free brace Heawood graph is the unique cubic
+        graph of girth six with the fewest number of vertices (that is 14).
+        Note that by `K_{3, 3}`-free, it shows that the Heawood graph does not
+        contain a subgraph that is isomophic to a graph obtained by
+        bisubdivision of `K_{3, 3}`::
+
+            sage: K = graphs.CompleteBipartiteGraph(3, 3)
+            sage: J = graphs.HeawoodGraph()
+            sage: H = MatchingCoveredGraph(J)
+            sage: H.is_brace() and not H.is_planar() and \
+            ....: H.is_regular(k=3) and H.girth() == 6
+            True
+
+        Braces of order six or more are 3-connected::
+
+            sage: H = graphs.HexahedralGraph()
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brace() and G.is_triconnected()
+            True
+
+        Braces of order four or more are 2-extendable::
+
+            sage: H = graphs.EllinghamHorton54Graph()
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brace()
+            True
+            sage: e = next(G.edge_iterator(labels=False)); f = None
+            sage: for f in G.edge_iterator(labels=False):
+            ....:     if not (set(e) & set(f)):
+            ....:          break
+            sage: S = [u for x in [e, f] for u in set(x)]
+            sage: J = H.copy(); J.delete_vertices(S)
+            sage: M = Graph(J.matching())
+            sage: M.add_edges([e, f])
+            sage: if all(d == 1 for d in M.degree()) and \
+            ....:    G.order() == M.order() and \
+            ....:    G.order() == 2*M.size():
+            ....:      print(f'graph {G} is 2-extendable')
+            graph Ellingham-Horton 54-graph is 2-extendable
+
+        Every edge in a brace of order at least six is removable::
+
+            sage: H = graphs.CircularLadderGraph(8)
+            sage: G = MatchingCoveredGraph(H)
+            sage: # len(G.removble_edges()) == G.size()
+            # True
+
+        Every brace of order eight has the hexahedral graph as a spanning
+        subgraph::
+
+            sage: H = graphs.HexahedralGraph()
+            sage: L = list(graphs(8,
+            ....:          lambda G: G.size() <= 28 and
+            ....:                    G.is_bipartite())
+            ....: )
+            sage: L = list(G for G in L if G.is_connected() and
+            ....:                          G.is_matching_covered()
+            ....: )
+            sage: M = list(MatchingCoveredGraph(G) for G in L)
+            sage: B = list(G for G in M if G.is_brace())
+            sage: C = list(G for G in M if Graph(G).subgraph_search(H) is not None)
+            sage: B == C
+            True
+
+        For every brace `G[A, B]` of order at least six, the graph
+        `G - a_1 - a_2 - b_1 - b_2` has a perfect matching for any two distinct
+        vertices `a_1` and `a_2` in `A` and any two distinct vertices `b_1` and
+        `b_2` in `B`::
+
+            sage: H =  graphs.CompleteBipartiteGraph(10, 10)
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brace()
+            True
+            sage: S = [0, 1, 10, 12]
+            sage: G.delete_vertices(S)
+            sage: G.has_perfect_matching()
+            True
+
+        For a brace `G[A, B]` of order six or more, `|N(X)| \geq |X| + 2`, for
+        all `X \subset A` such that `0 < |X| <|A| - 1`, where
+        `N(S) := \{b | (a, b) \in E \^ a \in S\}` is called the neighboring set
+        of `S`::
+
+            sage: H = graphs.MoebiusLadderGraph(15)
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brace()
+            True
+            sage: A, _ = G.bipartite_sets()
+            sage: # needs random
+            sage: X = random.sample(list(A), random.randint(1, len(A) - 1))
+            sage: N = {v for u in X for v in G.neighbor_iterator(u)}
+            sage: len(N) >= len(X) + 2
+            True
+
+        For a brace `G` of order four or more with a perfect matching `M`, the
+        graph `G - a - b` is matching covered for each edge `(a, b)` in `M`::
+
+            sage: H = graphs.HeawoodGraph()
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brace()
+            True
+            sage: M = G.get_matching()
+            sage: L = []
+            sage: for a, b, *_ in M:
+            ....:     J = G.copy(); J.delete_vertices([a, b])
+            ....:     if J.is_matching_covered():
+            ....:          L.append(J)
+            sage: len(L) == len(M)
+            True
+
+        A cycle graph of order six of more is a bipartite matching covered
+        graph, but is not a brace::
+
+            sage: C = graphs.CycleGraph(10)
+            sage: G = MatchingCoveredGraph(C)
+            sage: G.is_brace()
+            False
+
+        One may set the ``coNP_certificate`` to be ``True``::
+
+            sage: H = graphs.HexahedralGraph()
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brace(coNP_certificate=True)
+            (True, None, None)
+            sage: C = graphs.CycleGraph(6)
+            sage: D = MatchingCoveredGraph(C)
+            sage: D.is_brace(coNP_certificate=True)
+            (False, [(0, 5, None), (2, 3, None)], {0, 1, 2})
+
+        If the input matching covered graph is nonbipartite, a
+        :exc:`ValueError` is thrown::
+
+            sage: K4 = graphs.CompleteGraph(4)
+            sage: G = MatchingCoveredGraph(K4)
+            sage: G.is_brace()
+            Traceback (most recent call last):
+            ...
+            ValueError: the input graph is not bipartite
+            sage: P = graphs.PetersenGraph()
+            sage: H = MatchingCoveredGraph(P)
+            sage: H.is_brace(coNP_certificate=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input graph is not bipartite
+        """
+        if not self.is_bipartite():
+            raise ValueError('the input graph is not bipartite')
+
+        if self.order() < 6:
+            return (True, None, None) if coNP_certificate else True
+
+        A, B = self.bipartite_sets()
+        matching = set(self.get_matching())
+        matching_neighbor = {x: y for u, v, *_ in matching for x, y in [(u, v), (v, u)]}
+
+        for e in matching:
+            u, v, *_ = e
+
+            # Let G denote the undirected graph self, and
+            # let the graph H(e) := G — u — v
+            H = Graph(self, multiedges=False)
+            H.delete_vertices([u, v])
+
+            if not H.is_matching_covered(list(matching - set([e]))):
+                if not coNP_certificate:
+                    return False
+
+                # Construct the digraph D(e)(A ∪ B, F) defined as follows:
+                from sage.graphs.digraph import DiGraph
+                D = DiGraph()
+
+                # For each edge (a, b) in E(H(e)) ∩ M with a in A, b —> a in D(e).
+                # For each edge (a, b) in E(H(e)) with a in A, a —> b in D(e).
+                for a, b, *_ in H.edge_iterator():
+
+                    if a in B:
+                        a, b = b, a
+
+                    D.add_edge((a, b))
+                    if matching_neighbor[a] == b:
+                        D.add_edge((b, a))
+
+                # H(e) is matching covered iff D(e) is strongly connected.
+                # Check if D(e) is strongly connected using Kosaraju's algorithm
+                def dfs(v, visited, neighbor_iterator):
+                    stack = [v]  # a stack of vertices
+
+                    while stack:
+                        v = stack.pop()
+                        visited.add(v)
+
+                        for u in neighbor_iterator(v):
+                            if u not in visited:
+                                stack.append(u)
+
+                root = next(D.vertex_iterator())
+
+                visited_in = set()
+                dfs(root, visited_in, D.neighbor_in_iterator)
+
+                # Since D(e) is not strongly connected, it has a directed cut T(e).
+                # Note that by definition of D(e), it follows that T(e) ⊆ E(H(e)) — M.
+                # Thus, T(e) is a cut of H(e), which has a shore X such that every edge of T(e) is
+                # incident with a vertex in X ∩ B.
+
+                # Moreover, M — e is a perfect matching of H(e), and thus, |X ∩ A| = |X ∩ B|
+                # Consequently, Y := X + v is a shore of a nontrivial tight cut T of G
+
+                if len(visited_in) != D.order():
+                    X = visited_in
+                else:
+                    X = set()
+                    dfs(root, X, D.neighbor_out_iterator)
+
+                for a, b in H.edge_iterator(labels=False):
+                    if (a in X) ^ (b in X):
+                        x = a if a in A else b
+                        color_class = x not in X
+                        break
+
+                # Obtain the color class Z ∈ {A, B} such that X ∩ Z is a vertex cover for T(e)
+                # Thus, obtain Y := X + v
+                X.add(u if (not color_class and u in A) or (color_class and u in B) else v)
+
+                # Compute the nontrivial tight cut C := ∂(Y)
+                C = [f for f in self.edge_iterator() if (f[0] in X) ^ (f[1] in X)]
+
+                return False, C, X
+
+        return (True, None, None) if coNP_certificate else True
 
     @doc_index('Miscellaneous methods')
     def update_matching(self, matching):
