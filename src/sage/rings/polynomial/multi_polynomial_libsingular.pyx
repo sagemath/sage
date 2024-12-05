@@ -5714,17 +5714,17 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         Sometimes simple-looking computations can take a long time::
 
             sage: R.<x,y,z> = QQ[]
-            sage: n = 21  # chosen so that the computation takes > 1 second but not excessively long.
+            sage: n = 22  # chosen so that the computation takes > 1 second but not excessively long.
             ....: # when Singular improves the algorithm or hardware gets faster, increase n.
             sage: f = x^n+y^(n-1)+z^(n-2)+y^3*z^2
             sage: g = x^(n-3)+y^(n-4)+z^(n-5)+y*z
             sage: h = f.resultant(g, x)
             sage: len(dict(h))
-            1308
+            89
 
         As such we test the computation is interruptible (previously it wasn't)::
 
-            sage: alarm(1); h = f.resultant(g, x)
+            sage: alarm(0.5); h = f.resultant(g, x)
             Traceback (most recent call last):
             ...
             AlarmInterrupt
@@ -5737,7 +5737,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             AlarmInterrupt
             sage: h = f.resultant(g, x)
             sage: len(dict(h))
-            1308
+            89
         """
         cdef ring *_ring = self._parent_ring
         cdef poly *rt
