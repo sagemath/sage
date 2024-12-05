@@ -88,6 +88,8 @@ AUTHORS:
 - Jean-Florent Raymond (2019-04): is_redundant, is_dominating,
    private_neighbors
 
+- William Driot (04-2024) : added has_vertex_cover_of_size.
+
 Graph Format
 ------------
 
@@ -6609,6 +6611,105 @@ class Graph(GenericGraph):
             else:
                 cover_g.add(u)
         return list(cover_g)
+
+    @doc_index("Algorithmically hard stuff")
+    def has_vertex_cover_of_size(self, k, including=None):
+        r"""
+        Returns whether a vertex cover of size ``k`` exists or not in self, and returns it if so.
+
+        A vertex cover of a graph is a set `S` of vertices such that
+        each edge is incident to at least one element of `S`. Equivalently,
+        a vertex cover is a the complement of an independent set.
+        See :wikipedia:`Vertex_cover`.
+
+        INPUT:
+
+        - ``k`` -- int; the size of the vertex cover to look for.
+
+        OUTPUT:
+
+        A tuple ``(S,bool)`` consisting in a boolean ``bool``, and a set ``S`` that will either
+        be empty if ``bool`` is ``False`` or a vertex cover of size ``k`` if ``bool`` is ``True``.
+
+        EXAMPLES:
+
+            sage: graphs.CompleteGraph(9).has_vertex_cover_of_size(7)
+            (set(), False)
+            sage: graphs.CompleteGraph(9).has_vertex_cover_of_size(8)
+            ({0, 1, 2, 3, 4, 5, 6, 7}, True)
+            sage: Graph({1 : [], 2 : [], 3 : set()}).has_vertex_cover_of_size(0)
+            (set(), True)
+            sage: Graph({1 : [2,8], 2 : [3,4,5,6,7], 8 : [9], 9 : [10,14], 10 : [11], \
+            11 : [12], 12 : [13], 13 : [14], 14 : [13]}).has_vertex_cover_of_size(4)
+            (set(), False)
+            sage: Graph({1 : [2,8], 2 : [3,4,5,6,7], 8 : [9], 9 : [10,14], 10 : [11], \
+            11 : [12], 12 : [13], 13 : [14], 14 : [13]}).has_vertex_cover_of_size(5)
+            ({2, 8, 10, 12, 14}, True)
+
+        TESTS:
+
+            sage: graphs.EmptyGraph().has_vertex_cover_of_size(5)
+            (set(), True)
+        """
+        self._scream_if_not_simple()
+        if including is None:
+            including = set()
+        if k < 0:
+            return (including, False)
+        if not any(v not in including for u in self for v in self.neighbor_iterator(u)):
+            return (including, True)
+
+        def arbitrary_edges(G, including):
+            # Returns a set of 3 vertices that are connected by two adjacent edges in the graph G, excluding vertices in the selected set.
+            # If there are no pairs of adjacent edges remaining, it returns the number of remaining edges and garbage values for v and w.
+            # Returns a tuple containing three values: (u, v, w), where u, v, and w are vertices connected by two adjacent edges,
+            # or (number of remaining edges, None, None) if no pairs of adjacent edges remain.
+            count = 0
+            for u in G:
+                if u in including:
+                    continue
+                for v in G.neighbor_iterator(u):
+                    if v in including:
+                        continue
+                    count += 1
+                    for w in G.neighbor_iterator(v):
+                        if w == u or w in including:
+                            continue
+                        return (u, v, w)
+            return ((1 + count)//2, None, None)
+        u, v, w = arbitrary_edges(self, including)
+        if v is None and w is None:
+            return (including, (k >= u))
+        for i in {u, v}:
+            including.add(i)
+        if self.has_vertex_cover_of_size(k - 2, including)[1]:
+            return (including, True)
+        for i in {u, v}:
+            including.remove(i)
+        for i in {u, w}:
+            including.add(i)
+        if self.has_vertex_cover_of_size(k - 2, including)[1]:
+            return (including, True)
+        for i in {u, w}:
+            including.remove(i)
+        for i in {v, w}:
+            including.add(i)
+        if self.has_vertex_cover_of_size(k - 2, including)[1]:
+            return (including, True)
+        for i in {w, v}:
+            including.remove(i)
+        for i in {v}:
+            including.add(i)
+        if self.has_vertex_cover_of_size(k - 1, including)[1]:
+            return (including, True)
+        including.remove(v)
+        for i in {u, v, w}:
+            including.add(i)
+        if self.has_vertex_cover_of_size(k - 3, including)[1]:
+            return (including, True)
+        for i in {u, v, w}:
+            including.remove(i)
+        return (including, False)
 
     @doc_index("Connectivity, orientations, trees")
     def ear_decomposition(self):
