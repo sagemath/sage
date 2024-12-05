@@ -4461,7 +4461,7 @@ cdef class Polynomial(CommutativePolynomial):
                       if self.get_unsafe(n) else zero for n in range(self.degree() + 1)]
         return S(p)
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=None):
         """
         Return a sparse dictionary representation of this univariate
         polynomial.
