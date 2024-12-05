@@ -28,7 +28,7 @@ first, or run::
        grep -li "^Error" logs/pkgs/*
 
 from the top-level Sage directory to find log files with error
-messages in them.  Send the file ``config.log`` as well as the
+messages in them.  Send the file ``logs/pkgs/config.log`` as well as the
 log file(s) of the packages that have failed to build
 in their entirety to the sage-support mailing list
 at https://groups.google.com/group/sage-support; probably someone
