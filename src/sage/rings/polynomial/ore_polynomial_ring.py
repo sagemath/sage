@@ -317,7 +317,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             Univariate Polynomial Ring in x over Finite Field in a of size 5^2
             sage: S.<x> = OrePolynomialRing(k, Frob, polcast=False)
             sage: S
-            Ore Polynomial Ring in x over Finite Field in a of size 5^2 twisted by Identity
+            Ore Polynomial Ring in x over Finite Field in a of size 5^2 untwisted
         """
         if base_ring not in CommutativeRings():
             raise TypeError('base_ring must be a commutative ring')
@@ -325,7 +325,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             if (twist.domain() is not base_ring
              or twist.codomain() is not base_ring):
                 raise TypeError("the twisting morphism must be an endomorphism of base_ring (=%s)" % base_ring)
-            if twist.is_identity() and polcast:
+            if twist.is_identity():
                 morphism = None
             else:
                 morphism = twist
@@ -339,6 +339,8 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
                 derivation = twist
             else:
                 derivation = None
+        elif twist is None:
+            morphism = derivation = None
         else:
             raise TypeError("the twisting map must be a ring morphism or a derivation")
         if names is None:
@@ -596,6 +598,68 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             if P.variable_name() == self.variable_name():
                 return base_ring.has_coerce_map_from(P.base_ring())
 
+    def _repr_twist(self):
+        r"""
+        Return a string representation of the twisting morphisms.
+
+        This is a helper method.
+
+        TESTS::
+
+            sage: F.<z> = GF(5^3)
+            sage: Frob = F.frobenius_endomorphism()
+
+            sage: S.<x> = OrePolynomialRing(F, Frob)
+            sage: S._repr_twist()
+            'twisted by z |--> z^5'
+
+            sage: T.<y> = OrePolynomialRing(F, Frob^3, polcast=False)
+            sage: T._repr_twist()
+            'untwisted'
+
+        """
+        s = ""
+        if self._morphism is not None:
+            s += self._morphism._repr_short()
+        if self._derivation is not None:
+            if s != "":
+                s += " and "
+            s += self._derivation._repr_()
+        if s == "":
+            return "untwisted"
+        else:
+            return "twisted by " + s
+
+    def _latex_twist(self):
+        r"""
+        Return a LaTeX representation of the twisting morphisms.
+
+        This is a helper method.
+
+        TESTS::
+
+            sage: F.<z> = GF(5^3)
+            sage: Frob = F.frobenius_endomorphism()
+
+            sage: S.<x> = OrePolynomialRing(F, Frob)
+            sage: S._latex_twist()
+            z \mapsto z^{5}
+
+            sage: T.<y> = OrePolynomialRing(F, Frob^3, polcast=False)
+            sage: T._latex_twist()
+            ''
+
+        """
+        from sage.misc.latex import latex
+        s = ""
+        if self._morphism is not None:
+            s += latex(self._morphism)
+        if self._derivation is not None:
+            if s != "":
+                s += ","
+            s += latex(self._derivation)
+        return s
+
     def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
@@ -613,13 +677,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             sage: T
             Ore Polynomial Ring in d over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
         """
-        s = "Ore Polynomial Ring in %s over %s twisted by " % (self.variable_name(), self.base_ring())
-        if self._derivation is None:
-            s += self._morphism._repr_short()
-        else:
-            if self._morphism is not None:
-                s += "%s and " % self._morphism._repr_short()
-            s += self._derivation._repr_()
+        s = "Ore Polynomial Ring in %s over %s %s" % (self.variable_name(), self.base_ring(), self._repr_twist())
         if self.is_sparse():
             s = "Sparse " + s
         return s
@@ -645,12 +703,9 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         """
         from sage.misc.latex import latex
         s = "%s\\left[%s" % (latex(self.base_ring()), self.latex_variable_names()[0])
-        sep = ";"
-        if self._morphism is not None:
-            s += sep + latex(self._morphism)
-            sep = ","
-        if self._derivation is not None:
-            s += sep + latex(self._derivation)
+        twist = self._latex_twist()
+        if twist != "":
+            s += ";" + twist
         return s + "\\right]"
 
     def change_var(self, var):
@@ -679,7 +734,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         else:
             twist = self._derivation
         return OrePolynomialRing(self.base_ring(), twist, names=var,
-                                 sparse=self.__is_sparse)
+                                 sparse=self.__is_sparse, polcast=False)
 
     def characteristic(self):
         r"""
@@ -1200,6 +1255,60 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
                 self._fraction_field = self._fraction_field_class(ring)
                 self._fraction_field.register_coercion(self)
         return self._fraction_field
+
+    def quotient_module(self, P, names=None):
+        r"""
+        Return the quotient ring `A/AP` as a module over `A`
+        where `A` is this Ore polynomial ring.
+
+        INPUT:
+
+        - ``names`` (default: ``None``) -- a string or a list
+          of string, the names of the vector of the canonical
+          basis
+
+        EXAMPLES::
+
+            sage: k.<a> = GF(5^3)
+            sage: S.<x> = k['a', k.frobenius_endomorphism()]
+            sage: P = x^3 + a*x^2 + a^2 + 1
+            sage: M = S.quotient_module(P)
+            sage: M
+            Ore module of rank 3 over Finite Field in a of size 5^3 twisted by a |--> a^5
+
+        The argument ``names`` can be used to give chosen names
+        to the vectors in the canonical basis::
+
+            sage: M = S.quotient_module(P, names=('u', 'v', 'w'))
+            sage: M.basis()
+            [u, v, w]
+
+        or even::
+
+            sage: M = S.quotient_module(P, names='e')
+            sage: M.basis()
+            [e0, e1, e2]
+
+        Note that the bracket construction also works::
+
+            sage: M.<u,v,w> = S.quotient_module(P)
+            sage: M.basis()
+            [u, v, w]
+
+        With this construction, the vectors `u`, `v` and `w`
+        are directly available in the namespace::
+
+            sage: x*u + v
+            2*v
+
+        We refer to :mod:`sage.modules.ore_module` for a
+        tutorial on Ore modules in SageMath.
+
+        .. SEEALSO:
+
+            :mod:`sage.modules.ore_module`
+        """
+        return self(P).quotient_module(names=names)
 
     def _pushout_(self, other):
         r"""
