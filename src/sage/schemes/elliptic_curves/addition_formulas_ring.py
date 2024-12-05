@@ -4,6 +4,15 @@ def add(E, P, Q):
     Addition formulas for elliptic curves over general rings
     with trivial Picard group.
 
+    This function returns a generator which yields tuples of projective
+    coordinates. Some linear combination of those coordinate tuples is
+    guaranteed to form a valid projective point.
+
+    .. NOTE::
+
+        This function is for internal use. To add two elliptic-curve
+        points, users should simply use the `+` operator.
+
     REFERENCES:
 
     These formulas were derived by Bosma and Lenstra [BL1995]_,
@@ -25,6 +34,20 @@ def add(E, P, Q):
         (582, 2347, 1028)
         sage: E(PQ1) == E(PQ2)
         True
+
+    TESTS:
+
+    We ensure that these formulas return the same result as the ones over a field::
+
+        sage: from sage.schemes.elliptic_curves.addition_formulas_ring import add
+        sage: F = GF(2^127-1)
+        sage: E = EllipticCurve(j=F.random_element())
+        sage: E = choice(E.twists())
+        sage: P = E.random_point()
+        sage: Q = E.random_point()
+        sage: PQ1, PQ2 = add(E, P, Q)
+        sage: assert E(*PQ1) == P + Q
+        sage: assert E(*PQ2) == P + Q
     """
     a1, a2, a3, a4, a6 = E.a_invariants()
     b2, b4, b6, b8 = E.b_invariants()
