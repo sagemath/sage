@@ -2710,6 +2710,7 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
         TESTS::
 
             sage: import collections
+            sage: from sage.stats.statistical_tests import sigmas_from_uniform
             sage: R = GF(2**3, 'a')['x']; samples = 10000
 
         This test verifies that the "uniform_random" generates expected distributions::
