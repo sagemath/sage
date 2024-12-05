@@ -1502,7 +1502,7 @@ Quadratic class numbers::
     sage: pari(-104).quadclassunit()
     [6, [6], [Qfb(5, -4, 6)], 1]
     sage: pari(109).quadclassunit()
-    [1, [], [], 5.56453508676047]
+    [1, [], [], 5.56453508676047, -1]
     sage: pari(10001).quadclassunit() # random generators
     [16, [16], [Qfb(10, 99, -5, 0.E-38)], 5.29834236561059]
     sage: pari(10001).quadclassunit()[0]
@@ -1749,13 +1749,13 @@ General number fields::
     sage: y = QQ['yy'].0; _ = pari(y) # pari has variable ordering rules
     sage: x = QQ['zz'].0; nf = pari(x^2 + 2).nfinit()
     sage: nf.nfroots(y^2 + 2)
-    [Mod(-zz, zz^2 + 2), Mod(zz, zz^2 + 2)]
+    [Mod(-zz, zz^2 + 2), Mod(zz, zz^2 + 2)]~
     sage: nf = pari(x^3 + 2).nfinit()
     sage: nf.nfroots(y^3 + 2)
-    [Mod(zz, zz^3 + 2)]
+    [Mod(zz, zz^3 + 2)]~
     sage: nf = pari(x^4 + 2).nfinit()
     sage: nf.nfroots(y^4 + 2)
-    [Mod(-zz, zz^4 + 2), Mod(zz, zz^4 + 2)]
+    [Mod(-zz, zz^4 + 2), Mod(zz, zz^4 + 2)]~
 
     sage: nf = pari('x^2 + 1').nfinit()
     sage: nf.nfrootsof1()

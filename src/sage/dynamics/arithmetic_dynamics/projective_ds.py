@@ -1790,7 +1790,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: P.<x,y> = ProjectiveSpace(K,1)
             sage: f = DynamicalSystem_projective([1/3*x^2+1/a*y^2, y^2])
             sage: f.primes_of_bad_reduction()                                           # needs sage.rings.function_field
-            [Fractional ideal (a), Fractional ideal (3)]
+            [Fractional ideal (-a), Fractional ideal (3)]
 
         This is an example where ``check=False`` returns extra primes::
 
