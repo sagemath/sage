@@ -68,7 +68,7 @@ class HyperellipticCurveSmoothModel_finite_field(
 
         .. SEEALSO:: :meth:`points`
         """
-        # TODO: this is very silly but works
+        # NOTE: this is a very naive implementation
         yield from self.points_at_infinity()
         for x in self.base_ring():
             yield from self.lift_x(x, all=True)
@@ -161,7 +161,7 @@ class HyperellipticCurveSmoothModel_finite_field(
 
         t = []
         Mpow = 1
-        for i in range(n):
+        for _ in range(n):
             Mpow *= M
             t.append(Mpow.trace())
 
@@ -362,10 +362,10 @@ class HyperellipticCurveSmoothModel_finite_field(
             else:
                 raise ValueError("Unknown algorithm")
 
-        if p <= (2 * g + 1) * (2 * N - 1):
+        lower_bound = (2 * g + 1) * (2 * N - 1)
+        if p <= lower_bound:
             raise ValueError(
-                "p=%d should be greater than (2*g+1)(2*N-1)=%d"
-                % (p, (2 * g + 1) * (2 * N - 1))
+                f"p={p} should be greater than (2*g+1)(2*N-1)={lower_bound}"
             )
 
         if algorithm == "traces":
@@ -461,7 +461,7 @@ class HyperellipticCurveSmoothModel_finite_field(
         # No smart method available
         return self.count_points_exhaustive(n)
 
-    def cardinality_exhaustive(self, extension_degree=1, algorithm=None):
+    def cardinality_exhaustive(self, extension_degree=1):
         r"""
         Count points on a single extension of the base field
         by enumerating over x and solving the resulting quadratic
@@ -514,10 +514,6 @@ class HyperellipticCurveSmoothModel_finite_field(
         g = self.genus()
         n = extension_degree
 
-        if g == 0:
-            # here is the projective line
-            return K.cardinality() ** n + 1
-
         f, h = self.hyperelliptic_polynomials()
         a = 0
 
@@ -542,6 +538,7 @@ class HyperellipticCurveSmoothModel_finite_field(
         # For the affine points with given x-coordinate,
         # solve y^2 + h(x)*y == f(x).
 
+        # Handle the special case for char 2
         if K.characteristic() == 2:
             # points at infinity
             r = h[g + 1]
@@ -558,21 +555,21 @@ class HyperellipticCurveSmoothModel_finite_field(
                     a += 1
                 elif (fext(x) / r**2).trace() == 0:
                     a += 2
-        else:
-            # points at infinity
-            d = h[g + 1] ** 2 + 4 * f[2 * g + 2]
+            return a
+
+        # points at infinity
+        d = h[g + 1] ** 2 + 4 * f[2 * g + 2]
+        if not d:
+            a += 1
+        elif n % 2 == 0 or d.is_square():
+            a += 2
+        # affine points
+        for x in L:
+            d = hext(x) ** 2 + 4 * fext(x)
             if not d:
                 a += 1
-            elif n % 2 == 0 or d.is_square():
+            elif d.is_square():
                 a += 2
-            # affine points
-            for x in L:
-                d = hext(x) ** 2 + 4 * fext(x)
-                if not d:
-                    a += 1
-                elif d.is_square():
-                    a += 2
-
         return a
 
     def cardinality_hypellfrob(self, extension_degree=1, algorithm=None):
@@ -743,8 +740,8 @@ class HyperellipticCurveSmoothModel_finite_field(
         sqrtq = RR(q).sqrt()
         g = self.genus()
 
-        # note: this bound is from Kedlaya's paper, but he tells me it's not
-        # the best possible
+        # NOTE: this bound is from Kedlaya's paper, but he tells me it's not
+        # the best possible -- David Harvey
         M = 2 * binomial(2 * g, g) * sqrtq**g
         B = ZZ(M.ceil()).exact_log(p)
         if p**B < M:
@@ -1318,8 +1315,8 @@ class HyperellipticCurveSmoothModel_finite_field(
         # Compute the finite field and prime p.
         Fq = self.base_ring()
         p = Fq.characteristic()
+        
         # checks
-
         if p == 2:
             raise ValueError("p must be odd")
 
