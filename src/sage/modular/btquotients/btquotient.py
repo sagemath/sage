@@ -2795,21 +2795,14 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             sage: X = BruhatTitsQuotient(7,11)
             sage: X.get_units_of_order()
             [
-            [ 0]  [-2]
-            [-2]  [ 0]
-            [ 0]  [ 1]
-            [ 1], [ 0]
+            [ 0]  [ 2]
+            [ 2]  [ 0]
+            [ 0]  [-1]
+            [-1], [ 0]
             ]
         """
-        OM = self.get_eichler_order_quadmatrix()
-        v = pari('qfminim(%s,2,0, flag = 2)' % (OM.__pari__()))
-        n_units = Integer(v[0].sage() / 2)
-        v = pari('qfminim(%s,2,%s, flag = 2)' % ((OM.__pari__()), n_units))
-        O_units = []
-        for jj in range(n_units):
-            vec = Matrix(ZZ, 4, 1, [v[2][ii, jj].sage() for ii in range(4)])
-            O_units.append(vec)
-        return O_units
+        q = self.get_eichler_order_quadform()
+        return [Matrix(4,1,v) for v in q.vectors_by_length(1)[1]]
 
     @cached_method
     def _get_Up_data(self):
