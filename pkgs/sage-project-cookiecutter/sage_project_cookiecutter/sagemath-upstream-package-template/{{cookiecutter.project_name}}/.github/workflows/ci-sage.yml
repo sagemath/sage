@@ -1,0 +1,105 @@
+name: Run Sage CI
+
+## This GitHub Actions workflow provides:
+##
+##  - portability testing, by building and testing this project on many platforms
+##    (Linux variants, macOS)
+##
+##  - continuous integration, by building and testing other software
+##    that depends on this project.
+##
+## It runs on every pull request and push of a tag to the GitHub repository.
+##
+## The testing can be monitored in the "Actions" tab of the GitHub repository.
+##
+## After all jobs have finished (or are canceled) and a short delay,
+## tar files of all logs are made available as "build artifacts".
+##
+## This GitHub Actions workflow uses the portability testing framework
+## of SageMath (https://www.sagemath.org/).  For more information, see
+## https://doc.sagemath.org/html/en/developer/portability_testing.html
+
+## The workflow consists of two jobs:
+##
+##  - First, it builds a source distribution of the project
+##    and generates a script "update-pkgs.sh".  It uploads them
+##    as a build artifact named upstream.
+##
+##  - Second, it checks out a copy of the SageMath source tree.
+##    It downloads the upstream artifact and replaces the project's
+##    package in the SageMath distribution by the newly packaged one
+##    from the upstream artifact, by running the script "update-pkgs.sh".
+##    Then it builds a small portion of the Sage distribution.
+##
+## Many copies of the second step are run in parallel for each of the tested
+## systems/configurations.
+
+on:
+  pull_request:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+    # Allow to run manually
+
+concurrency:
+  group: {{"${{"}} github.workflow {{"}}"}}-{{"${{"}} github.head_ref || github.run_id {{"}}"}}
+  cancel-in-progress: true
+
+env:
+  # Ubuntu packages to install so that the project's "make dist" can succeed
+  DIST_PREREQ: python3-pip
+  # Name of this project in the Sage distribution
+  SPKG:        {{cookiecutter.project_name}}
+  REMOVE_PATCHES: "*"
+
+jobs:
+
+  dist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out {{"${{"}} env.SPKG {{"}}"}}
+        uses: actions/checkout@v3
+        with:
+          path: build/pkgs/{{"${{"}} env.SPKG {{"}}"}}/src
+      - name: Install prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $DIST_PREREQ
+          python3 -m pip install --user build
+      - name: Run make dist, prepare upstream artifact
+        run: |
+          (cd build/pkgs/{{"${{"}} env.SPKG {{"}}"}}/src && python3 -m build --sdist) \
+          && mkdir -p upstream && cp build/pkgs/{{"${{"}} env.SPKG {{"}}"}}/src/dist/*.tar.gz upstream/{{"${{"}} env.SPKG {{"}}"}}-git.tar.gz \
+          && echo "sage-package create {{"${{"}} env.SPKG {{"}}"}} --version git --tarball {{"${{"}} env.SPKG {{"}}"}}-git.tar.gz --type=optional" > upstream/update-pkgs.sh \
+          && if [ -n "{{"${{"}} env.REMOVE_PATCHES {{"}}"}}" ]; then echo "(cd ../build/pkgs/{{"${{"}} env.SPKG {{"}}"}}/patches && rm -f {{"${{"}} env.REMOVE_PATCHES {{"}}"}}; :)" >> upstream/update-pkgs.sh; fi \
+          && ls -l upstream/
+      - uses: actions/upload-artifact@v3
+        with:
+          path: upstream
+          name: upstream
+
+  linux:
+    uses: sagemath/sage/.github/workflows/docker.yml@develop
+    with:
+      # Sage distribution packages to build
+      targets: SAGE_CHECK=no SAGE_CHECK_PACKAGES={{cookiecutter.project_name}} {{cookiecutter.project_name}}
+      # Standard setting: Test the current beta release of Sage:
+      sage_repo: sagemath/sage
+      sage_ref: develop
+      upstream_artifact: upstream
+      # Docker targets (stages) to tag
+      docker_targets: "with-targets"
+      docker_push_repository: ghcr.io/{{"${{"}} github.repository {{"}}"}}/{{cookiecutter.project_name}}
+    needs: [dist]
+
+  macos:
+    uses: sagemath/sage/.github/workflows/macos.yml@develop
+    with:
+      # Sage distribution packages to build
+      targets: SAGE_CHECK=no SAGE_CHECK_PACKAGES={{cookiecutter.project_name}} {{cookiecutter.project_name}}
+      # Standard setting: Test the current beta release of Sage:
+      sage_repo: sagemath/sage
+      sage_ref: develop
+      upstream_artifact: upstream
+    needs: [dist]
