@@ -154,6 +154,7 @@ jobs:
           git config --global user.email "ci-sage@example.com"
           git config --global user.name "Build documentation workflow"
           unzip doc.zip
+          rm doc.zip
           PR_NUMBER=""
           if [[ "$GITHUB_REF" =~ refs/pull/([0-9]+)/merge ]]; then
             PR_NUMBER="${BASH_REMATCH[1]}"
