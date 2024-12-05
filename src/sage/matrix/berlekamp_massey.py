@@ -79,6 +79,8 @@ def berlekamp_massey(a):
 
     R, x = K['x'].objgen()
     f0, f1 = R(x**(len(a)-1) * R(a)(x^(-1))), x**(len(a))
+    if f0.degree() < 0:
+        return R(1)
     s0, s1 = 0, 1
     k = len(a)
     while True:
