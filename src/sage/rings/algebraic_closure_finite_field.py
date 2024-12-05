@@ -594,6 +594,28 @@ class AlgebraicClosureFiniteField_generic(Field):
         """
         return not (self == other)
 
+    def __copy__(self):
+        """
+        TESTS::
+
+            sage: import copy
+            sage: F = GF(3).algebraic_closure()
+            sage: copy.copy(F) is F
+            True
+        """
+        return self
+
+    def __deepcopy__(self, memo):
+        """
+        TESTS::
+
+            sage: import copy
+            sage: F = GF(3).algebraic_closure()
+            sage: copy.deepcopy(F) is F
+            True
+        """
+        return self
+
     def characteristic(self):
         """
         Return the characteristic of ``self``.
