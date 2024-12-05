@@ -303,7 +303,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         Compute the points at infinity on the curve. Assumes we are using
         a weighted projective model for the curve
         """
-        return [self.point([1, y, 0], check=False) for y in self.roots_at_infinity()]
+        return [self.point([1, y, 0], check=True) for y in self.roots_at_infinity()]
 
     def is_x_coord(self, x):
         """
