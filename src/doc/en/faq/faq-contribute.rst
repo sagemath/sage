@@ -21,8 +21,8 @@ I want to contribute code to Sage. How do I get started?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 Take a look at the
-`official development guide <https://doc.sagemath.org/html/en/developer>`_
-for Sage. At a minimum, the first chapter in that guide is required
+`Sage Developer Guide <https://doc.sagemath.org/html/en/developer>`_.
+At a minimum, the first chapter in that guide is required
 reading for any Sage developer. Also pay special attention to the
 `GitHub guidelines <https://doc.sagemath.org/html/en/developer/github.html>`_.
 You can also join the
@@ -120,153 +120,21 @@ project idea.
 Where can I find resources on Python or Cython?
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Here is an incomplete list of resources on Python and Cython. Further
-resources can be found by a web search.
+If you are new to Python, you can start with the `Official Python Tutorial <https://docs.python.org/3/tutorial/>`_ or one of numerous
+free tutorials and courses out on the web.
 
-**General resources**
+To learn about Cython, start with the `Basic Cython Tutorial <https://cython.readthedocs.io/en/latest/src/tutorial/cython_tutorial.html>`_.
 
-* `Cython <https://cython.org>`_
-* `pep8 <https://pypi.org/project/pep8>`_
-* `pydeps <https://pypi.org/project/pydeps>`_
-* `pycallgraph <https://pycallgraph.readthedocs.io>`_
-* `PyChecker <http://pychecker.sourceforge.net>`_
-* `PyFlakes <https://pypi.org/project/pyflakes>`_
-* `Pylint <https://www.logilab.org/project/pylint>`_
-* `Python <https://www.python.org>`_ home page and the
-  `Python standard documentation <https://docs.python.org>`_
-* `Snakefood <http://furius.ca/snakefood>`_
-* `Sphinx <https://www.sphinx-doc.org>`_
-* `XDot <https://github.com/jrfonseca/xdot.py>`_
-
-**Tutorials and books**
-
-* `Cython Tutorial <http://conference.scipy.org/proceedings/SciPy2009/paper_1/>`_
-  by Stefan Behnel, Robert W. Bradshaw, and Dag Sverre Seljebotn
-* `Dive Into Python 3 <http://www.diveintopython3.net>`_ by Mark Pilgrim
-* `Fast Numerical Computations with Cython <http://conference.scipy.org/proceedings/SciPy2009/paper_2/>`_
-  by Dag Sverre Seljebotn
-* `Official Python Tutorial <https://docs.python.org/3/tutorial/>`_
-
-**Articles and HOWTOs**
-
-* `decorator <https://pypi.org/project/decorator>`_
-* `Functional Programming HOWTO <https://docs.python.org/3/howto/functional.html>`_
-  by A. M. Kuchling
-* `Python Functional Programming for Mathematicians <https://wiki.sagemath.org/devel/FunctionalProgramming>`_
-  by Minh Van Nguyen
-* `Regular Expression HOWTO <https://docs.python.org/3/howto/regex.html>`_
-  by A. M. Kuchling
-* `reStructuredText <https://docutils.sourceforge.io/rst.html>`_
+It is a good idea to learn about good developer tools
+alongside with learning about programming in these languages.
+Our developer guide explains how to :ref:`write testable examples
+<section-doctest-writing>` and has information on the
+:ref:`development and testing tools <chapter-tools>` that
+are in use in Sage development.
 
 
 Are there any coding conventions I need to follow?
 """"""""""""""""""""""""""""""""""""""""""""""""""
 
-You should follow the standard Python conventions as documented at
-:pep:`8` and :pep:`257`.
-Also consult the Sage Developer's Guide, especially the chapter
-`Conventions for Coding in Sage <https://doc.sagemath.org/html/en/developer/#sage-coding-details>`_.
-
-
-I submitted a bug fix to the GitHub Sage repo several weeks ago. Why are you ignoring my branch?
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-We are not trying to ignore your branch. Most people who work on Sage do so
-in their free time. With hundreds of open PRs of varying degrees of
-impacts on the whole Sage community, people who work on PRs need
-to prioritize their time and work on those PRs that interest
-them. Sometimes you may be the only person who understands your
-branch. In that case, you are encouraged to take extra care to make it
-as easy as possible for anyone to review. Here are some
-tips on making your branch easy to review:
-
-* Have you clearly described the problem your branch is trying to
-  solve?
-* Have you provided any background information relevant to the problem
-  your patch is trying to solve? Such information include links to
-  online resources and any relevant papers, books and reference
-  materials.
-* Have you clearly described how your branch solves the problem under
-  consideration?
-* Have you clearly described how to test the changes in your branch?
-* Have you listed any issues/PRs that your branch depends on?
-* Is your branch based on a recent (preferably, the latest) Sage beta version?
-* Does your branch
-  `follow relevant conventions <https://doc.sagemath.org/html/en/developer/#writing-code-for-sage>`_
-  as documented in the Developer's Guide?
-
-If your branch stands no chance of being merged in the Sage source
-tree, we will not ignore your branch but simply close the relevant
-PR with an explanation why we cannot include your changes.
-
-
-When and how might I remind the Sage community of a branch I care about?
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-You are encouraged to take extra care in how you remind the Sage
-community of a branch/patch you want to get merged into the Sage source
-tree. There might be an upcoming bug squash sprint or an upcoming Sage
-Days workshop that relates to your patch. Monitor the relevant Sage
-mailing lists and respond politely to any relevant email threads, with
-clear explanation on why your patch is relevant.
-
-
-I wrote some Sage code and I want it to be integrated into Sage. However, after renaming my file ``a.sage`` to ``a.py``, I got syntax errors. Do I have to rewrite all my code in Python instead of Sage?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-The basic answer is yes, but rewriting is a big word for what is
-really needed. There is little work to do since Sage mostly follows
-Python syntax. The two main differences are handling of integer (see
-also the `afterword`_ for more on the sage preparser), and the
-necessity to import what you need.
-
-- **Handling of integers:** You need to take care of the following
-  changes:
-
-  - Notation for exponentiation: In Python ``**`` means exponentiation
-    and ``^`` means "xor".
-  - If you need to return an integer to the user, write ``return
-    Integer(1)`` instead of ``return 1``. In Python, 1 is a python
-    ``int``, and ``Integer(1)`` is a Sage/Gmp integer. In addition,
-    ``Integer`` are much more powerful than ``int``; for
-    example, they know about being prime and factorization.
-  - You should also notice that ``2 / 3`` no longer means
-    ``Integer(2) / Integer(3)`` and returns ``2/3``, but rather
-    ``int(2) / int(3)``, and therefore returns ``0`` due to integer
-    division where it deregards any remainder. If you are dealing with
-    ``Integer`` but you really need an integer division you can use
-    ``Integer(2) // Integer(3)``.
-
-- **Importing stuff:** The second big change is the necessity to
-  import everything what you need. More precisely, each time you use
-  some Sage function, you need to import it at the beginning of the
-  file. For example, if you want ``PolynomialRing``, you need to
-  write:
-
-  .. CODE-BLOCK:: python
-
-      from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-
-  You can use ``import_statements`` to get the exact necessary line::
-
-      sage: import_statements(PolynomialRing)
-      from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-
-  If this fails, you can ask Sage where to find ``PolynomialRing`` using::
-
-      sage: PolynomialRing.__module__
-      'sage.rings.polynomial.polynomial_ring_constructor'
-
-  This also corresponds to the path starting after ``site-packages``
-  given when you ask Sage for ``PolynomialRing`` help. For example,
-  if you call ``PolynomialRing?``, you get:
-
-  .. CODE-BLOCK:: text
-
-      Type:    function
-      [...]
-      File:    /path_to_sage_root/sage/local/lib/python3.7/site-packages/sage/rings/polynomial/polynomial_ring_constructor.py
-      [...]
-
-
-.. _afterword: https://doc.sagemath.org/html/en/tutorial/afterword.html
+See the Sage Developer's Guide, especially the chapter
+:ref:`chapter-code-basics`.
