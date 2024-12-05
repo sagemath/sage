@@ -8,8 +8,6 @@ workspaces.
 
 import os
 import glob
-from sage.env import GAP_ROOT_PATHS
-from sage.interfaces.gap_workspace import gap_workspace_file
 
 
 def timestamp():
@@ -29,10 +27,11 @@ def timestamp():
         sage: type(timestamp())
         <... 'float'>
     """
+    from sage.interfaces.gap import KERNEL_INFO
     libgap_dir = os.path.dirname(__file__)
     libgap_files = glob.glob(os.path.join(libgap_dir, '*'))
     gap_packages = []
-    for d in GAP_ROOT_PATHS.split(";"):
+    for d in KERNEL_INFO().GAP_ROOT_PATHS.split(";"):
         if d:
             # If GAP_ROOT_PATHS begins or ends with a semicolon,
             # we'll get one empty d.
@@ -71,6 +70,7 @@ def workspace(name='workspace'):
         sage: isinstance(up_to_date, bool)
         True
     """
+    from sage.interfaces.gap_workspace import gap_workspace_file
     workspace = gap_workspace_file("libgap", name)
     try:
         workspace_mtime = os.path.getmtime(workspace)
