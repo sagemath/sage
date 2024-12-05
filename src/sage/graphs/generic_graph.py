@@ -22984,7 +22984,7 @@ class GenericGraph(GenericGraph_pyx):
     # alias, consistent with linear algebra code
     charpoly = characteristic_polynomial
 
-    def eigenvectors(self, laplacian=False):
+    def eigenvectors(self, laplacian=False, vertices=None):
         r"""
         Return the *right* eigenvectors of the adjacency matrix of the graph.
 
@@ -23089,14 +23089,28 @@ class GenericGraph(GenericGraph_pyx):
              (-0.5000000000... + 0.8660254037...*I,
               [(1, -0.5000000000... + 0.8660254037...*I, -0.5000000000... - 0.8660254037...*I)],
               1)]
-        """
-        if laplacian:
-            M = self.kirchhoff_matrix(vertices=list(self))
-        else:
-            M = self.adjacency_matrix(vertices=list(self))
-        return M.right_eigenvectors()
 
-    def eigenspaces(self, laplacian=False):
+        Eigenvectors as elements of a :class:`CombinatorialFreeModule`::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.relabel('12345ABCDE')
+            sage: G.eigenvectors(vertices=True)
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'CombinatorialFreeModule_with_category' object has no attribute 'basis_matrix'
+        """
+        from sage.matrix.constructor import matrix
+        vertex_indices, keys = self._vertex_indices_and_keys(vertices, sort=False)
+        if laplacian:
+            M = self.kirchhoff_matrix(vertices=list(vertex_indices))
+        else:
+            M = self.adjacency_matrix(vertices=list(vertex_indices))
+        if keys is None:
+            return M.right_eigenvectors()
+        M = matrix(M, row_keys=keys, column_keys=keys)
+        return M.eigenvectors()
+
+    def eigenspaces(self, laplacian=False, vertices=None):
         r"""
         Return the *right* eigenspaces of the adjacency matrix of the graph.
 
@@ -23201,13 +23215,18 @@ class GenericGraph(GenericGraph_pyx):
                  [      1      a1 -a1 - 1])
             ]
         """
+        from sage.matrix.constructor import matrix
+        vertex_indices, keys = self._vertex_indices_and_keys(vertices, sort=False)
         if laplacian:
-            M = self.kirchhoff_matrix(vertices=list(self))
+            M = self.kirchhoff_matrix(vertices=list(vertex_indices))
         else:
-            M = self.adjacency_matrix(vertices=list(self))
+            M = self.adjacency_matrix(vertices=list(vertex_indices))
         # could pass format='all' to get QQbar eigenvalues and eigenspaces
         # which would be a change in default behavior
-        return M.right_eigenspaces(format='galois', algebraic_multiplicity=False)
+        if keys is None:
+            return M.right_eigenspaces(format='galois', algebraic_multiplicity=False)
+        M = matrix(M, row_keys=keys, column_keys=keys)
+        return M.eigenspaces(format='galois', algebraic_multiplicity=False)
 
     # Automorphism and isomorphism
 
