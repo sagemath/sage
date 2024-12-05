@@ -11,6 +11,7 @@ from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.interfaces.sage0', ['sage0', 'sage0_version', 'Sage'])
 lazy_import('sage.interfaces.axiom', ['Axiom', 'axiom'])
+lazy_import('sage.interfaces.asir', ['Asir', 'asir'])
 lazy_import('sage.interfaces.ecm', ['ECM', 'ecm'])
 lazy_import('sage.interfaces.four_ti_2', 'four_ti_2')
 lazy_import('sage.interfaces.fricas', ['FriCAS', 'fricas'])
