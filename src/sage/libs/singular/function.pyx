@@ -1477,11 +1477,15 @@ cdef inline call_function(SingularFunction self, tuple args, object R, bint sign
 
     with opt_ctx: # we are preserving the global options state here
         if signal_handler:
-            sig_on()
-            _res = self.call_handler.handle_call(argument_list, si_ring)
-            sig_off()
+            try:
+                sig_on()
+                _res = self.call_handler.handle_call(argument_list, si_ring)
+                sig_off()
+            finally:
+                s = check_error()
         else:
             _res = self.call_handler.handle_call(argument_list, si_ring)
+            s = check_error()
 
     if myynest:
         myynest = 0
@@ -1489,7 +1493,6 @@ cdef inline call_function(SingularFunction self, tuple args, object R, bint sign
     if currentVoice:
         currentVoice = NULL
 
-    s = check_error()
     if s:
         raise RuntimeError("error in Singular function call %r:\n%s" %
             (self._name, "\n".join(s)))
