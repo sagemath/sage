@@ -26,11 +26,9 @@ from sage.functions.all import exp
 from sage.symbolic.expression_conversions import Converter
 from sage.symbolic.operators import add_vararg, mul_vararg
 from sage.symbolic.ring import SR
+from sage.rings.abc import AlgebraicRealField
 
 
-#############
-# Algebraic #
-#############
 class AlgebraicConverter(Converter):
     def __init__(self, field):
         """
@@ -44,6 +42,11 @@ class AlgebraicConverter(Converter):
             tan
         """
         self.field = field
+        # converter for operands
+        if isinstance(field, AlgebraicRealField):
+            self.converter = AlgebraicConverter(field.algebraic_closure())
+        else:
+            self.converter = self
 
         from sage.functions.all import reciprocal_trig_functions
         self.reciprocal_trig_functions = reciprocal_trig_functions
@@ -97,6 +100,12 @@ class AlgebraicConverter(Converter):
             sage: L = QuadraticField(3, embedding=-AA(3).sqrt())
             sage: bool(L.gen() == -sqrt(3))
             True
+
+        Test that :issue:12745 is fixed:
+
+            sage: x = exp(2*I*pi/7) + exp(-2*I*pi/7)
+            sage: AA(x)
+            1.246979603717467?
         """
         # We try to avoid simplifying, because maxima's simplify command
         # can change the value of a radical expression (by changing which
@@ -105,25 +114,16 @@ class AlgebraicConverter(Converter):
             if operator is pow:
                 from sage.rings.rational import Rational
                 base, expt = ex.operands()
-                base = self.field(base)
+                base = self.converter.field(base)
                 expt = Rational(expt)
                 return self.field(base**expt)
-            else:
-                if operator is add_vararg:
-                    operator = add
-                elif operator is mul_vararg:
-                    operator = mul
-                return reduce(operator, map(self, ex.operands()))
+            if operator is add_vararg:
+                operator = add
+            elif operator is mul_vararg:
+                operator = mul
+            return self.field(reduce(operator, map(self.converter, ex.operands())))
         except TypeError:
             pass
-
-        if operator is pow:
-            from sage.symbolic.constants import e, pi, I
-            from sage.rings.rational_field import QQ
-
-            base, expt = ex.operands()
-            if base == e and expt / (pi * I) in QQ:
-                return exp(expt)._algebraic_(self.field)
 
         raise TypeError("unable to convert %r to %s" % (ex, self.field))
 
