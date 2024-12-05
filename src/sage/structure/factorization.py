@@ -752,6 +752,51 @@ class Factorization(SageObject):
         """
         return self.__unit
 
+    def factor(self, simplify=False):
+        r"""
+        Return the :class:`Factorization` of this object, i.e. itself.
+
+        If ``simplify`` is set, this factorization is fully factorized.
+
+        EXAMPLES::
+
+            sage: f = factor(12); f
+            2^2 * 3
+            sage: factor(f)
+            2^2 * 3
+            sage: factor(f) is f
+            True
+
+        If an incomplete :class:`Factorization` is given, the ``simplify``
+        argument will compute the full factorization::
+
+            sage: f = Factorization([(27, 1), (12, -2)], unit=5)
+            sage: f, f.value()
+            (5 * 12^-2 * 27, 15/16)
+            sage: factor(f)
+            5 * 12^-2 * 27
+            sage: factor(f, simplify=True)
+            2^-4 * 3 * 5
+            sage: _.value()
+            15/16
+
+        ::
+
+            sage: R.<x> = QQ[]
+            sage: factor(x^2 - 1)
+            (x - 1) * (x + 1)
+            sage: factor(Factorization([(x^2 - 1, 1)]))
+            x^2 - 1
+            sage: factor(Factorization([(x^2 - 1, 1)]), simplify=True)
+            (x - 1) * (x + 1)
+        """
+        if simplify:
+            from sage.misc.misc_c import prod
+            from sage.arith.misc import factor
+            return prod(factor(p)**e for p, e in self) * factor(self.unit())
+
+        return self
+
     def _cr(self):
         """
         Return whether or not factorizations are printed with carriage
