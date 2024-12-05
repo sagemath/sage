@@ -3255,7 +3255,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         Return an irreducible polynomial of degree at most `n` which is
         approximately satisfied by this complex number.
 
-        ALGORITHM: Uses the PARI C-library :pari:`algdep` command.
+        ALGORITHM: See :func:`~sage.arith.misc.algdep`.
 
         INPUT: Type ``algdep?`` at the top level prompt. All additional
         parameters are passed onto the top-level :func:`algdep` command.
@@ -3275,6 +3275,29 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
     # Alias
     algdep = algebraic_dependency
+
+    def minpoly(self, *args, **kwargs):
+        """
+        Finds some polynomial with integer coefficients that has a root
+        approximately equal to ``self``.
+
+        TESTS::
+
+            sage: CC(1).minpoly()
+            x - 1
+            sage: CC(1/2).minpoly()
+            2*x - 1
+            sage: CC(sqrt(-1)).minpoly()
+            x^2 + 1
+            sage: CC(pi*(-1)^(1/3)).minpoly()  # transcendental, might return arbitrary polynomial or error
+            793891*x^3 + 24615604
+            sage: minpoly(CC((-1)^(1/50)))  # insufficient precision
+            736594*x^2 - 1470281*x + 736594
+            sage: minpoly(ComplexField(400)((-1)^(1/50)))
+            x^40 - x^30 + x^20 - x^10 + 1
+        """
+        from sage.calculus.calculus import minpoly
+        return minpoly(self, *args, **kwargs)
 
 
 def make_ComplexNumber0(fld, mult_order, real, imag):

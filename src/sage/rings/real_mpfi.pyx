@@ -5167,6 +5167,34 @@ cdef class RealIntervalFieldElement(RingElement):
         return RealBallField(self.precision())(self).zeta(a).\
             _real_mpfi_(self._parent)
 
+    def minpoly(self, *args, **kwargs):
+        """
+        Finds some polynomial with integer coefficients that has a root inside the interval.
+
+        TESTS::
+
+            sage: RIF(1).minpoly()
+            x - 1
+            sage: RIF(1/2).minpoly()
+            2*x - 1
+            sage: RIF(sqrt(2)).minpoly()
+            x^2 - 2
+            sage: RIF(sin(1)).minpoly()
+            Traceback (most recent call last):
+            ...
+            ValueError: Could not find minimal polynomial
+            sage: minpoly(RIF(2^(1/50)))  # insufficient precision
+            Traceback (most recent call last):
+            ...
+            ValueError: Could not find minimal polynomial
+            sage: minpoly(RealIntervalField(200)(2^(1/50)))  # insufficient precision, returns an arbitrary polynomial
+            17*x^27 + 17*x^26 + 6*x^25 + 25*x^24 + 2*x^23 - 28*x^22 - 72*x^21 - 51*x^20 - 12*x^19 - 82*x^18 + 42*x^17 - 35*x^16 + 42*x^15 - 78*x^14 + 34*x^13 + 33*x^12 + 9*x^11 - 7*x^10 + 77*x^9 - 48*x^8 + 102*x^7 + 53*x^6 + 27*x^5 + 16*x^4 - 32*x^3 - 35*x^2 - 31*x + 30
+            sage: minpoly(RealIntervalField(400)(2^(1/50)))
+            x^50 - 2
+        """
+        from sage.calculus.calculus import minpoly
+        return minpoly(self, *args, **kwargs)
+
 
 def _simplest_rational_test_helper(low, high, low_open=False, high_open=False):
     """

@@ -4046,4 +4046,30 @@ cdef class RealBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
+    def minpoly(self, *args, **kwargs):
+        """
+        Finds some polynomial with integer coefficients that has a root inside the interval.
+
+        TESTS::
+
+            sage: RBF(1).minpoly()
+            x - 1
+            sage: RBF(1/2).minpoly()
+            2*x - 1
+            sage: RBF(sqrt(2)).minpoly()
+            x^2 - 2
+            sage: RBF(sin(1)).minpoly()
+            Traceback (most recent call last):
+            ...
+            ValueError: Could not find minimal polynomial
+            sage: minpoly(RBF(2^(1/50)))  # insufficient precision
+            Traceback (most recent call last):
+            ...
+            ValueError: Could not find minimal polynomial
+            sage: minpoly(RealBallField(400)(2^(1/50)))
+            x^50 - 2
+        """
+        from sage.calculus.calculus import minpoly
+        return minpoly(self, *args, **kwargs)
+
 RBF = RealBallField()
