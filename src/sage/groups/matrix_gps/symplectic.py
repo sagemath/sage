@@ -60,8 +60,18 @@ def Sp(n, R, var='a', invariant_form=None):
     r"""
     Return the symplectic group.
 
-    The special linear group `GL( d, R )` consists of all `d \times d`
-    matrices that are invertible over the ring `R` with determinant one.
+    The symplectic group `Sp(n, R)` consists of all `n \times n` matrices `M` of
+    even dimension that are symplectic with respect to an alternating form `E`
+    over the ring `R`, which are the matrices satisfying
+
+    .. MATH::
+
+        M E M^T = E.
+
+    By default, the alternating form `E` is represented by the block matrix
+    `\begin{pmatrix} 0 & J_{n / 2} \\ -J_{n / 2} & 0 \end{pmatrix}`, where `J_{n
+    / 2}` is the `(n / 2) \times (n / 2)` antidiagonal matrix with all ones on
+    the diagonal.
 
     .. NOTE::
 
@@ -94,6 +104,20 @@ def Sp(n, R, var='a', invariant_form=None):
         Traceback (most recent call last):
         ...
         ValueError: the degree must be even
+
+    Elements in the symplectic group fixes the underlying form::
+
+        sage: G = Sp(6, 13)
+        sage: E = G.invariant_form(); E
+        [ 0  0  0  0  0  1]
+        [ 0  0  0  0  1  0]
+        [ 0  0  0  1  0  0]
+        [ 0  0 12  0  0  0]
+        [ 0 12  0  0  0  0]
+        [12  0  0  0  0  0]
+        sage: M = Matrix(G.random_element())
+        sage: M * E * M.T == E
+        True
 
     Using the ``invariant_form`` option::
 
@@ -246,5 +270,5 @@ class SymplecticMatrixGroup_generic(NamedMatrixGroup_generic):
             sage: G._check_matrix(G.an_element().matrix())
         """
         F = self.invariant_form()
-        if x * F * x.transpose() != F:
-            raise TypeError('matrix must be symplectic with respect to the alternating form\n{}'.format(F))
+        if not x.is_symplectic(F):
+            raise TypeError(f"matrix must be symplectic with respect to the alternating form\n{F}")

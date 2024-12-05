@@ -4565,6 +4565,51 @@ cdef class Matrix(sage.structure.element.Matrix):
             raise ValueError("The matrix is not a square matrix")
         return self._check_symmetrizability(return_diag=return_diag, skew=True, positive=positive)
 
+    def is_symplectic(self, invariant_form=None):
+        r"""
+        Return ``True`` if this matrix `M` is symplectic with respect to the
+        invariant form `E`.
+
+        The matrix `M` is symplectic with respect to `E` if it satisfies `M E
+        M^T = E`. By default, the alternating form `E` is represented by the
+        block matrix `\begin{pmatrix} 0 & J_{n / 2} \\ -J_{n / 2} & 0
+        \end{pmatrix}`, where `J_{n / 2}` is the `(n / 2) \times (n / 2)`
+        antidiagonal matrix with all ones on the diagonal.
+
+        INPUT: see :func:`~sage.groups.matrix_gps.symplectic`.
+
+        EXAMPLES:
+
+        Symplectic `2 \times 2` matrices are those with determinant one::
+
+            sage: K.<a> = NumberField(x^3 + 2)
+            sage: R = K.order(2*a)
+            sage: M = random_matrix(R, 2, algorithm="unimodular")
+            sage: M.is_symplectic()
+            True
+
+        Identity matrices are symplectic::
+
+            sage: identity_matrix(R, 32).is_symplectic()
+            True
+
+        We can pass in an invariant form::
+
+            sage: E = Matrix(ZZ, [[0, 0, 0, 1], [0, 0, 2, 1], [0, -2, 0, 0], [-1, -1, 0, 0]])
+            sage: M = Matrix(ZZ, [[1, 0, 0, 0], [0, 1, 1, 0], [0, 0, 1, 0], [1, 0, 0, 1]])
+            sage: M.is_symplectic(invariant_form=E)
+            True
+            sage: M * E * M.T == E
+            True
+        """
+        if self._ncols != self._nrows:
+            raise ValueError("the matrix is not a square matrix")
+
+        if invariant_form is None:
+            from sage.groups.matrix_gps.symplectic import Sp
+            invariant_form = Sp(self._nrows, self._base_ring).invariant_form()
+        return self * invariant_form * self.transpose() == invariant_form
+
     def is_dense(self):
         """
         Return ``True`` if this is a dense matrix.

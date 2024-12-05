@@ -965,11 +965,6 @@ REFERENCES:
              J. Reine Angew. Math., **655** (2011), 61-87.
              :mathscinet:`MR2806105`
 
-.. [BL1994] Bernhard Beckermann, George Labahn. "A Uniform Approach for the
-            Fast Computation of Matrix-Type Padé Approximants". SIAM J. Matrix
-            Anal. Appl. 15 (1994) 804-823.
-            :doi:`10.1137/S0895479892230031`
-
 .. [BHMPW20a] Tom Braden, June Huh, Jacob P. Matherne, Nicholas Proudfoot,
              and Botong Wang, *A semi-small decomposition of the Chow
              ring of a matroid*, :arxiv:`2002.03341` (2020).
@@ -997,6 +992,11 @@ REFERENCES:
             (Waterloo, Ont., 1982) (1984): 85-122.
             http://oai.cwi.nl/oai/asset/1817/1817A.pdf
 
+.. [BL1994] Bernhard Beckermann, George Labahn. "A Uniform Approach for the
+            Fast Computation of Matrix-Type Padé Approximants". SIAM J. Matrix
+            Anal. Appl. 15 (1994) 804-823.
+            :doi:`10.1137/S0895479892230031`
+
 .. [BL2000] Anders Björner and Frank H. Lutz, "Simplicial manifolds,
             bistellar flips and a 16-vertex triangulation of the
             Poincaré homology 3-sphere", Experiment. Math. 9 (2000),
@@ -1005,9 +1005,15 @@ REFERENCES:
 .. [BL2003] \S. Brlek, A. Ladouceur, A note on differentiable palindromes,
             Theoret. Comput. Sci. 302 (2003) 167--178.
 
+.. [BL2004] Birkenhake, C., Lange, H. (2004). Abelian Varieties. In: Complex
+            Abelian Varieties. Grundlehren der mathematischen Wissenschaften,
+            vol 302. Springer, Berlin, Heidelberg.
+            https://doi.org/10.1007/978-3-662-06307-1_6
+
 .. [BLL1998] \F. Bergeron, G. Labelle, and P. Leroux.
              "Combinatorial species and tree-like structures".
-             Encyclopedia of Mathematics and its Applications, vol. 67, Cambridge Univ. Press. 1998.
+             Encyclopedia of Mathematics and its Applications, vol. 67,
+             Cambridge Univ. Press. 1998.
 
 .. [BLL2008] François Bergeron, Gilbert Labelle, and Pierre Leroux.
              "Introduction to the Theory of Species of Structures", March 14, 2008.
