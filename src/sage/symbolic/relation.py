@@ -691,13 +691,13 @@ def solve(f, *args, **kwds):
         sage: Expression.solve(x^2==1,x)
         [x == -1, x == 1]
 
-    We must solve with respect to actual variables::
+    We may solve for certain non-variables as well::
 
-        sage: z = 5
-        sage: solve([8*z + y == 3, -z +7*y == 0],y,z)
-        Traceback (most recent call last):
-        ...
-        TypeError: 5 is not a valid variable.
+        sage: u=function('u')(x,y);
+        sage: solve(list((u^2+x*u+y).gradient()),list(u.gradient()))
+        [[diff(u(x, y), x) == -u(x, y)/(x + 2*u(x, y)), diff(u(x, y), y) == -1/(x + 2*u(x, y))]]
+        sage: solve([diff(u^2+x^2,x), diff(u^2+x^2,x,x)],[diff(u,x),diff(u,x,x)])
+        [[diff(u(x, y), x) == -x/u(x, y), diff(u(x, y), x, x) == -(x^2 + u(x, y)^2)/u(x, y)^3]]
 
     If we ask for dictionaries containing the solutions, we get them::
 
@@ -1081,7 +1081,7 @@ def solve(f, *args, **kwds):
         variables = tuple(x)
 
     for v in variables:
-        if not (isinstance(v, Expression) and v.is_symbol()):
+        if not isinstance(v, Expression):
             raise TypeError("%s is not a valid variable." % repr(v))
 
     try:
