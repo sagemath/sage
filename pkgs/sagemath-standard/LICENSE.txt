@@ -1,1 +1,0 @@
-../../src/LICENSE.txt

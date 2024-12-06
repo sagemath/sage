@@ -139,7 +139,6 @@ EOF
     # ONLY stderr, and to re-output the results back to stderr leaving
     # stdout alone. Basically we swap the two descriptors using a
     # third, filter, and then swap them back.
-    ./bootstrap-conda && \
     aclocal -I m4 && \
     automake --add-missing --copy build/make/Makefile-auto 3>&1 1>&2 2>&3 \
         | sed "${QUIET_SED_FILTER}" 3>&1 1>&2 2>&3 && \
@@ -228,9 +227,6 @@ save () {
 	$(find src/doc/en/reference/spkg -name index.rst -prune -o -maxdepth 1 -name "*.rst" -print) \
 	environment-3.[89].yml environment-3.1[0-9].yml \
 	src/Pipfile \
-	src/pyproject.toml \
-	src/requirements.txt \
-	src/setup.cfg \
 	build/pkgs/cypari/version_requirements.txt \
 	build/pkgs/cysignals/version_requirements.txt \
 	build/pkgs/cython/version_requirements.txt \
