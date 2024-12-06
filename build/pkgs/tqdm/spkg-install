@@ -1,0 +1,8 @@
+#!/bin/sh
+if [ "$SAGE_LOCAL" = "" ]; then
+    echo "SAGE_LOCAL is not set. Exiting."
+    exit 1
+fi
+
+# Install the latest version of tqdm from PyPI
+"$SAGE_LOCAL/bin/pip" install tqdm
