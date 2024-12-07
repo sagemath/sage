@@ -1,0 +1,18 @@
+#!/bin/sh
+
+RED='\e[1;31m'
+NRM='\e[0m'  # normal
+
+if ! command -v autopep8 > /dev/null; then
+  printf "Error: ${RED}autopep8${NRM} not found.\nRequired for pre-commit checks.\n"
+  exit 1
+fi
+
+python_files=$(git diff --staged --name-only | grep "\.py\|\.pxd")
+[ -z "$python_files" ] && exit 0
+
+if ! autopep8 -i --exit-code $python_files; then
+  printf "${RED}autopep8${NRM}: Ill-formatted Python files staged for commit.\n\
+Auto-formatting... Check the unstaged changes.\n"
+  exit 1
+fi

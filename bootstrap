@@ -331,3 +331,5 @@ fi
 if [ $SAVE = yes ]; then
     save
 fi
+
+ln -fs "$SAGE_ROOT/tools/pre-commit" "$SAGE_ROOT/.git/hooks"
