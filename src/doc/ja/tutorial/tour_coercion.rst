@@ -273,7 +273,9 @@ Sageが宗とするのは歩み寄りだ．
     sage: R3.coerce(y)
     Traceback (most recent call last):
     ...
-    TypeError: no canonical coercion from Multivariate Polynomial Ring in x, y over Integer Ring to Multivariate Polynomial Ring in z, x over Integer Ring
+    TypeError: no canonical coercion
+    from Multivariate Polynomial Ring in x, y over Integer Ring
+    to Multivariate Polynomial Ring in z, x over Integer Ring
 
 ところが，そうした順序依存の変換は型強制としては満足すべきものにならない．
 ``ZZ['x','y']`` から ``ZZ['y','x']`` への変数名維持写像と ``ZZ['y','x']`` から ``ZZ['a','b']`` への順序依存写像を合成すると，結果は変数名も順序も保存しない写像となって無矛盾性が破れてしまうからである．

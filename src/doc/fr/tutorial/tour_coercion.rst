@@ -301,7 +301,9 @@ celle de l'autre en fonction de leur position dans la liste des générateurs :
     sage: R3.coerce(y)
     Traceback (most recent call last):
     ...
-    TypeError: no canonical coercion from Multivariate Polynomial Ring in x, y over Integer Ring to Multivariate Polynomial Ring in z, x over Integer Ring
+    TypeError: no canonical coercion
+    from Multivariate Polynomial Ring in x, y over Integer Ring
+    to Multivariate Polynomial Ring in z, x over Integer Ring
 
 Mais une telle conversion ne répond pas aux critères pour être une coercition :
 en effet, en composant l'application de ``ZZ['x','y']`` dans ``ZZ['y','x']``

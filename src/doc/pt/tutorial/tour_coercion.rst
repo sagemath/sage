@@ -307,7 +307,9 @@ geradores:
     sage: R3.coerce(y)
     Traceback (most recent call last):
     ...
-    TypeError: no canonical coercion from Multivariate Polynomial Ring in x, y over Integer Ring to Multivariate Polynomial Ring in z, x over Integer Ring
+    TypeError: no canonical coercion
+    from Multivariate Polynomial Ring in x, y over Integer Ring
+    to Multivariate Polynomial Ring in z, x over Integer Ring
 
 Mas essas conversões que preservam a posição não se qualificam como
 coação: Compondo um mapa que preserva nomes de ``ZZ['x','y']`` para

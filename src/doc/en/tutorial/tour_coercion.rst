@@ -301,7 +301,9 @@ ring generators according to their position in the list of generators:
     sage: R3.coerce(y)
     Traceback (most recent call last):
     ...
-    TypeError: no canonical coercion from Multivariate Polynomial Ring in x, y over Integer Ring to Multivariate Polynomial Ring in z, x over Integer Ring
+    TypeError: no canonical coercion
+    from Multivariate Polynomial Ring in x, y over Integer Ring
+    to Multivariate Polynomial Ring in z, x over Integer Ring
 
 But such position preserving conversions do not qualify as coercion:
 By composing a name preserving map from ``ZZ['x','y']`` to ``ZZ['y','x']``
