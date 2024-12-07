@@ -4579,8 +4579,9 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                     raise NotImplementedError("Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
 
             ivv = iv.ivGetVec()
-            v = [(f, ivv[i]) for i in range(1, I.ncols)
-                 if (f := new_MP(parent, p_Copy(I.m[i], _ring)))]
+            v = [(new_MP(parent, p_Copy(I.m[i], _ring)), ivv[i])
+                 for i in range(1, I.ncols)]
+            v = [(f, m) for f, m in v if f != 0]  # we might have zero in there
             unit = new_MP(parent, p_Copy(I.m[0], _ring))
 
             F = Factorization(v, unit)
