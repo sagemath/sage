@@ -66,7 +66,7 @@ In contrast, input to the ``%time`` magic command is preparsed::
 
 from IPython.core.magic import Magics, magics_class, line_magic, cell_magic
 from IPython.core.display import HTML
-from IPython import get_ipython
+from IPython.core.getipython import get_ipython
 
 from sage.repl.load import load_wrap
 from sage.env import SAGE_IMPORTALL, SAGE_STARTUP_FILE
