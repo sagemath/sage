@@ -192,4 +192,3 @@ cdef extern from "m4ri/m4ri.h":
     ##################################
 
     cdef void mzd_clear_bits(mzd_t *m, int x, int y, int n)
-
