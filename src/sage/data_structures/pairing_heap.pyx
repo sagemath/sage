@@ -257,7 +257,9 @@ cdef class PairingHeap_class:
             sage: P
             PairingHeap_of_n_integers: capacity 5, size 1
         """
-        return f"{self.name}: capacity {self.n}, size {len(self)}"
+        if isinstance(self, PairingHeap_of_n_integers):
+            return f"PairingHeap_of_n_integers: capacity {self.n}, size {len(self)}"
+        return f"PairingHeap_of_n_hashables: capacity {self.n}, size {len(self)}"
 
     def __bool__(self):
         r"""
@@ -428,7 +430,6 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
         """
         if not n:
             raise ValueError("the capacity of the heap must be strictly positive")
-        self.name = "PairingHeap_of_n_integers"
         self.n = n
         self.root = NULL
         self.nodes = <PairingHeapNode *>check_allocarray(n, sizeof(PairingHeapNode))
@@ -770,7 +771,6 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
         """
         if not n:
             raise ValueError("the capacity of the heap must be strictly positive")
-        self.name = "PairingHeap_of_n_hashables"
         self.n = n
         self.root = NULL
         self.nodes = <PairingHeapNode *>check_allocarray(n, sizeof(PairingHeapNode))

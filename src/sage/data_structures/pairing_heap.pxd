@@ -49,7 +49,6 @@ cdef _unlink(PairingHeapNode * p) except *
 
 
 cdef class PairingHeap_class:
-    cdef str name                 # name of the data structure
     cdef size_t n                 # maximum number of items
     cdef PairingHeapNode * root   # pointer to the top of the heap
     cdef PairingHeapNode * nodes  # array of size n to store items
