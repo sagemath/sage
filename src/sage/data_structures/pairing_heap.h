@@ -88,6 +88,107 @@ namespace pairing_heap {
     }; // end struct PairingHeapNode
 
 
+  // Remove p from its parent children list
+  template<
+    typename TI,  // type of items stored in the node
+    typename TV   // type of values associated with the stored item
+    >
+    static void _unlink(PairingHeapNode<TI, TV> *p) {
+      if (p->prev->child == p) {
+	p->prev->child = p->next;
+      } else {
+	p->prev->next = p->next;
+      }
+      if (p->next != nullptr) {
+	p->next->prev = p->prev;
+      }
+      p->prev = nullptr;
+      p->next = nullptr;
+    } // end _unlink
+
+  // Pair list of heaps and return pointer to the top of resulting heap
+  template<
+    typename TI,  // type of items stored in the node
+    typename TV   // type of values associated with the stored item
+    >
+    static PairingHeapNode<TI, TV> *_pair(PairingHeapNode<TI, TV> *p) {
+      if (p == nullptr) {
+	return nullptr;
+      }
+
+      /*
+       * Move toward the end of the list, counting elements along the way.
+       * This is done in order to:
+       * - know whether the list has odd or even number of nodes
+       * - speed up going-back through the list
+       */
+      size_t children = 1;
+      PairingHeapNode<TI, TV> *it = p;
+      while (it->next != nullptr) {
+	it = it->next;
+	children++;
+      }
+
+      PairingHeapNode<TI, TV> *result;
+
+      if (children % 2 == 1) {
+	PairingHeapNode<TI, TV> *a = it;
+	it = it->prev;
+	a->prev = a->next = nullptr;
+	result = a;
+      } else {
+	PairingHeapNode<TI, TV> *a = it;
+	PairingHeapNode<TI, TV> *b = it->prev;
+	it = it->prev->prev;
+	a->prev = a->next = b->prev = b->next = nullptr;
+	result = _merge(a, b);
+      }
+
+      for (size_t i = 0; i < (children - 1) / 2; i++) {
+	PairingHeapNode<TI, TV> *a = it;
+	PairingHeapNode<TI, TV> *b = it->prev;
+	it = it->prev->prev;
+	a->prev = a->next = b->prev = b->next = nullptr;
+	result = _merge(_merge(a, b), result);
+      }
+
+      return result;
+    } // end _pair
+
+
+  // Merge 2 heaps and return pointer to the top of resulting heap
+  template<
+    typename TI,  // type of items stored in the node
+    typename TV   // type of values associated with the stored item
+    >
+    static PairingHeapNode<TI, TV> *_merge(PairingHeapNode<TI, TV> *a,
+					   PairingHeapNode<TI, TV> *b) {
+      if (*a <= *b)  { // Use comparison method of PairingHeapNode
+	_link(a, b);
+	return a;
+      } else {
+	_link(b, a);
+	return b;
+      }
+    } // end _merge
+
+
+  // Make b a child of a
+  template<
+    typename TI,  // type of items stored in the node
+    typename TV   // type of values associated with the stored item
+    >
+    static void _link(PairingHeapNode<TI, TV> *a,
+		      PairingHeapNode<TI, TV> *b) {
+      if (a->child != nullptr) {
+	b->next = a->child;
+	a->child->prev = b;
+      }
+      b->prev = a;
+      a->child = b;
+    } // end _link
+
+
   template<
     typename TI,  // type of items stored in the node
     typename TV   // type of values associated with the stored item
@@ -214,92 +315,6 @@ namespace pairing_heap {
 
       // Map used to access stored items
       std::unordered_map<TI, PairingHeapNode<TI, TV> *> nodes;
-
-
-      // Pair list of heaps and return pointer to the top of resulting heap
-      static PairingHeapNode<TI, TV> *_pair(PairingHeapNode<TI, TV> *p) {
-	if (p == nullptr) {
-	  return nullptr;
-	}
-
-	/*
-	 * Move toward the end of the list, counting elements along the way.
-	 * This is done in order to:
-	 * - know whether the list has odd or even number of nodes
-	 * - speed up going-back through the list
-	 */
-	size_t children = 1;
-	PairingHeapNode<TI, TV> *it = p;
-	while (it->next != nullptr) {
-	  it = it->next;
-	  children++;
-	}
-
-	PairingHeapNode<TI, TV> *result;
-
-	if (children % 2 == 1) {
-	  PairingHeapNode<TI, TV> *a = it;
-	  it = it->prev;
-	  a->prev = a->next = nullptr;
-	  result = a;
-	} else {
-	  PairingHeapNode<TI, TV> *a = it;
-	  PairingHeapNode<TI, TV> *b = it->prev;
-	  it = it->prev->prev;
-	  a->prev = a->next = b->prev = b->next = nullptr;
-	  result = _merge(a, b);
-	}
-
-	for (size_t i = 0; i < (children - 1) / 2; i++) {
-	  PairingHeapNode<TI, TV> *a = it;
-	  PairingHeapNode<TI, TV> *b = it->prev;
-	  it = it->prev->prev;
-	  a->prev = a->next = b->prev = b->next = nullptr;
-	  result = _merge(_merge(a, b), result);
-	}
-
-	return result;
-      } // end _pair
-
-
-      // Merge 2 heaps and return pointer to the top of resulting heap
-      static PairingHeapNode<TI, TV> *_merge(PairingHeapNode<TI, TV> *a,
-					     PairingHeapNode<TI, TV> *b) {
-	if (*a <= *b)  { // Use comparison method of PairingHeapNode
-	  _link(a, b);
-	  return a;
-	} else {
-	  _link(b, a);
-	  return b;
-	}
-      } // end _merge
-
-
-      // Make b a child of a
-      static void _link(PairingHeapNode<TI, TV> *a,
-			PairingHeapNode<TI, TV> *b) {
-	if (a->child != nullptr) {
-	  b->next = a->child;
-	  a->child->prev = b;
-	}
-	b->prev = a;
-	a->child = b;
-      } // end _link
-
-
-      // Remove p from its parent children list
-      static void _unlink(PairingHeapNode<TI, TV> *p) {
-	if (p->prev->child == p) {
-	  p->prev->child = p->next;
-	} else {
-	  p->prev->next = p->next;
-	}
-	if (p->next != nullptr) {
-	  p->next->prev = p->prev;
-	}
-	p->prev = nullptr;
-	p->next = nullptr;
-      } // end _unlink
 
     }; // end class PairingHeap
 
