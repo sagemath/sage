@@ -9,6 +9,8 @@ py.install_sources(
   'bounded_integer_sequences.pxd',
   'list_of_pairs.pxd',
   'mutable_poset.py',
+  'pairing_heap.h',
+  'pairing_heap.pxd',
   'sparse_bitset.pxd',
   'stream.py',
   subdir: 'sage/data_structures',
@@ -21,6 +23,7 @@ extension_data = {
   'blas_dict' : files('blas_dict.pyx'),
   'bounded_integer_sequences' : files('bounded_integer_sequences.pyx'),
   'list_of_pairs' : files('list_of_pairs.pyx'),
+  'pairing_heap' : files('pairing_heap.pyx'),
 }
 
 foreach name, pyx : extension_data
