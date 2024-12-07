@@ -6156,7 +6156,7 @@ cdef class Matrix(Matrix1):
             [3 4 5]
             [6 7 8]
             sage: t.wiedemann(0)
-            x^2 - 12*x - 18
+            x^3 - 12*x^2 - 18*x
             sage: t.charpoly()                                                          # needs sage.libs.pari
             x^3 - 12*x^2 - 18*x
         """
