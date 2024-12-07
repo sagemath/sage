@@ -56,14 +56,14 @@ cdef class PairingHeap_class:
     cdef size_t number_of_items   # number of active items
     cpdef bint empty(self) noexcept
     cpdef bint full(self) noexcept
+    cpdef tuple top(self) except *
     cpdef object top_value(self) except *
+    cpdef void pop(self) noexcept
 
 
 cdef class PairingHeap_of_n_integers(PairingHeap_class):
     cpdef void push(self, size_t item, object value) except *
-    cpdef tuple top(self) except *
     cpdef size_t top_item(self) except *
-    cpdef void pop(self) noexcept
     cpdef void decrease(self, size_t item, object new_value) except *
     cpdef object value(self, size_t item) except *
 
@@ -72,8 +72,6 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
     cdef list _int_to_item  # mapping from integers to items
     cdef dict _item_to_int  # mapping from items to integers
     cpdef void push(self, object item, object value) except *
-    cpdef tuple top(self) except *
     cpdef object top_item(self) except *
-    cpdef void pop(self) noexcept
     cpdef void decrease(self, object item, object new_value) except *
     cpdef object value(self, object item) except *

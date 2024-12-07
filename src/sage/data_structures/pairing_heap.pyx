@@ -328,6 +328,29 @@ cdef class PairingHeap_class:
 
     size = __len__
 
+    cpdef tuple top(self) except *:
+        r"""
+        Return the top pair (item, value) of the heap.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.pairing_heap import PairingHeap_of_n_integers
+            sage: P = PairingHeap_of_n_integers(5)
+            sage: P.push(1, 2)
+            sage: P.top()
+            (1, 2)
+            sage: P.push(3, 1)
+            sage: P.top()
+            (3, 1)
+
+            sage: P = PairingHeap_of_n_integers(3)
+            sage: P.top()
+            Traceback (most recent call last):
+            ...
+            ValueError: trying to access the top of an empty heap
+        """
+        raise NotImplementedError()
+
     cpdef object top_value(self) except *:
         r"""
         Return the value of the top item of the heap.
@@ -352,6 +375,25 @@ cdef class PairingHeap_class:
             raise ValueError("trying to access the top of an empty heap")
         return <object>self.root.value
 
+    cpdef void pop(self) noexcept:
+        r"""
+        Remove the top item from the heap.
+
+        If the heap is already empty, we do nothing.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.pairing_heap import PairingHeap_of_n_integers
+            sage: P = PairingHeap_of_n_integers(5); P
+            PairingHeap_of_n_integers: capacity 5, size 0
+            sage: P.push(1, 2); P
+            PairingHeap_of_n_integers: capacity 5, size 1
+            sage: P.pop(); P
+            PairingHeap_of_n_integers: capacity 5, size 0
+            sage: P.pop(); P
+            PairingHeap_of_n_integers: capacity 5, size 0
+        """
+        raise NotImplementedError()
 
 # ==============================================================================
 # Class PairingHeap_of_n_integers
