@@ -61,6 +61,8 @@ def berlekamp_massey(a):
         x^4 - 36727/11711*x^3 + 34213/5019*x^2 + 7024942/35133*x - 335813/1673
         sage: berlekamp_massey(prime_range(2, 38))                                      # needs sage.libs.pari
         x^6 - 14/9*x^5 - 7/9*x^4 + 157/54*x^3 - 25/27*x^2 - 73/18*x + 37/9
+        sage: berlekamp_massey([1,2,3,4,5])
+        x^2 - 2*x + 1
 
     TESTS::
 
