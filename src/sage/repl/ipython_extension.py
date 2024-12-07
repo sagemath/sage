@@ -65,11 +65,21 @@ In contrast, input to the ``%time`` magic command is preparsed::
 """
 
 from IPython.core.magic import Magics, magics_class, line_magic, cell_magic
+from IPython.core.display import HTML
+from IPython import get_ipython
 
 from sage.repl.load import load_wrap
 from sage.env import SAGE_IMPORTALL, SAGE_STARTUP_FILE
 from sage.misc.lazy_import import LazyImport
 from sage.misc.misc import run_once
+
+
+def _running_in_notebook():
+    try:
+        from ipykernel.zmqshell import ZMQInteractiveShell
+    except ImportError:
+        return False
+    return isinstance(get_ipython(), ZMQInteractiveShell)
 
 
 @magics_class
@@ -364,6 +374,16 @@ class SageMagics(Magics):
 
           See :func:`~sage.misc.cython.cython` for details.
 
+          For ``--view-annotate``, the following additional choices are allowed:
+
+          - ``--view-annotate=none`` (default)
+          - ``--view-annotate=auto`` (same as ``--view-annotate``); select one of the
+            choices below automatically
+          - ``--view-annotate=webbrowser``; open the annotation in a web browser
+            (preferred if the Sage command line is used)
+          - ``--view-annotate=displayhtml``; display the annotation inline in the notebook
+            (preferred if the Sage notebook is used)
+
         - ``cell`` -- string; the Cython source code to process
 
         OUTPUT: none; the Cython code is compiled and loaded
@@ -404,6 +424,15 @@ class SageMagics(Magics):
             ....: ''')
             UsageError: unrecognized arguments: --help
 
+        Test ``--view-annotate`` invalid arguments::
+
+            sage: # needs sage.misc.cython
+            sage: shell.run_cell('''
+            ....: %%cython --view-annotate=xx
+            ....: print(1)
+            ....: ''')
+            UsageError: argument --view-annotate: invalid choice: 'xx' (choose from 'none', 'auto', 'webbrowser', 'displayhtml')
+
         Test invalid quotes::
 
             sage: # needs sage.misc.cython
@@ -435,11 +464,26 @@ class SageMagics(Magics):
         parser.add_argument("--use-cache", action=argparse.BooleanOptionalAction)
         parser.add_argument("--create-local-c-file", action=argparse.BooleanOptionalAction)
         parser.add_argument("--annotate", action=argparse.BooleanOptionalAction)
-        parser.add_argument("--view-annotate", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--view-annotate", choices=["none", "auto", "webbrowser", "displayhtml"],
+                            nargs="?", const="auto", default="none")
         parser.add_argument("--sage-namespace", action=argparse.BooleanOptionalAction)
         parser.add_argument("--create-local-so-file", action=argparse.BooleanOptionalAction)
         args = parser.parse_args(shlex.split(line))
-        return cython_compile(cell, **{k: v for k, v in args.__dict__.items() if v is not None})
+        view_annotate = args.view_annotate
+        del args.view_annotate
+        if view_annotate == "auto":
+            if _running_in_notebook():
+                view_annotate = "displayhtml"
+            else:
+                view_annotate = "webbrowser"
+        args_dict = {k: v for k, v in args.__dict__.items() if v is not None}
+        if view_annotate != "none":
+            args_dict["view_annotate"] = True
+            if view_annotate == "displayhtml":
+                path_to_annotate_html_container = []
+                cython_compile(cell, **args_dict, view_annotate_callback=path_to_annotate_html_container.append)
+                return HTML(filename=path_to_annotate_html_container[0])
+        return cython_compile(cell, **args_dict)
 
     @cell_magic
     def fortran(self, line, cell):

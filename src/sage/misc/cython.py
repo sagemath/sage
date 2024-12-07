@@ -81,7 +81,7 @@ sequence_number = {}
 
 def cython(filename, verbose=0, compile_message=False,
            use_cache=False, create_local_c_file=False, annotate=True, view_annotate=False,
-           sage_namespace=True, create_local_so_file=False):
+           view_annotate_callback=webbrowser.open, sage_namespace=True, create_local_so_file=False):
     r"""
     Compile a Cython file. This converts a Cython file to a C (or C++ file),
     and then compiles that. The .c file and the .so file are
@@ -113,6 +113,11 @@ def cython(filename, verbose=0, compile_message=False,
 
     - ``view_annotate`` -- boolean (default: ``False``); if ``True``, open the
       annotated html file in a web browser using :func:`webbrowser.open`
+
+    - ``view_annotate_callback`` -- function (default: ``webbrowser.open``); a function
+      that takes a string being the path to the html file. This can be overridden to
+      change what to do with the annotated html file. Have no effect unless
+      ``view_annotate`` is ``True``
 
     - ``sage_namespace`` -- boolean (default: ``True``); if ``True``, import
       ``sage.all``
@@ -258,6 +263,18 @@ def cython(filename, verbose=0, compile_message=False,
         Traceback (most recent call last):
         ...
         ValueError: Cannot view annotated file without creating it
+
+    ::
+
+        sage: collected_paths = []
+        sage: cython('''
+        ....: def f(int n):
+        ....:     return n*n
+        ....: ''', view_annotate=True, view_annotate_callback=collected_paths.append)
+        sage: collected_paths
+        ['...']
+        sage: len(collected_paths)
+        1
     """
     if not filename.endswith('pyx'):
         print("Warning: file (={}) should have extension .pyx".format(filename), file=sys.stderr)
@@ -416,7 +433,7 @@ def cython(filename, verbose=0, compile_message=False,
     if view_annotate:
         if not annotate:
             raise ValueError("Cannot view annotated file without creating it")
-        webbrowser.open(os.path.join(target_dir, name + ".html"))
+        view_annotate_callback(os.path.join(target_dir, name + ".html"))
 
     # This emulates running "setup.py build" with the correct options
     #
