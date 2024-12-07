@@ -521,16 +521,16 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
                 _cf = nInitChar(n_Z2m, <void *>cexponent)
 
             elif modbase.is_prime() and cexponent > 1:
-                _info.base = <__mpz_struct*>omAlloc(sizeof(__mpz_struct))
+                _info.base = <__mpz_struct *>omAlloc(sizeof(__mpz_struct))
                 mpz_init_set(_info.base, modbase.value)
                 _info.exp = cexponent
-                _cf = nInitChar( n_Znm, <void *>&_info )
+                _cf = nInitChar(n_Znm, <void *>&_info)
 
             else:
-                _info.base = <__mpz_struct*>omAlloc(sizeof(__mpz_struct))
+                _info.base = <__mpz_struct *>omAlloc(sizeof(__mpz_struct))
                 mpz_init_set(_info.base, ch.value)
                 _info.exp = 1
-                _cf = nInitChar( n_Zn, <void *>&_info )
+                _cf = nInitChar(n_Zn, <void *>&_info)
             _ring = rDefault(_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     elif isinstance(base_ring, FiniteField_generic):
@@ -540,13 +540,14 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         # TODO: This is lazy, it should only call Singular stuff not PolynomialRing()
         k = PolynomialRing(base_ring.prime_subfield(),
-            name=base_ring.variable_name(), order='lex', implementation='singular')
+                           name=base_ring.variable_name(), order='lex',
+                           implementation='singular')
         minpoly = base_ring.polynomial()(k.gen())
 
         _ext_names = <char**>omAlloc0(sizeof(char*))
         _name = str_to_bytes(k._names[0])
         _ext_names[0] = omStrDup(_name)
-        _cfr = rDefault( <int>base_ring.characteristic(), 1, _ext_names )
+        _cfr = rDefault(<int>base_ring.characteristic(), 1, _ext_names)
 
         _cfr.qideal = idInit(1,1)
         rComplete(_cfr, 1)

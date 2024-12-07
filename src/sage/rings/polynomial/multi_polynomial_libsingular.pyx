@@ -4157,30 +4157,30 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         Test many base rings::
 
-            sage: R.<x,y,z>=GF(2^32+15)[]
+            sage: R.<x,y,z> = GF(2^32+15)[]
             sage: ((x+y)^3+x+z)//(x+y)
             Traceback (most recent call last):
             ...
             NotImplementedError: Division of multivariate polynomials over non fields by non-monomials not implemented.
-            sage: R.<x,y,z>=Zmod(2^29-3)[]
+            sage: R.<x,y,z> = Zmod(2^29-3)[]
             sage: ((x+y)^3+x+z)//(x+y)
             Traceback (most recent call last):
             ...
             NotImplementedError: Division of multivariate polynomials over non fields by non-monomials not implemented.
-            sage: R.<x,y,z>=GF(2^29+11)[]
+            sage: R.<x,y,z> = GF(2^29+11)[]
             sage: ((x+y)^3+x+z)//(x+y)
             Traceback (most recent call last):
             ...
             NotImplementedError: Division of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
-            sage: R.<x,y,z>=Zmod(2^29+10)[]
+            sage: R.<x,y,z> = Zmod(2^29+10)[]
             sage: ((x+y)^3+x+z)//(x+y)
             Traceback (most recent call last):
             ...
             NotImplementedError: Division of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
-            sage: R.<x,y,z>=GF((2^29-3)^2)[]
+            sage: R.<x,y,z> = GF((2^29-3)^2)[]
             sage: ((x+y)^3+x+z)//(x+y)
             x^2 + 2*x*y + y^2
-            sage: R.<x,y,z>=Zmod(7^2)[]
+            sage: R.<x,y,z> = Zmod(7^2)[]
             sage: ((x+y)^3+x+z)//(x+y)
             Traceback (most recent call last):
             ...
@@ -4498,28 +4498,28 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         Test many base rings::
 
-            sage: R.<x,y,z>=GF(2^32+15)[]
+            sage: R.<x,y,z> = GF(2^32+15)[]
             sage: ((x+y)^2*(x+z)^3).factor()
             Traceback (most recent call last):
             ...
             NotImplementedError: Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
-            sage: R.<x,y,z>=Zmod(2^29-3)[]
+            sage: R.<x,y,z> = Zmod(2^29-3)[]
             sage: ((x+y)^2*(x+z)^3).factor()
             (x + y)^2 * (x + z)^3
-            sage: R.<x,y,z>=GF(2^29+11)[]
+            sage: R.<x,y,z> = GF(2^29+11)[]
             sage: ((x+y)^2*(x+z)^3).factor()
             Traceback (most recent call last):
             ...
             NotImplementedError: Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
-            sage: R.<x,y,z>=Zmod(2^29+10)[]
+            sage: R.<x,y,z> = Zmod(2^29+10)[]
             sage: ((x+y)^2*(x+z)^3).factor()
             Traceback (most recent call last):
             ...
             NotImplementedError: Factorization of multivariate polynomials over Ring of integers modulo 536870922 is not implemented.
-            sage: R.<x,y,z>=GF((2^29-3)^2)[]
+            sage: R.<x,y,z> = GF((2^29-3)^2)[]
             sage: ((x+y)^2*(x+z)^3).factor()
             (x + y)^2 * (x + z)^3
-            sage: R.<x,y,z>=Zmod(7^2)[]
+            sage: R.<x,y,z> = Zmod(7^2)[]
             sage: ((x+y)^2*(x+z)^3).factor()
             Traceback (most recent call last):
             ...
@@ -4579,9 +4579,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                     raise NotImplementedError("Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
 
             ivv = iv.ivGetVec()
-            v = [(new_MP(parent, p_Copy(I.m[i], _ring)), ivv[i])
-                 for i in range(1, I.ncols)]
-            v = [(f, m) for f, m in v if f != 0]  # we might have zero in there
+            v = [(f, ivv[i]) for i in range(1, I.ncols)
+                 if (f := new_MP(parent, p_Copy(I.m[i], _ring)))]
             unit = new_MP(parent, p_Copy(I.m[0], _ring))
 
             F = Factorization(v, unit)
@@ -4714,10 +4713,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                     warn(f'unexpected error from singular: {s}')
                 raise ValueError("polynomial is not in the ideal")
 
-            l = []
-            for i from 0 <= i < IDELEMS(res):
-                for j from 1 <= j <= IDELEMS(_I):
-                    l.append( new_MP(parent, pTakeOutComp(&res.m[i], 1)) )
+            l = [new_MP(parent, pTakeOutComp(&res.m[i], 1))
+                 for i in range(IDELEMS(res)) for _ in range(IDELEMS(_I))]
         finally:
             id_Delete(&fI, r)
             id_Delete(&_I, r)
@@ -4954,30 +4951,30 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         Test many base rings::
 
-            sage: R.<x,y,z>=GF(2^32+15)[]
+            sage: R.<x,y,z> = GF(2^32+15)[]
             sage: ((x+y)^2*(x+z)^3).gcd((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
             ...
             NotImplementedError: GCD over rings not implemented.
-            sage: R.<x,y,z>=Zmod(2^29-3)[]
+            sage: R.<x,y,z> = Zmod(2^29-3)[]
             sage: ((x+y)^2*(x+z)^3).gcd((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
             ...
             NotImplementedError: GCD over rings not implemented.
-            sage: R.<x,y,z>=GF(2^29+11)[]
+            sage: R.<x,y,z> = GF(2^29+11)[]
             sage: ((x+y)^2*(x+z)^3).gcd((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
             ...
             NotImplementedError: GCD of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
-            sage: R.<x,y,z>=Zmod(2^29+10)[]
+            sage: R.<x,y,z> = Zmod(2^29+10)[]
             sage: ((x+y)^2*(x+z)^3).gcd((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
             ...
             NotImplementedError: GCD over rings not implemented.
-            sage: R.<x,y,z>=GF((2^29-3)^2)[]
+            sage: R.<x,y,z> = GF((2^29-3)^2)[]
             sage: ((x+y)^2*(x+z)^3).gcd((x+y)^3*(y+z)^5)
             x^2 + 2*x*y + y^2
-            sage: R.<x,y,z>=Zmod(7^2)[]
+            sage: R.<x,y,z> = Zmod(7^2)[]
             sage: ((x+y)^2*(x+z)^3).gcd((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
             ...
@@ -5012,10 +5009,10 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             raise NotImplementedError("GCD of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
 
         cdef int count = singular_polynomial_length_bounded(self._poly, 20) \
-            + singular_polynomial_length_bounded(right._poly,20)
+            + singular_polynomial_length_bounded(right._poly, 20)
         if count >= 20:
             sig_on()
-        _res = singclap_gcd(p_Copy(self._poly, _ring), p_Copy(right._poly, _ring), _ring )
+        _res = singclap_gcd(p_Copy(self._poly, _ring), p_Copy(right._poly, _ring), _ring)
         if count >= 20:
             sig_off()
 
@@ -5070,30 +5067,30 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         Test many base rings::
 
-            sage: R.<x,y,z>=GF(2^32+15)[]
+            sage: R.<x,y,z> = GF(2^32+15)[]
             sage: ((x+y)^2*(x+z)^3).lcm((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
             ...
             TypeError: LCM over non-integral domains not available.
-            sage: R.<x,y,z>=Zmod(2^29-3)[]
+            sage: R.<x,y,z> = Zmod(2^29-3)[]
             sage: ((x+y)^2*(x+z)^3).lcm((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
             ...
             TypeError: LCM over non-integral domains not available.
-            sage: R.<x,y,z>=GF(2^29+11)[]
+            sage: R.<x,y,z> = GF(2^29+11)[]
             sage: ((x+y)^2*(x+z)^3).lcm((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
             ...
             NotImplementedError: LCM of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
-            sage: R.<x,y,z>=Zmod(2^29+10)[]
+            sage: R.<x,y,z> = Zmod(2^29+10)[]
             sage: ((x+y)^2*(x+z)^3).lcm((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
             ...
             TypeError: LCM over non-integral domains not available.
-            sage: R.<x,y,z>=GF((2^29-3)^2)[]
+            sage: R.<x,y,z> = GF((2^29-3)^2)[]
             sage: ((x+y)^2*(x+z)^3).lcm((x+y)^3*(y+z)^5)
             x^6*y^5 + 3*x^5*y^6 + 3*x^4*y^7 + x^3*y^8 + 5*x^6*y^4*z + 18*x^5*y^5*z + 24*x^4*y^6*z + 14*x^3*y^7*z + 3*x^2*y^8*z + 10*x^6*y^3*z^2 + 45*x^5*y^4*z^2 + 78*x^4*y^5*z^2 + 64*x^3*y^6*z^2 + 24*x^2*y^7*z^2 + 3*x*y^8*z^2 + 10*x^6*y^2*z^3 + 60*x^5*y^3*z^3 + 135*x^4*y^4*z^3 + 146*x^3*y^5*z^3 + 78*x^2*y^6*z^3 + 18*x*y^7*z^3 + y^8*z^3 + 5*x^6*y*z^4 + 45*x^5*y^2*z^4 + 135*x^4*y^3*z^4 + 190*x^3*y^4*z^4 + 135*x^2*y^5*z^4 + 45*x*y^6*z^4 + 5*y^7*z^4 + x^6*z^5 + 18*x^5*y*z^5 + 78*x^4*y^2*z^5 + 146*x^3*y^3*z^5 + 135*x^2*y^4*z^5 + 60*x*y^5*z^5 + 10*y^6*z^5 + 3*x^5*z^6 + 24*x^4*y*z^6 + 64*x^3*y^2*z^6 + 78*x^2*y^3*z^6 + 45*x*y^4*z^6 + 10*y^5*z^6 + 3*x^4*z^7 + 14*x^3*y*z^7 + 24*x^2*y^2*z^7 + 18*x*y^3*z^7 + 5*y^4*z^7 + x^3*z^8 + 3*x^2*y*z^8 + 3*x*y^2*z^8 + y^3*z^8
-            sage: R.<x,y,z>=Zmod(7^2)[]
+            sage: R.<x,y,z> = Zmod(7^2)[]
             sage: ((x+y)^2*(x+z)^3).lcm((x+y)^3*(y+z)^5)
             Traceback (most recent call last):
             ...
@@ -5183,28 +5180,28 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         Test many base rings::
 
-            sage: R.<x,y,z>=GF(2^32+15)[]
+            sage: R.<x,y,z> = GF(2^32+15)[]
             sage: ((x+y)^3+x+z).quo_rem(x+y)
             Traceback (most recent call last):
             ...
             NotImplementedError: Division of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
-            sage: R.<x,y,z>=Zmod(2^29-3)[]
+            sage: R.<x,y,z> = Zmod(2^29-3)[]
             sage: ((x+y)^3+x+z).quo_rem(x+y)
             (x^2 + 2*x*y + y^2, x + z)
-            sage: R.<x,y,z>=GF(2^29+11)[]
+            sage: R.<x,y,z> = GF(2^29+11)[]
             sage: ((x+y)^3+x+z).quo_rem(x+y)
             Traceback (most recent call last):
             ...
             NotImplementedError: Division of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
-            sage: R.<x,y,z>=Zmod(2^29+10)[]
+            sage: R.<x,y,z> = Zmod(2^29+10)[]
             sage: ((x+y)^3+x+z).quo_rem(x+y)
             Traceback (most recent call last):
             ...
             NotImplementedError: Division of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
-            sage: R.<x,y,z>=GF((2^29-3)^2)[]
+            sage: R.<x,y,z> = GF((2^29-3)^2)[]
             sage: ((x+y)^3+x+z).quo_rem(x+y)
             (x^2 + 2*x*y + y^2, x + z)
-            sage: R.<x,y,z>=Zmod(7^2)[]
+            sage: R.<x,y,z> = Zmod(7^2)[]
             sage: ((x+y)^3+x+z).quo_rem(x+y)
             Traceback (most recent call last):
             ...
@@ -5245,11 +5242,12 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             py_rem = self - right*py_quo
             return py_quo, py_rem
 
-        if r!=currRing: rChangeCurrRing(r)   # singclap_pdivide
+        if r != currRing:
+            rChangeCurrRing(r)   # singclap_pdivide
         start_catch_error()
         try:
             sig_on()
-            quo = singclap_pdivide( self._poly, right._poly, r )
+            quo = singclap_pdivide(self._poly, right._poly, r)
             sig_off()
         finally:
             if check_error():
@@ -5684,28 +5682,28 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: f.resultant(g,y)
             x^2 + x
 
-            sage: R.<x,y,z>=GF(2^32+15)[]
+            sage: R.<x,y,z> = GF(2^32+15)[]
             sage: (x-z).resultant(y-z,z)
             Traceback (most recent call last):
             ...
             NotImplementedError: Resultants of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
-            sage: R.<x,y,z>=Zmod(2^29-3)[]
+            sage: R.<x,y,z> = Zmod(2^29-3)[]
             sage: (x-z).resultant(y-z,z)
             x + 536870908*y
-            sage: R.<x,y,z>=GF(2^29+11)[]
+            sage: R.<x,y,z> = GF(2^29+11)[]
             sage: (x-z).resultant(y-z,z)
             Traceback (most recent call last):
             ...
             NotImplementedError: Resultants of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
-            sage: R.<x,y,z>=Zmod(2^29+10)[]
+            sage: R.<x,y,z> = Zmod(2^29+10)[]
             sage: (x-z).resultant(y-z,z)
             Traceback (most recent call last):
             ...
             NotImplementedError: Resultants require base fields or integer base ring.
-            sage: R.<x,y,z>=GF((2^29-3)^2)[]
+            sage: R.<x,y,z> = GF((2^29-3)^2)[]
             sage: (x-z).resultant(y-z,z)
             x - y
-            sage: R.<x,y,z>=Zmod(7^2)[]
+            sage: R.<x,y,z> = Zmod(7^2)[]
             sage: (x-z).resultant(y-z,z)
             Traceback (most recent call last):
             ...
@@ -5755,18 +5753,18 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         start_catch_error()
         try:
             sig_on()
-            if _ring != currRing: rChangeCurrRing(_ring)   # singclap_resultant
-            rt =  singclap_resultant(p_Copy(self._poly, _ring),
-                                     p_Copy(other._poly, _ring),
-                                     p_Copy((<MPolynomial_libsingular>variable)._poly, _ring ),
-                                     _ring)
+            if _ring != currRing:
+                rChangeCurrRing(_ring)   # singclap_resultant
+            rt = singclap_resultant(p_Copy(self._poly, _ring),
+                                    p_Copy(other._poly, _ring),
+                                    p_Copy((<MPolynomial_libsingular>variable)._poly, _ring),
+                                    _ring)
             sig_off()
         finally:
             if check_error():
                 if isinstance(self._parent._base, FiniteField_prime_modn):
                     raise NotImplementedError("Resultants of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
-                else:
-                    raise NotImplementedError("Resultants require base fields or integer base ring.")
+                raise NotImplementedError("Resultants require base fields or integer base ring.")
 
         return new_MP(self._parent, rt)
 

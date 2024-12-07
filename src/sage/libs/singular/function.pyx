@@ -1450,7 +1450,6 @@ EXAMPLES::
 
 cdef inline call_function(SingularFunction self, tuple args, object R, bint signal_handler=True, attributes=None):
     global currRingHdl
-    global errorreported
     global currentVoice
     global myynest
 
@@ -1487,15 +1486,14 @@ cdef inline call_function(SingularFunction self, tuple args, object R, bint sign
             _res = self.call_handler.handle_call(argument_list, si_ring)
             s = check_error()
 
-    if myynest:
-        myynest = 0
+    myynest = 0
 
     if currentVoice:
         currentVoice = NULL
 
     if s:
         raise RuntimeError("error in Singular function call %r:\n%s" %
-            (self._name, "\n".join(s)))
+                           (self._name, "\n".join(s)))
 
     res = argument_list.to_python(_res)
 

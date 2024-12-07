@@ -1542,7 +1542,7 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
     cdef nMapFunc nMapFuncPtr = NULL
 
     if _ring.cf.type == n_unknown:
-        return n_Init(int(d),_ring.cf)
+        return n_Init(int(d), _ring.cf)
 
     if _ring.cf.type == n_Z2m:
         _d = long(d)
@@ -1904,9 +1904,8 @@ cdef object check_error():
         errorreported = False
         error_messages.clear()
         return result
-    else:
-        assert not error_messages
-        return None
+    assert not error_messages
+    return None
 
 
 def get_resource(id):
