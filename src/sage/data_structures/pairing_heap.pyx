@@ -103,8 +103,8 @@ from cpython.ref cimport PyObject, Py_INCREF, Py_XDECREF
 from cysignals.signals cimport sig_on, sig_off, sig_check
 from cysignals.memory cimport check_allocarray, sig_free
 from sage.data_structures.bitset_base cimport (bitset_init, bitset_free,
-                                               bitset_clear, bitset_add,
-                                               bitset_remove, bitset_in,
+                                               bitset_add, bitset_remove,
+                                               bitset_in,
                                                bitset_first_in_complement)
 from sage.misc.prandom import shuffle
 
@@ -434,7 +434,6 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
         self.root = NULL
         self.nodes = <PairingHeapNode *>check_allocarray(n, sizeof(PairingHeapNode))
         bitset_init(self.active, n)
-        bitset_clear(self.active)
         self.number_of_items = 0
 
     cpdef void push(self, size_t item, object value) except *:
@@ -775,7 +774,6 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
         self.root = NULL
         self.nodes = <PairingHeapNode *>check_allocarray(n, sizeof(PairingHeapNode))
         bitset_init(self.active, n)
-        bitset_clear(self.active)
         self.number_of_items = 0
         self._int_to_item = [None] * n
         self._item_to_int = dict()
