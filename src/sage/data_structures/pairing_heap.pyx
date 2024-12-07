@@ -326,6 +326,30 @@ cdef class PairingHeap_class:
 
     size = __len__
 
+    cpdef object top_value(self) except *:
+        r"""
+        Return the value of the top item of the heap.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.pairing_heap import PairingHeap_of_n_integers
+            sage: P = PairingHeap_of_n_integers(5)
+            sage: P.push(1, 2)
+            sage: P.top()
+            (1, 2)
+            sage: P.top_value()
+            2
+
+            sage: P = PairingHeap_of_n_integers(3)
+            sage: P.top_value()
+            Traceback (most recent call last):
+            ...
+            ValueError: trying to access the top of an empty heap
+        """
+        if not self:
+            raise ValueError("trying to access the top of an empty heap")
+        return <object>self.root.value
+
 
 # ==============================================================================
 # Class PairingHeap_of_n_integers
@@ -511,30 +535,6 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
         if not self:
             raise ValueError("trying to access the top of an empty heap")
         return self.root - self.nodes
-
-    cpdef object top_value(self) except *:
-        r"""
-        Return the value of the top item of the heap.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.pairing_heap import PairingHeap_of_n_integers
-            sage: P = PairingHeap_of_n_integers(5)
-            sage: P.push(1, 2)
-            sage: P.top()
-            (1, 2)
-            sage: P.top_value()
-            2
-
-            sage: P = PairingHeap_of_n_integers(3)
-            sage: P.top_value()
-            Traceback (most recent call last):
-            ...
-            ValueError: trying to access the top of an empty heap
-        """
-        if not self:
-            raise ValueError("trying to access the top of an empty heap")
-        return <object>self.root.value
 
     cpdef void pop(self) noexcept:
         r"""
@@ -885,30 +885,6 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
             raise ValueError("trying to access the top of an empty heap")
         cdef size_t idx = self.root - self.nodes
         return self._int_to_item[idx]
-
-    cpdef object top_value(self) except *:
-        r"""
-        Return the value of the top item of the heap.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.pairing_heap import PairingHeap_of_n_hashables
-            sage: P = PairingHeap_of_n_hashables(5)
-            sage: P.push(1, 2)
-            sage: P.top()
-            (1, 2)
-            sage: P.top_value()
-            2
-
-            sage: P = PairingHeap_of_n_hashables(3)
-            sage: P.top_value()
-            Traceback (most recent call last):
-            ...
-            ValueError: trying to access the top of an empty heap
-        """
-        if not self:
-            raise ValueError("trying to access the top of an empty heap")
-        return <object>self.root.value
 
     cpdef void pop(self) noexcept:
         r"""
