@@ -19,7 +19,6 @@ cdef extern from "./pairing_heap.h" namespace "pairing_heap":
         PairingHeap() except +
         PairingHeap(PairingHeap[TypeOfItem, TypeOfValue]) except +
         bint empty()
-        void reset()
         void push(TypeOfItem, TypeOfValue) except +
         pair[TypeOfItem, TypeOfValue] top() except +
         TypeOfItem top_item() except +

@@ -1156,21 +1156,21 @@ def _test_PairingHeap_from_C(n=100):
     try:
         _ = HH.top()
         print("something goes wrong, the error has not been raised")
-    except ValueError, msg:
+    except ValueError as msg:
         # The error has been properly handled
         pass
 
     try:
         _ = HH.top_item()
         print("something goes wrong, the error has not been raised")
-    except ValueError, msg:
+    except ValueError as msg:
         # The error has been properly handled
         pass
 
     try:
         _ = HH.top_value()
         print("something goes wrong, the error has not been raised")
-    except ValueError, msg:
+    except ValueError as msg:
         # The error has been properly handled
         pass
 
@@ -1178,7 +1178,7 @@ def _test_PairingHeap_from_C(n=100):
     try:
         _ = HH.value(123)
         print("something goes wrong, the error has not been raised")
-    except ValueError, msg:
+    except ValueError as msg:
         # The error has been properly handled
         pass
 
@@ -1263,21 +1263,21 @@ def _test_PairingHeap_of_n_integers(n=100):
     try:
         _ = P.top()
         print("something goes wrong, the error has not been raised")
-    except ValueError, msg:
+    except ValueError as msg:
         # The error has been properly handled
         pass
 
     try:
         _ = P.top_item()
         print("something goes wrong, the error has not been raised")
-    except ValueError, msg:
+    except ValueError as msg:
         # The error has been properly handled
         pass
 
     try:
         _ = P.top_value()
         print("something goes wrong, the error has not been raised")
-    except ValueError, msg:
+    except ValueError as msg:
         # The error has been properly handled
         pass
 
@@ -1285,7 +1285,7 @@ def _test_PairingHeap_of_n_integers(n=100):
     try:
         _ = P.value(123)
         print("something goes wrong, the error has not been raised")
-    except ValueError, msg:
+    except ValueError as msg:
         # The error has been properly handled
         pass
 
@@ -1369,21 +1369,21 @@ def _test_PairingHeap_of_n_hashables(n=100):
     try:
         _ = P.top()
         print("something goes wrong, the error has not been raised")
-    except ValueError, msg:
+    except ValueError as msg:
         # The error has been properly handled
         pass
 
     try:
         _ = P.top_item()
         print("something goes wrong, the error has not been raised")
-    except ValueError, msg:
+    except ValueError as msg:
         # The error has been properly handled
         pass
 
     try:
         _ = P.top_value()
         print("something goes wrong, the error has not been raised")
-    except ValueError, msg:
+    except ValueError as msg:
         # The error has been properly handled
         pass
 
@@ -1391,7 +1391,7 @@ def _test_PairingHeap_of_n_hashables(n=100):
     try:
         _ = P.value(123)
         print("something goes wrong, the error has not been raised")
-    except ValueError, msg:
+    except ValueError as msg:
         # The error has been properly handled
         pass
 
