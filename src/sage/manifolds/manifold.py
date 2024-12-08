@@ -1321,7 +1321,7 @@ class TopologicalManifold(ManifoldSubset):
             sage: M.default_chart()
             Chart (M, (u, v))
         """
-        from .chart import Chart
+        from sage.manifolds.chart import Chart
         if not isinstance(chart, Chart):
             raise TypeError("{} is not a chart".format(chart))
         if chart not in self._atlas:
@@ -2950,14 +2950,20 @@ def Manifold(
         sage: isinstance(M, sage.misc.fast_methods.WithEqualityById)
         True
     """
-    from sage.rings.infinity import infinity
+    from sage.manifolds.differentiable.degenerate import DegenerateManifold
+    from sage.manifolds.differentiable.degenerate_submanifold import (
+        DegenerateSubmanifold,
+    )
+    from sage.manifolds.differentiable.differentiable_submanifold import (
+        DifferentiableSubmanifold,
+    )
     from sage.manifolds.differentiable.manifold import DifferentiableManifold
     from sage.manifolds.differentiable.pseudo_riemannian import PseudoRiemannianManifold
-    from sage.manifolds.differentiable.degenerate import DegenerateManifold
+    from sage.manifolds.differentiable.pseudo_riemannian_submanifold import (
+        PseudoRiemannianSubmanifold,
+    )
     from sage.manifolds.topological_submanifold import TopologicalSubmanifold
-    from sage.manifolds.differentiable.differentiable_submanifold import DifferentiableSubmanifold
-    from sage.manifolds.differentiable.pseudo_riemannian_submanifold import PseudoRiemannianSubmanifold
-    from sage.manifolds.differentiable.degenerate_submanifold import DegenerateSubmanifold
+    from sage.rings.infinity import infinity
 
     global _manifold_id
 
