@@ -405,6 +405,9 @@ class EllipticCurveHom_composite(EllipticCurveHom):
                 raise ValueError(f'not an elliptic curve: {codomain}')
             iso = self._phis[-1].codomain().isomorphism_to(codomain) * self._phis[-1]
             if isinstance(iso, EllipticCurveHom_composite):
+                # with the current implementation this line is not reachable
+                # because self._phis[-1] has type EllipticCurveIsogeny or WeierstrassIsomorphism
+                # and both of them can be directly composed with an isomorphism
                 self._phis = self._phis[:-1] + iso._phis
             else:
                 self._phis[-1] = iso
@@ -668,9 +671,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
               To:   Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-4)*x + (-6*I)
                     over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         """
-        if not isinstance(left, EllipticCurveHom_composite) and not isinstance(right, EllipticCurveHom_composite):
-            return NotImplemented
-
+        assert isinstance(left, EllipticCurveHom_composite) or isinstance(right, EllipticCurveHom_composite)
         left_factors = left._phis if isinstance(left, EllipticCurveHom_composite) else (left,)
         right_factors = right._phis if isinstance(right, EllipticCurveHom_composite) else (right,)
         tmp = left_factors[0] * right_factors[-1]
