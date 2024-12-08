@@ -289,7 +289,7 @@ class PolynomialRing_general(Ring):
             sage: PolynomialRing(Zmod(1), 'x').category()
             Category of finite commutative rings
 
-        Check `is_finite` inherited from category (:issue:`24432`)::
+        Check ``is_finite`` inherited from category (:issue:`24432`)::
 
             sage: Zmod(1)['x'].is_finite()
             True

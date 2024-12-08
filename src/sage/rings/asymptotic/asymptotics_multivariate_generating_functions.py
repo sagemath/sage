@@ -4032,7 +4032,7 @@ def diff_op_simple(A, B, AB_derivs, x, v, a, N):
     various natural numbers `e, k, l` that depend on `v` and `N`.
 
     Here `DD` is a specific linear differential operator that depends
-    on `a` and `v` , `A` and `B` are symbolic functions, and `AB_derivs`
+    on `a` and `v` , `A` and `B` are symbolic functions, and ``AB_derivs``
     contains all the derivatives of `A` and `B` evaluated at `p` that are
     necessary for the computation.
 

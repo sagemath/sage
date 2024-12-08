@@ -4788,9 +4788,9 @@ class LPRevisedDictionary(LPAbstractDictionary):
 
         The implementation of this method for revised dictionaries
         adds a new inequality constraint to the problem, in which the given
-        `basic_variable` becomes the slack variable.  The resulting dictionary
-        (with `basic_variable` added to the basis) will have the given
-        `nonbasic_coefficients` and `constant` as a new row.
+        ``basic_variable`` becomes the slack variable.  The resulting dictionary
+        (with ``basic_variable`` added to the basis) will have the given
+        ``nonbasic_coefficients`` and ``constant`` as a new row.
 
         INPUT:
 

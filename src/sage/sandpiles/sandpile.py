@@ -2000,7 +2000,7 @@ class Sandpile(DiGraph):
             [{0: -5, 1: 3, 2: 2}, {0: -4, 1: 3, 2: 1}]
 
         Let `\tau` be the nonnegative generator of the kernel of the transpose of
-        the Laplacian, and let `tau_s` be it sink component, then the sandpile
+        the Laplacian, and let `\tau_s` be its sink component, then the sandpile
         group is isomorphic to the direct sum of the cyclic group of order
         `\tau_s` and the Jacobian group.  In the example above, we have::
 
