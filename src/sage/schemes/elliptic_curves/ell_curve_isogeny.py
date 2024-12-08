@@ -1088,6 +1088,56 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         """
         Returns a modified isogeny by pre-composing or post-composing with a
         :class:`sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism`.
+
+        Old tests from ``__clear_cached_values``::
+
+            sage: R.<x> = QQ[]
+            sage: E = EllipticCurve(QQ, [0,0,0,1,0])
+            sage: phi = EllipticCurveIsogeny(E, x)
+            sage: old_ratl_maps = phi.rational_maps()
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import negation_morphism
+            sage: phi = phi._compose_with_isomorphism(post_isomorphism=negation_morphism(phi.codomain()))
+            sage: old_ratl_maps == phi.rational_maps()
+            False
+            sage: old_ratl_maps[1] == -phi.rational_maps()[1]
+            True
+
+            sage: F = GF(127); R.<x> = F[]
+            sage: E = EllipticCurve(j=F(1728))
+            sage: f = x^5 + 43*x^4 + 97*x^3 + 81*x^2 + 42*x + 82
+            sage: phi = EllipticCurveIsogeny(E, f)
+            sage: old_ratl_maps = phi.rational_maps()
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+            sage: phi = phi._compose_with_isomorphism(post_isomorphism=WeierstrassIsomorphism(phi.codomain(),
+            ....:                                                  (-13,13,-13,13)))
+            sage: old_ratl_maps == phi.rational_maps()
+            False
+
+        Coverage tests::
+
+            sage: E = EllipticCurve(GF(7), [0, 1])
+            sage: phi = EllipticCurveIsogeny(E, E.0)
+            sage: E2 = phi.codomain()
+            sage: phi._compose_with_isomorphism(pre_isomorphism=E2.isomorphism_to(E2))
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid parameter: pre-isomorphism must have codomain curve equal to this isogenies' domain
+            sage: phi._compose_with_isomorphism(post_isomorphism=E2.isomorphism_to(E2))
+            Isogeny of degree 6 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7 to Elliptic Curve defined by y^2 = x^3 + 6*x + 1 over Finite Field of size 7
+            sage: phi._compose_with_isomorphism(pre_isomorphism=E.isomorphism_to(E))
+            Isogeny of degree 6 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7 to Elliptic Curve defined by y^2 = x^3 + 6*x + 1 over Finite Field of size 7
+            sage: phi._compose_with_isomorphism(post_isomorphism=E.isomorphism_to(E))
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid parameter: post-isomorphism must have domain curve equal to this isogenies' codomain
+            sage: phi._compose_with_isomorphism(pre_isomorphism=E2.isogeny(E2.0))
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid parameter: pre-isomorphism must be a WeierstrassIsomorphism
+            sage: phi._compose_with_isomorphism(post_isomorphism=E2.isogeny(E2.0))
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid parameter: post-isomorphism must be a WeierstrassIsomorphism
         """
         final_pre_isomorphism = self.__pre_isomorphism
         final_post_isomorphism = self.__post_isomorphism
