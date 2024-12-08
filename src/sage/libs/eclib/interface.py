@@ -247,8 +247,11 @@ class mwrank_EllipticCurve(SageObject):
         """
         a1, a2, a3, a4, a6 = self.__ainvs
         # we do not assume a1, a2, a3 are reduced to {0,1}, {-1,0,1}, {0,1}
-        coeff = lambda a: ''.join([" +" if a > 0 else " -",
-                                   " " + str(abs(a)) if abs(a) > 1 else ""])
+
+        def coeff(a):
+            return ''.join([" +" if a > 0 else " -",
+                            " " + str(abs(a)) if abs(a) > 1 else ""])
+
         return ''.join(['y^2',
                         ' '.join([coeff(a1), 'xy']) if a1 else '',
                         ' '.join([coeff(a3), 'y']) if a3 else '',
@@ -614,12 +617,14 @@ class mwrank_EllipticCurve(SageObject):
         """
         return bool(self.__two_descent_data().getcertain())
 
-    #def fullmw(self):
-    #    return self.__two_descent_data().getfullmw()
+    # def fullmw(self):
+    #     return self.__two_descent_data().getfullmw()
 
     def CPS_height_bound(self):
         r"""
-        Return the Cremona-Prickett-Siksek height bound.  This is a
+        Return the Cremona-Prickett-Siksek height bound.
+
+        This is a
         floating point number `B` such that if `P` is a point on the
         curve, then the naive logarithmic height `h(P)` is less than
         `B+\hat{h}(P)`, where `\hat{h}(P)` is the canonical height of
@@ -1290,9 +1295,9 @@ class mwrank_MordellWeil(SageObject):
         """
         height_limit = float(height_limit)
         int_bits = sys.maxsize.bit_length()
-        max_height_limit = int_bits * 0.693147 # log(2.0) = 0.693147 approx
+        max_height_limit = int_bits * 0.693147  # log(2.0) = 0.693147 approx
         if height_limit >= max_height_limit:
-            raise ValueError("The height limit must be < {} = {}log(2) on a {}-bit machine.".format(max_height_limit, int_bits, int_bits+1))
+            raise ValueError("The height limit must be < {} = {}log(2) on a {}-bit machine.".format(max_height_limit, int_bits, int_bits + 1))
 
         moduli_option = 0  # Use Stoll's sieving program... see strategies in ratpoints-1.4.c
 
