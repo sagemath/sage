@@ -173,6 +173,7 @@ call individually::
     3.60546360143265208591582056420772677481026899659802474544                    # 32-bit
 """
 
+
 def _get_pari_instance():
     """
     TESTS::
