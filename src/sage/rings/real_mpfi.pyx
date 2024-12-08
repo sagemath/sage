@@ -818,7 +818,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
         # Direct and efficient conversions
         if S is ZZ or S is QQ:
             return True
-        if S is int or S is long:
+        if S is int:
             return True
         if isinstance(S, RealIntervalField_class):
             return (<RealIntervalField_class>S)._prec >= prec

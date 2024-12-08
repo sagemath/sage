@@ -753,8 +753,6 @@ cdef class RealField_class(sage.rings.abc.RealField):
             return QQtoRR(QQ, self)
         elif (S is RDF or S is float) and self._prec <= 53:
             return double_toRR(S, self)
-        elif S is long:
-            return int_toRR(long, self)
         elif S is int:
             return int_toRR(int, self)
         elif isinstance(S, RealField_class) and S.prec() >= self._prec:

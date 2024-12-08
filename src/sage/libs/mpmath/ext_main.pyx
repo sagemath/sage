@@ -580,7 +580,7 @@ cdef class Context:
             s = (<mpc>x).re.special
             t = (<mpc>x).im.special
             return s == S_NAN or t == S_NAN
-        if type(x) is int or type(x) is long or isinstance(x, Integer) \
+        if isinstance(x, (int, Integer)) \
             or isinstance(x, rationallib.mpq):
             return False
         typ = MPF_set_any(&tmp_opx_re, &tmp_opx_im, x, global_opts, 0)
@@ -622,7 +622,7 @@ cdef class Context:
             s = (<mpc>x).re.special
             t = (<mpc>x).im.special
             return s == S_INF or s == S_NINF or t == S_INF or t == S_NINF
-        if type(x) is int or type(x) is long or isinstance(x, Integer) \
+        if isinstance(x, (int, Integer)) \
             or isinstance(x, rationallib.mpq):
             return False
         typ = MPF_set_any(&tmp_opx_re, &tmp_opx_im, x, global_opts, 0)
@@ -671,7 +671,7 @@ cdef class Context:
             if re == libmp.fzero: return im_normal
             if im == libmp.fzero: return re_normal
             return re_normal and im_normal
-        if type(x) is int or type(x) is long or isinstance(x, Integer) \
+        if isinstance(x, (int, Integer)) \
             or isinstance(x, rationallib.mpq):
             return bool(x)
         x = ctx.convert(x)
@@ -708,7 +708,7 @@ cdef class Context:
         cdef MPF v
         cdef MPF w
         cdef int typ
-        if type(x) is int or type(x) is long or isinstance(x, Integer):
+        if isinstance(x, (int, Integer)):
             return True
         if isinstance(x, mpf):
             v = (<mpf>x).value
