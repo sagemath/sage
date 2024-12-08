@@ -1,18 +1,35 @@
 #!/bin/sh
 
+python_files=$(git diff --staged --name-only | grep "\.py\|\.pxd")
+[ -z "$python_files" ] && exit 0
+
 RED='\e[1;31m'
 NRM='\e[0m'  # normal
 
 if ! command -v autopep8 > /dev/null; then
-  printf "Error: ${RED}autopep8${NRM} not found.\nRequired for pre-commit checks.\n"
+  printf "Error: ${RED}autopep8${NRM} not found; required for pre-commit checks.\n\
+To avoid these pre-commit checks, use 'git commit --no-verify'.\n"
   exit 1
 fi
 
-python_files=$(git diff --staged --name-only | grep "\.py\|\.pxd")
-[ -z "$python_files" ] && exit 0
+in_place=false
+for arg in "$@"; do
+  if [ "$arg" == "in-place" ]; then
+    in_place=true
+  fi
+done
 
-if ! autopep8 -i --exit-code $python_files; then
-  printf "${RED}autopep8${NRM}: Ill-formatted Python files staged for commit.\n\
+if ! $in_place; then
+  if ! autopep8 --exit-code $python_files > /dev/null; then
+    printf "${RED}autopep8${NRM}: Ill-formatted Python files staged for commit.\n\
+Format them manually or use 'git hook run pre-commit -- in-place'.\n\
+To avoid these pre-commit checks, use 'git commit --no-verify'.\n"
+    exit 1
+  fi
+else
+  if ! autopep8 --in-place --exit-code $python_files; then
+    printf "${RED}autopep8${NRM}: Ill-formatted Python files staged for commit.\n\
 Auto-formatting... Check the unstaged changes.\n"
-  exit 1
+    exit 1
+  fi
 fi
