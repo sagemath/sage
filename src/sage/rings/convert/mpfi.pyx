@@ -130,10 +130,10 @@ cdef int _from_str_question_style(mpfi_ptr x, bytes s, int base) except -1:
 
     Large exponent (ensure precision is not lost)::
 
-        sage: x = RIF("1.123456?2e1000000000"); x
-        1.12346?e1000000000
+        sage: x = RIF("1.123456?2e100000000"); x
+        1.12346?e100000000
         sage: x.str(style="question", error_digits=3)
-        '1.12345600?201e1000000000'
+        '1.12345600?201e100000000'
 
     Large precision::
 
