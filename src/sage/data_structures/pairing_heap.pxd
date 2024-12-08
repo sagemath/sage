@@ -52,7 +52,6 @@ cdef class PairingHeap_class:
     cdef size_t n                 # maximum number of items
     cdef PairingHeapNode * root   # pointer to the top of the heap
     cdef PairingHeapNode * nodes  # array of size n to store items
-    cdef bitset_t active          # bitset to identify active items
     cdef size_t number_of_items   # number of active items
     cpdef bint empty(self) noexcept
     cpdef bint full(self) noexcept
@@ -62,6 +61,7 @@ cdef class PairingHeap_class:
 
 
 cdef class PairingHeap_of_n_integers(PairingHeap_class):
+    cdef bitset_t active  # bitset to identify active items
     cpdef void push(self, size_t item, object value) except *
     cpdef size_t top_item(self) except *
     cpdef void decrease(self, size_t item, object new_value) except *
@@ -71,6 +71,7 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
 cdef class PairingHeap_of_n_hashables(PairingHeap_class):
     cdef list _int_to_item  # mapping from integers to items
     cdef dict _item_to_int  # mapping from items to integers
+    cdef list free_idx      # list of free indexes
     cpdef void push(self, object item, object value) except *
     cpdef object top_item(self) except *
     cpdef void decrease(self, object item, object new_value) except *

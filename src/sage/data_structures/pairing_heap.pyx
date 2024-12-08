@@ -815,10 +815,10 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
         self.n = n
         self.root = NULL
         self.nodes = <PairingHeapNode *>check_allocarray(n, sizeof(PairingHeapNode))
-        bitset_init(self.active, n)
         self.number_of_items = 0
         self._int_to_item = [None] * n
         self._item_to_int = dict()
+        self.free_idx = list(range(n))
 
     cpdef void push(self, object item, object value) except *:
         r"""
@@ -861,7 +861,7 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
         if self.full():
             raise ValueError("the heap is full")
 
-        cdef size_t idx = bitset_first_in_complement(self.active)
+        cdef size_t idx = self.free_idx.pop()
         self._int_to_item[idx] = item
         self._item_to_int[item] = idx
         cdef PairingHeapNode * p = self.nodes + idx
@@ -872,7 +872,6 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
             self.root = p
         else:
             self.root = _merge(self.root, p)
-        bitset_add(self.active, idx)
         self.number_of_items += 1
 
     cpdef tuple top(self) except *:
@@ -953,7 +952,7 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
         cdef object item = self.top_item()
         cdef size_t idx = self._item_to_int[item]
         Py_XDECREF(<PyObject *>self.nodes[idx].value)
-        bitset_remove(self.active, idx)
+        self.free_idx.append(idx)
         del self._item_to_int[item]
         self.number_of_items -= 1
         self.root = _pair(self.root.child)
