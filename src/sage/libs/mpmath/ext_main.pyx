@@ -580,8 +580,7 @@ cdef class Context:
             s = (<mpc>x).re.special
             t = (<mpc>x).im.special
             return s == S_NAN or t == S_NAN
-        if isinstance(x, (int, Integer)) \
-            or isinstance(x, rationallib.mpq):
+        if isinstance(x, (int, Integer, rationallib.mpq)):
             return False
         typ = MPF_set_any(&tmp_opx_re, &tmp_opx_im, x, global_opts, 0)
         if typ == 1:
@@ -622,8 +621,7 @@ cdef class Context:
             s = (<mpc>x).re.special
             t = (<mpc>x).im.special
             return s == S_INF or s == S_NINF or t == S_INF or t == S_NINF
-        if isinstance(x, (int, Integer)) \
-            or isinstance(x, rationallib.mpq):
+        if isinstance(x, (int, Integer, rationallib.mpq)):
             return False
         typ = MPF_set_any(&tmp_opx_re, &tmp_opx_im, x, global_opts, 0)
         if typ == 1:
@@ -671,8 +669,7 @@ cdef class Context:
             if re == libmp.fzero: return im_normal
             if im == libmp.fzero: return re_normal
             return re_normal and im_normal
-        if isinstance(x, (int, Integer)) \
-            or isinstance(x, rationallib.mpq):
+        if isinstance(x, (int, Integer, rationallib.mpq)):
             return bool(x)
         x = ctx.convert(x)
         if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
