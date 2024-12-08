@@ -179,6 +179,9 @@ cdef extern from "m4ri/m4ri.h":
     # reduced row echelon form using PLUQ factorization
     cdef mzd_t *mzd_kernel_left_pluq(mzd_t *A, int cutoff)
 
+    # system solving
+    cdef int mzd_solve_left(mzd_t *A, mzd_t *B, int cutoff, int inconsistency_check)
+
     ########################
     # Bit operations
     ########################
