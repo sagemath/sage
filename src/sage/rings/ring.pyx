@@ -1018,37 +1018,6 @@ cdef class IntegralDomain(CommutativeRing):
         CommutativeRing.__init__(self, base_ring, names=names, normalize=normalize,
                                  category=category)
 
-    def is_integrally_closed(self):
-        r"""
-        Return ``True`` if this ring is integrally closed in its field of
-        fractions; otherwise return ``False``.
-
-        When no algorithm is implemented for this, then this
-        function raises a :exc:`NotImplementedError`.
-
-        Note that ``is_integrally_closed`` has a naive implementation
-        in fields. For every field `F`, `F` is its own field of fractions,
-        hence every element of `F` is integral over `F`.
-
-        EXAMPLES::
-
-            sage: ZZ.is_integrally_closed()
-            True
-            sage: QQ.is_integrally_closed()
-            True
-            sage: QQbar.is_integrally_closed()                                          # needs sage.rings.number_field
-            True
-            sage: GF(5).is_integrally_closed()
-            True
-            sage: Z5 = Integers(5); Z5
-            Ring of integers modulo 5
-            sage: Z5.is_integrally_closed()
-            Traceback (most recent call last):
-            ...
-            AttributeError: 'IntegerModRing_generic_with_category' object has no attribute 'is_integrally_closed'...
-        """
-        raise NotImplementedError
-
     def is_field(self, proof=True):
         r"""
         Return ``True`` if this ring is a field.
@@ -1224,18 +1193,6 @@ cdef class Field(CommutativeRing):
         EXAMPLES::
 
             sage: Frac(ZZ['x,y']).is_field()
-            True
-        """
-        return True
-
-    def is_integrally_closed(self):
-        """
-        Return ``True`` since fields are trivially integrally closed in
-        their fraction field (since they are their own fraction field).
-
-        EXAMPLES::
-
-            sage: Frac(ZZ['x,y']).is_integrally_closed()
             True
         """
         return True
