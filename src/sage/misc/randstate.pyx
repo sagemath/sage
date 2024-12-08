@@ -529,11 +529,11 @@ cdef class randstate:
 
         if seed is None:
             if use_urandom:
-                seed = long(binascii.hexlify(os.urandom(16)), 16)
+                seed = int(binascii.hexlify(os.urandom(16)), 16)
             else:
-                seed = long(time.time() * 256)
+                seed = int(time.time() * 256)
         else:
-            seed = long(seed)
+            seed = int(seed)
 
         # If seed==0, leave it at the default seed used by
         # gmp_randinit_default()
@@ -605,9 +605,9 @@ cdef class randstate:
         from sage.rings.integer_ring import ZZ
         rand = cls()
         if seed is None:
-            rand.seed(long(ZZ.random_element(long(1)<<128)))
+            rand.seed(int(ZZ.random_element(1<<128)))
         else:
-            rand.seed(long(seed))
+            rand.seed(int(seed))
         self._python_random = rand
         return rand
 
@@ -624,7 +624,7 @@ cdef class randstate:
             48314508034782595865062786044921182484
         """
         from sage.rings.integer_ring import ZZ
-        return ZZ.random_element(long(1)<<128)
+        return ZZ.random_element(1<<128)
 
     cpdef long_seed(self):
         r"""
@@ -638,7 +638,7 @@ cdef class randstate:
             256056279774514099508607350947089272595
         """
         from sage.rings.integer_ring import ZZ
-        return long(ZZ.random_element(long(1)<<128))
+        return int(ZZ.random_element(1<<128))
 
     cpdef set_seed_libc(self, bint force):
         r"""
@@ -688,7 +688,7 @@ cdef class randstate:
         if force or _ntl_seed_randstate is not self:
             import sage.libs.ntl.ntl_ZZ as ntl_ZZ
             from sage.rings.integer_ring import ZZ
-            ntl_ZZ.ntl_setSeed(ZZ.random_element(long(1)<<128))
+            ntl_ZZ.ntl_setSeed(ZZ.random_element(1<<128))
             _ntl_seed_randstate = self
 
     def set_seed_gap(self):
@@ -715,7 +715,7 @@ cdef class randstate:
                 mersenne_seed, classic_seed = self._gap_saved_seed
             else:
                 from sage.rings.integer_ring import ZZ
-                seed = ZZ.random_element(long(1)<<128)
+                seed = ZZ.random_element(1<<128)
                 classic_seed = seed
                 mersenne_seed = seed
 
