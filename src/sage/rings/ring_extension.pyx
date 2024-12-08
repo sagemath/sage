@@ -1952,7 +1952,7 @@ cdef class RingExtension_generic(Parent):
 
         TESTS:
 
-            Ensure issue :issue:`34692` is fixed::
+        Ensure issue :issue:`34692` is fixed::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]

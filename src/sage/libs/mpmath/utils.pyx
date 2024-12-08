@@ -75,7 +75,7 @@ cpdef isqrt(n):
     mpz_sqrt(y.value, m.value)
     return y
 
-cpdef from_man_exp(man, exp, long prec = 0, str rnd = 'd'):
+cpdef from_man_exp(man, exp, long prec=0, str rnd='d'):
     """
     Create normalized mpf value tuple from mantissa and exponent.
 
