@@ -70,3 +70,6 @@ python3 -c 'import pathlib; from sage.misc.lazy_import_cache import get_cache_fi
 # Issue #33103: The temp.* directories are large after a full build.
 # We remove them to save space; they are not needed for fast rebuilds.
 rm -rf build/temp.*
+
+# indicate that we are done - is needed to allow ./sage to start
+touch $SAGE_VENV/bin/sage
