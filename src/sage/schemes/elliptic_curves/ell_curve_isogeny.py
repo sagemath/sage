@@ -1116,8 +1116,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         Coverage tests::
 
             sage: E = EllipticCurve(GF(7), [0, 1])
-            sage: phi = EllipticCurveIsogeny(E, E.0)
-            sage: E2 = phi.codomain()
+            sage: E2 = EllipticCurve(GF(7), [6, 1])
+            sage: phi = E.isogeny(E(2, 4), codomain=E2)
             sage: phi._compose_with_isomorphism(pre_isomorphism=E2.isomorphism_to(E2))
             Traceback (most recent call last):
             ...
