@@ -2042,7 +2042,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.green_function(P([2, 1]), K.ideal(7), N=7)
             0.48647753726382832627633818586
             sage: f.green_function(P([w, 1]), K.ideal(17), error_bound=0.001)
-            -0.70813041039490996737374178059
+            -0.70821687320448199545278619351
 
         ::
 
@@ -2073,7 +2073,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             K = BR
         elif is_prime(v):
             K = Qp(v, prec)
-        elif v == 0:
+        elif v == 0 and BR == QQ:
             K = R
             v = BR.places(prec=prec)[0]
         else:
@@ -2095,6 +2095,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             # compute upper bound
             if isinstance(v, RingHomomorphism_im_gens): #archimedean
                 vindex = BR.places(prec=prec).index(v)
+                emb = BR.places(prec=prec)[vindex]
                 U = GBR.local_height_arch(vindex, prec=prec) + R(binomial(dim + d, d)).log()
             else: #non-archimedean
                 U = GBR.local_height(v, prec=prec)
@@ -2103,30 +2104,31 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             CR = GBR.codomain().ambient_space().coordinate_ring() #.lift() only works over fields
             I = CR.ideal(GBR.defining_polynomials())
             maxh = 0
-            Res = 1
             for k in range(dim + 1):
                 CoeffPolys = (CR.gen(k) ** D).lift(I)
                 h = 1
                 for poly in CoeffPolys:
                     if poly != 0:
-                        for c in poly.coefficients():
-                            Res = lcm(Res, c.denominator())
-                for poly in CoeffPolys:
-                    if poly != 0:
                         if isinstance(v, RingHomomorphism_im_gens): #archimedean
                             if BR == QQ:
-                                h = max([(Res*c).local_height_arch(prec=prec) for c in poly.coefficients()])
+                                h = max([R(K(c).abs()) for c in poly.coefficients()])
                             else:
-                                h = max([(Res*c).local_height_arch(vindex, prec=prec) for c in poly.coefficients()])
+                                h = max([R(emb(c).abs()) for c in poly.coefficients()])
                         else: #non-archimedean
-                            h = max([c.local_height(v, prec=prec) for c in poly.coefficients()])
+                            if BR == QQ:
+                                h = max([R(v)**(-R(c.valuation(v)))  for c in poly.coefficients()])
+                            else:
+                                h = max([R(c.abs_non_arch(v, prec=prec)) for c in poly.coefficients()])
                         maxh = max(h, maxh)
             if maxh == 0:
                 maxh = 1  #avoid division by 0
             if isinstance(v, RingHomomorphism_im_gens): #archimedean
-                L = R(Res / ((dim + 1) * binomial(dim + D - d, D - d) * maxh)).log().abs()
+                L = R(1 / ((dim + 1) * binomial(dim + D - d, D - d) * maxh)).log().abs()
             else: #non-archimedean
-                L = R(Res / maxh).log().abs()
+                if BR == QQ:
+                    L = ((-self.resultant().valuation(v))*R(v).log()).abs()
+                else:
+                    L = (self.resultant().abs_non_arch(v, prec=prec)).log().abs()
             C = max([U, L])
             if C != 0:
                 N = R(C / (err*(d-1))).log(d).abs().ceil()
@@ -2252,7 +2254,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f = DynamicalSystem_projective([1000*x^2 - 29*y^2, 1000*y^2])
             sage: Q = P(-1/4, 1)
             sage: f.canonical_height(Q, error_bound=0.01)                               # needs sage.libs.pari
-            3.7996079979254623065837411853
+            3.7979215342343045582800170705
 
         ::
 
