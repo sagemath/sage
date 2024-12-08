@@ -2566,6 +2566,8 @@ cdef class CachedMethod():
     Note, however, that accessing the attribute directly will call :meth:`__get__`,
     and returns a :class:`CachedMethodCaller` or :class:`CachedMethodCallerNoArgs`.
 
+    ::
+
         sage: P.<a,b,c,d> = QQ[]
         sage: I = P*[a,b]
         sage: type(I.__class__.gens)
