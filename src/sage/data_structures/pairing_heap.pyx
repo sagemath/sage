@@ -104,8 +104,7 @@ from cysignals.signals cimport sig_on, sig_off, sig_check
 from cysignals.memory cimport check_allocarray, sig_free
 from sage.data_structures.bitset_base cimport (bitset_init, bitset_free,
                                                bitset_add, bitset_remove,
-                                               bitset_in,
-                                               bitset_first_in_complement)
+                                               bitset_in)
 from sage.misc.prandom import shuffle
 
 # ==============================================================================
@@ -231,19 +230,6 @@ cdef class PairingHeap_class:
     Common class and methods for :class:`PairingHeap_of_n_integers` and
     :class:`PairingHeap_of_n_hashables`.
     """
-    def __dealloc__(self):
-        """
-        Deallocate ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.pairing_heap import PairingHeap_of_n_integers
-            sage: P = PairingHeap_of_n_integers(5)
-            sage: del P
-        """
-        sig_free(self.nodes)
-        bitset_free(self.active)
-
     def __repr__(self):
         r"""
         Return a string representing ``self``.
@@ -477,6 +463,19 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
         self.nodes = <PairingHeapNode *>check_allocarray(n, sizeof(PairingHeapNode))
         bitset_init(self.active, n)
         self.number_of_items = 0
+
+    def __dealloc__(self):
+        """
+        Deallocate ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.pairing_heap import PairingHeap_of_n_integers
+            sage: P = PairingHeap_of_n_integers(5)
+            sage: del P
+        """
+        sig_free(self.nodes)
+        bitset_free(self.active)
 
     cpdef void push(self, size_t item, object value) except *:
         r"""
@@ -819,6 +818,18 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
         self._int_to_item = [None] * n
         self._item_to_int = dict()
         self.free_idx = list(range(n))
+
+    def __dealloc__(self):
+        """
+        Deallocate ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.pairing_heap import PairingHeap_of_n_integers
+            sage: P = PairingHeap_of_n_integers(5)
+            sage: del P
+        """
+        sig_free(self.nodes)
 
     cpdef void push(self, object item, object value) except *:
         r"""
