@@ -555,11 +555,12 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         r"""
         Add a new element into a new set containing only the new element.
 
-        According to :wikipedia:`Disjoint-set_data_structure#Making_new_sets` the
-        `make_set` operation adds a new element into a new set containing only
-        the new element. The new set is added at the end of `self`.
+        According to :wikipedia:`Disjoint-set_data_structure#Making_new_sets`
+        the `make_set` operation adds a new element into a new set containing
+        only the new element. The new set is added at the end of `self`.
 
         EXAMPLES::
+
             sage: d = DisjointSet(5)
             sage: d.union(1, 2)
             sage: d.union(0, 1)
@@ -568,6 +569,13 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             {{0, 1, 2}, {3}, {4}, {5}}
             sage: d.find(1)
             1
+
+        TESTS::
+
+            sage: d = DisjointSet(0)
+            sage: d.make_set()
+            sage: d
+            {{0}}
         """
         OP_make_set(self._nodes)
 
