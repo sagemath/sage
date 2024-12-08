@@ -5223,11 +5223,11 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             Traceback (most recent call last):
             ...
             AlarmInterrupt
-            sage: h = f.quo_rem(g)
-            sage: len(dict(h))
-            Traceback (most recent call last):
-            ...
-            ValueError: dictionary update sequence element #0 has length 658875; 2 is required
+            sage: q, r = f.quo_rem(g)
+            sage: len(dict(q))
+            178748
+            sage: len(dict(r))
+            7993
         """
         cdef poly *quo
         cdef poly *rem
