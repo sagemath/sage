@@ -268,21 +268,28 @@ class mwrank_EllipticCurve(SageObject):
 
         - ``selmer_only`` -- boolean (default: ``False``); ``selmer_only`` switch
 
-        - ``first_limit`` -- integer (default: 20); bound on `|x|+|z|` in
-          quartic point search
+        - ``first_limit`` -- integer (default: 20); naive height bound on
+          first point search on quartic homogeneous spaces (before
+          testing local solubility; very simple search with no
+          overheads).
 
-        - ``second_limit`` -- integer (default: 8); bound on
-          `\log \max(|x|,|z|)`, i.e. logarithmic
+        - ``second_limit`` -- integer (default: 8); logarithmic height bound on
+          second point search on quartic homogeneous spaces (after
+          testing local solubility; sieve-assisted search)
 
-        - ``n_aux`` -- integer (default: -1); (only relevant for general
-          2-descent when 2-torsion trivial) number of primes used for
-          quartic search.  ``n_aux=-1`` causes default (8) to be used.
-          Increase for curves of higher rank.
+        - ``n_aux`` -- integer (default: -1); if positive, the number of
+          auxiliary primes used in sieve-assisted search for quartics.
+          If -1 (the default) use a default value (set in the eclib
+          code in ``src/qrank/mrank1.cc`` in DEFAULT_NAUX: currently 8).
+          Only relevant for curves with no 2-torsion, where full
+          2-descent is carried out.  Worth increasing for curves
+          expected to be of rank > 6 to one or two more than the
+          expected rank.
 
-        - ``second_descent`` -- boolean (default: ``True``); (only relevant
-          for curves with 2-torsion, where mwrank uses descent via
-          2-isogeny) flag determining whether or not to do second
-          descent.  *Default strongly recommended.*
+        - ``second_descent`` -- boolean (default: ``True``); flag specifying
+          whether or not a second descent will be carried out.  Only relevant
+          for curves with 2-torsion.  Recommended left as the default except for
+          experts interested in details of Selmer groups.
 
         OUTPUT: nothing
 
