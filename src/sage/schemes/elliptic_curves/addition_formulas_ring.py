@@ -1,5 +1,5 @@
 
-def add(E, P, Q):
+def _add(E, P, Q):
     r"""
     Addition formulas for elliptic curves over general rings
     with trivial Picard group.
@@ -20,14 +20,14 @@ def add(E, P, Q):
 
     EXAMPLES::
 
-        sage: from sage.schemes.elliptic_curves.addition_formulas_ring import add
+        sage: from sage.schemes.elliptic_curves.addition_formulas_ring import _add
         sage: M = Zmod(13*17*19)
         sage: R.<U,V> = M[]
         sage: S.<u,v> = R.quotient(U*V - 17)
         sage: E = EllipticCurve(S, [1,2,3,4,5])
         sage: P = E(817, 13, 19)
         sage: Q = E(425, 123, 17)
-        sage: PQ1, PQ2 = add(E, P, Q)
+        sage: PQ1, PQ2 = _add(E, P, Q)
         sage: PQ1
         (1188, 1674, 540)
         sage: PQ2
@@ -39,13 +39,13 @@ def add(E, P, Q):
 
     We ensure that these formulas return the same result as the ones over a field::
 
-        sage: from sage.schemes.elliptic_curves.addition_formulas_ring import add
+        sage: from sage.schemes.elliptic_curves.addition_formulas_ring import _add
         sage: F = GF(2^127-1)
         sage: E = EllipticCurve(j=F.random_element())
         sage: E = choice(E.twists())
         sage: P = E.random_point()
         sage: Q = E.random_point()
-        sage: PQ1, PQ2 = add(E, P, Q)
+        sage: PQ1, PQ2 = _add(E, P, Q)
         sage: assert E(*PQ1) == P + Q
         sage: assert E(*PQ2) == P + Q
     """

@@ -345,11 +345,11 @@ class EllipticCurvePoint(AdditiveGroupElement,
 
                         return E.point(Sequence(pt, E.base_ring()), check=False)
 
-        from sage.schemes.elliptic_curves.addition_formulas_ring import add
+        from sage.schemes.elliptic_curves.addition_formulas_ring import _add
         from sage.modules.free_module_element import vector
 
         pts = []
-        for pt in filter(any, add(E, self, other)):
+        for pt in filter(any, _add(E, self, other)):
             if R.one() in R.ideal(pt):
                 return E.point(pt)
             pts.append(pt)
