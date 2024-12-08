@@ -47,7 +47,6 @@ cdef inline OrbitPartition *OP_new(int n) noexcept:
     cdef OrbitPartition *OP = <OrbitPartition *> \
                                 sig_malloc(sizeof(OrbitPartition))
     if OP is NULL:
-        sig_free(OP)
         return NULL
     OP.parent = <int *> sig_malloc(n * sizeof(int))
     OP.rank = <int *> sig_malloc(n * sizeof(int))
@@ -94,8 +93,8 @@ cdef inline void OP_make_set(OrbitPartition *OP) noexcept:
     cdef int n = OP.degree
 
     OP.parent = <int *> sig_realloc(OP.parent, (n + 1) * sizeof(int))
-    OP.rank = <int *> sig_realloc(OP.rank,(n + 1) * sizeof(int))
-    OP.mcr = <int *> sig_realloc(OP.mcr,(n + 1) * sizeof(int))
+    OP.rank = <int *> sig_realloc(OP.rank, (n + 1) * sizeof(int))
+    OP.mcr = <int *> sig_realloc(OP.mcr, (n + 1) * sizeof(int))
     OP.size = <int *> sig_realloc(OP.size, (n + 1) * sizeof(int))
     if OP.parent is NULL or OP.rank is NULL or OP.mcr is NULL or OP.size is NULL:
         sig_free(OP.parent)
