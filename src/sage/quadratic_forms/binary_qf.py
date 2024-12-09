@@ -1630,7 +1630,7 @@ class BinaryQF(SageObject):
 
         ALGORITHM: :pari:`qfbsolve` or :pari:`qfbcornacchia`
 
-        TODO:: Replace `_flag` with human-readable parameters c.f. :issue:`37119`
+        TODO:: Replace ``_flag`` with human-readable parameters c.f. :issue:`37119`
 
         EXAMPLES::
 
@@ -1736,7 +1736,7 @@ class BinaryQF(SageObject):
             sage: Q(*xy)
             0
 
-        Test for different `_flag` values::
+        Test for different ``_flag`` values::
 
             sage: # needs sage.libs.pari
             sage: Q = BinaryQF([1, 0, 5])

@@ -265,7 +265,7 @@ cdef class GenericBackend:
     @classmethod
     def _test_sense(cls, tester=None, **options):
         """
-        Run tests on `set_sense` and `is_maximization`.
+        Run tests on ``set_sense`` and ``is_maximization``.
 
         TESTS::
 
