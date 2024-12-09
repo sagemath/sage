@@ -26,6 +26,7 @@ AUTHORS:
 #*****************************************************************************
 
 from functools import total_ordering
+
 from sage.sets.family import FiniteFamily
 
 
