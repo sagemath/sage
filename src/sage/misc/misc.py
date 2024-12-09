@@ -174,6 +174,7 @@ try:
 except KeyError:
     pass
 
+
 def exactly_one_is_true(iterable):
     r"""
     Return whether exactly one element of ``iterable`` evaluates ``True``.
