@@ -105,7 +105,7 @@ else
 endif
 
 m4rie = cc.find_library('m4rie', required: not is_windows, disabler: true)
-mtx = cc.find_library('mtx', required: false, disabler: true)
+mtx = cc.find_library('mtx', required: false, disabler: true, has_headers: ['meataxe.h'])
 png = dependency('libpng', required: false)
 if not png.found()
   png = dependency('libpng16')
