@@ -103,7 +103,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         TESTS::
 
             sage: TestSuite(s).run(elements=[s[1,1]+2*s[2], s[1]+3*s[1,1]])
-            sage: TestSuite(s).run(skip=["_test_associativity", "_test_prod", '_test_construction'])  # long time (7s on sage.math, 2011)
+            sage: TestSuite(s).run(skip=["_test_associativity", "_test_prod"])  # long time (7s on sage.math, 2011)
 
         Note: ``s.an_element()`` is of degree 4; so we skip
         ``_test_associativity`` and ``_test_prod`` which involve
