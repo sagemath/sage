@@ -1958,14 +1958,14 @@ class GRSErrorErasureDecoder(Decoder):
                                 [word[i] for i in range(len(word))
                                  if not erasure_vector[i]])
         C1_length = len(punctured_word)
-        if C1_length == k:
-            return self.connected_encoder().unencode_nocheck(word)
         C1_evaluation_points = [self.code().evaluation_points()[i] for i in
                 range(n) if erasure_vector[i] != 1]
         C1_column_multipliers = [self.code().column_multipliers()[i] for i in
                 range(n) if erasure_vector[i] != 1]
         C1 = GeneralizedReedSolomonCode(C1_evaluation_points, k,
                 C1_column_multipliers)
+        if C1_length == k:
+            return C1.unencode(punctured_word, nocheck=True)
         return C1.decode_to_message(punctured_word)
 
     def decoding_radius(self, number_erasures):
