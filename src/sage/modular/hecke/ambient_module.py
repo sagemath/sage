@@ -242,10 +242,8 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         try:
             return self.__decomposition_matrix_cache
         except AttributeError:
-            rows = []
-            for A in self.decomposition():
-                for x in A.basis():
-                    rows.append(x.list())
+            rows = [x.list() for A in self.decomposition()
+                    for x in A.basis()]
             A = matrix_space.MatrixSpace(self.base_ring(), self.rank())(rows)
             self.__decomposition_matrix_cache = A
             return self.__decomposition_matrix_cache

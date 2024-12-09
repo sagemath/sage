@@ -27,6 +27,7 @@ from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModuleWithBasis
 
+
 class Representation_abstract:
     """
     Abstract base class for representations of semigroups.

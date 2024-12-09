@@ -206,11 +206,12 @@ class Fields(CategoryWithAxiom):
             """
             return True
 
-        def is_integrally_closed(self):
+        def is_integrally_closed(self) -> bool:
             r"""
-            Return ``True``, as per :meth:`IntegralDomain.is_integrally_closed`:
-            for every field `F`, `F` is its own field of fractions,
-            hence every element of `F` is integral over `F`.
+            Return whether ``self`` is integrally closed.
+
+            For every field `F`, `F` is its own field of fractions.
+            Therefore every element of `F` is integral over `F`.
 
             EXAMPLES::
 
@@ -221,6 +222,8 @@ class Fields(CategoryWithAxiom):
                 sage: Z5 = GF(5); Z5
                 Finite Field of size 5
                 sage: Z5.is_integrally_closed()
+                True
+                sage: Frac(ZZ['x,y']).is_integrally_closed()
                 True
             """
             return True

@@ -22,6 +22,7 @@ import subprocess
 from . import Executable
 from . import FeatureTestResult
 
+
 class msolve(Executable):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :ref:`msolve <spkg_msolve>`.
@@ -63,6 +64,7 @@ class msolve(Executable):
             return FeatureTestResult(self, False,
                                      reason="output of msolve -h not recognized")
         return FeatureTestResult(self, True)
+
 
 def all_features():
     return [msolve()]

@@ -40,5 +40,6 @@ class symengine_py(JoinFeature):
                              [PythonModule('symengine', spkg='symengine_py',
                                             url='https://pypi.org/project/symengine')])
 
+
 def all_features():
     return [symengine_py()]

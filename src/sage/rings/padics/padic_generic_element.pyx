@@ -1349,7 +1349,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: Zp(5)(0).gamma()
             1 + O(5^20)
 
-        Check the cached version of `dwork_expansion` from :issue:`24433`::
+        Check the cached version of ``dwork_expansion`` from :issue:`24433`::
 
             sage: p = next_prime(200)
             sage: F = Qp(p)

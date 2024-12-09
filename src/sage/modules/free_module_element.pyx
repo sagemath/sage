@@ -3451,7 +3451,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         The more general :meth:`sage.matrix.matrix2.tensor_product` is an
         operation on a pair of matrices.  If we construct a pair of vectors
         as a column vector and a row vector, then an outer product and a
-        tensor product are identical.  Thus `tensor_product` is a synonym
+        tensor product are identical.  Thus ``tensor_product`` is a synonym
         for this method.  ::
 
             sage: u = vector(QQ, [1/2, 1/3, 1/4, 1/5])
@@ -4047,7 +4047,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         Differentiate with respect to var by differentiating each element
         with respect to var.
 
-        .. seealso:
+        .. SEEALSO::
 
            :meth:`derivative`
 

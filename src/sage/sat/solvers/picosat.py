@@ -160,8 +160,8 @@ class PicoSAT(SatSolver):
             sage: solver()                                 # optional - pycosat
             False
         """
-        #import pycosat
-        #self._solve = pycosat.solve
+        # import pycosat
+        # self._solve = pycosat.solve
         sol = self._solve(self._clauses, verbose=self._verbosity,
                           prop_limit=self._prop_limit, vars=self._nvars)
         # sol = pycosat.solve(self._clauses)

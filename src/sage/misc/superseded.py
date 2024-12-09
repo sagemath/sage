@@ -105,7 +105,7 @@ def deprecation_cython(issue_number, message, stacklevel=3):
 
     TESTS:
 
-    We check that `deprecation_cython` in a cython function generates a warning
+    We check that ``deprecation_cython`` in a cython function generates a warning
     with the same callsite reference as `deprecation` in a python function, whereas
     `deprecation` in a cython function does not::
 

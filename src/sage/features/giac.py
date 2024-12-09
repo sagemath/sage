@@ -5,6 +5,7 @@ Feature for testing the presence of ``giac``
 
 from . import Executable, FeatureTestResult
 
+
 class Giac(Executable):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :ref:`giac <spkg_giac>`.
@@ -25,6 +26,7 @@ class Giac(Executable):
         """
         Executable.__init__(self, 'giac', executable='giac',
                             spkg='giac', type='standard')
+
 
 def all_features():
     return [Giac()]

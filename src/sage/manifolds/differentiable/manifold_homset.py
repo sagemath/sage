@@ -42,12 +42,14 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.manifolds.manifold_homset import TopologicalManifoldHomset
-from sage.manifolds.differentiable.diff_map import DiffMap
 from sage.manifolds.differentiable.curve import DifferentiableCurve
-from sage.manifolds.differentiable.integrated_curve import IntegratedCurve
-from sage.manifolds.differentiable.integrated_curve import IntegratedAutoparallelCurve
-from sage.manifolds.differentiable.integrated_curve import IntegratedGeodesic
+from sage.manifolds.differentiable.diff_map import DiffMap
+from sage.manifolds.differentiable.integrated_curve import (
+    IntegratedAutoparallelCurve,
+    IntegratedCurve,
+    IntegratedGeodesic,
+)
+from sage.manifolds.manifold_homset import TopologicalManifoldHomset
 
 
 class DifferentiableManifoldHomset(TopologicalManifoldHomset):
@@ -180,8 +182,7 @@ class DifferentiableManifoldHomset(TopologicalManifoldHomset):
              manifolds over Real Field with 53 bits of precision
             sage: TestSuite(E).run()
         """
-        from sage.manifolds.differentiable.manifold import \
-                                                         DifferentiableManifold
+        from sage.manifolds.differentiable.manifold import DifferentiableManifold
         if not isinstance(domain, DifferentiableManifold):
             raise TypeError("domain = {} is not an ".format(domain) +
                             "instance of DifferentiableManifold")
@@ -1305,11 +1306,11 @@ class IntegratedAutoparallelCurveSet(IntegratedCurveSet):
             (1.0565635217644918,)
         """
 
+        from sage.categories.homset import Hom
+        from sage.functions.log import exp
         from sage.rings.infinity import Infinity
         from sage.rings.rational_field import QQ
-        from sage.categories.homset import Hom
         from sage.symbolic.ring import var
-        from sage.functions.log import exp
 
         dom = self.domain()
         t = dom.canonical_coordinate()
@@ -1754,8 +1755,8 @@ class IntegratedGeodesicSet(IntegratedAutoparallelCurveSet):
         """
 
         from sage.categories.homset import Hom
-        from sage.symbolic.ring import var
         from sage.functions.log import exp
+        from sage.symbolic.ring import var
 
         dom = self.domain()
         t = dom.canonical_coordinate()

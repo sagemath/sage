@@ -14,6 +14,7 @@ Feature for testing the presence of ``ffmpeg``
 
 from . import Executable, FeatureTestResult
 
+
 class FFmpeg(Executable):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :ref:`ffmpeg <spkg_ffmpeg>`.

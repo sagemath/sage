@@ -76,7 +76,10 @@ foreach name, pyx : extension_data
   )
 endforeach
 
-extension_data_cpp = {'vector_mod2_dense': files('vector_mod2_dense.pyx')}
+extension_data_cpp = {
+  'numpy_util' : files('numpy_util.pyx'),
+  'vector_mod2_dense': files('vector_mod2_dense.pyx'),
+}
 
 foreach name, pyx : extension_data_cpp
   py.extension_module(

@@ -500,7 +500,7 @@ class FreeModuleCoBasis(Basis_abstract):
         Basis_abstract.__init__(self, basis._fmodule, symbol, latex_symbol,
                                 indices, latex_indices)
         # The individual linear forms:
-        vl = list()
+        vl = []
         fmodule = self._fmodule
         ring_one = fmodule._ring.one()
         for i in fmodule.irange():
@@ -719,7 +719,7 @@ class FreeModuleBasis(Basis_abstract):
         # The basis is added to the module list of bases
         fmodule._known_bases.append(self)
         # The individual vectors:
-        vl = list()
+        vl = []
         ring_one = fmodule._ring.one()
         for i in fmodule.irange():
             v = fmodule.element_class(fmodule)

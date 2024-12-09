@@ -59,6 +59,7 @@ from .parsing import parse_optional_tags, parse_file_optional_tags, unparse_opti
 
 auto_optional_tags = set()
 
+
 class DocTestDefaults(SageObject):
     """
     This class is used for doctesting the Sage doctest module.

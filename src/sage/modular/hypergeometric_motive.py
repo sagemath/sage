@@ -685,7 +685,7 @@ class HypergeometricData:
         Count ``alpha``'s at most ``x`` minus ``beta``'s at most ``x``.
 
         This function is used to compute the weight and the Hodge numbers.
-        With `flip_beta` set to ``True``, replace each `b` in `\beta`
+        With ``flip_beta`` set to ``True``, replace each `b` in `\beta`
         with `1-b`.
 
         .. SEEALSO::
@@ -1317,7 +1317,7 @@ class HypergeometricData:
         If left unspecified, `prec` is set to the minimum `p`-adic precision
         needed to recover the Euler factor.
 
-        If `cache_p` is ``True``, then the function caches an intermediate
+        If ``cache_p`` is ``True``, then the function caches an intermediate
         result which depends only on `p` and `f`. This leads to a significant
         speedup when iterating over `t`.
 
@@ -1933,13 +1933,13 @@ class HypergeometricData:
         P = PolynomialRing(ZZ, 'T')
         if t.numerator() % p == 0 or t.denominator() % p == 0:
             ans = P.one()
-            for m in set(j for i in self.cyclotomic_data() for j in i):
+            for m in {j for i in self.cyclotomic_data() for j in i}:
                 ans *= self.euler_factor_tame_contribution(t, p, m, deg)
             if deg is not None:
                 ans = ans.truncate(deg + 1)
             return ans
         # now p is good, or p is tame and t is a p-adic unit
-        elif (t-1) % p == 0:
+        elif (t - 1) % p == 0:
             typ = "mult"
             d = self.degree() - 1
             if d % 2:

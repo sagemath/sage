@@ -1296,7 +1296,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         the :class:`GlobalOptions` class.
 
         The :meth:`__getstate__` method returns a dictionary with an
-        `options_class` key which identifies the "parent" class for the options.
+        ``options_class`` key which identifies the "parent" class for the options.
         This is then used to unpickle the options class.
 
         EXAMPLES::

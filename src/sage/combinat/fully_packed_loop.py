@@ -1361,8 +1361,8 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
         """
         if isinstance(generator, AlternatingSignMatrix):
             SVM = generator.to_six_vertex_model()
-        elif isinstance(generator, SquareIceModel.Element) or \
-                isinstance(generator, SixVertexConfiguration):
+        elif isinstance(generator, (SquareIceModel.Element,
+                                    SixVertexConfiguration)):
             SVM = generator
         else:  # Not ASM nor SVM
             try:

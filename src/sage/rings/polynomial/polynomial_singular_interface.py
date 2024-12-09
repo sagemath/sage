@@ -430,8 +430,8 @@ def can_convert_to_singular(R):
 
     base_ring = R.base_ring()
     if (base_ring is ZZ
-        or isinstance(base_ring, RationalField)
-        or isinstance(base_ring, (sage.rings.abc.IntegerModRing,
+        or isinstance(base_ring, (RationalField,
+                                  sage.rings.abc.IntegerModRing,
                                   sage.rings.abc.RealField, sage.rings.abc.ComplexField,
                                   sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField))):
         return True

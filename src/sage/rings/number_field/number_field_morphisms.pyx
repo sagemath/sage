@@ -20,15 +20,13 @@ fields (generally `\RR` or `\CC`).
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.rings.complex_double
-
 from sage.structure.element cimport Element
 from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map
 from sage.categories.pushout import pushout
 
+from sage.rings.complex_double import CDF
 from sage.rings.real_lazy import RLF, CLF, LazyField, LazyAlgebraic
-
 
 cdef class NumberFieldEmbedding(Morphism):
 
@@ -254,7 +252,7 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
                 candidate_ambient_fields.append(ambient_field.algebraic_closure())
             except NotImplementedError:
                 pass
-            candidate_ambient_fields.append(sage.rings.complex_double.CDF)
+            candidate_ambient_fields.append(CDF)
         else:
             candidate_ambient_fields = [ambient_field]
 

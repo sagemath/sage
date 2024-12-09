@@ -377,6 +377,21 @@ class CuspidalSubmodule_wt1_eps(CuspidalSubmodule):
         return [weight1.modular_ratio_to_prec(chi, f, prec) for f in
             weight1.hecke_stable_subspace(chi)]
 
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        EXAMPLES::
+
+            sage: A = CuspForms(DirichletGroup(23, QQ).0, 1)
+            sage: pari.mfparams(A)
+            [23, 1, -23, 1, t + 1]
+            sage: pari.mfdim(A)
+            1
+        """
+        from sage.libs.pari import pari
+        return pari.mfinit([self.level(), self.weight(), self.character()], 1)
+
 
 class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
     r"""

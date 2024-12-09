@@ -173,6 +173,7 @@ call individually::
     3.60546360143265208591582056420772677481026899659802474544                    # 32-bit
 """
 
+
 def _get_pari_instance():
     """
     TESTS::
@@ -181,8 +182,8 @@ def _get_pari_instance():
         Interface to the PARI C library
     """
     from cypari2 import Pari
-    stack_initial = 1024*1024
-    stack_max = 1024*stack_initial
+    stack_initial = 1024 * 1024
+    stack_max = 1024 * stack_initial
     P = Pari(stack_initial, stack_max)
 
     # pari_init_opts() overrides MPIR's memory allocation functions,

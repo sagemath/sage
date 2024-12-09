@@ -21,6 +21,7 @@ checked in this module.
 from . import Executable, FeatureTestResult
 from .join_feature import JoinFeature
 
+
 class Magick(Executable):
     r"""
     A :class:`~sage.features.Feature` describing the presence of ``magick`` or the deprecated ``convert``.
@@ -133,6 +134,7 @@ class ImageMagick(JoinFeature):
                              [Magick()],
                              spkg='imagemagick',
                              url='https://www.imagemagick.org/')
+
 
 def all_features():
     return [ImageMagick()]

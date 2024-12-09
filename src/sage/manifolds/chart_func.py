@@ -32,16 +32,16 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.structure.element import AlgebraElement, ModuleElementWithMutability
-from sage.structure.parent import Parent
-from sage.structure.sage_object import SageObject
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.manifolds.utilities import ExpressionNice
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
-from sage.symbolic.ring import SR
+from sage.structure.element import AlgebraElement, ModuleElementWithMutability
 from sage.structure.mutability import Mutability
+from sage.structure.parent import Parent
+from sage.structure.sage_object import SageObject
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.symbolic.ring import SR
 
 try:
     import sympy
@@ -671,8 +671,8 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
             sage: X.zero_function().display()
             (x, y) ↦ 0
         """
-        from sage.typeset.unicode_characters import unicode_mapsto
         from sage.tensor.modules.format_utilities import FormattedExpansion
+        from sage.typeset.unicode_characters import unicode_mapsto
         curr = self._calc_method._current
         expr = self.expr(curr)
         if (curr == 'SR' and

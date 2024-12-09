@@ -16,6 +16,7 @@ import os
 import subprocess
 from . import Executable, FeatureTestResult
 
+
 class FriCAS(Executable):
     r"""
     A :class:`~sage.features.Feature` which checks for the :ref:`fricas <fricas>` binary.
@@ -61,6 +62,7 @@ class FriCAS(Executable):
                     reason="Call `{command}` did not produce output which contains `{expected}`".format(command=" ".join(command), expected=expected))
 
         return FeatureTestResult(self, True)
+
 
 def all_features():
     return [FriCAS()]

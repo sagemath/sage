@@ -402,7 +402,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             for mor in T[:-1]:
                 # ALGORITHM:
-                # `split_convolve` moves terms of the form x # y to x*Ti(y1) # y2 in Sweedler notation.
+                # ``split_convolve`` moves terms of the form x # y to x*Ti(y1) # y2 in Sweedler notation.
                 def split_convolve(x_y):
                     x, y = x_y
                     return (((xy1, y2), c * d)

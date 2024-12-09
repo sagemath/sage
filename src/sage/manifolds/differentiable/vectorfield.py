@@ -59,10 +59,12 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 from sage.manifolds.differentiable.multivectorfield import (
-                                       MultivectorField, MultivectorFieldParal)
+    MultivectorField,
+    MultivectorFieldParal,
+)
 from sage.misc.decorators import options
+from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
 
 
 class VectorField(MultivectorField):
@@ -663,14 +665,14 @@ class VectorField(MultivectorField):
 
             sage: v.plot.reset()
         """
-        from sage.rings.infinity import Infinity
-        from sage.misc.functional import numerical_approx
-        from sage.misc.latex import latex
-        from sage.plot.graphics import Graphics
         from sage.manifolds.chart import RealChart
         from sage.manifolds.utilities import set_axes_labels
+        from sage.misc.functional import numerical_approx
+        from sage.misc.latex import latex
         from sage.parallel.decorate import parallel
         from sage.parallel.parallelism import Parallelism
+        from sage.plot.graphics import Graphics
+        from sage.rings.infinity import Infinity
 
         #
         # 1/ Treatment of input parameters

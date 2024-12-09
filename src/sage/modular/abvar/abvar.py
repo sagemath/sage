@@ -4501,11 +4501,11 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
                         else:
                             X = A.decomposition(bound=bound)
                         for B in X:
-                            for t in divisors(M // N):
-                                D.append(ModularAbelianVariety_modsym(B.degeneracy_map(M, t).image(),
-                                                                      is_simple=True, newform_level=(N, G),
-                                                                      isogeny_number=isogeny_number,
-                                                                      number=(t, M)))
+                            D.extend(ModularAbelianVariety_modsym(B.degeneracy_map(M, t).image(),
+                                                                  is_simple=True, newform_level=(N, G),
+                                                                  isogeny_number=isogeny_number,
+                                                                  number=(t, M))
+                                     for t in divisors(M // N))
                             isogeny_number += 1
             elif A == amb.cuspidal_submodule():
                 D = [ModularAbelianVariety_modsym(B)

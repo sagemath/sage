@@ -458,7 +458,7 @@ class Category_over_base_ring(Category_over_base):
             ....:            VectorSpaces(GF(3)).parent_class)
             True
 
-        Check that :issue:`16618` is fixed: this `_subcategory_hook_`
+        Check that :issue:`16618` is fixed: this ``_subcategory_hook_``
         method is only valid for :class:`Category_over_base_ring`, not
         :class:`Category_over_base`::
 

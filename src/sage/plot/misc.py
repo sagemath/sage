@@ -285,7 +285,7 @@ def _multiple_of_constant(n, pos, const):
     Function for internal use in formatting ticks on axes with
     nice-looking multiples of various symbolic constants, such
     as `\pi` or `e`.  Should only be used via keyword argument
-    `tick_formatter` in :meth:`plot.show`.  See documentation
+    ``tick_formatter`` in :meth:`plot.show`.  See documentation
     for the matplotlib.ticker module for more details.
 
     EXAMPLES:

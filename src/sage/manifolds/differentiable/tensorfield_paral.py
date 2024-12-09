@@ -1975,8 +1975,8 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             t^10_0 = (u^2 - v^2)/(u^2 + 2*u*v + v^2 + 8)
             t^11_1 = -12/(u^2 + 2*u*v + v^2 + 8)
         """
-        from sage.misc.latex import latex
         from sage.manifolds.differentiable.vectorframe import CoordFrame
+        from sage.misc.latex import latex
         if frame is None:
             if chart is not None:
                 frame = chart.frame()

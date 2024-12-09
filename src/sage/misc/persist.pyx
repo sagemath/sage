@@ -57,7 +57,7 @@ from sage.misc.sage_unittest import TestSuite
 # Apart from this, you are free to use these variables as you like.
 #
 # However, the standard utilisation is the following.
-# The pickling method (namely `__reduce__`) checks if the id of the
+# The pickling method (namely ``__reduce__``) checks if the id of the
 # current element appears in the dictionary `already_pickled`. If it
 # does not, the methods records that this element is about to be
 # pickled by adding the entry { id: True } to `already_pickled`.

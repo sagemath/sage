@@ -303,7 +303,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
         if S[0] is None:
             return None
     elif S[-1] is False:
-            return S[0:-1]
+        return S[0:-1]
     return S
 
 
@@ -395,7 +395,7 @@ def learn(F, converter=None, solver=None, max_learnt_length=3, interreduction=Fa
         try:
             lc = solver.learnt_clauses()
         except (AttributeError, NotImplementedError):
-        # solver does not support recovering learnt clauses
+            # solver does not support recovering learnt clauses
             lc = []
         for c in lc:
             if len(c) <= max_learnt_length:

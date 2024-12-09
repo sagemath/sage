@@ -454,7 +454,7 @@ def clean_output(s):
 
 def _un_camel(name):
     """
-    Convert `CamelCase` to `camel_case`.
+    Convert ``CamelCase`` to ``camel_case``.
 
     EXAMPLES::
 

@@ -14,6 +14,7 @@ Feature for testing the presence of ``dvipng``
 
 from . import Executable
 
+
 class dvipng(Executable):
     r"""
     A :class:`~sage.features.Feature` describing the presence of ``dvipng``.

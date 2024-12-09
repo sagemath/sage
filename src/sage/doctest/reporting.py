@@ -50,6 +50,7 @@ from sage.doctest.util import count_noun
 from sage.doctest.sources import DictAsObject
 from .external import available_software
 
+
 def signal_name(sig):
     """
     Return a string describing a signal number.
@@ -90,6 +91,7 @@ def signal_name(sig):
     if sig == SIGBUS:
         return "bus error"
     return "signal %s" % sig
+
 
 class DocTestReporter(SageObject):
     """

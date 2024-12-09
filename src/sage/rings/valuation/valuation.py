@@ -770,7 +770,7 @@ class DiscreteValuation(DiscretePseudoValuation):
                                    reduce_init=[]).run_serial()
         else:
             raise NotImplementedError(algorithm)
-        leafs = set([node.valuation for node in nodes])
+        leafs = {node.valuation for node in nodes}
         for node in nodes:
             if node.parent is None:
                 continue

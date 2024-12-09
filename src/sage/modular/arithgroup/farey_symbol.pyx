@@ -13,15 +13,15 @@ based on the *KFarey* package by Chris Kurth. Implemented as C++ module
 for speed.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Hartmut Monien <monien@th.physik.uni-bonn.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport PyObject_RichCompare
 from itertools import groupby
@@ -206,11 +206,11 @@ cdef class Farey:
             self.this_ptr = new cpp_farey(data)
             sig_off()
             return
-        ## to accelerate the calculation of the FareySymbol
-        ## we implement the tests for the standard congruence groups
-        ## in the c++ module. For a general group the test if an element
-        ## of SL2Z is in the group the python __contains__ attribute
-        ## of the group is called
+        # to accelerate the calculation of the FareySymbol
+        # we implement the tests for the standard congruence groups
+        # in the c++ module. For a general group the test if an element
+        # of SL2Z is in the group the python __contains__ attribute
+        # of the group is called
         cdef int p
         if hasattr(group, "level"):
             p = group.level()
@@ -285,19 +285,19 @@ cdef class Farey:
             a, b, c, d = pm.matrix().list()
             newval = gens_dict.get(SL2Z([a, b, c, d]))
             if newval is not None:
-                ans.append((newval,1))
+                ans.append((newval, 1))
                 continue
             newval = gens_dict.get(SL2Z([-a, -b, -c, -d]))
             if newval is not None:
-                ans.append((newval,-1))
+                ans.append((newval, -1))
                 continue
             newval = gens_dict.get(SL2Z([d, -b, -c, a]))
             if newval is not None:
-                ans.append((-newval,1))
+                ans.append((-newval, 1))
                 continue
             newval = gens_dict.get(SL2Z([-d, b, c, -a]))
             if newval is not None:
-                ans.append((-newval,-1))
+                ans.append((-newval, -1))
                 continue
             raise RuntimeError("This should have not happened")
         return ans
@@ -453,7 +453,7 @@ cdef class Farey:
         result = self.this_ptr.word_problem(a.value, b.value, c.value, d.value, cpp_beta)
         sig_off()
         beta = convert_to_SL2Z(cpp_beta[0])**-1
-        mbeta = SL2Z([-beta.a(),-beta.b(),-beta.c(),-beta.d()])
+        mbeta = SL2Z([-beta.a(), -beta.b(), -beta.c(), -beta.d()])
         V = self.pairing_matrices_to_tietze_index()
         sgn = 1
         tietze = []
@@ -500,7 +500,7 @@ cdef class Farey:
         tietze.reverse()
         gens = self.generators()
         if check:
-            tmp = SL2Z([1,0,0,1])
+            tmp = SL2Z([1, 0, 0, 1])
             for i in range(len(tietze)):
                 t = tietze[i]
                 tmp = tmp * gens[t-1] if t > 0 else tmp * gens[-t-1]**-1
@@ -1009,7 +1009,7 @@ cdef class Farey:
                                          fill=options['fill'],
                                          linestyle=options['linestyle'],
                                          thickness=options['thickness'])
-        ## show pairings
+        # show pairings
         p = self.pairings()
         x = self.fractions()
         if options['show_pairing']:
@@ -1033,7 +1033,7 @@ cdef class Farey:
         return g
 
 
-#--- conversions ------------------------------------------------------------
+# ----- conversions ---------------------------------
 
 cdef public long convert_to_long(n) noexcept:
     cdef long m = n

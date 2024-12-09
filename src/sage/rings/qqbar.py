@@ -7098,11 +7098,25 @@ class AlgebraicPolynomialTracker(SageObject):
             sage: cp.exactify()
             sage: cp._exact
             True
+
+        TESTS:
+
+        Check that interrupting ``exactify()`` does not lead to incoherent state::
+
+            sage: x = polygen(AA)
+            sage: p = AA(2)^(1/100) * x + AA(3)^(1/100)
+            sage: cp = AA.common_polynomial(p)
+            sage: alarm(0.5); cp.generator()
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+            sage: alarm(0.5); cp.generator()
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
         """
         if self._exact:
             return
-
-        self._exact = True
 
         if self._poly.base_ring() is QQ:
             self._factors = [fac_exp[0] for fac_exp in self._poly.factor()]
@@ -7127,6 +7141,8 @@ class AlgebraicPolynomialTracker(SageObject):
                 fp = fld_poly(coeffs)
 
                 self._factors = [fac_exp[0] for fac_exp in fp.factor()]
+
+        self._exact = True
 
     def factors(self):
         r"""

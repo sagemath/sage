@@ -27,14 +27,15 @@ AUTHORS:
 # ****************************************************************************
 
 from operator import pow as _pow
+
+from sage.functions.other import abs_symbolic
+from sage.functions.trig import cos, sin
+from sage.misc.functional import sqrt
+from sage.rings.rational import Rational
+from sage.symbolic.constants import pi
 from sage.symbolic.expression import Expression
 from sage.symbolic.expression_conversions import ExpressionTreeWalker
 from sage.symbolic.ring import SR
-from sage.symbolic.constants import pi
-from sage.functions.other import abs_symbolic
-from sage.misc.functional import sqrt
-from sage.functions.trig import cos, sin
-from sage.rings.rational import Rational
 
 
 class SimplifySqrtReal(ExpressionTreeWalker):
@@ -991,6 +992,7 @@ class ExpressionNice(Expression):
             d = d.replace(o, res)
 
         import re
+
         from sage.manifolds.manifold import TopologicalManifold
         if TopologicalManifold.options.omit_function_arguments:
             list_f = []
@@ -1144,6 +1146,7 @@ def _list_derivatives(ex, list_d, exponent=0):
     operands = ex.operands()
 
     import operator
+
     from sage.misc.latex import latex, latex_variable_name
     from sage.symbolic.operators import FDerivativeOperator
 

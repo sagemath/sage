@@ -843,7 +843,7 @@ class ContinuousMap(Morphism):
             sage: Phi_S.is_subset(M)
             True
         """
-        from .continuous_map_image import ImageManifoldSubset
+        from sage.manifolds.continuous_map_image import ImageManifoldSubset
         if self._is_identity:
             if subset is None:
                 return self.domain()
@@ -1166,8 +1166,8 @@ class ContinuousMap(Morphism):
              \end{array}
         """
         from sage.misc.latex import latex
-        from sage.typeset.unicode_characters import unicode_to, unicode_mapsto
         from sage.tensor.modules.format_utilities import FormattedExpansion
+        from sage.typeset.unicode_characters import unicode_mapsto, unicode_to
 
         def _display_expression(self, chart1, chart2, result):
             r"""
@@ -2045,8 +2045,8 @@ class ContinuousMap(Morphism):
             sage: si == s
             True
         """
-        from sage.symbolic.ring import SR
         from sage.symbolic.relation import solve
+        from sage.symbolic.ring import SR
         if self._inverse is not None:
             return self._inverse
         if not self._is_isomorphism:

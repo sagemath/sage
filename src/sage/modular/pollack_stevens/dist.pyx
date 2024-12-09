@@ -43,7 +43,7 @@ from sage.rings.rational_field import QQ
 from sage.structure.element cimport Element
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
-#from sage.libs.flint.ulong_extras cimport *
+# from sage.libs.flint.ulong_extras cimport *
 
 cdef long overflow = 1 << (4 * sizeof(long) - 1)
 cdef long underflow = -overflow
@@ -360,8 +360,8 @@ cdef class Dist(ModuleElement):
                     raise ValueError("self is zero")
                 v = a.valuation(p)
             relprec = n - i - v
-#            verbose("p=%s, n-i=%s\nself.moment=%s, other.moment=%s" % (p, n-i, a, other._unscaled_moment(i)),level=2)
-## RP: This code was crashing because other may have too few moments -- so I added this bound with other's relative precision
+            #            verbose("p=%s, n-i=%s\nself.moment=%s, other.moment=%s" % (p, n-i, a, other._unscaled_moment(i)),level=2)
+            # RP: This code was crashing because other may have too few moments -- so I added this bound with other's relative precision
             if padic:
                 if i < other_pr:
                     alpha = (other._unscaled_moment(i) / a).add_bigoh(n - i)
@@ -373,7 +373,7 @@ cdef class Dist(ModuleElement):
                 else:
                     alpha = 0
             verbose("alpha = %s" % alpha, level = 2)
-## RP: This code was crashing because other may have too few moments -- so I added this bound with other's relative precision
+            # RP: This code was crashing because other may have too few moments -- so I added this bound with other's relative precision
             while i < other_pr - 1:
                 i += 1
                 verbose("comparing p moment %s" % i, level = 2)
@@ -656,11 +656,11 @@ cdef class Dist(ModuleElement):
         zero = R(0)
         moments.extend([zero] * (M - k - 1))
         mu = V(moments)
-        #val = mu.valuation()
-        #if val < 0:
-        #    # This seems unnatural
-        #    print("scaling by ", p, "^", -val, " to keep things integral")
-        #    mu *= p**(-val)
+        # val = mu.valuation()
+        # if val < 0:
+        #     # This seems unnatural
+        #     print("scaling by ", p, "^", -val, " to keep things integral")
+        #     mu *= p**(-val)
         return mu
 
     def _is_malformed(self):
@@ -1129,7 +1129,7 @@ cdef class Dist_vector(Dist):
         """
         # assert self._moments[0][0]==0, "not total measure zero"
         # print("result accurate modulo p^",self.moment(0).valuation(self.p) )
-        #v=[0 for j in range(0,i)]+[binomial(j,i)*bernoulli(j-i) for j in range(i,M)]
+        # v=[0 for j in range(0,i)]+[binomial(j,i)*bernoulli(j-i) for j in range(i,M)]
         M = self.precision_relative()
         R = self.parent().base_ring()
         K = R.fraction_field()
@@ -1361,7 +1361,7 @@ cdef class WeightKAction_vector(WeightKAction):
             sage: v * D._act.actor()(g) # indirect doctest
             (-107, 35, -12, 5)
         """
-        #tim = verbose("Starting")
+        # tim = verbose("Starting")
         a, b, c, d = self._adjuster(g)
         # if g.parent().base_ring().is_exact():
         #     self._check_mat(a, b, c, d)
@@ -1378,17 +1378,17 @@ cdef class WeightKAction_vector(WeightKAction):
             return B.change_ring(self.codomain().base_ring())
         R = PowerSeriesRing(base_ring, 'y', default_prec=M)
         y = R.gen()
-        #tim = verbose("Checked, made R",tim)
+        # tim = verbose("Checked, made R",tim)
         # special case for small precision, large weight
         scale = (b + d * y) / (a + c * y)
         t = (a + c * y) ** k  # will already have precision M
         cdef long row, col
-        #tim = verbose("Made matrix",tim)
+        # tim = verbose("Made matrix",tim)
         for col in range(M):
             for row in range(M):
                 B.set_unsafe(row, col, t[row])
             t *= scale
-        #verbose("Finished loop",tim)
+        # verbose("Finished loop",tim)
         # the changering here is annoying, but otherwise we have to
         # change ring each time we multiply
         B = B.change_ring(self.codomain().base_ring())
