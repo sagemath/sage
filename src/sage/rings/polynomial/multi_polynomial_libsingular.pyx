@@ -2997,7 +2997,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         return self._parent._base._zero_element
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=None):
         """
         Return a dictionary representing ``self``. This dictionary is in
         the same format as the generic MPolynomial: The dictionary
