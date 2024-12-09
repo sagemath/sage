@@ -185,6 +185,35 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
         sage: from gmpy2 import mpz, mpfr
         sage: algdep(mpfr(1.888888888888888), mpz(1))                                   # needs sage.libs.pari
         9*x - 17
+
+    Test with interval arithmetic::
+
+        sage: algdep(RealIntervalField(100)(sqrt(2)), 2)
+        x^2 - 2
+        sage: algdep(RealIntervalField(100)(sqrt(2) + 2^-99), 2)
+        Traceback (most recent call last):
+        ...
+        ValueError: cannot find a polynomial
+        sage: algdep(RealIntervalField(100)((x^5 + x^3 - 2*x^2 + x + 1).roots(x, ring=QQbar)[0][0]), 5)
+        x^5 + x^3 - 2*x^2 + x + 1
+        sage: algdep(ComplexIntervalField(100)(sqrt(-1)), 2)
+        x^2 + 1
+        sage: algdep(RealBallField(100)(sqrt(2)), 2)
+        x^2 - 2
+        sage: algdep(RealBallField(100)(sqrt(2) + 2^-96), 2)
+        Traceback (most recent call last):
+        ...
+        ValueError: cannot find a polynomial
+        sage: algdep(ComplexBallField(100)(sqrt(-1)), 2)
+        x^2 + 1
+
+    The result might be nonsensical if ``degree`` is too high,
+    or if there is no satisfying polynomial::
+
+        sage: algdep(RR(1.01), 8)
+        x - 1
+
+    In the case above, the found polynomial may be ``(x + 1) * (x - 1)^7``.
     """
     if proof and not height_bound:
         raise ValueError("height_bound must be given for proof=True")
@@ -206,7 +235,17 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
             return None
         return z.denominator() * x - z.numerator()
 
-    if isinstance(z.parent(), (RealField, ComplexField)):
+    from sage.rings.complex_arb import ComplexBallField
+    from sage.rings.complex_interval_field import ComplexIntervalField, ComplexIntervalField_class
+    from sage.rings.real_arb import RealBallField
+    from sage.rings.real_mpfi import RealIntervalField, RealIntervalField_class
+
+    is_interval = isinstance(parent(z), (RealBallField, ComplexBallField, RealIntervalField_class, ComplexIntervalField_class))
+    if is_interval:
+        original_z = z
+        z = z.center()
+
+    if isinstance(parent(z), (RealField, ComplexField)):
 
         log2_10 = math.log(10, 2)
 
@@ -220,7 +259,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
         if use_bits is not None:
             prec = int(use_bits)
 
-        is_complex = isinstance(z.parent(), ComplexField)
+        is_complex = isinstance(parent(z), ComplexField)
         n = degree + 1
         from sage.matrix.constructor import matrix
         M = matrix(ZZ, n, n + 1 + int(is_complex))
@@ -269,8 +308,28 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
         y = pari(z)
         f = y.algdep(degree)
 
+    f = R(f)
+    if is_interval:
+        P = parent(original_z)
+        is_real = False
+        if isinstance(P, RealBallField):
+            P1 = RealBallField(P.precision() + 10)
+            is_real = True
+        elif isinstance(P, ComplexBallField):
+            P1 = ComplexBallField(P.precision() + 10)
+        elif isinstance(P, RealIntervalField_class):
+            P1 = RealIntervalField(P.precision() + 10)
+            is_real = True
+        else:
+            assert isinstance(P, ComplexIntervalField_class)
+            P1 = ComplexIntervalField(P.precision() + 10)
+
+        from sage.rings.qqbar import QQbar, AA
+        if not any(r in P1(original_z) for r in f.roots(AA if is_real else QQbar, multiplicities=False)):
+            raise ValueError("cannot find a polynomial")
+
     # f might be reducible. Find the best fitting irreducible factor
-    factors = [p for p, e in R(f).factor()]
+    factors = [p for p, e in f.factor()]
     return min(factors, key=lambda f: abs(f(z)))
 
 
