@@ -1915,6 +1915,12 @@ class GRSErrorErasureDecoder(Decoder):
             sage: y = Chan(c)
             sage: D.connected_encoder().unencode(c) == D.decode_to_message(y)
             True
+            sage: n_era = C.minimum_distance() - 1
+            sage: Chan = channels.ErrorErasureChannel(C.ambient_space(),
+            ....:                                     D.decoding_radius(n_era), n_era)
+            sage: y = Chan(c)
+            sage: D.connected_encoder().unencode(c) == D.decode_to_message(y)
+            True
 
         TESTS:
 
@@ -1997,7 +2003,7 @@ class GRSErrorErasureDecoder(Decoder):
             ValueError: The number of erasures exceed decoding capability
         """
         diff = self.code().minimum_distance() - 1 - number_erasures
-        if diff <= 0:
+        if diff < 0:
             raise ValueError("The number of erasures exceed decoding capability")
         else:
             return diff // 2
