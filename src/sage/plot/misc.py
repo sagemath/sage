@@ -289,7 +289,7 @@ def _multiple_of_constant(n, pos, const):
     as `\pi` or `e`.
 
     This should only be used via keyword argument
-    `tick_formatter` in :meth:`plot.show`.  See documentation
+    ``tick_formatter`` in :meth:`plot.show`.  See documentation
     for the matplotlib.ticker module for more details.
 
     EXAMPLES:
