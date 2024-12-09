@@ -141,7 +141,7 @@ cdef inline void OP_join(OrbitPartition *OP, int m, int n) noexcept:
     if m_root != n_root:
         OP.num_cells -= 1
 
-cdef void OP_make_set(OrbitPartition *OP) noexcept
+cdef inline void OP_make_set(OrbitPartition *OP) noexcept
 
 cdef inline int OP_merge_list_perm(OrbitPartition *OP, int *gamma) noexcept:
     """

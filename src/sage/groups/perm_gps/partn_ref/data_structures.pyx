@@ -88,6 +88,7 @@ cdef OP_string(OrbitPartition *OP):
 cdef inline void OP_make_set(OrbitPartition *OP) noexcept:
     """
     Increase the degree of the input partition by one.
+
     An error is raised in case of memory allocation failure.
     """
     cdef int n = OP.degree
