@@ -275,11 +275,11 @@ cat <<EOF
 FROM with-system-packages AS bootstrapped
 #:bootstrapping:
 RUN rm -rf /new /sage/.git
-$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 .gitignore /new/
+$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap configure.ac sage .homebrew-build-env tox.ini .gitignore /new/
 $ADD config/config.rpath /new/config/config.rpath
 $ADD src/doc/bootstrap /new/src/doc/bootstrap
 $ADD src/bin /new/src/bin
-$ADD src/Pipfile.m4 src/pyproject.toml src/requirements.txt.m4 src/setup.cfg.m4 src/VERSION.txt /new/src/
+$ADD src/pyproject.toml src/requirements.txt.m4 src/setup.cfg.m4 src/VERSION.txt /new/src/
 $ADD m4 /new/m4
 $ADD pkgs /new/pkgs
 $ADD build /new/build

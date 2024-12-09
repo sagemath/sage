@@ -1751,8 +1751,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             return self._convert_from_str(s.replace('!', ''))
         elif isinstance(x, str):
             return self._convert_from_str(x)
-        elif (isinstance(x, (tuple, list)) or
-              isinstance(x, sage.modules.free_module_element.FreeModuleElement)):
+        elif isinstance(x, (tuple, list,
+                            sage.modules.free_module_element.FreeModuleElement)):
             if len(x) != self.relative_degree():
                 raise ValueError("Length must be equal to the degree of this number field")
             base = self.base_ring()

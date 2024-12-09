@@ -1,5 +1,10 @@
 bliss = cc.find_library('bliss', required: false, disabler: true)
-mcqd = cc.find_library('mcqd', required: false, disabler: true)
+# mcqd is a header-only library
+if cc.has_header('mcqd.h')
+  mcqd = declare_dependency()
+else
+  mcqd = disabler()
+endif
 cliquer = cc.find_library('cliquer', required: not is_windows, disabler: true)
 
 # Cannot be found via pkg-config

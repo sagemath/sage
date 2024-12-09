@@ -225,8 +225,7 @@ save () {
 	build/make/Makefile-auto.in \
 	src/doc/en/installation/*.txt \
 	$(find src/doc/en/reference/spkg -name index.rst -prune -o -maxdepth 1 -name "*.rst" -print) \
-	environment-3.[89].yml environment-3.1[0-9].yml \
-	src/Pipfile \
+	environment-3.[89]-*.yml environment-3.1[0-9]-*.yml \
 	src/pyproject.toml \
 	src/requirements.txt \
 	src/setup.cfg \
@@ -236,6 +235,7 @@ save () {
 	build/pkgs/gmpy2/version_requirements.txt \
 	build/pkgs/jupyter_core/version_requirements.txt \
 	build/pkgs/memory_allocator/version_requirements.txt \
+        build/pkgs/meson/version_requirements.txt \
 	build/pkgs/numpy/version_requirements.txt \
 	build/pkgs/pkgconfig/version_requirements.txt \
 	build/pkgs/pplpy/version_requirements.txt \

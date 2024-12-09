@@ -1142,22 +1142,6 @@ cdef class IntegerRing_class(CommutativeRing):
         """
         return 1
 
-    def is_integrally_closed(self):
-        """
-        Return that the integer ring is, in fact, integrally closed.
-
-        .. NOTE::
-
-            This should rather be inherited from the category
-            of ``DedekindDomains``.
-
-        EXAMPLES::
-
-            sage: ZZ.is_integrally_closed()
-            True
-        """
-        return True
-
     def completion(self, p, prec, extras={}):
         r"""
         Return the metric completion of the integers at the prime `p`.

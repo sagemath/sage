@@ -1099,7 +1099,7 @@ class MPowerSeries(PowerSeries):
             return self.change_ring(Zmod(other))
         raise NotImplementedError("Mod on multivariate power series ring elements not defined except modulo an integer.")
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=None):
         """
         Return underlying dictionary with keys the exponents and values the
         coefficients of this power series.

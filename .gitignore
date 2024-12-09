@@ -59,10 +59,6 @@
 
 /src/setup.cfg
 /src/requirements.txt
-/src/Pipfile
-/src/Pipfile.lock
-/Pipfile
-/Pipfile.lock
 
 # Various editors
 *~
