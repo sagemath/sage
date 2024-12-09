@@ -1006,7 +1006,7 @@ class RootsOfUnityGroup(UnitCircleGroup):
             Rational Field
         """
         from sage.rings.rational_field import QQ
-        return super().__init__(base=QQ, category=category)
+        super().__init__(base=QQ, category=category)
 
     def _repr_(self):
         r"""
@@ -1626,7 +1626,7 @@ class SignGroup(AbstractArgumentGroup):
             sage: S.base()  # indirect doctest
             <class 'int'>
         """
-        return super().__init__(base=int, category=category)
+        super().__init__(base=int, category=category)
 
     def _repr_(self):
         r"""

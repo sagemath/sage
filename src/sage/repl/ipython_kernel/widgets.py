@@ -119,7 +119,7 @@ class TransformWidget:
             <... 'dict'>
         """
         self.__transform = kwds.pop("transform", None)
-        return super().__init__(*args, **kwds)
+        super().__init__(*args, **kwds)
 
     def get_value(self):
         """
