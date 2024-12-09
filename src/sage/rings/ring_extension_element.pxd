@@ -18,5 +18,3 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
     cdef _trace(self, Parent base)
     cdef _norm(self, Parent base)
     cpdef minpoly(self, base=*, var=*)
-
-

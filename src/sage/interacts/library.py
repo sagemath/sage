@@ -496,6 +496,7 @@ def quadratic_equation(A, B, C):
            r"\frac{-%s\pm\sqrt{%s}}{%s} = %s$"
     html(calc % (B, dis1, A, B, dis2, (2*A), sol))
 
+
 @library_interact(
     a0=lambda: slider(0, 360, 1, 30, label='A'),
     a1=lambda: slider(0, 360, 1, 180, label='B'),
