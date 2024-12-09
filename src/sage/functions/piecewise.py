@@ -836,6 +836,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             Check that the algorithm keyword can be used::
 
+                sage: # needs sage.libs.giac
                 sage: ex = piecewise([([0, 1], 1), ((1, oo), 1/x**2)])
                 sage: integral(ex, x, 0, 100, algorithm='sympy')
                 199/100
