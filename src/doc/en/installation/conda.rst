@@ -86,14 +86,14 @@ Here we assume that you are using a git checkout.
 
     .. code-block:: shell
 
-        $ mamba env create --file environment-dev-3.11-linux.yml --name sage-dev
+        $ mamba env create --file environment-3.11-linux.yml --name sage-dev
         $ conda activate sage-dev
 
   .. tab:: conda
 
     .. code-block:: shell
 
-        $ conda env create --file environment-dev-3.11-linux.yml --name sage-dev
+        $ conda env create --file environment-3.11-linux.yml --name sage-dev
         $ conda activate sage-dev
 
   Alternatively, you can use ``environment-3.11-linux.yml`` or
@@ -137,7 +137,7 @@ After editing any Cython files, rebuild the Sage library using::
 
 In order to update the conda environment later, you can run::
 
-  $ mamba env update --file environment-dev-3.11-linux.yml --name sage-dev
+  $ mamba env update --file environment-3.11-linux.yml --name sage-dev
 
 To build the documentation, use::
 
@@ -156,5 +156,5 @@ To build the documentation, use::
 
   You can update the conda lock files by running
   ``.github/workflows/conda-lock-update.py`` or by running
-  ``conda-lock --platform linux-64 --filename environment-dev-3.11-linux.yml --lockfile environment-dev-3.11-linux.lock``
+  ``conda-lock --platform linux-64 --filename environment-3.11-linux.yml --lockfile environment-3.11-linux.lock``
   manually.
