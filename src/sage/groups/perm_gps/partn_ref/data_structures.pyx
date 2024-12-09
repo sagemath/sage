@@ -64,6 +64,7 @@ cdef inline OrbitPartition *OP_new(int n) noexcept:
     OP_clear(OP)
     return OP
 
+
 cdef inline void OP_dealloc(OrbitPartition *OP) noexcept:
     if OP is not NULL:
         sig_free(OP.parent)
@@ -71,6 +72,7 @@ cdef inline void OP_dealloc(OrbitPartition *OP) noexcept:
         sig_free(OP.mcr)
         sig_free(OP.size)
         sig_free(OP)
+
 
 cdef OP_string(OrbitPartition *OP):
     """
@@ -232,6 +234,7 @@ cdef inline PartitionStack *PS_new(int n, bint unit_partition) noexcept:
         PS_unit_partition(PS)
     return PS
 
+
 cdef void PS_unit_partition(PartitionStack *PS) noexcept:
     """
     Set partition stack to a single partition with a single cell.
@@ -243,6 +246,7 @@ cdef void PS_unit_partition(PartitionStack *PS) noexcept:
         PS.levels[i] = n
     PS.entries[n-1] = n - 1
     PS.levels[n-1] = -1
+
 
 cdef inline PartitionStack *PS_copy(PartitionStack *PS) noexcept:
     """
@@ -263,10 +267,12 @@ cdef inline PartitionStack *PS_copy(PartitionStack *PS) noexcept:
     PS_copy_from_to(PS, PS2)
     return PS2
 
+
 cdef inline void PS_dealloc(PartitionStack *PS) noexcept:
     if PS is not NULL:
         sig_free(PS.entries)
         sig_free(PS)
+
 
 cdef PartitionStack *PS_from_list(list L) noexcept:
     """
@@ -293,6 +299,7 @@ cdef PartitionStack *PS_from_list(list L) noexcept:
     PS.degree = n
     return PS
 
+
 cdef PS_print(PartitionStack *PS):
     """
     Print a visual representation of PS.
@@ -300,6 +307,7 @@ cdef PS_print(PartitionStack *PS):
     cdef int i
     for i in range(PS.depth + 1):
         PS_print_partition(PS, i)
+
 
 cdef PS_print_partition(PartitionStack *PS, int k):
     """
@@ -314,6 +322,7 @@ cdef PS_print_partition(PartitionStack *PS, int k):
             s += ' '
     s = s[:-1] + ')'
     print(s)
+
 
 cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL) noexcept:
     """
@@ -379,7 +388,7 @@ cdef int PS_all_new_cells(PartitionStack *PS, bitset_t** nonsingletons_ptr) noex
                 bitset_init(nonsingletons[count-1], n)
                 bitset_copy(nonsingletons[count-1], scratch)
         else:
-            if beg==0:
+            if beg == 0:
                 nonsingletons = <bitset_t*> sig_realloc(nonsingletons, sizeof(bitset_t))
                 if nonsingletons is NULL:
                     raise MemoryError("Memory error in PS_all_new_cells")
@@ -390,6 +399,7 @@ cdef int PS_all_new_cells(PartitionStack *PS, bitset_t** nonsingletons_ptr) noex
         beg = end+1
     nonsingletons_ptr[0] = nonsingletons
     return count
+
 
 cdef int PS_find_element(PartitionStack *PS, bitset_t b, int x) except -1:
     """
@@ -413,6 +423,7 @@ cdef int PS_find_element(PartitionStack *PS, bitset_t b, int x) except -1:
             break
         i += 1
     return location
+
 
 cdef list PS_singletons(PartitionStack * part):
     """
@@ -583,6 +594,7 @@ cdef enum:
     default_num_gens = 8
     default_num_bits = 64
 
+
 cdef StabilizerChain *SC_new(int n, bint init_gens=True) noexcept:
     """
     Allocate and return a pointer to a new StabilizerChain of degree n. Return
@@ -653,6 +665,7 @@ cdef StabilizerChain *SC_new(int n, bint init_gens=True) noexcept:
 
     return SC
 
+
 cdef inline int SC_realloc_gens(StabilizerChain *SC, int level, int size) noexcept:
     """
     Reallocate generator array at level `level` to size `size`.
@@ -675,6 +688,7 @@ cdef inline int SC_realloc_gens(StabilizerChain *SC, int level, int size) noexce
     SC.array_size[level] = size
     return 0
 
+
 cdef inline void SC_dealloc(StabilizerChain *SC) noexcept:
     cdef int i, n
     if SC is not NULL:
@@ -683,12 +697,13 @@ cdef inline void SC_dealloc(StabilizerChain *SC) noexcept:
             for i in range(n):
                 sig_free(SC.generators[i])
                 sig_free(SC.gen_inverses[i])
-        sig_free(SC.generators) # frees int_ptrs
-        sig_free(SC.orbit_sizes) # frees int_array
+        sig_free(SC.generators)  # frees int_ptrs
+        sig_free(SC.orbit_sizes)  # frees int_array
         sig_free(SC.gen_used.bits)
         sig_free(SC.gen_is_id.bits)
         OP_dealloc(SC.OP_scratch)
         sig_free(SC)
+
 
 cdef StabilizerChain *SC_symmetric_group(int n) noexcept:
     """
@@ -724,12 +739,13 @@ cdef StabilizerChain *SC_symmetric_group(int n) noexcept:
             SC.parents[i][i+j] = b
             SC.labels[i][i+j] = j
         for j in range(n - i - 1):
-            #j-th generator sends i+j+1 to b
+            # j-th generator sends i+j+1 to b
             memcpy(SC.generators[i] + n*j, id_perm, n * sizeof(int) )
             SC.generators[i][n*j + i+j+1] = b
             SC.generators[i][n*j + b] = i+j+1
             memcpy(SC.gen_inverses[i] + n*j, SC.generators[i] + n*j, n * sizeof(int) )
     return SC
+
 
 cdef StabilizerChain *SC_alternating_group(int n) noexcept:
     """
@@ -767,13 +783,14 @@ cdef StabilizerChain *SC_alternating_group(int n) noexcept:
             SC.labels[i][i+j] = j
         SC.labels[i][n-1] = -(n-i-2)
         for j in range(n - i - 2):
-            #j-th generator sends i+j+1 to b, i+j+2 to i+j+1, and b to i+j+2
+            # j-th generator sends i+j+1 to b, i+j+2 to i+j+1, and b to i+j+2
             memcpy(SC.generators[i] + n*j, id_perm, n * sizeof(int) )
             SC.generators[i][n*j + i+j+1] = b
             SC.generators[i][n*j + b    ] = i+j+2
             SC.generators[i][n*j + i+j+2] = i+j+1
             SC_invert_perm(SC.gen_inverses[i] + n*j, SC.generators[i] + n*j, n)
     return SC
+
 
 cdef int SC_realloc_bitsets(StabilizerChain *SC, unsigned long size) noexcept:
     """
@@ -804,10 +821,13 @@ cdef int SC_realloc_bitsets(StabilizerChain *SC, unsigned long size) noexcept:
     SC.gen_used.size = new_size
     SC.gen_is_id.size = new_size
     SC.gen_used.bits[size_old >> index_shift] &= limb_lower_bits_down(size_old)
-    memset(SC.gen_used.bits + (size_old >> index_shift) + 1, 0, (limbs - (size_old >> index_shift) - 1) * sizeof(unsigned long))
+    memset(SC.gen_used.bits + (size_old >> index_shift) + 1, 0,
+           (limbs - (size_old >> index_shift) - 1) * sizeof(unsigned long))
     SC.gen_is_id.bits[size_old >> index_shift] &= limb_lower_bits_down(size_old)
-    memset(SC.gen_is_id.bits + (size_old >> index_shift) + 1, 0, (limbs - (size_old >> index_shift) - 1) * sizeof(unsigned long))
+    memset(SC.gen_is_id.bits + (size_old >> index_shift) + 1, 0,
+           (limbs - (size_old >> index_shift) - 1) * sizeof(unsigned long))
     return 0
+
 
 cdef StabilizerChain *SC_copy(StabilizerChain *SC, int level) noexcept:
     """
@@ -834,15 +854,16 @@ cdef StabilizerChain *SC_copy(StabilizerChain *SC, int level) noexcept:
             SC_dealloc(SCC)
             return NULL
         SCC.array_size[i] = default_num_gens
-    SC_copy_nomalloc(SCC, SC, level) # no chance for memory error here...
+    SC_copy_nomalloc(SCC, SC, level)  # no chance for memory error here...
     return SCC
+
 
 cdef int SC_copy_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int level) noexcept:
     cdef int i, n = SC.degree
     level = min(level, SC.base_size)
     SC_dest.base_size = level
-    memcpy(SC_dest.orbit_sizes, SC.orbit_sizes, 2*n * sizeof(int) ) # copies orbit_sizes, num_gens
-    memcpy(SC_dest.base_orbits[0], SC.base_orbits[0], 3*n*n * sizeof(int) ) # copies base_orbits, parents, labels
+    memcpy(SC_dest.orbit_sizes, SC.orbit_sizes, 2*n * sizeof(int) )  # copies orbit_sizes, num_gens
+    memcpy(SC_dest.base_orbits[0], SC.base_orbits[0], 3*n*n * sizeof(int) )  # copies base_orbits, parents, labels
     for i in range(level):
         if SC.num_gens[i] > SC_dest.array_size[i]:
             if SC_realloc_gens(SC_dest, i, max(SC.num_gens[i], 2*SC_dest.array_size[i])):
@@ -850,6 +871,7 @@ cdef int SC_copy_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int lev
         memcpy(SC_dest.generators[i], SC.generators[i], SC.num_gens[i]*n * sizeof(int) )
         memcpy(SC_dest.gen_inverses[i], SC.gen_inverses[i], SC.num_gens[i]*n * sizeof(int) )
     return 0
+
 
 cdef SC_print_level(StabilizerChain *SC, int level):
     cdef int i, j, n = SC.degree
@@ -890,6 +912,7 @@ cdef StabilizerChain *SC_new_base(StabilizerChain *SC, int *base, int base_len) 
         return NULL
     return NEW
 
+
 cdef int SC_new_base_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int *base, int base_len) noexcept:
     cdef int i
     SC_dest.base_size = 0
@@ -899,6 +922,7 @@ cdef int SC_new_base_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int
         SC_dealloc(SC_dest)
         return 1
     return 0
+
 
 cdef int SC_update(StabilizerChain *dest, StabilizerChain *source, int level) noexcept:
     cdef mpz_t src_order, dst_order
@@ -934,6 +958,7 @@ cdef int SC_update(StabilizerChain *dest, StabilizerChain *source, int level) no
     mpz_clear(dst_order)
     return 0
 
+
 cdef StabilizerChain *SC_insert_base_point(StabilizerChain *SC, int level, int p) noexcept:
     """
     Insert the point ``p`` as a base point on level ``level``. Return a new
@@ -961,6 +986,7 @@ cdef StabilizerChain *SC_insert_base_point(StabilizerChain *SC, int level, int p
         return NULL
     return NEW
 
+
 cdef int SC_insert_base_point_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int level, int p) noexcept:
     cdef int i, b
     SC_copy_nomalloc(SC_dest, SC, level)
@@ -972,6 +998,7 @@ cdef int SC_insert_base_point_nomalloc(StabilizerChain *SC_dest, StabilizerChain
     if SC_update(SC_dest, SC, level):
         return 1
     return 0
+
 
 cdef int SC_re_tree(StabilizerChain *SC, int level, int *perm, int x) noexcept:
     """
@@ -1014,6 +1041,7 @@ cdef int SC_re_tree(StabilizerChain *SC, int level, int *perm, int x) noexcept:
         i += 1
     return 0
 
+
 cdef int SC_sift(StabilizerChain *SC, int level, int x, int *gens, int num_gens, int *new_gens) noexcept:
     """
     Apply Schreier's subgroup lemma[1] as follows. Given a level, a point x, and
@@ -1035,8 +1063,8 @@ cdef int SC_sift(StabilizerChain *SC, int level, int x, int *gens, int num_gens,
 
     # copy a representative taking base to the point x to each of these
     cdef int i
-    cdef int *temp = SC.gen_inverses[level] + n*SC.num_gens[level] # one more scratch space
-                                                                   # (available since num_gens > 0)
+    cdef int *temp = SC.gen_inverses[level] + n*SC.num_gens[level]  # one more scratch space
+                                                                    # (available since num_gens > 0)
     cdef int *rep_inv = temp
     SC_identify(rep_inv, n)
     SC_compose_up_to_base(SC, level, x, rep_inv)
@@ -1059,6 +1087,7 @@ cdef int SC_sift(StabilizerChain *SC, int level, int x, int *gens, int num_gens,
         SC_compose_up_to_base(SC, level, y, perm_rep_inv)
         SC_mult_perms(perm, perm, perm_rep_inv, n)
     return SC_insert(SC, level+1, new_gens, num_gens)
+
 
 cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_perms, bint sift) noexcept:
     cdef int i, j, b, n = SC.degree
@@ -1109,7 +1138,7 @@ cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_per
                         bitset_set(&SC.gen_used, perm_gen_index)
                     if SC_re_tree(SC, level, perm, x):
                         return 1
-                    start_over = 1 # we must look anew
+                    start_over = 1  # we must look anew
                     break
             if start_over:
                 break
@@ -1121,7 +1150,7 @@ cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_per
                     # now we have an x which maps to a new point under perm,
                     if SC_re_tree(SC, level, perm, x):
                         return 1
-                    start_over = 1 # we must look anew
+                    start_over = 1  # we must look anew
                     break
             if start_over:
                 break
@@ -1132,7 +1161,7 @@ cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_per
                         # now we have an x which maps to a new point under perm,
                         if SC_re_tree(SC, level, perm, x):
                             return 1
-                        start_over = 1 # we must look anew
+                        start_over = 1  # we must look anew
                         break
     if not sift:
         return 0
@@ -1166,6 +1195,7 @@ cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_per
                 return 1
             section += 1
     return 0
+
 
 cdef bint SC_is_giant(int n, int num_perms, int *perms, float p, bitset_t support) noexcept:
     """
@@ -1692,6 +1722,7 @@ cdef int sort_by_function(PartitionStack *PS, int start, int *degrees) noexcept:
         j += 1
     return max_location
 
+
 cdef int refine_by_orbits(PartitionStack *PS, StabilizerChain *SC, int *perm_stack, int *cells_to_refine_by, int *ctrb_len) noexcept:
     """
     Given a stabilizer chain SC, refine the partition stack PS so that each cell
@@ -1731,6 +1762,7 @@ cdef int refine_by_orbits(PartitionStack *PS, StabilizerChain *SC, int *perm_sta
                 ctrb_len[0] += 1
         start += i
     return invariant
+
 
 cdef int compute_relabeling(StabilizerChain *group, StabilizerChain *scratch_group,
     int *permutation, int *relabeling) noexcept:
