@@ -94,6 +94,11 @@ platforms = [
     'osx-64', 'linux-64', 'linux-aarch64', 'osx-arm64'
 ]
 
+[tool.meson-python.args]
+# Ensure that ``library`` targets are built as static, and nothing gets installed
+setup = ['--default-library=static']
+install = ['--skip-subprojects']
+
 # External dependencies in the format proposed by https://peps.python.org/pep-0725
 [external]
 build-requires = [

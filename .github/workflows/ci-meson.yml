@@ -90,7 +90,7 @@ jobs:
             pip install --no-build-isolation --config-settings=builddir=builddir . -v
           else
             export LIB="$LIB;$CONDA_PREFIX\\Library\\lib"
-            pip install --no-build-isolation --config-settings=builddir=builddir -e . -v
+            pip install --no-build-isolation --config-settings=builddir=builddir . -v
           fi
 
       - name: Test
