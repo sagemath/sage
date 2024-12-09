@@ -1,7 +1,7 @@
 #!/bin/sh
 
 python_files=$(git diff --staged --name-only | grep "\.py" | grep -v "\.pyx")
-cython_files=$(git diff --staged --name-only | grep "\.pyx\|\.pxd")
+cython_files=$(git diff --staged --name-only | grep "\.pyx\|\.pxd\|\.pxi")
 [ -z "$python_files" ] && [ -z "$cython_files" ] && exit 0
 
 # Text formatting
