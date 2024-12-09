@@ -38,7 +38,12 @@
 #include "cmatcher.h"
 #include "wildcard.h"
 
-#include <unistd.h>
+#ifdef _WIN32
+  #define NOMINMAX
+  #include <windows.h>
+#else
+  #include <unistd.h>
+#endif
 #include <vector>
 #include <stdexcept>
 #include <limits>

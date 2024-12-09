@@ -2,7 +2,6 @@
     // This settings file is not ignored by git.
     "files.exclude": {
         "**/__pycache__": true,
-        "src/**/*.cpp": true,
         "src/**/*.so": true
     },
     "search.exclude": {
@@ -110,5 +109,7 @@
         "zmin"
     ],
     "editor.formatOnType": true,
-    "esbonio.sphinx.confDir": ""
+    "esbonio.sphinx.confDir": "",
+    "C_Cpp.default.compileCommands": "d:\\Programming\\sage\\builddir/compile_commands.json",
+    "C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild"
 }

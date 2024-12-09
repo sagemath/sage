@@ -82,6 +82,11 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  if is_windows
+    # sage_modules_vector_mod2_dense.pyx.cpp.obj : error LNK2019: unresolved external symbol "struct mzd_t * __cdecl mzd_init(int,int)"
+    continue
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
