@@ -158,9 +158,6 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
 
     # Filter out packages that are not available on Windows
     if platform == "win-64":
-        # gmpy2 has to be installed via pip on Windows at the moment until the following PR is merged:
-        # https://github.com/conda-forge/gmpy2-feedstock/pull/43
-        all_requirements.remove("gmpy2 ~=2.1.b999")
         # Remove packages that are not available on Windows
         all_requirements.difference_update(
             (
