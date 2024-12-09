@@ -28,12 +28,12 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.rings.integer import Integer
-from sage.structure.sage_object import SageObject
-from sage.misc.cachefunc import cached_method
 from sage.manifolds.differentiable.manifold import DifferentiableManifold
+from sage.misc.cachefunc import cached_method
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
+from sage.rings.integer import Integer
+from sage.structure.sage_object import SageObject
 
 
 class AffineConnection(SageObject):
@@ -603,8 +603,8 @@ class AffineConnection(SageObject):
             sage: nab._new_coef(X.frame())
             3-indices components w.r.t. Coordinate frame (M, (∂/∂x,∂/∂y))
         """
-        from sage.tensor.modules.comp import Components
         from sage.manifolds.differentiable.scalarfield import DiffScalarField
+        from sage.tensor.modules.comp import Components
         return Components(frame._domain.scalar_field_algebra(), frame, 3,
                           start_index=self._domain._sindex,
                           output_formatter=DiffScalarField.coord_function)
@@ -1306,8 +1306,8 @@ class AffineConnection(SageObject):
             Gam^ph_ph,r = 1/r
             Gam^ph_ph,th = cos(th)/sin(th)
         """
-        from sage.misc.latex import latex
         from sage.manifolds.differentiable.vectorframe import CoordFrame
+        from sage.misc.latex import latex
         if frame is None:
             frame = self._domain.default_frame()
         if chart is None:
@@ -1503,8 +1503,7 @@ class AffineConnection(SageObject):
         :class:`~sage.manifolds.differentiable.affine_connection.AffineConnection`
         for more examples.
         """
-        from sage.manifolds.differentiable.tensorfield_paral import \
-                                                               TensorFieldParal
+        from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
         from sage.tensor.modules.format_utilities import format_unop_latex
         dom_resu = self._domain.intersection(tensor._domain)
         tensor_r = tensor.restrict(dom_resu)
@@ -1608,7 +1607,7 @@ class AffineConnection(SageObject):
 
             # definition of the parallel function
             @parallel(p_iter='multiprocessing',ncpus=nproc)
-            def make_CovDerivative(ind_part,tc,gam,frame,n_con,rank,manif):
+            def make_CovDerivative(ind_part, tc, gam, frame, n_con, rank, manif):
                 partial = []
                 for ind in ind_part:
                     p = ind[-1]  # derivation index

@@ -1012,7 +1012,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: var('x,y,z')                                                          # needs sage.symbolic
             (x, y, z)
             sage: P = implicit_plot3d(z-x*y,(-2,2),(-2,2),(-2,2))                       # needs sage.symbolic
-            sage: def condi(x,y,z):
+            sage: def condi(x, y, z):
             ....:     return bool(x*x+y*y+z*z <= Integer(1))
             sage: R = P.add_condition(condi, 20); R                                     # needs sage.symbolic
             Graphics3d Object
@@ -1021,13 +1021,13 @@ cdef class IndexFaceSet(PrimitiveObject):
 
             x,y,z = var('x,y,z')
             P = implicit_plot3d(z-x*y,(-2,2),(-2,2),(-2,2))
-            def condi(x,y,z):
+            def condi(x, y, z):
                 return bool(x*x+y*y+z*z <= Integer(1))
             sphinx_plot(P.add_condition(condi,40))
 
         An example with colors::
 
-            sage: def condi(x,y,z):
+            sage: def condi(x, y, z):
             ....:     return bool(x*x+y*y <= 1.1)
             sage: cm = colormaps.hsv
             sage: cf = lambda x,y,z: float(x+y) % 1
@@ -1039,7 +1039,7 @@ cdef class IndexFaceSet(PrimitiveObject):
         .. PLOT::
 
             x,y,z = var('x,y,z')
-            def condi(x,y,z):
+            def condi(x, y, z):
                 return bool(x*x+y*y <= 1.1)
             cm = colormaps.hsv
             cf = lambda x,y,z: float(x+y) % 1
@@ -1050,7 +1050,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
             sage: P = implicit_plot3d(x**4+y**4+z**2-4, (x,-2,2), (y,-2,2), (z,-2,2),   # needs sage.symbolic
             ....:                     alpha=0.3)
-            sage: def cut(a,b,c):
+            sage: def cut(a, b, c):
             ....:     return a*a+c*c > 2
             sage: Q = P.add_condition(cut,40); Q                                        # needs sage.symbolic
             Graphics3d Object
@@ -1059,7 +1059,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
             x,y,z = var('x,y,z')
             P = implicit_plot3d(x**4+y**4+z**2-4,(x,-2,2),(y,-2,2),(z,-2,2),alpha=0.3)
-            def cut(a,b,c):
+            def cut(a, b, c):
                 return a*a+c*c > 2
             sphinx_plot(P.add_condition(cut,40))
 
@@ -1067,7 +1067,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
             sage: P = plot3d(-sin(2*x*x+2*y*y)*exp(-x*x-y*y), (x,-2,2), (y,-2,2),       # needs sage.symbolic
             ....:            color='gold')
-            sage: def cut(x,y,z):
+            sage: def cut(x, y, z):
             ....:     return x*x+y*y < 1
             sage: Q = P.add_condition(cut);Q                                            # needs sage.symbolic
             Graphics3d Object
@@ -1076,7 +1076,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
             x,y,z = var('x,y,z')
             P = plot3d(-sin(2*x*x+2*y*y)*exp(-x*x-y*y),(x,-2,2),(y,-2,2),color='gold')
-            def cut(x,y,z):
+            def cut(x, y, z):
                 return x*x+y*y < 1
             sphinx_plot(P.add_condition(cut))
 
@@ -1087,7 +1087,7 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: # needs sage.symbolic
             sage: x,y,z = var('x,y,z')
             sage: P = plot3d(cos(x*y),(x,-2,2),(y,-2,2),color='red',opacity=0.1)
-            sage: def condi(x,y,z):
+            sage: def condi(x, y, z):
             ....:     return not(x*x+y*y <= 1)
             sage: Q = P.add_condition(condi, 40)
             sage: L = Q.json_repr(Q.default_render_params())
@@ -1097,7 +1097,7 @@ cdef class IndexFaceSet(PrimitiveObject):
         A test that this works with polygons::
 
             sage: p = polygon3d([[2,0,0], [0,2,0], [0,0,3]])
-            sage: def f(x,y,z):
+            sage: def f(x, y, z):
             ....:     return bool(x*x+y*y+z*z<=5)
             sage: cut = p.add_condition(f,60,1.0e-12); cut.face_list()                  # needs sage.symbolic
             [[(0.556128491210302, 0.0, 2.165807263184547),

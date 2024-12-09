@@ -216,7 +216,7 @@ class PolynomialQuotientRingFactory(UniqueFactory):
             raise TypeError("ring must be a polynomial ring")
         if not isinstance(polynomial, polynomial_element.Polynomial):
             raise TypeError("must be a polynomial")
-        if not polynomial.parent() is ring:
+        if polynomial.parent() is not ring:
             raise TypeError("polynomial must be in ring")
 
         c = polynomial.leading_coefficient()
@@ -383,7 +383,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         1
 
     The test suite passes. However, we have to skip the test for its elements,
-    since `an_element` has been cached in the call above and its class does not
+    since ``an_element`` has been cached in the call above and its class does not
     match the new category's element class anymore::
 
         sage: TestSuite(Q).run(skip=['_test_elements'])                                 # needs sage.rings.number_field

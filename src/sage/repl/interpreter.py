@@ -772,7 +772,8 @@ class SageCrashHandler(IPAppCrashHandler):
         contact_email = 'sage-support@googlegroups.com'
         bug_tracker = 'https://github.com/sagemath/sage/issues'
         CrashHandler.__init__(self,
-            app, contact_name, contact_email, bug_tracker, show_crash_traceback=True)
+                              app, contact_name, contact_email,
+                              bug_tracker, show_crash_traceback=True)
         self.crash_report_fname = 'Sage_crash_report.txt'
 
 

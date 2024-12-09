@@ -3056,7 +3056,7 @@ cdef class Matrix(Matrix1):
 
         ALGORITHM:
 
-        If the base ring has a method `_matrix_charpoly`, we use it.
+        If the base ring has a method ``_matrix_charpoly``, we use it.
 
         In the generic case of matrices over a ring (commutative and with
         unity), there is a division-free algorithm, which can be accessed
@@ -7938,7 +7938,7 @@ cdef class Matrix(Matrix1):
             sage: m == transformation_matrix * m_original
             True
 
-        TESTS::
+        TESTS:
 
         Check that :issue:`34724` is fixed (indirect doctest)::
 

@@ -3783,7 +3783,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
     omega_involution = omega
 
-    def theta(self,a):
+    def theta(self, a):
         r"""
         Return the image of ``self`` under the theta endomorphism which sends
         `p_k` to `a \cdot p_k` for every positive integer `k`.
@@ -6747,7 +6747,7 @@ def _nonnegative_coefficients(x):
         sage: _nonnegative_coefficients(x^2-4)
         False
     """
-    if isinstance(x, Polynomial) or isinstance(x, MPolynomial):
+    if isinstance(x, (Polynomial, MPolynomial)):
         return all(c >= 0 for c in x.coefficients(sparse=False))
     else:
         return x >= 0
