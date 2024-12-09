@@ -33,7 +33,7 @@ changes=false
 if ! [ "$1" == "in-place" ]; then
   printf "${BLUE}auto${YLLW}pep8${NRM}: Checking code formatting..."
   [ -n "$python_files" ] && ! autopep8 $autopep8_flags $python_files > /dev/null && changes=true
-  $changes || [ -n "$cython_files" ] && ! autopep8 $autopep8_flags $cython_flags $cython_files > /dev/null && changes=true
+  ! $changes && [ -n "$cython_files" ] && ! autopep8 $autopep8_flags $cython_flags $cython_files > /dev/null && changes=true
   if $changes; then
     printf "\n${RED}Error${NRM}: Ill-formatted Python files staged for commit.\n\
 Format them manually or use 'git hook run pre-commit -- in-place'.\n\
