@@ -586,6 +586,22 @@ class EisensteinSubmodule_eps(EisensteinSubmodule_params):
         q^5 + (zeta3 + 1)*q^8 + O(q^10)
         ]
     """
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        EXAMPLES::
+
+            sage: e = DirichletGroup(27,CyclotomicField(3)).0**2
+            sage: M = ModularForms(e,2,prec=10).eisenstein_subspace()
+            sage: pari.mfdim(M)
+            6
+            sage: pari.mfparams(M)
+            [27, 2, Mod(10, 27), 3, t^2 + t + 1]
+        """
+        from sage.libs.pari import pari
+        return pari.mfinit([self.level(), self.weight(), self.character()], 3)
+
     # TODO
     # def _compute_q_expansion_basis(self, prec):
     #     B = EisensteinSubmodule_params._compute_q_expansion_basis(self, prec)

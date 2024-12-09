@@ -72,6 +72,33 @@ cdef int mpfi_set_sage(mpfi_ptr re, mpfi_ptr im, x, field, int base) except -1:
       imaginary component is 0.
 
     - in all other cases: raise an exception.
+
+    TESTS::
+
+        sage: RIF('0xabc')
+        Traceback (most recent call last):
+        ...
+        TypeError: unable to convert '0xabc' to real interval
+        sage: RIF("0x123.e1", base=0)  # rel tol 1e-12
+        291.87890625000000?
+        sage: RIF("0x123.@1", base=0)  # rel tol 1e-12
+        4656
+        sage: RIF("1Xx", base=36)  # rel tol 1e-12
+        2517
+        sage: RIF("-1Xx@-10", base=62)  # rel tol 1e-12
+        -7.088054920481391?e-15
+        sage: RIF("1", base=1)
+        Traceback (most recent call last):
+        ...
+        ValueError: base (=1) must be 0 or between 2 and 62
+        sage: RIF("1", base=-1)
+        Traceback (most recent call last):
+        ...
+        ValueError: base (=-1) must be 0 or between 2 and 62
+        sage: RIF("1", base=63)
+        Traceback (most recent call last):
+        ...
+        ValueError: base (=63) must be 0 or between 2 and 62
     """
     cdef RealIntervalFieldElement ri
     cdef ComplexIntervalFieldElement zi
@@ -79,6 +106,8 @@ cdef int mpfi_set_sage(mpfi_ptr re, mpfi_ptr im, x, field, int base) except -1:
     cdef ComplexDoubleElement zd
     cdef bytes s
 
+    if base != 0 and (base < 2 or base > 62):
+        raise ValueError(f"base (={base}) must be 0 or between 2 and 62")
     if im is not NULL and isinstance(x, tuple):
         # For complex numbers, interpret tuples as real/imag parts
         if len(x) != 2:
