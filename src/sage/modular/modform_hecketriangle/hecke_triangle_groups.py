@@ -1383,7 +1383,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         The method assumes that ``D > 0``.
 
-        Also see the element method `rational_period_function` for more information.
+        Also see the element method ``rational_period_function`` for more information.
 
         - ``k`` -- even integer, the desired weight of the rational period
           functions

@@ -5841,7 +5841,7 @@ class SemistandardTableaux(Tableaux):
     OUTPUT:
 
     - The appropriate class, after checking basic consistency tests. (For
-      example, specifying ``eval`` implies a value for `max_entry`).
+      example, specifying ``eval`` implies a value for ``max_entry``).
 
     A semistandard tableau is a tableau whose entries are positive integers,
     which are weakly increasing in rows and strictly increasing down columns.
