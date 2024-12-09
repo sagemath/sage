@@ -1,35 +1,55 @@
 #!/bin/sh
 
-python_files=$(git diff --staged --name-only | grep "\.py\|\.pxd")
-[ -z "$python_files" ] && exit 0
+python_files=$(git diff --staged --name-only | grep "\.py" | grep -v "\.pyx")
+cython_files=$(git diff --staged --name-only | grep "\.pyx\|\.pxd")
+[ -z "$python_files" ] && [ -z "$cython_files" ] && exit 0
 
+# Text formatting
 RED='\e[1;31m'
+BLUE='\e[1;34m'
+YLLW='\e[1;33m'
 NRM='\e[0m'  # normal
 
 if ! command -v autopep8 > /dev/null; then
-  printf "Error: ${RED}autopep8${NRM} not found; required for pre-commit checks.\n\
+  printf "${RED}Error${NRM}: ${BLUE}auto${YLLW}pep8${NRM} not found; required for pre-commit checks.\n\
 To avoid these pre-commit checks, use 'git commit --no-verify'.\n"
   exit 1
 fi
 
-in_place=false
-for arg in "$@"; do
-  if [ "$arg" == "in-place" ]; then
-    in_place=true
-  fi
-done
+# The flag `--exit-code` is used so that autopep8 returns 2 if changes are
+# needed (instead of 0).
+autopep8_flags="-j0 --exit-code"
+if [ "$1" == "in-place" ]; then
+  autopep8_flags="--in-place $autopep8_flags"
+else
+  autopep8_flags="--diff $autopep8_flags"
+fi
 
-if ! $in_place; then
-  if ! autopep8 --exit-code $python_files > /dev/null; then
-    printf "${RED}autopep8${NRM}: Ill-formatted Python files staged for commit.\n\
+# For Cython files we are less aggressive in order to avoid adding whitespace around
+# pointers (e.g., `cdef int *array`) and casting syntax (e.g., `<int *>`).
+cython_flags="--ignore=E225,E226,E227,E228"
+
+changes=false
+if ! [ "$1" == "in-place" ]; then
+  printf "${BLUE}auto${YLLW}pep8${NRM}: Checking code formatting..."
+  [ -n "$python_files" ] && ! autopep8 $autopep8_flags $python_files > /dev/null && changes=true
+  $changes || [ -n "$cython_files" ] && ! autopep8 $autopep8_flags $cython_flags $cython_files > /dev/null && changes=true
+  if $changes; then
+    printf "\n${RED}Error${NRM}: Ill-formatted Python files staged for commit.\n\
 Format them manually or use 'git hook run pre-commit -- in-place'.\n\
 To avoid these pre-commit checks, use 'git commit --no-verify'.\n"
     exit 1
+  else
+    printf " success.\n"
   fi
 else
-  if ! autopep8 --in-place --exit-code $python_files; then
-    printf "${RED}autopep8${NRM}: Ill-formatted Python files staged for commit.\n\
-Auto-formatting... Check the unstaged changes.\n"
+  printf "${BLUE}auto${YLLW}pep8${NRM}: Auto-formatting..."
+  [ -n "$python_files" ] && ! autopep8 $autopep8_flags $python_files && changes=true
+  [ -n "$cython_files" ] && ! autopep8 $autopep8_flags $cython_flags $cython_files && changes=true
+  if $changes; then
+    printf "\nCheck the unstaged changes.\n"
     exit 1
+  else
+    printf "\nNo changes required.\n"
   fi
 fi
