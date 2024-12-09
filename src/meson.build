@@ -67,6 +67,11 @@ if flint.version().version_compare('<3.1')
   flint = cc.find_library('flint')
 endif
 
+linbox = dependency('linbox', required: false)
+if not linbox.found()
+    linbox = cc.find_library('linbox')
+endif
+
 blas_order = []
 if host_machine.system() == 'darwin'
   blas_order += 'accelerate'
