@@ -556,8 +556,8 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         Add a new element into a new set containing only the new element.
 
         According to :wikipedia:`Disjoint-set_data_structure#Making_new_sets` the
-        `make_set` operation adds a new element into a new set containing only
-        the new element. The new set is added at the end of `self`.
+        ``make_set`` operation adds a new element into a new set containing only
+        the new element. The new set is added at the end of ``self``.
 
         EXAMPLES::
             sage: d = DisjointSet(5)
@@ -874,8 +874,8 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         Add a new element into a new set containing only the new element.
 
         According to :wikipedia:`Disjoint-set_data_structure#Making_new_sets`
-        the `make_set` operation adds a new element into a new set containing
-        only the new element. The new set is added at the end of `self`.
+        the ``make_set`` operation adds a new element into a new set containing
+        only the new element. The new set is added at the end of ``self``.
 
         INPUT:
 
