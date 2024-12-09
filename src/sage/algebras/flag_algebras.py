@@ -1,8 +1,9 @@
 """
 TODO:
 
--pattern matching with ftypes broken
--think if noneq permutations changeing dict order can break things
+-fix pattern coercion
+-better code to handle combined theory patterns (perhaps multi ftype)
+-think about maps (projections and lifts) between theories
 -write code to overlap generate
 -write better nonequal permutations, figure out what makes the most sense for typed flags
 """
@@ -215,7 +216,7 @@ import itertools
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
-from sage.structure.element import Element
+from sage.structure.element import Element, get_coercion_model
 from sage.rings.rational_field import QQ
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.rings.integer import Integer
@@ -502,6 +503,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             :func:`__init__` of :class:`Flag`
         """
 
+        if isinstance(n, Flag) or isinstance(n, Pattern):
+            if n.parent()==self:
+                return n
+            n = n.as_pattern()
+            return self.pattern(n.size(), ftype=n.ftype_points(), **n.as_pattern().blocks())
+
         ftype_points = tuple()
         if 'ftype_points' in kwds:
             try:
@@ -580,7 +587,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         for xx in self._signature.keys():
             blocks[xx] = tuple()
             blocks[xx+"_m"] = tuple()
-            unary = (self._signature[xx]["arity"]==1)
+            unary = self._signature[xx]["arity"]==1
 
 
             if xx in kwds:
@@ -728,7 +735,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             "symmetries": self._symmetries,
             "excluded": tuple([xx._serialize() for xx in excluded])
         }
-    
+
     #Optimizing and rounding
 
     def blowup_construction(self, target_size, pattern_size, symbolic=False, symmetric=True, unordered=False, **kwargs):
@@ -1466,7 +1473,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 phi_vector_original = initial_sol['y']
                 phi_vector_rounded, error_coeff = _round_adaptive(initial_sol['y'], one_vector)
                 if error_coeff<1e-6:
-                    alg = FlagAlgebra(QQ, self)
+                    alg = FlagAlgebra(self, QQ)
                     construction = alg(target_size, phi_vector_rounded)
                     phipr = str(construction)
                     print("The initial run gave an accurate looking construction")
@@ -1918,7 +1925,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 flat_perm.extend(perm)
             all_permutations.append(tuple(flat_perm))
         return all_permutations
- 
+    
     #Generating tables
 
     def mul_project_table(self, n1, n2, large_ftype, ftype_inj=None, target_size=None):
@@ -2219,13 +2226,11 @@ class FlagAlgebraElement(Element):
 
             :func:`FlagAlgebra._element_constructor_`
         """
-        self._flags = parent.generate_flags(n)
-        if len(values)!=len(self._flags):
+        if len(values)!=parent.get_size(n):
             raise ValueError('The coefficients must have the same length as the number of flags')
         self._n = n
         base = parent.base()
         self._values = vector(base, values, sparse=True)
-        self._ftype = parent.ftype()
         Element.__init__(self, parent)
     
     def ftype(self):
@@ -2254,7 +2259,7 @@ class FlagAlgebraElement(Element):
             :func:`ftype` in :class:`FlagAlgebra`
             :func:`ftype` in :class:`Flag`
         """
-        return self._ftype
+        return self.parent().ftype()
     
     def size(self):
         r"""
@@ -2321,7 +2326,7 @@ class FlagAlgebraElement(Element):
             sage: g.afae().flags() == g.theory().generate_flags(g.size(), g.ftype())
             True
         """
-        return self._flags
+        return self.parent().generate_flags(self._n)
     
     def values(self):
         r"""
@@ -2419,8 +2424,8 @@ class FlagAlgebraElement(Element):
             :func:`Flag.afae`
             :func:`__len__`
         """
-        for ii in range(len(self)):
-            yield (self._values[ii], self._flags[ii])
+        for ii, fl in enumerate(self.parent().generate_flags(self.size())):
+            yield (self._values[ii], fl)
     
     def _repr_(self):
         r"""
@@ -2464,10 +2469,9 @@ class FlagAlgebraElement(Element):
         sttrl = ['Flag Algebra Element over {}'.format(self.parent().base())]
         strs = [str(xx) for xx in self.values()]
         maxstrlen = max([len(xx) for xx in strs])
-        flgs = self.flags()
-        for ii in range(len(self)):
+        for ii, fl in enumerate(self.parent().generate(self.size())):
             if len(self)<10:
-                sttrl.append(('{:<'+str(maxstrlen)+'} - {}').format(strs[ii], str(flgs[ii])))
+                sttrl.append(('{:<'+str(maxstrlen)+'} - {}').format(strs[ii], str(fl)))
             else:
                 include = True
                 try: 
@@ -2475,9 +2479,34 @@ class FlagAlgebraElement(Element):
                 except: 
                     include = self.values()[ii]!=0
                 if include:
-                    sttrl.append(('{:<'+str(maxstrlen)+'} - {}').format(strs[ii], str(flgs[ii])))
+                    sttrl.append(('{:<'+str(maxstrlen)+'} - {}').format(strs[ii], str(fl)))
         return "\n".join(sttrl)
     
+    def base(self):
+        return self.parent().base()
+
+    def theory(self):
+        return self.parent().theory()
+
+    def custom_coerce(self, other):
+        if isinstance(other, Flag) or isinstance(other, Pattern):
+            if self.ftype()!=other.ftype():
+                raise ValueError("The ftypes must agree.")
+            alg = self.parent()
+            return (self, alg(other))
+        elif isinstance(other, FlagAlgebraElement):
+            if self.ftype()!=other.ftype():
+                raise ValueError("The ftypes must agree.")
+            sbase = self.base()
+            obase = other.base()
+            base = get_coercion_model().common_parent(sbase, obase)
+            alg = FlagAlgebra(self.theory(), base, self.ftype())
+            return (alg(self), alg(other))
+        else:
+            base = get_coercion_model().common_parent(self.base(), other.parent())
+            alg = FlagAlgebra(self.theory(), base, self.ftype())
+            return (alg(self), alg(base(other)))
+
     def as_flag_algebra_element(self):
         r"""
         Returns self.
@@ -2683,13 +2712,21 @@ class FlagAlgebraElement(Element):
         return self.__class__(self.parent(), ressize, vals)
     
     def __getitem__(self, flag):
-        if (not isinstance(flag, Flag)) or (not flag.ftype()==self.ftype()) or (not self.size()==flag.size()):
-            raise TypeError("Indecies must be Flags with matching ftype and size, not {}".format(str(type(flag))))
-        return self.values()[self.flags().index(flag)]
+        if isinstance(flag, Flag):
+            ind = self.parent().get_index(flag)
+        elif isinstance(flag, Integer) and 0 <= flag and flag < self.parent().get_size(self.size()):
+            ind = flag
+        if ind == -1:
+            raise TypeError("Indecies must be Flags with matching ftype and size, or integers. Not {}".format(str(type(flag))))
+        return self._values[ind]
     
     def __setitem__(self, flag, value):
-        if (not isinstance(flag, Flag)) or (not flag.ftype()==self.ftype()) or (not self.size()==flag.size()):
-            raise TypeError("Indecies must be Flags with matching ftype and size, not {}".format(str(type(flag))))
+        if isinstance(flag, Flag):
+            ind = self.parent().get_index(flag)
+        elif isinstance(flag, Integer) and 0 <= flag and flag < self.parent().get_size(self.size()):
+            ind = flag
+        if ind == -1:
+            raise TypeError("Indecies must be Flags with matching ftype and size, or integers. Not {}".format(str(type(flag))))
         self.values()[self.flags().index(flag)] = value
     
     def project(self, ftype_inj=tuple()):
@@ -2774,7 +2811,7 @@ class FlagAlgebraElement(Element):
         table = self.parent().mpt(self.size(), other.size(), ftype_inj=ftype_inj, target_size=N)
         vals = [self.values() * mat * other.values() for mat in table]
         
-        TargetAlgebra = FlagAlgebra(self.parent().base(), self.parent().combinatorial_theory(), new_ftype)
+        TargetAlgebra = FlagAlgebra(self.parent().combinatorial_theory(), self.parent().base(), new_ftype)
         return TargetAlgebra(N, vals)
     
     def density(self, other):
@@ -2837,7 +2874,7 @@ class FlagAlgebraElement(Element):
             return self
         repl = {gs[ii]:args[ii] for ii in range(min(len(args), len(gs)))}
         nvec = vector([xx.subs(repl) for xx in valvec])
-        retalg = FlagAlgebra(ring, self.parent().theory())
+        retalg = FlagAlgebra(self.parent().theory(), ring)
         return retalg(self.size(), nvec)
 
     def derivative(self, times):
@@ -2951,7 +2988,8 @@ class FlagAlgebraElement(Element):
         return all([richcmp(v1[ii], v2[ii], op) for ii in range(len(v1))])
 
 class FlagAlgebra(Parent, UniqueRepresentation):
-    def __init__(self, base, theory, ftype=None):
+    
+    def __init__(self, theory, base=QQ, ftype=None):
         r"""
         Initialize a FlagAlgebra
 
@@ -2971,13 +3009,13 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         Create the FlagAlgebra for GraphTheory (without any ftype) ::
 
             sage: from sage.algebras.flag_algebras import *
-            sage: GraphFlagAlgebra = FlagAlgebra(QQ, GraphTheory)
+            sage: GraphFlagAlgebra = FlagAlgebra(GraphTheory, QQ)
             sage: GraphFlagAlgebra
             Flag Algebra with Ftype on 0 points with edges=[] over Rational Field
         
         Create the FlagAlgebra for TournamentTheory with point ftype ::
 
-            sage: FlagAlgebra(QQ, TournamentTheory, TournamentTheory(1, ftype_points=[0]))
+            sage: FlagAlgebra(TournamentTheory, QQ, TournamentTheory(1, ftype_points=[0]))
             Flag Algebra with Ftype on 1 points with edges=[] over Rational Field
         """
         if ftype==None:
@@ -2991,10 +3029,34 @@ class FlagAlgebra(Parent, UniqueRepresentation):
             raise ValueError('The base must contain the rationals')
         self._theory = theory
         self._ftype = ftype
+        self._index_set = {}
+        self._size_set = {}
         Parent.__init__(self, base)
     
     Element = FlagAlgebraElement
     
+    def get_index_set(self, n):
+        if n not in self._index_set:
+            fls = self.generate_flags(n)
+            fldict = dict(zip(fls, range(len(fls))))
+            self._index_set[n] = fldict
+        return self._index_set[n]
+
+    def get_index(self, flag):
+        if not isinstance(flag, Flag):
+            return -1
+        if flag.ftype()!=self.ftype():
+            return -1
+        indn = self.get_index_set(flag.size())
+        if flag not in indn:
+            return -1
+        return indn[flag]
+
+    def get_size(self, n):
+        if n not in self._size_set:
+            self._size_set[n] = len(self.generate_flags(n))
+        return self._size_set[n]
+
     def _element_constructor_(self, *args, **kwds):
         r"""
         Constructs a FlagAlgebraElement with the given parameters
@@ -3014,7 +3076,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         Construct from a constant ::
 
             sage: from sage.algebras.flag_algebras import *
-            sage: FA = FlagAlgebra(QQ, GraphTheory)
+            sage: FA = FlagAlgebra(GraphTheory, QQ)
             sage: FA(3)
             Flag Algebra Element over Rational Field
             3 - Ftype on 0 points with edges=[]
@@ -3030,7 +3092,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
             
         Construct from a FlagAlgebraElement with smaller base ::
         
-            sage: FAX = FlagAlgebra(QQ['x'], GraphTheory)
+            sage: FAX = FlagAlgebra(GraphTheory, QQ['x'])
             sage: FAX(el)
             Flag Algebra Element over Univariate Polynomial Ring in x over Rational Field
             1 - Flag on 2 points, ftype from [] with edges=[]
@@ -3051,10 +3113,19 @@ class FlagAlgebra(Parent, UniqueRepresentation):
             v = args[0]
             base = self.base()
             if isinstance(v, Flag):
-                if v.ftype()==self.ftype():
-                    flags = self.generate_flags(v.size())
-                    vec = vector(base, [(1 if xx==v else 0) for xx in flags], sparse=True)
-                    return self.element_class(self, v.size(), vec)
+                ind = self.get_index(v)
+                size = self.get_size(v.size())
+                if ind!=-1:
+                    return self.element_class(
+                        self, v.size(), vector(self.base(), size, {ind:1})
+                        )
+            elif isinstance(v, Pattern):
+                if self.ftype() == v.ftype():
+                    dvec = {self.get_index(xx):1 for xx in v.compatible_flags()}
+                    size = self.get_size(v.size())
+                    return self.element_class(
+                        self, v.size(), vector(self.base(), size, dvec)
+                        )
             elif isinstance(v, FlagAlgebraElement):
                 if v.ftype()==self.ftype():
                     if self.base()==v.parent().base():
@@ -3085,7 +3156,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         Constructs the pushout FlagAlgebra
         """
         if S.has_coerce_map_from(self.base()):
-            return FlagAlgebra(S, self.theory(), self.ftype())
+            return FlagAlgebra(self.theory(), S, self.ftype())
         return None
     
     def _repr_(self):
@@ -3095,7 +3166,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.flag_algebras import *
-            sage: FlagAlgebra(QQ, GraphTheory)
+            sage: FlagAlgebra(GraphTheory, QQ)
             Flag Algebra with Ftype on 0 points with edges=[] over Rational Field
 
         .. SEEALSO::
@@ -3114,7 +3185,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         is empty ::
 
             sage: from sage.algebras.flag_algebras import *
-            sage: FA = FlagAlgebra(QQ, GraphTheory)
+            sage: FA = FlagAlgebra(GraphTheory, QQ)
             sage: FA.ftype()
             Ftype on 0 points with edges=[]
 
@@ -3140,7 +3211,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         This is the same as provided in the constructor ::
 
             sage: from sage.algebras.flag_algebras import *
-            sage: FA = FlagAlgebra(QQ, GraphTheory)
+            sage: FA = FlagAlgebra(GraphTheory, QQ)
             sage: FA.theory()
             Theory for Graph
 
@@ -3162,7 +3233,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.flag_algebras import *
-            sage: FA = FlagAlgebra(QQ, GraphTheory)
+            sage: FA = FlagAlgebra(GraphTheory, QQ)
             sage: FA.base_ring()
             Rational Field
 
@@ -3181,7 +3252,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.flag_algebras import *
-            sage: FA = FlagAlgebra(QQ, GraphTheory)
+            sage: FA = FlagAlgebra(GraphTheory, QQ)
             sage: FA.characteristic()
             0
 
@@ -3206,6 +3277,8 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         """
         return self.theory().generate_flags(n, self.ftype())
     
+    generate = generate_flags
+
     def _an_element_(self):
         r"""
         Returns an element

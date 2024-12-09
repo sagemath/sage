@@ -1277,18 +1277,6 @@ cdef class CoercionModel:
                 if res is not None and res is not NotImplemented:
                     return res
         
-        try:
-            xe = x.as_operand()
-            return self.bin_op(xe, y, op)
-        except AttributeError:
-            pass
-        
-        try:
-            ye = y.as_operand()
-            return self.bin_op(x, ye, op)
-        except AttributeError:
-            pass
-        
         # We should really include the underlying error.
         # This causes so much headache.
         raise bin_op_exception(op, x, y)
@@ -1423,6 +1411,16 @@ cdef class CoercionModel:
                 self._record_exception()
             else:
                 return self.canonical_coercion(x, y)
+
+        try:
+            return x.custom_coerce(y)
+        except AttributeError:
+            self._record_exception()
+        
+        try:
+            return y.custom_coerce(x)
+        except AttributeError:
+            self._record_exception()
 
         # Allow coercion of 0 even if no coercion from Z
         if (x_numeric or is_Integer(x)) and not x and type(yp) is not type:

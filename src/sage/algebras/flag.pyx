@@ -21,6 +21,7 @@ import itertools
 from sage.rings.rational_field import QQ
 from cysignals.signals cimport sig_check
 from sage.structure.element cimport Element
+from sage.structure.coerce cimport coercion_model
 from blisspy cimport canonical_form_from_edge_list, automorphism_group_gens_from_edge_list
 
 # Elementary block operations
@@ -385,6 +386,7 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, tuple e
 #     ))
 #     return combined_tuple
 
+
 cdef class Flag(Element):
     
     cdef int _n
@@ -436,7 +438,7 @@ cdef class Flag(Element):
 
     cpdef tuple _relation_list(self):
         cdef dict ret = {}
-        cdef dict signature = self.parent().signature()
+        cdef dict signature = self.theory().signature()
         cdef int group
         for xx in signature:
             group = signature[xx]["group"]
@@ -456,8 +458,8 @@ cdef class Flag(Element):
         cdef tuple sx
         cdef list mx
         cdef int n = self.size()
-        for xx in self.parent().signature():
-            rel = self.parent().signature()[xx]
+        for xx in self.theory().signature():
+            rel = self.theory().signature()[xx]
             sx = self._blocks[xx]
             mx = [tup for tup in _generate_all_relations(n, rel) if tup not in sx]
             pat_blocks[xx+"_m"] = tuple(mx)
@@ -592,7 +594,6 @@ cdef class Flag(Element):
         """
         return self._n == self._ftype_size
 
-
     # Isomorphisms and related stuff
 
     cpdef tuple unique(self, bint weak = False):
@@ -684,7 +685,7 @@ cdef class Flag(Element):
         
 
         #Adding the remaining layer 2 vertices for the symmetry graphs
-        cdef tuple symmetries = self.parent()._symmetries
+        cdef tuple symmetries = self.theory()._symmetries
         cdef int n_sym, m_sym, ii
         cdef tuple edges_sym
         for group in groups:
@@ -907,13 +908,13 @@ cdef class Flag(Element):
         else:
             points = tuple(list(points) + [ii for ii in ftype_points if ii not in points])
         if len(points)==0:
-            return self.parent().empty()
+            return self.theory().empty()
         ftype_points = tuple(ftype_points)
         if points==tuple(range(self.size())) and ftype_points==self._ftype_points:
             return self
         blocks = {xx: _subblock_helper(points, self._blocks[xx]) for xx in self._blocks.keys()}
         new_ftype_points = [points.index(ii) for ii in ftype_points]
-        return Flag(self.parent(), len(points), new_ftype_points, **blocks)
+        return Flag(self.theory(), len(points), new_ftype_points, **blocks)
 
     cpdef list ftypes_inside(self, target):
         r"""
@@ -939,7 +940,7 @@ cdef class Flag(Element):
     
     cpdef list signature_changes(self):
         cdef list ret = []
-        cdef list perms = self.parent()._signature_perms()
+        cdef list perms = self.theory()._signature_perms()
         cdef tuple perm
         cdef dict nblocks
         cdef str xx
@@ -950,7 +951,7 @@ cdef class Flag(Element):
             nblocks = {}
             for ii, xx in enumerate(self._blocks.keys()):
                 nblocks[perm[ii]] = self._blocks[xx]
-            ret.append(Flag(self.parent(), self.size(), self._ftype_points, **nblocks))
+            ret.append(Flag(self.theory(), self.size(), self._ftype_points, **nblocks))
         return ret
     
     cpdef densities(self, int n1, tuple n1flgs, int n2, tuple n2flgs, \
@@ -1038,147 +1039,60 @@ cdef class Flag(Element):
         return (len(n1flgs), len(n2flgs), ret)
 
     # Flag algebra compatibility
-
-    def as_flag_algebra_element(self, basis=QQ):
-        r"""
-        Transforms this `Flag` to a `FlagAlgebraElement` over a given basis
-
-        INPUT:
-
-        - ``basis`` -- Ring (default: `QQ`); the base of
-            the FlagAlgebra where the target will live.
-
-        OUTPUT: A `FlagAlgebraElement` representing this `Flag`
-
-        .. SEEALSO::
-
-            :class:`FlagAlgebra`
-            :func:`FlagAlgebra._element_constructor_`
-            :class:`FlagAlgebraElement`
-        """
+    
+    def afae(self):
         from sage.algebras.flag_algebras import FlagAlgebra
-        targ_alg = FlagAlgebra(basis, self.theory(), self.ftype())
-        return targ_alg(self)
-    
-    afae = as_flag_algebra_element
-    
-    def as_operand(self):
-        r"""
-        Turns this `Flag` into a `FlagAlgebraElement` so operations can be performed on it
+        alg = FlagAlgebra(self.theory(), QQ, self.ftype())
+        return alg(self)
 
-        .. SEEALSO::
-
-            :func:`as_flag_algebra_element`
-        """
-        return self.afae(QQ)
+    def custom_coerce(self, other):
+        from sage.algebras.flag_algebras import FlagAlgebra, FlagAlgebraElement
+        if isinstance(other, Flag) or isinstance(other, Pattern):
+            if self.ftype()!=other.ftype():
+                raise ValueError("The ftypes must agree.")
+            alg = FlagAlgebra(self.theory(), QQ, self.ftype())
+            return (alg(self), alg(other))
+        elif isinstance(other, FlagAlgebraElement):
+            if self.ftype()!=other.ftype():
+                raise ValueError("The ftypes must agree.")
+            base = other.base()
+            alg = other.parent()
+            return (alg(self), other)
+        else:
+            base = coercion_model.common_parent(QQ, other.parent())
+            alg = FlagAlgebra(self.theory(), base, self.ftype())
+            return (alg(self), alg(base(other)))
 
     def _add_(self, other):
-        r"""
-        Add two Flags together
-        
-        The flags must have the same ftype. Different sizes are 
-            all shifted to the larger one.
+        sf, of = self.custom_coerce(other)
+        return sf._add_(of)
 
-        OUTPUT: The :class:`FlagAlgebraElement` object, 
-            which is the sum of the two parameters
-
-        EXAMPLES::
-
-        Adding to self is 2*self ::
-
-            sage: from sage.algebras.flag_algebras import *
-            sage: g = GraphTheory(3)
-            sage: g+g==2*g
-            True
-        
-        Adding two distinct elements with the same size gives a vector 
-        with exactly two `1` entries ::
-
-            sage: h = GraphTheory(3, edges=[[0, 1]])
-            sage: (g+h).values()
-            (1, 1, 0, 0)
-        
-        Adding with different size the smaller flag
-        is shifted to have the same size ::
-        
-            sage: e = GraphTheory(2)
-            sage: (e+h).values()
-            (1, 5/3, 1/3, 0)
-
-        .. SEEALSO::
-
-            :func:`FlagAlgebraElement._add_`
-            :func:`__lshift__`
-
-        """
-        if self.ftype()!=other.ftype():
-            raise TypeError("The terms must have the same ftype")
-        return self.afae()._add_(other.afae())
-    
     def _sub_(self, other):
-        r"""
-        Subtract a Flag from `self`
-        
-        The flags must have the same ftype. Different sizes are 
-            all shifted to the larger one.
+        sf, of = self.custom_coerce(other)
+        return sf._sub_(of)
 
-        EXAMPLES::
-            
-            sage: from sage.algebras.flag_algebras import *
-            sage: g = GraphTheory(2)
-            sage: h = GraphTheory(3, edges=[[0, 1]])
-            sage: (g-h).values()
-            (1, -1/3, 1/3, 0)
+    def _neg_(self):
+        from sage.rings.integer import Integer
+        return self.__mul__(Integer(-1))
 
-        .. SEEALSO::
+    def __mul__(self, other):
+        sf, of = self.custom_coerce(other)
+        return sf._mul_(of)
 
-            :func:`_add_`
-            :func:`__lshift__`
-            :func:`FlagAlgebraElement._sub_`
+    def __rmul__(self, other):
+        return self.__mul__(other)
 
-        """
-        if self.ftype()!=other.ftype():
-            raise TypeError("The terms must have the same ftype")
-        return self.afae()._sub_(other.afae())
-    
-    def _mul_(self, other):
-        r"""
-        Multiply two flags together.
-        
-        The flags must have the same ftype. The result
-        will have the same ftype and size 
-        `self.size() + other.size() - self.ftype().size()`
+    def __pow__(self, other):
+        if other==0:
+            return 1
+        if other==1:
+            return self
+        else:
+            ret = self
+            for _ in range(other-1):
+                ret *= self
+            return ret
 
-        OUTPUT: The :class:`FlagAlgebraElement` object, 
-            which is the product of the two parameters
-
-        EXAMPLES::
-
-        Pointed edge multiplied by itself ::
-
-            sage: from sage.algebras.flag_algebras import *
-            sage: pe = GraphTheory(2, edges=[[0, 1]], ftype=[0])
-            sage: (pe*pe).values()
-            (0, 0, 0, 0, 1, 1)
-
-        .. SEEALSO::
-
-            :func:`FlagAlgebraElement._mul_`
-            :func:`mul_project`
-            :func:`CombinatorialTheory.mul_project_table`
-
-        TESTS::
-
-            sage: sum((pe*pe*pe*pe).values())
-            11
-            sage: e = GraphTheory(2)
-            sage: (e*e).values()
-            (1, 2/3, 1/3, 0, 2/3, 1/3, 0, 0, 1/3, 0, 0)
-        """
-        if self.ftype()!=other.ftype():
-            raise TypeError("The terms must have the same ftype")
-        return self.afae()._mul_(other.afae())
-    
     def __lshift__(self, amount):
         r"""
         `FlagAlgebraElement`, equal to this, with size is shifted by the amount
@@ -1253,7 +1167,7 @@ cdef class Flag(Element):
         """
         if type(other)!=type(self):
             return False
-        if self.parent()!=other.parent():
+        if self.theory()!=other.theory():
             return False
         return self.normal_equal(other)
     
@@ -1270,7 +1184,7 @@ cdef class Flag(Element):
         """
         if type(other)!=type(self):
             return False
-        if self.parent()!=other.parent():
+        if self.theory()!=other.theory():
             return False
         if self.size()>=other.size():
             return False
@@ -1447,7 +1361,6 @@ cdef class Flag(Element):
         safae = self.afae()
         oafae = safae.parent(other)
         return self.afae().density(oafae)
-    
 
 
 cdef tuple _generate_all_relations(int n, dict relation):
@@ -1467,27 +1380,53 @@ cdef bint _block_refinement(tuple block_flag, tuple block_pattern, tuple missing
             return False
     return True
 
-cdef bint _pattern_consistency(tuple ftype_points, dict blocks, dict signature):
+cdef dict _pattern_overlap_fix(tuple ftype_points, dict blocks, dict signature):
     cdef str xx
-    cdef tuple blxx, msxx, tp, alrel, fttp
+    cdef tuple blxx, msxx, tp
+    cdef dict fix = {}
     for xx in signature:
         blxx = blocks[xx]
         msxx = blocks[xx+"_m"]
         #Check they are disjoint
-        for tp in blxx:
-            if tp in msxx:
-                return False
-        for tp in msxx:
-            if tp in blxx:
-                return False
-        
+        if fix=={}:
+            for tp in blxx:
+                if tp in msxx:
+                    fix = blocks
+                    fix[xx+"_m"] = tuple([tp for tp in msxx if tp not in blxx])
+                    break
+        else:
+            fix[xx+"_m"] = tuple([tp for tp in msxx if tp not in blxx])
+    return fix
+
+cdef dict _pattern_ftype_fix(tuple ftype_points, dict blocks, dict signature):
+    cdef str xx
+    cdef tuple blxx, msxx, tp, alrel, fttp
+    cdef dict fix = {}
+    for xx in signature:
+        blxx = blocks[xx]
+        msxx = blocks[xx+"_m"]
         #Check ftype has no undefined edges
         alrel = _generate_all_relations(len(ftype_points), signature[xx])
-        for tp in alrel:
-            fttp = tuple([ftype_points[ii] for ii in tp])
-            if (fttp not in blxx) and (fttp not in msxx):
-                return False
-    return True
+        if fix=={}:
+            for tp in alrel:
+                fttp = tuple([ftype_points[ii] for ii in tp])
+                if (fttp not in blxx) and (fttp not in msxx):
+                    fix = blocks
+                    newmsxx = list(blocks[xx+"_m"])
+                    for tp in alrel:
+                        fttp = tuple([ftype_points[ii] for ii in tp])
+                        if (fttp not in blxx) and (fttp not in msxx):
+                            newmsxx.append(fttp)
+                    fix[xx+"_m"] = tuple(newmsxx)
+                    break
+        else:
+            newmsxx = list(blocks[xx+"_m"])
+            for tp in alrel:
+                fttp = tuple([ftype_points[ii] for ii in tp])
+                if (fttp not in blxx) and (fttp not in msxx):
+                    newmsxx.append(fttp)
+            fix[xx+"_m"] = tuple(newmsxx)
+    return fix
 
 cdef class Pattern(Element):
     
@@ -1505,10 +1444,20 @@ cdef class Pattern(Element):
         self._ftype_points = tuple(ftype)
         self._ftype_size = len(self._ftype_points)
         self._not_ftype_points = None
-        self._blocks = _standardize_blocks(params, theory._signature, True)
-        if not _pattern_consistency(self._ftype_points, self._blocks, theory._signature):
-            raise ValueError("Patterns must have the required edges disjoint from the missing edges," + 
-            " and every edge in the ftype must be either required or missing")
+        cdef dict blocks = _standardize_blocks(params, theory._signature, True)
+        cdef dict blfix = _pattern_overlap_fix(self._ftype_points, blocks, theory._signature)
+        if blfix!={}:
+            import warnings
+            warnings.warn("""The pattern is initialized with required relations and 
+            missing relations overlapping. The required relations will take priority.""")
+            blocks = _standardize_blocks(blfix, theory._signature, True)
+        blfix = _pattern_ftype_fix(self._ftype_points, blocks, theory._signature)
+        if blfix!={}:
+            import warnings
+            warnings.warn("""The pattern is initialized with optional relations inside 
+            the ftype. Those relations will be missing in the resulting pattern.""")
+            blocks = _standardize_blocks(blfix, theory._signature, True)
+        self._blocks = blocks
         self._ftype = None
         Element.__init__(self, theory)
     
@@ -1558,8 +1507,8 @@ cdef class Pattern(Element):
 
     cpdef ftype(self):
         if self._ftype==None:
-            blocks = {xx: _subblock_helper(self._ftype_points, self._blocks[xx]) for xx in self.parent().signature().keys()}
-            self._ftype = Flag(self.parent(), len(self._ftype_points), self._ftype_points, **blocks)
+            blocks = {xx: _subblock_helper(self._ftype_points, self._blocks[xx]) for xx in self.theory().signature().keys()}
+            self._ftype = Flag(self.theory(), len(self._ftype_points), self._ftype_points, **blocks)
         return self._ftype
     
     cpdef tuple ftype_points(self):
@@ -1573,6 +1522,9 @@ cdef class Pattern(Element):
     
     def is_ftype(self):
         return False
+
+    cpdef Pattern as_pattern(self):
+        return self
 
     #Pattern methods
 
@@ -1626,51 +1578,134 @@ cdef class Pattern(Element):
             raise ValueError("Subflag for patterns is not defined with different ftype!")
         blocks = {xx: _subblock_helper(points, self._blocks[xx]) for xx in self._blocks.keys()}
         new_ftype_points = [points.index(ii) for ii in ftype_points]
-        return Pattern(self.parent(), len(points), new_ftype_points, **blocks)
+        return Pattern(self.theory(), len(points), new_ftype_points, **blocks)
 
     #Compatibility with flag algebras
 
     cpdef list compatible_flags(self):
-        aflags = self.parent().generate(self.size(), self.ftype())
+        aflags = self.theory().generate(self.size(), self.ftype())
         ret = [xx for xx in aflags if self.is_compatible(xx)]
         return ret
 
-    def as_flag_algebra_element(self, basis=QQ):
+    def as_flag_algebra_element(self, base=QQ):
         from sage.algebras.flag_algebras import FlagAlgebra
         from sage.modules.free_module_element import vector
 
-        targ_alg = FlagAlgebra(basis, self.theory(), self.ftype())
-        aflags = self.parent().generate(self.size(), self.ftype())
+        targ_alg = FlagAlgebra(self.theory(), base=base, ftype=self.ftype())
+        aflags = self.theory().generate(self.size(), self.ftype())
         targ_vec = {}
         for ii,xx in enumerate(aflags):
             if self.is_compatible(xx):
                 targ_vec[ii]=1
-        return targ_alg(self.size(), vector(basis, len(aflags), targ_vec))
+        return targ_alg(self.size(), vector(base, len(aflags), targ_vec))
     
     afae = as_flag_algebra_element
     
-    def as_operand(self):
-        return self.afae(QQ)
+    def custom_coerce(self, other):
+        from sage.algebras.flag_algebras import FlagAlgebra, FlagAlgebraElement
+        if isinstance(other, Flag) or isinstance(other, Pattern):
+            if self.ftype()!=other.ftype():
+                raise ValueError("The ftypes must agree.")
+            alg = FlagAlgebra(self.theory(), QQ, self.ftype())
+            return (alg(self), alg(other))
+        elif isinstance(other, FlagAlgebraElement):
+            if self.ftype()!=other.ftype():
+                raise ValueError("The ftypes must agree.")
+            base = other.base()
+            alg = other.parent()
+            return (alg(self), other)
+        else:
+            base = coercion_model.common_parent(QQ, other.parent())
+            alg = FlagAlgebra(self.theory(), base, self.ftype())
+            return (alg(self), alg(base(other)))
     
-    cpdef _add_(self, other):
-        if self.ftype()!=other.ftype():
-            raise TypeError("The terms must have the same ftype")
-        return self.afae()._add_(other.afae())
-    
-    cpdef _sub_(self, other):
-        if self.ftype()!=other.ftype():
-            raise TypeError("The terms must have the same ftype")
-        return self.afae()._sub_(other.afae())
-    
-    cpdef _mul_(self, other):
-        if self.ftype()!=other.ftype():
-            raise TypeError("The terms must have the same ftype")
-        return self.afae()._mul_(other.afae())
-    
+    def _add_(self, other):
+        sf, of = self.custom_coerce(other)
+        return sf._add_(of)
+
+    def _sub_(self, other):
+        sf, of = self.custom_coerce(other)
+        return sf._sub_(of)
+
+    def _neg_(self):
+        from sage.rings.integer import Integer
+        return self.__mul__(Integer(-1))
+
+    def __mul__(self, other):
+        sf, of = self.custom_coerce(other)
+        return sf._mul_(of)
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    def __pow__(self, other):
+        if other==0:
+            return 1
+        if other==1:
+            return self
+        else:
+            ret = self
+            for _ in range(other-1):
+                ret *= self
+            return ret
+
     def __lshift__(self, amount):
+        r"""
+        `FlagAlgebraElement`, equal to this, with size is shifted by the amount
+
+        EXAMPLES::
+
+        Edge shifted to size `3` ::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: edge = GraphTheory(2, edges=[[0, 1]])
+            sage: (edge<<1).values()
+            (0, 1/3, 2/3, 1)
+
+        .. SEEALSO::
+
+            :func:`FlagAlgebraElement.__lshift__`
+        """
         return self.afae().__lshift__(amount)
     
     def __truediv__(self, other):
+        r"""
+        Divide by a scalar
+
+        INPUT:
+
+        - ``other`` -- number; any number such that `1` can be divided with that
+
+        OUTPUT: The `FlagAlgebraElement` resulting from the division
+
+        EXAMPLES::
+
+        Divide by `2` ::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: g = GraphTheory(3)
+            sage: (g/2).values()
+            (1/2, 0, 0, 0)
+            
+        Even for `x` symbolic `1/x` is defined, so the division is understood ::
+            sage: var('x')
+            x
+            sage: g = GraphTheory(2)
+            sage: g/x
+            Flag Algebra Element over Symbolic Ring
+            1/x - Flag on 2 points, ftype from [] with edges=[]
+            0   - Flag on 2 points, ftype from [] with edges=[[0, 1]]
+        
+        .. NOTE::
+
+            Dividing by `Flag` or `FlagAlgebraElement` is not allowed, only
+            numbers such that the division is defined in some extension
+            of the rationals.
+
+        .. SEEALSO::
+
+            :func:`FlagAlgebraElement.__truediv__`
+        """
         return self.afae().__truediv__(other)
     
     def project(self, ftype_inj=tuple()):
