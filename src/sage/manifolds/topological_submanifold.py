@@ -45,11 +45,12 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.manifolds.manifold import TopologicalManifold
 from sage.manifolds.continuous_map import ContinuousMap
-from sage.symbolic.expression import Expression
-from sage.symbolic.assumptions import assumptions, assume
+from sage.manifolds.manifold import TopologicalManifold
 from sage.misc.lazy_import import lazy_import
+from sage.symbolic.assumptions import assume, assumptions
+from sage.symbolic.expression import Expression
+
 lazy_import("sage.plot.plot3d.parametric_surface", "ParametricSurface")
 
 #############################################################################
