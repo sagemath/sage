@@ -37,7 +37,7 @@ Writing Cython code in Sage
 
 There are several ways to create and build Cython code in Sage.
 
-#. In the Sage Notebook or the Sage command line, begin any cell with
+#. In the Sage notebook or the Sage command line, begin any cell with
    a line containing ``%%cython``. When you evaluate that cell,
 
    #. It is saved to a file.
