@@ -59,7 +59,13 @@ cdef double c_f(double t, void *params) noexcept:
         else:
             value = wrapper.the_function(t)
     except Exception as msg:
-        print(msg)
+        try:
+            if str(msg).strip():
+                print(msg)
+            else:
+                print(f"Unable to evaluate function at {t}")
+        except Exception:
+            pass
         return 0
 
     return value
@@ -144,17 +150,19 @@ def numerical_integral(func, a, b=None,
     For a Python function with parameters::
 
         sage: f(x,a) = 1/(a+x^2)
-        sage: [numerical_integral(f, 1, 2, max_points=100, params=[n]) for n in range(10)]  # random output (architecture and os dependent)
-        [(0.49999999999998657, 5.5511151231256336e-15),
-         (0.32175055439664557, 3.5721487367706477e-15),
-         (0.24030098317249229, 2.6678768435816325e-15),
-         (0.19253082576711697, 2.1375215571674764e-15),
-         (0.16087527719832367, 1.7860743683853337e-15),
-         (0.13827545676349412, 1.5351659583939151e-15),
-         (0.12129975935702741, 1.3466978571966261e-15),
-         (0.10806674191683065, 1.1997818507228991e-15),
-         (0.09745444625548845, 1.0819617008493815e-15),
-         (0.088750683050217577, 9.8533051773561173e-16)]
+        sage: [numerical_integral(f, 1, 2, max_points=100, params=[n])[0]  # abs tol 1.0e-6
+        ....:           for n in range(10)]
+        [0.5000000000000000,
+         0.3217505543966422,
+         0.24030098317248832,
+         0.19253082576711372,
+         0.1608752771983211,
+         0.138275456763492,
+         0.1212997593570257,
+         0.10806674191683492,
+         0.09745444625553161,
+         0.08875068305030848]
+
         sage: y = var('y')
         sage: numerical_integral(x*y, 0, 1)
         Traceback (most recent call last):
@@ -323,6 +331,9 @@ def numerical_integral(func, a, b=None,
                     if ell.is_numeric() and not ell.is_zero():
                         raise ValueError('integral does not converge at infinity')
             func = fast_callable(func, vars=[v], domain=float)
+            # `func` is now a function of one variable,
+            # so it no longer needs any parameters
+            params = []
 
     if not isinstance(func, compiled_integrand):
         wrapper = PyFunctionWrapper()
