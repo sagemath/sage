@@ -23,4 +23,3 @@ cdef class tr_data:
     cdef int *df
 
     cdef void incr(self, int *f_out, int verbose, int haltk, int phc) noexcept
-

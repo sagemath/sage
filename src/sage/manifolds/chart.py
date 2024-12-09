@@ -36,16 +36,16 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.ext.fast_callable import fast_callable
+from sage.manifolds.calculus_method import CalculusMethod
+from sage.manifolds.chart_func import ChartFunctionRing
+from sage.misc.decorators import options
+from sage.misc.latex import latex
+from sage.rings.infinity import Infinity
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.symbolic.ring import SR
-from sage.rings.infinity import Infinity
-from sage.misc.latex import latex
-from sage.misc.decorators import options
-from sage.manifolds.chart_func import ChartFunctionRing
-from sage.manifolds.calculus_method import CalculusMethod
 from sage.symbolic.expression import Expression
-from sage.ext.fast_callable import fast_callable
+from sage.symbolic.ring import SR
 
 
 class Chart(UniqueRepresentation, SageObject):
@@ -1216,7 +1216,7 @@ class Chart(UniqueRepresentation, SageObject):
             sage: R((-2,)) in McZ
             True
         """
-        from .subsets.pullback import ManifoldSubsetPullback
+        from sage.manifolds.subsets.pullback import ManifoldSubsetPullback
         return ManifoldSubsetPullback(self, codomain_subset,
                                       name=name, latex_name=latex_name)
 
@@ -2053,9 +2053,9 @@ class RealChart(Chart):
             sage: c_spher1.codomain()
             The Cartesian product of ((0, +oo), (0, pi), [0, 2*pi))
         """
-        from sage.sets.real_set import RealSet
-        from sage.modules.free_module import VectorSpace
         from sage.categories.cartesian_product import cartesian_product
+        from sage.modules.free_module import VectorSpace
+        from sage.sets.real_set import RealSet
         intervals = tuple(RealSet.interval(xmin, xmax,
                                            lower_closed=(min_included == 'periodic' or min_included),
                                            upper_closed=(max_included != 'periodic' and max_included))
@@ -2554,7 +2554,7 @@ class RealChart(Chart):
             return self._fast_valid_coordinates(*coordinates)
 
         # case fast callable has to be computed
-        from operator import lt, gt
+        from operator import gt, lt
 
         if not isinstance(self._restrictions, (list, set, frozenset)):
             if isinstance(self._restrictions, tuple):
@@ -3003,11 +3003,11 @@ class RealChart(Chart):
 
             sage: X.plot.reset()
         """
+        from sage.manifolds.continuous_map import ContinuousMap
+        from sage.manifolds.utilities import set_axes_labels
         from sage.misc.functional import numerical_approx
         from sage.plot.graphics import Graphics
         from sage.plot.line import line
-        from sage.manifolds.continuous_map import ContinuousMap
-        from sage.manifolds.utilities import set_axes_labels
 
         # Extract the kwds options
         max_range = kwds['max_range']

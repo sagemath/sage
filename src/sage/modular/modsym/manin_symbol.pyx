@@ -401,7 +401,7 @@ cdef class ManinSymbol(Element):
             N=int(N)
             if N < 1:
                 raise ArithmeticError("N must be positive")
-        a,b,c,d = self.lift_to_sl2z()
+        a, b, c, d = self.lift_to_sl2z()
         return Cusp(b, d), Cusp(a, c)
 
     def weight(self):
@@ -453,8 +453,7 @@ cdef class ManinSymbol(Element):
         # TODO: It would likely be much better to do this slightly more directly
         from sage.modular.modsym.modular_symbols import ModularSymbol
         x = ModularSymbol(self.parent(), self.i, 0, Infinity)
-        a,b,c,d = self.lift_to_sl2z()
-        return x.apply([a,b,c,d])
+        return x.apply(self.lift_to_sl2z())
 
 
 def _print_polypart(i, j):
