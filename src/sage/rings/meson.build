@@ -72,6 +72,7 @@ py.install_sources(
   'ring_extension_element.pxd',
   'ring_extension_homset.py',
   'ring_extension_morphism.pxd',
+  'species.py',
   'sum_of_squares.pxd',
   'tate_algebra.py',
   'tate_algebra_element.pxd',
