@@ -74,7 +74,7 @@ cdef int next_swap(int n, int *c, int *o) noexcept:
     Note, Knuth's descriptions of algorithms tend to encourage
     one to think of finite state machines.  For convenience,
     we have added comments to show what state the machine is
-    in at any given point in the algorithm. `plain_swap_reset`
+    in at any given point in the algorithm. ``plain_swap_reset``
     sets the state to 1, and this function begins and ends in
     state 2.
 
