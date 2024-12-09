@@ -3197,7 +3197,7 @@ class RealChart(Chart):
             else:
                 if not isinstance(mapping, ContinuousMap):
                     raise TypeError(
-                        "the argument 'mapping' must be a " "continuous manifold map"
+                        "the argument 'mapping' must be a continuous manifold map"
                     )
                 if not self.domain().is_subset(mapping.domain()):
                     raise ValueError(

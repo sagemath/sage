@@ -198,7 +198,7 @@ def Kerr(m=1, a=0, coordinates='BL', names=None):
         M._first_ngens = C._first_ngens
         g = M.metric('g')
         t, r, th, ph = C[:]
-        rho = sqrt(r**2 + a**2 * cos(th) ** 2)
+        rho = sqrt(r**2 + a**2 * cos(th)**2)
         g[0, 0], g[1, 1], g[2, 2], g[3, 3] = (
             -(1 - 2 * m * r / rho**2),
             1 + 2 * m * r / rho**2,
@@ -240,7 +240,7 @@ def Kerr(m=1, a=0, coordinates='BL', names=None):
         return M
 
     raise NotImplementedError(
-        "coordinates system not implemented, see help" " for details"
+        "coordinates system not implemented, see help for details"
     )
 
 

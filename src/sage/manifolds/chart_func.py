@@ -595,7 +595,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
         """
         if self.is_immutable():
             raise ValueError(
-                "the expressions of an immutable element cannot " "be changed"
+                "the expressions of an immutable element cannot be changed"
             )
         for vv in self._express.values():
             if not bool(

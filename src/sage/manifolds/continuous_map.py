@@ -397,7 +397,7 @@ class ContinuousMap(Morphism):
             self._is_isomorphism = True
             if domain != codomain:
                 raise ValueError(
-                    "the domain and codomain must coincide" " for the identity map"
+                    "the domain and codomain must coincide for the identity map"
                 )
             if name is None:
                 name = 'Id_' + domain._name
