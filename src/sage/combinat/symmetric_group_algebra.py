@@ -2188,7 +2188,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                 z = F.multiplicative_generator()
                 k = u.log(z)
                 if k % (q+1) != 0:
-                    raise ValueError("Unable to factor: u is not in base field GF(q)")
+                    raise ValueError(f"unable to factor since {u} is not in base field GF({q})")
                 return z**((k//(q+1)) % (q-1))
 
             def base_change_hermitian(U):
