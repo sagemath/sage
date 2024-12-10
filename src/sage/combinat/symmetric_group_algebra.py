@@ -2091,7 +2091,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
             sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
             sage: U_dft = QS3._dft_unitary()
-            sage: U_dft*U_dft.conjugate().transpose() == identity_matrix(QS3.group().cardinality())
+            sage: U_dft*U_dft.H == identity_matrix(QS3.group().cardinality())
             True
             sage: GF5S3 = SymmetricGroupAlgebra(GF(5**2), 3)
             sage: U = GF5S3._dft_unitary()
