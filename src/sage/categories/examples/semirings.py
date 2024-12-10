@@ -179,24 +179,6 @@ class TernaryLogic(UniqueRepresentation, Parent):
         """
         return "An example of a semiring: the ternary-logic semiring"
 
-    def __contains__(self, n) -> bool:
-        """
-        Return whether ``self`` contains the element.
-
-        EXAMPLES::
-
-            sage: S = Semirings().example()
-            sage: S(1) in S
-            True
-            sage: 2 in S
-            True
-            sage: 4 in S
-            False
-        """
-        if isinstance(n, Ternary):
-            return True
-        return n in [0, 1, 2]
-
     def summation(self, x, y):
         r"""
         Return the sum of ``x`` and ``y`` in the semiring as per
@@ -262,3 +244,6 @@ class TernaryLogic(UniqueRepresentation, Parent):
         return [self(i) for i in [0, 1, 2]]
 
     Element = Ternary
+
+
+Example = TernaryLogic

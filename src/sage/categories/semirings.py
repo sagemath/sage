@@ -50,19 +50,7 @@ class Semirings(CategoryWithAxiom):
     TESTS::
 
         sage: TestSuite(Semirings()).run()
+        sage: Semirings().example()
+        An example of a semiring: the ternary-logic semiring
     """
     _base_category_class_and_axiom = (MagmasAndAdditiveMagmas.Distributive.AdditiveAssociative.AdditiveCommutative.AdditiveUnital.Associative, "Unital")
-
-    def example(self):
-        r"""
-        Return an example of a semiring, as per
-        :meth:`Category.example()
-        <sage.categories.category.Category.example>`.
-
-        EXAMPLES::
-
-            sage: Semirings().example()
-            An example of a semiring: the ternary-logic semiring
-        """
-        from sage.categories.examples.semirings import TernaryLogic
-        return TernaryLogic()
