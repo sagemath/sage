@@ -2209,10 +2209,10 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
             PGdeg = Partitions(G.degree())
             fourier_transform = [flatten([hat(g, partition).list() for partition in PGdeg]) for g in G]
-            dft_matrix = matrix(F,fourier_transform).transpose()
-            sign_diag = (dft_matrix*dft_matrix.H).diagonal()
-            factor_diag = diagonal_matrix([conj_square_root(d) for d in sign_diag])
-            return factor_diag.inverse()*dft_matrix
+            dft_matrix = matrix(F, fourier_transform).transpose()
+            sign_diag = (dft_matrix * dft_matrix.H).diagonal()
+            factor_diag_inv = diagonal_matrix([~conj_square_root(d) for d in sign_diag])
+            return factor_diag_inv * dft_matrix
 
     def _dft_seminormal(self, mult='l2r'):
         """
