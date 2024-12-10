@@ -26,11 +26,13 @@ else
 fi
 
 # Set PEP8 issues to fix (autopep8 by default ignores E226,E24,W50,W690).
+# We also ignore E203 to avoid the enforcing of questionable formatting of
+# slices (e.g., [start: end: step]).
 # For Python files we include E226 to add whitespace around operator (e.g., 2*3).
-# For Cython files we are less aggressive in order to avoid adding whitespace around
-# pointers (e.g., `cdef int *array`) and casting syntax (e.g., `<int *>`).
-python_flags="--ignore=E24,W50,W690"
-cython_flags="--ignore=E225,E226,E227,E228,E24,W50,W690"
+# For Cython files we are less aggressive in order to avoid adding whitespace
+# around pointers (e.g., `cdef int *array`) and casting syntax (e.g., `<int *>`).
+python_flags="--ignore=E203,E24,W50,W690"
+cython_flags="--ignore=E203,E225,E226,E227,E228,E24,W50,W690"
 
 changes=false
 if ! [ "$1" == "in-place" ]; then
