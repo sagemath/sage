@@ -268,6 +268,7 @@ Examples of parents using categories
    sage/categories/examples/posets
    sage/categories/examples/semigroups
    sage/categories/examples/semigroups_cython
+   sage/categories/examples/semirings
    sage/categories/examples/sets_cat
    sage/categories/examples/sets_with_grading
    sage/categories/examples/with_realizations
