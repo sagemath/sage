@@ -297,13 +297,18 @@ Test a doctest failing with ``abort()``::
 
 A different kind of crash::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
-    ....:      "--random-seed=0", "--optional=sage", "fail_and_die.rst"], **kwds)
+    sage: # long time
+    sage: proc = subprocess.run(["sage", "-t", "--warn-long", "0",
+    ....:      "--random-seed=0", "--optional=sage", "fail_and_die.rst"], **kwds,
+    ....:      stdout=subprocess.PIPE, text=True)
+    sage: # the replacements are needed to avoid the strings being interpreted
+    ....: # specially by the doctesting framework
+    sage: print(proc.stdout.replace('sage:', 'sage<COLON>').replace('....:', '<DOTSCOLON>'))
     Running doctests...
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 fail_and_die.rst
     **********************************************************************
-    File "fail_and_die.rst", line 5, in sage.doctest.tests.fail_and_die
+    File "fail_and_die.rst", line 8, in sage.doctest.tests.fail_and_die
     Failed example:
         this_gives_a_NameError
     Exception raised:
@@ -313,11 +318,18 @@ A different kind of crash::
         Killed due to kill signal
     **********************************************************************
     Tests run before process (pid=...) failed:
-    ...
+    sage<COLON> import time, signal ## line 4 ##
+    sage<COLON> print(1,
+    <DOTSCOLON>       2) ## line 5 ##
+    1 2
+    sage<COLON> this_gives_a_NameError ## line 8 ##
+    sage<COLON> os.kill(os.getpid(), signal.SIGKILL) ## line 9 ##
+    **********************************************************************
     ----------------------------------------------------------------------
     sage -t --warn-long 0.0 --random-seed=0 fail_and_die.rst  # Killed due to kill signal
     ----------------------------------------------------------------------
     ...
+    sage: proc.returncode
     16
 
 Test that ``sig_on_count`` is checked correctly::
