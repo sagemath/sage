@@ -295,7 +295,8 @@ Test a doctest failing with ``abort()``::
     ...
     16
 
-A different kind of crash::
+A different kind of crash (also test printing of line continuation ``...:``,
+represented by ``<DOTSCOLON>`` below)::
 
     sage: # long time
     sage: proc = subprocess.run(["sage", "-t", "--warn-long", "0",
