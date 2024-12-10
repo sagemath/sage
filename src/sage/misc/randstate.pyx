@@ -838,8 +838,8 @@ cdef class randstate:
             sage: current_randstate().c_rand_double()
             0.22437207488974298
         """
-        cdef double a = gmp_urandomb_ui(self.gmp_state, 25) * (1.0 / 33554432.0) # divide by 2^25
-        cdef double b = gmp_urandomb_ui(self.gmp_state, 28) * (1.0 / 9007199254740992.0) # divide by 2^53
+        cdef double a = gmp_urandomb_ui(self.gmp_state, 25) * (1.0 / 33554432.0)  # divide by 2^25
+        cdef double b = gmp_urandomb_ui(self.gmp_state, 28) * (1.0 / 9007199254740992.0)  # divide by 2^53
         return a+b
 
     def __dealloc__(self):
@@ -1005,7 +1005,6 @@ def benchmark_libc():
         125 loops, best of 3: 2.12 ms per loop
     """
     cdef int i
-    cdef randstate rstate = _current_randstate
     for i from 0 <= i < 100000:
         c_libc_random()
 
