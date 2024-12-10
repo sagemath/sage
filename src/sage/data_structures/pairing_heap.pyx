@@ -107,119 +107,6 @@ from sage.data_structures.bitset_base cimport (bitset_init, bitset_free,
                                                bitset_in)
 from sage.misc.prandom import shuffle
 
-# ==============================================================================
-# Methods for PairingHeapNode
-# ==============================================================================
-
-cdef inline bint _compare(PairingHeapNode * a, PairingHeapNode * b) except *:
-    r"""
-    Check whether ``a.value <= b.value``.
-
-    TESTS::
-
-        sage: from sage.data_structures.pairing_heap import _test_PairingHeap_of_n_integers
-        sage: _test_PairingHeap_of_n_integers(5)
-    """
-    return <object>a.value <= <object>b.value
-
-
-cdef inline PairingHeapNode * _pair(PairingHeapNode * p) except *:
-    r"""
-    Pair a list of heaps and return the pointer to the top of the resulting heap.
-
-    TESTS::
-
-        sage: from sage.data_structures.pairing_heap import _test_PairingHeap_of_n_integers
-        sage: _test_PairingHeap_of_n_integers(5)
-    """
-    if p == NULL:
-        return NULL
-
-    # Move toward the end of the list, counting elements along the way.
-    # This is done in order to:
-    # - know whether the list has odd or even number of nodes
-    # - speed up going-back through the list
-    cdef size_t children = 1
-    cdef PairingHeapNode * it = p
-    while it.succ != NULL:
-        it = it.succ
-        children += 1
-
-    cdef PairingHeapNode * result
-    cdef PairingHeapNode * a
-    cdef PairingHeapNode * b
-
-    if children % 2:
-        a = it
-        it = it.prev
-        a.prev = a.succ = NULL
-        result = a
-    else:
-        a = it
-        b = it.prev
-        it = it.prev.prev
-        a.prev = a.succ = b.prev = b.succ = NULL
-        result = _merge(a, b)
-
-    for _ in range((children - 1) // 2):
-        a = it
-        b = it.prev
-        it = it.prev.prev
-        a.prev = a.succ = b.prev = b.succ = NULL
-        result = _merge(_merge(a, b), result)
-
-    return result
-
-
-cdef inline PairingHeapNode * _merge(PairingHeapNode * a, PairingHeapNode * b) except *:
-    r"""
-    Merge two heaps and return the pointer to the top of the resulting heap.
-
-    TESTS::
-
-        sage: from sage.data_structures.pairing_heap import _test_PairingHeap_of_n_integers
-        sage: _test_PairingHeap_of_n_integers(5)
-    """
-    if _compare(a, b):  # True if a.value <= b.value
-        _link(a, b)
-        return a
-    _link(b, a)
-    return b
-
-
-cdef inline _link(PairingHeapNode * a, PairingHeapNode * b) except *:
-    r"""
-    Make ``b`` a child of ``a``.
-
-    TESTS::
-
-        sage: from sage.data_structures.pairing_heap import _test_PairingHeap_of_n_integers
-        sage: _test_PairingHeap_of_n_integers(5)
-    """
-    if a.child != NULL:
-        b.succ = a.child
-        a.child.prev = b
-    b.prev = a
-    a.child = b
-
-
-cdef inline _unlink(PairingHeapNode * p) except *:
-    r"""
-    Remove ``p`` from the list of children of its parent.
-
-    TESTS::
-
-        sage: from sage.data_structures.pairing_heap import _test_PairingHeap_of_n_integers
-        sage: _test_PairingHeap_of_n_integers(5)
-    """
-    if p.prev.child == p:
-        p.prev.child = p.succ
-    else:
-        p.prev.succ = p.succ
-    if p.succ != NULL:
-        p.succ.prev = p.prev
-    p.prev = p.succ = NULL
-
 
 # ==============================================================================
 # Class PairingHeap_class
@@ -314,7 +201,7 @@ cdef class PairingHeap_class:
 
     size = __len__
 
-    cpdef tuple top(self) except *:
+    cpdef tuple top(self):
         r"""
         Return the top pair (item, value) of the heap.
 
@@ -337,7 +224,7 @@ cdef class PairingHeap_class:
         """
         raise NotImplementedError()
 
-    cpdef object top_value(self) except *:
+    cpdef object top_value(self):
         r"""
         Return the value of the top item of the heap.
 
@@ -460,7 +347,7 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
             raise ValueError("the capacity of the heap must be strictly positive")
         self.n = n
         self.root = NULL
-        self.nodes = <PairingHeapNode *>check_allocarray(n, sizeof(PairingHeapNode))
+        self.nodes = <PairingHeapNodePy *>check_allocarray(n, sizeof(PairingHeapNodePy))
         bitset_init(self.active, n)
         self.number_of_items = 0
 
@@ -517,18 +404,18 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
         if item in self:
             raise ValueError(f"{item} is already in the heap")
 
-        cdef PairingHeapNode * p = self.nodes + item
+        cdef PairingHeapNodePy * p = self.nodes + item
         Py_INCREF(value)
-        p.value = <void *>value
-        p.prev = p.succ = p.child = NULL
+        p.value = <PyObject *>value
+        p.prev = p.next = p.child = NULL
         if self.root == NULL:
             self.root = p
         else:
-            self.root = _merge(self.root, p)
+            self.root = PairingHeapNodePy._merge(self.root, p)
         bitset_add(self.active, item)
         self.number_of_items += 1
 
-    cpdef tuple top(self) except *:
+    cpdef tuple top(self):
         r"""
         Return the top pair (item, value) of the heap.
 
@@ -605,7 +492,7 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
         Py_XDECREF(<PyObject *>self.nodes[item].value)
         bitset_remove(self.active, item)
         self.number_of_items -= 1
-        self.root = _pair(self.root.child)
+        self.root = PairingHeapNodePy._pair(self.root.child)
 
     cpdef void decrease(self, size_t item, object new_value) except *:
         r"""
@@ -648,17 +535,19 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
             ...
             ValueError: the new value must be less than the current value
         """
-        cdef PairingHeapNode * p
+        if item >= self.n:
+            raise ValueError(f"item must be in range 0..{self.n - 1}")
+        cdef PairingHeapNodePy * p
         if bitset_in(self.active, item):
             p = self.nodes + item
             if <object>p.value <= new_value:
                 raise ValueError("the new value must be less than the current value")
             Py_XDECREF(<PyObject *>p.value)
             Py_INCREF(new_value)
-            p.value = <void *>new_value
+            p.value = <PyObject *>new_value
             if p.prev != NULL:
-                _unlink(p)
-                self.root = _merge(self.root, p)
+                PairingHeapNodePy._unlink(p)
+                self.root = PairingHeapNodePy._merge(self.root, p)
         else:
             self.push(item, new_value)
 
@@ -682,11 +571,13 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
             sage: 100 in P
             False
         """
+        if item >= self.n:
+            return False
         return bitset_in(self.active, item)
 
     contains = __contains__
 
-    cpdef object value(self, size_t item) except *:
+    cpdef object value(self, size_t item):
         r"""
         Return the value associated with the item.
 
@@ -766,6 +657,13 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
         Traceback (most recent call last):
         ...
         ValueError: the heap is full
+
+        sage: P = PairingHeap_of_n_hashables(10)
+        sage: P.push(1, 'John')
+        sage: P.push(4, 42)
+        Traceback (most recent call last):
+        ...
+        TypeError: unsupported operand parent(s) for >=: 'Integer Ring' and '<class 'str'>'
     """
     def __init__(self, size_t n):
         r"""
@@ -813,7 +711,7 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
             raise ValueError("the capacity of the heap must be strictly positive")
         self.n = n
         self.root = NULL
-        self.nodes = <PairingHeapNode *>check_allocarray(n, sizeof(PairingHeapNode))
+        self.nodes = <PairingHeapNodePy *>check_allocarray(n, sizeof(PairingHeapNodePy))
         self.number_of_items = 0
         self._int_to_item = [None] * n
         self._item_to_int = dict()
@@ -875,17 +773,17 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
         cdef size_t idx = self.free_idx.pop()
         self._int_to_item[idx] = item
         self._item_to_int[item] = idx
-        cdef PairingHeapNode * p = self.nodes + idx
+        cdef PairingHeapNodePy * p = self.nodes + idx
         Py_INCREF(value)
-        p.value = <void *>value
-        p.prev = p.succ = p.child = NULL
+        p.value = <PyObject *>value
+        p.prev = p.next = p.child = NULL
         if self.root == NULL:
             self.root = p
         else:
-            self.root = _merge(self.root, p)
+            self.root = PairingHeapNodePy._merge(self.root, p)
         self.number_of_items += 1
 
-    cpdef tuple top(self) except *:
+    cpdef tuple top(self):
         r"""
         Return the top pair (item, value) of the heap.
 
@@ -911,7 +809,7 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
         cdef size_t idx = self.root - self.nodes
         return self._int_to_item[idx], <object>self.root.value
 
-    cpdef object top_item(self) except *:
+    cpdef object top_item(self):
         r"""
         Return the top item of the heap.
 
@@ -966,7 +864,7 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
         self.free_idx.append(idx)
         del self._item_to_int[item]
         self.number_of_items -= 1
-        self.root = _pair(self.root.child)
+        self.root = PairingHeapNodePy._pair(self.root.child)
 
     cpdef void decrease(self, object item, object new_value) except *:
         r"""
@@ -1009,7 +907,7 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
             ...
             ValueError: the new value must be less than the current value
         """
-        cdef PairingHeapNode * p
+        cdef PairingHeapNodePy * p
         cdef size_t idx
         if item in self:
             idx = self._item_to_int[item]
@@ -1018,10 +916,10 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
                 raise ValueError("the new value must be less than the current value")
             Py_XDECREF(<PyObject *>p.value)
             Py_INCREF(new_value)
-            p.value = <void *>new_value
+            p.value = <PyObject *>new_value
             if p.prev != NULL:
-                _unlink(p)
-                self.root = _merge(self.root, p)
+                PairingHeapNodePy._unlink(p)
+                self.root = PairingHeapNodePy._merge(self.root, p)
         else:
             self.push(item, new_value)
 

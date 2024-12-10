@@ -62,261 +62,284 @@
 namespace pairing_heap {
 
   template<
-    typename TI,  // type of items stored in the node
-    typename TV   // type of values associated with the stored item
+    typename TV,  // type of values
+    typename T    // type of the child class
     >
-    struct PairingHeapNode {
-      TI item;   // item contained in the node
-      TV value;  // value associated with the item
-
-      PairingHeapNode<TI, TV> * prev;  // Previous sibling of the node or parent
-      PairingHeapNode<TI, TV> * next;  // Next sibling of the node
-      PairingHeapNode<TI, TV> * child; // First child of the node
-
-      explicit PairingHeapNode(const TI &some_item, const TV &some_value)
-	: item(some_item), value(some_value),
-	  prev(nullptr), next(nullptr), child(nullptr) {
-      }
-
-      bool operator<(PairingHeapNode const& other) const {
-	return value < other.value;
-      }
-
-      bool operator<=(PairingHeapNode const& other) const {
-	return value <= other.value;
-      }
-    }; // end struct PairingHeapNode
-
-
-  // Remove p from its parent children list
-  template<
-    typename TI,  // type of items stored in the node
-    typename TV   // type of values associated with the stored item
-    >
-    static void _unlink(PairingHeapNode<TI, TV> *p) {
-      if (p->prev->child == p) {
-	p->prev->child = p->next;
-      } else {
-	p->prev->next = p->next;
-      }
-      if (p->next != nullptr) {
-	p->next->prev = p->prev;
-      }
-      p->prev = nullptr;
-      p->next = nullptr;
-    } // end _unlink
-
-  // Pair list of heaps and return pointer to the top of resulting heap
-  template<
-    typename TI,  // type of items stored in the node
-    typename TV   // type of values associated with the stored item
-    >
-    static PairingHeapNode<TI, TV> *_pair(PairingHeapNode<TI, TV> *p) {
-      if (p == nullptr) {
-	return nullptr;
-      }
-
-      /*
-       * Move toward the end of the list, counting elements along the way.
-       * This is done in order to:
-       * - know whether the list has odd or even number of nodes
-       * - speed up going-back through the list
-       */
-      size_t children = 1;
-      PairingHeapNode<TI, TV> *it = p;
-      while (it->next != nullptr) {
-	it = it->next;
-	children++;
-      }
-
-      PairingHeapNode<TI, TV> *result;
-
-      if (children % 2 == 1) {
-	PairingHeapNode<TI, TV> *a = it;
-	it = it->prev;
-	a->prev = a->next = nullptr;
-	result = a;
-      } else {
-	PairingHeapNode<TI, TV> *a = it;
-	PairingHeapNode<TI, TV> *b = it->prev;
-	it = it->prev->prev;
-	a->prev = a->next = b->prev = b->next = nullptr;
-	result = _merge(a, b);
-      }
-
-      for (size_t i = 0; i < (children - 1) / 2; i++) {
-	PairingHeapNode<TI, TV> *a = it;
-	PairingHeapNode<TI, TV> *b = it->prev;
-	it = it->prev->prev;
-	a->prev = a->next = b->prev = b->next = nullptr;
-	result = _merge(_merge(a, b), result);
-      }
-
-      return result;
-    } // end _pair
-
-
-  // Merge 2 heaps and return pointer to the top of resulting heap
-  template<
-    typename TI,  // type of items stored in the node
-    typename TV   // type of values associated with the stored item
-    >
-    static PairingHeapNode<TI, TV> *_merge(PairingHeapNode<TI, TV> *a,
-					   PairingHeapNode<TI, TV> *b) {
-      if (*a <= *b)  { // Use comparison method of PairingHeapNode
-	_link(a, b);
-	return a;
-      } else {
-	_link(b, a);
-	return b;
-      }
-    } // end _merge
-
-
-  // Make b a child of a
-  template<
-    typename TI,  // type of items stored in the node
-    typename TV   // type of values associated with the stored item
-    >
-    static void _link(PairingHeapNode<TI, TV> *a,
-		      PairingHeapNode<TI, TV> *b) {
-      if (a->child != nullptr) {
-	b->next = a->child;
-	a->child->prev = b;
-      }
-      b->prev = a;
-      a->child = b;
-    } // end _link
-
-
-  template<
-    typename TI,  // type of items stored in the node
-    typename TV   // type of values associated with the stored item
-    >
-    class PairingHeap
-    {
+  struct PairingHeapNodeBase {
     public:
 
-      // Constructor
-      explicit PairingHeap()
-	: root(nullptr) {
+      bool operator<=(PairingHeapNodeBase const& other) const {
+	return static_cast<T const*>(this)->le_implem(static_cast<T const&>(other));
       }
 
-      // Copy constructor
-      PairingHeap(PairingHeap<TI, TV> const *other)
-	: root(nullptr) {
-	for (auto const& it: other->nodes) {
-	  push(it.first, it.second->value);
+      // Pair list of heaps and return pointer to the top of resulting heap
+      static T *_pair(T *p) {
+	if (p == nullptr) {
+	  return nullptr;
 	}
-      }
 
-      // Destructor
-      virtual ~PairingHeap() {
-	for (auto const& it: nodes) {
-	    delete it.second;
+	/*
+	 * Move toward the end of the list, counting elements along the way.
+	 * This is done in order to:
+	 * - know whether the list has odd or even number of nodes
+	 * - speed up going-back through the list
+	 */
+	size_t children = 1;
+	T *it = p;
+	while (it->next != nullptr) {
+	  it = it->next;
+	  children++;
 	}
-      }
 
-      // Return true if the heap is empty, else false
-      bool empty() const {
-	return root == nullptr;
-      }
+	T *result;
 
-      // Return true if the heap is not empty, else false
-      explicit operator bool() const {
-	return root != nullptr;
-      }
-
-      // Insert an item into the heap with specified value (priority)
-      void push(const TI &some_item, const TV &some_value) {
-	if (nodes.find(some_item) != nodes.end()) {
-	  throw std::invalid_argument("item already in the heap");
-	}
-	PairingHeapNode<TI, TV> *p = new PairingHeapNode<TI, TV>(some_item, some_value);
-	nodes[some_item] = p;
-	root = root == nullptr ? p : _merge(root, p);
-      }
-
-      // Return the top pair (item, value) of the heap
-      std::pair<TI, TV> top() const {
-	if (root ==  nullptr) {
-	  throw std::domain_error("trying to access the top of an empty heap");
-	}
-	return std::make_pair(root->item, root->value);
-      }
-
-      // Return the top item of the heap
-      TI top_item() const {
-	if (root == nullptr) {
-	  throw std::domain_error("trying to access the top of an empty heap");
-	}
-	return root->item;
-      }
-
-      // Return the top value of the heap
-      TV top_value() const {
-	if (root == nullptr) {
-	  throw std::domain_error("trying to access the top of an empty heap");
-	}
-	return root->value;
-      }
-
-      // Remove the top element from the heap. Do nothing if empty
-      void pop() {
-	if (root != nullptr) {
-	  PairingHeapNode<TI, TV> *p = root->child;
-	  nodes.erase(root->item);
-	  delete root;
-	  root = _pair(p);
-	}
-      }
-
-      // Decrease the value of specified item
-      // If the item is not in the heap, push it
-      void decrease(const TI &some_item, const TV &new_value) {
-	if (contains(some_item)) {
-	  PairingHeapNode<TI, TV> *p = nodes[some_item];
-	  if (p->value <= new_value) {
-	    throw std::invalid_argument("the new value must be less than the current value");
-	  }
-	  p->value = new_value;
-	  if (p->prev != nullptr) {
-	    _unlink(p);
-	    root = _merge(root, p);
-	  }
+	if (children % 2 == 1) {
+	  T *a = it;
+	  it = it->prev;
+	  a->prev = a->next = nullptr;
+	  result = a;
 	} else {
-	  push(some_item, new_value);
+	  T *a = it;
+	  T *b = it->prev;
+	  it = it->prev->prev;
+	  a->prev = a->next = b->prev = b->next = nullptr;
+	  result = _merge(a, b);
 	}
-      }
 
-      // Check if specified item is in the heap
-      bool contains(TI const& some_item) const {
-	return nodes.find(some_item) != nodes.end();
-      }
-
-      // Return the value associated with the item
-      TV value(const TI &some_item) const {
-	auto it = nodes.find(some_item);
-	if (it == nodes.end()) {
-	  throw std::invalid_argument("the specified item is not in the heap");
+	for (size_t i = 0; i < (children - 1) / 2; i++) {
+	  T *a = it;
+	  T *b = it->prev;
+	  it = it->prev->prev;
+	  a->prev = a->next = b->prev = b->next = nullptr;
+	  result = _merge(_merge(a, b), result);
 	}
-	return it->second->value;
+
+	return result;
+      } // end _pair
+
+
+      // Merge 2 heaps and return pointer to the top of resulting heap
+      static T *_merge(T *a, T *b) {
+	if (*a <= *b)  { // Use comparison method of PairingHeapNodeBase
+	  _link(a, b);
+	  return a;
+	} else {
+	  _link(b, a);
+	  return b;
+	}
+      } // end _merge
+
+
+      // Make b a child of a
+      static void _link(T *a, T *b) {
+	if (a->child != nullptr) {
+	  b->next = a->child;
+	  a->child->prev = b;
+	}
+	b->prev = a;
+	a->child = b;
+      } // end _link
+
+
+      // Remove p from its parent children list
+      static void _unlink(T *p) {
+	if (p->prev->child == p) {
+	  p->prev->child = p->next;
+	} else {
+	  p->prev->next = p->next;
+	}
+	if (p->next != nullptr) {
+	  p->next->prev = p->prev;
+	}
+	p->prev = nullptr;
+	p->next = nullptr;
+      } // end _unlink
+
+
+      TV value;  // value associated to the node
+      T * prev;  // Previous sibling of the node or parent
+      T * next;  // Next sibling of the node
+      T * child; // First child of the node
+
+    protected:
+      // Only derived class can build a PairingHeapNodeBase
+      explicit PairingHeapNodeBase(const TV &some_value)
+	: value{some_value}, prev{nullptr}, next{nullptr}, child{nullptr} {
+	}
+  }; // end struct PairingHeapNodeBase
+
+
+  template<
+    typename TI,  // type of items stored in the node
+    typename TV   // type of values associated with the stored item
+                  // Assumes TV is a comparable type
+    >
+  class PairingHeapNode
+    : public PairingHeapNodeBase<TV, PairingHeapNode<TI, TV>> {
+
+  public:
+    PairingHeapNode(TI const& some_item, TV const& some_value)
+      : Base_(some_value), item(some_item) {
+    }
+
+    bool le_implem(PairingHeapNode const& other) const {
+      return this->value <= other.value;
+    }
+
+    TI item;  // item contained in the node
+
+  private:
+    using Base_ = PairingHeapNodeBase<TV, PairingHeapNode<TI, TV>>;
+  };
+
+
+  class PairingHeapNodePy
+    : public PairingHeapNodeBase<PyObject *, PairingHeapNodePy> {
+  public:
+    PairingHeapNodePy(PyObject *some_value)
+      : Base_(some_value) {
+    }
+
+    bool le_implem(PairingHeapNodePy const& other) const {
+      return PyObject_RichCompareBool(this->value, other.value, Py_LE);
+    }
+
+  private:
+    using Base_ = PairingHeapNodeBase<PyObject *, PairingHeapNodePy>;
+  };
+
+
+
+  template<
+    typename TI,  // type of items stored in the node
+    typename TV   // type of values associated with the stored item
+                  // Assume TV is a comparable type
+    >
+  class PairingHeap
+  {
+  public:
+    using HeapNodeType = PairingHeapNode<TI, TV>;
+
+    // Constructor
+    explicit PairingHeap()
+      : root(nullptr) {
+    }
+
+    // Copy constructor
+    PairingHeap(PairingHeap<TI, TV> const *other)
+      : root(nullptr) {
+      for (auto const& it: other->nodes) {
+	push(it.first, it.second->value);
       }
+    }
 
-      // Return the number of items in the heap
-      size_t size() const {
-	return nodes.size();
+    // Destructor
+    virtual ~PairingHeap() {
+      for (auto const& it: nodes) {
+	delete it.second;
       }
+    }
 
-    private:
+    // Return true if the heap is empty, else false
+    bool empty() const {
+      return root == nullptr;
+    }
 
-      // Pointer to the top of the heap
-      PairingHeapNode<TI, TV> *root;
+    // Return true if the heap is not empty, else false
+    explicit operator bool() const {
+      return root != nullptr;
+    }
 
-      // Map used to access stored items
-      std::unordered_map<TI, PairingHeapNode<TI, TV> *> nodes;
+    // Insert an item into the heap with specified value (priority)
+    void push(const TI &some_item, const TV &some_value) {
+      if (nodes.find(some_item) != nodes.end()) {
+	throw std::invalid_argument("item already in the heap");
+      }
+      PairingHeapNode<TI, TV> *p = new PairingHeapNode<TI, TV>(some_item, some_value);
+      nodes[some_item] = p;
+      root = root == nullptr ? p : HeapNodeType::_merge(root, p);
+    }
 
-    }; // end class PairingHeap
+    // Return the top pair (item, value) of the heap
+    std::pair<TI, TV> top() const {
+      if (root ==  nullptr) {
+	throw std::domain_error("trying to access the top of an empty heap");
+      }
+      return std::make_pair(root->item, root->value);
+    }
+
+    // Return the top item of the heap
+    TI top_item() const {
+      if (root == nullptr) {
+	throw std::domain_error("trying to access the top of an empty heap");
+      }
+      return root->item;
+    }
+
+    // Return the top value of the heap
+    TV top_value() const {
+      if (root == nullptr) {
+	throw std::domain_error("trying to access the top of an empty heap");
+      }
+      return root->value;
+    }
+
+    // Remove the top element from the heap. Do nothing if empty
+    void pop() {
+      if (root != nullptr) {
+	PairingHeapNode<TI, TV> *p = root->child;
+	nodes.erase(root->item);
+	delete root;
+	root = HeapNodeType::_pair(p);
+      }
+    }
+
+    // Decrease the value of specified item
+    // If the item is not in the heap, push it
+    void decrease(const TI &some_item, const TV &new_value) {
+      if (contains(some_item)) {
+	PairingHeapNode<TI, TV> *p = nodes[some_item];
+	if (p->value <= new_value) {
+	  throw std::invalid_argument("the new value must be less than the current value");
+	}
+	p->value = new_value;
+	if (p->prev != nullptr) {
+	  HeapNodeType::_unlink(p);
+	  root = HeapNodeType::_merge(root, p);
+	}
+      } else {
+	push(some_item, new_value);
+      }
+    }
+
+    // Check if specified item is in the heap
+    bool contains(TI const& some_item) const {
+      return nodes.find(some_item) != nodes.end();
+    }
+
+    // Return the value associated with the item
+    TV value(const TI &some_item) const {
+      auto it = nodes.find(some_item);
+      if (it == nodes.end()) {
+	throw std::invalid_argument("the specified item is not in the heap");
+      }
+      return it->second->value;
+    }
+
+    // Return the number of items in the heap
+    size_t size() const {
+      return nodes.size();
+    }
+
+  private:
+
+    // Pointer to the top of the heap
+    PairingHeapNode<TI, TV> *root;
+
+    // Map used to access stored items
+    std::unordered_map<TI, PairingHeapNode<TI, TV> *> nodes;
+
+  }; // end class PairingHeap
 
 } // end namespace pairing_heap
 
