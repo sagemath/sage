@@ -280,7 +280,6 @@ $ADD config/config.rpath /new/config/config.rpath
 $ADD src/doc/bootstrap /new/src/doc/bootstrap
 $ADD src/meson.build /new/src/
 $ADD src/bin /new/src/bin
-$ADD src/pyproject.toml src/requirements.txt.m4 src/setup.cfg.m4 src/VERSION.txt /new/src/
 $ADD m4 /new/m4
 $ADD pkgs /new/pkgs
 $ADD build /new/build
