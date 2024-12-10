@@ -1,6 +1,11 @@
-r"""
-TODO
--add relation symmetry support
+"""
+TODO:
+
+-fix pattern coercion
+-better code to handle combined theory patterns (perhaps multi ftype)
+-think about maps (projections and lifts) between theories
+-write code to overlap generate
+-write better nonequal permutations, figure out what makes the most sense for typed flags
 """
 
 r"""
@@ -211,7 +216,7 @@ import itertools
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
-from sage.structure.element import Element
+from sage.structure.element import Element, get_coercion_model
 from sage.rings.rational_field import QQ
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.rings.integer import Integer
@@ -234,7 +239,7 @@ import pickle
 import os
 from tqdm import tqdm
 
-def combine(name, *theories, symmetric=False):
+def combine(name, *theories, symmetries=False):
     #Sanity checks
     if len(theories)==0:
         raise ValueError("At least one theory is expected!")
@@ -271,27 +276,34 @@ def combine(name, *theories, symmetric=False):
         result_excluded += list(theory._excluded)
         next_group += next_group_increment
 
-    if not can_symmetry and (symmetric is not False):
+    if not can_symmetry and (symmetries is not False):
         import warnings
         warnings.warn("Warning, the combination can not be symmetric. The symmetries are ignored!", RuntimeWarning)
-        symmetric = False
+        symmetries = False
 
-    if symmetric is not False:
+    if symmetries is not False:
         #Make everything in the same group
         for xx in result_signature:
             result_signature[xx]["group"] = 0
-        if symmetric is True:
+        if symmetries is True:
             #This case symmetry is trivial for the entire group
-            result_symmetry = [[]]
+            result_symmetry = [(len(theories), len(theories), tuple())]
         else:
             #This case symmetry is as provided by the parameter
-            result_symmetry = [symmetric]
+            m = 0
+            formatted_sym = []
+            for edge in symmetries:
+                m = max(m, edge[0], edge[1])
+                formatted_sym.append(tuple(sorted(list(edge))))
+            formatted_sym = tuple(sorted(formatted_sym))
+            result_symmetry = [(len(theories), m+1, formatted_sym)]
     #Note that otherwise we use each symmetry from the combined pieces
     theory_data = {
         "signature": result_signature, 
         "symmetries": result_symmetry
         }
-    ret_theory = CombinatorialTheory(name, _from_data=_serialize_data(theory_data))
+    ser_data = _serialize_data(theory_data)
+    ret_theory = CombinatorialTheory(name, _from_data=ser_data)
     ret_theory.exclude(result_excluded, force=True)
     return ret_theory
 
@@ -303,75 +315,38 @@ def _serialize_data(data):
         ll = tuple(signature[xx].values())
         sered_signature.append((xx, ll))
     sered_signature = tuple(sered_signature)
-
-    #For the symmetries
-    symms = data["symmetries"]
-    sered_symms = []
-    for group_graph in symms:
-        group_graph = [tuple(sorted(list(edge))) for edge in group_graph]
-        sered_symms.append(tuple(sorted(group_graph)))
-    sered_symms = tuple(sered_symms)
-
-    return (sered_signature, sered_symms)
+    return (sered_signature, tuple(data["symmetries"]))
 
 def test_generate():
-    CG = combine("CGraph", C0, G)
-    Cs = combine("Cs", C0, C1, symmetric=True)
+    def test_theory(TT, nstart, nend, vals):
+        print("\nTesting theory {}".format(str(TT)))
+        for ii,jj in enumerate(range(nstart, nend+1)):
+            print("Size {}, the number is {} (should be {})".format(
+                jj, 
+                len(TT.generate(jj)), 
+                vals[ii]
+                ))
     
-    print("\nSingle color generate test start")
-    for ii in [5, 6, 7, 8, 9, 10]:
-        print("Size {}, the number is {}".format(ii, len(C0.generate(ii))))
-    print("Should be equal to 6, 7, 8, 9, 10, 11")
-
-    print("\nTwo colors generate test start")
-    for ii in [3, 4, 5, 6, 7, 8]:
-        print("Size {}, the number is {}".format(ii, len(Cs.generate(ii))))
-    print("Should be equal to 13, 22, 34, 50, 70, 95")
-    
-    print("\nGraph generate test start")
-    for ii in [3, 4, 5, 6, 7]:
-        print("Size {}, the number is {}".format(ii, len(G.generate(ii))))
-    print("Should be equal to 4, 11, 34, 156, 1044, (12346)")
-    
-    #This gives an incorrect value for n=6
-    print("\nThreeGraph generate test start")
-    for ii in [3, 4, 5, 6]:
-        print("Size {}, the number is {}".format(ii, len(TG.generate(ii))))
-    print("Should be equal to 2, 5, 34, 2136, (7013320)")
-    
-    print("\nDiGraph generate test start")
-    for ii in [2, 3, 4, 5]:
-        print("Size {}, the number is {}".format(ii, len(DG.generate(ii))))
-    print("Should be equal to 3, 16, 218, 9608 (1540944)")
-    
-    print("\nDirected ThreeGraph generate test start")
-    for ii in [3]:
-        print("Done with size {}, the number is {}".format(ii, len(DTG.generate(ii))))
-    print("Unconfirmed numbers here are 16 (?)")
-
-    print("\nColoredGraph generate test start")
-    for ii in [2, 3, 4, 5, 6]:
-        print("Size {}, the number is {}".format(ii, len(CG.generate(ii))))
-    print("Should be equal to 6, 20, 90, 544, 5096")
-    
+    CG = combine("CGraph", Color0, GraphTheory)
+    Cs = combine("Cs", Color0, Color1, symmetries=True)
+    test_theory(Color0, 5, 10, [6, 7, 8, 9, 10, 11])
+    test_theory(Cs, 3, 8, [13, 22, 34, 50, 70, 95])
+    test_theory(GraphTheory, 3, 7, [4, 11, 34, 156, 1044])
+    test_theory(ThreeGraphTheory, 3, 6, [2, 5, 34, 2136])
+    test_theory(DiGraphTheory, 2, 5, [3, 16, 218, 9608])
+    test_theory(DiThreeGraphTheory, 3, 3, [16])
+    test_theory(CG, 2, 6, [6, 20, 90, 544, 5096])
     Cs.exclude([Cs(1), Cs(1, C0=[[0]], C1=[[0]])])
-    G.exclude(G(3))
-    CGp = combine("CGsym", G, Cs)
-
-    print("\nDouble Color with no overlaps generate test start")
-    for ii in [4, 5, 6, 7, 8]:
-        print("Size {}, the number is {}".format(ii, len(Cs.generate(ii))))
-    print("Should be equal to 3, 3, 4, 4, 5")
-
-    print("\nGraph no triangle generate test start")
-    for ii in [3, 4, 5, 6, 7]:
-        print("Size {}, the number is {}".format(ii, len(G.generate(ii))))
-    print("Should be equal to 3, 7, 14, 38, 107, (410)")
-
-    print("\nGraph no triangle symm colors generate test start")
-    for ii in [2, 3, 4, 5]:
-        print("Size {}, the number is {}".format(ii, len(CGp.generate(ii))))
-    print("Should be equal to 4, 8, 32, 106")
+    GraphTheory.exclude(GraphTheory(3))
+    CGp = combine("CGsym", GraphTheory, Cs)
+    test_theory(Cs, 4, 8, [3, 3, 4, 4, 5])
+    test_theory(GraphTheory, 3, 8, [3, 7, 14, 38, 107, 410])
+    test_theory(CGp, 2, 5, [4, 8, 32, 106])
+    Css = combine("Colors3Sym", Color0, Color1, Color2, symmetries=True)
+    pe = Css(1)
+    p0 = Css.p(1, C2=[0], C1=[0])
+    Css.exclude([pe, p0])
+    test_theory(Css, 3, 8, [3, 4, 5, 7, 8, 10])
 
 def clear_all_calculations(theory_name=None):
     calcs_dir = os.path.join(os.getenv('HOME'), '.sage', 'calcs')
@@ -451,7 +426,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 "ordered": is_ordered,
                 "group": 0
             }}
-            self._symmetries = tuple([tuple([])])
+            self._symmetries = ((1, 1, tuple()), )
         self._excluded = tuple()
         Parent.__init__(self, category=(Sets(), ))
         self._populate_coercion_lists_()
@@ -469,30 +444,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             Theory for Graph
         """
         return 'Theory for {}'.format(self._name)
-    
-    def Pattern(self, n, **kwds):
-        ftype_points = tuple()
-        if 'ftype_points' in kwds:
-            ftype_points = tuple(kwds['ftype_points'])
-        elif 'ftype' in kwds:
-            ftype_points = tuple(kwds['ftype'])
-        if len(ftype_points)==n:
-            return self._element_constructor_(n, **kwds)
-
-        blocks = {}
-        for xx in self._signature.keys():
-            blocks[xx] = tuple()
-            blocks[xx+"_m"] = tuple()
-
-            if xx in kwds:
-                blocks[xx] = kwds[xx]
-            
-            for xx_missing in [xx+"_m", xx+"_missing", xx+"_miss"]:
-                if xx_missing in kwds:
-                    blocks[xx+"_m"] = kwds[xx_missing]
-        return Pattern(self, n, ftype_points, **blocks)
-    
-    P = Pattern
 
     def signature(self):
         return self._signature
@@ -507,7 +458,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``n`` -- integer; number of points of the flag
+        - ``n`` -- the size of the flag
         - ``**kwds`` -- can contain ftype_points, listing
             the points that will form part of the ftype;
             and can contain the blocks for each signature.
@@ -551,22 +502,41 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
             :func:`__init__` of :class:`Flag`
         """
-        if n==0:
-            #this is needed for sum to work
-            alg = FlagAlgebra(QQ, self)
-            return alg(0)
-        
+
+        if isinstance(n, Flag) or isinstance(n, Pattern):
+            if n.parent()==self:
+                return n
+            n = n.as_pattern()
+            return self.pattern(n.size(), ftype=n.ftype_points(), **n.as_pattern().blocks())
+
         ftype_points = tuple()
         if 'ftype_points' in kwds:
-            ftype_points = tuple(kwds['ftype_points'])
+            try:
+                ftype_points = tuple(kwds['ftype_points'])
+            except:
+                raise ValueError("The provided {} must be iterable".format('ftype_points'))
         elif 'ftype' in kwds:
-            ftype_points = tuple(kwds['ftype'])
+            try:
+                ftype_points = tuple(kwds['ftype'])
+            except:
+                raise ValueError("The provided {} must be iterable".format('ftype'))
         
         blocks = {}
         for xx in self._signature.keys():
             blocks[xx] = tuple()
+            unary = (self._signature[xx]["arity"]==1)
             if xx in kwds:
-                blocks[xx] = kwds[xx]
+                try:
+                    blocks[xx] = tuple(kwds[xx])
+                except:
+                    raise ValueError("The provided {} must be iterable".format(xx))
+                if unary:
+                    if len(blocks[xx])>0:
+                        try:
+                            tuple(blocks[xx][0])
+                        except:
+                            blocks[xx] = tuple([[aa] for aa in blocks[xx]])
+                        
         return self.element_class(self, n, ftype_points, **blocks)
     
     def empty_element(self):
@@ -598,6 +568,61 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     empty = empty_element
     
+    def pattern(self, n, **kwds):
+        ftype_points = tuple()
+        if 'ftype_points' in kwds:
+            try:
+                ftype_points = tuple(kwds['ftype_points'])
+            except:
+                raise ValueError("The provided {} must be iterable".format('ftype_points'))
+        elif 'ftype' in kwds:
+            try:
+                ftype_points = tuple(kwds['ftype'])
+            except:
+                raise ValueError("The provided {} must be iterable".format('ftype'))
+        if len(ftype_points)==n:
+            return self._element_constructor_(n, **kwds)
+        
+        blocks = {}
+        for xx in self._signature.keys():
+            blocks[xx] = tuple()
+            blocks[xx+"_m"] = tuple()
+            unary = self._signature[xx]["arity"]==1
+
+
+            if xx in kwds:
+                try:
+                    blocks[xx] = tuple(kwds[xx])
+                except:
+                    raise ValueError("The provided {} must be iterable".format(xx))
+                if unary:
+                    if len(blocks[xx])>0:
+                        try:
+                            tuple(blocks[xx][0])
+                        except:
+                            blocks[xx] = tuple([[aa] for aa in blocks[xx]])
+            
+            for xx_missing in [xx+"_m", xx+"_missing", xx+"_miss"]:
+                if xx_missing in kwds:
+                    blocks[xx+"_m"] = kwds[xx_missing]
+
+
+                    try:
+                        blocks[xx+"_m"] = tuple(kwds[xx_missing])
+                    except:
+                        raise ValueError("The provided {} must be iterable".format(xx_missing))
+                    if unary:
+                        if len(blocks[xx])>0:
+                            try:
+                                tuple(blocks[xx][0])
+                            except:
+                                blocks[xx+"_m"] = tuple([[aa] for aa in blocks[xx+"_m"]])
+        return Pattern(self, n, ftype_points, **blocks)
+    
+    p = pattern
+    P = pattern
+    Pattern = pattern
+
     def _an_element_(self, n=0, ftype=None):
         r"""
         Returns a random element
@@ -623,7 +648,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         """
         res = [self._an_element_()]
         return res
-
 
     #Persistend data management
     def _calcs_dir(self):
@@ -714,7 +738,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
     #Optimizing and rounding
 
-
     def blowup_construction(self, target_size, pattern_size, symbolic=False, symmetric=True, unordered=False, **kwargs):
         r"""
         Returns a blowup construction, based on a given pattern
@@ -789,7 +812,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 res += self(target_size, **blocks).afae() * coeff
         return res
     
-    def _adjust_table_phi(self, table_constructor, phi_vectors_exact, test=False):
+    def _adjust_table_phi(self, table_constructor, phi_vectors_exact, test=False, ring=QQ):
         r"""
         Helper to modify a table constructor, incorporating extra data from
         constructions (phi_vectors_exact)
@@ -823,7 +846,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 Zk = Z.kernel()
                 Zkern = Zk.basis_matrix()
                 if Zkern.nrows()>0:
-                    new_bases.append(matrix(QQ, Zkern * table_constructor[param][ii], sparse=True))
+                    new_bases.append(matrix(ring, Zkern * table_constructor[param][ii], sparse=True))
             table_constructor[param] = new_bases
 
         return table_constructor
@@ -913,6 +936,25 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         prev_data[1] = list(target)
         return prev_data
     
+    def _make_sdp_data_integer(self, sdp_data):
+        from sage.arith.functions import lcm
+        from sage.rings.integer import Integer
+        block_sizes, target, mat_inds, mat_vals = sdp_data
+
+        mat_vals_factor = 1
+        for xx in mat_vals:
+            if xx!=0:
+                mat_vals_factor = lcm(mat_vals_factor, QQ(xx).denominator())
+        mat_vals = [Integer(xx*mat_vals_factor) for xx in mat_vals]
+        
+        target_factor = 1
+        for xx in target:
+            if xx!=0:
+                target_factor = lcm(target_factor, QQ(xx).denominator())
+        target = [Integer(xx*target_factor) for xx in target]
+
+        return (block_sizes, target, mat_inds, mat_vals)
+
     def _get_relevant_ftypes(self, target_size):
         r"""
         Returns the ftypes useful for optimizing up to `target_size`
@@ -974,7 +1016,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         r"""
         Creates the data that holds the linear constraints
         """
-        
         
         base_flags = self.generate_flags(target_size)
         
@@ -1070,19 +1111,19 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return result, X_matrices_rounded, e_vector_rounded, slacks, [phi_vector_rounded]
     
     def _round_sdp_solution_phi(self, sdp_result, sdp_data, table_constructor, \
-                            constraints_data, phi_vectors_exact, denom=1024):
+                            constraints_data, phi_vectors_exact, denom=1024, ring=QQ):
         r"""
         Round the SDP results output to get something exact.
         """
         
         #unpack variables
         block_sizes, target_list_exact, mat_inds, mat_vals = sdp_data
-        target_vector_exact = vector(target_list_exact)
+        target_vector_exact = vector(ring, target_list_exact)
         flags_num, constraints_vals, positives_list_exact, one_vector = constraints_data
-        positives_matrix_exact = matrix(QQ, len(positives_list_exact), flags_num, positives_list_exact)
+        positives_matrix_exact = matrix(ring, len(positives_list_exact), flags_num, positives_list_exact)
         
         no_constr = len(phi_vectors_exact)==0
-        phi_vector_exact = vector([0]*positives_matrix_exact.ncols()) if no_constr else phi_vectors_exact[0]
+        phi_vector_exact = vector(ring, [0]*positives_matrix_exact.ncols()) if no_constr else phi_vectors_exact[0]
         
         one_vector_exact = positives_matrix_exact.rows()[-2] # find the one_vector from the equality constraint
         positives_matrix_exact = positives_matrix_exact[:-2, :] # remove the equality constraints
@@ -1090,7 +1131,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         flags_num = -block_sizes[-2] # same as |F_n|
 
         c_vector_approx = vector(sdp_result['X'][-2]) # dim: |F_n|, c vector, primal slack for flags
-        c_vector_rounded = vector(_round_list(c_vector_approx, method=0, denom=denom)) # as above but rounded
+        c_vector_rounded = vector(QQ, _round_list(c_vector_approx, method=0, denom=denom)) # as above but rounded
 
         # The F (FF) flag indecies where the c vector is zero/nonzero
         c_zero_inds = [FF for FF, xx in enumerate(c_vector_approx) if (abs(xx)<1e-6 or phi_vector_exact[FF]!=0)]
@@ -1103,7 +1144,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         phi_pos_vector_exact = positives_matrix_exact*phi_vector_exact # dim: m, witness that phi is positive
 
         e_vector_approx = vector(sdp_result['X'][-1][:-2]) # dim: m, the e vector, primal slack for positivitives
-        e_vector_rounded = vector(_round_list(e_vector_approx, method=0, denom=denom)) # as above but rounded
+        e_vector_rounded = vector(QQ, _round_list(e_vector_approx, method=0, denom=denom)) # as above but rounded
 
         # The f (ff) positivity constraints where the e vector is zero/nonzero
         e_zero_inds = [ff for ff, xx in enumerate(e_vector_approx) if (abs(xx)<1e-6 or phi_pos_vector_exact[ff]!=0)]
@@ -1113,10 +1154,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         bound_exact = target_vector_exact*phi_vector_exact 
         # the constraints for the flags that are exact
-        corrected_target_relevant_exact = vector([target_vector_exact[FF] - bound_exact for FF in c_zero_inds])
+        corrected_target_relevant_exact = vector(ring, [target_vector_exact[FF] - bound_exact for FF in c_zero_inds])
         # the d^f_F matrix, but only the relevant parts for the rounding
         # so F where c_F = 0 and f where e_f != 0
-        positives_matrix_relevant_exact = matrix(QQ, len(e_nonzero_inds), len(c_zero_inds), \
+        positives_matrix_relevant_exact = matrix(ring, len(e_nonzero_inds), len(c_zero_inds), \
                                                  [[positives_matrix_exact[ff][FF] for FF in c_zero_inds] for ff in e_nonzero_inds])
         # the e vector, but only the nonzero entries
         e_nonzero_list_rounded = [e_vector_rounded[ff] for ff in e_nonzero_inds]
@@ -1138,7 +1179,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         
         print("Rounding X matrices")
         
-        M_flat_relevant_matrix_exact = matrix(QQ, len(c_zero_inds), 0, 0, sparse=True)
+        M_flat_relevant_matrix_exact = matrix(ring, len(c_zero_inds), 0, 0, sparse=True)
         X_flat_vector_rounded = [] # The rounded X values flattened to a list
         block_index = 0
         block_info = []
@@ -1157,7 +1198,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                     M_FF = table[FF]
                     M_extra.append(_flatten_matrix((base * M_FF * base.T).rows(), doubled=True))
 
-                M_flat_relevant_matrix_exact = M_flat_relevant_matrix_exact.augment(matrix(M_extra))
+                M_flat_relevant_matrix_exact = M_flat_relevant_matrix_exact.augment(matrix(ring, M_extra))
             block_index += len(table_constructor[params])
 
 
@@ -1169,7 +1210,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # 
 
         M_matrix_final = M_flat_relevant_matrix_exact.augment(positives_matrix_relevant_exact.T)
-        x_vector_final = vector(X_flat_vector_rounded+e_nonzero_list_rounded)
+        x_vector_final = vector(ring, X_flat_vector_rounded+e_nonzero_list_rounded)
 
 
         # Correct the values of the x vector, based on the minimal L_2 norm
@@ -1182,7 +1223,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         #
 
         e_nonzero_vector_corr = x_vector_corr[-len(e_nonzero_inds):]
-        e_vector_corr = vector(QQ, positives_num, dict(zip(e_nonzero_inds, e_nonzero_vector_corr)))
+        e_vector_corr = vector(ring, positives_num, dict(zip(e_nonzero_inds, e_nonzero_vector_corr)))
         if len(e_vector_corr)>0 and min(e_vector_corr)<0:
             print("Linear coefficient is negative: {}".format(min(e_vector_corr)))
             return None
@@ -1197,7 +1238,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             for plus_index, base in enumerate(table_constructor[params]):
                 block_dim = block_sizes[block_index + plus_index]
                 X_ii_small, x_vector_corr = _unflatten_matrix(x_vector_corr, block_dim)
-                X_ii_small = matrix(X_ii_small)
+                X_ii_small = matrix(ring, X_ii_small)
                 
                 # verify semidefiniteness
                 if not X_ii_small.is_positive_semidefinite():
@@ -1325,7 +1366,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return cert_dict
     
     def optimize_problem(self, target_element, target_size, maximize=True, positives=None, \
-                         construction=None, file=None, exact=False, denom=1024):
+                         construction=None, file=None, exact=False, denom=1024, ring=QQ):
         r"""
         Try to maximize or minimize the value of `target_element`
         
@@ -1372,8 +1413,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             -OEGraphTheory: 4
         """
         from csdpy import solve_sdp
-        import sys
-        import io
         import time
 
         #
@@ -1434,7 +1473,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 phi_vector_original = initial_sol['y']
                 phi_vector_rounded, error_coeff = _round_adaptive(initial_sol['y'], one_vector)
                 if error_coeff<1e-6:
-                    alg = FlagAlgebra(QQ, self)
+                    alg = FlagAlgebra(self, QQ)
                     construction = alg(target_size, phi_vector_rounded)
                     phipr = str(construction)
                     print("The initial run gave an accurate looking construction")
@@ -1467,7 +1506,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         #
 
         print("Adjusting table with kernels from construction")
-        table_constructor = self._adjust_table_phi(table_constructor, phi_vectors_exact)
+        table_constructor = self._adjust_table_phi(table_constructor, phi_vectors_exact, ring=ring)
         sdp_data = self._target_to_sdp_data(target_vector_exact)
         sdp_data = self._tables_to_sdp_data(table_constructor, prev_data=sdp_data)
         sdp_data = self._constraints_to_sdp_data(constraints_data, prev_data=sdp_data)
@@ -1490,7 +1529,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         
         print("Starting the rounding of the result")
         rounding_output = self._round_sdp_solution_phi(final_sol, sdp_data, table_constructor, \
-                                                                         constraints_data, phi_vectors_exact, denom=denom)
+                                                                         constraints_data, phi_vectors_exact, denom=denom, ring=ring)
         if rounding_output==None:
             print("Rounding based on construction was unsuccessful")
             rounding_output = self._round_sdp_solution_no_phi(final_sol, sdp_data, table_constructor, \
@@ -1504,6 +1543,81 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     optimize = optimize_problem
     
+    def external_optimize(self, target_element, target_size, maximize=True, positives=None, \
+                         construction=None, file=None):
+        if (not isinstance(file, str)) or file=="":
+            raise ValueError("File name is invalid.")
+        if not file.endswith(".dat-s"):
+            if file.endswith(".dat"):
+                file += "-s"
+            else:
+                file += ".dat-s"
+        #
+        # Initial setup
+        #
+        base_flags = self.generate_flags(target_size)
+        print("Base flags generated, their number is {}".format(len(base_flags)))
+        mult = -1 if maximize else 1
+        target_vector_exact = (target_element.project()*(mult)<<(target_size - target_element.size())).values()
+        sdp_data = self._target_to_sdp_data(target_vector_exact)
+        
+        #
+        # Create the relevant ftypes
+        #
+        
+        ftype_data = self._get_relevant_ftypes(target_size)
+        print("The relevant ftypes are constructed, their number is {}".format(len(ftype_data)))
+        flags = [self.generate_flags(dat[0], dat[1]) for dat in ftype_data]
+        flag_sizes = [len(xx) for xx in flags]
+        print("Block sizes before symmetric/asymmetric change is applied: {}".format(flag_sizes))
+        
+        #
+        # Create the table constructor and add it to sdp_data
+        #
+        
+        table_constructor = self._create_table_constructor(ftype_data, target_size)
+        if not (construction==None or construction==[]):
+            if isinstance(construction, FlagAlgebraElement):
+                phi_vectors_exact = [construction.values()]
+            else:
+                phi_vectors_exact = [xx.values() for xx in construction]
+            print("Adjusting table with kernels from construction")
+            table_constructor = self._adjust_table_phi(table_constructor, phi_vectors_exact)
+        sdp_data = self._tables_to_sdp_data(table_constructor, prev_data=sdp_data)
+        print("Tables finished")
+
+        #
+        # Create constraints data and add it to sdp_data
+        #
+        
+        constraints_data = self._create_constraints_data(positives, target_element, target_size)
+        sdp_data = self._constraints_to_sdp_data(constraints_data, prev_data=sdp_data)
+        print("Constraints finished")
+
+
+        #
+        # Make sdp data integer and write it to a file
+        #
+        sdp_data = self._make_sdp_data_integer(sdp_data)
+        
+        with open(file, "a") as file:
+            block_sizes, target, mat_inds, mat_vals = sdp_data
+
+            file.write("{}\n{}\n".format(len(target), len(block_sizes)))
+            file.write(" ".join(map(str, block_sizes)) + "\n")
+            for xx in target:
+                file.write("%.1e " % xx)
+            file.write("\n")
+
+            for ii in range(len(mat_vals)):
+                file.write("{} {} {} {} {}\n".format(
+                    mat_inds[ii*4 + 0],
+                    mat_inds[ii*4 + 1],
+                    mat_inds[ii*4 + 2],
+                    mat_inds[ii*4 + 3],
+                    "%.1e" % mat_vals[ii]
+                ))
+
     def verify_certificate(self, file_or_cert, target_element, target_size, maximize=True, positives=None, construction=None):
         r"""
         Verifies the certificate provided by the optimizer written to `file`
@@ -1638,8 +1752,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         if max_arity==1 or n<max_arity:
             return 1
         
-        
-        
         check_bits = 0
         for xx in self._signature:
             arity =self._signature[xx]["arity"]
@@ -1650,7 +1762,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 check_bits += factor*(binomial(n-2, arity-2))
         
         prev_guess = len(self.generate(n-1))
-        return binomial(prev_guess + 2 - 1, 2) * (2**check_bits)
+        sign_perm = len(self._signature_perms())
+        return binomial(prev_guess + 1, 2) * (2**check_bits) * sign_perm
     
     def generate_flags(self, n, ftype=None, run_bound=500000):
         r"""
@@ -1711,12 +1824,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             # Not ftype generation needed, just generate inductively
             if run_bound==infinity or n<=3:
                 prev = self.generate_flags(n-1, run_bound=run_bound)
-                ret = inductive_generator(n, self, prev, self._signature, excluded)
+                ret = inductive_generator(n, self, prev, excluded)
             else:
                 guess = self._guess_number(n)
                 if guess < run_bound:
                     prev = self.generate_flags(n-1, run_bound=run_bound)
-                    ret = inductive_generator(n, self, prev, self._signature, excluded)
+                    ret = inductive_generator(n, self, prev, excluded)
                 else:
                     confirm = input("This might take a while: {}. Continue? y/n\n".format(guess))
                     if "y" in confirm.lower():
@@ -1789,6 +1902,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     match = match_pattern
 
+    @lru_cache(maxsize=None)
     def _signature_perms(self):
         terms = self._signature.keys()
         groups = [self._signature[xx]["group"] for xx in terms]
@@ -1811,13 +1925,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 flat_perm.extend(perm)
             all_permutations.append(tuple(flat_perm))
         return all_permutations
-
+    
     #Generating tables
-    def _try_load_table(self, N, n1, n2, large_ftype, ftype_inj):
-        excluded = tuple([xx for xx in self._excluded if xx.size()<=N])
-        key = ("table", self._serialize(excluded=excluded), \
-               N, n1, n2, large_ftype._serialize(), ftype_inj)
-        return self._load(key=key)
 
     def mul_project_table(self, n1, n2, large_ftype, ftype_inj=None, target_size=None):
         r"""
@@ -1913,7 +2022,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         norm = falling_factorial(N - small_size, large_size - small_size) 
         norm *= binomial(N - large_size, n1 - large_size)
-        
         ret = tuple([ \
             MatrixArgs(QQ, mat[0], mat[1], entries=mat[2]).matrix()/norm for mat in mats])
         
@@ -1956,18 +2064,31 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 Theory = CombinatorialTheory
 
 #Pre-defined theories
-G = Theory("Graph")
-DG = Theory("DiGraph", arity=2, is_ordered=True)
-TG = Theory("ThreeGraph", arity=3)
-C0 = Theory("Color", relation_name="C0", arity=1)
-C1 = Theory("Color", relation_name="C1", arity=1)
-C2 = Theory("Color", relation_name="C2", arity=1)
-C3 = Theory("Color", relation_name="C3", arity=1)
-C4 = Theory("Color", relation_name="C4", arity=1)
-C5 = Theory("Color", relation_name="C5", arity=1)
-C6 = Theory("Color", relation_name="C6", arity=1)
-C7 = Theory("Color", relation_name="C7", arity=1)
-DTG = Theory("DiThreeGraph", arity=3, is_ordered=True)
+GraphTheory = Theory("Graph")
+DiGraphTheory = Theory("DiGraph", arity=2, is_ordered=True)
+ThreeGraphTheory = Theory("ThreeGraph", arity=3)
+DiThreeGraphTheory = Theory("DiThreeGraph", arity=3, is_ordered=True)
+FourGraphTheory = Theory("FourGraph", arity=4)
+Color0 = Theory("Color0", relation_name="C0", arity=1)
+Color1 = Theory("Color1", relation_name="C1", arity=1)
+Color2 = Theory("Color2", relation_name="C2", arity=1)
+Color3 = Theory("Color3", relation_name="C3", arity=1)
+Color4 = Theory("Color4", relation_name="C4", arity=1)
+Color5 = Theory("Color5", relation_name="C5", arity=1)
+Color6 = Theory("Color6", relation_name="C6", arity=1)
+Color7 = Theory("Color7", relation_name="C7", arity=1)
+
+#Pre-defined symmetries
+Cyclic3 = [
+    [0, 1], [1, 2], [2, 0],
+    [3, 4], [5, 6], [7, 8],
+    [1, 7], [1, 6],
+    [2, 4], [2, 5],
+    [0, 8], [0, 3],
+    [2, 3], [1, 5], [0, 7]
+]
+FullSymmetry = True
+NoSymmetry = False
 
 #Primitive rounding methods
 def _flatten_matrix(mat, doubled=False):
@@ -2105,13 +2226,11 @@ class FlagAlgebraElement(Element):
 
             :func:`FlagAlgebra._element_constructor_`
         """
-        self._flags = parent.generate_flags(n)
-        if len(values)!=len(self._flags):
+        if len(values)!=parent.get_size(n):
             raise ValueError('The coefficients must have the same length as the number of flags')
         self._n = n
         base = parent.base()
         self._values = vector(base, values, sparse=True)
-        self._ftype = parent.ftype()
         Element.__init__(self, parent)
     
     def ftype(self):
@@ -2140,7 +2259,7 @@ class FlagAlgebraElement(Element):
             :func:`ftype` in :class:`FlagAlgebra`
             :func:`ftype` in :class:`Flag`
         """
-        return self._ftype
+        return self.parent().ftype()
     
     def size(self):
         r"""
@@ -2207,7 +2326,7 @@ class FlagAlgebraElement(Element):
             sage: g.afae().flags() == g.theory().generate_flags(g.size(), g.ftype())
             True
         """
-        return self._flags
+        return self.parent().generate_flags(self._n)
     
     def values(self):
         r"""
@@ -2305,8 +2424,8 @@ class FlagAlgebraElement(Element):
             :func:`Flag.afae`
             :func:`__len__`
         """
-        for ii in range(len(self)):
-            yield (self._values[ii], self._flags[ii])
+        for ii, fl in enumerate(self.parent().generate_flags(self.size())):
+            yield (self._values[ii], fl)
     
     def _repr_(self):
         r"""
@@ -2350,10 +2469,9 @@ class FlagAlgebraElement(Element):
         sttrl = ['Flag Algebra Element over {}'.format(self.parent().base())]
         strs = [str(xx) for xx in self.values()]
         maxstrlen = max([len(xx) for xx in strs])
-        flgs = self.flags()
-        for ii in range(len(self)):
+        for ii, fl in enumerate(self.parent().generate(self.size())):
             if len(self)<10:
-                sttrl.append(('{:<'+str(maxstrlen)+'} - {}').format(strs[ii], str(flgs[ii])))
+                sttrl.append(('{:<'+str(maxstrlen)+'} - {}').format(strs[ii], str(fl)))
             else:
                 include = True
                 try: 
@@ -2361,9 +2479,34 @@ class FlagAlgebraElement(Element):
                 except: 
                     include = self.values()[ii]!=0
                 if include:
-                    sttrl.append(('{:<'+str(maxstrlen)+'} - {}').format(strs[ii], str(flgs[ii])))
+                    sttrl.append(('{:<'+str(maxstrlen)+'} - {}').format(strs[ii], str(fl)))
         return "\n".join(sttrl)
     
+    def base(self):
+        return self.parent().base()
+
+    def theory(self):
+        return self.parent().theory()
+
+    def custom_coerce(self, other):
+        if isinstance(other, Flag) or isinstance(other, Pattern):
+            if self.ftype()!=other.ftype():
+                raise ValueError("The ftypes must agree.")
+            alg = self.parent()
+            return (self, alg(other))
+        elif isinstance(other, FlagAlgebraElement):
+            if self.ftype()!=other.ftype():
+                raise ValueError("The ftypes must agree.")
+            sbase = self.base()
+            obase = other.base()
+            base = get_coercion_model().common_parent(sbase, obase)
+            alg = FlagAlgebra(self.theory(), base, self.ftype())
+            return (alg(self), alg(other))
+        else:
+            base = get_coercion_model().common_parent(self.base(), other.parent())
+            alg = FlagAlgebra(self.theory(), base, self.ftype())
+            return (alg(self), alg(base(other)))
+
     def as_flag_algebra_element(self):
         r"""
         Returns self.
@@ -2441,6 +2584,9 @@ class FlagAlgebraElement(Element):
         vals = (self<<(nm-self.size())).values() - (other<<(nm-other.size())).values()
         return self.__class__(self.parent(), nm, vals)
     
+    def _neg_(self):
+        return self.__class__(self.parent(), self.size(), self.values()*(-1))
+
     def _mul_(self, other):
         r"""
         Multiplies two elements together
@@ -2566,13 +2712,21 @@ class FlagAlgebraElement(Element):
         return self.__class__(self.parent(), ressize, vals)
     
     def __getitem__(self, flag):
-        if (not isinstance(flag, Flag)) or (not flag.ftype()==self.ftype()) or (not self.size()==flag.size()):
-            raise TypeError("Indecies must be Flags with matching ftype and size, not {}".format(str(type(flag))))
-        return self.values()[self.flags().index(flag)]
+        if isinstance(flag, Flag):
+            ind = self.parent().get_index(flag)
+        elif isinstance(flag, Integer) and 0 <= flag and flag < self.parent().get_size(self.size()):
+            ind = flag
+        if ind == -1:
+            raise TypeError("Indecies must be Flags with matching ftype and size, or integers. Not {}".format(str(type(flag))))
+        return self._values[ind]
     
     def __setitem__(self, flag, value):
-        if (not isinstance(flag, Flag)) or (not flag.ftype()==self.ftype()) or (not self.size()==flag.size()):
-            raise TypeError("Indecies must be Flags with matching ftype and size, not {}".format(str(type(flag))))
+        if isinstance(flag, Flag):
+            ind = self.parent().get_index(flag)
+        elif isinstance(flag, Integer) and 0 <= flag and flag < self.parent().get_size(self.size()):
+            ind = flag
+        if ind == -1:
+            raise TypeError("Indecies must be Flags with matching ftype and size, or integers. Not {}".format(str(type(flag))))
         self.values()[self.flags().index(flag)] = value
     
     def project(self, ftype_inj=tuple()):
@@ -2657,7 +2811,7 @@ class FlagAlgebraElement(Element):
         table = self.parent().mpt(self.size(), other.size(), ftype_inj=ftype_inj, target_size=N)
         vals = [self.values() * mat * other.values() for mat in table]
         
-        TargetAlgebra = FlagAlgebra(self.parent().base(), self.parent().combinatorial_theory(), new_ftype)
+        TargetAlgebra = FlagAlgebra(self.parent().combinatorial_theory(), self.parent().base(), new_ftype)
         return TargetAlgebra(N, vals)
     
     def density(self, other):
@@ -2706,7 +2860,7 @@ class FlagAlgebraElement(Element):
         nvec = vector([xx.subs(repl) for xx in valvec])
         return self.parent()(self.size(), nvec)
 
-    def subs(self, args):
+    def subs(self, args, ring=QQ):
         r"""
         Symbolic substitution.
         """
@@ -2720,7 +2874,7 @@ class FlagAlgebraElement(Element):
             return self
         repl = {gs[ii]:args[ii] for ii in range(min(len(args), len(gs)))}
         nvec = vector([xx.subs(repl) for xx in valvec])
-        retalg = FlagAlgebra(QQ, self.parent().theory())
+        retalg = FlagAlgebra(self.parent().theory(), ring)
         return retalg(self.size(), nvec)
 
     def derivative(self, times):
@@ -2746,7 +2900,7 @@ class FlagAlgebraElement(Element):
             rvec.append(aval)
         return self.parent()(self.size(), vector(rvec))
 
-    def derivatives(self, point):
+    def derivatives(self, point, ring=QQ):
         r"""
         Returns all symbolic derivatives evaluated at a given point.
         """
@@ -2772,7 +2926,7 @@ class FlagAlgebraElement(Element):
                         times.append(ll)
         res = []
         for xx in times:
-            der = self.derivative(xx).subs(point)
+            der = self.derivative(xx).subs(point, ring=ring)
             minnz = 1000000
             for xx in der.values():
                 if int(xx)!=0:
@@ -2834,7 +2988,8 @@ class FlagAlgebraElement(Element):
         return all([richcmp(v1[ii], v2[ii], op) for ii in range(len(v1))])
 
 class FlagAlgebra(Parent, UniqueRepresentation):
-    def __init__(self, base, theory, ftype=None):
+    
+    def __init__(self, theory, base=QQ, ftype=None):
         r"""
         Initialize a FlagAlgebra
 
@@ -2854,13 +3009,13 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         Create the FlagAlgebra for GraphTheory (without any ftype) ::
 
             sage: from sage.algebras.flag_algebras import *
-            sage: GraphFlagAlgebra = FlagAlgebra(QQ, GraphTheory)
+            sage: GraphFlagAlgebra = FlagAlgebra(GraphTheory, QQ)
             sage: GraphFlagAlgebra
             Flag Algebra with Ftype on 0 points with edges=[] over Rational Field
         
         Create the FlagAlgebra for TournamentTheory with point ftype ::
 
-            sage: FlagAlgebra(QQ, TournamentTheory, TournamentTheory(1, ftype_points=[0]))
+            sage: FlagAlgebra(TournamentTheory, QQ, TournamentTheory(1, ftype_points=[0]))
             Flag Algebra with Ftype on 1 points with edges=[] over Rational Field
         """
         if ftype==None:
@@ -2874,10 +3029,34 @@ class FlagAlgebra(Parent, UniqueRepresentation):
             raise ValueError('The base must contain the rationals')
         self._theory = theory
         self._ftype = ftype
+        self._index_set = {}
+        self._size_set = {}
         Parent.__init__(self, base)
     
     Element = FlagAlgebraElement
     
+    def get_index_set(self, n):
+        if n not in self._index_set:
+            fls = self.generate_flags(n)
+            fldict = dict(zip(fls, range(len(fls))))
+            self._index_set[n] = fldict
+        return self._index_set[n]
+
+    def get_index(self, flag):
+        if not isinstance(flag, Flag):
+            return -1
+        if flag.ftype()!=self.ftype():
+            return -1
+        indn = self.get_index_set(flag.size())
+        if flag not in indn:
+            return -1
+        return indn[flag]
+
+    def get_size(self, n):
+        if n not in self._size_set:
+            self._size_set[n] = len(self.generate_flags(n))
+        return self._size_set[n]
+
     def _element_constructor_(self, *args, **kwds):
         r"""
         Constructs a FlagAlgebraElement with the given parameters
@@ -2897,7 +3076,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         Construct from a constant ::
 
             sage: from sage.algebras.flag_algebras import *
-            sage: FA = FlagAlgebra(QQ, GraphTheory)
+            sage: FA = FlagAlgebra(GraphTheory, QQ)
             sage: FA(3)
             Flag Algebra Element over Rational Field
             3 - Ftype on 0 points with edges=[]
@@ -2913,7 +3092,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
             
         Construct from a FlagAlgebraElement with smaller base ::
         
-            sage: FAX = FlagAlgebra(QQ['x'], GraphTheory)
+            sage: FAX = FlagAlgebra(GraphTheory, QQ['x'])
             sage: FAX(el)
             Flag Algebra Element over Univariate Polynomial Ring in x over Rational Field
             1 - Flag on 2 points, ftype from [] with edges=[]
@@ -2934,10 +3113,19 @@ class FlagAlgebra(Parent, UniqueRepresentation):
             v = args[0]
             base = self.base()
             if isinstance(v, Flag):
-                if v.ftype()==self.ftype():
-                    flags = self.generate_flags(v.size())
-                    vec = vector(base, [(1 if xx==v else 0) for xx in flags], sparse=True)
-                    return self.element_class(self, v.size(), vec)
+                ind = self.get_index(v)
+                size = self.get_size(v.size())
+                if ind!=-1:
+                    return self.element_class(
+                        self, v.size(), vector(self.base(), size, {ind:1})
+                        )
+            elif isinstance(v, Pattern):
+                if self.ftype() == v.ftype():
+                    dvec = {self.get_index(xx):1 for xx in v.compatible_flags()}
+                    size = self.get_size(v.size())
+                    return self.element_class(
+                        self, v.size(), vector(self.base(), size, dvec)
+                        )
             elif isinstance(v, FlagAlgebraElement):
                 if v.ftype()==self.ftype():
                     if self.base()==v.parent().base():
@@ -2947,7 +3135,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
                         return self.element_class(self, v.size(), vals)
             elif v in base:
                 return self.element_class(self, self.ftype().size(), vector(base, [v], sparse=True))
-            raise ValueError('Can\'t construct an element from {}'.format(v))
+            raise ValueError('Can\'t construct an element from {} for the theory\n{}'.format(v, self))
         return self.element_class(self, *args, **kwds)
     
     def _coerce_map_from_(self, S):
@@ -2968,7 +3156,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         Constructs the pushout FlagAlgebra
         """
         if S.has_coerce_map_from(self.base()):
-            return FlagAlgebra(S, self.theory(), self.ftype())
+            return FlagAlgebra(self.theory(), S, self.ftype())
         return None
     
     def _repr_(self):
@@ -2978,7 +3166,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.flag_algebras import *
-            sage: FlagAlgebra(QQ, GraphTheory)
+            sage: FlagAlgebra(GraphTheory, QQ)
             Flag Algebra with Ftype on 0 points with edges=[] over Rational Field
 
         .. SEEALSO::
@@ -2997,7 +3185,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         is empty ::
 
             sage: from sage.algebras.flag_algebras import *
-            sage: FA = FlagAlgebra(QQ, GraphTheory)
+            sage: FA = FlagAlgebra(GraphTheory, QQ)
             sage: FA.ftype()
             Ftype on 0 points with edges=[]
 
@@ -3023,7 +3211,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         This is the same as provided in the constructor ::
 
             sage: from sage.algebras.flag_algebras import *
-            sage: FA = FlagAlgebra(QQ, GraphTheory)
+            sage: FA = FlagAlgebra(GraphTheory, QQ)
             sage: FA.theory()
             Theory for Graph
 
@@ -3045,7 +3233,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.flag_algebras import *
-            sage: FA = FlagAlgebra(QQ, GraphTheory)
+            sage: FA = FlagAlgebra(GraphTheory, QQ)
             sage: FA.base_ring()
             Rational Field
 
@@ -3064,7 +3252,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: from sage.algebras.flag_algebras import *
-            sage: FA = FlagAlgebra(QQ, GraphTheory)
+            sage: FA = FlagAlgebra(GraphTheory, QQ)
             sage: FA.characteristic()
             0
 
@@ -3089,6 +3277,8 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         """
         return self.theory().generate_flags(n, self.ftype())
     
+    generate = generate_flags
+
     def _an_element_(self):
         r"""
         Returns an element
