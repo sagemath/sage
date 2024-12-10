@@ -57,19 +57,17 @@ AUTHORS:
 # ****************************************************************************
 from copy import copy
 
-from sage.structure.sage_object import SageObject
-from sage.rings.integer import Integer
-from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.misc.prandom import randint, random, sample
-from sage.modules.free_module_element import vector
-from sage.misc.abstract_method import abstract_method
 from sage.categories.cartesian_product import cartesian_product
 from sage.categories.fields import Fields
-from sage.modules.free_module import VectorSpace, span
 from sage.functions.other import binomial
 from sage.matrix.constructor import matrix
-from sage.coding.linear_rank_metric import from_matrix_representation
-from copy import copy
+from sage.misc.abstract_method import abstract_method
+from sage.misc.prandom import randint, random, sample
+from sage.modules.free_module import VectorSpace, span
+from sage.modules.free_module_element import vector
+from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.rings.integer import Integer
+from sage.structure.sage_object import SageObject
 
 
 def random_error_vector(n, F, error_positions):
@@ -562,8 +560,8 @@ class ErrorErasureChannel(Channel):
 
     def transmit_unsafe(self, message):
         r"""
-        Return ``message`` with as many errors as ``self._number_errors`` in it, 
-        and as many erasures as ``self._number_erasures`` in it.
+        Return ``message`` with as many errors as ``self._number_errors``
+        in it, and as many erasures as ``self._number_erasures`` in it.
 
         If ``self._number_errors`` was passed as a tuple for the number of errors, it will
         pick a random integer between the bounds of the tuple and use it as the number of errors.
@@ -871,7 +869,7 @@ class StaticRankErrorChannel(Channel):
         over Finite Field in z8 of size 2^8
     """
 
-    def __init__(self, space, rank_errors, relative_field = None):
+    def __init__(self, space, rank_errors, relative_field=None):
         r"""
         TESTS:
 
@@ -921,7 +919,7 @@ class StaticRankErrorChannel(Channel):
         if not relative_field:
             self._relative_field = self._base_field.prime_subfield()
         else:
-            if not relative_field in Fields():
+            if relative_field not in Fields():
                 raise ValueError("relative_field must be a Field and %s is not." % relative_field)
             if not relative_field.is_subring(self._base_field):
                 raise ValueError("%s is not an extension of %s" % (self._base_field, relative_field))
@@ -1002,7 +1000,6 @@ class StaticRankErrorChannel(Channel):
             2
         """
         rank_errors = randint(*self.rank_errors())
-        Fqm = self._base_field
         Fq = self._relative_field
         V = self._column_space
         n = self.input_space().dimension()
