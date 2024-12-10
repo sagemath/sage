@@ -2199,16 +2199,16 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                 factor_diag = diagonal_matrix([conj_square_root(d) for d in diag])
                 return factor_diag*A.inverse()
 
-            def hat(f,partition):
+            def hat(g, partition):
                 specht_module = self.specht_module(partition)
                 rho = specht_module.representation_matrix
                 U = invariant_symmetric_bilinear_matrix(partition)[0]
                 A = base_change_hermitian(U)
-                sqrt_unitary_factor = sqrt(F(specht_module.dimension()/G.cardinality()))
-                return sqrt_unitary_factor*sum(f(g)*A*rho(g)*A.inverse() for g in G)
+                sqrt_unitary_factor = sqrt(F(specht_module.dimension() / G.cardinality()))
+                return sqrt_unitary_factor * f(g) * A * rho(g) * A.inverse()
 
-            delta = lambda s: lambda t: 1 if t == s else 0
-            fourier_transform = [flatten([hat(delta(g),partition).list() for partition in Partitions(G.degree())]) for g in G]
+            PGdeg = Partitions(G.degree())
+            fourier_transform = [flatten([hat(g, partition).list() for partition in PGdeg]) for g in G]
             dft_matrix = matrix(F,fourier_transform).transpose()
             sign_diag = (dft_matrix*dft_matrix.H).diagonal()
             factor_diag = diagonal_matrix([conj_square_root(d) for d in sign_diag])
