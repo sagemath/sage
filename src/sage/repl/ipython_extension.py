@@ -395,14 +395,13 @@ class SageMagics(Magics):
             ....: ''')
             UsageError: unrecognized arguments: --help
 
-        Test invalid quotes (see :mod:`sage.repl.interpreter` for explanation of the dummy line)::
+        Test invalid quotes::
 
             sage: # needs sage.misc.cython
-            sage: print("dummy line"); shell.run_cell('''
+            sage: shell.run_cell('''
             ....: %%cython --a='
             ....: print(1)
             ....: ''')
-            dummy line
             ...
             ValueError...Traceback (most recent call last)
             ...
