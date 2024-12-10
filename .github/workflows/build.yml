@@ -120,7 +120,7 @@ jobs:
             doctests:
               - 'src/**/*.{py,pyx,pxd,pxi,sage,spyx,rst,tex}'
               - '!src/{setup,conftest*}.py'
-              - '!src/sage/doctests/tests/*'
+              - '!src/sage/doctest/tests/*'
 
       - name: Determine targets to build
         id: build-targets
