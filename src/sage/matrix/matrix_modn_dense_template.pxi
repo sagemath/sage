@@ -3241,4 +3241,3 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             [0 1]
         """
         return self._entries[j+i*self._ncols] == 0
-

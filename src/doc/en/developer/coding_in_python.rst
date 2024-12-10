@@ -785,13 +785,13 @@ the procedure below:
     class NewClass:
         ...
 
-    OldClass = NewClass   # OldClass is deprecated. See Issue 12345.
+    OldClass = NewClass   # OldClass is deprecated. See Issue #12345.
 
 * **Removing a class:**  add a comment:
 
   .. CODE-BLOCK:: python
 
-    # OldClass is deprecated. See Issue 12345.
+    # OldClass is deprecated. See Issue #12345.
 
     class OldClass:
 
