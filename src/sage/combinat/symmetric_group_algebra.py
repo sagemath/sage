@@ -2130,7 +2130,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                         K = K.extension(sqrt(n).minpoly(),names=gen_name)
                     if not n.is_rational() and sqrt(n).minpoly().is_irreducible():
                         gen_name = "deg" + str(n.minpoly().degree()) + "index" + str(list(set(required_square_roots)).index(n))
-                        K = K.extension(sqrt(n).minpoly(),names=gen_name)
+                        K = K.extension(sqrt(n).minpoly(), names=gen_name)
                 return K
 
             def unitary_change_of_basis(partition, K):
