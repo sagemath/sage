@@ -25,4 +25,6 @@ To import these names into the global namespace, use::
 from sage.misc.lazy_import import lazy_import as _lazy_import
 _lazy_import('sage.coding.channel', ['ErrorErasureChannel',
                                      'QarySymmetricChannel',
-                                     'StaticErrorRateChannel'])
+                                     'StaticErrorRateChannel',
+                                     'StaticRankErrorChannel',
+                                     ])
