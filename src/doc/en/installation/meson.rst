@@ -34,7 +34,6 @@ Assume we're starting from a clean repo and a fully set up conda environment:
 
         $ mamba env create --file environment-3.11-win.yml --name sage-dev
         $ conda activate sage-dev
-        $ pip install gmpy2 cysignals
         $ set LIB=%CONDA_PREFIX%\Library\lib;%LIB%
 
     Windows support is experimental and not fully working yet.        
