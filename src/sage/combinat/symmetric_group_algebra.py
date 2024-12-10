@@ -2179,7 +2179,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                 for g in G:
                     total_system = total_system.stack(augmented_matrix(g))
                 null_space = total_system.right_kernel()
-                U_mats = [matrix(F,d_rho,d_rho,b) for b in null_space.basis()]
+                U_mats = [matrix(F, d_rho, d_rho, b) for b in null_space.basis()]
                 return U_mats
 
             def conj_square_root(u):
