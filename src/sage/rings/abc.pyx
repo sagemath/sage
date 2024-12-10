@@ -1,6 +1,8 @@
 """
 Abstract base classes for rings
 """
+
+
 class NumberField_quadratic(Field):
     r"""
     Abstract base class for :class:`~sage.rings.number_field.number_field.NumberField_quadratic`.
