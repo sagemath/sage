@@ -18,8 +18,8 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/stats',
     install: true,
-    include_directories: [inc_cpython, inc_numpy],
-    dependencies: [py_dep, cysignals, gmp],
+    include_directories: [inc_cpython],
+    dependencies: [py_dep, cysignals, gmp, numpy],
   )
 endforeach
 
