@@ -2161,9 +2161,9 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                 specht_module = self.specht_module(partition)
                 rho = specht_module.representation_matrix
                 d_rho = specht_module.dimension()
-                R = PolynomialRing(F,'u',d_rho**2)
+                R = PolynomialRing(F, 'u', d_rho**2)
                 U_vars = R.gens()
-                U = matrix(R,d_rho,d_rho,U_vars)
+                U = matrix(R, d_rho, d_rho, U_vars)
 
                 def augmented_matrix(g):
                     rho_g = rho(g)
