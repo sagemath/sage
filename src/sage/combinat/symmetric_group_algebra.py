@@ -2100,7 +2100,6 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         """
         from sage.matrix.special import diagonal_matrix
         from sage.misc.functional import sqrt
-        from sage.misc.flatten import flatten
 
         G = self.group()
         F = self.base_ring()
@@ -2208,7 +2207,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                 return sqrt_unitary_factor * f(g) * A * rho(g) * A.inverse()
 
             PGdeg = Partitions(G.degree())
-            fourier_transform = [flatten([hat(g, partition).list() for partition in PGdeg]) for g in G]
+            fourier_transform = [[x for partition in PGdeg for x in hat(g, partition).list()] for g in G]
             dft_matrix = matrix(F, fourier_transform).transpose()
             sign_diag = (dft_matrix * dft_matrix.H).diagonal()
             factor_diag_inv = diagonal_matrix([~conj_square_root(d) for d in sign_diag])
