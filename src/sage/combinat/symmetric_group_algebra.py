@@ -2175,7 +2175,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                             row = [linear_expression.coefficient(u) for u in U_vars]
                             augmented_system.append(row)
                     return matrix(F, augmented_system)
-                total_system = matrix(F,0,d_rho**2)
+                total_system = matrix(F, 0, d_rho**2)
                 for g in G:
                     total_system = total_system.stack(augmented_matrix(g))
                 null_space = total_system.right_kernel()
