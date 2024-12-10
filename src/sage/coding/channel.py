@@ -855,20 +855,20 @@ class StaticRankErrorChannel(Channel):
     to any transmitted message::
 
         sage: n_err = 2
-        sage: Chan = channels.StaticRankErrorChannel(GF(59)^40, n_err)
+        sage: Chan = channels.StaticRankErrorChannel(GF(256)^6, n_err)
         sage: Chan
-        Channel creating error of rank 2 over Finite Field of size 59,
-        of input and output space Vector space of dimension 40
-        over Finite Field of size 59
+        Channel creating error of rank 2 over Finite Field of size 2,
+        of input and output space Vector space of dimension 6
+        over Finite Field in z8 of size 2^8
 
     We can also pass a tuple for the number of errors::
 
-        sage: n_err = (1, 10)
-        sage: Chan = channels.StaticRankErrorChannel(GF(59)^40, n_err)
+        sage: n_err = (1, 4)
+        sage: Chan = channels.StaticRankErrorChannel(GF(256)^6, n_err)
         sage: Chan
-        Channel creating error of rank between 1 and 10 over Finite Field
-        of size 59, of input and output space Vector space of dimension 40
-        over Finite Field of size 59
+        Channel creating error of rank between 1 and 4 over Finite Field
+        of size 2, of input and output space Vector space of dimension 6
+        over Finite Field in z8 of size 2^8
     """
 
     def __init__(self, space, rank_errors, relative_field = None):
@@ -876,13 +876,17 @@ class StaticRankErrorChannel(Channel):
         TESTS:
 
         If the number of errors exceeds the dimension of the input space,
-        it will return an error::
+        or the field extension degree, then an error is raised::
 
-            sage: n_err = 42
-            sage: Chan = channels.StaticRankErrorChannel(GF(59)^40, n_err)
+            sage: n_err = 7
+            sage: channels.StaticRankErrorChannel(GF(256)^6, n_err)
             Traceback (most recent call last):
             ...
-            ValueError: There might be more errors than the dimension of the input space
+            ValueError: There might be errors of rank larger than the dimension of the input space.
+            sage: channels.StaticRankErrorChannel(GF(64)^8, n_err)
+            Traceback (most recent call last):
+            ...
+            ValueError: There might be errors of rank larger than the field extension degree.
 
         If ``relative_field`` is specified and is not a subfield of the base field,
         it will return an error::
@@ -911,7 +915,7 @@ class StaticRankErrorChannel(Channel):
             raise ValueError("rank_errors must be a tuple, a list, an Integer or a Python int")
         super(StaticRankErrorChannel, self).__init__(space, space)
         if rank_errors[1] > space.dimension():
-            raise ValueError("There might be more errors than the dimension of the input space")
+            raise ValueError("There might be errors of rank larger than the dimension of the input space.")
         self._rank_errors = rank_errors
         self._base_field = space.base_field()
         if not relative_field:
@@ -922,6 +926,12 @@ class StaticRankErrorChannel(Channel):
             if not relative_field.is_subring(self._base_field):
                 raise ValueError("%s is not an extension of %s" % (self._base_field, relative_field))
             self._relative_field = relative_field
+        V, vec_to_field, field_to_vec = self._base_field.vector_space(self._relative_field)
+        self._column_space = V
+        self._extension_degree = V.dimension()
+        if rank_errors[1] > self._extension_degree:
+            raise ValueError("There might be errors of rank larger than the field extension degree.")
+        self._map_to_field = vec_to_field
 
     def _repr_(self):
         r"""
@@ -930,11 +940,11 @@ class StaticRankErrorChannel(Channel):
         EXAMPLES::
 
             sage: n_err = 2
-            sage: Chan = channels.StaticRankErrorChannel(GF(59)^40, n_err)
+            sage: Chan = channels.StaticRankErrorChannel(GF(256)^6, n_err)
             sage: Chan
-            Channel creating error of rank 2 over Finite Field of size 59,
-            of input and output space Vector space of dimension 40
-            over Finite Field of size 59
+            Channel creating error of rank 2 over Finite Field of size 2,
+            of input and output space Vector space of dimension 6
+            over Finite Field in z8 of size 2^8
         """
         no_err = self.rank_errors()
         return "Channel creating error of rank %s over %s, of input and output space %s"\
@@ -947,11 +957,11 @@ class StaticRankErrorChannel(Channel):
         EXAMPLES::
 
             sage: n_err = 2
-            sage: Chan = channels.StaticRankErrorChannel(GF(59)^40, n_err)
+            sage: Chan = channels.StaticRankErrorChannel(GF(256)^6, n_err)
             sage: latex(Chan)
             \textnormal{Channel creating error of rank 2 over Finite Field
-            of size 59, of input and output space Vector space of dimension 40
-            over Finite Field of size 59}
+            of size 2, of input and output space Vector space of dimension 6
+            over Finite Field in z8 of size 2^8}
         """
         no_err = self.rank_errors()
         return "\\textnormal{Channel creating error of rank %s over %s, of input and output space %s}"\
@@ -991,22 +1001,19 @@ class StaticRankErrorChannel(Channel):
             sage: rank_distance(msg, c, GF(4))
             2
         """
-        w = copy(message)
         rank_errors = randint(*self.rank_errors())
         Fqm = self._base_field
         Fq = self._relative_field
-        V = Fqm.vector_space(Fq, map=False)
+        V = self._column_space
         n = self.input_space().dimension()
         good = False
-        w = None
         while not good:
             basis = [V.random_element() for i in range(rank_errors)]
             R = span(basis)
             err = [R.random_element() for i in range(n)]
-            M = matrix(Fq, err).transpose()
-            if M.rank() == rank_errors:
-                good = True
-        e = from_matrix_representation(M, Fqm)
+            M = matrix(Fq, err)
+            good = (M.rank() == rank_errors)
+        e = vector(map(self._map_to_field, M.rows()))
         w = message + e
         return w
 
@@ -1017,7 +1024,7 @@ class StaticRankErrorChannel(Channel):
         EXAMPLES::
 
             sage: n_err = 3
-            sage: Chan = channels.StaticRankErrorChannel(GF(59)^6, n_err)
+            sage: Chan = channels.StaticRankErrorChannel(GF(256)^6, n_err)
             sage: Chan.rank_errors()
             (3, 3)
         """
@@ -1034,7 +1041,7 @@ class StaticRankErrorChannel(Channel):
         EXAMPLES::
 
             sage: n_err = 3
-            sage: Chan = channels.StaticRankErrorChannel(GF(59)^6, n_err)
+            sage: Chan = channels.StaticRankErrorChannel(GF(256)^6, n_err)
             sage: Chan.number_errors()
             (3, 3)
         """
