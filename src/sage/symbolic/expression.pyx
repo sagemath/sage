@@ -1218,6 +1218,34 @@ cdef class Expression(Expression_abc):
         else:
             return super()._interface_(session)
 
+    def _maxima_init_solve_(self):
+        r"""
+        Return string that when evaluated in Maxima defines an equation
+        or inequality in a format suitable as input for `solve`.
+
+        Equations (``==``) and inequations (``!=``) are normally converted
+        to calls to Maxima's ``equal`` and ``notequal`` functions; but
+        as input to ``solve``, the infix operators ``=`` and ``#`` must be
+        used.
+
+        EXAMPLES::
+
+            sage: (x == 1)._maxima_init_solve_()
+            '(_SAGE_VAR_x)=(1)'
+            sage: (x != 1)._maxima_init_solve_()
+            '(_SAGE_VAR_x)#(1)'
+            sage: (x > 1)._maxima_init_solve_()
+            '(_SAGE_VAR_x)>(1)'
+        """
+        from sage.calculus.calculus import maxima
+        if self.is_relational():
+            l = self.lhs()._maxima_init_()
+            r = self.rhs()._maxima_init_()
+            op = self.operator()
+            return '(%s)%s(%s)' % (l, maxima._relation_symbols()[op], r)
+        else:
+            return self._maxima_init_()
+
     def _interface_init_(self, I):
         """
         EXAMPLES::
@@ -1250,8 +1278,11 @@ cdef class Expression(Expression_abc):
             sage: SR(CDF.0)._maxima_init_()
             '1.0000000000000000*%i'
         """
-        from sage.symbolic.expression_conversions import InterfaceInit
-        return InterfaceInit(I)(self)
+        from sage.symbolic.expression_conversions import InterfaceInit, MaximaConverter
+        if I.name().startswith("maxima"):
+            return MaximaConverter(I)(self)
+        else:
+            return InterfaceInit(I)(self)
 
     def _gap_init_(self):
         """

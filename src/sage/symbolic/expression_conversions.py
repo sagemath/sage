@@ -15,7 +15,7 @@ overridden by subclasses.
 #                  https://www.gnu.org/licenses/
 ###############################################################################
 
-from operator import eq, ne, gt, lt, ge, le, mul, pow, neg, add, truediv
+from operator import eq, ne, mul, pow, neg, add, truediv
 from functools import reduce
 
 import sage.rings.abc
@@ -23,10 +23,9 @@ import sage.rings.abc
 from sage.misc.lazy_import import lazy_import
 from sage.symbolic.ring import SR
 from sage.structure.element import Expression
-from sage.functions.all import exp
+from sage.functions.log import exp
 from sage.symbolic.operators import arithmetic_operators, relation_operators, FDerivativeOperator, add_vararg, mul_vararg
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
-from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 
 lazy_import('sage.symbolic.expression_conversion_sympy', ['SympyConverter', 'sympy_converter'])
 lazy_import('sage.symbolic.expression_conversion_algebraic', ['AlgebraicConverter', 'algebraic'])
@@ -654,6 +653,34 @@ class InterfaceInit(Converter):
             op = repr(operator)
 
         return self.interface._function_call_string(op, ops, [])
+
+
+# ##########
+#   Maxima
+# ##########
+
+class MaximaConverter(InterfaceInit):
+
+    def relation(self, ex, op):
+        """
+        EXAMPLES::
+
+            sage: import operator
+            sage: from sage.symbolic.expression_conversions import InterfaceInit
+            sage: m = InterfaceInit(maxima)
+            sage: m.relation(x==3, operator.eq)
+            '_SAGE_VAR_x = 3'
+            sage: m.relation(x==3, operator.lt)
+            '_SAGE_VAR_x < 3'
+        """
+        lhs = self(ex.lhs())
+        rhs = self(ex.rhs())
+        if op is eq:
+            return f"equal({lhs}, {rhs})"
+        if op is ne:
+            return f"notequal({lhs}, {rhs})"
+        rel = self.relation_symbols[op]
+        return f"{lhs} {rel} {rhs}"
 
 
 ##########
@@ -1651,7 +1678,6 @@ class Exponentialize(ExpressionTreeWalker):
     # the same canned results dictionary at each call.
     from sage.calculus.var import function
     from sage.functions.hyperbolic import sinh, cosh, sech, csch, tanh, coth
-    from sage.functions.log import exp
     from sage.functions.trig import sin, cos, sec, csc, tan, cot
     from sage.rings.integer import Integer
     from sage.symbolic.constants import e, I
