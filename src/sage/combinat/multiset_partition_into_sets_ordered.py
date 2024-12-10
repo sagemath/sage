@@ -1885,7 +1885,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             # iterate over blocks of letters over an alphabet
             if "alphabet" in self.constraints:
                 A = self.constraints["alphabet"]
-                # establish a cutoff order `max_ell`
+                # establish a cutoff order ``max_ell``
                 max = self.constraints.get("max_length", infinity)
                 max = self.constraints.get("length", max)
                 max = max * len(A)
@@ -3520,7 +3520,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
             w = w.e(i)
             return P.element_class(P, (w, breaks))
 
-        def f(self,i):
+        def f(self, i):
             r"""
             Return `f_i` on ``self``.
 

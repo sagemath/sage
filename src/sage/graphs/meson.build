@@ -1,5 +1,10 @@
 bliss = cc.find_library('bliss', required: false, disabler: true)
-mcqd = cc.find_library('mcqd', required: false, disabler: true)
+# mcqd is a header-only library
+if cc.has_header('mcqd.h')
+  mcqd = declare_dependency()
+else
+  mcqd = disabler()
+endif
 cliquer = cc.find_library('cliquer')
 
 # Cannot be found via pkg-config
@@ -36,6 +41,7 @@ py.install_sources(
   'isgci.py',
   'lovasz_theta.py',
   'matching.py',
+  'matching_covered_graph.py',
   'mcqd.pxd',
   'orientations.py',
   'partial_cube.py',

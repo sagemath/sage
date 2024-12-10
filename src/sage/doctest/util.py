@@ -26,6 +26,7 @@ AUTHORS:
 from time import time as walltime
 from os import sysconf, times
 
+
 def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
     """
     EXAMPLES::
@@ -613,6 +614,7 @@ def make_recording_dict(D, st, gt):
     ans.set = st
     ans.got = gt
     return ans
+
 
 class NestedName:
     """

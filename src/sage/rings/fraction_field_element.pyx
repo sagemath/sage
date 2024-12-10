@@ -263,7 +263,7 @@ cdef class FractionFieldElement(FieldElement):
         """
         return self._denominator
 
-    def is_square(self,root=False):
+    def is_square(self, root=False):
         """
         Return whether or not ``self`` is a perfect square.
 

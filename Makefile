@@ -122,7 +122,7 @@ sagelib-clean:
 	     rm -rf c_lib .cython_version cython_debug; \
 	     rm -rf build; find . -name '*.pyc' -o -name "*.so" | xargs rm -f; \
 	     rm -f $$(find . -name "*.pyx" | sed 's/\(.*\)[.]pyx$$/\1.c \1.cpp/'); \
-	     rm -rf sage/ext/interpreters) \
+	     cd sage/ext/interpreters/ && rm -f *.so *.c *.h *.py* *.pxd) \
 	    && (cd "$(SAGE_ROOT)/build/pkgs/sagelib/src/" && rm -rf build); \
 	fi
 
@@ -175,7 +175,6 @@ bootstrap-clean:
 	rm -f src/doc/en/installation/*.txt
 	find src/doc/en/reference/spkg -name index.rst -prune -o -maxdepth 1 -name "*.rst" -exec rm -f {} \+
 	for a in environment environment-optional src/environment src/environment-dev src/environment-optional; do rm -f $$a.yml $$a-3.[89].yml $$a-3.1[0-9].yml; done
-	rm -f src/Pipfile
 	rm -f src/requirements.txt
 	rm -f src/setup.cfg
 	rm -f build/pkgs/cypari/version_requirements.txt

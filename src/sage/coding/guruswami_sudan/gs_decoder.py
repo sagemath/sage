@@ -375,7 +375,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         """
         n,k = n_k_params(C, n_k)
 
-        def get_tau(s,l):
+        def get_tau(s, l):
             "Return the decoding radius given this s and l"
             if s <= 0 or l <= 0:
                 return -1
@@ -389,7 +389,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         # Either s or l is set, but not both. First a shared local function
         def find_integral_max(real_max, f):
             """Given a real (local) maximum of a function `f`, return that of
-            the integers around `real_max` which gives the (local) integral
+            the integers around ``real_max`` which gives the (local) integral
             maximum, and the value of at that point."""
             if real_max in ZZ:
                 int_max = ZZ(real_max)

@@ -52,6 +52,7 @@ py.install_sources(
   'polynomial_singular_interface.py',
   'polynomial_zmod_flint.pxd',
   'polynomial_zz_pex.pxd',
+  'q_integer_valued_polynomials.py',
   'real_roots.pxd',
   'skew_polynomial_element.pxd',
   'skew_polynomial_finite_field.pxd',
@@ -92,6 +93,19 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, gmp]
+  if name == 'evaluation_flint'
+    deps += [flint, mpfi]
+  elif name == 'polynomial_complex_arb'
+    deps += [flint, mpfi]
+  elif name == 'polynomial_real_mpfr_dense'
+    deps += [mpfr]
+  elif name == 'real_roots'
+    deps += [mpfi]
+  elif name == 'hilbert'
+    deps += [mpfi]
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
@@ -106,18 +120,7 @@ foreach name, pyx : extension_data
       inc_rings,
       inc_rings_finite,
     ],
-    dependencies: [
-      py_dep,
-      cypari2,
-      cysignals,
-      flint,
-      givaro,
-      gmp,
-      mpfi,
-      mpfr,
-      ntl,
-      pari,
-    ],
+    dependencies: deps,
   )
 endforeach
 
