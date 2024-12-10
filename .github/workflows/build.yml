@@ -107,6 +107,8 @@ jobs:
         uses: tj-actions/changed-files@v45
         with:
           # File extensions for doctests per sage.doctest.control.skipfile
+          # Also src/sage/doctests/tests/ are excluded because of nodoctest file
+          # which would make sage.doctest.control.skipdir returns True
           files_yaml: |
             configures:
               - 'build/pkgs/*/spkg-configure.m4'
@@ -118,6 +120,7 @@ jobs:
             doctests:
               - 'src/**/*.{py,pyx,pxd,pxi,sage,spyx,rst,tex}'
               - '!src/{setup,conftest*}.py'
+              - '!src/sage/doctests/tests/*'
 
       - name: Determine targets to build
         id: build-targets
@@ -246,7 +249,7 @@ jobs:
           ./sage -python -m pytest -c tox.ini -qq --doctest --collect-only || true
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
-      - name: Test changed files (sage -t --new)
+      - name: Test changed files
         if: (success() || failure()) && steps.container.outcome == 'success' && steps.changed-files.outputs.doctests_all_changed_files
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=4
