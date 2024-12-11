@@ -2781,6 +2781,7 @@ class GraphGenerators:
     RandomBlockGraph = staticmethod(random.RandomBlockGraph)
     RandomBoundedToleranceGraph = staticmethod(random.RandomBoundedToleranceGraph)
     RandomChordalGraph = staticmethod(random.RandomChordalGraph)
+    RandomCoGraph = staticmethod(random.RandomCoGraph)
     RandomGNM = staticmethod(random.RandomGNM)
     RandomGNP = staticmethod(random.RandomGNP)
     RandomHolmeKim = staticmethod(random.RandomHolmeKim)
