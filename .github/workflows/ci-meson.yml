@@ -77,4 +77,4 @@ jobs:
           # We don't install sage_setup, so don't try to test it
           rm -R ./src/sage_setup/
           pip install coverage pytest-xdist pytest-github-actions-annotate-failures
-          coverage run -m pytest --doctest -s -rfEs .
+          coverage run -m pytest --doctest -s -rfEs src
