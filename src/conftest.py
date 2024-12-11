@@ -210,7 +210,7 @@ def pytest_addoption(parser):
 
 
 # Monkey patch exception printing to replace the full qualified name of the exception by its short name
-# TODO: Remove this hack
+# TODO: Remove this hack once migration to pytest is complete
 import traceback
 
 old_format_exception_only = traceback.format_exception_only
