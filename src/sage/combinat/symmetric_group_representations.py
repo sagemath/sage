@@ -1074,7 +1074,7 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
         assert F.is_field()
 
         if F.characteristic() == 0:
-            return SymmetricGroupRepresentation(self._partition, 'orthogonal').representation_matrix(permutation)
+            return SymmetricGroupRepresentation(self._partition, 'orthogonal')._representation_matrix_uncached(permutation)
 
         if F.characteristic() > 0:
             assert F.is_finite()
@@ -1083,7 +1083,7 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
                 raise NotImplementedError("Not implemented when p|n!. Dimension of invariant forms may be greater than one. See modular DFT.")
             q = sqrt(F.order())
             specht_module = SymmetricGroupRepresentation(self._partition, 'specht', ring=F)
-            rho = specht_module.representation_matrix
+            rho = specht_module._representation_matrix_uncached
 
             def invariant_symmetric_bilinear_matrix():
                 d_rho = rho(G[0]).ncols()
