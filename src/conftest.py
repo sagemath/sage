@@ -259,6 +259,7 @@ def doctest_run(
 
 doctest.DocTestRunner.run = doctest_run
 
+
 @pytest.fixture(autouse=True, scope="session")
 def add_imports(doctest_namespace: dict[str, Any]):
     """
@@ -267,9 +268,9 @@ def add_imports(doctest_namespace: dict[str, Any]):
     See `pytest documentation <https://docs.pytest.org/en/stable/doctest.html#doctest-namespace-fixture>`.
     """
     # Inject sage.all into each doctest
-    import sage.all
+    import sage.repl.ipython_kernel.all_jupyter
 
-    dict_all = sage.all.__dict__
+    dict_all = sage.repl.ipython_kernel.all_jupyter.__dict__
 
     # Remove '__package__' item from the globals since it is not
     # always in the globals in an actual Sage session.
