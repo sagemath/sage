@@ -2115,6 +2115,12 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             return sqrt_diag_inv*dft_matrix
 
         if F.characteristic() > 0:
+            assert F.is_finite()
+            assert F.order().is_square()
+            if  F.characteristic().divides(G.cardinality()):
+                raise NotImplementedError("Not implemented when p|n!. Dimension of invariant forms may be greater than one and 1/|G| is not defined. See modular DFT.")
+            q = sqrt(F.order())
+
             def conj_square_root(u):
                 if u == 0:
                     return 0
