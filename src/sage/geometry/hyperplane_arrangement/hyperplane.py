@@ -353,10 +353,7 @@ class Hyperplane(LinearExpression):
             sage: p2 = h.linear_part_projection([3,4,5]);  p2
             (8/7, 2/7)
             sage: h.linear_part().basis()
-            [
-            (1, 0, -1/3),
-            (0, 1, -2/3)
-            ]
+            [(1, 0, -1/3), (0, 1, -2/3)]
             sage: p3 = h.linear_part_projection([1,1,1]);  p3
             (4/7, 1/7)
         """

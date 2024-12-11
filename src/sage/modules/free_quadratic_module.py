@@ -204,11 +204,7 @@ def QuadraticSpace(K, dimension, inner_product_matrix, sparse=False):
         [    0 x - 1     0]
         [    0     0 x + 1]
         sage: V.basis()
-        [
-        (1, 0, 0),
-        (0, 1, 0),
-        (0, 0, 1)
-        ]
+        [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
 
     The base must be a field or a :exc:`TypeError` is raised::
 

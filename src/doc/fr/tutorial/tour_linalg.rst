@@ -63,11 +63,7 @@ Sage sait aussi calculer les valeurs propres et vecteurs propres::
     [-2*I, 2*I]
     sage: B = matrix([[1, 3], [3, 1]])
     sage: B.eigenvectors_left()
-    [(4, [
-    (1, 1)
-    ], 1), (-2, [
-    (1, -1)
-    ], 1)]
+    [(4, [(1, 1)], 1), (-2, [(1, -1)], 1)]
 
 (La sortie de ``eigenvectors_left`` est une liste de triplets (valeur propre,
 vecteur propre, multiplicité).) Sur ``QQ`` et ``RR``, on peut aussi utiliser

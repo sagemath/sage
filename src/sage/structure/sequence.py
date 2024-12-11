@@ -406,11 +406,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             [1, 2, 3, 4, 5]
             sage: a = Sequence([1..3], universe=QQ, check=False, immutable=True, cr=True, cr_str=False, use_sage_types=True)
             sage: a
-            [
-            1,
-            2,
-            3
-            ]
+            [1, 2, 3]
             sage: a = Sequence([1..5], universe=QQ, check=False, immutable=True, cr_str=True, use_sage_types=True)
             sage: a
             [1, 2, 3, 4, 5]

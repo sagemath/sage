@@ -1250,11 +1250,9 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             False
             sage: o_copy._read_nef_partitions(s)                                        # needs palp
             sage: o_copy._nef_partitions                                                # needs palp
-            [
-            Nef-partition {0, 1, 3} ⊔ {2, 4, 5},
-            Nef-partition {0, 1, 2} ⊔ {3, 4, 5},
-            Nef-partition {0, 1, 2, 3} ⊔ {4, 5}
-            ]
+            [Nef-partition {0, 1, 3} ⊔ {2, 4, 5},
+             Nef-partition {0, 1, 2} ⊔ {3, 4, 5},
+             Nef-partition {0, 1, 2, 3} ⊔ {4, 5}]
         """
         if isinstance(data, str):
             f = StringIO(data)
@@ -2710,29 +2708,25 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
             sage: p = lattice_polytope.cross_polytope(4)
             sage: p.nef_partitions()                                                    # needs palp
-            [
-            Nef-partition {0, 1, 4, 5} ⊔ {2, 3, 6, 7} (direct product),
-            Nef-partition {0, 1, 2, 4} ⊔ {3, 5, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5} ⊔ {3, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5, 6} ⊔ {3, 7} (direct product),
-            Nef-partition {0, 1, 2, 3} ⊔ {4, 5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4} ⊔ {5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4, 5} ⊔ {6, 7},
-            Nef-partition {0, 1, 2, 3, 4, 5, 6} ⊔ {7} (projection)
-            ]
+            [Nef-partition {0, 1, 4, 5} ⊔ {2, 3, 6, 7} (direct product),
+             Nef-partition {0, 1, 2, 4} ⊔ {3, 5, 6, 7},
+             Nef-partition {0, 1, 2, 4, 5} ⊔ {3, 6, 7},
+             Nef-partition {0, 1, 2, 4, 5, 6} ⊔ {3, 7} (direct product),
+             Nef-partition {0, 1, 2, 3} ⊔ {4, 5, 6, 7},
+             Nef-partition {0, 1, 2, 3, 4} ⊔ {5, 6, 7},
+             Nef-partition {0, 1, 2, 3, 4, 5} ⊔ {6, 7},
+             Nef-partition {0, 1, 2, 3, 4, 5, 6} ⊔ {7} (projection)]
 
         Now we omit projections::
 
             sage: p.nef_partitions(keep_projections=False)                              # needs palp
-            [
-            Nef-partition {0, 1, 4, 5} ⊔ {2, 3, 6, 7} (direct product),
-            Nef-partition {0, 1, 2, 4} ⊔ {3, 5, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5} ⊔ {3, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5, 6} ⊔ {3, 7} (direct product),
-            Nef-partition {0, 1, 2, 3} ⊔ {4, 5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4} ⊔ {5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4, 5} ⊔ {6, 7}
-            ]
+            [Nef-partition {0, 1, 4, 5} ⊔ {2, 3, 6, 7} (direct product),
+             Nef-partition {0, 1, 2, 4} ⊔ {3, 5, 6, 7},
+             Nef-partition {0, 1, 2, 4, 5} ⊔ {3, 6, 7},
+             Nef-partition {0, 1, 2, 4, 5, 6} ⊔ {3, 7} (direct product),
+             Nef-partition {0, 1, 2, 3} ⊔ {4, 5, 6, 7},
+             Nef-partition {0, 1, 2, 3, 4} ⊔ {5, 6, 7},
+             Nef-partition {0, 1, 2, 3, 4, 5} ⊔ {6, 7}]
 
         Currently Hodge numbers cannot be computed for a given nef-partition::
 
@@ -2772,21 +2766,17 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
             sage: p = lattice_polytope.cross_polytope(2)
             sage: p.nef_partitions()                                                    # needs palp
-            [
-            Nef-partition {0, 2} ⊔ {1, 3} (direct product),
-            Nef-partition {0, 1} ⊔ {2, 3},
-            Nef-partition {0, 1, 2} ⊔ {3} (projection)
-            ]
+            [Nef-partition {0, 2} ⊔ {1, 3} (direct product),
+             Nef-partition {0, 1} ⊔ {2, 3},
+             Nef-partition {0, 1, 2} ⊔ {3} (projection)]
             sage: p.nef_partitions(keep_symmetric=True)                                 # needs palp
-            [
-            Nef-partition {0, 1, 3} ⊔ {2} (projection),
-            Nef-partition {0, 2, 3} ⊔ {1} (projection),
-            Nef-partition {0, 3} ⊔ {1, 2},
-            Nef-partition {1, 2, 3} ⊔ {0} (projection),
-            Nef-partition {1, 3} ⊔ {0, 2} (direct product),
-            Nef-partition {2, 3} ⊔ {0, 1},
-            Nef-partition {0, 1, 2} ⊔ {3} (projection)
-            ]
+            [Nef-partition {0, 1, 3} ⊔ {2} (projection),
+             Nef-partition {0, 2, 3} ⊔ {1} (projection),
+             Nef-partition {0, 3} ⊔ {1, 2},
+             Nef-partition {1, 2, 3} ⊔ {0} (projection),
+             Nef-partition {1, 3} ⊔ {0, 2} (direct product),
+             Nef-partition {2, 3} ⊔ {0, 1},
+             Nef-partition {0, 1, 2} ⊔ {3} (projection)]
 
         Nef-partitions can be computed only for reflexive polytopes::
 
@@ -2979,10 +2969,8 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
             sage: o = lattice_polytope.cross_polytope(2)
             sage: o.normal_form(algorithm='palp_modified')                              # needs sage.groups
-            M( 1,  0),
-            M( 0,  1),
-            M( 0, -1),
-            M(-1,  0)
+            Traceback (most recent call last):
+            ...
             in 2-d lattice M
 
         The following examples demonstrate the speed of the available algorithms.
@@ -3192,17 +3180,13 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M( 0, -1)
             in 2-d lattice M
             sage: o._palp_modified_normal_form()                                        # needs sage.graphs sage.groups
-            M( 1,  0),
-            M( 0,  1),
-            M( 0, -1),
-            M(-1,  0)
+            Traceback (most recent call last):
+            ...
             in 2-d lattice M
             sage: o._palp_modified_normal_form(permutation=True)                        # needs sage.graphs sage.groups
-            (M( 1,  0),
-            M( 0,  1),
-            M( 0, -1),
-            M(-1,  0)
-            in 2-d lattice M, (3,4))
+            Traceback (most recent call last):
+            ...
+            (3,4))
         """
         PM = self.vertex_facet_pairing_matrix()
         PM_max = PM.permutation_normal_form()
@@ -3293,11 +3277,16 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: o = lattice_polytope.cross_polytope(2)
             sage: PM = o.vertex_facet_pairing_matrix()
             sage: PM_max = PM.permutation_normal_form()                                 # needs sage.graphs
+            Traceback (most recent call last):
+            ...
+            <BLANKLINE>
             sage: PM_max == o._palp_PM_max()                                            # needs sage.graphs sage.groups
+            Traceback (most recent call last):
+            ...
             True
             sage: P2 = ReflexivePolytope(2, 0)
             sage: PM_max, permutations = P2._palp_PM_max(check=True)                    # needs sage.groups
-            sage: PM_max                                                                # needs sage.graphs
+            sage: PM_max                                                                # needs sage.graphs sage.groups
             [3 0 0]
             [0 3 0]
             [0 0 3]
@@ -3308,7 +3297,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
              [(1,2), (1,2)],
              [(), ()],
              [(2,3), (2,3)]]
-            sage: PM_max.automorphisms_of_rows_and_columns()                            # needs sage.graphs
+            sage: PM_max.automorphisms_of_rows_and_columns()                            # needs sage.graphs sage.groups
             [((), ()),
              ((1,2,3), (1,2,3)),
              ((1,3,2), (1,3,2)),
@@ -4135,7 +4124,7 @@ def is_NefPartition(x):
         sage: o = lattice_polytope.cross_polytope(3)
         sage: np = o.nef_partitions()[0]; np                                            # needs palp
         Nef-partition {0, 1, 3} ⊔ {2, 4, 5}
-        sage: isinstance(np, NefPartition)                                                       # needs palp
+        sage: isinstance(np, NefPartition)                                              # needs palp
         True
     """
     from sage.misc.superseded import deprecation
@@ -4276,13 +4265,11 @@ class NefPartition(SageObject, Hashable):
     ``nef.x`` program from PALP)::
 
         sage: o.nef_partitions()                                                        # needs palp
-        [
-        Nef-partition {0, 1, 3} ⊔ {2, 4, 5},
-        Nef-partition {0, 1, 3, 4} ⊔ {2, 5} (direct product),
-        Nef-partition {0, 1, 2} ⊔ {3, 4, 5},
-        Nef-partition {0, 1, 2, 3} ⊔ {4, 5},
-        Nef-partition {0, 1, 2, 3, 4} ⊔ {5} (projection)
-        ]
+        [Nef-partition {0, 1, 3} ⊔ {2, 4, 5},
+         Nef-partition {0, 1, 3, 4} ⊔ {2, 5} (direct product),
+         Nef-partition {0, 1, 2} ⊔ {3, 4, 5},
+         Nef-partition {0, 1, 2, 3} ⊔ {4, 5},
+         Nef-partition {0, 1, 2, 3, 4} ⊔ {5} (projection)]
     """
 
     def __init__(self, data, Delta_polar, check=True):
@@ -5329,13 +5316,11 @@ def all_nef_partitions(polytopes, keep_symmetric=False):
         sage: o = lattice_polytope.cross_polytope(3)
         sage: lattice_polytope.all_nef_partitions([o])                                  # needs palp
         sage: o.nef_partitions()                                                        # needs palp
-        [
-        Nef-partition {0, 1, 3} ⊔ {2, 4, 5},
-        Nef-partition {0, 1, 3, 4} ⊔ {2, 5} (direct product),
-        Nef-partition {0, 1, 2} ⊔ {3, 4, 5},
-        Nef-partition {0, 1, 2, 3} ⊔ {4, 5},
-        Nef-partition {0, 1, 2, 3, 4} ⊔ {5} (projection)
-        ]
+        [Nef-partition {0, 1, 3} ⊔ {2, 4, 5},
+         Nef-partition {0, 1, 3, 4} ⊔ {2, 5} (direct product),
+         Nef-partition {0, 1, 2} ⊔ {3, 4, 5},
+         Nef-partition {0, 1, 2, 3} ⊔ {4, 5},
+         Nef-partition {0, 1, 2, 3, 4} ⊔ {5} (projection)]
 
     You cannot use this function for non-reflexive polytopes::
 

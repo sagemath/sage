@@ -419,47 +419,36 @@ class NumberField_relative(NumberField_generic):
             sage: PF.<Y> = F[]
             sage: K.<c> = F.extension(Y^2 - (1 + a)*(a + b)*a*b)
             sage: K.subfields(2)
-            [
-            (Number Field in c0 with defining polynomial x^2 - 24*x + 96,
-             Ring morphism:
-               From: Number Field in c0 with defining polynomial x^2 - 24*x + 96
-               To:   Number Field in c with defining polynomial
-                     Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
-               Defn: c0 |--> -4*b + 12,
-             None),
-            (Number Field in c1 with defining polynomial x^2 - 24*x + 120,
-             Ring morphism:
-               From: Number Field in c1 with defining polynomial x^2 - 24*x + 120
-               To:   Number Field in c with defining polynomial
-                     Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
-               Defn: c1 |--> 2*b*a + 12,
-             None),
-            (Number Field in c2 with defining polynomial x^2 - 24*x + 72,
-             Ring morphism:
-               From: Number Field in c2 with defining polynomial x^2 - 24*x + 72
-               To:   Number Field in c with defining polynomial
-                     Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
-               Defn: c2 |--> -6*a + 12,
-             None)
-            ]
+            [(Number Field in c0 with defining polynomial x^2 - 24*x + 96,
+              Ring morphism:
+                From: Number Field in c0 with defining polynomial x^2 - 24*x + 96
+                To:   Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
+                Defn: c0 |--> -4*b + 12,
+              None),
+             (Number Field in c1 with defining polynomial x^2 - 24*x + 120,
+              Ring morphism:
+                From: Number Field in c1 with defining polynomial x^2 - 24*x + 120
+                To:   Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
+                Defn: c1 |--> 2*b*a + 12,
+              None),
+             (Number Field in c2 with defining polynomial x^2 - 24*x + 72,
+              Ring morphism:
+                From: Number Field in c2 with defining polynomial x^2 - 24*x + 72
+                To:   Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
+                Defn: c2 |--> -6*a + 12,
+              None)]
             sage: K.subfields(8, 'w')
-            [
-            (Number Field in w0 with defining polynomial x^8 - 12*x^6 + 36*x^4 - 36*x^2 + 9,
-             Ring morphism:
-               From: Number Field in w0 with defining polynomial
-                     x^8 - 12*x^6 + 36*x^4 - 36*x^2 + 9
-               To:   Number Field in c with defining polynomial
-                     Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
-               Defn: w0 |--> (-1/2*b*a + 1/2*b + 1/2)*c,
-             Relative number field morphism:
-              From: Number Field in c with defining polynomial
-                    Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
-              To:   Number Field in w0 with defining polynomial
-                    x^8 - 12*x^6 + 36*x^4 - 36*x^2 + 9
-              Defn: c |--> -1/3*w0^7 + 4*w0^5 - 12*w0^3 + 11*w0
-                    a |--> 1/3*w0^6 - 10/3*w0^4 + 5*w0^2
-                    b |--> -2/3*w0^6 + 7*w0^4 - 14*w0^2 + 6)
-            ]
+            [(Number Field in w0 with defining polynomial x^8 - 12*x^6 + 36*x^4 - 36*x^2 + 9,
+              Ring morphism:
+                From: Number Field in w0 with defining polynomial x^8 - 12*x^6 + 36*x^4 - 36*x^2 + 9
+                To:   Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
+                Defn: w0 |--> (-1/2*b*a + 1/2*b + 1/2)*c,
+              Relative number field morphism:
+                From: Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
+                To:   Number Field in w0 with defining polynomial x^8 - 12*x^6 + 36*x^4 - 36*x^2 + 9
+                Defn: c |--> -1/3*w0^7 + 4*w0^5 - 12*w0^3 + 11*w0
+                      a |--> 1/3*w0^6 - 10/3*w0^4 + 5*w0^2
+                      b |--> -2/3*w0^6 + 7*w0^4 - 14*w0^2 + 6)]
             sage: K.subfields(3)
             []
         """
@@ -2052,19 +2041,36 @@ class NumberField_relative(NumberField_generic):
             sage: x = polygen(ZZ, 'x')
             sage: K.<a,b> = NumberField([x^3 - 2, x^2 + 1])
             sage: f = K.embeddings(ComplexField(58)); f
-            [
-            Relative number field morphism:
-              From: Number Field in a with defining polynomial x^3 - 2 over its base field
-              To:   Complex Field with 58 bits of precision
-              Defn: a |--> -0.62996052494743676 - 1.0911236359717214*I
-                    b |--> -1.9428902930940239e-16 + 1.0000000000000000*I,
-            ...
-            Relative number field morphism:
-              From: Number Field in a with defining polynomial x^3 - 2 over its base field
-              To:   Complex Field with 58 bits of precision
-              Defn: a |--> 1.2599210498948731
-                    b |--> -0.99999999999999999*I
-            ]
+            [Relative number field morphism:
+               From: Number Field in a with defining polynomial x^3 - 2 over its base field
+               To:   Complex Field with 58 bits of precision
+               Defn: a |--> -0.62996052494743676 - 1.0911236359717214*I
+                     b |--> -1.9428902930940239e-16 + 1.0000000000000000*I,
+             Relative number field morphism:
+               From: Number Field in a with defining polynomial x^3 - 2 over its base field
+               To:   Complex Field with 58 bits of precision
+               Defn: a |--> -0.62996052494743657 - 1.0911236359717214*I
+                     b |--> -1.0000000000000000*I,
+             Relative number field morphism:
+               From: Number Field in a with defining polynomial x^3 - 2 over its base field
+               To:   Complex Field with 58 bits of precision
+               Defn: a |--> -0.62996052494743657 + 1.0911236359717214*I
+                     b |--> 1.0000000000000000*I,
+             Relative number field morphism:
+               From: Number Field in a with defining polynomial x^3 - 2 over its base field
+               To:   Complex Field with 58 bits of precision
+               Defn: a |--> -0.62996052494743676 + 1.0911236359717214*I
+                     b |--> -1.9428902930940239e-16 - 1.0000000000000000*I,
+             Relative number field morphism:
+               From: Number Field in a with defining polynomial x^3 - 2 over its base field
+               To:   Complex Field with 58 bits of precision
+               Defn: a |--> 1.2599210498948731
+                     b |--> 0.99999999999999999*I,
+             Relative number field morphism:
+               From: Number Field in a with defining polynomial x^3 - 2 over its base field
+               To:   Complex Field with 58 bits of precision
+               Defn: a |--> 1.2599210498948731
+                     b |--> -0.99999999999999999*I]
             sage: f[0](a)^3
             2.0000000000000002 - 8.6389229103644993e-16*I
             sage: f[0](b)^2
@@ -2105,16 +2111,12 @@ class NumberField_relative(NumberField_generic):
             sage: K.<a, b> = NumberField([x^2 + 10000, x^2 + x + 50]); K
             Number Field in a with defining polynomial x^2 + 10000 over its base field
             sage: K.automorphisms()
-            [
-            Relative number field endomorphism of Number Field in a
-             with defining polynomial x^2 + 10000 over its base field
-              Defn: a |--> a
-                    b |--> b,
-            Relative number field endomorphism of Number Field in a
-             with defining polynomial x^2 + 10000 over its base field
-              Defn: a |--> -a
-                    b |--> b
-            ]
+            [Relative number field endomorphism of Number Field in a with defining polynomial x^2 + 10000 over its base field
+               Defn: a |--> a
+                     b |--> b,
+             Relative number field endomorphism of Number Field in a with defining polynomial x^2 + 10000 over its base field
+               Defn: a |--> -a
+                     b |--> b]
             sage: rho, tau = K.automorphisms()
             sage: tau(a)
             -a
@@ -2124,16 +2126,12 @@ class NumberField_relative(NumberField_generic):
             sage: L.<b, a> = NumberField([x^2 + x + 50, x^2 + 10000, ]); L
             Number Field in b with defining polynomial x^2 + x + 50 over its base field
             sage: L.automorphisms()
-            [
-            Relative number field endomorphism of Number Field in b
-             with defining polynomial x^2 + x + 50 over its base field
-              Defn: b |--> b
-                    a |--> a,
-            Relative number field endomorphism of Number Field in b
-             with defining polynomial x^2 + x + 50 over its base field
-              Defn: b |--> -b - 1
-                    a |--> a
-            ]
+            [Relative number field endomorphism of Number Field in b with defining polynomial x^2 + x + 50 over its base field
+               Defn: b |--> b
+                     a |--> a,
+             Relative number field endomorphism of Number Field in b with defining polynomial x^2 + x + 50 over its base field
+               Defn: b |--> -b - 1
+                     a |--> a]
             sage: rho, tau = L.automorphisms()
             sage: tau(a) == a
             True
@@ -2145,18 +2143,14 @@ class NumberField_relative(NumberField_generic):
             sage: PF.<Y> = F[]
             sage: K.<c> = F.extension(Y^2 - (1 + a)*(a + b)*a*b)
             sage: K.automorphisms()
-            [
-            Relative number field endomorphism of Number Field in c
-             with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
-              Defn: c |--> c
-                    a |--> a
-                    b |--> b,
-            Relative number field endomorphism of Number Field in c
-             with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
-              Defn: c |--> -c
-                    a |--> a
-                    b |--> b
-            ]
+            [Relative number field endomorphism of Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
+               Defn: c |--> c
+                     a |--> a
+                     b |--> b,
+             Relative number field endomorphism of Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
+               Defn: c |--> -c
+                     a |--> a
+                     b |--> b]
         """
         try:
             return self.__automorphisms
