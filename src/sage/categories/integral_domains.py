@@ -155,9 +155,8 @@ class IntegralDomains(CategoryWithAxiom):
             if self.is_finite():
                 return True
             if proof:
-                raise NotImplementedError("unable to determine whether or not is a field.")
-            else:
-                return False
+                raise NotImplementedError(f"unable to determine whether or not {self} is a field.")
+            return False
 
         def localization(self, additional_units, names=None, normalize=True, category=None):
             """
