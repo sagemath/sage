@@ -2111,6 +2111,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             diag = (dft_matrix*dft_matrix.H).diagonal()
             primes_needed = {factor for d in diag for factor, _ in d.squarefree_part().factor()}
             names = [f"sqrt{factor}" for factor in primes_needed]
+            x = PolynomialRing(QQ, 'x').gen()
             K = NumberField([x**2-d for d in primes_needed],names=names)
             sqrt_diag_inv = diagonal_matrix([~sqrt(K(d)) for d in diag])
             return sqrt_diag_inv*dft_matrix
