@@ -1004,8 +1004,7 @@ def benchmark_libc():
         sage: timeit('benchmark_mt()')    # random
         125 loops, best of 3: 2.12 ms per loop
     """
-    cdef int i
-    for i from 0 <= i < 100000:
+    for _ in range(100000):
         c_libc_random()
 
 
