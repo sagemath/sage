@@ -1055,7 +1055,7 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
             assert F.is_finite()
             assert F.order().is_square()
             if F.characteristic().divides(G.cardinality()):
-                raise NotImplementedError("Not implemented when p|n!. Dimension of invariant forms may be greater than one.")
+                raise NotImplementedError("Not implemented when p|n!. Dimension of invariant forms may be greater than one. See modular DFT.")
             q = sqrt(F.order())
             specht_module = SymmetricGroupRepresentation(self._partition, 'specht', ring=F)
             rho = specht_module.representation_matrix
