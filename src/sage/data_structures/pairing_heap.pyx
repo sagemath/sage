@@ -130,9 +130,7 @@ cdef class PairingHeap_class:
             sage: P
             PairingHeap_of_n_integers: capacity 5, size 1
         """
-        if isinstance(self, PairingHeap_of_n_integers):
-            return f"PairingHeap_of_n_integers: capacity {self.n}, size {len(self)}"
-        return f"PairingHeap_of_n_hashables: capacity {self.n}, size {len(self)}"
+        return f"{type(self).__name__}: capacity {self.n}, size {len(self)}"
 
     def __bool__(self):
         r"""
@@ -947,7 +945,7 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
 
     contains = __contains__
 
-    cpdef object value(self, object item) except *:
+    cpdef object value(self, object item):
         r"""
         Return the value associated with the item.
 
