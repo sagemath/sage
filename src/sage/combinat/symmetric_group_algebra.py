@@ -2080,12 +2080,12 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
             sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
             sage: QS3._dft_unitary()
-            [ 1/6*sqrt(6)  1/6*sqrt(6)  1/6*sqrt(6)  1/6*sqrt(6)  1/6*sqrt(6)  1/6*sqrt(6)]
-            [ 1/3*sqrt(3)  1/6*sqrt(3) -1/3*sqrt(3) -1/6*sqrt(3) -1/6*sqrt(3)  1/6*sqrt(3)]
-            [           0          1/2            0          1/2         -1/2         -1/2]
-            [           0          1/2            0         -1/2          1/2         -1/2]
-            [ 1/3*sqrt(3) -1/6*sqrt(3)  1/3*sqrt(3) -1/6*sqrt(3) -1/6*sqrt(3) -1/6*sqrt(3)]
-            [ 1/6*sqrt(6) -1/6*sqrt(6) -1/6*sqrt(6)  1/6*sqrt(6)  1/6*sqrt(6) -1/6*sqrt(6)]
+            [-1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2]
+            [       1/3*sqrt3        1/6*sqrt3       -1/3*sqrt3       -1/6*sqrt3       -1/6*sqrt3        1/6*sqrt3]
+            [               0              1/2                0              1/2             -1/2             -1/2]
+            [               0              1/2                0             -1/2              1/2             -1/2]
+            [       1/3*sqrt3       -1/6*sqrt3        1/3*sqrt3       -1/6*sqrt3       -1/6*sqrt3       -1/6*sqrt3]
+            [-1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2]
 
         TESTS::
 
