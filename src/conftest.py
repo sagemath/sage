@@ -180,6 +180,11 @@ def pytest_collect_file(
             ):
                 # This is an executable file.
                 return IgnoreCollector.from_parent(parent)
+
+            if file_path.name == "conftest_inputtest.py":
+                # This is an input file for testing the doctest machinery (and contains broken doctests).
+                return IgnoreCollector.from_parent(parent)
+
             if (
                 (
                     file_path.name == "finite_dimensional_lie_algebras_with_basis.py"
