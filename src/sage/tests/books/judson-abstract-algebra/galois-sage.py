@@ -152,16 +152,14 @@ r"""
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: Sequence([[fromL(tau(r)) for r in roots] for tau in G], cr=True)
-    [
-    [b, a, -a, -b],
-    [-b, -a, a, b],
-    [a, -b, b, -a],
-    [b, -a, a, -b],
-    [-a, -b, b, a],
-    [a, b, -b, -a],
-    [-b, a, -a, b],
-    [-a, b, -b, a]
-    ]
+    [[b, a, -a, -b],
+     [-b, -a, a, b],
+     [a, -b, b, -a],
+     [b, -a, a, -b],
+     [-a, -b, b, a],
+     [a, b, -b, -a],
+     [-b, a, -a, b],
+     [-a, b, -b, a]]
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -382,71 +380,69 @@ r"""
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: L.subfields()
-    [
-    (Number Field in c0 with defining polynomial x,
-     Ring morphism:
-       From: Number Field in c0 with defining polynomial x
-       To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
-       Defn: 0 |--> 0,
-     None),
-    (Number Field in c1 with defining polynomial x^2 + 112*x + 40000,
-     Ring morphism:
-       From: Number Field in c1 with defining polynomial x^2 + 112*x + 40000
-       To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
-       Defn: c1 |--> 4*c^4,
-     None),
-    (Number Field in c2 with defining polynomial x^2 + 512,
-     Ring morphism:
-       From: Number Field in c2 with defining polynomial x^2 + 512
-       To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
-       Defn: c2 |--> 1/25*c^6 + 78/25*c^2,
-     None),
-    (Number Field in c3 with defining polynomial x^2 - 288,
-     Ring morphism:
-       From: Number Field in c3 with defining polynomial x^2 - 288
-       To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
-       Defn: c3 |--> -1/25*c^6 + 22/25*c^2,
-     None),
-    (Number Field in c4 with defining polynomial x^4 + 112*x^2 + 40000,
-     Ring morphism:
-       From: Number Field in c4 with defining polynomial x^4 + 112*x^2 + 40000
-       To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
-       Defn: c4 |--> 2*c^2,
-     None),
-    (Number Field in c5 with defining polynomial x^4 + 8,
-    Ring morphism:
-      From: Number Field in c5 with defining polynomial x^4 + 8
-      To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
-      Defn: c5 |--> -1/80*c^5 + 1/40*c,
+    [(Number Field in c0 with defining polynomial x,
+      Ring morphism:
+        From: Number Field in c0 with defining polynomial x
+        To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
+        Defn: 0 |--> 0,
       None),
-    (Number Field in c6 with defining polynomial x^4 + 648,
-     Ring morphism:
-       From: Number Field in c6 with defining polynomial x^4 + 648
-       To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
-       Defn: c6 |--> 1/80*c^5 + 79/40*c,
-     None),
-    (Number Field in c7 with defining polynomial x^4 - 512,
-     Ring morphism:
-       From: Number Field in c7 with defining polynomial x^4 - 512
-       To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
-       Defn: c7 |--> -1/60*c^5 + 41/30*c,
-     None),
-    (Number Field in c8 with defining polynomial x^4 - 32,
-     Ring morphism:
-       From: Number Field in c8 with defining polynomial x^4 - 32
-       To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
-       Defn: c8 |--> 1/60*c^5 + 19/30*c,
-     None),
-    (Number Field in c9 with defining polynomial x^8 + 28*x^4 + 2500,
-     Ring morphism:
-       From: Number Field in c9 with defining polynomial x^8 + 28*x^4 + 2500
-       To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
-       Defn: c9 |--> c,
-     Ring morphism:
-       From: Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
-       To:   Number Field in c9 with defining polynomial x^8 + 28*x^4 + 2500
-       Defn: c |--> c9)
-    ]
+     (Number Field in c1 with defining polynomial x^2 + 112*x + 40000,
+      Ring morphism:
+        From: Number Field in c1 with defining polynomial x^2 + 112*x + 40000
+        To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
+        Defn: c1 |--> 4*c^4,
+      None),
+     (Number Field in c2 with defining polynomial x^2 + 512,
+      Ring morphism:
+        From: Number Field in c2 with defining polynomial x^2 + 512
+        To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
+        Defn: c2 |--> 1/25*c^6 + 78/25*c^2,
+      None),
+     (Number Field in c3 with defining polynomial x^2 - 288,
+      Ring morphism:
+        From: Number Field in c3 with defining polynomial x^2 - 288
+        To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
+        Defn: c3 |--> -1/25*c^6 + 22/25*c^2,
+      None),
+     (Number Field in c4 with defining polynomial x^4 + 112*x^2 + 40000,
+      Ring morphism:
+        From: Number Field in c4 with defining polynomial x^4 + 112*x^2 + 40000
+        To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
+        Defn: c4 |--> 2*c^2,
+      None),
+     (Number Field in c5 with defining polynomial x^4 + 8,
+      Ring morphism:
+        From: Number Field in c5 with defining polynomial x^4 + 8
+        To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
+        Defn: c5 |--> -1/80*c^5 + 1/40*c,
+      None),
+     (Number Field in c6 with defining polynomial x^4 + 648,
+      Ring morphism:
+        From: Number Field in c6 with defining polynomial x^4 + 648
+        To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
+        Defn: c6 |--> 1/80*c^5 + 79/40*c,
+      None),
+     (Number Field in c7 with defining polynomial x^4 - 512,
+      Ring morphism:
+        From: Number Field in c7 with defining polynomial x^4 - 512
+        To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
+        Defn: c7 |--> -1/60*c^5 + 41/30*c,
+      None),
+     (Number Field in c8 with defining polynomial x^4 - 32,
+      Ring morphism:
+        From: Number Field in c8 with defining polynomial x^4 - 32
+        To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
+        Defn: c8 |--> 1/60*c^5 + 19/30*c,
+      None),
+     (Number Field in c9 with defining polynomial x^8 + 28*x^4 + 2500,
+      Ring morphism:
+        From: Number Field in c9 with defining polynomial x^8 + 28*x^4 + 2500
+        To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
+        Defn: c9 |--> c,
+      Ring morphism:
+        From: Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
+        To:   Number Field in c9 with defining polynomial x^8 + 28*x^4 + 2500
+        Defn: c |--> c9)]
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 

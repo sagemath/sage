@@ -174,15 +174,11 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: S.prec()
             6
             sage: S.basis()
-            [
-            q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
-            ]
+            [q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)]
             sage: S.prec(8)
             8
             sage: S.basis()
-            [
-            q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 - 16744*q^7 + O(q^8)
-            ]
+            [q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 - 16744*q^7 + O(q^8)]
         """
         return self.ambient().prec(new_prec)
 
@@ -201,19 +197,14 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: M.set_precision(10)
             sage: S = M.cuspidal_subspace()
             sage: S.basis()
-            [
-            q + q^3 - 2*q^4 - q^7 - 2*q^9 + O(q^10),
-            q^2 + 2*q^3 - 2*q^4 + q^5 - 3*q^6 - 4*q^9 + O(q^10)
-            ]
+            [q + q^3 - 2*q^4 - q^7 - 2*q^9 + O(q^10),
+             q^2 + 2*q^3 - 2*q^4 + q^5 - 3*q^6 - 4*q^9 + O(q^10)]
 
         ::
 
             sage: S.set_precision(0)
             sage: S.basis()
-            [
-            O(q^0),
-            O(q^0)
-            ]
+            [O(q^0), O(q^0)]
 
         The precision of subspaces is the same as the precision of the
         ambient space.
@@ -222,11 +213,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
             sage: S.set_precision(2)
             sage: M.basis()
-            [
-            q + O(q^2),
-            O(q^2),
-            1 + 2/3*q + O(q^2)
-            ]
+            [q + O(q^2), O(q^2), 1 + 2/3*q + O(q^2)]
 
         The precision must be nonnegative::
 
@@ -427,35 +414,27 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
             sage: M = ModularForms(11)
             sage: M.basis()
-            [
-            q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6),
-            1 + 12/5*q + 36/5*q^2 + 48/5*q^3 + 84/5*q^4 + 72/5*q^5 + O(q^6)
-            ]
+            [q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6),
+             1 + 12/5*q + 36/5*q^2 + 48/5*q^3 + 84/5*q^4 + 72/5*q^5 + O(q^6)]
             sage: M.echelon_form().basis()
-            [
-            1 + 12*q^2 + 12*q^3 + 12*q^4 + 12*q^5 + O(q^6),
-            q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)
-            ]
+            [1 + 12*q^2 + 12*q^3 + 12*q^4 + 12*q^5 + O(q^6),
+             q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)]
 
         ::
 
             sage: M = ModularForms(Gamma1(6),4)
             sage: M.basis()
-            [
-            q - 2*q^2 - 3*q^3 + 4*q^4 + 6*q^5 + O(q^6),
-            1 + O(q^6),
-            q - 8*q^4 + 126*q^5 + O(q^6),
-            q^2 + 9*q^4 + O(q^6),
-            q^3 + O(q^6)
-            ]
+            [q - 2*q^2 - 3*q^3 + 4*q^4 + 6*q^5 + O(q^6),
+             1 + O(q^6),
+             q - 8*q^4 + 126*q^5 + O(q^6),
+             q^2 + 9*q^4 + O(q^6),
+             q^3 + O(q^6)]
             sage: M.echelon_form().basis()
-            [
-            1 + O(q^6),
-            q + 94*q^5 + O(q^6),
-            q^2 + 36*q^5 + O(q^6),
-            q^3 + O(q^6),
-            q^4 - 4*q^5 + O(q^6)
-            ]
+            [1 + O(q^6),
+             q + 94*q^5 + O(q^6),
+             q^2 + 36*q^5 + O(q^6),
+             q^3 + O(q^6),
+             q^4 - 4*q^5 + O(q^6)]
 
         We create a space with a funny basis then compute the corresponding
         echelon form.
@@ -464,22 +443,16 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
             sage: M = ModularForms(11,4)
             sage: M.basis()
-            [
-            q + 3*q^3 - 6*q^4 - 7*q^5 + O(q^6),
-            q^2 - 4*q^3 + 2*q^4 + 8*q^5 + O(q^6),
-            1 + O(q^6),
-            q + 9*q^2 + 28*q^3 + 73*q^4 + 126*q^5 + O(q^6)
-            ]
+            [q + 3*q^3 - 6*q^4 - 7*q^5 + O(q^6),
+             q^2 - 4*q^3 + 2*q^4 + 8*q^5 + O(q^6),
+             1 + O(q^6),
+             q + 9*q^2 + 28*q^3 + 73*q^4 + 126*q^5 + O(q^6)]
             sage: F = M.span_of_basis([M.0 + 1/3*M.1, M.2 + M.3]); F.basis()
-            [
-            q + 1/3*q^2 + 5/3*q^3 - 16/3*q^4 - 13/3*q^5 + O(q^6),
-            1 + q + 9*q^2 + 28*q^3 + 73*q^4 + 126*q^5 + O(q^6)
-            ]
+            [q + 1/3*q^2 + 5/3*q^3 - 16/3*q^4 - 13/3*q^5 + O(q^6),
+             1 + q + 9*q^2 + 28*q^3 + 73*q^4 + 126*q^5 + O(q^6)]
             sage: E = F.echelon_form(); E.basis()
-            [
-            1 + 26/3*q^2 + 79/3*q^3 + 235/3*q^4 + 391/3*q^5 + O(q^6),
-            q + 1/3*q^2 + 5/3*q^3 - 16/3*q^4 - 13/3*q^5 + O(q^6)
-            ]
+            [1 + 26/3*q^2 + 79/3*q^3 + 235/3*q^4 + 391/3*q^5 + O(q^6),
+             q + 1/3*q^2 + 5/3*q^3 - 16/3*q^4 - 13/3*q^5 + O(q^6)]
         """
         return self.span_of_basis(self.echelon_basis())
 
@@ -495,37 +468,28 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
             sage: M = ModularForms(Gamma0(11),4)
             sage: M.echelon_basis()
-            [
-            1 + O(q^6),
-            q - 9*q^4 - 10*q^5 + O(q^6),
-            q^2 + 6*q^4 + 12*q^5 + O(q^6),
-            q^3 + q^4 + q^5 + O(q^6)
-            ]
+            [1 + O(q^6),
+             q - 9*q^4 - 10*q^5 + O(q^6),
+             q^2 + 6*q^4 + 12*q^5 + O(q^6),
+             q^3 + q^4 + q^5 + O(q^6)]
             sage: M.cuspidal_subspace().echelon_basis()
-            [
-            q + 3*q^3 - 6*q^4 - 7*q^5 + O(q^6),
-            q^2 - 4*q^3 + 2*q^4 + 8*q^5 + O(q^6)
-            ]
+            [q + 3*q^3 - 6*q^4 - 7*q^5 + O(q^6), q^2 - 4*q^3 + 2*q^4 + 8*q^5 + O(q^6)]
 
         ::
 
             sage: M = ModularForms(SL2Z, 12)
             sage: M.echelon_basis()
-            [
-            1 + 196560*q^2 + 16773120*q^3 + 398034000*q^4 + 4629381120*q^5 + O(q^6),
-            q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
-            ]
+            [1 + 196560*q^2 + 16773120*q^3 + 398034000*q^4 + 4629381120*q^5 + O(q^6),
+             q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)]
 
         ::
 
             sage: M = CuspForms(Gamma0(17),4, prec=10)
             sage: M.echelon_basis()
-            [
-            q + 2*q^5 - 8*q^7 - 8*q^8 + 7*q^9 + O(q^10),
-            q^2 - 3/2*q^5 - 7/2*q^6 + 9/2*q^7 + q^8 - 4*q^9 + O(q^10),
-            q^3 - 2*q^6 + q^7 - 4*q^8 - 2*q^9 + O(q^10),
-            q^4 - 1/2*q^5 - 5/2*q^6 + 3/2*q^7 + 2*q^9 + O(q^10)
-            ]
+            [q + 2*q^5 - 8*q^7 - 8*q^8 + 7*q^9 + O(q^10),
+             q^2 - 3/2*q^5 - 7/2*q^6 + 9/2*q^7 + q^8 - 4*q^9 + O(q^10),
+             q^3 - 2*q^6 + q^7 - 4*q^8 - 2*q^9 + O(q^10),
+             q^4 - 1/2*q^5 - 5/2*q^6 + 3/2*q^7 + 2*q^9 + O(q^10)]
         """
         F = self.free_module()
         W = self._q_expansion_module()
@@ -548,62 +512,52 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: m = ModularForms(97,2,prec=10)
             sage: s = m.cuspidal_subspace()
             sage: s.integral_basis()
-            [
-            q + 2*q^7 + 4*q^8 - 2*q^9 + O(q^10),
-            q^2 + q^4 + q^7 + 3*q^8 - 3*q^9 + O(q^10),
-            q^3 + q^4 - 3*q^8 + q^9 + O(q^10),
-            2*q^4 - 2*q^8 + O(q^10),
-            q^5 - 2*q^8 + 2*q^9 + O(q^10),
-            q^6 + 2*q^7 + 5*q^8 - 5*q^9 + O(q^10),
-            3*q^7 + 6*q^8 - 4*q^9 + O(q^10)
-            ]
+            [q + 2*q^7 + 4*q^8 - 2*q^9 + O(q^10),
+             q^2 + q^4 + q^7 + 3*q^8 - 3*q^9 + O(q^10),
+             q^3 + q^4 - 3*q^8 + q^9 + O(q^10),
+             2*q^4 - 2*q^8 + O(q^10),
+             q^5 - 2*q^8 + 2*q^9 + O(q^10),
+             q^6 + 2*q^7 + 5*q^8 - 5*q^9 + O(q^10),
+             3*q^7 + 6*q^8 - 4*q^9 + O(q^10)]
             sage: s.echelon_basis()
-            [
-            q + 2/3*q^9 + O(q^10),
-            q^2 + 2*q^8 - 5/3*q^9 + O(q^10),
-            q^3 - 2*q^8 + q^9 + O(q^10),
-            q^4 - q^8 + O(q^10),
-            q^5 - 2*q^8 + 2*q^9 + O(q^10),
-            q^6 + q^8 - 7/3*q^9 + O(q^10),
-            q^7 + 2*q^8 - 4/3*q^9 + O(q^10)
-            ]
+            [q + 2/3*q^9 + O(q^10),
+             q^2 + 2*q^8 - 5/3*q^9 + O(q^10),
+             q^3 - 2*q^8 + q^9 + O(q^10),
+             q^4 - q^8 + O(q^10),
+             q^5 - 2*q^8 + 2*q^9 + O(q^10),
+             q^6 + q^8 - 7/3*q^9 + O(q^10),
+             q^7 + 2*q^8 - 4/3*q^9 + O(q^10)]
 
         Here's another example where there is a big gap in the valuations::
 
             sage: m = CuspForms(64,2)
             sage: m.integral_basis()
-            [
-            q + O(q^6),
-            q^2 + O(q^6),
-            q^5 + O(q^6)
-            ]
+            [q + O(q^6), q^2 + O(q^6), q^5 + O(q^6)]
 
         TESTS::
 
             sage: m = CuspForms(11*2^4,2, prec=13); m
             Cuspidal subspace of dimension 19 of Modular Forms space of dimension 30 for Congruence Subgroup Gamma0(176) of weight 2 over Rational Field
             sage: m.integral_basis()          # takes a long time (3 or 4 seconds)
-            [
-            q + O(q^13),
-            q^2 + O(q^13),
-            q^3 + O(q^13),
-            q^4 + O(q^13),
-            q^5 + O(q^13),
-            q^6 + O(q^13),
-            q^7 + O(q^13),
-            q^8 + O(q^13),
-            q^9 + O(q^13),
-            q^10 + O(q^13),
-            q^11 + O(q^13),
-            q^12 + O(q^13),
-            O(q^13),
-            O(q^13),
-            O(q^13),
-            O(q^13),
-            O(q^13),
-            O(q^13),
-            O(q^13)
-            ]
+            [q + O(q^13),
+             q^2 + O(q^13),
+             q^3 + O(q^13),
+             q^4 + O(q^13),
+             q^5 + O(q^13),
+             q^6 + O(q^13),
+             q^7 + O(q^13),
+             q^8 + O(q^13),
+             q^9 + O(q^13),
+             q^10 + O(q^13),
+             q^11 + O(q^13),
+             q^12 + O(q^13),
+             O(q^13),
+             O(q^13),
+             O(q^13),
+             O(q^13),
+             O(q^13),
+             O(q^13),
+             O(q^13)]
         """
         W = self._q_expansion_module()
         pr = W.degree()
@@ -658,35 +612,27 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
             sage: S = ModularForms(11,2).cuspidal_submodule()
             sage: S.q_expansion_basis()
-            [
-            q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)
-            ]
+            [q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)]
             sage: S.q_expansion_basis(5)
-            [
-            q - 2*q^2 - q^3 + 2*q^4 + O(q^5)
-            ]
+            [q - 2*q^2 - q^3 + 2*q^4 + O(q^5)]
             sage: S = ModularForms(1,24).cuspidal_submodule()
             sage: S.q_expansion_basis(8)
-            [
-            q + 195660*q^3 + 12080128*q^4 + 44656110*q^5 - 982499328*q^6 - 147247240*q^7 + O(q^8),
-            q^2 - 48*q^3 + 1080*q^4 - 15040*q^5 + 143820*q^6 - 985824*q^7 + O(q^8)
-            ]
+            [q + 195660*q^3 + 12080128*q^4 + 44656110*q^5 - 982499328*q^6 - 147247240*q^7 + O(q^8),
+             q^2 - 48*q^3 + 1080*q^4 - 15040*q^5 + 143820*q^6 - 985824*q^7 + O(q^8)]
 
         An example which used to be buggy::
 
             sage: M = CuspForms(128, 2, prec=3)
             sage: M.q_expansion_basis()
-            [
-            q - q^17 + O(q^22),
-            q^2 - 3*q^18 + O(q^22),
-            q^3 - q^11 + q^19 + O(q^22),
-            q^4 - 2*q^20 + O(q^22),
-            q^5 - 3*q^21 + O(q^22),
-            q^7 - q^15 + O(q^22),
-            q^9 - q^17 + O(q^22),
-            q^10 + O(q^22),
-            q^13 - q^21 + O(q^22)
-            ]
+            [q - q^17 + O(q^22),
+             q^2 - 3*q^18 + O(q^22),
+             q^3 - q^11 + q^19 + O(q^22),
+             q^4 - 2*q^20 + O(q^22),
+             q^5 - 3*q^21 + O(q^22),
+             q^7 - q^15 + O(q^22),
+             q^9 - q^17 + O(q^22),
+             q^10 + O(q^22),
+             q^13 - q^21 + O(q^22)]
         """
         if prec is None:
             try:  # don't care about precision -- just must be big enough to determine forms
@@ -755,18 +701,14 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
             sage: M = ModularForms(11,2)
             sage: M.q_expansion_basis()
-            [
-            q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6),
-            1 + 12/5*q + 36/5*q^2 + 48/5*q^3 + 84/5*q^4 + 72/5*q^5 + O(q^6)
-            ]
+            [q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6),
+             1 + 12/5*q + 36/5*q^2 + 48/5*q^3 + 84/5*q^4 + 72/5*q^5 + O(q^6)]
 
         ::
 
             sage: M.q_echelon_basis()
-            [
-            1 + 12*q^2 + 12*q^3 + 12*q^4 + 12*q^5 + O(q^6),
-            q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)
-            ]
+            [1 + 12*q^2 + 12*q^3 + 12*q^4 + 12*q^5 + O(q^6),
+             q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)]
         """
         prec = self.__normalize_prec(prec)
         if prec == 0:
@@ -810,9 +752,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
             sage: S = CuspForms(11,2)
             sage: S.q_integral_basis(5)
-            [
-            q - 2*q^2 - q^3 + 2*q^4 + O(q^5)
-            ]
+            [q - 2*q^2 - q^3 + 2*q^4 + O(q^5)]
         """
         if not self.base_ring() == QQ:
             raise TypeError("the base ring must be Q")
@@ -883,11 +823,9 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: m = ModularForms(Gamma0(23),2); m
             Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(23) of weight 2 over Rational Field
             sage: m.basis()
-            [
-            q - q^3 - q^4 + O(q^6),
-            q^2 - 2*q^3 - q^4 + 2*q^5 + O(q^6),
-            1 + 12/11*q + 36/11*q^2 + 48/11*q^3 + 84/11*q^4 + 72/11*q^5 + O(q^6)
-            ]
+            [q - q^3 - q^4 + O(q^6),
+             q^2 - 2*q^3 - q^4 + 2*q^5 + O(q^6),
+             1 + 12/11*q + 36/11*q^2 + 48/11*q^3 + 84/11*q^4 + 72/11*q^5 + O(q^6)]
             sage: m._q_expansion([1,2,0], 5)
             q + 2*q^2 - 5*q^3 - 3*q^4 + O(q^5)
         """
@@ -1377,10 +1315,8 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
             sage: MM = ModularForms(11,2)
             sage: MM.basis()
-            [
-            q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6),
-            1 + 12/5*q + 36/5*q^2 + 48/5*q^3 + 84/5*q^4 + 72/5*q^5 + O(q^6)
-            ]
+            [q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6),
+             1 + 12/5*q + 36/5*q^2 + 48/5*q^3 + 84/5*q^4 + 72/5*q^5 + O(q^6)]
         """
         return Sequence([self.element_class(self, x)
                          for x in self.free_module().basis()],
@@ -1394,13 +1330,11 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
             sage: N = ModularForms(6,4)
             sage: N.basis()
-            [
-            q - 2*q^2 - 3*q^3 + 4*q^4 + 6*q^5 + O(q^6),
-            1 + O(q^6),
-            q - 8*q^4 + 126*q^5 + O(q^6),
-            q^2 + 9*q^4 + O(q^6),
-            q^3 + O(q^6)
-            ]
+            [q - 2*q^2 - 3*q^3 + 4*q^4 + 6*q^5 + O(q^6),
+             1 + O(q^6),
+             q - 8*q^4 + 126*q^5 + O(q^6),
+             q^2 + 9*q^4 + O(q^6),
+             q^3 + O(q^6)]
 
         ::
 
@@ -1432,13 +1366,11 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
             sage: N = ModularForms(6,4)
             sage: N.gens()
-            [
-            q - 2*q^2 - 3*q^3 + 4*q^4 + 6*q^5 + O(q^6),
-            1 + O(q^6),
-            q - 8*q^4 + 126*q^5 + O(q^6),
-            q^2 + 9*q^4 + O(q^6),
-            q^3 + O(q^6)
-            ]
+            [q - 2*q^2 - 3*q^3 + 4*q^4 + 6*q^5 + O(q^6),
+             1 + O(q^6),
+             q - 8*q^4 + 126*q^5 + O(q^6),
+             q^2 + 9*q^4 + O(q^6),
+             q^3 + O(q^6)]
         """
         return self.basis()
 

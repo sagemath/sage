@@ -451,10 +451,8 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             False
             sage: o = m.old_subspace()
             sage: o.decomposition()
-            [
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 6 for Gamma_0(33) of weight 2 with sign 1 over Rational Field,
-            Modular Symbols subspace of dimension 3 of Modular Symbols space of dimension 6 for Gamma_0(33) of weight 2 with sign 1 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 6 for Gamma_0(33) of weight 2 with sign 1 over Rational Field,
+             Modular Symbols subspace of dimension 3 of Modular Symbols space of dimension 6 for Gamma_0(33) of weight 2 with sign 1 over Rational Field]
             sage: C = ModularSymbols(1,14,0,GF(5)).cuspidal_submodule(); C
             Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 2 for Gamma_0(1) of weight 14 with sign 0 over Finite Field of size 5
             sage: C.is_simple()
@@ -545,9 +543,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
             sage: M = ModularSymbols(15)
             sage: M.cuspidal_submodule().q_expansion_basis()
-            [
-            q - q^2 - q^3 - q^4 + q^5 + q^6 + O(q^8)
-            ]
+            [q - q^2 - q^3 - q^4 + q^5 + q^6 + O(q^8)]
             sage: M.set_default_prec(20)
 
         Notice that setting the default precision of the ambient space
@@ -556,9 +552,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         ::
 
             sage: M.cuspidal_submodule().q_expansion_basis()
-            [
-            q - q^2 - q^3 - q^4 + q^5 + q^6 + 3*q^8 + q^9 - q^10 - 4*q^11 + q^12 - 2*q^13 - q^15 - q^16 + 2*q^17 - q^18 + 4*q^19 + O(q^20)
-            ]
+            [q - q^2 - q^3 - q^4 + q^5 + q^6 + 3*q^8 + q^9 - q^10 - 4*q^11 + q^12 - 2*q^13 - q^15 - q^16 + 2*q^17 - q^18 + 4*q^19 + O(q^20)]
             sage: M.cuspidal_submodule().default_prec()
             20
         """
@@ -581,10 +575,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             sage: M = ModularSymbols(Gamma1(13),2)
             sage: M.set_default_prec(5)
             sage: M.cuspidal_submodule().q_expansion_basis()
-            [
-            q - 4*q^3 - q^4 + O(q^5),
-            q^2 - 2*q^3 - q^4 + O(q^5)
-            ]
+            [q - 4*q^3 - q^4 + O(q^5), q^2 - 2*q^3 - q^4 + O(q^5)]
         """
         if not self.is_ambient():
             return self.ambient_hecke_module().set_default_prec(prec)
@@ -599,14 +590,10 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
             sage: M = ModularSymbols(17,2)
             sage: M.cuspidal_submodule().q_expansion_basis()
-            [
-            q - q^2 - q^4 - 2*q^5 + 4*q^7 + O(q^8)
-            ]
+            [q - q^2 - q^4 - 2*q^5 + 4*q^7 + O(q^8)]
             sage: M.set_precision(10)
             sage: M.cuspidal_submodule().q_expansion_basis()
-            [
-            q - q^2 - q^4 - 2*q^5 + 4*q^7 + 3*q^8 - 3*q^9 + O(q^10)
-            ]
+            [q - q^2 - q^4 - 2*q^5 + 4*q^7 + 3*q^8 - 3*q^9 + O(q^10)]
         """
         self.set_default_prec(prec)
 
@@ -646,42 +633,32 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
             sage: M = ModularSymbols(1, 12).cuspidal_submodule()
             sage: M.q_expansion_basis(8)
-            [
-            q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 - 16744*q^7 + O(q^8)
-            ]
+            [q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 - 16744*q^7 + O(q^8)]
 
         ::
 
             sage: M.q_expansion_basis(8, algorithm='eigen')
-            [
-            q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 - 16744*q^7 + O(q^8)
-            ]
+            [q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 - 6048*q^6 - 16744*q^7 + O(q^8)]
 
         ::
 
             sage: M = ModularSymbols(1, 24).cuspidal_submodule()
             sage: M.q_expansion_basis(8, algorithm='eigen')
-            [
-            q + 195660*q^3 + 12080128*q^4 + 44656110*q^5 - 982499328*q^6 - 147247240*q^7 + O(q^8),
-            q^2 - 48*q^3 + 1080*q^4 - 15040*q^5 + 143820*q^6 - 985824*q^7 + O(q^8)
-            ]
+            [q + 195660*q^3 + 12080128*q^4 + 44656110*q^5 - 982499328*q^6 - 147247240*q^7 + O(q^8),
+             q^2 - 48*q^3 + 1080*q^4 - 15040*q^5 + 143820*q^6 - 985824*q^7 + O(q^8)]
 
         ::
 
             sage: M = ModularSymbols(11, 2, sign=-1).cuspidal_submodule()
             sage: M.q_expansion_basis(8, algorithm='eigen')
-            [
-            q - 2*q^2 - q^3 + 2*q^4 + q^5 + 2*q^6 - 2*q^7 + O(q^8)
-            ]
+            [q - 2*q^2 - q^3 + 2*q^4 + q^5 + 2*q^6 - 2*q^7 + O(q^8)]
 
         ::
 
             sage: M = ModularSymbols(Gamma1(13), 2, sign=1).cuspidal_submodule()
             sage: M.q_expansion_basis(8, algorithm='eigen')
-            [
-            q - 4*q^3 - q^4 + 3*q^5 + 6*q^6 + O(q^8),
-            q^2 - 2*q^3 - q^4 + 2*q^5 + 2*q^6 + O(q^8)
-            ]
+            [q - 4*q^3 - q^4 + 3*q^5 + 6*q^6 + O(q^8),
+             q^2 - 2*q^3 - q^4 + 2*q^5 + 2*q^6 + O(q^8)]
 
         ::
 
@@ -693,9 +670,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
             sage: M = ModularSymbols(Gamma1(7), 3, sign=-1).cuspidal_submodule()
             sage: M.q_expansion_basis(8)
-            [
-            q - 3*q^2 + 5*q^4 - 7*q^7 + O(q^8)
-            ]
+            [q - 3*q^2 + 5*q^4 - 7*q^7 + O(q^8)]
 
         ::
 
@@ -703,16 +678,11 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             sage: M[0]
             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 7 for Gamma_0(43) of weight 2 with sign 0 over Rational Field
             sage: M[0].q_expansion_basis()
-            [
-            q - 2*q^2 - 2*q^3 + 2*q^4 - 4*q^5 + 4*q^6 + O(q^8)
-            ]
+            [q - 2*q^2 - 2*q^3 + 2*q^4 - 4*q^5 + 4*q^6 + O(q^8)]
             sage: M[1]
             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 7 for Gamma_0(43) of weight 2 with sign 0 over Rational Field
             sage: M[1].q_expansion_basis()
-            [
-            q + 2*q^5 - 2*q^6 - 2*q^7 + O(q^8),
-            q^2 - q^3 - q^5 + q^7 + O(q^8)
-            ]
+            [q + 2*q^5 - 2*q^6 - 2*q^7 + O(q^8), q^2 - q^3 - q^5 + q^7 + O(q^8)]
         """
         if prec is None:
             prec = self.default_prec()
@@ -851,10 +821,8 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             sage: k.<a> = NumberField(x^2-5)
             sage: M = ModularSymbols(23, base_ring=k, sign=1).cuspidal_submodule()
             sage: D = M.decomposition(); D
-            [
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 3 for Gamma_0(23) of weight 2 with sign 1 over Number Field in a with defining polynomial x^2 - 5,
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 3 for Gamma_0(23) of weight 2 with sign 1 over Number Field in a with defining polynomial x^2 - 5
-            ]
+            [Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 3 for Gamma_0(23) of weight 2 with sign 1 over Number Field in a with defining polynomial x^2 - 5,
+             Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 3 for Gamma_0(23) of weight 2 with sign 1 over Number Field in a with defining polynomial x^2 - 5]
             sage: M.q_expansion_module(8, QQ)
             Vector space of degree 8 and dimension 2 over Rational Field
             Basis matrix:
@@ -870,9 +838,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             sage: M = ModularSymbols(eps,2,sign=1).cuspidal_submodule(); M
             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 4 and level 25, weight 2, character [zeta10], sign 1, over Cyclotomic Field of order 10 and degree 4
             sage: D = M.decomposition(); D
-            [
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 4 and level 25, weight 2, character [zeta10], sign 1, over Cyclotomic Field of order 10 and degree 4
-            ]
+            [Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 4 and level 25, weight 2, character [zeta10], sign 1, over Cyclotomic Field of order 10 and degree 4]
             sage: D[0].q_eigenform(4, 'mu')
             q + mu*q^2 + ((zeta10^3 + zeta10 - 1)*mu + zeta10^2 - 1)*q^3 + O(q^4)
             sage: D[0].q_expansion_module(11, QQ)
@@ -1545,10 +1511,8 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         EXAMPLES::
 
             sage: ModularSymbols(Gamma1(19), 2).cuspidal_submodule().star_decomposition()
-            [
-            Modular Symbols subspace of dimension 7 of Modular Symbols space of dimension 31 for Gamma_1(19) of weight 2 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 7 of Modular Symbols space of dimension 31 for Gamma_1(19) of weight 2 with sign 0 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 7 of Modular Symbols space of dimension 31 for Gamma_1(19) of weight 2 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 7 of Modular Symbols space of dimension 31 for Gamma_1(19) of weight 2 with sign 0 over Rational Field]
         """
         S = self.star_involution()
         return S.decomposition()
