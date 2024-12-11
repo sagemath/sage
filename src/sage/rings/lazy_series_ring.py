@@ -2273,9 +2273,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: f.parent()
             Fraction Field of Multivariate Polynomial Ring in a, b, c over Integer Ring
             sage: L(f)                                                                  # needs sage.libs.singular
-            1 + (a+b) + (-a*b) + (-a^2*b-a*b^2-c^3) + (a^2*b^2-a*c^3-b*c^3)
-             + (a^3*b^2+a^2*b^3+2*a*b*c^3) + (-a^3*b^3+2*a^2*b*c^3+2*a*b^2*c^3+c^6)
-             + O(a,b,c)^7
+            1 + (a+b) - a*b - (a^2*b+a*b^2+c^3) + (a^2*b^2-a*c^3-b*c^3) + (a^3*b^2+a^2*b^3+2*a*b*c^3) - (a^3*b^3-2*a^2*b*c^3-2*a*b^2*c^3-c^6) + O(a,b,c)^7
             sage: L(f) == (1 + aa + bb) / (1 + aa*bb + cc^3)                            # needs sage.libs.singular
             True
 
@@ -2533,13 +2531,12 @@ class LazyPowerSeriesRing(LazySeriesRing):
 
             sage: L = LazyPowerSeriesRing(GF(3), 'q, t')
             sage: L.some_elements()[:6]
-            [0, 1, q,
+            [0,
+             1,
+             q,
              q + q^2 + q^3,
-             1 + q + q^2 + (-q^3) + (-q^4) + (-q^5) + (-q^6) + O(q,t)^7,
-             1 + (q+t) + (q^2-q*t+t^2) + (q^3+t^3)
-               + (q^4+q^3*t+q*t^3+t^4)
-               + (q^5-q^4*t+q^3*t^2+q^2*t^3-q*t^4+t^5)
-               + (q^6-q^3*t^3+t^6) + O(q,t)^7]
+             1 + q + q^2 - q^3 - q^4 - q^5 - q^6 + O(q,t)^7,
+             1 + (q+t) + (q^2-q*t+t^2) + (q^3+t^3) + (q^4+q^3*t+q*t^3+t^4) + (q^5-q^4*t+q^3*t^2+q^2*t^3-q*t^4+t^5) + (q^6-q^3*t^3+t^6) + O(q,t)^7]
         """
         z = self.gen(0)
         elts = [self.zero(), self.one(), self.an_element()]
@@ -2595,14 +2592,14 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: L.<a,b> = LazyPowerSeriesRing(QQ)
             sage: def f(x, y): return (1 + x) / (1 + y)
             sage: L.taylor(f)
-            1 + (a-b) + (-a*b+b^2) + (a*b^2-b^3) + (-a*b^3+b^4) + (a*b^4-b^5) + (-a*b^5+b^6) + O(a,b)^7
+            1 + (a-b) - (a*b-b^2) + (a*b^2-b^3) - (a*b^3-b^4) + (a*b^4-b^5) - (a*b^5-b^6) + O(a,b)^7
             sage: g(w, z) = (1 + w) / (1 + z)
             sage: L.taylor(g)
-            1 + (a-b) + (-a*b+b^2) + (a*b^2-b^3) + (-a*b^3+b^4) + (a*b^4-b^5) + (-a*b^5+b^6) + O(a,b)^7
+            1 + (a-b) - (a*b-b^2) + (a*b^2-b^3) - (a*b^3-b^4) + (a*b^4-b^5) - (a*b^5-b^6) + O(a,b)^7
             sage: y = SR.var('y')
             sage: h = (1 + x) / (1 + y)
             sage: L.taylor(h)
-            1 + (a-b) + (-a*b+b^2) + (a*b^2-b^3) + (-a*b^3+b^4) + (a*b^4-b^5) + (-a*b^5+b^6) + O(a,b)^7
+            1 + (a-b) - (a*b-b^2) + (a*b^2-b^3) - (a*b^3-b^4) + (a*b^4-b^5) - (a*b^5-b^6) + O(a,b)^7
         """
         try:
             return f(*self.gens())

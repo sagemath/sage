@@ -2435,8 +2435,8 @@ class LazyModuleElement(Element):
 
             sage: L.<x,y> = LazyPowerSeriesRing(QQ)
             sage: atan(x/(1-y))
-            x + x*y + (-1/3*x^3+x*y^2) + (-x^3*y+x*y^3) + (1/5*x^5-2*x^3*y^2+x*y^4)
-             + (x^5*y-10/3*x^3*y^3+x*y^5) + (-1/7*x^7+3*x^5*y^2-5*x^3*y^4+x*y^6) + O(x,y)^8
+            x + x*y - (1/3*x^3-x*y^2) - (x^3*y-x*y^3) + (1/5*x^5-2*x^3*y^2+x*y^4)
+             + (x^5*y-10/3*x^3*y^3+x*y^5) - (1/7*x^7-3*x^5*y^2+5*x^3*y^4-x*y^6) + O(x,y)^8
 
         TESTS::
 
@@ -2555,8 +2555,8 @@ class LazyModuleElement(Element):
 
             sage: L.<x,y> = LazyPowerSeriesRing(QQ)
             sage: tanh(x/(1-y))                                                         # needs sage.libs.flint
-            x + x*y + (-1/3*x^3+x*y^2) + (-x^3*y+x*y^3) + (2/15*x^5-2*x^3*y^2+x*y^4)
-             + (2/3*x^5*y-10/3*x^3*y^3+x*y^5) + (-17/315*x^7+2*x^5*y^2-5*x^3*y^4+x*y^6) + O(x,y)^8
+            x + x*y - (1/3*x^3-x*y^2) - (x^3*y-x*y^3) + (2/15*x^5-2*x^3*y^2+x*y^4)
+             + (2/3*x^5*y-10/3*x^3*y^3+x*y^5) - (17/315*x^7-2*x^5*y^2+5*x^3*y^4-x*y^6) + O(x,y)^8
 
         TESTS::
 
@@ -2618,8 +2618,8 @@ class LazyModuleElement(Element):
 
             sage: L.<x, y> = LazyPowerSeriesRing(QQ)
             sage: sech(x/(1-y))                                                         # needs sage.libs.flint
-            1 + (-1/2*x^2) + (-x^2*y) + (5/24*x^4-3/2*x^2*y^2) + (5/6*x^4*y-2*x^2*y^3)
-             + (-61/720*x^6+25/12*x^4*y^2-5/2*x^2*y^4) + O(x,y)^7
+            1 - 1/2*x^2 - x^2*y + (5/24*x^4-3/2*x^2*y^2) + (5/6*x^4*y-2*x^2*y^3)
+             - (61/720*x^6-25/12*x^4*y^2+5/2*x^2*y^4) + O(x,y)^7
 
         TESTS::
 
@@ -2688,8 +2688,8 @@ class LazyModuleElement(Element):
 
             sage: L.<x,y> = LazyPowerSeriesRing(QQ)
             sage: asinh(x/(1-y))
-            x + x*y + (-1/6*x^3+x*y^2) + (-1/2*x^3*y+x*y^3) + (3/40*x^5-x^3*y^2+x*y^4)
-             + (3/8*x^5*y-5/3*x^3*y^3+x*y^5) + (-5/112*x^7+9/8*x^5*y^2-5/2*x^3*y^4+x*y^6) + O(x,y)^8
+            x + x*y - (1/6*x^3-x*y^2) - (1/2*x^3*y-x*y^3) + (3/40*x^5-x^3*y^2+x*y^4)
+             + (3/8*x^5*y-5/3*x^3*y^3+x*y^5) - (5/112*x^7-9/8*x^5*y^2+5/2*x^3*y^4-x*y^6) + O(x,y)^8
 
         TESTS::
 
@@ -2908,10 +2908,10 @@ class LazyModuleElement(Element):
 
             sage: L.<x,y> = LazyPowerSeriesRing(QQ)
             sage: sqrt(1+x/(1-y))
-            1 + 1/2*x + (-1/8*x^2+1/2*x*y) + (1/16*x^3-1/4*x^2*y+1/2*x*y^2)
-             + (-5/128*x^4+3/16*x^3*y-3/8*x^2*y^2+1/2*x*y^3)
+            1 + 1/2*x - (1/8*x^2-1/2*x*y) + (1/16*x^3-1/4*x^2*y+1/2*x*y^2)
+             - (5/128*x^4-3/16*x^3*y+3/8*x^2*y^2-1/2*x*y^3)
              + (7/256*x^5-5/32*x^4*y+3/8*x^3*y^2-1/2*x^2*y^3+1/2*x*y^4)
-             + (-21/1024*x^6+35/256*x^5*y-25/64*x^4*y^2+5/8*x^3*y^3-5/8*x^2*y^4+1/2*x*y^5)
+             - (21/1024*x^6-35/256*x^5*y+25/64*x^4*y^2-5/8*x^3*y^3+5/8*x^2*y^4-1/2*x*y^5)
              + O(x,y)^7
 
         This also works for Dirichlet series::
@@ -4875,7 +4875,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
         sage: L.<x, y> = LazyPowerSeriesRing(ZZ)
         sage: f = 1 / (1 - x^2 + y^3); f
-        1 + x^2 + (-y^3) + x^4 + (-2*x^2*y^3) + (x^6+y^6) + O(x,y)^7
+        1 + x^2 - y^3 + x^4 - 2*x^2*y^3 + (x^6+y^6) + O(x,y)^7
         sage: P.<x, y> = PowerSeriesRing(ZZ, default_prec=101)
         sage: g = 1 / (1 - x^2 + y^3); f[100] - g[100]
         0
@@ -4884,7 +4884,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
         sage: g = loads(dumps(f))
         sage: g
-        1 + x^2 + (-y^3) + x^4 + (-2*x^2*y^3) + (x^6+y^6) + O(x,y)^7
+        1 + x^2 - y^3 + x^4 - 2*x^2*y^3 + (x^6+y^6) + O(x,y)^7
         sage: g == f
         True
     """
@@ -5504,14 +5504,13 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
             sage: f = (1 + x + y^2 + z)^-1
             sage: f.derivative(x)
-            -1 + (2*x+2*z) + (-3*x^2+2*y^2-6*x*z-3*z^2) + ... + O(x,y,z)^6
+            -1 + (2*x+2*z) - (3*x^2-2*y^2+6*x*z+3*z^2) + (4*x^3-6*x*y^2+12*x^2*z-6*y^2*z+12*x*z^2+4*z^3) - (5*x^4-12*x^2*y^2+3*y^4+20*x^3*z-24*x*y^2*z+30*x^2*z^2-12*y^2*z^2+20*x*z^3+5*z^4) + (6*x^5-20*x^3*y^2+12*x*y^4+30*x^4*z-60*x^2*y^2*z+12*y^4*z+60*x^3*z^2-60*x*y^2*z^2+60*x^2*z^3-20*y^2*z^3+30*x*z^4+6*z^5) + O(x,y,z)^6
             sage: f.derivative(y, 2)
-            -2 + (4*x+4*z) + (-6*x^2+12*y^2-12*x*z-6*z^2) + ... + O(x,y,z)^5
+            -2 + (4*x+4*z) - (6*x^2-12*y^2+12*x*z+6*z^2) + (8*x^3-36*x*y^2+24*x^2*z-36*y^2*z+24*x*z^2+8*z^3) - (10*x^4-72*x^2*y^2+30*y^4+40*x^3*z-144*x*y^2*z+60*x^2*z^2-72*y^2*z^2+40*x*z^3+10*z^4) + O(x,y,z)^5
             sage: f.derivative(x, y)
-            4*y + (-12*x*y-12*y*z) + (24*x^2*y-12*y^3+48*x*y*z+24*y*z^2)
-             + (-40*x^3*y+48*x*y^3-120*x^2*y*z+48*y^3*z-120*x*y*z^2-40*y*z^3) + O(x,y,z)^5
+            4*y - (12*x*y+12*y*z) + (24*x^2*y-12*y^3+48*x*y*z+24*y*z^2) - (40*x^3*y-48*x*y^3+120*x^2*y*z-48*y^3*z+120*x*y*z^2+40*y*z^3) + O(x,y,z)^5
             sage: f.derivative(x, y, z)
-            (-12*y) + (48*x*y+48*y*z) + (-120*x^2*y+48*y^3-240*x*y*z-120*y*z^2) + O(x,y,z)^4
+            -12*y + (48*x*y+48*y*z) - (120*x^2*y-48*y^3+240*x*y*z+120*y*z^2) + O(x,y,z)^4
 
             sage: R.<t> = QQ[]
             sage: L.<x,y,z> = LazyPowerSeriesRing(R)
@@ -5798,7 +5797,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
             sage: L.<x,y,z> = LazyPowerSeriesRing(QQ)
             sage: (x + y - z^2).integral(z)
-            (x*z+y*z) + (-1/3*z^3)
+            (x*z+y*z) - 1/3*z^3
 
         TESTS::
 
@@ -5929,13 +5928,13 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: L.<x,y> = LazyPowerSeriesRing(QQ)
             sage: f = 1 / (2 - x^2 + y)
             sage: f._format_series(repr)
-            '1/2 + (-1/4*y) + (1/4*x^2+1/8*y^2) + (-1/4*x^2*y-1/16*y^3)
-             + (1/8*x^4+3/16*x^2*y^2+1/32*y^4) + (-3/16*x^4*y-1/8*x^2*y^3-1/64*y^5)
+            '1/2 - 1/4*y + (1/4*x^2+1/8*y^2) - (1/4*x^2*y+1/16*y^3)
+             + (1/8*x^4+3/16*x^2*y^2+1/32*y^4) - (3/16*x^4*y+1/8*x^2*y^3+1/64*y^5)
              + (1/16*x^6+3/16*x^4*y^2+5/64*x^2*y^4+1/128*y^6) + O(x,y)^7'
 
             sage: f = (2 - x^2 + y)
             sage: f._format_series(repr)
-            '2 + y + (-x^2)'
+            '2 + y - x^2'
         """
         P = self.parent()
         cs = self._coeff_stream
@@ -6012,7 +6011,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
             sage: L.<x,y> = LazyPowerSeriesRing(ZZ)
             sage: f = x^2 + y*x - x + 2; f
-            2 + (-x) + (x^2+x*y)
+            2 - x + (x^2+x*y)
             sage: f.polynomial()
             x^2 + x*y - x + 2
 
@@ -6020,7 +6019,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
             sage: g = 1 / (1 + x + y + x*y)
             sage: g3 = g.truncate(4); g3
-            1 + (-x-y) + (x^2+x*y+y^2) + (-x^3-x^2*y-x*y^2-y^3)
+            1 - (x+y) + (x^2+x*y+y^2) - (x^3+x^2*y+x*y^2+y^3)
             sage: g.polynomial()
             Traceback (most recent call last):
             ...
@@ -6629,7 +6628,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: L = LazySymmetricFunctions(p)
             sage: f = L(a + b*p[1])
             sage: f.revert()
-            (((-a)/b)*p[]) + 1/b*p[1]
+            (-a/b*p[]) + 1/b*p[1]
             sage: f = L(2*p[1])
             sage: f.revert()
             1/2*p[1]
