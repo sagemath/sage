@@ -54,7 +54,6 @@
 #ifndef PAIRING_HEAP_H
 #define PAIRING_HEAP_H
 
-#include <iostream>
 #include <unordered_map>
 #include <stdexcept>
 
