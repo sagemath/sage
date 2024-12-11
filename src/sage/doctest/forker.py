@@ -283,7 +283,7 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
     lines.extend(traceback.format_exception_only(category, category(message)))
 
     if file is None:
-        file = sys.stderr
+        file = sys.stdout
     try:
         file.writelines(lines)
         file.flush()
