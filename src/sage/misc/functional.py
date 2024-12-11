@@ -105,10 +105,7 @@ def basis(x):
         sage: V = VectorSpace(QQ, 3)                                                    # needs sage.modules
         sage: S = V.subspace([[1,2,0], [2,2,-1]])                                       # needs sage.modules
         sage: basis(S)                                                                  # needs sage.modules
-        [
-        (1, 0, -1),
-        (0, 1, 1/2)
-        ]
+        [(1, 0, -1), (0, 1, 1/2)]
     """
     return x.basis()
 
@@ -220,9 +217,8 @@ def decomposition(x):
 
         sage: M = matrix([[2, 3], [3, 4]])                                              # needs sage.libs.pari sage.modules
         sage: M.decomposition()                                                         # needs sage.libs.pari sage.modules
-        [
-        (Ambient free module of rank 2 over the principal ideal domain Integer Ring, True)
-        ]
+        [(Ambient free module of rank 2 over the principal ideal domain Integer Ring,
+          True)]
 
         sage: # needs sage.groups
         sage: G.<a,b> = DirichletGroup(20)
@@ -910,11 +906,7 @@ def kernel(x):
         Basis matrix:
         []
         sage: kernel(A.transpose()).basis()
-        [
-        (1, 0, 0),
-        (0, 1, 0),
-        (0, 0, 1)
-        ]
+        [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
     """
     return x.kernel()
 
