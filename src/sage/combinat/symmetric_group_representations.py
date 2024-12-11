@@ -1103,7 +1103,8 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
             U = invariant_symmetric_bilinear_matrix()
             A = base_change_hermitian(U)
             return A*rho(permutation)*A.inverse()
-        
+
+
 class UnitaryRepresentations(SymmetricGroupRepresentations_class):
     _default_ring = ZZ
 

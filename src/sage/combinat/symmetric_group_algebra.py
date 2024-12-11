@@ -2120,9 +2120,9 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                 z = F.multiplicative_generator()
                 k = u.log(z)
                 if k % (q+1) != 0:
-                    raise ValueError("Unable to factor: u is not in base field GF(q)")
-                return z ** ((k//(q+1))%(q-1))
-            
+                    raise ValueError(f"Unable to factor {u} is not in base field GF({q})")
+                return z ** ((k//(q+1)) % (q-1))
+
             dft_matrix = self.dft()
             sign_diag = (dft_matrix*dft_matrix.H).diagonal()
             conj_sqrt_diag_inv = diagonal_matrix([~conj_square_root(d) for d in sign_diag])
