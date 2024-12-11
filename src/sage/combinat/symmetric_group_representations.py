@@ -916,7 +916,7 @@ class SpechtRepresentation(SymmetricGroupRepresentation_generic_class):
         """
         if permutation is None:
             permutation = Permutation(range(1, 1 + self._n))
-        Q = matrix(QQ, len(self._yang_baxter_graph))
+        Q = matrix(self._ring, len(self._yang_baxter_graph))
         for i, v in enumerate(self._dual_vertices):
             for j, u in enumerate(self._yang_baxter_graph):
                 Q[i, j] = self.scalar_product(tuple(permutation.action(v)), u)
@@ -1040,6 +1040,31 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
             [6*z2 + 1        2        1]
             [6*z2 + 1        1        2]
         """
+        ret = self._representation_matrix_uncached(permutation)
+        ret.set_immutable()
+        return ret
+
+    def _representation_matrix_uncached(self, permutation):
+        r"""
+        Return the matrix representing the ``permutation`` in this
+        irreducible representation.
+
+        .. NOTE::
+
+            This method caches the results.
+
+        EXAMPLES::
+
+            sage: unitary_specht = SymmetricGroupRepresentation([3,1], 'unitary', ring=GF(7**2))
+            sage: unitary_specht.representation_matrix(Permutation([2,1,3,4]))
+            [       3     4*z2     5*z2]
+            [3*z2 + 4        4        2]
+            [       0        0        1]
+            sage: unitary_specht.representation_matrix(Permutation([3,2,1,4]))
+            [       4       z2       z2]
+            [6*z2 + 1        2        1]
+            [6*z2 + 1        1        2]
+        """
         from sage.matrix.special import diagonal_matrix
         from sage.misc.functional import sqrt
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -1061,7 +1086,7 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
             rho = specht_module.representation_matrix
 
             def invariant_symmetric_bilinear_matrix():
-                d_rho = specht_module.dimension()
+                d_rho = rho(G[0]).ncols()
                 R = PolynomialRing(F, 'u', d_rho**2)
                 U_vars = R.gens()
                 U = matrix(R, d_rho, d_rho, U_vars)
