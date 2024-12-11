@@ -259,7 +259,6 @@ def doctest_run(
 
 doctest.DocTestRunner.run = doctest_run
 
-
 @pytest.fixture(autouse=True, scope="session")
 def add_imports(doctest_namespace: dict[str, Any]):
     """
