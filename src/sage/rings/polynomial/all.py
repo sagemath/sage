@@ -54,3 +54,5 @@ from sage.rings.polynomial.cyclotomic import cyclotomic_value
 # Integer-valued Univariate Polynomial Ring
 lazy_import('sage.rings.polynomial.integer_valued_polynomials',
             'IntegerValuedPolynomialRing')
+lazy_import('sage.rings.polynomial.q_integer_valued_polynomials',
+            'QuantumValuedPolynomialRing')

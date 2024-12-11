@@ -1462,7 +1462,7 @@ class CachedMethodPickle():
         we replace the actual cached method by a place holder,
         that kills itself as soon as any attribute is requested.
         Then, the original cached attribute is reinstated. But the
-        cached values are in fact saved (if `do_pickle` is set.)
+        cached values are in fact saved (if ``do_pickle`` is set.)
 
     EXAMPLES::
 

@@ -3,15 +3,15 @@
 Set of all objects of a given Python class
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE
 from sage.structure.richcmp cimport rich_to_bool

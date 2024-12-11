@@ -40,7 +40,6 @@ from sage.arith.functions import lcm
 from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.all cimport *
-from sage.libs.gsl.types cimport *
 from sage.libs.gsl.complex cimport *
 from sage.libs.gsl.gamma cimport gsl_sf_lngamma_complex_e
 from sage.libs.mpmath import utils as mpmath_utils

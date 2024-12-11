@@ -65,7 +65,7 @@ def CrystalOfSpins(ct):
     Return the spin crystal of the given type `B`.
 
     This is a combinatorial model for the crystal with highest weight
-    `Lambda_n` (the `n`-th fundamental weight). It has
+    `\Lambda_n` (the `n`-th fundamental weight). It has
     `2^n` elements, here called Spins. See also
     :func:`~sage.combinat.crystals.letters.CrystalOfLetters`,
     :func:`~sage.combinat.crystals.spins.CrystalOfSpinsPlus`,
@@ -108,7 +108,7 @@ def CrystalOfSpinsPlus(ct):
     r"""
     Return the plus spin crystal of the given type D.
 
-    This is the crystal with highest weight `Lambda_n` (the
+    This is the crystal with highest weight `\Lambda_n` (the
     `n`-th fundamental weight).
 
     INPUT:
@@ -141,7 +141,7 @@ def CrystalOfSpinsMinus(ct):
     r"""
     Return the minus spin crystal of the given type D.
 
-    This is the crystal with highest weight `Lambda_{n-1}`
+    This is the crystal with highest weight `\Lambda_{n-1}`
     (the `(n-1)`-st fundamental weight).
 
     INPUT:

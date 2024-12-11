@@ -165,7 +165,8 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         if isinstance(morphism_or_polys, SchemeMorphism_polynomial):
             domain = morphism_or_polys.domain()
         if domain is not None:
-            if isinstance(domain, AffineSpace_generic) or isinstance(domain, AlgebraicScheme_subscheme_affine):
+            if isinstance(domain, (AffineSpace_generic,
+                                   AlgebraicScheme_subscheme_affine)):
                 from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
                 return DynamicalSystem_affine(morphism_or_polys, domain)
             if isinstance(domain, Berkovich_Cp):

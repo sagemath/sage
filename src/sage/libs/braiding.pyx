@@ -41,6 +41,11 @@ cdef extern from "braiding.h" namespace "Braiding":
     int thurstontype(int n, list[int] word)
     int Rigidity_ext(int n, list[int] word)
     list[list[list[list[int]]]] SlidingCircuits(int n, list[int] word)
+    list[list[list[int]]] SendToSSS(int n, list[int] word)
+    list[list[list[int]]] SendToUSS(int n, list[int] word)
+    list[list[list[int]]] SendToSC(int n, list[int] word)
+    list[list[list[int]]] Trajectory(int n, list[int] word)
+    list[list[list[list[int]]]] CyclicSlidings(int n, list[int] word)
 
 
 def conjugatingbraid(braid1, braid2):
@@ -381,5 +386,163 @@ def sliding_circuits(braid):
     l = braid.Tietze()
     sig_on()
     cdef list[list[list[list[int]]]] rop = SlidingCircuits(nstrands, l)
+    sig_off()
+    return rop
+
+
+def send_to_sss(braid):
+    r"""
+    Return an element of the braid's super summit set and the conjugating braid.
+
+    INPUT:
+
+    - ``braid`` -- a braid
+
+    OUTPUT:
+
+    A list with two braids, the first one is an element of ``braid`` super summit
+    set, the second one is the corresponding conjugating braid.
+
+    EXAMPLES::
+
+        sage: from sage.libs.braiding import send_to_sss
+        sage: B = BraidGroup(4)
+        sage: d = B([1, 2, 1, 2, 3, -1, 2,- 3])
+        sage: send_to_sss(d)
+        [[[0], [1, 2, 1, 3]], [[-1], [1, 2, 3, 2]]]
+
+    """
+    nstrands = braid.parent().strands()
+    l = braid.Tietze()
+    sig_on()
+    cdef list[list[list[int]]] rop = SendToSSS(nstrands, l)
+    sig_off()
+    return rop
+
+
+def send_to_uss(braid):
+    r"""
+    Return an element of the braid's ultra summit set and the conjugating braid.
+
+    INPUT:
+
+    - ``braid`` -- a braid
+
+    OUTPUT:
+
+    A list with two braids, the first one is an element of ``braid`` ultra summit
+    set, the second one is the corresponding conjugating braid.
+
+    EXAMPLES::
+
+        sage: from sage.libs.braiding import send_to_uss
+        sage: B = BraidGroup(4)
+        sage: d = B([1, 2, 1, 2, 3, -1, 2,- 1])
+        sage: send_to_uss(d)
+        [[[0], [1, 2, 3, 2]], [[0], [1]]]
+
+    """
+    nstrands = braid.parent().strands()
+    l = braid.Tietze()
+    sig_on()
+    cdef list[list[list[int]]] rop = SendToUSS(nstrands, l)
+    sig_off()
+    return rop
+
+
+def send_to_sc(braid):
+    r"""
+    Return an element of the braid's sliding circuits and the conjugating braid.
+
+    INPUT:
+
+    - ``braid`` -- a braid
+
+    OUTPUT:
+
+    A list with two braids, the first one is an element of ``braid`` sliding
+    circuits, the second one is the corresponding conjugating braid.
+
+    EXAMPLES::
+
+        sage: from sage.libs.braiding import send_to_sc
+        sage: B = BraidGroup(4)
+        sage: d = B([1, 2, 1, 2, 3, -1, 2, 2])
+        sage: send_to_sc(d)
+        [[[0], [1, 2, 3, 2], [2, 1]], [[0], [1]]]
+
+
+    """
+    nstrands = braid.parent().strands()
+    l = braid.Tietze()
+    sig_on()
+    cdef list[list[list[int]]] rop = SendToSC(nstrands, l)
+    sig_off()
+    return rop
+
+
+def trajectory(braid):
+    r"""
+    Return the braid's trajectory.
+
+    INPUT:
+
+    - ``braid`` -- a braid
+
+    OUTPUT:
+
+    A list of braids, formed by the ``braid```trajectory.
+
+    EXAMPLES::
+
+        sage: from sage.libs.braiding import trajectory
+        sage: B = BraidGroup(4)
+        sage: d = B([1, 2, 1, 2, 3, -1, 2, 2])
+        sage: trajectory(d)
+        [[[0], [1, 3], [1, 2, 3, 2]],
+         [[0], [1, 2, 3, 2, 1], [3]],
+         [[0], [1, 2, 3, 2], [2, 1]],
+         [[0], [2, 1, 3], [1, 2, 3]]]
+
+
+    """
+    nstrands = braid.parent().strands()
+    l = braid.Tietze()
+    sig_on()
+    cdef list[list[list[int]]] rop = Trajectory(nstrands, l)
+    sig_off()
+    return rop
+
+
+def cyclic_slidings(braid):
+    r"""
+    Return the cyclic slidings of the braid.
+
+    INPUT:
+
+    - ``braid`` -- a braid
+
+    OUTPUT:
+
+    A list of lists of braids, given by the input's cyclic slidings.
+
+    EXAMPLES::
+
+        sage: from sage.libs.braiding import cyclic_slidings
+        sage: B = BraidGroup(4)
+        sage: d = B([1, 2, 1, 2, 3, -1, 2, 2])
+        sage: cyclic_slidings(d)
+        [[[[0], [1, 2, 3, 2], [2, 1]],
+          [[0], [1, 2, 3, 2, 1], [3]],
+          [[0], [2, 1, 3], [1, 2, 3]]],
+         [[[0], [1, 3, 2, 1], [2, 3]],
+          [[0], [1, 2, 3, 2, 1], [1]],
+          [[0], [2, 1, 3], [3, 2, 1]]]]
+
+    """
+    nstrands = braid.parent().strands()
+    l = braid.Tietze()
+    sig_on()
+    cdef list[list[list[list[int]]]] rop = CyclicSlidings(nstrands, l)
     sig_off()
     return rop

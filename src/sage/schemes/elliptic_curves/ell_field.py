@@ -1364,7 +1364,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
               From: Elliptic Curve defined by y^2 + x*y = x^3 + x + 2 over Finite Field of size 31
               To:   Elliptic Curve defined by y^2 + x*y = x^3 + 2*x + 26 over Finite Field of size 31
 
-        Multiple ways to set the `velu_sqrt_bound`::
+        Multiple ways to set the ``velu_sqrt_bound``::
 
             sage: E = EllipticCurve_from_j(GF(97)(42))
             sage: P = E.gens()[0]*4
@@ -1427,7 +1427,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: phi.codomain()._order
             170141183460469231746191640949390434666
 
-        Check that ``'factored'`` recursively apply `velu_sqrt_bound`::
+        Check that ``factored`` recursively apply ``velu_sqrt_bound``::
 
             sage: from sage.schemes.elliptic_curves.hom_velusqrt import _velu_sqrt_bound
             sage: _velu_sqrt_bound.get()
@@ -2141,7 +2141,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         """
         def compute_key(phi):
             """
-            Data used in ``hash(phi)`` excluding the expensive `.kernel_polynomial`.
+            Data used in ``hash(phi)`` excluding the expensive ``.kernel_polynomial``.
             """
             return (phi.domain(), phi.codomain(), phi.degree(), phi.scaling_factor())
 

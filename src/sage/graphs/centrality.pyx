@@ -131,7 +131,7 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
     - ``G`` -- a graph
 
     - ``_`` -- this variable is ignored, only its type matters. If it is of type
-      `mpq_t` then computations are made on `Q`, if it is ``double`` the
+      ``mpq_t`` then computations are made on `Q`, if it is ``double`` the
       computations are made on ``double``.
 
     - ``normalize`` -- boolean (default: ``True``); whether to renormalize the

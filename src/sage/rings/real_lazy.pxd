@@ -27,4 +27,3 @@ cdef class LazyUnop(LazyFieldElement):
 
 cdef class LazyNamedUnop(LazyUnop):
     cdef readonly _extra_args
-

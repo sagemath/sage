@@ -287,7 +287,7 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         return PolynomialSequence([P(0)], P, immutable=True)
 
     # check for name confusions
-    blackgiacconstants = ['i', 'e'] # NB e^k is expanded to exp(k)
+    blackgiacconstants = ['i', 'e']  # NB e^k is expanded to exp(k)
     blacklist = blackgiacconstants + [str(j) for j in libgiac.VARS()]
     problematicnames = sorted(set(P.gens_dict()).intersection(blacklist))
 
@@ -336,8 +336,8 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
                 var_names = var_names[:len(blocks[0])]
             else:
                 raise NotImplementedError(
-                        "%s is not a supported term order in "
-                        "Giac Groebner bases." % P.term_order())
+                    "%s is not a supported term order in "
+                    "Giac Groebner bases." % P.term_order())
 
         # compute de groebner basis with giac
         gb_giac = F.gbasis(list(var_names), giac_order)

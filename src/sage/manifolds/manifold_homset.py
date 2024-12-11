@@ -28,10 +28,10 @@ REFERENCES:
 #*****************************************************************************
 
 from sage.categories.homset import Homset
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.manifolds.continuous_map import ContinuousMap
 from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class TopologicalManifoldHomset(UniqueRepresentation, Homset):
