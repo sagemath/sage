@@ -2103,6 +2103,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         from sage.rings.number_field.number_field import NumberField
 
         F = self.base_ring()
+        G = self.group()
         assert F.is_field()
 
         if F.characteristic() == 0:
@@ -2117,7 +2118,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         if F.characteristic() > 0:
             assert F.is_finite()
             assert F.order().is_square()
-            if  F.characteristic().divides(G.cardinality()):
+            if F.characteristic().divides(G.cardinality()):
                 raise NotImplementedError("Not implemented when p|n!. Dimension of invariant forms may be greater than one and 1/|G| is not defined. See modular DFT.")
             q = sqrt(F.order())
 
