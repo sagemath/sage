@@ -1000,7 +1000,7 @@ class SpechtRepresentations(SymmetricGroupRepresentations_class):
             Specht representations of the symmetric group of order 4! over Integer Ring
         """
         return "Specht representations of the symmetric group of order %s! over %s" % (self._n, self._ring)
-    
+
 # #### Unitary Representation ###############################################
 
 
@@ -1014,7 +1014,7 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
             sage: SymmetricGroupRepresentation([2,1], "unitary")
             Unitary representation of the symmetric group corresponding to [2, 1]
         """
-        return "Unitary representation of the symmetric group corresponding to {}".format(self._partition)
+        return f"Unitary representation of the symmetric group corresponding to {self._partition}"
 
     _default_ring = ZZ
 
