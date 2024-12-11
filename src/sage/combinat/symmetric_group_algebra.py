@@ -2100,6 +2100,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         """
         from sage.matrix.special import diagonal_matrix
         from sage.misc.functional import sqrt
+        from sage.rings.number_field.number_field import NumberField
 
         F = self.base_ring()
         assert F.is_field()
@@ -2120,7 +2121,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                 z = F.multiplicative_generator()
                 k = u.log(z)
                 if k % (q+1) != 0:
-                    raise ValueError(f"Unable to factor {u} is not in base field GF({q})")
+                    raise ValueError(f"Unable to factor as {u} is not in base field GF({q})")
                 return z ** ((k//(q+1)) % (q-1))
 
             dft_matrix = self.dft()
