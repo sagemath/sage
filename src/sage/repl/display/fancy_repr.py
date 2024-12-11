@@ -120,6 +120,7 @@ class SomeIPythonRepr(ObjectReprABC):
         from sage.structure.sequence import Sequence_generic
         from sage.rings.polynomial.multi_polynomial_sequence import (
                 PolynomialSequence_generic, PolynomialSequence_gf2, PolynomialSequence_gf2e)
+        # when :issue:`36801` is fixed, the code below will be redundant
         type_repr[Sequence_generic] = type_repr[list]
         type_repr[PolynomialSequence_generic] = type_repr[list]
         type_repr[PolynomialSequence_gf2] = type_repr[list]
