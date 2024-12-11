@@ -118,7 +118,12 @@ class SomeIPythonRepr(ObjectReprABC):
         del type_repr[types.FunctionType]
         del type_repr[str]
         from sage.structure.sequence import Sequence_generic
+        from sage.rings.polynomial.multi_polynomial_sequence import (
+                PolynomialSequence_generic, PolynomialSequence_gf2, PolynomialSequence_gf2e)
         type_repr[Sequence_generic] = type_repr[list]
+        type_repr[PolynomialSequence_generic] = type_repr[list]
+        type_repr[PolynomialSequence_gf2] = type_repr[list]
+        type_repr[PolynomialSequence_gf2e] = type_repr[list]
         self._type_repr = type_repr
 
     def __call__(self, obj, p, cycle):

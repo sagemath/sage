@@ -76,7 +76,7 @@ import sage.structure.coerce
 
 
 def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=None, use_sage_types=False):
-    """
+    r"""
     A mutable list of elements with a common guaranteed universe,
     which can be set immutable.
 
@@ -98,10 +98,10 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
       immutable
 
     - ``cr`` -- boolean (default: ``False``); if ``True``, then print a carriage return
-      after each comma when printing this sequence
+      after each comma when calling ``repr()`` on this sequence (see note below)
 
-    - ``cr_str`` -- boolean (default: ``False``); if ``True``, then print a carriage return
-      after each comma when calling ``str()`` on this sequence
+    - ``cr_str`` -- boolean (default: same as ``cr``); if ``True``, then print a carriage return
+      after each comma when calling ``str()`` on this sequence (see note below)
 
     - ``use_sage_types`` -- boolean (default: ``False``); if ``True``, coerce the
       built-in Python numerical types int, float, complex to the corresponding
@@ -203,12 +203,55 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
         sage: v.universe()
         Finite Field of size 5
 
+    .. NOTE::
+
+        ``cr`` and ``cr_str`` is not recommended (because IPython's pretty printer is used);
+        nevertheless it is kept for backwards compatibility.
+
+        By default ``Sequence`` are printed using IPython's pretty printer,
+        so ``cr`` and ``cr_str`` are not taken into account at all::
+
+            sage: Sequence([1, 2, 3], cr=False)
+            [1, 2, 3]
+            sage: Sequence([1, 2, 3], cr=True)
+            [1, 2, 3]
+
+        Nevertheless, before the pretty printer exists, ``repr()`` is used.
+        Now ``cr`` and ``cr_str`` still affects the behavior of ``repr()`` and ``str()``::
+
+            sage: repr(Sequence([1, 2, 3], cr=False))
+            '[1, 2, 3]'
+            sage: repr(Sequence([1, 2, 3], cr=True))
+            '[\n1,\n2,\n3\n]'
+
+        In any case, this behavior should probably not be relied upon.
+
     TESTS::
 
         sage: Sequence(["a"], universe=ZZ)
         Traceback (most recent call last):
         ...
         TypeError: unable to convert a to an element of Integer Ring
+
+    Here are some tests for ``cr`` and ``cr_str``, even though they shouldn't be used.
+    ``cr_str`` can be weird in this case, but we keep the current implementation
+    (the feature is not recommended anyway so it doesn't make much difference)::
+
+        sage: str(Sequence([1, 2, 3], cr=True, cr_str=True))
+        '[\n1,\n2,\n3\n]'
+        sage: str(Sequence([1, 2, 3], cr=True, cr_str=False))
+        '[\n1,\n2,\n3\n]'
+
+    In the opposite case, ``cr_str`` works fine::
+
+        sage: str(Sequence([1, 2, 3], cr=False, cr_str=False))
+        '[1, 2, 3]'
+        sage: str(Sequence([1, 2, 3], cr=False, cr_str=True))
+        '[\n1,\n2,\n3\n]'
+        sage: repr(Sequence([1, 2, 3], cr=False, cr_str=False))
+        '[1, 2, 3]'
+        sage: repr(Sequence([1, 2, 3], cr=False, cr_str=True))
+        '[1, 2, 3]'
     """
     if universe is None:
         if isinstance(x, Sequence_generic):
@@ -285,8 +328,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
     - ``immutable`` -- boolean (default: ``True``); whether or not this sequence is
       immutable
 
-    - ``cr`` -- boolean (default: ``False``); if ``True``, then print a carriage return
-      after each comma when printing this sequence
+    - ``cr``, ``cr_str`` -- see :func:`Sequence`
 
     - ``use_sage_types`` -- boolean (default: ``False``); if ``True``, coerce the
       built-in Python numerical types int, float, complex to the corresponding

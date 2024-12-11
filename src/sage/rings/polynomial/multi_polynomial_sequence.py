@@ -221,10 +221,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
       - ``immutable`` -- if ``True`` the sequence is immutable (default: ``False``)
 
-      - ``cr`` -- print a line break after each element (default: ``False``)
-
-      - ``cr_str`` -- print a line break after each element if 'str' is
-        called (default: ``None``)
+      - ``cr``, ``cr_str`` -- see :func:`~sage.structure.sequence.Sequence`
 
     EXAMPLES::
 
@@ -391,10 +388,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         - ``immutable`` -- if ``True`` the sequence is immutable (default: ``False``)
 
-        - ``cr`` -- print a line break after each element (default: ``False``)
-
-        - ``cr_str`` -- print a line break after each element if 'str'
-          is called (default: ``None``)
+        - ``cr``, ``cr_str`` -- see :func:`~sage.structure.sequence.Sequence`
 
         EXAMPLES::
 
