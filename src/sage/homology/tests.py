@@ -42,6 +42,46 @@ def random_chain_complex(level=1):
     return ChainComplex({dim: mat}, degree=deg)
 
 
+<<<<<<< HEAD
+@random_testing
+def test_random_chain_complex(level=1, trials=1, verbose=False):
+    """
+    Compute the homology of a random chain complex with and without
+    CHomP, and compare the results.  If they are not the same, raise
+    an error.
+
+    This function is deprecated: see :issue:`33777`.
+
+    :param level: measure of complexity of the chain complex -- see
+      :func:`random_chain_complex`
+    :type level: positive integer; optional, default 1
+    :param trials: number of trials to conduct
+    :type trials: positive integer; optional, default 1
+    :param verbose: if ``True``, print verbose messages
+    :type verbose: boolean; optional, default ``False``
+
+    EXAMPLES::
+
+        sage: from sage.homology.tests import test_random_chain_complex
+        sage: test_random_chain_complex(trials=2)  # optional - CHomP
+        doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
+        See https://github.com/sagemath/sage/issues/33777 for details.
+        done
+    """
+    deprecation(33777, 'the CHomP interface is deprecated; hence so is this function')
+    for i in range(trials):
+        C = random_chain_complex(level=level)
+        for d in C.differential():
+            chomp = C.homology(d, verbose=verbose)
+            no_chomp = C.homology(d, algorithm='no_chomp', verbose=verbose)
+            if chomp != no_chomp:
+                print("Homology in dimension %s according to CHomP: %s" % (d, chomp))
+                print("Homology in dimension %s according to Sage: %s" % (d, no_chomp))
+                print("Chain complex: %s" % C.differential())
+                raise ValueError
+    print("done")
+
+
 def random_simplicial_complex(level=1, p=0.5):
     """
     Return a random simplicial complex.
@@ -64,3 +104,44 @@ def random_simplicial_complex(level=1, p=0.5):
     n = randint(2, 4 * level)
     dim = randint(1, n)
     return RandomComplex(n, dim, p)
+
+
+@random_testing
+def test_random_simplicial_complex(level=1, trials=1, verbose=False):
+    """
+    Compute the homology of a random simplicial complex with and
+    without CHomP, and compare the results.  If they are not the same,
+    raise an error.
+
+    :param level: measure of complexity of the simplicial complex --
+      see :func:`random_simplicial_complex`
+    :type level: positive integer; optional, default 1
+    :param trials: number of trials to conduct
+    :type trials: positive integer; optional, default 1
+    :param verbose: if ``True``, print verbose messages
+    :type verbose: boolean; optional, default ``False``
+
+    This gets pretty slow if ``level`` is more than 3.
+
+    EXAMPLES::
+
+        sage: from sage.homology.tests import test_random_simplicial_complex
+        sage: test_random_simplicial_complex(trials=2)  # optional - CHomP
+        doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
+        See https://github.com/sagemath/sage/issues/33777 for details.
+        done
+    """
+    deprecation(33777, 'the CHomP interface is deprecated; hence so is this function')
+    for i in range(trials):
+        X = random_simplicial_complex(level=level)
+        chomp = X.homology(verbose=verbose)
+        no_chomp = X.homology(algorithm='no_chomp', verbose=verbose)
+        if chomp != no_chomp:
+            print("Homology according to CHomP: %s" % chomp)
+            print("Homology according to Sage: %s" % no_chomp)
+            print("Simplicial complex: %s" % X)
+            print("Its chain complex: %s" % X.chain_complex())
+            raise ValueError
+    print("done")
+=======
+>>>>>>> origin/develop
