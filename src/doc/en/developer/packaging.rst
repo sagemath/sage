@@ -497,11 +497,10 @@ should not need to add it yourself.
 
 The following are also available, but rarely used.
 
-- ``sdh_cmake [...]``: Runs ``cmake`` in the current directory with
-  the given arguments, as well as additional arguments passed to
-  cmake (assuming packages are using the GNUInstallDirs module) so
-  that ``CMAKE_INSTALL_PREFIX`` and ``CMAKE_INSTALL_LIBDIR`` are set
-  correctly.
+- ``sdh_cmake [...]``: Runs ``cmake`` in the current directory with the given
+  arguments, as well as additional arguments (assuming packages are using the
+  GNUInstallDirs module) so that ``CMAKE_INSTALL_PREFIX`` and
+  ``CMAKE_INSTALL_LIBDIR`` are set correctly.
 
 - ``sdh_preload_lib EXECUTABLE SONAME``: (Linux only -- no-op on other
   platforms.)  Check shared libraries loaded by ``EXECUTABLE`` (may be a
