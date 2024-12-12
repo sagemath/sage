@@ -358,6 +358,12 @@ class SageMagics(Magics):
         This is syntactic sugar on the
         :func:`~sage.misc.cython.cython_compile` function.
 
+        Note that there is also the ``%%cython`` cell magic provided by Cython,
+        which can be loaded with ``%load_ext cython``, see
+        `Cython documentation <https://cython.readthedocs.io/en/latest/src/userguide/source_files_and_compilation.html#compiling-with-a-jupyter-notebook>`_
+        for more details.
+        The semantic is slightly different from the version provided by Sage.
+
         INPUT:
 
         - ``line`` -- parsed as keyword arguments. The allowed arguments are:
@@ -432,6 +438,36 @@ class SageMagics(Magics):
             ....: print(1)
             ....: ''')
             UsageError: argument --view-annotate: invalid choice: 'xx' (choose from 'none', 'auto', 'webbrowser', 'displayhtml')
+
+        Test ``--view-annotate=displayhtml`` (note that in a notebook environment
+        an inline HTML frame will be displayed)::
+
+            sage: # needs sage.misc.cython
+            sage: shell.run_cell('''
+            ....: %%cython --view-annotate=displayhtml
+            ....: print(1)
+            ....: ''')
+            1
+            <IPython.core.display.HTML object>
+
+        Test ``--view-annotate=webbrowser``::
+
+            sage: # needs sage.misc.cython webbrowser
+            sage: shell.run_cell('''
+            ....: %%cython --view-annotate
+            ....: print(1)
+            ....: ''')
+            1
+            sage: shell.run_cell('''
+            ....: %%cython --view-annotate=auto
+            ....: print(1)
+            ....: ''')
+            1
+            sage: shell.run_cell('''
+            ....: %%cython --view-annotate=webbrowser
+            ....: print(1)
+            ....: ''')
+            1
 
         Test invalid quotes::
 
