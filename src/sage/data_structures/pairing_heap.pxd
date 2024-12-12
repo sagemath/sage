@@ -8,12 +8,14 @@
 #                  https://www.gnu.org/licenses/
 # ******************************************************************************
 
+from cpython cimport PyObject
+from libcpp.pair cimport pair
+from sage.data_structures.bitset_base cimport bitset_t
+
+
 # ==============================================================================
 # Interface to pairing heap data structure from ./pairing_heap.h
 # ==============================================================================
-
-from libcpp.pair cimport pair
-from cpython cimport PyObject
 
 cdef extern from "./pairing_heap.h" namespace "pairing_heap":
     cdef cppclass PairingHeap[TypeOfItem, TypeOfValue]:
@@ -37,10 +39,13 @@ cdef extern from "./pairing_heap.h" namespace "pairing_heap":
 
         @staticmethod
         PairingHeapNodePy * _merge(PairingHeapNodePy * a, PairingHeapNodePy * b) except +
+
         @staticmethod
         PairingHeapNodePy * _pair(PairingHeapNodePy * p) except +
+
         @staticmethod
         void _link(PairingHeapNodePy * a, PairingHeapNodePy * b)
+
         @staticmethod
         void _unlink(PairingHeapNodePy * p)
 
@@ -49,8 +54,6 @@ cdef extern from "./pairing_heap.h" namespace "pairing_heap":
 # Pairing heap data structure with fixed capacity n
 # ==============================================================================
 
-from sage.data_structures.bitset_base cimport bitset_t
-
 cdef class PairingHeap_class:
     cdef size_t n                   # maximum number of items
     cdef PairingHeapNodePy * root   # pointer to the top of the heap
@@ -58,6 +61,8 @@ cdef class PairingHeap_class:
     cdef size_t number_of_items     # number of active items
     cpdef bint empty(self) noexcept
     cpdef bint full(self) noexcept
+    cpdef size_t capacity(self) noexcept
+    cpdef size_t size(self) noexcept
     cpdef tuple top(self)
     cpdef object top_value(self)
     cpdef void pop(self) noexcept

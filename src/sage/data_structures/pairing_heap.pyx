@@ -7,7 +7,7 @@ This module proposes several implementations of the pairing heap data structure
 min-heap data structure.
 
 - :class:`PairingHeap_of_n_integers`: a pairing heap data structure with fixed
-  capacity `n`. Its items are integers in the range `0..n-1`. Values can be of
+  capacity `n`. Its items are integers in the range `[0, n-1]`. Values can be of
   any type equipped with a comparison method (``<=``).
 
 - :class:`PairingHeap_of_n_hashables`: a pairing heap data structure with fixed
@@ -23,7 +23,7 @@ min-heap data structure.
 
 EXAMPLES:
 
-Pairing heap of `n` integers in the range `0..n-1`::
+Pairing heap of `n` integers in the range `[0, n-1]`::
 
     sage: from sage.data_structures.pairing_heap import PairingHeap_of_n_integers
     sage: P = PairingHeap_of_n_integers(10); P
@@ -81,11 +81,6 @@ Pairing heap of `n` hashables::
     (Graph on 2 vertices, (1, 'z'))
     (2, (2, 'a'))
     (('a', 1), (2, 'b'))
-
-AUTHORS:
-
-- David Coudert (2024) - Initial version.
-
 """
 # ******************************************************************************
 # Copyright (C) 2024 David Coudert <david.coudert@inria.fr>
@@ -117,6 +112,7 @@ cdef class PairingHeap_class:
     Common class and methods for :class:`PairingHeap_of_n_integers` and
     :class:`PairingHeap_of_n_hashables`.
     """
+
     def __repr__(self):
         r"""
         Return a string representing ``self``.
@@ -150,7 +146,7 @@ cdef class PairingHeap_class:
 
     cpdef bint empty(self) noexcept:
         r"""
-        Check whether the heap is empty or not.
+        Check whether the heap is empty.
 
         EXAMPLES::
 
@@ -166,7 +162,7 @@ cdef class PairingHeap_class:
 
     cpdef bint full(self) noexcept:
         r"""
-        Check whether the heap is full or not.
+        Check whether the heap is full.
 
         EXAMPLES::
 
@@ -180,6 +176,43 @@ cdef class PairingHeap_class:
             True
         """
         return self.n == self.number_of_items
+
+    cpdef size_t capacity(self) noexcept:
+        r"""
+        Return the maximum capacity of the heap.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.pairing_heap import PairingHeap_of_n_integers
+            sage: P = PairingHeap_of_n_integers(5)
+            sage: P.capacity()
+            5
+            sage: P.push(1, 2)
+            sage: P.capacity()
+            5
+        """
+        return self.n
+
+    cpdef size_t size(self) noexcept:
+        r"""
+        Return the number of items in the heap.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.pairing_heap import PairingHeap_of_n_integers
+            sage: P = PairingHeap_of_n_integers(5)
+            sage: P.size()
+            0
+            sage: P.push(1, 2)
+            sage: P.size()
+            1
+
+        One may also use Python's `__len__`::
+
+            sage: len(P)
+            1
+        """
+        return self.number_of_items
 
     def __len__(self):
         r"""
@@ -196,8 +229,6 @@ cdef class PairingHeap_class:
             1
         """
         return self.number_of_items
-
-    size = __len__
 
     cpdef tuple top(self):
         r"""
@@ -266,13 +297,14 @@ cdef class PairingHeap_class:
         """
         raise NotImplementedError()
 
+
 # ==============================================================================
 # Class PairingHeap_of_n_integers
 # ==============================================================================
 
 cdef class PairingHeap_of_n_integers(PairingHeap_class):
     r"""
-    Pairing Heap for items in range [0..n - 1].
+    Pairing Heap for items in range `[0, n - 1]`.
 
     EXAMPLES::
 
@@ -305,12 +337,13 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
         sage: P.push(11, 3)
         Traceback (most recent call last):
         ...
-        ValueError: item must be in range 0..4
+        ValueError: item must be in range [0, 4]
     """
+
     def __init__(self, size_t n):
         r"""
         Construct the ``PairingHeap_of_n_integers`` where items are integers
-        from ``0`` to ``n-1``.
+        from `0` to `n-1`.
 
         INPUT:
 
@@ -321,24 +354,21 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
             sage: from sage.data_structures.pairing_heap import PairingHeap_of_n_integers
             sage: P = PairingHeap_of_n_integers(5); P
             PairingHeap_of_n_integers: capacity 5, size 0
-            sage: P.push(1, 2)
-            sage: P
+            sage: P.push(1, 2); P
             PairingHeap_of_n_integers: capacity 5, size 1
-            sage: P.push(2, 3)
-            sage: P
+            sage: P.push(2, 3); P
             PairingHeap_of_n_integers: capacity 5, size 2
-            sage: P.pop()
-            sage: P
+            sage: P.pop(); P
             PairingHeap_of_n_integers: capacity 5, size 1
             sage: P.push(10, 1)
             Traceback (most recent call last):
             ...
-            ValueError: item must be in range 0..4
-            sage: P = PairingHeap_of_n_integers(0)
+            ValueError: item must be in range [0, 4]
+            sage: PairingHeap_of_n_integers(0)
             Traceback (most recent call last):
             ...
             ValueError: the capacity of the heap must be strictly positive
-            sage: P = PairingHeap_of_n_integers(1); P
+            sage: PairingHeap_of_n_integers(1)
             PairingHeap_of_n_integers: capacity 1, size 0
         """
         if not n:
@@ -368,7 +398,7 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
 
         INPUT:
 
-        - ``item`` -- non negative integer; the item to consider
+        - ``item`` -- nonnegative integer; the item to consider
 
         - ``value`` -- the value associated with ``item``
 
@@ -395,10 +425,14 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
             sage: P.push(11, 2)
             Traceback (most recent call last):
             ...
-            ValueError: item must be in range 0..4
+            ValueError: item must be in range [0, 4]
+            sage: P.push(-1, 0)
+            Traceback (most recent call last):
+            ...
+            OverflowError: can't convert negative value to size_t
         """
         if item >= self.n:
-            raise ValueError(f"item must be in range 0..{self.n - 1}")
+            raise ValueError(f"item must be in range [0, {self.n - 1}]")
         if item in self:
             raise ValueError(f"{item} is already in the heap")
 
@@ -501,7 +535,7 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
 
         INPUT:
 
-        - ``item`` -- non negative integer; the item to consider
+        - ``item`` -- nonnegative integer; the item to consider
 
         - ``new_value`` -- the new value for ``item``
 
@@ -534,7 +568,7 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
             ValueError: the new value must be less than the current value
         """
         if item >= self.n:
-            raise ValueError(f"item must be in range 0..{self.n - 1}")
+            raise ValueError(f"item must be in range [0, {self.n - 1}]")
         cdef PairingHeapNodePy * p
         if bitset_in(self.active, item):
             p = self.nodes + item
@@ -555,7 +589,7 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
 
         INPUT:
 
-        - ``item`` -- non negative integer; the item to consider
+        - ``item`` -- nonnegative integer; the item to consider
 
         EXAMPLES::
 
@@ -581,7 +615,7 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
 
         INPUT:
 
-        - ``item`` -- non negative integer; the item to consider
+        - ``item`` -- nonnegative integer; the item to consider
 
         EXAMPLES::
 
@@ -607,7 +641,7 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
 
 cdef class PairingHeap_of_n_hashables(PairingHeap_class):
     r"""
-    Pairing Heap for ``n`` hashable items.
+    Pairing Heap for `n` hashable items.
 
     EXAMPLES::
 
@@ -615,8 +649,7 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
         sage: P = PairingHeap_of_n_hashables(5); P
         PairingHeap_of_n_hashables: capacity 5, size 0
         sage: P.push(1, 3)
-        sage: P.push('abc', 2)
-        sage: P
+        sage: P.push('abc', 2); P
         PairingHeap_of_n_hashables: capacity 5, size 2
         sage: P.top()
         ('abc', 2)
@@ -663,6 +696,7 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
         ...
         TypeError: unsupported operand parent(s) for >=: 'Integer Ring' and '<class 'str'>'
     """
+
     def __init__(self, size_t n):
         r"""
         Construct the ``PairingHeap_of_n_hashables``.
@@ -733,7 +767,7 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
 
         INPUT:
 
-        - ``item`` -- non negative integer; the item to consider
+        - ``item`` -- a hashable object; the item to add
 
         - ``value`` -- the value associated with ``item``
 

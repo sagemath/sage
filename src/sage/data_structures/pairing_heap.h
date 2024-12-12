@@ -54,9 +54,8 @@
 #ifndef PAIRING_HEAP_H
 #define PAIRING_HEAP_H
 
-#include <unordered_map>
 #include <stdexcept>
-
+#include <unordered_map>
 
 namespace pairing_heap {
 
