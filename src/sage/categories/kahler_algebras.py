@@ -53,12 +53,3 @@ class KahlerAlgebras(Category_over_base_ring):
                 for j in range(i+1, len(basis_k)):
                     coeff.append((el*(lefschetz_el**(r-(2*k))*basis_k[j])).degree())
             return QuadraticForm(self.base_ring(), len(basis_k), coeff)
-            
-            
-
-
-
-
-            
-    
-    
