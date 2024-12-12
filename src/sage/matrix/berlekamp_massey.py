@@ -82,7 +82,7 @@ def berlekamp_massey(a):
     R, x = K['x'].objgen()
     f0, f1 = R(a[::-1]), x**len(a)
     if f0.is_zero():
-        return R(1)
+        return R.one()
     s0, s1 = 0, 1
     k = len(a)
     while True:
