@@ -9,6 +9,8 @@ py.install_sources(
   'bounded_integer_sequences.pxd',
   'list_of_pairs.pxd',
   'mutable_poset.py',
+  'pairing_heap.h',
+  'pairing_heap.pxd',
   'sparse_bitset.pxd',
   'stream.py',
   subdir: 'sage/data_structures',
@@ -39,3 +41,18 @@ foreach name, pyx : extension_data
   )
 endforeach
 
+extension_data_cpp = {
+  'pairing_heap' : files('pairing_heap.pyx'),
+}
+
+foreach name, pyx : extension_data_cpp
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/data_structures/',
+    install: true,
+    override_options: ['cython_language=cpp'],
+    include_directories: [inc_cpython, inc_data_structures],
+    dependencies: [py_dep, cysignals, gmp],
+  )
+endforeach
