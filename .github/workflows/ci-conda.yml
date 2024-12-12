@@ -74,7 +74,9 @@ jobs:
 
       - name: Install test tools
         shell: bash -l {0}
-        run: conda install -c conda-forge pytest-xdist pytest-github-actions-annotate-failures coverage
+        run: |
+          conda install -c conda-forge pytest-xdist pytest-github-actions-annotate-failures coverage
+          pip install pytest-isolate
 
       - name: Print Conda environment
         shell: bash -l {0}
@@ -104,7 +106,7 @@ jobs:
       - name: Test
         if: success() || failure()
         shell: bash -l {0}
-        run: ./sage -python -m pytest --doctest-ignore-import-errors --doctest -rfEs -s src
+        run: ./sage -python -m pytest --doctest-ignore-import-errors --doctest --isolate -rfEs -s src
 
       - name: Print logs
         if: always()
