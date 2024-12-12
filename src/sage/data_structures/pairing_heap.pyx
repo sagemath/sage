@@ -207,7 +207,7 @@ cdef class PairingHeap_class:
             sage: P.size()
             1
 
-        One may also use Python's `__len__`::
+        One may also use Python's ``__len__``::
 
             sage: len(P)
             1
@@ -364,12 +364,18 @@ cdef class PairingHeap_of_n_integers(PairingHeap_class):
             Traceback (most recent call last):
             ...
             ValueError: item must be in range [0, 4]
+            sage: PairingHeap_of_n_integers(1)
+            PairingHeap_of_n_integers: capacity 1, size 0
+
+        TESTS::
+
             sage: PairingHeap_of_n_integers(0)
             Traceback (most recent call last):
             ...
             ValueError: the capacity of the heap must be strictly positive
-            sage: PairingHeap_of_n_integers(1)
-            PairingHeap_of_n_integers: capacity 1, size 0
+            sage: P = PairingHeap_of_n_integers(10)
+            sage: P.push(1, 1); P.push(7, 0); P.push(0, 4); P.pop(); P.push(5, 5)
+            sage: TestSuite(P).run(skip="_test_pickling")
         """
         if not n:
             raise ValueError("the capacity of the heap must be strictly positive")
@@ -738,6 +744,9 @@ cdef class PairingHeap_of_n_hashables(PairingHeap_class):
             ValueError: the capacity of the heap must be strictly positive
             sage: P = PairingHeap_of_n_hashables(1); P
             PairingHeap_of_n_hashables: capacity 1, size 0
+            sage: P = PairingHeap_of_n_hashables(6)
+            sage: P.push(1, -0.5); P.push(frozenset(), 1); P.pop(); P.push('a', 3.5)
+            sage: TestSuite(P).run(skip="_test_pickling")
         """
         if not n:
             raise ValueError("the capacity of the heap must be strictly positive")
@@ -1348,7 +1357,7 @@ def _test_PairingHeap_of_n_hashables(n=100):
         pass
 
 
-def compare_heaps(n=100, verbose=False):
+def _compare_heaps(n=100, verbose=False):
     r"""
     Check that the heaps behave the same.
 
@@ -1369,13 +1378,13 @@ def compare_heaps(n=100, verbose=False):
 
     EXAMPLES::
 
-        sage: from sage.data_structures.pairing_heap import compare_heaps
-        sage: compare_heaps(n=100)
-        sage: compare_heaps(n=100, verbose=True)  # random
+        sage: from sage.data_structures.pairing_heap import _compare_heaps
+        sage: _compare_heaps(n=100)
+        sage: _compare_heaps(n=100, verbose=True)  # random
         PairingHeap_of_n_integers: 7.800000000024454e-05
         PairingHeap_of_n_hashables: 9.400000000026054e-05
         PairingHeap (C++): 6.899999999987472e-05
-        sage: compare_heaps(1000000, verbose=True)  # not tested (long time), random
+        sage: _compare_heaps(1000000, verbose=True)  # not tested (long time), random
         PairingHeap_of_n_integers: 1.5106779999999995
         PairingHeap_of_n_hashables: 4.998040000000001
         PairingHeap (C++): 1.7841750000000012
