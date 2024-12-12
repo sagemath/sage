@@ -32,7 +32,7 @@ from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
 
 class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
     r"""
-    This class implements the space of Pseudomorphisms with a fixed twist.
+    This class implements the space of pseudomorphisms with a fixed twist.
 
     For free modules, the elements of a pseudomorphism correspond to matrices
     which define the mapping on elements of a basis.
