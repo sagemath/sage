@@ -1,1 +1,1 @@
-python3-execnet
+python3-pyproject-api
