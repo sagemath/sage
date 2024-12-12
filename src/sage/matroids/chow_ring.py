@@ -8,7 +8,7 @@ AUTHORS:
 
 from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug, AugmentedChowRingIdeal_fy, AugmentedChowRingIdeal_atom_free
 from sage.rings.quotient_ring import QuotientRing_generic
-from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
+from sage.categories.kahler_algebras import KahlerAlgebras
 from sage.categories.commutative_rings import CommutativeRings
 
 class ChowRing(QuotientRing_generic):
@@ -95,7 +95,7 @@ class ChowRing(QuotientRing_generic):
                 self._ideal = AugmentedChowRingIdeal_atom_free(M, R)
         else:
             self._ideal = ChowRingIdeal_nonaug(M, R)
-        C = CommutativeRings().Quotients() & GradedAlgebrasWithBasis(R).FiniteDimensional()
+        C = CommutativeRings().Quotients() & KahlerAlgebras(R).FiniteDimensional()
         QuotientRing_generic.__init__(self, R=self._ideal.ring(),
                                       I=self._ideal,
                                       names=self._ideal.ring().variable_names(),
