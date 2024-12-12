@@ -201,7 +201,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
         INPUT:
 
         - ``var`` -- string (default: ``x``) the name of
-          tha variable
+          the variable
 
         EXAMPLES::
 
@@ -273,7 +273,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
         r"""
         Test associativity for (not necessarily all) elements in this parent.
 
-        This test is not relevant for pseudo-morphisms because they are not
+        This test is not relevant for pseudomorphisms because they are not
         stable by addition.
 
         TESTS::
@@ -290,7 +290,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
         r"""
         Test distributivity for (not necessarily all) elements in this parent.
 
-        This test is not relevant for pseudo-morphisms because they are not
+        This test is not relevant for pseudomorphisms because they are not
         stable by addition.
 
         TESTS::
@@ -307,8 +307,8 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
         r"""
         Test properties the identity element.
 
-        This test is not relevant for pseudo-morphisms because the identity
-        is not a pseudo-morphism in general.
+        This test is not relevant for pseudomorphisms because the identity
+        is not a pseudomorphism in general.
 
         TESTS::
 
@@ -324,8 +324,8 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
         r"""
         Test properties of the zero element.
 
-        This test is not relevant for pseudo-morphisms because the zero
-        map is not a pseudo-morphism in general.
+        This test is not relevant for pseudomorphisms because the zero
+        map is not a pseudomorphism in general.
 
         TESTS::
 
