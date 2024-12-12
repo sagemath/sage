@@ -25,7 +25,7 @@ from sage.env import SAGE_DATA_PATH
 
 def sage_data_path(data_name):
     r"""
-    Search path for database `data_name`.
+    Search path for database ``data_name``.
 
     EXAMPLES::
 

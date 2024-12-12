@@ -1434,6 +1434,7 @@ def sum_indices(k, i_k_plus_one, S_k_plus_one):
     return [[i_k] + l for i_k in range(S_k, i_k_plus_one)
             for l in sum_indices(k-1, i_k, S_k)]
 
+
 def is_GF2(R):
     r"""
     Return ``True`` iff ``R`` is isomorphic to the field `\GF{2}`.

@@ -216,10 +216,9 @@ The change-of-frame automorphisms and their matrices::
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.tensor.modules.free_module_basis import (FreeModuleBasis,
-                                                   FreeModuleCoBasis)
-from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 from sage.misc.cachefunc import cached_method
+from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
+from sage.tensor.modules.free_module_basis import FreeModuleBasis, FreeModuleCoBasis
 
 
 class CoFrame(FreeModuleCoBasis):
@@ -1715,9 +1714,9 @@ class CoordFrame(VectorFrame):
             Coordinate frame (M, (∂/∂x,∂/∂y))
             sage: TestSuite(e).run()
         """
+        from sage.manifolds.differentiable.chart import DiffChart
         from sage.misc.latex import latex
         from sage.typeset.unicode_characters import unicode_partial
-        from sage.manifolds.differentiable.chart import DiffChart
         if not isinstance(chart, DiffChart):
             raise TypeError("the first argument must be a chart")
         dom = chart.domain()

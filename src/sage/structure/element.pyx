@@ -4661,7 +4661,7 @@ def coerce_binop(method):
 
     EXAMPLES:
 
-    Sparse polynomial rings uses `@coerce_binop` on `gcd`::
+    Sparse polynomial rings uses ``@coerce_binop`` on ``gcd``::
 
         sage: S.<x> = PolynomialRing(ZZ, sparse=True)
         sage: f = x^2
@@ -4695,7 +4695,7 @@ def coerce_binop(method):
         sage: h.gcd(f, 'modular')
         1
 
-    We demonstrate a small class using `@coerce_binop` on a method::
+    We demonstrate a small class using ``@coerce_binop`` on a method::
 
         sage: from sage.structure.element import coerce_binop
         sage: class MyRational(Rational):

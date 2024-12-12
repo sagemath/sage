@@ -408,14 +408,13 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.functions.trig import cos, sin, atan2
+from sage.categories.manifolds import Manifolds
+from sage.categories.metric_spaces import MetricSpaces
+from sage.functions.trig import atan2, cos, sin
+from sage.manifolds.differentiable.pseudo_riemannian import PseudoRiemannianManifold
 from sage.misc.functional import sqrt
 from sage.misc.latex import latex
 from sage.rings.real_mpfr import RR
-from sage.categories.manifolds import Manifolds
-from sage.categories.metric_spaces import MetricSpaces
-from sage.manifolds.differentiable.pseudo_riemannian import \
-                                                       PseudoRiemannianManifold
 
 ###############################################################################
 
@@ -696,8 +695,9 @@ class EuclideanSpace(PseudoRiemannianManifold):
             symbols = ' '.join(names)
 
         # Technical bit for UniqueRepresentation
-        from sage.misc.prandom import getrandbits
         from time import time
+
+        from sage.misc.prandom import getrandbits
         if unique_tag is None:
             unique_tag = getrandbits(128) * time()
 
@@ -1035,7 +1035,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
         n = self._dim
         if n == 1:
             raise ValueError('Euclidean space must have dimension of at least 2')
-        from .sphere import Sphere
+        from sage.manifolds.differentiable.examples.sphere import Sphere
         return Sphere(n-1, radius=radius, ambient_space=self,
                       center=center, name=name, latex_name=latex_name,
                       coordinates=coordinates, names=names)

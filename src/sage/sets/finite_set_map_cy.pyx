@@ -621,11 +621,10 @@ cdef class FiniteSetEndoMap_N(FiniteSetMap_MN):
             sage: F([1, 0, 2]) * F([2, 1, 0])
             [1, 2, 0]
         """
-        assert(self._parent is other._parent), "Parent mismatch"
+        assert (self._parent is other._parent), "Parent mismatch"
         if self._parent._action == "right":
             return self._compose_internal_(other, self._parent)
-        else:
-            return other._compose_internal_(self, self._parent)
+        return other._compose_internal_(self, self._parent)
 
     def __pow__(self, n, dummy):
         """
@@ -679,11 +678,10 @@ cdef class FiniteSetEndoMap_Set(FiniteSetMap_Set):
             sage: g * f
             map: a -> c, b -> c, c -> c
         """
-        assert(self._parent is other._parent), "Parent mismatch"
+        assert (self._parent is other._parent), "Parent mismatch"
         if self._parent._action == "right":
             return self._compose_internal_(other, self._parent)
-        else:
-            return other._compose_internal_(self, self._parent)
+        return other._compose_internal_(self, self._parent)
 
     def __pow__(self, n, dummy):
         """

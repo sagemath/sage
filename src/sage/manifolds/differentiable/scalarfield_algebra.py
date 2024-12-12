@@ -30,10 +30,10 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.manifolds.differentiable.scalarfield import DiffScalarField
+from sage.manifolds.scalarfield_algebra import ScalarFieldAlgebra
 from sage.rings.infinity import infinity
 from sage.symbolic.ring import SymbolicRing
-from sage.manifolds.scalarfield_algebra import ScalarFieldAlgebra
-from sage.manifolds.differentiable.scalarfield import DiffScalarField
 
 
 class DiffScalarFieldAlgebra(ScalarFieldAlgebra):

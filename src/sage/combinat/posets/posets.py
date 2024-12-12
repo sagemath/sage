@@ -794,7 +794,7 @@ class FinitePoset(UniqueRepresentation, Parent):
       corresponding to vertex ``i``. If ``elements`` is ``None``, then it is
       set to be the vertex set of the digraph. Note that if this option is set,
       then ``elements`` is considered as a specified linear extension of the poset
-      and the `linear_extension` attribute is set.
+      and the ``linear_extension`` attribute is set.
 
     - ``category`` -- :class:`FinitePosets`, or a subcategory thereof
 

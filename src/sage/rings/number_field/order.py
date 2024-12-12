@@ -631,9 +631,11 @@ class Order(Parent, sage.rings.abc.Order):
         """
         return True
 
-    def is_integrally_closed(self):
+    def is_integrally_closed(self) -> bool:
         r"""
-        Return ``True`` if this ring is integrally closed, i.e., is equal
+        Return whether this ring is integrally closed.
+
+        This is true if and only if it is equal
         to the maximal order.
 
         EXAMPLES::

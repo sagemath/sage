@@ -202,7 +202,7 @@ class FreeLieBasis_abstract(FinitelyGeneratedLieAlgebra, IndexedGenerators, Bind
             Free Algebra on 2 generators (x, y) over Rational Field
             sage: L.<x> = LieAlgebra(QQ)
             sage: L._construct_UEA()
-            Free Algebra on 1 generators (x,) over Rational Field
+            Free Algebra on 1 generator (x,) over Rational Field
         """
         return FreeAlgebra(self.base_ring(), len(self._names), self._names)
 

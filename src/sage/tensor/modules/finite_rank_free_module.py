@@ -1302,7 +1302,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         self._dual_exterior_powers = {}
         # Set of all modules (tensor powers, exterior powers)
         # that depend on self's bases:
-        self._all_modules = set([self])
+        self._all_modules = {self}
         # List of known bases on the free module:
         self._known_bases = []
         self._def_basis = None # default basis
