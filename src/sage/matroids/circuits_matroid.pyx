@@ -186,7 +186,6 @@ cdef class CircuitsMatroid(Matroid):
             6
         """
         cdef set XX = set(X)
-        cdef int i
         cdef frozenset C
         while True:
             try:

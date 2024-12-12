@@ -608,7 +608,7 @@ cdef class GraphicMatroid(Matroid):
                 # then use method from abstract matroid class
                 conset, delset = sanitize_contractions_deletions(self, contractions, deletions)
                 M = self._minor(contractions=conset, deletions=delset)
-                should_be_true, elements = Matroid._has_minor(M, N, certificate=True)
+                _, elements = Matroid._has_minor(M, N, certificate=True)
 
                 # elements is a tuple (contractions, deletions, dict)
                 # There should be no more contractions
