@@ -1646,7 +1646,7 @@ class BinaryQF(SageObject):
             sage: Q = BinaryQF([1, 0, 12345])
             sage: n = 2^99 + 5273
             sage: Q.solve_integer(n)                                                    # needs sage.libs.pari
-            (-67446480057659, 7139620553488)
+            (67446480057659, 7139620553488)
             sage: Q.solve_integer(n, algorithm='cornacchia')                            # needs sage.libs.pari
             (67446480057659, 7139620553488)
             sage: timeit('Q.solve_integer(n)')                          # not tested
@@ -1661,7 +1661,7 @@ class BinaryQF(SageObject):
             sage: Qs
             [x^2 + x*y + 6*y^2, 2*x^2 - x*y + 3*y^2, 2*x^2 + x*y + 3*y^2]
             sage: [Q.solve_integer(3) for Q in Qs]
-            [None, (0, -1), (0, -1)]
+            [None, (0, 1), (0, 1)]
             sage: [Q.solve_integer(5) for Q in Qs]
             [None, None, None]
             sage: [Q.solve_integer(6) for Q in Qs]
@@ -1741,11 +1741,11 @@ class BinaryQF(SageObject):
             sage: # needs sage.libs.pari
             sage: Q = BinaryQF([1, 0, 5])
             sage: Q.solve_integer(126, _flag=1)
-            [(11, -1), (-1, -5), (-1, 5), (-11, -1)]
+            [(-11, -1), (-1, -5), (-1, 5), (11, -1)]
             sage: Q.solve_integer(126, _flag=2)
             (11, -1)
             sage: Q.solve_integer(126, _flag=3)
-            [(11, -1), (-1, -5), (-1, 5), (-11, -1), (-9, -3), (9, -3)]
+            [(-11, -1), (-9, -3), (-1, -5), (-1, 5), (9, -3), (11, -1)]
         """
         if self.is_negative_definite():  # not supported by PARI
             return (-self).solve_integer(-n)

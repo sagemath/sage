@@ -49,7 +49,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
         doctest:warning...:
         DeprecationWarning: please use the 2-descent algorithm over QQ inside pari
         See https://github.com/sagemath/sage/issues/38461 for details.
-        (2, 2, [(5/4 : 5/8 : 1), (-3/4 : 7/8 : 1)])
+        (2, 2, [(-3/4 : 7/8 : 1), (5/4 : 5/8 : 1)])
 
     TESTS::
 

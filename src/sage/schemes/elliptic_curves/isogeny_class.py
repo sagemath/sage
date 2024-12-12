@@ -223,8 +223,8 @@ class IsogenyClass_EC(SageObject):
             sage: C.curves
             [Elliptic Curve defined by y^2 = x^3 + (-27) over Number Field in i with defining polynomial x^2 + 1 with i = 1*I,
              Elliptic Curve defined by y^2 = x^3 + 1 over Number Field in i with defining polynomial x^2 + 1 with i = 1*I,
-             Elliptic Curve defined by y^2 + (i+1)*x*y + (i+1)*y = x^3 + i*x^2 + (-i+3)*x + 4*i over Number Field in i with defining polynomial x^2 + 1 with i = 1*I,
-             Elliptic Curve defined by y^2 + (i+1)*x*y + (i+1)*y = x^3 + i*x^2 + (-i+33)*x + (-58*i) over Number Field in i with defining polynomial x^2 + 1 with i = 1*I]
+             Elliptic Curve defined by y^2 + (i+1)*x*y = x^3 + i*x^2 + 3*x + (-i) over Number Field in i with defining polynomial x^2 + 1 with i = 1*I,
+             Elliptic Curve defined by y^2 + (i+1)*x*y = x^3 + i*x^2 + 33*x + 91*i over Number Field in i with defining polynomial x^2 + 1 with i = 1*I]
         """
         if self._label:
             return "Elliptic curve isogeny class %s" % (self._label)
@@ -615,8 +615,8 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
             sage: [E1.ainvs() for E1 in C]
             [(0, 0, 0, 0, -27),
              (0, 0, 0, 0, 1),
-             (i + 1, i, i + 1, -i + 3, 4*i),
-             (i + 1, i, i + 1, -i + 33, -58*i)]
+             (i + 1, i, 0, 3, -i),
+             (i + 1, i, 0, 33, 91*i)]
 
         The matrix of degrees of cyclic isogenies between curves::
 
@@ -647,13 +647,13 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
             sage: [((i,j), isogs[i][j].x_rational_map())
             ....:  for i in range(4) for j in range(4) if isogs[i][j] != 0]
             [((0, 1), (1/9*x^3 - 12)/x^2),
-             ((0, 3), (-1/2*i*x^2 + i*x - 12*i)/(x - 3)),
+             ((0, 3), (1/2*i*x^2 - 2*i*x + 15*i)/(x - 3)),
              ((1, 0), (x^3 + 4)/x^2),
-             ((1, 2), (-1/2*i*x^2 - i*x - 2*i)/(x + 1)),
-             ((2, 1), (1/2*i*x^2 - x)/(x + 3/2*i)),
-             ((2, 3), (x^3 + 4*i*x^2 - 10*x - 10*i)/(x^2 + 4*i*x - 4)),
-             ((3, 0), (1/2*i*x^2 + x + 4*i)/(x - 5/2*i)),
-             ((3, 2), (1/9*x^3 - 4/3*i*x^2 - 34/3*x + 226/9*i)/(x^2 - 8*i*x - 16))]
+             ((1, 2), (1/2*i*x^2 + i)/(x + 1)),
+             ((2, 1), (-1/2*i*x^2 - 1/2*i)/(x - 1/2*i)),
+             ((2, 3), (x^3 - 2*i*x^2 - 7*x + 4*i)/(x^2 - 2*i*x - 1)),
+             ((3, 0), (-1/2*i*x^2 + 2*x - 5/2*i)/(x + 7/2*i)),
+             ((3, 2), (1/9*x^3 + 2/3*i*x^2 - 13/3*x - 116/9*i)/(x^2 + 10*i*x - 25))]
 
             sage: K.<i> = QuadraticField(-1)
             sage: E = EllipticCurve([1+i, -i, i, 1, 0])
