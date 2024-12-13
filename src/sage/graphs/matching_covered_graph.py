@@ -57,7 +57,6 @@ AUTHORS:
         ``delete_multiedge()`` | Delete all edges from ``u`` to ``v``.
         ``disjoint_union()`` | Return the disjoint union of ``self`` and ``other``.
         ``disjunctive_product()`` | Return the disjunctive product of ``self`` and ``other``.
-        ``has_loops()`` | Return whether there are loops in the matching covered graph.
         ``is_biconnected()`` | Check if the matching covered graph is biconnected.
         ``is_block_graph()`` | Check whether the matching covered graph is a block graph.
         ``is_cograph()`` | Check whether the matching covered graph is cograph.
@@ -69,13 +68,9 @@ AUTHORS:
         ``join()`` | Return the join of ``self`` and ``other``.
         ``lexicographic_product()`` | Return the lexicographic product of ``self`` and ``other``.
         ``load_afile()`` | Load the matching covered graph specified in the given file into the current object.
-        ``loop_edges()`` | Return a list of all loops in the matching covered graph.
-        ``loop_vertices()`` | Return a list of vertices with loops.
         ``merge_vertices()`` | Merge vertices.
         ``minor()`` | Return the vertices of a minor isomorphic to `H` in the current graph.
-        ``number_of_loops()`` | Return the number of edges that are loops.
         ``random_subgraph()`` | Return a random matching covered subgraph containing each vertex with probability ``p``.
-        ``remove_loops()`` | Remove loops on vertices in ``vertices``.
         ``save_afile()`` | Save the graph to file in alist format.
         ``strong_product()`` | Return the strong product of ``self`` and ``other``.
         ``subdivide_edge()`` | Subdivide an edge `k` times.
@@ -90,16 +85,6 @@ AUTHORS:
         ``transitive_closure()`` | Return the transitive closure of the matching covered graph.
         ``transitive_reduction()`` | Return a transitive reduction of the matching covered graph.
         ``union()`` | Return the union of ``self`` and ``other``.
-
-    **Barriers and canonical partition**
-
-    .. csv-table::
-        :class: contentstable
-        :widths: 30, 70
-        :delim: |
-
-        ``canonical_partition()`` | Return the canonical partition of the (matching covered) graph.
-        ``maximal_barrier()`` | Return the (unique) maximal barrier of the (matching covered) graph containing the (provided) vertex.
 
     **Bricks, braces and tight cut decomposition**
 
@@ -165,6 +150,7 @@ Methods
 # ****************************************************************************
 from sage.graphs.graph import Graph
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
+
 
 class MatchingCoveredGraph(Graph):
     r"""
@@ -1628,6 +1614,16 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: loops are not allowed in matching covered graphs
+
+        .. SEEALSO::
+
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
         """
         if new:
             raise ValueError('loops are not allowed in '
@@ -1659,8 +1655,96 @@ class MatchingCoveredGraph(Graph):
             sage: G = MatchingCoveredGraph(P)
             sage: G.allows_loops()
             False
+
+        .. SEEALSO::
+
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
         """
         return False
+
+    @doc_index('Barriers and canonical partition')
+    def canonical_partition(self):
+        r"""
+        Return the canonical partition of the (matching covered) graph.
+
+        For a matching covered graph `G`, a subset `B` of the vertex set `V` is
+        a barrier if `|B| = o(G - B)`, where `|B|` denotes the cardinality of
+        the set `B` and `o(G - B)` denotes the number of odd components in the
+        graph `G - B`. And a barrier `B` is a maximal barrier if `C` is not a
+        barrier for each `C` such that `B \subset C \subseteq V`.
+
+        Note that in a matching covered graph, each vertex belongs to a unique
+        maximal barrier. The maximal barriers of a matching covered graph
+        partitions its vertex set and the partition of the vertex set of a
+        matching covered graph into its maximal barriers is called as its
+        *canonical* *partition*.
+
+        OUTPUT:
+
+        - A list of sets that constitute a (canonical) partition of the vertex
+          set, wherein each set is a (unique) maximal barrier of the (matching
+          covered) graph.
+
+        EXAMPLES:
+
+        Show the maximal barrier of the graph `K_4 \odot K_{3, 3}`::
+
+            sage: G = Graph([
+            ....:    (0, 2), (0, 3), (0, 4), (1, 2),
+            ....:    (1, 3), (1, 4), (2, 5), (3, 6),
+            ....:    (4, 7), (5, 6), (5, 7), (6, 7)
+            ....: ])
+            sage: H = MatchingCoveredGraph(G)
+            sage: H.canonical_partition()
+            [{0}, {1}, {2, 3, 4}, {5}, {6}, {7}]
+
+        For a bicritical graph (for instance, the Petersen graph), the
+        canonical parition constitutes of only singleton sets each containing
+        an individual vertex::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.canonical_partition()
+            [{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}]
+
+        For a bipartite matching covered graph (for instance, the Hexahedral
+        graph), the canonical partition consists of two sets each of which
+        corresponds to the individual color class::
+
+            sage: H = graphs.HexahedralGraph()
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.canonical_partition()
+            [{0, 2, 5, 7}, {1, 3, 4, 6}]
+            sage: B = BipartiteGraph(H)
+            sage: list(B.bipartition()) == G.canonical_partition()
+            True
+
+        REFERENCES:
+
+            - [LM2024]_
+
+        .. SEEALSO::
+
+            - :meth:`~sage.graphs.graph.Graph.is_bicritical`
+            - :meth:`~sage.graphs.graph.Graph.is_matching_covered`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.maximal_barrier`
+        """
+        visited = set()
+
+        maximal_barriers = []
+        for v in self:
+            if v not in visited:
+                B = self.maximal_barrier(v)
+                visited.update(B)
+                maximal_barriers.append(B)
+
+        return maximal_barriers
 
     @doc_index('Overwritten methods')
     def delete_vertex(self, vertex, in_order=False):
@@ -1918,6 +2002,265 @@ class MatchingCoveredGraph(Graph):
             True
         """
         return self._matching
+
+    @doc_index('Barriers and canonical partition')
+    def maximal_barrier(self, vertex):
+        r"""
+        Return the (unique) maximal barrier containing the vertex.
+
+        For a matching covered graph `G`, a subset `B` of the vertex set `V` is
+        a barrier if `|B| = o(G - B)`, where `|B|` denotes the cardinality of
+        the set `B` and `o(G - B)` denotes the number of odd components in the
+        graph `G - B`. And a barrier `B` is a maximal barrier if `C` is not a
+        barrier for each `C` such that `B \subset C \subseteq V`.
+
+        In a matching covered graph, each vertex belongs to a unique maximal
+        barrier, which is a consequence of the following theorem.
+
+        .. RUBRIC:: Theorem [LM2024]_:
+
+        Let `u` and `v` be any two vertices in a matchable graph `G`. Then the
+        graph `G - u - v` is matchable if and only if there is no barrier of
+        `G` which contains both `u` and `v`.
+
+        And in order to find the vertices that do not lie in the maximal
+        barrier containing the provided vertex in linear time we take
+        inspiration of the `M` alternating tree seach method [LR2004]_.
+
+        INPUT:
+
+        - ``vertex`` -- a vertex of the graph
+
+        OUTPUT:
+
+        - A :exc:`~ValueError` is returned if ``vertex`` is not a vertex of the
+          graph, otherwise a set of vertices that constitute the (unique)
+          maximal barrier containing the vertex is returned.
+
+        EXAMPLES:
+
+        The graph `K_4 \odot K_{3, 3}` is matching covered. Show the set of
+        vertices in the (unique) maximal barrier containing the vertex `2`::
+
+            sage: G = Graph([
+            ....:    (0, 2), (0, 3), (0, 4), (1, 2),
+            ....:    (1, 3), (1, 4), (2, 5), (3, 6),
+            ....:    (4, 7), (5, 6), (5, 7), (6, 7)
+            ....: ])
+            sage: H = MatchingCoveredGraph(G)
+            sage: B = H.maximal_barrier(2)
+            sage: B
+            {2, 3, 4}
+
+        Let `B` be a maximal barrier of a matching covered graph `G` (which is,
+        of course, a matchable graph). The graph, `J := G - B` has no even
+        component::
+
+            sage: J = G.copy()
+            sage: J.delete_vertices(B)
+            sage: all(len(K)%2 != 0 for K in J.connected_components())
+            ...
+            True
+
+        Let `B` be a maximal barrier in a matching covered graph `G` and let
+        `M` be a perfect matching of `G`. If `K` is an odd component of
+        `J := G - B`, then `M \cap \partial_G(K)` has precisely one edge and if
+        `v` is the end of that edge in `V(K)`, then `M \cap E(K)` is a perfect
+        matching of `K - v`::
+
+            sage: K = J.subgraph(vertices=(J.connected_components())[0])
+            sage: # Let F := \partial_G(K) and T := M \cap F
+            sage: F = [edge for edge in G.edge_iterator()
+            ....:      if (edge[0] in K and edge[1] not in K)
+            ....:      or (edge[0] not in K and edge[1] in K)
+            ....: ]
+            sage: M = H.get_matching()
+            sage: T = [edge for edge in F if edge in M]
+            sage: len(T) == 1
+            True
+            sage: v = T[0][0] if T[0][0] in K else T[0][1]
+            sage: # Let N := M \cap E(K) and L := K - v
+            sage: N = Graph([edge for edge in K.edge_iterator() if edge in M])
+            sage: L = K.copy()
+            sage: L.delete_vertex(v)
+            sage: # Check if N is a perfect matching of L
+            sage: L.order() == 2*N.size()
+            True
+
+        Let `B` be a maximal barrier of a matching covered graph `G` (which is,
+        of course, a matchable graph). The graph induced by each component of
+        `G - B` is factor critical::
+
+            sage: all((K.subgraph(vertices=connected_component)).is_factor_critical()
+            ....:     for connected_component in K.connected_components()
+            ....: )
+            True
+
+        For a bicritical graph (for instance, the Petersen graph), for each
+        vertex the maximal barrier is a singleton set containing only that
+        vertex::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: u = 0
+            sage: set([u]) == G.maximal_barrier(u)
+            True
+
+        In a bipartite matching covered graph (for instance, the Hexahedral
+        graph), for a vertex, the maximal barrier is the set of vertices of
+        the color class that the particular vertex belongs to. In other words,
+        there are precisely two maximal barriers in a bipartite matching
+        covered graph, that is, the vertex sets of the individual color class::
+
+            sage: G = graphs.HexahedralGraph()
+            sage: H = MatchingCoveredGraph(G)
+            sage: A, _ = H.bipartite_sets()
+            sage: # needs random
+            sage: import random
+            sage: a = random.choice(list(A))
+            sage: A == H.maximal_barrier(a)
+            True
+
+        Maximal barriers of matching covered graph constitute a partition of
+        its vertex set::
+
+            sage: S = set()
+            sage: for v in H:
+            ....:     B = tuple(sorted(list(H.maximal_barrier(v))))
+            ....:     S.add(B)
+            sage: S = list(S)
+            sage: # Check that S is a partition of the vertex set of H
+            sage: # Part 1: Check if S spans the vertex set of H
+            sage: sorted([u for B in S for u in B]) == sorted(list(H))
+            True
+            sage: # Part 2: Check if each maximal barrier in S is disjoint
+            sage: is_disjoint = True
+            sage: for i in range(len(S)):
+            ....:     for j in range(i+1, len(S)):
+            ....:         c = [v for v in S[i] if v in S[j]]
+            ....:         is_disjoint = (len(c) == 0)
+            sage: is_disjoint
+            True
+
+        TESTS:
+
+        Providing with a nonexistent vertex::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.maximal_barrier('')
+            Traceback (most recent call last):
+            ...
+            ValueError: vertex  not in the graph
+            sage: G.maximal_barrier(100)
+            Traceback (most recent call last):
+            ...
+            ValueError: vertex 100 not in the graph
+
+        REFERENCES:
+
+        - [LZ2004]_
+        - [LM2024]_
+
+        .. SEEALSO::
+
+            - :meth:`~sage.graphs.graph.Graph.is_bicritical`
+            - :meth:`~sage.graphs.graph.Graph.is_matching_covered`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.canonical_partition`
+        """
+        if vertex not in self:
+            raise ValueError('vertex {} not in the graph'.format(vertex))
+
+        # u: The M neighbor of vertex
+        matching = self.get_matching()
+        u = next((a if b == vertex else b) for a, b, *_ in matching if vertex in [a, b])
+
+        # Goal: Find the vertices w such that G - w - vertex is matchable.
+        # In other words, there exists an odd length M-alternating vertex-w
+        # path in G, starting and ending with edges in M. Alternatively, there
+        # exists an even length M-alternating u-w path in the graph G - vertex
+        # starting with an edge not in M and ending with and edge in M.
+
+        # even: The set of all such vertex w
+        from sage.graphs.matching import M_alternating_even_mark
+        even = M_alternating_even_mark(G=self, matching=matching,
+                                       vertex=u)
+
+        B = set([vertex])
+        B.update(v for v in self if v not in even)
+
+        return B
+
+    @doc_index('Overwritten methods')
+    def has_loops(self):
+        r"""
+        Check whether there are loops in the (matching covered) graph.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.has_loops` method in
+            order to return ``False`` as matching covered graphs are always
+            free of looped edges.
+
+        OUTPUT:
+
+        - A boolean ``False`` is returned since matching covered graphs, by
+          definition, are free of self-loops.
+
+        EXAMPLES:
+
+        A matching covered graph, for instance the Petersen graph, is always free
+        of loops::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G
+            Matching covered petersen graph: graph on 10 vertices
+            sage: G.has_loops()
+            False
+            sage: G.allows_loops()
+            False
+            sage: G.add_edge(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+
+        A matching covered graph may support multiple edges, still no
+        loops are allowed::
+
+            sage: K = graphs.CompleteGraph(2)
+            sage: G = MatchingCoveredGraph(K)
+            sage: G.allow_multiple_edges(True)
+            sage: G
+            Matching covered complete graph: multi-graph on 2 vertices
+            sage: G.add_edge(0, 1, 'label')
+            sage: G.add_edge(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 1, 'label')]
+            sage: G.allows_loops()
+            False
+            sage: G.has_loops()
+            False
+            sage: G.allow_loops(True)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+
+        .. SEEALSO::
+
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+        """
+        return False
 
     @doc_index('Overwritten methods')
     def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
@@ -2346,6 +2689,323 @@ class MatchingCoveredGraph(Graph):
                 return False, C, X
 
         return (True, None, None) if coNP_certificate else True
+
+    @doc_index('Overwritten methods')
+    def loop_edges(self, labels=True):
+        r"""
+        Return a list of all loops in the (matching covered) graph.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.loop_edges` method
+            in order to return an empty list as matching covered graphs are
+            free of looped edges.
+
+        INPUT:
+
+        - ``labels`` -- boolean (default: ``True``); whether returned edges
+          have labels (``(u,v,l)``) or not (``(u,v)``).
+
+        OUTPUT:
+
+        - A list capturing the edges that are loops in the matching covered
+          graph; note that, the list is empty since matching covered graphs do
+          not contain any looped edges.
+
+        EXAMPLES:
+
+        A matching covered graph, for instance the Heawood graph, by
+        definition, is always free of loops::
+
+            sage: H = graphs.HeawoodGraph()
+            sage: G = MatchingCoveredGraph(H)
+            sage: G
+            Matching covered heawood graph: graph on 14 vertices
+            sage: G.add_edge(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            sage: G.loops()
+            []
+            sage: G.loop_edges()
+            []
+
+        A matching covered graph may support multiple edges, still no
+        loops are allowed::
+
+            sage: C = graphs.CycleGraph(4)
+            sage: G = MatchingCoveredGraph(C)
+            sage: G.allow_multiple_edges(True)
+            sage: G
+            Matching covered cycle graph: multi-graph on 4 vertices
+            sage: G.add_edge(0, 1, 'label')
+            sage: G.add_edge(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 1, 'label'), (0, 3, None), (1, 2, None), (2, 3, None)]
+            sage: G.loops()
+            []
+            sage: G.loop_edges()
+            []
+
+        One may set the ``label`` to either ``True`` or ``False``::
+
+            sage: G.loop_edges(labels=False)
+            []
+            sage: G.loops(labels=True)
+            []
+
+        .. SEEALSO::
+
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+        """
+        return []
+
+    @doc_index('Overwritten methods')
+    def loop_vertices(self):
+        r"""
+        Return a list of vertices with loops.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.loop_vertices`
+            method in order to return an empty list as matching covered graphs
+            are free of vertices that have looped edges.
+
+        OUTPUT:
+
+        - A list capturing the vertices that have loops in the matching covered
+          graph; note that, the list is empty since matching covered graphs do
+          not contain any looped edges.
+
+        EXAMPLES:
+
+        A matching covered graph, for instance the Möbius graph of order 8, by
+        definition, is always free of loops::
+
+            sage: M = graphs.MoebiusLadderGraph(4)
+            sage: G = MatchingCoveredGraph(M)
+            sage: G
+            Matching covered moebius ladder graph: graph on 8 vertices
+            sage: G.add_edge(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            sage: G.loop_vertices()
+            []
+
+        A matching covered graph may support multiple edges, still no
+        loops are allowed::
+
+            sage: S = graphs.StaircaseGraph(4)
+            sage: G = MatchingCoveredGraph(S)
+            sage: G.allow_multiple_edges(True)
+            sage: G
+            Matching covered staircase graph: multi-graph on 8 vertices
+            sage: G.add_edge(0, 1, 'label')
+            sage: G.add_edge(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 1, 'label'), (0, 3, None), (0, 6, None),
+             (1, 2, None), (1, 4, None), (2, 5, None), (2, 7, None),
+             (3, 4, None), (3, 6, None), (4, 5, None), (5, 7, None),
+             (6, 7, None)]
+            sage: G.loop_vertices()
+            []
+
+        .. SEEALSO::
+
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+        """
+        return []
+
+    loops = loop_edges
+
+    @doc_index('Overwritten methods')
+    def number_of_loops(self):
+        r"""
+        Return the number of edges that are loops.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.number_of_loops`
+            method in order to return 0 as matching covered graphs are free
+            of looped edges.
+
+        OUTPUT:
+
+        - An integer, 0 is returned, since matching covered graphs do not
+          contain zero loops.
+
+        EXAMPLES:
+
+        A matching covered graph, for instance the Truncated biwheel graph,
+        by definition, is always free of loops::
+
+            sage: T = graphs.TruncatedBiwheelGraph(5)
+            sage: G = MatchingCoveredGraph(T)
+            sage: G
+            Matching covered truncated biwheel graph: graph on 10 vertices
+            sage: G.add_edge(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            sage: G.loop_vertices()
+            []
+            sage: G.number_of_loops()
+            0
+
+        A matching covered graph may support multiple edges, still no
+        loops are allowed::
+
+            sage: B = graphs.BiwheelGraph(4)
+            sage: G = MatchingCoveredGraph(B)
+            sage: G.allow_multiple_edges(True)
+            sage: G
+            Matching covered biwheel graph: multi-graph on 8 vertices
+            sage: G.add_edge(0, 1, 'label')
+            sage: G.add_edge(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 1, 'label'), (0, 5, None), (0, 7, None),
+             (1, 2, None), (1, 6, None), (2, 3, None), (2, 7, None),
+             (3, 4, None), (3, 6, None), (4, 5, None), (4, 7, None),
+             (5, 6, None)]
+            sage: G.loop_vertices()
+            []
+            sage: G.number_of_loops()
+            0
+
+        .. SEEALSO::
+
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+        """
+        return 0
+
+    @doc_index('Overwritten methods')
+    def remove_loops(self, vertices=None):
+        r"""
+        Remove loops on vertices in ``vertices``.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.remove_loops` method
+            in order to return without any alteration as matching covered
+            graphs are free of looped edges.
+
+        INPUT:
+
+        - ``vertices`` -- (default: ``None``) iterator container of vertex
+          labels correponding to which the looped edges are to be removed. If
+          ``vertices`` is ``None``, remove all loops.
+
+        OUTPUT:
+
+        - Nothing is returned, as a matching covered graph is already devoid of
+          any loops.
+
+        EXAMPLES:
+
+        A matching covered graph, for instance the Wheel graph of order six, is
+        always free of loops::
+
+            sage: W = graphs.WheelGraph(6)
+            sage: G = MatchingCoveredGraph(W)
+            sage: G
+            Matching covered wheel graph: graph on 6 vertices
+            sage: G.add_edge(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            sage: G.remove_loops()
+            sage: G.edges(sort=True)
+            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None),
+             (0, 5, None), (1, 2, None), (1, 5, None), (2, 3, None),
+             (3, 4, None), (4, 5, None)]
+
+        A matching covered graph may support multiple edges, still no
+        loops are allowed::
+
+            sage: K = graphs.CompleteGraph(2)
+            sage: G = MatchingCoveredGraph(K)
+            sage: G.allow_multiple_edges(True)
+            sage: G
+            Matching covered complete graph: multi-graph on 2 vertices
+            sage: G.add_edge(0, 1, 'label')
+            sage: G.add_edge(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 1, 'label')]
+            sage: G.remove_loops(vertices=[0, 1])
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 1, 'label')]
+            sage: G.remove_loops(vertices=[0..100])
+
+        Note that the parameter ``vertices`` must be either ``None`` or an
+        iterable::
+
+            sage: G.remove_loops(vertices='')
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 1, 'label')]
+            sage: G.remove_loops(vertices=None)
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 1, 'label')]
+            sage: G.remove_loops(vertices=0)
+            Traceback (most recent call last):
+            ...
+            TypeError: 'Integer' object is not iterable
+            sage: G.remove_loops(vertices=False)
+            Traceback (most recent call last):
+            ...
+            TypeError: 'bool' object is not iterable
+
+        .. SEEALSO::
+
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
+            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`
+        """
+        from collections.abc import Iterable
+
+        if vertices is not None and not isinstance(vertices, Iterable):
+            raise TypeError(f'\'{vertices.__class__.__name__}\' '
+                            'object is not iterable')
+
+        return
 
     @doc_index('Miscellaneous methods')
     def update_matching(self, matching):
