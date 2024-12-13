@@ -248,13 +248,6 @@ def format_exception_only(etype: type, value: BaseException) -> list[str]:
     return formatted_exception
 
 
-traceback.format_exception_only = format_exception_only
-
-# Display warnings in doctests
-warnings.showwarning = showwarning_with_traceback
-
-from sage.repl.rich_output import get_display_manager
-
 # Initialize Sage-specific doctest stuff
 init_sage()
 
@@ -269,6 +262,13 @@ def doctest_run(
     out: Any = None,
     clear_globs: bool = True,
 ) -> doctest.TestResults:
+    traceback.format_exception_only = format_exception_only
+
+    # Display warnings in doctests
+    warnings.showwarning = showwarning_with_traceback
+
+    from sage.repl.rich_output import get_display_manager
+
     setattr(sys, "__displayhook__", get_display_manager().displayhook)
     return old_run(self, test, compileflags, out, clear_globs)
 
