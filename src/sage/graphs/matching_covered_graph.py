@@ -94,7 +94,6 @@ AUTHORS:
         :delim: |
 
         ``bricks_and_braces()`` | Return the list of (underlying simple graph of) the bricks and braces of the (matching covered) graph.
-        ``is_brick()`` | Check if the (matching covered) graph is a brick.
         ``number_of_braces()`` | Return the number of braces.
         ``number_of_bricks()`` | Return the number of bricks.
         ``number_of_petersen_bricks()`` | Return the number of Petersen bricks.
@@ -2689,6 +2688,104 @@ class MatchingCoveredGraph(Graph):
                 return False, C, X
 
         return (True, None, None) if coNP_certificate else True
+
+
+    @doc_index('Bricks, braces and tight cut decomposition')
+    def is_brick(self, coNP_certificate=False):
+        r"""
+        Check if the (matching covered) graph is a brick.
+
+        A matching covered graph which is free of nontrivial tight cuts is
+        called a *brick* if it is nonbipartite. A nonbipartite matching covered
+        graph is a brick if and only if it is 3-connected and bicritical
+        [LM2024]_.
+
+        .. SEEALSO::
+
+            :meth:`~sage.graphs.graph.Graph.is_bicritical`
+        """
+        if self.is_bipartite():
+            raise ValueError('the input graph is bipartite')
+
+        # Check if G is bicritical
+        bicritical, certificate = self.is_bicritical(coNP_certificate=True)
+
+        if not bicritical:
+            if not coNP_certificate:
+                return False
+
+            # G has a pair of vertices u, v such that G - u - v is not matching
+            # covered, thus has a nontrivial barrier B containing both u and v.
+            u, _ = certificate
+            B = self.maximal_barrier(u)
+
+            H = Graph(self)
+            H.delete_vertices(B)
+
+            # Let K be a nontrivial odd component of H := G - B. Note that
+            # there exists at least one such K since G is nonbipartite
+            nontrivial_odd_component = next(
+                (component for component in H.connected_components()
+                if len(component) % 2 and len(component) > 1), None
+            )
+
+            # Find a nontrivial barrier cut
+            C = [(u, v, w) if u in nontrivial_odd_component else (v, u, w)
+                for u, v, w in self.edge_iterator()
+                if (u in nontrivial_odd_component) ^ (v in nontrivial_odd_component)]
+
+            return False, C, nontrivial_odd_component
+
+        # Check if G is 3-connected
+        if self.is_triconnected():
+            return (True, None, None) if coNP_certificate else True
+
+        # G has a 2-vertex cut
+        # Compute the SPQR-tree decomposition
+        spqr_tree = self.spqr_tree()
+        two_vertex_cut = []
+
+        # Check for 2-vertex cuts in P and S nodes
+        for u in spqr_tree:
+            if u[0] == 'P':
+                two_vertex_cut.extend(u[1].vertices())
+                break
+            elif u[0] == 'S' and u[1].order() > 3:
+                s_vertex_set = set(u[1].vertices())
+                for v in u[1].vertices():
+                    s_vertex_set -= {v} | set(u[1].neighbors(v))
+                    two_vertex_cut.extend([v, next(iter(s_vertex_set))])
+                    break
+
+        # If no 2-vertex cut found, look for R nodes
+        if not two_vertex_cut:
+            R_frequency = {u: 0 for u in self}
+            for u in spqr_tree.vertices():
+                if u[0] == 'R':
+                    for v in u[1].vertices():
+                        R_frequency[v] += 1
+            two_vertex_cut = [u for u in self if R_frequency[u] >= 2][:2]
+
+        # We obtain a 2-vertex cut (u, v)
+        H = Graph(self)
+        H.delete_vertices(two_vertex_cut)
+
+        # Check if all components of H are odd
+        components = H.connected_components()
+        are_all_odd_components = all(len(c) % 2 for c in components)
+
+        # Find a nontrivial odd component
+        if are_all_odd_components:
+            nontrivial_odd_component = next((c for c in components if len(c) > 1), None)
+        else:
+            nontrivial_odd_component = components[0] + [two_vertex_cut[0]]
+
+        C = [(u, v, w) if u in nontrivial_odd_component else (v, u, w)
+            for u, v, w in self.edge_iterator()
+            if (u in nontrivial_odd_component) ^ (v in nontrivial_odd_component)]
+
+        # Edge (u, v, w) in C are formatted so that u is in a nontrivial odd component
+        return (False, C, nontrivial_odd_component) if coNP_certificate else False
 
     @doc_index('Overwritten methods')
     def loop_edges(self, labels=True):
