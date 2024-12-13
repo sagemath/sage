@@ -2683,7 +2683,9 @@ class MatchingCoveredGraph(Graph):
                 X.add(u if (not color_class and u in A) or (color_class and u in B) else v)
 
                 # Compute the nontrivial tight cut C := ∂(Y)
-                C = [f for f in self.edge_iterator() if (f[0] in X) ^ (f[1] in X)]
+                C = [(u, v, w) if u in X else (v, u, w)
+                    for u, v, w in self.edge_iterator()
+                    if (u in X) ^ (v in X)]
 
                 return False, C, X
 
