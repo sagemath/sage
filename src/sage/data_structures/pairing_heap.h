@@ -25,7 +25,7 @@
  * - top_value(): access the value of the item at the top of the heap in O(1).
  *   This operation assumes that the heap is not empty.
  *
- * - pop(): remove top item from the heap in amortize time O(log(n))
+ * - pop(): remove top item from the heap in amortize time O(log(n)).
  *
  * - decrease(item, new_value): change the value associated with the item to the
  *   specified value ``new_value`` in time o(log(n)). The new value must be
@@ -250,17 +250,17 @@ namespace pairing_heap {
 
     // Insert an item into the heap with specified value (priority)
     void push(const TI &some_item, const TV &some_value) {
-      if (nodes.find(some_item) != nodes.end()) {
+      if (contains(some_item)) {
 	throw std::invalid_argument("item already in the heap");
       }
       PairingHeapNode<TI, TV> *p = new PairingHeapNode<TI, TV>(some_item, some_value);
       nodes[some_item] = p;
-      root = root == nullptr ? p : HeapNodeType::_merge(root, p);
+	root = empty() ? p : HeapNodeType::_merge(root, p);
     }
 
     // Return the top pair (item, value) of the heap
     std::pair<TI, TV> top() const {
-      if (root ==  nullptr) {
+      if (empty()) {
 	throw std::domain_error("trying to access the top of an empty heap");
       }
       return std::make_pair(root->item, root->value);
@@ -268,7 +268,7 @@ namespace pairing_heap {
 
     // Return the top item of the heap
     TI top_item() const {
-      if (root == nullptr) {
+      if (empty()) {
 	throw std::domain_error("trying to access the top of an empty heap");
       }
       return root->item;
@@ -276,7 +276,7 @@ namespace pairing_heap {
 
     // Return the top value of the heap
     TV top_value() const {
-      if (root == nullptr) {
+      if (empty()) {
 	throw std::domain_error("trying to access the top of an empty heap");
       }
       return root->value;
@@ -284,7 +284,7 @@ namespace pairing_heap {
 
     // Remove the top element from the heap. Do nothing if empty
     void pop() {
-      if (root != nullptr) {
+      if (not empty()) {
 	PairingHeapNode<TI, TV> *p = root->child;
 	nodes.erase(root->item);
 	delete root;

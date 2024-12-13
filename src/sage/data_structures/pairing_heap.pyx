@@ -1061,7 +1061,7 @@ def _test_PairingHeap_from_C(n=100):
 
     # Test decrease key operations. We first push items in the heap with an
     # excess of k in the value. Then we decrease the keys in a random order by
-    # random values until returning to the origianl values. We finally check the
+    # random values until returning to the original values. We finally check the
     # validity of the resulting ordering.
     k = 10
     dec = {item: k for item in items}
