@@ -20,7 +20,7 @@ etc.). It also implements some iterators over all these orientations.
     :meth:`random_orientation` | Return a random orientation of a graph `G`
     :meth:`minimum_outdegree_orientation` | Return an orientation of `G` with the smallest possible maximum outdegree.
     :meth:`bounded_outdegree_orientation` | Return an orientation of `G` such that every vertex `v` has out-degree less than `b(v)`.
-    :meth:`eulerian_orientation(G)` | Return a DiGraph which is an Eulerian orientation of the graph `G`.
+    :meth:`eulerian_orientation` | Return an Eulerian orientation of the graph `G`.
 
 Authors
 -------
@@ -1404,7 +1404,7 @@ def bounded_outdegree_orientation(G, bound, solver=None, verbose=False,
 
 def eulerian_orientation(G):
     r"""
-    Return a DiGraph which is an Eulerian orientation of the graph `G`.
+    Return an Eulerian orientation of the graph `G`.
 
     An Eulerian graph being a graph such that any vertex has an even degree, an
     Eulerian orientation of a graph is an orientation of its edges such that
