@@ -788,7 +788,13 @@ def strong_orientation(G):
         sage: g.strong_orientation()
         Multi-digraph on 3 vertices
     """
-    d = DiGraph(multiedges=G.allows_multiple_edges())
+    from sage.graphs.base.dense_graph import DenseGraphBackend
+    if isinstance(G._backend, DenseGraphBackend):
+        data_structure = "dense"
+    else:
+        data_structure = "sparse"
+    d = _initialize_digraph(G, [], data_structure=data_structure)
+
     i = 0
 
     # The algorithm works through a depth-first search. Any edge used in the
