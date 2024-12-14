@@ -231,7 +231,6 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
 
     EXAMPLES::
 
-        sage: # needs sage.schemes
         sage: from sage.combinat.designs.designs_pyx import is_orthogonal_array
         sage: OA = designs.orthogonal_arrays.build(8,9)
         sage: is_orthogonal_array(OA,8,9)
@@ -250,7 +249,6 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
 
     TESTS::
 
-        sage: # needs sage.schemes
         sage: is_orthogonal_array(OA,8,9, t=3)
         Traceback (most recent call last):
         ...
@@ -274,7 +272,7 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
 
         sage: from itertools import product
         sage: n = 0
-        sage: for a in product(product((0,1), repeat=3), repeat=4):                     # needs sage.schemes
+        sage: for a in product(product((0,1), repeat=3), repeat=4):
         ....:     if is_orthogonal_array(a,3,2):
         ....:          n += 1
         sage: n
@@ -412,7 +410,6 @@ def is_group_divisible_design(groups, blocks, v, G=None, K=None, lambd=1, verbos
         a block has size 2 while K=[1]
         False
 
-        sage: # needs sage.schemes
         sage: p = designs.projective_plane(3)
         sage: is_group_divisible_design(None, p.blocks(), 13)
         (True, [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11], [12]])
@@ -614,12 +611,11 @@ def is_projective_plane(blocks, verbose=False):
     EXAMPLES::
 
         sage: from sage.combinat.designs.designs_pyx import is_projective_plane
-        sage: p = designs.projective_plane(4)                                           # needs sage.schemes
-        sage: b = p.blocks()                                                            # needs sage.schemes
-        sage: is_projective_plane(b, verbose=True)                                      # needs sage.schemes
+        sage: p = designs.projective_plane(4)
+        sage: b = p.blocks()
+        sage: is_projective_plane(b, verbose=True)
         True
 
-        sage: # needs sage.schemes
         sage: p = designs.projective_plane(2)
         sage: b = p.blocks()
         sage: is_projective_plane(b)
@@ -637,7 +633,6 @@ def is_projective_plane(blocks, verbose=False):
         First block has less than 3 points.
         False
 
-        sage: # needs sage.schemes
         sage: p = designs.projective_plane(2)
         sage: b = p.blocks()
         sage: b[2].append(4)
