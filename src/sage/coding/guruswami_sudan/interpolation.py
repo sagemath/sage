@@ -284,10 +284,10 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
     # Pick a nonzero element from the right kernel
     sol = Ker.basis()[0]
     # Construct the Q polynomial
-    PF = M.base_ring()['x', 'y'] #make that ring a ring in <x>
+    PF = M.base_ring()['x', 'y']  # make that ring a ring in <x>
     x, y = PF.gens()
-    Q = sum([x**monomials[i][0] * y**monomials[i][1] * sol[i] for i in range(0, len(monomials))])
-    return Q
+    return sum([x**monomials[i][0] * y**monomials[i][1] * sol[i]
+                for i in range(len(monomials))])
 
 ####################### Lee-O'Sullivan's method ###############################
 
