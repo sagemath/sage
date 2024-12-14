@@ -416,7 +416,7 @@ def orientations(G, data_structure=None, sparse=None):
         sage: next(G.orientations(data_structure='sparse', sparse=True))._backend
         Traceback (most recent call last):
         ...
-        ValueError: cannot specify both 'sparse' and 'data_structure'
+        ValueError: you cannot define 'immutable' or 'sparse' when 'data_structure' has a value
         sage: next(G.orientations(sparse=True))._backend
         <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
         sage: next(G.orientations(sparse=False))._backend
@@ -442,51 +442,21 @@ def orientations(G, data_structure=None, sparse=None):
         sage: next(G.orientations()).get_embedding() == {}
         True
     """
-    if sparse is not None:
-        if data_structure is not None:
-            raise ValueError("cannot specify both 'sparse' and 'data_structure'")
-        data_structure = "sparse" if sparse else "dense"
-    if data_structure is None:
-        from sage.graphs.base.dense_graph import DenseGraphBackend
-        from sage.graphs.base.sparse_graph import SparseGraphBackend
-        if isinstance(G._backend, DenseGraphBackend):
-            data_structure = "dense"
-        elif isinstance(G._backend, SparseGraphBackend):
-            data_structure = "sparse"
-        else:
-            data_structure = "static_sparse"
-
     name = G.name()
     if name:
         name = 'An orientation of ' + name
 
     if not G.size():
-        D = DiGraph(data=[G, []],
-                    format='vertices_and_edges',
-                    name=name,
-                    pos=G._pos,
-                    multiedges=G.allows_multiple_edges(),
-                    loops=G.allows_loops(),
-                    data_structure=data_structure)
-        if hasattr(G, '_embedding'):
-            D._embedding = copy(G._embedding)
-        yield D
+        yield _initialize_digraph(G, [], name=name,
+                                  data_structure=data_structure, sparse=sparse)
         return
 
     E = [[(u, v, label), (v, u, label)] if u != v else [(u, v, label)]
          for u, v, label in G.edge_iterator()]
     from itertools import product
     for edges in product(*E):
-        D = DiGraph(data=[G, edges],
-                    format='vertices_and_edges',
-                    name=name,
-                    pos=G._pos,
-                    multiedges=G.allows_multiple_edges(),
-                    loops=G.allows_loops(),
-                    data_structure=data_structure)
-        if hasattr(G, '_embedding'):
-            D._embedding = copy(G._embedding)
-        yield D
+        yield _initialize_digraph(G, edges, name=name,
+                                  data_structure=data_structure, sparse=sparse)
 
 
 def acyclic_orientations(G):
