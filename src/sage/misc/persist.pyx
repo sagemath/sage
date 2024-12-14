@@ -57,7 +57,7 @@ from sage.misc.sage_unittest import TestSuite
 # Apart from this, you are free to use these variables as you like.
 #
 # However, the standard utilisation is the following.
-# The pickling method (namely `__reduce__`) checks if the id of the
+# The pickling method (namely ``__reduce__``) checks if the id of the
 # current element appears in the dictionary `already_pickled`. If it
 # does not, the methods records that this element is about to be
 # pickled by adding the entry { id: True } to `already_pickled`.
@@ -456,14 +456,14 @@ def register_unpickle_override(module, name, callable, call_name=None):
     ::
 
         sage: class A():
-        ....:    def __init__(self,value):
+        ....:    def __init__(self, value):
         ....:        self.original_attribute = value
         ....:    def __repr__(self):
         ....:        return 'A(%s)' % self.original_attribute
         sage: class B():
-        ....:    def __init__(self,value):
+        ....:    def __init__(self, value):
         ....:        self.new_attribute = value
-        ....:    def __setstate__(self,state):
+        ....:    def __setstate__(self, state):
         ....:        try:
         ....:            self.new_attribute = state['new_attribute']
         ....:        except KeyError:      # an old pickle

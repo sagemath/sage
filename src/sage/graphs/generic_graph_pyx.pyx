@@ -390,7 +390,7 @@ cdef inline double sqrt_approx(double x, double y, double xx, double yy) noexcep
     Assuming that `x > y > 0`, it is a taylor expansion at `x^2`. To see how
     'bad' the approximation is::
 
-        sage: def dist(x,y):
+        sage: def dist(x, y):
         ....:    x = abs(x)
         ....:    y = abs(y)
         ....:    return max(x,y) + min(x,y)**2/(2*max(x,y))

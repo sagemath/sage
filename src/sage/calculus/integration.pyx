@@ -31,7 +31,10 @@ from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
 
 from sage.rings.real_double import RDF
-from sage.libs.gsl.all cimport *
+from sage.libs.gsl.errno cimport gsl_set_error_handler_off
+from sage.libs.gsl.integration cimport *
+from sage.libs.gsl.monte cimport *
+from sage.libs.gsl.rng cimport *
 from sage.misc.sageinspect import sage_getargspec
 from sage.ext.interpreters.wrapper_rdf cimport Wrapper_rdf
 from sage.ext.fast_callable import fast_callable
@@ -498,7 +501,7 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         (4.0, 0.0)
         sage: monte_carlo_integral(lambda u,v: u*v, [0,0], [2,2], 10000)  # abs tol 0.1
         (4.0, 0.0)
-        sage: def f(x1,x2,x3,x4): return x1*x2*x3*x4
+        sage: def f(x1, x2, x3, x4): return x1*x2*x3*x4
         sage: monte_carlo_integral(f, [0,0], [2,2], 1000, params=[0.6,2])  # abs tol 0.2
         (4.8, 0.0)
 
@@ -522,7 +525,7 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         ValueError: The function to be integrated depends on 2 variables (x, y),
         and so cannot be integrated in 3 dimensions. Please fix additional
         variables with the 'params' argument
-        sage: def f(x,y): return x*y
+        sage: def f(x, y): return x*y
         sage: monte_carlo_integral(f, [0,0,0], [2,2,2], 100)
         Traceback (most recent call last):
         ...
