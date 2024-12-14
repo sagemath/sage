@@ -720,7 +720,8 @@ def acyclic_orientations(G):
 
     # Iterate over acyclic orientations and create relabeled graphs
     for orientation in orientations:
-        D = DiGraph([(u, v) if label else (v, u) for (u, v), label in orientation.items()])
+        edges = ((u, v) if label else (v, u) for (u, v), label in orientation.items())
+        D = _initialize_digraph(G, edges)
         D.relabel(perm=reverse_vertex_labels, inplace=True)
         yield D
 
