@@ -277,7 +277,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
                 # If an edge exists in both sets, then this is a false cycle.
                 # This implies we have ee^-1 which is why it's false.
                 # So we only add the true ones.
-                if len(p.intersection(n)) == 0:
+                if not p.intersection(n):
                     data.append([p, n])
         elif isinstance(data, Matrix):
             if key != 'chirotope' and key is not None:

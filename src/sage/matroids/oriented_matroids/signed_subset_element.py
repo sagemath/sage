@@ -231,11 +231,11 @@ class SignedSubsetElement(SageObject):
             sage: E(2)
             -1
         """
-        if var in self.positives():
+        if var in self._p:
             return 1
-        if var in self.negatives():
+        if var in self._n:
             return -1
-        if var in self.zeros():
+        if var in self._z:
             return 0
         raise ValueError("not in groundset")
 
@@ -297,9 +297,9 @@ class SignedSubsetElement(SageObject):
             True
         """
         if isinstance(other, SignedSubsetElement):
-            if self._p == other._p \
-                    and self._n == other._n \
-                    and self._z == other._z:
+            if (self._p == other._p
+                    and self._n == other._n
+                    and self._z == other._z):
                 return True
         return False
 
@@ -359,15 +359,13 @@ class SignedSubsetElement(SageObject):
             sage: bool(E3)
             False
         """
-        if len(self.support()) > 0:
-            return True
-        return False
+        return bool(self.support())
 
     def __iter__(self):
         """
         Return an iter version of ``self``.
         """
-        for e in self.groundset():
+        for e in self._g:
             yield self(e)
 
     def _repr_(self):
@@ -583,19 +581,17 @@ class SignedSubsetElement(SageObject):
         p = []
         n = []
         z = []
-        for e in self.groundset():
-            x = self(e)
+        for e in self._g:
             # If x is non-zero, keep its value
-            if x == 1:
+            if e in self._p:
                 p.append(e)
-            elif x == -1:
+            elif e in self._n:
                 n.append(e)
             else:
                 # else grab the value of the other
-                x = other(e)
-                if x == 1:
+                if e in other._p:
                     p.append(e)
-                elif x == -1:
+                elif e in other._n:
                     n.append(e)
                 else:
                     z.append(e)
@@ -618,7 +614,7 @@ class SignedSubsetElement(SageObject):
             sage: E1.separation_set(E2)
             {0, 2}
         """
-        return self.positives().intersection(other.negatives()).union(self.negatives().intersection(other.positives()))
+        return self._p.intersection(other._n).union(self._n.intersection(other._p))
 
     def reorientation(self, change_set):
         r"""
@@ -648,7 +644,7 @@ class SignedSubsetElement(SageObject):
 
         # ensure every elt is in the groundset
         for i in change_set:
-            if i not in self.groundset():
+            if i not in self._g:
                 raise ValueError(f"{i} is not in the groundset")
 
         p = self.positives().difference(change_set).union(
@@ -708,7 +704,7 @@ class SignedSubsetElement(SageObject):
             sage: E1.is_conformal_with(E3)
             True
         """
-        return len(self.separation_set(other)) == 0
+        return not self.separation_set(other)
 
     def is_orthogonal_with(self, other):
         r"""
@@ -732,7 +728,7 @@ class SignedSubsetElement(SageObject):
             True
         """
         intersection = other.support().intersection(self.support())
-        if len(intersection) == 0:
+        if not intersection:
             return True
 
         s = self.restrict_to(intersection)
@@ -827,7 +823,7 @@ class SignedSubsetElement(SageObject):
         I = P.interval(P.bottom(), self)
         PP = P.sublattice(I)
         b = PP.breadth()
-        return len(I) == 2**b
+        return len(I) == 2 ** b
 
     def is_zero(self):
         """
@@ -847,4 +843,4 @@ class SignedSubsetElement(SageObject):
             sage: E3.is_zero()
             True
         """
-        return not any(self(e) != 0 for e in self.groundset())
+        return all(e in self._z for e in self._g)
