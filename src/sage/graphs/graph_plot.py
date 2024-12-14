@@ -863,13 +863,13 @@ class GraphPlot(SageObject):
                         ethickness = self._options['edge_thickness']
                         if (style_key_edges is not None
                             and ((style_key_edges and (x, y) in self._options['edge_styles'])
-                                or (not style_key_edges and lab in self._options['edge_styles']))):
+                                 or (not style_key_edges and lab in self._options['edge_styles']))):
                             estyle = style_key_edges and self._options['edge_styles'][(x, y)] or self._options['edge_styles'][lab]
-                        if (thickness_key_edges is not None 
-                            and ((thickness_key_edges and (x, y) in self._options['edge_thicknesses']) 
-                                or (not thickness_key_edges and lab in self._options['edge_thicknesses']))):
+                        if (thickness_key_edges is not None
+                            and ((thickness_key_edges and (x, y) in self._options['edge_thicknesses'])
+                                 or (not thickness_key_edges and lab in self._options['edge_thicknesses']))):
                             ethickness = thickness_key_edges and self._options['edge_thicknesses'][(x, y)] or self._options['edge_thicknesses'][lab]
-                            
+
                         c = circle((x, y), loop_size, rgbcolor=col, linestyle=estyle, thickness=ethickness)
                         self._plot_components['edges'].append(c)
                         if labels:
@@ -1244,7 +1244,7 @@ class GraphPlot(SageObject):
             for u, v, l in D.edges(sort=True):
                 D.set_edge_label(u, v, f'({u},{v})')
             sphinx_plot(D.graphplot(edge_labels=True, layout='circular'))
-        
+
         For graphs with ``circular`` layouts, one may shift the vertex labels by
         specifying coordinates to shift by::
 
@@ -1364,7 +1364,7 @@ class GraphPlot(SageObject):
             sage: D = graphs.CubeGraph(3)
             sage: D.graphplot(layout='planar').plot()
             Launched png viewer for Graphics object consisting of 21 graphics primitives
-        
+
         .. PLOT::
 
             D = graphs.CubeGraph(3)
