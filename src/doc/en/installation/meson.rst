@@ -65,11 +65,23 @@ or run the tests with ``./sage -t``.
     This means that any Sage-the-distribution commands such as ``sage -i`` 
     will not work.
 
+.. NOTE::
+
+    By default, ``ninja`` will automatically determine the number of jobs to
+    run in parallel based on the number of CPU available. This can be adjusted
+    by passing ``--config-settings=compile-args=-jN`` to ``pip install``,
+    which will pass ``-jN`` to ``ninja``.
+
+    ``--verbose`` can be passed to ``pip install``, then the meson commands
+    internally used by pip will be printed out.
+
 Background information
 ======================
 
 Under the hood, pip invokes meson to configure and build the project.
 We can also use meson directly as follows.
+``meson compile`` is much faster than ``pip install``,
+because ``pip install`` reruns ``meson setup --reconfigure`` each time.
 
 To configure the project, we need to run the following command:
 
@@ -79,6 +91,12 @@ To configure the project, we need to run the following command:
 
 This will create a build directory ``builddir`` that will hold the build artifacts.
 The ``--prefix`` option specifies the directory where the Sage will be installed.
+
+If pip is used as above, ``builddir`` is set to be
+``build/cp[Python major version][Python minor version]``, such as ``build/cp311``.
+``--prefix=`` can be left unspecified, when conda is used then meson will
+install to the conda environment e.g. ``$HOME/miniforge3/envs/sage-dev/``.
+
 To compile the project, run the following command:
 
 .. CODE-BLOCK:: shell-session
@@ -98,6 +116,8 @@ Usually, this directory is not on your Python path, so you have to use:
 .. CODE-BLOCK:: shell-session
 
     $ PYTHONPATH=build-install/lib/python3.11/site-packages ./sage
+
+When editable install is used, it is not necessary to reinstall after each compilation.
 
 Alternatively, we can still use pip to install:
 
