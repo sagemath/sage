@@ -323,64 +323,11 @@ def orient(G, f, weighted=None, data_structure=None, sparse=None,
         sage: H.orient(foo, data_structure=None, immutable=None, sparse=None)._backend
         <sage.graphs.base.dense_graph.DenseGraphBackend object at ...>
     """
-    # Which data structure should be used ?
-    if data_structure is not None:
-        # data_structure is already defined so there is nothing left to do
-        # here. Did the user try to define too much ?
-        if immutable is not None or sparse is not None:
-            raise ValueError("you cannot define 'immutable' or 'sparse' "
-                             "when 'data_structure' has a value")
-    # At this point, data_structure is None.
-    elif immutable is True:
-        data_structure = 'static_sparse'
-        if sparse is False:
-            raise ValueError("there is no dense immutable backend at the moment")
-    elif immutable is False:
-        # If the user requests a mutable digraph and input is immutable, we
-        # choose the 'sparse' cgraph backend. Unless the user explicitly
-        # asked for something different.
-        if G.is_immutable():
-            data_structure = 'dense' if sparse is False else 'sparse'
-    elif sparse is True:
-        data_structure = "sparse"
-    elif sparse is False:
-        data_structure = "dense"
-
-    if data_structure is None:
-        from sage.graphs.base.dense_graph import DenseGraphBackend
-        if isinstance(G._backend, DenseGraphBackend):
-            data_structure = "dense"
-        else:
-            data_structure = "sparse"
-
-    if weighted is None:
-        weighted = G.weighted()
-
     edges = (f(e) for e in G.edge_iterator())
-    D = DiGraph([G, edges], format='vertices_and_edges',
-                data_structure=data_structure,
-                loops=G.allows_loops(),
-                multiedges=G.allows_multiple_edges(),
-                name=f"Orientation of {G.name()}",
-                pos=copy(G._pos), weighted=weighted,
-                hash_labels=hash_labels)
-
-    attributes_to_copy = ('_assoc', '_embedding')
-    for attr in attributes_to_copy:
-        if hasattr(G, attr):
-            copy_attr = {}
-            old_attr = getattr(G, attr)
-            if isinstance(old_attr, dict):
-                for v, value in old_attr.items():
-                    try:
-                        copy_attr[v] = value.copy()
-                    except AttributeError:
-                        copy_attr[v] = copy(value)
-                setattr(D, attr, copy_attr)
-            else:
-                setattr(D, attr, copy(old_attr))
-
-    return D
+    name = f"Orientation of {G.name()}"
+    return _initialize_digraph(G, edges, name=name, weighted=weighted,
+                               data_structure=data_structure, sparse=sparse,
+                               immutable=immutable, hash_labels=hash_labels)
 
 
 def orientations(G, data_structure=None, sparse=None):
