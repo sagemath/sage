@@ -47,6 +47,165 @@ from copy import copy
 from sage.graphs.digraph import DiGraph
 
 
+def _initialize_digraph(G, edges, name=None, weighted=None, sparse=None,
+                        data_structure=None, immutable=None, hash_labels=None):
+    r"""
+    Helper method to return a directed graph built from `G`.
+
+    This method returns a digraph with the same set of vertices than the input
+    graph `G` and with specified edges. The data structure can be
+    specified. Furthermore, all attributes of the graph are copied to the
+    returned digraph.
+
+    INPUT:
+
+    - ``G`` -- a graph
+
+    - ``edges`` -- iterable; the edges of the digraph to return
+
+    - ``name`` -- string (default: ``None``); the name of the digraph to
+      return. By default (``None``), the returned digraph has the same name as
+      the input graph ``G``.
+
+    - ``weighted`` -- boolean (default: ``None``); weightedness for the oriented
+      digraph. By default (``None``), the graph and its orientation will behave
+      the same.
+
+    - ``sparse`` -- boolean (default: ``None``); ``sparse=True`` is an alias for
+      ``data_structure="sparse"``, and ``sparse=False`` is an alias for
+      ``data_structure="dense"``. Only used when ``data_structure=None``.
+
+    - ``data_structure`` -- string (default: ``None``); one of ``'sparse'``,
+      ``'static_sparse'``, or ``'dense'``. See the documentation of
+      :class:`DiGraph`.
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable digraph. Only used when ``data_structure=None``.
+
+      * ``immutable=None`` (default) means that the graph and its orientation
+        will behave the same way.
+
+      * ``immutable=True`` is a shortcut for ``data_structure='static_sparse'``
+
+      * ``immutable=False`` means that the created digraph is mutable. When used
+        to orient an immutable graph, the data structure used is ``'sparse'``
+        unless anything else is specified.
+
+    - ``hash_labels`` -- boolean (default: ``None``); whether to include edge
+      labels during hashing of the oriented digraph. This parameter defaults to
+      ``True`` if the graph is weighted. This parameter is ignored when
+      parameter ``immutable`` is not ``True``. Beware that trying to hash
+      unhashable labels will raise an error.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.orientations import _initialize_digraph
+        sage: G = Graph([(1, 2)], immutable=True, loops=True, multiedges=True)
+        sage: D = _initialize_digraph(G, [])
+        sage: D.is_immutable()
+        True
+        sage: D.allows_loops()
+        True
+        sage: D.allows_multiple_edges()
+        True
+        sage: D.edges()
+        []
+        sage: D.add_edge((2, 3))
+        Traceback (most recent call last):
+        ...
+        ValueError: graph is immutable; please change a copy instead (use function copy())
+        sage: G = Graph([(1, 2)])
+        sage: D = _initialize_digraph(G, [])
+        sage: D.vertices()
+        [1, 2]
+        sage: D.edges()
+        []
+        sage: D.add_edge((2, 3)); D.edges()
+        [(2, 3, None)]
+
+    TESTS::
+
+        sage: from sage.graphs.orientations import _initialize_digraph
+        sage: _initialize_digraph(Graph(), [], data_structure='sparse', immutable=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: you cannot define 'immutable' or 'sparse' when 'data_structure' has a value
+        sage: _initialize_digraph(Graph(), [], data_structure='sparse', sparse=True)
+        Traceback (most recent call last):
+        ...
+        ValueError: you cannot define 'immutable' or 'sparse' when 'data_structure' has a value
+    """
+    # Which data structure should be used ?
+    if data_structure is not None:
+        # data_structure is already defined so there is nothing left to do
+        # here. Did the user try to define too much ?
+        if immutable is not None or sparse is not None:
+            raise ValueError("you cannot define 'immutable' or 'sparse' "
+                             "when 'data_structure' has a value")
+    # At this point, data_structure is None.
+    elif immutable is True:
+        data_structure = 'static_sparse'
+        if sparse is False:
+            raise ValueError("there is no dense immutable backend at the moment")
+    elif immutable is False:
+        # If the user requests a mutable digraph and input is immutable, we
+        # choose the 'sparse' cgraph backend. Unless the user explicitly
+        # asked for something different.
+        if G.is_immutable():
+            data_structure = 'dense' if sparse is False else 'sparse'
+    # At this point, data_structure and immutable are None.
+    elif sparse is True:
+        data_structure = "sparse"
+    elif sparse is False:
+        data_structure = "dense"
+
+    if data_structure is None:
+        from sage.graphs.base.dense_graph import DenseGraphBackend
+        from sage.graphs.base.sparse_graph import SparseGraphBackend
+        if isinstance(G._backend, DenseGraphBackend):
+            data_structure = "dense"
+        elif isinstance(G._backend, SparseGraphBackend):
+            data_structure = "sparse"
+        else:
+            data_structure = "static_sparse"
+
+    if name is None:
+        name = G.name()
+    if weighted is None:
+        weighted = G.weighted()
+    if hash_labels is None:
+        hash_labels = G._hash_labels
+
+    D = DiGraph(data=[G, edges],
+                format='vertices_and_edges',
+                data_structure=data_structure,
+                multiedges=G.allows_multiple_edges(),
+                loops=G.allows_loops(),
+                weighted=weighted,
+                pos=copy(G.get_pos()),
+                name=name,
+                hash_labels=hash_labels)
+
+    D.set_vertices(G.get_vertices())
+
+    attributes_to_copy = ('_assoc', '_embedding')
+    for attr in attributes_to_copy:
+        if hasattr(G, attr):
+            copy_attr = {}
+            old_attr = getattr(G, attr)
+            if isinstance(old_attr, dict):
+                for v, value in old_attr.items():
+                    try:
+                        copy_attr[v] = value.copy()
+                    except AttributeError:
+                        copy_attr[v] = copy(value)
+                setattr(D, attr, copy_attr)
+            else:
+                setattr(D, attr, copy(old_attr))
+
+    return D
+
+
 def orient(G, f, weighted=None, data_structure=None, sparse=None,
            immutable=None, hash_labels=None):
     r"""
