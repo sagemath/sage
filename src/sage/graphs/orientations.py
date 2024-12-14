@@ -1227,15 +1227,8 @@ def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose
 
     orientation = p.get_values(orientation, convert=bool, tolerance=integrality_tolerance)
 
-    # All the edges from G are doubled in O ( one in each direction )
-    O = DiGraph(G)
-
-    # Builds the list of edges that should be removed
-    edges = (e[::-1] if orientation[frozenset(e)] else e
-             for e in G.edge_iterator(labels=False))
-    O.delete_edges(edges)
-
-    return O
+    # Return the resulting orientation
+    return G.orient(lambda e: e if orientation[frozenset(e[:2])] else (e[1], e[0], e[2]))
 
 
 def bounded_outdegree_orientation(G, bound, solver=None, verbose=False,
