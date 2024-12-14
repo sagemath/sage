@@ -1461,7 +1461,7 @@ def eulerian_orientation(G):
         sage: E4.eulerian_orientation()
         Digraph on 4 vertices
     """
-    d = DiGraph([G, []], format='vertices_and_edges')
+    d = _initialize_digraph(G, [], sparse=True, immutable=False)
 
     if not G.size():
         return d
