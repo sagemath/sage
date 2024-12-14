@@ -356,7 +356,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             -8378776308224696727
         """
         fse = frozenset(self.elements())
-        fsgs = frozenset(self.groundset())
+        fsgs = frozenset(self._groundset)
         return hash((fsgs, fse))
 
     def __contains__(self, x):
@@ -587,7 +587,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
                 raise NotImplementedError("no %ss() method found in oriented matroid" % (new_type,))
             return OrientedMatroid(els,
                                    key=new_type,
-                                   groundset=self.groundset())
+                                   groundset=self._groundset)
         else:
             raise NotImplementedError("type %s not implemented" % (new_type,))
 
@@ -852,13 +852,13 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             sage: D.groundset()
             (Hyperplane t0 - t1 + 0*t2 + 0, Hyperplane t0 + 0*t1 - t2 + 0)
         """
-        if change_set in self.groundset():
+        if change_set in self._groundset:
             change_set = set([change_set])
         else:
             change_set = set(change_set)
 
         from sage.matroids.oriented_matroids.oriented_matroid import deep_tupler
-        groundset = set(self.groundset()).difference(change_set)
+        groundset = set(self._groundset).difference(change_set)
         groundset = deep_tupler(groundset)
         data = []
         for c in self.covectors():
@@ -903,13 +903,13 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
              -: Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
              0: ]
         """
-        if change_set in self.groundset():
+        if change_set in self._groundset:
             change_set = set([change_set])
         else:
             change_set = set(change_set)
 
         from sage.matroids.oriented_matroids.oriented_matroid import deep_tupler
-        groundset = set(self.groundset()).difference(change_set)
+        groundset = set(self._groundset).difference(change_set)
         groundset = deep_tupler(groundset)
         data = []
         for c in self.covectors():
@@ -947,7 +947,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         """
         T = self.topes()[0]
         loops = []
-        for j in self.groundset():
+        for j in self._groundset:
             if T(j) == 0:
                 loops.append(j)
         return loops
@@ -972,7 +972,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             ...
             ValueError: elements must be in groundset and must not be loops
         """
-        gs = set(self.groundset()).difference(set(self.loops()))
+        gs = set(self._groundset).difference(set(self.loops()))
         if e not in gs or f not in gs:
             raise ValueError("elements must be in groundset and must not be loops")
         for i in self.elements():
@@ -1003,7 +1003,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         from sage.combinat.subset import Subsets
         if len(self.loops()) > 0:
             return False
-        for i in Subsets(self.groundset(), 2):
+        for i in Subsets(self._groundset, 2):
             if self.are_parallel(i[0], i[1]):
                 return False
         return True
@@ -1015,7 +1015,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         Two oriented matroids are dual if the circuits of one are pairwise
         orthogonal to the circuits of the other.
         """
-        if self.groundset() != other.groundset():
+        if self._groundset != other.groundset():
             return False
         for u in self.circuits():
             for v in other.circuits():

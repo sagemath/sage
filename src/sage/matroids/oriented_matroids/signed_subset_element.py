@@ -321,18 +321,6 @@ class SignedSubsetElement(SageObject):
         """
         return not (self == other)
 
-    def _cmp_(self, other):
-        """
-        Arbitrary comparison function so posets work.
-        """
-        if not isinstance(other, SignedSubsetElement):
-            return 0
-        return 1
-        # x = len(self.support()) - len(other.support())
-        # if x == 0:
-        #     return x
-        # return x / abs(x) * -1
-
     def __bool__(self):
         r"""
         Return whether an element is not considered a zero.
@@ -364,6 +352,15 @@ class SignedSubsetElement(SageObject):
     def __iter__(self):
         """
         Return an iter version of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E1 = M.elements()[0]
+            sage: [e for e in E1]
+            [1, 0, -1]
         """
         for e in self._g:
             yield self(e)
