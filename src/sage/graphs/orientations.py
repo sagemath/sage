@@ -1102,25 +1102,14 @@ def random_orientation(G):
     if not isinstance(G, Graph):
         raise ValueError("the input parameter must be a Graph")
 
-    D = DiGraph(data=[G.vertices(sort=False), []],
-                format='vertices_and_edges',
-                multiedges=G.allows_multiple_edges(),
-                loops=G.allows_loops(),
-                weighted=G.weighted(),
-                pos=G.get_pos(),
-                name="Random orientation of {}".format(G.name()))
-    if hasattr(G, '_embedding'):
-        D._embedding = copy(G._embedding)
-
     from sage.misc.prandom import getrandbits
     rbits = getrandbits(G.size())
+    edges = []
     for u, v, l in G.edge_iterator():
-        if rbits % 2:
-            D.add_edge(u, v, l)
-        else:
-            D.add_edge(v, u, l)
+        edges.append((u, v, l) if rbits % 2 else (v, u, l))
         rbits >>= 1
-    return D
+
+    return _initialize_digraph(G, edges, name=f"Random orientation of {G.name()}")
 
 
 def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose=0,
