@@ -1393,22 +1393,13 @@ def bounded_outdegree_orientation(G, bound, solver=None, verbose=False,
     if value != G.size():
         raise ValueError("No orientation exists for the given bound")
 
-    D = DiGraph()
-    D.add_vertices(vertices)
-
     # The flow graph may not contain all the vertices, if they are
     # not part of the flow...
+    edges = ((vertices[u], vertices[vv if vv != u else uu])
+             for u in (x for x in range(n) if x in flow)
+             for uu, vv in flow.neighbors_out(u))
 
-    for u in [x for x in range(n) if x in flow]:
-
-        for uu, vv in flow.neighbors_out(u):
-            v = vv if vv != u else uu
-            D.add_edge(vertices[u], vertices[v])
-
-    # I do not like when a method destroys the embedding ;-)
-    D.set_pos(G.get_pos())
-
-    return D
+    return _initialize_digraph(G, edges)
 
 
 def eulerian_orientation(G):
