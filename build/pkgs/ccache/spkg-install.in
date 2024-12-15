@@ -1,13 +1,13 @@
 cd src
 
-# Use newer version of config.guess and config.sub (see Issue #23710)
-cp "$SAGE_ROOT"/config/config.* .
-
-export CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"
-sdh_configure
+mkdir build
+cd build
+sdh_cmake -DCMAKE_BUILD_TYPE=Release \
+          -DENABLE_TESTING=OFF \
+		  -DREDIS_STORAGE_BACKEND=OFF \
+		  ..
 sdh_make
 sdh_make_install
-
 
 set -e
 
@@ -21,4 +21,4 @@ ln -sf ../../bin/ccache "$SAGE_LOCAL/libexec/ccache/clang++"
 
 # Copy a reasonable default configuration for Sage
 # (cache size of 4G and compression enabled)
-cp -p ../ccache.conf "$SAGE_LOCAL/etc"
+cp -p ../../ccache.conf "$SAGE_LOCAL/etc"
