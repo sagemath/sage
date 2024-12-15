@@ -13,8 +13,7 @@ Assume we're starting from a clean repo and a fully set up conda environment:
         
 .. CODE-BLOCK:: shell-session
 
-    $ ./bootstrap-conda
-    $ mamba env create --file src/environment-dev-3.11.yml --name sage-dev
+    $ mamba env create --file src/environment-3.11.yml --name sage-dev
     $ conda activate sage-dev
 
 Alternatively, install all build requirements as described in section
