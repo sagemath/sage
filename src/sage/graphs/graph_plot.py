@@ -236,7 +236,7 @@ graphplot_options.update({
     'talk':
         'Whether to display the vertices in talk mode (larger and white).',
     'label_fontsize':
-        'font size of all labels',
+       'font size of all labels',
     'graph_border':
         'Whether or not to draw a frame around the graph.',
     'edge_labels_background':
@@ -272,7 +272,7 @@ DEFAULT_PLOT_OPTIONS = {
     'partition'                 : None,
     'dist'                      : .075,
     'max_dist'                  : 1.5,
-    'label_fontsize'            : 12,
+    'label_fontsize'            : 10,
     'loop_size'                 : .075,
     'edge_labels_background'    : 'white'}
 
@@ -1029,7 +1029,8 @@ class GraphPlot(SageObject):
                         text(str(elabel),
                              [(C[0] + D[0]) / 2., (C[1] + D[1]) / 2.],
                              background_color=bg,
-                             fontsize=self._options['label_fontsize']))
+                             fontsize=self._options['label_fontsize']
+                             ))
             elif is_directed:
                 self._plot_components['edges'].append(
                     arrow(self._pos[a], self._pos[b],
@@ -1045,7 +1046,8 @@ class GraphPlot(SageObject):
                     line([self._pos[a], self._pos[b]],
                          rgbcolor=ecolor,
                          linestyle=estyle,
-                         thickness=ethickness))
+                         thickness=ethickness
+                         ))
             if labels and not self._arcdigraph:
                 bg = self._options['edge_labels_background']
                 self._plot_components['edge_labels'].append(
@@ -1053,7 +1055,8 @@ class GraphPlot(SageObject):
                          [(self._pos[a][0] + self._pos[b][0]) / 2.,
                          (self._pos[a][1] + self._pos[b][1]) / 2.],
                          background_color=bg,
-                         fontsize=self._options['label_fontsize']))
+                         fontsize=self._options['label_fontsize']
+                         ))
 
     def _polar_hack_for_multidigraph(self, A, B, VR):
         """
