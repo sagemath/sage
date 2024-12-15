@@ -44,7 +44,6 @@ EXAMPLES::
 import itertools
 
 from copy import copy
-from datetime import datetime
 from itertools import combinations
 
 from sage.combinat.permutation import Permutation
@@ -1417,7 +1416,7 @@ def conjugate_positive_form(braid):
 
     A list of `r` lists. Each such list is another list with two elements, a
     positive braid `\alpha_i` and a list of permutation braids
-    `\gamma_{1}^{i},\dots,\gamma_{r}^{n_i}` such that if
+    `\gamma_{1}^{i},\dots,\gamma_{n_i}^{i}` such that if
     `\gamma_i=\prod_{j=1}^{n_i} \gamma_j^i` then the braids
     `\tau_i=\gamma_i\alpha_i\gamma_i^{-1}` pairwise commute
     and `\alpha=\prod_{i=1}^{r} \tau_i`.
@@ -1428,11 +1427,11 @@ def conjugate_positive_form(braid):
         sage: B = BraidGroup(4)
         sage: t = B((1, 3, 2, -3, 1, 1))
         sage: conjugate_positive_form(t)
-        [[(s1*s0)^2, [s2]]]
+        [[(s0*s1)^2, [s0*s2*s1*s0]]]
         sage: B = BraidGroup(5)
         sage: t = B((1, 2, 3, 4, -1, -2, 3, 3, 2, -4))
         sage: L = conjugate_positive_form(t); L
-        [[s1^2, [s3*s2]], [s1*s2, [s0]]]
+        [[s0^2, [s0*s1*s2*s1*s3*s2*s1*s0]], [s3*s2, [s0*s1*s2*s1*s3*s2*s1*s0]]]
         sage: s = B.one()
         sage: for a, l in L:
         ....:   b = prod(l)
@@ -1452,9 +1451,7 @@ def conjugate_positive_form(braid):
         braid1 = prod(A1, B.delta() ** ex)
         sg0 = B.one()
     else:
-        A = braid.super_summit_set()
-        braid1 = A[0]
-        sg0 = braid.conjugating_braid(braid1)
+        braid1, sg0 = braid.super_summit_set_element()
     if ex > 0:
         blocks = [list(braid1.Tietze())]
     else:
@@ -1467,30 +1464,18 @@ def conjugate_positive_form(braid):
             if block:
                 blocks.append(block)
     shorts = []
-    oneblock = len(blocks) == 1
     for a in blocks:
         if sg0 == B.one():
             res0 = [B(a), []]
         else:
-            if not oneblock:
-                A = B(a).super_summit_set()
+            bra = sg0 * B(a) / sg0
+            br1, sg = bra.super_summit_set_element()
             res = None
-            t0 = datetime.now()
-            for j, tau in enumerate(A):
-                if j == 1:
-                    sg = sg0
-                else:
-                    sg = (sg0 * B(a) / sg0).conjugating_braid(tau)
-                A1 = rightnormalform(sg)
-                par = A1[-1][0] % 2
-                A1 = [B(a) for a in A1[:-1]]
-                b = prod(A1, B.one())
-                b1 = len(b.Tietze()) / (len(A1) + 1)
-                if res is None or b1 < res[3]:
-                    res = [tau, A1, par, b1]
-                if (datetime.now() - t0).total_seconds() > 60:
-                    break
-            if res[2] == 1:
+            A1 = rightnormalform(sg)
+            par = A1[-1][0] % 2
+            A1 = [B(a0) for a0 in A1[:-1]]
+            res = [br1, A1, par]
+            if res[2]:
                 r0 = res[0].Tietze()
                 res[0] = B([i.sign() * (d - abs(i)) for i in r0])
             res0 = res[:2]
@@ -1619,9 +1604,10 @@ def fundamental_group_from_braid_mon(bm, degree=None,
         sage: bm = [s1*s2*s0*s1*s0^-1*s1^-1*s0^-1,
         ....:       s0*s1^2*s0*s2*s1*(s0^-1*s1^-1)^2*s0^-1,
         ....:       (s0*s1)^2]
-        sage: g = fundamental_group_from_braid_mon(bm, projective=True); g      # needs sirocco
+        sage: g = fundamental_group_from_braid_mon(bm, projective=True)        # needs sirocco
+        sage: g.sorted_presentation()                                          # needs sirocco
         Finitely presented group
-        < x1, x3 | x3^2*x1^2, x1^-1*x3^-1*x1*x3^-1*x1^-1*x3^-1 >
+        < x0, x1 | x1^-2*x0^-2, x1^-1*(x0^-1*x1)^2*x0 >
         sage: print(g.order(), g.abelian_invariants())                         # needs sirocco
         12 (4,)
         sage: B2 = BraidGroup(2)
@@ -1720,8 +1706,8 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=True):
         sage: from sage.schemes.curves.zariski_vankampen import fundamental_group, braid_monodromy
         sage: R.<x, y> = QQ[]
         sage: f = x^2 + y^3
-        sage: fundamental_group(f)
-        Finitely presented group < x0, x1 | x0*x1^-1*x0^-1*x1^-1*x0*x1 >
+        sage: fundamental_group(f).sorted_presentation()
+        Finitely presented group < x0, x1 | x1^-1*x0^-1*x1^-1*x0*x1*x0 >
         sage: fundamental_group(f, simplified=False, puiseux=False).sorted_presentation()
         Finitely presented group < x0, x1, x2 | x2^-1*x1^-1*x0*x1,
                                                 x2^-1*x0*x1*x0^-1,
@@ -1882,7 +1868,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         sage: G.sorted_presentation()
         Finitely presented group
         < x0, x1, x2, x3 | x3^-1*x2^-1*x3*x2, x3^-1*x1^-1*x0^-1*x1*x3*x0,
-                           x3^-1*x1^-1*x3*x0*x1*x0^-1, x2^-1*x0^-1*x2*x0 >
+                           x3^-1*x1^-1*x0^-1*x3*x0*x1, x2^-1*x0^-1*x2*x0 >
         sage: dic
         {0: [x1], 1: [x3], 2: [x2], 3: [x0], 4: [x3^-1*x2^-1*x1^-1*x0^-1]}
         sage: fundamental_group_arrangement(L, vertical=True)
