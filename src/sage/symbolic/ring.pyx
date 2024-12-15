@@ -187,7 +187,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             True
         """
         if isinstance(R, type):
-            if R in [int, float, long, complex, bool]:
+            if R in (int, float, complex, bool):
                 return True
 
             if is_numpy_type(R):

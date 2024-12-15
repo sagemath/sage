@@ -167,7 +167,7 @@ class FlatteningMorphism(Morphism):
         variables = []
         intermediate_rings = []
 
-        while isinstance(ring, PolynomialRing_generic) or isinstance(ring, MPolynomialRing_base):
+        while isinstance(ring, (PolynomialRing_generic, MPolynomialRing_base)):
             intermediate_rings.append(ring)
             v = ring.variable_names()
             variables.extend(reversed(v))
@@ -538,7 +538,9 @@ class SpecializationMorphism(Morphism):
         # Construct unflattened codomain R
         new_vars = []
         R = domain
-        while isinstance(R, PolynomialRing_generic) or isinstance(R, MPolynomialRing_base) or isinstance(R, FractionField_generic):
+        while isinstance(R, (PolynomialRing_generic,
+                             MPolynomialRing_base,
+                             FractionField_generic)):
             if isinstance(R, FractionField_generic):
                 # We've hit base_ring, so set _sub_specialization and exit the loop
                 field_over = R.base()

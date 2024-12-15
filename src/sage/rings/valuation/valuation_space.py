@@ -1214,14 +1214,16 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 sage: v = QQ.valuation(5)
                 sage: v._test_mul()
             """
+            from sage.rings.infinity import infinity
+            from itertools import product
             tester = self._tester(**options)
             S = self.domain().some_elements()
-            from itertools import product
+            infis = {infinity, -infinity}
+
             for x, y in tester.some_elements(product(S, S)):
-                from sage.rings.infinity import infinity
-                if set([self(x), self(y)]) == set([infinity, -infinity]):
+                if {Sx := self(x), Sy := self(y)} == infis:
                     continue
-                tester.assertEqual(self(x * y), self(x) + self(y))
+                tester.assertEqual(self(x * y), Sx + Sy)
 
         def _test_no_infinite_units(self, **options):
             r"""

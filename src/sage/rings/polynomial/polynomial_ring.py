@@ -290,7 +290,7 @@ class PolynomialRing_generic(Ring):
             sage: PolynomialRing(Zmod(1), 'x').category()
             Category of finite commutative rings
 
-        Check `is_finite` inherited from category (:issue:`24432`)::
+        Check ``is_finite`` inherited from category (:issue:`24432`)::
 
             sage: Zmod(1)['x'].is_finite()
             True
@@ -643,7 +643,7 @@ class PolynomialRing_generic(Ring):
         """
         from .multi_polynomial_ring import MPolynomialRing_base
         base = self.base_ring()
-        if isinstance(base, PolynomialRing_generic) or isinstance(base, MPolynomialRing_base):
+        if isinstance(base, (PolynomialRing_generic, MPolynomialRing_base)):
             from .flatten import FlatteningMorphism
             return FlatteningMorphism(self)
         else:
