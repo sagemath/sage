@@ -104,6 +104,10 @@ REFERENCES:
              graphs and isoperimetric inequalities*, The Annals of Probability
              32 (2004), no.  3A, 1727-1745.
 
+.. [ALL2002] P. Auger, G. Labelle and P. Leroux, *Combinatorial
+             addition formulas and applications*, Advances in Applied
+             Mathematics 28 (2002) 302-342.
+
 .. [ASV2020] Federico Ardila, Mariel Supina, and Andrés R. Vindas-Meléndez,
          *The Equivariant Ehrhart Theory of the Permutahedron*,
          Proc. Amer. Math. Soc. Volume 148, Number 12, 2020, pp. 5091--5107.
@@ -261,6 +265,9 @@ REFERENCES:
              finite Drinfeld modules.* manuscripta mathematica 93, 1 (01 Aug 1997),
              369–379. https://doi.org/10.1007/BF02677478
 
+.. [ANR2023] Robert Angarone, Anastasia Nathanson, and Victor Reiner. *Chow rings of
+             matroids as permutation representations*, 2023. :arxiv:`2309.14312`.
+
 .. [AP1986] \S. Arnborg, A. Proskurowski,
             *Characterization and Recognition of Partial 3-Trees*,
             SIAM Journal of Alg. and Discrete Methods,
@@ -269,6 +276,10 @@ REFERENCES:
 
 .. [Ap1997] \T. Apostol, Modular functions and Dirichlet series in
             number theory, Springer, 1997 (2nd ed), section 3.7--3.9.
+
+.. [AP2024] William Atherton, Dmitrii V. Pasechnik, *Decline and Fall of the
+            ICALP 2008 Modular Decomposition algorithm*, 2024.
+            :arxiv:`2404.14049`.
 
 .. [APR2001] George E. Andrews, Peter Paule, Axel Riese,
              *MacMahon's partition analysis: the Omega package*,
@@ -488,6 +499,9 @@ REFERENCES:
 
 .. [BeBo2009] Olivier Bernardi and Nicolas Bonichon, *Intervals in Catalan
               lattices and realizers of triangulations*, JCTA 116 (2009)
+
+.. [Best2021] Alex J. Best: Tools and Techniques for Rational Points on Curves.
+              PhD Thesis, Boston University, 2021.
 
 .. [BBGL2008] \A. Blondin Massé, S. Brlek, A. Garon, and S. Labbé,
               Combinatorial properties of f -palindromes in the
@@ -962,6 +976,10 @@ REFERENCES:
             Fast Computation of Matrix-Type Padé Approximants". SIAM J. Matrix
             Anal. Appl. 15 (1994) 804-823.
             :doi:`10.1137/S0895479892230031`
+
+.. [BL1995] W. Bosma, H.W. Lenstra: Complete Systems of Two Addition Laws for
+            Elliptic Curves. Journal of Number Theory, volume 53, issue 2,
+            pages 229-240. 1995.
 
 .. [BHMPW20a] Tom Braden, June Huh, Jacob P. Matherne, Nicholas Proudfoot,
              and Botong Wang, *A semi-small decomposition of the Chow
@@ -3207,6 +3225,10 @@ REFERENCES:
              The Electronic Journal of Combinatorics 11 (2004), #R77.
              http://www.combinatorics.org/Volume_11/PDF/v11i1r77.pdf
 
+.. [HaHo2017] Nate Harman and Sam Hopkins,
+              *Quantum integer-valued polynomials*,
+              J. Alg. Comb. 2017, :doi:`10.1007/s10801-016-0717-3`
+
 .. [Hai1989] M.D. Haiman, *On mixed insertion, symmetry, and shifted
              Young tableaux*. Journal of Combinatorial Theory, Series
              A Volume 50, Number 2 (1989), pp. 196-225.
@@ -3220,7 +3242,7 @@ REFERENCES:
              http://www-math.mit.edu/~hajiagha/pp11.ps
 
 .. [Han1960] Haim Hanani,
-             On quadruple systems,
+             *On quadruple systems*,
              pages 145--157, vol. 12,
              Canadian Journal of Mathematics,
              1960
@@ -4699,6 +4721,9 @@ REFERENCES:
              University Press, New York, 1995, With contributions
              by A. Zelevinsky, Oxford Science Publications.
 
+.. [Mac2015] Diane Maclagan and Bernd Sturmfels, *Introduction to
+             Tropical Geometry*, American Mathematical Society, 2015.
+
 .. [MagmaHGM] *Hypergeometric motives* in Magma,
    http://magma.maths.usyd.edu.au/~watkins/papers/HGM-chapter.pdf
 
@@ -4927,6 +4952,9 @@ REFERENCES:
 
 .. [MM2015] \J. Matherne and \G. Muller, *Computing upper cluster algebras*,
             Int. Math. Res. Not. IMRN, 2015, 3121-3149.
+
+.. [MM2022] Matthew Mastroeni and Jason McCullough. *Chow rings of matroids are
+            Koszul*. Mathematische Annalen, 387(3-4):1819-1851, November 2022.
 
 .. [MMRS2022] Ruslan G. Marzo, Rafael A. Melo,  Celso C. Ribeiro and
               Marcio C. Santos: *New formulations and branch-and-cut procedures

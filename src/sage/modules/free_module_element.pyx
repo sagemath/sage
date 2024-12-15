@@ -3451,7 +3451,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         The more general :meth:`sage.matrix.matrix2.tensor_product` is an
         operation on a pair of matrices.  If we construct a pair of vectors
         as a column vector and a row vector, then an outer product and a
-        tensor product are identical.  Thus `tensor_product` is a synonym
+        tensor product are identical.  Thus ``tensor_product`` is a synonym
         for this method.  ::
 
             sage: u = vector(QQ, [1/2, 1/3, 1/4, 1/5])
@@ -4047,7 +4047,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         Differentiate with respect to var by differentiating each element
         with respect to var.
 
-        .. seealso:
+        .. SEEALSO::
 
            :meth:`derivative`
 
@@ -4141,7 +4141,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             (1/2, 1/3, -cos(1) + 1)
         """
         from sage.misc.functional import integral
-        return self.apply_map(lambda x: integral(x,*args, **kwds))
+        return self.apply_map(lambda x: integral(x, *args, **kwds))
 
     integrate = integral
 
@@ -4179,11 +4179,11 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         # return self.apply_map(lambda x: x.nintegral(*args, **kwds) for x in self)
 
         if self.is_sparse():
-            v = [(i,z.nintegral(*args,**kwds)) for i,z in self.dict(copy=False).items()]
+            v = [(i,z.nintegral(*args, **kwds)) for i,z in self.dict(copy=False).items()]
             answers = dict([(i,a[0]) for i,a in v])
             v=dict(v)
         else:
-            v = [z.nintegral(*args,**kwds) for z in self.list()]
+            v = [z.nintegral(*args, **kwds) for z in self.list()]
             answers = [a[0] for a in v]
 
         return (vector(answers,sparse=self.is_sparse()), v)
@@ -4850,7 +4850,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         We can initialize with dicts, lists, tuples and derived types::
 
             sage: from sage.modules.free_module_element import FreeModuleElement_generic_sparse
-            sage: def S(R,n):
+            sage: def S(R, n):
             ....:     return FreeModule(R, n, sparse=True)
 
             sage: # needs sage.symbolic

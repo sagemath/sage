@@ -408,7 +408,7 @@ cdef class EvenlyDistributedSetsBacktracker:
         whether the set `f_{ij}(B)` is smaller than `B`.
 
         This is an internal function and should only be call by the backtracker
-        implemented in the method `__iter__`.
+        implemented in the method ``__iter__``.
 
         OUTPUT: ``False`` if ``self.B`` is not minimal
 
@@ -433,7 +433,7 @@ cdef class EvenlyDistributedSetsBacktracker:
             will be called only once.
         """
         cdef unsigned int i,j,k,tmp1,tmp2,verify
-        cdef list B = [self.B[i] for i in range(1,self.k)]
+        cdef list B = [self.B[i] for i in range(1, self.k)]
         B.append(self.q-1)
         cdef list BB = [None]*self.k
         cdef set relabs = set([tuple(B)])

@@ -3030,7 +3030,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         Convert this rational to a Python ``int``.
 
         This truncates ``self`` if ``self`` has a denominator (which is
-        consistent with Python's ``long(floats)``).
+        consistent with Python's ``int(floats)``).
 
         EXAMPLES::
 
@@ -3993,9 +3993,9 @@ cdef double mpq_get_d_nearest(mpq_t x) except? -648555075988944.5:
             return 0.0
     elif shift >= 971:  # |d| > 2^1024
         if resultsign < 0:
-            return -1.0/0.0
+            return float('-inf')
         else:
-            return 1.0/0.0
+            return float('inf')
 
     sig_on()
 
@@ -4243,7 +4243,7 @@ cdef class int_to_Q(Morphism):
         import sage.categories.homset
         from sage.sets.pythonclass import Set_PythonType
         Morphism.__init__(self, sage.categories.homset.Hom(
-            Set_PythonType(long), rational_field.QQ))
+            Set_PythonType(int), rational_field.QQ))
 
     cpdef Element _call_(self, a):
         """

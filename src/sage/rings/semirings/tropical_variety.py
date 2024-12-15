@@ -12,6 +12,7 @@ AUTHORS:
 REFERENCES:
 
 - [Bru2014]_
+- [Mac2015]_
 - [Fil2017]_
 """
 
@@ -26,8 +27,10 @@ REFERENCES:
 # ****************************************************************************
 
 from sage.structure.sage_object import SageObject
-from sage.rings.infinity import infinity
 from sage.structure.unique_representation import UniqueRepresentation
+
+from sage.rings.rational_field import QQ
+from sage.rings.infinity import infinity
 
 
 class TropicalVariety(UniqueRepresentation, SageObject):
@@ -150,10 +153,10 @@ class TropicalVariety(UniqueRepresentation, SageObject):
     a tropical hypersurface embedded in a real space `\RR^n`::
 
         sage: T = TropicalSemiring(QQ)
-        sage: R.<a,x,y,z> = PolynomialRing(T)
-        sage: p1 = x*y + R(-1/2)*x*z + R(4)*z^2 + a*x
+        sage: R.<w,x,y,z> = PolynomialRing(T)
+        sage: p1 = x*y + R(-1/2)*x*z + R(4)*z^2 + w*x
         sage: tv = p1.tropical_variety(); tv
-        Tropical hypersurface of 0*a*x + 0*x*y + (-1/2)*x*z + 4*z^2
+        Tropical hypersurface of 0*w*x + 0*x*y + (-1/2)*x*z + 4*z^2
         sage: tv.components()
         [[(t1, t2, t3 - 1/2, t3), [t2 - 9/2 <= t3, t3 <= t1 + 1/2, t2 - 5 <= t1], 1],
         [(t1, 2*t2 - t3 + 4, t3, t2), [t3 + 1/2 <= t2, t3 <= t1], 1],
@@ -261,7 +264,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                     temp_order.append(order)
                     temp_keys.append(keys)
 
-        # Changing all the operator symbol to be <= or >=
+        # Changing all the operator's symbol to <= or >=
         self._keys = []
         components = []
         dim_param = 0
@@ -473,6 +476,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                             sol_param_sim.add(eqn.lhs() >= eqn.rhs())
                 else:
                     sol_param_sim.add(sol)
+
             # Checking there are no conditions with the same variables
             # that use the <= and >= operators simultaneously
             unique_sol_param = set()
@@ -526,6 +530,209 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                         points[i] = new_eq
                     update_result(result)
         return result
+
+    def weight_vectors(self):
+        r"""
+        Return the weight vectors for each unique intesection of
+        components of ``self``.
+
+        Weight vectors are a list of vectors associated with each
+        unique intersection of the components of tropical variety.
+        Each vector is a normal vector to a component with respect
+        to the unique intersection lying within that component.
+
+        Assume ``self`` is a `n`-dimensional tropical variety.
+        Suppose `L` is an intersection lying within the components
+        `S_1, \ldots, S_k` with respective weights `w_1, \ldots, w_k`.
+        This `L` is a linear structure in `\RR^{n-1}` and has `n-1`
+        direction vectors `d_1,d_2,\ldots, d_{n-1}`. Each component
+        `S_1, \ldots, S_k` has a normal vector `n_1, \ldots, n_k`.
+        Then, we scale each normal vector to an integer vector such
+        that the greatest common divisor of its elements is 1.
+
+        The weight vector of a component `S_i` with respect to `L`
+        can be found by calculating the cross product between direction
+        vectors of `L` and normal vector `n_i`.These vectors will
+        satisfy the balancing condition `\sum_{i=1}^k w_k v_k = 0`.
+
+        OUTPUT:
+
+        A tuple of three dictionaries. The first dictionary contains
+        equations representing the intersections. The second dictionary
+        contains indices of components that contains the intersection.
+        The third dictionary contains lists of vectors.
+
+        EXAMPLES:
+
+        Weight vectors of tropical surface::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: p = x^2 + R(-1)*y + z + R(1)
+            sage: tv = p.tropical_variety()
+            sage: tv.weight_vectors()
+            ({0: ((1/2*u2, u2 + 1, u2), {u2 <= 1}),
+              1: ((1/2, 2, u2), {1 <= u2}),
+              2: ((1/2, u2, 1), {2 <= u2}),
+              3: ((u1, 2, 1), {(1/2) <= u1})},
+             {0: [0, 1, 3], 1: [0, 2, 4], 2: [1, 2, 5], 3: [3, 4, 5]},
+             {0: [(1, 2, -5/2), (1, -5/2, 2), (-2, 1/2, 1/2)],
+              1: [(-1, -2, 0), (0, 2, 0), (1, 0, 0)],
+              2: [(1, 0, 2), (0, 0, -2), (-1, 0, 0)],
+              3: [(0, 1, 1), (0, 0, -1), (0, -1, 0)]})
+
+        TESTS:
+
+        Checking the balance condition of weight vectors::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<a,b,c,d> = PolynomialRing(T)
+            sage: f = R.random_element()
+            sage: vec = f.tropical_variety().weight_vectors()[2].values()
+            sage: all(a == vector([0,0,0,0]) for a in [sum(lst) for lst in vec])
+            True
+        """
+        from sage.symbolic.ring import SR
+        from sage.symbolic.relation import solve
+        from sage.calculus.functional import diff
+        from sage.arith.misc import gcd
+        from sage.matrix.constructor import matrix
+        from sage.modules.free_module_element import vector, zero_vector
+        from itertools import combinations
+
+        dim = self.dimension()
+        t = SR.var('t')
+        t_vars = [SR.var('t{}'.format(i)) for i in range(dim)]
+        u_vars = [SR.var('u{}'.format(i)) for i in range(dim)]
+        convert_tu = {ti: ui for ti, ui in zip(t_vars, u_vars)}
+        CI = self._components_intersection()
+        unique_line = set()
+        index_line = {}
+        line_comps = {}
+        index = 0
+
+        # Find the unique intersection between multiple components and
+        # the indices of the components containing this intersection.
+        for i, lines in CI.items():
+            for line in lines:
+                eqn = line[0]
+                is_unique = True
+                for uniq in unique_line:
+                    subs_index = -1
+                    for j in range(dim):
+                        if eqn[j] != uniq[j]:
+                            subs_index = j
+                            break
+                    if subs_index == -1:
+                        new_line = eqn
+                        is_unique = False
+                        break
+                    subs_dict = {}
+                    while len(subs_dict) != dim-2 and subs_index < dim:
+                        eq1 = eqn[subs_index].subs(subs_dict)
+                        vib = None
+                        for unk in eq1.variables():
+                            if unk not in subs_dict:
+                                if unk in t_vars:
+                                    vib = unk
+                                    break
+                        if vib:
+                            eq1 = eq1.subs(**{str(vib): t})
+                            eq2 = uniq[subs_index]
+                            temp_sol = solve(eq1 == eq2, t)
+                            if temp_sol:
+                                temp_sol = temp_sol[0].rhs()
+                                if not temp_sol.is_numeric():
+                                    subs_dict[vib] = temp_sol
+                        subs_index += 1
+                    if subs_dict:
+                        new_line = []
+                        for l in eqn:
+                            for key, value in subs_dict.items():
+                                l = l.subs(key == value)
+                            new_line.append(l)
+                        if tuple(new_line) in unique_line:
+                            is_unique = False
+                            break
+                if is_unique:
+                    new_eqn = tuple([eq.subs(convert_tu) for eq in eqn])
+                    cdns = line[1]
+                    new_cdn = set([cdn.subs(convert_tu) for cdn in cdns])
+                    unique_line.add(new_eqn)
+                    index_line[index] = tuple([new_eqn, new_cdn])
+                    line_comps[index] = [i]
+                    index += 1
+                else:
+                    match_key = [k for k, v in index_line.items() if v[0] == tuple(new_line)][0]
+                    line_comps[match_key].append(i)
+
+        WV = {i: [] for i in range(len(line_comps)) if len(line_comps[i]) > 1}
+        for k in WV:
+            # Calculate direction vector of the line
+            dir_vecs = []
+            line = index_line[k][0]
+            all_var = set()
+            for l in line:
+                for v in l.variables():
+                    all_var.add(v)
+            for vpar in all_var:
+                par_drv = []
+                for l in line:
+                    par_drv.append(QQ(diff(l, vpar)))
+                par_drv = vector(par_drv)
+                dir_vecs.append(par_drv)
+
+            # Calculate the outgoing normal vector of each surface in the
+            # direction of the line
+            for i in line_comps[k]:
+                surface = self._hypersurface[i][0]
+                drv_vectors = []
+                for vpar in self._vars:
+                    temp_vec = []
+                    for s in surface:
+                        temp_vec.append(QQ(diff(s, vpar)))
+                    temp_vec = vector(temp_vec)
+                    drv_vectors.append(temp_vec)
+                temp = [t_vars]
+                for vec in drv_vectors:
+                    temp.append(vec)
+                vec_matrix = matrix(SR, temp)
+                normal_vec = vec_matrix.det()
+                temp_nor = []
+                for tvar in t_vars:
+                    temp_nor.append(QQ(diff(normal_vec, tvar)))
+                normal_vec = vector(temp_nor)
+                normal_vec *= 1/gcd(normal_vec)
+
+                # Calculate the weight vector
+                temp_final = [t_vars]
+                for v in dir_vecs:
+                    temp_final.append(v)
+                temp_final.append(normal_vec)
+                vec_matrix = matrix(SR, temp_final)
+                weight_vec = vec_matrix.det()
+                temp_weight = []
+                for tvar in t_vars:
+                    temp_weight.append(QQ(diff(weight_vec, tvar)))
+                weight_vec = vector(temp_weight)
+                order = self._hypersurface[i][2]
+                weight_vec *= order
+                WV[k].append(weight_vec)
+
+            balance = False
+            for i in range(1, len(WV[k])+1):
+                for j in combinations(range(len(WV[k])), i):
+                    test_vectors = [v for v in WV[k]]
+                    for idx in j:
+                        test_vectors[idx] = -test_vectors[idx]
+                    if sum(test_vectors) == zero_vector(QQ, dim):
+                        WV[k] = test_vectors
+                        balance = True
+                        break
+                if balance:
+                    break
+
+        return index_line, line_comps, WV
 
 
 class TropicalSurface(TropicalVariety):
@@ -641,7 +848,7 @@ class TropicalSurface(TropicalVariety):
             v_set = v_set.union(temp_v)
         axes = [[min(u_set)-1, max(u_set)+1], [min(v_set)-1, max(v_set)+1]]
 
-        # Finding the z-axis
+        # Calculate the z-axis
         step = 10
         du = (axes[0][1]-axes[0][0]) / step
         dv = (axes[1][1]-axes[1][0]) / step
@@ -693,7 +900,7 @@ class TropicalSurface(TropicalVariety):
 
             sage: p2 = x^2 + x + y + z + R(1)
             sage: tv2 = p2.tropical_variety()
-            sage: tv2._polygon_vertices()
+            sage: tv2._polygon_vertices() # long time
             {0: {(0, 0, 0), (0, 0, 2), (1, 1, 1), (2, 2, 2)},
             1: {(0, 0, 0), (0, 2, 0), (1, 1, 1), (2, 2, 2)},
             2: {(0, 0, 0), (0, 0, 2), (0, 2, 0), (0, 2, 2)},
@@ -704,9 +911,8 @@ class TropicalSurface(TropicalVariety):
             7: {(-1/2, -1, -1), (-1/2, 2, -1), (0, 0, 0), (0, 2, 0)},
             8: {(1, 1, 1), (1, 2, 1), (2, 1, 1), (2, 2, 1)}}
         """
-        from sage.sets.real_set import RealSet
         from sage.symbolic.relation import solve
-        from sage.rings.rational_field import QQ
+        from sage.sets.real_set import RealSet
 
         poly_verts = {i: set() for i in range(self.number_of_components())}
         axes = self._axes()
@@ -714,7 +920,7 @@ class TropicalSurface(TropicalVariety):
         vars = self._vars
         comps_int = self._components_intersection()
 
-        # Finding the inside vertices
+        # Find the inside vertices (intersection of components)
         for index, lines in comps_int.items():
             for line in lines:
                 v = list(line[1])[0].variables()[0]
@@ -793,7 +999,8 @@ class TropicalSurface(TropicalVariety):
                     sol1 = solve(point >= axes[i][0], pv)
                     sol2 = solve(point <= axes[i][1], pv)
                     is_doublevar = True
-            # Finding the edge vertices (those that touch the axes)
+
+            # Find the edge vertices (those that touch the axes)
             find_edge_vertices(0)  # t1 fixed
             find_edge_vertices(1)  # t2 fixed
         return poly_verts
@@ -832,12 +1039,12 @@ class TropicalSurface(TropicalVariety):
             p1 = x + z
             sphinx_plot(p1.tropical_variety().plot())
 
-        A tropical surface with multiple cell that exhibit complex and
+        A tropical surface with multiple cells that exhibit complex and
         intriguing geometric structures::
 
             sage: p2 = x^2 + x + y + z + R(1)
             sage: tv = p2.tropical_variety()
-            sage: tv.plot()
+            sage: tv.plot() # long time
             Graphics3d Object
 
         .. PLOT::
@@ -895,15 +1102,69 @@ class TropicalCurve(TropicalVariety):
     condition ensures that the sum of the outgoing slopes at each vertex
     is zero, reflecting the equilibrium.
 
-    EXAMPLES::
+    EXAMPLES:
+
+    We define some tropical curves::
 
         sage: T = TropicalSemiring(QQ, use_min=False)
         sage: R.<x,y> = PolynomialRing(T)
         sage: p1 = x + y + R(0)
-        sage: tv = p1.tropical_variety(); tv
+        sage: tv1 = p1.tropical_variety(); tv1
         Tropical curve of 0*x + 0*y + 0
-        sage: tv.components()
+        sage: tv1.components()
         [[(t1, t1), [t1 >= 0], 1], [(0, t1), [t1 <= 0], 1], [(t1, 0), [t1 <= 0], 1]]
+        sage: tv1.plot()
+        Graphics object consisting of 3 graphics primitives
+
+    .. PLOT::
+        :width: 300 px
+
+        T = TropicalSemiring(QQ, use_min=False)
+        R = PolynomialRing(T, ('x,y'))
+        x, y = R.gen(), R.gen(1)
+        p1 = x + y + R(0)
+        sphinx_plot(p1.tropical_variety().plot())
+
+    ::
+
+        sage: p2 = R(-2)*x^2 + R(-1)*x + R(1/2)*y + R(1/6)
+        sage: tv2 = p2.tropical_variety()
+        sage: tv2.components()
+        [[(1/2*t1 + 5/4, t1), [(-1/3) <= t1], 1],
+         [(13/12, t1), [t1 <= (-1/3)], 2],
+         [(t1, -1/3), [t1 <= (13/12)], 1]]
+        sage: tv2.plot()
+        Graphics object consisting of 4 graphics primitives
+
+    .. PLOT::
+        :width: 300 px
+
+        T = TropicalSemiring(QQ, use_min=False)
+        R = PolynomialRing(T, ('x,y'))
+        x, y = R.gen(), R.gen(1)
+        p2 = R(-2)*x**2 + R(-1)*x + R(1/2)*y + R(1/6)
+        sphinx_plot(p2.tropical_variety().plot())
+
+    When two tropical polynomials are multiplied, the tropical curve of
+    the resulting polynomial is the union of the tropical curves of the
+    original polynomials::
+
+        sage: p3 = p1 * p2; p3
+        (-2)*x^3 + (-2)*x^2*y + (-1)*x^2 + 1/2*x*y + 1/2*y^2 + 1/6*x + 1/2*y + 1/6
+        sage: tv3 = p3.tropical_variety()
+        sage: tv3.plot()
+        Graphics object consisting of 11 graphics primitives
+
+    .. PLOT::
+        :width: 300 px
+
+        T = TropicalSemiring(QQ, use_min=False)
+        R = PolynomialRing(T, ('x,y'))
+        x, y = R.gen(), R.gen(1)
+        p1 = x + y + R(0)
+        p2 = R(-2)*x**2 + R(-1)*x + R(1/2)*y + R(1/6)
+        p3 = p1 * p2
+        sphinx_plot(p3.tropical_variety().plot())
     """
     def _axes(self):
         """
@@ -968,7 +1229,7 @@ class TropicalCurve(TropicalVariety):
         Return all vertices of ``self``, which is the point where three or
         more edges intersect.
 
-        OUTPUT: A set of `(x,y)` points
+        OUTPUT: a set of `(x,y)` points
 
         EXAMPLES::
 
@@ -983,29 +1244,276 @@ class TropicalCurve(TropicalVariety):
         """
         if len(self._hypersurface) < 3:
             return set()
+        return set(self._vertices_components().keys())
 
-        vertices = set()
-        for i, component in enumerate(self._hypersurface):
-            parametric_function = component[0]
-            var = component[1][0].variables()[0]
-            interval = self._parameter_intervals()[i]
-            lower = interval[0].lower()
-            upper = interval[0].upper()
-            if lower != -infinity:
-                x = parametric_function[0].subs(**{str(var): lower})
-                y = parametric_function[1].subs(**{str(var): lower})
-                vertices.add((x, y))
-            if upper != infinity:
-                x = parametric_function[0].subs(**{str(var): upper})
-                y = parametric_function[1].subs(**{str(var): upper})
-                vertices.add((x, y))
-        return vertices
+    def _vertices_components(self):
+        """
+        Return the index of components adjacent to each vertex of ``self``.
+
+        OUTPUT:
+
+        A dictionary where the keys represent the vertices, and the
+        values are lists of tuples. Each tuple consists of the index
+        of an adjacent edge (component) `e_i` and a number indicating
+        the directionality of `e_i` relative to the vertex. The number
+        is either -1 or 1.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(0) + x + y + x*y + x^2*y + x*y^2
+            sage: p1.tropical_variety()._vertices_components()
+            {(0, 0): [(0, 1), (1, 1), (2, 1), (3, -1), (4, -1)]}
+            sage: p2 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            sage: p2.tropical_variety()._vertices_components()
+            {(-2, 0): [(0, -1), (1, 1), (3, 1)],
+             (-1, -3): [(2, -1), (4, 1), (5, 1)],
+             (-1, 0): [(3, -1), (4, -1), (6, 1)],
+             (3, 4): [(6, -1), (7, 1), (8, 1)]}
+        """
+        comp_vert = {}
+        if len(self._hypersurface) >= 3:
+            for i, component in enumerate(self._hypersurface):
+                parametric_function = component[0]
+                v = component[1][0].variables()[0]
+                interval = self._parameter_intervals()[i]
+                lower = interval[0].lower()
+                upper = interval[0].upper()
+                if lower != -infinity:
+                    x = parametric_function[0].subs(**{str(v): lower})
+                    y = parametric_function[1].subs(**{str(v): lower})
+                    if (x,y) not in comp_vert:
+                        comp_vert[(x,y)] = [(i, 1)]
+                    else:
+                        comp_vert[(x,y)].append((i, 1))
+                if upper != infinity:
+                    x = parametric_function[0].subs(**{str(v): upper})
+                    y = parametric_function[1].subs(**{str(v): upper})
+                    if (x,y) not in comp_vert:
+                        comp_vert[(x,y)] = [(i, -1)]
+                    else:
+                        comp_vert[(x,y)].append((i, -1))
+        return comp_vert
+
+    def weight_vectors(self):
+        r"""
+        Return the weight vectors for all vertices of ``self``.
+
+        Weight vectors are a list of vectors associated with each vertex
+        of the curve. Each vector corresponds to an edge emanating from
+        that vertex and points in the direction of the edge.
+
+        Suppose `v` is a vertex adjacent to the edges `e_1, \ldots, e_k`
+        with respective weights `w_1, \ldots, w_k`. Every edge `e_i` is
+        contained in a line (component) defined by an equation. Therefore,
+        there exists a unique integer vector `v_i = (\alpha, \beta)` in
+        the direction of `e_i` such that `\gcd(\alpha, \beta)=1`. Then,
+        each vertex `v` yield the vectors `w_1 v_1, \ldots, w_k v_k`.
+        These vectors will satisfy the following balancing condition:
+        `\sum_{i=1}^k w_i v_i = 0`.
+
+        OUTPUT:
+
+        A dictionary where the keys represent the vertices, and the values
+        are lists of vectors.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(-2)*x^2 + R(-1)*x + R(1/2)*y + R(1/6)
+            sage: p1.tropical_variety().weight_vectors()
+            {(1, -1/2): [(0, 1), (-1, -2), (1, 1)],
+             (7/6, -1/3): [(-1, -1), (0, 1), (1, 0)]}
+
+            sage: p2 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            sage: p2.tropical_variety().weight_vectors()
+            {(-2, 0): [(-1, -1), (0, 1), (1, 0)],
+             (-1, -3): [(-1, -1), (0, 1), (1, 0)],
+             (-1, 0): [(-1, 0), (0, -1), (1, 1)],
+             (3, 4): [(-1, -1), (0, 1), (1, 0)]}
+        """
+        from sage.calculus.functional import diff
+        from sage.modules.free_module_element import vector
+        from sage.arith.misc import gcd
+
+        if not self._vertices_components():
+            return {}
+
+        # Calculate the base vector in the direction of each edge
+        temp_vectors = []
+        par = self._hypersurface[0][1][0].variables()[0]
+        for comp in self._hypersurface:
+            dx = diff(comp[0][0], par)
+            dy = diff(comp[0][1], par)
+            multiplier = gcd(QQ(dx), QQ(dy))
+            temp_vectors.append(vector([dx/multiplier, dy/multiplier]))
+
+        # Calculate the weight vectors of each vertex
+        cov = self._vertices_components()
+        result = {}
+        for vertex in cov:
+            vectors = []
+            for comp in cov[vertex]:
+                weight = self._hypersurface[comp[0]][2]
+                vectors.append(weight*comp[1]*temp_vectors[comp[0]])
+            result[vertex] = vectors
+        return result
+
+    def is_smooth(self):
+        r"""
+        Return ``True`` if ``self`` is smooth and ``False`` otherwise.
+
+        Suppose `C` is a tropical curve of degree `d`. A tropical curve
+        `C` is smooth if the dual subdivision of `C` consists of `d^2`
+        triangles each having unit area `1/2`. This is equivalent with
+        `C` having `d^2` vertices. These vertices are necessarily
+        trivalent (has three adjacent edges).
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = x^2 + x + R(1)
+            sage: p1.tropical_variety().is_smooth()
+            False
+            sage: p2 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            sage: p2.tropical_variety().is_smooth()
+            True
+        """
+        return len(self.vertices()) == self._poly.degree() ** 2
+
+    def is_simple(self):
+        r"""
+        Return ``True`` if ``self`` is simple and ``False`` otherwise.
+
+        A tropical curve `C` is called simple if each vertex is either
+        trivalent or is locally the intersection of two line segments.
+        Equivalently, `C` is simple if the corresponding subdivision
+        consists only of triangles and parallelograms.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(0) + x + y + x*y + x^2*y + x*y^2
+            sage: p1.tropical_variety().is_simple()
+            False
+            sage: p2 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            sage: p2.tropical_variety().is_simple()
+            True
+        """
+        vov = self.weight_vectors()
+        for vertex in self.vertices():
+            if len(vov[vertex]) > 4:
+                return False
+            if len(vov[vertex]) == 4:
+                if any(-v not in vov[vertex] for v in vov[vertex]):
+                    return False
+        return True
+
+    def genus(self):
+        r"""
+        Return the genus of ``self``.
+
+        Let `t(C)` be the number of trivalent vertices, and let `r(C)` be
+        the number of unbounded edges of `C`. The genus of simple tropical
+        curve `C` is defined by the formula:
+
+        .. MATH::
+
+            g(C) = \frac{1}{2}t(C) - \frac{1}{2}r(C) + 1.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = x^2 + y^2 + x*y
+            sage: p1.tropical_variety().genus()
+            1
+            sage: p2 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            sage: p2.tropical_variety().genus()
+            0
+
+        TESTS::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(0) + y + x^2*y + x*y^2
+            sage: p1.tropical_variety().genus()
+            Traceback (most recent call last):
+            ...
+            ValueError: Tropical curve of 0*x^2*y + 0*x*y^2 + 0*y + 0 is not simple
+        """
+        if not self.is_simple():
+            raise ValueError(f"{self} is not simple")
+        trivalent = 0  # number of trivalent vertices
+        for vectors in self.weight_vectors().values():
+            if len(vectors) == 3:
+                trivalent += 1
+        unbounded = 0  # number of unbounded edges
+        for component in self._hypersurface:
+            if len(component[1]) == 1:
+                unbounded += 1
+        return trivalent//2 - unbounded//2 + 1
+
+    def contribution(self):
+        r"""
+        Return the contribution of ``self``.
+
+        The contribution of a simple curve `C` is defined as the product
+        of the normalized areas of all triangles in the corresponding
+        dual subdivision. We just multiply positive integers attached to
+        the trivalent vertices. The contribution of a trivalent vertex
+        equals `w_1w_2|\det(v_1,v_2)|`, with `w_i` are the weights of
+        the adjacent edges and `v_i` are their weight vectors. That
+        formula is independent of the choice made because of the
+        balancing condition `w_1v_1+w_2v_2+w_3v_3=0`.
+
+        EXAMPLES::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(2)*x^2 + x*y + R(2)*y^2 + x + R(-1)*y + R(3)
+            sage: p1.tropical_variety().contribution()
+            1
+            sage: p2 = R(-1/3)*x^2 + R(1)*x*y + R(1)*y^2 + R(-1/3)*x + R(1/3)
+            sage: p2.tropical_variety().contribution()
+            16
+
+        TESTS::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(0) + x + x^2*y + x*y^2
+            sage: p1.tropical_variety().contribution()
+            Traceback (most recent call last):
+            ...
+            ValueError: Tropical curve of 0*x^2*y + 0*x*y^2 + 0*x + 0 is not simple
+        """
+        if not self.is_simple():
+            raise ValueError(f"{self} is not simple")
+        result = 1
+        voc = self._vertices_components()
+        vov = self.weight_vectors()
+        for vertex in vov:
+            if len(vov[vertex]) == 3:
+                u1 = vov[vertex][0]
+                u2 = vov[vertex][1]
+                index1 = voc[vertex][0][0]
+                index2 = voc[vertex][1][0]
+                w1 = self._hypersurface[index1][2]
+                w2 = self._hypersurface[index2][2]
+                det = u1[0]*u2[1] - u1[1]*u2[0]
+                result *= w1 * w2 * abs(det)
+        return result
 
     def _parameter_intervals(self):
         r"""
         Return the intervals of each component's parameter of ``self``.
 
-        OUTPUT: A list of ``RealSet``
+        OUTPUT: a list of ``RealSet``
 
         EXAMPLES::
 
@@ -1092,9 +1600,10 @@ class TropicalCurve(TropicalVariety):
         Another tropical polynomial with numerous components, resulting
         in a more intricate structure::
 
-            sage: p2 = (x^6 + R(4)*x^4*y^2 + R(2)*x^3*y^3 + R(3)*x^2*y^4 + x*y^5
-            ....:       + R(7)*x^2 + R(5)*x*y + R(3)*y^2 + R(2)*x + y + R(10))
-            sage: p2.tropical_variety().plot()
+            sage: p2 = (x^6 + R(4)*x^4*y^2 + R(2)*x^3*y^3 + R(3)*x^2*y^4
+            ....:       + x*y^5 + R(7)*x^2 + R(5)*x*y + R(3)*y^2 + R(2)*x
+            ....:       + y + R(10))
+            sage: p2.tropical_variety().plot() # long time
             Graphics object consisting of 11 graphics primitives
 
         .. PLOT::
@@ -1103,9 +1612,29 @@ class TropicalCurve(TropicalVariety):
             T = TropicalSemiring(QQ)
             R = PolynomialRing(T, ('x,y'))
             x, y = R.gen(), R.gen(1)
-            p2 = x**6 + R(4)*x**4*y**2 + R(2)*x**3*y**3 + R(3)*x**2*y**4 + \
-            x*y**5 + R(7)*x**2 + R(5)*x*y + R(3)*y**2 + R(2)*x + y + R(10)
+            p2 = (x**6 + R(4)*x**4*y**2 + R(2)*x**3*y**3 + R(3)*x**2*y**4
+                  + x*y**5 + R(7)*x**2 + R(5)*x*y + R(3)*y**2 + R(2)*x
+                  + y + R(10))
             sphinx_plot(p2.tropical_variety().plot())
+
+        ::
+
+            sage: p3 = (R(8) + R(4)*x + R(2)*y + R(1)*x^2 + x*y + R(1)*y^2
+            ....:       + R(2)*x^3 + x^2*y + x*y^2 + R(4)*y^3 + R(8)*x^4
+            ....:       + R(4)*x^3*y + x^2*y^2 + R(2)*x*y^3 + y^4)
+            sage: p3.tropical_variety().plot() # long time
+            Graphics object consisting of 23 graphics primitives
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ)
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
+            p3 = (R(8) + R(4)*x + R(2)*y + R(1)*x**2 + x*y + R(1)*y**2
+                 + R(2)*x**3 + x**2*y + x*y**2 + R(4)*y**3 + R(8)*x**4
+                 + R(4)*x**3*y + x**2*y**2 + R(2)*x*y**3 + y**4)
+            sphinx_plot(p3.tropical_variety().plot())
         """
         from sage.plot.plot import plot
         from sage.plot.text import text

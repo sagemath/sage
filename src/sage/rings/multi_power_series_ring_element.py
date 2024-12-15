@@ -671,7 +671,7 @@ class MPowerSeries(PowerSeries):
         else:
             return codomain(self._subs_formal(*im_gens, base_map=base_map))
 
-    def __getitem__(self,n):
+    def __getitem__(self, n):
         """
         Return summand of total degree ``n``.
 
@@ -1099,7 +1099,7 @@ class MPowerSeries(PowerSeries):
             return self.change_ring(Zmod(other))
         raise NotImplementedError("Mod on multivariate power series ring elements not defined except modulo an integer.")
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=None):
         """
         Return underlying dictionary with keys the exponents and values the
         coefficients of this power series.
@@ -2130,7 +2130,7 @@ class MO:
         sage: w^2
         1 + 2*a + O(a, b, c)^2
     """
-    def __init__(self,x):
+    def __init__(self, x):
         """
         Initialize ``self``.
 
