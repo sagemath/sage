@@ -75,9 +75,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
+from itertools import count
+from collections import Counter
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.superseded import deprecation
-
 
 import sage.libs.ntl.all as ntl
 import sage.rings.abc
@@ -99,7 +101,6 @@ from sage.rings.infinity import Infinity
 from sage.rings.finite_rings.integer_mod import mod
 from sage.categories.number_fields import NumberFields
 
-from sage.rings.ring import Ring
 from sage.misc.latex import latex_variable_name
 
 from .unit_group import UnitGroup
@@ -118,8 +119,6 @@ from sage.structure.proof.proof import get_flag
 from . import maps
 from . import structure
 from . import number_field_morphisms
-from itertools import count
-from collections import Counter
 
 from sage.categories.homset import Hom
 from sage.categories.sets_cat import Sets
@@ -128,6 +127,7 @@ from sage.modules.free_module_element import vector
 from sage.rings.real_mpfr import RR
 
 from sage.interfaces.abc import GapElement
+from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
 
 lazy_import('sage.libs.gap.element', 'GapElement', as_='LibGapElement')
 lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldElement')
@@ -136,13 +136,12 @@ lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldEl
 _NumberFields = NumberFields()
 
 
-from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
-
-
 def is_NumberFieldHomsetCodomain(codomain):
     """
     Return whether ``codomain`` is a valid codomain for a number
-    field homset. This is used by NumberField._Hom_ to determine
+    field homset.
+
+    This is used by NumberField._Hom_ to determine
     whether the created homsets should be a
     :class:`sage.rings.number_field.homset.NumberFieldHomset`.
 
@@ -414,8 +413,8 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
         sage: RR(g)
         -1.25992104989487
 
-    If no embedding is specified or is complex, the comparison is not returning something
-    meaningful.::
+    If no embedding is specified or is complex, the comparison is not
+    returning something meaningful.::
 
         sage: N.<g> = NumberField(x^3 + 2)
         sage: 1 < g
