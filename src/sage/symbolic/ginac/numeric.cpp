@@ -3688,6 +3688,9 @@ const numeric numeric::ratlog(const numeric &b, bool& israt) const {
                         israt = false;
                         return *_num0_p;
                 }
+                if (v._long == 0) {
+                        return py_funcs.py_eval_neg_infinity();
+                }
                 int c = 0;
                 std::ldiv_t ld;
                 ld.quot = v._long;
