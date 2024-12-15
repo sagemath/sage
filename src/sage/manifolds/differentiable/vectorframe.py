@@ -1404,7 +1404,7 @@ class VectorFrame(FreeModuleBasis):
         """
         # Case of a non-trivial destination map
         if self._from_frame is not None:
-            if self._dest_map.is_identity():  #!# probably not necessary
+            if self._dest_map.is_identity():  # ! # probably not necessary
                 raise ValueError("the destination map should not be the identity")
             ambient_point = self._dest_map(point)
             return self._from_frame.at(ambient_point)

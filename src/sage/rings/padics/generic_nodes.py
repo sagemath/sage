@@ -257,7 +257,7 @@ class FloatingPointGeneric(LocalGeneric):
         tester = self._tester(**options)
         S = tester.some_elements()
         from sage.misc.misc import some_tuples
-        for x,y,z in some_tuples(S, 3, tester._max_runs):
+        for x, y, z in some_tuples(S, 3, tester._max_runs):
             tester.assertTrue(((x + y) + z).is_equal_to(x + (y + z), min(x.precision_absolute(), y.precision_absolute(), z.precision_absolute())))
 
 
@@ -265,7 +265,8 @@ class FloatingPointRingGeneric(FloatingPointGeneric):
     pass
 
 
-class FloatingPointFieldGeneric(FloatingPointGeneric):#, sage.rings.ring.Field):
+class FloatingPointFieldGeneric(FloatingPointGeneric):
+    # in category of Fields()
     pass
 
 
@@ -273,7 +274,8 @@ class CappedRelativeRingGeneric(CappedRelativeGeneric):
     pass
 
 
-class CappedRelativeFieldGeneric(CappedRelativeGeneric):#, sage.rings.ring.Field):
+class CappedRelativeFieldGeneric(CappedRelativeGeneric):
+    # in category of Fields()
     pass
 
 

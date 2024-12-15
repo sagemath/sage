@@ -188,9 +188,9 @@ class HyperbolicIsometry(Morphism):
             return False
         test_matrix = bool((self.matrix() - other.matrix()).norm() < EPSILON)
         if self.domain().is_isometry_group_projective():
-            A,B = self.matrix(), other.matrix() # Rename for simplicity
+            A, B = self.matrix(), other.matrix()  # Rename for simplicity
             m = self.matrix().ncols()
-            A = A / sqrt(A.det(), m) # Normalized to have determinant 1
+            A = A / sqrt(A.det(), m)  # Normalized to have determinant 1
             B = B / sqrt(B.det(), m)
             test_matrix = ((A - B).norm() < EPSILON
                            or (A + B).norm() < EPSILON)
@@ -636,7 +636,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         [1 0]
         [0 1]
     """
-    def _call_(self, p): #UHP
+    def _call_(self, p):  # UHP
         r"""
         Return image of ``p`` under the action of ``self``.
 
@@ -656,7 +656,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
             coords = coords.conjugate()
         return self.codomain().get_point(moebius_transform(self._matrix, coords))
 
-    def preserves_orientation(self): #UHP
+    def preserves_orientation(self):  # UHP
         r"""
         Return ``True`` if ``self`` is orientation-preserving and ``False``
         otherwise.
@@ -673,7 +673,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         """
         return bool(self._matrix.det() > 0)
 
-    def classification(self): #UHP
+    def classification(self):  # UHP
         r"""
         Classify the hyperbolic isometry as elliptic, parabolic, or
         hyperbolic.
@@ -725,7 +725,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
             return 'reflection'
         return 'orientation-reversing hyperbolic'
 
-    def translation_length(self): #UHP
+    def translation_length(self):  # UHP
         r"""
         For hyperbolic elements, return the translation length;
         otherwise, raise a :exc:`ValueError`.
@@ -800,7 +800,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
             d = sqrt(tau - 4)
             return [pt((M[0,0] - M[1,1] + sign(M[1,0])*d) / (2*M[1,0]))]
         elif M_cls == 'hyperbolic':
-            if M[1,0] != 0: #if the isometry doesn't fix infinity
+            if M[1,0] != 0:  # if the isometry does not fix infinity
                 d = sqrt(tau - 4)
                 p_1 = (M[0,0] - M[1,1]+d) / (2*M[1,0])
                 p_2 = (M[0,0] - M[1,1]-d) / (2*M[1,0])
@@ -898,7 +898,7 @@ class HyperbolicIsometryPD(HyperbolicIsometry):
         [1 0]
         [0 1]
     """
-    def _call_(self, p): #PD
+    def _call_(self, p):  # PD
         r"""
         Return image of ``p`` under the action of ``self``.
 
@@ -917,7 +917,7 @@ class HyperbolicIsometryPD(HyperbolicIsometry):
         _image = moebius_transform(self._matrix, coords)
         return self.codomain().get_point(_image)
 
-    def __mul__(self, other): #PD
+    def __mul__(self, other):  # PD
         r"""
         Return image of ``p`` under the action of ``self``.
 
@@ -935,7 +935,7 @@ class HyperbolicIsometryPD(HyperbolicIsometry):
             return M.to_model('PD')
         return super().__mul__(other)
 
-    def __pow__(self, n): #PD
+    def __pow__(self, n):  # PD
         r"""
         EXAMPLES::
 
@@ -948,7 +948,7 @@ class HyperbolicIsometryPD(HyperbolicIsometry):
         """
         return (self._cached_isometry**n).to_model('PD')
 
-    def preserves_orientation(self): #PD
+    def preserves_orientation(self):  # PD
         """
         Return ``True`` if ``self`` preserves orientation and ``False``
         otherwise.
@@ -964,7 +964,7 @@ class HyperbolicIsometryPD(HyperbolicIsometry):
         return bool(self._matrix.det() > 0) and HyperbolicIsometryPD._orientation_preserving(self._matrix)
 
     @staticmethod
-    def _orientation_preserving(A): #PD
+    def _orientation_preserving(A):  # PD
         r"""
         For a matrix ``A`` of a PD isometry, determine if it preserves
         orientation.
@@ -1001,7 +1001,7 @@ class HyperbolicIsometryKM(HyperbolicIsometry):
         [0 1 0]
         [0 0 1]
     """
-    def _call_(self, p): #KM
+    def _call_(self, p):  # KM
         r"""
         Return image of ``p`` under the action of ``self``.
 
@@ -1019,7 +1019,7 @@ class HyperbolicIsometryKM(HyperbolicIsometry):
         return self.codomain().get_point(v[0:2] / v[2])
 
 #####################################################################
-## Helper functions
+#  Helper functions
 
 
 def moebius_transform(A, z):
