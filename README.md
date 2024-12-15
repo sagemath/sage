@@ -341,6 +341,20 @@ in the Installation Guide.
     powerful machines, you might even consider `-j16`, as building with
     more jobs than CPU cores can speed things up further.
 
+    Alternatively, the `MAKEFLAGS` environment variable can be used.
+    In this case, only provide the flag itself, for example
+    `export MAKEFLAGS="-j4"`.
+
+    Note that the compilation may nonetheless uses a different number of
+    threads, because sometimes `ninja` is used.
+    Unfortunately, [there is no way to control number of jobs `ninja` uses
+    from environment variables](https://github.com/ninja-build/ninja/issues/1482).
+    See also https://github.com/sagemath/sage/issues/38950.
+
+    If the [Meson build system](https://doc-release--sagemath.netlify.app/html/en/installation/meson)
+    is used, the number of jobs running in parallel passed to `meson compile` will be respected,
+    because everything are managed by `ninja`.
+
     To reduce the terminal output during the build, type `export V=0`.
     (`V` stands for "verbosity".)
 
