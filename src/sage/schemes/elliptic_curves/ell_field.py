@@ -1529,6 +1529,55 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             E._fetch_cached_order(self)
         return E
 
+    def period_lattice(self):
+        r"""
+        Return the period lattice of the elliptic curve for the given
+        embedding of its base field with respect to the differential
+        `dx/(2y + a_1x + a_3)`.
+
+        Only supported for some base rings.
+
+        EXAMPLES::
+
+            sage: EllipticCurve(RR, [1, 6]).period_lattice()
+            Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.00000000000000*x + 6.00000000000000 over Real Field with 53 bits of precision
+
+        TESTS::
+
+            sage: EllipticCurve(QQ, [1, 6]).period_lattice()
+            Period lattice associated to Elliptic Curve defined by y^2 = x^3 + x + 6 over Rational Field
+            sage: EllipticCurve(RR, [1, 6]).period_lattice()
+            Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.00000000000000*x + 6.00000000000000 over Real Field with 53 bits of precision
+            sage: EllipticCurve(RealField(100), [1, 6]).period_lattice()
+            Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.0000000000000000000000000000*x + 6.0000000000000000000000000000 over Real Field with 100 bits of precision
+            sage: EllipticCurve(CC, [1, 6]).period_lattice()
+            Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.00000000000000*x + 6.00000000000000 over Complex Field with 53 bits of precision
+            sage: EllipticCurve(ComplexField(100), [1, 6]).period_lattice()
+            Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.0000000000000000000000000000*x + 6.0000000000000000000000000000 over Complex Field with 100 bits of precision
+            sage: EllipticCurve(AA, [1, 6]).period_lattice()
+            Period lattice associated to Elliptic Curve defined by y^2 = x^3 + x + 6 over Algebraic Real Field
+            sage: EllipticCurve(QQbar, [1, 6]).period_lattice()
+            Period lattice associated to Elliptic Curve defined by y^2 = x^3 + x + 6 over Algebraic Field
+
+        Unsupported cases (the exact error being raised may change in the future)::
+
+            sage: EllipticCurve(ZZ, [1, 6]).period_lattice()
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'EllipticCurve_generic_with_category' object has no attribute 'period_lattice'
+            sage: QQt.<t> = QQ[]
+            sage: EllipticCurve(QQt.fraction_field(), [1, 6]).period_lattice()
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'FractionField_1poly_field_with_category' object has no attribute ...
+            sage: EllipticCurve(GF(7), [1, 6]).period_lattice()
+            Traceback (most recent call last):
+            ...
+            IndexError: list index out of range
+        """
+        from sage.schemes.elliptic_curves.period_lattice import PeriodLattice_ell
+        return PeriodLattice_ell(self)
+
     def kernel_polynomial_from_point(self, P, *, algorithm=None):
         r"""
         Given a point `P` on this curve which generates a rational subgroup,

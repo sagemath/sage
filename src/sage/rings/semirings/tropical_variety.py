@@ -32,6 +32,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import infinity
 
+
 class TropicalVariety(UniqueRepresentation, SageObject):
     r"""
     A tropical variety in `\RR^n`.

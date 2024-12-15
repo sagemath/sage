@@ -18,15 +18,15 @@ AUTHOR:
 - Simon King (2013-10): Add :class:`Singleton`
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Simon A. King <simon.king at uni-jena.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
 from sage.misc.constant_function import ConstantFunction

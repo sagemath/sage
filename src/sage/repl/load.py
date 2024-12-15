@@ -87,6 +87,14 @@ def load(filename, globals, attach=False):
 
             from t import *
 
+    .. NOTE::
+
+        The global ``load`` function is :func:`sage.misc.persist.load`,
+        which delegates to this function for code file formats.
+
+        ``%runfile`` magic can also be used, see
+        :meth:`~sage.repl.ipython_extension.SageMagics.runfile`.
+
     INPUT:
 
     - ``filename`` -- string (denoting a filename or URL) or a :class:`Path` object
@@ -97,13 +105,15 @@ def load(filename, globals, attach=False):
     - ``attach`` -- boolean (default: ``False``); whether to add the
       file to the list of attached files
 
-    Loading an executable Sage script from the command prompt will run whatever
-    code is inside an
+    Loading an executable Sage script from the :ref:`command line <section-command-line>`
+    will run whatever code is inside an
+
+    ::
 
         if __name__ == "__main__":
 
     section, as the condition on ``__name__`` will hold true (code run from the
-    command prompt is considered to be running in the ``__main__`` module.)
+    command line is considered to be running in the ``__main__`` module.)
 
     EXAMPLES:
 
@@ -159,7 +169,8 @@ def load(filename, globals, attach=False):
 
         sage: sage.repl.load.load('https://raw.githubusercontent.com/sagemath/sage-patchbot/3.0.0/sage_patchbot/util.py', globals())  # optional - internet
 
-    We attach a file::
+    We attach a file (note that :func:`~sage.repl.attach.attach`
+    is equivalent, but available at the global scope by default)::
 
         sage: t = tmp_filename(ext='.py')
         sage: with open(t, 'w') as f:

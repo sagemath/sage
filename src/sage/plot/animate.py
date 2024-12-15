@@ -839,7 +839,7 @@ class Animation(WithEqualityById, SageObject):
 
             sage: a.show(delay=50)                      # long time  # optional -- ImageMagick
 
-        You can also make use of the HTML5 video element in the Sage Notebook::
+        You can also make use of the HTML5 video element in the Sage notebook::
 
             sage: # long time, optional -- FFmpeg
             sage: a.show(format='ogg')

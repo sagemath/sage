@@ -201,7 +201,7 @@ cdef class PuiseuxSeries(AlgebraElement):
                 l = l.add_bigoh(prec / d)
 
         self._l = l
-        self._e = long(abs(e))
+        self._e = int(abs(e))
 
     def __reduce__(self):
         """

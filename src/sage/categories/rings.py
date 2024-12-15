@@ -554,6 +554,22 @@ class Rings(CategoryWithAxiom):
             except (TypeError, AttributeError):
                 return False
 
+        def localization(self, *args, **kwds):
+            """
+            Return the localization of ``self``.
+
+            This only works for integral domains.
+
+            EXAMPLES::
+
+                sage: R = Zmod(6)
+                sage: R.localization((4))
+                Traceback (most recent call last):
+                ...
+                TypeError: self must be an integral domain
+            """
+            raise TypeError("self must be an integral domain")
+
         def bracket(self, x, y):
             """
             Return the Lie bracket `[x, y] = x y - y x` of `x` and `y`.

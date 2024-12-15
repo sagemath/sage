@@ -318,8 +318,12 @@ def attach(*files):
 
     .. SEEALSO::
 
-        :meth:`~sage.repl.load.load` is the same as :func:`attach`, but
-        does not automatically reload a file when it changes.
+        :func:`~sage.repl.load.load` is the same as :func:`attach`, but
+        does not automatically reload a file when it changes unless
+        ``attach=True`` is passed.
+
+        ``%attach`` magic can also be used, see
+        :meth:`~sage.repl.ipython_extension.SageMagics.attach`.
 
     EXAMPLES:
 

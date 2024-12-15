@@ -180,7 +180,7 @@ AUTHORS:
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.integral_domains import IntegralDomains
-from sage.rings.ring import IntegralDomain
+from sage.structure.parent import Parent
 from sage.structure.element import IntegralDomainElement
 
 
@@ -193,7 +193,7 @@ def normalize_extra_units(base_ring, add_units, warning=True):
 
     INPUT:
 
-    - ``base_ring`` -- an instance of :class:`IntegralDomain`
+    - ``base_ring`` -- a ring in the category of :class:`IntegralDomains`
     - ``add_units`` -- list of elements from base ring
     - ``warning`` -- boolean (default: ``True``); to suppress a warning which
       is thrown if no normalization was possible
@@ -561,7 +561,7 @@ class LocalizationElement(IntegralDomainElement):
         return self._value._integer_(Z=Z)
 
 
-class Localization(IntegralDomain, UniqueRepresentation):
+class Localization(Parent, UniqueRepresentation):
     r"""
     The localization generalizes the construction of the field of fractions of
     an integral domain to an arbitrary ring. Given a (not necessarily
@@ -580,21 +580,18 @@ class Localization(IntegralDomain, UniqueRepresentation):
     this class relies on the construction of the field of fraction and is
     therefore restricted to integral domains.
 
-    Accordingly, this class is inherited from :class:`IntegralDomain` and can
-    only be used in that context. Furthermore, the base ring should support
+    Accordingly, the base ring must be in the category of ``IntegralDomains``.
+    Furthermore, the base ring should support
     :meth:`sage.structure.element.CommutativeRingElement.divides` and the exact
     division operator ``//`` (:meth:`sage.structure.element.Element.__floordiv__`)
     in order to guarantee a successful application.
 
     INPUT:
 
-    - ``base_ring`` -- an instance of :class:`Ring` allowing the construction
-      of :meth:`fraction_field` (that is an integral domain)
+    - ``base_ring`` -- a ring in the category of ``IntegralDomains``
     - ``extra_units`` -- tuple of elements of ``base_ring`` which should be
       turned into units
-    - ``names`` -- passed to :class:`IntegralDomain`
-    - ``normalize`` -- boolean (default: ``True``); passed to :class:`IntegralDomain`
-    - ``category`` -- (default: ``None``) passed to :class:`IntegralDomain`
+    - ``category`` -- (default: ``None``) passed to :class:`Parent`
     - ``warning`` -- boolean (default: ``True``); to suppress a warning which
       is thrown if ``self`` cannot be represented uniquely
 
@@ -712,7 +709,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
             # since by construction the base ring must contain non units self must be infinite
             category = IntegralDomains().Infinite()
 
-        IntegralDomain.__init__(self, base_ring, names=names, normalize=normalize, category=category)
+        Parent.__init__(self, base=base_ring, names=names, normalize=normalize, category=category)
         self._extra_units = tuple(extra_units)
         self._fraction_field = base_ring.fraction_field()
         self._populate_coercion_lists_()

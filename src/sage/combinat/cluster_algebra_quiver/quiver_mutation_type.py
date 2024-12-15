@@ -1985,7 +1985,7 @@ class QuiverMutationType_Reducible(QuiverMutationType_abstract):
         """
         data = args
         if len(data) < 2 or not all(isinstance(comp, QuiverMutationType_Irreducible) for comp in data):
-            return _mutation_type_error(data)
+            _mutation_type_error(data)
 
         # _info is initialized
         self._info = {}

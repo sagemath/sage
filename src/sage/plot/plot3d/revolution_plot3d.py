@@ -7,7 +7,7 @@ AUTHORS:
 - Oscar Gerardo Lazo Arjona (2010): initial version.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Oscar Gerardo Lazo Arjona algebraicamente@gmail.com
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -19,8 +19,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.misc.decorators import rename_keyword
 
 from sage.plot.plot3d.parametric_plot3d import parametric_plot3d
@@ -253,10 +253,10 @@ def revolution_plot3d(curve, trange, phirange=None, parallel_axis='z', axis=(0, 
         phirange = (phi, phirange[0], phirange[1])
 
     if isinstance(curve, (tuple, list)):
-        #this if-else provides a vector v to be plotted
-        #if curve is a tuple or a list of length 2, it is interpreted as a parametric curve
-        #in the x-z plane.
-        #if it is of length 3 it is interpreted as a parametric curve in 3d space
+        # this if-else provides a vector v to be plotted
+        # if curve is a tuple or a list of length 2, it is interpreted as a parametric curve
+        # in the x-z plane.
+        # if it is of length 3 it is interpreted as a parametric curve in 3d space
 
         if len(curve) == 2:
             x = curve[0]

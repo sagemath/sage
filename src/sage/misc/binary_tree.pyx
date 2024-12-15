@@ -145,7 +145,7 @@ cdef binary_tree_node *binary_tree_head_excise(binary_tree_node *self) noexcept:
 
 
 cdef int LIST_PREORDER, LIST_POSTORDER, LIST_INORDER, LIST_KEYS, LIST_VALUES
-LIST_PREORDER  = 1
+LIST_PREORDER = 1
 LIST_INORDER = 2
 LIST_POSTORDER = 4
 LIST_KEYS = 8

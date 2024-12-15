@@ -277,6 +277,10 @@ REFERENCES:
 .. [Ap1997] \T. Apostol, Modular functions and Dirichlet series in
             number theory, Springer, 1997 (2nd ed), section 3.7--3.9.
 
+.. [AP2024] William Atherton, Dmitrii V. Pasechnik, *Decline and Fall of the
+            ICALP 2008 Modular Decomposition algorithm*, 2024.
+            :arxiv:`2404.14049`.
+
 .. [APR2001] George E. Andrews, Peter Paule, Axel Riese,
              *MacMahon's partition analysis: the Omega package*,
              European J. Combin. 22 (2001), no. 7, 887--904.
@@ -495,6 +499,9 @@ REFERENCES:
 
 .. [BeBo2009] Olivier Bernardi and Nicolas Bonichon, *Intervals in Catalan
               lattices and realizers of triangulations*, JCTA 116 (2009)
+
+.. [Best2021] Alex J. Best: Tools and Techniques for Rational Points on Curves.
+              PhD Thesis, Boston University, 2021.
 
 .. [BBGL2008] \A. Blondin Massé, S. Brlek, A. Garon, and S. Labbé,
               Combinatorial properties of f -palindromes in the
@@ -969,6 +976,10 @@ REFERENCES:
             Fast Computation of Matrix-Type Padé Approximants". SIAM J. Matrix
             Anal. Appl. 15 (1994) 804-823.
             :doi:`10.1137/S0895479892230031`
+
+.. [BL1995] W. Bosma, H.W. Lenstra: Complete Systems of Two Addition Laws for
+            Elliptic Curves. Journal of Number Theory, volume 53, issue 2,
+            pages 229-240. 1995.
 
 .. [BHMPW20a] Tom Braden, June Huh, Jacob P. Matherne, Nicholas Proudfoot,
              and Botong Wang, *A semi-small decomposition of the Chow
