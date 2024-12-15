@@ -1551,7 +1551,7 @@ class GraphPlot(SageObject):
             ....:              (0, 1, 'd'), (0, 1, 'e'), (0, 1, 'f'),
             ....:              (0, 1, 'f'), (2, 1, 'g'), (2, 2, 'h')])
             sage: GP = g.graphplot(vertex_size=100, edge_labels=True,
-            ....:                  color_by_label=True, edge_style='dashed') 
+            ....:                  color_by_label=True, edge_style='dashed')
             sage: GP.set_edges(edge_styles={'a':'dashed', 'g':'dotted'})
             sage: GP.plot()
             Graphics object consisting of 22 graphics primitives
