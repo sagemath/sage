@@ -608,15 +608,44 @@ class EllipticCurveFactory(UniqueFactory):
             sage: E = EllipticCurve.from_period_lattice_basis(w1, w2)
             sage: E.period_lattice().basis() # abs tol 1e-10
             (-2.64575131106483*I, -1.00000000000000)
+
+        TESTS::
+
+            sage: E = EllipticCurve.from_period_lattice_basis(F(1), F(3*I))
+            sage: E.period_lattice().basis() # abs tol 1e-10
+            (-3.00000000000639*I, -1.00000000000000)
+            sage: E = EllipticCurve.from_period_lattice_basis(F(2), F(3*I))
+            sage: E.period_lattice().basis() # abs tol 1e-10
+            (-3.00000000000000*I, -2.00000000000000)
+            sage: E = EllipticCurve.from_period_lattice_basis(F(1), F(-I))
+            sage: E.period_lattice().basis() # abs tol 1e-10
+            (1.00000000000000, -1.00000000000000*I)
+            sage: E = EllipticCurve.from_period_lattice_basis(F(3+4*I), F(4+3*I))
+            sage: E.period_lattice().basis() # abs tol 1e-10
+            (-4.00000000006586 - 3.00000000011837*I, -1.00000000000000 + 1.00000000000000*I)
+            sage: E = EllipticCurve.from_period_lattice_basis(F(1+I), F(6*I))
+            sage: E.period_lattice().basis() # abs tol 1e-10
+            (3.00000000000639 - 3.00000000000639*I, -1.00000000000000 - 1.00000000000000*I)
+            sage: E = EllipticCurve.from_period_lattice_basis(F(1+2*I), F(-2+3*I))
+            sage: E.period_lattice().basis() # abs tol 1e-10
+            (3.00000000000000 - 1.00000000000000*I, -1.00000000000000 - 2.00000000000000*I)
+
+        Higher precision::
+
+            sage: F = ComplexField(128)
+            sage: E = EllipticCurve.from_period_lattice_basis(F(1), F(3*I))
+            sage: E.period_lattice().basis() # abs tol 1e-30
+            (-2.9999999999999999999999999999999996134*I, -1.0000000000000000000000000000000000000)
         """
         F = w1.parent()
         if F != w2.parent():
             raise ValueError("basis elements must have the same parent")
         prec = F.precision()
         tau = w2/w1
+        if tau.imag() < 0: tau = -tau
         g2 = -60*EllipticCurve._eisenstein_series_g_eval(4, tau, prec)/w1**4
         g3 = -140*EllipticCurve._eisenstein_series_g_eval(6, tau, prec)/w1**6
-        return EllipticCurve(F, [(g2/4).real(), (g3/4).real()])
+        return EllipticCurve(F, [g2/4, g3/4])
 
 
 EllipticCurve = EllipticCurveFactory('sage.schemes.elliptic_curves.constructor.EllipticCurve')
