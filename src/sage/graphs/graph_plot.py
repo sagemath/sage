@@ -1363,7 +1363,7 @@ class GraphPlot(SageObject):
 
             sage: D = graphs.CubeGraph(3)
             sage: D.graphplot(layout='planar').plot()
-            Launched png viewer for Graphics object consisting of 21 graphics primitives
+            Graphics object consisting of 21 graphics primitives
 
         .. PLOT::
 
@@ -1482,7 +1482,6 @@ class GraphPlot(SageObject):
 
             sage: D = DiGraph({0:[1,2,3], 2:[1,4], 3:[0]})
             sage: D.graphplot(label_fontsize=20).show()
-            Graphics object consisting of 8 graphics primitives
 
         .. PLOT::
 
@@ -1534,6 +1533,7 @@ class GraphPlot(SageObject):
 
         The ``edge_style`` option may be provided in the short format too::
 
+
             sage: g.graphplot(edge_labels=True,
             ....:             color_by_label=True,
             ....:             edge_style='--'
@@ -1543,6 +1543,12 @@ class GraphPlot(SageObject):
         The ``edge_styles`` option may be provided if you need only certain edges
         to have certain styles::
 
+            sage: g = Graph(loops=True, multiedges=True, sparse=True)
+            sage: g.add_edges([(0, 0, 'a'), (0, 0, 'b'), (0, 1, 'c'),
+            ....:              (0, 1, 'd'), (0, 1, 'e'), (0, 1, 'f'),
+            ....:              (0, 1, 'f'), (2, 1, 'g'), (2, 2, 'h')])
+            sage: GP = g.graphplot(vertex_size=100, edge_labels=True,
+            ....:                  color_by_label=True, edge_style='dashed') 
             sage: GP.set_edges(edge_styles={'a':'dashed', 'g':'dotted'})
             sage: GP.plot()
             Graphics object consisting of 22 graphics primitives
