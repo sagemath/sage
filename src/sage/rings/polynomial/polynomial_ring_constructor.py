@@ -54,6 +54,77 @@ _CompleteDiscreteValuationFields = CompleteDiscreteValuationFields()
 _cache = sage.misc.weak_dict.WeakValueDictionary()
 
 
+def _free_variable_names_recursive(R):
+    """
+    Internal method, returns a tuple of name of variables that is free. See tests below.
+
+    This is used for the purpose of coercion map computation.
+
+    As a general rule of thumb, if ``"a"`` is included in the output of this
+    function, then ``R.has_coerce_map_from(ZZ["a"])`` should return ``True``.
+
+    TESTS::
+
+        sage: from sage.rings.polynomial.polynomial_ring_constructor import _free_variable_names_recursive
+        sage: T.<a> = QQ[]
+        sage: _free_variable_names_recursive(T)
+        ('a',)
+        sage: _free_variable_names_recursive(T.quotient_ring(a^2 + 1))
+        ('a',)
+        sage: T.quotient_ring(a^2 + 1).variable_names()  # different from above
+        ('abar',)
+        sage: _free_variable_names_recursive(T.quotient_ring(a^2 + 1)["b"])
+        ('a', 'b')
+        sage: T.quotient_ring(a^2 + 1)["b"].variable_names_recursive()  # different from above
+        ('b',)
+        sage: _free_variable_names_recursive(QQ[["a"]])
+        ('a',)
+        sage: _free_variable_names_recursive(Frac(T))
+        ('a',)
+        sage: _free_variable_names_recursive(Frac(QQ[["a"]]))
+        ('a',)
+        sage: _free_variable_names_recursive(LaurentPolynomialRing(QQ, "a"))
+        ('a',)
+        sage: _free_variable_names_recursive(LaurentPolynomialRing(QQ, "a,b"))
+        ('a', 'b')
+        sage: _free_variable_names_recursive(QQ["a,b"])
+        ('a', 'b')
+        sage: _free_variable_names_recursive(Frac(QQ["a,b"]))
+        ('a', 'b')
+        sage: _free_variable_names_recursive(QQ[["a"]]["b"])
+        ('a', 'b')
+        sage: _free_variable_names_recursive(QQ["a"]["b"])
+        ('a', 'b')
+    """
+    from sage.rings.fraction_field import FractionField_generic
+    from sage.rings.laurent_series_ring import LaurentSeriesRing
+    from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing_generic
+    from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+    from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+    from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
+    from sage.rings.polynomial.polynomial_ring import PolynomialRing_general as PolynomialRing_generic
+    from sage.rings.power_series_ring import PowerSeriesRing_generic
+    if isinstance(R, (PolynomialRing_generic, PowerSeriesRing_generic, LazyPowerSeriesRing,
+                      LaurentPolynomialRing_generic, LaurentSeriesRing, MPolynomialRing_base)):
+        return _free_variable_names_recursive(R.base_ring()) + R.variable_names()
+    if isinstance(R, PolynomialQuotientRing_generic):
+        return _free_variable_names_recursive(R.polynomial_ring())
+    if isinstance(R, FractionField_generic):
+        return _free_variable_names_recursive(R.ring())
+    return ()
+
+
+def _check_nested_different_variable_name(R, names):
+    """
+    Internal method to raise a deprecation warning if e.g.
+    ``R`` is ``QQ["x"]`` and ``names`` is ``["x"]``.
+    """
+    assert isinstance(names, (list, tuple))
+    if set(_free_variable_names_recursive(R)) & set(names):
+        from sage.misc.superseded import deprecation
+        deprecation(39126, 'Construction of nested rings with the same free variable name such as QQ["x"]["x"] is deprecated.')
+
+
 # The signature for this function is too complicated to express sensibly
 # in any other way besides *args and **kwds (in Python 3 or Cython, we
 # could probably do better thanks to PEP 3102).
@@ -621,6 +692,26 @@ def PolynomialRing(base_ring, *args, **kwds):
         ....:                        '_test_distributivity', '_test_prod'])
         sage: R.<x,y> = PolynomialRing(RIF,2)
         sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive'])
+
+    Check deprecation raised on nested ring with same variable name (:issue:`39126`)::
+
+        sage: import warnings
+        sage: T.<a> = QQ[]
+        sage: for R in [T, T.quotient_ring(a^2 + 1), QQ[["a"]], Frac(T), Frac(QQ[["a"]]),
+        ....:           LaurentPolynomialRing(QQ, "a"), LaurentPolynomialRing(QQ, "a,b"),
+        ....:           QQ["a,b"], Frac(QQ["a,b"]), QQ[["a,b"]]]:
+        ....:     for f in [lambda: R["a"], lambda: R["a,b"], lambda: R[["a,b"]],
+        ....:               lambda: LaurentPolynomialRing(R, "a,c"),
+        ....:               lambda: LaurentSeriesRing(R, "a")]:
+        ....:         with warnings.catch_warnings(record=True) as w:
+        ....:             warnings.simplefilter("always")
+        ....:             S = f()
+        ....:         if not w:
+        ....:             print(f"Constructing {S} should raise a warning but does not")
+        ....:         del S
+
+    Note that rerunning the test may not raise the warning, because
+    the unique representation behavior makes the constructor run only once.
     """
     from sage.rings.semirings.tropical_semiring import TropicalSemiring
     if base_ring not in Rings() and not isinstance(base_ring, TropicalSemiring):
@@ -715,6 +806,8 @@ def PolynomialRing(base_ring, *args, **kwds):
         kwnames = kwds.pop("names")
         if kwnames != names:
             raise TypeError("variable names specified twice inconsistently: %r and %r" % (names, kwnames))
+
+    _check_nested_different_variable_name(base_ring, names)
 
     if multivariate or len(names) != 1:
         return _multi_variate(base_ring, names, **kwds)
