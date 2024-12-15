@@ -44,8 +44,8 @@ REFERENCES:
             1995
 
 .. [Ab2022] Willie Aboumrad,
-        *Quantum compution with anyons: an F-matrix and braid calculator*
-        (2022). https://arxiv.org/abs/2212.00831
+        *Quantum computing with anyons: an F-matrix and braid calculator*
+        (2022). :arxiv:`2212.00831`
 
 .. [Alekseyev2006] \M. Alekseyev:
                    (Forum post on counting irreducible multivariate polynomials),
@@ -76,7 +76,7 @@ REFERENCES:
                     "Lilliput-AE: a New Lightweight Tweakable BlockCipher for Authenticated Encryption with AssociatedData"
                     https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/LILLIPUT-AE-spec.pdf
 
-.. [ABCMT2019] \V. Arul, A. J. Best, E. Costa, R. Magner, and N. Triantafillou, *Computing zeta functions of cyclic covers in large characteristic,* The Open Book Series, vol. 2, no. 1, pp. 37–53, Jan. 2019.
+.. [ABCMT2019] \V. Arul, A. J. Best, E. Costa, R. Magner, and N. Triantafillou, *Computing zeta functions of cyclic covers in large characteristic*, The Open Book Series, vol. 2, no. 1, pp. 37–53, Jan. 2019.
 
 .. [ABZ2007] \R. Aharoni and E. Berger and R. Ziv.
              *Independent systems of representatives in weighted graphs*.
@@ -242,8 +242,8 @@ REFERENCES:
  .. [AM1990] \R. Abraham and J. E. Marsden, "Foundations of Mechanics",
             Addison-Wesley, 1980.
 
-.. [AM1974] \J. F. Adams and H. R. Margolis, "Sub-Hopf-algebras of the
-            Steenrod algebra," Proc. Cambridge Philos. Soc. 76 (1974),
+.. [AM1974] \J. F. Adams and H. R. Margolis, *Sub-Hopf-algebras of the
+            Steenrod algebra*, Proc. Cambridge Philos. Soc. 76 (1974),
             45-52.
 
 .. [AM2000] \S. Ariki and A. Mathas.
@@ -444,16 +444,16 @@ REFERENCES:
              Proc. Calgary Internat. Conference 1969, New York, 1970,
              Gordon and Breach.
 
-.. [Bar2006] \G. Bard. 'Accelerating Cryptanalysis with the Method of
-             Four Russians'. Cryptography E-Print Archive
+.. [Bar2006] \G. Bard. *Accelerating Cryptanalysis with the Method of
+             Four Russians*. Cryptography E-Print Archive
              (http://eprint.iacr.org/2006/251.pdf), 2006.
 
 .. [Bat1991] \V. V. Batyrev, *On the classification of smooth projective
              toric varieties*, Tohoku Math. J. **43** (1991), 569-585
 
 .. [Bat1994] Victor V. Batyrev,
-             "Dual polyhedra and mirror symmetry for Calabi-Yau
-             hypersurfaces in toric varieties",
+             *Dual polyhedra and mirror symmetry for Calabi-Yau
+             hypersurfaces in toric varieties*,
              J. Algebraic Geom. 3 (1994), no. 3, 493-535.
              :arxiv:`alg-geom/9310003v1`
 
@@ -540,14 +540,14 @@ REFERENCES:
 .. [Bodin2007] \A. Bodin:
             Number of irreducible polynomials in several variables over finite fields,
             The American Mathematical Monthly 115(7), pp. 653-660, 2008.
-            https://arxiv.org/abs/0706.0157
+            :arxiv:`0706.0157`
 
 .. [BH2012] \A. Brouwer and W. Haemers,
             Spectra of graphs,
             Springer, 2012,
             http://homepages.cwi.nl/~aeb/math/ipm/ipm.pdf
 
-.. [BMFPR2011] \M. Bousquet-Melou, É. Fusy, L.-F. Préville-Ratelle,
+.. [BMFPR2011] \M. Bousquet-Mélou, É. Fusy, L.-F. Préville-Ratelle,
                 *The number of intervals in the m-Tamari lattices*.
                 Electronic Journal of Combinatorics 18(2), 2011.
                 :doi:`10.37236/2027`
@@ -713,8 +713,8 @@ REFERENCES:
             Journal of Algebraic Combinatorics (1992), vol.1, n.4, pp329-346,
             :doi:`10.1023/A%3A1022438616684`.
 
-.. [Bec1992] Bernhard Beckermann. "A reliable method for computing M-Padé
-             approximants on arbitrary staircases". J. Comput. Appl. Math.,
+.. [Bec1992] Bernhard Beckermann. *A reliable method for computing M-Padé
+             approximants on arbitrary staircases*. J. Comput. Appl. Math.,
              40(1):19-42, 1992. :doi:`10.1016/0377-0427(92)90039-Z`.
 
 .. [BeCoMe] Frits Beukers, Henri Cohen, Anton Mellit,
@@ -800,15 +800,16 @@ REFERENCES:
 .. [BF2005] \R.L. Burden and J.D. Faires. *Numerical Analysis*.
             8th edition, Thomson Brooks/Cole, 2005.
 
-.. [BFS2004] Magali Bardet, Jean-Charles Faugère, and Bruno Salvy, On
+.. [BFS2004] Magali Bardet, Jean-Charles Faugère, and Bruno Salvy, *On
              the complexity of Groebner basis computation of
-             semi-regular overdetermined algebraic equations.
+             semi-regular overdetermined algebraic equations.*
              Proc. International Conference on Polynomial System
              Solving (ICPSS), pp. 71-75, 2004.
 
 .. [BFSS2006] \A. Bostan, P. Flajolet, B. Salvy and E. Schost, *Fast
               Computation of special resultants*, Journal of Symbolic
               Computation 41 (2006), 1-29
+              :doi:`10.1016/j.jsc.2005.07.001`
 
 .. [BFZ2005] \A. Berenstein, \S. Fomin, and \A. Zelevinsky, *Cluster
              algebras. III. Upper bounds and double Bruhat cells*,
@@ -1115,18 +1116,18 @@ REFERENCES:
               lacunas of the Thue-Morse word*, Proc. GASCOM 2008 (June
               16-20 2008, Bibbiena, Arezzo-Italia), 53--67.
 
-.. [BMFPR] \M. Bousquet-Melou, E. Fusy, L.-F. Preville Ratelle.
+.. [BMFPR] \M. Bousquet-Mélou, E. Fusy, L.-F. Preville Ratelle.
            *The number of intervals in the m-Tamari lattices*. :arxiv:`1106.1498`
 
-.. [BMS2006] Bugeaud, Mignotte, and Siksek. "Classical and modular
+.. [BMS2006] Bugeaud, Mignotte, and Siksek. *Classical and modular
              approaches to exponential Diophantine
-             equations: I. Fibonacci and Lucas perfect powers." Annals
+             equations: I. Fibonacci and Lucas perfect powers.* Annals
              of Math, 2006.
 
 .. [BMSS2006] Alin Bostan, Bruno Salvy, François Morain, Éric Schost.
-              Fast algorithms for computing isogenies between elliptic
-              curves. [Research Report] 2006, pp.28. <inria-00091441>
-              https://arxiv.org/pdf/cs/0609020.pdf
+              *Fast algorithms for computing isogenies between elliptic
+              curves*. [Research Report] 2006, pp.28. <inria-00091441>
+              `arxiv:`cs/0609020`
 
 .. [BN2010] \D. Bump and M. Nakasuji.
             Integration on `p`-adic groups and crystal bases.
@@ -1595,12 +1596,13 @@ REFERENCES:
              IV. The quotient groups of the lower central series, Ann. of Math.
              68 (1958) 81--95.
 
-.. [CFZ2000] \J. Cassaigne, S. Ferenczi, L.Q. Zamboni, Imbalances in
-             Arnoux-Rauzy sequences, Ann. Inst. Fourier (Grenoble)
+.. [CFZ2000] \J. Cassaigne, S. Ferenczi, L.Q. Zamboni, *Imbalances in
+             Arnoux-Rauzy sequences*, Ann. Inst. Fourier (Grenoble)
              50 (2000) 1265--1276.
 
-.. [CFZ2002] Chapoton, Fomin, Zelevinsky - Polytopal realizations of
-             generalized associahedra, :arxiv:`math/0202004`.
+.. [CFZ2002] Chapoton, Fomin, Zelevinsky - *Polytopal realizations of
+             generalized associahedra*, :arxiv:`math/0202004`,
+             :doi:`10.4153/CMB-2002-054-1`
 
 .. [CGHLM2013] \P. Crescenzi, R. Grossi, M. Habib, L. Lanzi, A. Marino.
                *On computing the diameter of real-world undirected graphs*.
@@ -1648,9 +1650,9 @@ REFERENCES:
 .. [Cha18] Frédéric Chapoton, *Some properties of a new partial
            order on Dyck paths*, 2018, :arxiv:`1809.10981`
 
-.. [Cha22005] \B. Cha. Vanishing of some cohomology groups and bounds
+.. [Cha22005] \B. Cha. *Vanishing of some cohomology groups and bounds
               for the Shafarevich-Tate groups of elliptic
-              curves. J. Number Theory, 111:154-178, 2005.
+              curves*. J. Number Theory, 111:154-178, 2005.
 
 .. [Cha2008] Frédéric Chapoton.
              *Sur le nombre d'intervalles dans les treillis de Tamari*.
