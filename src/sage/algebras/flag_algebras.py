@@ -1,13 +1,3 @@
-"""
-TODO:
-
--fix pattern coercion
--better code to handle combined theory patterns (perhaps multi ftype)
--think about maps (projections and lifts) between theories
--write code to overlap generate
--write better nonequal permutations, figure out what makes the most sense for typed flags
-"""
-
 r"""
 Implementation of flag algebras, with a class for combinatorial theories
 
@@ -668,6 +658,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         if path==None:
             file_path = os.path.join(self._calcs_dir(), file_name)
+        elif path=="":
+            file_path = file_name
         else:
             if not os.path.exists(path):
                 os.makedirs(path)
@@ -1362,8 +1354,11 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         if file!=None and file!="":
             if not file.endswith(".pickle"):
                 file += ".pickle"
-            self._save(cert_dict, path=self._certs_dir(), name=file)
-        return cert_dict
+            with open(file, "wb") as file_handle:
+                pickle.dump(cert_dict, file_handle)
+        if file=="notebook":
+            return cert_dict
+        return result
     
     def optimize_problem(self, target_element, target_size, maximize=True, positives=None, \
                          construction=None, file=None, exact=False, denom=1024, ring=QQ):
@@ -1631,7 +1626,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             file = file_or_cert
             if not file.endswith(".pickle"):
                 file += ".pickle"
-            file = self._certs_dir() + file
             with open(file, 'rb') as file:
                 certificate = pickle.load(file)
         else:
@@ -1736,6 +1730,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return result
     
     verify = verify_certificate
+    
     
     #Generating flags
     def _guess_number(self, n):
@@ -1892,6 +1887,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     def reset_exclude(self):
         self.exclude(force=True)
 
+    reset = reset_exclude
+
     def match_pattern(self, pattern):
         if pattern is Flag:
             return [pattern]
@@ -1925,6 +1922,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 flat_perm.extend(perm)
             all_permutations.append(tuple(flat_perm))
         return all_permutations
+    
     
     #Generating tables
 
@@ -2150,11 +2148,16 @@ def _round_list(ls, force_pos=False, method=1, quotient_bound=7, denom_bound=9, 
     else:
         return [_round(xx, method, quotient_bound, denom_bound, denom) for xx in ls]
 
+
 def _round_matrix(mat, method=1, quotient_bound=7, denom_bound=9, denom=1024):
     r"""
     Helper function, to round a matrix
     """
-    return matrix(QQ, [_round_list(xx, False, method, quotient_bound, denom_bound, denom) for xx in mat])
+    try:
+        return matrix(QQ, [_round_list(xx, False, method, quotient_bound, denom_bound, denom) for xx in mat])
+    except:
+        #This happens when a semidef constraint turns out to be just linear
+        return diagonal_matrix(QQ, _round_list(mat, True, method, quotient_bound, denom_bound, denom))
 
 def _round_ldl(mat, method=1, quotient_bound=7, denom_bound=9, denom=1024):
     r"""

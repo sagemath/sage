@@ -1418,7 +1418,8 @@ cdef class CoercionModel:
             self._record_exception()
         
         try:
-            return y.custom_coerce(x)
+            ym, xm = y.custom_coerce(x)
+            return (xm, ym)
         except AttributeError:
             self._record_exception()
 
