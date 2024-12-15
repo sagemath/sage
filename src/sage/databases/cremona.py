@@ -1663,10 +1663,14 @@ def CremonaDatabase(name=None, mini=None, set_global=None):
     TESTS::
 
         sage: c = CremonaDatabase()
-        sage: isinstance(c, sage.databases.cremona.MiniCremonaDatabase)
+        sage: type(c) is sage.databases.cremona.MiniCremonaDatabase  # optional - !database_cremona_ellcurve
         True
         sage: isinstance(c, sage.databases.cremona.LargeCremonaDatabase)  # optional - database_cremona_ellcurve
         True
+
+    Above we use ``type(c) is ...`` instead of ``isinstance(c, ...)``, however
+    this is because currently ``LargeCremonaDatabase`` is a subclass of
+    ``MiniCremonaDatabase``, and we want to test for ``MiniCremonaDatabase`` specifically.
 
     Verify that :issue:`12341` has been resolved::
 
@@ -1682,10 +1686,44 @@ def CremonaDatabase(name=None, mini=None, set_global=None):
         FeatureNotPresentError: database_should_not_exist_ellcurve is not available.
         '...db' not found in any of [...]
         ...Further installation instructions might be available at https://github.com/JohnCremona/ecdata.
+
+    Verify that :issue:`39072` has been resolved::
+
+        sage: # optional - !database_cremona_ellcurve
+        sage: c = CremonaDatabase(mini=True)  # without database_cremona_ellcurve, this will select name = 'cremona mini'
+        sage: type(c) is sage.databases.cremona.MiniCremonaDatabase
+        True
+        sage: c = CremonaDatabase(mini=False)  # same as above but invalid value of ``mini`` raises error
+        Traceback (most recent call last):
+        ...
+        ValueError: wrong value of mini, database 'cremona mini' must have mini=True
+        sage: c = CremonaDatabase(name='cremona mini', mini=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: wrong value of mini, database 'cremona mini' must have mini=True
+
+    ::
+
+        sage: # optional - database_cremona_ellcurve
+        sage: c = CremonaDatabase(mini=False)
+        sage: isinstance(c, sage.databases.cremona.LargeCremonaDatabase)
+        True
+        sage: c = CremonaDatabase(mini=True)  # with database_cremona_ellcurve, this will select name = 'cremona'
+        Traceback (most recent call last):
+        ...
+        ValueError: wrong value of mini, database 'cremona' must have mini=False
+        sage: c = CremonaDatabase(name='cremona', mini=True)
+        Traceback (most recent call last):
+        ...
+        ValueError: wrong value of mini, database 'cremona' must have mini=False
+        sage: c = CremonaDatabase(name='cremona', mini=False)
+        sage: isinstance(c, sage.databases.cremona.LargeCremonaDatabase)
+        True
     """
     if set_global is not None:
         from sage.misc.superseded import deprecation
         deprecation(25825, "the set_global argument for CremonaDatabase is deprecated and ignored")
+    input_mini = mini
     if name is None:
         if DatabaseCremona().is_present():
             name = 'cremona'
@@ -1697,6 +1735,8 @@ def CremonaDatabase(name=None, mini=None, set_global=None):
         mini = True
     if mini is None:
         raise ValueError('mini must be set as either True or False')
+    if (name == 'cremona' and input_mini is True) or (name == 'cremona mini' and input_mini is False):
+        raise ValueError(f'wrong value of mini, database {name!r} must have mini={mini}')
 
     if mini:
         return MiniCremonaDatabase(name)
