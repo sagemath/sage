@@ -397,12 +397,10 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
             sage: C = codes.HammingCode(GF(2), 3)
             sage: C.basis()
-            [
-            (1, 0, 0, 0, 0, 1, 1),
-            (0, 1, 0, 0, 1, 0, 1),
-            (0, 0, 1, 0, 1, 1, 0),
-            (0, 0, 0, 1, 1, 1, 1)
-            ]
+            [(1, 0, 0, 0, 0, 1, 1),
+             (0, 1, 0, 0, 1, 0, 1),
+             (0, 0, 1, 0, 1, 1, 0),
+             (0, 0, 0, 1, 1, 1, 1)]
             sage: C.basis().universe()
             Vector space of dimension 7 over Finite Field of size 2
         """

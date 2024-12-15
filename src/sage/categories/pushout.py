@@ -2263,25 +2263,13 @@ class SubspaceFunctor(ConstructionFunctor):
 
             sage: # needs sage.modules
             sage: F1.basis
-            [
-            (1, 0, 4),
-            (0, 1, 2)
-            ]
+            [(1, 0, 4), (0, 1, 2)]
             sage: F2.basis
-            [
-            (1, 2, 3),
-            (0, 3, 6)
-            ]
+            [(1, 2, 3), (0, 3, 6)]
             sage: F3.basis
-            [
-            (1, 0, -1),
-            (0, 1, 2)
-            ]
+            [(1, 0, -1), (0, 1, 2)]
             sage: F4.basis
-            [
-            (1, 0, -1),
-            (0, 1, 2)
-            ]
+            [(1, 0, -1), (0, 1, 2)]
 
 
         The basis of ``F2`` is modulo 5 different from the other bases.

@@ -9,14 +9,12 @@ EXAMPLES::
     Modular Forms space of dimension 6 for
      Congruence Subgroup Gamma1(4) of weight 11 over Rational Field
     sage: m.basis()
-    [
-    q - 134*q^5 + O(q^6),
-    q^2 + 80*q^5 + O(q^6),
-    q^3 + 16*q^5 + O(q^6),
-    q^4 - 4*q^5 + O(q^6),
-    1 + 4092/50521*q^2 + 472384/50521*q^3 + 4194300/50521*q^4 + O(q^6),
-    q + 1024*q^2 + 59048*q^3 + 1048576*q^4 + 9765626*q^5 + O(q^6)
-    ]
+    [q - 134*q^5 + O(q^6),
+     q^2 + 80*q^5 + O(q^6),
+     q^3 + 16*q^5 + O(q^6),
+     q^4 - 4*q^5 + O(q^6),
+     1 + 4092/50521*q^2 + 472384/50521*q^3 + 4194300/50521*q^4 + O(q^6),
+     q + 1024*q^2 + 59048*q^3 + 1048576*q^4 + 9765626*q^5 + O(q^6)]
 """
 
 # ****************************************************************************
@@ -270,16 +268,13 @@ def ModularForms(group=1,
         Modular Forms space of dimension 5 for Congruence Subgroup Gamma1(11)
          of weight 1 over Rational Field
         sage: M.basis()
-        [
-        1 + 22*q^5 + O(q^6),
-        q + 4*q^5 + O(q^6),
-        q^2 - 4*q^5 + O(q^6),
-        q^3 - 5*q^5 + O(q^6),
-        q^4 - 3*q^5 + O(q^6)
-        ]
+        [1 + 22*q^5 + O(q^6),
+         q + 4*q^5 + O(q^6),
+         q^2 - 4*q^5 + O(q^6),
+         q^3 - 5*q^5 + O(q^6),
+         q^4 - 3*q^5 + O(q^6)]
         sage: M.cuspidal_subspace().basis()
-        [
-        ]
+        []
         sage: M == M.eisenstein_subspace()
         True
 

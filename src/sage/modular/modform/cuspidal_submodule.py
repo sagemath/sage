@@ -8,27 +8,19 @@ EXAMPLES::
     Cuspidal subspace of dimension 1 of Modular Forms space of dimension 2 for
     Modular Group SL(2,Z) of weight 12 over Rational Field
     sage: S.basis()
-    [
-    q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
-    ]
+    [q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)]
 
     sage: S = CuspForms(Gamma0(33),2); S
     Cuspidal subspace of dimension 3 of Modular Forms space of dimension 6 for
     Congruence Subgroup Gamma0(33) of weight 2 over Rational Field
     sage: S.basis()
-    [
-    q - q^5 + O(q^6),
-    q^2 - q^4 - q^5 + O(q^6),
-    q^3 + O(q^6)
-    ]
+    [q - q^5 + O(q^6), q^2 - q^4 - q^5 + O(q^6), q^3 + O(q^6)]
 
     sage: S = CuspForms(Gamma1(3),6); S
     Cuspidal subspace of dimension 1 of Modular Forms space of dimension 3 for
     Congruence Subgroup Gamma1(3) of weight 6 over Rational Field
     sage: S.basis()
-    [
-    q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)
-    ]
+    [q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)]
 """
 
 #########################################################################
@@ -67,27 +59,19 @@ class CuspidalSubmodule(ModularFormsSubmodule):
             Cuspidal subspace of dimension 1 of Modular Forms space of dimension 2 for
             Modular Group SL(2,Z) of weight 12 over Rational Field
             sage: S.basis()
-            [
-            q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
-            ]
+            [q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)]
 
             sage: S = CuspForms(Gamma0(33),2); S
             Cuspidal subspace of dimension 3 of Modular Forms space of dimension 6 for
             Congruence Subgroup Gamma0(33) of weight 2 over Rational Field
             sage: S.basis()
-            [
-            q - q^5 + O(q^6),
-            q^2 - q^4 - q^5 + O(q^6),
-            q^3 + O(q^6)
-            ]
+            [q - q^5 + O(q^6), q^2 - q^4 - q^5 + O(q^6), q^3 + O(q^6)]
 
             sage: S = CuspForms(Gamma1(3),6); S
             Cuspidal subspace of dimension 1 of Modular Forms space of dimension 3 for
             Congruence Subgroup Gamma1(3) of weight 6 over Rational Field
             sage: S.basis()
-            [
-            q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)
-            ]
+            [q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)]
             sage: S == loads(dumps(S))
             True
         """
@@ -223,10 +207,7 @@ class CuspidalSubmodule_R(CuspidalSubmodule):
 
             sage: # needs sage.rings.number_field
             sage: CuspForms(Gamma1(13), 2, base_ring=QuadraticField(-7, 'a')).q_expansion_basis() # indirect doctest
-            [
-            q - 4*q^3 - q^4 + 3*q^5 + O(q^6),
-            q^2 - 2*q^3 - q^4 + 2*q^5 + O(q^6)
-            ]
+            [q - 4*q^3 - q^4 + 3*q^5 + O(q^6), q^2 - 2*q^3 - q^4 + 2*q^5 + O(q^6)]
         """
         return ModularFormsSubmodule._compute_q_expansion_basis(self, prec)
 
@@ -242,9 +223,7 @@ class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
         EXAMPLES::
 
             sage: sage.modular.modform.cuspidal_submodule.CuspidalSubmodule_modsym_qexp(ModularForms(11,2))._compute_q_expansion_basis()
-            [
-            q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)
-            ]
+            [q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)]
         """
         if prec is None:
             prec = self.prec()
@@ -327,9 +306,7 @@ class CuspidalSubmodule_level1_Q(CuspidalSubmodule):
         EXAMPLES::
 
             sage: sage.modular.modform.cuspidal_submodule.CuspidalSubmodule_level1_Q(ModularForms(1,12))._compute_q_expansion_basis()
-            [
-            q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
-            ]
+            [q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)]
         """
         if prec is None:
             prec = self.prec()
@@ -365,9 +342,7 @@ class CuspidalSubmodule_wt1_eps(CuspidalSubmodule):
         EXAMPLES::
 
             sage: CuspForms(DirichletGroup(23, QQ).0, 1).q_echelon_basis()  # indirect doctest
-            [
-            q - q^2 - q^3 + O(q^6)
-            ]
+            [q - q^2 - q^3 + O(q^6)]
         """
         if prec is None:
             prec = self.prec()
@@ -405,9 +380,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
         EXAMPLES::
 
             sage: CuspForms(GammaH(31, [7]), 1).q_expansion_basis()  # indirect doctest
-            [
-            q - q^2 - q^5 + O(q^6)
-            ]
+            [q - q^2 - q^5 + O(q^6)]
 
         A more elaborate example (two Galois-conjugate characters each giving a
         2-dimensional space)::
@@ -661,9 +634,7 @@ class CuspidalSubmodule_eps(CuspidalSubmodule_modsym_qexp):
         character [zeta4] and weight 5 over Cyclotomic Field of order 4 and degree 2
 
         sage: S.basis()
-        [
-        q + (-zeta4 - 1)*q^2 + (6*zeta4 - 6)*q^3 - 14*zeta4*q^4 + (15*zeta4 + 20)*q^5 + O(q^6)
-        ]
+        [q + (-zeta4 - 1)*q^2 + (6*zeta4 - 6)*q^3 - 14*zeta4*q^4 + (15*zeta4 + 20)*q^5 + O(q^6)]
         sage: f = S.0
         sage: f.qexp()
         q + (-zeta4 - 1)*q^2 + (6*zeta4 - 6)*q^3 - 14*zeta4*q^4 + (15*zeta4 + 20)*q^5 + O(q^6)

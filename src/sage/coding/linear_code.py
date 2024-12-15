@@ -2301,11 +2301,9 @@ class LinearCode(AbstractLinearCode):
             ....:             [a, a + 1, 1, a + 1, 1, 0, 0]])
             sage: C = LinearCode(G)
             sage: C.basis()
-            [
-            (1, 0, 0, a + 1, 0, 1, 0),
-            (0, 1, 0, 0, a + 1, 0, 1),
-            (0, 0, 1, a, a + 1, a, a + 1)
-            ]
+            [(1, 0, 0, a + 1, 0, 1, 0),
+             (0, 1, 0, 0, a + 1, 0, 1),
+             (0, 0, 1, a, a + 1, a, a + 1)]
             sage: C.minimum_distance()                                                  # needs sage.libs.gap
             3
 

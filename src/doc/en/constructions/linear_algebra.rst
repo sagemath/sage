@@ -22,10 +22,7 @@ one can create a subspace. Note the basis computed by Sage is
     sage: V = VectorSpace(GF(2),8)
     sage: S = V.subspace([V([1,1,0,0,0,0,0,0]),V([1,0,0,0,0,1,1,0])])
     sage: S.basis()
-    [
-    (1, 0, 0, 0, 0, 1, 1, 0),
-    (0, 1, 0, 0, 0, 1, 1, 0)
-    ]
+    [(1, 0, 0, 0, 0, 1, 1, 0), (0, 1, 0, 0, 0, 1, 1, 0)]
     sage: S.dimension()
     2
 
@@ -205,26 +202,21 @@ gives matrices :math:`D` and :math:`P` such that :math:`AP=PD` (resp.
     sage: A.eigenvalues()
     [3, 2, 1]
     sage: A.eigenvectors_right()
-    [(3, [
-    (0, 0, 1)
-    ], 1), (2, [
-    (1, 1, 0)
-    ], 1), (1, [
-    (1, 0, 0)
-    ], 1)]
+    [(3, [(0, 0, 1)], 1), (2, [(1, 1, 0)], 1), (1, [(1, 0, 0)], 1)]
 
     sage: A.eigenspaces_right()
-    [
-    (3, Vector space of degree 3 and dimension 1 over Rational Field
-    User basis matrix:
-    [0 0 1]),
-    (2, Vector space of degree 3 and dimension 1 over Rational Field
-    User basis matrix:
-    [1 1 0]),
-    (1, Vector space of degree 3 and dimension 1 over Rational Field
-    User basis matrix:
-    [1 0 0])
-    ]
+    [(3,
+      Vector space of degree 3 and dimension 1 over Rational Field
+      User basis matrix:
+      [0 0 1]),
+     (2,
+      Vector space of degree 3 and dimension 1 over Rational Field
+      User basis matrix:
+      [1 1 0]),
+     (1,
+      Vector space of degree 3 and dimension 1 over Rational Field
+      User basis matrix:
+      [1 0 0])]
 
     sage: D, P = A.eigenmatrix_right()
     sage: D
@@ -256,20 +248,19 @@ floating point entries (over ``CDF`` and ``RDF``) can be obtained with the
     sage: MS = MatrixSpace(QQ, 2, 2)
     sage: A = MS([1,-4,1, -1])
     sage: A.eigenspaces_left(format='all')
-    [
-    (-1.732050807568878?*I, Vector space of degree 2 and dimension 1 over Algebraic Field
-    User basis matrix:
-    [                        1 -1 - 1.732050807568878?*I]),
-    (1.732050807568878?*I, Vector space of degree 2 and dimension 1 over Algebraic Field
-    User basis matrix:
-    [                        1 -1 + 1.732050807568878?*I])
-    ]
+    [(-1.732050807568878?*I,
+      Vector space of degree 2 and dimension 1 over Algebraic Field
+      User basis matrix:
+      [                        1 -1 - 1.732050807568878?*I]),
+     (1.732050807568878?*I,
+      Vector space of degree 2 and dimension 1 over Algebraic Field
+      User basis matrix:
+      [                        1 -1 + 1.732050807568878?*I])]
     sage: A.eigenspaces_left(format='galois')
-    [
-    (a0, Vector space of degree 2 and dimension 1 over Number Field in a0 with defining polynomial x^2 + 3
-    User basis matrix:
-    [     1 a0 - 1])
-    ]
+    [(a0,
+      Vector space of degree 2 and dimension 1 over Number Field in a0 with defining polynomial x^2 + 3
+      User basis matrix:
+      [     1 a0 - 1])]
 
 Another approach is to use the interface with Maxima:
 

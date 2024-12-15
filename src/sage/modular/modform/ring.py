@@ -89,11 +89,9 @@ def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=Fals
         [          0           1           0      195660    12080128]
         [          0           0           1         -48        1080]
         sage: ModularForms(1, 24).q_echelon_basis(prec=5)
-        [
-        1 + 52416000*q^3 + 39007332000*q^4 + O(q^5),
-        q + 195660*q^3 + 12080128*q^4 + O(q^5),
-        q^2 - 48*q^3 + 1080*q^4 + O(q^5)
-        ]
+        [1 + 52416000*q^3 + 39007332000*q^4 + O(q^5),
+         q + 195660*q^3 + 12080128*q^4 + O(q^5),
+         q^2 - 48*q^3 + 1080*q^4 + O(q^5)]
 
     Test the alternative randomized algorithm::
 

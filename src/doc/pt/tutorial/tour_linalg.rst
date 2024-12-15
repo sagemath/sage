@@ -61,11 +61,7 @@ O Sage também pode calcular autovalores e autovetores::
     [-2*I, 2*I]
     sage: B = matrix([[1, 3], [3, 1]])
     sage: B.eigenvectors_left()
-    [(4, [
-    (1, 1)
-    ], 1), (-2, [
-    (1, -1)
-    ], 1)]
+    [(4, [(1, 1)], 1), (-2, [(1, -1)], 1)]
 
 (A sintaxe para a resposta de ``eigenvectors_left`` é uma lista com
 três componentes: (autovalor, autovetor, multiplicidade).) Autovalores

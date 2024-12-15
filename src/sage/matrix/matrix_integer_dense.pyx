@@ -4813,14 +4813,14 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: w.charpoly().factor()
             (x - 3) * (x + 2)
             sage: w.decomposition()
-            [
-            (Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [ 5 -2], True),
-            (Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [0 1], True)
-            ]
+            [(Free module of degree 2 and rank 1 over Integer Ring
+              Echelon basis matrix:
+              [ 5 -2],
+              True),
+             (Free module of degree 2 and rank 1 over Integer Ring
+              Echelon basis matrix:
+              [0 1],
+              True)]
         """
         F = self.charpoly().factor()
         if len(F) == 1:

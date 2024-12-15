@@ -63,11 +63,7 @@ Sage kann auch Eigenwerte und Eigenvektoren berechnen::
     [-2*I, 2*I]
     sage: B = matrix([[1, 3], [3, 1]])
     sage: B.eigenvectors_left()
-    [(4, [
-    (1, 1)
-    ], 1), (-2, [
-    (1, -1)
-    ], 1)]
+    [(4, [(1, 1)], 1), (-2, [(1, -1)], 1)]
 
 (Die Syntax der Ausgabe von ``eigenvectors_left`` ist eine Liste von
 Tripeln: (Eigenwert, Eigenvektor, Vielfachheit).) Eigenwerte und
