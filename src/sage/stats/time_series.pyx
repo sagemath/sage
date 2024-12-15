@@ -465,7 +465,7 @@ cdef class TimeSeries:
         """
         cdef Py_ssize_t i
         cdef TimeSeries t = new_time_series(self._length)
-        memcpy(t._values, self._values , sizeof(double)*self._length)
+        memcpy(t._values, self._values, sizeof(double)*self._length)
         return t
 
     def __add__(left, right):
