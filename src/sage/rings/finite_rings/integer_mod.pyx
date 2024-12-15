@@ -2039,8 +2039,12 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
             sage: e = Mod(19, 10^10)
             sage: e << 102
             9443608576
+            sage: e << (2^200)
+            Traceback (most recent call last):
+            ...
+            OverflowError: Python int too large to convert to C long
         """
-        return self.shift(long(k))
+        return self.shift(k)
 
     def __rshift__(IntegerMod_gmp self, k):
         r"""
@@ -2053,8 +2057,12 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
             sage: e = Mod(19, 10^10)
             sage: e >> 1
             9
+            sage: e << (2^200)
+            Traceback (most recent call last):
+            ...
+            OverflowError: Python int too large to convert to C long
         """
-        return self.shift(-long(k))
+        return self.shift(-k)
 
     cdef shift(IntegerMod_gmp self, long k):
         r"""
