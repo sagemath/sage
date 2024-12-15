@@ -414,7 +414,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
         -1.25992104989487
 
     If no embedding is specified or is complex, the comparison is not
-    returning something meaningful.::
+    returning something meaningful. ::
 
         sage: N.<g> = NumberField(x^3 + 2)
         sage: 1 < g
