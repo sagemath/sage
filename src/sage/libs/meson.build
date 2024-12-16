@@ -36,7 +36,7 @@ foreach name, pyx : extension_data
   if name == 'sirocco'
     deps += [sirocco]
   elif name == 'meataxe'
-    deps += [mtx, meataxe]
+    deps += [mtx]
   endif
 
   py.extension_module(
