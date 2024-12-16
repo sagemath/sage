@@ -3150,7 +3150,7 @@ def _tensor_product_ring(B, A):
 
     def term_order(A):
         # univariate rings do not have a term order
-        if (isinstance(A, PolynomialRing_generic) or isinstance(A, PolynomialQuotientRing_generic)
+        if (isinstance(A, (PolynomialRing_generic, PolynomialQuotientRing_generic))
             or (isinstance(A, (NumberField, FiniteField))
                 and not A.is_prime_field())):
             return TermOrder('lex', 1)
@@ -3166,7 +3166,7 @@ def _tensor_product_ring(B, A):
                        order=term_order(B) + term_order(A))
 
     def relations(A, R_gens_A):
-        if isinstance(A, MPolynomialRing_base) or isinstance(A, PolynomialRing_generic):
+        if isinstance(A, (MPolynomialRing_base, PolynomialRing_generic)):
             return []
         elif isinstance(A, PolynomialQuotientRing_generic):
             to_R = A.ambient().hom(R_gens_A, R, check=False)

@@ -395,7 +395,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             # homogenize!
             f = morphism_or_polys
             aff_CR = f.parent()
-            if (not isinstance(aff_CR, PolynomialRing_generic) and not isinstance(aff_CR, FractionField_generic)
+            if (not isinstance(aff_CR, (PolynomialRing_generic, FractionField_generic))
                 and not (isinstance(aff_CR, MPolynomialRing_base) and aff_CR.ngens() == 1)):
                 msg = '{} is not a single variable polynomial or rational function'
                 raise ValueError(msg.format(f))

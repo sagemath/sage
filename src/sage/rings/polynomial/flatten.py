@@ -160,7 +160,7 @@ class FlatteningMorphism(Morphism):
             sage: fl.section()(fl(p)) == p
             True
         """
-        if not isinstance(domain, PolynomialRing_generic) and not isinstance(domain, MPolynomialRing_base):
+        if not isinstance(domain, (PolynomialRing_generic, MPolynomialRing_base)):
             raise ValueError("domain should be a polynomial ring")
 
         ring = domain
@@ -347,7 +347,7 @@ class UnflatteningMorphism(Morphism):
         """
         if not isinstance(domain, MPolynomialRing_base):
             raise ValueError("domain should be a multivariate polynomial ring")
-        if not isinstance(codomain, PolynomialRing_generic) and not isinstance(codomain, MPolynomialRing_base):
+        if not isinstance(codomain, (PolynomialRing_generic, MPolynomialRing_base)):
             raise ValueError("codomain should be a polynomial ring")
 
         ring = codomain
@@ -499,7 +499,7 @@ class SpecializationMorphism(Morphism):
               Defn: Defined on coordinates by sending (z) to
                     (z^2 + 1.00000000000000)
         """
-        if not isinstance(domain, PolynomialRing_generic) and not isinstance(domain, MPolynomialRing_base):
+        if not isinstance(domain, (PolynomialRing_generic, MPolynomialRing_base)):
             raise TypeError("domain should be a polynomial ring")
 
         # use only the generators that are in the stack somewhere,
