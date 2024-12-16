@@ -67,10 +67,9 @@ or run the tests with ``./sage -t``.
 
 .. NOTE::
 
-    By default, ``ninja`` will automatically determine the number of jobs to
+    By default, Meson will automatically determine the number of jobs to
     run in parallel based on the number of CPU available. This can be adjusted
-    by passing ``--config-settings=compile-args=-jN`` to ``pip install``,
-    which will pass ``-jN`` to ``ninja``.
+    by passing ``--config-settings=compile-args=-jN`` to ``pip install``.
 
     ``--verbose`` can be passed to ``pip install``, then the meson commands
     internally used by pip will be printed out.
