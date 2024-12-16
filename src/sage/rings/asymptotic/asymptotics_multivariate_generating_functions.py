@@ -505,7 +505,7 @@ class FractionWithFactoredDenominator(RingElement):
         from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
         from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
         R = self.denominator_ring
-        if isinstance(R, PolynomialRing_general) or isinstance(R, MPolynomialRing_base):
+        if isinstance(R, (PolynomialRing_general, MPolynomialRing_base)):
             return R.ngens()
         raise NotImplementedError('only polynomial rings are supported as base')
 
@@ -3167,7 +3167,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
 
             from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
             from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-            if isinstance(R, PolynomialRing_general) or isinstance(R, MPolynomialRing_base):
+            if isinstance(R, (PolynomialRing_general, MPolynomialRing_base)):
                 if not R(q).is_unit():
                     # Factor denominator
                     try:
@@ -3235,7 +3235,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
             B = P.base()
             from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
             from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-            if isinstance(B, PolynomialRing_general) or isinstance(B, MPolynomialRing_base):
+            if isinstance(B, (PolynomialRing_general, MPolynomialRing_base)):
                 if self.base().has_coerce_map_from(B):
                     return True
 
@@ -4032,7 +4032,7 @@ def diff_op_simple(A, B, AB_derivs, x, v, a, N):
     various natural numbers `e, k, l` that depend on `v` and `N`.
 
     Here `DD` is a specific linear differential operator that depends
-    on `a` and `v` , `A` and `B` are symbolic functions, and `AB_derivs`
+    on `a` and `v` , `A` and `B` are symbolic functions, and ``AB_derivs``
     contains all the derivatives of `A` and `B` evaluated at `p` that are
     necessary for the computation.
 
