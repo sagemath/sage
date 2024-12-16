@@ -71,6 +71,8 @@ Named associative algebras
    sage/algebras/steenrod/steenrod_algebra_mult
    sage/algebras/weyl_algebra
    sage/algebras/yangian
+   sage/algebras/flag_algebras
+   sage/algebras/flag
 
 Hecke algebras
 --------------
