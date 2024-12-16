@@ -1,4 +1,3 @@
-# coding: utf-8
 r"""
 Solution of polynomial systems using msolve
 
@@ -8,7 +7,7 @@ based on Gröbner bases.
 This module provide implementations of some operations on polynomial ideals
 based on msolve.
 
-Note that the `optional package msolve <../../../../spkg/msolve.html>`_ must be installed.
+Note that the :ref:`optional package msolve <spkg_msolve>` must be installed.
 
 .. SEEALSO::
 
@@ -33,6 +32,7 @@ from sage.rings.real_double import RealDoubleField_class
 from sage.rings.real_mpfr import RealField_class
 from sage.rings.real_mpfi import RealIntervalField_class, RealIntervalField
 from sage.structure.sequence import Sequence
+
 
 def _run_msolve(ideal, options):
     r"""
@@ -63,6 +63,7 @@ def _run_msolve(ideal, options):
     msolve_out.check_returncode()
 
     return msolve_out.stdout
+
 
 def groebner_basis_degrevlex(ideal, proof=True):
     r"""
@@ -112,6 +113,7 @@ def groebner_basis_degrevlex(ideal, proof=True):
     gbasis = sage_eval(msolve_out[:-2], locals=drlpolring.gens_dict())
     return Sequence(gbasis)
 
+
 def variety(ideal, ring, *, proof=True):
     r"""
     Compute the variety of a zero-dimensional ideal using msolve.
@@ -137,18 +139,18 @@ def variety(ideal, ring, *, proof=True):
         sage: R.<x, y> = PolynomialRing(GF(p), 2, order='lex')
         sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])
 
-        sage: sorted(I.variety(algorithm="msolve", proof=False), key=str) # optional - msolve
+        sage: sorted(I.variety(algorithm='msolve', proof=False), key=str) # optional - msolve
         [{x: 1, y: 1}, {x: 267525699, y: 473946006}]
 
         sage: K.<a> = GF(p^2)
-        sage: sorted(I.variety(K, algorithm="msolve", proof=False), key=str) # optional - msolve
+        sage: sorted(I.variety(K, algorithm='msolve', proof=False), key=str) # optional - msolve
         [{x: 1, y: 1},
          {x: 118750849*a + 194048031, y: 510295713*a + 18174854},
          {x: 267525699, y: 473946006},
          {x: 418120060*a + 75297182, y: 26575196*a + 44750050}]
 
         sage: R.<x, y> = PolynomialRing(GF(2147483659), 2, order='lex')
-        sage: ideal([x, y]).variety(algorithm="msolve", proof=False)
+        sage: ideal([x, y]).variety(algorithm='msolve', proof=False)
         Traceback (most recent call last):
         ...
         NotImplementedError: unsupported base field: Finite Field of size 2147483659

@@ -1,0 +1,48 @@
+commit 621a3b0825d7f7ad463e8ae175db51b0ec15bcd5 (HEAD -> master)
+Author: Volker Braun <vbraun.name@gmail.com>
+Date:   Sun Jun 2 14:42:31 2024 +0200
+
+    Disable sse41, sse42, avx, avx2 on 32-bit
+    
+    This can potentially be provided by the CPU, but will not compile
+    since simd128_int64.inl is 64-bit only. Probably also makes not much
+    sense to try to hardware-accelerate 64-bit on 32-bit OS.
+
+diff --git a/fflas-ffpack/fflas-ffpack-config.h b/fflas-ffpack/fflas-ffpack-config.h
+index a8e6cb0d..ff538bc6 100644
+--- a/fflas-ffpack/fflas-ffpack-config.h
++++ b/fflas-ffpack/fflas-ffpack-config.h
+@@ -121,13 +121,16 @@ namespace std _GLIBCXX_VISIBILITY(default)
+ #define __FFLASFFPACK_HAVE_SSE3_INSTRUCTIONS  1
+ #endif
+ 
+-/* Define if sse4.1 instructions are supported */
+-#ifdef __SSE4_1__
++/* Define if sse4.1 instructions are supported
++ * Technically, sse4.1 could be supported on 32-bit but if you want to
++ * accelerate 64-bit simd you should start by installing a 64-bit OS
++ */
++#if defined(__SSE4_1__) && defined(__x86_64__)
+ #define __FFLASFFPACK_HAVE_SSE4_1_INSTRUCTIONS  1
+ #endif
+ 
+ /* Define if sse4.2 instructions are supported */
+-#ifdef __SSE4_2__
++#if defined(__SSE4_2__) && defined(__x86_64__)
+ #define __FFLASFFPACK_HAVE_SSE4_2_INSTRUCTIONS  1
+ #endif
+ 
+@@ -137,12 +140,12 @@ namespace std _GLIBCXX_VISIBILITY(default)
+ #if not defined(__CYGWIN__) or not defined(__GNUC__)
+ 
+ /* Define if avx instructions are supported */
+-#ifdef __AVX__
++#if defined(__AVX__) && defined(__x86_64__)
+ #define __FFLASFFPACK_HAVE_AVX_INSTRUCTIONS  1
+ #endif
+ 
+ /* Define if avx2 instructions are supported */
+-#ifdef __AVX2__
++#if defined(__AVX2__) && defined(__x86_64__)
+ #define __FFLASFFPACK_HAVE_AVX2_INSTRUCTIONS  1
+ #endif

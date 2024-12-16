@@ -17,7 +17,6 @@ AUTHORS:
 
 - Julian Rueth (2013-04-09) - Collected common code in
   :class:`Set_object_binary`, fixed ``__hash__``.
-
 """
 
 # ****************************************************************************
@@ -184,7 +183,7 @@ def Set(X=None, category=None):
         sage: S = Set([])
         sage: TestSuite(S).run()
 
-    Check that :trac:`16090` is fixed::
+    Check that :issue:`16090` is fixed::
 
         sage: Set()
         {}
@@ -210,7 +209,7 @@ def Set(X=None, category=None):
         return Set_object_enumerated(X, category=category)
 
 
-class Set_base():
+class Set_base:
     r"""
     Abstract base class for sets, not necessarily parents.
     """
@@ -304,7 +303,7 @@ class Set_base():
 
     def symmetric_difference(self, X):
         r"""
-        Returns the symmetric difference of ``self`` and ``X``.
+        Return the symmetric difference of ``self`` and ``X``.
 
         EXAMPLES::
 
@@ -343,7 +342,7 @@ class Set_base():
         if set_self is not self:
             from sage.misc.sage_unittest import TestSuite
             tester.info("\n  Running the test suite of Set(self)")
-            TestSuite(set_self).run(skip="_test_pickling",  # see Issue #32025
+            TestSuite(set_self).run(skip='_test_pickling',  # see Issue #32025
                                     verbose=tester._verbose,
                                     prefix=tester._prefix + "  ")
             tester.info(tester._prefix + " ", newline=False)
@@ -372,7 +371,7 @@ class Set_boolean_operators:
 
     def __and__(self, X):
         """
-        Returns the intersection of ``self`` and ``X``.
+        Return the intersection of ``self`` and ``X``.
 
         EXAMPLES::
 
@@ -385,7 +384,7 @@ class Set_boolean_operators:
 
     def __xor__(self, X):
         """
-        Returns the symmetric difference of ``self`` and ``X``.
+        Return the symmetric difference of ``self`` and ``X``.
 
         EXAMPLES::
 
@@ -461,7 +460,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
     TESTS:
 
-    See :trac:`14486`::
+    See :issue:`14486`::
 
         sage: 0 == Set([1]), Set([1]) == 0
         (False, False)
@@ -471,7 +470,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
     def __init__(self, X, category=None):
         """
-        Create a Set_object
+        Create a Set_object.
 
         This function is called by the Set function; users
         shouldn't call this directly.
@@ -492,8 +491,8 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             '<class 'sage.sets.set.Set_object_enumerated_with_category'>'
             and 'Integer Ring'
         """
-        from sage.rings.integer import is_Integer
-        if isinstance(X, int) or is_Integer(X):
+        from sage.rings.integer import Integer
+        if isinstance(X, (int, Integer)):
             # The coercion model will try to call Set_object(0)
             raise ValueError('underlying object cannot be an integer')
 
@@ -705,9 +704,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         """
         Return boolean representing emptiness of the set.
 
-        OUTPUT:
-
-        True if the set is empty, False if otherwise.
+        OUTPUT: ``True`` if the set is empty, ``False`` otherwise
 
         EXAMPLES::
 
@@ -807,7 +804,6 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
             sage: Y = Set()
             sage: Y.subsets_lattice()                                                   # needs sage.graphs
             Finite lattice containing 1 elements
-
         """
         if not self.is_finite():
             raise NotImplementedError(
@@ -1095,7 +1091,7 @@ class Set_object_enumerated(Set_object):
 
         INPUT:
 
-         - ``other`` -- a finite Set
+        - ``other`` -- a finite Set
 
         EXAMPLES::
 
@@ -1123,7 +1119,7 @@ class Set_object_enumerated(Set_object):
 
         INPUT:
 
-         - ``other`` -- a finite Set
+        - ``other`` -- a finite Set
 
         EXAMPLES::
 
@@ -1268,9 +1264,9 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
 
     - ``X``, ``Y`` -- sets, the operands to ``op``
 
-    - ``op`` -- a string describing the binary operation
+    - ``op`` -- string describing the binary operation
 
-    - ``latex_op`` -- a string used for rendering this object in LaTeX
+    - ``latex_op`` -- string used for rendering this object in LaTeX
 
     EXAMPLES::
 
@@ -1361,7 +1357,7 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
 
         TESTS:
 
-        Test that :trac:`14432` has been resolved::
+        Test that :issue:`14432` has been resolved::
 
             sage: S = Set(ZZ).union(Set([infinity]))
             sage: T = Set(ZZ).union(Set([infinity]))
@@ -1645,7 +1641,7 @@ class Set_object_intersection(Set_object_binary):
             2
 
         Check that known finite intersections have finite iterators (see
-        :trac:`18159`)::
+        :issue:`18159`)::
 
             sage: P = Set(ZZ).intersection(Set(range(10,20)))
             sage: list(P)
@@ -1720,7 +1716,9 @@ class Set_object_difference(Set_object_binary):
             sage: S = Set(QQ)
             sage: T = Set(ZZ)
             sage: X = S.difference(T); X
-            Set-theoretic difference of Set of elements of Rational Field and Set of elements of Integer Ring
+            Set-theoretic difference of
+             Set of elements of Rational Field and
+             Set of elements of Integer Ring
             sage: X.category()
             Category of sets
             sage: latex(X)
@@ -1960,7 +1958,6 @@ class Set_object_symmetric_difference(Set_object_binary):
             True
             sage: Y == X
             True
-
         """
         if not isinstance(right, Set_generic):
             return rich_to_bool(op, -1)

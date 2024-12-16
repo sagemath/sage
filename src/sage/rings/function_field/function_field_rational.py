@@ -102,7 +102,7 @@ class RationalFunctionField(FunctionField):
         sage: R.<x> = FunctionField(QQ)
         sage: L.<y> = R[]
         sage: F.<y> = R.extension(y^2 - (x^2+1))                                        # needs sage.rings.function_field
-        sage: (y/x).divisor()                                                           # needs sage.modules sage.rings.function_field
+        sage: (y/x).divisor()                                                           # needs sage.rings.function_field
         - Place (x, y - 1)
          - Place (x, y + 1)
          + Place (x^2 + 1, y)
@@ -112,20 +112,17 @@ class RationalFunctionField(FunctionField):
         sage: NF.<i> = NumberField(z^2 + 1)
         sage: R.<x> = FunctionField(NF)
         sage: L.<y> = R[]
-        sage: F.<y> = R.extension(y^2 - (x^2+1))                                        # needs sage.modules sage.rings.function_field
-
-        sage: (x/y*x.differential()).divisor()                                          # needs sage.modules sage.rings.function_field sage.rings.number_field
+        sage: F.<y> = R.extension(y^2 - (x^2+1))                                        # needs sage.rings.function_field
+        sage: (x/y*x.differential()).divisor()                                          # needs sage.rings.function_field
         -2*Place (1/x, 1/x*y - 1)
          - 2*Place (1/x, 1/x*y + 1)
          + Place (x, y - 1)
          + Place (x, y + 1)
-
-        sage: (x/y).divisor()                                                           # needs sage.modules sage.rings.function_field sage.rings.number_field
+        sage: (x/y).divisor()                                                           # needs sage.rings.function_field
         - Place (x - i, y)
          + Place (x, y - 1)
          + Place (x, y + 1)
          - Place (x + i, y)
-
     """
     Element = FunctionFieldElement_rational
 
@@ -134,7 +131,6 @@ class RationalFunctionField(FunctionField):
         Initialize.
 
         EXAMPLES::
-
 
             sage: K.<t> = FunctionField(CC); K                                          # needs sage.rings.real_mpfr
             Rational function field in t over Complex Field with 53 bits of precision
@@ -207,7 +203,6 @@ class RationalFunctionField(FunctionField):
             sage: K.<t> = FunctionField(QQ)
             sage: hash(K) == hash((K.constant_base_field(), K.variable_names()))
             True
-
         """
         return self._hash
 
@@ -256,7 +251,6 @@ class RationalFunctionField(FunctionField):
             sage: I = S * [x^2 - y^2, y - t]
             sage: I.groebner_basis()                                                    # needs sage.rings.function_field
             [x^2 - t^2, y - t]
-
         """
         if isinstance(x, FunctionFieldElement):
             return self.element_class(self, self._field(x._x))
@@ -278,7 +272,7 @@ class RationalFunctionField(FunctionField):
         INPUT:
 
         - ``f`` -- element of the rational function field which is a
-          constant of the underlying rational function field.
+          constant of the underlying rational function field
 
         EXAMPLES::
 
@@ -292,13 +286,12 @@ class RationalFunctionField(FunctionField):
 
         TESTS:
 
-        Verify that :trac:`21872` has been resolved::
+        Verify that :issue:`21872` has been resolved::
 
             sage: K(1) in QQ
             True
             sage: x in QQ
             False
-
         """
         K = self.constant_base_field()
         if f.denominator() in K and f.numerator() in K:
@@ -313,7 +306,8 @@ class RationalFunctionField(FunctionField):
 
         INPUT:
 
-        - ``f`` -- an element of this rational function field whose denominator is a constant.
+        - ``f`` -- an element of this rational function field whose denominator
+          is a constant
 
         EXAMPLES::
 
@@ -323,7 +317,7 @@ class RationalFunctionField(FunctionField):
         """
         K = f.parent().constant_base_field()
         if f.denominator() in K:
-            return f.numerator()/K(f.denominator())
+            return f.numerator() / K(f.denominator())
         raise ValueError("only polynomials can be converted to the underlying polynomial ring")
 
     def _to_bivariate_polynomial(self, f):
@@ -335,9 +329,7 @@ class RationalFunctionField(FunctionField):
 
         - ``f`` -- univariate polynomial over the function field
 
-        OUTPUT:
-
-        - bivariate polynomial, denominator
+        OUTPUT: bivariate polynomial, denominator
 
         EXAMPLES::
 
@@ -350,7 +342,8 @@ class RationalFunctionField(FunctionField):
         v = f.list()
         denom = lcm([a.denominator() for a in v])
         S = denom.parent()
-        x,t = S.base_ring()['%s,%s' % (f.parent().variable_name(),self.variable_name())].gens()
+        x, t = S.base_ring()['%s,%s' % (f.parent().variable_name(),
+                                        self.variable_name())].gens()
         phi = S.hom([t])
         return sum([phi((denom * v[i]).numerator()) * x**i for i in range(len(v))]), denom
 
@@ -407,7 +400,6 @@ class RationalFunctionField(FunctionField):
             sage: F = t*x
             sage: F.factor(proof=False)
             (x) * t
-
         """
         old_variable_name = f.variable_name()
         # the variables of the bivariate polynomial must be distinct
@@ -420,12 +412,12 @@ class RationalFunctionField(FunctionField):
         x = f.parent().gen()
         t = f.parent().base_ring().gen()
         phi = F.parent().hom([x, t])
-        v = [(phi(P),e) for P, e in fac]
-        unit = phi(fac.unit())/d
+        v = [(phi(P), e) for P, e in fac]
+        unit = phi(fac.unit()) / d
         w = []
         for a, e in v:
             c = a.leading_coefficient()
-            a = a/c
+            a = a / c
             # undo any variable substitution that we introduced for the bivariate polynomial
             if old_variable_name != a.variable_name():
                 a = a.change_variable_name(old_variable_name)
@@ -433,7 +425,7 @@ class RationalFunctionField(FunctionField):
             if a.is_unit():
                 unit *= a**e
             else:
-                w.append((a,e))
+                w.append((a, e))
         from sage.structure.factorization import Factorization
         return Factorization(w, unit=unit)
 
@@ -447,9 +439,7 @@ class RationalFunctionField(FunctionField):
 
         - ``names`` -- string or length-1 tuple
 
-        OUTPUT:
-
-        - a function field
+        OUTPUT: a function field
 
         EXAMPLES::
 
@@ -508,7 +498,8 @@ class RationalFunctionField(FunctionField):
 
         - ``basis`` -- (ignored) a basis for the vector space
 
-        - ``map`` -- (default ``True``), whether to return maps to and from the vector space
+        - ``map`` -- (default: ``True``) whether to return maps to and from the
+          vector space
 
         OUTPUT:
 
@@ -540,7 +531,6 @@ class RationalFunctionField(FunctionField):
              Isomorphism:
               From: Rational function field in x over Rational Field
               To:   Vector space of dimension 1 over Rational function field in x over Rational Field)
-
         """
         if basis is not None:
             raise NotImplementedError
@@ -553,7 +543,7 @@ class RationalFunctionField(FunctionField):
         if not map:
             return V
         from_V = MapVectorSpaceToFunctionField(V, self)
-        to_V   = MapFunctionFieldToVectorSpace(self, V)
+        to_V = MapFunctionFieldToVectorSpace(self, V)
         return (V, from_V, to_V)
 
     def random_element(self, *args, **kwds):
@@ -650,11 +640,9 @@ class RationalFunctionField(FunctionField):
           ``base_morphism``; this is not checked.
 
         - ``base_morphism`` -- a homomorphism from the base field into the
-          other ring.  If ``None``, try to use a coercion map.
+          other ring; if ``None``, try to use a coercion map
 
-        OUTPUT:
-
-        - a map between function fields
+        OUTPUT: a map between function fields
 
         EXAMPLES:
 
@@ -683,7 +671,7 @@ class RationalFunctionField(FunctionField):
         """
         if isinstance(im_gens, CategoryObject):
             return self.Hom(im_gens).natural_map()
-        if not isinstance(im_gens, (list,tuple)):
+        if not isinstance(im_gens, (list, tuple)):
             im_gens = [im_gens]
         if len(im_gens) != 1:
             raise ValueError("there must be exactly one generator")
@@ -708,7 +696,6 @@ class RationalFunctionField(FunctionField):
         .. SEEALSO::
 
             :meth:`sage.rings.fraction_field.FractionField_1poly_field.function_field`
-
         """
         return self._field
 
@@ -802,7 +789,7 @@ class RationalFunctionField(FunctionField):
 
         INPUT:
 
-        - ``name`` -- a string or a tuple consisting of a single string, the
+        - ``name`` -- string or tuple consisting of a single string; the
           name of the new variable
 
         OUTPUT:
@@ -827,15 +814,14 @@ class RationalFunctionField(FunctionField):
               Defn: x |--> y)
             sage: L.change_variable_name('x')[0] is K
             True
-
         """
         if isinstance(name, tuple):
             if len(name) != 1:
                 raise ValueError("names must be a tuple with a single string")
             name = name[0]
         if name == self.variable_name():
-            id = Hom(self,self).identity()
-            return self,id,id
+            id = Hom(self, self).identity()
+            return self, id, id
         else:
             from .constructor import FunctionField
             ret = FunctionField(self.constant_base_field(), name)
@@ -976,7 +962,7 @@ class RationalFunctionField_global(RationalFunctionField):
 
         INPUT:
 
-        - ``degree`` -- a positive integer
+        - ``degree`` -- positive integer
 
         EXAMPLES::
 
@@ -992,7 +978,6 @@ class RationalFunctionField_global(RationalFunctionField):
             Place (x^4 + x + 1)
             sage: K.get_place(5)                                                        # needs sage.libs.pari
             Place (x^5 + x^2 + 1)
-
         """
         for p in self._places_finite(degree):
             return p

@@ -10,7 +10,7 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
 from sage.modules.free_module import FreeModule, VectorSpace, span
@@ -38,3 +38,4 @@ lazy_import("sage.modules.filtered_vector_space", "FilteredVectorSpace")
 lazy_import("sage.modules.multi_filtered_vector_space", "MultiFilteredVectorSpace")
 lazy_import("sage.modules.free_quadratic_module_integer_symmetric", "IntegralLattice")
 lazy_import("sage.modules.torsion_quadratic_module", "TorsionQuadraticForm")
+del lazy_import

@@ -1,13 +1,17 @@
+if [ "$UNAME" = "Darwin" ]; then
+    LDFLAGS="${LDFLAGS} -Wl,-rpath,${SAGE_LOCAL}/lib"
+    export LDFLAGS
+fi
 cd src
 
-# Trac #33054: primecount needs "-std=gnu++..."
+# Issue #33054: primecount needs "-std=gnu++..."
 # so it gains access to 128-bit integers for full functionality.
 CXXFLAGS=$(echo "${CXXFLAGS}" | sed "s/-std=c++/-std=gnu++/g")
 export CXXFLAGS
 
 primc_config(){
 echo "Configuring primecount: building primesieve $1"
-# Trac #33082: WITH_POPCNT=OFF fixes the flawed logic in primecount 7.1
+# Issue #33082: WITH_POPCNT=OFF fixes the flawed logic in primecount 7.1
 # build system that appends -mpopcnt to the compiler flags whenever
 # the compiler supports it.  (Note that with gcc, WITH_POPCNT=OFF
 # does NOT actually disable use of the popcount intrinsics.)

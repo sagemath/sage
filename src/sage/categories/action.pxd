@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 from sage.structure.element cimport Element
 from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map
@@ -8,10 +9,10 @@ cdef class Action(Functor):
     cdef readonly op
     cdef readonly bint _is_left
     cdef US
-    cdef underlying_set(self) noexcept
+    cdef underlying_set(self)
 
-    cdef _act_convert(self, g, x) noexcept
-    cpdef _act_(self, g, x) noexcept
+    cdef _act_convert(self, g, x)
+    cpdef _act_(self, g, x)
 
 
 cdef class InverseAction(Action):

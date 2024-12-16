@@ -5,7 +5,6 @@ This file contains all the example code from the published book
 William Stein, Springer-Verlag, 2009.
 """
 
-
 """
 sage: prime_range(10,50)
 [11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
@@ -207,9 +206,9 @@ sage: def rsa(bits):
 ....:         if gcd(e,phi_n) == 1: break
 ....:     d = lift(Mod(e,phi_n)^(-1))
 ....:     return e, d, n
-sage: def encrypt(m,e,n):
+sage: def encrypt(m, e, n):
 ....:     return lift(Mod(m,n)^e)
-sage: def decrypt(c,d,n):
+sage: def decrypt(c, d, n):
 ....:     return lift(Mod(c,n)^d)
 sage: e,d,n = rsa(20)
 sage: c = encrypt(123, e, n)
@@ -283,7 +282,7 @@ sage: factor(n)
 sage: e = 22601762315966221465875845336488389513
 sage: d = 31940292321834506197902778067109010093
 sage: n = 268494924039590992469444675130990465673
-sage: p = crack_given_decrypt(n, e*d - 1)  # not tested, known bug (see :trac:`32097`)
+sage: p = crack_given_decrypt(n, e*d - 1)  # not tested, known bug (see :issue:`32097`)
 sage: p   # random output (could be other prime divisor)  # not tested
 13432418150982799907
 sage: n % p  # not tested
@@ -349,7 +348,7 @@ sage: zeta^5
 1
 sage: 1/zeta
 -zeta^3 - zeta^2 - zeta - 1
-sage: def gauss_sum(a,p):
+sage: def gauss_sum(a, p):
 ....:     K.<zeta> = CyclotomicField(p)
 ....:     return sum(legendre_symbol(n,p) * zeta^(a*n) for n in range(1,p))
 sage: g2 = gauss_sum(2,5); g2
@@ -528,7 +527,7 @@ sage: rels = [y1^2 - (x1^3 + a*x1 + b),
 ....:         y3^2 - (x3^3 + a*x3 + b)]
 ...
 sage: Q = R.quotient(rels)
-sage: def op(P1,P2):
+sage: def op(P1, P2):
 ....:     x1,y1 = P1;  x2,y2 = P2
 ....:     lam = (y1 - y2)/(x1 - x2); nu  = y1 - lam*x1
 ....:     x3 = lam^2 - x1 - x2; y3 = -lam*x3 - nu

@@ -13,14 +13,14 @@ Tools for enumeration modulo the action of a permutation group
 
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 
-cpdef list all_children(ClonableIntArray v, int max_part) noexcept:
+cpdef list all_children(ClonableIntArray v, int max_part):
     r"""
-    Returns all the children of an integer vector (:class:`~sage.structure.list_clone.ClonableIntArray`)
+    Return all the children of an integer vector (:class:`~sage.structure.list_clone.ClonableIntArray`)
     ``v`` in the tree of enumeration by lexicographic order. The children of
     an integer vector ``v`` whose entries have the sum `n` are all integer
     vectors of sum `n+1` which follow ``v`` in the lexicographic order.
 
-    That means this function adds `1` on the last non zero entries and the
+    That means this function adds `1` on the last nonzero entries and the
     following ones. For an integer vector `v` such that
 
     .. MATH::
@@ -92,7 +92,8 @@ cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2) noexcept:
 
     INPUT:
 
-    Two instances `v_1, v_2` of :class:`~sage.structure.list_clone.ClonableIntArray`
+    - ``v1``, ``v2`` -- two instances of
+      :class:`~sage.structure.list_clone.ClonableIntArray`
 
     OUTPUT:
 
@@ -118,10 +119,9 @@ cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2) noexcept:
         -1
         sage: lex_cmp(v3, v1)
         1
-
     """
     cdef int i
-    cdef int step = min(v1._len,v2._len)
+    cdef int step = min(v1._len, v2._len)
     for i in range(step):
         if v1._list[i] != v2._list[i]:
             break
@@ -139,7 +139,7 @@ cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2) noexcept:
 
 cpdef bint is_canonical(list sgs, ClonableIntArray v) except -1:
     r"""
-    Returns ``True`` if the integer vector `v` is maximal with respect to
+    Return ``True`` if the integer vector `v` is maximal with respect to
     the lexicographic order in its orbit under the action of the
     permutation group whose strong generating system is ``sgs``. Such
     vectors are said to be canonical.
@@ -184,9 +184,9 @@ cpdef bint is_canonical(list sgs, ClonableIntArray v) except -1:
     return True
 
 
-cpdef ClonableIntArray canonical_representative_of_orbit_of(list sgs, ClonableIntArray v) noexcept:
+cpdef ClonableIntArray canonical_representative_of_orbit_of(list sgs, ClonableIntArray v):
     r"""
-    Returns the maximal vector for the lexicographic order living in
+    Return the maximal vector for the lexicographic order living in
     the orbit of `v` under the action of the permutation group whose
     strong generating system is ``sgs``. The maximal vector is also
     called "canonical". Hence, this method returns the canonical
@@ -230,9 +230,9 @@ cpdef ClonableIntArray canonical_representative_of_orbit_of(list sgs, ClonableIn
         representative = max(to_analyse)
     return representative
 
-cpdef list canonical_children(list sgs, ClonableIntArray v, int max_part) noexcept:
+cpdef list canonical_children(list sgs, ClonableIntArray v, int max_part):
     r"""
-    Returns the canonical children of the integer vector ``v``. This
+    Return the canonical children of the integer vector ``v``. This
     function computes all children of the integer vector ``v`` via the
     function :func:`all_children` and returns from this list only
     these which are canonicals identified via the function
@@ -251,9 +251,9 @@ cpdef list canonical_children(list sgs, ClonableIntArray v, int max_part) noexce
     cdef ClonableIntArray child
     return [child for child in all_children(v, max_part) if is_canonical(sgs, child)]
 
-cpdef set orbit(list sgs, ClonableIntArray v) noexcept:
+cpdef set orbit(list sgs, ClonableIntArray v):
     r"""
-    Returns the orbit of the integer vector ``v`` under the action of the
+    Return the orbit of the integer vector ``v`` under the action of the
     permutation group whose strong generating system is ``sgs``.
 
     NOTE:

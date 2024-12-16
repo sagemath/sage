@@ -3,16 +3,7 @@ cd src
 export PIP_NO_INDEX=true
 export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
 
-if [ "$SAGE_EDITABLE" = yes ]; then
-    # SAGE_ROOT/src/setup.py installs everything, nothing to do...
-    if [ "$SAGE_WHEELS" = yes ]; then
-        # ... except we build the wheel if requested
-        sdh_setup_bdist_wheel && sdh_store_wheel .
-    fi
-else
-    if [ "$SAGE_WHEELS" = yes ]; then
-        # Modularized install via wheels
-        sdh_pip_install .
-    # else nothing to do in legacy direct installation.
-    fi
-fi
+# Modularized install via wheels
+# --no-build-isolation so that declared build dependencies,
+# in particular sagemath-environment do not have to be present as wheels.
+sdh_pip_install --no-build-isolation .

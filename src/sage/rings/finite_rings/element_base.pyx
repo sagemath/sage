@@ -5,7 +5,7 @@ Base class for finite field elements
 AUTHORS:
 
 - David Roe (2010-01-14): factored out of sage.structure.element
-- Sebastian Oehms (2018-07-19): added :meth:`conjugate` (see :trac:`26761`)
+- Sebastian Oehms (2018-07-19): added :meth:`conjugate` (see :issue:`26761`)
 """
 
 # ****************************************************************************
@@ -22,7 +22,7 @@ from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-from sage.misc.superseded import deprecated_function_alias
+
 
 def is_FiniteFieldElement(x):
     """
@@ -53,8 +53,8 @@ cdef class FiniteRingElement(CommutativeRingElement):
     def _nth_root_common(self, n, all, algorithm, cunningham):
         """
         This function exists to reduce code duplication between finite field
-        nth roots and integer_mod nth roots. It assumes that `self` is a field
-        element.
+        `n`-th roots and ``integer_mod`` `n`-th roots. It assumes that ``self``
+        is a field element.
 
         The inputs are described there.
 
@@ -142,6 +142,29 @@ cdef class FiniteRingElement(CommutativeRingElement):
         else:
             raise ValueError("unknown algorithm")
 
+    def to_bytes(self, byteorder='big'):
+        r"""
+        Return an array of bytes representing an integer.
+
+        Internally relies on the python ``int.to_bytes()`` method.
+        Length of byte array is determined from the field's order.
+
+        INPUT:
+
+        - ``byteorder`` -- string (default: ``'big'``); determines the byte order of
+          ``input_bytes``; can only be ``'big'`` or ``'little'``
+
+        EXAMPLES::
+
+            sage: F = GF(65537)
+            sage: a = F(8726)
+            sage: a.to_bytes()
+            b'\x00"\x16'
+            sage: a.to_bytes(byteorder='little')
+            b'\x16"\x00'
+        """
+        length = (self.parent().order().nbits() + 7) // 8
+        return int(self).to_bytes(length=length, byteorder=byteorder)
 
 cdef class FinitePolyExtElement(FiniteRingElement):
     """
@@ -178,20 +201,20 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             f = Cx([base_map(c) for c in f])
         return codomain(f(im_gens[0]))
 
-    def minpoly(self,var='x',algorithm='pari'):
+    def minpoly(self, var='x', algorithm='pari'):
         """
-        Returns the minimal polynomial of this element
+        Return the minimal polynomial of this element
         (over the corresponding prime subfield).
 
         INPUT:
 
-        - ``var`` - string (default: 'x')
+        - ``var`` -- string (default: ``'x'``)
 
-        - ``algorithm`` - string (default: 'pari')
+        - ``algorithm`` -- string (default: ``'pari'``):
 
-          - 'pari' -- use pari's minpoly
+          - ``'pari'`` -- use pari's minpoly
 
-          - 'matrix' -- return the minpoly computed from the matrix of
+          - ``'matrix'`` -- return the minpoly computed from the matrix of
             left multiplication by self
 
         EXAMPLES::
@@ -201,8 +224,8 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: parent(a)
             Finite Field in a of size 19^2
             sage: b=a**20
-            sage: p=FinitePolyExtElement.minpoly(b,"x", algorithm="pari")
-            sage: q=FinitePolyExtElement.minpoly(b,"x", algorithm="matrix")
+            sage: p=FinitePolyExtElement.minpoly(b,"x", algorithm='pari')
+            sage: q=FinitePolyExtElement.minpoly(b,"x", algorithm='matrix')
             sage: q == p
             True
             sage: p
@@ -226,7 +249,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
     # for compatibility with sage.matrix
     def minimal_polynomial(self, var='x'):
         """
-        Returns the minimal polynomial of this element
+        Return the minimal polynomial of this element
         (over the corresponding prime subfield).
 
         EXAMPLES::
@@ -245,7 +268,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
     def __getitem__(self, n):
         r"""
-        Return the `n`\th coefficient of this finite field element when
+        Return the `n`-th coefficient of this finite field element when
         written as a polynomial in the generator.
 
         EXAMPLES::
@@ -385,7 +408,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         INPUT:
 
         - ``reverse`` -- reverse the order of the bits
-          from little endian to big endian.
+          from little endian to big endian
 
         EXAMPLES::
 
@@ -432,7 +455,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         INPUT:
 
-        - ``reverse`` -- if True, act on vectors in reversed order
+        - ``reverse`` -- if ``True``, act on vectors in reversed order
 
         EXAMPLES::
 
@@ -465,8 +488,8 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
     def _latex_(self):
         r"""
-        Return the latex representation of self, which is just the
-        latex representation of the polynomial representation of self.
+        Return the latex representation of ``self``, which is just the
+        latex representation of the polynomial representation of ``self``.
 
         EXAMPLES::
 
@@ -522,7 +545,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         INPUT:
 
-        - ``var`` -- default: ``None`` - a string for a new variable name to use.
+        - ``var`` -- (default: ``None``) a string for a new variable name to use
 
         EXAMPLES::
 
@@ -535,7 +558,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS:
 
-        The following tests against a bug fixed in :trac:`11530`::
+        The following tests against a bug fixed in :issue:`11530`::
 
             sage: F.<d> = GF(3^4)
             sage: F.modulus()
@@ -567,9 +590,9 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         INPUT:
 
-        - ``var`` -- string (default: 'x')
+        - ``var`` -- string (default: ``'x'``)
 
-        - ``algorithm`` -- string (default: ``'pari'``)
+        - ``algorithm`` -- string (default: ``'pari'``):
 
           - ``'pari'`` -- use pari's charpoly
 
@@ -585,8 +608,8 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: parent(a)
             Finite Field in a of size 19^2
             sage: b = a**20
-            sage: p = FinitePolyExtElement.charpoly(b, "x", algorithm="pari")
-            sage: q = FinitePolyExtElement.charpoly(b, "x", algorithm="matrix")         # needs sage.modules
+            sage: p = FinitePolyExtElement.charpoly(b, "x", algorithm='pari')
+            sage: q = FinitePolyExtElement.charpoly(b, "x", algorithm='matrix')         # needs sage.modules
             sage: q == p                                                                # needs sage.modules
             True
             sage: p
@@ -607,9 +630,9 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
     def norm(self):
         """
-        Return the norm of self down to the prime subfield.
+        Return the norm of ``self`` down to the prime subfield.
 
-        This is the product of the Galois conjugates of self.
+        This is the product of the Galois conjugates of ``self``.
 
         EXAMPLES::
 
@@ -713,7 +736,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
     def is_square(self):
         """
-        Returns ``True`` if and only if this element is a perfect square.
+        Return ``True`` if and only if this element is a perfect square.
 
         EXAMPLES::
 
@@ -749,17 +772,16 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         INPUT:
 
-
-        -  ``extend`` -- bool (default: ``True``); if ``True``, return a
-           square root in an extension ring, if necessary. Otherwise, raise a
-           ValueError if the root is not in the base ring.
+        - ``extend`` -- boolean (default: ``True``); if ``True``, return a
+          square root in an extension ring, if necessary. Otherwise, raise a
+          :exc:`ValueError` if the root is not in the base ring.
 
            .. WARNING::
 
                This option is not implemented!
 
-        -  ``all`` -- bool (default: ``False``); if ``True``, return all
-           square roots of ``self``, instead of just one.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return all
+          square roots of ``self``, instead of just one
 
         .. WARNING::
 
@@ -799,33 +821,33 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         return self.square_root(extend=extend, all=all)
 
-    def nth_root(self, n, extend = False, all = False, algorithm=None, cunningham=False):
+    def nth_root(self, n, extend=False, all=False, algorithm=None, cunningham=False):
         r"""
-        Returns an `n`\th root of ``self``.
+        Return an `n`-th root of ``self``.
 
         INPUT:
 
         - ``n`` -- integer `\geq 1`
 
-        - ``extend`` -- bool (default: ``False``); if ``True``, return an `n`\th
-          root in an extension ring, if necessary. Otherwise, raise a
-          ValueError if the root is not in the base ring.  Warning:
+        - ``extend`` -- boolean (default: ``False``); if ``True``, return an
+          `n`-th root in an extension ring, if necessary. Otherwise, raise a
+          :exc:`ValueError` if the root is not in the base ring.  Warning:
           this option is not implemented!
 
-        - ``all`` -- bool (default: ``False``); if ``True``, return all `n`\th
-          roots of ``self``, instead of just one.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return all `n`-th
+          roots of ``self``, instead of just one
 
-        - ``algorithm`` -- string (default: ``None``); 'Johnston' is the only
-          currently supported option.  For IntegerMod elements, the problem
+        - ``algorithm`` -- string (default: ``None``); ``'Johnston'`` is the
+          only currently supported option.  For IntegerMod elements, the problem
           is reduced to the prime modulus case using CRT and `p`-adic logs,
           and then this algorithm used.
 
         OUTPUT:
 
-        If self has an `n`\th root, returns one (if ``all`` is ``False``) or a
+        If ``self`` has an `n`-th root, returns one (if ``all`` is ``False``) or a
         list of all of them (if ``all`` is ``True``).
-        Otherwise, raises a ``ValueError`` (if ``extend`` is ``False``)
-        or a ``NotImplementedError`` (if ``extend`` is ``True``).
+        Otherwise, raises a :exc:`ValueError` (if ``extend`` is ``False``)
+        or a :exc:`NotImplementedError` (if ``extend`` is ``True``).
 
         .. warning::
 
@@ -918,9 +940,9 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         n = Integer(n)
         return self._nth_root_common(n, all, algorithm, cunningham)
 
-    def pth_power(self, int k = 1):
+    def pth_power(self, int k=1):
         """
-        Return the `(p^k)^{th}` power of self, where `p` is the
+        Return the `(p^k)`-th power of self, where `p` is the
         characteristic of the field.
 
         INPUT:
@@ -952,9 +974,9 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
     frobenius = pth_power
 
-    def pth_root(self, int k = 1):
+    def pth_root(self, int k=1):
         """
-        Return the `(p^k)^{th}` root of self, where `p` is the characteristic
+        Return the `(p^k)`-th root of self, where `p` is the characteristic
         of the field.
 
         INPUT:
@@ -1002,7 +1024,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS:
 
-        Check that :trac:`26761` is fixed::
+        Check that :issue:`26761` is fixed::
 
             sage: # needs sage.libs.gap
             sage: G32 = GU(3,2)
@@ -1081,10 +1103,37 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             f = f.reverse(self.parent().degree() - 1)
         return f(p)
 
-    integer_representation = deprecated_function_alias(33941, to_integer)
+    def to_bytes(self, byteorder='big'):
+        r"""
+        Return an array of bytes representing an integer.
+
+        Internally relies on the python ``int.to_bytes()`` method.
+        Length of byte array is determined from the field's order.
+
+        INPUT:
+
+        - ``byteorder`` -- string (default: ``'big'``); determines the byte order of
+          the output; can only be ``'big'`` or ``'little'``
+
+        EXAMPLES::
+
+            sage: F.<z5> = GF(3^5)
+            sage: a = z5^4 + 2*z5^3 + 1
+            sage: a.to_bytes()
+            b'\x88'
+
+        ::
+
+            sage: F.<z3> = GF(163^3)
+            sage: a = 136*z3^2 + 10*z3 + 125
+            sage: a.to_bytes()
+            b'7)\xa3'
+        """
+        length = (self.parent().order().nbits() + 7) // 8
+        return self.to_integer().to_bytes(length=length, byteorder=byteorder)
 
 cdef class Cache_base(SageObject):
-    cpdef FinitePolyExtElement fetch_int(self, number) noexcept:
+    cpdef FinitePolyExtElement fetch_int(self, number):
         r"""
         Given an integer less than `p^n` with base `2`
         representation `a_0 + a_1 \cdot 2 + \cdots + a_k 2^k`, this returns

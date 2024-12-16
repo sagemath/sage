@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Examples of Sandpile
 
@@ -25,7 +24,8 @@ See the documentation for each particular type of example for full details.
 from sage.sandpiles.sandpile import Sandpile
 from sage.graphs.graph_generators import graphs
 
-class SandpileExamples():
+
+class SandpileExamples:
     """
     Some examples of sandpiles.
 
@@ -51,15 +51,9 @@ class SandpileExamples():
     """
     def __call__(self):
         r"""
-        If sandpiles() is executed, return a helpful message.
+        If ``sandpiles()`` is executed, return a helpful message.
 
-        INPUT:
-
-        None
-
-        OUTPUT:
-
-        None
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -78,11 +72,9 @@ class SandpileExamples():
 
         INPUT:
 
-        -  ``n`` -- positive integer
+        - ``n`` -- positive integer
 
-        OUTPUT:
-
-        - Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 
@@ -92,7 +84,7 @@ class SandpileExamples():
             sage: sandpiles.Complete(3) == sandpiles.Cycle(3)
             True
         """
-        return Sandpile(graphs.CompleteGraph(n),0)
+        return Sandpile(graphs.CompleteGraph(n), 0)
 
     def Cycle(self, n):
         """
@@ -100,11 +92,9 @@ class SandpileExamples():
 
         INPUT:
 
-        -  ``n`` -- a non-negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 
@@ -119,19 +109,13 @@ class SandpileExamples():
              (3, 0, 1),
              (3, 2, 1)]
         """
-        return Sandpile(graphs.CycleGraph(n),0)
+        return Sandpile(graphs.CycleGraph(n), 0)
 
     def Diamond(self):
         """
         Sandpile on the diamond graph.
 
-        INPUT:
-
-        None
-
-        OUTPUT:
-
-        - Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 
@@ -147,11 +131,9 @@ class SandpileExamples():
 
         INPUT:
 
-        -  ``n`` -- a non-negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 
@@ -164,18 +146,18 @@ class SandpileExamples():
         """
         f = graphs.WheelGraph(n)
         if n > 2:
-            f.delete_edge(1,n-1)
+            f.delete_edge(1, n-1)
             if deg_three_verts:
                 f.allow_multiple_edges(True)
-                f.add_edges([(0,1),(0,n-1)])
-            return Sandpile(f,0)
+                f.add_edges([(0, 1), (0, n-1)])
+            return Sandpile(f, 0)
         elif n == 1:
-            return Sandpile(f,0)
+            return Sandpile(f, 0)
         elif n == 2:
             if deg_three_verts:
-                return Sandpile({0:{1:3}, 1:{0:3}})
+                return Sandpile({0: {1: 3}, 1: {0: 3}})
             else:
-                return Sandpile(f,0)
+                return Sandpile(f, 0)
 
     def Grid(self, m, n):
         """
@@ -183,11 +165,9 @@ class SandpileExamples():
 
         INPUT:
 
-        -  ``m``, ``n`` -- negative integers
+        - ``m``, ``n`` -- negative integers
 
-        OUTPUT:
-
-        - Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 
@@ -200,23 +180,18 @@ class SandpileExamples():
             sage: s.dict()
             {(0, 0): {(1, 1): 4}, (1, 1): {(0, 0): 4}}
         """
-        G = graphs.Grid2dGraph(m+2,n+2)
+        G = graphs.Grid2dGraph(m+2, n+2)
         G.allow_multiple_edges(True)  # to ensure each vertex ends up with degree 4
-        V = [(i,j) for i in [0,m+1] for j in range(n+2)] + [(i,j) for j in [0,n+1] for i in range(m+2)]
+        V = [(i, j) for i in [0, m+1] for j in range(n+2)]
+        V += [(i, j) for j in [0, n+1] for i in range(m+2)]
         G.merge_vertices(V)
-        return Sandpile(G, (0,0))
+        return Sandpile(G, (0, 0))
 
     def House(self):
         """
         Sandpile on the House graph.
 
-        INPUT:
-
-        None
-
-        OUTPUT:
-
-        - Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 
@@ -224,7 +199,7 @@ class SandpileExamples():
             sage: s.invariant_factors()
             [1, 1, 1, 11]
         """
-        return Sandpile(graphs.HouseGraph(),0)
+        return Sandpile(graphs.HouseGraph(), 0)
 
     def Wheel(self, n):
         """
@@ -232,11 +207,9 @@ class SandpileExamples():
 
         INPUT:
 
-        -  ``n`` -- a non-negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 
@@ -244,7 +217,7 @@ class SandpileExamples():
             sage: w.invariant_factors()
             [1, 1, 1, 11, 11]
         """
-        return Sandpile(graphs.WheelGraph(n),0)
+        return Sandpile(graphs.WheelGraph(n), 0)
 
 
 sandpiles = SandpileExamples()

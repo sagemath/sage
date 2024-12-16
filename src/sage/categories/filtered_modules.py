@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Filtered Modules
 
@@ -65,6 +66,7 @@ class FilteredModulesCategory(RegressiveCovariantConstructionCategory, Category_
             Category of filtered algebras with basis over Rational Field
         """
         return "filtered {}".format(self.base_category()._repr_object_names())
+
 
 class FilteredModules(FilteredModulesCategory):
     r"""

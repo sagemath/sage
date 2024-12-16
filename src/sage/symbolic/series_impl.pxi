@@ -85,19 +85,19 @@ expanded to a series. This must be explicitly done by the user::
 
 TESTS:
 
-Check that :trac:`20088` is fixed::
+Check that :issue:`20088` is fixed::
 
     sage: ((1+x).series(x)^pi).series(x,3)
     1 + pi*x + (-1/2*pi + 1/2*pi^2)*x^2 + Order(x^3)
 
-Check that :trac:`14878` is fixed, this should take only microseconds::
+Check that :issue:`14878` is fixed, this should take only microseconds::
 
     sage: sin(x*sin(x*sin(x*sin(x)))).series(x,8)
     1*x^4 + (-1/6)*x^6 + Order(x^8)
     sage: sin(x*sin(x*sin(x*sin(x)))).series(x,12)
     1*x^4 + (-1/6)*x^6 + (-19/120)*x^8 + (-421/5040)*x^10 + Order(x^12)
 
-Check that :trac:`22959` is fixed::
+Check that :issue:`22959` is fixed::
 
     sage: (x/(1-x^2)).series(x==0, 10)
     1*x + 1*x^3 + 1*x^5 + 1*x^7 + 1*x^9 + Order(x^10)
@@ -108,7 +108,7 @@ Check that :trac:`22959` is fixed::
     sage: (x^2/(1-x^2)).series(x==0, 11)
     1*x^2 + 1*x^4 + 1*x^6 + 1*x^8 + 1*x^10 + Order(x^11)
 
-Check that :trac:`22733` is fixed::
+Check that :issue:`22733` is fixed::
 
     sage: _ = var('z')
     sage: z.series(x)
@@ -141,16 +141,14 @@ cdef class SymbolicSeries(Expression):
 
     def is_terminating_series(self):
         """
-        Return True if the series is without order term.
+        Return ``True`` if the series is without order term.
 
         A series is terminating if it can be represented exactly,
         without requiring an order term. You can explicitly
         request terminating series by setting the order to
         positive infinity.
 
-        OUTPUT:
-
-        Boolean. ``True`` if the series has no order term.
+        OUTPUT: boolean; ``True`` if the series has no order term
 
         EXAMPLES::
 
@@ -170,9 +168,7 @@ cdef class SymbolicSeries(Expression):
         Given a power series or expression, return the corresponding
         expression without the big oh.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -209,20 +205,18 @@ cdef class SymbolicSeries(Expression):
 
         INPUT:
 
-        -  ``x`` -- optional variable.
+        - ``x`` -- (optional) variable
 
-        -  ``sparse`` -- Boolean. If ``False`` return a list with as much
-            entries as the order of the series.
+        - ``sparse`` -- boolean (default: ``True``); if ``False`` return a list
+          with as much entries as the order of the series
 
-        OUTPUT:
-
-        Depending on the value of ``sparse``,
+        OUTPUT: depending on the value of ``sparse``,
 
         - A list of pairs ``(expr, n)``, where ``expr`` is a symbolic
           expression and ``n`` is a power (``sparse=True``, default)
 
         - A list of expressions where the ``n``-th element is the coefficient of
-          ``x^n`` when self is seen as polynomial in ``x`` (``sparse=False``).
+          ``x^n`` when ``self`` is seen as polynomial in ``x`` (``sparse=False``).
 
         EXAMPLES::
 

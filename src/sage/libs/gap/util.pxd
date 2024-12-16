@@ -17,10 +17,10 @@ from sage.libs.gap.gap_includes cimport Obj
 cdef class ObjWrapper():
     cdef Obj value
 
-cdef ObjWrapper wrap_obj(Obj obj) noexcept
+cdef ObjWrapper wrap_obj(Obj obj)
 
 # returns the refcount dictionary for debugging purposes
-cpdef get_owned_objects() noexcept
+cpdef get_owned_objects()
 
 # Reference count GAP objects that you want to prevent from being
 # garbage collected
@@ -35,7 +35,7 @@ cdef void gasman_callback() noexcept with gil
 ### Initialization of GAP ##################################################
 ############################################################################
 
-cdef initialize() noexcept
+cdef initialize()
 
 
 ############################################################################

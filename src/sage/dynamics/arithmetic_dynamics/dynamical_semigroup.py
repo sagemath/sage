@@ -386,9 +386,10 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         INPUT:
 
         - ``input`` -- one value that can be evaluated
-          with the generators of this dynamical semigroup.
+          with the generators of this dynamical semigroup
 
-        OUTPUT: A set of the resulting values after applying all of this dynamical semigroup's generators to ``input``.
+        OUTPUT: a set of the resulting values after applying all of this
+        dynamical semigroup's generators to ``input``
 
         EXAMPLES::
 
@@ -423,7 +424,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         The base ring of this dynamical semigroup. This is identical
         to the base ring of all of its defining dynamical system.
 
-        OUTPUT: A ring.
+        OUTPUT: a ring
 
         EXAMPLES::
 
@@ -441,7 +442,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         INPUT:
 
-        - ``new_ring`` -- a ring.
+        - ``new_ring`` -- a ring
 
         OUTPUT:
 
@@ -471,7 +472,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         r"""
         Return the domain of the generators of this dynamical semigroup.
 
-        OUTPUT: A subscheme of a projective space or affine space.
+        OUTPUT: a subscheme of a projective space or affine space
 
         EXAMPLES::
 
@@ -486,7 +487,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         r"""
         Return the codomain of the generators of this dynamical semigroup.
 
-        OUTPUT: A subscheme of a projective space or affine space.
+        OUTPUT: a subscheme of a projective space or affine space
 
         EXAMPLES::
 
@@ -501,7 +502,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         r"""
         Return the set of polynomials that define the generators of this dynamical semigroup.
 
-        OUTPUT: A set of polynomials.
+        OUTPUT: a set of polynomials
 
         EXAMPLES::
 
@@ -519,7 +520,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         r"""
         Return the generators of this dynamical semigroup.
 
-        OUTPUT: A tuple of dynamical systems.
+        OUTPUT: a tuple of dynamical systems
 
         EXAMPLES::
 
@@ -541,7 +542,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         INPUT:
 
         - ``p`` -- a value on which dynamical systems can evaluate
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         OUTPUT: a set of values
 
@@ -619,7 +620,6 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: one = QQ(1)
             sage: f.nth_iterate(2, one)
             {(3 : 1), (4 : 1)}
-
         """
         n = ZZ(n)
         if n < 0:
@@ -639,11 +639,11 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         INPUT:
 
-        - `p` -- value on which this dynamical semigroup can be evaluated
-        - `n` -- a nonnegative integer or a list or tuple of length 2 describing an
+        - ``p`` -- value on which this dynamical semigroup can be evaluated
+        - ``n`` -- nonnegative integer or a list or tuple of length 2 describing an
           interval of the number line containing entirely nonnegative integers
 
-        OUTPUT: a tuple of sets of values on the domain of this dynamical semigroup.
+        OUTPUT: a tuple of sets of values on the domain of this dynamical semigroup
 
         EXAMPLES::
 
@@ -697,7 +697,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             sage: d.orbit(2, x)
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: x is not a constant polynomial
 
         ::
 
@@ -753,13 +753,15 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
     def specialization(self, assignments):
         r"""
-        Returns the specialization of the generators of this dynamical semigroup.
+        Return the specialization of the generators of this dynamical semigroup.
 
         INPUT:
 
-        - `assignments` -- argument for specialization of the generators of this dynamical semigroup.
+        - ``assignments`` -- argument for specialization of the generators of
+          this dynamical semigroup
 
-        OUTPUT: a dynamical semigroup with the specialization of the generators of this dynamical semigroup.
+        OUTPUT: a dynamical semigroup with the specialization of the generators
+        of this dynamical semigroup
 
         EXAMPLES::
 
@@ -845,7 +847,6 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         - ``other_dynamical_semigroup`` -- a dynamical semigroup
 
         OUTPUT: :class:`DynamicalSemigroup`
-
 
         EXAMPLES::
 
@@ -986,7 +987,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         OUTPUT: :class:`DynamicalSemigroup`
 
@@ -1123,7 +1124,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
         r"""
         Return the :class:`String` representation of this dynamical semigroup.
 
-        OUTPUT: A :class:`String` displaying information about this dynamical semigroup.
+        OUTPUT: a :class:`String` displaying information about this dynamical semigroup
 
         EXAMPLES::
 
@@ -1154,7 +1155,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         OUTPUT:
 
-        A boolean that is True if and only if the generators of the two
+        A boolean that is ``True`` if and only if the generators of the two
         dynamical semigroups are equal as sets and no generator is of degree 1.
 
         EXAMPLES::
@@ -1221,8 +1222,8 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
 
     INPUT:
 
-    - ``ds_data`` -- list or tuple of dynamical systems or objects that define dynamical systems
-      over projective space.
+    - ``ds_data`` -- list or tuple of dynamical systems or objects that define
+      dynamical systems over projective space
 
     OUTPUT: :class:`DynamicalSemigroup_projective`
 
@@ -1277,7 +1278,7 @@ class DynamicalSemigroup_projective(DynamicalSemigroup):
 
         INPUT:
 
-        - ``n`` -- a tuple of nonnegative integers. If ``n`` is an integer,
+        - ``n`` -- tuple of nonnegative integers; if `n` is an integer,
           then the two values of the tuple are assumed to be the same
 
         OUTPUT: :class:`DynamicalSemigroup_affine`
@@ -1349,7 +1350,7 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
     INPUT:
 
     - ``ds_data`` -- list or tuple of dynamical systems or objects that define dynamical systems
-      over affine space.
+      over affine space
 
     OUTPUT: :class:`DynamicalSemigroup_affine`
 
@@ -1403,7 +1404,7 @@ class DynamicalSemigroup_affine(DynamicalSemigroup):
 
         INPUT:
 
-        - ``n`` -- a tuple of nonnegative integers. If ``n`` is an integer,
+        - ``n`` -- tuple of nonnegative integers; if `n` is an integer,
           then the two values of the tuple are assumed to be the same
 
         OUTPUT: :class:`DynamicalSemigroup_projective`

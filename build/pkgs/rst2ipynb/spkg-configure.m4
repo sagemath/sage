@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([rst2ipynb], [SAGE_PYTHON_PACKAGE_CHECK([rst2ipynb])])

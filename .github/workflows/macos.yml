@@ -19,16 +19,18 @@ on:
         type: string
       # System configuration
       osversion_xcodeversion_toxenv_tuples:
+        # As of 2024-05, "runs-on: macos-latest" and "runs-on: macos-14" selects the new M1 runners.
+        # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories
         description: 'Stringified JSON object'
         default: >-
-          [["latest", "",             "homebrew-macos-usrlocal-minimal"],
-           ["latest", "",             "homebrew-macos-usrlocal-standard"],
-           ["11",     "xcode_13.2.1", "homebrew-macos-usrlocal-minimal"],
+          [["12",     "",             "homebrew-macos-usrlocal-minimal"],
            ["12",     "",             "homebrew-macos-usrlocal-standard"],
+           ["12",     "",             "homebrew-macos-usrlocal-python3_xcode-standard"],
+           ["12",     "",             "homebrew-macos-usrlocal-maximal"],
            ["13",     "xcode_15.0",   "homebrew-macos-usrlocal-standard"],
-           ["latest", "",             "homebrew-macos-usrlocal-maximal"],
-           ["latest", "",             "homebrew-macos-usrlocal-python3_xcode-standard"],
-           ["latest", "",             "conda-forge-macos-minimal"],
+           ["latest", "",             "homebrew-macos-opthomebrew-standard"],
+           ["13",     "",             "conda-forge-macos-minimal"],
+           ["13",     "",             "conda-forge-macos-standard"],
            ["latest", "",             "conda-forge-macos-standard"]]
         type: string
       extra_sage_packages:
@@ -41,6 +43,10 @@ on:
       free_disk_space:
         default: false
         type: boolean
+      timeout:
+        description: 'Elapsed time (seconds) at which to kill the build'
+        default: 20000
+        type: number
       #
       # For use in upstream CIs.
       #
@@ -74,12 +80,18 @@ jobs:
           repository: ${{ inputs.sage_repo }}
           ref: ${{ inputs.sage_ref }}
           fetch-depth: 10000
-
+      - uses: actions/setup-python@v5
+        # As of 2024-02-03, the macOS M1 runners do not have preinstalled python or pipx.
+        # Installing pipx follows the approach of https://github.com/pypa/cibuildwheel/pull/1743
+        id: python
+        with:
+          python-version: "3.8 - 3.12"
+          update-environment: false
       - name: Install test prerequisites
         run: |
-          brew install tox
+          "${{ steps.python.outputs.python-path }}" -m pip install pipx
       - name: Download upstream artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: upstream
           name: ${{ inputs.upstream_artifact }}
@@ -96,7 +108,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: sage-local-artifact
           name: ${{ env.LOCAL_ARTIFACT_NAME }}
@@ -129,12 +141,13 @@ jobs:
             *)               export TARGETS_PRE="${{ inputs.targets_pre }}" TARGETS="${{ inputs.targets }} TARGETS_OPTIONAL="${{ inputs.targets_optional }}
                              ;;
           esac
-          MAKE="make -j12" tox -e $TOX_ENV -- SAGE_NUM_THREADS=4 $TARGETS
+          (sleep ${{ inputs.timeout }}; pkill make) &
+          MAKE="make -j12" EXTRA_SAGE_PACKAGES="${{ inputs.extra_sage_packages }}" "${{ steps.python.outputs.python-path }}" -m pipx run tox -e $TOX_ENV -- SAGE_NUM_THREADS=6 $TARGETS
       - name: Prepare logs artifact
         run: |
           mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; cp -r .tox/*/log "artifacts/$LOGS_ARTIFACT_NAME"
         if: always()
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: artifacts
           name: ${{ env.LOGS_ARTIFACT_NAME }}
@@ -152,7 +165,7 @@ jobs:
         run: |
           mkdir -p sage-local-artifact && (cd .tox/$TOX_ENV && rm -f "local/lib64" && tar -cf - $(pwd)) > sage-local-artifact/sage-${{ env.TOX_ENV }}-${{ inputs.stage }}.tar
         if: contains(inputs.stage, '1')
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: sage-local-artifact/sage-${{ env.TOX_ENV }}-${{ inputs.stage }}.tar
           name: ${{ env.LOCAL_ARTIFACT_NAME }}

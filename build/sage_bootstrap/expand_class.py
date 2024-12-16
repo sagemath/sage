@@ -4,7 +4,8 @@ Utility to manage lists of packages
 """
 
 # ****************************************************************************
-#       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2016      Volker Braun <vbraun.name@gmail.com>
+#                     2020-2024 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -52,12 +53,21 @@ class PackageClass(object):
                 self._init_optional(predicate=included_in_filter)
             elif package_name_or_class == ':experimental:':
                 self._init_experimental(predicate=included_in_filter)
+            elif any(package_name_or_class.startswith(prefix)
+                     for prefix in ["pkg:", "pypi/", "generic"]):
+                self.__names.add(Package(package_name_or_class).name)
             else:
                 if ':' in package_name_or_class:
-                    raise ValueError('a colon may only appear in designators of package types, '
+                    raise ValueError('a colon may only appear in a PURL such as '
+                                     'pkg:pypi/DISTRIBUTION-NAME '
+                                     'and in designators of package types, '
                                      'which must be one of '
                                      ':all:, :standard:, :optional:, or :experimental:'
                                      'got {}'.format(package_name_or_class))
+                if '-' in package_name_or_class:
+                    raise ValueError('dashes may only appear in a PURL such as '
+                                     'pkg:pypi/DISTRIBUTION-NAME; '
+                                     'SPKG names use underscores')
                 self.__names.add(package_name_or_class)
 
         def include_recursive_dependencies(names, package_name):

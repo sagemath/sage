@@ -131,7 +131,7 @@ def lifting(p, t, A, G):
 
     - ``p`` -- a prime element of some principal ideal domain `D`
 
-    - ``t`` -- a non-negative integer
+    - ``t`` -- nonnegative integer
 
     - ``A`` -- a `c\times d` matrix over `D[X]`
 
@@ -243,7 +243,7 @@ def p_part(f, p):
     OUTPUT:
 
     A polynomial `g` such that `\deg g \le \deg f` and
-    all non-zero coefficients of `f - p g` are not divisible by `p`.
+    all nonzero coefficients of `f - p g` are not divisible by `p`.
 
     EXAMPLES::
 
@@ -257,12 +257,11 @@ def p_part(f, p):
 
     TESTS:
 
-    Return value is supposed to be a polynomial, see :trac:`22402`
+    Return value is supposed to be a polynomial, see :issue:`22402`
 
         sage: g = p_part(X+1, 2)
         sage: g.parent()
         Univariate Polynomial Ring in X over Integer Ring
-
     """
     DX = f.parent()
     (X,) = DX.gens()
@@ -359,9 +358,9 @@ class ComputeMinimalPolynomials(SageObject):
 
         - ``p`` -- a prime element of `D`
 
-        - ``t`` -- a non-negative integer
+        - ``t`` -- nonnegative integer
 
-        - ``pt_generators`` -- a list `(g_1, \ldots, g_s)` of polynomials in
+        - ``pt_generators`` -- list `(g_1, \ldots, g_s)` of polynomials in
           `D[X]` such that `N_{(p^t)}(B) = (g_1, \ldots, g_s) + pN_{(p^{t-1})}(B)`
 
         - ``prev_nu`` -- a `(p^{t-1})`-minimal polynomial of `B`
@@ -438,9 +437,9 @@ class ComputeMinimalPolynomials(SageObject):
 
         - ``p`` -- a prime element of `D`
 
-        - ``t`` -- a positive integer
+        - ``t`` -- positive integer
 
-        - ``pt_generators`` -- a list `(g_1, \ldots, g_s)` of polynomials in
+        - ``pt_generators`` -- list `(g_1, \ldots, g_s)` of polynomials in
           `D[X]` such that `N_{(p^t)}(B) = (g_1, \ldots, g_s) + pN_{(p^{t-1})}(B)`
 
         - ``prev_nu`` -- a `(p^{t-1})`-minimal polynomial of `B`
@@ -523,7 +522,7 @@ class ComputeMinimalPolynomials(SageObject):
 
         - ``p`` -- a prime element in `D`
 
-        - ``t`` -- a positive integer
+        - ``t`` -- positive integer
 
         - ``nu`` -- a `(p^t)`-minimal polynomial of `B`
 
@@ -541,8 +540,8 @@ class ComputeMinimalPolynomials(SageObject):
             sage: x = polygen(ZZ, 'x')
             sage: nu_4 = x^2 + 3*x + 2
             sage: g = C.mccoy_column(2, 2, nu_4)
-            sage: b = matrix(9, 1, (x-B).adjugate().list())
-            sage: M = matrix.block([[b , -B.charpoly(x)*matrix.identity(9)]])
+            sage: b = matrix(9, 1, (x - B).adjugate().list())
+            sage: M = matrix.block([[b, -B.charpoly(x)*matrix.identity(9)]])
             sage: (M*g % 4).is_zero()
             True
 
@@ -557,7 +556,6 @@ class ComputeMinimalPolynomials(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: x^2 + x not in (2^2)-ideal
-
         """
         if not (nu(self._B) % p**t).is_zero():
             raise ValueError(
@@ -590,7 +588,7 @@ class ComputeMinimalPolynomials(SageObject):
 
         - ``p`` -- a prime in `D`
 
-        - ``s_max`` -- a positive integer (default: ``None``); if set, only
+        - ``s_max`` -- positive integer (default: ``None``); if set, only
           `(p^s)`-minimal polynomials for ``s <= s_max`` are computed
           (see below for details)
 
@@ -813,9 +811,7 @@ class ComputeMinimalPolynomials(SageObject):
 
         - ``b`` -- an element of `D` (default: 0)
 
-        OUTPUT:
-
-        An ideal in `D[X]`.
+        OUTPUT: an ideal in `D[X]`
 
         EXAMPLES::
 
@@ -874,9 +870,7 @@ class ComputeMinimalPolynomials(SageObject):
         Determine those primes `p` where `\mu_B` might not be a
         `(p)`-minimal polynomial.
 
-        OUTPUT:
-
-        A list of primes.
+        OUTPUT: list of primes
 
         EXAMPLES::
 

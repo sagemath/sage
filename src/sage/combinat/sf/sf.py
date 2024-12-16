@@ -44,7 +44,7 @@ from . import llt
 
 class SymmetricFunctions(UniqueRepresentation, Parent):
     r"""
-    The abstract algebra of commutative symmetric functions
+    The abstract algebra of commutative symmetric functions.
 
     .. rubric:: Symmetric Functions in Sage
 
@@ -135,7 +135,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         sage: p[[]]
         p[]
 
-    .. note:: When elements are constructed using the ``p[something ]`` syntax ,
+    .. NOTE:: When elements are constructed using the ``p[something ]`` syntax ,
        an error will be raised if the input cannot be interpreted as a partition.
        This is *not* the case when ``p.basis()`` is used::
 
@@ -522,14 +522,14 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
     One can also use the Sage standard renaming idiom to get shorter outputs::
 
         sage: Sym = SymmetricFunctions(QQ)
-        sage: Sym.rename("Sym")
+        sage: Sym.rename('Sym')
         sage: Sym
         Sym
         sage: Sym.rename()
 
     And we name it back::
 
-        sage: Sym.rename("Symmetric Functions over Rational Field"); Sym
+        sage: Sym.rename('Symmetric Functions over Rational Field'); Sym
         Symmetric Functions over Rational Field
 
     .. rubric:: Other bases
@@ -863,7 +863,6 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: Sym1 = SymmetricFunctions(FiniteField(23))
             sage: Sym2 = SymmetricFunctions(Integers(23))
             sage: TestSuite(Sym).run()
-
         """
         # change the line below to assert(R in Rings()) once MRO issues from #15536, #15475 are resolved
         assert R in Fields() or R in Rings()  # side effect of this statement assures MRO exists for R
@@ -898,7 +897,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def schur(self):
         r"""
-        The Schur basis of the Symmetric Functions
+        The Schur basis of the Symmetric Functions.
 
         EXAMPLES::
 
@@ -908,11 +907,10 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         return schur.SymmetricFunctionAlgebra_schur(self)
     s = schur
     Schur = schur # Currently needed by SymmetricFunctions.__init_extra__
-                  # and sfa.GradedSymmetricFunctionsBases.corresponding_basis_over
 
     def powersum(self):
         r"""
-        The power sum basis of the Symmetric Functions
+        The power sum basis of the Symmetric Functions.
 
         EXAMPLES::
 
@@ -925,7 +923,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def complete(self):
         r"""
-        The complete basis of the Symmetric Functions
+        The complete basis of the Symmetric Functions.
 
         EXAMPLES::
 
@@ -938,7 +936,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def elementary(self):
         r"""
-        The elementary basis of the Symmetric Functions
+        The elementary basis of the Symmetric Functions.
 
         EXAMPLES::
 
@@ -950,7 +948,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def monomial(self):
         r"""
-        The monomial basis of the Symmetric Functions
+        The monomial basis of the Symmetric Functions.
 
         EXAMPLES::
 
@@ -960,7 +958,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         return monomial.SymmetricFunctionAlgebra_monomial(self)
     m = monomial
 
-    def witt(self, coerce_h=True, coerce_e=False, coerce_p=False):
+    def witt(self, coerce_h=None, coerce_e=None, coerce_p=None):
         r"""
         The Witt basis of the symmetric functions.
 
@@ -968,15 +966,22 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
             sage: SymmetricFunctions(QQ).witt()
             Symmetric Functions over Rational Field in the Witt basis
+
+        TESTS::
+
             sage: SymmetricFunctions(QQ).witt(coerce_p=True)
-            Symmetric Functions over Rational Field in the Witt basis
-            sage: SymmetricFunctions(QQ).witt(coerce_h=False, coerce_e=True, coerce_p=True)
+            doctest:warning
+            ...
+            DeprecationWarning: the coerce_* inputs are deprecated and ignored
+            See https://github.com/sagemath/sage/issues/37736 for details.
             Symmetric Functions over Rational Field in the Witt basis
         """
+        if coerce_h is not None or coerce_e is not None or coerce_p is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(37736, "the coerce_* inputs are deprecated and ignored")
         from . import witt
-        return witt.SymmetricFunctionAlgebra_witt(self, coerce_h=coerce_h, coerce_e=coerce_e, coerce_p=coerce_p)
+        return witt.SymmetricFunctionAlgebra_witt(self)
     w = witt
-    # Currently needed by sfa.GradedSymmetricFunctionsBases.corresponding_basis_over
     Witt = witt
 
     def irreducible_symmetric_group_character(self):
@@ -1018,8 +1023,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             ....:   for rho in Partitions(5)]))
             [4, 2, 0, 1, -1, 0, -1]
         """
-        from .character import irreducible_character_basis
-        return irreducible_character_basis(self, 'st')
+        from .character import IrreducibleCharacterBasis
+        return IrreducibleCharacterBasis(self)
 
     st = irreducible_symmetric_group_character
 
@@ -1074,8 +1079,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: [ht([1]).eval_at_permutation_roots(rho) for rho in Partitions(5)]
             [0, 1, 0, 2, 1, 3, 5]
         """
-        from .character import induced_trivial_character_basis
-        return induced_trivial_character_basis(self, 'ht')
+        from .character import InducedTrivialCharacterBasis
+        return InducedTrivialCharacterBasis(self)
 
     ht = induced_trivial_character
 
@@ -1214,7 +1219,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def macdonald(self, q='q', t='t'):
         r"""
-        Returns the entry point for the various Macdonald bases.
+        Return the entry point for the various Macdonald bases.
 
         INPUT:
 
@@ -1261,7 +1266,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def hall_littlewood(self, t='t'):
         """
-        Returns the entry point for the various Hall-Littlewood bases.
+        Return the entry point for the various Hall-Littlewood bases.
 
         INPUT:
 
@@ -1293,7 +1298,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def jack(self, t='t'):
         """
-        Returns the entry point for the various Jack bases.
+        Return the entry point for the various Jack bases.
 
         INPUT:
 
@@ -1319,7 +1324,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def zonal(self):
         """
-        The zonal basis of the Symmetric Functions
+        The zonal basis of the Symmetric Functions.
 
         EXAMPLES::
 
@@ -1334,7 +1339,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``k`` -- a positive integer indicating the level
+        - ``k`` -- positive integer indicating the level
         - ``t`` -- a parameter (default: `t`)
 
         LLT polynomials in `hspin` and `hcospin` bases.
@@ -1354,7 +1359,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def from_polynomial(self, f):
         """
-        Converts a symmetric polynomial ``f`` to a symmetric function.
+        Convert a symmetric polynomial ``f`` to a symmetric function.
 
         INPUT:
 
@@ -1416,7 +1421,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def __init_extra__(self):
         """
-        Sets up the coercions between the different bases
+        Set up the coercions between the different bases.
 
         EXAMPLES::
 
@@ -1432,7 +1437,6 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             2*s[] + 2*s[1] - 3*s[1, 1] + 3*s[2]
             sage: f(p.an_element()) == p.an_element()
             True
-
         """
         #powersum   = self.powersum  ()
         #complete   = self.complete  ()
@@ -1466,8 +1470,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``k`` - a positive integer
-        - ``t`` a formal parameter; `t=1` yields a subring
+        - ``k`` -- positive integer
+        - ``t`` -- a formal parameter; `t=1` yields a subring
 
         The subspace of the ring of symmetric functions spanned by
         `\{ s_{\lambda}[X/(1-t)] \}_{\lambda_1\le k} = \{ s_{\lambda}^{(k)}[X,t]\}_{\lambda_1 \le k}`
@@ -1497,7 +1501,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def kschur(self, k, t='t'):
         r"""
-        Returns the `k`-Schur functions.
+        Return the `k`-Schur functions.
 
         EXAMPLES::
 
@@ -1537,7 +1541,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def khomogeneous(self, k):
         r"""
-        Returns the homogeneous symmetric functions in the `k`-bounded subspace.
+        Return the homogeneous symmetric functions in the `k`-bounded subspace.
 
         EXAMPLES::
 
@@ -1552,11 +1556,11 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     def kBoundedQuotient(self, k, t='t'):
         r"""
-        Returns the `k`-bounded quotient space of the ring of symmetric functions.
+        Return the `k`-bounded quotient space of the ring of symmetric functions.
 
         INPUT:
 
-        - ``k`` - a positive integer
+        - ``k`` -- positive integer
 
         The quotient of the ring of symmetric functions ...
 
@@ -1587,7 +1591,7 @@ class SymmetricaConversionOnBasis:
         INPUT:
 
         - ``t`` -- a function taking a monomial in CombinatorialFreeModule(QQ, Partitions()),
-           and returning a (partition, coefficient) list.
+          and returning a (partition, coefficient) list
 
         - ``domain``, ``codomain`` -- parents
 
@@ -1600,7 +1604,7 @@ class SymmetricaConversionOnBasis:
 
             sage: Sym = SymmetricFunctions(QQ['x'])
             sage: p = Sym.p(); s = Sym.s()
-            sage: def t(x) : [(p,c)] = x; return [ (p,2*c), (p.conjugate(), c) ]
+            sage: def t(x) : [(p, c)] = x; return [ (p, 2*c), (p.conjugate(), c) ]
             sage: f = sage.combinat.sf.sf.SymmetricaConversionOnBasis(t, p, s)
             sage: f(Partition([3,1]))
             s[2, 1, 1] + 2*s[3, 1]

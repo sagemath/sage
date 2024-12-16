@@ -19,8 +19,6 @@ to slow code.
 
 For those willing to sacrifice a (very small) amount of
 speed, we provide a class that wraps our struct.
-
-
 """
 # ****************************************************************************
 #       Copyright (C) 2010 Tom Boothby <tomas.boothby@gmail.com>
@@ -76,13 +74,12 @@ cdef int next_swap(int n, int *c, int *o) noexcept:
     Note, Knuth's descriptions of algorithms tend to encourage
     one to think of finite state machines.  For convenience,
     we have added comments to show what state the machine is
-    in at any given point in the algorithm. `plain_swap_reset`
+    in at any given point in the algorithm. ``plain_swap_reset``
     sets the state to 1, and this function begins and ends in
     state 2.
 
     Returns the index i such that the next permutation can be
     obtained by swapping P[i] <-> P[i+1]
-
     """
 
     cdef int j,s,q,offset
@@ -118,7 +115,7 @@ cdef int next_swap(int n, int *c, int *o) noexcept:
 
 def permutation_iterator_transposition_list(int n):
     """
-    Returns a list of transposition indices to enumerate the
+    Return a list of transposition indices to enumerate the
     permutations on `n` letters by adjacent transpositions.
     Assumes zero-based lists.  We artificially limit the
     argument to `n < 12` to avoid overflowing 32-bit pointers.
@@ -190,9 +187,7 @@ cpdef bint next_perm(array l) noexcept:
 
         This method mutates the array ``l``.
 
-    OUTPUT:
-
-    boolean; whether another permutation was obtained
+    OUTPUT: boolean; whether another permutation was obtained
 
     EXAMPLES::
 
@@ -255,7 +250,7 @@ cpdef bint next_perm(array l) noexcept:
 
 
 @cython.boundscheck(False)
-cpdef map_to_list(array l, tuple values, int n) noexcept:
+cpdef map_to_list(array l, tuple values, int n):
     """
     Build a list by mapping the array ``l`` using ``values``.
 
@@ -269,11 +264,9 @@ cpdef map_to_list(array l, tuple values, int n) noexcept:
 
     - ``l`` -- array of unsigned int (i.e., type ``'I'``)
     - ``values`` -- tuple; the values of the permutation
-    - ``n`` -- int; the length of the array ``l``
+    - ``n`` -- integer; the length of the array ``l``
 
-    OUTPUT:
-
-    A list representing the permutation.
+    OUTPUT: list representing the permutation
 
     EXAMPLES::
 
@@ -291,7 +284,7 @@ cpdef map_to_list(array l, tuple values, int n) noexcept:
 #####################################################################
 ## Multiplication functions for permutations
 
-cpdef list left_action_same_n(list S, list lp) noexcept:
+cpdef list left_action_same_n(list S, list lp):
     r"""
     Return the permutation obtained by composing a permutation
     ``S`` with a permutation ``lp`` in such an order that ``lp``
@@ -318,7 +311,7 @@ cpdef list left_action_same_n(list S, list lp) noexcept:
         ret.append(S[i-1])
     return ret
 
-cpdef list right_action_same_n(list S, list rp) noexcept:
+cpdef list right_action_same_n(list S, list rp):
     """
     Return the permutation obtained by composing a permutation
     ``S`` with a permutation ``rp`` in such an order that ``S`` is
@@ -345,7 +338,7 @@ cpdef list right_action_same_n(list S, list rp) noexcept:
         ret.append(rp[i-1])
     return ret
 
-cpdef list left_action_product(list S, list lp) noexcept:
+cpdef list left_action_product(list S, list lp):
     r"""
     Return the permutation obtained by composing a permutation
     ``S`` with a permutation ``lp`` in such an order that ``lp`` is
@@ -379,7 +372,7 @@ cpdef list left_action_product(list S, list lp) noexcept:
         lp.append(i)
     return left_action_same_n(S, lp)
 
-cpdef list right_action_product(list S, list rp) noexcept:
+cpdef list right_action_product(list S, list rp):
     """
     Return the permutation obtained by composing a permutation
     ``S`` with a permutation ``rp`` in such an order that ``S`` is

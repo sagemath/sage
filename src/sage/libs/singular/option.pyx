@@ -20,15 +20,17 @@ By default, tail reductions are performed::
     sage: from sage.libs.singular.option import opt, opt_ctx
     sage: opt['red_tail']
     True
-    sage: std(I)[-1]
+    sage: red = std(I)[-1]; red
     d^2*e^6 + 28*b*c*d + ...
 
 If we don't want this, we can create an option context, which disables
 this::
 
     sage: with opt_ctx(red_tail=False, red_sb=False):
-    ....:    std(I)[-1]
-    d^2*e^6 + 8*c^3 + ...
+    ....:    notred = std(I)[-1]; notred
+    d^2*e^6 + ...
+    sage: len(list(red)) < len(list(notred))
+    True
 
 However, this does not affect the global state::
 
@@ -146,7 +148,7 @@ cdef class LibSingularOptions_abstract:
         """
         INPUT:
 
-        - ``**kwds`` - all keyword parameters are immediately applied.
+        - ``**kwds`` -- all keyword parameters are immediately applied
 
         EXAMPLES::
 
@@ -302,72 +304,72 @@ cdef class LibSingularOptions(LibSingularOptions_abstract):
 
     Supported options are:
 
-     - ``return_sb`` or ``returnSB`` - the functions ``syz``,
-       ``intersect``, ``quotient``, ``modulo`` return a standard
-       base instead of a generating set if ``return_sb``
-       is set. This option should not be used for ``lift``.
+    - ``return_sb`` or ``returnSB`` -- the functions ``syz``,
+      ``intersect``, ``quotient``, ``modulo`` return a standard
+      base instead of a generating set if ``return_sb``
+      is set. This option should not be used for ``lift``.
 
-     - ``fast_hc`` or ``fastHC`` - tries to find the highest corner
-       of the staircase (HC) as fast as possible during a standard
-       basis computation (only used for local orderings).
+    - ``fast_hc`` or ``fastHC`` -- tries to find the highest corner
+      of the staircase (HC) as fast as possible during a standard
+      basis computation (only used for local orderings).
 
-     - ``int_strategy`` or ``intStrategy`` - avoids division of
-       coefficients during standard basis computations. This option
-       is ring dependent. By default, it is set for rings with
-       characteristic 0 and not set for all other rings.
+    - ``int_strategy`` or ``intStrategy`` -- avoids division of
+      coefficients during standard basis computations. This option
+      is ring dependent. By default, it is set for rings with
+      characteristic 0 and not set for all other rings.
 
-     - ``lazy`` - uses a more lazy approach in std computations, which
-       was used in SINGULAR version before 2-0 (and which may lead to
-       faster or slower computations, depending on the example).
+    - ``lazy`` -- uses a more lazy approach in std computations, which
+      was used in SINGULAR version before 2-0 (and which may lead to
+      faster or slower computations, depending on the example).
 
-     - ``length`` - select shorter reducers in std computations.
+    - ``length`` -- select shorter reducers in std computations
 
-     - ``not_regularity`` or ``notRegularity`` - disables the
-       regularity bound for ``res`` and ``mres``.
+    - ``not_regularity`` or ``notRegularity`` -- disables the
+      regularity bound for ``res`` and ``mres``
 
-     - ``not_sugar`` or ``notSugar`` - disables the sugar strategy
-       during standard basis computation.
+    - ``not_sugar`` or ``notSugar`` -- disables the sugar strategy
+      during standard basis computation
 
-     - ``not_buckets`` or ``notBuckets`` - disables the bucket
-       representation of polynomials during standard basis
-       computations. This option usually decreases the memory
-       usage but increases the computation time. It should only
-       be set for memory-critical standard basis computations.
+    - ``not_buckets`` or ``notBuckets`` -- disables the bucket
+      representation of polynomials during standard basis
+      computations. This option usually decreases the memory
+      usage but increases the computation time. It should only
+      be set for memory-critical standard basis computations.
 
-     - ``old_std`` or ``oldStd`` - uses a more lazy approach in std
-       computations, which was used in SINGULAR version before 2-0
-       (and which may lead to faster or slower computations, depending
-       on the example).
+    - ``old_std`` or ``oldStd`` -- uses a more lazy approach in std
+      computations, which was used in SINGULAR version before 2-0
+      (and which may lead to faster or slower computations, depending
+      on the example).
 
-     - ``prot`` - shows protocol information indicating the progress
-       during the following computations: ``facstd``, ``fglm``,
-       ``groebner``, ``lres``, ``mres``, ``minres``, ``mstd``,
-       ``res``, ``slimgb``, ``sres``, ``std``, ``stdfglm``,
-       ``stdhilb``, ``syz``.
+    - ``prot`` -- shows protocol information indicating the progress
+      during the following computations: ``facstd``, ``fglm``,
+      ``groebner``, ``lres``, ``mres``, ``minres``, ``mstd``,
+      ``res``, ``slimgb``, ``sres``, ``std``, ``stdfglm``,
+      ``stdhilb``, ``syz``.
 
-     - ``red_sb`` or ``redSB`` - computes a reduced standard basis in
-       any standard basis computation.
+    - ``red_sb`` or ``redSB`` -- computes a reduced standard basis in
+      any standard basis computation
 
-     - ``red_tail`` or ``redTail`` - reduction of the tails of
-       polynomials during standard basis computations. This option
-       is ring dependent. By default, it is set for rings with global
-       degree orderings and not set for all other rings.
+    - ``red_tail`` or ``redTail`` -- reduction of the tails of
+      polynomials during standard basis computations. This option
+      is ring dependent. By default, it is set for rings with global
+      degree orderings and not set for all other rings.
 
-     - ``red_through`` or ``redThrough`` - for inhomogeneous input,
-       polynomial reductions during standard basis computations are
-       never postponed, but always finished through. This option is
-       ring dependent. By default, it is set for rings with global
-       degree orderings and not set for all other rings.
+    - ``red_through`` or ``redThrough`` -- for inhomogeneous input,
+      polynomial reductions during standard basis computations are
+      never postponed, but always finished through. This option is
+      ring dependent. By default, it is set for rings with global
+      degree orderings and not set for all other rings.
 
-     - ``sugar_crit`` or ``sugarCrit`` - uses criteria similar to the
-       homogeneous case to keep more useless pairs.
+    - ``sugar_crit`` or ``sugarCrit`` -- uses criteria similar to the
+      homogeneous case to keep more useless pairs
 
-     - ``weight_m`` or ``weightM`` - automatically computes suitable
-       weights for the weighted ecart and the weighted sugar method.
+    - ``weight_m`` or ``weightM`` -- automatically computes suitable
+      weights for the weighted ecart and the weighted sugar method
 
     In addition, two integer valued parameters are supported, namely:
 
-    - ``deg_bound`` or ``degBound`` - The standard basis computation
+    - ``deg_bound`` or ``degBound`` -- the standard basis computation
       is stopped if the total (weighted) degree exceeds ``deg_bound``.
       ``deg_bound`` should not be used for a global ordering with
       inhomogeneous input. Reset this bound by setting ``deg_bound``
@@ -375,7 +377,7 @@ cdef class LibSingularOptions(LibSingularOptions_abstract):
       and the command: ``slimgb`` uses always the total degree with
       weights 1, ``std`` does so for block orderings, only.
 
-    - ``mult_bound`` or ``multBound`` - The standard basis computation
+    - ``mult_bound`` or ``multBound`` -- the standard basis computation
       is stopped if the ideal is zero-dimensional in a ring with local
       ordering and its multiplicity is lower than ``mult_bound``.
       Reset this bound by setting ``mult_bound`` to 0.
@@ -408,7 +410,6 @@ cdef class LibSingularOptions(LibSingularOptions_abstract):
         sage: opt['red_tail'] = True # the previous commands reset opt['red_tail'] to False
         sage: J.groebner_basis()
         [x^3*y^2 + y^3*z^2 + x^2*z^3, x^2*y^3 + x^3*z^2 + y^2*z^3, y^5, x^6, x^4*z^2 - y^4*z^2 - x^2*y*z^3 + x*y^2*z^3, z^6, y^4*z^3 - y^3*z^4 - x^2*z^5, x^3*y*z^4 - x^2*y^2*z^4 + x*y^3*z^4, x^3*z^5, x^2*y*z^5 + y^3*z^5, x*y^3*z^5]
-
     """
     def __init__(self, **kwds):
         """
@@ -467,7 +468,6 @@ cdef class LibSingularOptions(LibSingularOptions_abstract):
         self.load(_saved_options)
 
 
-
 #############
 
 cdef class LibSingularVerboseOptions(LibSingularOptions_abstract):
@@ -476,27 +476,27 @@ cdef class LibSingularVerboseOptions(LibSingularOptions_abstract):
 
     Supported options are:
 
-     - ``mem`` - shows memory usage in square brackets.
-     - ``yacc`` - Only available in debug version.
-     - ``redefine`` - warns about variable redefinitions.
-     - ``reading`` - shows the number of characters read from a file.
-     - ``loadLib`` or ``load_lib`` - shows loading of libraries.
-     - ``debugLib`` or ``debug_lib`` - warns about syntax errors
-       when loading a library.
-     - ``loadProc`` or ``load_proc`` - shows loading of procedures
-       from libraries.
-     - ``defRes`` or ``def_res`` - shows the names of the syzygy
-       modules while converting ``resolution`` to ``list``.
-     - ``usage`` - shows correct usage in error messages.
-     - ``Imap`` or ``imap`` - shows the mapping of variables with
-       the ``fetch`` and ``imap`` commands.
-     - ``notWarnSB`` or ``not_warn_sb`` - do not warn if
-       a basis is not a standard basis
-     - ``contentSB`` or ``content_sb`` - avoids to divide by the
-       content of a polynomial in ``std`` and related algorithms.
-       Should usually not be used.
-     - ``cancelunit`` - avoids to divide polynomials by non-constant
-       units in ``std`` in the local case. Should usually not be used.
+    - ``mem`` -- shows memory usage in square brackets
+    - ``yacc`` -- only available in debug version
+    - ``redefine`` -- warns about variable redefinitions
+    - ``reading`` -- shows the number of characters read from a file
+    - ``loadLib`` or ``load_lib`` -- shows loading of libraries
+    - ``debugLib`` or ``debug_lib`` -- warns about syntax errors
+      when loading a library
+    - ``loadProc`` or ``load_proc`` -- shows loading of procedures
+      from libraries
+    - ``defRes`` or ``def_res`` -- shows the names of the syzygy
+      modules while converting ``resolution`` to ``list``
+    - ``usage`` -- shows correct usage in error messages
+    - ``Imap`` or ``imap`` -- shows the mapping of variables with
+      the ``fetch`` and ``imap`` commands
+    - ``notWarnSB`` or ``not_warn_sb`` -- do not warn if
+      a basis is not a standard basis
+    - ``contentSB`` or ``content_sb`` -- avoids to divide by the
+      content of a polynomial in ``std`` and related algorithms.
+      Should usually not be used.
+    - ``cancelunit`` -- avoids to divide polynomials by non-constant
+      units in ``std`` in the local case. Should usually not be used
 
     EXAMPLES::
 
@@ -537,7 +537,7 @@ cdef class LibSingularVerboseOptions(LibSingularOptions_abstract):
 
     def reset_default(self):
         """
-        Return to libSingular's default verbosity options
+        Return to libSingular's default verbosity options.
 
         EXAMPLES::
 
@@ -550,7 +550,6 @@ cdef class LibSingularVerboseOptions(LibSingularOptions_abstract):
             sage: opt_verb.reset_default()
             sage: opt_verb['not_warn_sb']
             False
-
         """
         from sage.libs.singular.singular import _saved_verbose_options
         self.global_options[0] = int(_saved_verbose_options)

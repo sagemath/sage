@@ -83,7 +83,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
     - ``L`` -- the Lie algebra of the Lie group; must be a finite
       dimensional nilpotent Lie algebra with basis over a topological
       field, e.g. `\QQ` or `\RR`
-    - ``name`` -- a string; name (symbol) given to the Lie group
+    - ``name`` -- string; name (symbol) given to the Lie group
 
     Two types of exponential coordinates are defined on any
     nilpotent Lie group using the basis of the Lie algebra,
@@ -310,7 +310,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
         return R_a.differential(self.one()).matrix().subs(asubs)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a tuple of elements whose one-parameter subgroups generate
         the Lie group.

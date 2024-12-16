@@ -6,7 +6,6 @@ AUTHORS:
 - David Kohel, William Stein (2005): initial version
 
 - Ben Hutz (2013): affine subschemes
-
 """
 
 # ****************************************************************************
@@ -21,8 +20,6 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.fields import Fields
-from sage.interfaces.singular import singular
-from sage.modules.free_module_element import vector
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 
 from .affine_morphism import SchemeMorphism_polynomial_affine_subscheme_field
@@ -88,7 +85,6 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             Scheme endomorphism of Affine Space of dimension 3 over Integer Ring
               Defn: Defined on coordinates by sending (x, y, z) to
                     (x, y, z)
-
         """
         return self.ambient_space()._morphism(*args, **kwds)
 
@@ -141,13 +137,12 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        -  ``i`` -- integer (default: dimension of self = last
-           coordinate) determines which projective embedding to compute. The
-           embedding is that which has a 1 in the i-th coordinate, numbered
-           from 0.
+        - ``i`` -- integer (default: dimension of self = last coordinate);
+          determines which projective embedding to compute. The embedding is
+          that which has a 1 in the `i`-th coordinate, numbered from 0.
 
-        -  ``PP`` -- (default: None) ambient projective space, i.e., ambient space
-            of codomain of morphism; this is constructed if it is not given.
+        - ``PP`` -- (default: ``None``) ambient projective space, i.e., ambient
+          space of codomain of morphism; this is constructed if it is not given
 
         EXAMPLES::
 
@@ -250,12 +245,13 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``i`` -- (default: None) determines the embedding to use to compute the projective
-          closure of this affine subscheme. The embedding used is the one which has a 1 in the
-          i-th coordinate, numbered from 0.
+        - ``i`` -- (default: ``None``) determines the embedding to use to
+          compute the projective closure of this affine subscheme. The
+          embedding used is the one which has a 1 in the i-th coordinate,
+          numbered from 0.
 
-        -  ``PP`` -- (default: None) ambient projective space, i.e., ambient space
-           of codomain of morphism; this is constructed if it is not given
+        - ``PP`` -- (default: ``None``) ambient projective space, i.e., ambient
+          space of codomain of morphism; this is constructed if it is not given
 
         OUTPUT: a projective subscheme
 
@@ -290,12 +286,12 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``point`` -- A point or ``None`` (default). The point to
-          test smoothness at.
+        - ``point`` -- a point or ``None`` (default). The point to
+          test smoothness at
 
         OUTPUT:
 
-        Boolean. If no point was specified, returns whether the
+        boolean; if no point was specified, returns whether the
         algebraic subscheme is smooth everywhere. Otherwise,
         smoothness at the specified point is tested.
 
@@ -347,11 +343,11 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``X`` -- subscheme in the same ambient space as this subscheme.
+        - ``X`` -- subscheme in the same ambient space as this subscheme
 
-        - ``P`` -- a point in the intersection of this subscheme with ``X``.
+        - ``P`` -- a point in the intersection of this subscheme with ``X``
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -415,10 +411,11 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         J = X.defining_ideal()
         # move P to the origin and localize
         chng_coords = [AA.gens()[i] + P[i] for i in range(AA.dimension_relative())]
-        R = AA.coordinate_ring().change_ring(order="negdegrevlex")
+        R = AA.coordinate_ring().change_ring(order='negdegrevlex')
         Iloc = R.ideal([f(chng_coords) for f in I.gens()])
         Jloc = R.ideal([f(chng_coords) for f in J.gens()])
         # compute the intersection multiplicity with Serre's Tor formula using Singular
+        from sage.interfaces.singular import singular
         singular.lib("homolog.lib")
         i = 0
         s = 0
@@ -438,11 +435,9 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``P`` -- a point on this subscheme.
+        - ``P`` -- a point on this subscheme
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -476,7 +471,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             sage: X.multiplicity(Q2)                                                    # needs sage.libs.singular
             7
 
-        Check that :trac:`27479` is fixed::
+        Check that :issue:`27479` is fixed::
 
             sage: A1.<x> = AffineSpace(QQ, 1)
             sage: X = A1.subscheme([x^1789 + x])
@@ -492,6 +487,8 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             P = self(P)
         except TypeError:
             raise TypeError("(=%s) is not a point on (=%s)" % (P, self))
+
+        from sage.interfaces.singular import singular
 
         # Apply a linear change of coordinates to self so that P is sent to the origin
         # and then compute the multiplicity of the local ring of the translated subscheme
@@ -579,6 +576,8 @@ class AlgebraicScheme_subscheme_affine_field(AlgebraicScheme_subscheme_affine):
             sage: _.dimension()
             1
         """
+        from sage.modules.free_module_element import vector
+
         A = self.ambient_space()
         R = A.coordinate_ring()
         gens = R.gens()

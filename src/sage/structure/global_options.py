@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Global options
 
@@ -48,13 +49,13 @@ syntax, ``MyOptions`` is not a class.
 The options constructed by :class:`GlobalOptions` have to be explicitly
 associated to the class that they control using the following arguments:
 
-- ``NAME`` -- A descriptive name for the options class. This is
-  optional; the default is the name of the constructed class.
+- ``NAME`` -- a descriptive name for the options class; this is
+  optional. The default is the name of the constructed class.
 
-- ``module`` -- The sage module containing the options class (optional)
+- ``module`` -- the sage module containing the options class (optional)
 
-- ``option_class`` -- The name of the options class. This is optional and
-  defaults to ``NAME`` if not explicitly set.
+- ``option_class`` -- the name of the options class; this is optional and
+  defaults to ``NAME`` if not explicitly set
 
 It is only possible to pickle a :class:`GlobalOptions` class if the
 corresponding module is specified *and* if the options are explicitly
@@ -64,31 +65,31 @@ Each option is specified as a dictionary which describes the possible
 values for the option and its documentation. The possible entries in this
 dictionary are:
 
-- ``alias`` -- Allows for several option values to do the same thing.
+- ``alias`` -- allows for several option values to do the same thing
 
-- ``alt_name`` -- An alternative name for this option.
+- ``alt_name`` -- an alternative name for this option
 
-- ``checker`` -- A validation function which returns whether a user
+- ``checker`` -- a validation function which returns whether a user
   supplied value is valid or not. This is typically useful for large
   lists of legal values such as :class:`~sage.rings.semirings.non_negative_integer_semiring.NN`.
 
-- ``default`` -- Gives the default value for the option.
+- ``default`` -- gives the default value for the option
 
-- ``description`` -- A one line description of the option.
+- ``description`` -- a one line description of the option
 
-- ``link_to`` -- Links this option to another one in another set of
+- ``link_to`` -- links this option to another one in another set of
   global options. This is used for example to allow
   :class:`Partitions` and :class:`Tableaux` to share the same
   ``convention`` option.
 
-- ``setter`` -- A function which is called **after** the value of the
-  option is changed.
+- ``setter`` -- a function which is called **after** the value of the
+  option is changed
 
-- ``values`` -- A dictionary assigning each valid value for the option
-  to a short description of what it does.
+- ``values`` -- dictionary assigning each valid value for the option
+  to a short description of what it does
 
-- ``case_sensitive`` -- (Default: ``True``) ``True`` or ``False`` depending on
-  whether the values of the option are case sensitive.
+- ``case_sensitive`` -- boolean (default: ``True``); depending on
+  whether the values of the option are case sensitive
 
 For each option, either a complete list of possible values, via ``values``, or a
 validation function, via ``checker``, must be given. The values can be quite
@@ -265,7 +266,6 @@ the supplied options. For example, the generated documentation for the options
       Reward for good service
 
 
-
     The END!
 
     See :class:`~sage.structure.global_options.GlobalOptions` for more features of these options.
@@ -429,9 +429,9 @@ We can have a ``name`` option::
 Check that the ``name`` and ``NAME`` keywords are both supported with
 this syntax::
 
-    sage: GlobalOptions(name="menu")
+    sage: GlobalOptions(name='menu')
     Current options for menu
-    sage: GlobalOptions(NAME="menu")
+    sage: GlobalOptions(NAME='menu')
     Current options for menu
     sage: GlobalOptions()
     Traceback (most recent call last):
@@ -514,7 +514,7 @@ from textwrap import dedent
 from sage.misc.instancedoc import instancedoc
 
 
-class Option():
+class Option:
     r"""
     An option.
 
@@ -560,7 +560,7 @@ class Option():
 
         EXAMPLES::
 
-            sage: Partitions.options.display # indirect doctest                         # needs sage.combinat
+            sage: Partitions.options.display  # indirect doctest                        # needs sage.combinat
             list
         """
         # NOTE: we intentionally use str() instead of repr()
@@ -648,7 +648,7 @@ class Option():
 
         TESTS:
 
-        Check that values can be set to ``None`` (:trac:`30763`)::
+        Check that values can be set to ``None`` (:issue:`30763`)::
 
             sage: from sage.structure.global_options import GlobalOptions
             sage: class config(GlobalOptions):
@@ -827,7 +827,7 @@ class GlobalOptionsMetaMeta(type):
 
 class GlobalOptionsMeta(type, metaclass=GlobalOptionsMetaMeta):
     """
-    Metaclass for :class:`GlobalOptions`
+    Metaclass for :class:`GlobalOptions`.
 
     This class is itself an instance of :class:`GlobalOptionsMetaMeta`,
     which implements the subclass magic.
@@ -871,12 +871,12 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
       option in another :class:`GlobalOptions`
     - ``setter`` -- a function (class method) which is called whenever this
       option changes
-    - ``values`` -- a dictionary of the legal values for this option (this
+    - ``values`` -- dictionary of the legal values for this option (this
       automatically defines the corresponding ``checker``); this dictionary
       gives the possible options, as keys, together with a brief description
       of them
-    - ``case_sensitive`` -- (default: ``True``) ``True`` or ``False``
-      depending on whether the values of the option are case sensitive
+    - ``case_sensitive`` -- boolean (default: ``True``); depending on whether
+      the values of the option are case sensitive
 
     Options and their values can be abbreviated provided that this
     abbreviation is a prefix of a unique option.
@@ -1026,12 +1026,12 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
             sage: class alias_test(GlobalOptions):
             ....:       "Test aliases with case sensitivity"
-            ....:       test_opt = dict(default="Upper",
+            ....:       test_opt = dict(default='Upper',
             ....:           description = 'Starts with an uppercase',
             ....:           values = dict(Upper="Starts with uppercase",
             ....:                         lower="only lowercase"),
             ....:           case_sensitive = False,
-            ....:           alias = dict(UpperAlias="Upper", lower_alias="lower"))
+            ....:           alias = dict(UpperAlias='Upper', lower_alias='lower'))
             sage: alias_test['test_opt'] = 'Lower_Alias'
             sage: alias_test['test_opt']
             'lower'
@@ -1129,13 +1129,13 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
               - food:  apple
             sage: FoodOptions('food')
             'apple'
-            sage: FoodOptions(food="pair"); FoodOptions()
+            sage: FoodOptions(food='pair'); FoodOptions()
             Current options for daily meal
               - drink: water
               - food:  pair
             sage: FoodOptions('beverage')
             'water'
-            sage: FoodOptions(food="apple", drink="coffee"); FoodOptions()
+            sage: FoodOptions(food='apple', drink='coffee'); FoodOptions()
             Current options for daily meal
               - drink: coffee
               - food:  apple
@@ -1237,7 +1237,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
             sage: print(Partitions.options.__doc__)                                     # needs sage.combinat
             <BLANKLINE>
-            Sets and displays the global options for elements of the partition,
+            Set and display the global options for elements of the partition,
             skew partition, and partition tuple classes.  If no parameters are
             set, then the function returns a copy of the options dictionary.
             <BLANKLINE>
@@ -1267,7 +1267,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
     def __setattr__(self, name, value=None):
         r"""
-        Set the attribute ``name`` of the option class self equal to
+        Set the attribute ``name`` of the option class ``self`` equal to
         ``value``, if the attribute ``name`` exists.
 
         As the attributes of an option class are the actual options we need
@@ -1296,7 +1296,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         the :class:`GlobalOptions` class.
 
         The :meth:`__getstate__` method returns a dictionary with an
-        `options_class` key which identifies the "parent" class for the options.
+        ``options_class`` key which identifies the "parent" class for the options.
         This is then used to unpickle the options class.
 
         EXAMPLES::
@@ -1330,7 +1330,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         for setting in unpickle.__dict__:
             self.__dict__[setting] = unpickle.__dict__[setting]
 
-        # reset the options in `self` to their defaults
+        # reset the options in ``self`` to their defaults
         self._reset()
         # apply the options stored in state
         for opt in state:
@@ -1389,7 +1389,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
         EXAMPLES::
 
-            sage: Partitions.options == PartitionsGreatestLE.options # indirect doctest             # needs sage.combinat
+            sage: Partitions.options == PartitionsGreatestLE.options  # indirect doctest            # needs sage.combinat
             True
             sage: Partitions.options == Tableaux.options                                # needs sage.combinat
             False
@@ -1402,8 +1402,8 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
         INPUT:
 
-        - ``option`` -- a string
-        - ``specifications`` -- a dictionary
+        - ``option`` -- string
+        - ``specifications`` -- dictionary
 
         .. SEEALSO::
 
@@ -1519,7 +1519,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
         INPUT:
 
-        - ``option`` -- a string
+        - ``option`` -- string
 
         EXAMPLES::
 
@@ -1562,8 +1562,8 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
         INPUT:
 
-        - ``option`` -- a string: the name of an option, or prefix thereof
-        - ``value``  -- a value or ``'?'``
+        - ``option`` -- string: the name of an option, or prefix thereof
+        - ``value`` -- a value or ``'?'``
 
         EXAMPLES::
 
@@ -1642,8 +1642,6 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
     def _dispatch(self, obj, dispatch_to, option, *args, **kargs):
         r"""
-        .. TODO:: title
-
         The *dispatchable* options are options which dispatch related methods of
         the corresponding class - or user defined methods which are passed to
         :class:`GlobalOptions`. The format for specifying a dispatchable option
@@ -1701,7 +1699,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
 
         INPUT:
 
-        - ``option`` -- (Default: ``None``) The name of an option as a string
+        - ``option`` -- (default: ``None``) the name of an option as a string
           or ``None``. If ``option`` is specified only this option is reset to
           its default value; otherwise all options are reset.
 

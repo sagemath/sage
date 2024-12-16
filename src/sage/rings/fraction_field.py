@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Fraction Field of Integral Domains
 
@@ -57,7 +56,7 @@ TESTS::
     sage: F == loads(dumps(F))
     True
 
-Test that :trac:`15971` is fixed::
+Test that :issue:`15971` is fixed::
 
     sage: for B in [QQ['t'], QQ['s, t'], ZZ['t'], ZZ['s, t']]:
     ....:     F = B.fraction_field()
@@ -80,7 +79,7 @@ Test that :trac:`15971` is fixed::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 import sage.misc.latex as latex
@@ -102,9 +101,9 @@ def FractionField(R, names=None):
 
     INPUT:
 
-    -  ``R`` -- an integral domain
+    - ``R`` -- an integral domain
 
-    -  ``names`` -- ignored
+    - ``names`` -- ignored
 
     EXAMPLES:
 
@@ -135,16 +134,16 @@ def FractionField(R, names=None):
         sage: Frac(Integers(4))
         Traceback (most recent call last):
         ...
-        TypeError: R must be an integral domain.
+        TypeError: R must be an integral domain
     """
-    if not ring.is_Ring(R):
+    if R not in Rings():
         raise TypeError("R must be a ring")
     if not R.is_integral_domain():
-        raise TypeError("R must be an integral domain.")
+        raise TypeError("R must be an integral domain")
     return R.fraction_field()
 
 
-def is_FractionField(x):
+def is_FractionField(x) -> bool:
     """
     Test whether or not ``x`` inherits from :class:`FractionField_generic`.
 
@@ -152,10 +151,18 @@ def is_FractionField(x):
 
         sage: from sage.rings.fraction_field import is_FractionField
         sage: is_FractionField(Frac(ZZ['x']))
+        doctest:warning...
+        DeprecationWarning: The function is_FractionField is deprecated;
+        use 'isinstance(..., FractionField_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         True
         sage: is_FractionField(QQ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38128,
+                "The function is_FractionField is deprecated; "
+                "use 'isinstance(..., FractionField_generic)' instead.")
     return isinstance(x, FractionField_generic)
 
 
@@ -171,7 +178,7 @@ class FractionField_generic(ring.Field):
 
         INPUT:
 
-        -  ``R`` -- an integral domain
+        - ``R`` -- an integral domain
 
         EXAMPLES::
 
@@ -180,14 +187,20 @@ class FractionField_generic(ring.Field):
             sage: Frac(QQ['x,y']).variable_names()
             ('x', 'y')
             sage: category(Frac(QQ['x']))
-            Category of quotient fields
+            Category of infinite quotient fields
+
+        TESTS::
+
+            sage: F = FractionField(QQ['x'])
+            sage: F.cardinality()
+            +Infinity
         """
         self._R = R
         self._element_class = element_class
         cat = category
-        if self in Rings().Infinite():
+        if R in Rings().Infinite():
             cat = cat.Infinite()
-        elif self in Rings().Finite():
+        elif R in Rings().Finite():
             cat = cat.Finite()
         Parent.__init__(self, base=R, names=R._names, category=cat)
 
@@ -259,7 +272,7 @@ class FractionField_generic(ring.Field):
             sage: K.coerce(L.gen())
             x
 
-        We demonstrate that :trac:`7958` is resolved in the case of
+        We demonstrate that :issue:`7958` is resolved in the case of
         number fields::
 
             sage: # needs sage.rings.number_field
@@ -271,7 +284,7 @@ class FractionField_generic(ring.Field):
             sage: F(1/a)
             (a^4 - 3*a^3 + 2424*a^2 + 2)/232
 
-        Some corner cases have been known to fail in the past (:trac:`5917`)::
+        Some corner cases have been known to fail in the past (:issue:`5917`)::
 
             sage: F1 = FractionField( QQ['a'] )
             sage: R12 = F1['x','y']
@@ -287,7 +300,7 @@ class FractionField_generic(ring.Field):
             sage: F2(R22(F2('a')))
             a
 
-        Coercion from Laurent polynomials now works (:trac:`15345`)::
+        Coercion from Laurent polynomials now works (:issue:`15345`)::
 
             sage: R = LaurentPolynomialRing(ZZ, 'x')
             sage: T = PolynomialRing(ZZ, 'x')
@@ -304,7 +317,7 @@ class FractionField_generic(ring.Field):
             sage: 1/(R.gen(0) + R.gen(1))
             1/(x + y)
 
-        Test for :trac:`31320`::
+        Test for :issue:`31320`::
 
             sage: FQt = Frac(QQ['t'])
             sage: LCt = LaurentPolynomialRing(CC,'t')                                   # needs sage.rings.real_mpfr
@@ -385,15 +398,13 @@ class FractionField_generic(ring.Field):
 
         INPUT:
 
-        -  ``x`` -- Number field element
+        - ``x`` -- number field element
 
-        OUTPUT:
-
-        -  Element of ``self``
+        OUTPUT: Element of ``self``
 
         TESTS:
 
-        We demonstrate that :trac:`7958` is resolved in the case of
+        We demonstrate that :issue:`7958` is resolved in the case of
         number fields::
 
             sage: # needs sage.rings.number_field
@@ -433,7 +444,6 @@ class FractionField_generic(ring.Field):
 
             sage: Frac(QQ['a','b','c']).is_finite()
             False
-
         """
         return self._R.is_finite()
 
@@ -573,12 +583,12 @@ class FractionField_generic(ring.Field):
 
         TESTS:
 
-        The next example failed before :trac:`4376`::
+        The next example failed before :issue:`4376`::
 
             sage: K(pari((x + 1)/(x^2 + x + 1)))                                        # needs sage.libs.pari
             (x + 1)/(x^2 + x + 1)
 
-        These examples failed before :trac:`11368`::
+        These examples failed before :issue:`11368`::
 
             sage: R.<x, y, z> = PolynomialRing(QQ)
             sage: S = R.fraction_field()
@@ -588,7 +598,7 @@ class FractionField_generic(ring.Field):
             sage: S(pari(x + y + 1/z))                                                  # needs sage.libs.pari
             (x*z + y*z + 1)/z
 
-        This example failed before :trac:`23664`::
+        This example failed before :issue:`23664`::
 
             sage: P0.<x> = ZZ[]
             sage: P1.<y> = Frac(P0)[]
@@ -606,7 +616,7 @@ class FractionField_generic(ring.Field):
             ...
             TypeError: unable to evaluate 'z' in Fraction Field of Multivariate Polynomial Ring in x, y over Integer Ring
 
-        Check that :trac:`17971` is fixed::
+        Check that :issue:`17971` is fixed::
 
             sage: A.<a,c> = Frac(PolynomialRing(QQ,'a,c'))
             sage: B.<d,e> = PolynomialRing(A,'d,e')
@@ -614,13 +624,13 @@ class FractionField_generic(ring.Field):
             sage: (a*d*x^2+a+e+1).resultant(-4*c^2*x+1)                                 # needs sage.libs.pari
             a*d + (16*c^4)*e + (16*a*c^4 + 16*c^4)
 
-        Check that :trac:`24539` is fixed::
+        Check that :issue:`24539` is fixed::
 
             sage: tau = polygen(QQ, 'tau')
             sage: PolynomialRing(CyclotomicField(2), 'z').fraction_field()(tau/(1+tau))             # needs sage.rings.number_field
             z/(z + 1)
 
-        Check that :trac:`26150` is fixed::
+        Check that :issue:`26150` is fixed::
 
             sage: z = SR.var('z')                                                       # needs sage.symbolic
             sage: CyclotomicField(2)['z'].fraction_field()(2*(4*z + 5)/((z + 1)*(z - 1)^4))         # needs sage.rings.number_field sage.symbolic
@@ -633,7 +643,7 @@ class FractionField_generic(ring.Field):
             sage: S.fraction_field()(s/(s+1), (t-1)/(t+2))
             (s^2 + 2*s)/(s^2 - 1)
 
-        Check that :trac:`29713` is fixed::
+        Check that :issue:`29713` is fixed::
 
             sage: F = FractionField(QQ['a'])
             sage: a = F.gen()
@@ -681,7 +691,11 @@ class FractionField_generic(ring.Field):
         x = py_scalar_to_element(x)
         y = py_scalar_to_element(y)
 
-        from sage.libs.pari.all import pari_gen
+        try:
+            from sage.libs.pari.all import pari_gen
+        except ImportError:
+            pari_gen = ()
+
         if isinstance(x, pari_gen) and x.type() == 't_POL':
             # This recursive approach is needed because PARI
             # represents multivariate polynomials as iterated
@@ -917,13 +931,12 @@ class FractionField_generic(ring.Field):
              (2*x^2 + 2)/x^3,
              (2*x^2 + 2)/(x^2 - 1),
              2]
-
         """
         ret = [self.zero(), self.one()]
-        for a in self._R.some_elements():
-            for b in self._R.some_elements():
-                if a != b and self(a) and self(b):
-                    ret.append(self(a) / self(b))
+        ret.extend(self(a) / self(b)
+                   for a in self._R.some_elements()
+                   for b in self._R.some_elements()
+                   if a != b and self(a) and self(b))
         return ret
 
     def _gcd_univariate_polynomial(self, f, g):
@@ -1033,7 +1046,6 @@ class FractionField_1poly_field(FractionField_generic):
             sage: f = x^3 + a
             sage: f.factor()
             (x + 2*a + 1)^3
-
         """
         # The default implementation would try to convert this element to singular and factor there.
         # This fails silently over some base fields, see #23642, so we convert
@@ -1054,7 +1066,6 @@ class FractionField_1poly_field(FractionField_generic):
         .. SEEALSO::
 
             :meth:`sage.rings.function_field.RationalFunctionField.field`
-
         """
         from sage.rings.function_field.constructor import FunctionField
         return FunctionField(self.base_ring(), names=self.variable_name())
@@ -1076,7 +1087,6 @@ class FractionField_1poly_field(FractionField_generic):
                      over Finite Field of size 5
             sage: f(~L.gen())
             1/t
-
         """
         from sage.rings.function_field.function_field_rational import (
             RationalFunctionField,
@@ -1109,7 +1119,7 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
         True
         sage: TestSuite(f).run()
 
-    Check that :trac:`23185` has been resolved::
+    Check that :issue:`23185` has been resolved::
 
         sage: R.<x> = QQ[]
         sage: K.<x> = FunctionField(QQ)
@@ -1117,7 +1127,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
         True
         sage: R.is_subring(R.fraction_field())
         True
-
     """
     def is_surjective(self):
         r"""
@@ -1128,7 +1137,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
             sage: R.<x> = QQ[]
             sage: R.fraction_field().coerce_map_from(R).is_surjective()
             False
-
         """
         return self.domain().is_field()
 
@@ -1144,7 +1152,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
             sage: R.<x> = QQ[]
             sage: R.fraction_field().coerce_map_from(R).is_injective()
             True
-
         """
         return True
 
@@ -1159,7 +1166,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
             Section map:
               From: Fraction Field of Univariate Polynomial Ring in x over Rational Field
               To:   Univariate Polynomial Ring in x over Rational Field
-
         """
         from sage.categories.homset import Hom
         from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
@@ -1181,7 +1187,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
             False
             sage: f == f
             True
-
         """
         if type(self) is not type(other):
             return NotImplemented
@@ -1196,7 +1201,6 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
             sage: R.<x> = QQ[]
             sage: hash(R.fraction_field().coerce_map_from(R)) == hash(R.fraction_field().coerce_map_from(R))
             True
-
         """
         return hash((type(self), self.domain()))
 
@@ -1220,7 +1224,6 @@ class FractionFieldEmbeddingSection(Section):
         sage: isinstance(f, FractionFieldEmbeddingSection)
         True
         sage: TestSuite(f).run()
-
     """
     def _call_(self, x, check=True):
         r"""
@@ -1314,7 +1317,6 @@ class FractionFieldEmbeddingSection(Section):
             False
             sage: f == f
             True
-
         """
         if type(self) is not type(other):
             return NotImplemented
@@ -1329,6 +1331,5 @@ class FractionFieldEmbeddingSection(Section):
             sage: R.<x> = QQ[]
             sage: hash(R.fraction_field().coerce_map_from(R).section()) == hash(R.fraction_field().coerce_map_from(R).section())
             True
-
         """
         return hash((type(self), self.codomain()))

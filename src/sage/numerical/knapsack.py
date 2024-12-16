@@ -98,12 +98,13 @@ from sage.misc.latex import latex
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
 
+
 class Superincreasing(SageObject):
     r"""
     A class for super-increasing sequences.
 
     Let `L = (a_1, a_2, a_3, \dots, a_n)` be a non-empty sequence of
-    non-negative integers. Then `L` is said to be super-increasing if
+    nonnegative integers. Then `L` is said to be super-increasing if
     each `a_i` is strictly greater than the sum of all previous values.
     That is, for each `a_i \in L` the sequence `L` must satisfy the property
 
@@ -120,7 +121,7 @@ class Superincreasing(SageObject):
 
     INPUT:
 
-    - ``seq`` -- (default: ``None``) a non-empty sequence.
+    - ``seq`` -- (default: ``None``) a non-empty sequence
 
     EXAMPLES::
 
@@ -148,8 +149,7 @@ class Superincreasing(SageObject):
 
         INPUT:
 
-        - ``seq`` -- (default: ``None``) a non-empty sequence.
-
+        - ``seq`` -- (default: ``None``) a non-empty sequence
 
         EXAMPLES::
 
@@ -204,7 +204,6 @@ class Superincreasing(SageObject):
         Return a string representation of this super-increasing
         sequence object.
 
-
         EXAMPLES::
 
             sage: from sage.numerical.knapsack import Superincreasing
@@ -231,14 +230,12 @@ class Superincreasing(SageObject):
 
         INPUT:
 
-        - ``N`` -- integer; the target value to search for.
-
+        - ``N`` -- integer; the target value to search for
 
         OUTPUT:
 
         The largest integer in ``self`` that is less than or equal to ``N``. If
         no solution exists, then return ``None``.
-
 
         EXAMPLES:
 
@@ -339,7 +336,7 @@ class Superincreasing(SageObject):
         super-increasing.
 
         Let `L = (a_1, a_2, a_3, \dots, a_n)` be a non-empty sequence of
-        non-negative integers. Then `L` is said to be super-increasing if
+        nonnegative integers. Then `L` is said to be super-increasing if
         each `a_i` is strictly greater than the sum of all previous values.
         That is, for each `a_i \in L` the sequence `L` must satisfy the
         property
@@ -352,11 +349,9 @@ class Superincreasing(SageObject):
         If `L` has exactly one element, then it is also defined to be a
         super-increasing sequence.
 
-
         INPUT:
 
         - ``seq`` -- (default: ``None``) a sequence to test
-
 
         OUTPUT:
 
@@ -367,7 +362,6 @@ class Superincreasing(SageObject):
         - If ``seq`` is not ``None``, then test ``seq`` to determine whether
           or not it is super-increasing. Return ``True`` if ``seq`` is
           super-increasing; ``False`` otherwise.
-
 
         EXAMPLES:
 
@@ -414,12 +408,12 @@ class Superincreasing(SageObject):
             sage: Superincreasing(L).is_superincreasing()
             Traceback (most recent call last):
             ...
-            TypeError: Element e (= 1.00000000000000) of seq must be a non-negative integer.
+            TypeError: Element e (= 1.00000000000000) of seq must be a nonnegative integer.
             sage: L = [1, 2.1, pi, 21, 69, 189, 376, 919]
             sage: Superincreasing(L).is_superincreasing()
             Traceback (most recent call last):
             ...
-            TypeError: Element e (= 2.10000000000000) of seq must be a non-negative integer.
+            TypeError: Element e (= 2.10000000000000) of seq must be a nonnegative integer.
         """
         # argument seq is None, so test self for super-increasing
         if seq is None:
@@ -448,15 +442,15 @@ class Superincreasing(SageObject):
                 return False
             # so now seq is known to represent a non-empty sequence
             if (not isinstance(seq[0], Integer)) and (not isinstance(seq[0], int)):
-                raise TypeError("Element e (= %s) of seq must be a non-negative integer." % seq[0])
+                raise TypeError("Element e (= %s) of seq must be a nonnegative integer." % seq[0])
             if seq[0] < 0:
-                raise TypeError("Element e (= %s) of seq must be a non-negative integer." % seq[0])
+                raise TypeError("Element e (= %s) of seq must be a nonnegative integer." % seq[0])
             cumSum = seq[0]  # the cumulative sum of the sequence seq
             for e in seq[1:]:
                 if (not isinstance(e, Integer)) and (not isinstance(e, int)):
-                    raise TypeError("Element e (= %s) of seq must be a non-negative integer." % e)
+                    raise TypeError("Element e (= %s) of seq must be a nonnegative integer." % e)
                 if e < 0:
-                    raise TypeError("Element e (= %s) of seq must be a non-negative integer." % e)
+                    raise TypeError("Element e (= %s) of seq must be a nonnegative integer." % e)
                 if e <= cumSum:
                     return False
                 cumSum += e
@@ -467,7 +461,7 @@ class Superincreasing(SageObject):
         Solving the subset sum problem for a super-increasing sequence.
 
         Let `S = (s_1, s_2, s_3, \dots, s_n)` be a non-empty sequence of
-        non-negative integers, and let `N \in \ZZ` be non-negative. The
+        nonnegative integers, and let `N \in \ZZ` be nonnegative. The
         subset sum problem asks for a  subset `A \subseteq S` all of whose
         elements sum to `N`. This method specializes the subset sum problem
         to the case of super-increasing sequences. If a solution exists, then
@@ -480,11 +474,9 @@ class Superincreasing(SageObject):
             problem for an arbitrary sequence is known to be computationally
             hard.
 
-
         INPUT:
 
-        - ``N`` -- a non-negative integer.
-
+        - ``N`` -- nonnegative integer
 
         OUTPUT:
 
@@ -492,11 +484,9 @@ class Superincreasing(SageObject):
           subset is also a super-increasing sequence. If no such subset
           exists, then return the empty list.
 
-
-        ALGORITHMS:
+        ALGORITHM:
 
         The algorithm used is adapted from page 355 of [HPS2008]_.
-
 
         EXAMPLES:
 
@@ -511,35 +501,35 @@ class Superincreasing(SageObject):
 
         TESTS:
 
-        The target ``N`` must be a non-negative integer::
+        The target ``N`` must be a nonnegative integer::
 
             sage: from sage.numerical.knapsack import Superincreasing
             sage: L = [0, 1, 2, 4]
             sage: Superincreasing(L).subset_sum(-6)
             Traceback (most recent call last):
             ...
-            TypeError: N (= -6) must be a non-negative integer.
+            TypeError: N (= -6) must be a nonnegative integer.
             sage: Superincreasing(L).subset_sum(-6.2)
             Traceback (most recent call last):
             ...
-            TypeError: N (= -6.20000000000000) must be a non-negative integer.
+            TypeError: N (= -6.20000000000000) must be a nonnegative integer.
 
-        The sequence that ``self`` represents must only contain non-negative
+        The sequence that ``self`` represents must only contain nonnegative
         integers::
 
             sage: L = [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 0, 1]
             sage: Superincreasing(L).subset_sum(1)
             Traceback (most recent call last):
             ...
-            TypeError: Element e (= -10) of seq must be a non-negative integer.
+            TypeError: Element e (= -10) of seq must be a nonnegative integer.
         """
         # input error handling
         if not self.is_superincreasing():
             raise TypeError("self is not super-increasing. Only super-increasing sequences are currently supported.")
         if (not isinstance(N, Integer)) and (not isinstance(N, int)):
-            raise TypeError("N (= %s) must be a non-negative integer." % N)
+            raise TypeError("N (= %s) must be a nonnegative integer." % N)
         if N < 0:
-            raise TypeError("N (= %s) must be a non-negative integer." % N)
+            raise TypeError("N (= %s) must be a nonnegative integer." % N)
 
         # solve subset sum problem for super-increasing sequence
         candidates = []
@@ -556,10 +546,11 @@ class Superincreasing(SageObject):
         else:
             return []
 
+
 def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0,
              *, integrality_tolerance=1e-3):
     r"""
-    Solves the knapsack problem
+    Solve the knapsack problem.
 
     For more information on the knapsack problem, see the documentation of the
     :mod:`knapsack module <sage.numerical.knapsack>` or the
@@ -567,7 +558,7 @@ def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0,
 
     INPUT:
 
-    - ``seq`` -- Two different possible types:
+    - ``seq`` -- two different possible types:
 
       - A sequence of tuples ``(weight, value, something1, something2,
         ...)``. Note that only the first two coordinates (``weight`` and
@@ -577,17 +568,17 @@ def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0,
 
       - A sequence of reals (a value of 1 is assumed).
 
-    - ``binary`` -- When set to ``True``, an item can be taken 0 or 1 time.
+    - ``binary`` -- when set to ``True``, an item can be taken 0 or 1 time
       When set to ``False``, an item can be taken any amount of times (while
       staying integer and positive).
 
-    - ``max`` -- Maximum admissible weight.
+    - ``max`` -- maximum admissible weight
 
-    - ``value_only`` -- When set to ``True``, only the maximum useful value is
+    - ``value_only`` -- when set to ``True``, only the maximum useful value is
       returned. When set to ``False``, both the maximum useful value and an
       assignment are returned.
 
-    - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear Programming
+    - ``solver`` -- (default: ``None``) specify a Mixed Integer Linear Programming
       (MILP) solver to be used. If set to ``None``, the default one is used. For
       more information on MILP solvers and which default solver is used, see
       the method
@@ -595,11 +586,11 @@ def knapsack(seq, binary=True, max=1, value_only=False, solver=None, verbose=0,
       of the class
       :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``). Sets the level of verbosity. Set
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
       to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
-      inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`.
+      inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`
 
     OUTPUT:
 

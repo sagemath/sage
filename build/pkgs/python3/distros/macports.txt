@@ -1,1 +1,2 @@
 python310
+py-setuptools

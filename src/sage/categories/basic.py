@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 A subset of sage.categories.all with just the basic categories needed
 for sage startup (i.e. to define ZZ, QQ, ...).
@@ -42,6 +43,7 @@ from sage.categories.division_rings import DivisionRings
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.gcd_domains import GcdDomains
+from sage.categories.dedekind_domains import DedekindDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.unique_factorization_domains import UniqueFactorizationDomains

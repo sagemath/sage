@@ -16,7 +16,6 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
 - :class:`~sage.combinat.path_tableaux.frieze.FriezePatterns`
 - :class:`~sage.combinat.path_tableaux.semistandard.SemistandardPathTableau`
 - :class:`~sage.combinat.path_tableaux.semistandard.SemistandardPathTableaux`
-
 """
 
 from sage.misc.lazy_import import lazy_import

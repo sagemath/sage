@@ -38,14 +38,12 @@ from sage.schemes.toric.weierstrass import _check_homogeneity
 ######################################################################
 def WeierstrassForm2(polynomial, variables=None, transformation=False):
     r"""
-    Helper function for :func:`~sage.schemes.toric.weierstrass.WeierstrassForm`
+    Helper function for :func:`~sage.schemes.toric.weierstrass.WeierstrassForm`.
 
     Currently, only the case of the complete intersection of two
     quadratic equations in `\mathbb{P}^3` is supported.
 
-    INPUT / OUTPUT:
-
-    See :func:`~sage.schemes.toric.weierstrass.WeierstrassForm`
+    INPUT / OUTPUT: see :func:`~sage.schemes.toric.weierstrass.WeierstrassForm`
 
     TESTS::
 
@@ -74,14 +72,14 @@ def _check_polynomials_P3(quadratic1, quadratic2, variables):
     INPUT:
 
     - ``quadratic1``, ``quadratic2`` -- two quadratic polynomials in 4
-      homogeneous or 3 inhomogeneous variables.
+      homogeneous or 3 inhomogeneous variables
 
-    - ``variables`` -- the variables or ``None`` (default).
+    - ``variables`` -- the variables or ``None`` (default)
 
     OUTPUT:
 
     This function returns ``variables``, potentially guessed from the
-    polynomial ring. A ``ValueError`` is raised if the polynomial is
+    polynomial ring. A :exc:`ValueError` is raised if the polynomial is
     not homogeneous.
 
     EXAMPLES::
@@ -124,7 +122,7 @@ def _check_polynomials_P3(quadratic1, quadratic2, variables):
 ######################################################################
 def _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=None):
     r"""
-    Helper function for the Weierstrass form of a biquadratic in `\mathbb{P}^3`
+    Helper function for the Weierstrass form of a biquadratic in `\mathbb{P}^3`.
 
     The invariants and covariants of a quaternary biquadratic satisfy
     the relation
@@ -139,11 +137,9 @@ def _biquadratic_syzygy_quartic(quadratic1, quadratic2, variables=None):
 
     INPUT:
 
-    See :func:`WeierstrassForm_P3`
+    See :func:`WeierstrassForm_P3`.
 
-    OUTPUT:
-
-    A triple consisting of
+    OUTPUT: a triple consisting of
 
     - The quaternary biquadratic as an algebraic form
       :class:`~sage.rings.invariant_theory.TwoQuaternaryQuadratics`

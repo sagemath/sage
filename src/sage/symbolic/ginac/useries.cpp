@@ -550,14 +550,16 @@ void power::useries(flint_series_t& fp, int order) const
                         mpz_t cnum, cden;
                         mpz_init(cnum);
                         mpz_init(cden);
-                        fmpq_get_mpz_frac(cnum, cden, c);
+                        fmpz_get_mpz(cnum, fmpq_numref(c));
+                        fmpz_get_mpz(cden, fmpq_denref(c));
                         if (not mpz_perfect_square_p(cnum)
                             or not mpz_perfect_square_p(cden))
                                 throw flint_error();
                         mpz_sqrt(cnum, cnum);
                         mpz_sqrt(cden, cden);
                         fmpq_t cc;
-                        fmpq_init_set_mpz_frac_readonly(cc, cnum, cden);
+                        fmpz_init_set_readonly(fmpq_numref(cc), cnum);
+                        fmpz_init_set_readonly(fmpq_denref(cc), cden);
                         mpz_clear(cnum);
                         mpz_clear(cden);
 

@@ -2,15 +2,15 @@
 Stopgaps
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import warnings
 
@@ -18,13 +18,14 @@ import warnings
 from sage.doctest import DOCTEST_MODE
 cdef bint ENABLED = not DOCTEST_MODE
 
+
 def set_state(bint mode):
     """
     Enable or disable the stopgap warnings.
 
     INPUT:
 
-    - ``mode`` -- (bool); if True, enable stopgaps; otherwise, disable.
+    - ``mode`` -- boolean; if ``True``, enable stopgaps. Otherwise, disable.
 
     EXAMPLES::
 
@@ -41,6 +42,7 @@ def set_state(bint mode):
     global ENABLED
     ENABLED = mode
 
+
 class StopgapWarning(Warning):
     """
     This class is used to warn users of a known issue that may produce
@@ -48,9 +50,12 @@ class StopgapWarning(Warning):
     """
     pass
 
+
 warnings.filterwarnings('always', category=StopgapWarning)
 
-cdef set _stopgap_cache = set([])
+
+cdef set _stopgap_cache = set()
+
 
 def stopgap(message, int issue_no):
     r"""
@@ -58,9 +63,10 @@ def stopgap(message, int issue_no):
 
     INPUT:
 
-     - ``message`` - an explanation of how an incorrect answer might be produced.
+    - ``message`` -- an explanation of how an incorrect answer might be produced
 
-     - ``issue_no`` - an integer, giving the number of the Github issue tracking the underlying issue.
+    - ``issue_no`` -- integer; giving the number of the Github issue tracking
+      the underlying issue
 
     EXAMPLES::
 

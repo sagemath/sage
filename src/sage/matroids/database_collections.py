@@ -22,30 +22,28 @@ AUTHORS:
 # ****************************************************************************
 
 
-def AllMatroids(n, r=None, type="all"):
+def AllMatroids(n, r=None, type='all'):
     r"""
-    Return an iterator over all matroids of certain number of elements (and,
-    optionally, of specific rank and type).
+    Iterate over all matroids of certain number of elements (and, optionally,
+    of specific rank and type).
 
     INPUT:
 
     - ``n`` -- integer; the number of elements of the matroids
-    - ``r`` -- integer (optional); the rank of the matroids; `0 \le r \le n`
-    - ``type`` -- string (default: ``'all'``); the type of the matroids; must
+    - ``r`` -- integer (optional); the rank of the matroids (`0 \le r \le n`)
+    - ``type`` -- string (default: ``'all'``); the type of the matroids. Must
       be one of the following:
 
       * ``'all'`` -- all matroids; available: (n=0-9), (n=0-12, r=0-2),
         (n=0-11, r=3)
-      * ``'unorientable'`` -- all unorientable matroids; the rank ``r`` must be
+      * ``'unorientable'`` -- all unorientable matroids; the rank `r` must be
         specified; available: (n=7-11, r=3), (n=7-9, r=4)
       * any other type for which there exists an ``is_type`` method;
         availability same as for ``'all'``
 
-    OUTPUT: an iterator over matroids
-
     EXAMPLES::
 
-        sage: for M in matroids.AllMatroids(2):
+        sage: for M in matroids.AllMatroids(2):                                         # optional - matroid_database
         ....:     M
         all_n02_r00_#0: Matroid of rank 0 on 2 elements with 1 bases
         all_n02_r01_#0: Matroid of rank 1 on 2 elements with 2 bases
@@ -54,7 +52,7 @@ def AllMatroids(n, r=None, type="all"):
 
     ::
 
-        sage: for M in matroids.AllMatroids(5, 3, "simple"):
+        sage: for M in matroids.AllMatroids(5, 3, 'simple'):                            # optional - matroid_database
         ....:     M
         simple_n05_r03_#0: Matroid of rank 3 on 5 elements with 10 bases
         simple_n05_r03_#1: Matroid of rank 3 on 5 elements with 9 bases
@@ -63,7 +61,8 @@ def AllMatroids(n, r=None, type="all"):
 
     ::
 
-        sage: for M in matroids.AllMatroids(4, type="paving"):
+        sage: # optional - matroid_database
+        sage: for M in matroids.AllMatroids(4, type='paving'):
         ....:     M
         paving_n04_r00_#0: Matroid of rank 0 on 4 elements with 1 bases
         paving_n04_r01_#0: Matroid of rank 1 on 4 elements with 4 bases
@@ -80,22 +79,23 @@ def AllMatroids(n, r=None, type="all"):
 
     ::
 
+        sage: # optional - matroid_database
         sage: for M in matroids.AllMatroids(10, 4):
         ....:     M
         Traceback (most recent call last):
         ...
-        ValueError: (n=10, r=4, type="all") is not available in the database
+        ValueError: (n=10, r=4, type='all') is not available in the database
         sage: for M in matroids.AllMatroids(12, 3, "unorientable"):
         ....:     M
         Traceback (most recent call last):
         ...
-        ValueError: (n=12, r=3, type="unorientable") is not available in the database
-        sage: for M in matroids.AllMatroids(8, type="unorientable"):
+        ValueError: (n=12, r=3, type='unorientable') is not available in the database
+        sage: for M in matroids.AllMatroids(8, type='unorientable'):
         ....:     M
         Traceback (most recent call last):
         ...
-        ValueError: The rank needs to be specified for type "unorientable".
-        sage: for M in matroids.AllMatroids(6, type="nice"):
+        ValueError: The rank needs to be specified for type "unorientable"
+        sage: for M in matroids.AllMatroids(6, type='nice'):
         ....:     M
         Traceback (most recent call last):
         ...
@@ -109,6 +109,7 @@ def AllMatroids(n, r=None, type="all"):
 
     TESTS::
 
+        sage: # optional - matroid_database
         sage: all_n = [1, 2, 4, 8, 17, 38, 98, 306, 1724, 383172]
         sage: for i in range(0, 8 + 1):
         ....:     assert len(list(matroids.AllMatroids(i))) == all_n[i]
@@ -160,8 +161,9 @@ def AllMatroids(n, r=None, type="all"):
         ....:                 assert M.is_valid()
     """
     from sage.matroids.constructor import Matroid
-    from sage.env import SAGE_EXTCODE
-    import os
+    from sage.features.databases import DatabaseMatroids
+    DatabaseMatroids().require()
+    import matroid_database
 
     if type != "all" and type != "unorientable":
         try:
@@ -174,7 +176,7 @@ def AllMatroids(n, r=None, type="all"):
             )
 
     if r is None and type == "unorientable":
-        raise ValueError("The rank needs to be specified for type \"%s\". " % type)
+        raise ValueError("The rank needs to be specified for type \"%s\"" % type)
 
     if r is None:
         rng = range(0, n+1)
@@ -193,27 +195,20 @@ def AllMatroids(n, r=None, type="all"):
                     yield M
         else:
             rp = min(r, n - r) if (type != "unorientable") else r
-            type_file = "all" if (type != "unorientable") else "unorientable"
-            file = os.path.join(
-                str(SAGE_EXTCODE), "matroids", "database",
-                type_file + "_matroids",
-                type_file + "r" + str(rp) + "n" + str(n).zfill(2) + ".txt"
-            )
+            type_db = "all" if (type != "unorientable") else "unorientable"
+
+            matroids_bases = getattr(matroid_database, type_db + "_matroids_bases")
             try:
-                fin = open(file, "r")
-            except FileNotFoundError:
+                matroids_bases(n, rp).__next__()
+            except ValueError:
                 raise ValueError(
                     "(n=%s, r=%s, type=\"%s\")" % (n, r, type)
                     + " is not available in the database"
                 )
 
             cnt = 0
-            while True:
-                line = fin.readline()
-                if not line:
-                    break
-
-                M = Matroid(groundset=range(n), rank=rp, revlex=line[:-1])
+            for B in matroids_bases(n, rp):
+                M = Matroid(groundset=range(n), bases=B)
 
                 if type != "unorientable" and n - r < r:
                     M = M.dual()
@@ -227,12 +222,10 @@ def AllMatroids(n, r=None, type="all"):
                         yield M
                         cnt += 1
 
-            fin.close()
-
 
 def OxleyMatroids():
     """
-    Return an iterator over Oxley's matroid collection.
+    Iterate over Oxley's matroid collection.
 
     EXAMPLES::
 
@@ -250,8 +243,8 @@ def OxleyMatroids():
 
     REFERENCES:
 
-    These matroids are the nonparametrized matroids that appear in the
-    Appendix ``Some Interesting Matroids`` in [Oxl2011]_ (p. 639-64).
+    These matroids are the nonparametrized matroids that appear in the Appendix
+    ``Some Interesting Matroids`` in [Oxl2011]_ (p. 639-64).
     """
     from sage.matroids.database_matroids import (
         U24, U25, U35, K4, Whirl3, Q6, P6, U36, R6,
@@ -282,7 +275,7 @@ def OxleyMatroids():
 
 def BrettellMatroids():
     """
-    Return an iterator over Brettell's matroid collection.
+    Iterate over Brettell's matroid collection.
 
     EXAMPLES::
 
@@ -331,7 +324,7 @@ def BrettellMatroids():
 
 def VariousMatroids():
     """
-    Return an iterator over various other named matroids.
+    Iterate over various other named matroids.
 
     EXAMPLES::
 

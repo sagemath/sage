@@ -1,4 +1,8 @@
 # distutils: extra_compile_args = -D_XPG6
+
+# WARNING: src/sage/libs/flint/flint_sage.pyx is generated from
+# src/sage_setup/autogen/flint/templates/flint_sage.pyx.template;
+# please make sure that you are modifying the correct file!
 """
 Flint imports
 
@@ -8,7 +12,7 @@ Import this module::
 
     sage: import sage.libs.flint.flint_sage
 
-We verify that :trac:`6919` is correctly fixed::
+We verify that :issue:`6919` is correctly fixed::
 
     sage: R.<x> = PolynomialRing(ZZ)
     sage: A = 2^(2^17+2^15)
