@@ -642,7 +642,8 @@ class EllipticCurveFactory(UniqueFactory):
             raise ValueError("basis elements must have the same parent")
         prec = F.precision()
         tau = w2/w1
-        if tau.imag() < 0: tau = -tau
+        if tau.imag() < 0:
+            tau = -tau
         g2 = -60*EllipticCurve._eisenstein_series_g_eval(4, tau, prec)/w1**4
         g3 = -140*EllipticCurve._eisenstein_series_g_eval(6, tau, prec)/w1**6
         return EllipticCurve(F, [g2/4, g3/4])
