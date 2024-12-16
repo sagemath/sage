@@ -107,6 +107,10 @@ class SageMagics(Magics):
 
         - ``s`` -- string; the file to be loaded
 
+        .. SEEALSO::
+
+            This is the same as :func:`~sage.repl.load.load`.
+
         EXAMPLES::
 
             sage: import os
@@ -132,6 +136,10 @@ class SageMagics(Magics):
         /path/to/file``.
 
         - ``s`` -- string. The file to be attached
+
+        .. SEEALSO::
+
+            This is the same as :func:`~sage.repl.attach.attach`.
 
         EXAMPLES::
 
@@ -395,14 +403,13 @@ class SageMagics(Magics):
             ....: ''')
             UsageError: unrecognized arguments: --help
 
-        Test invalid quotes (see :mod:`sage.repl.interpreter` for explanation of the dummy line)::
+        Test invalid quotes::
 
             sage: # needs sage.misc.cython
-            sage: print("dummy line"); shell.run_cell('''
+            sage: shell.run_cell('''
             ....: %%cython --a='
             ....: print(1)
             ....: ''')
-            dummy line
             ...
             ValueError...Traceback (most recent call last)
             ...

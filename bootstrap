@@ -235,6 +235,7 @@ save () {
 	build/pkgs/gmpy2/version_requirements.txt \
 	build/pkgs/jupyter_core/version_requirements.txt \
 	build/pkgs/memory_allocator/version_requirements.txt \
+        build/pkgs/meson/version_requirements.txt \
 	build/pkgs/numpy/version_requirements.txt \
 	build/pkgs/pkgconfig/version_requirements.txt \
 	build/pkgs/pplpy/version_requirements.txt \
