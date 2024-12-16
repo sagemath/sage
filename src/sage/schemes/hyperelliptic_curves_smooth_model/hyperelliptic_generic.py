@@ -255,7 +255,13 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         """
         TODO: the name of this function could be better?
 
-        Computes G^±(x) for curves in the split degree model
+        Computes G^±(x) for curves in the split degree model used for
+        Cantor composition with points at infinity when performing
+        arithmetic with the Jac(H).
+
+        .. SEEALSO::
+
+            :func:`~sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_split.cantor_compose_at_infinity`
         """
         if hasattr(self, "_infinite_polynomials"):
             return self._infinite_polynomials
@@ -282,6 +288,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         G_plus = self._polynomial_ring(g)
         G_minus = -G_plus - h
+
         # Checks for the assumptions on G^±
         genus = self.genus()
         assert G_plus.degree() <= (genus + 1)
@@ -296,7 +303,6 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         Compute the points at infinity on the curve. Assumes we are using
         a weighted projective model for the curve
         """
-        # TODO: check to False?
         return [self.point([1, y, 0], check=True) for y in self.roots_at_infinity()]
 
     def is_x_coord(self, x):
@@ -393,14 +399,17 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         if not h:
             y2 = f(x)
             return y2.is_square()
+
         # Generic case for h != 0
         a = f(x)
         b = h(x)
+
         # Special case for char 2
         if K.characteristic() == 2:
             R = f.parent()  # Polynomial ring K[x]
             F = R([-a, b, 1])
             return bool(F.roots())
+
         # Otherwise x is a point on the curve if the discriminant is a square
         D = b * b + 4 * a
         return D.is_square()
@@ -646,7 +655,6 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             (1 + 3*5^2 + O(5^8) : 3*5 + 4*5^2 + 5^4 + 3*5^5 + 5^6 + O(5^7) : 1 + O(5^8))
             sage: HK.is_weierstrass_point(T)
             False
-
         """
 
         f, h = self.hyperelliptic_polynomials()
@@ -680,8 +688,6 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: P = H.point([15,6,1])
             sage: H.is_weierstrass_point(P)
             True
-
-
         """
         f, h = self.hyperelliptic_polynomials()
 
@@ -743,17 +749,18 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             # For the the split and ramified case, a point at infinity is chosen,
             self._distinguished_point = self.points_at_infinity()[0]
             return self._distinguished_point
-        else:
-            assert (
-                self.base_ring().characteristic() > 0
-            ), "in characteristic 0, a distinguished_point needs to be specified"
-            # in the inert case we choose a point with minimal x-coordinate
-            for x0 in self.base_ring():
-                try:
-                    self._distinguished_point = self.lift_x(x0)
-                    return self._distinguished_point
-                except ValueError:
-                    pass
+
+        assert (
+            self.base_ring().characteristic() > 0
+        ), "in characteristic 0, a distinguished_point needs to be specified"
+
+        # in the inert case we choose a point with minimal x-coordinate
+        for x0 in self.base_ring():
+            try:
+                self._distinguished_point = self.lift_x(x0)
+                return self._distinguished_point
+            except ValueError:
+                pass
 
         raise ValueError("distinguished point not found")
 
@@ -870,7 +877,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         return self.points_at_infinity() + [self(*P) for P in proj_pts if P[2] != 0]
 
     # -------------------------------------------
-    # Hacky things
+    # Hacky functions from old implementation.
     # -------------------------------------------
 
     def is_singular(self, *args, **kwargs):
@@ -907,8 +914,9 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
     def odd_degree_model(self):
         r"""
-        Return an odd degree model of self, or raise ValueError if one does not exist over the field of definition.
-        The term odd degree model refers to a model of the form y^2 = f(x) with deg(f) = 2*g + 1.
+        Return an odd degree model of self, or raise ValueError if one does not
+        exist over the field of definition. The term odd degree model refers to
+        a model of the form y^2 = f(x) with deg(f) = 2*g + 1.
 
         EXAMPLES::
 
@@ -964,12 +972,6 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
             sage: HyperellipticCurveSmoothModel(x^5 + 1, 1).odd_degree_model()
             Hyperelliptic Curve over Rational Field defined by y^2 = 4*x^5 + 5
-
-        TESTS::
-
-            sage: # TODO this used to have names="U, V"
-            sage: HyperellipticCurveSmoothModel(x^5 + 1).odd_degree_model()
-            Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + 1
         """
         from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_constructor import (
             HyperellipticCurveSmoothModel,
@@ -991,9 +993,9 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             raise ValueError("No odd degree model exists over field of definition")
         rt = rts[0]
         x = f.parent().gen()
-        fnew = f((x * rt + 1) / x).numerator()  # move rt to "infinity"
+        f_new = f((x * rt + 1) / x).numerator()  # move rt to "infinity"
 
-        return HyperellipticCurveSmoothModel(fnew, 0)
+        return HyperellipticCurveSmoothModel(f_new, 0)
 
     def has_odd_degree_model(self):
         r"""
@@ -1050,6 +1052,13 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
     # -------------------------------------------
 
     def monsky_washnitzer_gens(self):
+        """
+        Compute the generators of the special hyperelliptic quotient ring
+
+        EXAMPLES::
+
+            TODO
+        """
         from sage.schemes.hyperelliptic_curves_smooth_model import monsky_washnitzer
 
         S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self)
@@ -1066,7 +1075,6 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: C = HyperellipticCurveSmoothModel(x^5 - 4*x + 4)
             sage: C.invariant_differential()
             1 dx/2y
-
         """
         from sage.schemes.hyperelliptic_curves_smooth_model import monsky_washnitzer
 
@@ -1129,20 +1137,16 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         - Jennifer Balakrishnan (2007-12)
         - Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
-
         """
         if P[2] == 0:
             raise TypeError(
-                "P = %s is a point at infinity. Use local_coordinates_at_infinity instead!"
-                % P
+                f"P = {P} is a point at infinity. Use local_coordinates_at_infinity instead"
             )
         if self.is_weierstrass_point(P):
             raise TypeError(
-                "P = %s is a Weierstrass point. Use local_coordinates_at_weierstrass instead!"
-                % P
+                f"P = {P} is a Weierstrass point. Use local_coordinates_at_weierstrass instead"
             )
         f, h = self.hyperelliptic_polynomials()
-        # pol = self.hyperelliptic_polynomials()[0]
         a, b = self.affine_coordinates(P)
 
         L = PowerSeriesRing(self.base_ring(), name, default_prec=prec)
@@ -1209,17 +1213,14 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             - Jennifer Balakrishnan (2007-12)
             - Francis Clarke (2012-08-26)
             - Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
-
         """
         if P[2] == 0:
             raise TypeError(
-                "P = %s is a point at infinity. Use local_coordinates_at_infinity instead!"
-                % P
+                f"P = {P} is a point at infinity. Use local_coordinates_at_infinity instead"
             )
         if not self.is_weierstrass_point(P):
             raise TypeError(
-                "P = %s is not a Weierstrass point. Use local_coordinates_at_nonweierstrass instead!"
-                % P
+                f"P = {P} is not a Weierstrass point. Use local_coordinates_at_nonweierstrass instead"
             )
 
         L = PowerSeriesRing(self.base_ring(), name, default_prec=prec)
@@ -1301,8 +1302,6 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         g = self.genus()
         f, h = self.hyperelliptic_polynomials()
-        # if h:
-        #    raise NotImplementedError("h = %s is nonzero" % h)
         K = LaurentSeriesRing(self.base_ring(), name, default_prec=prec + 2)
         t = K.gen()
         L = PolynomialRing(K, "x")
@@ -1379,8 +1378,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             )
         if not P[2] == 0:
             raise TypeError(
-                "P = %s is not a point at infinity. Use local_coordinates_at_nonweierstrass or  local_coordinates_at_weierstrass instead!"
-                % P
+                f"P = {P} is not a point at infinity. Use local_coordinates_at_nonweierstrass or local_coordinates_at_weierstrass instead"
             )
 
         K = LaurentSeriesRing(self.base_ring(), name, default_prec=prec + 2)
