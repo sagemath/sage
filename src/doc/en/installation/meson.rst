@@ -56,8 +56,9 @@ or run the tests with ``./sage -t``.
     By using ``pip install --editable`` in the above steps, the Sage library 
     is installed in editable mode. This means that when you only edit source
     files, there is no need to rebuild the library; it suffices to restart Sage.
-    Note that this even works when you edit Cython files, so you no longer need
-    to manually compile after editing Cython files.
+    Note that this even works when you edit Cython files (they will be recompiled
+    automatically), so you no longer need to manually compile after editing Cython
+    files.
 
 .. NOTE::
 
@@ -79,8 +80,6 @@ Background information
 
 Under the hood, pip invokes meson to configure and build the project.
 We can also use meson directly as follows.
-``meson compile`` is much faster than ``pip install``,
-because ``pip install`` reruns ``meson setup --reconfigure`` each time.
 
 To configure the project, we need to run the following command:
 
@@ -139,3 +138,17 @@ Alternatively, we can still use pip to install:
     See `Meson's quick guide <https://mesonbuild.com/Quick-guide.html#using-meson-as-a-distro-packager>`_
     and `Meson's install guide <https://mesonbuild.com/Installing.html#destdir-support>`_
     for more information.
+
+Miscellaneous tips
+==================
+
+The environment variable ``MESONPY_EDITABLE_VERBOSE=1`` can be set while running ``./sage``,
+so that when Cython files are recompiled a message is printed out.
+
+If a new ``.pyx`` file is added, it need to be added to ``meson.build`` file in the
+containing directory.
+
+Unlike the ``make``-based build system which relies on header comments ``# distutils: language = c++``
+to determine whether C++ should be used, Meson-based build system requires specifying
+``override_options: ['cython_language=cpp']`` in the ``meson.build`` file.
+Similarly, dependencies need to be specified by ``dependencies: [...]``.
