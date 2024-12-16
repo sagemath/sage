@@ -553,6 +553,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
         self.total_walltime_skips = 0
         self.total_performed_tests = 0
         self.total_walltime = 0
+        if not hasattr(self, "_stats"):
+            self._stats = self._name2ft
 
     def _run(self, test, compileflags, out):
         """
@@ -830,7 +832,10 @@ class SageDocTestRunner(doctest.DocTestRunner):
         self.optionflags = original_optionflags
 
         # Record and return the number of failures and tries.
-        self._DocTestRunner__record_outcome(test, failures, tries)
+        try:
+            self._DocTestRunner__record_outcome(test, failures, tries, walltime_skips)
+        except TypeError:
+            self._DocTestRunner__record_outcome(test, failures, tries)
         self.total_walltime_skips += walltime_skips
         self.total_performed_tests += tries
         return TestResults(failures, tries)
@@ -931,7 +936,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
             sage: import doctest, sys, os
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
-            sage: DTR._name2ft['sage.doctest.forker'] = (1,120)
+            sage: DTR._stats['sage.doctest.forker'] = (1,120)
             sage: results = DTR.summarize()
             **********************************************************************
             1 item had failures:
@@ -946,15 +951,15 @@ class SageDocTestRunner(doctest.DocTestRunner):
         passed = []
         failed = []
         totalt = totalf = 0
-        for x in self._name2ft.items():
-            name, (f, t) = x
-            assert f <= t
-            totalt += t
-            totalf += f
-            if not t:
+        for x in self._stats.items():
+            name, f = x
+            assert f[0] <= f[1]
+            totalt += f[1]
+            totalf += f[0]
+            if not f[1]:
                 notests.append(name)
-            elif not f:
-                passed.append((name, t))
+            elif not f[0]:
+                passed.append((name, f[1]))
             else:
                 failed.append(x)
         if verbose:
@@ -972,10 +977,10 @@ class SageDocTestRunner(doctest.DocTestRunner):
             print(self.DIVIDER, file=m)
             print(count_noun(len(failed), "item"), "had failures:", file=m)
             failed.sort()
-            for thing, (f, t) in failed:
-                print(" %3d of %3d in %s" % (f, t, thing), file=m)
+            for thing, f in failed:
+                print(" %3d of %3d in %s" % (f[0], f[1], thing), file=m)
         if verbose:
-            print(count_noun(totalt, "test") + " in " + count_noun(len(self._name2ft), "item") + ".", file=m)
+            print(count_noun(totalt, "test") + " in " + count_noun(len(self._stats), "item") + ".", file=m)
             print("%s passed and %s failed." % (totalt - totalf, totalf), file=m)
             if totalf:
                 print("***Test Failed***", file=m)
