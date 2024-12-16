@@ -7106,14 +7106,13 @@ class AlgebraicPolynomialTracker(SageObject):
             sage: x = polygen(AA)
             sage: p = AA(2)^(1/100) * x + AA(3)^(1/100)
             sage: cp = AA.common_polynomial(p)
-            sage: alarm(0.5); cp.generator()
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
-            sage: alarm(0.5); cp.generator()
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.5): cp.generator()
+            doctest:warning...
+            RuntimeWarning: cypari2 leaked ... bytes on the PARI stack
+            sage: with ensure_interruptible_after(0.5): cp.generator()
+            doctest:warning...
+            RuntimeWarning: cypari2 leaked ... bytes on the PARI stack
         """
         if self._exact:
             return

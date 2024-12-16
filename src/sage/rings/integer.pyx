@@ -7108,21 +7108,16 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         Check that it can be interrupted (:issue:`17852`)::
 
-            sage: alarm(0.5); (2^100).binomial(2^22, algorithm='mpir')
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.5): (2^100).binomial(2^22, algorithm='mpir')
 
         For PARI, we try 10 interrupts with increasing intervals to
         check for reliable interrupting, see :issue:`18919`::
 
             sage: from cysignals import AlarmInterrupt
             sage: for i in [1..10]:             # long time (5s)                        # needs sage.libs.pari
-            ....:     try:
-            ....:         alarm(i/11)
+            ....:     with ensure_interruptible_after(i/11):
             ....:         (2^100).binomial(2^22, algorithm='pari')
-            ....:     except AlarmInterrupt:
-            ....:         pass
             doctest:...: RuntimeWarning: cypari2 leaked ... bytes on the PARI stack...
         """
         cdef Integer x

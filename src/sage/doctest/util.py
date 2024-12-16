@@ -25,6 +25,8 @@ AUTHORS:
 
 from time import time as walltime
 from os import sysconf, times
+from contextlib import contextmanager
+from cysignals.alarm import alarm, cancel_alarm, AlarmInterrupt
 
 
 def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
@@ -749,3 +751,104 @@ class NestedName:
             True
         """
         return not (self == other)
+
+
+@contextmanager
+def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float = 0.2, inaccuracy_tolerance: float = 0.1):
+    """
+    Helper function for doctesting to ensure that the code is interruptible after a certain amount of time.
+    This should only be used for internal doctesting purposes.
+
+    EXAMPLES::
+
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: with ensure_interruptible_after(1) as data: sleep(3)
+
+    ``as data`` is optional, but if it is used, it will contain a few useful values::
+
+        sage: data  # abs tol 0.2
+        {'alarm_raised': True, 'elapsed': 1.0}
+
+    ``max_wait_after_interrupt`` can be passed if the function may take longer than usual to be interrupted::
+
+        sage: cython('''
+        ....: from libc.time cimport clock_t, clock, CLOCKS_PER_SEC
+        ....: from cysignals.signals cimport sig_check
+        ....: cpdef void uninterruptible_sleep(double seconds):
+        ....:     cdef clock_t target = clock() + <clock_t>(CLOCKS_PER_SEC * seconds)
+        ....:     while clock() < target:
+        ....:         pass
+        ....: cpdef void check_interrupt_only_occasionally():
+        ....:     for i in range(10):
+        ....:         uninterruptible_sleep(0.8)
+        ....:         sig_check()
+        ....: ''')
+        sage: with ensure_interruptible_after(1) as data:  # not passing max_wait_after_interrupt will raise an error
+        ....:     check_interrupt_only_occasionally()
+        Traceback (most recent call last):
+        ...
+        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 1... seconds
+        sage: with ensure_interruptible_after(1, max_wait_after_interrupt=0.9):
+        ....:     check_interrupt_only_occasionally()
+
+    TESTS::
+
+        sage: data['elapsed']  # abs tol 0.3  # 1.6 = 0.8 * 2
+        1.6
+
+    ::
+
+        sage: with ensure_interruptible_after(2) as data: sleep(1)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: Function terminates early after 1... < 2.0000 seconds
+        sage: data  # abs tol 0.2
+        {'alarm_raised': False, 'elapsed': 1.0}
+        sage: with ensure_interruptible_after(1) as data: raise ValueError
+        Traceback (most recent call last):
+        ...
+        ValueError
+        sage: data  # abs tol 0.2
+        {'alarm_raised': False, 'elapsed': 0.0}
+
+    ::
+
+        sage: # needs sage.misc.cython
+        sage: with ensure_interruptible_after(1) as data: uninterruptible_sleep(2)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 2... seconds
+        sage: data  # abs tol 0.2
+        {'alarm_raised': True, 'elapsed': 2.0}
+        sage: with ensure_interruptible_after(1): uninterruptible_sleep(2); raise RuntimeError
+        Traceback (most recent call last):
+        ...
+        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 2... seconds
+        sage: data  # abs tol 0.2
+        {'alarm_raised': True, 'elapsed': 2.0}
+    """
+    data = {}
+    start_time = walltime()
+    alarm(seconds)
+    alarm_raised = False
+
+    try:
+        yield data
+    except AlarmInterrupt:
+        alarm_raised = True
+    finally:
+        cancel_alarm()
+        elapsed = walltime() - start_time
+        data["elapsed"] = elapsed
+        data["alarm_raised"] = alarm_raised
+
+    if elapsed > seconds + max_wait_after_interrupt:
+        raise RuntimeError(
+                f"Function is not interruptible within {seconds:.4f} seconds, only after {elapsed:.4f} seconds"
+                + ("" if alarm_raised else " (__exit__ called before interrupt check)"))
+
+    if alarm_raised:
+        if elapsed < seconds - inaccuracy_tolerance:
+            raise RuntimeError(f"Interrupted too early: {elapsed:.4f} < {seconds:.4f}, this should not happen")
+    else:
+        raise RuntimeError(f"Function terminates early after {elapsed:.4f} < {seconds:.4f} seconds")
