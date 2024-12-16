@@ -37,6 +37,13 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return self.codomain().curve()
 
     def extended_curve(self):
+        """
+        TODO:
+
+        EXAMPLES::
+
+            sage: # TODO
+        """
         # Code from schemes/generic/homset.py
         if "_extended_curve" in self.__dict__:
             return self._extended_curve
@@ -51,7 +58,13 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
     @cached_method
     def order(self):
         """
+        Compute the order of the Jacobian
+
         TODO: currently using lazy methods by calling sage
+
+        EXAMPLES::
+
+            sage: # TODO
         """
         return sum(self.extended_curve().frobenius_polynomial())
 
@@ -61,6 +74,8 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         Return the roots of the charpoly of frobenius on the extended curve.
 
         EXAMPLES::
+
+            sage: # TODO
         """
         from sage.rings.qqbar import QQbar
 
@@ -93,6 +108,13 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         )
 
     def count_points(self, n=1):
+        """
+        TODO
+
+        EXAMPLES::
+
+            sage: # TODO
+        """
         try:
             n = Integer(n)
         except TypeError:
@@ -110,6 +132,10 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         """
         On input a point P, return the Mumford coordinates
         of (the affine part of) the divisor [P].
+
+        EXAMPLES::
+
+            sage: # TODO
         """
         R, x = self.extended_curve().polynomial_ring().objgen()
         X, Y, Z = P._coords
@@ -658,7 +684,3 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return ss
 
     rational_points = points
-
-    # TODO: Remove this after #38566 is merged
-    def __iter__(self):
-        yield from self.points()

@@ -26,6 +26,9 @@ AUTHORS:
 
 from sage.matrix.constructor import Matrix
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_constructor import (
+    HyperellipticCurveSmoothModel,
+)
 from sage.schemes.plane_conics.constructor import Conic
 
 
@@ -187,15 +190,14 @@ def HyperellipticCurve_from_invariants(
                 f"No such curve exists over {k} as there are no "
                 f"rational points on {MConic}"
             )
+    elif MConic.has_rational_point():
+        parametrization = MConic.parametrization(morphism=False)[0]
+        [F1, F2, F3] = [p(t, 1) for p in parametrization]
     else:
-        if MConic.has_rational_point():
-            parametrization = MConic.parametrization(morphism=False)[0]
-            [F1, F2, F3] = [p(t, 1) for p in parametrization]
-        else:
-            raise ValueError(
-                f"No such curve exists over {k} as there are no "
-                f"rational points on {MConic}"
-            )
+        raise ValueError(
+            f"No such curve exists over {k} as there are no "
+            f"rational points on {MConic}"
+        )
 
     # setting the cijk from Mestre's algorithm
     c111 = 12 * x * y - 2 * y / 3 - 4 * z

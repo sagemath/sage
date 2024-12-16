@@ -68,12 +68,14 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
         if check:
             # check parent
-            from sage.schemes.hyperelliptic_curves_smooth_model.weighted_projective_homset import SchemeHomset_points_weighted_projective_ring
+            from sage.schemes.hyperelliptic_curves_smooth_model.weighted_projective_homset import (
+                SchemeHomset_points_weighted_projective_ring,
+            )
             if not isinstance(X, SchemeHomset_points_weighted_projective_ring):
                 raise TypeError(f"ambient space {X} must be a weighted projective space")
 
-            from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
             from sage.rings.ring import CommutativeRing
+            from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
             d = X.codomain().ambient_space().ngens()
             if isinstance(v, SchemeMorphism) or isinstance(v, EllipticCurvePoint_field):
                 v = list(v)
@@ -99,13 +101,12 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
                 if not any(v):
                     raise ValueError(f"{v} does not define a valid projective "
                                      "point since all entries are zero")
-            else:
-                # Over rings with zero divisors, a more careful check
-                # is required: We test whether the coordinates of the
-                # point generate the unit ideal. See #31576.
-                if 1 not in R.ideal(v):
-                    raise ValueError(f"{v} does not define a valid projective point "
-                                     "since it is a multiple of a zero divisor")
+            # Over rings with zero divisors, a more careful check
+            # is required: We test whether the coordinates of the
+            # point generate the unit ideal. See #31576.
+            elif 1 not in R.ideal(v):
+                raise ValueError(f"{v} does not define a valid projective point "
+                                 "since it is a multiple of a zero divisor")
 
             X.extended_codomain()._check_satisfies_equations(v)
 
@@ -278,8 +279,8 @@ class SchemeMorphism_point_weighted_projective_field(SchemeMorphism_point_weight
         self._normalized = False
 
         if check:
-            from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
             from sage.rings.ring import CommutativeRing
+            from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
             d = X.codomain().ambient_space().ngens()
             if is_SchemeMorphism(v) or isinstance(v, EllipticCurvePoint_field):
                 v = list(v)

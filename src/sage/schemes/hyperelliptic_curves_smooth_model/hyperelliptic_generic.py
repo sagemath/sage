@@ -1068,10 +1068,10 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             1 dx/2y
 
         """
-        from sage.schemes.hyperelliptic_curves_smooth_model import monsky_washnitzer as m_w
+        from sage.schemes.hyperelliptic_curves_smooth_model import monsky_washnitzer
 
-        S = m_w.SpecialHyperellipticQuotientRing(self)
-        MW = m_w.MonskyWashnitzerDifferentialRing(S)
+        S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self)
+        MW = monsky_washnitzer.MonskyWashnitzerDifferentialRing(S)
         return MW.invariant_differential()
 
     # -------------------------------------------
