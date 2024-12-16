@@ -44,7 +44,7 @@ comp = zlib
 comp_other = bz2
 
 from sage.misc.sage_unittest import TestSuite
-
+from sage.misc.superseded import deprecation
 
 # We define two global dictionaries `already_pickled` and
 # `already_unpickled`, which are intended to help you to implement
@@ -1230,6 +1230,8 @@ def db(name):
 
     The database directory is ``$HOME/.sage/db``.
     """
+    deprecation(39012, "Directly use pickle/unpickle instead of db/db_save.")
+
     from sage.misc.misc import SAGE_DB
     return load('%s/%s' % (SAGE_DB, name))
 
@@ -1240,6 +1242,8 @@ def db_save(x, name=None):
 
     The database directory is ``$HOME/.sage/db``.
     """
+    deprecation(39012, "Directly use pickle/unpickle instead of db/db_save.")
+
     try:
         x.db(name)
     except AttributeError:

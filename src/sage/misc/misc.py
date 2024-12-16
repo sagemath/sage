@@ -168,10 +168,6 @@ def try_read(obj, splitlines=False):
 
     return data
 
-
-SAGE_DB = os.path.join(DOT_SAGE, 'db')
-os.makedirs(SAGE_DB, exist_ok=True)
-
 try:
     # Create the matplotlib config directory.
     os.makedirs(os.environ["MPLCONFIGDIR"], exist_ok=True)
