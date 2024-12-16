@@ -11,6 +11,7 @@ homfly = cc.find_library(
 )
 
 py.install_sources(
+  '__init__.py',
   'all.py',
   'all__sagemath_coxeter3.py',
   'all__sagemath_meataxe.py',

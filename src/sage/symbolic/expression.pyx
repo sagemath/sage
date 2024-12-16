@@ -372,6 +372,7 @@ More sanity tests::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+cimport cython
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
 
@@ -13573,6 +13574,7 @@ def _eval_on_operands(f):
         Some documentation.
     """
     @sage_wraps(f)
+    @cython.binding(True)
     def new_f(ex, *args, **kwds):
         new_args = list(ex._unpack_operands())
         new_args.extend(args)

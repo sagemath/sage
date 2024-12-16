@@ -8,10 +8,11 @@ endif
 rw = cc.find_library('rw', required: not is_windows, disabler: true)
 
 py.install_sources(
+  '__init__.py',
   'all.py',
   'all__sagemath_tdlib.py',
   'fast_digraph.pxd',
-  'modular_decomposition.py',
+  'modular_decomposition.pxd',
   'rankwidth.pxd',
   'slice_decomposition.pxd',
   'tree_decomposition.pxd',
@@ -43,6 +44,7 @@ endforeach
 extension_data_cpp = {
   'clique_separators': files('clique_separators.pyx'),
   'slice_decomposition' : files('slice_decomposition.pyx'),
+  'modular_decomposition' : files('modular_decomposition.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
