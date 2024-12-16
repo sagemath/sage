@@ -3298,7 +3298,7 @@ class AllowZeroInversionsContext:
         self.sr._allow_zero_inversions = self.allow_zero_inversions
 
 
-def test_consistency(max_n=2, **kwargs):
+def check_consistency(max_n=2, **kwargs):
     r"""
     Test all combinations of ``r``, ``c``, ``e`` and ``n`` in ``(1,
     2)`` for consistency of random encryptions and their polynomial
@@ -3317,8 +3317,8 @@ def test_consistency(max_n=2, **kwargs):
     on machines with "only" 2GB of RAM, we test ``max_n`` = 1, which
     has a more reasonable memory usage. ::
 
-        sage: from sage.crypto.mq.sr import test_consistency
-        sage: test_consistency(1)  # long time (65s on sage.math, 2012)
+        sage: from sage.crypto.mq.sr import check_consistency
+        sage: check_consistency(1)  # long time (65s on sage.math, 2012)
         True
     """
     consistent = True

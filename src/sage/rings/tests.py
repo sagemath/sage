@@ -333,14 +333,14 @@ def random_rings(level=MAX_LEVEL):
 
 
 @random_testing
-def test_random_elements(level=MAX_LEVEL, trials=1):
+def check_random_elements(level=MAX_LEVEL, trials=1):
     """
     Create random elements of random rings until a crash occurs, in
     which case an exception is raised.  Defaults to running a single
     trial, but more can be specified.  To run tests in an infinite
     loop, you could use::
 
-        while True: test_random_elements(trials=100, print_seed=True)
+        while True: check_random_elements(trials=100, print_seed=True)
 
     INPUT:
 
@@ -352,7 +352,7 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
     EXAMPLES::
 
         sage: import sage.rings.tests
-        sage: sage.rings.tests.test_random_elements(trials=2, seed=0)                   # needs sage.rings.number_field
+        sage: sage.rings.tests.check_random_elements(trials=2, seed=0)                   # needs sage.rings.number_field
         survived 0 tests
         Rational Field
         -1/2
@@ -363,9 +363,9 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
         ----
 
         sage: # needs sage.rings.finite_rings sage.rings.number_field sage.rings.padics
-        sage: sage.rings.tests.test_random_elements(trials=10)
+        sage: sage.rings.tests.check_random_elements(trials=10)
         survived 0 tests...
-        sage: sage.rings.tests.test_random_elements(trials=1000)  # long time (5 seconds)
+        sage: sage.rings.tests.check_random_elements(trials=1000)  # long time (5 seconds)
         survived 0 tests...
     """
     r = random_rings(level)
@@ -381,7 +381,7 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
 
 
 @random_testing
-def test_random_arith(level=MAX_LEVEL, trials=1):
+def check_random_arith(level=MAX_LEVEL, trials=1):
     """
     Create random elements of random rings and do some arithmetic with them.
 
@@ -430,7 +430,7 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
 
 
 @random_testing
-def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
+def check_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
                                   ref_mul=lambda f, g: f._mul_generic(g),
                                   base_ring_random_elt_args=[],
                                   numtests=10, verbose=False):
