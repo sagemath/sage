@@ -380,7 +380,7 @@ def cython(filename, verbose=0, compile_message=False,
         cython_messages = re.sub(
             "^.*The keyword 'nogil' should appear at the end of the function signature line. "
             "Placing it before 'except' or 'noexcept' will be disallowed in a future version of Cython.\n",
-            "", cython_messages, 0, re.MULTILINE)
+            "", cython_messages, count=0, flags=re.MULTILINE)
 
         sys.stderr.write(cython_messages)
         sys.stderr.flush()
