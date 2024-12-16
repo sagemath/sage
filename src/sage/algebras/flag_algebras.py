@@ -211,7 +211,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.algebras.flag import Flag, Pattern, inductive_generator
+from sage.algebras.flag import Flag, Pattern, inductive_generator, overlap_generator
 
 from sage.categories.sets_cat import Sets
 
@@ -1731,7 +1731,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     verify = verify_certificate
     
-    
     #Generating flags
     def _guess_number(self, n):
         if n==0:
@@ -1760,6 +1759,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         sign_perm = len(self._signature_perms())
         return binomial(prev_guess + 1, 2) * (2**check_bits) * sign_perm
     
+    def generate_with_overlaps(self, theory0, theory1, n):
+        ls0 = theory0.generate(n)
+        ls1 = theory1.generate(n)
+        return overlap_generator(n, self, ls0, ls1, tuple())
+
+
     def generate_flags(self, n, ftype=None, run_bound=500000):
         r"""
         Returns the list of flags with a given size and ftype
@@ -1901,6 +1906,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
     @lru_cache(maxsize=None)
     def _signature_perms(self):
+        
         terms = self._signature.keys()
         groups = [self._signature[xx]["group"] for xx in terms]
 
@@ -1908,9 +1914,15 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         for group, term in zip(groups, terms):
             grouped_terms.setdefault(group, []).append(term)
 
-        group_permutations = {
-            group: list(itertools.permutations(terms)) for group, terms in grouped_terms.items()
-            }
+        group_permutations = {}
+        for group, terms in grouped_terms.items():
+            sym_gr = self._symmetries[group][2]
+            if len(sym_gr)==0:
+                group_permutations[group] = list(itertools.permutations(terms))
+            else:
+                coset_reps = _coset_reps(self._symmetries[group])
+                group_permutations[group] = [[terms[ii] for ii in xx] for xx in coset_reps]
+        
         grouped_permutations = itertools.product(
             *(group_permutations[group] for group in sorted(grouped_terms.keys()))
             )
@@ -2085,8 +2097,81 @@ Cyclic3 = [
     [0, 8], [0, 3],
     [2, 3], [1, 5], [0, 7]
 ]
+K4mSymmetry = [
+    [0, 6],
+    [1, 6],
+    [4, 6],
+    [0, 7],
+    [1, 7],
+    [5, 7],
+    [0, 8],
+    [2, 8],
+    [3, 8],
+    [0, 9],
+    [2, 9],
+    [5, 9],
+    [0, 10],
+    [3, 10],
+    [4, 10],
+    [1, 11],
+    [2, 11],
+    [3, 11],
+    [1, 12],
+    [2, 12],
+    [4, 12],
+    [1, 13],
+    [3, 13],
+    [5, 13],
+    [2, 14],
+    [4, 14],
+    [5, 14],
+    [3, 15],
+    [4, 15],
+    [5, 15]
+]
 FullSymmetry = True
 NoSymmetry = False
+
+def _coset_reps(sym):
+    from blisspy import automorphism_group_gens_from_edge_list
+    n0, n, graph = sym
+    ed0, ed1 = zip(*graph)
+    part = [list(range(n0)), list(range(n0, n))]
+    gens = automorphism_group_gens_from_edge_list(n, list(ed0), list(ed1), 1, None, part)
+    grp = _generate_group(gens, n0)
+    allgrp = set(itertools.permutations(range(n0)))
+    perms = list(_compute_coset_reps(allgrp, grp, n0))
+    return perms
+
+def _generate_group(generators, n):
+    group = set()
+    to_check = [tuple(range(n))]
+    while to_check:
+        perm = to_check.pop()
+        if perm in group:
+            continue
+        group.add(perm)
+        for gen in generators:
+            new_perm = tuple(gen[perm[i]] for i in range(n))
+            if new_perm not in group:
+                to_check.append(new_perm)
+    return group
+
+def _compute_coset_reps(G, H, n):
+    coset_reps = []
+    for g in G:
+        in_existing_coset = False
+        for c in coset_reps:
+            h = [0] * n
+            for i in range(n):
+                h[c[i]] = g[i]
+            h_tuple = tuple(h)
+            if h_tuple in H:
+                in_existing_coset = True
+                break
+        if not in_existing_coset:
+            coset_reps.append(g)
+    return coset_reps
 
 #Primitive rounding methods
 def _flatten_matrix(mat, doubled=False):

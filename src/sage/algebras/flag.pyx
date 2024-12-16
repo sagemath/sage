@@ -343,48 +343,28 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, tuple e
     ))
     return combined_tuple
 
-# cpdef tuple overlap_generator(int n, theoryR, theory0, theory1, tuple small0, tuple small1, tuple excluded):
-#     cdef dict signatureR = theoryR.signature()
-#     cdef dict signature0 = theory0.signature()
-#     cdef dict signature1 = theory1.signature()
+cpdef tuple overlap_generator(int n, theoryR, tuple small0, tuple small1, tuple excluded):
+    cdef dict ret = {}
 
-#     cdef dict ret = {}
+    cdef int ii, jj
+    cdef Flag fl0, fl1, perm0
 
-#     cdef list sm_0_auts = []
-#     for fl0 in small0:
-
-
-#     #For the merging
-#     cdef dict G_canonical_blocks, FG_overlap, G_canonical_blocks_permed
-#     cdef tuple dummy_1
-#     cdef tuple G_perm
-#     cdef list G_perm_list
-
-#     #Check ways to combine
-#     for Fs_canonical in subf_classes:
-#         for ii, (F_canonical_blocks, _) in enumerate(subf_classes[Fs_canonical]):
-#             F_canonical_blocks = _perm_blocks(F_canonical_blocks, perm_0)
-#             for G_canonical_blocks, Gs_cosets in subf_classes[Fs_canonical][ii:]:
-#                 for G_perm in Gs_cosets:
-#                     G_perm_list = list(G_perm)
-#                     G_perm_list.insert(1, n-1)
-#                     G_canonical_blocks_permed = _perm_blocks(G_canonical_blocks, tuple(G_perm_list))
-#                     FG_overlap = _merge_blocks(F_canonical_blocks, G_canonical_blocks_permed, (0, ))
-#                     for ext in extensions:
-#                         sig_check()
-#                         final_overlap = _merge_blocks(FG_overlap, ext, tuple())
-#                         final_flag = Flag(theory, n, tuple(), **final_overlap)
-#                         if _excluded_compatible(n, final_flag, excluded, 2):
-#                             patt = final_flag._relation_list()
-#                             if patt not in ret:
-#                                 ret[patt] = [final_flag]
-#                             elif final_flag not in ret[patt]:
-#                                 ret[patt].append(final_flag)
-    
-#     combined_tuple = tuple(itertools.chain.from_iterable(
-#         [ret[key] for key in sorted(ret.keys())]
-#     ))
-#     return combined_tuple
+    #Check ways to combine
+    for ii, fl0 in enumerate(small0):
+        for perm0 in fl0.nonequal_permutations():
+            for jj, fl1 in enumerate(small1):
+                overlap = perm0._blocks | fl1._blocks
+                final_flag = Flag(theoryR, n, tuple(), **overlap)
+                if _excluded_compatible(n, final_flag, excluded, 0):
+                    patt = (fl0, fl1)
+                    if patt not in ret:
+                        ret[patt] = [final_flag]
+                    elif final_flag not in ret[patt]:
+                        ret[patt].append(final_flag)
+    combined_tuple = tuple(itertools.chain.from_iterable(
+        [ret[key] for key in sorted(ret.keys())]
+    ))
+    return combined_tuple
 
 
 cdef class Flag(Element):
@@ -808,6 +788,20 @@ cdef class Flag(Element):
             return False
         return self._blocks == other._blocks
     
+    cpdef tuple automorphism_generators(self):
+        if self._automorphisms!=None:
+            return self._automorphisms
+        cdef tuple symmetry_graph_data = self._symmetry_graph()
+        cdef tuple result = automorphism_group_gens_from_edge_list(
+            symmetry_graph_data[0],
+            symmetry_graph_data[1],
+            symmetry_graph_data[2],
+            symmetry_graph_data[3],
+            symmetry_graph_data[4],
+            symmetry_graph_data[5]
+        )
+        return result
+
     cpdef set automorphisms(self):
         if self._automorphisms!=None:
             return self._automorphisms
@@ -854,7 +848,7 @@ cdef class Flag(Element):
     cpdef list _typeless_nonequal_permutations(self):
         cdef list ssc = self.signature_changes()
         cdef set G_self = self.automorphisms()
-        cdef set G_all = set(itertools.permutations(self.size()))
+        cdef set G_all = set(itertools.permutations(range(self.size())))
         cdef list cosreps = _compute_coset_reps(G_all, G_self, self.size())
         cdef Flag xx
         cdef tuple perm
@@ -866,7 +860,7 @@ cdef class Flag(Element):
         cdef Flag xx, yy, zz
         cdef bint gd
         for zz in ssc:
-            for perm in itertools.permutations(self.size()):
+            for perm in itertools.permutations(range(self.size())):
                 xx = zz.subflag(points=perm)
                 gd = True
                 for yy in ret:
