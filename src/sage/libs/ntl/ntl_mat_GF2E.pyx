@@ -377,10 +377,10 @@ cdef class ntl_mat_GF2E():
 
         if isinstance(ij, tuple) and len(ij) == 2:
             i, j = ij
-        elif self.x.NumCols()==1 and (isinstance(ij, Integer) or isinstance(ij, int)):
+        elif self.x.NumCols() == 1 and isinstance(ij, (Integer, int)):
             i = ij
             j = 0
-        elif self.x.NumRows()==1 and (isinstance(ij, Integer) or isinstance(ij, int)):
+        elif self.x.NumRows() == 1 and isinstance(ij, (Integer, int)):
             i = 0
             j = ij
         else:
@@ -411,10 +411,10 @@ cdef class ntl_mat_GF2E():
         cdef int i, j
         if isinstance(ij, tuple) and len(ij) == 2:
             i, j = ij
-        elif self.x.NumCols() == 1 and (isinstance(ij, Integer) or isinstance(ij, int)):
+        elif self.x.NumCols() == 1 and isinstance(ij, (Integer, int)):
             i = ij
             j = 0
-        elif self.x.NumRows() == 1 and (isinstance(ij, Integer) or isinstance(ij, int)):
+        elif self.x.NumRows() == 1 and  isinstance(ij, (Integer, int)):
             i = 0
             j = ij
         else:
