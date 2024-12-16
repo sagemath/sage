@@ -22,6 +22,7 @@ import time
 
 keep_going = False
 
+
 def run_command(cmd):
     """
     INPUT:
@@ -34,6 +35,7 @@ def run_command(cmd):
     print(cmd)
     sys.stdout.flush()
     return os.system(cmd)
+
 
 def apply_func_progress(p):
     """
@@ -48,6 +50,7 @@ def apply_func_progress(p):
     sys.stdout.write(p[2])
     sys.stdout.flush()
     return p[0](p[1])
+
 
 def execute_list_of_commands_in_parallel(command_list, nthreads):
     """
@@ -83,6 +86,7 @@ def execute_list_of_commands_in_parallel(command_list, nthreads):
     pool.join()
     process_command_results(result)
 
+
 def process_command_results(result_values):
     error = None
     for r in result_values:
@@ -93,6 +97,7 @@ def process_command_results(result_values):
             error = r
     if error:
         sys.exit(1)
+
 
 def execute_list_of_commands(command_list):
     """
@@ -124,10 +129,10 @@ def execute_list_of_commands(command_list):
     nthreads = min(len(command_list), nthreads)
     nthreads = max(1, nthreads)
 
-    def plural(n,noun):
+    def plural(n, noun):
         if n == 1:
             return "1 %s" % noun
-        return "%i %ss" % (n,noun)
+        return "%i %ss" % (n, noun)
 
     print("Executing %s (using %s)" % (plural(len(command_list),"command"), plural(nthreads,"thread")))
     execute_list_of_commands_in_parallel(command_list, nthreads)

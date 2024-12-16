@@ -385,6 +385,7 @@ def instr_funcall_1arg_mpfr(name, io, op):
     """
     return InstrSpec(name, io, code='%s(o0, i0, MPFR_RNDN);' % op)
 
+
 def instr_funcall_2args_mpc(name, io, op):
     r"""
     A helper function for creating MPC instructions with two inputs
@@ -399,6 +400,7 @@ def instr_funcall_2args_mpc(name, io, op):
         add: SS->S = 'mpc_add(o0, i0, i1, MPC_RNDNN);'
     """
     return InstrSpec(name, io, code='%s(o0, i0, i1, MPC_RNDNN);' % op)
+
 
 def instr_funcall_1arg_mpc(name, io, op):
     r"""

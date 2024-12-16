@@ -15,6 +15,7 @@ except ImportError:
     from distutils.errors import DistutilsSetupError
 from sage_setup.run_parallel import execute_list_of_commands
 
+
 class sage_build_ext(build_ext):
     def finalize_options(self):
         build_ext.finalize_options(self)

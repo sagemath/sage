@@ -36,7 +36,7 @@ def string_of_addr(a):
     """
     if isinstance(a, int):
         return str(a)
-    assert(isinstance(a, MemoryChunk))
+    assert isinstance(a, MemoryChunk)
     return '*%s++' % a.name
 
 
