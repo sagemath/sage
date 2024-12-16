@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'quaternion_algebra.py',
   'quaternion_algebra_element.pxd',

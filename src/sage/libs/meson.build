@@ -1,11 +1,17 @@
 sirocco = cc.find_library('sirocco', required: false, disabler: true)
 # cannot be found via pkg-config
-ecl = cc.find_library('ecl')
-braiding = cc.find_library('braiding')
-gc = cc.find_library('gc')
-homfly = cc.find_library('homfly', has_headers: ['homfly.h'])
+ecl = cc.find_library('ecl', required: not is_windows, disabler: true)
+braiding = cc.find_library('braiding', required: not is_windows, disabler: true)
+gc = cc.find_library('gc', required: not is_windows, disabler: true)
+homfly = cc.find_library(
+  'homfly',
+  has_headers: ['homfly.h'],
+  required: not is_windows,
+  disabler: true,
+)
 
 py.install_sources(
+  '__init__.py',
   'all.py',
   'all__sagemath_coxeter3.py',
   'all__sagemath_meataxe.py',

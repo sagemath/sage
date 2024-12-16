@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'f_matrix.py',
   'fast_parallel_fmats_methods.pxd',

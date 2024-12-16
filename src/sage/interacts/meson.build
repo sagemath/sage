@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'algebra.py',
   'all.py',
   'calculus.py',

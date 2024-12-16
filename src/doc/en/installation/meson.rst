@@ -11,10 +11,34 @@ Walkthrough
 
 Assume we're starting from a clean repo and a fully set up conda environment:
         
-.. CODE-BLOCK:: shell-session
+.. tab:: Linux
 
-    $ mamba env create --file src/environment-3.11.yml --name sage-dev
-    $ conda activate sage-dev
+    .. code-block:: shell
+
+        $ mamba env create --file environment-3.11-linux.yml --name sage-dev
+        $ conda activate sage-dev
+
+.. tab:: macOS
+    
+    .. code-block:: shell
+
+        $ mamba env create --file environment-3.11-macos.yml --name sage-dev
+        $ conda activate sage-dev
+
+.. tab:: Windows
+    
+    Open the "VS x64 Native Tools Command Prompt" (for 64bit) or 
+    "Developer Command Prompt for VS2022 (or 2019)" (for 32bit).
+
+    .. code-block:: shell
+
+        $ mamba env create --file environment-3.11-win.yml --name sage-dev
+        $ conda activate sage-dev
+        $ pip install gmpy2 cysignals
+        $ set LIB=%CONDA_PREFIX%\Library\lib;%LIB%
+
+    Windows support is experimental and not fully working yet.        
+
 
 Alternatively, install all build requirements as described in section
 :ref:`section-prereqs`. In the likely case that you have to install some

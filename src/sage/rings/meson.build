@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'abc.pxd',
   'algebraic_closure_finite_field.py',
   'all.py',
@@ -86,7 +87,6 @@ extension_data = {
   'abc' : files('abc.pyx'),
   'complex_arb' : files('complex_arb.pyx'),
   'complex_conversion' : files('complex_conversion.pyx'),
-  'complex_double' : files('complex_double.pyx'),
   'complex_interval' : files('complex_interval.pyx'),
   'complex_mpc' : files('complex_mpc.pyx'),
   'complex_mpfr' : files('complex_mpfr.pyx'),
@@ -132,8 +132,6 @@ foreach name, pyx : extension_data
     ]
   elif name == 'complex_conversion'
     deps += [gsl, mpfr]
-  elif name == 'complex_double'
-    deps += [gmpy2, gsl]
   elif name == 'complex_interval'
     deps += [
       mpfi,
@@ -186,6 +184,8 @@ extension_data_cpp = {
     'bernmm/bern_rat.cpp',
   ),
   'bernoulli_mod_p': files('bernoulli_mod_p.pyx'),
+  # Has to be compiled as c++ due to https://github.com/cython/cython/issues/6524
+  'complex_double' : files('complex_double.pyx'),
   'fraction_field_FpT': files('fraction_field_FpT.pyx'),
   'rational': files('rational.pyx'),
 }
@@ -196,8 +196,14 @@ foreach name, pyx : extension_data_cpp
     deps += [ntl]
   elif name == 'bernoulli_mod_p'
     deps += [ntl]
+  elif name == 'complex_double'
+    deps += [gmpy2, gsl]
   elif name == 'fraction_field_FpT'
     deps += [flint]
+    if is_windows
+      # Has some compilation errors: https://github.com/flintlib/flint/issues/2101
+      continue
+    endif
   elif name == 'rational'
     deps += [gmpy2]
   endif

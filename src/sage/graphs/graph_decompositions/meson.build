@@ -5,9 +5,10 @@ else
   tdlib = disabler()
 endif
 # Cannot be found via pkg-config
-rw = cc.find_library('rw')
+rw = cc.find_library('rw', required: not is_windows, disabler: true)
 
 py.install_sources(
+  '__init__.py',
   'all.py',
   'all__sagemath_tdlib.py',
   'fast_digraph.pxd',

@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'complex_double_vector.py',
   'diamond_cutting.py',
@@ -16,6 +17,7 @@ py.install_sources(
   'module.pxd',
   'module_functors.py',
   'multi_filtered_vector_space.py',
+  'numpy_util.pxd',
   'quotient_module.py',
   'real_double_vector.py',
   'submodule.py',
@@ -82,6 +84,11 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  if is_windows
+    # sage_modules_vector_mod2_dense.pyx.cpp.obj : error LNK2019: unresolved external symbol "struct mzd_t * __cdecl mzd_init(int,int)"
+    continue
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
