@@ -116,8 +116,6 @@ singular = dependency('Singular')
 maxima = find_program('maxima', required: true)
 # Cannot be found via pkg-config
 ntl = cc.find_library('ntl')
-# Cannot be found via pkg-config
-meataxe = cc.find_library('meataxe', required: false, disabler: true)
 
 # Meson currently ignores include_directories for Cython modules, so we
 # have to add them manually.

@@ -20,8 +20,10 @@ from typing import Optional
 
 from sage.categories.manifolds import Manifolds
 from sage.manifolds.differentiable.examples.euclidean import EuclideanSpace
-from sage.manifolds.differentiable.symplectic_form import (SymplecticForm,
-                                                           SymplecticFormParal)
+from sage.manifolds.differentiable.symplectic_form import (
+    SymplecticForm,
+    SymplecticFormParal,
+)
 from sage.rings.real_mpfr import RR
 
 

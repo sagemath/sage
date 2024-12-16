@@ -610,6 +610,9 @@ def cython_import_all(filename, globals, **kwds):
 
     - ``filename`` -- string; name of a file that contains Cython
       code
+
+    See the function :func:`sage.misc.cython.cython` for documentation
+    for the other inputs.
     """
     m = cython_import(filename, **kwds)
     for k, x in m.__dict__.items():
@@ -652,6 +655,9 @@ def compile_and_load(code, **kwds):
 
     - ``code`` -- string containing code that could be in a .pyx file
       that is attached or put in a %cython block in the notebook
+
+    See the function :func:`sage.misc.cython.cython` for documentation
+    for the other inputs.
 
     OUTPUT: a module, which results from compiling the given code and
     importing it
