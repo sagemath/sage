@@ -52,6 +52,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
         sage: C = cartesian_product([M, ZZ, QQ])
         sage: C
         The Cartesian product of (M, Integer Ring, Rational Field)
+        sage: M.reset_name()
         sage: C.an_element()
         ('abcd', 1, 1/2)
         sage: C.an_element()^2
