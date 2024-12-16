@@ -3665,7 +3665,7 @@ const numeric numeric::log(const numeric &b, PyObject* parent) const {
 }
 
 // General log
-// Handle special cases here that return MPZ/MPQ (or an infinity)
+// Handle special cases here that return MPZ/MPQ
 const numeric numeric::ratlog(const numeric &b, bool& israt) const {
         israt = true;
         if (b.is_one()) {
