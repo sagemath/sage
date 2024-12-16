@@ -177,3 +177,8 @@ lint = [
   "pycodestyle",
   "flake8-rst-docstrings",
 ]
+dev = [
+  "conda-lock",
+  "grayskull",
+  "toml",
+]
