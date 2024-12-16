@@ -2803,9 +2803,9 @@ class DummyObjectsOverBaseRing(Category_over_base_ring):
             sage: DummyObjectsOverBaseRing(QQ).super_categories()
             [Category of test objects]
             sage: DummyObjectsOverBaseRing.Unital.an_instance()
-            Category of unital test objects over base ring over Rational Field
+            Category of unital dummy objects over base ring over Rational Field
             sage: DummyObjectsOverBaseRing.FiniteDimensional.Unital.an_instance()
-            Category of finite dimensional unital test objects over base ring over Rational Field
+            Category of finite dimensional unital dummy objects over base ring over Rational Field
             sage: C = DummyObjectsOverBaseRing(QQ).FiniteDimensional().Unital().Commutative()
             sage: TestSuite(C).run()
         """
