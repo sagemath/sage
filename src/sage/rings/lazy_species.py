@@ -492,6 +492,12 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: L.<X,Y> = LazySpecies(QQ)
             sage: E(X)
             1 + X + E_2(X) + E_3(X) + E_4(X) + E_5(X) + E_6(X) + O^7
+
+            sage: L.<X> = LazySpecies(QQ)
+            sage: E1 = L.Sets(min=1)
+            sage: Omega = L.undefined(1)
+            sage: L.define_implicitly([Omega], [E1(Omega) - X])
+            sage: Omega[1]
         """
         return CompositionSpeciesElement(self, *args)
 
@@ -549,6 +555,14 @@ class ProductSpeciesElement(LazySpeciesElement):
 
 class CompositionSpeciesElement(LazySpeciesElement):
     def __init__(self, left, *args):
+        """
+        TESTS::
+
+            sage: P.<X> = LazySpecies(QQ)
+            sage: X(P.zero())
+
+            sage: (1+X)(P.zero())
+        """
         fP = parent(left)
         if len(args) != fP._arity:
             raise ValueError("arity of must be equal to the number of arguments provided")
@@ -560,7 +574,11 @@ class CompositionSpeciesElement(LazySpeciesElement):
 
         # f = 0
         if isinstance(left._coeff_stream, Stream_zero):
-            return P.zero()
+            coeff_stream = Stream_zero()
+            super().__init__(P, coeff_stream)
+            self._left = left
+            self._args = args
+            return
 
         # args = (0, ..., 0)
         if all((not isinstance(g, LazyModuleElement) and not g)
