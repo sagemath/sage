@@ -162,6 +162,7 @@ def pytest_addoption(parser):
         dest="doctest",
     )
 
+
 @pytest.fixture(autouse=True, scope="session")
 def add_imports(doctest_namespace: dict[str, Any]):
     """

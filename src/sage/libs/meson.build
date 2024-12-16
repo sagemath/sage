@@ -6,6 +6,7 @@ gc = cc.find_library('gc')
 homfly = cc.find_library('homfly', has_headers: ['homfly.h'])
 
 py.install_sources(
+  '__init__.py',
   'all.py',
   'all__sagemath_coxeter3.py',
   'all__sagemath_meataxe.py',
@@ -36,7 +37,7 @@ foreach name, pyx : extension_data
   if name == 'sirocco'
     deps += [sirocco]
   elif name == 'meataxe'
-    deps += [mtx, meataxe]
+    deps += [mtx]
   endif
 
   py.extension_module(

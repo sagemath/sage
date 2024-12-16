@@ -172,7 +172,7 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###########################################################################
 
 import itertools
@@ -185,7 +185,6 @@ import sage.rings.infinity
 import sage.rings.integer
 import sage.rings.integer_ring
 import sage.rings.rational_field
-from sage.rings.ring import IntegralDomain
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
@@ -296,7 +295,7 @@ class FreeModuleFactory(UniqueFactory):
                 and base_ring.is_maximal() and base_ring.class_number() == 1):
             return FreeModule_ambient_pid(base_ring, rank, sparse=sparse)
 
-        if isinstance(base_ring, IntegralDomain) or base_ring in IntegralDomains():
+        if base_ring in IntegralDomains():
             return FreeModule_ambient_domain(base_ring, rank, sparse=sparse)
 
         return FreeModule_ambient(base_ring, rank, sparse=sparse)

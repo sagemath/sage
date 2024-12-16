@@ -996,7 +996,7 @@ class RingDerivationWithoutTwist(RingDerivation):
         parent = self.parent()
         return [self(x) for x in parent.dual_basis()]
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=None):
         r"""
         Return dictionary of nonzero coordinates (on the canonical
         basis) of this derivation.

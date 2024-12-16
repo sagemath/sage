@@ -69,8 +69,9 @@ import weakref
 
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
+from sage.categories.integral_domains import IntegralDomains
 from sage.modules import free_module
-from sage.rings.ring import Field, IntegralDomain
+from sage.rings.ring import Field
 import sage.matrix.matrix_space
 import sage.misc.latex as latex
 
@@ -175,7 +176,7 @@ def FreeQuadraticModule(base_ring, rank, inner_product_matrix,
         M = FreeQuadraticModule_ambient_pid(
             base_ring, rank, sparse=sparse, inner_product_matrix=inner_product_matrix)
 
-    elif isinstance(base_ring, IntegralDomain) or base_ring.is_integral_domain():
+    elif base_ring in IntegralDomains():
         M = FreeQuadraticModule_ambient_domain(
             base_ring, rank, sparse=sparse, inner_product_matrix=inner_product_matrix)
     else:

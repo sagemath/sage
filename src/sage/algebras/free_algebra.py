@@ -160,23 +160,24 @@ Some tests for the category::
 # ***************************************************************************
 
 
-from sage.categories.rings import Rings
-
-from sage.monoids.free_monoid import FreeMonoid
-from sage.monoids.free_monoid_element import FreeMonoidElement
-
 from sage.algebras.free_algebra_element import FreeAlgebraElement
-
-from sage.structure.factory import UniqueFactory
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_import import lazy_import
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.integer_ring import ZZ
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
+from sage.categories.functor import Functor
+from sage.categories.pushout import (ConstructionFunctor,
+                                     CompositeConstructionFunctor,
+                                     IdentityConstructionFunctor)
+from sage.categories.rings import Rings
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.word import Word
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+from sage.monoids.free_monoid import FreeMonoid
+from sage.monoids.free_monoid_element import FreeMonoidElement
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.category_object import normalize_names
-
+from sage.structure.coerce_exceptions import CoercionException
+from sage.structure.factory import UniqueFactory
 
 lazy_import('sage.algebras.letterplace.free_algebra_letterplace', 'FreeAlgebra_letterplace')
 
@@ -199,12 +200,12 @@ class FreeAlgebraFactory(UniqueFactory):
         sage: FreeAlgebra(GF(5),3, 'abc')
         Free Algebra on 3 generators (a, b, c) over Finite Field of size 5
         sage: FreeAlgebra(GF(5),1, 'z')
-        Free Algebra on 1 generators (z,) over Finite Field of size 5
+        Free Algebra on 1 generator (z,) over Finite Field of size 5
         sage: FreeAlgebra(GF(5),1, ['alpha'])
-        Free Algebra on 1 generators (alpha,) over Finite Field of size 5
+        Free Algebra on 1 generator (alpha,) over Finite Field of size 5
         sage: FreeAlgebra(FreeAlgebra(ZZ,1,'a'), 2, 'x')
         Free Algebra on 2 generators (x0, x1) over
-         Free Algebra on 1 generators (a,) over Integer Ring
+         Free Algebra on 1 generator (a,) over Integer Ring
 
     Free algebras are globally unique::
 
@@ -264,7 +265,7 @@ class FreeAlgebraFactory(UniqueFactory):
         sage: s = a*b^2 * c^3; s
         a*b^2*c^3
         sage: parent(s)
-        Free Algebra on 1 generators (c,) over
+        Free Algebra on 1 generator (c,) over
          Free Algebra on 2 generators (a, b) over Rational Field
         sage: c^3 * a * b^2
         a*b^2*c^3
@@ -507,6 +508,17 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
         else:
             self._degrees = {g: ZZ(d) for g, d in zip(self.monoid().gens(), degrees)}
 
+    def construction(self):
+        """
+        Return the construction of ``self``.
+
+        EXAMPLES::
+
+            sage: F, R = algebras.Free(QQ,4,'x,y,z,t').construction(); F
+            Associative[x,y,z,t]
+        """
+        return AssociativeFunctor(self.variable_names(), self._degrees), self.base_ring()
+
     def one_basis(self):
         """
         Return the index of the basis element `1`.
@@ -554,16 +566,17 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
             sage: F                                                             # indirect doctest
             QQ<<x0,x1,x2>>
             sage: FreeAlgebra(ZZ, 1, ['a'])
-            Free Algebra on 1 generators (a,) over Integer Ring
+            Free Algebra on 1 generator (a,) over Integer Ring
 
             sage: FreeAlgebra(QQ, 2, ['x', 'y'], degrees=(2,1))
             Free Algebra on 2 generators (x, y) with degrees (2, 1) over Rational Field
         """
+        txt = "generator" if self.__ngens == 1 else "generators"
         if self._degrees is None:
-            return "Free Algebra on {} generators {} over {}".format(
-                self.__ngens, self.gens(), self.base_ring())
-        return "Free Algebra on {} generators {} with degrees {} over {}".format(
-            self.__ngens, self.gens(), tuple(self._degrees.values()), self.base_ring())
+            return "Free Algebra on {} {} {} over {}".format(
+                self.__ngens, txt, self.gens(), self.base_ring())
+        return "Free Algebra on {} {} {} with degrees {} over {}".format(
+            self.__ngens, txt, self.gens(), tuple(self._degrees.values()), self.base_ring())
 
     def _latex_(self) -> str:
         r"""
@@ -634,13 +647,24 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
             1.00000000000000*x^2 * 1.00000000000000*y^3
             sage: F(f)
             1.00000000000000*x^2*y^3
+
+        Check for extended coercion::
+
+            sage: A = algebras.Free(QQ,['x','y'])
+            sage: B = algebras.Free(QQ,['y'])
+            sage: y, = B.gens()
+            sage: A(4+y)
+            4 + y
         """
         if isinstance(x, FreeAlgebraElement):
             P = x.parent()
             if P is self:
                 return x
-            if P is not self.base_ring():
-                return self.element_class(self, x)
+            # from another FreeAlgebra:
+            if x not in self.base_ring():
+                D = {self.monoid()(T): cf
+                     for T, cf in x.monomial_coefficients().items()}
+                return self.element_class(self, D)
         elif hasattr(x, 'letterplace_polynomial'):
             P = x.parent()
             if self.has_coerce_map_from(P):  # letterplace versus generic
@@ -678,21 +702,23 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
             return self.element_class(self, {})
         return self.element_class(self, {self.one_basis(): x})
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         """
         Return ``True`` if there is a coercion from ``R`` into ``self`` and
-        ``False`` otherwise.  The things that coerce into ``self`` are:
+        ``False`` otherwise.
+
+        The things that coerce into ``self`` are:
 
         - This free algebra.
 
-        - Anything with a coercion into ``self.monoid()``.
+        - The PBW basis of ``self``.
 
-        - Free algebras in the same variables over a base with a coercion
-          map into ``self.base_ring()``.
+        - Free algebras in some subset of variables
+          over a base with a coercion map into ``self.base_ring()``.
 
         - The underlying monoid.
 
-        - The PBW basis of ``self``.
+        - Anything with a coercion into ``self.monoid()``.
 
         - Anything with a coercion into ``self.base_ring()``.
 
@@ -706,7 +732,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
             sage: G._coerce_map_from_(F)
             True
             sage: F._coerce_map_from_(H)
-            False
+            True
             sage: F._coerce_map_from_(QQ)
             False
             sage: G._coerce_map_from_(QQ)
@@ -743,7 +769,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
 
         # free algebras in the same variable over any base that coerces in:
         if isinstance(R, (FreeAlgebra_generic, FreeAlgebra_letterplace)):
-            if R.variable_names() == self.variable_names():
+            if all(x in self.variable_names() for x in R.variable_names()):
                 return self.base_ring().has_coerce_map_from(R.base_ring())
         if isinstance(R, PBWBasisOfFreeAlgebra):
             return self.has_coerce_map_from(R._alg)
@@ -808,7 +834,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
         return Family(self.variable_names(), lambda i: ret[i])
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -1302,7 +1328,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
             sage: G._coerce_map_from_(F)
             True
             sage: F._coerce_map_from_(H)
-            False
+            True
             sage: F._coerce_map_from_(QQ)
             False
             sage: G._coerce_map_from_(QQ)
@@ -1449,3 +1475,222 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
                 x + x^2*y - 2*x*y*x + y*x^2 + y^4*x
             """
             return self.parent().expansion(self)
+
+
+class AssociativeFunctor(ConstructionFunctor):
+    """
+    A constructor for free associative algebras.
+
+    EXAMPLES::
+
+        sage: P = algebras.Free(ZZ, 2, 'x,y')
+        sage: x,y = P.gens()
+        sage: F = P.construction()[0]; F
+        Associative[x,y]
+
+        sage: A = GF(5)['a,b']
+        sage: a, b = A.gens()
+        sage: F(A)
+        Free Algebra on 2 generators (x, y) over Multivariate Polynomial Ring in a, b over Finite Field of size 5
+
+        sage: f = A.hom([a+b,a-b],A)
+        sage: F(f)
+        Generic endomorphism of Free Algebra on 2 generators (x, y)
+        over Multivariate Polynomial Ring in a, b over Finite Field of size 5
+
+        sage: F(f)(a * F(A)(x))
+        (a+b)*x
+    """
+    rank = 9
+
+    def __init__(self, vars, degs=None):
+        """
+        EXAMPLES::
+
+            sage: from sage.algebras.free_algebra import AssociativeFunctor
+            sage: F = AssociativeFunctor(['x','y'])
+            sage: F
+            Associative[x,y]
+            sage: F(ZZ)
+            Free Algebra on 2 generators (x, y)  over Integer Ring
+        """
+        Functor.__init__(self, Rings(), Rings())
+        if not isinstance(vars, (list, tuple)):
+            raise TypeError("vars must be a list or tuple")
+        if degs is not None and not isinstance(degs, (list, tuple, dict)):
+            raise TypeError("degs must be a list, tuple or dict")
+        self.vars = vars
+        self.degs = degs
+
+    def _apply_functor(self, R):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        EXAMPLES::
+
+            sage: R = algebras.Free(ZZ, 3, 'x,y,z')
+            sage: F = R.construction()[0]; F
+            Associative[x,y,z]
+            sage: type(F)
+            <class 'sage.algebras.free_algebra.AssociativeFunctor'>
+            sage: F(ZZ)          # indirect doctest
+            Free Algebra on 3 generators (x, y, z) over Integer Ring
+        """
+        return FreeAlgebra(R, self.vars, self.degs)
+
+    def _apply_functor_to_morphism(self, f):
+        """
+        Apply the functor ``self`` to the ring morphism `f`.
+
+        TESTS::
+
+            sage: R = algebras.Free(ZZ, 'x').construction()[0]
+            sage: R(ZZ.hom(GF(3)))  # indirect doctest
+            Generic morphism:
+              From: Free Algebra on 1 generator (x,) over Integer Ring
+              To:   Free Algebra on 1 generator (x,) over Finite Field of size 3
+        """
+        dom = self(f.domain())
+        codom = self(f.codomain())
+
+        def action(x):
+            return codom._from_dict({a: f(b)
+                                     for a, b in x.monomial_coefficients().items()})
+        return dom.module_morphism(function=action, codomain=codom)
+
+    def __eq__(self, other):
+        """
+        EXAMPLES::
+
+            sage: F = algebras.Free(ZZ, 3, 'x,y,z').construction()[0]
+            sage: G = algebras.Free(QQ, 3, 'x,y,z').construction()[0]
+            sage: F == G
+            True
+            sage: G == loads(dumps(G))
+            True
+            sage: G = algebras.Free(QQ, 2, 'x,y').construction()[0]
+            sage: F == G
+            False
+        """
+        if not isinstance(other, AssociativeFunctor):
+            return False
+        return self.vars == other.vars and self.degs == other.degs
+
+    def __mul__(self, other):
+        """
+        If two Associative functors are given in a row, form a single Associative functor
+        with all of the variables.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.free_algebra import AssociativeFunctor
+            sage: F = AssociativeFunctor(['x','y'])
+            sage: G = AssociativeFunctor(['t'])
+            sage: G * F
+            Associative[x,y,t]
+        """
+        if isinstance(other, IdentityConstructionFunctor):
+            return self
+        if isinstance(other, AssociativeFunctor):
+            if set(self.vars).intersection(other.vars):
+                raise CoercionException("Overlapping variables (%s,%s)" %
+                                        (self.vars, other.vars))
+            return AssociativeFunctor(other.vars + self.vars)
+        elif (isinstance(other, CompositeConstructionFunctor) and
+              isinstance(other.all[-1], AssociativeFunctor)):
+            return CompositeConstructionFunctor(other.all[:-1],
+                                                self * other.all[-1])
+        else:
+            return CompositeConstructionFunctor(other, self)
+
+    def merge(self, other):
+        """
+        Merge ``self`` with another construction functor, or return ``None``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.free_algebra import AssociativeFunctor
+            sage: F = AssociativeFunctor(['x','y'])
+            sage: G = AssociativeFunctor(['t'])
+            sage: F.merge(G)
+            Associative[x,y,t]
+            sage: F.merge(F)
+            Associative[x,y]
+
+        With degrees::
+
+            sage: F = AssociativeFunctor(['x','y'], (2,3))
+            sage: G = AssociativeFunctor(['t'], (4,))
+            sage: H = AssociativeFunctor(['z','y'], (5,3))
+            sage: F.merge(G)
+            Associative[x,y,t] with degrees (2, 3, 4)
+            sage: F.merge(H)
+            Associative[x,y,z] with degrees (2, 3, 5)
+
+        Now some actual use cases::
+
+            sage: R = algebras.Free(ZZ, 3, 'x,y,z')
+            sage: x,y,z = R.gens()
+            sage: 1/2 * x
+            1/2*x
+            sage: parent(1/2 * x)
+            Free Algebra on 3 generators (x, y, z) over Rational Field
+
+            sage: S = algebras.Free(QQ, 2, 'z,t')
+            sage: z,t = S.gens()
+            sage: x + t
+            t + x
+            sage: parent(x + t)
+            Free Algebra on 4 generators (z, t, x, y) over Rational Field
+
+        TESTS::
+
+            sage: F = AssociativeFunctor(['x','y'], (2,3))
+            sage: H = AssociativeFunctor(['z','y'], (5,4))
+            sage: F.merge(H)
+        """
+        if isinstance(other, AssociativeFunctor):
+            if self.vars == other.vars and self.degs == other.degs:
+                return self
+
+            ret = list(self.vars)
+            self_vars = set(ret)
+            ret.extend(v for v in other.vars if v not in self_vars)
+
+            # first case: no degrees
+            if self.degs is None and other.degs is None:
+                return AssociativeFunctor(tuple(ret))
+
+            # second case: merge the degrees
+            if self.degs is None:
+                deg = [1] * len(self.vars)
+            else:
+                deg = list(self.degs)
+            if other.degs is None:
+                o_degs = [1] * len(other.vars)
+            else:
+                o_degs = list(other.degs)
+            self_table = {w: d for w, d in zip(self.vars, deg)}
+            for v, d in zip(other.vars, o_degs):
+                if v not in self_vars:
+                    deg.append(d)
+                elif d != self_table[v]:
+                    # incompatible degrees
+                    return None
+            return AssociativeFunctor(tuple(ret), tuple(deg))
+
+        return None
+
+    def _repr_(self) -> str:
+        """
+        TESTS::
+
+            sage: algebras.Free(QQ,4,'x,y,z,t').construction()[0]
+            Associative[x,y,z,t]
+            sage: algebras.Free(QQ,4,'x,y,z,t',degrees=(1,2,3,4)).construction()[0]
+            Associative[x,y,z,t] with degrees {x: 1, y: 2, z: 3, t: 4}
+        """
+        vars = ','.join(self.vars)
+        if self.degs is None:
+            return f"Associative[{vars}]"
+        return f"Associative[{vars}] with degrees {self.degs}"

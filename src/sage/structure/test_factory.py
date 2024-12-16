@@ -3,7 +3,7 @@
 Test of the :mod:`~sage.structure.factory` module
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -15,8 +15,8 @@ Test of the :mod:`~sage.structure.factory` module
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.structure.factory import UniqueFactory
 

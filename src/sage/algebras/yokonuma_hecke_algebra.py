@@ -447,13 +447,17 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
 
             sage: Y = algebras.YokonumaHecke(2, 4)
             sage: [2*Y.inverse_g(i) for i in range(1, 4)]
-            [(q^-1+q) + 2*g[1] + (q^-1+q)*t1*t2,
-             (q^-1+q) + 2*g[2] + (q^-1+q)*t2*t3,
-             (q^-1+q) + 2*g[3] + (q^-1+q)*t3*t4]
+            [(q^-1-q) + 2*g[1] + (q^-1-q)*t1*t2,
+             (q^-1-q) + 2*g[2] + (q^-1-q)*t2*t3,
+             (q^-1-q) + 2*g[3] + (q^-1-q)*t3*t4]
+            sage: all(Y.inverse_g(i) * Y.g(i) == Y.one() for i in range(1, 4))
+            True
+            sage: all(Y.g(i) * Y.inverse_g(i) == Y.one() for i in range(1, 4))
+            True
         """
         if i < 1 or i >= self._n:
             raise ValueError("invalid index")
-        return self.g(i) + (~self._q + self._q) * self.e(i)
+        return self.g(i) + (~self._q - self._q) * self.e(i)
 
     class Element(CombinatorialFreeModule.Element):
         def __invert__(self):
@@ -468,10 +472,15 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
                 sage: t.inverse()   # indirect doctest
                 t1^2*t2^2*t3^2
                 sage: [3*~(t*g) for g in Y.g()]
-                [(q^-1+q)*t2*t3^2 + (q^-1+q)*t1*t3^2
-                   + (q^-1+q)*t1^2*t2^2*t3^2 + 3*t1^2*t2^2*t3^2*g[1],
-                 (q^-1+q)*t1^2*t3 + (q^-1+q)*t1^2*t2
-                   + (q^-1+q)*t1^2*t2^2*t3^2 + 3*t1^2*t2^2*t3^2*g[2]]
+                [(q^-1-q)*t2*t3^2 + (q^-1-q)*t1*t3^2
+                   + (q^-1-q)*t1^2*t2^2*t3^2 + 3*t1^2*t2^2*t3^2*g[1],
+                 (q^-1-q)*t1^2*t3 + (q^-1-q)*t1^2*t2
+                   + (q^-1-q)*t1^2*t2^2*t3^2 + 3*t1^2*t2^2*t3^2*g[2]]
+                sage: g = prod(Y.g())
+                sage: ~g * g == Y.one()
+                True
+                sage: g * ~g == Y.one()
+                True
 
             TESTS:
 

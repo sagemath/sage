@@ -34,6 +34,7 @@ AUTHORS:
 
 # Lazy import from examples folders:
 from sage.misc.lazy_import import lazy_import as _lazy_import
+
 _lazy_import('sage.manifolds.differentiable.examples.real_line', 'OpenInterval')
 _lazy_import('sage.manifolds.differentiable.examples.real_line', 'RealLine')
 _lazy_import('sage.manifolds.differentiable.examples.euclidean', 'EuclideanSpace')
@@ -172,9 +173,9 @@ def Kerr(m=1, a=0, coordinates='BL', names=None):
         sage: K.default_chart().coord_range()
         t: (-oo, +oo); r: (0, +oo); th: (0, pi); ph: [-pi, pi] (periodic)
     """
-    from sage.misc.functional import sqrt
     from sage.functions.trig import cos, sin
     from sage.manifolds.manifold import Manifold
+    from sage.misc.functional import sqrt
     M = Manifold(4, 'M', structure='Lorentzian')
     if coordinates == "Kerr":
         if names is None:
@@ -252,8 +253,8 @@ def Torus(R=2, r=1, names=None):
         gamma = dtheta⊗dtheta + (cos(theta)^2 + 6*cos(theta) + 9) dphi⊗dphi
     """
     from sage.functions.trig import cos, sin
-    from sage.manifolds.manifold import Manifold
     from sage.manifolds.differentiable.examples.euclidean import EuclideanSpace
+    from sage.manifolds.manifold import Manifold
     E = EuclideanSpace(3, symbols='X Y Z')
     M = Manifold(2, 'T', ambient=E, structure='Riemannian')
     if names is None:

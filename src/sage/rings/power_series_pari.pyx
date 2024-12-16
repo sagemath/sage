@@ -734,7 +734,7 @@ cdef class PowerSeries_pari(PowerSeries):
         else:
             return [R(g)] + [R.zero()] * (n - 1)
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=None):
         """
         Return a dictionary of coefficients for ``self``.
 

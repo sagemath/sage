@@ -190,19 +190,19 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.manifolds.differentiable.pseudo_riemannian import \
-    PseudoRiemannianManifold
-from sage.manifolds.differentiable.degenerate import \
-    DegenerateManifold
-from sage.manifolds.differentiable.differentiable_submanifold import \
-    DifferentiableSubmanifold
-from sage.rings.infinity import infinity
-from sage.matrix.constructor import matrix
-from sage.functions.other import factorial
-from sage.symbolic.ring import SR
-from sage.misc.cachefunc import cached_method
-from sage.rings.integer import Integer
 from queue import Queue
+
+from sage.functions.other import factorial
+from sage.manifolds.differentiable.degenerate import DegenerateManifold
+from sage.manifolds.differentiable.differentiable_submanifold import (
+    DifferentiableSubmanifold,
+)
+from sage.manifolds.differentiable.pseudo_riemannian import PseudoRiemannianManifold
+from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_method
+from sage.rings.infinity import infinity
+from sage.rings.integer import Integer
+from sage.symbolic.ring import SR
 
 
 class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
