@@ -640,6 +640,8 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
         """
         if len(v) == 1:
             v = v[0]
+        if v == 0:
+            return self.zero()
         return self.codomain()._point(self.extended_codomain(), v, **kwds)
 
     def _repr_(self):
@@ -688,6 +690,23 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
             raise NotImplementedError('Abelian variety point sets are not '
                             'implemented as modules over rings other than ZZ')
         return self
+
+    def zero(self):
+        r"""
+        Return the neutral element in this group of points.
+
+        EXAMPLES::
+
+            sage: S = EllipticCurve(GF(5), [1,1]).point_homset()
+            sage: S.zero()
+            (0 : 1 : 0)
+            sage: S = EllipticCurve(Zmod(15), [1,1]).point_homset()
+            sage: S.zero()
+            (0 : 1 : 0)
+        """
+        return self.codomain()(0)
+
+    _an_element_ = zero
 
 
 from sage.misc.persist import register_unpickle_override
