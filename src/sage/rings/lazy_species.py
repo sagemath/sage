@@ -558,6 +558,7 @@ class CompositionSpeciesElement(LazySpeciesElement):
         """
         TESTS::
 
+            sage: from sage.rings.lazy_species import LazySpecies
             sage: P.<X> = LazySpecies(QQ)
             sage: X(P.zero())
 
