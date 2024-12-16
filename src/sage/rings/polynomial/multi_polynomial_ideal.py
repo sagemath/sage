@@ -601,10 +601,10 @@ class MPolynomialIdeal_singular_base_repr:
         """
         from sage.rings.fraction_field import FractionField_generic
         from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         F = self.base_ring()
         if (not isinstance(F, FractionField_generic) or
-            not isinstance(F.ring(), (MPolynomialRing_base, PolynomialRing_general))):
+            not isinstance(F.ring(), (MPolynomialRing_base, PolynomialRing_generic))):
             raise TypeError("the base ring must be a field with parameters")
         from sage.arith.functions import lcm
         from sage.libs.singular.function import lib, singular_function
