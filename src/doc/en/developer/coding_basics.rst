@@ -88,12 +88,13 @@ Python Version
 =================
 
 In order to reduce the technical debt of maintaining the project, Sage follows
-Numpy's time window-based support policy
-`NEP 29 <https://numpy.org/neps/nep-0029-deprecation_policy.html>`_ for Python versions. 
-Accordingly, minor versions of Python that are older than 42 months 
-at the next planned release date are no longer supported.
-Support for Python 3.9 (initially released in October 2020) is dropped in April 2024 and
-support for Python 3.10 (initially released in October 2021) is dropped in April 2025.
+the time window-based support policy
+`SPEC 0 — Minimum Supported Dependencies <https://scientific-python.org/specs/spec-0000/>`_
+for Python versions. Accordingly, support for Python versions will be dropped 
+3 years after their initial release.
+For the drop schedule of Python versions, see the 
+`SPEC 0 <https://scientific-python.org/specs/spec-0000/#drop-schedule>`_
+document.
 
 .. _chapter-directory-structure:
 
