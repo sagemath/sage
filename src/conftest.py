@@ -262,14 +262,17 @@ def doctest_run(
     out: Any = None,
     clear_globs: bool = True,
 ) -> doctest.TestResults:
+    from sage.repl.rich_output import get_display_manager
+    from sage.repl.user_globals import set_globals
+
     traceback.format_exception_only = format_exception_only
 
     # Display warnings in doctests
     warnings.showwarning = showwarning_with_traceback
-
-    from sage.repl.rich_output import get_display_manager
-
     setattr(sys, "__displayhook__", get_display_manager().displayhook)
+
+    # Ensure that injecting globals works as expected in doctests
+    set_globals(test.globs)
     return old_run(self, test, compileflags, out, clear_globs)
 
 
