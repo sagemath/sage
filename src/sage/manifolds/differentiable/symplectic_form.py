@@ -22,18 +22,19 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 from __future__ import annotations
-from typing import Union, Optional
 
-from sage.symbolic.expression import Expression
+from typing import Optional, Union
+
 from sage.manifolds.differentiable.diff_form import DiffForm, DiffFormParal
 from sage.manifolds.differentiable.diff_map import DiffMap
-from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
+from sage.manifolds.differentiable.manifold import DifferentiableManifold
+from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
+from sage.manifolds.differentiable.scalarfield import DiffScalarField
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
-from sage.manifolds.differentiable.manifold import DifferentiableManifold
-from sage.manifolds.differentiable.scalarfield import DiffScalarField
 from sage.manifolds.differentiable.vectorfield import VectorField
-from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
+from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
+from sage.symbolic.expression import Expression
 
 
 class SymplecticForm(DiffForm):

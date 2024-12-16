@@ -1006,7 +1006,7 @@ class RootsOfUnityGroup(UnitCircleGroup):
             Rational Field
         """
         from sage.rings.rational_field import QQ
-        return super().__init__(base=QQ, category=category)
+        super().__init__(base=QQ, category=category)
 
     def _repr_(self):
         r"""
@@ -1461,9 +1461,22 @@ class Sign(AbstractArgument):
             1
             sage: S(-1)^3  # indirect doctest
             -1
+
+        Check that the results may live in other parents too::
+
+            sage: x = SR.var('x')
+            sage: elem = S(-1)^x; elem  # indirect doctest
+            (-1)^x
+            sage: elem.parent()
+            Symbolic Ring
+
         """
+        result = self._element_ ** exponent
         P = self.parent()
-        return P.element_class(P, self._element_ ** exponent)
+        try:
+            return P.element_class(P, result)
+        except (ValueError, TypeError):
+            return result
 
     def __invert__(self):
         r"""
@@ -1613,7 +1626,7 @@ class SignGroup(AbstractArgumentGroup):
             sage: S.base()  # indirect doctest
             <class 'int'>
         """
-        return super().__init__(base=int, category=category)
+        super().__init__(base=int, category=category)
 
     def _repr_(self):
         r"""

@@ -167,7 +167,7 @@ class PBWDatum():
     def star(self):
         """
         Return the starred version of ``self``, i.e.,
-        with reversed `long_word` and `lusztig_datum`
+        with reversed ``long_word`` and ``lusztig_datum``
 
         EXAMPLES::
 

@@ -464,7 +464,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
             sage: sage.modular.arithgroup.congroup_generic.CongruenceSubgroup(5) # indirect doctest
             Generic congruence subgroup of level 5
         """
-        return CongruenceSubgroupBase.__init__(self, *args, **kwds)
+        CongruenceSubgroupBase.__init__(self, *args, **kwds)
 
     def _repr_(self):
         """

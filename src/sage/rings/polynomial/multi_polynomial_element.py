@@ -802,7 +802,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         zero = self.parent().base_ring().zero()
         return self.element().get(exp, zero)
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=None):
         """
         Return underlying dictionary with keys the exponents and values
         the coefficients of this polynomial.

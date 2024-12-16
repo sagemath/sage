@@ -53,6 +53,7 @@ AUTHORS:
 
 from sage.matroids.matroid import Matroid
 
+
 class DualMatroid(Matroid):
     r"""
     Dual of a matroid.

@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'abstract_code.py',
   'ag_code.py',
   'all.py',

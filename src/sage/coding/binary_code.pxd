@@ -115,4 +115,3 @@ cdef class BinaryCodeClassifier:
 
     cdef void record_automorphism(self, int *, int) noexcept
     cdef void aut_gp_and_can_label(self, BinaryCode, int) noexcept
-

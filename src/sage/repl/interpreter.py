@@ -75,8 +75,7 @@ Check that Cython source code appears in tracebacks::
 
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
-    sage: print("dummy line"); shell.run_cell('1/0') # known bug (meson doesn't include the Cython source code) # see #25320 for the reason of the `...` and the dummy line in this test
-    dummy line
+    sage: shell.run_cell('1/0') # known bug (meson doesn't include the Cython source code)
     ...
     ZeroDivisionError...Traceback (most recent call last)
     ...
@@ -772,7 +771,8 @@ class SageCrashHandler(IPAppCrashHandler):
         contact_email = 'sage-support@googlegroups.com'
         bug_tracker = 'https://github.com/sagemath/sage/issues'
         CrashHandler.__init__(self,
-            app, contact_name, contact_email, bug_tracker, show_crash_traceback=True)
+                              app, contact_name, contact_email,
+                              bug_tracker, show_crash_traceback=True)
         self.crash_report_fname = 'Sage_crash_report.txt'
 
 

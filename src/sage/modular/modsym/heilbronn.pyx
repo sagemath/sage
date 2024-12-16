@@ -202,8 +202,8 @@ cdef class Heilbronn:
                 b[i] = (u * self.list.v[4*i+1]) % N + (v * self.list.v[4*i+3]) % N
         else:
             for i in range(self.length):
-                a[i] = llong_prod_mod(u,self.list.v[4*i],N) + llong_prod_mod(v,self.list.v[4*i+2], N)
-                b[i] = llong_prod_mod(u,self.list.v[4*i+1],N) + llong_prod_mod(v,self.list.v[4*i+3], N)
+                a[i] = llong_prod_mod(u, self.list.v[4*i], N) + llong_prod_mod(v, self.list.v[4*i+2], N)
+                b[i] = llong_prod_mod(u, self.list.v[4*i+1], N) + llong_prod_mod(v, self.list.v[4*i+3], N)
         sig_off()
 
     cdef apply_to_polypart(self, fmpz_poly_t* ans, int i, int k):
@@ -283,8 +283,8 @@ cdef class Heilbronn:
         else:
             for i in range(self.length):
                 sig_check()
-                a = llong_prod_mod(u,self.list.v[4*i],N) + llong_prod_mod(v,self.list.v[4*i+2], N)
-                b = llong_prod_mod(u,self.list.v[4*i+1],N) + llong_prod_mod(v,self.list.v[4*i+3], N)
+                a = llong_prod_mod(u, self.list.v[4*i], N) + llong_prod_mod(v, self.list.v[4*i+2], N)
+                b = llong_prod_mod(u, self.list.v[4*i+1], N) + llong_prod_mod(v, self.list.v[4*i+3], N)
                 export.c_p1_normalize_llong(N, a, b, &c, &d, &s, 0)
                 X = (c, d)
                 if X in M:
@@ -368,15 +368,15 @@ cdef class HeilbronnCremona(Heilbronn):
         L = &self.list
         p = self.p
 
-        list_append4(L, 1,0,0,p)
+        list_append4(L, 1, 0, 0, p)
 
         # When p==2, then Heilbronn matrices are
         #    [[1,0,0,2], [2,0,0,1], [2,1,0,1], [1,0,1,2]]
         # which are not given by the algorithm below.
         if p == 2:
-            list_append4(L, 2,0,0,1)
-            list_append4(L, 2,1,0,1)
-            list_append4(L, 1,0,1,2)
+            list_append4(L, 2, 0, 0, 1)
+            list_append4(L, 2, 1, 0, 1)
+            list_append4(L, 1, 0, 1, 2)
             self.length = 4
             return
 
@@ -489,20 +489,20 @@ cdef class HeilbronnMerel(Heilbronn):
 
         sig_on()
         for a in range(1, n+1):
-            ## We have ad-bc=n so c=0 and ad=n, or b=(ad-n)/c
-            ## Must have ad - n >= 0, so d must be >= Ceiling(n/a).
+            # We have ad-bc=n so c=0 and ad=n, or b=(ad-n)/c
+            # Must have ad - n >= 0, so d must be >= Ceiling(n/a).
             q = n // a
             if q*a == n:
                 d = q
                 for b in range(a):
-                    list_append4(L, a,b,0,d)
+                    list_append4(L, a, b, 0, d)
                 for c in range(1, d):
-                    list_append4(L, a,0,c,d)
+                    list_append4(L, a, 0, c, d)
             for d in range(q+1, n+1):
                 bc = (<llong>a) * (<llong>d) - (<llong>n)
-                ## Divisor c of bc must satisfy Floor(bc/c) lt a and c lt d.
-                ## c ge (bc div a + 1)  <=>  Floor(bc/c) lt a  (for integers)
-                ## c le d - 1           <=>  c lt d
+                # Divisor c of bc must satisfy Floor(bc/c) lt a and c lt d.
+                # c ge (bc div a + 1)  <=>  Floor(bc/c) lt a  (for integers)
+                # c le d - 1           <=>  c lt d
                 for c in range(bc // a + 1, d):
                     if bc % c == 0:
                         list_append4(L, a, bc // c, c, d)
@@ -569,7 +569,7 @@ def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
     cdef Heilbronn H
 
     t = verbose("computing non-reduced images of symbol under Hecke operators",
-                               level=1, caller_name='hecke_images_gamma0_weight2')
+                level=1, caller_name='hecke_images_gamma0_weight2')
     for i, n in enumerate(indices):
         # List the Heilbronn matrices of determinant n defined by Cremona or Merel
         H = HeilbronnCremona(n) if is_prime(n) else HeilbronnMerel(n)
@@ -601,25 +601,25 @@ def hecke_images_gamma0_weight2(int u, int v, int N, indices, R):
         sig_free(b)
 
     t = verbose("finished computing non-reduced images",
-                               t, level=1, caller_name='hecke_images_gamma0_weight2')
+                t, level=1, caller_name='hecke_images_gamma0_weight2')
 
     t = verbose("Now reducing images of symbol",
-                               level=1, caller_name='hecke_images_gamma0_weight2')
+                level=1, caller_name='hecke_images_gamma0_weight2')
 
     # Return the product T * R, whose rows are the image of (u,v) under
     # the Hecke operators T_n for n in indices.
     if max(indices) <= 30:   # In this case T tends to be very sparse
         ans = T.sparse_matrix()._matrix_times_matrix_dense(R)
         verbose("did reduction using sparse multiplication",
-                               t, level=1, caller_name='hecke_images_gamma0_weight2')
+                t, level=1, caller_name='hecke_images_gamma0_weight2')
     elif R.is_sparse():
         ans = T * R.dense_matrix()
         verbose("did reduction using dense multiplication",
-                               t, level=1, caller_name='hecke_images_gamma0_weight2')
+                t, level=1, caller_name='hecke_images_gamma0_weight2')
     else:
         ans = T * R
         verbose("did reduction using dense multiplication",
-                               t, level=1, caller_name='hecke_images_gamma0_weight2')
+                t, level=1, caller_name='hecke_images_gamma0_weight2')
 
     if original_base_ring != QQ:
         ans = ans.change_ring(original_base_ring)
@@ -700,7 +700,7 @@ def hecke_images_nonquad_character_weight2(int u, int v, int N, indices, chi, R)
     cdef Heilbronn H
 
     t = verbose("computing non-reduced images of symbol under Hecke operators",
-                               level=1, caller_name='hecke_images_character_weight2')
+                level=1, caller_name='hecke_images_character_weight2')
 
     # Make a matrix over the rational numbers each of whose columns
     # are the values of the character chi.

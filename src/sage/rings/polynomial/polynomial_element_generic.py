@@ -128,7 +128,7 @@ class Polynomial_generic_sparse(Polynomial):
         if check:
             self.__normalize()
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=None):
         """
         Return a new copy of the dict of the underlying
         elements of ``self``.
