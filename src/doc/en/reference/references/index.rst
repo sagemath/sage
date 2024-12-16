@@ -1127,7 +1127,7 @@ REFERENCES:
 .. [BMSS2006] Alin Bostan, Bruno Salvy, François Morain, Éric Schost.
               *Fast algorithms for computing isogenies between elliptic
               curves*. [Research Report] 2006, pp.28. <inria-00091441>
-              `arxiv:`cs/0609020`
+              :arxiv:`cs/0609020`
 
 .. [BN2010] \D. Bump and M. Nakasuji.
             Integration on `p`-adic groups and crystal bases.
@@ -1600,7 +1600,7 @@ REFERENCES:
              Arnoux-Rauzy sequences*, Ann. Inst. Fourier (Grenoble)
              50 (2000) 1265--1276.
 
-.. [CFZ2002] Chapoton, Fomin, Zelevinsky - *Polytopal realizations of
+.. [CFZ2002] \F. Chapoton, S. Fomin, A. Zelevinsky - *Polytopal realizations of
              generalized associahedra*, :arxiv:`math/0202004`,
              :doi:`10.4153/CMB-2002-054-1`
 
@@ -1792,13 +1792,13 @@ REFERENCES:
              :doi:`10.1007/978-3-319-07959-2_5`,
              https://hal.inria.fr/hal-00943549/document
 
-.. [CMO2011] \C. Chun, D. Mayhew, J. Oxley, A chain theorem for
-             internally 4-connected binary matroids. J. Combin. Theory
+.. [CMO2011] \C. Chun, D. Mayhew, J. Oxley, *A chain theorem for
+             internally 4-connected binary matroids*. J. Combin. Theory
              Ser. B 101 (2011), 141-189.
 
-.. [CMO2012] \C. Chun, D. Mayhew, J. Oxley,  Towards a splitter
+.. [CMO2012] \C. Chun, D. Mayhew, J. Oxley,  *Towards a splitter
              theorem for internally 4-connected binary
-             matroids. J. Combin. Theory Ser. B 102 (2012), 688-700.
+             matroids*. J. Combin. Theory Ser. B 102 (2012), 688-700.
 
 .. [CMR2005] C\. Cid, S\. Murphy, M\. Robshaw, *Small Scale Variants of
              the AES*; in Proceedings of Fast Software Encryption
