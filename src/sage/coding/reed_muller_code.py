@@ -401,6 +401,14 @@ class BinaryReedMullerCode(AbstractLinearCode):
         sage: C = codes.BinaryReedMullerCode(2, 4)
         sage: C
         Binary Reed-Muller Code of order 2 and number of variables 4
+
+    Very large Reed-Muller codes can be constructed without building the generator matrix or elements of the code.
+
+        sage: C = codes.BinaryReedMullerCode(16, 32)
+        sage: C
+        Binary Reed-Muller Code of order 16 and number of variables 32
+        sage: C.dimension(), C.length()
+        (2448023843, 4294967296)
     """
 
     _registered_encoders = {}
