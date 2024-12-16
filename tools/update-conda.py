@@ -172,9 +172,14 @@ def get_dependencies(pyproject_toml: Path, python: str) -> list[str]:
 def get_dev_dependencies(pyproject_toml: Path) -> list[str]:
     pyproject = tomllib.load(pyproject_toml)
     dependency_groups = pyproject.get("dependency-groups", {})
-    dev_dependencies = dependency_groups.get("test", []) + dependency_groups.get(
-        "docs", []
+    dev_dependencies = (
+        dependency_groups.get("test", [])
+        + dependency_groups.get("docs", [])
+        + dependency_groups.get("lint", [])
+        + dependency_groups.get("dev", [])
     )
+    # Remove dependencies that are not available on conda
+    dev_dependencies.remove("relint")
     return dev_dependencies
 
 
