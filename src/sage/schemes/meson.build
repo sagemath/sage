@@ -1,4 +1,9 @@
-py.install_sources('all.py', 'overview.py', subdir: 'sage/schemes')
+py.install_sources(
+  '__init__.py',
+  'all.py',
+  'overview.py',
+  subdir: 'sage/schemes',
+)
 
 install_subdir('affine', install_dir: sage_install_dir / 'schemes')
 install_subdir('berkovich', install_dir: sage_install_dir / 'schemes')
