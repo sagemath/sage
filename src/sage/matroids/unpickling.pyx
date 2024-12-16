@@ -33,12 +33,13 @@ from sage.rings.rational cimport Rational
 from sage.matroids.basis_matroid cimport BasisMatroid
 from sage.matroids.circuits_matroid cimport CircuitsMatroid
 from sage.matroids.circuit_closures_matroid cimport CircuitClosuresMatroid
-from sage.matroids.flats_matroid cimport FlatsMatroid
 from sage.matroids.dual_matroid import DualMatroid
+from sage.matroids.flats_matroid cimport FlatsMatroid
 from sage.matroids.graphic_matroid import GraphicMatroid
 from sage.matroids.lean_matrix cimport GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix, RationalMatrix
 from sage.matroids.linear_matroid cimport LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
 from sage.matroids.minor_matroid import MinorMatroid
+from sage.matroids.transversal_matroid cimport TransversalMatroid
 
 
 #############################################################################
@@ -744,6 +745,53 @@ def unpickle_graphic_matroid(version, data):
         raise TypeError("object was created with newer version of Sage. Please upgrade.")
     G, name = data
     M = GraphicMatroid(G)
+    if name is not None:
+        M.rename(name)
+    return M
+
+
+#############################################################################
+# Transversal matroids
+#############################################################################
+
+def unpickle_transversal_matroid(version, data):
+    """
+    Unpickle a TransversalMatroid.
+
+    *Pickling* is Python's term for the loading and saving of objects.
+    Functions like these serve to reconstruct a saved object. This all happens
+    transparently through the ``load`` and ``save`` commands, and you should
+    never have to call this function directly.
+
+    INPUT:
+
+    - ``version`` -- integer (currently `0`)
+    - ``data`` -- tuple ``(sets, groundset, name)``, where ``groundset`` is a
+      ``frozenset`` of elements, and ``sets`` is a ``frozenset`` of tuples
+      consisting of a name for the set, and a ``frozenset`` of groundset
+      elements it contains.
+
+    OUTPUT: :class:`TransversalMatroid`
+
+    .. WARNING::
+
+        Users should never call this function directly.
+
+    EXAMPLES::
+
+        sage: from sage.matroids.transversal_matroid import *
+        sage: sets = [range(6)] * 3
+        sage: M = TransversalMatroid(sets)
+        sage: M == loads(dumps(M))
+        True
+        sage: M.rename('U36')
+        sage: loads(dumps(M))
+        U36
+    """
+    if version != 0:
+        raise TypeError("object was created with newer version of Sage. Please upgrade.")
+    sets, groundset, set_labels, matching, name = data
+    M = TransversalMatroid(sets, groundset, set_labels, matching)
     if name is not None:
         M.rename(name)
     return M
