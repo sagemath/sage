@@ -1401,7 +1401,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             # this is our cue that singular uses `rp` instead of `ip`
             if singular_name_mapping['invlex'] == 'rp' and 'doctest' in str(get_display_manager()):
                 s = re.sub('^(// .*block.* : ordering )rp$', '\\1ip',
-                           s, count=0, flags=re.MULTILINE)
+                           s, flags=re.MULTILINE)
         return s
 
     def __copy__(self):
