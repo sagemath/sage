@@ -360,65 +360,65 @@ from itertools import product
 import operator
 
 
-def test_relation_maxima(relation):
+def check_relation_maxima(relation):
     """
     Return ``True`` if this (in)equality is definitely true. Return ``False``
     if it is false or the algorithm for testing (in)equality is inconclusive.
 
     EXAMPLES::
 
-        sage: from sage.symbolic.relation import test_relation_maxima
+        sage: from sage.symbolic.relation import check_relation_maxima
         sage: k = var('k')
         sage: pol = 1/(k-1) - 1/k -1/k/(k-1)
-        sage: test_relation_maxima(pol == 0)
+        sage: check_relation_maxima(pol == 0)
         True
         sage: f = sin(x)^2 + cos(x)^2 - 1
-        sage: test_relation_maxima(f == 0)
+        sage: check_relation_maxima(f == 0)
         True
-        sage: test_relation_maxima( x == x )
+        sage: check_relation_maxima( x == x )
         True
-        sage: test_relation_maxima( x != x )
+        sage: check_relation_maxima( x != x )
         False
-        sage: test_relation_maxima( x > x )
+        sage: check_relation_maxima( x > x )
         False
-        sage: test_relation_maxima( x^2 > x )
+        sage: check_relation_maxima( x^2 > x )
         False
-        sage: test_relation_maxima( x + 2 > x )
+        sage: check_relation_maxima( x + 2 > x )
         True
-        sage: test_relation_maxima( x - 2 > x )
+        sage: check_relation_maxima( x - 2 > x )
         False
 
     Here are some examples involving assumptions::
 
         sage: x, y, z = var('x, y, z')
         sage: assume(x>=y,y>=z,z>=x)
-        sage: test_relation_maxima(x==z)
+        sage: check_relation_maxima(x==z)
         True
-        sage: test_relation_maxima(z<x)
+        sage: check_relation_maxima(z<x)
         False
-        sage: test_relation_maxima(z>y)
+        sage: check_relation_maxima(z>y)
         False
-        sage: test_relation_maxima(y==z)
+        sage: check_relation_maxima(y==z)
         True
         sage: forget()
         sage: assume(x>=1,x<=1)
-        sage: test_relation_maxima(x==1)
+        sage: check_relation_maxima(x==1)
         True
-        sage: test_relation_maxima(x>1)
+        sage: check_relation_maxima(x>1)
         False
-        sage: test_relation_maxima(x>=1)
+        sage: check_relation_maxima(x>=1)
         True
-        sage: test_relation_maxima(x!=1)
+        sage: check_relation_maxima(x!=1)
         False
         sage: forget()
         sage: assume(x>0)
-        sage: test_relation_maxima(x==0)
+        sage: check_relation_maxima(x==0)
         False
-        sage: test_relation_maxima(x>-1)
+        sage: check_relation_maxima(x>-1)
         True
-        sage: test_relation_maxima(x!=0)
+        sage: check_relation_maxima(x!=0)
         True
-        sage: test_relation_maxima(x!=1)
+        sage: check_relation_maxima(x!=1)
         False
         sage: forget()
 
@@ -433,7 +433,7 @@ def test_relation_maxima(relation):
         sage: f = log(x*y) - (log(x) + log(y))
         sage: f(x=-1, y=i)
         -2*I*pi
-        sage: test_relation_maxima(f == 0)
+        sage: check_relation_maxima(f == 0)
         False
         sage: forget()
 
@@ -442,7 +442,7 @@ def test_relation_maxima(relation):
 
         sage: assume(x, 'complex')
         sage: f = sqrt(x^2) - abs(x)
-        sage: test_relation_maxima(f == 0)
+        sage: check_relation_maxima(f == 0)
         False
         sage: forget()
 
@@ -451,7 +451,7 @@ def test_relation_maxima(relation):
         sage: assume(x, 'real')
         sage: f1 = ( e^(I*x) - e^(-I*x) ) / ( I*e^(I*x) + I*e^(-I*x) )
         sage: f2 = sin(x)/cos(x)
-        sage: test_relation_maxima(f1 - f2 == 0)
+        sage: check_relation_maxima(f1 - f2 == 0)
         True
         sage: forget()
 
@@ -460,7 +460,7 @@ def test_relation_maxima(relation):
         sage: assume(x, 'complex')
         sage: f1 = ( e^(I*x) - e^(-I*x) ) / ( I*e^(I*x) + I*e^(-I*x) )
         sage: f2 = sin(x)/cos(x)
-        sage: test_relation_maxima(f1 - f2 == 0)
+        sage: check_relation_maxima(f1 - f2 == 0)
         False
         sage: forget()
 
@@ -471,7 +471,7 @@ def test_relation_maxima(relation):
         sage: assume(k, 'integer')
         sage: f1 = factorial(n+1)/factorial(n)
         sage: f2 = n + 1
-        sage: test_relation_maxima(f1 - f2 == 0)
+        sage: check_relation_maxima(f1 - f2 == 0)
         True
         sage: forget()
 

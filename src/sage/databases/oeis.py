@@ -1930,7 +1930,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             return sorted(table)
         return sorted(prog for la, prog in table if la == language)
 
-    def test_compile_sage_code(self):
+    def check_compile_sage_code(self):
         """
         Try to compile the extracted sage code, if there is any.
 
@@ -1946,13 +1946,13 @@ class OEISSequence(SageObject, UniqueRepresentation):
         One correct sequence::
 
             sage: s = oeis.find_by_id('A027642')        # optional -- internet
-            sage: s.test_compile_sage_code()            # optional -- internet
+            sage: s.check_compile_sage_code()            # optional -- internet
             True
 
         One dead sequence::
 
             sage: s = oeis.find_by_id('A000154')        # optional -- internet
-            sage: s.test_compile_sage_code()            # optional -- internet
+            sage: s.check_compile_sage_code()            # optional -- internet
             True
         """
         if self.is_dead():

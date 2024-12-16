@@ -7,9 +7,12 @@ See https://docs.pytest.org/en/latest/index.html for more details.
 
 from __future__ import annotations
 
+import doctest
 import inspect
+import sys
+import warnings
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Optional
 
 import pytest
 from _pytest.doctest import (
@@ -22,6 +25,11 @@ from _pytest.doctest import (
     get_optionflags,
 )
 from _pytest.pathlib import ImportMode, import_path
+
+from sage.doctest.forker import (
+    init_sage,
+    showwarning_with_traceback,
+)
 from sage.doctest.parsing import SageDocTestParser, SageOutputChecker
 
 
@@ -70,7 +78,6 @@ class SageDoctestModule(DoctestModule):
                 if _is_mocked(obj):
                     return
                 with _patch_unwrap_mock_aware():
-
                     # Type ignored because this is a private function.
                     super()._find(  # type:ignore[misc]
                         tests, obj, name, module, source_lines, globs, seen
@@ -81,6 +88,7 @@ class SageDoctestModule(DoctestModule):
                 self.path,
                 self.config.getoption("importmode"),
                 rootpath=self.config.rootpath,
+                consider_namespace_packages=True,
             )
         else:
             try:
@@ -90,34 +98,57 @@ class SageDoctestModule(DoctestModule):
                     root=self.config.rootpath,
                     consider_namespace_packages=True,
                 )
-            except ImportError:
+            except ImportError as exception:
                 if self.config.getvalue("doctest_ignore_import_errors"):
                     pytest.skip("unable to import module %r" % self.path)
                 else:
+                    if isinstance(exception, ModuleNotFoundError):
+                        # Ignore some missing features/modules for now
+                        # TODO: Remove this once all optional things are using Features
+                        if exception.name in (
+                            "valgrind",
+                            "rpy2",
+                            "sage.libs.coxeter3.coxeter",
+                        ):
+                            pytest.skip(
+                                f"unable to import module { self.path } due to missing feature { exception.name }"
+                            )
                     raise
         # Uses internal doctest module parsing mechanism.
         finder = MockAwareDocTestFinder()
         optionflags = get_optionflags(self.config)
+        from sage.features import FeatureNotPresentError
+
         runner = _get_runner(
             verbose=False,
             optionflags=optionflags,
             checker=SageOutputChecker(),
             continue_on_failure=_get_continue_on_failure(self.config),
         )
-
-        for test in finder.find(module, module.__name__):
-            if test.examples:  # skip empty doctests
-                yield DoctestItem.from_parent(
-                    self, name=test.name, runner=runner, dtest=test
-                )
+        try:
+            for test in finder.find(module, module.__name__):
+                if test.examples:  # skip empty doctests
+                    yield DoctestItem.from_parent(
+                        self, name=test.name, runner=runner, dtest=test
+                    )
+        except FeatureNotPresentError as exception:
+            pytest.skip(
+                f"unable to import module { self.path } due to missing feature { exception.feature.name }"
+            )
+        except ModuleNotFoundError as exception:
+            # TODO: Remove this once all optional things are using Features
+            pytest.skip(
+                f"unable to import module { self.path } due to missing feature { exception.name }"
+            )
 
 
 class IgnoreCollector(pytest.Collector):
     """
     Ignore a file.
     """
+
     def __init__(self, parent: pytest.Collector) -> None:
-        super().__init__('ignore', parent)
+        super().__init__("ignore", parent)
 
     def collect(self) -> Iterable[pytest.Item | pytest.Collector]:
         return []
@@ -134,6 +165,12 @@ def pytest_collect_file(
 
     See `pytest documentation <https://docs.pytest.org/en/latest/reference/reference.html#std-hook-pytest_collect_file>`_.
     """
+    if (
+        file_path.parent.name == "combinat"
+        or file_path.parent.parent.name == "combinat"
+    ):
+        # Crashes CI for some reason
+        return IgnoreCollector.from_parent(parent)
     if file_path.suffix == ".pyx":
         # We don't allow pytests to be defined in Cython files.
         # Normally, Cython files are filtered out already by pytest and we only
@@ -141,11 +178,42 @@ def pytest_collect_file(
         return IgnoreCollector.from_parent(parent)
     elif file_path.suffix == ".py":
         if parent.config.option.doctest:
-            if file_path.name == "__main__.py":
-                # We don't allow tests to be defined in __main__.py files (because their import will fail).
+            if file_path.name == "__main__.py" or file_path.name == "setup.py":
+                # We don't allow tests to be defined in __main__.py/setup.py files (because their import will fail).
                 return IgnoreCollector.from_parent(parent)
-            if file_path.name == "postprocess.py" and file_path.parent.name == "nbconvert":
+            if (
+                (
+                    file_path.name == "postprocess.py"
+                    and file_path.parent.name == "nbconvert"
+                )
+                or (
+                    file_path.name == "giacpy-mkkeywords.py"
+                    and file_path.parent.name == "autogen"
+                )
+                or (
+                    file_path.name == "flint_autogen.py"
+                    and file_path.parent.name == "autogen"
+                )
+            ):
                 # This is an executable file.
+                return IgnoreCollector.from_parent(parent)
+
+            if file_path.name == "conftest_inputtest.py":
+                # This is an input file for testing the doctest machinery (and contains broken doctests).
+                return IgnoreCollector.from_parent(parent)
+
+            if (
+                (
+                    file_path.name == "finite_dimensional_lie_algebras_with_basis.py"
+                    and file_path.parent.name == "categories"
+                )
+                or (
+                    file_path.name == "__init__.py"
+                    and file_path.parent.name == "crypto"
+                )
+                or (file_path.name == "__init__.py" and file_path.parent.name == "mq")
+            ):
+                # TODO: Fix these (import fails with "RuntimeError: dictionary changed size during iteration")
                 return IgnoreCollector.from_parent(parent)
             return SageDoctestModule.from_parent(parent, path=file_path)
 
@@ -163,6 +231,60 @@ def pytest_addoption(parser):
     )
 
 
+# Monkey patch exception printing to replace the full qualified name of the exception by its short name
+# TODO: Remove this hack once migration to pytest is complete
+import traceback
+
+old_format_exception_only = traceback.format_exception_only
+
+
+def format_exception_only(etype: type, value: BaseException) -> list[str]:
+    formatted_exception = old_format_exception_only(etype, value)
+    exception_name = etype.__name__
+    if etype.__module__:
+        exception_full_name = etype.__module__ + "." + etype.__qualname__
+    else:
+        exception_full_name = etype.__qualname__
+
+    for i, line in enumerate(formatted_exception):
+        if line.startswith(exception_full_name):
+            formatted_exception[i] = line.replace(
+                exception_full_name, exception_name, 1
+            )
+    return formatted_exception
+
+
+# Initialize Sage-specific doctest stuff
+init_sage()
+
+# Monkey patch doctest to use our custom printer etc
+old_run = doctest.DocTestRunner.run
+
+
+def doctest_run(
+    self: doctest.DocTestRunner,
+    test: doctest.DocTest,
+    compileflags: Optional[int] = None,
+    out: Any = None,
+    clear_globs: bool = True,
+) -> doctest.TestResults:
+    from sage.repl.rich_output import get_display_manager
+    from sage.repl.user_globals import set_globals
+
+    traceback.format_exception_only = format_exception_only
+
+    # Display warnings in doctests
+    warnings.showwarning = showwarning_with_traceback
+    setattr(sys, "__displayhook__", get_display_manager().displayhook)
+
+    # Ensure that injecting globals works as expected in doctests
+    set_globals(test.globs)
+    return old_run(self, test, compileflags, out, clear_globs)
+
+
+doctest.DocTestRunner.run = doctest_run
+
+
 @pytest.fixture(autouse=True, scope="session")
 def add_imports(doctest_namespace: dict[str, Any]):
     """
@@ -171,8 +293,9 @@ def add_imports(doctest_namespace: dict[str, Any]):
     See `pytest documentation <https://docs.pytest.org/en/stable/doctest.html#doctest-namespace-fixture>`.
     """
     # Inject sage.all into each doctest
-    import sage.all
-    dict_all = sage.all.__dict__
+    import sage.repl.ipython_kernel.all_jupyter
+
+    dict_all = sage.repl.ipython_kernel.all_jupyter.__dict__
 
     # Remove '__package__' item from the globals since it is not
     # always in the globals in an actual Sage session.

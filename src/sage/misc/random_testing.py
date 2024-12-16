@@ -67,7 +67,7 @@ def random_testing(fn):
     debugging the problem.  With the former snippet, you only need to
     rerun ``test_foo(100)`` with a known-failing random seed.
 
-    See :func:`sage.misc.random_testing.test_add_commutes` for a
+    See :func:`sage.misc.random_testing.check_add_commutes` for a
     simple example using this decorator, and :mod:`sage.rings.tests`
     for realistic uses.
 
@@ -160,7 +160,7 @@ def random_testing(fn):
 
 
 @random_testing
-def test_add_commutes(trials, verbose=False):
+def check_add_commutes(trials, verbose=False):
     r"""
     This is a simple demonstration of the :func:`random_testing` decorator and
     its recommended usage.
@@ -169,14 +169,14 @@ def test_add_commutes(trials, verbose=False):
 
     EXAMPLES::
 
-        sage: from sage.misc.random_testing import test_add_commutes
-        sage: test_add_commutes(2, verbose=True, seed=0)
+        sage: from sage.misc.random_testing import check_add_commutes
+        sage: check_add_commutes(2, verbose=True, seed=0)
         a == -4, b == 0 ...
         Passes!
         a == -1/2, b == -1/95 ...
         Passes!
-        sage: test_add_commutes(10)
-        sage: test_add_commutes(1000) # long time
+        sage: check_add_commutes(10)
+        sage: check_add_commutes(1000) # long time
     """
     from sage.rings.rational_field import QQ
     for _ in range(trials):
@@ -190,14 +190,14 @@ def test_add_commutes(trials, verbose=False):
 
 
 @random_testing
-def test_add_is_mul(trials, verbose=False):
+def check_add_is_mul(trials, verbose=False):
     r"""
     This example demonstrates a failing :func:`random_testing` test,
     and shows how to reproduce the error.
 
     DO NOT USE THIS AS AN EXAMPLE OF HOW TO USE
     :func:`random_testing`!  Instead, look at
-    :func:`sage.misc.random_testing.test_add_commutes`.
+    :func:`sage.misc.random_testing.check_add_commutes`.
 
     We test that ``a+b == a*b``, for *a*, *b* rational.  This is of
     course false, so the test will almost always fail.
