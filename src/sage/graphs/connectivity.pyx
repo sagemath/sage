@@ -135,7 +135,7 @@ def is_connected(G):
         return len(conn_verts) == G.num_verts()
 
 
-def connected_components(G, sort=None, key=None):
+def connected_components(G, sort=None, key=None, forbidden_vertices=None):
     """
     Return the list of connected components.
 
@@ -156,6 +156,9 @@ def connected_components(G, sort=None, key=None):
     - ``key`` -- a function (default: ``None``); a function that takes a
       vertex as its one argument and returns a value that can be used for
       comparisons in the sorting algorithm (we must have ``sort=True``)
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. The start vertex ``v`` cannot be in this set.
 
     EXAMPLES::
 
@@ -213,20 +216,24 @@ def connected_components(G, sort=None, key=None):
     cdef list components = []
     for v in G:
         if v not in seen:
-            c = connected_component_containing_vertex(G, v, sort=sort, key=key)
+            c = connected_component_containing_vertex(G, v, sort=sort, key=key,
+                                                      forbidden_vertices=forbidden_vertices)
             seen.update(c)
             components.append(c)
     components.sort(key=lambda comp: -len(comp))
     return components
 
 
-def connected_components_number(G):
+def connected_components_number(G, forbidden_vertices=None):
     """
     Return the number of connected components.
 
     INPUT:
 
     - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. The start vertex ``v`` cannot be in this set.
 
     EXAMPLES::
 
@@ -253,9 +260,16 @@ def connected_components_number(G):
     return len(connected_components(G, sort=False))
 
 
-def connected_components_subgraphs(G):
+def connected_components_subgraphs(G, forbidden_vertices=None):
     """
     Return a list of connected components as graph objects.
+
+    INPUT:
+
+    - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. The start vertex ``v`` cannot be in this set.
 
     EXAMPLES::
 
@@ -283,10 +297,12 @@ def connected_components_subgraphs(G):
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-    return [G.subgraph(c, inplace=False) for c in connected_components(G, sort=False)]
+    return [G.subgraph(c, inplace=False)
+            for c in connected_components(G, sort=False, forbidden_vertices=forbidden_vertices)]
 
 
-def connected_component_containing_vertex(G, vertex, sort=None, key=None):
+def connected_component_containing_vertex(G, vertex, sort=None, key=None,
+                                          forbidden_vertices=None):
     """
     Return a list of the vertices connected to vertex.
 
@@ -306,6 +322,9 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None):
     - ``key`` -- a function (default: ``None``); a function that takes a
       vertex as its one argument and returns a value that can be used for
       comparisons in the sorting algorithm (we must have ``sort=True``)
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. The start vertex ``v`` cannot be in this set.
 
     EXAMPLES::
 
@@ -370,20 +389,29 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None):
         raise ValueError('sort keyword is False, yet a key function is given')
 
     try:
-        c = list(G._backend.depth_first_search(vertex, ignore_direction=True))
+        c = list(G._backend.depth_first_search(vertex, ignore_direction=True,
+                                               forbidden_vertices=forbidden_vertices))
     except AttributeError:
-        c = list(G.depth_first_search(vertex, ignore_direction=True))
+        c = list(G.depth_first_search(vertex, ignore_direction=True,
+                                      forbidden_vertices=forbidden_vertices))
 
     if sort:
         return sorted(c, key=key)
     return c
 
 
-def connected_components_sizes(G):
+def connected_components_sizes(G, forbidden_vertices=None):
     """
     Return the sizes of the connected components as a list.
 
     The list is sorted from largest to lower values.
+
+    INPUT:
+
+    - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. The start vertex ``v`` cannot be in this set.
 
     EXAMPLES::
 
@@ -416,7 +444,7 @@ def connected_components_sizes(G):
         raise TypeError("the input must be a Sage graph")
 
     # connected components are sorted from largest to smallest
-    return [len(cc) for cc in connected_components(G, sort=False)]
+    return [len(cc) for cc in connected_components(G, sort=False, forbidden_vertices=forbidden_vertices)]
 
 
 def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None):
