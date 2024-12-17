@@ -226,17 +226,6 @@ def cython(filename, verbose=0, compile_message=False,
         ....: from sage.misc.cachefunc cimport cache_key
         ....: ''')
 
-    In Cython 0.29.33 using `from PACKAGE cimport MODULE` is broken
-    when `PACKAGE` is a namespace package, see :issue:`35322`::
-
-        sage: cython('''
-        ....: from sage.misc cimport cachefunc
-        ....: ''')
-        Traceback (most recent call last):
-        ...
-        RuntimeError: Error compiling Cython file:
-        ...
-        ...: 'sage/misc.pxd' not found
     """
     if not filename.endswith('pyx'):
         print("Warning: file (={}) should have extension .pyx".format(filename), file=sys.stderr)
@@ -578,6 +567,9 @@ def cython_import_all(filename, globals, **kwds):
 
     - ``filename`` -- string; name of a file that contains Cython
       code
+
+    See the function :func:`sage.misc.cython.cython` for documentation
+    for the other inputs.
     """
     m = cython_import(filename, **kwds)
     for k, x in m.__dict__.items():
@@ -620,6 +612,9 @@ def compile_and_load(code, **kwds):
 
     - ``code`` -- string containing code that could be in a .pyx file
       that is attached or put in a %cython block in the notebook
+
+    See the function :func:`sage.misc.cython.cython` for documentation
+    for the other inputs.
 
     OUTPUT: a module, which results from compiling the given code and
     importing it
