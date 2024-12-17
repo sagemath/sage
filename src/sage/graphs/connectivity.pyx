@@ -75,7 +75,7 @@ from sage.misc.superseded import deprecation
 from sage.sets.disjoint_set cimport DisjointSet
 
 
-def is_connected(G):
+def is_connected(G, forbidden_vertices=None):
     """
     Check whether the (di)graph is connected.
 
@@ -84,6 +84,9 @@ def is_connected(G):
     INPUT:
 
     - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
 
     .. SEEALSO::
 
@@ -99,6 +102,10 @@ def is_connected(G):
         False
         sage: G.add_edge(0,3)
         sage: is_connected(G)
+        True
+        sage: is_connected(G, forbidden_vertices=[3])
+        False
+        sage: is_connected(G, forbidden_vertices=[1])
         True
         sage: D = DiGraph({0: [1, 2], 1: [2], 3: [4, 5], 4: [5]})
         sage: is_connected(D)
@@ -128,14 +135,28 @@ def is_connected(G):
         return True
 
     try:
-        return G._backend.is_connected()
+        return G._backend.is_connected(forbidden_vertices=forbidden_vertices)
     except AttributeError:
-        v = next(G.vertex_iterator())
-        conn_verts = list(G.depth_first_search(v, ignore_direction=True))
-        return len(conn_verts) == G.num_verts()
+        # Search for a vertex in G that is not forbidden
+        forbidden = set(forbidden_vertices) if forbidden_vertices else set()
+        if forbidden:
+            for v in G:
+                if v not in forbidden:
+                    break
+            else:
+                # The empty graph is connected, so the graph with only forbidden
+                # vertices is also connected
+                return True
+        else:
+            v = next(G.vertex_iterator())
+        n = len(forbidden)
+        for _ in G.depth_first_search(v, ignore_direction=True,
+                                      forbidden_vertices=forbidden):
+            n += 1
+        return n == G.num_verts()
 
 
-def connected_components(G, sort=None, key=None):
+def connected_components(G, sort=None, key=None, forbidden_vertices=None):
     """
     Return the list of connected components.
 
@@ -157,6 +178,9 @@ def connected_components(G, sort=None, key=None):
       vertex as its one argument and returns a value that can be used for
       comparisons in the sorting algorithm (we must have ``sort=True``)
 
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
+
     EXAMPLES::
 
         sage: from sage.graphs.connectivity import connected_components
@@ -170,6 +194,12 @@ def connected_components(G, sort=None, key=None):
         [[0, 1, 2, 3], [4, 5, 6]]
         sage: connected_components(D, sort=True, key=lambda x: -x)
         [[3, 2, 1, 0], [6, 5, 4]]
+
+    Connected components in a graph with forbidden vertices::
+
+        sage: G = graphs.PathGraph(5)
+        sage: connected_components(G, sort=True, forbidden_vertices=[2])
+        [[0, 1], [3, 4]]
 
     TESTS:
 
@@ -209,24 +239,28 @@ def connected_components(G, sort=None, key=None):
     if (not sort) and key:
         raise ValueError('sort keyword is False, yet a key function is given')
 
-    cdef set seen = set()
+    cdef set seen = set(forbidden_vertices) if forbidden_vertices else set()
     cdef list components = []
     for v in G:
         if v not in seen:
-            c = connected_component_containing_vertex(G, v, sort=sort, key=key)
+            c = connected_component_containing_vertex(G, v, sort=sort, key=key,
+                                                      forbidden_vertices=forbidden_vertices)
             seen.update(c)
             components.append(c)
     components.sort(key=lambda comp: -len(comp))
     return components
 
 
-def connected_components_number(G):
+def connected_components_number(G, forbidden_vertices=None):
     """
     Return the number of connected components.
 
     INPUT:
 
     - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
 
     EXAMPLES::
 
@@ -239,6 +273,8 @@ def connected_components_number(G):
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: connected_components_number(D)
         2
+        sage: connected_components_number(D, forbidden_vertices=[1, 3])
+        3
 
     TESTS:
 
@@ -250,18 +286,28 @@ def connected_components_number(G):
         ...
         TypeError: the input must be a Sage graph
     """
-    return len(connected_components(G, sort=False))
+    return len(connected_components(G, sort=False,
+                                    forbidden_vertices=forbidden_vertices))
 
 
-def connected_components_subgraphs(G):
+def connected_components_subgraphs(G, forbidden_vertices=None):
     """
     Return a list of connected components as graph objects.
+
+    INPUT:
+
+    - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
 
     EXAMPLES::
 
         sage: from sage.graphs.connectivity import connected_components_subgraphs
         sage: G = Graph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: L = connected_components_subgraphs(G)
+        sage: graphs_list.show_graphs(L)                                                # needs sage.plot
+        sage: L = connected_components_subgraphs(G, forbidden_vertices=[1, 3])
         sage: graphs_list.show_graphs(L)                                                # needs sage.plot
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: L = connected_components_subgraphs(D)
@@ -283,10 +329,13 @@ def connected_components_subgraphs(G):
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-    return [G.subgraph(c, inplace=False) for c in connected_components(G, sort=False)]
+    return [G.subgraph(c, inplace=False)
+            for c in connected_components(G, sort=False,
+                                          forbidden_vertices=forbidden_vertices)]
 
 
-def connected_component_containing_vertex(G, vertex, sort=None, key=None):
+def connected_component_containing_vertex(G, vertex, sort=None, key=None,
+                                          forbidden_vertices=None):
     """
     Return a list of the vertices connected to vertex.
 
@@ -294,7 +343,7 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None):
 
     - ``G`` -- the input graph
 
-    - ``v`` -- the vertex to search for
+    - ``vertex`` -- the vertex to search for
 
     - ``sort`` -- boolean (default: ``None``); if ``True``, vertices inside the
       component are sorted according to the default ordering
@@ -307,6 +356,9 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None):
       vertex as its one argument and returns a value that can be used for
       comparisons in the sorting algorithm (we must have ``sort=True``)
 
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. The start ``vertex`` cannot be in this set.
+
     EXAMPLES::
 
         sage: from sage.graphs.connectivity import connected_component_containing_vertex
@@ -315,6 +367,8 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None):
         [0, 1, 2, 3]
         sage: G.connected_component_containing_vertex(0, sort=True)
         [0, 1, 2, 3]
+        sage: G.connected_component_containing_vertex(0, sort=True, forbidden_vertices=[1, 3])
+        [0]
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: connected_component_containing_vertex(D, 0, sort=True)
         [0, 1, 2, 3]
@@ -370,20 +424,29 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None):
         raise ValueError('sort keyword is False, yet a key function is given')
 
     try:
-        c = list(G._backend.depth_first_search(vertex, ignore_direction=True))
+        c = list(G._backend.depth_first_search(vertex, ignore_direction=True,
+                                               forbidden_vertices=forbidden_vertices))
     except AttributeError:
-        c = list(G.depth_first_search(vertex, ignore_direction=True))
+        c = list(G.depth_first_search(vertex, ignore_direction=True,
+                                      forbidden_vertices=forbidden_vertices))
 
     if sort:
         return sorted(c, key=key)
     return c
 
 
-def connected_components_sizes(G):
+def connected_components_sizes(G, forbidden_vertices=None):
     """
     Return the sizes of the connected components as a list.
 
     The list is sorted from largest to lower values.
+
+    INPUT:
+
+    - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
 
     EXAMPLES::
 
@@ -400,6 +463,13 @@ def connected_components_sizes(G):
         [2, 1]
         [3]
         [3]
+        sage: G = graphs.PathGraph(5)
+        sage: G.connected_components_sizes()
+        [5]
+        sage: G.connected_components_sizes(forbidden_vertices=[1])
+        [3, 1]
+        sage: G.connected_components_sizes(forbidden_vertices=[1, 3])
+        [1, 1, 1]
 
     TESTS:
 
@@ -416,7 +486,8 @@ def connected_components_sizes(G):
         raise TypeError("the input must be a Sage graph")
 
     # connected components are sorted from largest to smallest
-    return [len(cc) for cc in connected_components(G, sort=False)]
+    return [len(cc) for cc in connected_components(G, sort=False,
+                                                   forbidden_vertices=forbidden_vertices)]
 
 
 def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None):

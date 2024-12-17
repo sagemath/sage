@@ -4176,7 +4176,8 @@ cdef class CGraphBackend(GenericGraphBackend):
     # Searching
     ###################################
 
-    def depth_first_search(self, v, reverse=False, ignore_direction=False):
+    def depth_first_search(self, v, reverse=False, ignore_direction=False,
+                           forbidden_vertices=None):
         r"""
         Return a depth-first search from vertex ``v``.
 
@@ -4191,6 +4192,9 @@ cdef class CGraphBackend(GenericGraphBackend):
         - ``ignore_direction`` -- boolean (default: ``False``); this is only
           relevant to digraphs. If this is a digraph, ignore all orientations
           and consider the graph as undirected.
+
+        - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+          avoid during the search. The start vertex ``v`` cannot be in this set.
 
         ALGORITHM:
 
@@ -4234,7 +4238,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         Traversing the Petersen graph using depth-first search::
 
-            sage: G = Graph(graphs.PetersenGraph())
+            sage: G = graphs.PetersenGraph()
             sage: list(G.depth_first_search(0))
             [0, 5, 8, 6, 9, 7, 2, 3, 4, 1]
 
@@ -4251,14 +4255,33 @@ cdef class CGraphBackend(GenericGraphBackend):
             ....: "Stuttgart": ["Nurnberg"], "Erfurt": ["Wurzburg"]})
             sage: list(G.depth_first_search("Stuttgart"))
             ['Stuttgart', 'Nurnberg', ...]
+
+        Avoiding some cities:
+
+            sage: list(G.depth_first_search("Stuttgart",
+            ....:                 forbidden_vertices=["Frankfurt", "Munchen"]))
+            ['Stuttgart', 'Nurnberg', 'Wurzburg', 'Erfurt']
+
+        TESTS:
+
+        The start vertex cannot be forbidden::
+
+            sage: G = graphs.PetersenGraph()
+            sage: list(G.depth_first_search(0, forbidden_vertices=[0, 1]))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
         """
         return Search_iterator(self,
                                v,
                                direction=-1,
                                reverse=reverse,
-                               ignore_direction=ignore_direction)
+                               ignore_direction=ignore_direction,
+                               forbidden_vertices=forbidden_vertices)
 
-    def breadth_first_search(self, v, reverse=False, ignore_direction=False, report_distance=False, edges=False):
+    def breadth_first_search(self, v, reverse=False, ignore_direction=False,
+                             report_distance=False, edges=False,
+                             forbidden_vertices=None):
         r"""
         Return a breadth-first search from vertex ``v``.
 
@@ -4285,6 +4308,9 @@ cdef class CGraphBackend(GenericGraphBackend):
 
           Note that parameters ``edges`` and ``report_distance`` cannot be
           ``True`` simultaneously.
+
+        - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+          avoid during the search. The start vertex ``v`` cannot be in this set.
 
         ALGORITHM:
 
@@ -4337,6 +4363,22 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: G = graphs.EuropeMap(continental=True)
             sage: list(G.breadth_first_search("Portugal"))
             ['Portugal', 'Spain', ..., 'Greece']
+
+        Avoiding some countries:
+
+            sage: list(G.breadth_first_search("Portugal",
+            ....:                      forbidden_vertices=["Germany","Italy"]))
+            ['Portugal', 'Spain', ..., 'Sweden']
+
+        TESTS:
+
+        The start vertex cannot be forbidden::
+
+            sage: G = graphs.PetersenGraph()
+            sage: list(G.breadth_first_search(0, forbidden_vertices=[0]))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
         """
         return Search_iterator(self,
                                v,
@@ -4344,15 +4386,21 @@ cdef class CGraphBackend(GenericGraphBackend):
                                reverse=reverse,
                                ignore_direction=ignore_direction,
                                report_distance=report_distance,
-                               edges=edges)
+                               edges=edges,
+                               forbidden_vertices=forbidden_vertices)
 
     ###################################
     # Connectedness
     ###################################
 
-    def is_connected(self):
+    def is_connected(self, forbidden_vertices=None):
         r"""
         Check whether the graph is connected.
+
+        INPUT:
+
+        - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+          avoid during the search
 
         EXAMPLES:
 
@@ -4369,6 +4417,16 @@ cdef class CGraphBackend(GenericGraphBackend):
         A graph with non-integer vertex labels::
 
             sage: Graph(graphs.CubeGraph(3)).is_connected()
+            True
+
+        A graph with forbidden vertices::
+
+            sage: G = graphs.PathGraph(5)
+            sage: G._backend.is_connected()
+            True
+            sage: G._backend.is_connected(forbidden_vertices=[1])
+            False
+            sage: G._backend.is_connected(forbidden_vertices=[0, 1])
             True
 
         TESTS::
@@ -4389,8 +4447,18 @@ cdef class CGraphBackend(GenericGraphBackend):
         if v_int == -1:
             return True
         v = self.vertex_label(v_int)
-        cdef size_t n = 0
-        for _ in self.depth_first_search(v, ignore_direction=True):
+        cdef set forbidden = set(forbidden_vertices) if forbidden_vertices else set()
+        while v in forbidden:
+            v_int = bitset_next(cg.active_vertices, v_int + 1)
+            if v_int == -1:
+                # The empty graph is connected. So the graph with only forbidden
+                # vertices also is
+                return True
+            v = self.vertex_label(v_int)
+
+        cdef size_t n = len(forbidden)
+        for _ in self.depth_first_search(v, ignore_direction=True,
+                                         forbidden_vertices=forbidden):
             n += 1
         return n == cg.num_verts
 
@@ -4720,7 +4788,8 @@ cdef class Search_iterator:
     cdef in_neighbors
 
     def __init__(self, graph, v, direction=0, reverse=False,
-                 ignore_direction=False, report_distance=False, edges=False):
+                 ignore_direction=False, report_distance=False, edges=False,
+                 forbidden_vertices=None):
         r"""
         Initialize an iterator for traversing a (di)graph.
 
@@ -4762,11 +4831,16 @@ cdef class Search_iterator:
           Note that parameters ``edges`` and ``report_distance`` cannot be
           ``True`` simultaneously.
 
+        - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+          avoid during the search. The start vertex ``v`` cannot be in this set.
+
         EXAMPLES::
 
             sage: g = graphs.PetersenGraph()
             sage: list(g.breadth_first_search(0))
             [0, 1, 4, 5, 2, 6, 3, 9, 7, 8]
+            sage: list(g.breadth_first_search(0, forbidden_vertices=[1, 2]))
+            [0, 4, 5, 3, 9, 7, 8, 6]
 
         TESTS:
 
@@ -4805,9 +4879,18 @@ cdef class Search_iterator:
         bitset_set_first_n(self.seen, 0)
 
         cdef int v_id = self.graph.get_vertex(v)
+        cdef int u_id
 
         if v_id == -1:
             raise LookupError("vertex ({0}) is not a vertex of the graph".format(repr(v)))
+
+        if forbidden_vertices is not None:
+            for u in forbidden_vertices:
+                u_id = self.graph.get_vertex(u)
+                if u_id != -1:
+                    if u_id == v_id:
+                        raise ValueError(f"the start vertex is in the set of forbidden vertices")
+                    bitset_add(self.seen, u_id)
 
         if direction == 0:
             self.fifo.push(v_id)
