@@ -19208,7 +19208,7 @@ class GenericGraph(GenericGraph_pyx):
                     neighbors = self.neighbor_iterator
                 else:
                     neighbors = self.neighbor_out_iterator
-            seen = set() if forbidden_vertices is None else set(forbidden_vertices)
+            seen = set(forbidden_vertices) if forbidden_vertices else set()
             if isinstance(start, list):
                 for s in start:
                     if s in seen:

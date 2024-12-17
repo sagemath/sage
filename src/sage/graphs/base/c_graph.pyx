@@ -4393,9 +4393,14 @@ cdef class CGraphBackend(GenericGraphBackend):
     # Connectedness
     ###################################
 
-    def is_connected(self):
+    def is_connected(self, forbidden_vertices=None):
         r"""
         Check whether the graph is connected.
+
+        INPUT:
+
+        - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+          avoid during the search
 
         EXAMPLES:
 
@@ -4412,6 +4417,16 @@ cdef class CGraphBackend(GenericGraphBackend):
         A graph with non-integer vertex labels::
 
             sage: Graph(graphs.CubeGraph(3)).is_connected()
+            True
+
+        A graph with forbidden vertices::
+
+            sage: G = graphs.PathGraph(5)
+            sage: G._backend.is_connected()
+            True
+            sage: G._backend.is_connected(forbidden_vertices=[1])
+            False
+            sage: G._backend.is_connected(forbidden_vertices=[0, 1])
             True
 
         TESTS::
@@ -4432,8 +4447,18 @@ cdef class CGraphBackend(GenericGraphBackend):
         if v_int == -1:
             return True
         v = self.vertex_label(v_int)
-        cdef size_t n = 0
-        for _ in self.depth_first_search(v, ignore_direction=True):
+        cdef set forbidden = set(forbidden_vertices) if forbidden_vertices else set()
+        while v in forbidden:
+            v_int = bitset_next(cg.active_vertices, v_int + 1)
+            if v_int == -1:
+                # The empty is connected. So the graph with only forbidden
+                # vertices also is
+                return True
+            v = self.vertex_label(v_int)
+
+        cdef size_t n = len(forbidden)
+        for _ in self.depth_first_search(v, ignore_direction=True,
+                                         forbidden_vertices=forbidden):
             n += 1
         return n == cg.num_verts
 
