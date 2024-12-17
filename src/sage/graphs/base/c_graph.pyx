@@ -4451,7 +4451,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         while v in forbidden:
             v_int = bitset_next(cg.active_vertices, v_int + 1)
             if v_int == -1:
-                # The empty is connected. So the graph with only forbidden
+                # The empty graph is connected. So the graph with only forbidden
                 # vertices also is
                 return True
             v = self.vertex_label(v_int)
