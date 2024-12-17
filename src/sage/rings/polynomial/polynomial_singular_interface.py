@@ -424,7 +424,20 @@ def can_convert_to_singular(R):
         sage: R.<x,y> = Zmod(10^20 + 1)[]
         sage: R._has_singular
         True
+
+    Check that :issue:`39106` is fixed::
+
+        sage: s = SymmetricFunctions(QQ).s()
+        sage: R.<x> = PolynomialRing(s.fraction_field())
+        sage: can_convert_to_singular(R)
+        False
+        sage: R.<x, y> = PolynomialRing(s.fraction_field())
+        sage: can_convert_to_singular(R)
+        False
     """
+    from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+    from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+
     if R.ngens() == 0:
         return False
 
@@ -435,18 +448,18 @@ def can_convert_to_singular(R):
                                   sage.rings.abc.RealField, sage.rings.abc.ComplexField,
                                   sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField))):
         return True
-    elif isinstance(base_ring, FiniteField):
+    if isinstance(base_ring, FiniteField):
         return base_ring.characteristic() <= 2147483647
-    elif isinstance(base_ring, NumberField):
+    if isinstance(base_ring, NumberField):
         return base_ring.is_absolute()
-    elif isinstance(base_ring, sage.rings.fraction_field.FractionField_generic):
+    if (isinstance(base_ring, sage.rings.fraction_field.FractionField_generic)
+        and isinstance(base_ring.base(), (PolynomialRing_general, MPolynomialRing_base))):
         B = base_ring.base_ring()
         return (B.is_prime_field() or B is ZZ
                 or (isinstance(B, FiniteField) and B.characteristic() <= 2147483647))
-    elif isinstance(base_ring, RationalFunctionField):
+    if isinstance(base_ring, RationalFunctionField):
         return base_ring.constant_field().is_prime_field()
-    else:
-        return False
+    return False
 
 
 class Polynomial_singular_repr:
