@@ -296,6 +296,38 @@ class Gammoid(Matroid):
         """
         return (not self == other)
 
+    def __reduce__(self):
+        """
+        Save the matroid for later reloading.
+
+        OUTPUT:
+
+        A tuple ``(unpickle, (version, data))``, where ``unpickle`` is the
+        name of a function that, when called with ``(version, data)``,
+        produces a matroid isomorphic to ``self``. ``version`` is an integer
+        (currently 0) and ``data`` is a tuple ``(E, F, name)`` where ``E`` is
+        the groundset, ``F`` is the dictionary of flats, and ``name`` is a
+        custom name.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.gammoid import Gammoid
+            sage: edgelist = [(0, 4), (0, 5), (1, 0), (1, 4), (2, 0),
+            ....: (2, 1), (2, 3), (2, 6), (3, 4), (3, 5), (4, 0), (5, 2), (6, 5)]
+            sage: D = DiGraph(edgelist)
+            sage: M = Gammoid(D, roots=[4, 5, 6])
+            sage: M.rename("Example Gammoid: " + repr(M))
+            sage: M == loads(dumps(M)), loads(dumps(M))  # indirect doctest
+            (True, Example Gammoid: Gammoid of rank 3 on 7 elements)
+            sage: M.reset_name()
+            sage: loads(dumps(M))
+            Gammoid of rank 3 on 7 elements
+        """
+        import sage.matroids.unpickling
+        data = (self._D, self._roots, self._groundset, self.get_custom_name())
+        version = 0
+        return sage.matroids.unpickling.unpickle_gammoid, (version, data)
+
     def digraph(self):
         """
         Return the DiGraph associated with the gammoid.

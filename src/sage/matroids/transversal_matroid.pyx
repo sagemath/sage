@@ -26,7 +26,7 @@ The input should be a set system, formatted as an iterable of iterables::
     sage: M = TransversalMatroid([[0, 1], [1, 2, 3], [3, 4, 5]],
     ....: set_labels=['1', '2', '3'])
     sage: M.graph().vertices()
-    [0, 1, 2, 3, 4, 5, '1', '2', '3']
+    ['1', '2', '3', 0, 1, 2, 3, 4, 5]
 
 AUTHORS:
 
@@ -46,8 +46,6 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from __future__ import print_function, absolute_import
-
-include 'sage/data_structures/bitset.pxi'
 
 from sage.matroids.matroid cimport Matroid
 from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
@@ -254,13 +252,13 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
                     other_edges.append((self._idx[e], set_labels[i]))
         self._D.add_edges_from(other_edges)
 
-    cdef bint __is_exchange_pair(self, long x, long y) except -1:
+    cdef bint _is_exchange_pair(self, long x, long y) except -1:
         r"""
         Check for `M`-alternating path from `x` to `y`.
         """
         return nx.has_path(self._D, y, x)
 
-    cdef int __exchange(self, long x, long y) except -1:
+    cdef int _exchange(self, long x, long y) except -1:
         r"""
         Replace ``self.basis() with ``self.basis() - x + y``.
         Internal method, does no checks.
@@ -277,7 +275,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         self._D.remove_edges_from(sh_edges)
         self._D.add_edges_from(sh_edges_r)
 
-        BasisExchangeMatroid.__exchange(self, x, y)
+        BasisExchangeMatroid._exchange(self, x, y)
 
     def _repr_(self):
         """
@@ -411,7 +409,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             sage: hash(M1) == hash(M3)
             False
         """
-        return hash((frozenset(self._E), frozenset(self._sets.iteritems())))
+        return hash((self._groundset, frozenset(self._sets.items())))
 
     cdef dict _translate_matching(self):
         """
@@ -421,48 +419,6 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         for x in self._matching:
             matching[self._E[x]] = self._set_labels_input[self._set_labels.index(self._matching[x])]
         return matching
-
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.transversal_matroid import TransversalMatroid
-            sage: sets = [[0,1,2,3], [1,2], [1,3,4]]
-            sage: M = TransversalMatroid(sets)
-            sage: N = copy(M)  # indirect doctest
-            sage: N == M
-            True
-        """
-        cdef TransversalMatroid N
-        N = TransversalMatroid(groundset=self._E,
-                               sets=self._sets_input,
-                               set_labels=self._set_labels_input,
-                               matching=self._translate_matching())
-        N.rename(getattr(self, '__custom_name'))
-        return N
-
-    def __deepcopy__(self, memo):
-        """
-        Create a deep copy.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.transversal_matroid import TransversalMatroid
-            sage: sets = [[0,1,2,3], [1,2], [1,3,4]]
-            sage: M = TransversalMatroid(sets)
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: N == M
-            True
-        """
-        cdef TransversalMatroid N
-        N = TransversalMatroid(groundset=deepcopy(self._E, memo),
-                               sets=deepcopy(self._sets_input, memo),
-                               set_labels=deepcopy(self._set_labels_input, memo),
-                               matching=deepcopy(self._translate_matching(), memo))
-        N.rename(deepcopy(getattr(self, '__custom_name'), memo))
-        return N
 
     def __reduce__(self):
         """
@@ -490,7 +446,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         """
         from sage.matroids.unpickling import unpickle_transversal_matroid
         data = (self._sets_input, self._E, self._set_labels_input, self._translate_matching(),
-                getattr(self, '__custom_name'))
+                self.get_custom_name())
         version = 0
         return unpickle_transversal_matroid, (version, data)
 
@@ -642,7 +598,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             sage: M.set_labels()
             ['s0', 's1', 's2']
             sage: M.graph().vertices()
-            [0, 1, 2, 3, 4, 7, 's0', 's1', 's2']
+            ['s0', 's1', 's2', 0, 1, 2, 3, 4, 7]
         """
         return copy(self._set_labels_input)
 
@@ -898,7 +854,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         for collection in powerset:
             yield self.transversal_extension(element=element, sets=collection)
 
-    cpdef is_valid(self):
+    cpdef is_valid(self, certificate=False):
         """
         Test whether the matching in memory is a valid maximal matching.
 
