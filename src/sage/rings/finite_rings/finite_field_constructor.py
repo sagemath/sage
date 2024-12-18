@@ -497,7 +497,7 @@ class FiniteFieldFactory(UniqueFactory):
         Finite Field in z2 of size 5^2
         sage: GF((5, 2))
         Finite Field in z2 of size 5^2
-        sage: GF(5, 2) and GF((5, 2))
+        sage: GF(5, 2) is GF((5, 2))
         True
     """
     def __init__(self, *args, **kwds):
@@ -584,11 +584,29 @@ class FiniteFieldFactory(UniqueFactory):
             ...
             ValueError: wrong input for finite field constructor
             sage: GF(5, '^')
+            Traceback (most recent call last):
+            ...
+            ValueError: variable name '^' is not alphanumeric
             sage: GF((5, 2), 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: variable name '1' does not start with a letter
             sage: GF((5, 1), 3)
+            Traceback (most recent call last):
+            ...
+            TypeError: variable name 3 must be a string, not <class 'sage.rings.integer.Integer'>
             sage: GF((5, 2), 3)
+            Traceback (most recent call last):
+            ...
+            ValueError: variable name '3' does not start with a letter
             sage: GF(25, 2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the order of a finite field must be a prime power
             sage: GF((25, 2))
+            Traceback (most recent call last):
+            ...
+            ValueError: the order of a finite field must be a prime power
         """
         import sage.arith.all
 
@@ -614,7 +632,8 @@ class FiniteFieldFactory(UniqueFactory):
                 if order < 2:
                     raise ValueError("the order of a finite field must be at least 2")
                 if isinstance(name, (int, Integer)):
-                    p, n = order, name
+                    p, n = order, Integer(name)
+                    order = p**n
                     name = None
                 else:
                     p, n = order.perfect_power()
