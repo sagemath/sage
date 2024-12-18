@@ -1315,7 +1315,7 @@ class HyperellipticCurveSmoothModel_finite_field(
         # Compute the finite field and prime p.
         Fq = self.base_ring()
         p = Fq.characteristic()
-        
+
         # checks
         if p == 2:
             raise ValueError("p must be odd")

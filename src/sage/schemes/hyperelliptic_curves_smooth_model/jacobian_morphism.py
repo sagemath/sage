@@ -16,7 +16,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         SchemeMorphism.__init__(self, parent)
 
         if not isinstance(u, Polynomial) or not isinstance(v, Polynomial):
-            raise TypeError(f"arguments {u = } and {v = } must be polynomials")
+            raise TypeError(f"arguments u={u} and v={v} must be polynomials")
 
         # TODO:
         # 1. allow elements of the base field as input
@@ -27,7 +27,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             f, h = parent.curve().hyperelliptic_polynomials()
             assert (
                 v**2 + v * h - f
-            ) % u == 0, f"{u = }, {v = } do not define a divisor on the Jacobian"
+            ) % u == 0, f"u={u}, v={v} do not define a divisor on the Jacobian"
 
             # TODO: should we automatically do reduction here if the degree of u is
             # too large?

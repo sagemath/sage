@@ -37,6 +37,7 @@ from sage.structure.sequence import Sequence
 # Projective varieties
 # --------------------
 
+
 class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
     """
     A rational point of projective space over a ring.
@@ -192,6 +193,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         #if there is no good way to normalize return
         #a constant value
         return hash(self.codomain())
+
 
 class SchemeMorphism_point_weighted_projective_field(SchemeMorphism_point_weighted_projective_ring):
     """
