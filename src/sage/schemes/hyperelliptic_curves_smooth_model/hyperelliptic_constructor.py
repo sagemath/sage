@@ -200,7 +200,8 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
 
     The polynomials f and h need to define a smooth curve of genus at
     least one. In particular polynomials defining elliptic curves are
-    allowed as input.
+    allowed as input::
+
         sage: E = HyperellipticCurveSmoothModel(x^3+1)
         sage: E.genus()
         1
@@ -211,11 +212,11 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
 
     The following polynomials define a singular curve and are
     not allowed as input::
+
         sage: C = HyperellipticCurve(x^6 + 2*x - 1, 2*x - 2)
         Traceback (most recent call last):
         ...
         ValueError: not a hyperelliptic curve: singularity in the provided affine patch
-
     """
 
     # ---------------------------

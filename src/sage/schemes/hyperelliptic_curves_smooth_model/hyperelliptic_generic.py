@@ -669,7 +669,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         Return the rational Weierstrass points of the hyperelliptic curve.
         These are the points that are fixed by the hyperelliptic involution.
 
-        EXAMPLES::
+        EXAMPLES:
 
         When `h(x)` is zero, then the Weierstrass points are the points with
         `y`-coordinate equal to zero::
@@ -792,10 +792,9 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         TODO: renaming to plane_model ?
 
-        EXAMPLES::
+        EXAMPLES:
 
-        We consider the hyperelliptic curve with affine equation
-         `y^2 = x^5  + x` ::
+        We consider the hyperelliptic curve with affine equation `y^2 = x^5  + x`::
 
             sage: R.<x> = FiniteField(11)[]
             sage: H = HyperellipticCurveSmoothModel(x^6 + 2)
@@ -844,7 +843,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         `sage.schemes.generic.algebraic_scheme.rational_points` on this curve's
         :meth:`projective_curve` for the affine points.
 
-        EXAMPLES::
+        EXAMPLES:
 
         For the LMFDB genus 2 curve `932.a.3728.1 <https://www.lmfdb.org/Genus2Curve/Q/932/a/3728/1>`_::
 
@@ -1103,7 +1102,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         `(x(t),y(t))` such that `y(t)^2 + y(t)*h(x(t)) = f(x(t))` and `t = x - a`
         is the local parameter at `P`.
 
-        EXAMPLES::
+        EXAMPLES:
 
         We compute the local coordinates of `H : y^2 = x^5 - 23*x^3 + 18*x^2 + 40*x` at
         the point `P = (1, 6)`::
@@ -1178,10 +1177,10 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         `(x(t),y(t))` such that `y(t)^2 + h(x(t))*y(t) = f(x(t))` and `t = y - b`
         is the local parameter at `P = (a,b)`.
 
-        EXAMPLES::
+        EXAMPLES:
 
         We compute the local coordinates of the Weierstrass point `P = (4,0)`
-        on the hyperelliptic curve `y^2 = x^5 - 23*x^3 + 18*x^2 + 40*x`.
+        on the hyperelliptic curve `y^2 = x^5 - 23*x^3 + 18*x^2 + 40*x`::
 
             sage: R.<x> = QQ['x']
             sage: H = HyperellipticCurveSmoothModel(x^5 - 23*x^3 + 18*x^2 + 40*x)
@@ -1199,7 +1198,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             True
 
         We compute the local coordinates at the Weierstrass point `(1,-1)`
-        of the hyperelliptic curve `y^2 + (x^3 + 1)*y = -x^2.
+        of the hyperelliptic curve `y^2 + (x^3 + 1)*y = -x^2::
 
             sage: H = HyperellipticCurveSmoothModel(-x^2, x^3+1)
             sage: P = H(1,-1)
@@ -1256,10 +1255,10 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         `(x(t),y(t))` such that `y(t)^2 = f(x(t))` and `t = y/x^{g+1}`
         is the local parameter at infinity
 
-        EXAMPLES::
+        EXAMPLES:
 
         We compute the local coordinates at the point at infinity of the
-        hyperelliptic curve `y^2 = x^5 - 5*x^2 + 1`.
+        hyperelliptic curve `y^2 = x^5 - 5*x^2 + 1`::
 
             sage: R.<x> = QQ['x']
             sage: H = HyperellipticCurveSmoothModel(x^5 - 5*x^2 + 1)
@@ -1337,17 +1336,17 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         `(x(t),y(t))` such that `y(t)^2 = f(x(t))` and `t = y/x^{g+1}`
         is the local parameter at infinity
 
-        EXAMPLES::
+        EXAMPLES:
 
         We compute the local coordinates at the point at infinity of the
-        hyperelliptic curve ` `
+        hyperelliptic curve::
 
             sage: R.<x> = QQ['x']
             sage: H = HyperellipticCurveSmoothModel(x^6+4*x^4 + 4*x^2+1)
             sage: P1 = H(1,-1,0)
             sage: xt1,yt1 = H.local_coordinates_at_infinity_split(P1)
 
-        Note the similarity to the local coordinates of the other point at infinity ::
+        Note the similarity to the local coordinates of the other point at infinity::
 
             sage: P2 = H(1,1,0)
             sage: xt2,yt2 = H.local_coordinates_at_infinity_split(P2)
@@ -1412,10 +1411,10 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
         `(x(t),y(t))` such that `y(t)^2 + h(x(t))*y(t) = f(x(t))`, where `t`
         is the local parameter at `P`
 
-        EXAMPLES::
+        EXAMPLES:
 
         We compute the local coordinates of several points of the curve with
-        defining equation `y^2 = x^5 - 23*x^3 + 18*x^2 + 40*x`. ::
+        defining equation `y^2 = x^5 - 23*x^3 + 18*x^2 + 40*x`::
 
             sage: R.<x> = QQ['x']
             sage: H = HyperellipticCurveSmoothModel(x^5 - 23*x^3 + 18*x^2 + 40*x)

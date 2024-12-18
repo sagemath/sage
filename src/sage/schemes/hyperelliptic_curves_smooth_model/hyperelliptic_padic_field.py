@@ -141,7 +141,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         """
         Checks if `P` is in a Weierstrass disc.
 
-        EXAMPLES::
+        EXAMPLES:
 
         For odd degree models, the points with `y`-coordinate equivalent to zero
         are contained in a Weierstrass discs::
@@ -198,7 +198,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         Given `Q` a point on self in a Weierstrass disc, finds the
         center of the Weierstrass disc (if defined over self.base_ring())
 
-        EXAMPLES::
+        EXAMPLES:
 
         Examples for a hyperelliptic curve with odd degree model::
 
@@ -254,7 +254,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         TODO: Really, this gives the reduction over the residue field. Isn't the residue disc a disc over the p-adics?
         Maybe rename to residue_point or reduction ?
 
-        EXAMPLES::
+        EXAMPLES:
 
         We compute the residue discs for diffferent points on the elliptic curve
         `y^2 = x^3 = 10*x + 9` over the `5`-adics::
