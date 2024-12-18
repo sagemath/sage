@@ -565,7 +565,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             return list(C)
         return C
 
-    def numpy(self, dtype=None, copy=True):
+    def numpy(self, dtype=None):
         """
         Return the Numpy matrix associated to this matrix.
         See :meth:`.matrix1.Matrix.numpy`.

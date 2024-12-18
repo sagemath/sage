@@ -25,6 +25,9 @@ import sage.modules.free_module
 from sage.structure.coerce cimport coercion_model
 
 
+_MISSING = object()
+
+
 cdef class Matrix(Matrix0):
     ###################################################
     # Coercion to Various Systems
@@ -670,7 +673,7 @@ cdef class Matrix(Matrix0):
             entries = [[sib(v, 2) for v in row] for row in self.rows()]
             return sib.name('matrix')(self.base_ring(), entries)
 
-    def numpy(self, dtype=None, copy=True):
+    def numpy(self, dtype=None, copy=_MISSING):
         """
         Return the Numpy matrix associated to this matrix.
 
@@ -679,14 +682,6 @@ cdef class Matrix(Matrix0):
         - ``dtype`` -- the desired data-type for the array. If not given,
           then the type will be determined as the minimum type required
           to hold the objects in the sequence.
-
-        - ``copy`` -- if `self` is already an `ndarray`, then this flag
-          determines whether the data is copied (the default), or whether
-          the internal array is returned. Note that this is incompatible
-          with the behavior of ``copy`` argument to ``__array__`` method
-          in numpy 2.0, see `Adapting to changes in the copy keyword
-          <https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword>`_.
-          Currently SageMath is using numpy 1.26.
 
         EXAMPLES::
 
@@ -713,7 +708,7 @@ cdef class Matrix(Matrix0):
         typecodes::
 
             sage: import numpy                                                          # needs numpy
-            sage: numpy.typecodes.items()                                               # needs numpy
+            sage: numpy.typecodes.items()                                               # needs numpy  # random
             [('All', '?bhilqpBHILQPefdgFDGSUVOMm'), ('AllFloat', 'efdgFDG'),
             ...
 
@@ -738,20 +733,24 @@ cdef class Matrix(Matrix0):
             sage: b.shape
             (3, 4)
 
-        TESTS:
-
-        This ensures the docstring above is correct. It needs to be changed
-        when numpy version in SageMath is updated to 2.0.0::
+        TESTS::
 
             sage: # needs numpy
-            sage: import numpy as np
-            sage: np.__version__
-            '1.26.4'
+            sage: matrix(3, range(12)).numpy(copy=False)
+            doctest:warning...
+            DeprecationWarning: passing copy argument to numpy() is deprecated
+            See https://github.com/sagemath/sage/issues/39152 for details.
+            array([[ 0,  1,  2,  3],
+                   [ 4,  5,  6,  7],
+                   [ 8,  9, 10, 11]])
         """
+        if copy is not _MISSING:
+            from sage.misc.superseded import deprecation
+            deprecation(39152, "passing copy argument to numpy() is deprecated")
         import numpy
         return numpy.asarray(self.list(), dtype=dtype).reshape(self.nrows(), self.ncols())
 
-    def __array__(self, dtype=None):
+    def __array__(self, dtype=None, copy=None):
         """
         Define the magic ``__array__`` function so that ``numpy.array(m)`` can convert
         a matrix ``m`` to a numpy array. See
@@ -759,19 +758,44 @@ cdef class Matrix(Matrix0):
 
         Note that subclasses should override :meth:`numpy`, but usually not this method.
 
-        SageMath is using Numpy 1.26, so there is no ``copy`` argument.
+        INPUT:
 
-        TESTS:
+        - ``dtype`` -- the desired data-type for the array. If not given,
+          then the type will be determined automatically.
 
-        This ensures the docstring above is correct. It needs to be changed
-        when numpy version in SageMath is updated to 2.0.0::
+        - ``copy`` -- required for numpy 2.0 compatibility.
+          See <https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword>`_.
+          Note that ``copy=False`` is not supported.
+
+        TESTS::
 
             sage: # needs numpy
             sage: import numpy as np
-            sage: np.__version__
-            '1.26.4'
+            sage: a = matrix(3, range(12))
+            sage: if np.lib.NumpyVersion(np.__version__) >= '2.0.0':
+            ....:     try:
+            ....:         np.array(a, copy=False)  # in numpy 2.0, this raises an error
+            ....:     except ValueError:
+            ....:         pass
+            ....:     else:
+            ....:         assert False
+            ....: else:
+            ....:     b = np.array(a, copy=False)  # in numpy 1.26, this means "avoid copy if possible"
+            ....:     # https://numpy.org/doc/1.26/reference/generated/numpy.array.html#numpy.array
+            ....:     # but no-copy is not supported so it will copy anyway
+            ....:     a[0,0] = 1
+            ....:     assert b[0,0] == 0
+            ....:     b = np.asarray(a)
+            ....:     a[0,0] = 2
+            ....:     assert b[0,0] == 1
         """
-        return self.numpy(dtype, copy=False)
+        import numpy as np
+        if np.lib.NumpyVersion(np.__version__) >= '2.0.0':
+            if copy is False:
+                raise ValueError("Sage matrix cannot be converted to numpy array without copying")
+        else:
+            assert copy is None  # numpy versions before 2.0 should not pass copy argument
+        return self.numpy(dtype)
 
     ###################################################
     # Construction functions
