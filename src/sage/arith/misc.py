@@ -6415,6 +6415,7 @@ def dedekind_psi(N):
     N = Integer(N)
     return Integer(N * prod(1 + 1 / p for p in N.prime_divisors()))
 
+
 def smooth_part(x, base):
     r"""
     Given an element ``x`` of a Euclidean domain and a factor base ``base``,
@@ -6462,6 +6463,7 @@ def smooth_part(x, base):
             fs.append((p,v))
     from sage.structure.factorization import Factorization
     return Factorization(fs)
+
 
 def coprime_part(x, base):
     r"""

@@ -1,4 +1,9 @@
-tdlib = cc.find_library('tdlib', required: false, disabler: true)
+# tdlib is a header-only library
+if cc.has_header('treedec/combinations.hpp')
+  tdlib = declare_dependency()
+else
+  tdlib = disabler()
+endif
 # Cannot be found via pkg-config
 rw = cc.find_library('rw')
 
@@ -6,7 +11,7 @@ py.install_sources(
   'all.py',
   'all__sagemath_tdlib.py',
   'fast_digraph.pxd',
-  'modular_decomposition.py',
+  'modular_decomposition.pxd',
   'rankwidth.pxd',
   'slice_decomposition.pxd',
   'tree_decomposition.pxd',
@@ -38,6 +43,7 @@ endforeach
 extension_data_cpp = {
   'clique_separators': files('clique_separators.pyx'),
   'slice_decomposition' : files('slice_decomposition.pyx'),
+  'modular_decomposition' : files('modular_decomposition.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
