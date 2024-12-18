@@ -94,6 +94,7 @@ from sage.rings.integer_ring import ZZ
 
 from sage.schemes.elliptic_curves.hom import EllipticCurveHom, compare_via_evaluation
 
+
 class EllipticCurveHom_fractional(EllipticCurveHom):
     r"""
     This class represents a (symbolic) quotient of an isogeny divided by an integer.
@@ -116,7 +117,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
     """
 
     def __init__(self, phi, d, *, check=True):
-        """
+        r"""
         Construct a (symbolic) quotient of an isogeny divided by an integer.
 
         EXAMPLES::
@@ -249,7 +250,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
         return self._codomain.base_extend(k)(*Q)
 
     def _repr_(self):
-        """
+        r"""
         Return a textual description of this fractional elliptic-curve morphism.
 
         EXAMPLES::
@@ -357,7 +358,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
 
     @staticmethod
     def _composition_impl(left, right):
-        """
+        r"""
         Specialized composition method for fractional elliptic-curve morphisms.
 
         TESTS::
@@ -414,7 +415,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
         return EllipticCurveHom._richcmp_(left, right, op)
 
     def rational_maps(self):
-        """
+        r"""
         Return the pair of explicit rational maps defining this fractional isogeny.
 
         EXAMPLES::
@@ -430,7 +431,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
         return self.to_isogeny_chain().rational_maps()
 
     def x_rational_map(self):
-        """
+        r"""
         Return the `x`-coordinate rational map of this fractional isogeny.
 
         EXAMPLES::
@@ -444,7 +445,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
         return self.to_isogeny_chain().x_rational_map()
 
     def kernel_polynomial(self):
-        """
+        r"""
         Return the kernel polynomial of this fractional isogeny.
 
         EXAMPLES::
@@ -459,7 +460,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
 
     @cached_method
     def dual(self):
-        """
+        r"""
         Return the dual of this fractional isogeny.
 
         EXAMPLES::
@@ -474,7 +475,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
         return psi
 
     def formal(self, *args):
-        """
+        r"""
         Return the formal isogeny corresponding to this fractional
         isogeny as a power series in the variable `t=-x/y` on the
         domain curve.
@@ -525,6 +526,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
             419
         """
         return self._phi.inseparable_degree() / self._domain.scalar_multiplication(self._d).inseparable_degree()
+
 
 def _torsion_gens(E, EE, l, e, psi=None):
     if psi is None:
