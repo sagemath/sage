@@ -1,3 +1,5 @@
+from typing import Union
+
 from sage.categories.fields import Fields
 from sage.categories.rings import Rings
 from sage.misc.latex import latex
@@ -9,10 +11,10 @@ from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
 from sage.schemes.generic.ambient_space import AmbientSpace
+from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.schemes.weighted_projective.weighted_projective_homset import (
     SchemeHomset_points_weighted_projective_ring,
 )
-from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.all import UniqueRepresentation
 from sage.structure.category_object import normalize_names
 
@@ -145,7 +147,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         return self.dimension_relative() + 1
 
-    def _check_satisfies_equations(self, v: list[Integer] | tuple[Integer]) -> bool:
+    def _check_satisfies_equations(self, v: Union[list[Integer], tuple[Integer]]) -> bool:
         """
         Return ``True`` if ``v`` defines a point on the weighted projective
         plane; raise a :class:`TypeError` otherwise.
