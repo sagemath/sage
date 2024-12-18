@@ -364,17 +364,17 @@ cdef class Matrix_numpy_dense(Matrix_dense):
                     return False
         return True
 
-    def numpy(self, dtype=None):
+    def numpy(self, dtype=None, copy=True):
         """
-        Return a copy of the matrix as a numpy array.
-
-        It uses the numpy C/api so is very fast.
+        Return the Numpy matrix associated to this matrix.
 
         INPUT:
 
         - ``dtype`` -- the desired data-type for the array. If not given,
-          then the type will be determined as the minimum type required
-          to hold the objects in the sequence.
+          then the type will be determined automatically.
+
+        - ``copy`` -- boolean (default: ``True``); determines whether the data is copied
+          (the default), or whether the internal numpy array is returned.
 
         EXAMPLES::
 
@@ -424,12 +424,50 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             []
             sage: m.numpy()
             array([], shape=(5, 0), dtype=float64)
+
+        Test for ``copy``::
+
+            sage: m = matrix(RDF,2); m
+            [0.0 0.0]
+            [0.0 0.0]
+            sage: m[0,0]=1
+            sage: n=m.numpy()  # should copy
+            sage: m[0,0]=2
+            sage: n
+            array([[1., 0.],
+                   [0., 0.]])
+            sage: n=numpy.array(m)  # should copy
+            sage: m[0,0]=3
+            sage: n
+            array([[2., 0.],
+                   [0., 0.]])
+            sage: n=numpy.asarray(m)  # should not copy
+            sage: m[0,0]=4
+            sage: n
+            array([[4., 0.],
+                   [0., 0.]])
+            sage: n=numpy.asarray(m, dtype=numpy.int64)  # should copy
+            sage: m[0,0]=5
+            sage: n
+            array([[4, 0],
+                   [0, 0]])
+            sage: n=numpy.array(m, dtype=numpy.int64, copy=False)
+
+        Make sure it's reasonably fast (the temporary numpy array is immediately
+        destroyed otherwise it consumes 200MB memory)::
+
+            sage: import numpy as np
+            sage: np.sum(np.array(matrix.identity(RDF, 5*10^3)))  # around 2s each
+            5000.0
+            sage: np.sum(np.asarray(matrix.identity(RDF, 5*10^3)))
+            5000.0
+            sage: np.sum(np.asarray(matrix.identity(RDF, 5*10^3), dtype=np.uint8))
+            5000
+            sage: np.sum(np.array(matrix.identity(CDF, 3*10^3)))
+            (3000+0j)
         """
         import numpy as np
-        if dtype is None or self._numpy_dtype == np.dtype(dtype):
-            return self._matrix_numpy.copy()
-        else:
-            return Matrix_dense.numpy(self, dtype=dtype)
+        return np.array(self._matrix_numpy, dtype=dtype, copy=copy)
 
     def _replace_self_with_numpy(self, numpy_matrix):
         """

@@ -682,7 +682,11 @@ cdef class Matrix(Matrix0):
 
         - ``copy`` -- if `self` is already an `ndarray`, then this flag
           determines whether the data is copied (the default), or whether
-          a view is constructed.
+          the internal array is returned. Note that this is incompatible
+          with the behavior of ``copy`` argument to ``__array__`` method
+          in numpy 2.0, see `Adapting to changes in the copy keyword
+          <https://numpy.org/devdocs/numpy_2_0_migration_guide.html#adapting-to-changes-in-the-copy-keyword>`_.
+          Currently SageMath is using numpy 1.26.
 
         EXAMPLES::
 
@@ -708,14 +712,14 @@ cdef class Matrix(Matrix0):
         Type ``numpy.typecodes`` for a list of the possible
         typecodes::
 
-            sage: import numpy                            # needs numpy
-            sage: numpy.typecodes.items()                 # needs numpy # random
+            sage: import numpy                                                          # needs numpy
+            sage: numpy.typecodes.items()                                               # needs numpy
             [('All', '?bhilqpBHILQPefdgFDGSUVOMm'), ('AllFloat', 'efdgFDG'),
             ...
 
         For instance, you can see possibilities for real floating point numbers::
 
-            sage: numpy.typecodes['Float']                # needs numpy
+            sage: numpy.typecodes['Float']                                              # needs numpy
             'efdg'
 
         Alternatively, numpy automatically calls this function (via
@@ -733,15 +737,41 @@ cdef class Matrix(Matrix0):
             dtype('int64')  # 64-bit
             sage: b.shape
             (3, 4)
+
+        TESTS:
+
+        This ensures the docstring above is correct. It needs to be changed
+        when numpy version in SageMath is updated to 2.0.0::
+
+            sage: # needs numpy
+            sage: import numpy as np
+            sage: np.__version__
+            '1.26.4'
         """
         import numpy
-        A = numpy.matrix(self.list(), dtype=dtype, copy=copy)
-        return numpy.resize(A,(self.nrows(), self.ncols()))
+        return numpy.asarray(self.list(), dtype=dtype).reshape(self.nrows(), self.ncols())
 
-    # Define the magic "__array__" function so that numpy.array(m) can convert
-    # a matrix m to a numpy array.
-    # See http://docs.scipy.org/doc/numpy/user/c-info.how-to-extend.html#converting-an-arbitrary-sequence-object
-    __array__=numpy
+    def __array__(self, dtype=None):
+        """
+        Define the magic ``__array__`` function so that ``numpy.array(m)`` can convert
+        a matrix ``m`` to a numpy array. See
+        `Interoperability with NumPy <https://numpy.org/doc/1.26/user/basics.interoperability.html>`_.
+
+        Note that subclasses should override :meth:`numpy`, but usually not this method.
+
+        SageMath is using Numpy 1.26, so there is no ``copy`` argument.
+
+        TESTS:
+
+        This ensures the docstring above is correct. It needs to be changed
+        when numpy version in SageMath is updated to 2.0.0::
+
+            sage: # needs numpy
+            sage: import numpy as np
+            sage: np.__version__
+            '1.26.4'
+        """
+        return self.numpy(dtype, copy=False)
 
     ###################################################
     # Construction functions
