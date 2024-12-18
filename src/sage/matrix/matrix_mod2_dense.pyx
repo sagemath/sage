@@ -110,6 +110,7 @@ from cysignals.signals cimport sig_on, sig_str, sig_off
 cimport sage.matrix.matrix_dense as matrix_dense
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init, MA_ENTRIES_NDARRAY
 from libc.stdio cimport *
+from libc.stdint cimport uintptr_t
 from sage.structure.element cimport (Matrix, Vector)
 from sage.modules.free_module_element cimport FreeModuleElement
 from sage.libs.gmp.random cimport *
@@ -580,6 +581,33 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         if copy:
             return list(C)
         return C
+
+    def numpy(self, dtype=None):
+        """
+        Return the Numpy matrix associated to this matrix.
+        See :meth:`.matrix1.Matrix.numpy`.
+
+        EXAMPLES::
+
+            sage: # needs numpy
+            sage: import numpy as np
+            sage: np.array(matrix.identity(GF(2), 5))
+            array([[1, 0, 0, 0, 0],
+                   [0, 1, 0, 0, 0],
+                   [0, 0, 1, 0, 0],
+                   [0, 0, 0, 1, 0],
+                   [0, 0, 0, 0, 1]], dtype=uint8)
+
+        TESTS:
+
+        Make sure it's reasonably fast (the temporary numpy array is immediately
+        destroyed otherwise it consumes 400MB memory)::
+
+            sage: np.sum(np.array(matrix.identity(GF(2), 2*10^4)))  # around 2s walltime            # needs numpy
+            20000
+        """
+        from ..modules.numpy_util import mzd_matrix_to_numpy
+        return mzd_matrix_to_numpy(<uintptr_t>self._entries, dtype)
 
     ########################################################################
     # LEVEL 2 functionality

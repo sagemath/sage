@@ -366,15 +366,12 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
     def numpy(self, dtype=None):
         """
-        Return a copy of the matrix as a numpy array.
-
-        It uses the numpy C/api so is very fast.
+        Return the Numpy matrix associated to this matrix.
 
         INPUT:
 
         - ``dtype`` -- the desired data-type for the array. If not given,
-          then the type will be determined as the minimum type required
-          to hold the objects in the sequence.
+          then the type will be determined automatically.
 
         EXAMPLES::
 
@@ -424,12 +421,71 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             []
             sage: m.numpy()
             array([], shape=(5, 0), dtype=float64)
+
+        Test that a copy is always made::
+
+            sage: import numpy as np
+            sage: m = matrix(RDF,2); m
+            [0.0 0.0]
+            [0.0 0.0]
+            sage: m[0,0]=1
+            sage: n=m.numpy()  # should copy
+            sage: m[0,0]=2
+            sage: n
+            array([[1., 0.],
+                   [0., 0.]])
+            sage: n=numpy.array(m)  # should copy
+            sage: m[0,0]=3
+            sage: n
+            array([[2., 0.],
+                   [0., 0.]])
+            sage: n=numpy.asarray(m)  # should still copy
+            sage: m[0,0]=4
+            sage: n
+            array([[3., 0.],
+                   [0., 0.]])
+            sage: n=numpy.asarray(m, dtype=numpy.int64)  # should copy
+            sage: m[0,0]=5
+            sage: n
+            array([[4, 0],
+                   [0, 0]])
+
+        ::
+
+            sage: import numpy as np
+            sage: a = matrix(RDF, 3, range(12))
+            sage: if np.lib.NumpyVersion(np.__version__) >= '2.0.0':
+            ....:     try:
+            ....:         np.array(a, copy=False)  # in numpy 2.0, this raises an error
+            ....:     except ValueError:
+            ....:         pass
+            ....:     else:
+            ....:         assert False
+            ....: else:
+            ....:     b = np.array(a, copy=False)  # in numpy 1.26, this means "avoid copy if possible"
+            ....:     # https://numpy.org/doc/1.26/reference/generated/numpy.array.html#numpy.array
+            ....:     # but no-copy is not supported so it will copy anyway
+            ....:     a[0,0] = 1
+            ....:     assert b[0,0] == 0
+            ....:     b = np.asarray(a)
+            ....:     a[0,0] = 2
+            ....:     assert b[0,0] == 1
+
+        Make sure it's reasonably fast (the temporary numpy array is immediately
+        destroyed otherwise it consumes 200MB memory)::
+
+            sage: import numpy as np
+            sage: np.sum(np.array(matrix.identity(RDF, 5*10^3))).item()  # around 2s each
+            5000.0
+            sage: np.sum(np.asarray(matrix.identity(RDF, 5*10^3))).item()
+            5000.0
+            sage: np.sum(np.asarray(matrix.identity(RDF, 5*10^3), dtype=np.uint8)).item()
+            5000
+            sage: np.sum(np.array(matrix.identity(CDF, 3*10^3))).item()
+            (3000+0j)
         """
         import numpy as np
-        if dtype is None or self._numpy_dtype == np.dtype(dtype):
-            return self._matrix_numpy.copy()
-        else:
-            return Matrix_dense.numpy(self, dtype=dtype)
+        return np.array(self._matrix_numpy, dtype=dtype)
 
     def _replace_self_with_numpy(self, numpy_matrix):
         """
