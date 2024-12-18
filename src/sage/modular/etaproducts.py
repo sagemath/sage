@@ -541,8 +541,8 @@ class EtaGroup_class(UniqueRepresentation, Parent):
         for di in divs:
             # generate a row of relation matrix
             row = [Mod(di, 24) - Mod(N, 24), Mod(N // di, 24) - Mod(1, 24)]
-            for p in primedivs:
-                row.append(Mod(12 * (N // di).valuation(p), 24))
+            row.extend(Mod(12 * (N // di).valuation(p), 24)
+                       for p in primedivs)
             rows.append(row)
 
         M = matrix(IntegerModRing(24), rows)
@@ -717,8 +717,8 @@ def AllCusps(N) -> list:
         if n == 1:
             c.append(CuspFamily(N, d))
         elif n > 1:
-            for i in range(n):
-                c.append(CuspFamily(N, d, label=str(i + 1)))
+            c.extend(CuspFamily(N, d, label=str(i + 1))
+                     for i in range(n))
     return c
 
 
@@ -1036,9 +1036,7 @@ def _eta_relations_helper(eta1, eta2, degree, qexp_terms, labels, verbose):
     if verbose:
         print("Trying all coefficients from q^%s to q^%s inclusive" % (-pole_at_infinity, -pole_at_infinity + qexp_terms - 1))
 
-    rows = []
-    for j in range(qexp_terms):
-        rows.append([])
+    rows = [[] for _ in range(qexp_terms)]
     for i in indices:
         func = (eta1**i[0] * eta2**i[1]).qexp(qexp_terms)
         for j in range(qexp_terms):
