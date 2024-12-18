@@ -3498,7 +3498,8 @@ CRT = crt
 
 
 def CRT_list(values, moduli=None):
-    r""" Given a list ``values`` of elements and a list of corresponding
+    r"""
+    Given a list ``values`` of elements and a list of corresponding
     ``moduli``, find a single element that reduces to each element of
     ``values`` modulo the corresponding moduli.
 
@@ -3600,7 +3601,7 @@ def CRT_list(values, moduli=None):
         sage: ms
         [5, 7, 9]
     """
-    if not isinstance(values, list) or not isinstance(moduli, (list, type(None))):
+    if not isinstance(values, list) or (moduli is not None and not isinstance(moduli, list)):
         raise ValueError("arguments to CRT_list should be lists")
     return_mod = moduli is None
     if return_mod:
