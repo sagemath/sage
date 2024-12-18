@@ -4665,9 +4665,7 @@ cdef class Matrix(Matrix1):
         elif algorithm == 'flint' and not isinstance(R, (IntegerRing_class,
                                                          RationalField)):
             raise ValueError("'flint' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
-        elif algorithm == 'pari' and not isinstance(R, (IntegerRing_class,
-                                                        NumberField,
-                                                        RationalField)):
+        elif algorithm == 'pari' and not (isinstance(R, (IntegerRing_class, NumberField)) and not isinstance(R, RationalField)):
             raise ValueError("'pari' matrix kernel algorithm only available over non-trivial number fields and the integers, not over %s" % R)
         elif algorithm == 'generic' and R not in _Fields:
             raise ValueError("'generic' matrix kernel algorithm only available over a field, not over %s" % R)
