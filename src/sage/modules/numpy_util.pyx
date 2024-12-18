@@ -64,3 +64,28 @@ cpdef int set_mzd_from_numpy(uintptr_t entries_addr, Py_ssize_t degree, x) excep
                 mzd_write_bit(entries, 0, i, x_bool[i])
             return True
     return False
+
+
+cpdef object mzd_matrix_to_numpy(uintptr_t entries_addr, object dtype):
+    """
+    Convert ``<mzd_t*>entries_addr`` to a numpy array.
+
+    INPUT:
+
+    - ``entries_addr`` -- must be a ``mzd_t*`` casted to ``uintptr_t``; the casting
+      is necessary to pass it through Python boundary because of lazy import.
+      Do not pass arbitrary integer value here, will crash the program.
+
+    - ``dtype`` -- numpy dtype. If ``None``, the result will have some convenient dtype.
+
+    OUTPUT: a 2-dimensional array.
+    """
+    if dtype is not None:
+        return mzd_matrix_to_numpy(entries_addr, None).astype(dtype)
+    cdef mzd_t* entries = <mzd_t*>entries_addr
+    cdef np.ndarray[np.uint8_t, ndim=2] result = np.empty((entries.nrows, entries.ncols), dtype=np.uint8)
+    cdef Py_ssize_t i, j
+    for i in range(entries.nrows):
+        for j in range(entries.ncols):
+            result[i, j] = mzd_read_bit(entries, i, j)
+    return result
