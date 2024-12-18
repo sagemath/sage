@@ -6837,10 +6837,9 @@ class Partitions_all_restricted(Partitions):
             True
         """
         try:
-            mu = Partition(x)
-        except ValueError:
+            return mu in Partitions(sum(mu), **self._restrictions)
+        except Exception:
             return False
-        return mu in Partitions(mu.size(), **self._restrictions)
 
     def _repr_(self):
         """
@@ -9045,15 +9044,14 @@ class Partitions_length_and_parts_restricted(Partitions):
             sage: Partition([5, 3, 2]) in P
             True
         """
-        try:
-            mu = Partition(x)
-        except ValueError:
+        if mu not in _Partitions:
             return False
-        return (mu.size() == self._n
-                and (not mu
-                     or (min(mu) >= self._min_part
-                         and max(mu) <= self._max_part
-                         and self._min_length <= len(mu) <= self._max_length)))
+        if not self._n:
+            return not mu
+        return (sum(mu) == self._n
+                and mu[-1] >= self._min_part
+                and mu[0] <= self._max_part
+                and self._min_length <= len(mu) <= self._max_length)
 
     def __iter__(self):
         """
@@ -9069,7 +9067,7 @@ class Partitions_length_and_parts_restricted(Partitions):
                                    max_part=self._max_part,
                                    min_length=self._min_length,
                                    max_length=self._max_length,
-                                   element_constructor=Partition)
+                                   element_constructor=lambda x: self.element_class(self, x))
 
     def cardinality(self):
         """
