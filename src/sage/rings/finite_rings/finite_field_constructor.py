@@ -216,6 +216,8 @@ class FiniteFieldFactory(UniqueFactory):
       coherent lattice of extensions of the prime field.  The speed
       penalty grows with the size of extension degree and with
       the number of factors of the extension degree.
+      Note that the second argument can also be the degree,
+      where ``GF(p,n)`` is equivalent to ``GF((p,n))``.
 
     - ``modulus`` -- (optional) either a defining polynomial for the
       field, or a string specifying an algorithm to use to generate
@@ -489,14 +491,14 @@ class FiniteFieldFactory(UniqueFactory):
         sage: GF(q,'a',modulus='primitive') == GF(q,'a',modulus='primitive')
         True
 
-    Check that error is raised if user accidentally pass a number for ``name``::
+    Check that a number for ``name`` is interpreted as the degree instead::
 
         sage: GF(5, 2)
-        Traceback (most recent call last):
-        ...
-        TypeError: variable name 2 must be a string, not <class 'sage.rings.integer.Integer'>
+        Finite Field in z2 of size 5^2
         sage: GF((5, 2))
         Finite Field in z2 of size 5^2
+        sage: GF(5, 2) and GF((5, 2))
+        True
     """
     def __init__(self, *args, **kwds):
         """
@@ -581,6 +583,12 @@ class FiniteFieldFactory(UniqueFactory):
             Traceback (most recent call last):
             ...
             ValueError: wrong input for finite field constructor
+            sage: GF(5, '^')
+            sage: GF((5, 2), 1)
+            sage: GF((5, 1), 3)
+            sage: GF((5, 2), 3)
+            sage: GF(25, 2)
+            sage: GF((25, 2))
         """
         import sage.arith.all
 
@@ -605,7 +613,11 @@ class FiniteFieldFactory(UniqueFactory):
                 order = Integer(order)
                 if order < 2:
                     raise ValueError("the order of a finite field must be at least 2")
-                p, n = order.perfect_power()
+                if isinstance(name, (int, Integer)):
+                    p, n = order, name
+                    name = None
+                else:
+                    p, n = order.perfect_power()
             # at this point, order = p**n
             # note that we haven't tested p for primality
 
