@@ -1,3 +1,5 @@
+from sage.categories.fields import Fields
+from sage.categories.rings import Rings
 from sage.misc.latex import latex
 from sage.misc.prandom import shuffle
 from sage.rings.integer import Integer
@@ -7,12 +9,16 @@ from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
 from sage.schemes.generic.ambient_space import AmbientSpace
-from sage.schemes.hyperelliptic_curves_smooth_model.weighted_projective_homset import (
+from sage.schemes.weighted_projective.weighted_projective_homset import (
     SchemeHomset_points_weighted_projective_ring,
 )
-from sage.schemes.projective.projective_space import ProjectiveSpace, _CommRings
+from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.all import UniqueRepresentation
 from sage.structure.category_object import normalize_names
+
+_Fields = Fields()
+_Rings = Rings()
+_CommRings = _Rings.Commutative()
 
 
 def WeightedProjectiveSpace(weights, R=None, names=None):
@@ -68,6 +74,8 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
     # TODO: Specialise implementation to projective spaces over non-rings. But
     # since we don't really implement extra functionalities, I don't think we
     # care.
+    if R in _Fields:
+        return WeightedProjectiveSpace_field(weights, R=R, names=names)
     if R in _CommRings:
         return WeightedProjectiveSpace_ring(weights, R=R, names=names)
 
@@ -75,6 +83,9 @@ def WeightedProjectiveSpace(weights, R=None, names=None):
 
 
 class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
+    """
+    TODO: Documentation
+    """
     @staticmethod
     def __classcall__(cls, weights: tuple[Integer], R=ZZ, names=None):
         # __classcall_ is the "preprocessing" step for UniqueRepresentation
@@ -284,7 +295,6 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         For internal use only. See :mod:`morphism` for details.
         """
-        # raise NotImplementedError("_point_homset not implemented for weighted projective space")
         return SchemeHomset_points_weighted_projective_ring(*args, **kwds)
 
     def point(self, v, check=True):
@@ -325,7 +335,7 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         For internal use only. See :mod:`morphism` for details.
         """
-        from sage.schemes.hyperelliptic_curves_smooth_model.weighted_projective_point import (
+        from sage.schemes.weighted_projective.weighted_projective_point import (
             SchemeMorphism_point_weighted_projective_ring,
         )
         return SchemeMorphism_point_weighted_projective_ring(*args, **kwds)
@@ -369,3 +379,10 @@ class WeightedProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
     def subscheme(self, *_, **__):
         raise NotImplementedError("subscheme of weighted projective space has not been implemented")
+
+
+class WeightedProjectiveSpace_field(WeightedProjectiveSpace_ring):
+    """
+    TODO: Documentation
+    """
+    pass

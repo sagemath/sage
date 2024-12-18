@@ -196,7 +196,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
                     raise ValueError(f"{v} does not define a valid projective point "
                                      "since it is a multiple of a zero divisor")
 
+            print("v:", v)
             X.extended_codomain()._check_satisfies_equations(v)
+            print("v:", v)
 
         self._coords = tuple(v)
         self._normalized = False
@@ -1081,7 +1083,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
 
         This function still normalizes points so that the rightmost nonzero coordinate is 1.
         This is to maintain functionality with current
-        implementations of curves in projectives space (plane, conic, elliptic, etc).
+        implementations of curves in projective spaces (plane, conic, elliptic, etc).
         The :class:`SchemeMorphism_point_projective_ring` is for general use.
 
         EXAMPLES::

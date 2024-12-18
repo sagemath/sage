@@ -462,6 +462,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
             raise NotImplementedError('numerical approximation of points only for dimension 0 subschemes')
 
 
+# TODO: Should this inherit from the weighted projective class?
 class SchemeHomset_points_projective_ring(SchemeHomset_points):
     """
     Set of rational points of a projective variety over a commutative ring.

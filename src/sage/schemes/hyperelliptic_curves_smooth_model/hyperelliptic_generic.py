@@ -6,13 +6,8 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.real_mpfr import RR
 
-# TODO: move this
-from sage.schemes.hyperelliptic_curves_smooth_model.weighted_projective_curve import (
-    WeightedProjectiveCurve,
-)
-from sage.schemes.hyperelliptic_curves_smooth_model.weighted_projective_space import (
-    WeightedProjectiveSpace,
-)
+from sage.schemes.weighted_projective.weighted_projective_curve import WeightedProjectiveCurve
+from sage.schemes.weighted_projective.weighted_projective_space import WeightedProjectiveSpace
 
 
 class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):

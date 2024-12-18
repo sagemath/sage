@@ -1,6 +1,3 @@
-import itertools
-
-from sage.misc.banner import SAGE_VERSION
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import symbolic_prod as product
 from sage.misc.prandom import choice
@@ -9,16 +6,10 @@ from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.schemes.generic.homset import SchemeHomset_points
 
-# TODO: move this
-from sage.schemes.hyperelliptic_curves_smooth_model.weighted_projective_point import (
+from sage.schemes.weighted_projective.weighted_projective_point import (
     SchemeMorphism_point_weighted_projective_ring,
 )
 from sage.structure.element import parent
-
-assert SAGE_VERSION.startswith("10."), "please update to Sage 10"
-assert (
-    int(SAGE_VERSION.lstrip("10.").split(".")[0]) >= 4
-), "please update to Sage 10.4+ (#37118)"
 
 
 class HyperellipticJacobianHomset(SchemeHomset_points):
@@ -525,6 +516,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
             return self._morphism_element(self, u1, v1, check=False)
 
+        import itertools
         points = []
         for vv in itertools.product(*vss):
             u1, v1 = R.one(), R.zero()

@@ -40,11 +40,11 @@ from sage.structure.sequence import Sequence
 
 class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
     """
-    A rational point of projective space over a ring.
+    A rational point of weighted projective space over a ring.
 
     INPUT:
 
-    -  ``X`` -- a homset of a subscheme of an ambient projective space over a ring `K`.
+    -  ``X`` -- a homset of a subscheme of an ambient weighted projective space over a ring `K`.
 
     - ``v`` -- a list or tuple of coordinates in `K`.
 
@@ -52,9 +52,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
     EXAMPLES::
 
-        sage: P = ProjectiveSpace(2, ZZ)
-        sage: P(2,3,4)
-        (2 : 3 : 4)
+        TODO
     """
 
     def __init__(self, X, v, check=True):
@@ -69,16 +67,18 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
         if check:
             # check parent
-            from sage.schemes.hyperelliptic_curves_smooth_model.weighted_projective_homset import (
+            from sage.schemes.weighted_projective.weighted_projective_homset import (
                 SchemeHomset_points_weighted_projective_ring,
             )
+
             if not isinstance(X, SchemeHomset_points_weighted_projective_ring):
                 raise TypeError(f"ambient space {X} must be a weighted projective space")
 
             from sage.rings.ring import CommutativeRing
-            from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
+
             d = X.codomain().ambient_space().ngens()
-            if isinstance(v, SchemeMorphism) or isinstance(v, EllipticCurvePoint_field):
+            # TODO: Should we also do a special case when v (argument) is a hyperelliptic curve pt
+            if isinstance(v, SchemeMorphism):
                 v = list(v)
             else:
                 try:
@@ -88,26 +88,30 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
                     pass
             if not isinstance(v, (list, tuple)):
                 raise TypeError("argument v (= %s) must be a scheme point, list, or tuple" % str(v))
-            if len(v) != d and len(v) != d-1:
+            if len(v) != d and len(v) != d - 1:
                 raise TypeError("v (=%s) must have %s components" % (v, d))
 
             R = X.value_ring()
             v = Sequence(v, R)
-            if len(v) == d-1:     # very common special case
+            if len(v) == d - 1:  # very common special case
                 v.append(R.one())
 
             if R in IntegralDomains():
                 # Over integral domains, any tuple with at least one
                 # non-zero coordinate is a valid projective point.
                 if not any(v):
-                    raise ValueError(f"{v} does not define a valid projective "
-                                     "point since all entries are zero")
+                    raise ValueError(
+                        f"{v} does not define a valid projective "
+                        "point since all entries are zero"
+                    )
             # Over rings with zero divisors, a more careful check
             # is required: We test whether the coordinates of the
             # point generate the unit ideal. See #31576.
             elif 1 not in R.ideal(v):
-                raise ValueError(f"{v} does not define a valid projective point "
-                                 "since it is a multiple of a zero divisor")
+                raise ValueError(
+                    f"{v} does not define a valid projective point "
+                    "since it is a multiple of a zero divisor"
+                )
 
             X.extended_codomain()._check_satisfies_equations(v)
 
@@ -140,8 +144,9 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
         n = len(self._coords)
         if op in [op_EQ, op_NE]:
-            b = all(self[i] * other[j] == self[j] * other[i]
-                    for i in range(n) for j in range(i + 1, n))
+            b = all(
+                self[i] * other[j] == self[j] * other[i] for i in range(n) for j in range(i + 1, n)
+            )
             return b == (op == op_EQ)
         return richcmp(self._coords, other._coords, op)
 
@@ -184,24 +189,126 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             True
         """
         R = self.codomain().base_ring()
-        #if there is a fraction field normalize the point so that
-        #equal points have equal hash values
+        # if there is a fraction field normalize the point so that
+        # equal points have equal hash values
         if R in IntegralDomains():
             P = self.change_ring(FractionField(R))
             P.normalize_coordinates()
             return hash(tuple(P))
-        #if there is no good way to normalize return
-        #a constant value
+        # if there is no good way to normalize return
+        # a constant value
         return hash(self.codomain())
+
+    def normalize_coordinates(self):
+        """
+        Removes the gcd from the coordinates of this point (including `-1`)
+        and rescales everything so that the last nonzero entry is as "simple"
+        as possible. The notion of "simple" here depends on the base ring;
+        concretely, the last nonzero coordinate will be `1` in a field and
+        positive over an ordered ring.
+
+        .. WARNING:: The gcd will depend on the base ring.
+
+        OUTPUT: none
+
+        EXAMPLES::
+
+            sage: P = ProjectiveSpace(ZZ, 2, 'x')
+            sage: p = P([-5, -15, -20])
+            sage: p.normalize_coordinates(); p
+            (1 : 3 : 4)
+
+        ::
+
+            sage: # needs sage.rings.padics
+            sage: P = ProjectiveSpace(Zp(7), 2, 'x')
+            sage: p = P([-5, -15, -2])
+            sage: p.normalize_coordinates(); p
+            (6 + 3*7 + 3*7^2 + 3*7^3 + 3*7^4 + 3*7^5 + 3*7^6 + 3*7^7 + 3*7^8 + 3*7^9 + 3*7^10 + 3*7^11 + 3*7^12 + 3*7^13 + 3*7^14 + 3*7^15 + 3*7^16 + 3*7^17 + 3*7^18 + 3*7^19 + O(7^20) : 4 + 4*7 + 3*7^2 + 3*7^3 + 3*7^4 + 3*7^5 + 3*7^6 + 3*7^7 + 3*7^8 + 3*7^9 + 3*7^10 + 3*7^11 + 3*7^12 + 3*7^13 + 3*7^14 + 3*7^15 + 3*7^16 + 3*7^17 + 3*7^18 + 3*7^19 + O(7^20) : 1 + O(7^20))
+
+        ::
+
+            sage: R.<t> = PolynomialRing(QQ)
+            sage: P = ProjectiveSpace(R, 2, 'x')
+            sage: p = P([3/5*t^3, 6*t, t])
+            sage: p.normalize_coordinates(); p
+            (3/5*t^2 : 6 : 1)
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(Zmod(20), 1)
+            sage: Q = P(3, 6)
+            sage: Q.normalize_coordinates()
+            sage: Q
+            (1 : 2)
+
+        Since the base ring is a polynomial ring over a field, only the
+        gcd `c` is removed. ::
+
+            sage: R.<c> = PolynomialRing(QQ)
+            sage: P = ProjectiveSpace(R, 1)
+            sage: Q = P(2*c, 4*c)
+            sage: Q.normalize_coordinates(); Q
+            (1/2 : 1)
+
+        A polynomial ring over a ring gives the more intuitive result. ::
+
+            sage: R.<c> = PolynomialRing(ZZ)
+            sage: P = ProjectiveSpace(R, 1)
+            sage: Q = P(2*c, 4*c)
+            sage: Q.normalize_coordinates();Q
+            (1 : 2)
+
+        ::
+
+            sage: # needs sage.libs.singular
+            sage: R.<t> = QQ[]
+            sage: S = R.quotient_ring(R.ideal(t^3))
+            sage: P.<x,y> = ProjectiveSpace(S, 1)
+            sage: Q = P(t + 1, t^2 + t)
+            sage: Q.normalize_coordinates()
+            sage: Q
+            (1 : tbar)
+        """
+        if self._normalized:
+            return
+        R = self.codomain().base_ring()
+        if isinstance(R, QuotientRing_generic):
+            index = len(self._coords) - 1
+            while not self._coords[index]:
+                index -= 1
+            last = self._coords[index].lift()
+            mod, = R.defining_ideal().gens()
+            unit = last
+            while not (zdiv := mod.gcd(unit)).is_unit():
+                unit //= zdiv
+            self.scale_by(unit.inverse_mod(mod))
+        else:
+            GCD = R(gcd(self._coords[0], self._coords[1]))
+            index = 2
+            while not GCD.is_unit() and index < len(self._coords):
+                GCD = R(gcd(GCD, self._coords[index]))
+                index += 1
+            if not GCD.is_unit():
+                self.scale_by(~GCD)
+            index = len(self._coords) - 1
+            while not self._coords[index]:
+                index -= 1
+            if self._coords[index].is_unit():
+                if not self._coords[index].is_one():
+                    self.scale_by(~self._coords[index])
+            elif self._coords[index] < 0:
+                self.scale_by(-R.one())
+        self._normalized = True
 
 
 class SchemeMorphism_point_weighted_projective_field(SchemeMorphism_point_weighted_projective_ring):
     """
-    A rational point of projective space over a field.
+    A rational point of weighted projective space over a field.
 
     INPUT:
 
-    - ``X`` -- a homset of a subscheme of an ambient projective space
+    - ``X`` -- a homset of a subscheme of an ambient weighted projective space
        over a field `K`.
 
     - ``v`` -- a list or tuple of coordinates in `K`.
@@ -225,8 +332,8 @@ class SchemeMorphism_point_weighted_projective_field(SchemeMorphism_point_weight
 
         This function still normalizes points so that the rightmost non-zero coordinate is 1.
         This is to maintain functionality with current
-        implementations of curves in projectives space (plane, conic, elliptic, etc).
-        The :class:`SchemeMorphism_point_projective_ring` is for general use.
+        implementations of curves in projective spaces (plane, conic, elliptic, etc).
+        The :class:`SchemeMorphism_point_weighted_projective_ring` is for general use.
 
         EXAMPLES::
 
@@ -281,10 +388,8 @@ class SchemeMorphism_point_weighted_projective_field(SchemeMorphism_point_weight
         self._normalized = False
 
         if check:
-            from sage.rings.ring import CommutativeRing
-            from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
             d = X.codomain().ambient_space().ngens()
-            if is_SchemeMorphism(v) or isinstance(v, EllipticCurvePoint_field):
+            if isinstance(v, SchemeMorphism):
                 v = list(v)
             else:
                 try:
@@ -369,15 +474,17 @@ class SchemeMorphism_point_weighted_projective_field(SchemeMorphism_point_weight
                 inv = c.inverse()
                 new_coords = [d * inv for d in self._coords[:index]]
                 new_coords.append(self.base_ring().one())
-                new_coords.extend(self._coords[index+1:])
+                new_coords.extend(self._coords[index + 1 :])
                 self._coords = tuple(new_coords)
                 break
         else:
-            assert False, 'bug: invalid projective point'
+            assert False, "bug: invalid projective point"
         self._normalized = True
 
 
-class SchemeMorphism_point_weighted_projective_finite_field(SchemeMorphism_point_weighted_projective_field):
+class SchemeMorphism_point_weighted_projective_finite_field(
+    SchemeMorphism_point_weighted_projective_field
+):
 
     def __hash__(self):
         r"""

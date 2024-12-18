@@ -6,8 +6,7 @@ from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_morphism import (
     MumfordDivisorClassFieldSplit,
 )
 
-# TODO: move this
-from sage.schemes.hyperelliptic_curves_smooth_model.weighted_projective_point import (
+from sage.schemes.weighted_projective.weighted_projective_point import (
     SchemeMorphism_point_weighted_projective_ring,
 )
 from sage.structure.element import parent
@@ -18,7 +17,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         super().__init__(Y, X, **kwds)
         self._morphism_element = MumfordDivisorClassFieldSplit
 
-    def zero(self):
+    def zero(self, check=True):
         """
         Return the zero element of the Jacobian
         """
@@ -143,6 +142,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             elif isinstance(P1, self._morphism_element):
                 return P1
             elif isinstance(P1, SchemeMorphism_point_weighted_projective_ring):
+                # TODO: Test this path when args is a tuple
                 args = args + (
                     self.curve().distinguished_point(),
                 )  # this case will now be handled below.
