@@ -1193,7 +1193,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             True
 
         We compute the local coordinates at the Weierstrass point `(1,-1)`
-        of the hyperelliptic curve `y^2 + (x^3 + 1)*y = -x^2::
+        of the hyperelliptic curve `y^2 + (x^3 + 1)*y = -x^2`::
 
             sage: H = HyperellipticCurveSmoothModel(-x^2, x^3+1)
             sage: P = H(1,-1)

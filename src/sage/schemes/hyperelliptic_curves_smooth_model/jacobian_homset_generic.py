@@ -399,7 +399,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
         EXAMPLES::
 
-        TODO
+            sage: # TODO
         """
         u3, v3, _ = self._cantor_composition_generic(u1, v1, u2, v2)
         return u3, v3
@@ -410,7 +410,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
         EXAMPLES::
 
-        TODO
+            sage: # TODO
         """
         return self._cantor_reduction_generic(u0, v0)
 
