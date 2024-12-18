@@ -271,17 +271,17 @@ class Gammoid(Matroid):
 
         EXAMPLES::
 
-        sage: from sage.matroids.gammoid import Gammoid
-        sage: edgedict = {1: [2], 2: [3], 4: [1, 5], 5: [2, 3, 8], 6: [4, 7],
-        ....:             7: [5, 8]}
-        sage: D = DiGraph(edgedict)
-        sage: M = Gammoid(D, roots=[1, 2, 3])
-        sage: D.relabel([1, 2, 3, 4, 5, 6, 7, 'a'])
-        sage: N = Gammoid(D, roots=[1, 2, 3])
-        sage: M == N
-        False
-        sage: M.delete(8) == N.delete('a')
-        True
+            sage: from sage.matroids.gammoid import Gammoid
+            sage: edgedict = {1: [2], 2: [3], 4: [1, 5], 5: [2, 3, 8], 6: [4, 7],
+            ....:             7: [5, 8]}
+            sage: D = DiGraph(edgedict)
+            sage: M = Gammoid(D, roots=[1, 2, 3])
+            sage: D.relabel([1, 2, 3, 4, 5, 6, 7, 'a'])
+            sage: N = Gammoid(D, roots=[1, 2, 3])
+            sage: M == N
+            False
+            sage: M.delete(8) == N.delete('a')
+            True
         """
         return (not self == other)
 
