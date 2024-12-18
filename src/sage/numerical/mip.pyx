@@ -2129,7 +2129,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         from sage.numerical.linear_functions import LinearFunction, LinearConstraint
         from sage.numerical.linear_tensor import LinearTensor
         from sage.numerical.linear_tensor_constraints import LinearTensorConstraint
-        if isinstance(linear_function, LinearFunction) or isinstance(linear_function, LinearTensor):
+        if isinstance(linear_function, (LinearFunction, LinearTensor)):
             # Find the parent for the coefficients
             if isinstance(linear_function, LinearFunction):
                 M = linear_function.parent().base_ring()

@@ -1848,7 +1848,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             return Polynomial.__call__(self, *args, **kwds)
         arg = args[0]
         cdef ntl_ZZ_p fx = ntl_ZZ_p(0, self.c), x = None
-        if isinstance(arg, int) or isinstance(arg, Integer):
+        if isinstance(arg, (int, Integer)):
             x = ntl_ZZ_p(arg, self.c)
         elif isinstance(arg, Element):
             if <void *>self._parent._base == <void *>(<Element>arg)._parent: # c++ pointer hack

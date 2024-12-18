@@ -4659,11 +4659,13 @@ cdef class Matrix(Matrix1):
             algorithm = 'default'
         elif algorithm not in ['default', 'generic', 'flint', 'pari', 'padic', 'pluq']:
             raise ValueError("matrix kernel algorithm '%s' not recognized" % algorithm)
-        elif algorithm == 'padic' and not (isinstance(R, IntegerRing_class) or isinstance(R, RationalField)):
+        elif algorithm == 'padic' and not isinstance(R, (IntegerRing_class,
+                                                         RationalField)):
             raise ValueError("'padic' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
-        elif algorithm == 'flint' and not (isinstance(R, IntegerRing_class) or isinstance(R, RationalField)):
+        elif algorithm == 'flint' and not isinstance(R, (IntegerRing_class,
+                                                         RationalField)):
             raise ValueError("'flint' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
-        elif algorithm == 'pari' and not (isinstance(R, IntegerRing_class) or (isinstance(R, NumberField) and not isinstance(R, RationalField))):
+        elif algorithm == 'pari' and not (isinstance(R, (IntegerRing_class, NumberField)) and not isinstance(R, RationalField)):
             raise ValueError("'pari' matrix kernel algorithm only available over non-trivial number fields and the integers, not over %s" % R)
         elif algorithm == 'generic' and R not in _Fields:
             raise ValueError("'generic' matrix kernel algorithm only available over a field, not over %s" % R)

@@ -1045,8 +1045,10 @@ cdef class RingHomomorphism(RingMap):
             # avoid adding the 0-ideal to the graph ideal in order to benefit
             # from a cached Gröbner basis
             graph_I = graph
-        elif (isinstance(B, MPolynomialRing_base) or isinstance(B, PolynomialRing_general)
-              or isinstance(B, QuotientRing_nc) or isinstance(B, PolynomialQuotientRing_generic)):
+        elif isinstance(B, (MPolynomialRing_base,
+                            PolynomialRing_general,
+                            QuotientRing_nc,
+                            PolynomialQuotientRing_generic)):
             graph_I = graph + from_B(I)
         else:
             # nonzero fractional ideals of number fields not yet supported
@@ -3150,7 +3152,8 @@ def _tensor_product_ring(B, A):
 
     def term_order(A):
         # univariate rings do not have a term order
-        if (isinstance(A, PolynomialRing_general) or isinstance(A, PolynomialQuotientRing_generic)
+        if (isinstance(A, (PolynomialRing_general,
+                           PolynomialQuotientRing_generic))
             or (isinstance(A, (NumberField, FiniteField))
                 and not A.is_prime_field())):
             return TermOrder('lex', 1)

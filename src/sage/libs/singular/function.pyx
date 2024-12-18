@@ -386,11 +386,8 @@ def is_sage_wrapper_for_singular_ring(ring):
         sage: is_sage_wrapper_for_singular_ring(P)
         True
     """
-    if isinstance(ring, MPolynomialRing_libsingular):
-        return True
-    if isinstance(ring, NCPolynomialRing_plural):
-        return True
-    return False
+    return isinstance(ring, (MPolynomialRing_libsingular,
+                             NCPolynomialRing_plural))
 
 
 cdef new_sage_polynomial(ring,  poly *p):
@@ -523,8 +520,7 @@ cdef class Converter(SageObject):
             elif is_sage_wrapper_for_singular_ring(a):
                 v = self.append_ring(a)
 
-            elif isinstance(a, MPolynomialIdeal) or \
-                    isinstance(a, NCPolynomialIdeal):
+            elif isinstance(a, (MPolynomialIdeal, NCPolynomialIdeal)):
                 v = self.append_ideal(a)
 
             elif isinstance(a, int):
@@ -569,8 +565,7 @@ cdef class Converter(SageObject):
             elif isinstance(a, tuple):
                 is_intvec = True
                 for i in a:
-                    if not (isinstance(i, int)
-                        or isinstance(i, Integer)):
+                    if not isinstance(i, (int, Integer)):
                         is_intvec = False
                         break
                 if is_intvec:
@@ -584,7 +579,7 @@ cdef class Converter(SageObject):
                 v = self.append_int(a)
 
             else:
-                raise TypeError("unknown argument type '%s'"%(type(a),))
+                raise TypeError("unknown argument type '%s'" % (type(a),))
 
             if attributes and a in attributes:
                 for attrib in attributes[a]:
@@ -593,7 +588,7 @@ cdef class Converter(SageObject):
                         atSet(v, omStrDup("isSB"), <void*>val, INT_CMD)
                         setFlag(v, FLAG_STD)
                     else:
-                        raise NotImplementedError("Support for attribute '%s' not implemented yet."%attrib)
+                        raise NotImplementedError("Support for attribute '%s' not implemented yet." % attrib)
 
     def ring(self):
         """
@@ -1304,8 +1299,9 @@ cdef class SingularFunction(SageObject):
                     from sage.rings.rational_field import QQ
                     dummy_ring = PolynomialRing(QQ, "dummy", implementation='singular') # seems a reasonable default
                 ring = dummy_ring
-        if not (isinstance(ring, MPolynomialRing_libsingular) or isinstance(ring, NCPolynomialRing_plural)):
-            raise TypeError("cannot call Singular function '%s' with ring parameter of type '%s'" % (self._name,type(ring)))
+        if not isinstance(ring, (MPolynomialRing_libsingular,
+                                 NCPolynomialRing_plural)):
+            raise TypeError("cannot call Singular function '%s' with ring parameter of type '%s'" % (self._name, type(ring)))
         return call_function(self, args, ring, interruptible, attributes)
 
     def _instancedoc_(self):
