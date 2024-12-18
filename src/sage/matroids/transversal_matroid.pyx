@@ -31,7 +31,7 @@ AUTHORS:
 
 REFERENCES:
 
-- [Bonin2017]_
+- [Bon2017]_
 """
 
 # *****************************************************************************
@@ -807,7 +807,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         - ``sets`` -- (optional) list containing names of sets in the matroid's
           presentation
 
-        OUTPUT: iterator of :class:`TransversalMatroid`s
+        OUTPUT: iterator over instances of :class:`TransversalMatroid`
 
         If ``sets`` is not specified, every set will be used.
 

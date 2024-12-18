@@ -1,6 +1,6 @@
 # sage.doctest: optional - sage.graphs
 r"""
-Graphic Matroids
+Graphic matroids
 
 Let `G = (V,E)` be a graph and let `C` be the collection of the edge sets
 of cycles in `G`. The corresponding graphic matroid `M(G)` has groundset `E`
