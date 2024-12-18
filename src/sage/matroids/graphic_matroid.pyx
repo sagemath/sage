@@ -273,8 +273,7 @@ cdef class GraphicMatroid(Matroid):
         """
         cdef DisjointSet_of_hashables DS_vertices
         cdef list edges = self.groundset_to_edges(X)
-        cdef set vertices = set([u for (u, v, l) in edges]).union(
-                                [v for (u, v, l) in edges])
+        cdef set vertices = set([u for (u, v, l) in edges]).union([v for (u, v, l) in edges])
         # This counts components:
         DS_vertices = DisjointSet_of_hashables(vertices)
         for (u, v, l) in edges:
@@ -476,9 +475,9 @@ cdef class GraphicMatroid(Matroid):
         EXAMPLES::
 
             sage: M = matroids.CompleteGraphic(5)
-            sage: M._minor(deletions=frozenset([0,1,2]), contractions=frozenset([]))
+            sage: M._minor(deletions=frozenset([0,1,2]), contractions=frozenset())
             Graphic matroid of rank 4 on 7 elements
-            sage: M._minor(deletions=frozenset([]), contractions=frozenset([0,1,2]))
+            sage: M._minor(deletions=frozenset(), contractions=frozenset([0,1,2]))
             Graphic matroid of rank 1 on 7 elements
             sage: M = Matroid(range(15), graphs.PetersenGraph())
             sage: N = M._minor(deletions=frozenset([0, 3, 5, 9]),

@@ -1,14 +1,11 @@
 r"""
 Transversal matroids
 
-A transversal matroid arises from a ground set `E` and a collection `A` of sets
-over the ground set. This can be modeled as a bipartite graph `B`, where the
-vertices the left are ground set elements, the vertices on the right are the
-sets, and edges represent containment. Then a set `X` from the ground set is
+A transversal matroid arises from a groundset `E` and a collection `A` of sets
+over the groundset. This can be modeled as a bipartite graph `B`, where the
+vertices the left are groundset elements, the vertices on the right are the
+sets, and edges represent containment. Then a set `X` from the groundset is
 independent if and only if `X` has a matching in `B`.
-
-Construction
-============
 
 To construct a transversal matroid, first import
 :class:`~sage.matroids.transversal_matroid.TransversalMatroid` from
@@ -24,7 +21,7 @@ The input should be a set system, formatted as an iterable of iterables::
     sage: M.is_isomorphic(matroids.Uniform(3, 6))
     True
     sage: M = TransversalMatroid([[0, 1], [1, 2, 3], [3, 4, 5]],
-    ....: set_labels=['1', '2', '3'])
+    ....:                        set_labels=['1', '2', '3'])
     sage: M.graph().vertices()
     ['1', '2', '3', 0, 1, 2, 3, 4, 5]
 
@@ -36,7 +33,8 @@ REFERENCES:
 
 - [Bonin2017]_
 """
-#*****************************************************************************
+
+# *****************************************************************************
 #       Copyright (C) 2017 Zachary Gershkoff <zgersh2@lsu.edu>
 #
 #
@@ -44,23 +42,19 @@ REFERENCES:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+# *****************************************************************************
 
-from sage.matroids.matroid cimport Matroid
-from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
-from sage.matroids.minor_matroid import MinorMatroid
-from sage.matroids.utilities import newlabel
-
+from collections import Counter
+from copy import copy
+from cpython.object cimport Py_EQ, Py_NE
 from sage.graphs.graph import Graph
 from sage.graphs.digraph import DiGraph
 from sage.graphs.bipartite_graph import BipartiteGraph
-
-from cpython.object cimport Py_EQ, Py_NE
-from copy import copy, deepcopy
-from collections import Counter
-
+from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
+from sage.matroids.minor_matroid import MinorMatroid
+from sage.matroids.utilities import newlabel
 import networkx as nx
+
 
 cdef class TransversalMatroid(BasisExchangeMatroid):
     r"""
@@ -68,12 +62,12 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
 
     INPUT:
 
-    - ``sets`` -- an iterable of iterables of elements
-    - ``groundset`` -- (optional) an iterable containing names of ground set
+    - ``sets`` -- iterable of iterables of elements
+    - ``groundset`` -- (optional) iterable containing names of groundset
       elements
-    - ``set_labels`` -- (optional) a list of labels in 1-1 correspondence with
+    - ``set_labels`` -- (optional) list of labels in 1-1 correspondence with
       the iterables in ``sets``
-    - ``matching`` -- (optional) a dictionary specifying a maximal matching
+    - ``matching`` -- (optional) dictionary specifying a maximal matching
       between elements and set labels
 
     OUTPUT:
@@ -103,6 +97,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         sage: M.full_rank()
         1
     """
+
     def __init__(self, sets, groundset=None, set_labels=None, matching=None):
         """
         See class definition for full documentation.
@@ -121,13 +116,13 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             sage: M = TransversalMatroid([[0, 1], [1, 2], [2, 3], [3, 4]])
             sage: TestSuite(M).run()
 
-            sage: M = TransversalMatroid([[],[],[]], groundset=range(3)); M
+            sage: M = TransversalMatroid([[], [], []], groundset=range(3)); M
             Transversal matroid of rank 0 on 3 elements, with 3 sets
             sage: sets = [[0, 1, 2, 3, 4], [4, 5]]
             sage: M = TransversalMatroid(sets, groundset=[0, 1, 2, 3])
             Traceback (most recent call last):
             ...
-            ValueError: ground set and sets do not match
+            ValueError: groundset and sets do not match
             sage: M = TransversalMatroid(sets, set_labels=[1, 2, 3])
             Traceback (most recent call last):
             ...
@@ -150,14 +145,14 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             sage: M = TransversalMatroid([range(5)] * 4, set_labels='abcd')
             sage: M.full_rank()
             4
-            sage: M.rank([0,1,2])
+            sage: M.rank([0, 1, 2])
             3
 
         ::
 
             sage: sets = [[0, 1, 2, 3], [1, 2], [1, 3, 4]]
             sage: set_labels = [5, 6, 7]
-            sage: m = {0:5, 1:6, 3:7}
+            sage: m = {0: 5, 1: 6, 3: 7}
             sage: M = TransversalMatroid(sets, set_labels=set_labels, matching=m)
             sage: len(M.bases())
             9
@@ -166,7 +161,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         if groundset is None:
             groundset = contents
         elif not contents.issubset(groundset):
-            raise ValueError("ground set and sets do not match")
+            raise ValueError("groundset and sets do not match")
         groundset = tuple(groundset)
 
         # keep the original list as input so we don't lose order between minors etc.
@@ -193,7 +188,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
                 raise ValueError("set labels must be provided if matching is provided")
             self._set_labels_input = []
             increment = 0
-            for i in range(len(sets)): # make sure "sn" is not in ground set
+            for i in range(len(sets)):  # make sure "sn" is not in groundset
                 label = 's' + str(i + increment)
                 while label in groundset:
                     increment += 1
@@ -223,10 +218,10 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         basis = frozenset(matching_temp)
 
         # This creates self._groundset attribute, among other things
-        # It takes the actual ground set labels, not the translated ones
+        # It takes the actual groundset labels, not the translated ones
         BasisExchangeMatroid.__init__(self, groundset, basis)
 
-        # matching_temp uses actual ground set labels
+        # matching_temp uses actual groundset labels
         # self._matching will use the translated ones
         if matching:
             self._matching = {self._idx[e]: self._set_labels[self._set_labels_input.index(matching_temp[e])]
@@ -242,7 +237,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         self._D.add_nodes_from(self._set_labels)
 
         # For sets in the matching, orient them as starting from the collections
-        matching_reversed = [(v,k) for k,v in self._matching.iteritems()]
+        matching_reversed = [(v, k) for k, v in self._matching.iteritems()]
         self._D.add_edges_from(matching_reversed)
 
         other_edges = []
@@ -261,6 +256,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
     cdef int _exchange(self, long x, long y) except -1:
         r"""
         Replace ``self.basis() with ``self.basis() - x + y``.
+
         Internal method, does no checks.
         """
         # update the internal matching
@@ -289,25 +285,23 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             Transversal matroid of rank 3 on 4 elements, with 3 sets
         """
         return "Transversal matroid of rank {} on {} elements, with {} sets".format(
-                            self.rank(), self.size(), len(self._sets_input))
+            self.rank(), self.size(), len(self._sets_input))
 
     cpdef list sets(self):
         r"""
         Return the sets of ``self``.
 
-        A transversal matroid can be viewed as a ground set with a collection
+        A transversal matroid can be viewed as a groundset with a collection
         from its powerset. This is represented as a bipartite graph, where
         an edge represents containment.
 
-        OUTPUT:
-
-        A list of lists that correspond to the sets of the transversal matroid.
+        OUTPUT: list of lists that correspond to the sets of the transversal matroid
 
         EXAMPLES::
 
             sage: from sage.matroids.transversal_matroid import TransversalMatroid
             sage: sets = [[0, 1, 2, 3], [1, 2], [3, 4]]
-            sage: set_labels = [5,6,7]
+            sage: set_labels = [5, 6, 7]
             sage: M = TransversalMatroid(sets, set_labels=set_labels)
             sage: sorted(M.sets()) == sorted(sets)
             True
@@ -331,7 +325,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.transversal_matroid import TransversalMatroid
-            sage: sets = [['a', 'b', 'c'], ['c', 'd'], ['a','d'], ['e']]
+            sage: sets = [['a', 'b', 'c'], ['c', 'd'], ['a', 'd'], ['e']]
             sage: M = TransversalMatroid(sets)
             sage: M1 = TransversalMatroid(sets)
             sage: sets2 = [['a', 'b', 'c'], ['c', 'd'], ['a', 'd', 'e'], ['e']]
@@ -349,7 +343,8 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
 
         TESTS::
 
-            sage: M = TransversalMatroid([range(5)] * 4, set_labels='abcd', matching={0:'a', 1:'c'})
+            sage: M = TransversalMatroid([range(5)] * 4, set_labels='abcd',
+            ....:                        matching={0: 'a', 1: 'c'})
             sage: N = TransversalMatroid([range(5)] * 4, set_labels='abcd')
             sage: M == N
             False
@@ -374,7 +369,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         if not (lhs.is_valid() and rhs.is_valid()):
             return not res
         if (lhs._groundset == rhs._groundset and
-            Counter([frozenset(s) for s in lhs._sets_input]) == Counter([frozenset(s) for s in rhs._sets_input])):
+                Counter([frozenset(s) for s in lhs._sets_input]) == Counter([frozenset(s) for s in rhs._sets_input])):
             return res
         else:
             return not res
@@ -383,7 +378,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         r"""
         Return the hash of ``self``.
 
-        The hash is based on the ground set and an internal Counter of the
+        The hash is based on the groundset and an internal Counter of the
         collection of sets.
 
         This function is called when matroids are added to a set. It is very
@@ -413,7 +408,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
 
     cdef dict _translate_matching(self):
         """
-        Return a Python dictionary that can be used as input in ``__init__()``.
+        Return a Python dictionary that can be used as input for ``__init__()``.
         """
         cdef dict matching = {}
         for x in self._matching:
@@ -455,18 +450,16 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         Return a bipartite graph representing the transversal matroid.
 
         A transversal matroid can be represented as a set system, or as a
-        bipartite graph with one color class corresponding to the ground set
+        bipartite graph with one color class corresponding to the groundset
         and the other to the sets of the set system. This method returns
         that bipartite graph.
 
-        OUTPUT:
-
-        A :class:`Graph`.
+        OUTPUT: :class:`Graph`
 
         EXAMPLES::
 
             sage: from sage.matroids.transversal_matroid import TransversalMatroid
-            sage: edgedict = {5:[0,1,2,3], 6:[1,2], 7:[1,3,4]}
+            sage: edgedict = {5: [0, 1, 2, 3], 6: [1, 2], 7: [1, 3, 4]}
             sage: B = BipartiteGraph(edgedict)
             sage: M = TransversalMatroid(edgedict.values(), set_labels=edgedict.keys())
             sage: M.graph() == B
@@ -499,8 +492,8 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
 
         INPUT:
 
-        - ``contractions`` -- frozenset; an independent subset of the ground set
-        - ``deletions`` -- frozenset; a coindependent subset of the ground set
+        - ``contractions`` -- frozenset; an independent subset of the groundset
+        - ``deletions`` -- frozenset; a coindependent subset of the groundset
 
         OUTPUT:
 
@@ -513,10 +506,10 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.transversal_matroid import TransversalMatroid
-            sage: sets = [[0,1,2,3], [1,2], [1,3,4]]
+            sage: sets = [[0, 1, 2, 3], [1, 2], [1, 3, 4]]
             sage: M1 = TransversalMatroid(sets)
             sage: N1 = M1.delete([2,3])
-            sage: sets2 = [[0,1], [1], [4]]
+            sage: sets2 = [[0, 1], [1], [4]]
             sage: M2 = TransversalMatroid(sets2)
             sage: N1.is_isomorphic(M2)
             True
@@ -587,14 +580,12 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         set vertices of the bipartite graph used to represent the transversal
         matroid. This method does not set anything.
 
-        OUTPUT:
-
-        A list.
+        OUTPUT: list
 
         EXAMPLES::
 
             sage: from sage.matroids.transversal_matroid import TransversalMatroid
-            sage: M = TransversalMatroid([[0,1], [1,2,3], [3,4,7]])
+            sage: M = TransversalMatroid([[0, 1], [1, 2, 3], [3, 4, 7]])
             sage: M.set_labels()
             ['s0', 's1', 's2']
             sage: M.graph().vertices()
@@ -610,14 +601,12 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         has no coloops, then every presentation has `r(M)` nonempty sets. This method
         discards extra sets if `M` has coloops.
 
-        OUTPUT:
-
-        A ``TransversalMatroid`` instance with a reduced presentation.
+        OUTPUT: :class:`TransversalMatroid` with a reduced presentation
 
         EXAMPLES::
 
             sage: from sage.matroids.transversal_matroid import TransversalMatroid
-            sage: sets = [[0,1], [2], [2]]
+            sage: sets = [[0, 1], [2], [2]]
             sage: M = TransversalMatroid(sets); M
             Transversal matroid of rank 2 on 3 elements, with 3 sets
             sage: N = M.reduce_presentation(); N
@@ -626,7 +615,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             True
             sage: N == M
             False
-            sage: sets = [[0,1], [], [], [2]]
+            sage: sets = [[0, 1], [], [], [2]]
             sage: M1 = TransversalMatroid(sets); M1
             Transversal matroid of rank 2 on 3 elements, with 4 sets
             sage: M1.reduce_presentation()
@@ -644,7 +633,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         TESTS::
 
             sage: from sage.matroids.transversal_matroid import TransversalMatroid
-            sage: sets = [[4], [1,3], [4], [0,1], [2,3], [1]]
+            sage: sets = [[4], [1, 3], [4], [0, 1], [2, 3], [1]]
             sage: M = TransversalMatroid(sets)
             sage: M1 = M.reduce_presentation(); M1
             Transversal matroid of rank 5 on 5 elements, with 5 sets
@@ -660,7 +649,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         coloops = self.coloops()
         cdef list coloops_to_delete = [e for e in coloops if self._D.degree(element_int_map[e]) > 1]
         N = <TransversalMatroid?> self._minor(contractions=set(), deletions=set(coloops_to_delete))
-        cdef list sets = list(N._sets_input) # make a (shallow) copy as we will remove objects
+        cdef list sets = list(N._sets_input)  # make a (shallow) copy as we will remove objects
         # reuse the old set labels
         # this does not respect containment
         labels = N.set_labels()
@@ -681,7 +670,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
 
     cpdef transversal_extension(self, element=None, newset=False, sets=[]):
         r"""
-        Return a TransversalMatroid extended by an element.
+        Return a :class:`TransversalMatroid` extended by an element.
 
         This will modify the presentation of the transversal matroid by
         adding a new element, and placing this element in the specified
@@ -693,13 +682,13 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         - ``element`` -- (optional) the name for the new element
         - ``newset`` -- (optional) if specified, the element will be
           given its own set
-        - ``sets`` -- (default: ``None``) an iterable of labels representing the
+        - ``sets`` -- iterable of labels (default: ``None``) representing the
           sets in the current presentation that the new element will belong to
 
         OUTPUT:
 
         A :class:`~sage.matroids.transversal_matroids.TransversalMatroid`
-        with a ground set element added to specified sets. Note that the
+        with a groundset element added to specified sets. Note that the
         ``newset`` option will make the new element a coloop. If
         ``newset == True``, a name will be generated; otherwise the
         value of ``newset`` will be used.
@@ -726,7 +715,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             sage: M4 = M.transversal_extension('a', sets=['b'])
             Traceback (most recent call last):
             ...
-            ValueError: cannot extend by element already in ground set
+            ValueError: cannot extend by element already in groundset
             sage: M2.transversal_extension(newset='b')
             Traceback (most recent call last):
             ...
@@ -766,7 +755,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         if element is None:
             element = newlabel(self._groundset)
         elif element in self._groundset:
-            raise ValueError("cannot extend by element already in ground set")
+            raise ValueError("cannot extend by element already in groundset")
         cdef list labels = self._set_labels_input
         if not parsed_sets.issubset(labels):
             raise ValueError("sets do not match presentation")
@@ -777,7 +766,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             new_label = newlabel(self._groundset.union(labels).union([newset]))
             labels_map[element] = new_label
 
-        # newset should not be a ground set element or existing set
+        # newset should not be a groundset element or existing set
         if newset in self._E or newset in self._set_labels_input:
             # keywords `True` and `False` give us problems here
             if not isinstance(newset, bool):
@@ -815,12 +804,10 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         INPUT:
 
         - ``element`` -- (optional) the name of the new element
-        - ``sets`` -- (optional) a list containing names of sets in the matroid's
-          presentation.
+        - ``sets`` -- (optional) list containing names of sets in the matroid's
+          presentation
 
-        OUTPUT:
-
-        An iterator of ``TransversalMatroids``.
+        OUTPUT: iterator of :class:`TransversalMatroid`s
 
         If ``sets`` is not specified, every set will be used.
 
@@ -839,7 +826,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         if element is None:
             element = newlabel(self.groundset())
         elif element in self._groundset:
-            raise ValueError("cannot extend by element already in ground set")
+            raise ValueError("cannot extend by element already in groundset")
 
         labels = self._set_labels_input
         if not sets:
@@ -863,9 +850,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         parameter. This checks that the matching provided is indeed a matching, fits in
         the set system, and is maximal.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -875,13 +860,13 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             sage: M = TransversalMatroid(sets, set_labels=set_labels)
             sage: M.is_valid()
             True
-            sage: m = {0:5, 1:5, 3:7} # not a matching
+            sage: m = {0: 5, 1: 5, 3: 7}  # not a matching
             sage: TransversalMatroid(sets, set_labels=set_labels, matching=m).is_valid()
             False
-            sage: m = {2:6, 3:7} # not maximal
+            sage: m = {2: 6, 3: 7}  # not maximal
             sage: TransversalMatroid(sets, set_labels=set_labels, matching=m).is_valid()
             False
-            sage: m = {0:6, 1:5, 3:7} # not in the set system
+            sage: m = {0: 6, 1: 5, 3: 7}  # not in the set system
             sage: TransversalMatroid(sets, set_labels=set_labels, matching=m).is_valid()
             False
         """
@@ -904,4 +889,3 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             return False
 
         return True
-
