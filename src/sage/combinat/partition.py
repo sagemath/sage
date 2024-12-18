@@ -8941,15 +8941,15 @@ class Partitions_length_and_parts_restricted(Partitions):
     This class is strictly more general than
     :class:`PartitionsGreatestLE`, except that we insist that the
     size of the partition is positive and that neither the
-    restrictions on the parts not on the length are contradictory.
+    restrictions on the parts nor on the length are contradictory.
 
     INPUT:
 
     - ``n`` -- the size of the partition, positive
-    - ``min_length`` -- the lower bound on the number of parts, between 1 and n
-    - ``max_length`` -- the upper bound on the number of parts, between min_length and n
-    - ``min_part`` -- the bound on the smallest part, between 1 and n
-    - ``max_part`` -- the bound on the largest part, between min_part and n
+    - ``min_length`` -- the lower bound on the number of parts, between 1 and ``n``
+    - ``max_length`` -- the upper bound on the number of parts, between ``min_length`` and ``n``
+    - ``min_part`` -- the bound on the smallest part, between 1 and ``n``
+    - ``max_part`` -- the bound on the largest part, between ``min_part`` and ``n``
 
     EXAMPLES::
 
@@ -8964,6 +8964,19 @@ class Partitions_length_and_parts_restricted(Partitions):
         sage: [2,2,2,2,2] in Partitions_length_and_parts_restricted(10, 1, 10, 2, 10)
         True
 
+    .. WARNING::
+
+        If ``min_length`` and ``min_part`` equal 1 and ``max_length``
+        and ``max_part`` equal ``n``, this class contains the same
+        partitions as :class:`~sage.combinat.partition.Partitions`,
+        but is different from that class.
+
+    ::
+
+        sage: Partitions_length_and_parts_restricted(9, 1, 9, 1, 9)
+        Partitions of 9
+        sage: Partitions_length_and_parts_restricted(9, 1, 9, 1, 9) == Partitions(9)
+        False
     """
     def __init__(self, n, min_length, max_length, min_part, max_part):
         """
@@ -8993,8 +9006,16 @@ class Partitions_length_and_parts_restricted(Partitions):
         TESTS::
 
             sage: from sage.combinat.partition import Partitions_length_and_parts_restricted
+            sage: Partitions_length_and_parts_restricted(9, 1, 9, 1, 9)
+            Partitions of 9
+            sage: Partitions_length_and_parts_restricted(9, 1, 3, 1, 9)
+            Partitions of 9 having length at most 3
+            sage: Partitions_length_and_parts_restricted(9, 3, 9, 1, 9)
+            Partitions of 9 having length at least 3
             sage: Partitions_length_and_parts_restricted(9, 1, 9, 2, 9)
             Partitions of 9 whose parts are at least 2
+            sage: Partitions_length_and_parts_restricted(9, 1, 9, 1, 3)
+            Partitions of 9 whose parts are at most 3
             sage: Partitions_length_and_parts_restricted(9, 3, 5, 2, 9)
             Partitions of 9 having length between 3 and 5 and whose parts are at least 2
         """
@@ -9044,14 +9065,14 @@ class Partitions_length_and_parts_restricted(Partitions):
             sage: Partition([5, 3, 2]) in P
             True
         """
-        if mu not in _Partitions:
+        if x not in _Partitions:
             return False
         if not self._n:
-            return not mu
-        return (sum(mu) == self._n
-                and mu[-1] >= self._min_part
-                and mu[0] <= self._max_part
-                and self._min_length <= len(mu) <= self._max_length)
+            return not x
+        return (sum(x) == self._n
+                and x[-1] >= self._min_part
+                and x[0] <= self._max_part
+                and self._min_length <= len(x) <= self._max_length)
 
     def __iter__(self):
         """
