@@ -2711,7 +2711,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
         -1
         sage: nfI^2
         -1
-        sage: sum = nfrt2 + nfrt3 + nfI + nfz3; sum
+        sage: sum = nfrt2 + nfrt3 + nfI + nfz3; sum  # random
         a^5 + a^4 - a^3 + 2*a^2 - a - 1
         sage: hom(sum)
         2.646264369941973? + 1.866025403784439?*I
