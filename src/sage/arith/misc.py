@@ -3504,8 +3504,8 @@ def CRT_list(values, moduli=None):
     ``values`` modulo the corresponding moduli.
 
     This function can also be called with one argument, each element
-    of the list is a :class:`IntegerMod_abstract` object. In this case, it returns
-    another :class:`IntegerMod_abstract` object.
+    of the list is a :mod:`modular integer <sage.rings.finite_rings.integer_mod>`.
+    In this case, it returns another modular integer.
 
     .. SEEALSO::
 
