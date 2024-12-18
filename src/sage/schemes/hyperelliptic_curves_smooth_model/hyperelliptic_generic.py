@@ -608,18 +608,18 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         EXAMPLES::
 
-        We consider the hyperelliptic curve `y^2 = x^6 -1` over the rational numbers.
-        For instance, the point P = (1,0) is a Weierstrass point,
-        while the points at infinity are not::
+            We consider the hyperelliptic curve `y^2 = x^6 -1` over the rational numbers.
+            For instance, the point P = (1,0) is a Weierstrass point,
+            while the points at infinity are not::
 
-            sage: R.<x> = QQ[]
-            sage: H = HyperellipticCurveSmoothModel(x^6 - 1)
-            sage: P = H.point([1,0])
-            sage: H.is_weierstrass_point(P)
-            True
-            sage: Q = H.point([1,1,0])
-            sage: H.is_weierstrass_point(Q)
-            False
+                sage: R.<x> = QQ[]
+                sage: H = HyperellipticCurveSmoothModel(x^6 - 1)
+                sage: P = H.point([1,0])
+                sage: H.is_weierstrass_point(P)
+                True
+                sage: Q = H.point([1,1,0])
+                sage: H.is_weierstrass_point(Q)
+                False
 
         This also works for hyperelliptic curves with `h(x)` nonzero.
         Note that in this case the `y`-coordinate of a Weierstrass point
@@ -634,9 +634,9 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: H.is_weierstrass_point(Q)
             False
 
-        TESTS::
+        TESTS:
 
-        Check that the examples from the p-adic file work.
+        Check that the examples from the p-adic file work::
 
             sage: R.<x> = QQ['x']
             sage: H = HyperellipticCurveSmoothModel(x^3-10*x+9)

@@ -30,15 +30,13 @@ r"""
         sage: H = HyperellipticCurveSmoothModel(x^8+1, x^4+1); H
         Hyperelliptic Curve over Rational Field defined by y^2 + (x^4 + 1)*y = x^8 + 1
 
-    This hyperelliptic curve has no points at infinity,
-    i.e. `H` is inert::
+    This hyperelliptic curve has no points at infinity, i.e. `H` is inert::
         sage: H.points_at_infinity()
         []
         sage: H.is_inert()
         True
 
-    We can extend the base field to obtain a hyperelliptic curve
-    with two points at infinity::
+    We can extend the base field to obtain a hyperelliptic curve with two points at infinity::
         sage: K.<alpha> = QQ.extension(x^2+x-1)
         sage: HK = H.change_ring(K)
         sage: HK.points_at_infinity()
@@ -46,8 +44,7 @@ r"""
         sage: HK.is_split()
         True
 
-    The construction of hyperelliptic curves is supported over different fields.
-    The correct class is chosen automatically::
+    The construction of hyperelliptic curves is supported over different fields. The correct class is chosen automatically::
         sage: F = FiniteField(13)
         sage: S.<x> = PolynomialRing(F)
         sage: HF = HyperellipticCurve(x^5 + x^4 + x^3 + x^2 + x + 1, x^3 + x); HF
@@ -66,9 +63,7 @@ r"""
         sage: HyperellipticCurveSmoothModel(3*x^5+1)
         Hyperelliptic Curve over Rational Field defined by y^2 = 3*x^5 + 1
 
-    The polynomials f and h need to define a smooth curve of genus at
-    least one. In particular polynomials defining elliptic curves are
-    allowed as input.
+    The polynomials f and h need to define a smooth curve of genus at least one. In particular polynomials defining elliptic curves are allowed as input.
         sage: E = HyperellipticCurveSmoothModel(x^3+1)
         sage: E.genus()
         1
@@ -77,8 +72,7 @@ r"""
         ...
         ValueError: arguments f = x and h = 0 must define a curve of genus at least one.
 
-    The following polynomials define a singular curve and are
-    not allowed as input::
+    The following polynomials define a singular curve and are not allowed as input::
         sage: C = HyperellipticCurve(x^6 + 2*x - 1, 2*x - 2)
         Traceback (most recent call last):
         ...
@@ -171,15 +165,13 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         sage: H = HyperellipticCurveSmoothModel(x^8+1, x^4+1); H
         Hyperelliptic Curve over Rational Field defined by y^2 + (x^4 + 1)*y = x^8 + 1
 
-    This hyperelliptic curve has no points at infinity,
-    i.e. `H` is inert::
+    This hyperelliptic curve has no points at infinity, i.e. `H` is inert::
         sage: H.points_at_infinity()
         []
         sage: H.is_inert()
         True
 
-    We can extend the base field to obtain a hyperelliptic curve
-    with two points at infinity::
+    We can extend the base field to obtain a hyperelliptic curve with two points at infinity::
         sage: K.<alpha> = QQ.extension(x^2+x-1)
         sage: HK = H.change_ring(K)
         sage: HK.points_at_infinity()
@@ -187,8 +179,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         sage: HK.is_split()
         True
 
-    The construction of hyperelliptic curves is supported over different fields.
-    The correct class is chosen automatically::
+    The construction of hyperelliptic curves is supported over different fields. The correct class is chosen automatically::
         sage: F = FiniteField(13)
         sage: S.<x> = PolynomialRing(F)
         sage: HF = HyperellipticCurve(x^5 + x^4 + x^3 + x^2 + x + 1, x^3 + x); HF
