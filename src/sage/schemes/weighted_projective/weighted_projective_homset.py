@@ -57,7 +57,7 @@ class SchemeHomset_points_weighted_projective_field(SchemeHomset_points):
         sage: WP = WeightedProjectiveSpace(QQ, [1, 3, 1]); WP
         Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Rational Field
         sage: WP.point_homset()
-        Set of rational points of Weighted Projective Space of dimension 3 with weights (1, 3, 1, 1) over Rational Field
+        Set of rational points of Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Rational Field
         sage: type(WP.point_homset())
         <class 'sage.schemes.weighted_projective.weighted_projective_homset.SchemeHomset_points_weighted_projective_ring_with_category'>
     """

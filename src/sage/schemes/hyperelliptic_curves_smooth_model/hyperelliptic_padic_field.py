@@ -599,6 +599,9 @@ class HyperellipticCurveSmoothModel_padic_field(
 
         from sage.misc.profiler import Profiler
         from sage.schemes.hyperelliptic_curves_smooth_model import monsky_washnitzer
+        from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_constructor import (
+            HyperellipticCurveSmoothModel,
+        )
 
         prof = Profiler()
         prof("setup")

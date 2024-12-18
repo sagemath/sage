@@ -281,7 +281,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
     # Check the polynomials are of the right type
     F = h**2 + 4 * f
     if not isinstance(F, Polynomial):
-        raise TypeError(f"arguments f={f} and h={h} must be polynomials")
+        raise TypeError(f"arguments f = {f} and h = {h} must be polynomials")
 
     # Store the hyperelliptic polynomials as the correct type
     polynomial_ring = F.parent()
@@ -296,7 +296,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
     # Compute the genus of the curve from f, h
     genus = __genus(f, h)
     if genus == 0:
-        raise ValueError(f"arguments f={f} and h={h} must define a curve of genus at least one.")
+        raise ValueError(f"arguments f = {f} and h = {h} must define a curve of genus at least one.")
 
     # Compute the smooth model for the hyperelliptic curve
     # using a weighted projective space (via Toric Variety)
