@@ -766,49 +766,59 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
 
     ``as data`` is optional, but if it is used, it will contain a few useful values::
 
-        sage: data  # abs tol 0.2
+        sage: data  # abs tol 0.01
         {'alarm_raised': True, 'elapsed': 1.0}
 
     ``max_wait_after_interrupt`` can be passed if the function may take longer than usual to be interrupted::
 
-        sage: cython('''
-        ....: from libc.time cimport clock_t, clock, CLOCKS_PER_SEC
+        sage: cython(r'''
+        ....: from posix.time cimport clock_gettime, CLOCK_REALTIME, timespec
         ....: from cysignals.signals cimport sig_check
+        ....: from time import time as walltime
+        ....:
         ....: cpdef void uninterruptible_sleep(double seconds):
-        ....:     cdef clock_t target = clock() + <clock_t>(CLOCKS_PER_SEC * seconds)
-        ....:     while clock() < target:
-        ....:         pass
+        ....:     cdef timespec start_time, target_time
+        ....:     start_walltime = walltime()
+        ....:     clock_gettime(CLOCK_REALTIME, &start_time)
+        ....:
+        ....:     cdef int floor_seconds = <int>seconds
+        ....:     target_time.tv_sec = start_time.tv_sec + floor_seconds
+        ....:     target_time.tv_nsec = start_time.tv_nsec + <int>((seconds - floor_seconds) * 1e9)
+        ....:     if target_time.tv_nsec >= 1000000000:
+        ....:         target_time.tv_nsec -= 1000000000
+        ....:         target_time.tv_sec += 1
+        ....:
+        ....:     while True:
+        ....:         clock_gettime(CLOCK_REALTIME, &start_time)
+        ....:         if start_time.tv_sec > target_time.tv_sec or (start_time.tv_sec == target_time.tv_sec and start_time.tv_nsec >= target_time.tv_nsec):
+        ....:             break
+        ....:
         ....: cpdef void check_interrupt_only_occasionally():
         ....:     for i in range(10):
         ....:         uninterruptible_sleep(0.8)
         ....:         sig_check()
         ....: ''')
-        sage: with ensure_interruptible_after(1) as data:  # not passing max_wait_after_interrupt will raise an error
+        sage: with ensure_interruptible_after(1):  # not passing max_wait_after_interrupt will raise an error
         ....:     check_interrupt_only_occasionally()
         Traceback (most recent call last):
         ...
-        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 1... seconds
+        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 1.60... seconds
         sage: with ensure_interruptible_after(1, max_wait_after_interrupt=0.9):
         ....:     check_interrupt_only_occasionally()
 
     TESTS::
 
-        sage: data['elapsed']  # abs tol 0.3  # 1.6 = 0.8 * 2
-        1.6
-
-    ::
-
         sage: with ensure_interruptible_after(2) as data: sleep(1)
         Traceback (most recent call last):
         ...
-        RuntimeError: Function terminates early after 1... < 2.0000 seconds
-        sage: data  # abs tol 0.2
+        RuntimeError: Function terminates early after 1.00... < 2.0000 seconds
+        sage: data  # abs tol 0.01
         {'alarm_raised': False, 'elapsed': 1.0}
         sage: with ensure_interruptible_after(1) as data: raise ValueError
         Traceback (most recent call last):
         ...
         ValueError
-        sage: data  # abs tol 0.2
+        sage: data  # abs tol 0.01
         {'alarm_raised': False, 'elapsed': 0.0}
 
     ::
@@ -817,16 +827,20 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
         sage: with ensure_interruptible_after(1) as data: uninterruptible_sleep(2)
         Traceback (most recent call last):
         ...
-        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 2... seconds
-        sage: data  # abs tol 0.2
+        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 2.00... seconds
+        sage: data  # abs tol 0.01
         {'alarm_raised': True, 'elapsed': 2.0}
         sage: with ensure_interruptible_after(1): uninterruptible_sleep(2); raise RuntimeError
         Traceback (most recent call last):
         ...
-        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 2... seconds
-        sage: data  # abs tol 0.2
+        RuntimeError: Function is not interruptible within 1.0000 seconds, only after 2.00... seconds
+        sage: data  # abs tol 0.01
         {'alarm_raised': True, 'elapsed': 2.0}
     """
+    seconds = float(seconds)
+    max_wait_after_interrupt = float(max_wait_after_interrupt)
+    inaccuracy_tolerance = float(inaccuracy_tolerance)
+    # use Python float to avoid unexplained slowdown with Sage objects
     data = {}
     start_time = walltime()
     alarm(seconds)
@@ -837,6 +851,7 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
     except AlarmInterrupt:
         alarm_raised = True
     finally:
+        before_cancel_alarm_elapsed = walltime() - start_time
         cancel_alarm()
         elapsed = walltime() - start_time
         data["elapsed"] = elapsed
