@@ -995,6 +995,15 @@ class GaloisGroup_v2(GaloisGroup_perm):
             sage: K.<b> = NumberField(x^4 - 2*x^2 + 2, 'a').galois_closure()
             sage: K
             Number Field in b with defining polynomial x^8 - 20*x^6 + 104*x^4 - 40*x^2 + 1156
+            sage: K._pari_nf[6]  # integral basis computed by SageMath (important because each element of K is represented by a t_COL in this basis)
+            [33456, 51*y^6 - 1462*y^4 + 6358*y^2 + 14416, -51*y^6 + 68*y^4 + 7582*y^2 - 17204, 4*y^7 - 119*y^6 + 22*y^5 + 1785*y^4 - 2508*y^3 - 4148*y^2 + 12556*y + 7718, -4*y^7 - 17*y^6 - 22*y^5 + 255*y^4 + 2508*y^3 - 5372*y^2 - 12556*y + 5882, 18*y^7 + 17*y^6 - 598*y^5 - 255*y^4 + 4048*y^3 + 5372*y^2 + 4924*y - 5882, -36*y^7 - 17*y^6 + 499*y^5 + 255*y^4 - 1126*y^3 - 5372*y^2 - 11242*y + 5882, -43*y^7 + 119*y^6 + 809*y^5 - 1785*y^4 - 4404*y^3 + 4148*y^2 + 9302*y - 7718]
+            sage: [K(x).is_integral() for x in K._pari_nf[6] / K._pari_nf[6][0]]
+            [True, True, True, True, True, True, True, True]
+            sage: P = K.primes_above(7)[0]
+            sage: P.basis()
+            [7, 7/656*b^6 - 301/984*b^4 + 1309/984*b^2 + 371/123, 5/656*b^6 - 32/123*b^4 + 1345/984*b^2 + 2495/492, 1/8364*b^7 + 5/1968*b^6 + 11/16728*b^5 - 239/1968*b^4 - 209/2788*b^3 + 313/492*b^2 + 3139/8364*b + 1625/328, -1/8364*b^7 + 17/1968*b^6 - 11/16728*b^5 - 167/656*b^4 + 209/2788*b^3 + 241/246*b^2 - 3139/8364*b + 5669/984, 3/5576*b^7 + 1/123*b^6 - 299/16728*b^5 - 445/1968*b^4 + 253/2091*b^3 + 1093/984*b^2 + 1231/8364*b + 1305/328, -3/2788*b^7 + 5/1968*b^6 + 499/33456*b^5 - 157/1968*b^4 - 563/16728*b^3 + 9/41*b^2 - 5621/16728*b + 2005/984, -43/33456*b^7 + 1/123*b^6 + 809/33456*b^5 - 121/656*b^4 - 367/2788*b^3 + 683/984*b^2 + 4651/16728*b + 6949/984]
+            sage: [x in P for x in (P.pari_hnf().sage().T * vector([K(x) for x in K._pari_nf[6] / K._pari_nf[6][0]]))]
+            [True, True, True, True, True, True, True, True]
             sage: G = K.galois_group()
             sage: roots = G._pari_data[2].sage()
             sage: p = G._pari_data[1][0].sage()  # random prime that polynomial splits completely in
