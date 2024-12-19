@@ -105,8 +105,14 @@ class FilteredModulesCategory(RegressiveCovariantConstructionCategory, Category_
             <class 'sage.categories.vector_spaces.VectorSpaces.Filtered.parent_class'>
             sage: ModulesQQ.Filtered().parent_class
             <class 'sage.categories.filtered_modules.FilteredModules.parent_class'>
+
+        Nevertheless, as explained in :meth:`.Category_over_base._make_named_class_key`,
+        ``Modules(QQ).Filtered()`` and ``Modules(QQ.category()).Filtered()`` must have
+        the same parent class::
+
+            sage: Modules(QQ).Filtered().parent_class == Modules(QQ.category()).Filtered().parent_class
         """
-        return self._base_category
+        return (type(self._base_category).__base__, super()._make_named_class_key(name))
 
 
 class FilteredModules(FilteredModulesCategory):
@@ -163,8 +169,9 @@ class FilteredModules(FilteredModulesCategory):
         """
         from sage.categories.modules import Modules
         from sage.categories.fields import Fields
+        from sage.categories.category import Category
         base_ring = self.base_ring()
-        if base_ring in Fields():
+        if base_ring in Fields() or (isinstance(base_ring, Category) and base_ring.is_subcategory(Fields())):
             return [Modules(base_ring)]
         else:
             return []
