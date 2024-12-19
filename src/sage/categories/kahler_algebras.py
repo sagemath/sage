@@ -11,6 +11,7 @@ from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.misc.abstract_method import abstract_method
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 
+
 class KahlerAlgebras(Category_over_base_ring):
     r"""
     The category of graded algebras satisfying the Kähler package.
