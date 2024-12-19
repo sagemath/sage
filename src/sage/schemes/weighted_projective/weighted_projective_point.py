@@ -30,6 +30,7 @@ from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.ring import CommutativeRing
 from sage.schemes.generic.morphism import SchemeMorphism, SchemeMorphism_point
 from sage.structure.richcmp import op_EQ, op_NE, richcmp
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing_generic
 from sage.structure.sequence import Sequence
 
 # --------------------
@@ -55,12 +56,29 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
     """
 
     def __init__(self, X, v, check=True):
-        """
+        r"""
         The Python constructor.
 
         EXAMPLES::
 
-            TODO
+            sage: WeightedProjectiveSpace(ZZ, [1, 3, 1])(2, 8, 2)
+            (2 : 8 : 2)
+            sage: WeightedProjectiveSpace(Zmod(20), [1, 3, 1])(1, 9, 2)
+            (1 : 9 : 2)
+            sage: WeightedProjectiveSpace(Zmod(20), [1, 3, 1])(2, 8, 2)
+            Traceback (most recent call last):
+            ...
+            ValueError: [2, 8, 2] does not define a valid weighted projective point since it is a multiple of a zero divisor
+            sage: WeightedProjectiveSpace(Zmod(6), [2, 3])(2, 3)
+            (2 : 3)
+
+        The following example is a valid projective point in `\mathbb{P}^1`, but is equivalent to
+        `(0 : 0)` in `\mathbb{P}^{[2, 3]}` and hence invalid::
+
+            sage: WeightedProjectiveSpace(Zmod(2^5), [2, 3])(1, 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: [1, 1] does not define a valid weighted projective point since it is a multiple of a zero divisor
         """
         SchemeMorphism.__init__(self, X)
 
@@ -103,15 +121,23 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
                         f"{v} does not define a valid projective "
                         "point since all entries are zero"
                     )
-            # Over rings with zero divisors, a more careful check
-            # is required: We test whether the coordinates of the
-            # point generate the unit ideal. See #31576.
-            # TODO: Does this require modification? (Ring theory exam question)
-            elif 1 not in R.ideal(v):
-                raise ValueError(
-                    f"{v} does not define a valid projective point "
-                    "since it is a multiple of a zero divisor"
-                )
+
+            # Over rings with zero divisors, we want to check if there exists λ ≠ 0 such that
+            # v[i] * λ^w[i] = 0. But this is a hard problem in general. For example, consider
+            # R = Z/nZ, v[i] = 1, w[i] = 2, then λ exists iff n is powerful i.e. all exponents in
+            # prime factorisation of n is at least 2. Also this relates to finding nilpotents in a
+            # general ring etc.
+            # So instead we implement this only for cyclic rings by factorisation.
+            elif isinstance(R, IntegerModRing_generic):
+                from sage.arith.misc import valuation
+                weights = X.extended_codomain().weights()
+                for p, e in R.factored_order():
+                    # v[i] * λ^w[i] = 0 mod p^e
+                    # only possible if v_p(v[i]) + w[i] * (e - 1) >= e
+                    # after simplifying:
+                    if all(w >= 2 and e >= 2 or valuation(v, p) >= 1 for v, w in zip(v, weights)):
+                        raise ValueError(f"{v} does not define a valid weighted projective point "
+                                         "since it is a multiple of a zero divisor")
 
             X.extended_codomain()._check_satisfies_equations(v)
 
@@ -450,7 +476,7 @@ class SchemeMorphism_point_weighted_projective_field(SchemeMorphism_point_weight
                 if c.is_one():
                     break
                 if c:
-                    weights = X.codomain().weights()
+                    weights = X.extended_codomain().weights()
                     for j in range(last):
                         v[j] /= c ** weights[j]
                     v[last] = R.one()
