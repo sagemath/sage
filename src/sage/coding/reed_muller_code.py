@@ -396,13 +396,16 @@ class BinaryReedMullerCode(AbstractLinearCode):
 
     EXAMPLES:
 
-    A binary Reed-Muller code can be constructed by simply giving the order of the code and the number of variables::
+    A binary Reed-Muller code can be constructed by simply giving the order of
+    the code and the number of variables::
 
         sage: C = codes.BinaryReedMullerCode(2, 4)
         sage: C
         Binary Reed-Muller Code of order 2 and number of variables 4
 
-    Very large Reed-Muller codes can be constructed without building the generator matrix or elements of the code.
+    Very large Reed-Muller codes can be constructed without building
+    the generator matrix or elements of the code (fixes :issue:`33229`,
+    see also :issue:`39110`)::
 
         sage: C = codes.BinaryReedMullerCode(16, 32)
         sage: C
