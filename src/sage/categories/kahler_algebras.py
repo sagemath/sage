@@ -30,7 +30,7 @@ class KahlerAlgebras(Category_over_base_ring):
         sage: TestSuite(C).run()
     """
     def super_categories(self):
-            return [GradedAlgebrasWithBasis(self.base_ring())]
+        return [GradedAlgebrasWithBasis(self.base_ring())]
 
     class ParentMethods:
         def poincare_pairing(self, el1, el2, r):
@@ -69,10 +69,10 @@ class KahlerAlgebras(Category_over_base_ring):
             Kähler algebra.
 
             EXAMPLES::
-            
+
                 sage: ch = matroids.Uniform(4,6).chow_ring(QQ, False)
                 sage: ch.hodge_riemann_relations(1, ch.matroid().rank() - 1)
-                Quadratic form in 36 variables over Rational Field with coefficients: 
+                Quadratic form in 36 variables over Rational Field with coefficients:
                 [ 3 -1 -1 3 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 3 ]
                 [ * 3 -1 3 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 3 ]
                 [ * * 3 3 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 3 ]
@@ -123,7 +123,7 @@ class KahlerAlgebras(Category_over_base_ring):
                 coeff = []
                 for i,el in enumerate(basis_k):
                     for j in range(i, len(basis_k)):
-                        coeff.append((el*(lefschetz_el**(r-(2*k))*basis_k[j])).degree())
+                        coeff.append((el * (lefschetz_el ** (r-(2*k)) * basis_k[j])).degree())
                 return QuadraticForm(self.base_ring(), len(basis_k), coeff)
             else:
                 raise ValueError("k must be less than r < 2")
