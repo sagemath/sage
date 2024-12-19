@@ -226,7 +226,7 @@ def init_sage(controller=None):
 
     # Switch on extra debugging
     from sage.structure.debug_options import debug
-    debug.refine_category_hash_check = True
+    debug.enable_extra_debugging_during_doctest()
 
     # We import readline before forking, otherwise Pdb doesn't work
     # on OS X: https://github.com/sagemath/sage/issues/14289

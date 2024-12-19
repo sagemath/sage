@@ -9,6 +9,8 @@ EXAMPLES::
     False
     sage: debug.refine_category_hash_check
     True
+    sage: debug.test_category_graph
+    True
 """
 
 #*****************************************************************************
@@ -35,8 +37,15 @@ cdef class DebugOptions_class:
             <... 'sage.structure.debug_options.DebugOptions_class'>
         """
         self.unique_parent_warnings = False
-        # This one will be enabled during doctests
         self.refine_category_hash_check = False
+        self.test_category_graph = True
+
+    def enable_extra_debugging_during_doctest(self):
+        """
+        Function that is called before doctest to enable extra debugging options.
+        """
+        self.refine_category_hash_check = True
+        self.test_category_graph = True
 
 
 cdef DebugOptions_class debug = DebugOptions_class()

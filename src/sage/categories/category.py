@@ -113,6 +113,7 @@ from sage.misc.weak_dict import WeakValueDictionary
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.debug_options import debug
 from sage.structure.dynamic_class import DynamicMetaclass, dynamic_class
 
 from sage.categories.category_cy_helper import category_sort_key, _sort_uniq, _flatten_categories, join_as_tuple
@@ -1682,7 +1683,13 @@ class Category(UniqueRepresentation, SageObject):
         :class:`~sage.categories.category_types.Category_over_base` and
         :class:`sage.categories.category.JoinCategory`.
         """
-        return self._make_named_class('parent_class', 'ParentMethods')
+        parent_class = self._make_named_class('parent_class', 'ParentMethods')
+        if debug.test_category_graph:
+            # see also _test_category_graph()
+            if parent_class.mro()[1:] != [C.parent_class for C in self._all_super_categories_proper] + [object]:
+                print(f"Category graph does not match with Python MRO: {parent_class=} {parent_class.mro()=} {self._all_super_categories=}")
+        return parent_class
+
 
     @lazy_attribute
     def element_class(self):
@@ -1728,7 +1735,13 @@ class Category(UniqueRepresentation, SageObject):
 
         .. SEEALSO:: :meth:`parent_class`
         """
-        return self._make_named_class('element_class', 'ElementMethods')
+        element_class = self._make_named_class('element_class', 'ElementMethods')
+        if debug.test_category_graph:
+            # see also _test_category_graph()
+            assert self is self._all_super_categories[0]
+            if element_class.mro()[1:] != [C.element_class for C in self._all_super_categories_proper] + [object]:
+                print(f"Category graph does not match with Python MRO: {element_class=} {element_class.mro()=} {self._all_super_categories=}")
+        return element_class
 
     @lazy_attribute
     def morphism_class(self):
