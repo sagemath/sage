@@ -134,8 +134,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
                 for p, e in R.factored_order():
                     # v[i] * λ^w[i] = 0 mod p^e
                     # only possible if v_p(v[i]) + w[i] * (e - 1) >= e
-                    # after simplifying:
-                    if all(w >= 2 and e >= 2 or valuation(v, p) >= 1 for v, w in zip(v, weights)):
+                    if all(valuation(v, p) + w * (e - 1) >= e for v, w in zip(v, weights)):
                         raise ValueError(f"{v} does not define a valid weighted projective point "
                                          "since it is a multiple of a zero divisor")
 
