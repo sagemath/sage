@@ -1,5 +1,5 @@
 r"""
-Category of Kahler Algebras.
+Category of Kähler Algebras.
 
 AUTHORS:
 
@@ -17,6 +17,8 @@ class KahlerAlgebras(Category_over_base_ring):
 
     EXAMPLES::
 
+        sage: from sage.categories.kahler_algebras import KahlerAlgebras
+
         sage: C = KahlerAlgebras(QQ); C
         Category of kahler algebras over Rational Field
         sage: sorted(C.super_categories(), key=str)
@@ -32,6 +34,21 @@ class KahlerAlgebras(Category_over_base_ring):
 
     class ParentMethods:
         def poincare_pairing(self, el1, el2, r):
+            r"""
+            Return the Poincaré pairing of any two elements of the
+            Kähler algebra.
+
+            EXAMPLES::
+
+                sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
+                sage: A0, A1, A2, A3, A4, A5, A013, A025, A04, A124, A15, A23, A345, A012345 = ch.gens()
+                sage: u = ch(-1/6*A2*A012345 + 41/48*A012345^2); u
+                -1/6*A2*A012345 + 41/48*A012345^2
+                sage: v = ch(-A345^2 - 1/4*A345); v
+                -A345^2 - 1/4*A345
+                sage: ch.poincare_pairing(v, u, ch.matroid().rank())
+                3
+            """
             hom_components1 = el1.lift().homogeneous_components()
             hom_components2 = el2.lift().homogeneous_components()
             new_el = self.base_ring().zero()
@@ -46,10 +63,67 @@ class KahlerAlgebras(Category_over_base_ring):
         def lefschetz_element():
             pass
 
-        def hodge_riemann_relations(self, k, lefschetz_el, r):
-            basis_k = self.basis(d=k)
-            coeff = []
-            for el, i in enumerate(basis_k):
-                for j in range(i+1, len(basis_k)):
-                    coeff.append((el*(lefschetz_el**(r-(2*k))*basis_k[j])).degree())
-            return QuadraticForm(self.base_ring(), len(basis_k), coeff)
+        def hodge_riemann_relations(self, k, r):
+            r"""
+            Return the quadratic form for the corresponding k (< r/2) for the
+            Kähler algebra.
+
+            EXAMPLES::
+            
+                sage: ch = matroids.Uniform(4,6).chow_ring(QQ, False)
+                sage: ch.hodge_riemann_relations(1, ch.matroid().rank() - 1)
+                Quadratic form in 36 variables over Rational Field with coefficients: 
+                [ 3 -1 -1 3 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 3 ]
+                [ * 3 -1 3 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 3 ]
+                [ * * 3 3 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 3 ]
+                [ * * * 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ]
+                [ * * * * 3 -1 3 -1 3 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 3 ]
+                [ * * * * * 3 3 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 3 ]
+                [ * * * * * * 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ]
+                [ * * * * * * * 3 3 3 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 ]
+                [ * * * * * * * * 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ]
+                [ * * * * * * * * * 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ]
+                [ * * * * * * * * * * 3 -1 3 -1 -1 3 -1 -1 3 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 ]
+                [ * * * * * * * * * * * 3 3 -1 3 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 ]
+                [ * * * * * * * * * * * * 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ]
+                [ * * * * * * * * * * * * * 3 3 3 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 3 ]
+                [ * * * * * * * * * * * * * * 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ]
+                [ * * * * * * * * * * * * * * * 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ]
+                [ * * * * * * * * * * * * * * * * 3 3 3 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 3 ]
+                [ * * * * * * * * * * * * * * * * * 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ]
+                [ * * * * * * * * * * * * * * * * * * 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ]
+                [ * * * * * * * * * * * * * * * * * * * 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ]
+                [ * * * * * * * * * * * * * * * * * * * * 3 -1 3 -1 3 -1 -1 -1 -1 3 -1 -1 -1 3 -1 3 ]
+                [ * * * * * * * * * * * * * * * * * * * * * 3 3 -1 -1 3 -1 -1 3 -1 -1 -1 3 -1 -1 3 ]
+                [ * * * * * * * * * * * * * * * * * * * * * * 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ]
+                [ * * * * * * * * * * * * * * * * * * * * * * * 3 3 3 -1 3 -1 -1 -1 3 -1 -1 -1 3 ]
+                [ * * * * * * * * * * * * * * * * * * * * * * * * 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ]
+                [ * * * * * * * * * * * * * * * * * * * * * * * * * 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ]
+                [ * * * * * * * * * * * * * * * * * * * * * * * * * * 3 3 3 3 -1 -1 -1 -1 3 3 ]
+                [ * * * * * * * * * * * * * * * * * * * * * * * * * * * 3 -1 -1 -1 -1 -1 -1 -1 -1 ]
+                [ * * * * * * * * * * * * * * * * * * * * * * * * * * * * 3 -1 -1 -1 -1 -1 -1 -1 ]
+                [ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 3 -1 -1 -1 -1 -1 -1 ]
+                [ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 3 3 3 3 3 3 ]
+                [ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 3 -1 -1 -1 -1 ]
+                [ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 3 -1 -1 -1 ]
+                [ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 3 -1 -1 ]
+                [ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 3 -1 ]
+                [ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 3 ]
+                sage: ch.hodge_riemann_relations(3, ch.matroid().rank() - 1)
+               Traceback (most recent call last):
+                ...
+                ValueError: k must be less than r < 2
+            """
+            if k < (r/2):
+                basis_k = []
+                lefschetz_el = self.lefschetz_element()
+                for b in self.basis():
+                    if b.homogeneous_degree() == k:
+                        basis_k.append(b)
+                coeff = []
+                for i,el in enumerate(basis_k):
+                    for j in range(i, len(basis_k)):
+                        coeff.append((el*(lefschetz_el**(r-(2*k))*basis_k[j])).degree())
+                return QuadraticForm(self.base_ring(), len(basis_k), coeff)
+            else:
+                raise ValueError("k must be less than r < 2")
