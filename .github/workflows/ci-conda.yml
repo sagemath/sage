@@ -26,11 +26,11 @@ jobs:
         # On pushes to tags or branches, test the whole matrix.
         os: >-
           ${{ github.event_name == 'pull_request'
-                && fromJson('[]')
+                && fromJson('["ubuntu-latest"]')
                 || fromJson('["ubuntu-latest", "macos-latest", "macos-13"]') }}
         python: >-
           ${{ github.event_name == 'pull_request'
-                && fromJson('[]')
+                && fromJson('["3.9"]')
                 || fromJson('["3.9", "3.10", "3.11"]') }}
         # Optional environment is disabled for now as its not yet working
         # environment: [environment, environment-optional]
