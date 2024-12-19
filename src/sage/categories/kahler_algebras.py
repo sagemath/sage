@@ -11,6 +11,7 @@ from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.misc.abstract_method import abstract_method
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 
+
 # ****************************************************************************
 #       Copyright (C) 2024 Shriya M <25shriya at gmail.com>
 #
@@ -112,4 +113,4 @@ class KahlerAlgebras(Category_over_base_ring):
             for i,el in enumerate(basis_k):
                 for j in range(i, len(basis_k)):
                     coeff.append((el * (lefschetz_el ** (r-(2*k)) * basis_k[j])).degree())
-            return QuadraticForm(self.base_ring(), len(basis_k), coeff)           
+            return QuadraticForm(self.base_ring(), len(basis_k), coeff)
