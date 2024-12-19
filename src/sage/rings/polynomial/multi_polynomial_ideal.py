@@ -248,6 +248,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.noncommutative_ideals import Ideal_nc
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
+from sage.structure.element import parent
 from sage.structure.richcmp import (op_EQ, op_GE, op_GT, op_LE, op_LT, op_NE,
                                     rich_to_bool, richcmp_method)
 from sage.structure.sequence import Sequence
@@ -4964,6 +4965,23 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
             Requires computation of a Groebner basis, which can be a
             very expensive operation.
+
+        TESTS:
+
+        Check for :issue:`38560`::
+
+            sage: I.reduce(1)
+            1
+            sage: I.reduce(1r)
+            1
+            sage: I.reduce(pi.n())
+            Traceback (most recent call last):
+            ...
+            TypeError: no canonical coercion from Real Field with 53 bits of precision to Multivariate Polynomial Ring in x, y over Rational Field
+            sage: I.reduce(float(pi.n()))
+            Traceback (most recent call last):
+            ...
+            TypeError: no canonical coercion from <class 'float'> to Multivariate Polynomial Ring in x, y over Rational Field
         """
         try:
             strat = self._groebner_strategy()
@@ -4972,6 +4990,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             pass
 
         gb = self.groebner_basis()
+        f = self.ring().coerce(f)
         return f.reduce(gb)
 
     def _contains_(self, f):

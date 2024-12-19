@@ -4317,6 +4317,16 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
             ....:    'n', precision=5))
             True
 
+        Positive and negative singularities::
+
+            sage: def permutations_odd_cycles(z):
+            ....:     return sqrt((1+z) / (1-z))
+            sage: ex = B.coefficients_of_generating_function(
+            ....:     permutations_odd_cycles, (1, -1,), precision=2,
+            ....: ); ex
+            sqrt(2)/sqrt(pi)*n^(-1/2) - 1/2*sqrt(1/2)/sqrt(pi)*n^(-3/2)*(-1)^n
+            + O(n^(-5/2))
+
         .. WARNING::
 
             Once singular expansions around points other than infinity

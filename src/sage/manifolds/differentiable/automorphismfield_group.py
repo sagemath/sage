@@ -38,15 +38,19 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
 from sage.categories.groups import Groups
+from sage.manifolds.differentiable.automorphismfield import (
+    AutomorphismField,
+    AutomorphismFieldParal,
+)
+from sage.manifolds.differentiable.vectorfield_module import (
+    VectorFieldFreeModule,
+    VectorFieldModule,
+)
 from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 from sage.tensor.modules.free_module_linear_group import FreeModuleLinearGroup
-from sage.manifolds.differentiable.vectorfield_module import (VectorFieldModule,
-                                                              VectorFieldFreeModule)
-from sage.manifolds.differentiable.automorphismfield import (AutomorphismField,
-                                                             AutomorphismFieldParal)
 
 
 class AutomorphismFieldGroup(UniqueRepresentation, Parent):
