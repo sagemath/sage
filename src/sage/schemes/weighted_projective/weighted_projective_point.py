@@ -23,8 +23,11 @@ AUTHORS:
 
 from copy import copy
 
+from sage.arith.misc import gcd
 from sage.categories.integral_domains import IntegralDomains
 from sage.rings.fraction_field import FractionField
+from sage.rings.quotient_ring import QuotientRing_generic
+from sage.rings.ring import CommutativeRing
 from sage.schemes.generic.morphism import SchemeMorphism, SchemeMorphism_point
 from sage.structure.richcmp import op_EQ, op_NE, richcmp
 from sage.structure.sequence import Sequence
@@ -103,6 +106,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             # Over rings with zero divisors, a more careful check
             # is required: We test whether the coordinates of the
             # point generate the unit ideal. See #31576.
+            # TODO: Does this require modification? (Ring theory exam question)
             elif 1 not in R.ideal(v):
                 raise ValueError(
                     f"{v} does not define a valid projective point "
@@ -119,11 +123,11 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
     def _richcmp_(self, other, op):
         """
-        Test the projective equality of two points.
+        Test the weighted projective equality of two points.
 
         INPUT:
 
-        - ``right`` -- a point on projective space
+        - ``right`` -- a point on weighted projective space
 
         OUTPUT:
 
@@ -131,7 +135,25 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
         EXAMPLES::
 
-            TODO
+            sage: WP = WeightedProjectiveSpace(ZZ, [1, 3, 1])
+            sage: WP(2, 8, 2)
+            (2 : 8 : 2)
+            sage: _ == WP(1, 1, 1)
+            True
+            sage: WP(5, 0, 5) == WP(1, 0, 1)
+            True
+
+        ::
+
+            sage: weights = [randint(1, 10) for _ in range(5)]
+            sage: WP = WeightedProjectiveSpace(ZZ, weights)
+            sage: P = WP([randint(1, 100) * choice([-1, 1]) for _ in range(5)])
+            sage: λ = randint(2, 100) * choice([-1, 1])
+            sage: Q = WP([c * λ**w for c, w in zip(P._coords, weights)])
+            sage: P._coords == Q._coords
+            False
+            sage: P == Q
+            True
         """
         assert isinstance(other, SchemeMorphism_point)
 
@@ -140,8 +162,12 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
 
         n = len(self._coords)
         if op in [op_EQ, op_NE]:
+            weights = self.codomain().weights()
             b = all(
-                self[i] * other[j] == self[j] * other[i] for i in range(n) for j in range(i + 1, n)
+                other[i]**weights[j] * self[j]**weights[i]
+                == self[i]**weights[j] * other[j]**weights[i]
+                for i in range(n)
+                for j in range(i + 1, n)
             )
             return b == (op == op_EQ)
         return richcmp(self._coords, other._coords, op)
@@ -220,7 +246,9 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             sage: P = ProjectiveSpace(Zp(7), 2, 'x')
             sage: p = P([-5, -15, -2])
             sage: p.normalize_coordinates(); p
-            (6 + 3*7 + 3*7^2 + 3*7^3 + 3*7^4 + 3*7^5 + 3*7^6 + 3*7^7 + 3*7^8 + 3*7^9 + 3*7^10 + 3*7^11 + 3*7^12 + 3*7^13 + 3*7^14 + 3*7^15 + 3*7^16 + 3*7^17 + 3*7^18 + 3*7^19 + O(7^20) : 4 + 4*7 + 3*7^2 + 3*7^3 + 3*7^4 + 3*7^5 + 3*7^6 + 3*7^7 + 3*7^8 + 3*7^9 + 3*7^10 + 3*7^11 + 3*7^12 + 3*7^13 + 3*7^14 + 3*7^15 + 3*7^16 + 3*7^17 + 3*7^18 + 3*7^19 + O(7^20) : 1 + O(7^20))
+            (6 + 3*7 + 3*7^2 + 3*7^3 + 3*7^4 + 3*7^5 + 3*7^6 + 3*7^7 + 3*7^8 + 3*7^9 + 3*7^10 + 3*7^11 + 3*7^12 + 3*7^13 + 3*7^14 + 3*7^15 + 3*7^16 + 3*7^17 + 3*7^18 + 3*7^19 + O(7^20) :
+             4 + 4*7 + 3*7^2 + 3*7^3 + 3*7^4 + 3*7^5 + 3*7^6 + 3*7^7 + 3*7^8 + 3*7^9 + 3*7^10 + 3*7^11 + 3*7^12 + 3*7^13 + 3*7^14 + 3*7^15 + 3*7^16 + 3*7^17 + 3*7^18 + 3*7^19 + O(7^20) :
+             1 + O(7^20))
 
         ::
 
@@ -296,6 +324,12 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             elif self._coords[index] < 0:
                 self.scale_by(-R.one())
         self._normalized = True
+
+    def scale_by(self, t):
+        """
+        TODO: Implement
+        """
+        raise NotImplementedError
 
 
 class SchemeMorphism_point_weighted_projective_field(SchemeMorphism_point_weighted_projective_ring):
@@ -384,6 +418,14 @@ class SchemeMorphism_point_weighted_projective_field(SchemeMorphism_point_weight
         self._normalized = False
 
         if check:
+            # check parent
+            from sage.schemes.weighted_projective.weighted_projective_homset import (
+                SchemeHomset_points_weighted_projective_field,
+            )
+
+            if not isinstance(X, SchemeHomset_points_weighted_projective_field):
+                raise TypeError(f"ambient space {X} must be a weighted projective space over a ring")
+
             d = X.codomain().ambient_space().ngens()
             if isinstance(v, SchemeMorphism):
                 v = list(v)
@@ -393,7 +435,7 @@ class SchemeMorphism_point_weighted_projective_field(SchemeMorphism_point_weight
                         v = [v]
                 except AttributeError:
                     pass
-            if not isinstance(v, (list,tuple)):
+            if not isinstance(v, (list, tuple)):
                 raise TypeError("argument v (= %s) must be a scheme point, list, or tuple" % str(v))
             if len(v) != d and len(v) != d-1:
                 raise TypeError("v (=%s) must have %s components" % (v, d))
@@ -408,8 +450,9 @@ class SchemeMorphism_point_weighted_projective_field(SchemeMorphism_point_weight
                 if c.is_one():
                     break
                 if c:
+                    weights = X.codomain().weights()
                     for j in range(last):
-                        v[j] /= c
+                        v[j] /= c ** weights[j]
                     v[last] = R.one()
                     break
             else:
@@ -470,7 +513,7 @@ class SchemeMorphism_point_weighted_projective_field(SchemeMorphism_point_weight
                 inv = c.inverse()
                 new_coords = [d * inv for d in self._coords[:index]]
                 new_coords.append(self.base_ring().one())
-                new_coords.extend(self._coords[index + 1 :])
+                new_coords.extend(self._coords[index + 1:])
                 self._coords = tuple(new_coords)
                 break
         else:

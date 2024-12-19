@@ -30,7 +30,16 @@ class SchemeHomset_points_weighted_projective_ring(SchemeHomset_points):
 
     EXAMPLES::
 
-        sage: # TODO
+        sage: WP = WeightedProjectiveSpace(ZZ, [1, 3, 1]); WP
+        Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Integer Ring
+        sage: WP.point_homset()
+        Set of rational points of Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Integer Ring
+        sage: type(WP.point_homset())
+        <class 'sage.schemes.weighted_projective.weighted_projective_homset.SchemeHomset_points_weighted_projective_ring_with_category'>
+        sage: WP(2, 24, 2)
+        (2 : 24 : 2)
+        sage: WP(2, 24, 2) == WP(1, 3, 1)
+        True
     """
 
     def points(self, **__):
@@ -59,6 +68,10 @@ class SchemeHomset_points_weighted_projective_field(SchemeHomset_points):
         sage: WP.point_homset()
         Set of rational points of Weighted Projective Space of dimension 2 with weights (1, 3, 1) over Rational Field
         sage: type(WP.point_homset())
-        <class 'sage.schemes.weighted_projective.weighted_projective_homset.SchemeHomset_points_weighted_projective_ring_with_category'>
+        <class 'sage.schemes.weighted_projective.weighted_projective_homset.SchemeHomset_points_weighted_projective_field_with_category'>
+        sage: WP(2, 24, 2)
+        (1 : 3 : 1)
+        sage: WP(2, 24, 2) == WP(1, 3, 1)
+        True
     """
     pass

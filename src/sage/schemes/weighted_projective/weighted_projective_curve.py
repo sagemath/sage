@@ -1,6 +1,7 @@
 from sage.schemes.curves.curve import Curve_generic
 
 
+# TODO: Implement (some) embedding into straight projective space
 class WeightedProjectiveCurve(Curve_generic):
     def __init__(self, A, X, *kwargs):
         # TODO ensure that A is the right type?

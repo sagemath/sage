@@ -14,6 +14,7 @@ from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.schemes.weighted_projective.weighted_projective_homset import (
     SchemeHomset_points_weighted_projective_ring,
+    SchemeHomset_points_weighted_projective_field,
 )
 from sage.structure.all import UniqueRepresentation
 from sage.structure.category_object import normalize_names
@@ -387,4 +388,21 @@ class WeightedProjectiveSpace_field(WeightedProjectiveSpace_ring):
     """
     TODO: Documentation
     """
-    pass
+    def _point_homset(self, *args, **kwds):
+        """
+        Construct a point Hom-set.
+
+        For internal use only. See :mod:`morphism` for details.
+        """
+        return SchemeHomset_points_weighted_projective_field(*args, **kwds)
+
+    def _point(self, *args, **kwds):
+        """
+        Construct a point.
+
+        For internal use only. See :mod:`morphism` for details.
+        """
+        from sage.schemes.weighted_projective.weighted_projective_point import (
+            SchemeMorphism_point_weighted_projective_field,
+        )
+        return SchemeMorphism_point_weighted_projective_field(*args, **kwds)
