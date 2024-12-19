@@ -762,7 +762,7 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
     EXAMPLES::
 
         sage: from sage.doctest.util import ensure_interruptible_after
-        sage: with ensure_interruptible_after(1) as data: sleep(3)
+        sage: with ensure_interruptible_after(1) as data: sleep(3r)
 
     ``as data`` is optional, but if it is used, it will contain a few useful values::
 
@@ -808,7 +808,8 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
 
     TESTS::
 
-        sage: with ensure_interruptible_after(2) as data: sleep(1)
+        sage: # we use 1r instead of 1 to avoid unexplained slowdown
+        sage: with ensure_interruptible_after(2) as data: sleep(1r)
         Traceback (most recent call last):
         ...
         RuntimeError: Function terminates early after 1.00... < 2.0000 seconds
