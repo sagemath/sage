@@ -111,7 +111,7 @@ class KahlerAlgebras(Category_over_base_ring):
                 [ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 3 -1 ]
                 [ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 3 ]
                 sage: ch.hodge_riemann_relations(3, ch.matroid().rank() - 1)
-               Traceback (most recent call last):
+                Traceback (most recent call last):
                 ...
                 ValueError: k must be less than r < 2
             """
