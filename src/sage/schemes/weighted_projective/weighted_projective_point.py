@@ -25,12 +25,12 @@ from copy import copy
 
 from sage.arith.misc import gcd
 from sage.categories.integral_domains import IntegralDomains
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing_generic
 from sage.rings.fraction_field import FractionField
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.ring import CommutativeRing
 from sage.schemes.generic.morphism import SchemeMorphism, SchemeMorphism_point
 from sage.structure.richcmp import op_EQ, op_NE, richcmp
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing_generic
 from sage.structure.sequence import Sequence
 
 # --------------------

@@ -1,1 +1,0 @@
-from sage.schemes.weighted_projective.weighted_projective_space import WeightedProjectiveSpace

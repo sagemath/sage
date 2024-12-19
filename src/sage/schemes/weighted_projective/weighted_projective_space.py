@@ -13,8 +13,8 @@ from sage.rings.polynomial.term_order import TermOrder
 from sage.schemes.generic.ambient_space import AmbientSpace
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.schemes.weighted_projective.weighted_projective_homset import (
-    SchemeHomset_points_weighted_projective_ring,
     SchemeHomset_points_weighted_projective_field,
+    SchemeHomset_points_weighted_projective_ring,
 )
 from sage.structure.all import UniqueRepresentation
 from sage.structure.category_object import normalize_names
