@@ -4,9 +4,8 @@ build-backend = 'mesonpy'
 requires = [
     'meson-python',
     'cypari2 >=2.1.1',
-    # cysignals 1.11.2 is the newest version that is available on conda:
-    # https://github.com/conda-forge/cysignals-feedstock/pull/49
-    'cysignals >=1.11.2',
+    # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
+    'cysignals >=1.11.2, != 1.12.0',
     # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
     'cython >=3.0, != 3.0.3',
     'gmpy2 ~=2.1.b999',
@@ -21,7 +20,8 @@ dependencies = [
     'six >=1.15.0',
     'conway-polynomials >=0.8',
     'cypari2 >=2.1.1',
-    'cysignals >=1.10.2',
+    # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
+    'cysignals >=1.11.2, != 1.12.0',
     'cython >=3.0, != 3.0.3',
     'gmpy2 ~=2.1.b999',
     'lrcalc ~=2.1',
