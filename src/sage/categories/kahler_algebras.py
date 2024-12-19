@@ -1,5 +1,5 @@
 r"""
-Kähler Algebras.
+Kähler Algebras
 
 AUTHORS:
 
