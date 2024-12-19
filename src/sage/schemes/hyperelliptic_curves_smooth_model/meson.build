@@ -19,10 +19,6 @@ py.install_sources(
   'jacobian_morphism.py',
   'mestre.py',
   'monsky_washnitzer.py',
-  'weighted_projective_curve.py',
-  'weighted_projective_homset.py',
-  'weighted_projective_point.py',
-  'weighted_projective_space.py',
   subdir: 'sage/schemes/hyperelliptic_curves_smooth_model',
 )
 
