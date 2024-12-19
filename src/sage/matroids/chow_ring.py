@@ -196,6 +196,149 @@ class ChowRing(QuotientRing_generic):
         monomial_basis = self._ideal.normal_basis()
         return Family([self.element_class(self, mon, reduce=False) for mon in monomial_basis])
 
+    def flats_generator(self):
+        r"""
+            Return the corresponding generators of flats of the Chow ring.
+
+            EXAMPLES::
+
+                sage: ch = matroids.catalog.NonFano().chow_ring(ZZ, True, 'atom-free')
+                sage: ch.flats_generator()
+                {frozenset({'a'}): Aa,
+                frozenset({'b'}): Ab,
+                frozenset({'c'}): Ac,
+                frozenset({'d'}): Ad,
+                frozenset({'e'}): Ae,
+                frozenset({'f'}): Af,
+                frozenset({'g'}): Ag,
+                frozenset({'a', 'b', 'f'}): Aabf,
+                frozenset({'a', 'c', 'e'}): Aace,
+                frozenset({'a', 'd', 'g'}): Aadg,
+                frozenset({'b', 'c', 'd'}): Abcd,
+                frozenset({'b', 'e', 'g'}): Abeg,
+                frozenset({'c', 'f', 'g'}): Acfg,
+                frozenset({'d', 'e'}): Ade,
+                frozenset({'d', 'f'}): Adf,
+                frozenset({'e', 'f'}): Aef,
+                frozenset({'a', 'b', 'c', 'd', 'e', 'f', 'g'}): Aabcdefg}
+        """
+        flats = [X for i in range(1, self._matroid.rank() + 1)
+                 for X in self._matroid.flats(i)]
+        gens = self.gens()
+        if self._augmented & (self._presentation == 'fy'):
+            flats_gen = {}
+            E = list(self.matroid().groundset())
+            for i,F in enumerate(flats):
+                flats_gen[F] = gens[len(E) + i]
+            return flats_gen
+        else:
+            return dict(zip(flats, gens))
+
+    def lefschetz_element(self):
+        r"""
+            Return one Lefschetz element of the given Chow ring.
+
+            EXAMPLES::
+
+                sage: ch = matroids.catalog.P8pp().chow_ring(QQ, False)
+                sage: ch.lefschetz_element()
+                -2*Aab - 2*Aac - 2*Aad - 2*Aae - 2*Aaf - 2*Aag - 2*Aah - 2*Abc
+                - 2*Abd - 2*Abe - 2*Abf - 2*Abg - 2*Abh - 2*Acd - 2*Ace - 2*Acf
+                - 2*Acg - 2*Ach - 2*Ade - 2*Adf - 2*Adg - 2*Adh - 2*Aef - 2*Aeg
+                - 2*Aeh - 2*Afg - 2*Afh - 2*Agh - 6*Aabc - 6*Aabd - 6*Aabe
+                - 12*Aabfh - 6*Aabg - 6*Aacd - 12*Aacef - 12*Aacgh - 12*Aadeg
+                - 6*Aadf - 6*Aadh - 6*Aaeh - 6*Aafg - 6*Abcd - 12*Abceg
+                - 6*Abcf - 6*Abch - 12*Abdeh - 12*Abdfg - 6*Abef - 6*Abgh
+                - 6*Acde - 12*Acdfh - 6*Acdg - 6*Aceh - 6*Acfg - 6*Adef
+                - 6*Adgh - 6*Aefg - 6*Aefh - 6*Aegh - 6*Afgh - 56*Aabcdefgh
+
+            The following example finds the Lefschetz element of the Chow ring
+            of the uniform matroid of rank 4 on 5 elements (non-augmented).
+            It is then multiplied with the elements of FY-monomial bases of
+            different degrees::
+
+                sage: ch = matroids.Uniform(4,5).chow_ring(QQ, False)
+                sage: basis_deg = {}
+                sage: for b in ch.basis():
+                ....:     deg = b.homogeneous_degree()
+                ....:     if deg not in basis_deg:
+                ....:         basis_deg[deg] = []
+                ....:     basis_deg[deg].append(b)
+                ....:
+                sage: basis_deg
+                {0: [1], 1: [A02, A12, A01, A012, A03, A13, A013, A23, A023,
+                 A123, A04, A14, A014, A24, A024, A124, A34, A034, A134, A234,
+                 A01234], 2: [A02*A01234, A12*A01234, A01*A01234, A012^2,
+                 A03*A01234, A13*A01234, A013^2, A23*A01234, A023^2, A123^2,
+                 A04*A01234, A14*A01234, A014^2, A24*A01234, A024^2, A124^2,
+                 A34*A01234, A034^2, A134^2, A234^2, A01234^2], 3: [A01234^3]}
+                sage: g_eq_maps = {}
+                sage: lefschetz_el = ch.lefschetz_element(); lefschetz_el
+                -2*A01 - 2*A02 - 2*A03 - 2*A04 - 2*A12 - 2*A13 - 2*A14 - 2*A23
+                - 2*A24 - 2*A34 - 6*A012 - 6*A013 - 6*A014 - 6*A023 - 6*A024
+                - 6*A034 - 6*A123 - 6*A124 - 6*A134 - 6*A234 - 20*A01234
+                sage: for deg in basis_deg:
+                ....:     if deg not in g_eq_maps:
+                ....:         g_eq_maps[deg] = []
+                ....:     g_eq_maps[deg].extend([i*lefschetz_el for i in basis_deg[deg]])
+                ....:
+                sage: g_eq_maps
+                {0: [-2*A01 - 2*A02 - 2*A03 - 2*A04 - 2*A12 - 2*A13 - 2*A14
+                 - 2*A23 - 2*A24 - 2*A34 - 6*A012 - 6*A013 - 6*A014 - 6*A023
+                 - 6*A024 - 6*A034 - 6*A123 - 6*A124 - 6*A134 - 6*A234
+                 - 20*A01234], 1: [2*A012^2 + 2*A023^2 + 2*A024^2
+                 - 10*A02*A01234 + 2*A01234^2, 2*A012^2 + 2*A123^2 + 2*A124^2
+                 - 10*A12*A01234 + 2*A01234^2, 2*A012^2 + 2*A013^2 + 2*A014^2
+                 - 10*A01*A01234 + 2*A01234^2, -6*A012^2 + 2*A01*A01234
+                 + 2*A02*A01234 + 2*A12*A01234, 2*A013^2 + 2*A023^2 + 2*A034^2
+                 - 10*A03*A01234 + 2*A01234^2, 2*A013^2 + 2*A123^2 + 2*A134^2
+                 - 10*A13*A01234 + 2*A01234^2, -6*A013^2 + 2*A01*A01234
+                 + 2*A03*A01234 + 2*A13*A01234, 2*A023^2 + 2*A123^2 + 2*A234^2
+                 - 10*A23*A01234 + 2*A01234^2, -6*A023^2 + 2*A02*A01234
+                 + 2*A03*A01234 + 2*A23*A01234, -6*A123^2 + 2*A12*A01234
+                 + 2*A13*A01234 + 2*A23*A01234, 2*A014^2 + 2*A024^2 + 2*A034^2
+                 - 10*A04*A01234 + 2*A01234^2, 2*A014^2 + 2*A124^2 + 2*A134^2
+                 - 10*A14*A01234 + 2*A01234^2, -6*A014^2 + 2*A01*A01234
+                 + 2*A04*A01234 + 2*A14*A01234, 2*A024^2 + 2*A124^2 + 2*A234^2
+                 - 10*A24*A01234 + 2*A01234^2, -6*A024^2 + 2*A02*A01234
+                 + 2*A04*A01234 + 2*A24*A01234, -6*A124^2 + 2*A12*A01234
+                 + 2*A14*A01234 + 2*A24*A01234, 2*A034^2 + 2*A134^2 + 2*A234^2
+                 - 10*A34*A01234 + 2*A01234^2, -6*A034^2 + 2*A03*A01234
+                 + 2*A04*A01234 + 2*A34*A01234, -6*A134^2 + 2*A13*A01234
+                 + 2*A14*A01234 + 2*A34*A01234, -6*A234^2 + 2*A23*A01234
+                 + 2*A24*A01234 + 2*A34*A01234, -2*A01*A01234 - 2*A02*A01234
+                 - 2*A03*A01234 - 2*A04*A01234 - 2*A12*A01234 - 2*A13*A01234
+                 - 2*A14*A01234 - 2*A23*A01234 - 2*A24*A01234 - 2*A34*A01234
+                 - 20*A01234^2], 2: [2*A01234^3, 2*A01234^3, 2*A01234^3,
+                 6*A01234^3, 2*A01234^3, 2*A01234^3, 6*A01234^3, 2*A01234^3,
+                 6*A01234^3, 6*A01234^3, 2*A01234^3, 2*A01234^3, 6*A01234^3,
+                 2*A01234^3, 6*A01234^3, 6*A01234^3, 2*A01234^3, 6*A01234^3,
+                 6*A01234^3, 6*A01234^3, -20*A01234^3], 3: [0]}
+
+            TESTS::
+
+                sage: U46 = matroids.Uniform(4,6)
+                sage: C = U46.chow_ring(QQ, False)
+                sage: w = C.lefschetz_element(); w
+                -2*A01 - 2*A02 - 2*A03 - 2*A04 - 2*A05 - 2*A12 - 2*A13 - 2*A14 - 2*A15 - 2*A23 - 2*A24 - 2*A25 - 2*A34 - 2*A35 - 2*A45 - 6*A012 - 6*A013 - 6*A014 - 6*A015 - 6*A023 - 6*A024 - 6*A025 - 6*A034 - 6*A035 - 6*A045 - 6*A123 - 6*A124 - 6*A125 - 6*A134 - 6*A135 - 6*A145 - 6*A234 - 6*A235 - 6*A245 - 6*A345 - 30*A012345
+                sage: basis_deg = {}
+                sage: for b in C.basis():
+                ....:     deg = b.homogeneous_degree()
+                ....:     if deg not in basis_deg:
+                ....:         basis_deg[deg] = []
+                ....:     basis_deg[deg].append(b)
+                sage: m = max(basis_deg); m
+                3
+                sage: len(basis_deg[1]) == len(basis_deg[2])
+                True
+                sage: matrix([(w*b).to_vector() for b in basis_deg[1]]).rank()
+                36
+                sage: len(basis_deg[2])
+                36
+        """
+        w = sum(len(F) * (len(self.matroid().groundset()) - len(F)) * gen for F, gen in self.flats_generator().items())
+        return w
+
     class Element(QuotientRing_generic.Element):
         def to_vector(self, order=None):
             r"""
