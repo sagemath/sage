@@ -8111,6 +8111,10 @@ cdef class Matroid(SageObject):
         from sage.matroids.chow_ring import ChowRing
         return ChowRing(M=self, R=R, augmented=augmented, presentation=presentation)
 
+    def tor_algebra(self, R):
+        from sage.matroids.tor_algebra import TorAlgebra
+        return TorAlgebra(R, self)
+
     cpdef plot(self, B=None, lineorders=None, pos_method=None, pos_dict=None, save_pos=False):
         """
         Return geometric representation as a sage graphics object.
