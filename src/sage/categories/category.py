@@ -113,6 +113,7 @@ from sage.misc.weak_dict import WeakValueDictionary
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.debug_options import debug
 from sage.structure.dynamic_class import DynamicMetaclass, dynamic_class
 
 from sage.categories.category_cy_helper import category_sort_key, _sort_uniq, _flatten_categories, join_as_tuple
@@ -943,6 +944,20 @@ class Category(UniqueRepresentation, SageObject):
             appropriate. Simply because lazy attributes are much
             faster than any method.
 
+        .. NOTE::
+
+            This is not the same as the concept of super category in mathematics.
+            In fact, this is not even the opposite relation of :meth:`is_subcategory`::
+
+                sage: A = VectorSpaces(QQ); A
+                Category of vector spaces over Rational Field
+                sage: B = VectorSpaces(QQ.category()); B
+                Category of vector spaces over (number fields and quotient fields and metric spaces)
+                sage: A.is_subcategory(B)
+                True
+                sage: B in A.all_super_categories()
+                False
+
         EXAMPLES::
 
             sage: C = Rings(); C
@@ -1668,7 +1683,13 @@ class Category(UniqueRepresentation, SageObject):
         :class:`~sage.categories.category_types.Category_over_base` and
         :class:`sage.categories.category.JoinCategory`.
         """
-        return self._make_named_class('parent_class', 'ParentMethods')
+        parent_class = self._make_named_class('parent_class', 'ParentMethods')
+        if debug.test_category_graph:
+            # see also _test_category_graph()
+            if parent_class.mro()[1:] != [C.parent_class for C in self._all_super_categories_proper] + [object]:
+                print(f"Category graph does not match with Python MRO: {parent_class=} {parent_class.mro()=} {self._all_super_categories=}")
+        return parent_class
+
 
     @lazy_attribute
     def element_class(self):
@@ -1714,7 +1735,13 @@ class Category(UniqueRepresentation, SageObject):
 
         .. SEEALSO:: :meth:`parent_class`
         """
-        return self._make_named_class('element_class', 'ElementMethods')
+        element_class = self._make_named_class('element_class', 'ElementMethods')
+        if debug.test_category_graph:
+            # see also _test_category_graph()
+            assert self is self._all_super_categories[0]
+            if element_class.mro()[1:] != [C.element_class for C in self._all_super_categories_proper] + [object]:
+                print(f"Category graph does not match with Python MRO: {element_class=} {element_class.mro()=} {self._all_super_categories=}")
+        return element_class
 
     @lazy_attribute
     def morphism_class(self):
@@ -1757,7 +1784,7 @@ class Category(UniqueRepresentation, SageObject):
     # Operations on the lattice of categories
     def is_subcategory(self, c):
         """
-        Return ``True`` if ``self`` is naturally embedded as a subcategory of `c`.
+        Return ``True`` if there is a natural forgetful functor from ``self`` to `c`.
 
         EXAMPLES::
 
@@ -2804,12 +2831,24 @@ class CategoryWithParameters(Category):
         if isinstance(cls, DynamicMetaclass):
             cls = cls.__base__
         key = (cls, name, self._make_named_class_key(name))
+        if debug.test_category_graph and key in self._make_named_class_cache:
+            new_cls = Category._make_named_class(self, name, method_provider, cache=cache, **options)
+            old_cls = self._make_named_class_cache[key]
+            if old_cls.mro()[1:] != new_cls.mro()[1:]:
+                print(f"Categories with same _make_named_class_key has different MRO: {self._all_super_categories=}",
+                      [(i, a, b) for i, (a, b) in enumerate(zip(old_cls.mro()[1:], new_cls.mro()[1:])) if a!=b])
         try:
             return self._make_named_class_cache[key]
         except KeyError:
             pass
         result = Category._make_named_class(self, name, method_provider,
                                             cache=cache, **options)
+        # the object in the parameter may have had its category refined, which modifies the key, needs to recompute
+        # (problem with mutable objects)
+        key = (cls, name, self._make_named_class_key(name))
+        if key in self._make_named_class_cache:
+            # throw result away and use cached value
+            return self._make_named_class_cache[key]
         self._make_named_class_cache[key] = result
         return result
 

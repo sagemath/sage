@@ -67,6 +67,57 @@ class FilteredModulesCategory(RegressiveCovariantConstructionCategory, Category_
         """
         return "filtered {}".format(self.base_category()._repr_object_names())
 
+    def _make_named_class_key(self, name):
+        r"""
+        Return what the element/parent/... classes depend on.
+
+        .. SEEALSO::
+
+            - :meth:`.CategoryWithParameters._make_named_class_key`
+
+        EXAMPLES::
+
+            sage: Modules(ZZ).Filtered()._make_named_class_key('element_class')
+            (<class 'sage.categories.modules.Modules'>,
+             Join of Category of Dedekind domains and Category of euclidean domains and Category of noetherian rings and Category of infinite enumerated sets and Category of metric spaces)
+
+        Note that we cannot simply return the base as in
+        :meth:`.Category_over_base._make_named_class_key` because of the following
+        (see :issue:`39154`)::
+
+            sage: VectorSpacesQQ = VectorSpaces(QQ); VectorSpacesQQ
+            Category of vector spaces over Rational Field
+            sage: # ModulesQQ = Modules(QQ)  # doesn't work because...
+            sage: Modules(QQ) is VectorSpacesQQ
+            True
+            sage: ModulesQQ = VectorSpacesQQ.super_categories()[0]; ModulesQQ
+            Category of modules over Rational Field
+            sage: VectorSpacesQQ.Filtered()
+            Category of filtered vector spaces over Rational Field
+            sage: ModulesQQ.Filtered()
+            Category of filtered modules over Rational Field
+            sage: VectorSpacesQQ.Filtered()._make_named_class_key('parent_class')
+            (<class 'sage.categories.vector_spaces.VectorSpaces'>,
+             Join of Category of number fields and Category of quotient fields and Category of metric spaces)
+            sage: ModulesQQ.Filtered()._make_named_class_key('parent_class')
+            (<class 'sage.categories.modules.Modules'>,
+             Join of Category of number fields and Category of quotient fields and Category of metric spaces)
+            sage: assert (VectorSpacesQQ.Filtered()._make_named_class_key('parent_class') !=
+            ....:         ModulesQQ.Filtered()._make_named_class_key('parent_class'))
+            sage: VectorSpacesQQ.Filtered().parent_class
+            <class 'sage.categories.vector_spaces.VectorSpaces.Filtered.parent_class'>
+            sage: ModulesQQ.Filtered().parent_class
+            <class 'sage.categories.filtered_modules.FilteredModules.parent_class'>
+
+        Nevertheless, as explained in :meth:`.Category_over_base._make_named_class_key`,
+        ``Modules(QQ).Filtered()`` and ``Modules(QQ.category()).Filtered()`` must have
+        the same parent class::
+
+            sage: Modules(QQ).Filtered().parent_class == Modules(QQ.category()).Filtered().parent_class
+            True
+        """
+        return (type(self._base_category).__base__, super()._make_named_class_key(name))
+
 
 class FilteredModules(FilteredModulesCategory):
     r"""
@@ -122,8 +173,9 @@ class FilteredModules(FilteredModulesCategory):
         """
         from sage.categories.modules import Modules
         from sage.categories.fields import Fields
+        from sage.categories.category import Category
         base_ring = self.base_ring()
-        if base_ring in Fields():
+        if base_ring in Fields() or (isinstance(base_ring, Category) and base_ring.is_subcategory(Fields())):
             return [Modules(base_ring)]
         else:
             return []
