@@ -6,7 +6,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.real_mpfr import RR
 
-from sage.schemes.weighted_projective.weighted_projective_curve import WeightedProjectiveCurve
+from sage.schemes.curves.weighted_projective_curve import WeightedProjectiveCurve
 from sage.schemes.weighted_projective.weighted_projective_space import WeightedProjectiveSpace
 
 
