@@ -11,7 +11,15 @@ from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.misc.abstract_method import abstract_method
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 
-
+# ****************************************************************************
+#       Copyright (C) 2024 Shriya M <25shriya at gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 class KahlerAlgebras(Category_over_base_ring):
     r"""
     The category of graded algebras satisfying the Kähler package.
