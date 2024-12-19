@@ -226,14 +226,13 @@ class ChowRing(QuotientRing_generic):
         flats = [X for i in range(1, self._matroid.rank() + 1)
                  for X in self._matroid.flats(i)]
         gens = self.gens()
-        if self._augmented & (self._presentation == 'fy'):
-            flats_gen = {}
-            E = list(self.matroid().groundset())
-            for i,F in enumerate(flats):
-                flats_gen[F] = gens[len(E) + i]
-            return flats_gen
-        else:
+        if not (self._augmented and self._presentation == 'fy'):
             return dict(zip(flats, gens))
+        flats_gen = {}
+        E = list(self.matroid().groundset())
+        for i,F in enumerate(flats):
+            flats_gen[F] = gens[len(E) + i]
+        return flats_gen
 
     def lefschetz_element(self):
         r"""
