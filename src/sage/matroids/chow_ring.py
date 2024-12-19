@@ -11,6 +11,7 @@ from sage.rings.quotient_ring import QuotientRing_generic
 from sage.categories.kahler_algebras import KahlerAlgebras
 from sage.categories.commutative_rings import CommutativeRings
 
+
 class ChowRing(QuotientRing_generic):
     r"""
     The Chow ring of a matroid.

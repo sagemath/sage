@@ -1,6 +1,6 @@
 SAGE_SPKG_CONFIGURE([planarity], [
      AC_LANG_PUSH([C])
-     AC_CHECK_HEADER([planarity/planarity.h], [
+     AC_CHECK_HEADER([planarity/graph.h], [
         AC_CHECK_LIB([planarity], [gp_InitGraph], [
          AC_MSG_CHECKING([for planarity version 3.0 or later])
          AC_COMPILE_IFELSE(

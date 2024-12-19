@@ -7,4 +7,3 @@ cdef class SkewPolynomial_finite_order_dense (SkewPolynomial_generic_dense):
 
     cdef _matphir_c(self)
     cdef _matmul_c(self)
-
