@@ -16,6 +16,7 @@ py.install_sources(
   'module.pxd',
   'module_functors.py',
   'multi_filtered_vector_space.py',
+  'numpy_util.pxd',
   'quotient_module.py',
   'real_double_vector.py',
   'submodule.py',
