@@ -4669,7 +4669,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             ...
             AlarmInterrupt
             sage: f.lift(I)
-            Polynomial Sequence with 256 Polynomials in 2 Variables
+            Polynomial Sequence with 324 Polynomials in 2 Variables
         """
         cdef ideal *fI = idInit(1, 1)
         cdef ideal *_I
