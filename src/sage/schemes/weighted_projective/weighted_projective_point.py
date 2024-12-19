@@ -476,6 +476,9 @@ class SchemeMorphism_point_weighted_projective_field(SchemeMorphism_point_weight
                     break
                 if c:
                     weights = X.extended_codomain().weights()
+                    # we only normalise when weights[last] == 1, otherwise we have to take roots
+                    if weights[last] != 1:
+                        break
                     for j in range(last):
                         v[j] /= c ** weights[j]
                     v[last] = R.one()
