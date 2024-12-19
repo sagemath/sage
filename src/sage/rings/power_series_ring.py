@@ -1323,7 +1323,9 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             return self.__laurent_series_ring
 
 
-class PowerSeriesRing_domain(PowerSeriesRing_generic, ring.IntegralDomain):
+class PowerSeriesRing_domain(PowerSeriesRing_generic):
+    _default_category = _IntegralDomains
+
     def fraction_field(self):
         """
         Return the Laurent series ring over the fraction field of the base
