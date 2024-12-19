@@ -2066,7 +2066,73 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             return self._dft_seminormal(mult=mult)
         if form == "modular":
             return self._dft_modular()
+        if form == "unitary":
+            return self._dft_unitary()
         raise ValueError("invalid form (= %s)" % form)
+
+    def _dft_unitary(self):
+        """
+        Return the unitary form of the discrete Fourier transform for ``self``.
+
+        EXAMPLES::
+
+            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
+            sage: QS3._dft_unitary()
+            [-1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2]
+            [       1/3*sqrt3        1/6*sqrt3       -1/3*sqrt3       -1/6*sqrt3       -1/6*sqrt3        1/6*sqrt3]
+            [               0              1/2                0              1/2             -1/2             -1/2]
+            [               0              1/2                0             -1/2              1/2             -1/2]
+            [       1/3*sqrt3       -1/6*sqrt3        1/3*sqrt3       -1/6*sqrt3       -1/6*sqrt3       -1/6*sqrt3]
+            [-1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2]
+
+        TESTS::
+
+            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
+            sage: U = QS3._dft_unitary()
+            sage: U*U.H == identity_matrix(QS3.group().cardinality())
+            True
+            sage: GF5S3 = SymmetricGroupAlgebra(GF(5**2), 3)
+            sage: U = GF5S3._dft_unitary()
+            sage: U*U.H == identity_matrix(GF5S3.group().cardinality())
+            True
+        """
+        from sage.matrix.special import diagonal_matrix
+        F = self.base_ring()
+        G = self.group()
+
+        if F.characteristic() == 0:
+            from sage.misc.functional import sqrt
+            from sage.rings.number_field.number_field import NumberField
+            dft_matrix = self.dft()
+            diag = (dft_matrix * dft_matrix.H).diagonal()
+            primes_needed = {factor for d in diag for factor, _ in d.squarefree_part().factor()}
+            names = [f"sqrt{factor}" for factor in primes_needed]
+            x = PolynomialRing(QQ, 'x').gen()
+            K = NumberField([x**2 - d for d in primes_needed], names=names)
+            sqrt_diag_inv = diagonal_matrix([~sqrt(K(d)) for d in diag])
+            return sqrt_diag_inv * dft_matrix
+
+        # positive characteristic case
+        assert F.characteristic() > 0
+        if not (F.is_field() and F.is_finite() and F.order().is_square()):
+            raise ValueError("the base ring must be a finite field of square order")
+        if F.characteristic().divides(G.cardinality()):
+            raise NotImplementedError("not implemented when p|n!; dimension of invariant forms may be greater than one")
+        q = F.order().sqrt()
+
+        def conj_square_root(u):
+            if not u:
+                return F.zero()
+            z = F.multiplicative_generator()
+            k = u.log(z)
+            if k % (q+1) != 0:
+                raise ValueError(f"Unable to factor as {u} is not in base field GF({q})")
+            return z ** ((k//(q+1)) % (q-1))
+
+        dft_matrix = self.dft()
+        sign_diag = (dft_matrix * dft_matrix.H).diagonal()
+        conj_sqrt_diag_inv = diagonal_matrix([~conj_square_root(d) for d in sign_diag])
+        return conj_sqrt_diag_inv * dft_matrix
 
     def _dft_seminormal(self, mult='l2r'):
         """
