@@ -1,2 +1,1 @@
-from sage.schemes.weighted_projective.weighted_projective_curve import WeightedProjectiveCurve
 from sage.schemes.weighted_projective.weighted_projective_space import WeightedProjectiveSpace
