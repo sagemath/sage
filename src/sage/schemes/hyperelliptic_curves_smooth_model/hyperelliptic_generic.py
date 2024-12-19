@@ -20,10 +20,18 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
 
         # TODO: is this simply genus + 1
         self._d = max(h.degree(), (f.degree() + 1) // 2)
+        assert self._d == self._genus + 1
 
         # Initalise the underlying curve
         A = WeightedProjectiveSpace([1, self._genus + 1, 1], self._base_ring)
         WeightedProjectiveCurve.__init__(self, A, defining_polynomial)
+
+    def weights(self) -> list[int]:
+        """
+        Return the weights of the weighted projective space this hyperelliptic curve lives in, i.e.
+        `[1, g + 1, 1]`, where `g` is the genus of the curve.
+        """
+        return [1, self._genus + 1, 1]
 
     def _repr_(self):
         old_gen = str(self._polynomial_ring.gen())

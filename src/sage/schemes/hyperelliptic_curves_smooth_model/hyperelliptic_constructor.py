@@ -299,7 +299,7 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
         raise ValueError(f"arguments f = {f} and h = {h} must define a curve of genus at least one.")
 
     # Compute the smooth model for the hyperelliptic curve
-    # using a weighted projective space (via Toric Variety)
+    # using a weighted projective space
     defining_polynomial = __defining_polynomial(f, h)
 
     # -----------------------
