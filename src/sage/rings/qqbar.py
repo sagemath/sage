@@ -7083,7 +7083,7 @@ class AlgebraicPolynomialTracker(SageObject):
         return roots
 
     def exactify(self):
-        """
+        r"""
         Compute a common field that holds all of the algebraic coefficients
         of this polynomial, then factor the polynomial over that field.
         Store the factors for later use (ignoring multiplicity).
@@ -7107,12 +7107,13 @@ class AlgebraicPolynomialTracker(SageObject):
             sage: p = AA(2)^(1/100) * x + AA(3)^(1/100)
             sage: cp = AA.common_polynomial(p)
             sage: from sage.doctest.util import ensure_interruptible_after
-            sage: with ensure_interruptible_after(0.5): cp.generator()
-            doctest:warning...
-            RuntimeWarning: cypari2 leaked ... bytes on the PARI stack
-            sage: with ensure_interruptible_after(0.5): cp.generator()
-            doctest:warning...
-            RuntimeWarning: cypari2 leaked ... bytes on the PARI stack
+            sage: from warnings import catch_warnings, filterwarnings
+            sage: with ensure_interruptible_after(0.5), catch_warnings():
+            ....:     filterwarnings("ignore", r"cypari2 leaked \d+ bytes on the PARI stack")
+            ....:     cp.generator()
+            sage: with ensure_interruptible_after(0.5), catch_warnings():
+            ....:     filterwarnings("ignore", r"cypari2 leaked \d+ bytes on the PARI stack")
+            ....:     cp.generator()
         """
         if self._exact:
             return
