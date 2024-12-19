@@ -4656,7 +4656,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         Ensure interrupt does not make the internal state inconsistent::
 
             sage: R.<x,y> = QQ[]
-            sage: n = 15  # chosen so that the computation takes > 1 second but not excessively long.
+            sage: n = 17  # chosen so that the computation takes > 1 second but not excessively long.
             ....: # when Singular improves the algorithm or hardware gets faster, increase n.
             sage: I = R.ideal([(x-i)*(y-j) for i in (0..n) for j in (0..n)])
             sage: f = prod((x-i)*(y-j) for i in (0..n) for j in (0..n))
@@ -5211,7 +5211,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         Ensure interrupt does not make the internal state inconsistent::
 
             sage: R.<x,y,z> = PolynomialRing(QQ, order="lex")
-            sage: n = 250  # chosen so that the computation takes > 1 second but not excessively long.
+            sage: n = 300  # chosen so that the computation takes > 1 second but not excessively long.
             ....: # when Singular improves the algorithm or hardware gets faster, increase n.
             sage: f = z^n-2
             sage: g = z^2-z-x^2*y-x*y^3
@@ -5225,9 +5225,9 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             AlarmInterrupt
             sage: q, r = f.quo_rem(g)
             sage: len(dict(q))
-            178748
+            307638
             sage: len(dict(r))
-            7993
+            11409
         """
         cdef poly *quo
         cdef poly *rem
