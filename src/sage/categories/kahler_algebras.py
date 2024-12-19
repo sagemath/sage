@@ -101,16 +101,15 @@ class KahlerAlgebras(Category_over_base_ring):
                 ...
                 ValueError: k must be less than r < 2
             """
-            if k < (r/2):
-                basis_k = []
-                lefschetz_el = self.lefschetz_element()
-                for b in self.basis():
-                    if b.homogeneous_degree() == k:
-                        basis_k.append(b)
-                coeff = []
-                for i,el in enumerate(basis_k):
-                    for j in range(i, len(basis_k)):
-                        coeff.append((el * (lefschetz_el ** (r-(2*k)) * basis_k[j])).degree())
-                return QuadraticForm(self.base_ring(), len(basis_k), coeff)
-            else:
+            if k >= (r/2):
                 raise ValueError("k must be less than r < 2")
+            basis_k = []
+            lefschetz_el = self.lefschetz_element()
+            for b in self.basis():
+                if b.homogeneous_degree() == k:
+                    basis_k.append(b)
+            coeff = []
+            for i,el in enumerate(basis_k):
+                for j in range(i, len(basis_k)):
+                    coeff.append((el * (lefschetz_el ** (r-(2*k)) * basis_k[j])).degree())
+            return QuadraticForm(self.base_ring(), len(basis_k), coeff)           
