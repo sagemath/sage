@@ -50,10 +50,11 @@ def factor_using_pari(n, int_=False, debug_level=0, proof=None):
 
     Check that PARI's debug level is properly reset (:issue:`18792`)::
 
-        sage: alarm(0.5); factor(2^1000 - 1, verbose=5)
-        Traceback (most recent call last):
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: with ensure_interruptible_after(0.5): factor(2^1000 - 1, verbose=5)
         ...
-        AlarmInterrupt
+        doctest:warning...
+        RuntimeWarning: cypari2 leaked ... bytes on the PARI stack
         sage: pari.get_debug_level()
         0
     """

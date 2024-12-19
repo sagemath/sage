@@ -1975,10 +1975,8 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: A = random_matrix(GF(2), n, m)
             sage: x = random_vector(GF(2), m)
             sage: B = A*x
-            sage: alarm(0.5); sol = A.solve_right(B)
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.5): sol = A.solve_right(B)
         """
         cdef mzd_t *B_entries = (<Matrix_mod2_dense>B)._entries
 

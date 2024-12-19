@@ -789,10 +789,8 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         (see :issue:`21651`)::
 
             sage: C = LinearCode(random_matrix(GF(47), 25, 35))
-            sage: alarm(0.5); C.canonical_representative()                              # needs sage.libs.gap
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.5): C.canonical_representative()    # needs sage.libs.gap
         """
         aut_group_can_label = self._canonize(equivalence)
         return aut_group_can_label.get_canonical_form(), \

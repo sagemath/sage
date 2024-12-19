@@ -2533,10 +2533,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: K.<a> = GF(2^8)
             sage: x = polygen(K)
             sage: pol = x^1000000 + x + a
-            sage: alarm(0.5); pol.any_root()
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.5): pol.any_root()
 
         Check root computation over large finite fields::
 
