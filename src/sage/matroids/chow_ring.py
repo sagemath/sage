@@ -343,7 +343,7 @@ class ChowRing(QuotientRing_generic):
     def poincare_pairing(self, el1, el2, r):
         r"""
         Return the Poincaré pairing of any two elements of the
-        Kähler algebra.
+        Chow ring.
 
         EXAMPLES::
 
@@ -361,9 +361,9 @@ class ChowRing(QuotientRing_generic):
         new_el = self.base_ring().zero()
         for i in hom_components1:
             for j in hom_components2:
-                if i == r - j:
-                    new_el += hom_components1[i] * hom_components2[j]
-                #  the 'else' case is new_el += self.base_ring().zero()
+                if r - i not in hom_components2:
+                    continue
+                new_el += hom_components1[i] * hom_components2[j]
         return new_el.degree()
 
     class Element(QuotientRing_generic.Element):
