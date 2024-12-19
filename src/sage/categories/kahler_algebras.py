@@ -1,5 +1,5 @@
 r"""
-Category of Kähler Algebras.
+Kähler Algebras.
 
 AUTHORS:
 
