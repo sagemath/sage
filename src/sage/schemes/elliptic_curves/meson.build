@@ -1,4 +1,5 @@
 py.install_sources(
+  'addition_formulas_ring.py',
   'BSD.py',
   'Qcurves.py',
   'all.py',
