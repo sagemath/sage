@@ -78,7 +78,8 @@ class FilteredModulesCategory(RegressiveCovariantConstructionCategory, Category_
         EXAMPLES::
 
             sage: Modules(ZZ).Filtered()._make_named_class_key('element_class')
-            Category of modules over Integer Ring
+            (<class 'sage.categories.modules.Modules'>,
+             Join of Category of Dedekind domains and Category of euclidean domains and Category of noetherian rings and Category of infinite enumerated sets and Category of metric spaces)
 
         Note that we cannot simply return the base as in
         :meth:`.Category_over_base._make_named_class_key` because of the following
@@ -96,9 +97,11 @@ class FilteredModulesCategory(RegressiveCovariantConstructionCategory, Category_
             sage: ModulesQQ.Filtered()
             Category of filtered modules over Rational Field
             sage: VectorSpacesQQ.Filtered()._make_named_class_key('parent_class')
-            Category of vector spaces over Rational Field
+            (<class 'sage.categories.vector_spaces.VectorSpaces'>,
+             Join of Category of number fields and Category of quotient fields and Category of metric spaces)
             sage: ModulesQQ.Filtered()._make_named_class_key('parent_class')
-            Category of modules over Rational Field
+            (<class 'sage.categories.modules.Modules'>,
+             Join of Category of number fields and Category of quotient fields and Category of metric spaces)
             sage: assert (VectorSpacesQQ.Filtered()._make_named_class_key('parent_class') !=
             ....:         ModulesQQ.Filtered()._make_named_class_key('parent_class'))
             sage: VectorSpacesQQ.Filtered().parent_class
@@ -111,6 +114,7 @@ class FilteredModulesCategory(RegressiveCovariantConstructionCategory, Category_
         the same parent class::
 
             sage: Modules(QQ).Filtered().parent_class == Modules(QQ.category()).Filtered().parent_class
+            True
         """
         return (type(self._base_category).__base__, super()._make_named_class_key(name))
 
