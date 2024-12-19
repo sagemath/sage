@@ -2831,6 +2831,12 @@ class CategoryWithParameters(Category):
         if isinstance(cls, DynamicMetaclass):
             cls = cls.__base__
         key = (cls, name, self._make_named_class_key(name))
+        if debug.test_category_graph and key in self._make_named_class_cache:
+            new_cls = Category._make_named_class(self, name, method_provider, cache=cache, **options)
+            old_cls = self._make_named_class_cache[key]
+            if old_cls.mro()[1:] != new_cls.mro()[1:]:
+                print(f"Categories with same _make_named_class_key has different MRO: {self._all_super_categories=}",
+                      [(i, a, b) for i, (a, b) in enumerate(zip(old_cls.mro()[1:], new_cls.mro()[1:])) if a!=b])
         try:
             return self._make_named_class_cache[key]
         except KeyError:
