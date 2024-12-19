@@ -42,31 +42,9 @@ class KahlerAlgebras(Category_over_base_ring):
         return [GradedAlgebrasWithBasis(self.base_ring())]
 
     class ParentMethods:
-        def poincare_pairing(self, el1, el2, r):
-            r"""
-            Return the Poincaré pairing of any two elements of the
-            Kähler algebra.
-
-            EXAMPLES::
-
-                sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
-                sage: A0, A1, A2, A3, A4, A5, A013, A025, A04, A124, A15, A23, A345, A012345 = ch.gens()
-                sage: u = ch(-1/6*A2*A012345 + 41/48*A012345^2); u
-                -1/6*A2*A012345 + 41/48*A012345^2
-                sage: v = ch(-A345^2 - 1/4*A345); v
-                -A345^2 - 1/4*A345
-                sage: ch.poincare_pairing(v, u, ch.matroid().rank())
-                3
-            """
-            hom_components1 = el1.lift().homogeneous_components()
-            hom_components2 = el2.lift().homogeneous_components()
-            new_el = self.base_ring().zero()
-            for i in hom_components1:
-                for j in hom_components2:
-                    if i == r - j:
-                        new_el += hom_components1[i] * hom_components2[j]
-                    #  the 'else' case is new_el += self.base_ring().zero()
-            return new_el.degree()
+        @abstract_method
+        def poincare_pairing():
+            pass
 
         @abstract_method
         def lefschetz_element():
