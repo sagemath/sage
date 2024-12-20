@@ -2858,19 +2858,17 @@ class CategoryWithParameters(Category):
             cls = cls.__base__
         key = (cls, name, self._make_named_class_key(name))
         if debug.test_category_graph and key in self._make_named_class_cache:
-            new_cls = Category._make_named_class(self, name, method_provider, cache=cache, **options)
             old_cls = self._make_named_class_cache[key]
-            if old_cls.mro()[1:] != new_cls.mro()[1:]:
-                last_category = self._make_named_class_last_category_cache[key]
+            last_category = self._make_named_class_last_category_cache[key]
+            # new_cls = Category._make_named_class(self, name, method_provider, cache=cache, **options)
+            # if old_cls.mro()[1:] != new_cls.mro()[1:]:
+            # ^ cannot do the above because :meth:`_make_named_class` may refine the category of the ring thus modifies key
+            mismatch = [(i, a, b)
+                        for i, (a, b) in enumerate(zip(self._all_super_categories[1:], last_category._all_super_categories[1:]))
+                        if getattr(a, name) != getattr(b, name)]
+            if mismatch:
                 print(f"Categories with same _make_named_class_key has different MRO: {self._all_super_categories=}",
-                      f"{last_category=} {last_category._all_super_categories=}",
-                      # List of mismatching Python classes in the MRO
-                      [(i, a, b) for i, (a, b) in enumerate(zip(old_cls.mro()[1:], new_cls.mro()[1:])) if a!=b],
-                      # List of mismatching categories (unlike the above, it's natural for the following to
-                      # have many items since ``VectorSpaces(QQ).parent_class is VectorSpaces(QQ.category()).parent_class``
-                      [(i, a, b) for i, (a, b) in enumerate(zip(
-                          last_category._all_super_categories[1:], self._all_super_categories[1:])) if a!=b],
-                      )
+                      f"{last_category=} {last_category._all_super_categories=} {mismatch=}")
         try:
             return self._make_named_class_cache[key]
         except KeyError:

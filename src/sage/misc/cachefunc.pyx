@@ -1975,7 +1975,16 @@ cdef class CachedMethodCaller(CachedFunction):
                     raise
                 return w
         else:
-            raise NotImplementedError
+            try:
+                try:
+                    return cache[k]
+                except TypeError:  # k is not hashable
+                    k = dict_key(k)
+                    return cache[k]
+            except KeyError:
+                w = self._instance_call(*args, **kwds)
+                cache[k] = w
+                return w
 
     def cached(self, *args, **kwds):
         """
@@ -2342,7 +2351,10 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
                     raise
             return self.cache
         else:
-            raise NotImplementedError
+            if self.cache is None:
+                f = self.f
+                self.cache = f(self._instance)
+            return self.cache
 
     def set_cache(self, value):
         """
