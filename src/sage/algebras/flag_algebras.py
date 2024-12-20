@@ -207,7 +207,7 @@ from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import Element, get_coercion_model
-from sage.all import QQ, NN, RR, Integer, Infinity
+from sage.all import QQ, NN, RR, Integer, infinity
 from sage.algebras.flag import Flag, Pattern, inductive_generator, overlap_generator
 
 from sage.categories.sets_cat import Sets
