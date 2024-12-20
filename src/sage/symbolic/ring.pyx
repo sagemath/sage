@@ -44,6 +44,7 @@ from sage.symbolic.expression cimport (
 )
 
 from sage.categories.fields import Fields
+from sage.categories.commutative_rings import CommutativeRings
 from sage.structure.element cimport Element, Expression
 from sage.structure.parent cimport Parent
 from sage.categories.morphism cimport Morphism
@@ -86,7 +87,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         if base_ring is None:
             base_ring = self
-        Parent.__init__(self, base_ring, category=Fields())
+        Parent.__init__(self, base_ring, category=CommutativeRings())
         self._populate_coercion_lists_(convert_method_name='_symbolic_')
         self.symbols = {}
 

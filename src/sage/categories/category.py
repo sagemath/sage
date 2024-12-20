@@ -104,6 +104,7 @@ A parent ``P`` is in a category ``C`` if ``P.category()`` is a subcategory of
 
 import inspect
 from warnings import warn
+from itertools import zip_longest
 from sage.misc.abstract_method import abstract_method, abstract_methods_of_class
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.c3_controlled import _cmp_key, _cmp_key_named, C3_sorted_merge
@@ -2856,19 +2857,31 @@ class CategoryWithParameters(Category):
         cls = self.__class__
         if isinstance(cls, DynamicMetaclass):
             cls = cls.__base__
+        if debug.test_category_graph and hasattr(self, "_Category_over_base__base"):
+            previous_base = self._Category_over_base__base
+            if hasattr(previous_base, "category"):
+                previous_base_category = previous_base.category()
         key = (cls, name, self._make_named_class_key(name))
-        if debug.test_category_graph and key in self._make_named_class_cache:
+        if False and debug.test_category_graph and key in self._make_named_class_cache:
+            key2 = (cls, name, self._make_named_class_key(name))
+            assert key == key2
             old_cls = self._make_named_class_cache[key]
             last_category = self._make_named_class_last_category_cache[key]
             # new_cls = Category._make_named_class(self, name, method_provider, cache=cache, **options)
             # if old_cls.mro()[1:] != new_cls.mro()[1:]:
             # ^ cannot do the above because :meth:`_make_named_class` may refine the category of the ring thus modifies key
+            # mismatch = [(i, a, b)
+            #             for i, (a, b) in enumerate(zip(self._all_super_categories[1:], last_category._all_super_categories[1:]))
+            #             if getattr(a, name) != getattr(b, name)]
+            # ^ cannot do the above because :meth:`getattr(a, name)` may also refine the category (Heisenbug)
             mismatch = [(i, a, b)
-                        for i, (a, b) in enumerate(zip(self._all_super_categories[1:], last_category._all_super_categories[1:]))
-                        if getattr(a, name) != getattr(b, name)]
+                        for i, (a, b) in enumerate(zip_longest(self._all_super_categories[1:], last_category._all_super_categories[1:]))
+                        if a is None or b is None or (name in a.__dict__ and name in b.__dict__ and a.__dict__[name] != b.__dict__[name])]
             if mismatch:
+                key3 = (cls, name, self._make_named_class_key(name))
                 print(f"Categories with same _make_named_class_key has different MRO: {self._all_super_categories=}",
-                      f"{last_category=} {last_category._all_super_categories=} {mismatch=}")
+                      f"{last_category=} {last_category._all_super_categories=} {mismatch=}" +
+                      (" (probably Heisenbug)" if key3 != key else ""))
         try:
             return self._make_named_class_cache[key]
         except KeyError:
