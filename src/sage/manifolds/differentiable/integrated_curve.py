@@ -1096,7 +1096,7 @@ class IntegratedCurve(DifferentiableCurve):
         # raise error if coordinates in chart cannot be obtained
 
         initial_coord_basis = chart.frame().at(initial_pt)
-        initial_tgt_vec_comps = list(v0[initial_coord_basis,:]) #idem
+        initial_tgt_vec_comps = list(v0[initial_coord_basis,:])  # idem
 
         dim = self.codomain().dim()
 
@@ -2372,15 +2372,15 @@ class IntegratedCurve(DifferentiableCurve):
             else:
                 if across_charts:
                     for key in self._interpolations:
-                        if key[-8:-1] != '_chart_':       # check if not a subplot
+                        if key[-8:-1] != '_chart_':  # check if not a subplot
                             interpolation_key = key
                             break
                     else:
                         raise ValueError("Did you forget to "
                                          "integrate or interpolate the result?")
                 else:
-                    interpolation_key = next(iter(self._interpolations)) #will
-                # raise error if self._interpolations empty
+                    interpolation_key = next(iter(self._interpolations))
+                    # will raise error if self._interpolations empty
 
             if verbose:
                 print("Plotting from the interpolation associated " +
@@ -2484,7 +2484,7 @@ class IntegratedCurve(DifferentiableCurve):
             raise ValueError("the argument prange must be a " +
                              "tuple/list of 2 elements")
         else:
-            p = prange #'p' declared only for the line below to be shorter
+            p = prange  # 'p' declared only for the line below to be shorter
             if p[0] < param_min or p[0] > param_max or p[1] < param_min or p[1] > param_max:
                 raise ValueError("parameter range should be a " +
                                  "subinterval of the curve domain " +
@@ -3972,18 +3972,19 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
 
         if verbose:
             initial_tgt_space = v0.parent()
-            initial_pt = initial_tgt_space.base_point()#retrieves
-            # the initial point as the base point of the tangent space
-            # to which initial tangent vector belongs
+            initial_pt = initial_tgt_space.base_point()
+            # retrieves the initial point as the base point of the
+            # tangent space to which initial tangent vector belongs
+
             initial_pt_coords = list(initial_pt.coordinates(chart))
-            # previous line converts to list since would otherwise be a
-            # tuple ; will raise error if coordinates in chart are not
-            # known
+            # previous line converts to list since would otherwise be
+            # a tuple ; will raise error if coordinates in chart are
+            # not known
 
             initial_coord_basis = chart.frame().at(initial_pt)
-            initial_tgt_vec_comps = v0[initial_coord_basis,:] # will
-            # raise error if components in coordinate basis are not
-            # known
+            initial_tgt_vec_comps = v0[initial_coord_basis,:]
+            # will raise error if components in coordinate basis are
+            # not known
 
             description = "Geodesic "
             if self._name is not None:
