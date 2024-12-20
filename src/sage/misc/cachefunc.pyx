@@ -2340,8 +2340,6 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
                 except:
                     self.cache = None
                     raise
-                if self.cache is None:
-                    raise RuntimeError("Ineffective cache because function returns None")
             return self.cache
         else:
             raise NotImplementedError
