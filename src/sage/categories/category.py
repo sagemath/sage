@@ -2840,8 +2840,16 @@ class CategoryWithParameters(Category):
             new_cls = Category._make_named_class(self, name, method_provider, cache=cache, **options)
             old_cls = self._make_named_class_cache[key]
             if old_cls.mro()[1:] != new_cls.mro()[1:]:
+                last_category = self._make_named_class_last_category_cache[key]
                 print(f"Categories with same _make_named_class_key has different MRO: {self._all_super_categories=}",
-                      [(i, a, b) for i, (a, b) in enumerate(zip(old_cls.mro()[1:], new_cls.mro()[1:])) if a!=b])
+                      f"{last_category=} {last_category._all_super_categories=}",
+                      # List of mismatching Python classes in the MRO
+                      [(i, a, b) for i, (a, b) in enumerate(zip(old_cls.mro()[1:], new_cls.mro()[1:])) if a!=b],
+                      # List of mismatching categories (unlike the above, it's natural for the following to
+                      # have many items since ``VectorSpaces(QQ).parent_class is VectorSpaces(QQ.category()).parent_class``
+                      [(i, a, b) for i, (a, b) in enumerate(zip(
+                          last_category._all_super_categories[1:], self._all_super_categories[1:])) if a!=b],
+                      )
         try:
             return self._make_named_class_cache[key]
         except KeyError:
@@ -2855,6 +2863,11 @@ class CategoryWithParameters(Category):
             # throw result away and use cached value
             return self._make_named_class_cache[key]
         self._make_named_class_cache[key] = result
+        if debug.test_category_graph:
+            if not hasattr(CategoryWithParameters, '_make_named_class_last_category_cache'):
+                CategoryWithParameters._make_named_class_last_category_cache = {}
+            # if C._make_named_class(name) was called, then _make_named_class_last_category_cache[key] = C
+            self._make_named_class_last_category_cache[key] = self
         return result
 
     @abstract_method
