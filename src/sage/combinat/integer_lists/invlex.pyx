@@ -860,9 +860,12 @@ If you know what you are doing, you can set check=False to skip this warning."""
 
         OUTPUT:
 
-        ``None`` if this method finds a proof that there
+        ``True`` if this method finds a proof that there
         exists an upper bound on the length. Otherwise a
         :exc:`ValueError` is raised.
+
+        Note that :func:`cached_method` does not work with methods
+        returning ``None``, so ``True`` is returned instead.
 
         EXAMPLES::
 
@@ -1002,20 +1005,20 @@ If you know what you are doing, you can set check=False to skip this warning."""
         """
         # Trivial cases
         if self.max_length < Infinity:
-            return
+            return True
         if self.max_sum < self.min_sum:
-            return
+            return True
         if self.min_slope > self.max_slope:
-            return
+            return True
         if self.max_slope < 0:
-            return
+            return True
         if self.ceiling.limit() < self.floor.limit():
-            return
+            return True
         if self.ceiling.limit() == 0:
             # This assumes no trailing zeroes
-            return
+            return True
         if self.min_slope > 0 and self.ceiling.limit() < Infinity:
-            return
+            return True
 
         # Compute a lower bound on the sum of floor(i) for i=1 to infinity
         if self.floor.limit() > 0 or self.min_slope > 0:
@@ -1028,10 +1031,10 @@ If you know what you are doing, you can set check=False to skip this warning."""
             floor_sum_lower_bound = Infinity
 
         if self.max_sum < floor_sum_lower_bound:
-            return
+            return True
         if self.max_sum == floor_sum_lower_bound and self.max_sum < Infinity:
             # This assumes no trailing zeroes
-            return
+            return True
 
         # Variant on ceiling.limit() ==0 where we actually discover that the ceiling limit is 0
         if ( self.max_slope == 0 and
@@ -1039,13 +1042,13 @@ If you know what you are doing, you can set check=False to skip this warning."""
               (self.ceiling.limit_start() < Infinity and
                any(self.ceiling(i) == 0 for i in range(self.ceiling.limit_start()+1)))
              ) ):
-            return
+            return True
 
         limit_start = max(self.ceiling.limit_start(), self.floor.limit_start())
         if limit_start < Infinity:
             for i in range(limit_start+1):
                 if self.ceiling(i) < self.floor(i):
-                    return
+                    return True
 
         raise ValueError("could not prove that the specified constraints yield a finite set")
 
