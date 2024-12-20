@@ -2073,13 +2073,18 @@ class Category(UniqueRepresentation, SageObject):
         Return the subcategory of the objects of ``self`` satisfying
         the given ``axiom``.
 
+        Note that this is a private method thus should not be directly
+        used, see below.
+
         INPUT:
 
         - ``axiom`` -- string, the name of an axiom
 
         EXAMPLES::
 
-            sage: Sets()._with_axiom("Finite")
+            sage: Sets()._with_axiom("Finite")  # not idiomatic
+            Category of finite sets
+            sage: Sets().Finite()  # recommended
             Category of finite sets
 
             sage: type(Magmas().Finite().Commutative())
@@ -2095,7 +2100,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: Sets()._with_axiom("Associative")
             Category of sets
 
-        .. WARNING:: This may be changed in the future to raising an error.
+        .. WARNING:: This may be changed in the future to raise an error.
         """
         return Category.join(self._with_axiom_as_tuple(axiom))
 
@@ -3103,6 +3108,9 @@ class JoinCategory(CategoryWithParameters):
         """
         Return the category obtained by adding an axiom to ``self``.
 
+        As with :meth:`Category._with_axiom`, using this method directly is
+        not idiomatic.
+
         .. NOTE::
 
             This is just an optimization of
@@ -3112,7 +3120,9 @@ class JoinCategory(CategoryWithParameters):
         EXAMPLES::
 
             sage: C = Category.join([Monoids(), Posets()])
-            sage: C._with_axioms(["Finite"])
+            sage: C._with_axioms(["Finite"])  # not idiomatic
+            Join of Category of finite monoids and Category of finite posets
+            sage: C.Finite()  # recommended
             Join of Category of finite monoids and Category of finite posets
 
         TESTS:

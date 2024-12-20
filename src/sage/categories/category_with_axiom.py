@@ -2274,7 +2274,6 @@ class CategoryWithAxiom(Category):
                 # need not repeat it here. See the example with
                 # Sets().Finite().Subquotients() or Monoids()
                 continue
-            base_category = base_category._with_axiom(axiom)
             if axiom == "WithBasis":
                 result = result.replace(" over ", " with basis over ", 1)
             elif axiom == "Connected" and "graded " in result:
@@ -2293,7 +2292,7 @@ class CategoryWithAxiom(Category):
                 # Without the space at the end to handle Homsets().Endset()
                 result = result.replace("homsets", "endsets", 1)
             elif axiom == "FinitelyGeneratedAsMagma" and \
-                 not base_category.is_subcategory(AdditiveMagmas()):
+                 not base_category._with_axiom(axiom).is_subcategory(AdditiveMagmas()):
                 result = "finitely generated " + result
             elif axiom == "FinitelyGeneratedAsLambdaBracketAlgebra":
                 result = "finitely generated " + result
