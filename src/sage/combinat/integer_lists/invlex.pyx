@@ -871,6 +871,7 @@ If you know what you are doing, you can set check=False to skip this warning."""
 
             sage: L = IntegerListsLex(4, max_length=4)
             sage: L._check_finiteness()
+            True
 
         The following example is infinite::
 
