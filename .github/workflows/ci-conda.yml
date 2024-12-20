@@ -106,7 +106,7 @@ jobs:
       - name: Test
         if: success() || failure()
         shell: bash -l {0}
-        run: ./sage -python -m pytest --doctest-ignore-import-errors --doctest --isolate -rfEs -s src
+        run: ./sage -python -m pytest --doctest-ignore-import-errors --doctest -rfEs -s src
 
       - name: Print logs
         if: always()
