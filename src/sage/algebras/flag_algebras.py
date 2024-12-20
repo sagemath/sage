@@ -207,17 +207,12 @@ from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import Element, get_coercion_model
-from sage.rings.rational_field import QQ
-from sage.rings.semirings.non_negative_integer_semiring import NN
-from sage.rings.integer import Integer
-from sage.rings.infinity import infinity
+from sage.all import QQ, NN, RR, Integer, Infinity
 from sage.algebras.flag import Flag, Pattern, inductive_generator, overlap_generator
 
 from sage.categories.sets_cat import Sets
 
-from sage.modules.free_module_element import vector
-from sage.matrix.constructor import matrix
-from sage.matrix.special import diagonal_matrix
+from sage.all import vector, matrix, diagonal_matrix
 
 from sage.misc.prandom import randint
 from sage.arith.misc import falling_factorial, binomial, factorial
@@ -930,7 +925,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     def _make_sdp_data_integer(self, sdp_data):
         from sage.arith.functions import lcm
-        from sage.rings.integer import Integer
         block_sizes, target, mat_inds, mat_vals = sdp_data
 
         mat_vals_factor = 1
