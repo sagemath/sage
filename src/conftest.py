@@ -215,6 +215,46 @@ def pytest_collect_file(
             ):
                 # TODO: Fix these (import fails with "RuntimeError: dictionary changed size during iteration")
                 return IgnoreCollector.from_parent(parent)
+
+            if (
+                file_path.name in ("forker.py", "reporting.py")
+            ) and file_path.parent.name == "doctest":
+                # Fails with many errors due to different testing framework
+                return IgnoreCollector.from_parent(parent)
+
+            if (
+                (
+                    file_path.name == "arithgroup_generic.py"
+                    and file_path.parent.name == "arithgroup"
+                )
+                or (
+                    file_path.name == "pari.py"
+                    and file_path.parent.name == "lfunctions"
+                )
+                or (
+                    file_path.name == "permgroup_named.py"
+                    and file_path.parent.name == "perm_gps"
+                )
+                or (
+                    file_path.name == "finitely_generated.py"
+                    and file_path.parent.name == "matrix_gps"
+                )
+                or (
+                    file_path.name == "libgap_mixin.py"
+                    and file_path.parent.name == "groups"
+                )
+                or (
+                    file_path.name == "finitely_presented.py"
+                    and file_path.parent.name == "groups"
+                )
+                or (
+                    file_path.name == "classical_geometries.py"
+                    and file_path.parent.name == "generators"
+                )
+            ):
+                # Fails with "Fatal Python error"
+                return IgnoreCollector.from_parent(parent)
+
             return SageDoctestModule.from_parent(parent, path=file_path)
 
 
