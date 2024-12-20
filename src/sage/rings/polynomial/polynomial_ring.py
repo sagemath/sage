@@ -150,7 +150,7 @@ from sage.categories.morphism import IdentityMorphism
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.rings import Rings
 
-from sage.rings.ring import (Ring, IntegralDomain)
+from sage.rings.ring import Ring, CommutativeRing
 from sage.structure.element import RingElement
 import sage.rings.rational_field as rational_field
 from sage.rings.rational_field import QQ
@@ -1928,8 +1928,7 @@ class PolynomialRing_commutative(PolynomialRing_generic):
         return roots
 
 
-class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_singular_repr,
-                                     IntegralDomain):
+class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_singular_repr, CommutativeRing):
     def __init__(self, base_ring, name='x', sparse=False, implementation=None,
             element_class=None, category=None):
         """
