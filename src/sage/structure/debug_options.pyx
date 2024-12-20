@@ -39,6 +39,7 @@ cdef class DebugOptions_class:
         self.unique_parent_warnings = False
         self.refine_category_hash_check = False
         self.test_category_graph = True
+        self.test_nonrecursive_cachefunc = True
 
     def enable_extra_debugging_during_doctest(self):
         """
@@ -46,6 +47,7 @@ cdef class DebugOptions_class:
         """
         self.refine_category_hash_check = True
         self.test_category_graph = True
+        self.test_nonrecursive_cachefunc = True
 
 
 cdef DebugOptions_class debug = DebugOptions_class()

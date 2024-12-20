@@ -1394,8 +1394,6 @@ class Category(UniqueRepresentation, SageObject):
             method resolution order of the parent and element
             classes. This method checks this.
 
-        .. TODO:: currently, this won't work for hom categories.
-
         EXAMPLES::
 
             sage: C = HopfAlgebrasWithBasis(QQ)
@@ -2728,6 +2726,29 @@ class CategoryWithParameters(Category):
         True
         sage: C1.parent_class is C3.parent_class
         False
+
+    .. NOTE::
+
+        If category ``A`` is a supercategory of category ``B``,
+        and category ``B`` uses the optimization, then so must ``A``.
+
+        For example, ``Modules(ZZ)`` is a supercategory of ``Algebras(ZZ)``,
+        and ``Algebras(ZZ)`` implements the optimization::
+
+            sage: isinstance(Algebras(ZZ), CategoryWithParameters)
+            True
+            sage: Algebras(ZZ).parent_class is Algebras(ZZ.category()).parent_class
+            True
+            sage: Modules(ZZ) in Algebras(ZZ).all_super_categories()
+            True
+
+        This forces ``Modules(ZZ)`` to also implement the optimization::
+
+            sage: Modules(ZZ).parent_class is Modules(ZZ.category()).parent_class
+            True
+
+        This is because the Python MRO must match the supercategory hierarchy.
+        See :meth:`Category._test_category_graph`.
 
     .. automethod:: Category._make_named_class
     """
