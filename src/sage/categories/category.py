@@ -943,6 +943,20 @@ class Category(UniqueRepresentation, SageObject):
             appropriate. Simply because lazy attributes are much
             faster than any method.
 
+        .. NOTE::
+
+            This is not the same as the concept of super category in mathematics.
+            In fact, this is not even the opposite relation of :meth:`is_subcategory`::
+
+                sage: A = VectorSpaces(QQ); A
+                Category of vector spaces over Rational Field
+                sage: B = VectorSpaces(QQ.category()); B
+                Category of vector spaces over (number fields and quotient fields and metric spaces)
+                sage: A.is_subcategory(B)
+                True
+                sage: B in A.all_super_categories()
+                False
+
         EXAMPLES::
 
             sage: C = Rings(); C
@@ -1757,7 +1771,7 @@ class Category(UniqueRepresentation, SageObject):
     # Operations on the lattice of categories
     def is_subcategory(self, c):
         """
-        Return ``True`` if ``self`` is naturally embedded as a subcategory of `c`.
+        Return ``True`` if there is a natural forgetful functor from ``self`` to `c`.
 
         EXAMPLES::
 
@@ -2810,6 +2824,12 @@ class CategoryWithParameters(Category):
             pass
         result = Category._make_named_class(self, name, method_provider,
                                             cache=cache, **options)
+        # the object in the parameter may have had its category refined, which modifies the key, needs to recompute
+        # (problem with mutable objects)
+        key = (cls, name, self._make_named_class_key(name))
+        if key in self._make_named_class_cache:
+            # throw result away and use cached value
+            return self._make_named_class_cache[key]
         self._make_named_class_cache[key] = result
         return result
 
