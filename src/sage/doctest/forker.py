@@ -553,7 +553,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         self.total_walltime_skips = 0
         self.total_performed_tests = 0
         self.total_walltime = 0
-        if not hasattr(self, "_stats"):
+        if sys.version_info.minor < 13:
             self._stats = self._name2ft
 
     def _run(self, test, compileflags, out):
@@ -832,10 +832,10 @@ class SageDocTestRunner(doctest.DocTestRunner):
         self.optionflags = original_optionflags
 
         # Record and return the number of failures and tries.
-        try:
-            self._DocTestRunner__record_outcome(test, failures, tries, walltime_skips)
-        except TypeError:
+        if sys.version_info.minor < 13:
             self._DocTestRunner__record_outcome(test, failures, tries)
+        else:
+            self._DocTestRunner__record_outcome(test, failures, tries, walltime_skips)
         self.total_walltime_skips += walltime_skips
         self.total_performed_tests += tries
         return TestResults(failures, tries)
@@ -952,14 +952,14 @@ class SageDocTestRunner(doctest.DocTestRunner):
         failed = []
         totalt = totalf = 0
         for x in self._stats.items():
-            name, f = x
-            assert f[0] <= f[1]
-            totalt += f[1]
-            totalf += f[0]
-            if not f[1]:
+            name, (f, t, *_) = x
+            assert f <= t
+            totalt += t
+            totalf += f
+            if not t:
                 notests.append(name)
-            elif not f[0]:
-                passed.append((name, f[1]))
+            elif not f:
+                passed.append((name, t))
             else:
                 failed.append(x)
         if verbose:
@@ -977,8 +977,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             print(self.DIVIDER, file=m)
             print(count_noun(len(failed), "item"), "had failures:", file=m)
             failed.sort()
-            for thing, f in failed:
-                print(" %3d of %3d in %s" % (f[0], f[1], thing), file=m)
+            for thing, (f, t, *_) in failed:
+                print(" %3d of %3d in %s" % (f, t, thing), file=m)
         if verbose:
             print(count_noun(totalt, "test") + " in " + count_noun(len(self._stats), "item") + ".", file=m)
             print("%s passed and %s failed." % (totalt - totalf, totalf), file=m)
