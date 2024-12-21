@@ -8526,7 +8526,7 @@ class RegularPartitions_truncated(RegularPartitions):
             True
             sage: [4, 2, 1, 1] in P
             False
-            sage: [0,0,0,0] in P
+            sage: [0, 0, 0, 0] in P
             True
         """
         return len(x) <= self._max_len and RegularPartitions.__contains__(self, x)
@@ -8646,7 +8646,7 @@ class RegularPartitions_bounded(RegularPartitions):
             True
             sage: [4, 2, 1] in P
             False
-            sage: [0,0,0,0,0] in P
+            sage: [0, 0, 0, 0, 0] in P
             True
         """
         return len(x) == 0 or (x[0] <= self.k and RegularPartitions.__contains__(self, x))
@@ -9098,7 +9098,7 @@ class Partitions_length_and_parts_constrained(Partitions):
             sage: Partition([5, 3, 2]) in P
             True
 
-            sage: Partition([5, 3, 2, 0, 0]) in P
+            sage: [5, 3, 2, 0, 0] in P
             True
         """
         if x not in _Partitions:
