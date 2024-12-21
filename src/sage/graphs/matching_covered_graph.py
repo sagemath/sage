@@ -2066,7 +2066,7 @@ class MatchingCoveredGraph(Graph):
         `v` is the end of that edge in `V(K)`, then `M \cap E(K)` is a perfect
         matching of `K - v`::
 
-            sage: K = J.subgraph(vertices=(J.connected_components())[0])
+            sage: K = J.subgraph(vertices=(J.connected_components(sort=True))[0])
             sage: # Let F := \partial_G(K) and T := M \cap F
             sage: F = [edge for edge in G.edge_iterator()
             ....:      if (edge[0] in K and edge[1] not in K)
@@ -2090,7 +2090,7 @@ class MatchingCoveredGraph(Graph):
         `G - B` is factor critical::
 
             sage: all((K.subgraph(vertices=connected_component)).is_factor_critical()
-            ....:     for connected_component in K.connected_components()
+            ....:     for connected_component in K.connected_components(sort=True)
             ....: )
             True
 
@@ -2876,7 +2876,7 @@ class MatchingCoveredGraph(Graph):
             # Let K be a nontrivial odd component of H := G - B. Note that
             # there exists at least one such K since G is nonbipartite
             nontrivial_odd_component = next(
-                (component for component in H.connected_components()
+                (component for component in H.connected_components(sort=True)
                 if len(component) % 2 and len(component) > 1), None
             )
 
@@ -2920,7 +2920,7 @@ class MatchingCoveredGraph(Graph):
         H.delete_vertices(two_vertex_cut)
 
         # Check if all components of H are odd
-        components = H.connected_components()
+        components = H.connected_components(sort=True)
 
         # Find a nontrivial odd component
         if all(len(c) % 2 for c in components):
