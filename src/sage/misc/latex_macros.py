@@ -75,6 +75,7 @@ def produce_latex_macro(name, *sample_args):
          sage: produce_latex_macro('sage.rings.finite_rings.finite_field_constructor.FiniteField', 3)
          '\\newcommand{\\FiniteField}[1]{\\Bold{F}_{#1}}'
     """
+    import sys
     from sage.misc.latex import LatexCall  # type: ignore
     # this import is used inside a string below
     names_split = name.rsplit('.', 1)
@@ -91,12 +92,21 @@ def produce_latex_macro(name, *sample_args):
         args += str(x) + ','
     args += ')'
     loc = locals()
-    exec('from ' + module + ' import ' + real_name, locals = loc)
+    if sys.version_info.minor < 13:
+        exec('from ' + module + ' import ' + real_name)
+    else:
+        exec('from ' + module + ' import ' + real_name, locals = loc)
     if count:
         defn = '[' + str(count) + ']{'
-        defn += eval('str(LatexCall()(' + real_name + args + '))', locals = loc) + '}'
+        if sys.version_info.minor < 13:
+            defn += eval('str(LatexCall()(' + real_name + args + '))') + '}'
+        else:
+            defn += eval('str(LatexCall()(' + real_name + args + '))', locals = loc) + '}'
     else:
-        defn = '{' + eval('str(LatexCall()(' + real_name + '))', locals = loc) + '}'
+        if sys.version_info.minor < 13:
+            defn = '{' + eval('str(LatexCall()(' + real_name + '))') + '}'
+        else:
+            defn = '{' + eval('str(LatexCall()(' + real_name + '))', locals = loc) + '}'
     count = 0
     for x in sample_args:
         count += 1
