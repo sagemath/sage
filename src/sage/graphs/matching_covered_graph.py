@@ -1616,13 +1616,13 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
         """
         if new:
             raise ValueError('loops are not allowed in '
@@ -1657,13 +1657,13 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
         """
         return False
 
@@ -2251,13 +2251,13 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
         """
         return False
 
@@ -3001,13 +3001,13 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
         """
         return []
 
@@ -3068,13 +3068,13 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
         """
         return []
 
@@ -3140,13 +3140,13 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.remove_loops`
         """
         return 0
 
@@ -3232,13 +3232,13 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`,
-            :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allow_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.allows_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.has_loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_edges`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loop_vertices`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.loops`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_loops`
         """
         from collections.abc import Iterable
 
