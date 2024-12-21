@@ -1636,8 +1636,13 @@ class Category(UniqueRepresentation, SageObject):
             sage: type(cls)
             <class 'sage.structure.dynamic_class.DynamicMetaclass'>
         """
-        return self._make_named_class('subcategory_class', 'SubcategoryMethods',
-                                      cache=False, picklable=False)
+        subcategory_class = self._make_named_class('subcategory_class', 'SubcategoryMethods',
+                                                   cache=False, picklable=False)
+        if debug.test_category_graph:
+            # see also _test_category_graph()
+            if subcategory_class.mro()[1:] != [C.subcategory_class for C in self._all_super_categories_proper] + [object]:
+                print(f"Category graph does not match with Python MRO: {subcategory_class=} {subcategory_class.mro()=} {self._all_super_categories=}")
+        return subcategory_class
 
     @lazy_attribute
     def parent_class(self):
