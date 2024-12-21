@@ -90,12 +90,13 @@ def produce_latex_macro(name, *sample_args):
         count += 1
         args += str(x) + ','
     args += ')'
-    exec('from ' + module + ' import ' + real_name)
+    loc = locals()
+    exec('from ' + module + ' import ' + real_name, locals = loc)
     if count:
         defn = '[' + str(count) + ']{'
-        defn += eval('str(LatexCall()(' + real_name + args + '))') + '}'
+        defn += eval('str(LatexCall()(' + real_name + args + '))', locals = loc) + '}'
     else:
-        defn = '{' + eval('str(LatexCall()(' + real_name + '))') + '}'
+        defn = '{' + eval('str(LatexCall()(' + real_name + '))', locals = loc) + '}'
     count = 0
     for x in sample_args:
         count += 1
