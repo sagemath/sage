@@ -2693,7 +2693,7 @@ class MatchingCoveredGraph(Graph):
                     for u, v, w in self.edge_iterator()
                     if (u in X) ^ (v in X)]
 
-                return False, C, X
+                return (False, C, set(X))
 
         return (True, None, None) if coNP_certificate else True
 
