@@ -102,8 +102,8 @@ class Bimodules(CategoryWithParameters):
             sage: Bimodules(Fields(), Rings())._make_named_class_key('element_class')
             (Category of fields, Category of rings)
         """
-        return (self._left_base_ring if isinstance(self._left_base_ring, Category) else self._left_base_ring.category(),
-                self._right_base_ring if isinstance(self._right_base_ring, Category) else self._right_base_ring.category())
+        return (getattr(self._left_base_ring if isinstance(self._left_base_ring, Category) else self._left_base_ring.category(), name),
+                getattr(self._right_base_ring if isinstance(self._right_base_ring, Category) else self._right_base_ring.category(), name))
 
     @classmethod
     def an_instance(cls):

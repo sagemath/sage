@@ -457,6 +457,9 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         """
         return self._base_category
 
+    def _make_named_class_key(self, name):
+        return getattr(self._base_category, name)
+
     def extra_super_categories(self):
         """
         Return the extra super categories of a construction category.

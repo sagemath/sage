@@ -246,10 +246,7 @@ class Category_over_base(CategoryWithParameters):
             sage: Algebras(Fields())._make_named_class_key('morphism_class')
             Category of fields
         """
-        # return getattr(self.__base, name)  # adapted from JoinCategory._make_named_class_key. Will this work?
-        if isinstance(self.__base, Category):
-            return self.__base
-        return self.__base.category()
+        return getattr(self.__base if isinstance(self.__base, Category) else self.__base.category(), name)
 
     @classmethod
     def an_instance(cls):
