@@ -2057,8 +2057,7 @@ class MatchingCoveredGraph(Graph):
 
             sage: J = G.copy()
             sage: J.delete_vertices(B)
-            sage: all(len(K)%2 != 0 for K in J.connected_components())
-            ...
+            sage: all(len(K)%2 != 0 for K in J.connected_components(sort=True))
             True
 
         Let `B` be a maximal barrier in a matching covered graph `G` and let
@@ -2585,7 +2584,7 @@ class MatchingCoveredGraph(Graph):
             sage: C = graphs.CycleGraph(6)
             sage: D = MatchingCoveredGraph(C)
             sage: D.is_brace(coNP_certificate=True)
-            (False, [(0, 5, None), (2, 3, None)], {0, 1, 2})
+            (False, [(1, 2, None), (5, 4, None)], {0, 1, 5})
 
         If the input matching covered graph is nonbipartite, a
         :exc:`ValueError` is thrown::
@@ -2825,7 +2824,12 @@ class MatchingCoveredGraph(Graph):
             sage: K4 = graphs.CompleteGraph(4)
             sage: G = MatchingCoveredGraph(K4)
             sage: G.is_brick(coNP_certificate=True)
-            sage: # K(4)
+            (True, None, None)
+            sage: # K(4) ⊙ K(3, 3) is nonbipartite but not a brick
+            sage: H = graphs.MurtyGraph(); H.delete_edge(0, 1)
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brick(coNP_certificate=True)
+            (False, [(5, 2, None), (6, 3, None), (7, 4, None)], {5, 6, 7})
 
         If the input matching covered graph is bipartite, a
         :exc:`ValueError` is thrown::
