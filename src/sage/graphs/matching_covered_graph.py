@@ -2383,7 +2383,7 @@ class MatchingCoveredGraph(Graph):
 
         - If the input bipartite matching covered graph is a brace, a boolean
           ``True`` is returned if ``coNP_certificate`` is set to ``False``
-          otherwise a pair ``(True, None, None)`` is returned.
+          otherwise a tuple ``(True, None, None)`` is returned.
 
         - If the input bipartite matching covered graph is not a brace, a
           boolean ``False`` is returned if ``coNP_certificate`` is set to
@@ -2414,8 +2414,8 @@ class MatchingCoveredGraph(Graph):
             sage: G.is_brace()
             True
 
-        A circular ladder graph on `2n` vertices for `n \equiv 0 (\mod 2)` is
-        a brace::
+        A circular ladder graph of order eight or more on `2n` vertices for
+        an even `n` is a brace::
 
             sage: n = 10
             sage: CL = graphs.CircularLadderGraph(n)
@@ -2423,8 +2423,8 @@ class MatchingCoveredGraph(Graph):
             sage: G.is_brace()
             True
 
-        A moebius ladder graph on `2n` vertices for `n \equiv 1 (\mod 2)` is
-        a brace::
+        A moebius ladder graph of order six or more on `2n` vertices for an odd
+        `n` is a brace::
 
             sage: n = 11
             sage: ML = graphs.MoebiusLadderGraph(n)
@@ -2602,6 +2602,13 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: the input graph is not bipartite
+
+        .. SEEALSO::
+
+            - :meth:`~sage.graphs.graph.Graph.is_bicritical`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.is_brick`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.bricks_and_braces`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_braces`
         """
         if not self.is_bipartite():
             raise ValueError('the input graph is not bipartite')
