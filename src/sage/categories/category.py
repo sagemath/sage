@@ -2924,24 +2924,14 @@ class CategoryWithParameters(Category):
         The parent class of an algebra depends only on the category of the base ring::
 
             sage: Algebras(ZZ)._make_named_class_key("parent_class")
-            Join of Category of Dedekind domains
-                 and Category of euclidean domains
-                 and Category of noetherian rings
-                 and Category of infinite enumerated sets
-                 and Category of metric spaces
+            <class 'sage.categories.category.JoinCategory.parent_class'>
 
         The morphism class of a bimodule depends only on the category
         of the left and right base rings::
 
             sage: Bimodules(QQ, ZZ)._make_named_class_key("morphism_class")
-            (Join of Category of number fields
-                 and Category of quotient fields
-                 and Category of metric spaces,
-             Join of Category of Dedekind domains
-                 and Category of euclidean domains
-                 and Category of noetherian rings
-                 and Category of infinite enumerated sets
-                 and Category of metric spaces)
+            (<class 'sage.categories.category.JoinCategory.morphism_class'>,
+             <class 'sage.categories.category.JoinCategory.morphism_class'>)
 
         The element class of a join category depends only on the
         element class of its super categories::
@@ -3065,21 +3055,13 @@ class JoinCategory(CategoryWithParameters):
         EXAMPLES::
 
             sage: Modules(ZZ)._make_named_class_key('element_class')
-            Join of Category of Dedekind domains
-                 and Category of euclidean domains
-                 and Category of noetherian rings
-                 and Category of infinite enumerated sets
-                 and Category of metric spaces
+            <class 'sage.categories.category.JoinCategory.element_class'>
             sage: Modules(QQ)._make_named_class_key('parent_class')
-            Join of Category of number fields
-             and Category of quotient fields
-             and Category of metric spaces
+            <class 'sage.categories.category.JoinCategory.parent_class'>
             sage: Schemes(Spec(ZZ))._make_named_class_key('parent_class')
-            Category of schemes
+            <class 'sage.categories.schemes.Schemes.parent_class'>
             sage: ModularAbelianVarieties(QQ)._make_named_class_key('parent_class')
-            Join of Category of number fields
-             and Category of quotient fields
-             and Category of metric spaces
+            <class 'sage.categories.category.JoinCategory.parent_class'>
         """
         return tuple(getattr(cat, name) for cat in self._super_categories)
 

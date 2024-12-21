@@ -78,8 +78,7 @@ class FilteredModulesCategory(RegressiveCovariantConstructionCategory, Category_
         EXAMPLES::
 
             sage: Modules(ZZ).Filtered()._make_named_class_key('element_class')
-            (<class 'sage.categories.modules.Modules'>,
-             Join of Category of Dedekind domains and Category of euclidean domains and Category of noetherian rings and Category of infinite enumerated sets and Category of metric spaces)
+            <class 'sage.categories.modules.Modules.element_class'>
 
         Note that we cannot simply return the base as in
         :meth:`.Category_over_base._make_named_class_key` because of the following
@@ -97,11 +96,9 @@ class FilteredModulesCategory(RegressiveCovariantConstructionCategory, Category_
             sage: ModulesQQ.Filtered()
             Category of filtered modules over Rational Field
             sage: VectorSpacesQQ.Filtered()._make_named_class_key('parent_class')
-            (<class 'sage.categories.vector_spaces.VectorSpaces'>,
-             Join of Category of number fields and Category of quotient fields and Category of metric spaces)
+            <class 'sage.categories.vector_spaces.VectorSpaces.parent_class'>
             sage: ModulesQQ.Filtered()._make_named_class_key('parent_class')
-            (<class 'sage.categories.modules.Modules'>,
-             Join of Category of number fields and Category of quotient fields and Category of metric spaces)
+            <class 'sage.categories.modules.Modules.parent_class'>
             sage: assert (VectorSpacesQQ.Filtered()._make_named_class_key('parent_class') !=
             ....:         ModulesQQ.Filtered()._make_named_class_key('parent_class'))
             sage: VectorSpacesQQ.Filtered().parent_class
