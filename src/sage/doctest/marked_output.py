@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-repl
 """
-Helper for attaching tolerance information to strings
+Helper for attaching metadata to doctest output.
 """
 
 # ****************************************************************************
@@ -24,6 +24,19 @@ Helper for attaching tolerance information to strings
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from typing import TypedDict
+
+from typing_extensions import NotRequired, Unpack
+
+
+class MarkedOutputType(TypedDict):
+    random: NotRequired[bool]
+    rel_tol: NotRequired[float]
+    abs_tol: NotRequired[float]
+    tol: NotRequired[float]
+    bitness_32: NotRequired[str]
+    bitness_64: NotRequired[str]
+
 
 class MarkedOutput(str):
     """
@@ -44,12 +57,15 @@ class MarkedOutput(str):
         sage: MarkedOutput("56 µs")
         '56 \xb5s'
     """
+
     random = False
     rel_tol = 0
     abs_tol = 0
     tol = 0
+    bitness_32 = ""
+    bitness_64 = ""
 
-    def update(self, **kwds):
+    def update(self, **kwargs: Unpack[MarkedOutputType]):
         """
         EXAMPLES::
 
@@ -62,7 +78,7 @@ class MarkedOutput(str):
             sage: s.abs_tol
             1.00000000000000e-7
         """
-        self.__dict__.update(kwds)
+        self.__dict__.update(kwargs)
         return self
 
     def __reduce__(self):
@@ -82,6 +98,11 @@ class MarkedOutput(str):
             1.00000000000000e-7
         """
         return make_marked_output, (str(self), self.__dict__)
+
+    def __eq__(self, value: object) -> bool:
+        if isinstance(value, MarkedOutput):
+            return str(self) == str(value) and self.__dict__ == value.__dict__
+        return False
 
 
 def make_marked_output(s, D):

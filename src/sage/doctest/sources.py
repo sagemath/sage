@@ -29,7 +29,6 @@ AUTHORS:
 # ****************************************************************************
 
 import os
-import sys
 import re
 import random
 import doctest
@@ -59,8 +58,6 @@ double_colon = re.compile(r"^(\s*).*::\s*$")
 code_block = re.compile(r"^(\s*)[.][.]\s*code-block\s*::.*$")
 
 whitespace = re.compile(r"\s*")
-bitness_marker = re.compile('#.*(32|64)-bit')
-bitness_value = '64' if sys.maxsize > (1 << 32) else '32'
 
 # For neutralizing doctests
 find_prompt = re.compile(r"^(\s*)(>>>|sage:)(.*)")
@@ -298,7 +295,6 @@ class DocTestSource:
         if tab_okay is None:
             tab_okay = isinstance(self, TexSource)
         self._init()
-        self.line_shift = 0
         self.parser = SageDocTestParser(self.options.optional,
                                         self.options.long,
                                         probed_tags=self.options.probe,
@@ -326,19 +322,6 @@ class DocTestSource:
                     self._process_doc(doctests, doc, namespace, start)
                     unparsed_doc = False
                 else:
-                    bitness = bitness_marker.search(line)
-                    if bitness:
-                        if bitness.groups()[0] != bitness_value:
-                            self.line_shift += 1
-                            continue
-                        else:
-                            line = line[:bitness.start()] + "\n"
-                    if self.line_shift and (m := sagestart.match(line)):
-                        # We insert empty doctest lines to make up for the removed lines
-                        indent_and_prompt = m.group(1)
-                        doc.extend([indent_and_prompt + "# inserted to compensate for removed conditional doctest output\n"]
-                                   * self.line_shift)
-                        self.line_shift = 0
                     doc.append(line)
                     unparsed_doc = True
             if not in_docstring and (not just_finished or self.start_finish_can_overlap):
@@ -357,7 +340,6 @@ class DocTestSource:
                             start = lineno
                             doc = []
                     else:
-                        self.line_shift = 0
                         start = lineno
                         doc = []
         # In ReST files we can end the file without decreasing the indentation level.
