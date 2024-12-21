@@ -6177,14 +6177,14 @@ class Partitions(UniqueRepresentation, Parent):
                     max_part = min(kwargs['max_part'], n)
                     if max_part < 1:
                         return Partitions_n(-1)
-                    return Partitions_length_and_parts_restricted(n, 1, n, 1, max_part)
+                    return Partitions_length_and_parts_constrained(n, 1, n, 1, max_part)
                 if 'min_part' in kwargs:
                     if not n:
                         return Partitions_n(0)
                     min_part = max(kwargs['min_part'], 1)
                     if min_part > n:
                         return Partitions_n(-1)
-                    return Partitions_length_and_parts_restricted(n, 1, n, min_part, n)
+                    return Partitions_length_and_parts_constrained(n, 1, n, min_part, n)
                 if 'length' in kwargs:
                     return Partitions_nk(n, kwargs['length'])
                 if 'parts_in' in kwargs:
@@ -6237,7 +6237,7 @@ class Partitions(UniqueRepresentation, Parent):
                 if min_part > max_part:
                     return Partitions_n(-1)
 
-                return Partitions_length_and_parts_restricted(n, min_length, max_length, min_part, max_part)
+                return Partitions_length_and_parts_constrained(n, min_length, max_length, min_part, max_part)
 
             # FIXME: should inherit from IntegerListLex, and implement repr, or _name as a lazy attribute
             kwargs['name'] = "Partitions of the integer {} satisfying constraints {}".format(n, ", ".join(["{}={}".format(key, kwargs[key]) for key in sorted(kwargs)]))
@@ -6288,7 +6288,7 @@ class Partitions(UniqueRepresentation, Parent):
                 elif 'max_part' in kwargs and 'max_length' in kwargs:
                     return PartitionsInBox(kwargs['max_length'], kwargs['max_part'])
 
-            return Partitions_all_restricted(**kwargs)
+            return Partitions_all_constrained(**kwargs)
 
         raise ValueError("n must be an integer or be equal to one of "
                          "None, NN, NonNegativeIntegers()")
@@ -6806,14 +6806,14 @@ class Partitions_all(Partitions):
         return self.element_class(self, [new_w[i]+i for i in range(len(new_w))])
 
 
-class Partitions_all_restricted(Partitions):
+class Partitions_all_constrained(Partitions):
     def __init__(self, **kwargs):
         """
         TESTS::
 
-            sage: TestSuite(sage.combinat.partition.Partitions_all_restricted(max_length=3)).run() # long time
+            sage: TestSuite(sage.combinat.partition.Partitions_all_constrained(max_length=3)).run() # long time
         """
-        self._restrictions = kwargs
+        self._constraints = kwargs
         Partitions.__init__(self, is_infinite=True)
 
     def __contains__(self, x):
@@ -6837,7 +6837,7 @@ class Partitions_all_restricted(Partitions):
             True
         """
         try:
-            return mu in Partitions(sum(mu), **self._restrictions)
+            return mu in Partitions(sum(mu), **self._constraints)
         except Exception:
             return False
 
@@ -6849,11 +6849,11 @@ class Partitions_all_restricted(Partitions):
             Partitions satisfying constraints max_length=4, max_part=3, min_length=2
         """
         return "Partitions satisfying constraints " + ", ".join(["{}={}".format(key, value)
-                                                                 for key, value in sorted(self._restrictions.items())])
+                                                                 for key, value in sorted(self._constraints.items())])
 
     def __iter__(self):
         """
-        An iterator for partitions with various restrictions.
+        An iterator for partitions with various constraints.
 
         EXAMPLES::
 
@@ -6864,7 +6864,7 @@ class Partitions_all_restricted(Partitions):
         """
         n = 0
         while True:
-            for p in Partitions(n, **self._restrictions):
+            for p in Partitions(n, **self._constraints):
                 yield self.element_class(self, p)
             n += 1
 
@@ -8929,11 +8929,11 @@ class OrderedPartitions(Partitions):
         return ZZ(ans)
 
 
-##########################################
-# Partitions_length_and_parts_restricted #
-##########################################
+###########################################
+# Partitions_length_and_parts_constrained #
+###########################################
 
-class Partitions_length_and_parts_restricted(Partitions):
+class Partitions_length_and_parts_constrained(Partitions):
     r"""
     The class of all integer partitions having parts and length in a
     given range.
@@ -8941,7 +8941,7 @@ class Partitions_length_and_parts_restricted(Partitions):
     This class is strictly more general than
     :class:`PartitionsGreatestLE`, except that we insist that the
     size of the partition is positive and that neither the
-    restrictions on the parts nor on the length are contradictory.
+    constraints on the parts nor on the length are contradictory.
 
     INPUT:
 
@@ -8953,15 +8953,15 @@ class Partitions_length_and_parts_restricted(Partitions):
 
     EXAMPLES::
 
-        sage: from sage.combinat.partition import Partitions_length_and_parts_restricted
-        sage: Partitions_length_and_parts_restricted(10, 1, 10, 2, 5)
+        sage: from sage.combinat.partition import Partitions_length_and_parts_constrained
+        sage: Partitions_length_and_parts_constrained(10, 1, 10, 2, 5)
         Partitions of 10 whose parts are between 2 and 5
-        sage: list(Partitions_length_and_parts_restricted(9, 3, 4, 2, 4))
+        sage: list(Partitions_length_and_parts_constrained(9, 3, 4, 2, 4))
         [[4, 3, 2], [3, 3, 3], [3, 2, 2, 2]]
 
-        sage: [4,3,2,1] in Partitions_length_and_parts_restricted(10, 1, 10, 2, 10)
+        sage: [4,3,2,1] in Partitions_length_and_parts_constrained(10, 1, 10, 2, 10)
         False
-        sage: [2,2,2,2,2] in Partitions_length_and_parts_restricted(10, 1, 10, 2, 10)
+        sage: [2,2,2,2,2] in Partitions_length_and_parts_constrained(10, 1, 10, 2, 10)
         True
 
     .. WARNING::
@@ -8973,9 +8973,9 @@ class Partitions_length_and_parts_restricted(Partitions):
 
     ::
 
-        sage: Partitions_length_and_parts_restricted(9, 1, 9, 1, 9)
+        sage: Partitions_length_and_parts_constrained(9, 1, 9, 1, 9)
         Partitions of 9
-        sage: Partitions_length_and_parts_restricted(9, 1, 9, 1, 9) == Partitions(9)
+        sage: Partitions_length_and_parts_constrained(9, 1, 9, 1, 9) == Partitions(9)
         False
     """
     def __init__(self, n, min_length, max_length, min_part, max_part):
@@ -8984,8 +8984,8 @@ class Partitions_length_and_parts_restricted(Partitions):
 
         TESTS::
 
-            sage: from sage.combinat.partition import Partitions_length_and_parts_restricted
-            sage: p = Partitions_length_and_parts_restricted(10, 2, 5, 3, 4)
+            sage: from sage.combinat.partition import Partitions_length_and_parts_constrained
+            sage: p = Partitions_length_and_parts_constrained(10, 2, 5, 3, 4)
             sage: TestSuite(p).run()
         """
         if not (1 <= min_part <= max_part <= n):
@@ -9005,18 +9005,18 @@ class Partitions_length_and_parts_restricted(Partitions):
 
         TESTS::
 
-            sage: from sage.combinat.partition import Partitions_length_and_parts_restricted
-            sage: Partitions_length_and_parts_restricted(9, 1, 9, 1, 9)
+            sage: from sage.combinat.partition import Partitions_length_and_parts_constrained
+            sage: Partitions_length_and_parts_constrained(9, 1, 9, 1, 9)
             Partitions of 9
-            sage: Partitions_length_and_parts_restricted(9, 1, 3, 1, 9)
+            sage: Partitions_length_and_parts_constrained(9, 1, 3, 1, 9)
             Partitions of 9 having length at most 3
-            sage: Partitions_length_and_parts_restricted(9, 3, 9, 1, 9)
+            sage: Partitions_length_and_parts_constrained(9, 3, 9, 1, 9)
             Partitions of 9 having length at least 3
-            sage: Partitions_length_and_parts_restricted(9, 1, 9, 2, 9)
+            sage: Partitions_length_and_parts_constrained(9, 1, 9, 2, 9)
             Partitions of 9 whose parts are at least 2
-            sage: Partitions_length_and_parts_restricted(9, 1, 9, 1, 3)
+            sage: Partitions_length_and_parts_constrained(9, 1, 9, 1, 3)
             Partitions of 9 whose parts are at most 3
-            sage: Partitions_length_and_parts_restricted(9, 3, 5, 2, 9)
+            sage: Partitions_length_and_parts_constrained(9, 3, 5, 2, 9)
             Partitions of 9 having length between 3 and 5 and whose parts are at least 2
         """
         if self._min_length == 1 and self._max_length == self._n:
@@ -9096,10 +9096,10 @@ class Partitions_length_and_parts_restricted(Partitions):
 
         EXAMPLES::
 
-            sage: from sage.combinat.partition import Partitions_length_and_parts_restricted
-            sage: list(Partitions_length_and_parts_restricted(9, 1, 2, 3, 9))
+            sage: from sage.combinat.partition import Partitions_length_and_parts_constrained
+            sage: list(Partitions_length_and_parts_constrained(9, 1, 2, 3, 9))
             [[9], [6, 3], [5, 4]]
-            sage: Partitions_length_and_parts_restricted(9, 1, 2, 3, 9).cardinality()
+            sage: Partitions_length_and_parts_constrained(9, 1, 2, 3, 9).cardinality()
             3
 
         TESTS::
