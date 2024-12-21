@@ -9088,7 +9088,7 @@ class Partitions_length_and_parts_constrained(Partitions):
         TESTS::
 
             sage: from sage.combinat.partition import Partitions_length_and_parts_constrained
-            sage: P = Partitions_length_and_parts_constrained(10, 2, 5, 2, 4)
+            sage: P = Partitions_length_and_parts_constrained(10, 2, 4, 2, 5)
             sage: Partition([]) in P
             False
 
