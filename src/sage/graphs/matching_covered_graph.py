@@ -2584,7 +2584,7 @@ class MatchingCoveredGraph(Graph):
             sage: C = graphs.CycleGraph(6)
             sage: D = MatchingCoveredGraph(C)
             sage: D.is_brace(coNP_certificate=True)
-            (False, [(0, 5, None), (2, 3, None)], {0, 1, 2})
+            (False, [(0, 1, None), (4, 3, None)], {0, 4, 5})
 
         If the input matching covered graph is nonbipartite, a
         :exc:`ValueError` is thrown::
