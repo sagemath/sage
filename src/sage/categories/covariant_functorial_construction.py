@@ -457,57 +457,6 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         """
         return self._base_category
 
-    def _make_named_class_key(self, name):
-        """
-        Return what the element/parent/... classes depend on.
-
-        .. SEEALSO::
-
-            - :meth:`.CategoryWithParameters._make_named_class_key`
-
-        EXAMPLES::
-
-            sage: Modules(ZZ).Filtered()._make_named_class_key('element_class')
-            (<class 'sage.categories.modules.Modules'>,
-             Join of Category of Dedekind domains and Category of euclidean domains and Category of noetherian rings and Category of infinite enumerated sets and Category of metric spaces)
-
-        Note that we cannot simply return the base as in
-        :meth:`.Category_over_base._make_named_class_key` because of the following
-        (see :issue:`39154`)::
-
-            sage: VectorSpacesQQ = VectorSpaces(QQ); VectorSpacesQQ
-            Category of vector spaces over Rational Field
-            sage: # ModulesQQ = Modules(QQ)  # doesn't work because...
-            sage: Modules(QQ) is VectorSpacesQQ
-            True
-            sage: ModulesQQ = VectorSpacesQQ.super_categories()[0]; ModulesQQ
-            Category of modules over Rational Field
-            sage: VectorSpacesQQ.Filtered()
-            Category of filtered vector spaces over Rational Field
-            sage: ModulesQQ.Filtered()
-            Category of filtered modules over Rational Field
-            sage: VectorSpacesQQ.Filtered()._make_named_class_key('parent_class')
-            (<class 'sage.categories.vector_spaces.VectorSpaces'>,
-             Join of Category of number fields and Category of quotient fields and Category of metric spaces)
-            sage: ModulesQQ.Filtered()._make_named_class_key('parent_class')
-            (<class 'sage.categories.modules.Modules'>,
-             Join of Category of number fields and Category of quotient fields and Category of metric spaces)
-            sage: assert (VectorSpacesQQ.Filtered()._make_named_class_key('parent_class') !=
-            ....:         ModulesQQ.Filtered()._make_named_class_key('parent_class'))
-            sage: VectorSpacesQQ.Filtered().parent_class
-            <class 'sage.categories.vector_spaces.VectorSpaces.Filtered.parent_class'>
-            sage: ModulesQQ.Filtered().parent_class
-            <class 'sage.categories.filtered_modules.FilteredModules.parent_class'>
-
-        Nevertheless, as explained in :meth:`.Category_over_base._make_named_class_key`,
-        ``Modules(QQ).Filtered()`` and ``Modules(QQ.category()).Filtered()`` must have
-        the same parent class::
-
-            sage: Modules(QQ).Filtered().parent_class == Modules(QQ.category()).Filtered().parent_class
-            True
-        """
-        return getattr(self._base_category, name)
-
     def extra_super_categories(self):
         """
         Return the extra super categories of a construction category.
