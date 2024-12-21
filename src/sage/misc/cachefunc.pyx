@@ -441,7 +441,6 @@ from inspect import isfunction
 
 from sage.misc.weak_dict cimport CachedWeakValueDictionary
 from sage.misc.decorators import decorator_keywords
-from sage.structure.debug_options cimport debug
 
 cdef frozenset special_method_names = frozenset(
     ['__abs__', '__add__',
@@ -1954,37 +1953,16 @@ cdef class CachedMethodCaller(CachedFunction):
         k = self.get_key_args_kwds(args, kwds)
 
         cdef dict cache = <dict>self.cache
-        if debug.test_nonrecursive_cachefunc:
+        try:
             try:
-                try:
-                    hash(k)
-                except TypeError:
-                    k = dict_key(k)
-                result = cache[k]
-                if result is _COMPUTING:
-                    raise RuntimeError("Recursive call to cached method with identical argument not supported")
-                return result
-            except KeyError:
-                assert k not in cache
-                cache[k] = _COMPUTING
-                try:
-                    w = self._instance_call(*args, **kwds)
-                    cache[k] = w
-                except:
-                    del cache[k]
-                    raise
-                return w
-        else:
-            try:
-                try:
-                    return cache[k]
-                except TypeError:  # k is not hashable
-                    k = dict_key(k)
-                    return cache[k]
-            except KeyError:
-                w = self._instance_call(*args, **kwds)
-                cache[k] = w
-                return w
+                return cache[k]
+            except TypeError:  # k is not hashable
+                k = dict_key(k)
+                return cache[k]
+        except KeyError:
+            w = self._instance_call(*args, **kwds)
+            cache[k] = w
+            return w
 
     def cached(self, *args, **kwds):
         """
@@ -2338,23 +2316,10 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             sage: I.gens() is I.gens()
             True
         """
-        if debug.test_nonrecursive_cachefunc:
-            if self.cache is _COMPUTING:
-                raise RuntimeError("Recursive call to cached method with no argument not supported")
-            if self.cache is None:
-                f = self.f
-                self.cache = _COMPUTING
-                try:
-                    self.cache = f(self._instance)
-                except:
-                    self.cache = None
-                    raise
-            return self.cache
-        else:
-            if self.cache is None:
-                f = self.f
-                self.cache = f(self._instance)
-            return self.cache
+        if self.cache is None:
+            f = self.f
+            self.cache = f(self._instance)
+        return self.cache
 
     def set_cache(self, value):
         """
