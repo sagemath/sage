@@ -2269,7 +2269,7 @@ class CategoryWithAxiom(Category):
             result = base_category._repr_object_names()
         for i, axiom in enumerate(reversed(axioms)):
             # TODO: find a more generic way to handle the special cases below
-            if axiom in base_category.axioms():
+            if base_category is not None and axiom in base_category.axioms():
                 # If the base category already has this axiom, we
                 # need not repeat it here. See the example with
                 # Sets().Finite().Subquotients() or Monoids()
@@ -2277,7 +2277,11 @@ class CategoryWithAxiom(Category):
             if i != len(axioms) - 1 or axiom == "FinitelyGeneratedAsMagma":
                 # in the last iteration, base_category is no longer used except for FinitelyGeneratedAsMagma
                 # so as an optimization we don't need to compute this
-                base_category = base_category._with_axiom(axiom)
+                if "subcategory_class" not in base_category.__dict__:
+                    base_category = None
+                    result = "<error> " + result
+                if base_category is not None:
+                    base_category = base_category._with_axiom(axiom)
             if axiom == "WithBasis":
                 result = result.replace(" over ", " with basis over ", 1)
             elif axiom == "Connected" and "graded " in result:
@@ -2296,7 +2300,7 @@ class CategoryWithAxiom(Category):
                 # Without the space at the end to handle Homsets().Endset()
                 result = result.replace("homsets", "endsets", 1)
             elif axiom == "FinitelyGeneratedAsMagma" and \
-                 not base_category.is_subcategory(AdditiveMagmas()):
+                 base_category is not None and not base_category.is_subcategory(AdditiveMagmas()):
                 result = "finitely generated " + result
             elif axiom == "FinitelyGeneratedAsLambdaBracketAlgebra":
                 result = "finitely generated " + result

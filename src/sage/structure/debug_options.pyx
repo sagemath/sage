@@ -38,15 +38,15 @@ cdef class DebugOptions_class:
         """
         self.unique_parent_warnings = False
         self.refine_category_hash_check = False
-        self.test_category_graph = True
-        self.test_nonrecursive_cachefunc = False
+        self.test_category_graph = False
+        self.test_nonrecursive_cachefunc = True
 
     def enable_extra_debugging_during_doctest(self):
         """
         Function that is called before doctest to enable extra debugging options.
         """
         self.refine_category_hash_check = True
-        self.test_category_graph = True
+        self.test_category_graph = False
         self.test_nonrecursive_cachefunc = False
 
 

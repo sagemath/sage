@@ -1640,8 +1640,18 @@ class Category(UniqueRepresentation, SageObject):
                                                    cache=False, picklable=False)
         if debug.test_category_graph:
             # see also _test_category_graph()
-            if subcategory_class.mro()[1:] != [C.subcategory_class for C in self._all_super_categories_proper] + [object]:
-                print(f"Category graph does not match with Python MRO: {subcategory_class=} {subcategory_class.mro()=} {self._all_super_categories=}")
+            previous_all_super_categories = self.__dict__.get("_all_super_categories", None)
+            for C in self._all_super_categories_proper:
+                assert "subcategory_class" in C.__dict__  # avoid Heisenbug (relies on implementation detail of lazy_attribute)
+            mismatch = [(i, a, b)
+                        for i, (a, b) in enumerate(zip_longest(
+                            subcategory_class.mro()[1:],
+                            [C.subcategory_class for C in self._all_super_categories_proper] + [object]
+                            ))
+                        if a is None or b is None or a != b]
+            if mismatch:
+                print(f"Category graph does not match with Python MRO: {subcategory_class=} {subcategory_class.mro()=} {mismatch=}")
+                # we cannot even print self._all_super_categories here otherwise there's a risk of infinite recursion
         return subcategory_class
 
     @lazy_attribute
@@ -2867,9 +2877,10 @@ class CategoryWithParameters(Category):
             if hasattr(previous_base, "category"):
                 previous_base_category = previous_base.category()
         key = (cls, name, self._make_named_class_key(name))
-        if False and debug.test_category_graph and key in self._make_named_class_cache:
+        if debug.test_category_graph:
             key2 = (cls, name, self._make_named_class_key(name))
             assert key == key2
+        if False and debug.test_category_graph and key in self._make_named_class_cache:
             old_cls = self._make_named_class_cache[key]
             last_category = self._make_named_class_last_category_cache[key]
             # new_cls = Category._make_named_class(self, name, method_provider, cache=cache, **options)
@@ -2895,10 +2906,9 @@ class CategoryWithParameters(Category):
                                             cache=cache, **options)
         # the object in the parameter may have had its category refined, which modifies the key, needs to recompute
         # (problem with mutable objects)
-        key = (cls, name, self._make_named_class_key(name))
-        if key in self._make_named_class_cache:
-            # throw result away and use cached value
-            return self._make_named_class_cache[key]
+        if key != (cls, name, self._make_named_class_key(name)):
+            # throw result away and recompute
+            return self._make_named_class(name, method_provider, cache=cache, **options)
         self._make_named_class_cache[key] = result
         if debug.test_category_graph:
             if not hasattr(CategoryWithParameters, '_make_named_class_last_category_cache'):
