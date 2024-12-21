@@ -2584,7 +2584,7 @@ class MatchingCoveredGraph(Graph):
             sage: C = graphs.CycleGraph(6)
             sage: D = MatchingCoveredGraph(C)
             sage: D.is_brace(coNP_certificate=True)
-            (False, [(1, 2, None), (5, 4, None)], {0, 1, 5})
+            (False, [(0, 5, None), (2, 3, None)], {0, 1, 2})
 
         If the input matching covered graph is nonbipartite, a
         :exc:`ValueError` is thrown::
@@ -2637,7 +2637,7 @@ class MatchingCoveredGraph(Graph):
 
                 # For each edge (a, b) in E(H(e)) ∩ M with a in A, b —> a in D(e).
                 # For each edge (a, b) in E(H(e)) with a in A, a —> b in D(e).
-                for a, b, *_ in H.edge_iterator():
+                for a, b in H.edge_iterator(labels=False, sort_vertices=True):
 
                     if a in B:
                         a, b = b, a
@@ -2678,7 +2678,7 @@ class MatchingCoveredGraph(Graph):
                     X = set()
                     dfs(root, X, D.neighbor_out_iterator)
 
-                for a, b in H.edge_iterator(labels=False):
+                for a, b in H.edge_iterator(labels=False, sort_vertices=True):
                     if (a in X) ^ (b in X):
                         x = a if a in A else b
                         color_class = x not in X
@@ -2690,7 +2690,7 @@ class MatchingCoveredGraph(Graph):
 
                 # Compute the nontrivial tight cut C := ∂(Y)
                 C = [(u, v, w) if u in X else (v, u, w)
-                    for u, v, w in self.edge_iterator()
+                    for u, v, w in self.edge_iterator(sort_vertices=True)
                     if (u in X) ^ (v in X)]
 
                 return (False, C, set(X))
