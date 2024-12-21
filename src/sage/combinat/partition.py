@@ -6820,7 +6820,8 @@ class Partitions_all_constrained(Partitions):
         """
         TESTS::
 
-            sage: P = Partitions(max_part=3, max_length=2)
+            sage: from sage.combinat.partition import Partitions_all_constrained
+            sage: P = Partitions_all_constrained(max_part=3, max_length=2)
             sage: Partition([2,1]) in P
             True
             sage: [2,1] in P
@@ -6834,6 +6835,8 @@ class Partitions_all_constrained(Partitions):
             sage: [0] in P
             True
             sage: [] in P
+            True
+            sage: [3,1,0] in P
             True
         """
         try:
@@ -7373,6 +7376,8 @@ class Partitions_nk(Partitions):
             False
             sage: [5] in p
             False
+            sage: [4,1,0] in p
+            True
         """
         return x in _Partitions and sum(x) == self.n and len(x) == self.k
 
@@ -7590,11 +7595,14 @@ class Partitions_parts_in(Partitions):
         """
         TESTS::
 
-            sage: p = Partitions(5, parts_in=[1,2])
+            sage: from sage.combinat.partition import Partitions_parts_in
+            sage: p = Partitions_parts_in(5, [1,2])
             sage: [2,1,1,1] in p
             True
             sage: [4,1] in p
             False
+            sage: [2,1,1,1,0] in p
+            True
         """
         return (x in _Partitions and sum(x) == self.n and
                 all(p in self.parts for p in x))
@@ -7945,6 +7953,12 @@ class Partitions_starting(Partitions):
             True
             sage: [3] in p
             False
+
+        TESTS::
+
+            sage: from sage.combinat.partition import Partitions_starting
+            sage: [2,1,0] in Partitions_starting(3, [2, 1])
+            True
         """
         return x in Partitions_n(self.n) and x <= self._starting
 
@@ -8057,6 +8071,12 @@ class Partitions_ending(Partitions):
             False
             sage: [2,1] in p
             False
+
+        TESTS::
+
+            sage: from sage.combinat.partition import Partitions_ending
+            sage: [4,0] in Partitions_ending(3, [2, 2])
+            True
         """
         return x in Partitions_n(self.n) and x >= self._ending
 
@@ -8157,6 +8177,8 @@ class PartitionsInBox(Partitions):
             sage: [3,1] in PartitionsInBox(3, 2)
             False
             sage: [3,1] in PartitionsInBox(2, 3)
+            True
+            sage: [3,1,0] in PartitionsInBox(2, 3)
             True
         """
         return x in _Partitions and len(x) <= self.h \
@@ -8333,7 +8355,8 @@ class RegularPartitions(Partitions):
         """
         TESTS::
 
-            sage: P = Partitions(regular=3)
+            sage: from sage.combinat.partition import RegularPartitions
+            sage: P = RegularPartitions(3)
             sage: [5] in P
             True
             sage: [] in P
@@ -8495,13 +8518,16 @@ class RegularPartitions_truncated(RegularPartitions):
         """
         TESTS::
 
-            sage: P = Partitions(regular=4, max_length=3)
+            sage: from sage.combinat.partition import RegularPartitions_truncated
+            sage: P = RegularPartitions_truncated(4, 3)
             sage: [3, 3, 3] in P
             True
             sage: [] in P
             True
             sage: [4, 2, 1, 1] in P
             False
+            sage: [0,0,0,0] in P
+            True
         """
         return len(x) <= self._max_len and RegularPartitions.__contains__(self, x)
 
@@ -8612,13 +8638,16 @@ class RegularPartitions_bounded(RegularPartitions):
         """
         TESTS::
 
-            sage: P = Partitions(regular=4, max_part=3)
+            sage: from sage.combinat.partition import RegularPartitions_bounded
+            sage: P = RegularPartitions_bounded(4, 3)
             sage: [3, 3, 3] in P
             True
             sage: [] in P
             True
             sage: [4, 2, 1] in P
             False
+            sage: [0,0,0,0,0] in P
+            True
         """
         return len(x) == 0 or (x[0] <= self.k and RegularPartitions.__contains__(self, x))
 
@@ -8699,11 +8728,14 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
         """
         TESTS::
 
-            sage: P = Partitions(5, regular=3)
+            sage: from sage.combinat.partition import RegularPartitions_n
+            sage: P = RegularPartitions_n(5, 3)
             sage: [3, 1, 1] in P
             True
             sage: [3, 2, 1] in P
             False
+            sage: [5, 0, 0, 0, 0] in P
+            True
         """
         return RegularPartitions.__contains__(self, x) and sum(x) == self.n
 
@@ -9055,7 +9087,8 @@ class Partitions_length_and_parts_constrained(Partitions):
 
         TESTS::
 
-            sage: P = Partitions(10, min_part=2, max_part=5, min_length=2, max_length=4)
+            sage: from sage.combinat.partition import Partitions_length_and_parts_constrained
+            sage: P = Partitions_length_and_parts_constrained(10, 2, 5, 2, 4)
             sage: Partition([]) in P
             False
 
@@ -9063,6 +9096,9 @@ class Partitions_length_and_parts_constrained(Partitions):
             False
 
             sage: Partition([5, 3, 2]) in P
+            True
+
+            sage: Partition([5, 3, 2, 0, 0]) in P
             True
         """
         if x not in _Partitions:
@@ -9351,7 +9387,8 @@ class RestrictedPartitions_generic(Partitions):
         """
         TESTS::
 
-            sage: P = Partitions(restricted=3)
+            sage: from sage.combinat.partition import RestrictedPartitions_generic
+            sage: P = RestrictedPartitions_generic(3)
             sage: [5] in P
             False
             sage: [2] in P
@@ -9514,11 +9551,14 @@ class RestrictedPartitions_n(RestrictedPartitions_generic, Partitions_n):
         """
         TESTS::
 
-            sage: P = Partitions(5, regular=3)
+            sage: from sage.combinat.partition import RestrictedPartitions_n
+            sage: P = RestrictedPartitions_n(5, 3)
             sage: [3, 1, 1] in P
             True
             sage: [3, 2, 1] in P
             False
+            sage: [5, 0, 0, 0, 0] in P
+            True
         """
         return RestrictedPartitions_generic.__contains__(self, x) and sum(x) == self.n
 
