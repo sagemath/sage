@@ -2924,7 +2924,7 @@ class MatchingCoveredGraph(Graph):
 
         # Find a nontrivial odd component
         if all(len(c) % 2 for c in components):
-            nontrivial_odd_component = next((c for c in components if len(c) > 1), None)
+            nontrivial_odd_component = next(c for c in components if len(c) > 1)
         else:
             nontrivial_odd_component = components[0] + [two_vertex_cut[0]]
 
