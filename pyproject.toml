@@ -54,7 +54,7 @@ dependencies = [
     'ipykernel >=5.2.1',
     'jupyter-client',
     'ipywidgets >=7.5.1',
-    'fpylll >=0.5.9',
+    'fpylll >=0.6.2',
     'ptyprocess > 0.5',
     # TODO: Remove this once the migration to meson is complete
     'pkgconfig'

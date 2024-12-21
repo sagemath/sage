@@ -73,8 +73,8 @@ dependencies:
   - fonts-conda-forge=1=0
   - fonttools=4.55.0=py39hd18e689_0
   - fortran-compiler=1.8.0=h33d1f46_1
-  - fplll=5.4.5=hb7981ad_0
-  - fpylll=0.6.1=py39h3b3ffec_0
+  - fplll=5.5.0=hb7981ad_0
+  - fpylll=0.6.2=py39h3b3ffec_0
   - freetype=2.12.1=h60636b9_2
   - furo=2024.8.6=pyhd8ed1ab_1
   - gap-core=4.13.1=h2299be9_0
