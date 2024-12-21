@@ -95,18 +95,18 @@ def produce_latex_macro(name, *sample_args):
     if sys.version_info.minor < 13:
         exec('from ' + module + ' import ' + real_name)
     else:
-        exec('from ' + module + ' import ' + real_name, locals = loc)
+        exec('from ' + module + ' import ' + real_name, locals=loc)
     if count:
         defn = '[' + str(count) + ']{'
         if sys.version_info.minor < 13:
             defn += eval('str(LatexCall()(' + real_name + args + '))') + '}'
         else:
-            defn += eval('str(LatexCall()(' + real_name + args + '))', locals = loc) + '}'
+            defn += eval('str(LatexCall()(' + real_name + args + '))', locals=loc) + '}'
     else:
         if sys.version_info.minor < 13:
             defn = '{' + eval('str(LatexCall()(' + real_name + '))') + '}'
         else:
-            defn = '{' + eval('str(LatexCall()(' + real_name + '))', locals = loc) + '}'
+            defn = '{' + eval('str(LatexCall()(' + real_name + '))', locals=loc) + '}'
     count = 0
     for x in sample_args:
         count += 1
