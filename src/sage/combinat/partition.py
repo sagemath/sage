@@ -6461,7 +6461,7 @@ class Partitions(UniqueRepresentation, Parent):
         try:
             lst = list(map(ZZ, lst))
         except TypeError:
-            raise ValueError('all parts of %s should be nonnegative integers' % repr(lst))
+            raise ValueError(f'all parts of {lst} should be nonnegative integers')
 
         if lst in self:
             # trailing zeros are removed in Partition.__init__
@@ -6822,6 +6822,8 @@ class Partitions_all_constrained(Partitions):
 
             sage: from sage.combinat.partition import Partitions_all_constrained
             sage: P = Partitions_all_constrained(max_part=3, max_length=2)
+            sage: 1 in P
+            False
             sage: Partition([2,1]) in P
             True
             sage: [2,1] in P
@@ -6873,11 +6875,14 @@ class Partitions_all_constrained(Partitions):
 
 
 class Partitions_all_bounded(Partitions):
+    """
+    Partitions whose parts do not exceed a given bound.
+    """
     def __init__(self, k):
         """
         TESTS::
 
-            sage: TestSuite( sage.combinat.partition.Partitions_all_bounded(3) ).run() # long time
+            sage: TestSuite(sage.combinat.partition.Partitions_all_bounded(3)).run() # long time
         """
         self.k = k
         Partitions.__init__(self, is_infinite=True)
@@ -6887,6 +6892,10 @@ class Partitions_all_bounded(Partitions):
         TESTS::
 
             sage: P = Partitions(max_part=3)
+            sage: 1 in P
+            False
+            sage: 0 in P
+            False
             sage: Partition([2,1]) in P
             True
             sage: [2,1] in P
@@ -6902,7 +6911,7 @@ class Partitions_all_bounded(Partitions):
             sage: [] in P
             True
         """
-        return not x or (x[0] <= self.k and x in _Partitions)
+        return x in _Partitions and (not x or x[0] <= self.k)
 
     def _repr_(self):
         """
@@ -6959,14 +6968,16 @@ class Partitions_n(Partitions):
 
         TESTS::
 
-            sage: p = Partitions(5)
-            sage: [2,1] in p
+            sage: P = Partitions(5)
+            sage: 5 in P
             False
-            sage: [2,2,1] in p
+            sage: [2,1] in P
+            False
+            sage: [2,2,1] in P
             True
-            sage: [3,2] in p
+            sage: [3,2] in P
             True
-            sage: [2,3] in p
+            sage: [2,3] in P
             False
         """
         return x in _Partitions and sum(x) == self.n
@@ -7361,25 +7372,35 @@ class Partitions_nk(Partitions):
 
         TESTS::
 
-            sage: p = Partitions(5, length=2)
-            sage: [2,1] in p
+            sage: P = Partitions(5, length=2)
+            sage: [2,1] in P
             False
-            sage: [2,2,1] in p
+            sage: [2,2,1] in P
             False
-            sage: [3,2] in p
+            sage: [3,2] in P
             True
-            sage: [2,3] in p
+            sage: [2,3] in P
             False
-            sage: [4,1] in p
+            sage: [4,1] in P
             True
-            sage: [1,1,1,1,1] in p
+            sage: [1,1,1,1,1] in P
             False
-            sage: [5] in p
+            sage: [5] in P
             False
-            sage: [4,1,0] in p
+            sage: [4,1,0] in P
             True
+            sage: [] in Partitions(0, length=0)
+            True
+            sage: [0] in Partitions(0, length=0)
+            True
+            sage: [] in Partitions(0, length=1)
+            False
         """
-        return x in _Partitions and sum(x) == self.n and len(x) == self.k
+        if x not in _Partitions or sum(x) != self.n:
+            return False
+        if not x or not x[0]:
+            return not self.k
+        return len(x) == next(i for i, e in enumerate(reversed(x), self.k) if e)
 
     def _repr_(self):
         """
@@ -7596,16 +7617,21 @@ class Partitions_parts_in(Partitions):
         TESTS::
 
             sage: from sage.combinat.partition import Partitions_parts_in
-            sage: p = Partitions_parts_in(5, [1,2])
-            sage: [2,1,1,1] in p
-            True
-            sage: [4,1] in p
+            sage: P = Partitions_parts_in(5, [1,2])
+            sage: 5 in P
             False
-            sage: [2,1,1,1,0] in p
+            sage: [2,1,1,1] in P
+            True
+            sage: [4,1] in P
+            False
+            sage: [2,1,1,1,0] in P
             True
         """
-        return (x in _Partitions and sum(x) == self.n and
-                all(p in self.parts for p in x))
+        try:
+            mu = Partition(x)
+        except (ValueError, TypeError):
+            return False
+        return sum(mu) == self.n and all(p in self.parts for p in mu)
 
     def _repr_(self):
         """
@@ -7960,7 +7986,11 @@ class Partitions_starting(Partitions):
             sage: [2,1,0] in Partitions_starting(3, [2, 1])
             True
         """
-        return x in Partitions_n(self.n) and x <= self._starting
+        try:
+            mu = Partition(x)
+        except (ValueError, TypeError):
+            return False
+        return sum(mu) == self.n and mu <= self._starting
 
     def first(self):
         """
@@ -8075,10 +8105,14 @@ class Partitions_ending(Partitions):
         TESTS::
 
             sage: from sage.combinat.partition import Partitions_ending
-            sage: [4,0] in Partitions_ending(3, [2, 2])
+            sage: [4,0] in Partitions_ending(4, [2, 2])
             True
         """
-        return x in Partitions_n(self.n) and x >= self._ending
+        try:
+            mu = Partition(x)
+        except (ValueError, TypeError):
+            return False
+        return sum(mu) == self.n and mu >= self._ending
 
     def first(self):
         """
@@ -8178,11 +8212,15 @@ class PartitionsInBox(Partitions):
             False
             sage: [3,1] in PartitionsInBox(2, 3)
             True
+            sage: [0] in PartitionsInBox(2,2)
+            True
             sage: [3,1,0] in PartitionsInBox(2, 3)
             True
         """
-        return x in _Partitions and len(x) <= self.h \
-            and (len(x) == 0 or x[0] <= self.w)
+        return (x in _Partitions
+                and (not x or not x[0]
+                     or (x[0] <= self.w
+                         and len(x) <= next(i for i, e in enumerate(reversed(x), self.h) if e))))
 
     def list(self):
         """
@@ -8520,6 +8558,8 @@ class RegularPartitions_truncated(RegularPartitions):
 
             sage: from sage.combinat.partition import RegularPartitions_truncated
             sage: P = RegularPartitions_truncated(4, 3)
+            sage: 3 in P
+            False
             sage: [3, 3, 3] in P
             True
             sage: [] in P
@@ -8529,7 +8569,9 @@ class RegularPartitions_truncated(RegularPartitions):
             sage: [0, 0, 0, 0] in P
             True
         """
-        return len(x) <= self._max_len and RegularPartitions.__contains__(self, x)
+        return (RegularPartitions.__contains__(self, x)
+                and (not x or not x[0] or
+                     len(x) <= next(i for i, e in enumerate(reversed(x), self._max_len) if e)))
 
     def _repr_(self):
         """
@@ -8640,6 +8682,8 @@ class RegularPartitions_bounded(RegularPartitions):
 
             sage: from sage.combinat.partition import RegularPartitions_bounded
             sage: P = RegularPartitions_bounded(4, 3)
+            sage: 0 in P
+            False
             sage: [3, 3, 3] in P
             True
             sage: [] in P
@@ -8649,7 +8693,8 @@ class RegularPartitions_bounded(RegularPartitions):
             sage: [0, 0, 0, 0, 0] in P
             True
         """
-        return len(x) == 0 or (x[0] <= self.k and RegularPartitions.__contains__(self, x))
+        return (RegularPartitions.__contains__(self, x)
+                and (not x or x[0] <= self.k))
 
     def _repr_(self):
         """
@@ -9089,26 +9134,26 @@ class Partitions_length_and_parts_constrained(Partitions):
 
             sage: from sage.combinat.partition import Partitions_length_and_parts_constrained
             sage: P = Partitions_length_and_parts_constrained(10, 2, 4, 2, 5)
+            sage: 1 in P
+            False
             sage: Partition([]) in P
             False
-
             sage: Partition([3]) in P
             False
-
             sage: Partition([5, 3, 2]) in P
             True
-
             sage: [5, 3, 2, 0, 0] in P
             True
         """
-        if x not in _Partitions:
+        try:
+            mu = Partition(x)
+        except (ValueError, TypeError):
             return False
-        if not self._n:
-            return not x
-        return (sum(x) == self._n
-                and x[-1] >= self._min_part
-                and x[0] <= self._max_part
-                and self._min_length <= len(x) <= self._max_length)
+        return (sum(mu) == self._n
+                and (not mu
+                     or (mu[-1] >= self._min_part
+                         and mu[0] <= self._max_part
+                         and self._min_length <= len(mu) <= self._max_length)))
 
     def __iter__(self):
         """
@@ -9557,8 +9602,10 @@ class RestrictedPartitions_n(RestrictedPartitions_generic, Partitions_n):
             True
             sage: [3, 2, 1] in P
             False
-            sage: [5, 0, 0, 0, 0] in P
+            sage: [3, 2, 0, 0, 0] in P
             True
+            sage: [5] in P
+            False
         """
         return RestrictedPartitions_generic.__contains__(self, x) and sum(x) == self.n
 
