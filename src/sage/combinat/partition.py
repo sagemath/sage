@@ -6840,8 +6840,8 @@ class Partitions_all_constrained(Partitions):
             True
         """
         try:
-            return mu in Partitions(sum(mu), **self._constraints)
-        except Exception:
+            return x in Partitions(sum(x), **self._constraints)
+        except TypeError:
             return False
 
     def _repr_(self):
