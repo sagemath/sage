@@ -1682,21 +1682,40 @@ def CremonaDatabase(name=None, mini=None, set_global=None):
         FeatureNotPresentError: database_should_not_exist_ellcurve is not available.
         '...db' not found in any of [...]
         ...Further installation instructions might be available at https://github.com/JohnCremona/ecdata.
+
+    Verify that :issue:`39072` has been resolved::
+
+        sage: C = CremonaDatabase(mini=False)  # optional - !database_cremona_ellcurve
+        Traceback (most recent call last):
+        ...
+        ValueError: full Cremona database is not available; run "sage -i database_cremona_ellcurve" to install it
     """
     if set_global is not None:
         from sage.misc.superseded import deprecation
         deprecation(25825, "the set_global argument for CremonaDatabase is deprecated and ignored")
+
     if name is None:
-        if DatabaseCremona().is_present():
-            name = 'cremona'
-        else:
+        if mini is None:
+            if DatabaseCremona().is_present():
+                name = 'cremona'
+                mini = False
+            else:
+                name = 'cremona mini'
+                mini = True
+        elif mini:
             name = 'cremona mini'
-    if name == 'cremona':
-        mini = False
+        else:
+            if not DatabaseCremona().is_present():
+                raise ValueError('full Cremona database is not available; '
+                                 'run "sage -i database_cremona_ellcurve" to install it')
+            name = 'cremona'
     elif name == 'cremona mini':
         mini = True
-    if mini is None:
-        raise ValueError('mini must be set as either True or False')
+    elif name == 'cremona':
+        mini = False
+    else:
+        if mini is None:
+            raise ValueError('mini must be set as either True or False')
 
     if mini:
         return MiniCremonaDatabase(name)
