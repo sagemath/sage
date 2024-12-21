@@ -2885,7 +2885,7 @@ class MatchingCoveredGraph(Graph):
                 for u, v, w in self.edge_iterator()
                 if (u in nontrivial_odd_component) ^ (v in nontrivial_odd_component)]
 
-            return False, C, nontrivial_odd_component
+            return (False, C, set(nontrivial_odd_component))
 
         # Check if G is 3-connected
         if self.is_triconnected():
@@ -2933,7 +2933,7 @@ class MatchingCoveredGraph(Graph):
             if (u in nontrivial_odd_component) ^ (v in nontrivial_odd_component)]
 
         # Edge (u, v, w) in C are formatted so that u is in a nontrivial odd component
-        return (False, C, nontrivial_odd_component) if coNP_certificate else False
+        return (False, C, set(nontrivial_odd_component)) if coNP_certificate else False
 
     @doc_index('Overwritten methods')
     def loop_edges(self, labels=True):
