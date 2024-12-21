@@ -2691,7 +2691,6 @@ class MatchingCoveredGraph(Graph):
 
         return (True, None, None) if coNP_certificate else True
 
-
     @doc_index('Bricks, braces and tight cut decomposition')
     def is_brick(self, coNP_certificate=False):
         r"""
@@ -2702,9 +2701,148 @@ class MatchingCoveredGraph(Graph):
         graph is a brick if and only if it is 3-connected and bicritical
         [LM2024]_.
 
+        INPUT:
+
+        - ``coNP_certificate`` -- boolean (default: ``False``)
+
+        OUTPUT:
+
+        - If the input matching covered graph is bipartite, a :exc:`ValueError`
+          is returned.
+
+        - If the input nonbipartite matching covered graph is a brick, a
+          boolean ``True`` is returned if ``coNP_certificate`` is set to
+          ``False`` otherwise a tuple ``(True, None, None)`` is returned.
+
+        - If the input nonbipartite matching covered graph is not a brick, a
+          boolean ``False`` is returned if ``coNP_certificate`` is set to
+          ``False`` otherwise a tuple of boolean ``False``, a list of
+          edges constituting a nontrivial tight cut and a set of vertices of
+          one of the shores of the nontrivial tight cut is returned.
+
+        EXAMPLES:
+
+        The complete graph on four vertices `K_4` is the smallest brick::
+
+            sage: K = graphs.CompleteGraph(4)
+            sage: G = MatchingCoveredGraph(K)
+            sage: G.is_brick()
+            True
+
+        The triangular cicular ladder (a graph on six vertices), aka
+        `\overline{C_6}` is a brick::
+
+            sage: C6Bar = graphs.CircularLadderGraph(3)
+            sage: G = MatchingCoveredGraph(C6Bar)
+            sage: G.is_brick()
+            True
+
+        Each of Petersen graph, Bicorn graph, Tricorn graph, Cubeplex graph,
+        Twinplex graph, Wagner graph is a brick::
+
+            sage: MatchingCoveredGraph(graphs.PetersenGraph()).is_brick() and \
+            ....: MatchingCoveredGraph(graphs.StaircaseGraph(4)).is_brick() and \
+            ....: MatchingCoveredGraph(graphs.TricornGraph()).is_brick() and \
+            ....: MatchingCoveredGraph(graphs.CubeplexGraph()).is_brick() and \
+            ....: MatchingCoveredGraph(graphs.TwinplexGraph()).is_brick() and \
+            ....: MatchingCoveredGraph(graphs.WagnerGraph()).is_brick()
+            True
+
+        The Murty graph is the smallest simple brick that is not odd-intercyclic::
+
+            sage: M = graphs.MurtyGraph()
+            sage: G = MatchingCoveredGraph(M)
+            sage: G.is_brick()
+            True
+
+        A circular ladder graph of order six or more on `2n` vertices for an
+        odd `n` is a brick::
+
+            sage: n = 11
+            sage: CL = graphs.CircularLadderGraph(n)
+            sage: G = MatchingCoveredGraph(CL)
+            sage: G.is_brick()
+            True
+
+        A moebius ladder graph of order eight or more on `2n` vertices for an
+        even `n` is a brick::
+
+            sage: n = 10
+            sage: ML = graphs.MoebiusLadderGraph(n)
+            sage: G = MatchingCoveredGraph(ML)
+            sage: G.is_brick()
+            True
+
+        A wheel graph of an even order is a brick::
+
+            sage: W = graphs.WheelGraph(10)
+            sage: G = MatchingCoveredGraph(W)
+            sage: G.is_brick()
+            True
+
+        A graph that is isomorphic to a truncated biwheel graph is a brick::
+
+            sage: TB = graphs.TruncatedBiwheelGraph(15)
+            sage: G = MatchingCoveredGraph(TB)
+            sage: G.is_brick()
+            True
+
+        Each of the graphs in the staircase graph family with order eight or
+        more is a brick::
+
+            sage: ST = graphs.StaircaseGraph(9)
+            sage: G = MatchingCoveredGraph(ST)
+            sage: G.is_brick()
+            True
+
+        Bricks are 3-connected::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.is_brick()
+            True
+            sage: G.is_triconnected()
+            True
+
+        Bricks are bicritical::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.is_brick()
+            True
+            sage: G.is_bicritical()
+            True
+
+        One may set the ``coNP_certificate`` to be ``True``::
+
+            sage: K4 = graphs.CompleteGraph(4)
+            sage: G = MatchingCoveredGraph(K4)
+            sage: G.is_brick(coNP_certificate=True)
+            sage: # K(4)
+
+        If the input matching covered graph is bipartite, a
+        :exc:`ValueError` is thrown::
+
+            sage: H = graphs.HexahedralGraph()
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brick()
+            Traceback (most recent call last):
+            ...
+            ValueError: the input graph is bipartite
+            sage: J = graphs.HeawoodGraph()
+            sage: G = MatchingCoveredGraph(J)
+            sage: G.is_brick(coNP_certificate=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input graph is bipartite
+
         .. SEEALSO::
 
-            :meth:`~sage.graphs.graph.Graph.is_bicritical`
+            - :meth:`~sage.graphs.graph.Graph.is_bicritical`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.is_brace`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.bricks_and_braces`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_bricks`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_petersen_bricks`
         """
         if self.is_bipartite():
             raise ValueError('the input graph is bipartite')
@@ -2750,23 +2888,21 @@ class MatchingCoveredGraph(Graph):
         # Check for 2-vertex cuts in P and S nodes
         for u in spqr_tree:
             if u[0] == 'P':
-                two_vertex_cut.extend(u[1].vertices())
+                two_vertex_cut.extend(u[1])
                 break
             elif u[0] == 'S' and u[1].order() > 3:
-                s_vertex_set = set(u[1].vertices())
-                for v in u[1].vertices():
-                    s_vertex_set -= {v} | set(u[1].neighbors(v))
-                    two_vertex_cut.extend([v, next(iter(s_vertex_set))])
-                    break
+                s_vertex_set = set(u[1])
+                s_vertex_set -= {next(u[1].vertex_iterator())} | set(u[1].neighbors(next(u[1].vertex_iterator())))
+                two_vertex_cut.extend([next(u[1].vertex_iterator()), next(iter(s_vertex_set))])
 
         # If no 2-vertex cut found, look for R nodes
         if not two_vertex_cut:
-            R_frequency = {u: 0 for u in self}
-            for u in spqr_tree.vertices():
-                if u[0] == 'R':
-                    for v in u[1].vertices():
-                        R_frequency[v] += 1
-            two_vertex_cut = [u for u in self if R_frequency[u] >= 2][:2]
+            from collections import Counter
+            R_frequency = Counter()
+            for t, g in spqr_tree:
+                if t == 'R':
+                    R_frequency.update(g)
+            two_vertex_cut = [u for u, f in R_frequency.items() if f >= 2][:2]
 
         # We obtain a 2-vertex cut (u, v)
         H = Graph(self)
@@ -2774,10 +2910,9 @@ class MatchingCoveredGraph(Graph):
 
         # Check if all components of H are odd
         components = H.connected_components()
-        are_all_odd_components = all(len(c) % 2 for c in components)
 
         # Find a nontrivial odd component
-        if are_all_odd_components:
+        if all(len(c) % 2 for c in components):
             nontrivial_odd_component = next((c for c in components if len(c) > 1), None)
         else:
             nontrivial_odd_component = components[0] + [two_vertex_cut[0]]
