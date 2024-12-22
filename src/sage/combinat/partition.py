@@ -6459,7 +6459,7 @@ class Partitions(UniqueRepresentation, Parent):
             if lst.parent() is self:
                 return lst
         try:
-            lst = list(map(ZZ, lst))
+            lst = [ZZ(e) for e in lst]
         except TypeError:
             raise ValueError(f'all parts of {repr(lst)} should be nonnegative integers')
 
@@ -7627,11 +7627,13 @@ class Partitions_parts_in(Partitions):
             sage: [2,1,1,1,0] in P
             True
         """
-        try:
-            mu = Partition(x)
-        except (ValueError, TypeError):
+        if x not in _Partitions or sum(x) != self.n:
             return False
-        return sum(mu) == self.n and all(p in self.parts for p in mu)
+        if x and not x[-1]:
+            x = x[:-1]
+            while x and not x[-1]:
+                x.pop()
+        return all(p in self.parts for p in x)
 
     def _repr_(self):
         """
@@ -7986,11 +7988,13 @@ class Partitions_starting(Partitions):
             sage: [2,1,0] in Partitions_starting(3, [2, 1])
             True
         """
-        try:
-            mu = Partition(x)
-        except (ValueError, TypeError):
+        if x not in _Partitions or sum(x) != self.n:
             return False
-        return sum(mu) == self.n and mu <= self._starting
+        if x and not x[-1]:
+            x = x[:-1]
+            while x and not x[-1]:
+                x.pop()
+        return x <= self._starting
 
     def first(self):
         """
@@ -8108,11 +8112,13 @@ class Partitions_ending(Partitions):
             sage: [4,0] in Partitions_ending(4, [2, 2])
             True
         """
-        try:
-            mu = Partition(x)
-        except (ValueError, TypeError):
+        if x not in _Partitions or sum(x) != self.n:
             return False
-        return sum(mu) == self.n and mu >= self._ending
+        if x and not x[-1]:
+            x = x[:-1]
+            while x and not x[-1]:
+                x.pop()
+        return x >= self._ending
 
     def first(self):
         """
@@ -8412,7 +8418,7 @@ class RegularPartitions(Partitions):
             sage: Partition([10,1]) in P
             True
         """
-        if not Partitions.__contains__(self, x):
+        if x not in _Partitions:
             return False
         if isinstance(x, Partition):
             return max(x.to_exp() + [0]) < self._ell
@@ -9145,15 +9151,16 @@ class Partitions_length_and_parts_constrained(Partitions):
             sage: [5, 3, 2, 0, 0] in P
             True
         """
-        try:
-            mu = Partition(x)
-        except (ValueError, TypeError):
+        if x not in _Partitions or sum(x) != self._n:
             return False
-        return (sum(mu) == self._n
-                and (not mu
-                     or (mu[-1] >= self._min_part
-                         and mu[0] <= self._max_part
-                         and self._min_length <= len(mu) <= self._max_length)))
+        if x and not x[-1]:
+            x = x[:-1]
+            while x and not x[-1]:
+                x.pop()
+        return (not x
+                or (x[-1] >= self._min_part
+                    and x[0] <= self._max_part
+                    and self._min_length <= len(x) <= self._max_length))
 
     def __iter__(self):
         """
@@ -9463,9 +9470,9 @@ class RestrictedPartitions_generic(Partitions):
             sage: Partition([3,3] + [1]*10) in P
             True
         """
-        if not Partitions.__contains__(self, x):
+        if x not in _Partitions:
             return False
-        if x == []:
+        if not x:
             return True
         return (all(x[i] - x[i+1] < self._ell for i in range(len(x)-1))
                 and x[-1] < self._ell)
