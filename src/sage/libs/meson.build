@@ -6,6 +6,7 @@ gc = cc.find_library('gc')
 homfly = cc.find_library('homfly', has_headers: ['homfly.h'])
 
 py.install_sources(
+  '__init__.py',
   'all.py',
   'all__sagemath_coxeter3.py',
   'all__sagemath_meataxe.py',

@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'affine_ds.py',
   'all.py',
   'berkovich_ds.py',

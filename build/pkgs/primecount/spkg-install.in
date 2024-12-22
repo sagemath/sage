@@ -36,6 +36,7 @@ sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
           -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH \
           -DCMAKE_INSTALL_PREFIX=$SAGE_LOCAL \
           -DWITH_POPCNT=OFF \
+          . \
           && sdh_make_install
 }
 

@@ -191,7 +191,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         super().__init__(length, default_encoder_name, default_decoder_name, metric)
         cat = Modules(base_field).FiniteDimensional().WithBasis().Finite()
         facade_for = VectorSpace(base_field, self._length)
-        self.Element = type(facade_for.an_element())  # for when we made this a non-facade parent
+        self.Element = facade_for.Element
         Parent.__init__(self, base=base_field, facade=facade_for, category=cat)
 
     def base_field(self):

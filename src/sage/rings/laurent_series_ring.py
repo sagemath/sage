@@ -52,7 +52,7 @@ except ImportError:
 
 lazy_import('sage.rings.polynomial.laurent_polynomial_ring_base', 'LaurentPolynomialRing_generic')
 lazy_import('sage.rings.lazy_series_ring', ('LazyPowerSeriesRing', 'LazyLaurentSeriesRing'))
-lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_general')
+lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_generic')
 lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 
 
@@ -691,7 +691,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         if (isinstance(P, (LaurentSeriesRing, LazyLaurentSeriesRing,
                            LaurentPolynomialRing_generic,
                            PowerSeriesRing_generic, LazyPowerSeriesRing,
-                           PolynomialRing_general))
+                           PolynomialRing_generic))
                 and P.variable_name() == self.variable_name()
                 and A.has_coerce_map_from(P.base_ring())):
             return True

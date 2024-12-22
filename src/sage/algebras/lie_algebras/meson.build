@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'abelian.py',
   'affine_lie_algebra.py',
   'all.py',

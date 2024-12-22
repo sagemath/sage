@@ -4203,8 +4203,8 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
         if not isinstance(g, LazyModuleElement):
             # Check to see if it belongs to a polynomial ring
             #   that we can extend to a lazy series ring
-            from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-            if isinstance(P, PolynomialRing_general):
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+            if isinstance(P, PolynomialRing_generic):
                 from sage.rings.lazy_series_ring import LazyLaurentSeriesRing
                 R = LazyLaurentSeriesRing(P.base_ring(), P.variable_names(), P.is_sparse())
                 g = R(P(g))
@@ -5203,7 +5203,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         # f now has (potentially) infinitely many terms
         # Lift the resulting parent to a lazy series (if possible)
         # Also make sure each element of g is a LazyModuleElement
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
         from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing_univariate
         from sage.rings.lazy_series_ring import LazySeriesRing
@@ -5211,7 +5211,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             if fP._laurent_poly_ring.has_coerce_map_from(P):
                 S = fP._laurent_poly_ring
                 P = fP
-            if isinstance(P, (PolynomialRing_general, MPolynomialRing_base)):
+            if isinstance(P, (PolynomialRing_generic, MPolynomialRing_base)):
                 from sage.rings.lazy_series_ring import LazyPowerSeriesRing
                 S = P
                 try:

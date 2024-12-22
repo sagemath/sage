@@ -806,7 +806,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
         .. SEEALSO::
 
-            :meth:`sage.rings.polynomial.polynomial_ring.PolynomialRing_general.random_element`
+            :meth:`sage.rings.polynomial.polynomial_ring.PolynomialRing_generic.random_element`
 
         EXAMPLES:
 

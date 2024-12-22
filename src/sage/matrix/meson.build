@@ -2,6 +2,7 @@ iml = cc.find_library('iml')
 
 
 py.install_sources(
+  '__init__.py',
   'action.pxd',
   'all.py',
   'all__sagemath_meataxe.py',

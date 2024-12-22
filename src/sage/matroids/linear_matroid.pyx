@@ -2731,15 +2731,15 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         dX = dict(zip(range(len(X)), X))
         dY = dict(zip(range(len(Y)), Y))
 
-        for (x, y) in spanning_forest(M):
-            P_rows=[x]
-            P_cols=[y]
-            Q_rows=[]
-            Q_cols=[]
-            sol,cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 2)
+        for x, y in spanning_forest(M):
+            P_rows = [x]
+            P_cols = [y]
+            Q_rows = []
+            Q_cols = []
+            sol, cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 2)
             if sol:
                 if certificate:
-                    cert = set([])
+                    cert = set()
                     for x in cert_pair[0]:
                         cert.add(dX[x])
                     for y in cert_pair[1]:
@@ -2795,8 +2795,8 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         M = M2._matrix_()
         X, Y = self._current_rows_cols()
 
-        dX = dict(zip(range(len(X)),X))
-        dY = dict(zip(range(len(Y)),Y))
+        dX = dict(zip(range(len(X)), X))
+        dY = dict(zip(range(len(Y)), Y))
         n = len(X)
         m = len(Y)
 
@@ -2817,22 +2817,22 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             Yp = list(range(m))
             Yp.remove(y1)
 
-            B = B.matrix_from_rows_and_columns(Xp,Yp)
+            B = B.matrix_from_rows_and_columns(Xp, Yp)
 
             # produce a spanning forest of B
-            for (x,y) in spanning_forest(B):
+            for x, y in spanning_forest(B):
                 if x >= x1:
                     x = x + 1
                 if y >= y1:
                     y = y + 1
                 # rank 2 matrix and rank 0 matrix
-                P_rows = [x,x1]
-                P_cols = [y,y1]
+                P_rows = [x, x1]
+                P_cols = [y, y1]
                 Q_rows = []
                 Q_cols = []
                 # make sure the matrix has rank 2
-                if M.matrix_from_rows_and_columns(P_rows,P_cols).rank() == 2:
-                    sol,cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 3)
+                if M.matrix_from_rows_and_columns(P_rows, P_cols).rank() == 2:
+                    sol, cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 3)
                     if sol:
                         break
                 # rank 1 matrix and rank 1 matrix
@@ -2841,7 +2841,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 Q_rows = [x]
                 Q_cols = [y]
                 # both matrix have rank 1
-                sol,cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 3)
+                sol, cert_pair = M2.shifting_all(P_rows, P_cols, Q_rows, Q_cols, 3)
                 if sol:
                     break
             if sol:
@@ -2906,7 +2906,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
                 if action in Semigroups:
                     G, action = action, G
             else:
-                G, action = G_action, None # the None action is g.__call__
+                G, action = G_action, None  # the None action is g.__call__
 
             from sage.algebras.orlik_terao import OrlikTeraoInvariantAlgebra
 
@@ -3835,7 +3835,7 @@ cdef class BinaryMatroid(LinearMatroid):
         global GF2
         cdef int r, c
         B= self.basis()
-        C = [self._fundamental_cocircuit(B,e) for e in B]
+        C = [self._fundamental_cocircuit(B, e) for e in B]
 
         c = 1
         col = {}
@@ -3850,21 +3850,22 @@ cdef class BinaryMatroid(LinearMatroid):
             for f in range(e):
                 for g in range(f):
                     if not C[e].issuperset(C[f] & C[g]):
-                        M.append([col[e,f], col[e,g]])
+                        M.append([col[e, f], col[e, g]])
                         r += 1
                     if not C[f].issuperset(C[e] & C[g]):
-                        M.append([col[f,e], col[f,g]])
+                        M.append([col[f, e], col[f, g]])
                         r += 1
                     if not C[g].issuperset(C[e] & C[f]):
-                        M.append([col[g,e], col[g,f]])
+                        M.append([col[g, e], col[g, f]])
                         r += 1
                     if len(C[e] & C[f] & C[g]) > 0:
-                        M.append([0,col[e,f], col[e,g], col[f,e], col[f,g], col[g,e], col[g,f]])
+                        M.append([0, col[e, f], col[e, g], col[f, e],
+                                  col[f, g], col[g, e], col[g, f]])
                         r += 1
         cdef BinaryMatrix m = BinaryMatrix(r, c)
         for r in range(len(M)):
             for c in M[r]:
-                m.set(r,c)
+                m.set(r, c)
         # now self is graphic iff there is a binary vector x so that M*x = 0 and x_0 = 1, so:
         return BinaryMatroid(m).corank(frozenset([0])) > 0
 
@@ -4730,9 +4731,9 @@ cdef class TernaryMatroid(LinearMatroid):
         C = [self._idx[f] for f in F]
         A, C2 = (<TernaryMatrix>self._A).matrix_from_rows_and_columns_reordered(R, C)
         return TernaryMatroid(matrix=A,
-                             groundset=[self._E[c] for c in C2],
-                             basis=bas,
-                             keep_initial_representation=False)
+                              groundset=[self._E[c] for c in C2],
+                              basis=bas,
+                              keep_initial_representation=False)
 
     cpdef is_valid(self, certificate=False):
         r"""
@@ -5498,9 +5499,9 @@ cdef class QuaternaryMatroid(LinearMatroid):
         C = [self._idx[f] for f in F]
         A, C2 = (<QuaternaryMatrix>self._A).matrix_from_rows_and_columns_reordered(R, C)
         return QuaternaryMatroid(matrix=A,
-                             groundset=[self._E[c] for c in C2],
-                             basis=bas,
-                             keep_initial_representation=False)
+                                 groundset=[self._E[c] for c in C2],
+                                 basis=bas,
+                                 keep_initial_representation=False)
 
     cpdef is_valid(self, certificate=False):
         r"""
@@ -6166,8 +6167,9 @@ cdef class RegularMatroid(LinearMatroid):
             VO.extend(X)
         m = isomorphic(HS[2], HO[2], HS[0], VO, 1, 1)
         if m:
-            idx={str(f):f for f in other.groundset()}
-            return {e:idx[m[str(e)]] for e in self.groundset() if str(e) in m}
+            idx = {str(f): f for f in other.groundset()}
+            return {e: idx[m[str(e)]] for e in self.groundset()
+                    if str(e) in m}
 
     cpdef has_line_minor(self, k, hyperlines=None, certificate=False):
         r"""

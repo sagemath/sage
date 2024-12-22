@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'affine_nil_temperley_lieb.py',
   'algebra.py',
   'all.py',

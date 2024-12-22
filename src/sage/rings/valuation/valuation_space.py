@@ -515,8 +515,8 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             from sage.categories.fields import Fields
             if ret in Fields():
                 return ret
-            from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-            if isinstance(ret, PolynomialRing_general):
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+            if isinstance(ret, PolynomialRing_generic):
                 from sage.rings.function_field.constructor import FunctionField
                 return FunctionField(ret.base_ring().fraction_field(), names=(ret.variable_name(),))
             return ret.fraction_field()

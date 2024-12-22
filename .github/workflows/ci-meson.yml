@@ -47,7 +47,7 @@ jobs:
           key: ${{ runner.os }}-meson-${{ matrix.python }}
 
       - name: Setup Conda environment
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: ${{ matrix.python }}
           miniforge-version: latest

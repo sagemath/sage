@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'base.pxd',
   'combinatorial_face.pxd',

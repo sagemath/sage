@@ -194,7 +194,7 @@ from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.rings.polynomial.term_order import TermOrder
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 
 from sage.rings.ideal import FieldIdeal
 
@@ -674,7 +674,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
         """
         if self._base.has_coerce_map_from(S):
             return True
-        if isinstance(S, (MPolynomialRing_base, PolynomialRing_general,
+        if isinstance(S, (MPolynomialRing_base, PolynomialRing_generic,
                           BooleanMonomialMonoid)):
             try:
                 get_var_mapping(self, S)

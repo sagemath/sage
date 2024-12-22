@@ -24,7 +24,7 @@ from sage.arith.misc import binomial
 from sage.matrix.constructor import matrix
 from sage.misc.misc_c import prod
 
-####################### Linear algebra system solving ###############################
+# ###################### Linear algebra system solving ###############################
 
 
 def _flatten_once(lstlst):
@@ -50,9 +50,9 @@ def _flatten_once(lstlst):
     for lst in lstlst:
         yield from lst
 
-#*************************************************************
+# *************************************************************
 #  Linear algebraic Interpolation algorithm, helper functions
-#*************************************************************
+# *************************************************************
 
 
 def _monomial_list(maxdeg, l, wy):
@@ -137,9 +137,9 @@ def _interpolation_matrix_given_monomials(points, s, monomials):
                     jhat = monomial[1]
                     if ihat >= i and jhat >= j:
                         icoeff = binomial(ihat, i) * x0**(ihat-i) \
-                                    if ihat > i else 1
+                            if ihat > i else 1
                         jcoeff = binomial(jhat, j) * y0**(jhat-j) \
-                                    if jhat > j else 1
+                            if jhat > j else 1
                         eq[monomial] = jcoeff * icoeff
                 eqs.append([eq.get(monomial, 0) for monomial in monomials])
         return eqs
@@ -284,12 +284,12 @@ def gs_interpolation_linalg(points, tau, parameters, wy):
     # Pick a nonzero element from the right kernel
     sol = Ker.basis()[0]
     # Construct the Q polynomial
-    PF = M.base_ring()['x', 'y'] #make that ring a ring in <x>
+    PF = M.base_ring()['x', 'y']  # make that ring a ring in <x>
     x, y = PF.gens()
-    Q = sum([x**monomials[i][0] * y**monomials[i][1] * sol[i] for i in range(0, len(monomials))])
-    return Q
+    return sum([x**m[0] * y**m[1] * sol[i]
+                for i, m in enumerate(monomials)])
 
-####################### Lee-O'Sullivan's method ###############################
+# ###################### Lee-O'Sullivan's method ###############################
 
 
 def lee_osullivan_module(points, parameters, wy):
@@ -397,12 +397,11 @@ def gs_interpolation_lee_osullivan(points, tau, parameters, wy):
     from .utils import _degree_of_vector
     s, l = parameters[0], parameters[1]
     F = points[0][0].parent()
-    M = lee_osullivan_module(points, (s,l), wy)
-    shifts = [i * wy for i in range(0,l+1)]
+    M = lee_osullivan_module(points, (s, l), wy)
+    shifts = [i * wy for i in range(l + 1)]
     Mnew = M.reduced_form(shifts=shifts)
     # Construct Q as the element of the row with the lowest weighted degree
     Qlist = min(Mnew.rows(), key=lambda r: _degree_of_vector(r, shifts))
     PFxy = F['x,y']
     xx, yy = PFxy.gens()
-    Q = sum(yy**i * PFxy(Qlist[i]) for i in range(0,l+1))
-    return Q
+    return sum(yy**i * PFxy(Qlist[i]) for i in range(l + 1))

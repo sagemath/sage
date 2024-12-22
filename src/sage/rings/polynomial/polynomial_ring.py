@@ -141,6 +141,7 @@ Check that :issue:`5562` has been fixed::
 
 import sys
 
+from sage.misc.superseded import deprecation
 from sage.structure.element import Element
 from sage.structure.category_object import check_default_category
 
@@ -149,7 +150,7 @@ from sage.categories.morphism import IdentityMorphism
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.rings import Rings
 
-from sage.rings.ring import (Ring, IntegralDomain)
+from sage.rings.ring import Ring, CommutativeRing
 from sage.structure.element import RingElement
 import sage.rings.rational_field as rational_field
 from sage.rings.rational_field import QQ
@@ -193,7 +194,7 @@ def is_PolynomialRing(x):
         sage: is_PolynomialRing(2)
         doctest:warning...
         DeprecationWarning: The function is_PolynomialRing is deprecated;
-        use 'isinstance(..., PolynomialRing_general)' instead.
+        use 'isinstance(..., PolynomialRing_generic)' instead.
         See https://github.com/sagemath/sage/issues/38266 for details.
         False
 
@@ -232,13 +233,13 @@ def is_PolynomialRing(x):
     from sage.misc.superseded import deprecation
     deprecation(38266,
                 "The function is_PolynomialRing is deprecated; "
-                "use 'isinstance(..., PolynomialRing_general)' instead.")
-    return isinstance(x, PolynomialRing_general)
+                "use 'isinstance(..., PolynomialRing_generic)' instead.")
+    return isinstance(x, PolynomialRing_generic)
 
 
 #########################################################################################
 
-class PolynomialRing_general(Ring):
+class PolynomialRing_generic(Ring):
     """
     Univariate polynomial ring over a ring.
     """
@@ -534,12 +535,12 @@ class PolynomialRing_general(Ring):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-            sage: PolynomialRing_general._implementation_names(None, ZZ, True)
+            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+            sage: PolynomialRing_generic._implementation_names(None, ZZ, True)
             [None, 'generic']
-            sage: PolynomialRing_general._implementation_names("generic", ZZ, True)
+            sage: PolynomialRing_generic._implementation_names("generic", ZZ, True)
             [None, 'generic']
-            sage: PolynomialRing_general._implementation_names("xyzzy", ZZ, True)
+            sage: PolynomialRing_generic._implementation_names("xyzzy", ZZ, True)
             Traceback (most recent call last):
             ...
             ValueError: unknown implementation 'xyzzy' for sparse polynomial rings over Integer Ring
@@ -563,8 +564,8 @@ class PolynomialRing_general(Ring):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-            sage: PolynomialRing_general._implementation_names_impl("xyzzy", ZZ, True)
+            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+            sage: PolynomialRing_generic._implementation_names_impl("xyzzy", ZZ, True)
             NotImplemented
         """
         if implementation is None or implementation == "generic":
@@ -642,7 +643,7 @@ class PolynomialRing_general(Ring):
         """
         from .multi_polynomial_ring import MPolynomialRing_base
         base = self.base_ring()
-        if isinstance(base, (PolynomialRing_general, MPolynomialRing_base)):
+        if isinstance(base, (PolynomialRing_generic, MPolynomialRing_base)):
             from .flatten import FlatteningMorphism
             return FlatteningMorphism(self)
         else:
@@ -827,7 +828,7 @@ class PolynomialRing_general(Ring):
 
         # polynomial rings in the same variable over a base that canonically
         # coerces into self.base_ring()
-        if isinstance(P, PolynomialRing_general):
+        if isinstance(P, PolynomialRing_generic):
             if self.construction()[0] != P.construction()[0]:
                 # Construction (including variable names) must be the
                 # same to allow coercion
@@ -1590,7 +1591,7 @@ class PolynomialRing_general(Ring):
                     coeffs.reverse()
                     yield self(coeffs)
 
-    def _polys_max( self, max_degree ):
+    def _polys_max(self, max_degree):
         """
         Refer to polynomials() for full documentation.
         """
@@ -1617,7 +1618,7 @@ class PolynomialRing_general(Ring):
             0
         """
         base_ring = self.base_ring()
-        if isinstance(base_ring, PolynomialRing_general):
+        if isinstance(base_ring, PolynomialRing_generic):
             return 0
         try:
             from sage.matrix.matrix_space import MatrixSpace
@@ -1669,7 +1670,7 @@ class PolynomialRing_general(Ring):
         """
         self._Karatsuba_threshold = int(Karatsuba_threshold)
 
-    def polynomials( self, of_degree=None, max_degree=None ):
+    def polynomials(self, of_degree=None, max_degree=None):
         """
         Return an iterator over the polynomials of specified degree.
 
@@ -1733,7 +1734,7 @@ class PolynomialRing_general(Ring):
             return self._polys_max( max_degree )
         raise ValueError("you should pass exactly one of of_degree and max_degree")
 
-    def monics( self, of_degree=None, max_degree=None ):
+    def monics(self, of_degree=None, max_degree=None):
         """
         Return an iterator over the monic polynomials of specified degree.
 
@@ -1794,7 +1795,11 @@ class PolynomialRing_general(Ring):
         raise ValueError("you should pass exactly one of of_degree and max_degree")
 
 
-class PolynomialRing_commutative(PolynomialRing_general):
+# PolynomialRing_general is deprecated since 2024-12-03. See Issue #38207.
+PolynomialRing_general = PolynomialRing_generic
+
+
+class PolynomialRing_commutative(PolynomialRing_generic):
     """
     Univariate polynomial ring over a commutative ring.
     """
@@ -1808,7 +1813,7 @@ class PolynomialRing_commutative(PolynomialRing_general):
         else:
             defaultcat = polynomial_default_category(base_ring.category(), 1)
             category = check_default_category(defaultcat, category)
-        PolynomialRing_general.__init__(self, base_ring, name=name,
+        PolynomialRing_generic.__init__(self, base_ring, name=name,
                                         sparse=sparse, implementation=implementation,
                                         element_class=element_class, category=category)
 
@@ -1923,8 +1928,7 @@ class PolynomialRing_commutative(PolynomialRing_general):
         return roots
 
 
-class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_singular_repr,
-                                     IntegralDomain):
+class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_singular_repr, CommutativeRing):
     def __init__(self, base_ring, name='x', sparse=False, implementation=None,
             element_class=None, category=None):
         """

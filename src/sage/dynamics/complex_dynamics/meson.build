@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'mandel_julia.py',
   subdir: 'sage/dynamics/complex_dynamics',

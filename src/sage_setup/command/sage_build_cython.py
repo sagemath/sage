@@ -49,6 +49,7 @@ DEVEL = False
 if DEVEL:
     extra_compile_args.append('-ggdb')
 
+
 class sage_build_cython(Command):
     name = 'build_cython'
     description = "compile Cython extensions into C/C++ extensions"

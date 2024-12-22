@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'binary_qf.py',
   'bqf_class_group.py',

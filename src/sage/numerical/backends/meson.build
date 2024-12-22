@@ -2,6 +2,7 @@
 glpk = cc.find_library('glpk')
 
 py.install_sources(
+  '__init__.py',
   'all.py',
   'all__sagemath_polyhedra.py',
   'cvxopt_backend_test.py',

@@ -2170,17 +2170,18 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         M = MatrixSpace(ZZ,n)([R.coordinates(y) for y in self.basis()])
 
         D = M.hermite_form()
-        d = [D[i,i] for i in range(n)]
+        d = [D[i, i] for i in range(n)]
 
         v = R.coordinates(f)
 
         for i in range(n):
-            q, r = ZZ(v[i]).quo_rem(d[i])#v is a vector of rationals, we want division of integers
+            q, r = ZZ(v[i]).quo_rem(d[i])
+            # v is a vector of rationals, we want division of integers
             if 2*r > d[i]:
                 q = q + 1
             v = v - q*D[i]
 
-        return sum([v[i]*Rbasis[i] for i in range(n)])
+        return sum([v[i] * Rbasis[i] for i in range(n)])
 
     def residues(self):
         r"""

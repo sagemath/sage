@@ -11,6 +11,7 @@ cliquer = cc.find_library('cliquer')
 planarity = cc.find_library('planarity')
 
 py.install_sources(
+  '__init__.py',
   'all.py',
   'all__sagemath_bliss.py',
   'all__sagemath_mcqd.py',

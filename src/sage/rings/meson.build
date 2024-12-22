@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'abc.pxd',
   'algebraic_closure_finite_field.py',
   'all.py',

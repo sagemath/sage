@@ -3548,7 +3548,7 @@ def krasner_check(poly, prec):
         sage: krasner_check(1,2)  # this is a stupid example.
         True
     """
-    return True #This needs to be implemented
+    return True  # This needs to be implemented
 
 
 def is_eisenstein(poly):

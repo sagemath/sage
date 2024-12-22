@@ -852,6 +852,7 @@ class StorageTypeMPFR(StorageTypeAutoReference):
 
 ty_mpfr = StorageTypeMPFR()
 
+
 class StorageTypeMPC(StorageTypeAutoReference):
     r"""
     StorageTypeMPC is a subtype of StorageTypeAutoReference that deals
