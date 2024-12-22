@@ -880,26 +880,6 @@ class SageDocTestParser(doctest.DocTestParser):
             sage: ex.source
             'for i in range(Integer(4)):\n    print(i)\n'
 
-        Sage currently accepts backslashes as indicating that the end
-        of the current line should be joined to the next line.  This
-        feature allows for breaking large integers over multiple lines
-        but is not standard for Python doctesting.  It's not
-        guaranteed to persist::
-
-            sage: n = 1234\
-            ....:     5678
-            sage: print(n)
-            12345678
-            sage: type(n)
-            <class 'sage.rings.integer.Integer'>
-
-        It also works without the line continuation::
-
-            sage: m = 8765\
-            4321
-            sage: print(m)
-            87654321
-
         Optional tags at the start of an example block persist to the end of
         the block (delimited by a blank line)::
 

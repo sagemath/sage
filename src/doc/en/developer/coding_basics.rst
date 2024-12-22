@@ -1093,12 +1093,10 @@ written.
     The :ref:`doctest fixer <section-fixdoctests-optional-needs>` uses
     tab stops at columns 48, 56, 64, ... for these tags.
 
-- **Split long lines:** You may want to split long lines of code with a
-  backslash. Note: this syntax is non-standard and may be removed in the
-  future::
+- **Split long lines:** Standard Python rules apply. For example::
 
-      sage: n = 123456789123456789123456789\
-      ....:     123456789123456789123456789
+      sage: n = (123456789123456789123456789 +
+      ....:      123456789123456789123456789)
       sage: n.is_prime()
       False
 
