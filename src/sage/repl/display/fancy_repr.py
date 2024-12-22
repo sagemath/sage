@@ -117,14 +117,6 @@ class SomeIPythonRepr(ObjectReprABC):
         del type_repr[types.BuiltinFunctionType]
         del type_repr[types.FunctionType]
         del type_repr[str]
-        from sage.structure.sequence import Sequence_generic
-        from sage.rings.polynomial.multi_polynomial_sequence import (
-                PolynomialSequence_generic, PolynomialSequence_gf2, PolynomialSequence_gf2e)
-        # when :issue:`36801` is fixed, the code below will be redundant
-        type_repr[Sequence_generic] = type_repr[list]
-        type_repr[PolynomialSequence_generic] = type_repr[list]
-        type_repr[PolynomialSequence_gf2] = type_repr[list]
-        type_repr[PolynomialSequence_gf2e] = type_repr[list]
         self._type_repr = type_repr
 
     def __call__(self, obj, p, cycle):
@@ -156,6 +148,11 @@ class SomeIPythonRepr(ObjectReprABC):
             sage: pp.format_string(Sequence([[1]*20, [2]*20]))
             '[[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],\n [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]]'
         """
+        if hasattr(type(obj), '_repr_pretty_'):
+            # standard method for classes to extend pretty library
+            # see https://ipython.readthedocs.io/en/stable/api/generated/IPython.lib.pretty.html#extending
+            obj._repr_pretty_(p, cycle)
+            return True
         try:
             pretty_repr = self._type_repr[type(obj)]
         except KeyError:

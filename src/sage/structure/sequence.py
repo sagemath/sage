@@ -684,6 +684,9 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
 
     def _repr_(self):
         """
+        Return a string representation of this sequence.
+        Typically, :meth:`_repr_pretty_` is used instead of this method.
+
         EXAMPLES::
 
             sage: Sequence([1,2/3,-2/5])._repr_()
@@ -699,6 +702,21 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             return '[\n' + ',\n'.join(repr(x) for x in self) + '\n]'
         else:
             return list.__repr__(self)
+
+    def _repr_pretty_(self, p, cycle):
+        """
+        For pretty printing in the Sage command prompt.
+
+        Since ``Sequence`` inherits from ``list``, we just use IPython's built-in
+        ``list`` pretty printer.
+        When :issue:`36801` is fixed, this function will be redundant.
+
+        EXAMPLES::
+
+            sage: Sequence([1,2/3,-2/5])  # indirect doctest
+            [1, 2/3, -2/5]
+        """
+        p.pretty(list(self))
 
     def _latex_(self):
         r"""
