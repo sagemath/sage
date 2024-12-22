@@ -6461,7 +6461,7 @@ class Partitions(UniqueRepresentation, Parent):
         try:
             lst = list(map(ZZ, lst))
         except TypeError:
-            raise ValueError(f'all parts of {lst} should be nonnegative integers')
+            raise ValueError(f'all parts of {repr(lst)} should be nonnegative integers')
 
         if lst in self:
             # trailing zeros are removed in Partition.__init__
