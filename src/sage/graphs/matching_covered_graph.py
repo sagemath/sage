@@ -2583,8 +2583,17 @@ class MatchingCoveredGraph(Graph):
             (True, None, None)
             sage: C = graphs.CycleGraph(6)
             sage: D = MatchingCoveredGraph(C)
-            sage: D.is_brace(coNP_certificate=True)
-            (False, [(0, 1, None), (4, 3, None)], {0, 4, 5})
+            sage: is_brace, nontrivial_tight_cut, nontrivial_odd_component = \
+            ....: D.is_brace(coNP_certificate=True)
+            sage: is_brace is False
+            True
+            sage: J = C.subgraph(vertices=nontrivial_odd_component)
+            sage: J.is_isomorphic(graphs.PathGraph(3))
+            True
+            sage: len(nontrivial_tight_cut) == 2
+            True
+            sage: for u, v, *_ in nontrivial_tight_cut:
+            ....:     assert (u in nontrivial_odd_component and v not in nontrivial_odd_component)
 
         If the input matching covered graph is nonbipartite, a
         :exc:`ValueError` is thrown::
