@@ -8654,8 +8654,8 @@ cdef class Matrix(Matrix1):
             [0 0 0]
 
             sage: M.permutation_normal_form()
-            Traceback (most recent call last):
-            ...
+            [2 1 0]
+            [1 0 0]
             [0 0 0]
 
             sage: M = matrix(ZZ, [[-1, 3], [-1, 5], [2, 4]])
@@ -8665,8 +8665,11 @@ cdef class Matrix(Matrix1):
             [ 2  4]
 
             sage: M.permutation_normal_form(check=True)                                 # needs sage.graphs sage.groups
-            Traceback (most recent call last):
-            ...
+            (
+            [ 5 -1]
+            [ 4  2]
+            [ 3 -1],
+            ((1,2,3), (1,2))
             )
 
         TESTS::
@@ -8674,8 +8677,9 @@ cdef class Matrix(Matrix1):
             sage: # needs sage.graphs
             sage: M = matrix(ZZ, [[3, 4, 5], [3, 4, 5], [3, 5, 4], [2, 0,1]])
             sage: M.permutation_normal_form()
-            Traceback (most recent call last):
-            ...
+            [5 4 3]
+            [5 4 3]
+            [4 5 3]
             [1 0 2]
             sage: M = matrix(ZZ, 0, 0, [])
             sage: M.permutation_normal_form()

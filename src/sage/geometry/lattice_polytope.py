@@ -2967,8 +2967,10 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
             sage: o = lattice_polytope.cross_polytope(2)
             sage: o.normal_form(algorithm='palp_modified')                              # needs sage.groups
-            Traceback (most recent call last):
-            ...
+            M( 1,  0),
+            M( 0,  1),
+            M( 0, -1),
+            M(-1,  0)
             in 2-d lattice M
 
         The following examples demonstrate the speed of the available algorithms.
@@ -3178,13 +3180,17 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             M( 0, -1)
             in 2-d lattice M
             sage: o._palp_modified_normal_form()                                        # needs sage.graphs sage.groups
-            Traceback (most recent call last):
-            ...
+            M( 1,  0),
+            M( 0,  1),
+            M( 0, -1),
+            M(-1,  0)
             in 2-d lattice M
             sage: o._palp_modified_normal_form(permutation=True)                        # needs sage.graphs sage.groups
-            Traceback (most recent call last):
-            ...
-            (3,4))
+            (M( 1,  0),
+            M( 0,  1),
+            M( 0, -1),
+            M(-1,  0)
+            in 2-d lattice M, (3,4))
         """
         PM = self.vertex_facet_pairing_matrix()
         PM_max = PM.permutation_normal_form()
@@ -3275,16 +3281,11 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: o = lattice_polytope.cross_polytope(2)
             sage: PM = o.vertex_facet_pairing_matrix()
             sage: PM_max = PM.permutation_normal_form()                                 # needs sage.graphs
-            Traceback (most recent call last):
-            ...
-            <BLANKLINE>
             sage: PM_max == o._palp_PM_max()                                            # needs sage.graphs sage.groups
-            Traceback (most recent call last):
-            ...
             True
             sage: P2 = ReflexivePolytope(2, 0)
             sage: PM_max, permutations = P2._palp_PM_max(check=True)                    # needs sage.groups
-            sage: PM_max                                                                # needs sage.graphs sage.groups
+            sage: PM_max                                                                # needs sage.graphs
             [3 0 0]
             [0 3 0]
             [0 0 3]
