@@ -1688,7 +1688,7 @@ def CremonaDatabase(name=None, mini=None, set_global=None):
         sage: C = CremonaDatabase(mini=False)  # optional - !database_cremona_ellcurve
         Traceback (most recent call last):
         ...
-        ValueError: full Cremona database is not available; run "sage -i database_cremona_ellcurve" to install it
+        ValueError: full Cremona database is not available; consider using mini Cremona database by mini=True
     """
     if set_global is not None:
         from sage.misc.superseded import deprecation
@@ -1707,7 +1707,7 @@ def CremonaDatabase(name=None, mini=None, set_global=None):
         else:
             if not DatabaseCremona().is_present():
                 raise ValueError('full Cremona database is not available; '
-                                 'run "sage -i database_cremona_ellcurve" to install it')
+                                 'consider using mini Cremona database by mini=True')
             name = 'cremona'
     elif name == 'cremona mini':
         mini = True
