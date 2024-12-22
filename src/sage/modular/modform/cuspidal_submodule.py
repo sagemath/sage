@@ -386,12 +386,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
         2-dimensional space)::
 
             sage: CuspForms(GammaH(124, [85]), 1).q_expansion_basis()  # long time
-            [
-            q - q^4 - q^6 + O(q^7),
-            q^2 + O(q^7),
-            q^3 + O(q^7),
-            q^5 - q^6 + O(q^7)
-            ]
+            [q - q^4 - q^6 + O(q^7), q^2 + O(q^7), q^3 + O(q^7), q^5 - q^6 + O(q^7)]
         """
         if prec is None:
             prec = self.prec()

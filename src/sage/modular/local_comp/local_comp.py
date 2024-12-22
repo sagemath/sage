@@ -676,12 +676,8 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
             sage: f = Newform('81a', names='j'); f
             q + j0*q^2 + q^4 - j0*q^5 + O(q^6)
             sage: LocalComponent(f, 3).characters()  # long time (12s on sage.math, 2012)
-            [
-            Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0),
-              of level 2, mapping -2*s |--> -2*d + j0, 4 |--> 1, 3*s + 1 |--> -j0*d + 1, 3 |--> 1,
-            Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0),
-              of level 2, mapping -2*s |--> 2*d - j0, 4 |--> 1, 3*s + 1 |--> j0*d - 2, 3 |--> 1
-            ]
+            [Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0), of level 2, mapping -2*s |--> -2*d + j0, 4 |--> 1, 3*s + 1 |--> -j0*d + 1, 3 |--> 1,
+             Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0), of level 2, mapping -2*s |--> 2*d - j0, 4 |--> 1, 3*s + 1 |--> j0*d - 2, 3 |--> 1]
 
         Some ramified examples::
 
@@ -710,12 +706,8 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
               mapping s |--> 1, 2*s + 1 |--> 1/2*a0, 4*s + 1 |--> -1, -1 |--> 1, 2 |--> 1
             ]
             sage: Newform('243a',names='a').local_component(3).characters() # long time
-            [
-            Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 4,
-              mapping -2*s - 1 |--> -d - 1, 4 |--> 1, 3*s + 1 |--> -d - 1, s |--> 1,
-            Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 4,
-              mapping -2*s - 1 |--> d, 4 |--> 1, 3*s + 1 |--> d, s |--> 1
-            ]
+            [Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 4, mapping -2*s - 1 |--> -d - 1, 4 |--> 1, 3*s + 1 |--> -d - 1, s |--> 1,
+             Character of ramified extension Q_3(s)* (s^2 - 6 = 0), of level 4, mapping -2*s - 1 |--> d, 4 |--> 1, 3*s + 1 |--> d, s |--> 1]
         """
         T = self.type_space()
         p = self.prime()

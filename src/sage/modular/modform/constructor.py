@@ -285,10 +285,7 @@ def ModularForms(group=1,
         Modular Forms space of dimension 38 for Congruence Subgroup Gamma1(57)
          of weight 1 over Rational Field
         sage: M.cuspidal_submodule().basis()      # long time
-        [
-        q - q^4 + O(q^6),
-        q^3 - q^4 + O(q^6)
-        ]
+        [q - q^4 + O(q^6), q^3 - q^4 + O(q^6)]
 
     The Eisenstein subspace in weight 1 can be computed quickly, without
     triggering the expensive computation of the cuspidal part::

@@ -2739,16 +2739,14 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         Partitions will be exactly the same::
 
             sage: p.nef_partitions(hodge_numbers=True)  # long time (2s on sage.math, 2011), needs palp
-            [
-            Nef-partition {0, 1, 4, 5} ⊔ {2, 3, 6, 7} (direct product),
-            Nef-partition {0, 1, 2, 4} ⊔ {3, 5, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5} ⊔ {3, 6, 7},
-            Nef-partition {0, 1, 2, 4, 5, 6} ⊔ {3, 7} (direct product),
-            Nef-partition {0, 1, 2, 3} ⊔ {4, 5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4} ⊔ {5, 6, 7},
-            Nef-partition {0, 1, 2, 3, 4, 5} ⊔ {6, 7},
-            Nef-partition {0, 1, 2, 3, 4, 5, 6} ⊔ {7} (projection)
-            ]
+            [Nef-partition {0, 1, 4, 5} ⊔ {2, 3, 6, 7} (direct product),
+             Nef-partition {0, 1, 2, 4} ⊔ {3, 5, 6, 7},
+             Nef-partition {0, 1, 2, 4, 5} ⊔ {3, 6, 7},
+             Nef-partition {0, 1, 2, 4, 5, 6} ⊔ {3, 7} (direct product),
+             Nef-partition {0, 1, 2, 3} ⊔ {4, 5, 6, 7},
+             Nef-partition {0, 1, 2, 3, 4} ⊔ {5, 6, 7},
+             Nef-partition {0, 1, 2, 3, 4, 5} ⊔ {6, 7},
+             Nef-partition {0, 1, 2, 3, 4, 5, 6} ⊔ {7} (projection)]
 
         Now it is possible to get Hodge numbers::
 
