@@ -1016,19 +1016,9 @@ class SageDocTestParser(doctest.DocTestParser):
         find_sage_continuation = re.compile(r"^(\s*)\.\.\.\.:", re.M)
         find_python_continuation = re.compile(r"^(\s*)\.\.\.([^\.])", re.M)
         python_prompt = re.compile(r"^(\s*)>>>", re.M)
-        backslash_replacer = re.compile(r"""(\s*)sage:(.*)\\\ *
-\ *((\.){4}:)?\ *""")
 
         # The following are used to allow ... at the beginning of output
         ellipsis_tag = "<TEMP_ELLIPSIS_TAG>"
-
-        # Hack for non-standard backslash line escapes accepted by the current
-        # doctest system.
-        m = backslash_replacer.search(string)
-        while m is not None:
-            g = m.groups()
-            string = string[:m.start()] + g[0] + "sage:" + g[1] + string[m.end():]
-            m = backslash_replacer.search(string, m.start())
 
         replace_ellipsis = not python_prompt.search(string)
         if replace_ellipsis:
