@@ -80,12 +80,10 @@ A ``LinearCode`` is instantiated by providing a generator matrix::
     sage: G = MS([[1,1,1,0,0,0,0], [1,0,0,1,1,0,0], [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
     sage: C = LinearCode(G)
     sage: C.basis()
-    [
-    (1, 1, 1, 0, 0, 0, 0),
-    (1, 0, 0, 1, 1, 0, 0),
-    (0, 1, 0, 1, 0, 1, 0),
-    (1, 1, 0, 1, 0, 0, 1)
-    ]
+    [(1, 1, 1, 0, 0, 0, 0),
+     (1, 0, 0, 1, 1, 0, 0),
+     (0, 1, 0, 1, 0, 1, 0),
+     (1, 1, 0, 1, 0, 0, 1)]
     sage: c = C.basis()[1]
     sage: c in C
     True
