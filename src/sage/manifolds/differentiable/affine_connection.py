@@ -372,7 +372,7 @@ class AffineConnection(SageObject):
 
             sage: M = Manifold(3, 'M')
             sage: from sage.manifolds.differentiable.affine_connection import \
-                                                                AffineConnection
+            ....:                                               AffineConnection
             sage: nab = AffineConnection(M, 'nabla', latex_name=r'\nabla')
             sage: nab
             Affine connection nabla on the 3-dimensional differentiable

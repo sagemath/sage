@@ -66,8 +66,8 @@ distance) will use slow algorithms.
 A ``LinearCode`` is instantiated by providing a generator matrix::
 
     sage: M = matrix(GF(2), [[1, 0, 0, 1, 0],\
-                             [0, 1, 0, 1, 1],\
-                             [0, 0, 1, 1, 1]])
+    ....:                    [0, 1, 0, 1, 1],\
+    ....:                    [0, 0, 1, 1, 1]])
     sage: C = codes.LinearCode(M)
     sage: C
     [5, 3] linear code over GF(2)

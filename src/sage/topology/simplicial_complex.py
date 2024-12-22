@@ -3465,7 +3465,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         TESTS::
 
             sage: SC = SimplicialComplex([(0,1,2),(0,2,3),(2,3,4),(1,2,4), \
-                                          (1,4,5),(0,3,6),(3,6,7),(4,5,7)])
+            ....:                         (1,4,5),(0,3,6),(3,6,7),(4,5,7)])
 
         This was taking a long time before :issue:`20078`::
 

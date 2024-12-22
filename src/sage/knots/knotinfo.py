@@ -1427,7 +1427,7 @@ class KnotInfoBase(Enum):
 
             sage: H = KnotInfo.L11n459_1_1_1.homfly_polynomial()   # optional - database_knotinfo
             sage: all(L.homfly_polynomial() == L.link().homfly_polynomial(normalization='vz')\
-                      for L in KnotInfo if L.crossing_number() < 7)
+            ....:     for L in KnotInfo if L.crossing_number() < 7)
             True
 
         REFERENCES:

@@ -821,8 +821,8 @@ class StaticFile(FileFeature):
 
             sage: from sage.features import StaticFile
             sage: StaticFile(name='no_such_file', filename='KaT1aihu',\
-                             search_path=(), spkg='some_spkg',\
-                             url='http://rand.om').absolute_filename()  # optional - sage_spkg
+            ....:            search_path=(), spkg='some_spkg',\
+            ....:            url='http://rand.om').absolute_filename()  # optional - sage_spkg
             Traceback (most recent call last):
             ...
             FeatureNotPresentError: no_such_file is not available.

@@ -1806,8 +1806,8 @@ class DocTestDispatcher(SageObject):
         canceled::
 
             sage: from tempfile import NamedTemporaryFile as NTF
-            sage: with NTF(suffix='.py', mode='w+t') as f1, \
-            ....:      NTF(suffix='.py', mode='w+t') as f2:
+            sage: with (NTF(suffix='.py', mode='w+t') as f1,
+            ....:       NTF(suffix='.py', mode='w+t') as f2):
             ....:     _ = f1.write("'''\nsage: import time; time.sleep(60)\n'''")
             ....:     f1.flush()
             ....:     _ = f2.write("'''\nsage: True\nFalse\n'''")

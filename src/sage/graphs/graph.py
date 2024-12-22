@@ -104,7 +104,7 @@ covered here.
    ::
 
        sage: d = {0: [1,4,5], 1: [2,6], 2: [3,7], 3: [4,8], 4: [9], \
-             5: [7, 8], 6: [8,9], 7: [9]}
+       ....: 5: [7, 8], 6: [8,9], 7: [9]}
        sage: G = Graph(d); G
        Graph on 10 vertices
        sage: G.plot().show()    # or G.show()                                           # needs sage.plot
@@ -308,7 +308,7 @@ However, if one wants to define a dictionary, with the same keys and arbitrary
 objects for entries, one can make that association::
 
     sage: d = {0 : graphs.DodecahedralGraph(), 1 : graphs.FlowerSnark(), \
-          2 : graphs.MoebiusKantorGraph(), 3 : graphs.PetersenGraph() }
+    ....: 2 : graphs.MoebiusKantorGraph(), 3 : graphs.PetersenGraph() }
     sage: d[2]
     Moebius-Kantor Graph: Graph on 16 vertices
     sage: T = graphs.TetrahedralGraph()
