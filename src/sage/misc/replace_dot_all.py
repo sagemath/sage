@@ -194,7 +194,7 @@ def find_replacements(location, package_regex=None, verbose=False):
                     to_exec = to_exec.replace("'", '').replace('"', '')
                     if (to_exec[-1] == ','):
                         to_exec = to_exec[:-1]
-                    glob = globals()
+                    glob = dict()
                     exec(to_exec, glob)
                 except ModuleNotFoundError as err:
                     print(f'ModuleNotFoundError: {err} found when trying to execute {to_exec}')
