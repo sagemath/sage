@@ -553,7 +553,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         self.total_walltime_skips = 0
         self.total_performed_tests = 0
         self.total_walltime = 0
-        if sys.version_info.minor < 13:
+        if sys.version_info < (3,13):
             self._stats = self._name2ft
 
     def _run(self, test, compileflags, out):
@@ -832,7 +832,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         self.optionflags = original_optionflags
 
         # Record and return the number of failures and tries.
-        if sys.version_info.minor < 13:
+        if sys.version_info < (3,13):
             self._DocTestRunner__record_outcome(test, failures, tries)
         else:
             self._DocTestRunner__record_outcome(test, failures, tries, walltime_skips)
