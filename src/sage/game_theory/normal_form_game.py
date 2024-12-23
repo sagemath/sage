@@ -1989,7 +1989,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: c._solve_enumeration()
             [[(0, 1), (1, 0)]]
 
-        Testing against an error in `_is_NE`.  Note that 1 equilibrium is
+        Testing against an error in ``_is_NE``.  Note that 1 equilibrium is
         missing: ``[(2/3, 1/3), (0, 1)]``, however this equilibrium has
         supports of different sizes. This only occurs in degenerate games
         and is not supported in the `enumeration` algorithm::
