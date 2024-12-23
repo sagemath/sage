@@ -97,7 +97,6 @@ AUTHORS:
         ``number_of_braces()`` | Return the number of braces.
         ``number_of_bricks()`` | Return the number of bricks.
         ``number_of_petersen_bricks()`` | Return the number of Petersen bricks.
-        ``tight_cut_decomposition()`` | Return a tight cut decomposition.
 
     **Removability and ear decomposition**
 
@@ -3261,6 +3260,14 @@ class MatchingCoveredGraph(Graph):
 
         return
 
+    @doc_index('Bricks, braces and tight cut decomposition')
+    def tight_cut_decomposition(self):
+        r"""
+        Return a maximal set of laminar nontrivial tight cuts and a
+        corresponding vertex set partition.
+        """
+        raise NotImplementedError()
+    
     @doc_index('Miscellaneous methods')
     def update_matching(self, matching):
         r"""
