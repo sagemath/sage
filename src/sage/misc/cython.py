@@ -235,18 +235,6 @@ def cython(filename, verbose=0, compile_message=False,
         ....: from sage.misc.cachefunc cimport cache_key
         ....: ''')
 
-    In Cython 0.29.33 using `from PACKAGE cimport MODULE` is broken
-    when `PACKAGE` is a namespace package, see :issue:`35322`::
-
-        sage: cython('''
-        ....: from sage.misc cimport cachefunc
-        ....: ''')
-        Traceback (most recent call last):
-        ...
-        RuntimeError: Error compiling Cython file:
-        ...
-        ...: 'sage/misc.pxd' not found
-
     Test ``view_annotate``::
 
         sage: cython('''
@@ -418,7 +406,7 @@ def cython(filename, verbose=0, compile_message=False,
         cython_messages = re.sub(
             "^.*The keyword 'nogil' should appear at the end of the function signature line. "
             "Placing it before 'except' or 'noexcept' will be disallowed in a future version of Cython.\n",
-            "", cython_messages, 0, re.MULTILINE)
+            "", cython_messages, flags=re.MULTILINE)
 
         sys.stderr.write(cython_messages)
         sys.stderr.flush()
