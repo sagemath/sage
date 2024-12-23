@@ -117,7 +117,7 @@ def cython(filename, verbose=0, compile_message=False,
     - ``view_annotate_callback`` -- function (default: ``webbrowser.open``); a function
       that takes a string being the path to the html file. This can be overridden to
       change what to do with the annotated html file. Have no effect unless
-      ``view_annotate`` is ``True``
+      ``view_annotate`` is ``True``.
 
     - ``sage_namespace`` -- boolean (default: ``True``); if ``True``, import
       ``sage.all``
@@ -250,7 +250,7 @@ def cython(filename, verbose=0, compile_message=False,
         ....: ''', view_annotate=True, annotate=False)
         Traceback (most recent call last):
         ...
-        ValueError: Cannot view annotated file without creating it
+        ValueError: cannot view annotated file without creating it
 
     ::
 
@@ -420,7 +420,7 @@ def cython(filename, verbose=0, compile_message=False,
 
     if view_annotate:
         if not annotate:
-            raise ValueError("Cannot view annotated file without creating it")
+            raise ValueError("cannot view annotated file without creating it")
         view_annotate_callback(os.path.join(target_dir, name + ".html"))
 
     # This emulates running "setup.py build" with the correct options

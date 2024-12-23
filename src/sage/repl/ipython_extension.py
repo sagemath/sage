@@ -382,13 +382,12 @@ class SageMagics(Magics):
 
           For ``--view-annotate``, the following additional choices are allowed:
 
-          - ``--view-annotate=none`` (default)
-          - ``--view-annotate=auto`` (same as ``--view-annotate``); select one of the
-            choices below automatically
+          - ``--view-annotate=none`` (default); do not view the annotated html file
+          - ``--view-annotate`` (alternatively ``--view-annotate=auto``); select one of the
+            choices below automatically: use ``webbrowser`` in the Sage command line
+            and ``displayhtml`` in the Sage notebook
           - ``--view-annotate=webbrowser``; open the annotation in a web browser
-            (preferred if the Sage command line is used)
           - ``--view-annotate=displayhtml``; display the annotation inline in the notebook
-            (preferred if the Sage notebook is used)
 
         - ``cell`` -- string; the Cython source code to process
 
