@@ -25,6 +25,7 @@ cdef extern from "limits.h":
     long INT_MIN
 
 import os
+from warnings import warn
 
 from libc.stdint cimport int64_t
 from sage.libs.singular.decl cimport *
@@ -301,6 +302,9 @@ cdef object si2sa_GFq_generic(number *n, ring *_ring, object base):
     cdef object a
     cdef object ret
     cdef ring *cfRing = _ring.cf.extRing
+
+    if _ring.cf.type in (n_Zn, n_Znm):
+        return si2sa_ZZmod(n, _ring, base)
 
     if _ring.cf.cfIsZero(n,_ring.cf):
         return base.zero()
@@ -886,7 +890,7 @@ cdef number *sa2si_QQ(Rational r, ring *_ring) noexcept:
 
     - ``r`` -- a sage rational number
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -916,7 +920,7 @@ cdef number *sa2si_GFqGivaro(int quo, ring *_ring) noexcept:
 
     - ``quo`` -- sage integer
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -984,7 +988,7 @@ cdef number *sa2si_GFqNTLGF2E(FFgf2eE elem, ring *_ring) noexcept:
 
     - ``elem`` -- a sage element of a ntl_gf2e finite field
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1049,7 +1053,7 @@ cdef number *sa2si_GFq_generic(object elem, ring *_ring) noexcept:
 
     - ``elem`` -- a sage element of a generic finite field
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1075,6 +1079,9 @@ cdef number *sa2si_GFq_generic(object elem, ring *_ring) noexcept:
     cdef number *coeff
     cdef number *apow1
     cdef number *apow2
+
+    if _ring.cf.type in (n_Zn, n_Znm):
+        return sa2si_ZZmod(elem, _ring)
     elem = elem.polynomial()
 
     if _ring != currRing: rChangeCurrRing(_ring)
@@ -1115,7 +1122,7 @@ cdef number *sa2si_transext_QQ(object elem, ring *_ring) noexcept:
 
     - ``elem`` -- a sage element of a FractionField of polynomials over the rationals
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1265,7 +1272,7 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring) noexcept:
 
     - ``elem`` -- a sage element of a FractionField of polynomials over the rationals
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1365,7 +1372,7 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
 
     - ``elem`` -- a sage element of a NumberField
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1457,7 +1464,7 @@ cdef number *sa2si_ZZ(Integer d, ring *_ring) noexcept:
 
     - ``elem`` -- a sage Integer
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     OUTPUT:
 
@@ -1488,7 +1495,7 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
 
     - ``elem`` -- a sage IntegerMod
 
-    - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
+    - ``_ ring`` -- a (pointer to) a singular ring, where the result will live
 
     TESTS::
 
@@ -1512,7 +1519,7 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
 
         sage: P.<x,y,z> = Integers(2^32)[]
         sage: P(2^32-1)
-        4294967295
+        -1
 
         sage: P(3)
         3
@@ -1534,8 +1541,11 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
 
     cdef nMapFunc nMapFuncPtr = NULL
 
+    if _ring.cf.type == n_unknown:
+        return n_Init(int(d), _ring.cf)
+
     if _ring.cf.type == n_Z2m:
-        _d = long(d)
+        _d = d
         return nr2mMapZp(<number *>_d, currRing.cf, _ring.cf)
     elif _ring.cf.type == n_Zn or _ring.cf.type == n_Znm:
         lift = d.lift()
@@ -1577,7 +1587,7 @@ cdef object si2sa(number *n, ring *_ring, object base):
 
     An element of ``base``
     """
-    if isinstance(base, FiniteField_prime_modn):
+    if isinstance(base, FiniteField_prime_modn) and _ring.cf.type == n_Zp:
         return base(_ring.cf.cfInt(n, _ring.cf))
 
     elif isinstance(base, RationalField):
@@ -1605,8 +1615,6 @@ cdef object si2sa(number *n, ring *_ring, object base):
         return si2sa_transext_FF(n, _ring, base)
 
     elif isinstance(base, IntegerModRing_generic):
-        if _ring.cf.type == n_unknown:
-            return base(_ring.cf.cfInt(n, _ring.cf))
         return si2sa_ZZmod(n, _ring, base)
 
     else:
@@ -1628,7 +1636,8 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
     a (pointer to) a singular number
     """
     cdef int i = 0
-    if isinstance(elem._parent, FiniteField_prime_modn):
+
+    if isinstance(elem._parent, FiniteField_prime_modn) and _ring.cf.type == n_Zp:
         return n_Init(int(elem),_ring.cf)
 
     elif isinstance(elem._parent, RationalField):
@@ -1649,8 +1658,6 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
     elif isinstance(elem._parent, NumberField) and elem._parent.is_absolute():
         return sa2si_NF(elem, _ring)
     elif isinstance(elem._parent, IntegerModRing_generic):
-        if _ring.cf.type == n_unknown:
-            return n_Init(int(elem),_ring.cf)
         return sa2si_ZZmod(elem, _ring)
     elif isinstance(elem._parent, FractionField_generic) and isinstance(elem._parent.base(), (MPolynomialRing_libsingular, PolynomialRing_field)):
         if isinstance(elem._parent.base().base_ring(), RationalField):
@@ -1806,9 +1813,99 @@ saved_PATH = os.environ["PATH"]
 init_libsingular()
 os.environ["PATH"] = saved_PATH
 
+cdef bint catching_error = False
+
 cdef void libsingular_error_callback(const_char_ptr s) noexcept:
     _s = char_to_str(s)
-    error_messages.append(_s)
+    if catching_error:
+        error_messages.append(_s)
+    else:
+        warn(f"error in Singular ignored: {_s}")
+
+cdef int start_catch_error() except -1:
+    """
+    Helper function to convert Singular errors to Python exceptions.
+
+    Must be used as follows::
+
+        start_catch_error()
+        ...
+        s = check_error()  # nonempty tuple[str, ...] (error messages) or None
+        if s:
+            # at this point global variable ``error_messages`` is cleared
+            raise RuntimeError(...)
+
+    Return value is ignored, only used for exception handling.
+
+    Note that :func:`check_error` can only be called exactly once.
+
+    Note that this *must not* be used in conjunction with :func:`sig_on` as follows::
+
+        start_catch_error()
+        sig_on()
+        ...
+        sig_off()
+        if check_error():
+            raise RuntimeError(...)
+
+    because if the code is interrupted, then :func:`check_error` is never called.
+
+    Use the following instead::
+
+        start_catch_error()
+        try:
+            sig_on()
+            ...  # long time
+            sig_off()
+        finally:
+            if check_error():
+                raise RuntimeError(...)
+
+    If the code inside (marked `# long time`) can also raise a Python exception,
+    the above is still wrong --- :func:`sig_off` may not be called. In this case
+    use a nested ``try`` as suggested in ``cysignals`` documentation::
+
+        start_catch_error()
+        try:
+            sig_on()  # This must be OUTSIDE the inner try
+            try:
+                ...  # long time
+            finally:
+                sig_off()
+        finally:
+            if check_error():
+                raise RuntimeError(...)
+    """
+    global errorreported, catching_error, error_messages
+    if catching_error:
+        warn("internal error: previous start_catch_error not ended with check_error")
+    catching_error = True
+
+    if errorreported:
+        warn(f"error in Singular ignored: {', '.join(error_messages)}")
+        errorreported = False
+        error_messages.clear()
+    else:
+        assert not error_messages
+    return 0
+
+cdef object check_error():
+    """
+    See :func:`start_catch_error`.
+    """
+    global errorreported, catching_error, error_messages
+    if not catching_error:
+        warn("internal error: check_error not preceded with start_catch_error")
+    catching_error = False
+
+    if errorreported:
+        result = tuple(error_messages)
+        assert result
+        errorreported = False
+        error_messages.clear()
+        return result
+    assert not error_messages
+    return None
 
 
 def get_resource(id):

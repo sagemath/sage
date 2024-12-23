@@ -1915,6 +1915,12 @@ class GRSErrorErasureDecoder(Decoder):
             sage: y = Chan(c)
             sage: D.connected_encoder().unencode(c) == D.decode_to_message(y)
             True
+            sage: n_era = C.minimum_distance() - 1
+            sage: Chan = channels.ErrorErasureChannel(C.ambient_space(),
+            ....:                                     D.decoding_radius(n_era), n_era)
+            sage: y = Chan(c)
+            sage: D.connected_encoder().unencode(c) == D.decode_to_message(y)
+            True
 
         TESTS:
 
@@ -1958,14 +1964,14 @@ class GRSErrorErasureDecoder(Decoder):
                                 [word[i] for i in range(len(word))
                                  if not erasure_vector[i]])
         C1_length = len(punctured_word)
-        if C1_length == k:
-            return self.connected_encoder().unencode_nocheck(word)
         C1_evaluation_points = [self.code().evaluation_points()[i] for i in
                 range(n) if erasure_vector[i] != 1]
         C1_column_multipliers = [self.code().column_multipliers()[i] for i in
                 range(n) if erasure_vector[i] != 1]
         C1 = GeneralizedReedSolomonCode(C1_evaluation_points, k,
                 C1_column_multipliers)
+        if C1_length == k:
+            return C1.unencode(punctured_word, nocheck=True)
         return C1.decode_to_message(punctured_word)
 
     def decoding_radius(self, number_erasures):
@@ -1997,7 +2003,7 @@ class GRSErrorErasureDecoder(Decoder):
             ValueError: The number of erasures exceed decoding capability
         """
         diff = self.code().minimum_distance() - 1 - number_erasures
-        if diff <= 0:
+        if diff < 0:
             raise ValueError("The number of erasures exceed decoding capability")
         else:
             return diff // 2

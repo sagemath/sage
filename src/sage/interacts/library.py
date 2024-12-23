@@ -2,7 +2,7 @@ r"""
 Sage Interacts
 
 Sage interacts are applications of the `@interact decorator <../../sagenb/notebook/interact.html>`_.
-They are conveniently accessible in the Sage Notebook via ``interacts.[TAB].[TAB]()``.
+They are conveniently accessible in the Sage notebook via ``interacts.[TAB].[TAB]()``.
 The first ``[TAB]`` lists categories and the second ``[TAB]`` reveals the interact examples.
 
 EXAMPLES:
