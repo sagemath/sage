@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'algebras_with_basis.py',
   'all.py',
   'commutative_additive_monoids.py',

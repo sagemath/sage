@@ -248,6 +248,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.noncommutative_ideals import Ideal_nc
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
+from sage.structure.element import parent
 from sage.structure.richcmp import (op_EQ, op_GE, op_GT, op_LE, op_LT, op_NE,
                                     rich_to_bool, richcmp_method)
 from sage.structure.sequence import Sequence
@@ -600,10 +601,10 @@ class MPolynomialIdeal_singular_base_repr:
         """
         from sage.rings.fraction_field import FractionField_generic
         from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         F = self.base_ring()
         if (not isinstance(F, FractionField_generic) or
-            not isinstance(F.ring(), (MPolynomialRing_base, PolynomialRing_general))):
+            not isinstance(F.ring(), (MPolynomialRing_base, PolynomialRing_generic))):
             raise TypeError("the base ring must be a field with parameters")
         from sage.arith.functions import lcm
         from sage.libs.singular.function import lib, singular_function
@@ -4527,8 +4528,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: R.<x,y,z> = PolynomialRing(Zmod(2233497349584))
             sage: I = R.ideal([z*(x-3*y), 3^2*x^2-y*z, z^2+y^2])
             sage: I.groebner_basis()
-            [2*z^4, y*z^2 + 81*z^3, 248166372176*z^3, 9*x^2 - y*z, y^2 + z^2, x*z +
-            2233497349581*y*z, 248166372176*y*z]
+            [2*z^4, y*z^2 + 81*z^3, 248166372176*z^3, 9*x^2 + 2233497349583*y*z, y^2 + z^2, x*z + 2233497349581*y*z, 248166372176*y*z]
 
         Sage also supports local orderings::
 
@@ -4965,6 +4965,23 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
             Requires computation of a Groebner basis, which can be a
             very expensive operation.
+
+        TESTS:
+
+        Check for :issue:`38560`::
+
+            sage: I.reduce(1)
+            1
+            sage: I.reduce(1r)
+            1
+            sage: I.reduce(pi.n())
+            Traceback (most recent call last):
+            ...
+            TypeError: no canonical coercion from Real Field with 53 bits of precision to Multivariate Polynomial Ring in x, y over Rational Field
+            sage: I.reduce(float(pi.n()))
+            Traceback (most recent call last):
+            ...
+            TypeError: no canonical coercion from <class 'float'> to Multivariate Polynomial Ring in x, y over Rational Field
         """
         try:
             strat = self._groebner_strategy()
@@ -4973,6 +4990,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             pass
 
         gb = self.groebner_basis()
+        f = self.ring().coerce(f)
         return f.reduce(gb)
 
     def _contains_(self, f):
