@@ -1680,7 +1680,7 @@ class Components(SageObject):
         """
         if isinstance(other, (int, Integer)) and other == 0:
             return +self
-        return self + (-other)  #!# correct, deals properly with
+        return self + (-other)  # ! # correct, deals properly with
                                 # symmetries, but is probably not optimal
 
     def __rsub__(self, other):

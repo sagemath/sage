@@ -1,5 +1,6 @@
 py.install_sources(
   'MOLS_handbook_data.py',
+  '__init__.py',
   'all.py',
   'bibd.py',
   'block_design.py',
