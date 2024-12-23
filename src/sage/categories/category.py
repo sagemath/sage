@@ -2886,7 +2886,7 @@ class CategoryWithParameters(Category):
         if debug.test_category_graph:
             key2 = (cls, name, self._make_named_class_key(name))
             assert key == key2
-        if False and debug.test_category_graph and key in self._make_named_class_cache:
+        if debug.test_category_graph and key in self._make_named_class_cache:
             old_cls = self._make_named_class_cache[key]
             last_category = self._make_named_class_last_category_cache[key]
             # new_cls = Category._make_named_class(self, name, method_provider, cache=cache, **options)
