@@ -2874,7 +2874,7 @@ class CategoryWithParameters(Category):
         This method starts as an optimization to allow different related
         categories to share the Python types, see :issue:`11935`.
         However, because of the guarantees stated in :meth:`Category._test_category_graph`,
-        the following rules must be followed::
+        the following rules must be followed.
 
         - If two categories have different lists of supercategories, they must return
           different keys::
