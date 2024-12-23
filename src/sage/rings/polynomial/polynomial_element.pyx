@@ -118,7 +118,7 @@ from sage.arith.functions import lcm
 from sage.rings.polynomial import polynomial_fateman
 
 from sage.rings.ideal import Ideal_generic
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.polynomial.multi_polynomial cimport MPolynomial
 from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
@@ -7520,7 +7520,7 @@ cdef class Polynomial(CommutativePolynomial):
             raise TypeError("p2 must be a polynomial")
         p1, p2 = coercion_model.canonical_coercion(p1, p2)
         K = p1.parent()
-        assert isinstance(p1.parent(), PolynomialRing_general)
+        assert isinstance(p1.parent(), PolynomialRing_generic)
         S = K.base_ring()
         Sf = S.fraction_field()
 
