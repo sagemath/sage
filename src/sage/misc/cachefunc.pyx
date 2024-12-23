@@ -457,20 +457,21 @@ from inspect import isfunction
 from sage.misc.weak_dict cimport CachedWeakValueDictionary
 from sage.misc.decorators import decorator_keywords
 
-cdef frozenset special_method_names = frozenset(['__abs__', '__add__',
-            '__and__', '__call__', '__cmp__', '__coerce__', '__complex__', '__contains__', '__del__',
-            '__delattr__', '__delete__', '__delitem__', '__delslice__', '__dir__', '__div__',
-            '__eq__', '__float__', '__floordiv__', '__format__', '__ge__', '__get__', '__getattr__',
-            '__getattribute__', '__getitem__', '__getslice__', '__gt__', '__hash__', '__hex__',
-            '__iadd__', '__iand__', '__idiv__', '__ifloordiv__', '__ilshift__', '__imod__', '__imul__',
-            '__index__', '__init__', '__instancecheck__', '__int__', '__invert__', '__ior__', '__ipow__',
-            '__irshift__', '__isub__', '__iter__', '__itruediv__', '__ixor__', '__le__', '__len__',
-            '__length_hint__', '__long__', '__lshift__', '__lt__', '__missing__', '__mod__', '__mul__',
-            '__ne__', '__neg__', '__new__', '__oct__', '__or__', '__pos__', '__pow__',
-            '__radd__', '__rand__', '__rdiv__', '__repr__', '__reversed__', '__rfloordiv__', '__rlshift__',
-            '__rmod__', '__rmul__', '__ror__', '__rpow__', '__rrshift__', '__rshift__', '__rsub__',
-            '__rtruediv__', '__rxor__', '__set__', '__setattr__', '__setitem__', '__setslice__', '__sizeof__',
-            '__str__', '__sub__', '__subclasscheck__', '__truediv__', '__unicode__', '__xor__', 'next'])
+cdef frozenset special_method_names = frozenset(
+    ['__abs__', '__add__',
+     '__and__', '__call__', '__cmp__', '__coerce__', '__complex__', '__contains__', '__del__',
+     '__delattr__', '__delete__', '__delitem__', '__delslice__', '__dir__', '__div__',
+     '__eq__', '__float__', '__floordiv__', '__format__', '__ge__', '__get__', '__getattr__',
+     '__getattribute__', '__getitem__', '__getslice__', '__gt__', '__hash__', '__hex__',
+     '__iadd__', '__iand__', '__idiv__', '__ifloordiv__', '__ilshift__', '__imod__', '__imul__',
+     '__index__', '__init__', '__instancecheck__', '__int__', '__invert__', '__ior__', '__ipow__',
+     '__irshift__', '__isub__', '__iter__', '__itruediv__', '__ixor__', '__le__', '__len__',
+     '__length_hint__', '__long__', '__lshift__', '__lt__', '__missing__', '__mod__', '__mul__',
+     '__ne__', '__neg__', '__new__', '__oct__', '__or__', '__pos__', '__pow__',
+     '__radd__', '__rand__', '__rdiv__', '__repr__', '__reversed__', '__rfloordiv__', '__rlshift__',
+     '__rmod__', '__rmul__', '__ror__', '__rpow__', '__rrshift__', '__rshift__', '__rsub__',
+     '__rtruediv__', '__rxor__', '__set__', '__setattr__', '__setitem__', '__setslice__', '__sizeof__',
+     '__str__', '__sub__', '__subclasscheck__', '__truediv__', '__unicode__', '__xor__', 'next'])
 
 
 def _cached_function_unpickle(module, name, cache=None):
@@ -515,7 +516,7 @@ def _cached_function_unpickle(module, name, cache=None):
         sage: f(0)
         0
     """
-    ret = getattr(__import__(module, fromlist=['']),name)
+    ret = getattr(__import__(module, fromlist=['']), name)
     if cache is not None:
         ret.cache.update(cache)
     return ret
@@ -792,8 +793,9 @@ cdef class CachedFunction():
             self.__cached_module__ = f.__module__
         except AttributeError:
             self.__cached_module__ = f.__objclass__.__module__
-        if argument_fixer is not None: # it is None unless the argument fixer
-                                       # was known previously. See #15038.
+        if argument_fixer is not None:
+            # it is None unless the argument fixer
+            # was known previously. See #15038.
             self._argument_fixer = argument_fixer
 
     @property
@@ -826,7 +828,7 @@ cdef class CachedFunction():
             -1
         """
         self._argument_fixer = ArgumentFixer(self.f,
-                classmethod=self.is_classmethod)
+                                             classmethod=self.is_classmethod)
 
     cdef fix_args_kwds(self, tuple args, dict kwds):
         r"""
@@ -863,10 +865,10 @@ cdef class CachedFunction():
         return _cached_function_unpickle, (self.__cached_module__, self.__name__, self.cache)
 
     #########
-    ## Introspection
-    ##
-    ## We provide some methods explicitly, and
-    ## forward other questions to the cached function.
+    #  Introspection
+    #
+    # We provide some methods explicitly, and
+    # forward other questions to the cached function.
 
     def _instancedoc_(self):
         """
@@ -909,15 +911,15 @@ cdef class CachedFunction():
             try:
                 sourcelines = sage_getsourcelines(f)
                 filename = sage_getfile_relative(f)
-                #this is a rather expensive way of getting the line number, because
-                #retrieving the source requires reading the source file and in many
-                #cases this is not required (in cython it's embedded in the docstring,
-                #on code objects you'll find it in co_filename and co_firstlineno)
-                #however, this hasn't been factored out yet in sageinspect
-                #and the logic in sage_getsourcelines is rather intricate.
-                file_info = "File: {} (starting at line {})".format(filename,sourcelines[1])+os.linesep
+                # this is a rather expensive way of getting the line number, because
+                # retrieving the source requires reading the source file and in many
+                # cases this is not required (in cython it's embedded in the docstring,
+                # on code objects you'll find it in co_filename and co_firstlineno)
+                # however, this hasn't been factored out yet in sageinspect
+                # and the logic in sage_getsourcelines is rather intricate.
+                file_info = "File: {} (starting at line {})".format(filename, sourcelines[1]) + os.linesep
 
-                doc = file_info+doc
+                doc = file_info + doc
             except IOError:
                 pass
         return doc
@@ -1264,7 +1266,7 @@ cdef class CachedFunction():
             ak = normalize_input(a)
             if self.get_key_args_kwds(ak[0], ak[1]) not in self.cache:
                 arglist2.append(ak)
-        for ((args,kwargs), val) in P(arglist2):
+        for ((args, kwargs), val) in P(arglist2):
             self.set_cache(val, *args, **kwargs)
 
 
@@ -1477,7 +1479,7 @@ class CachedMethodPickle():
         we replace the actual cached method by a place holder,
         that kills itself as soon as any attribute is requested.
         Then, the original cached attribute is reinstated. But the
-        cached values are in fact saved (if `do_pickle` is set.)
+        cached values are in fact saved (if ``do_pickle`` is set.)
 
     EXAMPLES::
 
@@ -1620,7 +1622,7 @@ class CachedMethodPickle():
              x^2*y*z^3 - x*y^2*z^3 + 2*y^3*z^3 + z^6,
              x*y^3 + y^4 + x*z^3, x^3 + y^3 + z^3]}
         """
-        return CachedMethodPickle,(self._instance,self._name,self._cache)
+        return CachedMethodPickle, (self._instance, self._name, self._cache)
 
     def __call__(self, *args, **kwds):
         """
@@ -1644,7 +1646,7 @@ class CachedMethodPickle():
             Cached version of <function ...gens at 0x...>
         """
         self._instance.__dict__.__delitem__(self._name)
-        CM = getattr(self._instance,self._name)
+        CM = getattr(self._instance, self._name)
         if self._cache is not None:
             if isinstance(CM, CachedMethodCallerNoArgs):
                 CM.cache = self._cache
@@ -1682,14 +1684,14 @@ class CachedMethodPickle():
             Cached version of <function ...groebner_basis at 0x...>
         """
         self._instance.__dict__.__delitem__(self._name)
-        CM = getattr(self._instance,self._name)
+        CM = getattr(self._instance, self._name)
         if self._cache is not None:
             if isinstance(CM, CachedMethodCallerNoArgs):
                 CM.cache = self._cache
             else:
                 for k, v in self._cache:
                     CM.cache[k] = v
-        return getattr(CM,s)
+        return getattr(CM, s)
 
 
 cdef class CachedMethodCaller(CachedFunction):
@@ -1801,10 +1803,10 @@ cdef class CachedMethodCaller(CachedFunction):
             sage: J.groebner_basis
             Cached version of <function ...groebner_basis at 0x...>
         """
-        if isinstance(self._cachedmethod, CachedInParentMethod) or hasattr(self._instance,self._cachedmethod._cache_name):
-            return CachedMethodPickle,(self._instance,self.__name__)
+        if isinstance(self._cachedmethod, CachedInParentMethod) or hasattr(self._instance, self._cachedmethod._cache_name):
+            return CachedMethodPickle, (self._instance, self.__name__)
         else:
-            return CachedMethodPickle,(self._instance,self.__name__,self.cache)
+            return CachedMethodPickle, (self._instance, self.__name__, self.cache)
 
     def _instance_call(self, *args, **kwds):
         """
@@ -2101,11 +2103,12 @@ cdef class CachedMethodCaller(CachedFunction):
 
         cls = type(self)
         Caller = cls(self._cachedmethod, inst,
-                cache=self._cachedmethod._get_instance_cache(inst),
-                name=self._cachedmethod._cachedfunc.__name__, key=self.key, do_pickle=self.do_pickle)
+                     cache=self._cachedmethod._get_instance_cache(inst),
+                     name=self._cachedmethod._cachedfunc.__name__,
+                     key=self.key, do_pickle=self.do_pickle)
 
         try:
-            setattr(inst,self._cachedmethod._cachedfunc.__name__, Caller)
+            setattr(inst, self._cachedmethod._cachedfunc.__name__, Caller)
             return Caller
         except AttributeError:
             pass
@@ -2154,7 +2157,7 @@ cdef class CachedMethodCaller(CachedFunction):
             ak = normalize_input(a)
             if self.get_key_args_kwds(ak[0], ak[1]) not in self.cache:
                 arglist2.append(ak)
-        for ((args,kwargs), val) in P(arglist2):
+        for ((args, kwargs), val) in P(arglist2):
             self.set_cache(val, *args, **kwargs)
 
 
@@ -2242,12 +2245,12 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             4
         """
         # initialize CachedFunction
-        if isinstance(f,str):
+        if isinstance(f, str):
             try:
-                F = getattr(inst.__class__,f)
+                F = getattr(inst.__class__, f)
             except AttributeError:
-                F = getattr(inst,f)
-            if isinstance(F,CachedFunction):
+                F = getattr(inst, f)
+            if isinstance(F, CachedFunction):
                 f = F.f
             else:
                 f = F
@@ -2292,9 +2295,8 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             Cached version of <function ...gens at 0x...>
         """
         if self.do_pickle:
-            return CachedMethodPickle,(self._instance, self.__name__, self.cache)
-        else:
-            return CachedMethodPickle,(self._instance, self.__name__)
+            return CachedMethodPickle, (self._instance, self.__name__, self.cache)
+        return CachedMethodPickle, (self._instance, self.__name__)
 
     def _instance_call(self):
         """
@@ -2480,7 +2482,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             pass
         Caller = CachedMethodCallerNoArgs(inst, self.f, name=self.__name__, do_pickle=self.do_pickle)
         try:
-            setattr(inst,self.__name__, Caller)
+            setattr(inst, self.__name__, Caller)
             return Caller
         except AttributeError:
             pass
@@ -2877,7 +2879,7 @@ cdef class CachedMethod():
         if self.nargs == 0:
             if isinstance(f, object) and not isfunction(f):
                 try:
-                    if METH_NOARGS&PyCFunction_GetFlags(f.__get__(inst,cls)):
+                    if METH_NOARGS&PyCFunction_GetFlags(f.__get__(inst, cls)):
                         self.nargs = 1
                 except Exception:
                     pass
@@ -3022,7 +3024,7 @@ cdef class CachedSpecialMethod(CachedMethod):
                 self.nargs = 1
                 Caller = CachedMethodCallerNoArgs(inst, f, name=name, do_pickle=self._cachedfunc.do_pickle)
             else:
-                self.nargs = 2 # don't need the exact number
+                self.nargs = 2  # don't need the exact number
                 Caller = CachedMethodCaller(self, inst,
                                             cache=self._get_instance_cache(inst),
                                             name=name,
@@ -3038,7 +3040,7 @@ cdef class CachedSpecialMethod(CachedMethod):
                                         do_pickle=self._cachedfunc.do_pickle)
         if inst is not None:
             try:
-                setattr(inst,name, Caller)
+                setattr(inst, name, Caller)
                 return Caller
             except AttributeError:
                 pass
@@ -3331,7 +3333,7 @@ cdef class CachedInParentMethod(CachedMethod):
             return P.__dict__.setdefault(self._cache_name, default)
         except AttributeError:
             pass
-        if not hasattr(P,'_cached_methods'):
+        if not hasattr(P, '_cached_methods'):
             raise TypeError("The parent of this element does not allow attribute assignment\n" +
                             "    and does not descend from the Parent base class.\n" +
                             "    Cannot use CachedInParentMethod.")
@@ -3346,7 +3348,7 @@ cdef class CachedInParentMethod(CachedMethod):
         """
         Caller = GloballyCachedMethodCaller(self, inst, cache=self._get_instance_cache(inst), key=self._cachedfunc.key, do_pickle=self._cachedfunc.do_pickle)
         try:
-            setattr(inst,self._cachedfunc.__name__, Caller)
+            setattr(inst, self._cachedfunc.__name__, Caller)
         except AttributeError:
             pass
         return Caller
@@ -3433,7 +3435,7 @@ class FileCache():
         l = len(prefix)
         for f in os.listdir(dir):
             if f[:l] == prefix:
-                files.append( dir + f )
+                files.append(dir + f)
         return files
 
     def items(self):
@@ -3652,7 +3654,7 @@ class FileCache():
         f = self._filename(key)
 
         save(key, f+'.key.sobj')
-        save((key,value), f + '.sobj')
+        save((key, value), f + '.sobj')
         if self._cache is not None:
             self._cache[key] = value
 
