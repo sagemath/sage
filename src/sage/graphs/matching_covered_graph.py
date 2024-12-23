@@ -3267,7 +3267,7 @@ class MatchingCoveredGraph(Graph):
         corresponding vertex set partition.
         """
         raise NotImplementedError()
-    
+
     @doc_index('Miscellaneous methods')
     def update_matching(self, matching):
         r"""
