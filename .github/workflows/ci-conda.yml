@@ -28,7 +28,7 @@ jobs:
           ${{ github.event_name == 'pull_request'
                 && fromJson('["ubuntu-latest", "macos-latest"]')
                 || fromJson('["ubuntu-latest", "macos-latest", "macos-13"]') }}
-        python: ['3.11', '3.12']
+        python: ['3.11', '3.12', '3.13']
         # Optional environment is disabled for now as its not yet working
         # environment: [environment, environment-optional]
         conda-env: [environment]

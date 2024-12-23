@@ -27,7 +27,7 @@ platforms = {
     "osx-arm64": "macos",
     # "win-64": "win",
 }
-pythons = ["3.11", "3.12"]
+pythons = ["3.11", "3.12", "3.13"]
 tags = [""]
 
 
