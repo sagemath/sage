@@ -365,6 +365,13 @@ def _normalize(n, gens_orders=None, names='f'):
         Traceback (most recent call last):
         ...
         TypeError: unable to convert 's' to an integer
+
+    Verify that :issue:`38967` is fixed::
+
+        sage: AbelianGroup([-4])
+        Traceback (most recent call last):
+        ...
+        ValueError: orders of generators cannot be negative but they are (-4,)
     """
     if gens_orders is None:
         if isinstance(n, (list, tuple)):
@@ -376,6 +383,8 @@ def _normalize(n, gens_orders=None, names='f'):
     if len(gens_orders) < n:
         gens_orders = [0] * (n - len(gens_orders)) + list(gens_orders)
     gens_orders = tuple(ZZ(i) for i in gens_orders)
+    if any(i < 0 for i in gens_orders):
+        raise ValueError(f'orders of generators cannot be negative but they are {gens_orders}')
     if len(gens_orders) > n:
         raise ValueError('gens_orders (='+str(gens_orders)+') must have length n (='+str(n)+')')
     if isinstance(names, list):

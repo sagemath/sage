@@ -2228,7 +2228,7 @@ class TensorField(ModuleElementWithMutability):
             sage: t.parent().zero() == 0
             True
         """
-        from .mixed_form import MixedForm
+        from sage.manifolds.differentiable.mixed_form import MixedForm
 
         if other is self:
             return True
@@ -2341,8 +2341,10 @@ class TensorField(ModuleElementWithMutability):
         for dom, rst in self._restrictions.items():
             resu._restrictions[dom] = + rst
         # Compose names:
-        from sage.tensor.modules.format_utilities import (format_unop_txt,
-                                                          format_unop_latex)
+        from sage.tensor.modules.format_utilities import (
+            format_unop_latex,
+            format_unop_txt,
+        )
         resu._name = format_unop_txt('+', self._name)
         resu._latex_name = format_unop_latex(r'+', self._latex_name)
         return resu
@@ -2385,8 +2387,10 @@ class TensorField(ModuleElementWithMutability):
         for dom, rst in self._restrictions.items():
             resu._restrictions[dom] = - rst
         # Compose names:
-        from sage.tensor.modules.format_utilities import (format_unop_txt,
-                                                          format_unop_latex)
+        from sage.tensor.modules.format_utilities import (
+            format_unop_latex,
+            format_unop_txt,
+        )
         resu._name = format_unop_txt('-', self._name)
         resu._latex = format_unop_latex(r'-', self._latex_name)
         return resu
@@ -2597,8 +2601,10 @@ class TensorField(ModuleElementWithMutability):
         for dom, rst in self._restrictions.items():
             resu._restrictions[dom] = scalar.restrict(dom) * rst
         # Compose names:
-        from sage.tensor.modules.format_utilities import (format_mul_txt,
-                                                          format_mul_latex)
+        from sage.tensor.modules.format_utilities import (
+            format_mul_latex,
+            format_mul_txt,
+        )
         resu_name = format_mul_txt(scalar._name, '*', self._name)
         resu_latex = format_mul_latex(scalar._latex_name, r' \cdot ',
                                       self._latex_name)
@@ -3826,8 +3832,8 @@ class TensorField(ModuleElementWithMutability):
             raise ValueError("position out of range")
 
         from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
-        from sage.manifolds.differentiable.symplectic_form import SymplecticForm
         from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
+        from sage.manifolds.differentiable.symplectic_form import SymplecticForm
 
         if isinstance(non_degenerate_form, PseudoRiemannianMetric):
             return self.contract(pos, non_degenerate_form.inverse(), 1)

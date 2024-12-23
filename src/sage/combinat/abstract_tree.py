@@ -1857,7 +1857,7 @@ class AbstractClonableTree(AbstractTree):
             The tree ``self`` must be in a mutable state. See
             :mod:`sage.structure.list_clone` for more details about
             mutability.  The default implementation here assume that the
-            container of the node implement a method `_setitem` with signature
+            container of the node implement a method ``_setitem`` with signature
             `self._setitem(idx, value)`. It is usually provided by inheriting
             from :class:`~sage.structure.list_clone.ClonableArray`.
 
