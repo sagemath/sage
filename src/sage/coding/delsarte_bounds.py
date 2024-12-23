@@ -201,9 +201,8 @@ def _delsarte_LP_building(n, d, d_star, q, isinteger, solver, maxc=0):
           constraint_1: 0 <= x_1 <= 0
           constraint_2: 0 <= x_2 <= 0
           constraint_3: -7 x_0 - 5 x_1 - 3 x_2 - x_3 + x_4 + 3 x_5 + 5 x_6 + 7 x_7 <= 0
-          constraint_4: -7 x_0 - 5 x_1 - 3 x_2 - x_3 + x_4 + 3 x_5 + 5 x_6 + 7 x_7 <= 0
           ...
-          constraint_16: - x_0 + x_1 - x_2 + x_3 - x_4 + x_5 - x_6 + x_7 <= 0
+          constraint_9: - x_0 + x_1 - x_2 + x_3 - x_4 + x_5 - x_6 + x_7 <= 0
         Variables:
           x_0 is a continuous variable (min=0, max=+oo)
           ...
@@ -213,21 +212,20 @@ def _delsarte_LP_building(n, d, d_star, q, isinteger, solver, maxc=0):
 
     p = MixedIntegerLinearProgram(maximization=True, solver=solver)
     A = p.new_variable(integer=isinteger, nonnegative=True)
-    p.set_objective(sum([A[r] for r in range(n + 1)]))
+    p.set_objective(p.sum([A[r] for r in range(n + 1)]))
     p.add_constraint(A[0] == 1)
     for i in range(1, d):
         p.add_constraint(A[i] == 0)
     for j in range(1, n + 1):
-        rhs = sum([krawtchouk(n, q, j, r, check=False) * A[r]
+        rhs = p.sum([krawtchouk(n, q, j, r, check=False) * A[r]
                    for r in range(n + 1)])
-        p.add_constraint(0 <= rhs)
         if j >= d_star:
             p.add_constraint(0 <= rhs)
         else:  # rhs is proportional to j-th weight of the dual code
             p.add_constraint(0 == rhs)
 
     if maxc > 0:
-        p.add_constraint(sum([A[r] for r in range(n + 1)]), max=maxc)
+        p.add_constraint(p.sum([A[r] for r in range(n + 1)]), max=maxc)
     return A, p
 
 
@@ -275,7 +273,7 @@ def _delsarte_cwc_LP_building(n, d, w, solver, isinteger):
 
     p = MixedIntegerLinearProgram(maximization=True, solver=solver)
     A = p.new_variable(integer=isinteger, nonnegative=True)
-    p.set_objective(sum([A[2*r] for r in range(d//2, w+1)]) + 1)
+    p.set_objective(p.sum([A[2*r] for r in range(d//2, w+1)]) + 1)
 
     def _q(k, i):
         mu_i = 1
@@ -283,7 +281,7 @@ def _delsarte_cwc_LP_building(n, d, w, solver, isinteger):
         return mu_i*eberlein(n, w, i, k)/v_i
 
     for k in range(1, w+1):
-        p.add_constraint(sum([A[2*i]*_q(k, i) for i in range(d//2, w+1)]),
+        p.add_constraint(p.sum([A[2*i]*_q(k, i) for i in range(d//2, w+1)]),
                          min=-1)
 
     return A, p
@@ -622,7 +620,7 @@ def _delsarte_Q_LP_building(q, d, solver, isinteger):
 
     p = MixedIntegerLinearProgram(maximization=True, solver=solver)
     A = p.new_variable(integer=isinteger, nonnegative=True)
-    p.set_objective(sum([A[i] for i in range(n)]))
+    p.set_objective(p.sum([A[i] for i in range(n)]))
 
     p.add_constraint(A[0] == 1)
 
@@ -634,7 +632,7 @@ def _delsarte_Q_LP_building(q, d, solver, isinteger):
             p.add_constraint(A[i] == 0)
 
     for k in range(1, n):
-        p.add_constraint(sum([q[k][i] * A[i] for i in range(n)]), min=0)
+        p.add_constraint(p.sum([q[k][i] * A[i] for i in range(n)]), min=0)
 
     return A, p
 
