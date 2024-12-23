@@ -378,7 +378,7 @@ class RelativeRamifiedExtensionRingFloatingPoint(EisensteinExtensionGeneric, pAd
         """
         self._exact_modulus = exact_modulus
         unram_prec = (prec + approx_modulus.degree() - 1) // approx_modulus.degree()
-        KFP = approx_modulus.base_ring()#.change(field=False, show_prec=False)
+        KFP = approx_modulus.base_ring()  # .change(field=False, show_prec=False)
         self.prime_pow = PowComputer_relative_maker(approx_modulus.base_ring().prime(), max(min(unram_prec - 1, 30), 1), unram_prec, prec, False, exact_modulus.change_ring(KFP), shift_seed.change_ring(KFP), 'floating-point')
         self._implementation = 'Polynomial'
         EisensteinExtensionGeneric.__init__(self, approx_modulus, prec, print_mode, names, RelativeRamifiedFloatingPointElement)
@@ -416,7 +416,7 @@ class RelativeRamifiedExtensionFieldFloatingPoint(EisensteinExtensionGeneric, pA
         """
         self._exact_modulus = exact_modulus
         unram_prec = (prec + approx_modulus.degree() - 1) // approx_modulus.degree()
-        KFP = approx_modulus.base_ring()#.change(field=False, show_prec=False)
+        KFP = approx_modulus.base_ring()  # .change(field=False, show_prec=False)
         self.prime_pow = PowComputer_relative_maker(approx_modulus.base_ring().prime(), max(min(unram_prec - 1, 30), 1), unram_prec, prec, True, exact_modulus.change_ring(KFP), shift_seed.change_ring(KFP), 'floating-point')
         self._implementation = 'Polynomial'
         EisensteinExtensionGeneric.__init__(self, approx_modulus, prec, print_mode, names, RelativeRamifiedFloatingPointElement)

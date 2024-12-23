@@ -172,6 +172,7 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None,
         os.chdir(cwd)
     return python_packages, python_modules, cython_modules
 
+
 def filter_cython_sources(src_dir, distributions, exclude_distributions=None):
     """
     Find all Cython modules in the given source directory that belong to the
@@ -220,6 +221,7 @@ def filter_cython_sources(src_dir, distributions, exclude_distributions=None):
                 files.append(filepath)
 
     return files
+
 
 def _cythonized_dir(src_dir=None, editable_install=None):
     """
@@ -342,6 +344,7 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[], *,
         os.chdir(cwd)
 
     return data_files
+
 
 def installed_files_by_module(site_packages, modules=('sage',)):
     """
