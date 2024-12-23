@@ -377,7 +377,7 @@ cdef canonical_form_from_edge_list(int Vnr, list Vout, list Vin, int Lnr=1, list
     return new_edges
 
 
-cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True, certificate=False) noexcept:
+cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True, certificate=False, immutable=False) noexcept:
     r"""
     Return a canonical label for the given (di)graph.
 
@@ -403,6 +403,9 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
 
     - ``certificate`` -- boolean (default: ``False``); when set to ``True``,
       returns the labeling of G into a canonical graph
+
+    - ``immutable`` -- boolean (default: ``False``); when set to ``True``,
+      returns an immutable canonical label of the graph
 
     TESTS::
 
@@ -503,6 +506,13 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
         Traceback (most recent call last):
         ...
         ValueError: some vertices of the graph are not in the partition
+
+    Check that parameter ``immutable`` can be used::
+
+        sage: g = Graph({1: [2]})
+        sage: g_ = canonical_form(g, return_graph=True, immutable=True)   # optional - bliss
+        sage: g_.is_immutable()                                           # optional - bliss
+        True
     """
     # We need this to convert the numbers from <unsigned int> to <long>.
     # This assertion should be true simply for memory reasons.
@@ -588,6 +598,9 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
 
         H.add_vertices(range(G.order()))
         return (H, relabel) if certificate else H
+
+    if immutable:
+        H = H.copy(immutable=True)
 
     # Warning: this may break badly in Python 3 if the graph is not simple
     return (sorted(new_edges), relabel) if certificate else sorted(new_edges)
