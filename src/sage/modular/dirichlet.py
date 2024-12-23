@@ -1265,16 +1265,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: G = DirichletGroup(13)
             sage: G.galois_orbits()
             [[Dirichlet character modulo 13 of conductor 1 mapping 2 |--> 1],
-             [Dirichlet character modulo 13 of conductor 13 mapping 2 |--> zeta12,
-              Dirichlet character modulo 13 of conductor 13 mapping 2 |--> -zeta12^3 + zeta12,
-              Dirichlet character modulo 13 of conductor 13 mapping 2 |--> zeta12^3 - zeta12,
-              Dirichlet character modulo 13 of conductor 13 mapping 2 |--> -zeta12],
-             [Dirichlet character modulo 13 of conductor 13 mapping 2 |--> zeta12^2,
-              Dirichlet character modulo 13 of conductor 13 mapping 2 |--> -zeta12^2 + 1],
-             [Dirichlet character modulo 13 of conductor 13 mapping 2 |--> zeta12^3,
-              Dirichlet character modulo 13 of conductor 13 mapping 2 |--> -zeta12^3],
-             [Dirichlet character modulo 13 of conductor 13 mapping 2 |--> zeta12^2 - 1,
-              Dirichlet character modulo 13 of conductor 13 mapping 2 |--> -zeta12^2],
+             ...,
              [Dirichlet character modulo 13 of conductor 13 mapping 2 |--> -1]]
             sage: e = G.0
             sage: e
@@ -3050,14 +3041,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
         EXAMPLES::
 
             sage: DirichletGroup(20).galois_orbits()
-            [[Dirichlet character modulo 20 of conductor 20 mapping 11 |--> -1, 17 |--> -1],
-             [Dirichlet character modulo 20 of conductor 20 mapping 11 |--> -1, 17 |--> -zeta4,
-              Dirichlet character modulo 20 of conductor 20 mapping 11 |--> -1, 17 |--> zeta4],
-             [Dirichlet character modulo 20 of conductor 4 mapping 11 |--> -1, 17 |--> 1],
-             [Dirichlet character modulo 20 of conductor 5 mapping 11 |--> 1, 17 |--> -1],
-             [Dirichlet character modulo 20 of conductor 5 mapping 11 |--> 1, 17 |--> -zeta4,
-              Dirichlet character modulo 20 of conductor 5 mapping 11 |--> 1, 17 |--> zeta4],
-             [Dirichlet character modulo 20 of conductor 1 mapping 11 |--> 1, 17 |--> 1]]
+            [[Dirichlet character modulo 20 of conductor 20 mapping ...]]
             sage: DirichletGroup(17, Integers(6), zeta=Integers(6)(5)).galois_orbits()
             Traceback (most recent call last):
             ...

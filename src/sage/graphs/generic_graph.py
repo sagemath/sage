@@ -5361,7 +5361,7 @@ class GenericGraph(GenericGraph_pyx):
         A cycle basis in Petersen's Graph ::
 
             sage: g = graphs.PetersenGraph()
-            sage: g.cycle_basis()                                                       # needs networkx
+            sage: g.cycle_basis()                                                       # needs networkx, random (changes in networkx 3.2)
             [[6, 8, 5, 7, 9],
              [2, 3, 8, 5, 7],
              [4, 3, 8, 5, 7, 9],
@@ -5371,7 +5371,7 @@ class GenericGraph(GenericGraph_pyx):
 
         One can also get the result as a list of lists of edges::
 
-            sage: g.cycle_basis(output='edge')                                          # needs networkx
+            sage: g.cycle_basis(output='edge')                                          # needs networkx, random (changes in networkx 3.2)
             [[(6, 8, None), (8, 5, None), (5, 7, None), (7, 9, None), (9, 6, None)],
              [(2, 3, None), (3, 8, None), (8, 5, None), (5, 7, None), (7, 2, None)],
              [(4, 3, None),
@@ -5562,9 +5562,9 @@ class GenericGraph(GenericGraph_pyx):
             [[1, 2, 3], [1, 2, 3, 4], [5, 6, 7]]
             sage: sorted(g.minimum_cycle_basis(by_weight=False))
             [[1, 2, 3], [1, 3, 4], [5, 6, 7]]
-            sage: sorted(g.minimum_cycle_basis(by_weight=True, algorithm='NetworkX'))   # needs networkx
+            sage: sorted(g.minimum_cycle_basis(by_weight=True, algorithm='NetworkX'))   # needs networkx, random (changes in networkx 3.2)
             [[2, 3, 1], [2, 3, 4, 1], [6, 7, 5]]
-            sage: g.minimum_cycle_basis(by_weight=False, algorithm='NetworkX')          # needs networkx
+            sage: g.minimum_cycle_basis(by_weight=False, algorithm='NetworkX')          # needs networkx, random (changes in networkx 3.2)
             [[3, 4, 1], [2, 3, 1], [6, 7, 5]]
 
         ::
@@ -5572,7 +5572,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g = Graph([(1, 2), (2, 3), (3, 4), (4, 5), (5, 1), (5, 3)])
             sage: sorted(g.minimum_cycle_basis(by_weight=False))
             [[1, 2, 3, 5], [3, 4, 5]]
-            sage: sorted(g.minimum_cycle_basis(by_weight=False, algorithm='NetworkX'))  # needs networkx
+            sage: sorted(g.minimum_cycle_basis(by_weight=False, algorithm='NetworkX'))  # needs networkx, random (changes in networkx 3.2)
             [[3, 4, 5], [5, 3, 2, 1]]
 
         TESTS::

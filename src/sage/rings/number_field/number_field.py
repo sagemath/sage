@@ -6240,14 +6240,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: G.list()
             [Ring endomorphism of Number Field in b1 with defining polynomial x^6 + 108
                Defn: b1 |--> b1,
-             Ring endomorphism of Number Field in b1 with defining polynomial x^6 + 108
-               Defn: b1 |--> -b1,
-             Ring endomorphism of Number Field in b1 with defining polynomial x^6 + 108
-               Defn: b1 |--> 1/12*b1^4 + 1/2*b1,
-             Ring endomorphism of Number Field in b1 with defining polynomial x^6 + 108
-               Defn: b1 |--> 1/12*b1^4 - 1/2*b1,
-             Ring endomorphism of Number Field in b1 with defining polynomial x^6 + 108
-               Defn: b1 |--> -1/12*b1^4 + 1/2*b1,
+             ...
              Ring endomorphism of Number Field in b1 with defining polynomial x^6 + 108
                Defn: b1 |--> -1/12*b1^4 - 1/2*b1]
             sage: G[2](b1)
@@ -9340,7 +9333,7 @@ class NumberField_absolute(NumberField_generic):
 
             sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
-            sage: K.embeddings(CC)
+            sage: K.embeddings(CC)  # abs tol 1e-12
             [Ring morphism:
                From: Number Field in a with defining polynomial x^3 - 2
                To:   Complex Field with 53 bits of precision

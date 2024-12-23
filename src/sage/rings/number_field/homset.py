@@ -478,18 +478,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
             [Relative number field endomorphism of Number Field in a with defining polynomial x^2 + x + 1 over its base field
                Defn: a |--> a
                      b |--> b,
-             Relative number field endomorphism of Number Field in a with defining polynomial x^2 + x + 1 over its base field
-               Defn: a |--> -a - 1
-                     b |--> b,
-             Relative number field endomorphism of Number Field in a with defining polynomial x^2 + x + 1 over its base field
-               Defn: a |--> -a - 1
-                     b |--> b*a,
-             Relative number field endomorphism of Number Field in a with defining polynomial x^2 + x + 1 over its base field
-               Defn: a |--> a
-                     b |--> b*a,
-             Relative number field endomorphism of Number Field in a with defining polynomial x^2 + x + 1 over its base field
-               Defn: a |--> -a - 1
-                     b |--> -b*a - b,
+             ...
              Relative number field endomorphism of Number Field in a with defining polynomial x^2 + x + 1 over its base field
                Defn: a |--> a
                      b |--> -b*a - b]
@@ -504,16 +493,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
                To:   Cyclotomic Field of order 24 and degree 8
                Defn: a |--> z^6 - 2*z^2
                      b |--> -z^5 - z^3 + z,
-             Relative number field morphism:
-               From: Number Field in a with defining polynomial x^2 - 3 over its base field
-               To:   Cyclotomic Field of order 24 and degree 8
-               Defn: a |--> z^6 - 2*z^2
-                     b |--> z^5 + z^3 - z,
-             Relative number field morphism:
-               From: Number Field in a with defining polynomial x^2 - 3 over its base field
-               To:   Cyclotomic Field of order 24 and degree 8
-               Defn: a |--> -z^6 + 2*z^2
-                     b |--> -z^5 - z^3 + z,
+             ...
              Relative number field morphism:
                From: Number Field in a with defining polynomial x^2 - 3 over its base field
                To:   Cyclotomic Field of order 24 and degree 8

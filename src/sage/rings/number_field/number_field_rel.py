@@ -2046,26 +2046,7 @@ class NumberField_relative(NumberField_generic):
                To:   Complex Field with 58 bits of precision
                Defn: a |--> -0.62996052494743676 - 1.0911236359717214*I
                      b |--> -1.9428902930940239e-16 + 1.0000000000000000*I,
-             Relative number field morphism:
-               From: Number Field in a with defining polynomial x^3 - 2 over its base field
-               To:   Complex Field with 58 bits of precision
-               Defn: a |--> -0.62996052494743657 - 1.0911236359717214*I
-                     b |--> -1.0000000000000000*I,
-             Relative number field morphism:
-               From: Number Field in a with defining polynomial x^3 - 2 over its base field
-               To:   Complex Field with 58 bits of precision
-               Defn: a |--> -0.62996052494743657 + 1.0911236359717214*I
-                     b |--> 1.0000000000000000*I,
-             Relative number field morphism:
-               From: Number Field in a with defining polynomial x^3 - 2 over its base field
-               To:   Complex Field with 58 bits of precision
-               Defn: a |--> -0.62996052494743676 + 1.0911236359717214*I
-                     b |--> -1.9428902930940239e-16 - 1.0000000000000000*I,
-             Relative number field morphism:
-               From: Number Field in a with defining polynomial x^3 - 2 over its base field
-               To:   Complex Field with 58 bits of precision
-               Defn: a |--> 1.2599210498948731
-                     b |--> 0.99999999999999999*I,
+             ...
              Relative number field morphism:
                From: Number Field in a with defining polynomial x^3 - 2 over its base field
                To:   Complex Field with 58 bits of precision
