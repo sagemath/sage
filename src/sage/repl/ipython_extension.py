@@ -381,7 +381,7 @@ class SageMagics(Magics):
           See :func:`~sage.misc.cython.cython` for details.
 
           If ``--view-annotate`` is given, the annotation is either displayed
-          inline in the Sage notebook or opened in a new web browser, depends
+          inline in the Sage notebook or opened in a new web browser, depending
           on whether the Sage notebook is used.
 
           You can override the selection by specifying
