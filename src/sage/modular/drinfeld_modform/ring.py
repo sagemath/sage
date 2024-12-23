@@ -36,7 +36,7 @@ from sage.structure.parent import Parent
 from sage.rings.fraction_field import FractionField_generic
 from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.integer_ring import ZZ
 
@@ -265,7 +265,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         if not isinstance(base_ring, FractionField_generic):
             raise TypeError("base ring must be a fraction field of a "
                             "polynomial ring")
-        if not isinstance(base_ring.base(), PolynomialRing_general):
+        if not isinstance(base_ring.base(), PolynomialRing_generic):
             raise NotImplementedError("Drinfeld modular forms are currently "
                                       "only implemented for A = Fq[T]")
         if not base_ring.characteristic():
