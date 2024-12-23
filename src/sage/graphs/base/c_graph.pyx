@@ -2824,7 +2824,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
             # WARNING
             # If you modify this, you must keep in mind the documentation in the
-            # corresponding method in `generic_graph.py` in the method `edge_iterator`.
+            # corresponding method in ``generic_graph.py`` in the method ``edge_iterator``.
             # E.g. code assumes that you can use an iterator to relabel or delete arcs.
 
             u_int = cg._next_neighbor_unsafe(v_int, -1, out, &l_int)

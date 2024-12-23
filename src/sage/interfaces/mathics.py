@@ -402,7 +402,7 @@ def _mathics_sympysage_symbol(self):
 
     This function replaces ``_sympysage_symbol`` to
     take care of the special names used in Mathics.
-    It is set to the method `_sage_` of the Sympy class
+    It is set to the method ``_sage_`` of the Sympy class
     :class:`sympy.core.symbol.Sympol`.
 
     EXAMPLES::

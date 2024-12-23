@@ -729,7 +729,7 @@ class CubicHeckeFileCache(SageObject):
 
     def _warn_incompatibility(self, fname):
         """
-        Warn the user that he has an incomaptible file cache under `Sage_DOT`
+        Warn the user that he has an incomaptible file cache under ``Sage_DOT``
         and move it away to another file (marked with timestamp).
 
         EXAMPLES::
