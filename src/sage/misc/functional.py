@@ -1137,6 +1137,13 @@ def log(*args, **kwds):
 
         sage: log(0, 2)
         -Infinity
+
+    Check if :issue:`37794` is fixed::
+
+        sage: log(int(0), 2)
+        -Infinity
+        sage: log(int(0), 1/2)
+        +Infinity
     """
     base = kwds.pop('base', None)
     if base:
