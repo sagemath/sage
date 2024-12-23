@@ -297,7 +297,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
             except ImportError:
                 pass
             else:
-                if isinstance(R, polynomial_ring.PolynomialRing_general) and R.base_ring() in _Fields:
+                if isinstance(R, polynomial_ring.PolynomialRing_generic) and R.base_ring() in _Fields:
                     try:
                         from . import matrix_polynomial_dense
                     except ImportError:
