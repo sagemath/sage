@@ -46,7 +46,7 @@ cdef class DebugOptions_class:
         Function that is called before doctest to enable extra debugging options.
         """
         self.refine_category_hash_check = True
-        self.test_category_graph = False
+        self.test_category_graph = True
         self.test_nonrecursive_cachefunc = False
 
 

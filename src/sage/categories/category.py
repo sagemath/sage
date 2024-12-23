@@ -1636,6 +1636,8 @@ class Category(UniqueRepresentation, SageObject):
             sage: type(cls)
             <class 'sage.structure.dynamic_class.DynamicMetaclass'>
         """
+        if debug.test_category_graph:
+            _ = self._all_super_categories
         subcategory_class = self._make_named_class('subcategory_class', 'SubcategoryMethods',
                                                    cache=False, picklable=False)
         if debug.test_category_graph:
@@ -1697,6 +1699,8 @@ class Category(UniqueRepresentation, SageObject):
         :class:`~sage.categories.category_types.Category_over_base` and
         :class:`sage.categories.category.JoinCategory`.
         """
+        if debug.test_category_graph:
+            _ = self._all_super_categories
         parent_class = self._make_named_class('parent_class', 'ParentMethods')
         if debug.test_category_graph:
             # see also _test_category_graph()
@@ -1749,6 +1753,8 @@ class Category(UniqueRepresentation, SageObject):
 
         .. SEEALSO:: :meth:`parent_class`
         """
+        if debug.test_category_graph:
+            _ = self._all_super_categories
         element_class = self._make_named_class('element_class', 'ElementMethods')
         if debug.test_category_graph:
             # see also _test_category_graph()
