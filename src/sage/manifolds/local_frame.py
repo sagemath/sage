@@ -171,9 +171,8 @@ Let us check the components of `f` with respect to the frame `e`::
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.tensor.modules.free_module_basis import (FreeModuleBasis,
-                                                   FreeModuleCoBasis)
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
+from sage.tensor.modules.free_module_basis import FreeModuleBasis, FreeModuleCoBasis
 
 
 class LocalCoFrame(FreeModuleCoBasis):
@@ -1414,8 +1413,8 @@ class TrivializationFrame(LocalFrame):
             sage: e = phi.frame()
             sage: TestSuite(e).run()
         """
+        from sage.manifolds.trivialization import Trivialization
         from sage.misc.latex import latex
-        from .trivialization import Trivialization
         if not isinstance(trivialization, Trivialization):
             raise TypeError("the first argument must be a trivialization")
         ###

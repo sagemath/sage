@@ -107,6 +107,10 @@ class SageMagics(Magics):
 
         - ``s`` -- string; the file to be loaded
 
+        .. SEEALSO::
+
+            This is the same as :func:`~sage.repl.load.load`.
+
         EXAMPLES::
 
             sage: import os
@@ -132,6 +136,10 @@ class SageMagics(Magics):
         /path/to/file``.
 
         - ``s`` -- string. The file to be attached
+
+        .. SEEALSO::
+
+            This is the same as :func:`~sage.repl.attach.attach`.
 
         EXAMPLES::
 
@@ -302,7 +310,7 @@ class SageMagics(Magics):
                 max_width = 0
             if max_width <= 0:
                 raise ValueError(
-                        "max width must be a positive integer")
+                    "max width must be a positive integer")
             import sage.typeset.character_art as character_art
             character_art.MAX_WIDTH = max_width
             dm.preferences.text = arg0
@@ -342,7 +350,18 @@ class SageMagics(Magics):
 
         INPUT:
 
-        - ``line`` -- ignored
+        - ``line`` -- parsed as keyword arguments. The allowed arguments are:
+
+          - ``--verbose N`` / ``-v N``
+          - ``--compile-message``
+          - ``--use-cache``
+          - ``--create-local-c-file``
+          - ``--annotate``
+          - ``--sage-namespace``
+          - ``--create-local-so-file``
+          - ``--no-compile-message``, ``--no-use-cache``, etc.
+
+          See :func:`~sage.misc.cython.cython` for details.
 
         - ``cell`` -- string; the Cython source code to process
 
@@ -350,19 +369,75 @@ class SageMagics(Magics):
 
         EXAMPLES::
 
+            sage: # needs sage.misc.cython
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell(                                                       # needs sage.misc.cython
+            sage: shell.run_cell(
             ....: '''
-            ....: %%cython
+            ....: %%cython -v1 --annotate --no-sage-namespace
             ....: def f():
             ....:     print('test')
             ....: ''')
-            sage: f()                                                                   # needs sage.misc.cython
+            Compiling ....pyx because it changed.
+            [1/1] Cythonizing ....pyx
+            sage: f()
             test
+
+        TESTS:
+
+        Test unrecognized arguments::
+
+            sage: # needs sage.misc.cython
+            sage: shell.run_cell('''
+            ....: %%cython --some-unrecognized-argument
+            ....: print(1)
+            ....: ''')
+            UsageError: unrecognized arguments: --some-unrecognized-argument
+
+        Test ``--help`` is disabled::
+
+            sage: # needs sage.misc.cython
+            sage: shell.run_cell('''
+            ....: %%cython --help
+            ....: print(1)
+            ....: ''')
+            UsageError: unrecognized arguments: --help
+
+        Test invalid quotes::
+
+            sage: # needs sage.misc.cython
+            sage: shell.run_cell('''
+            ....: %%cython --a='
+            ....: print(1)
+            ....: ''')
+            ...
+            ValueError...Traceback (most recent call last)
+            ...
+            ValueError: No closing quotation
         """
         from sage.misc.cython import cython_compile
-        return cython_compile(cell)
+        import shlex
+        import argparse
+
+        class ExitCatchingArgumentParser(argparse.ArgumentParser):
+            def error(self, message):
+                # exit_on_error=False does not work completely in some Python versions
+                # see https://stackoverflow.com/q/67890157
+                # we raise UsageError to make the interface similar to what happens when e.g.
+                # IPython's ``%run`` gets unrecognized arguments
+                from IPython.core.error import UsageError
+                raise UsageError(message)
+
+        parser = ExitCatchingArgumentParser(prog="%%cython", add_help=False)
+        parser.add_argument("--verbose", "-v", type=int)
+        parser.add_argument("--compile-message", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--use-cache", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--create-local-c-file", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--annotate", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--sage-namespace", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--create-local-so-file", action=argparse.BooleanOptionalAction)
+        args = parser.parse_args(shlex.split(line))
+        return cython_compile(cell, **{k: v for k, v in args.__dict__.items() if v is not None})
 
     @cell_magic
     def fortran(self, line, cell):
