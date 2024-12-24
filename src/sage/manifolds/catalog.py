@@ -203,11 +203,11 @@ def Kerr(m=1, a=0, coordinates='BL', names=None):
             -(1 - 2 * m * r / rho**2),
             1 + 2 * m * r / rho**2,
             rho**2,
-            (r**2 + a**2 + 2 * a**2 * m * r * sin(th) ** 2 / rho**2) * sin(th) ** 2,
+            (r**2 + a**2 + 2 * a**2 * m * r * sin(th)**2 / rho**2) * sin(th)**2,
         )
         g[0, 1] = 2 * m * r / rho**2
-        g[0, 3] = -2 * a * m * r / rho**2 * sin(th) ** 2
-        g[1, 3] = -a * sin(th) ** 2 * (1 + 2 * m * r / rho**2)
+        g[0, 3] = -2 * a * m * r / rho**2 * sin(th)**2
+        g[1, 3] = -a * sin(th)**2 * (1 + 2 * m * r / rho**2)
         return M
 
     if coordinates == "BL":
@@ -229,14 +229,14 @@ def Kerr(m=1, a=0, coordinates='BL', names=None):
         M._first_ngens = C._first_ngens
         g = M.metric('g')
         t, r, th, ph = C[:]
-        rho = sqrt(r**2 + a**2 * cos(th) ** 2)
+        rho = sqrt(r**2 + a**2 * cos(th)**2)
         g[0, 0], g[1, 1], g[2, 2], g[3, 3] = (
             -(1 - 2 * m * r / rho**2),
             rho**2 / (r**2 - 2 * m * r + a**2),
             rho**2,
-            (r**2 + a**2 + 2 * m * r * a**2 / rho**2 * sin(th) ** 2) * sin(th) ** 2,
+            (r**2 + a**2 + 2 * m * r * a**2 / rho**2 * sin(th)**2) * sin(th)**2,
         )
-        g[0, 3] = -2 * m * r * a * sin(th) ** 2 / rho**2
+        g[0, 3] = -2 * m * r * a * sin(th)**2 / rho**2
         return M
 
     raise NotImplementedError(

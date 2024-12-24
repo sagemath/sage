@@ -3847,7 +3847,7 @@ class CoordChange(SageObject):
         check = kwds.pop('check', True)
         verbose = kwds.pop('verbose', False)
         for unknown_key in kwds:
-            raise TypeError("{} is not a valid keyword " "argument".format(unknown_key))
+            raise TypeError("{} is not a valid keyword argument".format(unknown_key))
         self._inverse = type(self)(self._chart2, self._chart1, *transformations)
         self._inverse._inverse = self
         if check:
@@ -3875,7 +3875,7 @@ class CoordChange(SageObject):
                 infos.append("  {}  {}".format(eq, resu))
             if any_failure:
                 infos.append(
-                    "NB: a failed report can reflect a mere lack of " "simplification."
+                    "NB: a failed report can reflect a mere lack of simplification."
                 )
             if verbose or any_failure:
                 for li in infos:
