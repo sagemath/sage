@@ -189,7 +189,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: J.absolute_norm()
             2
             sage: J.ideal_below()
-            Fractional ideal (b)
+            Fractional ideal (-b)
             sage: J.ideal_below().norm()
             2
         """

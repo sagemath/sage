@@ -4439,10 +4439,14 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             bnf = self._pari_bnf
         except AttributeError:
             f = self.pari_polynomial("y")
+            _saved_rand = pari.getrand()
+            # make this deterministic, it affects printing of ideals
+            pari.setrand(1)
             if units:
                 self._pari_bnf = f.bnfinit(1)
             else:
                 self._pari_bnf = f.bnfinit()
+            pari.setrand(_saved_rand)
             bnf = self._pari_bnf
         # Certify if needed
         if proof and not getattr(self, "_pari_bnf_certified", False):
@@ -6530,13 +6534,15 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         # the inner product on the Minkowski embedding, which is
         # faster than computing all the conjugates, etc ...
 
+        # flag to disable FLATTER, which is much more unstable than fplll
+        flag = 1 if pari.version() >= (2,17) else 0
         if self.is_totally_real():
             from sage.matrix.constructor import matrix
             M = matrix(ZZ, d, d, [[(x*y).trace() for x in ZK] for y in ZK])
-            T = pari(M).qflllgram()
+            T = pari(M).qflllgram(flag=flag)
         else:
             M = self.minkowski_embedding(ZK, prec=prec)
-            T = pari(M).qflll()
+            T = pari(M).qflll(flag=flag)
 
         return [sum([ZZ(T[i][j]) * ZK[j] for j in range(d)]) for i in range(d)]
 
@@ -7129,7 +7135,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: K.<a> = NumberField(1/2*x^2 - 1/6)
             sage: K.units()
-            (-3*a + 2,)
+            (3*a + 2,)
         """
         proof = proof_flag(proof)
 

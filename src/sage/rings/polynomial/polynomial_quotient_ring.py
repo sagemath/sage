@@ -1877,7 +1877,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: D.selmer_generators([K.ideal(2, -a + 1),
             ....:                      K.ideal(3, a + 1),
             ....:                      K.ideal(a)], 3)
-            [2, a + 1, -a]
+            [2, a + 1, a]
         """
         fields, isos, iso_classes = self._S_decomposition(tuple(S))
         n = len(fields)

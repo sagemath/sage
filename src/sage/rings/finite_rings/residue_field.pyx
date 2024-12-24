@@ -495,9 +495,9 @@ class ResidueField_generic(Field):
 
         sage: # needs sage.rings.number_field
         sage: I = QQ[i].factor(2)[0][0]; I
-        Fractional ideal (-I - 1)
+        Fractional ideal (I - 1)
         sage: k = I.residue_field(); k
-        Residue field of Fractional ideal (-I - 1)
+        Residue field of Fractional ideal (I - 1)
         sage: type(k)
         <class 'sage.rings.finite_rings.residue_field.ResidueFiniteField_prime_modn_with_category'>
 
@@ -1007,7 +1007,7 @@ cdef class ReductionMap(Map):
             sage: cr
             Partially defined reduction map:
               From: Number Field in a with defining polynomial x^2 + 1
-              To:   Residue field of Fractional ideal (-a + 1)
+              To:   Residue field of Fractional ideal (a - 1)
             sage: cr == r                       # not implemented
             True
             sage: r(2 + a) == cr(2 + a)
@@ -1038,7 +1038,7 @@ cdef class ReductionMap(Map):
             sage: cr
             Partially defined reduction map:
               From: Number Field in a with defining polynomial x^2 + 1
-              To:   Residue field of Fractional ideal (-a + 1)
+              To:   Residue field of Fractional ideal (a - 1)
             sage: cr == r                       # not implemented
             True
             sage: r(2 + a) == cr(2 + a)
@@ -1070,7 +1070,7 @@ cdef class ReductionMap(Map):
             sage: r = F.reduction_map(); r
             Partially defined reduction map:
               From: Number Field in a with defining polynomial x^2 + 1
-              To:   Residue field of Fractional ideal (-a + 1)
+              To:   Residue field of Fractional ideal (a - 1)
 
         We test that calling the function also works after copying::
 
@@ -1082,7 +1082,7 @@ cdef class ReductionMap(Map):
             Traceback (most recent call last):
             ...
             ZeroDivisionError: Cannot reduce field element 1/2*a
-            modulo Fractional ideal (-a + 1): it has negative valuation
+            modulo Fractional ideal (a - 1): it has negative valuation
 
             sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(2)[]; h = t^5 + t^2 + 1

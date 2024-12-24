@@ -1954,7 +1954,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: (6*i + 6).factor()
-            (i) * (-i - 1)^3 * 3
+            (i - 1)^3 * 3
 
         In the following example, the class number is 2.  If a factorization
         in prime elements exists, we will find it::
@@ -2043,7 +2043,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             0
             sage: R = K.maximal_order()
             sage: R(i+1).gcd(2)
-            i + 1
+            i - 1
             sage: R = K.order(2*i)
             sage: R(1).gcd(R(4*i))
             1
