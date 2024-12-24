@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'finite_dynamical_system.py',
   'finite_dynamical_system_catalog.py',
