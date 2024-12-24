@@ -533,14 +533,15 @@ def spyx_tmp() -> str:
     We cache the result of this function "by hand" so that the same
     temporary directory will always be returned. A function is used to
     delay creating a directory until (if) it is needed. The temporary
-    directory is removed when sage terminates by way of an atexit
-    hook.
+    directory is automatically removed when sage terminates.
     """
     global _spyx_tmp
     if _spyx_tmp:
         return _spyx_tmp
 
-    d = tempfile.TemporaryDirectory()
-    _spyx_tmp = os.path.join(d.name, 'spyx')
-    atexit.register(lambda: d.cleanup())
+    # We don't use `tempfile.TemporaryDirectory()` here because it
+    # will be cleaned up on child exit (e.g. for parallel testing)
+    # For some reason this doesn't affect the `TemporaryDirectory`
+    # stored in the global `TMP_DIR_FILENAME_BASE`.
+    _spyx_tmp = tmp_dir(name='spyx_')
     return _spyx_tmp
