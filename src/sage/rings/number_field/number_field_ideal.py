@@ -2069,7 +2069,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
             sage: K.<a> = NumberField(x^2 + 2); K
             Number Field in a with defining polynomial x^2 + 2
             sage: f = K.factor(2); f
-            (Fractional ideal (...a))^2
+            (Fractional ideal (a))^2
             sage: f[0][0].ramification_index()
             2
             sage: K.ideal(13).ramification_index()

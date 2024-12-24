@@ -385,7 +385,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: K.<a> = NumberField(x^2 + 6)
             sage: L.<b> = K.extension(K['x'].gen()^4 + a)
             sage: N = L.ideal(b).relative_norm(); N
-            Fractional ideal (a)
+            Fractional ideal (-a)
             sage: N.parent()
             Monoid of ideals of Number Field in a with defining polynomial x^2 + 6
             sage: N.ring()
@@ -409,10 +409,8 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: L.<b> = K.extension(5*x^2 + 1)
             sage: P = L.primes_above(2)[0]
-            sage: rn = P.relative_norm(); rn # random
-            Fractional ideal (6*a - 2)
-            sage: rn in [K.ideal(6*a - 2), K.ideal(-6*a -2)]
-            True
+            sage: P.relative_norm()
+            Fractional ideal (6*a + 2)
         """
         L = self.number_field()
         K = L.base_field()
@@ -530,10 +528,8 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: L.<b> = K.extension(5*x^2 + 1)
             sage: P = L.primes_above(2)[0]
-            sage: ib = P.ideal_below(); ib # random
-            Fractional ideal (6*a - 2)
-            sage: ib in [K.ideal(6*a - 2), K.ideal(-6*a -2)]
-            True
+            sage: P.ideal_below()
+            Fractional ideal (6*a + 2)
         """
         L = self.number_field()
         K = L.base_field()
@@ -916,7 +912,7 @@ def is_NumberFieldFractionalIdeal_rel(x):
         sage: is_NumberFieldFractionalIdeal_rel(I)
         True
         sage: N = I.relative_norm(); N
-        Fractional ideal (a)
+        Fractional ideal (-a)
         sage: is_NumberFieldFractionalIdeal_rel(N)
         False
     """

@@ -3665,27 +3665,40 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^2 + 23)
-            sage: d = K.ideals_of_bdd_norm(10); d # random
-                {1: [Fractional ideal (1)],
-                2: [Fractional ideal (2, 1/2*a - 1/2), Fractional ideal (2, 1/2*a + 1/2)],
-                3: [Fractional ideal (3, 1/2*a + 1/2), Fractional ideal (3, 1/2*a - 1/2)],
-                4: [Fractional ideal (4, 1/2*a + 3/2),
-                 Fractional ideal (2),
-                 Fractional ideal (4, 1/2*a + 5/2)],
-                5: [],
-                6: [Fractional ideal (6, 1/2*a + 7/2),
-                 Fractional ideal (-1/2*a - 1/2),
-                 Fractional ideal (-1/2*a + 1/2),
-                 Fractional ideal (6, 1/2*a + 5/2)],
-                7: [],
-                8: [Fractional ideal (1/2*a + 3/2),
-                 Fractional ideal (4, a - 1),
-                 Fractional ideal (4, a + 1),
-                 Fractional ideal (-1/2*a + 3/2)],
-                9: [Fractional ideal (9, 1/2*a + 7/2),
-                 Fractional ideal (3),
-                 Fractional ideal (9, 1/2*a + 11/2)],
-                10: []}
+            sage: d = K.ideals_of_bdd_norm(10)
+            sage: for n in d:
+            ....:     print(n)
+            ....:     for I in sorted(d[n]):
+            ....:         print(I)
+                1
+                Fractional ideal (1)
+                2
+                Fractional ideal (2, 1/2*a - 1/2)
+                Fractional ideal (2, 1/2*a + 1/2)
+                3
+                Fractional ideal (3, 1/2*a - 1/2)
+                Fractional ideal (3, 1/2*a + 1/2)
+                4
+                Fractional ideal (2)
+                Fractional ideal (4, 1/2*a + 3/2)
+                Fractional ideal (4, 1/2*a + 5/2)
+                5
+                6
+                Fractional ideal (-1/2*a + 1/2)
+                Fractional ideal (1/2*a + 1/2)
+                Fractional ideal (6, 1/2*a + 5/2)
+                Fractional ideal (6, 1/2*a + 7/2)
+                7
+                8
+                Fractional ideal (4, a - 1)
+                Fractional ideal (4, a + 1)
+                Fractional ideal (-1/2*a - 3/2)
+                Fractional ideal (1/2*a - 3/2)
+                9
+                Fractional ideal (3)
+                Fractional ideal (9, 1/2*a + 7/2)
+                Fractional ideal (9, 1/2*a + 11/2)
+                10
             sage: [[I.norm() for I in sorted(d[n])] for n in d]
                 [[1], [2, 2], [3, 3], [4, 4, 4], [], [6, 6, 6, 6], [], [8, 8, 8, 8], [9, 9, 9], []]
         """
@@ -3914,13 +3927,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         EXAMPLES::
 
             sage: K.<i> = QuadraticField(-1)
-            sage: P = K.primes_of_bounded_norm(10); P # random
-            [Fractional ideal (i + 1),
-             Fractional ideal (i + 2),
-             Fractional ideal (-i + 2),
+            sage: K.primes_of_bounded_norm(10)
+            [Fractional ideal (i - 1),
+             Fractional ideal (2*i - 1),
+             Fractional ideal (-2*i - 1),
              Fractional ideal (3)]
-            sage: [p.norm() for p in P]
-            [2, 5, 5, 9]
             sage: K.primes_of_bounded_norm(1)
             []
             sage: x = polygen(QQ, 'x')
@@ -3981,13 +3992,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: K.<i> = QuadraticField(-1)
             sage: it = K.primes_of_bounded_norm_iter(10)
-            sage: l = list(it); l # random
-            [Fractional ideal (i + 1),
+            sage: list(it)
+            [Fractional ideal (i - 1),
              Fractional ideal (3),
-             Fractional ideal (i + 2),
-             Fractional ideal (-i + 2)]
-            sage: [I.norm() for I in l]
-            [2, 9, 5, 5]
+             Fractional ideal (2*i - 1),
+             Fractional ideal (-2*i - 1)]
             sage: list(K.primes_of_bounded_norm_iter(1))
             []
         """
@@ -4817,7 +4826,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: K._S_class_group_and_units(tuple(K.primes_above(2) + K.primes_above(3)))
-            ([...6*a...2, ...6*a...3, -1, ...12*a...5], [])
+            ([6*a + 2, -6*a + 3, -1, -12*a - 5], [])
         """
         K_pari = self.pari_bnf(proof=proof)
         S_pari = [p.pari_prime() for p in sorted(set(S))]
@@ -5152,20 +5161,14 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: KS2, gens, fromKS2, toKS2 = K.selmer_space([P2, P3, P5], 2)
             sage: KS2
             Vector space of dimension 4 over Finite Field of size 2
-            sage: gens  # random
-            [-a - 1, a, 2, -1]
-            sage: gens in ([-a - 1, a, 2, -1], [a + 1, a, 2, -1])
-            True
+            sage: gens
+            [a + 1, a, 2, -1]
 
         Each generator must have even valuation at primes not in `S`::
 
-            sage: facgens = [K.ideal(g).factor() for g in gens]; facgens # random
+            sage: [K.ideal(g).factor() for g in gens]
             [(Fractional ideal (2, a + 1)) * (Fractional ideal (3, a + 1)),
-             Fractional ideal (a),
-             (Fractional ideal (2, a + 1))^2,
-             1]
-            sage: facgens[2][0][1]
-            2
+             Fractional ideal (-a), (Fractional ideal (2, a + 1))^2, 1]
 
             sage: toKS2(10)
             (0, 0, 1, 1)
@@ -5177,10 +5180,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: KS3, gens, fromKS3, toKS3 = K.selmer_space([P2, P3, P5], 3)
             sage: KS3
             Vector space of dimension 3 over Finite Field of size 3
-            sage: gens # random
-            [1/2, -1/4*a - 1/4, a]
-            sage: gens in ([1/2, -1/4*a - 1/4, a], [1/2, 1/4*a + 1/4, a])
-            True
+            sage: gens
+            [1/2, 1/4*a + 1/4, a]
 
         An example to show that the group `K(S,2)` may be strictly
         larger than the group of elements giving extensions unramified
@@ -5876,16 +5877,10 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.<a> = NumberField(x^2 + 1)
             sage: K.factor(1/3)
             (Fractional ideal (3))^-1
-            sage: fac = K.factor(1+a); fac # random
-            Fractional ideal (-a - 1)
-            sage: len(fac)
-            1
-            sage: fac = K.factor(1+a/5); fac # random
-            (Fractional ideal (-a - 1)) * (Fractional ideal (2*a - 1))^-1 * (Fractional ideal (-2*a - 1))^-1 * (Fractional ideal (3*a + 2))
-            sage: len(fac)
-            4
-            sage: product(I[0]^I[1] for I in list(fac))
-            Fractional ideal (1/5*a + 1)
+            sage: K.factor(1+a)
+            Fractional ideal (a - 1)
+            sage: K.factor(1+a/5)
+            (Fractional ideal (a - 1)) * (Fractional ideal (2*a - 1))^-1 * (Fractional ideal (-2*a - 1))^-1 * (Fractional ideal (3*a + 2))
 
         An example over a relative number field::
 
@@ -6517,12 +6512,12 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: k.<a> = NumberField(x^6 + 2218926655879913714112*x^4 - 32507675650290949030789018433536*x^3 + 4923635504174417014460581055002374467948544*x^2 - 36066074010564497464129951249279114076897746988630016*x + 264187244046129768986806800244258952598300346857154900812365824)
             sage: new_basis = k.reduced_basis(prec=120)
             sage: [c.minpoly() for c in new_basis]
-            [x^2 + x + 1,
-             x - 1,
-             x^6 + 3*x^5 - 102*x^4 - 315*x^3 + 10254*x^2 + 80955*x + 198147,
-             x^6 + 213*x^4 + 12567*x^2 + 198147,
-             x^6 + 171*x^4 - 1696*x^3 + 29241*x^2 - 145008*x + 719104,
-             x^6 + 171*x^4 - 1696*x^3 + 29241*x^2 - 145008*x + 719104]
+            [x - 1,
+             x^2 + x + 1,
+             x^6 + 3*x^5 - 102*x^4 - 103*x^3 + 10572*x^2 - 59919*x + 127657,
+             x^6 + 3*x^5 - 102*x^4 - 103*x^3 + 10572*x^2 - 59919*x + 127657,
+             x^3 - 171*x + 848,
+             x^6 + 171*x^4 + 1696*x^3 + 29241*x^2 + 145008*x + 719104]
             sage: R = k.order(new_basis)
             sage: R.discriminant()==k.discriminant()
             True
@@ -7438,8 +7433,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: # needs sage.rings.padics
             sage: solutions, bound = K.S_unit_solutions(S, prec=100, include_bound=True)
-            sage: bound in (6, 7)
-            True
+            sage: bound
+            6
         """
         from .S_unit_solver import solve_S_unit_equation
         return solve_S_unit_equation(self, S, prec, include_exponents, include_bound, proof)
