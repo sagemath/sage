@@ -32,7 +32,9 @@ from typing import IO
 # as the parent for all temporary files & directories created by them.
 # This lets us clean up after those two functions when sage exits normally
 # using an atexit hook
-TMP_DIR_FILENAME_BASE = tempfile.TemporaryDirectory()
+# Note that `TemporaryDirectory()` will cleanup on program exit;
+# we keep the atexit hook to be redundant, in case that fails.
+TMP_DIR_FILENAME_BASE = tempfile.TemporaryDirectory(prefix='sage_')
 atexit.register(lambda: TMP_DIR_FILENAME_BASE.cleanup())
 
 
