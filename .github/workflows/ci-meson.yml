@@ -47,14 +47,14 @@ jobs:
           key: ${{ runner.os }}-meson-${{ matrix.python }}
 
       - name: Setup Conda environment
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: ${{ matrix.python }}
           miniforge-version: latest
           use-mamba: true
           channels: conda-forge
           channel-priority: true
-          activate-environment: sage
+          activate-environment: sage-dev
           environment-file: environment-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || 'linux' }}.yml
 
       - name: Print Conda environment
