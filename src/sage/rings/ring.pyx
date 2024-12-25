@@ -773,25 +773,6 @@ cdef class CommutativeRing(Ring):
         Ring.__init__(self, base_ring, names=names, normalize=normalize,
                       category=category)
 
-    def localization(self, additional_units, names=None, normalize=True, category=None):
-        """
-        Return the localization of ``self`` at the given additional units.
-
-        EXAMPLES::
-
-            sage: R.<x, y> = GF(3)[]
-            sage: R.localization((x*y, x**2 + y**2))                                    # needs sage.rings.finite_rings
-            Multivariate Polynomial Ring in x, y over Finite Field of size 3
-             localized at (y, x, x^2 + y^2)
-            sage: ~y in _                                                               # needs sage.rings.finite_rings
-            True
-        """
-        if not self.is_integral_domain():
-            raise TypeError("self must be an integral domain.")
-
-        from sage.rings.localization import Localization
-        return Localization(self, additional_units, names=names, normalize=normalize, category=category)
-
     def fraction_field(self):
         """
         Return the fraction field of ``self``.
@@ -1018,29 +999,6 @@ cdef class IntegralDomain(CommutativeRing):
         CommutativeRing.__init__(self, base_ring, names=names, normalize=normalize,
                                  category=category)
 
-    def is_field(self, proof=True):
-        r"""
-        Return ``True`` if this ring is a field.
-
-        EXAMPLES::
-
-            sage: GF(7).is_field()
-            True
-
-        The following examples have their own ``is_field`` implementations::
-
-            sage: ZZ.is_field(); QQ.is_field()
-            False
-            True
-            sage: R.<x> = PolynomialRing(QQ); R.is_field()
-            False
-        """
-        if self.is_finite():
-            return True
-        if proof:
-            raise NotImplementedError("unable to determine whether or not is a field.")
-        else:
-            return False
 
 cdef class NoetherianRing(CommutativeRing):
     _default_category = NoetherianRings()

@@ -2287,28 +2287,28 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             sage: c2 == d2
             True
         """
-        #Decide whether we know how to go from self to other or
-        #from other to self
+        # Decide whether we know how to go from self to other or
+        # from other to self
         if to_other_function is not None:
-            known_cache = self_to_other_cache  #the known direction
-            unknown_cache = other_to_self_cache  #the unknown direction
+            known_cache = self_to_other_cache  # the known direction
+            unknown_cache = other_to_self_cache  # the unknown direction
             known_function = to_other_function
         else:
-            unknown_cache = self_to_other_cache  #the known direction
-            known_cache = other_to_self_cache  #the unknown direction
+            unknown_cache = self_to_other_cache  # the known direction
+            known_cache = other_to_self_cache  # the unknown direction
             known_function = to_self_function
 
-        #Do nothing if we've already computed the inverse
-        #for degree n.
+        # Do nothing if we've already computed the inverse
+        # for degree n.
         if n in known_cache and n in unknown_cache:
             return
 
-        #Univariate polynomial arithmetic is faster
-        #over ZZ.  Since that is all we need to compute
-        #the transition matrices between S and P, we
-        #should use that.
-        #Zt = ZZ['t']
-        #t = Zt.gen()
+        # Univariate polynomial arithmetic is faster
+        # over ZZ.  Since that is all we need to compute
+        # the transition matrices between S and P, we
+        # should use that.
+        # Zt = ZZ['t']
+        # t = Zt.gen()
         one = base_ring.one()
         zero = base_ring.zero()
 
