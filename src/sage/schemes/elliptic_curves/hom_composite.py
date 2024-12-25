@@ -190,7 +190,7 @@ def _compute_factored_isogeny_prime_power(P, l, n, split=.8, velu_sqrt_bound=Non
         sage: P, = E.gens()
         sage: (l,n), = P.order().factor()
         sage: phis = hom_composite._compute_factored_isogeny_prime_power(P,l,n)
-        sage: phis == hom_composite._compute_factored_isogeny_prime_power(P,l,n, split=0)
+        sage: phis == hom_composite._compute_factored_isogeny_prime_power(P,l,n, split=0)  # long time -- about 10s
         True
         sage: phis == hom_composite._compute_factored_isogeny_prime_power(P,l,n, split=0.1)
         True
@@ -449,9 +449,9 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         INPUT:
 
         - ``maps`` -- sequence of :class:`EllipticCurveHom` objects
-        - ``E`` (optional) -- the domain elliptic curve
-        - ``strict`` (default: ``True``) -- if ``True``,
-          always return an :class:`EllipticCurveHom_composite` object;
+        - ``E`` -- (optional) the domain elliptic curve
+        - ``strict`` -- boolean (default: ``True``); if ``True``,
+          always return an :class:`EllipticCurveHom_composite` object,
           else may return another :class:`EllipticCurveHom` type
 
         OUTPUT: the composite of ``maps``

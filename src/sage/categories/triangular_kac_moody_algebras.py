@@ -42,7 +42,6 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
             sage: TriangularKacMoodyAlgebras(QQ).super_categories()
             [Join of Category of graded Lie algebras with basis over Rational Field
                  and Category of kac moody algebras over Rational Field]
-
         """
         # We do not also derive from (Magmatic) algebras since we don't want *
         #   to be our Lie bracket
@@ -216,6 +215,7 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat sage.modules
                 sage: L = lie_algebras.sl(QQ, 3)
                 sage: La = L.cartan_type().root_system().weight_lattice().fundamental_weights()
                 sage: sorted(L.basis().keys(), key=L._basis_key)
@@ -313,7 +313,7 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
             EXAMPLES::
 
                 sage: # needs sage.combinat sage.modules
-                sage: L = LieAlgebra(QQ, cartan_type="F4")
+                sage: L = LieAlgebra(QQ, cartan_type='F4')
                 sage: L.inject_variables()
                 Defining e1, e2, e3, e4, f1, f2, f3, f4, h1, h2, h3, h4
                 sage: e1.part()
@@ -353,6 +353,7 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
                     sage: g._transpose_basis_mapping
                     {-alpha[1]: alpha[1],
@@ -364,7 +365,6 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
                      alphacheck[1]: alphacheck[1],
                      alphacheck[2]: alphacheck[2]}
                 """
-                Q = self.cartan_type().root_system().root_lattice()
                 K = self.basis().keys()
                 deg_map = {}
                 ret = {}
@@ -385,6 +385,7 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: g = LieAlgebra(QQ, cartan_type=['B', 2])
                     sage: B = g.basis()
                     sage: [(B[k], g._transpose_on_basis(k)) for k in B.keys()]
@@ -408,6 +409,7 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: g = LieAlgebra(QQ, cartan_type=['B', 2])
                     sage: g.transpose
                     Generic endomorphism of Lie algebra of ['B', 2] in the Chevalley basis
@@ -426,6 +428,7 @@ class TriangularKacMoodyAlgebras(Category_over_base_ring):
 
                 EXAMPLES::
 
+                    sage: # needs sage.combinat sage.modules
                     sage: g = LieAlgebra(QQ, cartan_type=['G', 2])
                     sage: for b in g.basis():
                     ....:     for bp in g.basis():

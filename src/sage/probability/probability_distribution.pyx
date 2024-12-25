@@ -40,7 +40,8 @@ REFERENCES:
 # ****************************************************************************
 from cysignals.memory cimport sig_malloc, sig_free
 
-from sage.libs.gsl.all cimport *
+from sage.libs.gsl.rng cimport *
+from sage.libs.gsl.random cimport *
 import sage.misc.prandom as random
 import sage.rings.real_double
 from sage.modules.free_module_element import vector
@@ -101,7 +102,7 @@ cdef class ProbabilityDistribution:
           the probability distribution
 
         - ``bins`` -- (optional) number of bins to divide the samples
-          into.
+          into
 
         OUTPUT:
 
@@ -155,13 +156,13 @@ cdef class ProbabilityDistribution:
 
         INPUT:
 
-        - ``name`` -- file to save the histogram plot (as a PNG).
+        - ``name`` -- file to save the histogram plot (as a PNG)
 
         - ``num_samples`` -- (optional) number of times to sample from
           the probability distribution
 
         - ``bins`` -- (optional) number of bins to divide the samples
-          into.
+          into
 
         EXAMPLES:
 
@@ -569,7 +570,6 @@ cdef class RealDistribution(ProbabilityDistribution):
         sage: Xs = [RealDistribution('gaussian', 1).get_random_element() for _ in range(1000)]
         sage: len(set(Xs)) > 2^^32
         True
-
     """
     cdef gsl_rng_type *T
     cdef gsl_rng *r
@@ -685,7 +685,6 @@ cdef class RealDistribution(ProbabilityDistribution):
             sage: T = RealDistribution('gaussian', 1, seed=0)
             sage: T.get_random_element()  # rel tol 4e-16
             0.13391860811867587
-
         """
         cdef double result
         if self.distribution_type == uniform:
@@ -1038,19 +1037,17 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
 
     INPUT:
 
-    - ``P`` -- list of probabilities. The list will automatically be
-      normalised if ``sum(P)`` is not equal to 1.
+    - ``P`` -- list of probabilities; the list will automatically be
+      normalised if ``sum(P)`` is not equal to 1
 
-    - ``rng`` -- (optional) random number generator to use. May be
-      one of ``'default'``, ``'luxury'``, or ``'taus'``.
+    - ``rng`` -- (optional) random number generator to use; may be
+      one of ``'default'``, ``'luxury'``, or ``'taus'``
 
     - ``seed`` -- (optional) seed to use with the random number
-      generator.
+      generator
 
-    OUTPUT:
-
-    - a probability distribution where the probability of selecting
-      ``x`` is ``P[x]``.
+    OUTPUT: a probability distribution where the probability of selecting
+    ``x`` is ``P[x]``.
 
     EXAMPLES:
 
@@ -1093,12 +1090,12 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
         sage: len(set(Xs)) > 2^^32
         True
 
-    The distribution probabilities must be non-negative::
+    The distribution probabilities must be nonnegative::
 
         sage: GeneralDiscreteDistribution([0.1, -0.1])
         Traceback (most recent call last):
         ...
-        ValueError: The distribution probabilities must be non-negative
+        ValueError: The distribution probabilities must be nonnegative
     """
     cdef gsl_rng_type * T
     cdef gsl_rng * r
@@ -1163,7 +1160,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
         for i in range(n):
             if P[i] < 0:
                 raise ValueError("The distribution probabilities must "
-                                 "be non-negative")
+                                 "be nonnegative")
             P_vec[i] = P[i]
 
         self.dist = gsl_ran_discrete_preproc(n, P_vec)

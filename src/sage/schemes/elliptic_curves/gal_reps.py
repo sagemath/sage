@@ -130,7 +130,7 @@ lazy_import('sage.libs.pari.all', 'pari')
 
 def _ex_set(p):
     """
-    Gives the set of the only values of trace^2/det
+    Give the set of the only values of trace^2/det
     that appear in a exceptional subgroup in PGL_2(F_p).
 
     EXAMPLES::
@@ -180,7 +180,7 @@ class GaloisRepresentation(SageObject):
 
     def __init__(self, E):
         r"""
-        see ``GaloisRepresentation`` for documentation
+        See ``GaloisRepresentation`` for documentation.
 
         EXAMPLES::
 
@@ -193,7 +193,7 @@ class GaloisRepresentation(SageObject):
 
     def __repr__(self):
         r"""
-        string representation of the class
+        String representation of the class.
 
         EXAMPLES::
 
@@ -203,9 +203,9 @@ class GaloisRepresentation(SageObject):
         """
         return "Compatible family of Galois representations associated to the " + repr(self._E)
 
-    def __eq__(self,other):
+    def __eq__(self, other):
         r"""
-        Compares two Galois representations.
+        Compare two Galois representations.
         We define tho compatible families of representations
         attached to elliptic curves to be isomorphic if the curves are equal.
 
@@ -253,7 +253,7 @@ class GaloisRepresentation(SageObject):
 
     def is_reducible(self, p):
         r"""
-        Return True if the mod-p representation is
+        Return ``True`` if the mod-p representation is
         reducible. This is equivalent to the existence of an
         isogeny defined over `\QQ` of degree `p` from the
         elliptic curve.
@@ -262,7 +262,7 @@ class GaloisRepresentation(SageObject):
 
         - ``p`` -- a prime number
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         The answer is cached.
 
@@ -307,13 +307,13 @@ class GaloisRepresentation(SageObject):
 
     def is_irreducible(self, p):
         r"""
-        Return True if the mod p representation is irreducible.
+        Return ``True`` if the mod p representation is irreducible.
 
         INPUT:
 
         - ``p`` -- a prime number
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -362,22 +362,20 @@ class GaloisRepresentation(SageObject):
 
     def is_surjective(self, p, A=1000):
         r"""
-        Return True if the mod-p representation is
+        Return ``True`` if the mod-p representation is
         surjective onto `Aut(E[p]) = GL_2(\GF{p})`.
 
-        False if it is not, or None if we were unable to
+        ``False`` if it is not, or ``None`` if we were unable to
         determine whether it is or not.
 
         INPUT:
 
-        - ``p`` (integer) -- a prime number
+        - ``p`` -- integer; a prime number
 
-        - ``A`` (integer) -- a bound on the number of `a_p` to use
+        - ``A`` -- integer; a bound on the number of `a_p` to use
 
-        OUTPUT:
-
-        - (boolean) -- True if the mod-p representation is surjective
-          and False if not.
+        OUTPUT: boolean; ``True`` if the mod-p representation is surjective
+        and ``False`` if not
 
         The answer is cached.
 
@@ -418,13 +416,13 @@ class GaloisRepresentation(SageObject):
         REMARKS:
 
         1. If `p \geq 5` then the mod-p representation is
-           surjective if and only if the p-adic representation is
+           surjective if and only if the `p`-adic representation is
            surjective. When `p = 2, 3` there are
            counterexamples. See papers of Dokchitsers and Elkies
            for more details.
 
         2. For the primes `p=2` and 3, this will always answer either
-           True or False. For larger primes it might give None.
+           ``True`` or ``False``. For larger primes it might give ``None``.
         """
         if not arith.is_prime(p):
             raise TypeError("p (=%s) must be prime." % p)
@@ -443,7 +441,7 @@ class GaloisRepresentation(SageObject):
 
     def _is_surjective(self, p, A):
         r"""
-        helper function for ``is_surjective``
+        Helper function for ``is_surjective``.
 
         The value of `A` is as before, except that
         `A=-1` is a special code to stop before
@@ -607,12 +605,12 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        - ``A`` -- an integer (default 1000). By increasing this parameter
-          the resulting set might get smaller.
+        - ``A`` -- integer (default: 1000); by increasing this parameter
+          the resulting set might get smaller
 
         OUTPUT:
 
-        - ``list`` -- if the curve has CM, returns [0].
+        - ``list`` -- if the curve has CM, returns ``[0]``.
           Otherwise, returns a list of primes where mod-p representation is
           very likely not surjective. At any prime not in this list, the
           representation is definitely surjective.
@@ -708,9 +706,9 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        - ``p``  a prime number
+        - ``p`` -- a prime number
 
-        OUTPUT: A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1083,7 +1081,7 @@ class GaloisRepresentation(SageObject):
         self.__image_type[p] = "The image could not be determined. Sorry."
         return self.__image_type[p]
 
-    def image_classes(self,p,bound=10000):
+    def image_classes(self, p, bound=10000):
         r"""
         This function returns, given the representation `\rho`
         a list of `p` values that add up to 1, representing the
@@ -1105,13 +1103,11 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        - a prime ``p``
+        - ``p`` -- a prime
 
-        - a natural number ``bound`` (default: 10000)
+        - ``bound`` -- a natural number (default: 10000)
 
-        OUTPUT:
-
-        - a list of `p` real numbers in the interval `[0,1]` adding up to 1
+        OUTPUT: list of `p` real numbers in the interval `[0,1]` adding up to 1
 
         EXAMPLES::
 
@@ -1232,21 +1228,21 @@ class GaloisRepresentation(SageObject):
 
 # ell-adic reps
 
-    def is_unramified(self,p,ell):
+    def is_unramified(self, p, ell):
         r"""
         Return true if the Galois representation to `GL_2(\ZZ_p)` is unramified at `\ell`, i.e.
         if the inertia group at a place above `\ell` in `\text{Gal}(\bar\QQ/\QQ)` has trivial image in
         `GL_2(\ZZ_p)`.
 
-        For a Galois representation attached to an elliptic curve `E`, this returns True if `\ell\neq p`
-        and `E` has good reduction at `\ell`.
+        For a Galois representation attached to an elliptic curve `E`, this
+        returns ``True`` if `\ell\neq p` and `E` has good reduction at `\ell`.
 
         INPUT:
 
-        - ``p``   a prime
-        - ``ell`` another prime
+        - ``p`` -- a prime
+        - ``ell`` -- another prime
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1266,20 +1262,20 @@ class GaloisRepresentation(SageObject):
             raise ValueError('ell (=%s) must be prime' % ell)
         return (ell != p) and self._E.has_good_reduction(ell)
 
-    def is_unipotent(self,p,ell):
+    def is_unipotent(self, p, ell):
         r"""
         Return true if the Galois representation to `GL_2(\ZZ_p)` is unipotent at `\ell\neq p`, i.e.
         if the inertia group at a place above `\ell` in `\text{Gal}(\bar\QQ/\QQ)` maps into a Borel subgroup.
 
-        For a Galois representation attached to an elliptic curve `E`, this returns True if
+        For a Galois representation attached to an elliptic curve `E`, this returns ``True`` if
         `E` has semi-stable reduction at `\ell`.
 
         INPUT:
 
-        - ``p``   a prime
-        - ``ell`` a different prime
+        - ``p`` -- a prime
+        - ``ell`` -- a different prime
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1305,7 +1301,7 @@ class GaloisRepresentation(SageObject):
             raise ValueError("unipotent is not defined for l = p, use semistable instead.")
         return not self._E.has_additive_reduction(ell)
 
-    def is_quasi_unipotent(self,p,ell):
+    def is_quasi_unipotent(self, p, ell):
         r"""
         Return true if the Galois representation to `GL_2(\ZZ_p)` is quasi-unipotent at `\ell\neq p`, i.e. if there is a finite extension `K/\QQ` such that the inertia group at a place above `\ell` in `\text{Gal}(\bar\QQ/K)` maps into a Borel subgroup.
 
@@ -1313,10 +1309,10 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        - ``p``   a prime
-        - ``ell`` a different prime
+        - ``p`` -- a prime
+        - ``ell`` -- a different prime
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1334,7 +1330,7 @@ class GaloisRepresentation(SageObject):
 
 # p-adic reps
 
-    def is_ordinary(self,p):
+    def is_ordinary(self, p):
         r"""
         Return true if the `p`-adic Galois representation to `GL_2(\ZZ_p)` is ordinary, i.e.
         if the image of the decomposition group in `\text{Gal}(\bar\QQ/\QQ)` above he prime `p` maps into
@@ -1344,9 +1340,9 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        - ``p`` a prime
+        - ``p`` -- a prime
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1364,7 +1360,7 @@ class GaloisRepresentation(SageObject):
             raise NotImplementedError('is_ordinary is only implemented for semi-stable representations')
         return self._E.has_multiplicative_reduction(p) or (self._E.has_good_reduction(p) and self._E.ap(p) % p != 0)
 
-    def is_crystalline(self,p):
+    def is_crystalline(self, p):
         r"""
         Return true is the `p`-adic Galois representation to `GL_2(\ZZ_p)` is crystalline.
 
@@ -1372,9 +1368,9 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        - ``p`` a prime
+        - ``p`` -- a prime
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1388,7 +1384,7 @@ class GaloisRepresentation(SageObject):
             raise ValueError('p (=%s) must be prime' % p)
         return self._E.has_good_reduction(p)
 
-    def is_potentially_crystalline(self,p):
+    def is_potentially_crystalline(self, p):
         r"""
         Return true is the `p`-adic Galois representation to `GL_2(\ZZ_p)` is potentially crystalline, i.e.
         if there is a finite extension `K/\QQ_p` such that the `p`-adic representation becomes crystalline.
@@ -1397,9 +1393,9 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        - ``p`` a prime
+        - ``p`` -- a prime
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1413,7 +1409,7 @@ class GaloisRepresentation(SageObject):
             raise ValueError('p (=%s) must be prime' % p)
         return self._E.j_invariant().valuation(p) >= 0
 
-    def is_semistable(self,p):
+    def is_semistable(self, p):
         r"""
         Return true if the `p`-adic Galois representation to `GL_2(\ZZ_p)` is semistable.
 
@@ -1421,9 +1417,9 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        - ``p`` a prime
+        - ``p`` -- a prime
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1439,17 +1435,17 @@ class GaloisRepresentation(SageObject):
             raise ValueError('p (=%s) must be prime' % p)
         return not self._E.has_additive_reduction(p)
 
-    def is_potentially_semistable(self,p):
+    def is_potentially_semistable(self, p):
         r"""
         Return true if the `p`-adic Galois representation to `GL_2(\ZZ_p)` is potentially semistable.
 
-        For an elliptic curve `E`, this returns True always
+        For an elliptic curve `E`, this returns ``True`` always
 
         INPUT:
 
-        - ``p`` a prime
+        - ``p`` -- a prime
 
-        OUTPUT: A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

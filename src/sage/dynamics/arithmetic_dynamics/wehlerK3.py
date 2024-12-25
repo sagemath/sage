@@ -56,10 +56,12 @@ _CommutativeRings = CommutativeRings()
 
 def WehlerK3Surface(polys):
     r"""
-    Defines a K3 Surface over `\mathbb{P}^2 \times \mathbb{P}^2` defined as
+    Define a K3 Surface over `\mathbb{P}^2 \times \mathbb{P}^2` defined as
     the intersection of a bilinear and biquadratic form. [Weh1998]_
 
-    INPUT: Bilinear and biquadratic polynomials as a tuple or list
+    INPUT:
+
+    - ``polys`` -- bilinear and biquadratic polynomials as a tuple or list
 
     OUTPUT: :class:`WehlerK3Surface_ring`
 
@@ -92,7 +94,9 @@ def random_WehlerK3Surface(PP):
     Produces a random K3 surface in `\mathbb{P}^2 \times \mathbb{P}^2` defined as the
     intersection of a bilinear and biquadratic form. [Weh1998]_
 
-    INPUT: Projective space cartesian product
+    INPUT:
+
+    - ``PP`` -- projective space cartesian product
 
     OUTPUT: :class:`WehlerK3Surface_ring`
 
@@ -163,7 +167,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         r"""
         Changes the base ring on which the Wehler K3 Surface is defined.
 
-        INPUT: ``R`` -- ring
+        INPUT:
+
+        - ``R`` -- ring
 
         OUTPUT: K3 Surface defined over input ring
 
@@ -188,9 +194,12 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         r"""
         Function checks to see if point ``P`` lies on the K3 Surface.
 
-        INPUT: ``P`` -- point in `\mathbb{P}^2 \times \mathbb{P}^2`
+        INPUT:
 
-        OUTPUT: AttributeError True if the point is not on the surface
+        - ``P`` -- point in `\mathbb{P}^2 \times \mathbb{P}^2`
+
+        OUTPUT: ``True`` if the point is not on the surface; :exc:`AttributeError`
+        otherwise
 
         EXAMPLES::
 
@@ -242,9 +251,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``component`` -- Integer: 0 or 1
+        - ``component`` -- integer; 0 or 1
 
-        - ``i`` -- Integer: 0, 1 or 2
+        - ``i`` -- integer; 0, 1 or 2
 
         OUTPUT: polynomial in terms of either y (Component = 0) or x (Component = 1)
 
@@ -290,11 +299,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``component`` -- Integer: 0 or 1
+        - ``component`` -- integer; 0 or 1
 
-        - ``i`` -- Integer: 0, 1 or 2
+        - ``i`` -- integer; 0, 1 or 2
 
-        - ``j`` -- Integer: 0, 1 or 2
+        - ``j`` -- integer; 0, 1 or 2
 
         OUTPUT: polynomial in terms of either y (Component = 0) or x (Component = 1)
 
@@ -340,9 +349,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``component`` -- Integer: 0 or 1
+        - ``component`` -- integer; 0 or 1
 
-        - ``k`` -- Integer: 0, 1 or 2
+        - ``k`` -- integer; 0, 1 or 2
 
         OUTPUT: polynomial in terms of either `y` (``component=0``) or `x` (``component=1``)
 
@@ -384,11 +393,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``component`` -- Integer: 0 or 1
+        - ``component`` -- integer; 0 or 1
 
-        - ``i`` -- Integer: 0, 1 or 2
+        - ``i`` -- integer; 0, 1 or 2
 
-        - ``j`` -- Integer: 0, 1 or 2
+        - ``j`` -- integer; 0, 1 or 2
 
         OUTPUT: polynomial in terms of either y (``component=0``) or x (``component=1``)
 
@@ -432,9 +441,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``a`` -- Point in `\mathbb{P}^2`
+        - ``a`` -- point in `\mathbb{P}^2`
 
-        OUTPUT: A polynomial representing the fiber
+        OUTPUT: a polynomial representing the fiber
 
         EXAMPLES::
 
@@ -470,9 +479,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         Notation and definition from: [CS1996]_
 
-        INPUT: ``a`` -- Point in `\mathbb{P}^2`
+        INPUT:
 
-        OUTPUT: A polynomial representing the fiber
+        - ``a`` -- point in `\mathbb{P}^2`
+
+        OUTPUT: a polynomial representing the fiber
 
         EXAMPLES::
 
@@ -509,9 +520,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``a`` -- Point in `\mathbb{P}^2`
+        - ``a`` -- point in `\mathbb{P}^2`
 
-        OUTPUT: A subscheme representing the fiber
+        OUTPUT: a subscheme representing the fiber
 
         EXAMPLES::
 
@@ -545,9 +556,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         Notation and definition from: [CS1996]_
 
-        INPUT: ``b`` -- Point in projective space
+        INPUT:
 
-        OUTPUT: A polynomial representing the fiber
+        - ``b`` -- point in projective space
+
+        OUTPUT: a polynomial representing the fiber
 
         EXAMPLES::
 
@@ -586,9 +599,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``b`` -- Point in projective space
+        - ``b`` -- point in projective space
 
-        OUTPUT: A polynomial representing the fiber
+        OUTPUT: a polynomial representing the fiber
 
         EXAMPLES::
 
@@ -624,9 +637,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``b`` -- Point in `\mathbb{P}^2`
+        - ``b`` -- point in `\mathbb{P}^2`
 
-        OUTPUT: A subscheme representing the fiber
+        OUTPUT: a subscheme representing the fiber
 
         EXAMPLES::
 
@@ -642,7 +655,6 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
              x0,
              x0^2 + 3*x0*x1 + x1^2
-
         """
         if b not in self.ambient_space()[1]:
             raise TypeError("point must be in projective space of dimension 2")
@@ -661,9 +673,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         The roots of this polynomial will either be degenerate fibers or fixed points
         of the involutions `\sigma_x` or `\sigma_y` for more information, see [CS1996]_.
 
-        INPUT: ``i`` -- Integer, either 0 (polynomial in y) or 1 (polynomial in x)
+        INPUT:
 
-        OUTPUT: Polynomial in the coordinate ring of the ambient space
+        - ``i`` -- integer; either 0 (polynomial in y) or 1 (polynomial in x)
+
+        OUTPUT: polynomial in the coordinate ring of the ambient space
 
         EXAMPLES::
 
@@ -697,8 +711,8 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
     @cached_method
     def is_degenerate(self):
         r"""
-        Function will return True if there is a fiber (over the algebraic closure of the
-        base ring) of dimension greater than 0 and False otherwise.
+        Function will return ``True`` if there is a fiber (over the algebraic closure of the
+        base ring) of dimension greater than 0 and ``False`` otherwise.
 
         OUTPUT: boolean
 
@@ -776,7 +790,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         This function finds the common solution through elimination via Groebner bases
         by using the .variety() function on the three affine charts in each component.
 
-        OUTPUT: The output is a list of lists where the elements of lists are
+        OUTPUT: the output is a list of lists where the elements of lists are
         points in the appropriate projective space.
         The first list is the points whose pullback by the projection to the
         first component (projective space) is dimension greater than 0.
@@ -884,13 +898,15 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
     @cached_method
     def degenerate_primes(self, check=True):
         r"""
-        Determine which primes `p` self has degenerate fibers over `\GF{p}`.
+        Determine which primes `p` ``self`` has degenerate fibers over `\GF{p}`.
 
         If ``check`` is ``False``, then may return primes that do not have degenerate fibers.
         Raises an error if the surface is degenerate.
         Works only for ``ZZ`` or ``QQ``.
 
-        INPUT: ``check`` -- (default: ``True``) boolean, whether the primes are verified
+        INPUT:
+
+        - ``check`` -- boolean (default: ``True``); whether the primes are verified
 
         ALGORITHM:
 
@@ -905,7 +921,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         is what is checked. The lcm of the coefficients of the monomials `x_i` in
         a Groebner basis is computed. This may return extra primes.
 
-        OUTPUT: List of primes.
+        OUTPUT: list of primes
 
         EXAMPLES::
 
@@ -996,7 +1012,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         Checks to confirm that all of the 2x2 minors of the Jacobian generated from
         the biquadratic and bilinear forms have no common vanishing points.
 
-        OUTPUT:  Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1057,11 +1073,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean checks to see if point is on the surface
+        - ``check`` -- boolean (default: ``True``); checks to see if point is on the surface
 
-        - ``normalize`` -- (default: ``True``) boolean normalizes the point
+        - ``normalize`` -- boolean (default: ``True``); normalizes the point
 
-        OUTPUT: A point on the K3 surface
+        OUTPUT: a point on the K3 surface
 
         EXAMPLES::
 
@@ -1174,7 +1190,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             -phi(self.Hpoly(1, 1, 2))]
         maxexp = []
 
-        #Find highest exponent that we can divide out by to get a non zero answer
+        #Find highest exponent that we can divide out by to get a nonzero answer
         for i in range(2,len(T)):
             e = 0
             while (T[i]/t**e).subs({w1:t1}) == 0:
@@ -1283,7 +1299,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             return Point
         return self.point(Point, False)
 
-    def sigmaY(self,P, **kwds):
+    def sigmaY(self, P, **kwds):
         r"""
         Return the involution on the Wehler K3 surfaces induced by the double covers.
 
@@ -1304,11 +1320,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean checks to see if point is on the surface
+        - ``check`` -- boolean (default: ``True``); checks to see if point is on the surface
 
-        - ``normalize`` -- (default: ``True``) boolean normalizes the point
+        - ``normalize`` -- boolean (default: ``True``); normalizes the point
 
-        OUTPUT: A point on the K3 surface
+        OUTPUT: a point on the K3 surface
 
         EXAMPLES::
 
@@ -1419,7 +1435,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         -phi(self.Hpoly(0, 1, 2))]
         maxexp = []
 
-        #Find highest exponent that we can divide out by to get a non zero answer
+        #Find highest exponent that we can divide out by to get a nonzero answer
         for i in range(2, len(T)):
             e = 0
             while (T[i]/t**e).subs({w1:t1}) == 0:
@@ -1536,15 +1552,15 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``a`` -- Point in `\mathbb{P}^2 \times \mathbb{P}^2`
+        - ``a`` -- point in `\mathbb{P}^2 \times \mathbb{P}^2`
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean checks to see if point is on the surface
+        - ``check`` -- boolean (default: ``True``); checks to see if point is on the surface
 
-        - ``normalize`` -- (default: ``True``) boolean normalizes the point
+        - ``normalize`` -- boolean (default: ``True``); normalizes the point
 
-        OUTPUT: A point on this surface
+        OUTPUT: a point on this surface
 
         EXAMPLES::
 
@@ -1563,7 +1579,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         kwds.update({"check":False})
         return self.sigmaY(A, **kwds)
 
-    def psi(self,a, **kwds):
+    def psi(self, a, **kwds):
         r"""
         Evaluates the function `\psi = \sigma_x \circ \sigma_y`.
 
@@ -1576,15 +1592,15 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``a`` -- Point in `\mathbb{P}^2 \times \mathbb{P}^2`
+        - ``a`` -- point in `\mathbb{P}^2 \times \mathbb{P}^2`
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean checks to see if point is on the surface
+        - ``check`` -- boolean (default: ``True``); checks to see if point is on the surface
 
-        - ``normalize`` -- (default: ``True``) boolean normalizes the point
+        - ``normalize`` -- boolean (default: ``True``); normalizes the point
 
-        OUTPUT: A point on this surface
+        OUTPUT: a point on this surface
 
         EXAMPLES::
 
@@ -1619,16 +1635,17 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``P`` -- a surface point
 
-        - ``N`` -- positive integer. number of terms of the series to use
+        - ``N`` -- positive integer; number of terms of the series to use
 
-        - ``v`` -- non-negative integer. a place, use v = 0 for the Archimedean place
+        - ``v`` -- nonnegative integer; a place, use v = 0 for the Archimedean place
 
-        - ``m``, ``n`` -- positive integers; we compute the local height for the divisor `E_{mn}^{+}`.
-          These must be indices of non-zero coordinates of the point ``P``.
+        - ``m``, ``n`` -- positive integers; we compute the local height for
+          the divisor `E_{mn}^{+}`. These must be indices of nonzero
+          coordinates of the point ``P``
 
-        - ``prec`` -- (default: 100) float point or p-adic precision
+        - ``prec`` -- (default: 100) float point or `p`-adic precision
 
-        OUTPUT: A real number
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1720,15 +1737,15 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``N`` -- positive integer. number of terms of the series to use
 
-        - ``v`` -- non-negative integer. a place, use v = 0 for the Archimedean place
+        - ``v`` -- nonnegative integer. a place, use v = 0 for the Archimedean place
 
         - ``m``, ``n`` -- positive integers; we compute the local height for
-          the divisor `E_{mn}^{+}`. These must be indices of non-zero
+          the divisor `E_{mn}^{+}`. These must be indices of nonzero
           coordinates of the point ``P``.
 
-        - ``prec`` -- (default: 100) float point or p-adic precision
+        - ``prec`` -- (default: 100) float point or `p`-adic precision
 
-        OUTPUT: A real number
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1817,9 +1834,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``badprimes`` -- (optional) list of integer primes (where the surface is degenerate)
 
-        - ``prec`` -- (default: 100) float point or p-adic precision
+        - ``prec`` -- (default: 100) float point or `p`-adic precision
 
-        OUTPUT: A real number
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1881,9 +1898,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``badprimes`` -- (optional) list of integer primes (where the surface is degenerate)
 
-        - ``prec`` -- (default: 100) float point or p-adic precision
+        - ``prec`` -- (default: 100) float point or `p`-adic precision
 
-        OUTPUT: A real number
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1943,9 +1960,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``badprimes`` -- (optional) list of integer primes (where the surface is degenerate)
 
-        - ``prec`` -- (default: 100) float point or p-adic precision
+        - ``prec`` -- (default: 100) float point or `p`-adic precision
 
-        OUTPUT: A real number
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1991,7 +2008,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``p`` -- a point in `\mathbb{P}^2`
 
-        OUTPUT: The corresponding fiber (as a list)
+        OUTPUT: the corresponding fiber (as a list)
 
         EXAMPLES::
 
@@ -2159,22 +2176,23 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
     def nth_iterate_phi(self, P, n, **kwds):
         r"""
-        Computes the ``n``-th iterate for the phi function.
+        Compute the `n`-th iterate for the phi function.
 
         INPUT:
 
         - ``P`` -- a point in `\mathbb{P}^2 \times \mathbb{P}^2`
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean checks to see if point is on the surface
+        - ``check`` -- boolean (default: ``True``); checks to see if point is
+          on the surface
 
-        - ``normalize`` -- (default: ``False``) boolean normalizes the point
+        - ``normalize`` -- boolean (default: ``False``); normalizes the point
 
-        OUTPUT: The nth iterate of the point given the phi function (if ``n`` is positive), or the
-        psi function (if ``n`` is negative)
+        OUTPUT: the `n`-th iterate of the point given the phi function (if `n`
+        is positive), or the psi function (if `n` is negative)
 
         EXAMPLES::
 
@@ -2224,22 +2242,22 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
     def nth_iterate_psi(self, P, n, **kwds):
         r"""
-        Computes the ``n``-th iterate for the psi function.
+        Compute the `n`-th iterate for the psi function.
 
         INPUT:
 
         - ``P`` -- a point in `\mathbb{P}^2 \times \mathbb{P}^2`
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean, checks to see if point is on the surface
+        - ``check`` -- boolean (default: ``True``); checks to see if point is on the surface
 
-        - ``normalize`` -- (default: ``False``) boolean, normalizes the point
+        - ``normalize`` -- boolean (default: ``False``); normalizes the point
 
-        OUTPUT: The nth iterate of the point given the psi function (if ``n`` is positive),
-        or the phi function (if ``n`` is negative)
+        OUTPUT: the `n`-th iterate of the point given the psi function (if `n` is positive),
+        or the phi function (if `n` is negative)
 
         EXAMPLES::
 
@@ -2285,17 +2303,17 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         INPUT:
 
-        - ``P`` -- Point on the K3 surface
+        - ``P`` -- point on the K3 surface
 
-        - ``N`` -- a non-negative integer or list or tuple of two non-negative integers
+        - ``N`` -- nonnegative integer or list or tuple of two nonnegative integers
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean, checks to see if point is on the surface
+        - ``check`` -- boolean (default: ``True``); checks to see if point is on the surface
 
-        - ``normalize`` -- (default: ``False``) boolean, normalizes the point
+        - ``normalize`` -- boolean (default: ``False``); normalizes the point
 
-        OUTPUT: List of points in the orbit
+        OUTPUT: list of points in the orbit
 
         EXAMPLES::
 
@@ -2323,7 +2341,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         except TypeError:
             raise TypeError("orbit bounds must be integers")
         if N[0] < 0 or N[1] < 0:
-            raise TypeError("orbit bounds must be non-negative")
+            raise TypeError("orbit bounds must be nonnegative")
         if N[0] > N[1]:
             return []
         Q = self(copy(P))
@@ -2346,15 +2364,15 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``P`` -- a point on the K3 surface
 
-        - ``N`` -- a non-negative integer or list or tuple of two non-negative integers
+        - ``N`` -- nonnegative integer or list or tuple of two nonnegative integers
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean, checks to see if point is on the surface
+        - ``check`` -- boolean (default: ``True``); checks to see if point is on the surface
 
-        - ``normalize`` -- (default: ``False``) boolean, normalizes the point
+        - ``normalize`` -- boolean (default: ``False``); normalizes the point
 
-        OUTPUT: a list of points in the orbit
+        OUTPUT: list of points in the orbit
 
         EXAMPLES::
 
@@ -2380,7 +2398,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         except TypeError:
             raise TypeError("orbit bounds must be integers")
         if N[0] < 0 or N[1] < 0:
-            raise TypeError("orbit bounds must be non-negative")
+            raise TypeError("orbit bounds must be nonnegative")
         if N[0] > N[1]:
             return []
         Q = self(copy(P))
@@ -2400,7 +2418,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``right`` -- the K3 surface to compare to the original
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2430,7 +2448,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         """
         return self.defining_ideal() == right.defining_ideal()
 
-    def is_symmetric_orbit(self,orbit):
+    def is_symmetric_orbit(self, orbit):
         r"""
         Check to see if the orbit is symmetric (i.e. if one of the points on the
         orbit is fixed by '\sigma_x' or '\sigma_y').
@@ -2439,7 +2457,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         - ``orbit`` -- a periodic cycle of either psi or phi
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -2493,7 +2511,7 @@ class WehlerK3Surface_finite_field( WehlerK3Surface_field):
         Enumerate points over `\mathbb{P}^2`, and then count the points on the fiber of
         each of those points.
 
-        OUTPUT: Integer -- total number of points on the surface
+        OUTPUT: integer; total number of points on the surface
 
         EXAMPLES::
 

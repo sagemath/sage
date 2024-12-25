@@ -62,7 +62,7 @@ class Elements(Category):
     @classmethod
     def an_instance(cls):
         """
-        Returns an instance of this class
+        Return an instance of this class.
 
         EXAMPLES::
 
@@ -147,7 +147,7 @@ class Elements(Category):
 #############################################################
 class Category_over_base(CategoryWithParameters):
     r"""
-    A base class for categories over some base object
+    A base class for categories over some base object.
 
     INPUT:
 
@@ -253,7 +253,7 @@ class Category_over_base(CategoryWithParameters):
     @classmethod
     def an_instance(cls):
         """
-        Returns an instance of this class
+        Return an instance of this class.
 
         EXAMPLES::
 
@@ -386,7 +386,7 @@ class Category_over_base_ring(Category_over_base):
         OUTPUT:
 
         A boolean if it is certain that ``C`` is (or is not) a
-        subcategory of self. :obj:`~sage.misc.unknown.Unknown`
+        subcategory of ``self``. :obj:`~sage.misc.unknown.Unknown`
         otherwise.
 
         EXAMPLES:
@@ -458,7 +458,7 @@ class Category_over_base_ring(Category_over_base):
             ....:            VectorSpaces(GF(3)).parent_class)
             True
 
-        Check that :issue:`16618` is fixed: this `_subcategory_hook_`
+        Check that :issue:`16618` is fixed: this ``_subcategory_hook_``
         method is only valid for :class:`Category_over_base_ring`, not
         :class:`Category_over_base`::
 
@@ -514,7 +514,6 @@ class Category_over_base_ring(Category_over_base):
 
             sage: QQ['x'] in Algebras(Fields()) # todo: not implemented
             True
-
         """
         try:
             # The issubclass test handles extension types or when the
@@ -616,8 +615,8 @@ class Category_ideal(Category_in_ambient):
         """
         if super().__contains__(x):
             return True
-        from sage.rings.ideal import is_Ideal
-        return is_Ideal(x) and x.ring() == self.ring()
+        from sage.rings.ideal import Ideal_generic
+        return isinstance(x, Ideal_generic) and x.ring() == self.ring()
 
     def __call__(self, v):
         """

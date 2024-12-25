@@ -180,7 +180,7 @@ AUTHORS:
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.integral_domains import IntegralDomains
-from sage.rings.ring import IntegralDomain
+from sage.structure.parent import Parent
 from sage.structure.element import IntegralDomainElement
 
 
@@ -193,13 +193,12 @@ def normalize_extra_units(base_ring, add_units, warning=True):
 
     INPUT:
 
-    - ``base_ring`` -- an instance of :class:`IntegralDomain`
+    - ``base_ring`` -- a ring in the category of :class:`IntegralDomains`
     - ``add_units`` -- list of elements from base ring
-    - ``warning`` -- (default: ``True``) to suppress a warning which is thrown if no normalization was possible
+    - ``warning`` -- boolean (default: ``True``); to suppress a warning which
+      is thrown if no normalization was possible
 
-    OUTPUT:
-
-    List of all prime factors of the elements of the given list.
+    OUTPUT: list of all prime factors of the elements of the given list
 
     EXAMPLES::
 
@@ -251,13 +250,13 @@ def normalize_extra_units(base_ring, add_units, warning=True):
 
 class LocalizationElement(IntegralDomainElement):
     """
-    Element class for localizations of integral domains
+    Element class for localizations of integral domains.
 
     INPUT:
 
     - ``parent`` -- instance of :class:`Localization`
-    - ``x`` -- instance of :class:`FractionFieldElement` whose parent is the fraction
-       field of the parent's base ring
+    - ``x`` -- instance of :class:`FractionFieldElement` whose parent is the
+      fraction field of the parent's base ring
 
     EXAMPLES::
 
@@ -527,9 +526,7 @@ class LocalizationElement(IntegralDomainElement):
 
         This is only possible if its base ring is the ring of integers.
 
-        OUTPUT:
-
-        A rational.
+        OUTPUT: a rational
 
         TESTS::
 
@@ -550,9 +547,7 @@ class LocalizationElement(IntegralDomainElement):
         This is only possible if its base ring is the ring of integers and
         the denominator of ``self`` is one.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         TESTS::
 
@@ -566,34 +561,39 @@ class LocalizationElement(IntegralDomainElement):
         return self._value._integer_(Z=Z)
 
 
-class Localization(IntegralDomain, UniqueRepresentation):
+class Localization(Parent, UniqueRepresentation):
     r"""
-    The localization generalizes the construction of the field of fractions of an integral domain to
-    an arbitrary ring. Given a (not necessarily commutative) ring `R` and a subset `S` of `R`,
-    there exists a ring `R[S^{-1}]` together with the ring homomorphism `R \longrightarrow R[S^{-1}]`
-    that "inverts" `S`; that is, the homomorphism maps elements in `S` to unit elements in `R[S^{-1}]`
-    and, moreover, any ring homomorphism from `R` that "inverts" `S` uniquely factors through `R[S^{-1}]`.
+    The localization generalizes the construction of the field of fractions of
+    an integral domain to an arbitrary ring. Given a (not necessarily
+    commutative) ring `R` and a subset `S` of `R`, there exists a ring
+    `R[S^{-1}]` together with the ring homomorphism `R \longrightarrow R[S^{-1}]`
+    that "inverts" `S`; that is, the homomorphism maps elements in `S` to unit
+    elements in `R[S^{-1}]` and, moreover, any ring homomorphism from `R` that
+    "inverts" `S` uniquely factors through `R[S^{-1}]`.
 
-    The ring `R[S^{-1}]` is called the *localization* of `R` with respect to `S`. For example, if `R` is
-    a commutative ring and `f` an element in `R`, then the localization consists of elements of the form
-    `r/f, r\in R, n \geq 0` (to be precise, `R[f^{-1}] = R[t]/(ft-1)`.
+    The ring `R[S^{-1}]` is called the *localization* of `R` with respect to
+    `S`. For example, if `R` is a commutative ring and `f` an element in `R`,
+    then the localization consists of elements of the form
+    `r/f, r\in R, n \geq 0` (to be precise, `R[f^{-1}] = R[t]/(ft-1)`).
 
-    The above text is taken from `Wikipedia`. The construction here used for this class relies on the
-    construction of the field of fraction and is therefore restricted to integral domains.
+    The above text is taken from `Wikipedia`. The construction here used for
+    this class relies on the construction of the field of fraction and is
+    therefore restricted to integral domains.
 
-    Accordingly, this class is inherited from :class:`IntegralDomain` and can only be used in that context.
-    Furthermore, the base ring should support :meth:`sage.structure.element.CommutativeRingElement.divides` and
-    the exact division operator `//` (:meth:`sage.structure.element.Element.__floordiv__`) in order to guarantee
-    a successful application.
+    Accordingly, the base ring must be in the category of ``IntegralDomains``.
+    Furthermore, the base ring should support
+    :meth:`sage.structure.element.CommutativeRingElement.divides` and the exact
+    division operator ``//`` (:meth:`sage.structure.element.Element.__floordiv__`)
+    in order to guarantee a successful application.
 
     INPUT:
 
-    - ``base_ring`` -- an instance of :class:`Ring` allowing the construction of :meth:`fraction_field` (that is an integral domain)
-    - ``extra_units`` -- tuple of elements of ``base_ring`` which should be turned into units
-    - ``names`` -- passed to :class:`IntegralDomain`
-    - ``normalize`` -- (default: ``True``) passed to :class:`IntegralDomain`
-    - ``category`` -- (default: None) passed to :class:`IntegralDomain`
-    - ``warning`` -- (default: ``True``) to suppress a warning which is thrown if self cannot be represented uniquely
+    - ``base_ring`` -- a ring in the category of ``IntegralDomains``
+    - ``extra_units`` -- tuple of elements of ``base_ring`` which should be
+      turned into units
+    - ``category`` -- (default: ``None``) passed to :class:`Parent`
+    - ``warning`` -- boolean (default: ``True``); to suppress a warning which
+      is thrown if ``self`` cannot be represented uniquely
 
     REFERENCES:
 
@@ -682,9 +682,9 @@ class Localization(IntegralDomain, UniqueRepresentation):
             sage: L = R.localization(x**2 + 1)                                          # needs sage.libs.pari
             sage: TestSuite(L).run()
         """
-        if type(extra_units) is tuple:
+        if isinstance(extra_units, tuple):
             extra_units = list(extra_units)
-        if not type(extra_units) is list:
+        elif not isinstance(extra_units, list):
             extra_units = [extra_units]
 
         from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
@@ -709,7 +709,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
             # since by construction the base ring must contain non units self must be infinite
             category = IntegralDomains().Infinite()
 
-        IntegralDomain.__init__(self, base_ring, names=names, normalize=normalize, category=category)
+        Parent.__init__(self, base=base_ring, names=names, normalize=normalize, category=category)
         self._extra_units = tuple(extra_units)
         self._fraction_field = base_ring.fraction_field()
         self._populate_coercion_lists_()
@@ -899,16 +899,14 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
     def _fraction_to_element(self, x):
         """
-        Checks if the given element of the fraction field is contained in ``self``
-        and construct it as an element of self in case the answer is true.
+        Check if the given element of the fraction field is contained in ``self``
+        and construct it as an element of ``self`` in case the answer is true.
 
         INPUT:
 
         - ``x`` -- an element of the fraction field of the base ring
 
-        OUTPUT:
-
-        An instance of the element class of self representing `x`.
+        OUTPUT: an instance of the element class of ``self`` representing `x`
 
         EXAMPLES::
 
@@ -1019,15 +1017,15 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         INPUT:
 
-        - ``proof`` -- (default: ``True``) Determines what to do in unknown
-          cases
+        - ``proof`` -- boolean (default: ``True``); determines what to do in
+          unknown cases
 
         ALGORITHM:
 
         If the parameter ``proof`` is set to ``True``, the returned value is
         correct but the method might throw an error.  Otherwise, if it is set
-        to ``False``, the method returns True if it can establish that self is
-        a field and False otherwise.
+        to ``False``, the method returns ``True`` if it can establish that
+        ``self`` is a field and ``False`` otherwise.
 
         EXAMPLES::
 

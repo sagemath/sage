@@ -74,13 +74,12 @@ cdef int next_swap(int n, int *c, int *o) noexcept:
     Note, Knuth's descriptions of algorithms tend to encourage
     one to think of finite state machines.  For convenience,
     we have added comments to show what state the machine is
-    in at any given point in the algorithm. `plain_swap_reset`
+    in at any given point in the algorithm. ``plain_swap_reset``
     sets the state to 1, and this function begins and ends in
     state 2.
 
     Returns the index i such that the next permutation can be
     obtained by swapping P[i] <-> P[i+1]
-
     """
 
     cdef int j,s,q,offset
@@ -116,7 +115,7 @@ cdef int next_swap(int n, int *c, int *o) noexcept:
 
 def permutation_iterator_transposition_list(int n):
     """
-    Returns a list of transposition indices to enumerate the
+    Return a list of transposition indices to enumerate the
     permutations on `n` letters by adjacent transpositions.
     Assumes zero-based lists.  We artificially limit the
     argument to `n < 12` to avoid overflowing 32-bit pointers.
@@ -188,9 +187,7 @@ cpdef bint next_perm(array l) noexcept:
 
         This method mutates the array ``l``.
 
-    OUTPUT:
-
-    boolean; whether another permutation was obtained
+    OUTPUT: boolean; whether another permutation was obtained
 
     EXAMPLES::
 
@@ -267,11 +264,9 @@ cpdef map_to_list(array l, tuple values, int n):
 
     - ``l`` -- array of unsigned int (i.e., type ``'I'``)
     - ``values`` -- tuple; the values of the permutation
-    - ``n`` -- int; the length of the array ``l``
+    - ``n`` -- integer; the length of the array ``l``
 
-    OUTPUT:
-
-    A list representing the permutation.
+    OUTPUT: list representing the permutation
 
     EXAMPLES::
 

@@ -2,7 +2,7 @@
 r"""
 `p`-adic Generic
 
-A generic superclass for all p-adic parents.
+A generic superclass for all `p`-adic parents.
 
 AUTHORS:
 
@@ -164,7 +164,7 @@ class pAdicGeneric(LocalGeneric):
         r"""
         Rich comparison of ``self`` with ``other``.
 
-        We consider two p-adic rings or fields to be equal if they are
+        We consider two `p`-adic rings or fields to be equal if they are
         equal mathematically, and also have the same precision cap and
         printing parameters.
 
@@ -198,7 +198,7 @@ class pAdicGeneric(LocalGeneric):
     # def ngens(self):
     #     return 1
 
-    # def gen(self, n = 0):
+    # def gen(self, n=0):
     #     if n != 0:
     #         raise IndexError, "only one generator"
     #     return self(self.prime())
@@ -230,9 +230,7 @@ class pAdicGeneric(LocalGeneric):
         r"""
         Return the prime, ie the characteristic of the residue field.
 
-        OUTPUT:
-
-        The characteristic of the residue field.
+        OUTPUT: the characteristic of the residue field
 
         EXAMPLES::
 
@@ -275,9 +273,7 @@ class pAdicGeneric(LocalGeneric):
         r"""
         Return the prime, i.e., the characteristic of the residue field.
 
-        OUTPUT:
-
-        The characteristic of the residue field.
+        OUTPUT: the characteristic of the residue field
 
         EXAMPLES::
 
@@ -377,9 +373,7 @@ class pAdicGeneric(LocalGeneric):
         - ``print_mode`` -- (optional) a dictionary containing print options;
           defaults to the same options as this ring
 
-        OUTPUT:
-
-        - the fraction field of this ring
+        OUTPUT: the fraction field of this ring
 
         EXAMPLES::
 
@@ -437,9 +431,7 @@ class pAdicGeneric(LocalGeneric):
         - ``print_mode`` -- (optional) a dictionary containing print options;
           defaults to the same options as this ring
 
-        OUTPUT:
-
-        - the ring of elements of this field with nonnegative valuation
+        OUTPUT: the ring of elements of this field with nonnegative valuation
 
         EXAMPLES::
 
@@ -503,9 +495,7 @@ class pAdicGeneric(LocalGeneric):
 
         - ``x`` -- something that can be cast into ``self``
 
-        OUTPUT:
-
-        - the Teichmüller lift of ``x``
+        OUTPUT: the Teichmüller lift of ``x``
 
         EXAMPLES::
 
@@ -619,7 +609,7 @@ class pAdicGeneric(LocalGeneric):
 
     def extension(self, modulus, prec=None, names=None, print_mode=None, implementation='FLINT', **kwds):
         r"""
-        Create an extension of this p-adic ring.
+        Create an extension of this `p`-adic ring.
 
         EXAMPLES::
 
@@ -1063,7 +1053,7 @@ class pAdicGeneric(LocalGeneric):
 
         INPUT:
 
-         - ``options`` -- any keyword arguments accepted by :meth:`_tester`
+        - ``options`` -- any keyword arguments accepted by :meth:`_tester`
 
         EXAMPLES::
 
@@ -1120,7 +1110,7 @@ class pAdicGeneric(LocalGeneric):
 
         INPUT:
 
-        -  ``n`` -- an integer (default: 1)
+        - ``n`` -- integer (default: 1)
 
         EXAMPLES::
 
@@ -1217,7 +1207,7 @@ class pAdicGeneric(LocalGeneric):
 
         INPUT:
 
-        - ``exponent`` -- an integer or ``Infinity``
+        - ``exponent`` -- integer or ``Infinity``
 
         OUTPUT:
 
@@ -1292,9 +1282,9 @@ class pAdicGeneric(LocalGeneric):
 
         INPUT:
 
-        - ``n`` -- an integer or ``None`` (default: ``None``)
+        - ``n`` -- integer or ``None`` (default: ``None``)
 
-        - ``order`` -- a boolean (default: ``False``)
+        - ``order`` -- boolean (default: ``False``)
 
         OUTPUT:
 
@@ -1372,7 +1362,7 @@ class pAdicGeneric(LocalGeneric):
 
         INPUT:
 
-        - ``n`` -- an integer or ``None`` (default: ``None``); if
+        - ``n`` -- integer or ``None`` (default: ``None``); if
           ``None``, the full group of roots of unity is returned
 
         EXAMPLES::
@@ -1436,17 +1426,17 @@ class pAdicGeneric(LocalGeneric):
 
         - ``ring`` -- a ring into which this ring coerces
 
-        - ``multiplicities`` -- a boolean (default: ``True``);
+        - ``multiplicities`` -- boolean (default: ``True``);
           whether we have to return the multiplicities of each
           root or not
 
-        - ``algorithm`` -- ``"pari"``, ``"sage"`` or ``None`` (default:
+        - ``algorithm`` -- ``'pari'``, ``'sage'`` or ``None`` (default:
           ``None``); Sage provides an implementation for any extension of
           `\QQ_p` whereas only roots of polynomials over `\QQ_p` is implemented
-          in Pari; the default is ``"pari"`` if ``ring`` is `\ZZ_p` or `\QQ_p`,
-          ``"sage"`` otherwise.
+          in Pari; the default is ``'pari'`` if ``ring`` is `\ZZ_p` or `\QQ_p`,
+          ``'sage'`` otherwise.
 
-        - ``secure`` -- a boolean (default: ``False``)
+        - ``secure`` -- boolean (default: ``False``)
 
         .. NOTE::
 
@@ -1511,12 +1501,12 @@ class pAdicGeneric(LocalGeneric):
              3 + O(3^9),
              O(3^9)]
 
-        This is due to the fact that we are using ``"pari"`` which does not
+        This is due to the fact that we are using ``'pari'`` which does not
         track precision (it can only compute `p`-adic roots of exact polynomials).
-        If we are switching to ``"sage"`` then the precision on the result
+        If we are switching to ``'sage'`` then the precision on the result
         becomes correct (but the computation is much slower)::
 
-            sage: P.roots(multiplicities=False, algorithm="sage")                       # needs sage.geometry.polyhedron sage.libs.ntl
+            sage: P.roots(multiplicities=False, algorithm='sage')                       # needs sage.geometry.polyhedron sage.libs.ntl
             [0,
              3 + O(3^11),
              1 + O(3^9),
@@ -1526,9 +1516,9 @@ class pAdicGeneric(LocalGeneric):
         We check that the keyword ``secure`` works as explained above::
 
             sage: P = x^2 + O(3^10)*x + O(3^10)                                         # needs sage.libs.ntl
-            sage: P.roots(algorithm="sage")                                             # needs sage.geometry.polyhedron sage.libs.ntl
+            sage: P.roots(algorithm='sage')                                             # needs sage.geometry.polyhedron sage.libs.ntl
             [(O(3^5), 2)]
-            sage: P.roots(algorithm="sage", secure=True)                                # needs sage.libs.ntl
+            sage: P.roots(algorithm='sage', secure=True)                                # needs sage.libs.ntl
             Traceback (most recent call last):
             ...
             PrecisionError: not enough precision to determine the number of roots
@@ -1611,7 +1601,7 @@ class pAdicGeneric(LocalGeneric):
 
 class ResidueReductionMap(Morphism):
     r"""
-    Reduction map from a p-adic ring or field to its residue field or ring.
+    Reduction map from a `p`-adic ring or field to its residue field or ring.
 
     These maps must be created using the :meth:`_create_` method in order
     to support categories correctly.
@@ -1633,8 +1623,8 @@ class ResidueReductionMap(Morphism):
 
         INPUT:
 
-        - ``R`` -- a `p`-adic ring or field.
-        - ``k`` -- the residue field of ``R``, or a residue ring of ``R``.
+        - ``R`` -- a `p`-adic ring or field
+        - ``k`` -- the residue field of ``R``, or a residue ring of ``R``
 
         EXAMPLES::
 
@@ -1704,14 +1694,14 @@ class ResidueReductionMap(Morphism):
             sage: Zmod(121).convert_map_from(Qp(11))(3/11)                              # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
-            ValueError: element must have non-negative valuation in order to compute residue
+            ValueError: element must have nonnegative valuation in order to compute residue
         """
         return x.residue(self._n, field=self._field, check_prec=self._field)
 
     def section(self):
         r"""
         Return the section from the residue ring or field
-        back to the p-adic ring or field.
+        back to the `p`-adic ring or field.
 
         EXAMPLES::
 
@@ -1753,9 +1743,10 @@ class ResidueReductionMap(Morphism):
 
 # A class for the Teichmüller lift would also be reasonable....
 
+
 class ResidueLiftingMap(Morphism):
     r"""
-    Lifting map to a p-adic ring or field from its residue field or ring.
+    Lifting map to a `p`-adic ring or field from its residue field or ring.
 
     These maps must be created using the :meth:`_create_` method in order
     to support categories correctly.
@@ -1777,8 +1768,8 @@ class ResidueLiftingMap(Morphism):
 
         INPUT:
 
-        - ``k`` -- the residue field of ``R``, or a residue ring of ``R``.
-        - ``R`` -- a `p`-adic ring or field.
+        - ``k`` -- the residue field of ``R``, or a residue ring of ``R``
+        - ``R`` -- a `p`-adic ring or field
 
         EXAMPLES::
 
@@ -1885,10 +1876,11 @@ class ResidueLiftingMap(Morphism):
             return NotImplemented
         return richcmp((self.domain(), self.codomain()), (other.domain(), other.codomain()), op)
 
+
 def local_print_mode(obj, print_options, pos=None, ram_name=None):
     r"""
     Context manager for safely temporarily changing the print_mode
-    of a p-adic ring/field.
+    of a `p`-adic ring/field.
 
     EXAMPLES::
 

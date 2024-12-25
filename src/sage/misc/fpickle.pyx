@@ -17,7 +17,7 @@ def code_ctor(*args):
 
     This indirectly tests this function. ::
 
-        sage: def foo(a,b,c=10): return a+b+c
+        sage: def foo(a, b, c=10): return a+b+c
         sage: sage.misc.fpickle.reduce_code(foo.__code__)
         (<cyfunction code_ctor at ...>, ...)
         sage: unpickle_function(pickle_function(foo))
@@ -74,11 +74,9 @@ def pickle_function(func):
 
     INPUT:
 
-        func -- a Python function
+    - ``func`` -- a Python function
 
-    OUTPUT:
-
-        a string
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -98,7 +96,7 @@ def unpickle_function(pickled):
 
     EXAMPLES::
 
-        sage: def f(N,M): return N*M
+        sage: def f(N, M): return N*M
         ...
         sage: unpickle_function(pickle_function(f))(3,5)
         15

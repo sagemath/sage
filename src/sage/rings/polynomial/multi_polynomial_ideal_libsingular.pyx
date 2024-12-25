@@ -69,8 +69,8 @@ from sage.rings.polynomial.plural cimport NCPolynomialRing_plural, NCPolynomial_
 
 cdef object singular_ideal_to_sage_sequence(ideal *i, ring *r, object parent):
     """
-    convert a SINGULAR ideal to a Sage Sequence (the format Sage
-    stores a Groebner basis in)
+    Convert a SINGULAR ideal to a Sage Sequence (the format Sage
+    stores a Groebner basis in).
 
     INPUT:
 
@@ -102,7 +102,8 @@ cdef ideal *sage_ideal_to_singular_ideal(I) except NULL:
     INPUT:
 
     - ``I`` -- a Sage ideal in a ring of type
-      :class:`~sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular` or a list of generators.
+      :class:`~sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular`
+      or a list of generators
 
     TESTS:
 
@@ -252,7 +253,7 @@ def slimgb_libsingular(I):
     i = sage_ideal_to_singular_ideal(I)
     r = currRing
 
-    if r.OrdSgn!=1 :
+    if r.OrdSgn != 1:
         id_Delete(&i, r)
         raise TypeError("ordering must be global for slimgb")
 
@@ -266,11 +267,11 @@ def slimgb_libsingular(I):
     result = t_rep_gb(r, i, i.rank, 0)
     sig_off()
 
-    id_Delete(&i,r)
+    id_Delete(&i, r)
 
-    res = singular_ideal_to_sage_sequence(result,r,I.ring())
+    res = singular_ideal_to_sage_sequence(result, r, I.ring())
 
-    id_Delete(&result,r)
+    id_Delete(&result, r)
     return res
 
 
@@ -321,19 +322,19 @@ def interred_libsingular(I):
     singular_options = bck
 
     # divide head by coefficients
-    if r.cf.type != n_Z and r.cf.type != n_Znm and r.cf.type != n_Zn and r.cf.type != n_Z2m :
+    if r.cf.type != n_Z and r.cf.type != n_Znm and r.cf.type != n_Zn and r.cf.type != n_Z2m:
         for j from 0 <= j < IDELEMS(result):
             p = result.m[j]
             if p:
-                n = p_GetCoeff(p,r)
-                n = r.cf.cfInvers(n,r.cf)
+                n = p_GetCoeff(p, r)
+                n = r.cf.cfInvers(n, r.cf)
             result.m[j] = pp_Mult_nn(p, n, r)
-            p_Delete(&p,r)
-            n_Delete(&n,r.cf)
+            p_Delete(&p, r)
+            n_Delete(&n, r.cf)
 
-    id_Delete(&i,r)
+    id_Delete(&i, r)
 
     res = sorted(singular_ideal_to_sage_sequence(result,r,I.ring()),reverse=True)
 
-    id_Delete(&result,r)
+    id_Delete(&result, r)
     return res

@@ -70,7 +70,7 @@ from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digr
 
 def is_asteroidal_triple_free(G, certificate=False):
     """
-    Test if the input graph is asteroidal triple-free
+    Test if the input graph is asteroidal triple-free.
 
     An independent set of three vertices such that each pair is joined by a path
     that avoids the neighborhood of the third one is called an *asteroidal
@@ -78,7 +78,7 @@ def is_asteroidal_triple_free(G, certificate=False):
     asteroidal triples. See the :mod:`module's documentation
     <sage.graphs.asteroidal_triples>` for more details.
 
-    This method returns ``True`` is the graph is AT-free and ``False`` otherwise.
+    This method returns ``True`` if the graph is AT-free and ``False`` otherwise.
 
     INPUT:
 
@@ -147,8 +147,7 @@ def is_asteroidal_triple_free(G, certificate=False):
     # module sage.graphs.base.static_sparse_graph
     cdef list int_to_vertex = list(G)
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
-                       sort_neighbors=False)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
 
     cdef bitset_t seen
     bitset_init(seen, n)

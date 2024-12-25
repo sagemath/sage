@@ -73,12 +73,13 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
 
     - ``B1`` -- bound for step 1 of ECM
 
-    - ``verbose`` (default: ``False``) -- print some debugging information
+    - ``verbose`` -- boolean (default: ``False``); print some debugging
+      information
 
     OUTPUT:
 
     Either ``(False, None)`` if no factor was found, or ``(True, f)``
-    if the factor ``f`` was found.
+    if the factor `f` was found.
 
     EXAMPLES::
 
@@ -168,7 +169,7 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
     sage_int_sigma = Integer(sigma)
 
     if number <= 1:
-        raise ValueError("Input number (%s) must be greater than 1"%number)
+        raise ValueError("Input number (%s) must be greater than 1" % number)
 
     if verbose:
         print("Performing one curve with B1=%1.0f" % B1)

@@ -104,23 +104,21 @@ def characteristic_polynomial_from_traces(traces, d, q, i, sign, deg=None, use_f
 
     INPUT:
 
-    - ``traces`` -- a list of integers `t_1, \dots, t_k`
+    - ``traces`` -- list of integers `t_1, \dots, t_k`
 
     - ``d`` -- the degree of the characteristic polynomial
 
     - ``q`` -- power of a prime number
 
-    - ``i`` -- integer, the weight in the motivic sense
+    - ``i`` -- integer; the weight in the motivic sense
 
-    - ``sign`` -- integer, the sign
+    - ``sign`` -- integer; the sign
 
-    - ``deg`` -- an integer or ``None``
+    - ``deg`` -- integer or ``None``
 
-    - ``use_fe`` -- a boolean (default: ``True``)
+    - ``use_fe`` -- boolean (default: ``True``)
 
-    OUTPUT:
-
-    a polynomial
+    OUTPUT: a polynomial
 
     If ``deg`` is specified, only the coefficients up to this degree (inclusive) are computed.
 
@@ -189,6 +187,7 @@ def characteristic_polynomial_from_traces(traces, d, q, i, sign, deg=None, use_f
         data[k] = sign * coeffs[d - k] * q**(i * (k - d / 2))
     return ring(data)
 
+
 def enumerate_hypergeometric_data(d, weight=None):
     r"""
     Return an iterator over parameters of hypergeometric motives (up to swapping).
@@ -197,7 +196,7 @@ def enumerate_hypergeometric_data(d, weight=None):
 
     - ``d`` -- the degree
 
-    - ``weight`` -- optional integer, to specify the motivic weight
+    - ``weight`` -- (optional) integer; specifies the motivic weight
 
     EXAMPLES::
 
@@ -231,7 +230,7 @@ def possible_hypergeometric_data(d, weight=None) -> list:
 
     - ``d`` -- the degree
 
-    - ``weight`` -- optional integer, to specify the motivic weight
+    - ``weight`` -- (optional) integer; specifies the motivic weight
 
     EXAMPLES::
 
@@ -281,7 +280,7 @@ def alpha_to_cyclotomic(alpha) -> list:
 
     The output represent a product of cyclotomic polynomials with exactly
     the given roots. Note that the multiplicity of `r/s` in the list
-    must be independent of `r`; otherwise, a :class:`ValueError` will be raised.
+    must be independent of `r`; otherwise, a :exc:`ValueError` will be raised.
 
     This is the inverse of :func:`cyclotomic_to_alpha`.
 
@@ -321,11 +320,9 @@ def capital_M(n):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
-    OUTPUT:
-
-    a rational
+    OUTPUT: a rational
 
     EXAMPLES::
 
@@ -379,7 +376,7 @@ def gamma_list_to_cyclotomic(galist):
 
     INPUT:
 
-    - ``galist`` -- a list of integers, where an integer `n` represents
+    - ``galist`` -- list of integers, where an integer `n` represents
       the power `(x^{|n|} - 1)^{\operatorname{sgn}(n)}`
 
     OUTPUT:
@@ -421,7 +418,7 @@ class HypergeometricData:
 
         INPUT:
 
-        three possibilities are offered, each describing a quotient
+        Three possibilities are offered, each describing a quotient
         of products of cyclotomic polynomials.
 
         - ``cyclotomic`` -- a pair of lists of nonnegative integers,
@@ -688,7 +685,7 @@ class HypergeometricData:
         Count ``alpha``'s at most ``x`` minus ``beta``'s at most ``x``.
 
         This function is used to compute the weight and the Hodge numbers.
-        With `flip_beta` set to ``True``, replace each `b` in `\beta`
+        With ``flip_beta`` set to ``True``, replace each `b` in `\beta`
         with `1-b`.
 
         .. SEEALSO::
@@ -704,7 +701,6 @@ class HypergeometricData:
             sage: H = Hyp(cyclotomic=([5], [1,1,1,1]))
             sage: [H.zigzag(x) for x in [0,1/6,1/4,1/2,3/4,5/6]]
             [-4, -4, -3, -2, -1, 0]
-
         """
         alpha = self._alpha
         beta = self._beta
@@ -931,7 +927,7 @@ class HypergeometricData:
 
         INPUT:
 
-        - ``vars`` -- optional pair of variables (default: `u,v`)
+        - ``vars`` -- (optional) pair of variables (default: `u,v`)
 
         REFERENCES:
 
@@ -999,9 +995,7 @@ class HypergeometricData:
         """
         Return the `M` coefficient that appears in the trace formula.
 
-        OUTPUT:
-
-        a rational
+        OUTPUT: a rational
 
         .. SEEALSO:: :meth:`canonical_scheme`
 
@@ -1323,7 +1317,7 @@ class HypergeometricData:
         If left unspecified, `prec` is set to the minimum `p`-adic precision
         needed to recover the Euler factor.
 
-        If `cache_p` is ``True``, then the function caches an intermediate
+        If ``cache_p`` is ``True``, then the function caches an intermediate
         result which depends only on `p` and `f`. This leads to a significant
         speedup when iterating over `t`.
 
@@ -1331,17 +1325,15 @@ class HypergeometricData:
 
         - ``p`` -- a prime number
 
-        - ``f`` -- an integer such that `q = p^f`
+        - ``f`` -- integer such that `q = p^f`
 
         - ``t`` -- a rational parameter
 
         - ``prec`` -- precision (optional)
 
-        - ``cache_p`` -- a boolean
+        - ``cache_p`` -- boolean
 
-        OUTPUT:
-
-        an integer
+        OUTPUT: integer
 
         EXAMPLES:
 
@@ -1476,17 +1468,15 @@ class HypergeometricData:
 
         - ``p`` -- a prime number
 
-        - ``f`` -- an integer such that `q = p^f`
+        - ``f`` -- integer such that `q = p^f`
 
         - ``t`` -- a rational parameter
 
-        - ``ring`` -- optional (default: :class:`UniversalCyclotomicfield`)
+        - ``ring`` -- (default: :class:`UniversalCyclotomicfield`)
 
         The ring could be also ``ComplexField(n)`` or ``QQbar``.
 
-        OUTPUT:
-
-        an integer
+        OUTPUT: integer
 
         .. WARNING::
 
@@ -1632,7 +1622,6 @@ class HypergeometricData:
             sage: H = Hyp(cyclotomic=([1,1,1], [6,2]))
             sage: [H.sign(4,p) for p in [5,7,11,13,17,19]]
             [1, 1, -1, -1, 1, 1]
-
         """
         t = QQ(t)
         if 0 in self._alpha:
@@ -1665,9 +1654,7 @@ class HypergeometricData:
 
         - ``deg`` -- integer (optional)
 
-        OUTPUT:
-
-        a polynomial
+        OUTPUT: a polynomial
 
         If ``deg`` is specified, the output is truncated to that degree (inclusive).
 
@@ -1758,9 +1745,7 @@ class HypergeometricData:
 
         - ``deg`` -- integer or ``None``
 
-        OUTPUT:
-
-        a polynomial
+        OUTPUT: a polynomial
 
         See [Benasque2009]_ for explicit examples of Euler factors.
 
@@ -1948,13 +1933,13 @@ class HypergeometricData:
         P = PolynomialRing(ZZ, 'T')
         if t.numerator() % p == 0 or t.denominator() % p == 0:
             ans = P.one()
-            for m in set(j for i in self.cyclotomic_data() for j in i):
+            for m in {j for i in self.cyclotomic_data() for j in i}:
                 ans *= self.euler_factor_tame_contribution(t, p, m, deg)
             if deg is not None:
                 ans = ans.truncate(deg + 1)
             return ans
         # now p is good, or p is tame and t is a p-adic unit
-        elif (t-1) % p == 0:
+        elif (t - 1) % p == 0:
             typ = "mult"
             d = self.degree() - 1
             if d % 2:

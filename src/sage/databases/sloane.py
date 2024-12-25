@@ -12,7 +12,7 @@ To look up a sequence, type
 ::
 
     sage: SloaneEncyclopedia[60843]  # optional - sloane_database
-    [1, 6, 21, 107]
+    [1, 6, 21, 107, 47176870]
 
 To get the name of a sequence, type
 
@@ -109,7 +109,9 @@ class SloaneEncyclopediaClass:
 
     def __repr__(self):
         """
-        String representation of this database. OUTPUT: str
+        String representation of this database.
+
+        OUTPUT: string
         """
         return "Local copy of Sloane Online Encyclopedia of Integer Sequences"
 
@@ -124,11 +126,11 @@ class SloaneEncyclopediaClass:
     def __getitem__(self, N):
         """
         Return sequence N in the encyclopedia. If sequence N does not
-        exist, return [].
+        exist, return ``[]``.
 
         INPUT:
 
-        -  ``N`` -- int
+        - ``N`` -- integer
 
         OUTPUT: list
         """
@@ -147,6 +149,17 @@ class SloaneEncyclopediaClass:
         self.load()
         return len(self.__data__)
 
+    def is_installed(self):
+        """
+        Check if a local copy of the encyclopedia is installed.
+
+        EXAMPLES::
+
+            sage: SloaneEncyclopedia.is_installed()  # optional - sloane_database
+            True
+        """
+        return os.path.exists(self.__file__) and os.path.exists(self.__file_names__)
+
     def find(self, seq, maxresults=30):
         """
         Return a list of all sequences which have seq as a subsequence, up
@@ -155,9 +168,9 @@ class SloaneEncyclopediaClass:
 
         INPUT:
 
-        -  ``seq`` -- list
+        - ``seq`` -- list
 
-        -  ``maxresults`` -- int
+        - ``maxresults`` -- integer
 
         OUTPUT: list of 2-tuples (i, v), where v is a sequence with seq as
         a subsequence.
@@ -175,24 +188,24 @@ class SloaneEncyclopediaClass:
 
         return answer
 
-    def install(self, oeis_url="https://oeis.org/stripped.gz",
-                names_url="https://oeis.org/names.gz", overwrite=False):
+    def install(self, oeis_url='https://oeis.org/stripped.gz',
+                names_url='https://oeis.org/names.gz', overwrite=False):
         """
         Download and install the online encyclopedia, raising an IOError if
         either step fails.
 
         INPUT:
 
-        - ``oeis_url`` -- string (default: "https://oeis.org...")
-          The URL of the stripped.gz encyclopedia file.
+        - ``oeis_url`` -- string (default: ``'https://oeis.org...'``)
+          The URL of the stripped.gz encyclopedia file
 
-        - ``names_url`` -- string (default: "https://oeis.org...")
+        - ``names_url`` -- string (default: ``'https://oeis.org...'``)
           The URL of the names.gz encyclopedia file.  If you do not want to
           download this file, set names_url=None.
 
-        - ``overwrite`` -- boolean (default: ``False``) If the encyclopedia is
+        - ``overwrite`` -- boolean (default: ``False``); if the encyclopedia is
           already installed and overwrite=True, download and install the latest
-          version over the installed one.
+          version over the installed one
         """
         # See if the encyclopedia already exists
         if not overwrite and os.path.exists(self.__file__):
@@ -226,14 +239,14 @@ class SloaneEncyclopediaClass:
 
         INPUT:
 
-        - ``stripped_file`` -- string. The name of the stripped.gz OEIS file.
+        - ``stripped_file`` -- string; the name of the stripped.gz OEIS file
 
-        - ``names_file`` -- string.  The name of the names.gz OEIS file, or
-          None if the user does not want it installed.
+        - ``names_file`` -- string; the name of the names.gz OEIS file, or
+          None if the user does not want it installed
 
-        - ``overwrite`` -- boolean (default: ``False``) If the encyclopedia is
-          already installed and overwrite=True, install 'filename' over the
-          old encyclopedia.
+        - ``overwrite`` -- boolean (default: ``False``); if the encyclopedia is
+          already installed and ``overwrite=True``, install 'filename' over the
+          old encyclopedia
         """
         if not overwrite and os.path.exists(self.__file__):
             raise OSError("Sloane encyclopedia is already installed")
@@ -272,7 +285,7 @@ class SloaneEncyclopediaClass:
         for L in file_seq:
             if len(L) == 0:
                 continue
-            m = entry.search(L)
+            m = entry.search(L.decode('utf-8'))
             if m:
                 seqnum = int(m.group('num'))
                 msg = m.group('body').strip()
@@ -285,10 +298,13 @@ class SloaneEncyclopediaClass:
             for L in file_names:
                 if not L:
                     continue
-                m = entry.search(L)
+                m = entry.search(L.decode('utf-8'))
                 if m:
                     seqnum = int(m.group('num'))
-                    self.__data__[seqnum][3] = m.group('body').strip()
+                    if seqnum in self.__data__:
+                        self.__data__[seqnum][3] = m.group('body').strip()
+                    else:
+                        self.__data__[seqnum] = [seqnum, None, 'unknown', m.group('body').strip()]
             file_names.close()
             self.__loaded_names__ = True
         except KeyError:
@@ -307,11 +323,11 @@ class SloaneEncyclopediaClass:
         Return the name of sequence ``N`` in the encyclopedia.
 
         If sequence ``N`` does not exist, return ``''``.  If the names
-        database is not installed, raise an :class:`IOError`.
+        database is not installed, raise an :exc:`IOError`.
 
         INPUT:
 
-        - ``N`` -- int
+        - ``N`` -- integer
 
         OUTPUT: string
 
@@ -352,9 +368,9 @@ def copy_gz_file(gz_source, bz_destination):
 
     INPUT:
 
-    - ``gz_source`` -- string. The name of the gzipped file.
+    - ``gz_source`` -- string; the name of the gzipped file
 
-    - ``bz_destination`` -- string.  The name of the newly compressed file.
+    - ``bz_destination`` -- string; the name of the newly compressed file
     """
     import gzip
 

@@ -343,7 +343,7 @@ An example::
     ....:         return C(key)
 
 Now, we define an instance of the factory, stating that it can be found under
-the name ``"F"`` in the ``__main__`` module. By consequence, pickling works::
+the name ``'F'`` in the ``__main__`` module. By consequence, pickling works::
 
     sage: F = MyFactory("__main__.F")
     sage: __main__.F = F                # not needed in an interactive session
@@ -763,7 +763,7 @@ class CachedRepresentation(WithPicklingByInitArgs):
     implementation does not work::
 
         sage: class MyClass3(CachedRepresentation):
-        ....:     def __init__(self, value = 3):
+        ....:     def __init__(self, value=3):
         ....:         self.value = value
         sage: MyClass3(3) is MyClass3()
         False
@@ -772,7 +772,7 @@ class CachedRepresentation(WithPicklingByInitArgs):
 
         sage: class MyClass3(UniqueRepresentation):
         ....:     @staticmethod
-        ....:     def __classcall__(cls, value = 3):
+        ....:     def __classcall__(cls, value=3):
         ....:         return super().__classcall__(cls, value)
         ....:
         ....:     def __init__(self, value):
@@ -1130,7 +1130,7 @@ class CachedRepresentation(WithPicklingByInitArgs):
             sage: class B(A):
             ....:     @staticmethod
             ....:     def __classcall__(cls, *args, **kwds):
-            ....:          return super().__classcall__(cls,*args,**kwds)
+            ....:          return super().__classcall__(cls, *args, **kwds)
             sage: class C(B): pass
             sage: a = A(1)
             sage: b = B(2)
@@ -1163,7 +1163,7 @@ class CachedRepresentation(WithPicklingByInitArgs):
             ....:     @staticmethod
             ....:     def __classcall_private__(cls, *args, **kwds):
             ....:         print("Private B")
-            ....:         return super().__classcall__(cls,*args,**kwds)
+            ....:         return super().__classcall__(cls, *args, **kwds)
             sage: class C(B): pass
             sage: a = A(1)
             sage: b = B(2)
@@ -1201,7 +1201,7 @@ class CachedRepresentation(WithPicklingByInitArgs):
             del cache[k]
 
 
-class UniqueRepresentation(CachedRepresentation, WithEqualityById):
+class UniqueRepresentation(WithEqualityById, CachedRepresentation):
     r"""
     Classes derived from ``UniqueRepresentation`` inherit a unique
     representation behavior for their instances.

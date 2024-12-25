@@ -99,8 +99,8 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.fraction_field import FractionField
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ, RationalField
 from sage.schemes.generic.ambient_space import AmbientSpace
@@ -136,7 +136,7 @@ _CommRings = _Rings.Commutative()
 
 def is_ProjectiveSpace(x):
     r"""
-    Return True if ``x`` is a projective space.
+    Return ``True`` if ``x`` is a projective space.
 
     In other words, if ``x`` is an ambient space `\mathbb{P}^n_R`,
     where `R` is a ring and `n\geq 0` is an integer.
@@ -248,7 +248,7 @@ def ProjectiveSpace(n, R=None, names=None):
         sage: P.gens() == R.gens()
         True
     """
-    if (is_MPolynomialRing(n) or is_PolynomialRing(n)) and R is None:
+    if isinstance(n, (MPolynomialRing_base, PolynomialRing_generic)) and R is None:
         if names is not None:
             # Check for the case that the user provided a variable name
             # That does not match what we wanted to use from R
@@ -370,7 +370,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
     def _check_satisfies_equations(self, v):
         """
         Return ``True`` if ``v`` defines a point on the scheme; raise a
-        :class:`TypeError` otherwise.
+        :exc:`TypeError` otherwise.
 
         EXAMPLES::
 
@@ -451,19 +451,17 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
     def _validate(self, polynomials):
         """
-        If ``polynomials`` is a tuple of valid polynomial functions on self,
-        return ``polynomials``, otherwise raise TypeError.
+        If ``polynomials`` is a tuple of valid polynomial functions on
+        ``self``, return ``polynomials``, otherwise raise :exc:`TypeError`.
 
         Since this is a projective space, polynomials must be homogeneous.
 
         INPUT:
 
         - ``polynomials`` -- tuple of polynomials in the coordinate ring of
-            this space.
+          this space
 
-        OUTPUT:
-
-        - tuple of polynomials in the coordinate ring of this space.
+        OUTPUT: tuple of polynomials in the coordinate ring of this space
 
         EXAMPLES::
 
@@ -498,9 +496,11 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         Return the Cartesian power of this space.
 
-        INPUT: ``m`` -- integer.
+        INPUT:
 
-        OUTPUT: product of projective spaces.
+        - ``m`` -- integer
+
+        OUTPUT: product of projective spaces
 
         EXAMPLES::
 
@@ -524,9 +524,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        - ``right`` -- a projective space, product of projective spaces, or subscheme.
+        - ``right`` -- a projective space, product of projective spaces, or subscheme
 
-        OUTPUT: a product of projective spaces or subscheme.
+        OUTPUT: a product of projective spaces or subscheme
 
         EXAMPLES::
 
@@ -607,12 +607,12 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        -  ``d`` -- a nonnegative integer.
+        - ``d`` -- nonnegative integer
 
-        -  ``pt`` -- a point of ``self`` (possibly represented by a list with at \
-                     least one component equal to 1).
+        - ``pt`` -- a point of ``self`` (possibly represented by a list with at
+          least one component equal to 1)
 
-        -  ``m`` -- a nonnegative integer.
+        - ``m`` -- nonnegative integer
 
         OUTPUT:
 
@@ -686,7 +686,6 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
             Use this method as starting point to implement a class
             LinearSystem for linear systems of hypersurfaces.
-
         """
         if not isinstance(d, (int, Integer)):
             raise TypeError('the argument d=%s must be an integer' % d)
@@ -785,7 +784,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         - ``check`` -- boolean (default: ``True``); whether
           to check the defining data for consistency
 
-        OUTPUT: A point of this projective space.
+        OUTPUT: a point of this projective space
 
         EXAMPLES::
 
@@ -901,11 +900,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        - ``R`` -- commutative ring or morphism.
+        - ``R`` -- commutative ring or morphism
 
-        OUTPUT:
-
-        - projective space over ``R``.
+        OUTPUT: projective space over ``R``
 
         .. NOTE::
 
@@ -952,7 +949,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        -  ``X`` -- a list or tuple of equations.
+        - ``X`` -- list or tuple of equations
 
         EXAMPLES::
 
@@ -1004,17 +1001,13 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         This is an implementation of Algorithm 6 in [Krumm2016]_.
 
-        INPUT:
-
-        kwds:
+        INPUT: keyword arguments:
 
         - ``bound`` -- a real number
 
         - ``precision`` -- (default: 53) a positive integer
 
-        OUTPUT:
-
-        - an iterator of points of bounded height
+        OUTPUT: an iterator of points of bounded height
 
         EXAMPLES::
 
@@ -1227,22 +1220,20 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
     def affine_patch(self, i, AA=None):
         r"""
-        Return the `i^{th}` affine patch of this projective space.
+        Return the `i`-th affine patch of this projective space.
 
         This is an ambient affine space `\mathbb{A}^n_R,` where
         `R` is the base ring of ``self``, whose "projective embedding"
-        map is `1` in the `i^{th}` factor.
+        map is `1` in the `i`-th factor.
 
         INPUT:
 
-        - ``i`` -- integer between 0 and dimension of ``self``, inclusive.
+        - ``i`` -- integer between 0 and dimension of ``self``, inclusive
 
-        - ``AA`` -- (default: None) ambient affine space, this is constructed
-          if it is not given.
+        - ``AA`` -- (default: ``None``) ambient affine space, this is constructed
+          if it is not given
 
-        OUTPUT:
-
-        - An ambient affine space with fixed projective_embedding map.
+        OUTPUT: an ambient affine space with fixed projective_embedding map
 
         EXAMPLES::
 
@@ -1298,11 +1289,11 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
     def _an_element_(self):
         r"""
-        Returns a (preferably typical) element of this space.
+        Return a (preferably typical) element of this space.
 
         This is used both for illustration and testing purposes.
 
-        OUTPUT: a point in this projective space.
+        OUTPUT: a point in this projective space
 
         EXAMPLES::
 
@@ -1326,11 +1317,11 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        - ``E`` -- an elliptic curve.
+        - ``E`` -- an elliptic curve
 
-        - ``m`` -- an integer.
+        - ``m`` -- integer
 
-        OUTPUT: a dynamical system on this projective space.
+        OUTPUT: a dynamical system on this projective space
 
         EXAMPLES::
 
@@ -1370,11 +1361,9 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        - ``other`` -- A projective space with the same base ring as this space.
+        - ``other`` -- a projective space with the same base ring as this space
 
-        OUTPUT:
-
-        - A Cartesian product of projective spaces.
+        OUTPUT: a Cartesian product of projective spaces
 
         EXAMPLES::
 
@@ -1399,13 +1388,13 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        - ``n`` -- a non-negative integer.
+        - ``n`` -- nonnegative integer
 
-        - ``kind`` -- ``first`` or ``second`` specifying which kind of chebyshev the user would like
-          to generate. Defaults to ``first``.
+        - ``kind`` -- ``'first'`` (default) or ``'second'`` specifying which
+          kind of Chebyshev the user would like to generate
 
-        - ``monic`` -- ``True`` or ``False`` specifying if the polynomial defining the system
-          should be monic or not. Defaults to ``False``.
+        - ``monic`` -- boolean (default: ``False``) specifying if the
+          polynomial defining the system should be monic or not
 
         OUTPUT: :class:`DynamicalSystem_projective`
 
@@ -1439,7 +1428,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.chebyshev_polynomial(-4, 'second')
             Traceback (most recent call last):
             ...
-            ValueError: first parameter 'n' must be a non-negative integer
+            ValueError: first parameter 'n' must be a nonnegative integer
 
         ::
 
@@ -1471,7 +1460,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             raise TypeError("projective space must be of dimension 1")
         n = ZZ(n)
         if (n < 0):
-            raise ValueError("first parameter 'n' must be a non-negative integer")
+            raise ValueError("first parameter 'n' must be a nonnegative integer")
         # use the affine version and then homogenize.
         A = self.affine_patch(1)
         f = A.chebyshev_polynomial(n, kind)
@@ -1486,18 +1475,18 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        - ``d`` -- a positive integer.
+        - ``d`` -- positive integer
 
-        - ``CS`` -- a projective ambient space to embed into. If this projective space has dimension `N`, the
-          dimension of ``CS`` must be `\binom{N + d}{d} - 1`. This is constructed if not specified. Default:
-          ``None``.
+        - ``CS`` -- (default: ``None``) a projective ambient space to embed
+          into. If this projective space has dimension `N`, the dimension of
+          ``CS`` must be `\binom{N + d}{d} - 1`. This is constructed if not
+          specified.
 
-        - ``order`` -- a monomial order to use to arrange the monomials defining the embedding. The monomials
-          will be arranged from greatest to least with respect to this order. Default: ``'lex'``.
+        - ``order`` -- string (default: ``'lex'``); a monomial order to use to
+          arrange the monomials defining the embedding. The monomials will be
+          arranged from greatest to least with respect to this order.
 
-        OUTPUT:
-
-        - a scheme morphism from this projective space to ``CS``.
+        OUTPUT: a scheme morphism from this projective space to ``CS``
 
         EXAMPLES::
 
@@ -1563,16 +1552,17 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        - ``points_source`` -- points in source projective space.
+        - ``points_source`` -- points in source projective space
 
-        - ``points_target`` -- points in target projective space.
+        - ``points_target`` -- points in target projective space
 
-        - ``normalize`` -- (default: ``True``) If the returned matrix should be normalized.
-          Only works over exact rings. If the base ring is a field, the matrix is normalized so
-          that the last nonzero entry in the last row is 1. If the base ring is a ring, then
-          the matrix is normalized so that the entries are elements of the base ring.
+        - ``normalize`` -- boolean (default: ``True``); if the returned matrix
+          should be normalized. Only works over exact rings. If the base ring
+          is a field, the matrix is normalized so that the last nonzero entry
+          in the last row is 1. If the base ring is a ring, then the matrix is
+          normalized so that the entries are elements of the base ring.
 
-        OUTPUT: Transformation matrix - element of PGL.
+        OUTPUT: transformation matrix - element of PGL
 
         ALGORITHM:
 
@@ -1788,7 +1778,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         - ``plane_1``, ``plane_2`` -- hyperplanes of this projective space
 
-        OUTPUT: An element of PGL
+        OUTPUT: an element of PGL
 
         EXAMPLES::
 
@@ -1928,7 +1918,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
                     source_points.append(self(L))
                 else:
                     nonzero_places.append(i)
-            # next we add a point for each variable with non-zero coefficient, except the last
+            # next we add a point for each variable with nonzero coefficient, except the last
             # giving us a total of (N+1) - J - 1 = N - J points added in this loop
             # resulting in exactly J + (N-J) = N points on the plane
             for i in range(len(nonzero_places)-1):
@@ -1967,15 +1957,13 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
         INPUT:
 
-        - ``points`` -- a list of points in this projective space.
+        - ``points`` -- list of points in this projective space
 
-        - ``n`` -- (Optional) A positive integer less than or equal to the length
+        - ``n`` -- (optional) positive integer less than or equal to the length
           of ``points``. Specifies the size of the subsets to check for
           linear independence.
 
-        OUTPUT:
-
-        - ``True`` if ``points`` is linearly independent, ``False`` otherwise.
+        OUTPUT: ``True`` if ``points`` is linearly independent, ``False`` otherwise
 
         EXAMPLES::
 
@@ -2029,7 +2017,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             sage: P.is_linearly_independent(points, 5)
             Traceback (most recent call last):
             ...
-            ValueError: n must be a non negative integer not greater than the length of points
+            ValueError: n must be a nonnegative integer not greater than the length of points
         """
         if not isinstance(points, list):
             raise TypeError("points must be a list")
@@ -2042,7 +2030,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             return M.rank() == len(points)
         n = Integer(n)
         if n < 1 or n > len(points):
-            raise ValueError('n must be a non negative integer not greater than the length of points')
+            raise ValueError('n must be a nonnegative integer not greater than the length of points')
         all_subsets = Subsets(range(len(points)), n)
         linearly_independent = True
         for subset in all_subsets:
@@ -2104,7 +2092,7 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
     def subscheme_from_Chow_form(self, Ch, dim):
         r"""
-        Returns the subscheme defined by the Chow equations associated to the Chow form ``Ch``.
+        Return the subscheme defined by the Chow equations associated to the Chow form ``Ch``.
 
         These equations define the subscheme set-theoretically, but only for smooth
         subschemes and hypersurfaces do they define the subscheme as a scheme.
@@ -2119,11 +2107,11 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
 
         INPUT:
 
-        - ``Ch`` -- a homogeneous polynomial.
+        - ``Ch`` -- a homogeneous polynomial
 
-        - ``dim`` -- the dimension of the associated scheme.
+        - ``dim`` -- the dimension of the associated scheme
 
-        OUTPUT: a projective subscheme.
+        OUTPUT: a projective subscheme
 
         EXAMPLES::
 
@@ -2254,7 +2242,6 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
             Traceback (most recent call last):
             ...
             ValueError: not distinct points
-
         """
         if p == q:
             raise ValueError("not distinct points")
@@ -2378,9 +2365,7 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
         r"""
         Return dictionary of points.
 
-        OUTPUT:
-
-        - dictionary
+        OUTPUT: dictionary
 
         EXAMPLES::
 
@@ -2428,7 +2413,7 @@ class ProjectiveSpace_finite_field(ProjectiveSpace_field):
 class ProjectiveSpace_rational_field(ProjectiveSpace_field):
     def rational_points(self, bound=0):
         r"""
-        Returns the projective points `(x_0:\cdots:x_n)` over
+        Return the projective points `(x_0:\cdots:x_n)` over
         `\QQ` with `|x_i| \leq` bound.
 
         ALGORITHM:
@@ -2444,7 +2429,7 @@ class ProjectiveSpace_rational_field(ProjectiveSpace_field):
 
         INPUT:
 
-        -  ``bound`` -- integer.
+        - ``bound`` -- integer
 
         EXAMPLES::
 

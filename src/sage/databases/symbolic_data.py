@@ -96,7 +96,7 @@ class SymbolicData:
         self.__intpath = path + "/Data/XMLResources/INTPS/"
         self.__genpath = path + "/Data/XMLResources/GenPS/"
 
-    def get_ideal(self, name, base_ring=QQ, term_order="degrevlex"):
+    def get_ideal(self, name, base_ring=QQ, term_order='degrevlex'):
         """
         Return the ideal given by 'name' over the base ring given by
         'base_ring' in a polynomial ring with the term order given by
@@ -130,8 +130,6 @@ class SymbolicData:
             return t
 
         def _dom2ideal(node):
-            """
-            """
             l = []
 
             if str(node.nodeName) in ['vars', 'poly']:

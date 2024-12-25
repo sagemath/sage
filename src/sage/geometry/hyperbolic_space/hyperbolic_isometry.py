@@ -89,7 +89,7 @@ class HyperbolicIsometry(Morphism):
         EXAMPLES::
 
             sage: A = HyperbolicPlane().UHP().get_isometry(matrix(2, [0,1,-1,0]))
-            sage: TestSuite(A).run(skip="_test_category")
+            sage: TestSuite(A).run(skip='_test_category')
         """
         if check:
             model.isometry_test(A)
@@ -120,9 +120,7 @@ class HyperbolicIsometry(Morphism):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        - a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -190,9 +188,9 @@ class HyperbolicIsometry(Morphism):
             return False
         test_matrix = bool((self.matrix() - other.matrix()).norm() < EPSILON)
         if self.domain().is_isometry_group_projective():
-            A,B = self.matrix(), other.matrix() # Rename for simplicity
+            A, B = self.matrix(), other.matrix()  # Rename for simplicity
             m = self.matrix().ncols()
-            A = A / sqrt(A.det(), m) # Normalized to have determinant 1
+            A = A / sqrt(A.det(), m)  # Normalized to have determinant 1
             B = B / sqrt(B.det(), m)
             test_matrix = ((A - B).norm() < EPSILON
                            or (A + B).norm() < EPSILON)
@@ -489,7 +487,7 @@ class HyperbolicIsometry(Morphism):
     def translation_length(self):
         r"""
         For hyperbolic elements, return the translation length;
-        otherwise, raise a :class:`ValueError`.
+        otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -512,7 +510,7 @@ class HyperbolicIsometry(Morphism):
     def axis(self):
         r"""
         For a hyperbolic isometry, return the axis of the
-        transformation; otherwise raise a :class:`ValueError`.
+        transformation; otherwise raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -540,9 +538,7 @@ class HyperbolicIsometry(Morphism):
         Return a list containing the fixed point set of
         orientation-preserving isometries.
 
-        OUTPUT:
-
-        list of hyperbolic points or a hyperbolic geodesic
+        OUTPUT: list of hyperbolic points or a hyperbolic geodesic
 
         EXAMPLES::
 
@@ -593,11 +589,9 @@ class HyperbolicIsometry(Morphism):
     def repelling_fixed_point(self):
         r"""
         For a hyperbolic isometry, return the attracting fixed point;
-        otherwise raise a :class:`ValueError`.
+        otherwise raise a :exc:`ValueError`.
 
-        OUTPUT:
-
-        - a hyperbolic point
+        OUTPUT: a hyperbolic point
 
         EXAMPLES::
 
@@ -612,11 +606,9 @@ class HyperbolicIsometry(Morphism):
     def attracting_fixed_point(self):
         r"""
         For a hyperbolic isometry, return the attracting fixed point;
-        otherwise raise a :class:`ValueError`.
+        otherwise raise a :exc:`ValueError`.
 
-        OUTPUT:
-
-        - a hyperbolic point
+        OUTPUT: a hyperbolic point
 
         EXAMPLES::
 
@@ -627,6 +619,7 @@ class HyperbolicIsometry(Morphism):
         """
         fp = self._cached_isometry.attracting_fixed_point()
         return self.domain().get_point(fp)
+
 
 class HyperbolicIsometryUHP(HyperbolicIsometry):
     r"""
@@ -643,7 +636,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         [1 0]
         [0 1]
     """
-    def _call_(self, p): #UHP
+    def _call_(self, p):  # UHP
         r"""
         Return image of ``p`` under the action of ``self``.
 
@@ -663,7 +656,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
             coords = coords.conjugate()
         return self.codomain().get_point(moebius_transform(self._matrix, coords))
 
-    def preserves_orientation(self): #UHP
+    def preserves_orientation(self):  # UHP
         r"""
         Return ``True`` if ``self`` is orientation-preserving and ``False``
         otherwise.
@@ -680,7 +673,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         """
         return bool(self._matrix.det() > 0)
 
-    def classification(self): #UHP
+    def classification(self):  # UHP
         r"""
         Classify the hyperbolic isometry as elliptic, parabolic, or
         hyperbolic.
@@ -732,10 +725,10 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
             return 'reflection'
         return 'orientation-reversing hyperbolic'
 
-    def translation_length(self): #UHP
+    def translation_length(self):  # UHP
         r"""
         For hyperbolic elements, return the translation length;
-        otherwise, raise a :class:`ValueError`.
+        otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -762,9 +755,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         Return a list or geodesic containing the fixed point set of
         orientation-preserving isometries.
 
-        OUTPUT:
-
-        list of hyperbolic points or a hyperbolic geodesic
+        OUTPUT: list of hyperbolic points or a hyperbolic geodesic
 
         EXAMPLES::
 
@@ -809,7 +800,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
             d = sqrt(tau - 4)
             return [pt((M[0,0] - M[1,1] + sign(M[1,0])*d) / (2*M[1,0]))]
         elif M_cls == 'hyperbolic':
-            if M[1,0] != 0: #if the isometry doesn't fix infinity
+            if M[1,0] != 0:  # if the isometry does not fix infinity
                 d = sqrt(tau - 4)
                 p_1 = (M[0,0] - M[1,1]+d) / (2*M[1,0])
                 p_2 = (M[0,0] - M[1,1]-d) / (2*M[1,0])
@@ -847,11 +838,9 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         r"""
         Return the repelling fixed point.
 
-        Otherwise, this raises a :class:`ValueError`.
+        Otherwise, this raises a :exc:`ValueError`.
 
-        OUTPUT:
-
-        - a hyperbolic point
+        OUTPUT: a hyperbolic point
 
         EXAMPLES::
 
@@ -873,11 +862,9 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         r"""
         Return the attracting fixed point.
 
-        Otherwise, this raises a :class:`ValueError`.
+        Otherwise, this raises a :exc:`ValueError`.
 
-        OUTPUT:
-
-        - a hyperbolic point
+        OUTPUT: a hyperbolic point
 
         EXAMPLES::
 
@@ -895,6 +882,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
             return self.domain().get_point(infinity)
         return self.domain().get_point(v[0] / v[1])
 
+
 class HyperbolicIsometryPD(HyperbolicIsometry):
     r"""
     Create a hyperbolic isometry in the PD model.
@@ -910,7 +898,7 @@ class HyperbolicIsometryPD(HyperbolicIsometry):
         [1 0]
         [0 1]
     """
-    def _call_(self, p): #PD
+    def _call_(self, p):  # PD
         r"""
         Return image of ``p`` under the action of ``self``.
 
@@ -929,7 +917,7 @@ class HyperbolicIsometryPD(HyperbolicIsometry):
         _image = moebius_transform(self._matrix, coords)
         return self.codomain().get_point(_image)
 
-    def __mul__(self, other): #PD
+    def __mul__(self, other):  # PD
         r"""
         Return image of ``p`` under the action of ``self``.
 
@@ -947,7 +935,7 @@ class HyperbolicIsometryPD(HyperbolicIsometry):
             return M.to_model('PD')
         return super().__mul__(other)
 
-    def __pow__(self, n): #PD
+    def __pow__(self, n):  # PD
         r"""
         EXAMPLES::
 
@@ -957,11 +945,10 @@ class HyperbolicIsometryPD(HyperbolicIsometry):
             Isometry in PD
             [   5/8  3/8*I]
             [-3/8*I    5/8]
-
         """
         return (self._cached_isometry**n).to_model('PD')
 
-    def preserves_orientation(self): #PD
+    def preserves_orientation(self):  # PD
         """
         Return ``True`` if ``self`` preserves orientation and ``False``
         otherwise.
@@ -977,7 +964,7 @@ class HyperbolicIsometryPD(HyperbolicIsometry):
         return bool(self._matrix.det() > 0) and HyperbolicIsometryPD._orientation_preserving(self._matrix)
 
     @staticmethod
-    def _orientation_preserving(A): #PD
+    def _orientation_preserving(A):  # PD
         r"""
         For a matrix ``A`` of a PD isometry, determine if it preserves
         orientation.
@@ -997,6 +984,7 @@ class HyperbolicIsometryPD(HyperbolicIsometry):
         return bool(A[1][0] == A[0][1].conjugate() and A[1][1] == A[0][0].conjugate()
                     and abs(A[0][0]) - abs(A[0][1]) != 0)
 
+
 class HyperbolicIsometryKM(HyperbolicIsometry):
     r"""
     Create a hyperbolic isometry in the KM model.
@@ -1013,7 +1001,7 @@ class HyperbolicIsometryKM(HyperbolicIsometry):
         [0 1 0]
         [0 0 1]
     """
-    def _call_(self, p): #KM
+    def _call_(self, p):  # KM
         r"""
         Return image of ``p`` under the action of ``self``.
 
@@ -1031,7 +1019,7 @@ class HyperbolicIsometryKM(HyperbolicIsometry):
         return self.codomain().get_point(v[0:2] / v[2])
 
 #####################################################################
-## Helper functions
+#  Helper functions
 
 
 def moebius_transform(A, z):
@@ -1044,9 +1032,7 @@ def moebius_transform(A, z):
     - ``A`` -- a `2 \times 2` invertible matrix over the complex numbers
     - ``z`` -- a complex number or infinity
 
-    OUTPUT:
-
-    - a complex number or infinity
+    OUTPUT: a complex number or infinity
 
     EXAMPLES::
 

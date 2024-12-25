@@ -27,14 +27,15 @@ AUTHORS:
 # ****************************************************************************
 
 from operator import pow as _pow
+
+from sage.functions.other import abs_symbolic
+from sage.functions.trig import cos, sin
+from sage.misc.functional import sqrt
+from sage.rings.rational import Rational
+from sage.symbolic.constants import pi
 from sage.symbolic.expression import Expression
 from sage.symbolic.expression_conversions import ExpressionTreeWalker
 from sage.symbolic.ring import SR
-from sage.symbolic.constants import pi
-from sage.functions.other import abs_symbolic
-from sage.misc.functional import sqrt
-from sage.functions.trig import cos, sin
-from sage.rings.rational import Rational
 
 
 class SimplifySqrtReal(ExpressionTreeWalker):
@@ -118,7 +119,6 @@ class SimplifySqrtReal(ExpressionTreeWalker):
 
         :func:`simplify_sqrt_real` for more examples with
         :class:`SimplifySqrtReal` at work.
-
     """
     def arithmetic(self, ex, operator):
         r"""
@@ -159,7 +159,6 @@ class SimplifySqrtReal(ExpressionTreeWalker):
             sage: a = x + 1 + sqrt(function('f')(x)^2)
             sage: s.arithmetic(a, a.operator())
             x + abs(f(x)) + 1
-
         """
         if operator is _pow:
             operands = ex.operands()
@@ -263,7 +262,6 @@ class SimplifyAbsTrig(ExpressionTreeWalker):
 
         :func:`simplify_abs_trig` for more examples with
         :class:`SimplifyAbsTrig` at work.
-
     """
     def composition(self, ex, operator):
         r"""
@@ -311,7 +309,6 @@ class SimplifyAbsTrig(ExpressionTreeWalker):
             sage: a = abs(sin(cos(x)))  # not simplifiable
             sage: s.composition(a, a.operator())
             abs(sin(cos(x)))
-
         """
         if operator is abs_symbolic:
             argum = ex.operands()[0]  # argument of abs
@@ -405,7 +402,6 @@ def simplify_sqrt_real(expr):
         sage: simplify_sqrt_real( sqrt(x^3*diff(f(g(x)), x)^2) )  # x<0
         (-x)^(3/2)*abs(D[0](f)(g(x)))*abs(diff(g(x), x))
         sage: forget()  # for doctests below
-
     """
     w0 = SR.wild()
     one_half = Rational((1,2))
@@ -495,7 +491,6 @@ def simplify_abs_trig(expr):
         sage: simplify_abs_trig(s)
         abs(sin(x))*D[0](f)(y^2) + cos(y)
         sage: forget()  # for doctests below
-
     """
     w0 = SR.wild()
     if expr.has(abs_symbolic(sin(w0))) or expr.has(abs_symbolic(cos(w0))):
@@ -594,7 +589,6 @@ def simplify_chain_real(expr):
     TESTS::
 
         sage: forget()  # for doctests below
-
     """
     if expr.number_of_operands() == 0:
         return expr
@@ -669,7 +663,6 @@ def simplify_chain_generic(expr):
     TESTS::
 
         sage: forget()  # for doctests below
-
     """
     if expr.number_of_operands() == 0:
         return expr
@@ -679,6 +672,7 @@ def simplify_chain_generic(expr):
     expr = expr.simplify_rational()
     expr = expr.expand_sum()
     return expr
+
 
 def simplify_chain_generic_sympy(expr):
     r"""
@@ -732,13 +726,13 @@ def simplify_chain_generic_sympy(expr):
         sage: s = (cos(2*x) - 2*cos(x)^2 + 1)._sympy_()
         sage: simplify_chain_generic_sympy(s)
         0
-
     """
     expr = expr.combsimp()
     expr = expr.trigsimp()
     expr = expr.expand()
     expr = expr.simplify()
     return expr
+
 
 def simplify_chain_real_sympy(expr):
     r"""
@@ -796,7 +790,6 @@ def simplify_chain_real_sympy(expr):
         sage: s = (cos(y)^2 + sin(y)^2)._sympy_()
         sage: simplify_chain_real_sympy(s)
         1
-
     """
     # TODO: introduce pure SymPy functions instead of simplify_sqrt_real and
     #       simplify_abs_trig
@@ -813,6 +806,7 @@ def simplify_chain_real_sympy(expr):
     return expr
 
 #******************************************************************************
+
 
 class ExpressionNice(Expression):
     r"""
@@ -907,7 +901,6 @@ class ExpressionNice(Expression):
         f(x, y)*(d(f)/dy)^2
         sage: latex(ExpressionNice(fun))
         f\left(x, y\right) \left(\frac{\partial\,f}{\partial y}\right)^{2}
-
     """
     def __init__(self, ex):
         r"""
@@ -923,7 +916,6 @@ class ExpressionNice(Expression):
             sage: df_nice = ExpressionNice(df)
             sage: df_nice
             d(f)/dx
-
         """
         from sage.symbolic.ring import SR
         self._parent = SR
@@ -952,7 +944,6 @@ class ExpressionNice(Expression):
 
             sage: ExpressionNice(function('f')(x+y, x-y).diff(y))
             d(f)/d(x + y) - d(f)/d(x - y)
-
         """
         d = self._parent._repr_element_(self)
 
@@ -1001,6 +992,7 @@ class ExpressionNice(Expression):
             d = d.replace(o, res)
 
         import re
+
         from sage.manifolds.manifold import TopologicalManifold
         if TopologicalManifold.options.omit_function_arguments:
             list_f = []
@@ -1051,7 +1043,6 @@ class ExpressionNice(Expression):
             sage: latex(ExpressionNice(function('f')(x+y, x-y).diff(y)))
             \frac{\partial\,f}{\partial \left( x + y \right)}
              - \frac{\partial\,f}{\partial \left( x - y \right)}
-
         """
         from sage.misc.latex import latex
 
@@ -1150,12 +1141,12 @@ def _list_derivatives(ex, list_d, exponent=0):
         sage: _list_derivatives(df, list_d)
         sage: list_d
         [(diff(f_x(x), x), 'f_x', {\cal F}, [0], [x], 2)]
-
     """
     op = ex.operator()
     operands = ex.operands()
 
     import operator
+
     from sage.misc.latex import latex, latex_variable_name
     from sage.symbolic.operators import FDerivativeOperator
 
@@ -1213,7 +1204,6 @@ def _list_functions(ex, list_f):
         sage: list_f
         [(f, 'f', '(x, y)', {\cal F}, \left(x, y\right)),
          (g_x, 'g_x', '(x, y)', 'g_{x}', \left(x, y\right))]
-
     """
     op = ex.operator()
     operands = ex.operands()
@@ -1245,6 +1235,7 @@ def _list_functions(ex, list_f):
 
 #******************************************************************************
 
+
 def set_axes_labels(graph, xlabel, ylabel, zlabel, **kwds):
     r"""
     Set axes labels for a 3D graphics object ``graph``.
@@ -1263,9 +1254,7 @@ def set_axes_labels(graph, xlabel, ylabel, zlabel, **kwds):
     - ``zlabel`` -- string for the z-axis label
     - ``**kwds`` -- options (e.g. color) for text3d
 
-    OUTPUT:
-
-    - the 3D graphic object with text3d labels added
+    OUTPUT: the 3D graphic object with text3d labels added
 
     EXAMPLES::
 
@@ -1278,7 +1267,6 @@ def set_axes_labels(graph, xlabel, ylabel, zlabel, **kwds):
         sage: ga.all  # the 3D frame has now axes labels
         [Graphics3d Object, Graphics3d Object,
          Graphics3d Object, Graphics3d Object]
-
     """
     from sage.plot.plot3d.shapes2 import text3d
     xmin, ymin, zmin = graph.bounding_box()[0]
@@ -1296,6 +1284,7 @@ def set_axes_labels(graph, xlabel, ylabel, zlabel, **kwds):
     graph += text3d('  ' + ylabel, (xmin1, y1, zmin1), **kwds)
     graph += text3d('  ' + zlabel, (xmin1, ymin1, z1), **kwds)
     return graph
+
 
 def exterior_derivative(form):
     r"""
@@ -1353,7 +1342,6 @@ def exterior_derivative(form):
         :class:`sage.manifolds.differentiable.diff_form.DiffFormParal.exterior_derivative`
         or :class:`sage.manifolds.differentiable.diff_form.DiffForm.exterior_derivative`
         for more examples.
-
     """
     return form.exterior_derivative()
 

@@ -202,6 +202,7 @@ def FinitelyGeneratedAbelianPresentation(int_list):
     ret_rls = ret_rls + [x[0]**(-1)*x[1]**(-1)*x[0]*x[1] for x in gen_pairs]
     return FinitelyPresentedGroup(F, tuple(ret_rls))
 
+
 def FinitelyGeneratedHeisenbergPresentation(n=1, p=0):
     r"""
     Return a finite presentation of the Heisenberg group.
@@ -292,6 +293,7 @@ def FinitelyGeneratedHeisenbergPresentation(n=1, p=0):
         rls += [w**p for w in F.gens()]
     return FinitelyPresentedGroup(F, tuple(rls))
 
+
 def DihedralPresentation(n):
     r"""
     Build the Dihedral group of order `2n` as a finitely presented group.
@@ -326,6 +328,7 @@ def DihedralPresentation(n):
     F = FreeGroup([ 'a', 'b' ])
     rls = F([1])**n, F([2])**2, (F([1])*F([2]))**2
     return FinitelyPresentedGroup( F, rls )
+
 
 def DiCyclicPresentation(n):
     r"""
@@ -448,12 +451,12 @@ def QuaternionPresentation():
         sage: Q.order(), Q.is_abelian()
         (8, False)
         sage: Q.is_isomorphic(groups.presentation.DiCyclic(2))
-        #I  Forcing finiteness test
         True
     """
     F = FreeGroup(['a','b'])
     rls = F([1])**4, F([2,2,-1,-1]), F([1,2,1,-2])
     return FinitelyPresentedGroup(F, rls)
+
 
 def AlternatingPresentation(n):
     r"""
@@ -521,6 +524,7 @@ def KleinFourPresentation():
     rls = F([1])**2, F([2])**2, F([-1])*F([-2])*F([1])*F([2])
     return FinitelyPresentedGroup(F, rls)
 
+
 def BinaryDihedralPresentation(n):
     r"""
     Build a binary dihedral group of order `4n` as a finitely presented group.
@@ -549,17 +553,12 @@ def BinaryDihedralPresentation(n):
         ....:     P = groups.presentation.BinaryDihedral(n)
         ....:     M = groups.matrix.BinaryDihedral(n)
         ....:     assert P.is_isomorphic(M)
-        #I  Forcing finiteness test
-        #I  Forcing finiteness test
-        #I  Forcing finiteness test
-        #I  Forcing finiteness test
-        #I  Forcing finiteness test
-        #I  Forcing finiteness test
     """
     F = FreeGroup('x,y,z')
     x,y,z = F.gens()
     rls = (x**-2 * y**2, x**-2 * z**n, x**-2 * x*y*z)
     return FinitelyPresentedGroup(F, rls)
+
 
 def CactusPresentation(n):
     r"""

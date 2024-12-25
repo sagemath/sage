@@ -5,7 +5,7 @@ TESTS::
 
     sage: R.<a,b> = QQ[]
     sage: m = matrix(R,2,[0,a,b,b^2])
-    sage: TestSuite(m).run(skip="_test_minpoly")
+    sage: TestSuite(m).run(skip='_test_minpoly')
 """
 
 cimport sage.matrix.matrix as matrix
@@ -97,7 +97,7 @@ cdef class Matrix_dense(matrix.Matrix):
 
     def transpose(self):
         """
-        Returns the transpose of self, without changing self.
+        Return the transpose of ``self``, without changing ``self``.
 
         EXAMPLES: We create a matrix, compute its transpose, and note that
         the original matrix is not changed.
@@ -147,7 +147,7 @@ cdef class Matrix_dense(matrix.Matrix):
 
     def antitranspose(self):
         """
-        Returns the antitranspose of self, without changing self.
+        Return the antitranspose of ``self``, without changing ``self``.
 
         EXAMPLES::
 
@@ -171,19 +171,19 @@ cdef class Matrix_dense(matrix.Matrix):
             [4|1]
             [3|0]
         """
-        (nc, nr) = (self.ncols(), self.nrows())
+        nc, nr = self.ncols(), self.nrows()
         cdef Matrix_dense atrans
-        atrans = self.new_matrix(nrows = nc, ncols = nr,
+        atrans = self.new_matrix(nrows=nc, ncols=nr,
                                  copy=False, coerce=False)
-        cdef Py_ssize_t i,j
-        cdef Py_ssize_t ri,rj # reversed i and j
+        cdef Py_ssize_t i, j
+        cdef Py_ssize_t ri, rj # reversed i and j
         rj = nc
         for j from 0 <= j < nc:
             ri = nr
-            rj = rj-1
+            rj -= 1
             for i from 0 <= i < nr:
-                ri = ri-1
-                atrans.set_unsafe(j , i, self.get_unsafe(ri,rj))
+                ri -= 1
+                atrans.set_unsafe(j, i, self.get_unsafe(ri, rj))
 
         if self._subdivisions is not None:
             row_divs, col_divs = self.subdivisions()
@@ -220,7 +220,7 @@ cdef class Matrix_dense(matrix.Matrix):
 
     def _elementwise_product(self, right):
         r"""
-        Returns the elementwise product of two dense
+        Return the elementwise product of two dense
         matrices with identical base rings.
 
         This routine assumes that ``self`` and ``right``
@@ -256,8 +256,8 @@ cdef class Matrix_dense(matrix.Matrix):
         prod = self.new_matrix(nr, nc, copy=False, coerce=False)
         for r in range(nr):
             for c in range(nc):
-                entry = self.get_unsafe(r,c)*other.get_unsafe(r,c)
-                prod.set_unsafe(r,c,entry)
+                entry = self.get_unsafe(r, c)*other.get_unsafe(r, c)
+                prod.set_unsafe(r, c, entry)
         return prod
 
     def _derivative(self, var=None, R=None):

@@ -109,10 +109,10 @@ def load_attach_mode(load_debug=None, attach_debug=None):
 
     - ``load_debug`` -- boolean or ``None`` (default); if not
       ``None``, then set a new value for the debug mode for loading
-      files.
+      files
 
     - ``attach_debug`` -- boolean or ``None`` (default); same as
-      ``load_debug``, but for attaching files.
+      ``load_debug``, but for attaching files
 
     OUTPUT:
 
@@ -151,15 +151,13 @@ def load_attach_path(path=None, replace=False):
     INPUT:
 
     - ``path`` -- string or list of strings (default: ``None``);
-      path(s) to append to or replace the current path.
+      path(s) to append to or replace the current path
 
     - ``replace`` -- boolean (default: ``False``); if ``path`` is not
       ``None``, whether to *replace* the search path instead of
-      *appending* to it.
+      *appending* to it
 
-    OUTPUT:
-
-    ``None`` or a *reference* to the current search paths.
+    OUTPUT: none or a *reference* to the current search paths
 
     EXAMPLES:
 
@@ -296,20 +294,20 @@ def attach(*files):
 
     INPUT:
 
-    - ``files`` -- a list of filenames (strings) to attach.
+    - ``files`` -- list of filenames (strings) to attach
 
     OUTPUT:
 
     Each file is read in and added to an internal list of watched files.
     The meaning of reading in a file depends on the file type:
 
-    -  ``.py`` files are read in with no preparsing (so, e.g., ``2^3`` is 2
-       bit-xor 3);
+    - ``.py`` files are read in with no preparsing (so, e.g., ``2^3`` is 2
+      bit-xor 3);
 
-    -  ``.sage`` files are preparsed, then the result is read in;
+    - ``.sage`` files are preparsed, then the result is read in;
 
     - ``.pyx`` files are *not* preparsed, but rather are compiled to a
-       module ``m`` and then ``from m import *`` is executed.
+      module ``m`` and then ``from m import *`` is executed.
 
     The contents of the file are then loaded, which means they are read
     into the running Sage session. For example, if ``foo.sage`` contains
@@ -320,8 +318,12 @@ def attach(*files):
 
     .. SEEALSO::
 
-        :meth:`~sage.repl.load.load` is the same as :func:`attach`, but
-        does not automatically reload a file when it changes.
+        :func:`~sage.repl.load.load` is the same as :func:`attach`, but
+        does not automatically reload a file when it changes unless
+        ``attach=True`` is passed.
+
+        ``%attach`` magic can also be used, see
+        :meth:`~sage.repl.ipython_extension.SageMagics.attach`.
 
     EXAMPLES:
 
@@ -372,7 +374,7 @@ def attach(*files):
 
 def add_attached_file(filename):
     """
-    Add to the list of attached files
+    Add to the list of attached files.
 
     This is a callback to be used from
     :func:`~sage.repl.load.load` after evaluating the attached
@@ -405,9 +407,7 @@ def attached_files() -> list:
     Return a list of all files attached to the current session with
     :meth:`attach`.
 
-    OUTPUT:
-
-    The filenames in a sorted list of strings.
+    OUTPUT: the filenames in a sorted list of strings
 
     EXAMPLES::
 
@@ -433,7 +433,7 @@ def detach(filename):
 
     INPUT:
 
-    - ``filename`` -- a string, a list of strings or a tuple of strings
+    - ``filename`` -- string, a list of strings or a tuple of strings
       or a :class:`Path`, a list of :class:`Path` or a tuple of :class:`Path`
 
     EXAMPLES::

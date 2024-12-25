@@ -31,23 +31,21 @@ from sage.structure.dynamic_class import dynamic_class
 
 def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
     r"""
-    Returns the hyperelliptic curve `y^2 + h y = f`, for
+    Return the hyperelliptic curve `y^2 + h y = f`, for
     univariate polynomials `h` and `f`. If `h`
     is not given, then it defaults to 0.
 
     INPUT:
 
-    -  ``f`` -- univariate polynomial
+    - ``f`` -- univariate polynomial
 
-    -  ``h`` -- optional univariate polynomial
+    - ``h`` -- (optional) univariate polynomial
 
-    -  ``names``  (default: ``["x","y"]``) -- names for the
-       coordinate functions
+    - ``names`` -- (default: ``["x","y"]``) names for the coordinate functions
 
-    -  ``check_squarefree`` (default: ``True``) -- test if
-       the input defines a hyperelliptic curve when f is
-       homogenized to degree `2g+2` and h to degree
-       `g+1` for some g.
+    - ``check_squarefree`` -- boolean (default: ``True``); test if the input
+      defines a hyperelliptic curve when f is homogenized to degree `2g+2` and
+      h to degree `g+1` for some `g`
 
     .. WARNING::
 
@@ -163,7 +161,7 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
     Input with integer coefficients creates objects with the integers
     as base ring, but only checks smoothness over `\QQ`, not over Spec(`\ZZ`).
-    In other words, it is checked that the discriminant is non-zero, but it is
+    In other words, it is checked that the discriminant is nonzero, but it is
     not checked whether the discriminant is a unit in `\ZZ^*`.::
 
         sage: P.<x> = ZZ[]
@@ -204,7 +202,7 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
     # rather than f and h, one of which might be constant.
     F = h**2 + 4 * f
     if not isinstance(F, Polynomial):
-        raise TypeError(f"arguments {f = } and {h = } must be polynomials")
+        raise TypeError(f"arguments f = {f} and h = {h} must be polynomials")
     P = F.parent()
     f = P(f)
     h = P(h)
@@ -222,7 +220,7 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
             # characteristic 2
             if h == 0:
                 raise ValueError(
-                    f"for characteristic 2, argument {h = } must be non-zero"
+                    f"for characteristic 2, argument h = {h} must be nonzero"
                 )
             if h[g + 1] == 0 and f[2 * g + 1] ** 2 == f[2 * g + 2] * h[g] ** 2:
                 raise ValueError(

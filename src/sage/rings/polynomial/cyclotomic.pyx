@@ -4,7 +4,7 @@ Fast calculation of cyclotomic polynomials
 This module provides a function :func:`cyclotomic_coeffs`, which calculates the
 coefficients of cyclotomic polynomials. This is not intended to be invoked
 directly by the user, but it is called by the method
-:meth:`~sage.rings.polynomial.polynomial_ring.PolynomialRing_general.cyclotomic_polynomial`
+:meth:`~sage.rings.polynomial.polynomial_ring.PolynomialRing_generic.cyclotomic_polynomial`
 method of univariate polynomial ring objects and the top-level
 :func:`~sage.misc.functional.cyclotomic_polynomial` function.
 """
@@ -58,7 +58,7 @@ def cyclotomic_coeffs(nn, sparse=None):
     form `1-x^n` can be done very quickly in a single pass.
 
     If ``sparse`` is ``True``, the result is returned as a dictionary of
-    the non-zero entries, otherwise the result is returned as a list
+    the nonzero entries, otherwise the result is returned as a list
     of python ints.
 
     EXAMPLES::
@@ -209,9 +209,7 @@ def cyclotomic_value(n, x):
 
     - ``x`` -- an element of a ring
 
-    OUTPUT:
-
-    - the value of the cyclotomic polynomial `\Phi_n` at `x`
+    OUTPUT: the value of the cyclotomic polynomial `\Phi_n` at `x`
 
     ALGORITHM:
 

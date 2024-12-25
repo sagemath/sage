@@ -50,7 +50,7 @@ def krawtchouk(n, q, l, x, check=True):
 
     - ``n``, ``q``, ``x`` -- arbitrary numbers
 
-    - ``l`` -- a nonnegative integer
+    - ``l`` -- nonnegative integer
 
     - ``check`` -- check the input for correctness. ``True`` by
       default. Otherwise, pass it as it is. Use ``check=False`` at
@@ -135,7 +135,7 @@ def eberlein(n, w, k, u, check=True):
 
     - ``w``, ``k``, ``x`` -- arbitrary numbers
 
-    - ``n`` -- a nonnegative integer
+    - ``n`` -- nonnegative integer
 
     - ``check`` -- check the input for correctness. ``True`` by
       default. Otherwise, pass it as it is. Use ``check=False`` at
@@ -201,9 +201,8 @@ def _delsarte_LP_building(n, d, d_star, q, isinteger, solver, maxc=0):
           constraint_1: 0 <= x_1 <= 0
           constraint_2: 0 <= x_2 <= 0
           constraint_3: -7 x_0 - 5 x_1 - 3 x_2 - x_3 + x_4 + 3 x_5 + 5 x_6 + 7 x_7 <= 0
-          constraint_4: -7 x_0 - 5 x_1 - 3 x_2 - x_3 + x_4 + 3 x_5 + 5 x_6 + 7 x_7 <= 0
           ...
-          constraint_16: - x_0 + x_1 - x_2 + x_3 - x_4 + x_5 - x_6 + x_7 <= 0
+          constraint_9: - x_0 + x_1 - x_2 + x_3 - x_4 + x_5 - x_6 + x_7 <= 0
         Variables:
           x_0 is a continuous variable (min=0, max=+oo)
           ...
@@ -213,27 +212,26 @@ def _delsarte_LP_building(n, d, d_star, q, isinteger, solver, maxc=0):
 
     p = MixedIntegerLinearProgram(maximization=True, solver=solver)
     A = p.new_variable(integer=isinteger, nonnegative=True)
-    p.set_objective(sum([A[r] for r in range(n + 1)]))
+    p.set_objective(p.sum([A[r] for r in range(n + 1)]))
     p.add_constraint(A[0] == 1)
     for i in range(1, d):
         p.add_constraint(A[i] == 0)
     for j in range(1, n + 1):
-        rhs = sum([krawtchouk(n, q, j, r, check=False) * A[r]
+        rhs = p.sum([krawtchouk(n, q, j, r, check=False) * A[r]
                    for r in range(n + 1)])
-        p.add_constraint(0 <= rhs)
         if j >= d_star:
             p.add_constraint(0 <= rhs)
         else:  # rhs is proportional to j-th weight of the dual code
             p.add_constraint(0 == rhs)
 
     if maxc > 0:
-        p.add_constraint(sum([A[r] for r in range(n + 1)]), max=maxc)
+        p.add_constraint(p.sum([A[r] for r in range(n + 1)]), max=maxc)
     return A, p
 
 
 def _delsarte_cwc_LP_building(n, d, w, solver, isinteger):
     r"""
-    LP builder for Delsarte's LP for constant weight codes
+    LP builder for Delsarte's LP for constant weight codes.
 
     It is used in :func:`delsarte_bound_constant_weight_code`; not exported.
 
@@ -275,7 +273,7 @@ def _delsarte_cwc_LP_building(n, d, w, solver, isinteger):
 
     p = MixedIntegerLinearProgram(maximization=True, solver=solver)
     A = p.new_variable(integer=isinteger, nonnegative=True)
-    p.set_objective(sum([A[2*r] for r in range(d//2, w+1)]) + 1)
+    p.set_objective(p.sum([A[2*r] for r in range(d//2, w+1)]) + 1)
 
     def _q(k, i):
         mu_i = 1
@@ -283,14 +281,14 @@ def _delsarte_cwc_LP_building(n, d, w, solver, isinteger):
         return mu_i*eberlein(n, w, i, k)/v_i
 
     for k in range(1, w+1):
-        p.add_constraint(sum([A[2*i]*_q(k, i) for i in range(d//2, w+1)]),
+        p.add_constraint(p.sum([A[2*i]*_q(k, i) for i in range(d//2, w+1)]),
                          min=-1)
 
     return A, p
 
 
 def delsarte_bound_constant_weight_code(n, d, w, return_data=False,
-                                        solver="PPL", isinteger=False):
+                                        solver='PPL', isinteger=False):
     r"""
     Find the Delsarte bound on a constant weight code.
 
@@ -362,9 +360,9 @@ def delsarte_bound_constant_weight_code(n, d, w, return_data=False,
 
 
 def delsarte_bound_hamming_space(n, d, q, return_data=False,
-                                 solver="PPL", isinteger=False):
+                                 solver='PPL', isinteger=False):
     r"""
-    Find the Delsarte bound on codes in ``H_q^n`` of minimal distance ``d``
+    Find the Delsarte bound on codes in ``H_q^n`` of minimal distance ``d``.
 
     Find the Delsarte bound [De1973]_ on the size of codes in
     the Hamming space ``H_q^n`` of minimal distance ``d``.
@@ -446,14 +444,14 @@ def delsarte_bound_hamming_space(n, d, q, return_data=False,
 
 
 def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_data=False,
-                                          solver="PPL", isinteger=False):
+                                          solver='PPL', isinteger=False):
     r"""
     Find a modified Delsarte bound on additive codes in Hamming space `H_q^n` of minimal distance `d`.
 
     Find the Delsarte LP bound on ``F_{q_base}``-dimension of additive
     codes in Hamming space `H_q^n` of minimal distance ``d`` with
     minimal distance of the dual code at least ``d_star``.  If
-    ``q_base`` is set to non-zero, then ``q`` is a power of
+    ``q_base`` is set to nonzero, then ``q`` is a power of
     ``q_base``, and the code is, formally, linear over
     ``F_{q_base}``. Otherwise it is assumed that ``q_base==q``.
 
@@ -466,10 +464,10 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_da
     - ``q`` -- the size of the alphabet
 
     - ``d_star`` -- the (lower bound on) minimal distance of the dual code;
-      only makes sense for additive codes.
+      only makes sense for additive codes
 
     - ``q_base`` -- if ``0``, the code is assumed to be linear. Otherwise,
-      ``q=q_base^m`` and the code is linear over ``F_{q_base}``.
+      ``q=q_base^m`` and the code is linear over ``F_{q_base}``
 
     - ``return_data`` -- if ``True``, return a triple ``(W,LP,bound)``,
       where ``W`` is a weights vector, and ``LP`` the Delsarte bound
@@ -483,7 +481,7 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_da
       list), you are on your own!
 
     - ``isinteger`` -- if ``True``, uses an integer programming solver (ILP),
-      rather that an LP solver. Can be very slow if set to ``True``.
+      rather that an LP solver (can be very slow if set to ``True``)
 
     EXAMPLES:
 
@@ -622,7 +620,7 @@ def _delsarte_Q_LP_building(q, d, solver, isinteger):
 
     p = MixedIntegerLinearProgram(maximization=True, solver=solver)
     A = p.new_variable(integer=isinteger, nonnegative=True)
-    p.set_objective(sum([A[i] for i in range(n)]))
+    p.set_objective(p.sum([A[i] for i in range(n)]))
 
     p.add_constraint(A[0] == 1)
 
@@ -634,13 +632,13 @@ def _delsarte_Q_LP_building(q, d, solver, isinteger):
             p.add_constraint(A[i] == 0)
 
     for k in range(1, n):
-        p.add_constraint(sum([q[k][i] * A[i] for i in range(n)]), min=0)
+        p.add_constraint(p.sum([q[k][i] * A[i] for i in range(n)]), min=0)
 
     return A, p
 
 
 def delsarte_bound_Q_matrix(q, d, return_data=False,
-                            solver="PPL", isinteger=False):
+                            solver='PPL', isinteger=False):
     r"""
     Delsarte bound on a code with Q matrix ``q`` and lower bound on min. dist. ``d``.
 

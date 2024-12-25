@@ -65,7 +65,7 @@ def CrystalOfSpins(ct):
     Return the spin crystal of the given type `B`.
 
     This is a combinatorial model for the crystal with highest weight
-    `Lambda_n` (the `n`-th fundamental weight). It has
+    `\Lambda_n` (the `n`-th fundamental weight). It has
     `2^n` elements, here called Spins. See also
     :func:`~sage.combinat.crystals.letters.CrystalOfLetters`,
     :func:`~sage.combinat.crystals.spins.CrystalOfSpinsPlus`,
@@ -73,7 +73,7 @@ def CrystalOfSpins(ct):
 
     INPUT:
 
-    -  ``['B', n]`` -- A Cartan type `B_n`.
+    - ``['B', n]`` -- a Cartan type `B_n`
 
     EXAMPLES::
 
@@ -108,12 +108,12 @@ def CrystalOfSpinsPlus(ct):
     r"""
     Return the plus spin crystal of the given type D.
 
-    This is the crystal with highest weight `Lambda_n` (the
+    This is the crystal with highest weight `\Lambda_n` (the
     `n`-th fundamental weight).
 
     INPUT:
 
-    -  ``['D', n]`` -- A Cartan type `D_n`.
+    - ``['D', n]`` -- a Cartan type `D_n`
 
     EXAMPLES::
 
@@ -141,12 +141,12 @@ def CrystalOfSpinsMinus(ct):
     r"""
     Return the minus spin crystal of the given type D.
 
-    This is the crystal with highest weight `Lambda_{n-1}`
+    This is the crystal with highest weight `\Lambda_{n-1}`
     (the `(n-1)`-st fundamental weight).
 
     INPUT:
 
-    -  ``['D', n]`` -- A Cartan type `D_n`.
+    - ``['D', n]`` -- a Cartan type `D_n`
 
     EXAMPLES::
 
@@ -494,7 +494,7 @@ cdef class Spin(Element):
 
     def _latex_(self):
         r"""
-        Gives the latex output of a spin column.
+        Give the latex output of a spin column.
 
         EXAMPLES::
 

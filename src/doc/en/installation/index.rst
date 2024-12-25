@@ -11,8 +11,7 @@ was made.
 More up-to-date information and details regarding supported platforms
 may have become available afterwards and can be found in the section
 "Availability and installation help" of the
-`release tour <https://wiki.sagemath.org/ReleaseTours>`_ for each
-SageMath release.
+`release tour for each SageMath release <https://github.com/sagemath/sage/releases>`_.
 
 **Where would you like to run SageMath?** Pick one of the following sections.
 
@@ -218,6 +217,7 @@ More information:
    binary
    conda
    source
+   meson
    launching
    troubles
 

@@ -179,26 +179,26 @@ class Tachyon(WithEqualityById, SageObject):
 
     INPUT:
 
-    - ``xres`` -- (default 350)
-    - ``yres`` -- (default 350)
-    - ``zoom`` -- (default 1.0)
-    - ``antialiasing`` -- (default ``False``)
-    - ``aspectratio``  -- (default 1.0)
-    - ``raydepth`` -- (default 8)
-    - ``camera_position`` -- (default (-3, 0, 0))
-    - ``updir`` -- (default (0, 0, 1))
-    - ``look_at`` -- (default (0,0,0))
-    - ``viewdir`` -- (default ``None``), otherwise list of three numbers
-    - ``projection`` -- ``'PERSPECTIVE'`` (default), ``'perspective_dof'``
-      or ``'fisheye'``.
-    - ``frustum`` -- (default ``''``), otherwise list of four numbers. Only
+    - ``xres`` -- (default: 350)
+    - ``yres`` -- (default: 350)
+    - ``zoom`` -- (default: 1.0)
+    - ``antialiasing`` -- (default: ``False``)
+    - ``aspectratio`` -- (default: 1.0)
+    - ``raydepth`` -- (default: 8)
+    - ``camera_position`` -- (default: (-3, 0, 0))
+    - ``updir`` -- (default: (0, 0, 1))
+    - ``look_at`` -- (default: (0,0,0))
+    - ``viewdir`` -- (default: ``None``) otherwise list of three numbers
+    - ``projection`` -- ``'PERSPECTIVE'`` (default) ``'perspective_dof'``
+      or ``'fisheye'``
+    - ``frustum`` -- (default: ``''``) otherwise list of four numbers. Only
       used with ``projection='fisheye'``.
-    - ``focallength`` -- (default ''), otherwise a number. Only used
+    - ``focallength`` -- (default: ``''``) otherwise a number. Only used
       with ``projection='perspective_dof'``.
-    - ``aperture`` -- (default ''), otherwise a number.  Only used
+    - ``aperture`` -- (default: ``''``) otherwise a number.  Only used
       with ``projection='perspective_dof'``.
 
-    OUTPUT: A Tachyon 3d scene.
+    OUTPUT: a Tachyon 3d scene
 
     Note that the coordinates are by default such that `z` is
     up, positive `y` is to the {left} and `x` is toward
@@ -371,8 +371,8 @@ class Tachyon(WithEqualityById, SageObject):
                  antialiasing=False,
                  aspectratio=1.0,
                  raydepth=8,
-                 camera_position=None, # default value (-3, 0, 0),
-                 camera_center=None, # alternative equivalent name
+                 camera_position=None,  # default value (-3, 0, 0),
+                 camera_center=None,  # alternative equivalent name
                  updir=[0, 0, 1],
                  look_at=[0, 0, 0],
                  viewdir=None,
@@ -397,10 +397,10 @@ class Tachyon(WithEqualityById, SageObject):
         self._raydepth = raydepth
         if camera_position is not None:
             self._camera_position = camera_position
-        elif camera_center is not None: # make sure that old programs continue to work
+        elif camera_center is not None:  # make sure that old programs continue to work
             self._camera_position = camera_center
         else:
-            self._camera_position = (-3, 0, 0) # default value
+            self._camera_position = (-3, 0, 0)  # default value
         self._updir = updir
         self._projection = projection
         self._focallength = focallength
@@ -462,36 +462,36 @@ class Tachyon(WithEqualityById, SageObject):
 
     def save(self, filename='sage.png', verbose=None, extra_opts=''):
         r"""
-        Save rendering of the tachyon scene
+        Save rendering of the tachyon scene.
 
         INPUT:
 
-        -  ``filename`` -- (default: 'sage.png') output
-           filename; the extension of the filename determines the type.
-           Supported types include:
+        - ``filename`` -- (default: ``'sage.png'``) output
+          filename; the extension of the filename determines the type.
+          Supported types include:
 
-        -  ``tga`` -- 24-bit (uncompressed)
+        - ``tga`` -- 24-bit (uncompressed)
 
-        -  ``bmp`` -- 24-bit Windows BMP (uncompressed)
+        - ``bmp`` -- 24-bit Windows BMP (uncompressed)
 
-        -  ``ppm`` -- 24-bit PPM (uncompressed)
+        - ``ppm`` -- 24-bit PPM (uncompressed)
 
-        -  ``rgb`` -- 24-bit SGI RGB (uncompressed)
+        - ``rgb`` -- 24-bit SGI RGB (uncompressed)
 
-        -  ``png`` -- 24-bit PNG (compressed, lossless)
+        - ``png`` -- 24-bit PNG (compressed, lossless)
 
-        -  ``verbose`` -- integer (default: ``None``); if no verbosity setting
-           is supplied, the verbosity level set by
-           ``sage.misc.verbose.set_verbose`` is used.
+        - ``verbose`` -- integer (default: ``None``); if no verbosity setting
+          is supplied, the verbosity level set by
+          ``sage.misc.verbose.set_verbose`` is used.
 
-        -  ``0`` -- silent
+        - ``0`` -- silent
 
-        -  ``1`` -- some output
+        - ``1`` -- some output
 
-        -  ``2`` -- very verbose output
+        - ``2`` -- very verbose output
 
-        -  ``extra_opts`` -- passed directly to tachyon command
-           line. Use tachyon_rt.usage() to see some of the possibilities.
+        - ``extra_opts`` -- passed directly to tachyon command
+          line. Use ``tachyon_rt.usage()`` to see some of the possibilities.
 
         EXAMPLES::
 
@@ -508,7 +508,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     def _rich_repr_(self, display_manager, **kwds):
         """
-        Rich Output Magic Method
+        Rich Output Magic Method.
 
         See :mod:`sage.repl.rich_output` for details.
 
@@ -559,7 +559,7 @@ class Tachyon(WithEqualityById, SageObject):
             sage: h = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
             ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: h.light((4.4,-4.4,4.4), 0.2, (1,1,1))
-            sage: def f(x,y): return float(sin(x*y))
+            sage: def f(x, y): return float(sin(x*y))
             sage: h.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
             sage: h.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
@@ -577,7 +577,7 @@ class Tachyon(WithEqualityById, SageObject):
             sage: s = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
             ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: s.light((4.4,-4.4,4.4), 0.2, (1,1,1))
-            sage: def f(x,y): return float(sin(x*y))
+            sage: def f(x, y): return float(sin(x*y))
             sage: s.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
             sage: s.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
@@ -600,7 +600,7 @@ class Tachyon(WithEqualityById, SageObject):
             sage: d = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
             ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: d.light((4.4,-4.4,4.4), 0.2, (1,1,1))
-            sage: def f(x,y): return float(sin(x*y))
+            sage: def f(x, y): return float(sin(x*y))
             sage: d.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
             sage: d.plot(f,(-4,4),(-4,4),"t0",max_depth=5,initial_depth=3,              # needs sage.symbolic
@@ -689,8 +689,8 @@ class Tachyon(WithEqualityById, SageObject):
         {}
         {}
         end_scene""".format(self._res(),
-                        self._camera(),
-                        '\n'.join(x.str() for x in self._objects))
+                            self._camera(),
+                            '\n'.join(x.str() for x in self._objects))
 
     def light(self, center, radius, color):
         r"""
@@ -711,7 +711,7 @@ class Tachyon(WithEqualityById, SageObject):
         r"""
         INPUT:
 
-        -  ``type`` -- (default: 0)
+        - ``type`` -- (default: 0)
 
            0. No special texture, plain shading
            1. 3D checkerboard function, like a rubik's cube
@@ -725,10 +725,9 @@ class Tachyon(WithEqualityById, SageObject):
            8. Spherical Image Map, requires ppm filename (with path)
            9. Planar Image Map, requires ppm filename (with path)
 
-        -  ``center`` -- (default: (0,0,0))
-        -  ``rotate`` -- (default: (0,0,0))
-        -  ``scale`` -- (default: (1,1,1))
-
+        - ``center`` -- (default: (0,0,0))
+        - ``rotate`` -- (default: (0,0,0))
+        - ``scale`` -- (default: (1,1,1))
 
         EXAMPLES: We draw an infinite checkerboard::
 
@@ -745,32 +744,32 @@ class Tachyon(WithEqualityById, SageObject):
     def texture(self, name, ambient=0.2, diffuse=0.8,
                 specular=0.0, opacity=1.0,
                 color=(1.0, 0.0, 0.5), texfunc=0, phong=0, phongsize=.5,
-                phongtype="PLASTIC", imagefile=''):
+                phongtype='PLASTIC', imagefile=''):
         r"""
         INPUT:
 
-        -  ``name`` -- string; the name of the texture (to be
-           used later)
+        - ``name`` -- string; the name of the texture (to be
+          used later)
 
-        -  ``ambient`` -- (default: 0.2)
+        - ``ambient`` -- (default: 0.2)
 
-        -  ``diffuse`` -- (default: 0.8)
+        - ``diffuse`` -- (default: 0.8)
 
-        -  ``specular`` -- (default: 0.0)
+        - ``specular`` -- (default: 0.0)
 
-        -  ``opacity`` -- (default: 1.0)
+        - ``opacity`` -- (default: 1.0)
 
-        -  ``color`` -- (default: (1.0,0.0,0.5))
+        - ``color`` -- (default: (1.0,0.0,0.5))
 
-        -  ``texfunc`` -- (default: 0); a texture function; this
-           is either the output of self.texfunc, or a number between 0 and 9,
-           inclusive. See the docs for self.texfunc.
+        - ``texfunc`` -- (default: 0) a texture function; this
+          is either the output of self.texfunc, or a number between 0 and 9,
+          inclusive. See the docs for self.texfunc.
 
-        -  ``phong`` -- (default: 0)
+        - ``phong`` -- (default: 0)
 
-        -  ``phongsize`` -- (default: 0.5)
+        - ``phongsize`` -- (default: 0.5)
 
-        -  ``phongtype`` -- (default: "PLASTIC")
+        - ``phongtype`` -- (default: ``'PLASTIC'``)
 
         EXAMPLES:
 
@@ -925,7 +924,6 @@ class Tachyon(WithEqualityById, SageObject):
             sage: t.triangle([1,2,3],[4,5,6],[7,8,10],'s')
             sage: t._objects[1].get_vertices()
             ([1, 2, 3], [4, 5, 6], [7, 8, 10])
-
         """
         self._objects.append(TachyonTriangle(vertex_1, vertex_2, vertex_3,
                                              texture))
@@ -968,29 +966,29 @@ class Tachyon(WithEqualityById, SageObject):
         r"""
         INPUT:
 
-        -  ``f`` -- Function of two variables, which returns a
-           float (or coercible to a float) (xmin,xmax)
+        - ``f`` -- function of two variables, which returns a
+          float (or coercible to a float) (xmin,xmax)
 
-        -  ``(ymin,ymax)`` -- defines the rectangle to plot over
-           texture: Name of texture to be used Optional arguments:
+        - ``(ymin,ymax)`` -- defines the rectangle to plot over
+          texture: Name of texture to be used Optional arguments:
 
-        -  ``grad_f`` -- gradient function. If specified,
-           smooth triangles will be used.
+        - ``grad_f`` -- gradient function. If specified,
+          smooth triangles will be used
 
-        -  ``max_bend`` -- Cosine of the threshold angle
-           between triangles used to determine whether or not to recurse after
-           the minimum depth
+        - ``max_bend`` -- cosine of the threshold angle
+          between triangles used to determine whether or not to recurse after
+          the minimum depth
 
-        -  ``max_depth`` -- maximum recursion depth. Maximum
-           triangles plotted = `2^{2*max_depth}`
+        - ``max_depth`` -- maximum recursion depth. Maximum
+          triangles plotted = `2^{2*max_depth}`
 
-        -  ``initial_depth`` -- minimum recursion depth. No
-           error-tolerance checking is performed below this depth. Minimum
-           triangles plotted: `2^{2*min_depth}`
+        - ``initial_depth`` -- minimum recursion depth. No
+          error-tolerance checking is performed below this depth. Minimum
+          triangles plotted: `2^{2*min_depth}`
 
-        -  ``num_colors`` -- Number of rainbow bands to color
-           the plot with. Texture supplied will be cloned (with different
-           colors) using the texture_recolor method of the Tachyon object.
+        - ``num_colors`` -- number of rainbow bands to color
+          the plot with. Texture supplied will be cloned (with different
+          colors) using the texture_recolor method of the Tachyon object.
 
 
         Plots a function by constructing a mesh with nonstandard sampling
@@ -1006,7 +1004,7 @@ class Tachyon(WithEqualityById, SageObject):
             sage: t = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
             ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: t.light((4.4,-4.4,4.4), 0.2, (1,1,1))
-            sage: def f(x,y): return float(sin(x*y))
+            sage: def f(x, y): return float(sin(x*y))
             sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
             sage: t.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
@@ -1022,8 +1020,8 @@ class Tachyon(WithEqualityById, SageObject):
             sage: t = Tachyon(xres=512, yres=512, camera_position=(4,-4,3),
             ....:             viewdir=(-4,4,-3), raydepth=4)
             sage: t.light((4.4,-4.4,4.4), 0.2, (1,1,1))
-            sage: def f(x,y): return float(sin(x*y))
-            sage: def g(x,y): return (float(y*cos(x*y)), float(x*cos(x*y)), 1)
+            sage: def f(x, y): return float(sin(x*y))
+            sage: def g(x, y): return (float(y*cos(x*y)), float(x*cos(x*y)), 1)
             sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,
             ....:           opacity=1.0, color=(1.0,0,0))
             sage: t.plot(f, (-4,4), (-4,4), "t0", max_depth=5, initial_depth=3,         # needs sage.symbolic
@@ -1117,7 +1115,6 @@ class Light:
                     light center  1.0 1.0 1.0
                           rad 1.0
                           color  1.0 1.0 1.0
-
         """
         return fr"""
         light center {tostr(self._center)}
@@ -1193,7 +1190,7 @@ class Texture:
     def __init__(self, name, ambient=0.2, diffuse=0.8,
                  specular=0.0, opacity=1.0,
                  color=(1.0, 0.0, 0.5), texfunc=0,
-                 phong=0, phongsize=0, phongtype="PLASTIC", imagefile=''):
+                 phong=0, phongsize=0, phongtype='PLASTIC', imagefile=''):
         r"""
         Store texture information.
 
@@ -1252,15 +1249,15 @@ class Texture:
         phong {} {} phong_size {}
         color {} texfunc {}
         """.format(self._name,
-               self._ambient,
-               self._diffuse,
-               self._specular,
-               self._opacity,
-               self._phongtype,
-               self._phong,
-               self._phongsize,
-               tostr(self._color),
-               self._texfunc)
+                   self._ambient,
+                   self._diffuse,
+                   self._specular,
+                   self._opacity,
+                   self._phongtype,
+                   self._phong,
+                   self._phongsize,
+                   tostr(self._color),
+                   self._texfunc)
 
 
 class Sphere:
@@ -1341,7 +1338,7 @@ class Ring:
         return r"""
         ring center {} normal {} inner {} outer {} {}
         """.format(tostr(self._center), tostr(self._normal),
-               self._inner, self._outer, self._texture)
+                   self._inner, self._outer, self._texture)
 
 
 class FractalLandscape:
@@ -1383,7 +1380,7 @@ class FractalLandscape:
         return r"""
         scape res {} scale {} center {} {}
         """.format(tostr(self._res, 2, int), tostr(self._scale, 2, int),
-               tostr(self._center), self._texture)
+                   tostr(self._center), self._texture)
 
 
 class Cylinder:

@@ -61,9 +61,7 @@ class GraphicPrimitive(WithEqualityById, SageObject):
         """
         Return the allowed options for a graphics primitive.
 
-        OUTPUT:
-
-            - a reference to a dictionary.
+        OUTPUT: a reference to a dictionary
 
         EXAMPLES::
 
@@ -148,7 +146,7 @@ class GraphicPrimitive(WithEqualityById, SageObject):
 
     def set_options(self, new_options):
         """
-        Change the options to `new_options`.
+        Change the options to ``new_options``.
 
         EXAMPLES::
 
@@ -219,7 +217,7 @@ class GraphicPrimitive(WithEqualityById, SageObject):
 class GraphicPrimitive_xydata(GraphicPrimitive):
     def get_minmax_data(self):
         """
-        Returns a dictionary with the bounding box data.
+        Return a dictionary with the bounding box data.
 
         EXAMPLES::
 

@@ -21,6 +21,7 @@ checked in this module.
 from . import Executable, FeatureTestResult
 from .join_feature import JoinFeature
 
+
 class Magick(Executable):
     r"""
     A :class:`~sage.features.Feature` describing the presence of ``magick`` or the deprecated ``convert``.
@@ -39,11 +40,11 @@ class Magick(Executable):
             sage: isinstance(Magick(), Magick)
             True
         """
-        Executable.__init__(self, "magick", executable="magick")
+        Executable.__init__(self, 'magick', executable='magick')
         try:
             _ = self.absolute_filename()
         except RuntimeError:
-            Executable.__init__(self, "magick", executable="convert")
+            Executable.__init__(self, 'magick', executable='convert')
 
     def is_functional(self):
         r"""
@@ -54,7 +55,6 @@ class Magick(Executable):
             sage: from sage.features.imagemagick import Magick
             sage: Magick().is_functional()   # optional - imagemagick
             FeatureTestResult('magick', True)
-
         """
         # Create the content of 1-pixel png file
         content = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x00\x00\x00\x00:~\x9bU\x00\x00\x00\nIDATx\x9cc`\x00\x00\x00\x02\x00\x01H\xaf\xa4q\x00\x00\x00\x00IEND\xaeB`\x82'
@@ -96,7 +96,7 @@ class Magick(Executable):
         # If an error occurred, return False
         if result.returncode:
             return FeatureTestResult(self, False, reason='Running command "{}" '
-                        'returned non-zero exit status "{}" with stderr '
+                        'returned nonzero exit status "{}" with stderr '
                         '"{}" and stdout "{}".'.format(result.args,
                                                        result.returncode,
                                                        result.stderr.strip(),
@@ -130,10 +130,11 @@ class ImageMagick(JoinFeature):
             sage: isinstance(ImageMagick(), ImageMagick)
             True
         """
-        JoinFeature.__init__(self, "imagemagick",
+        JoinFeature.__init__(self, 'imagemagick',
                              [Magick()],
-                             spkg="imagemagick",
-                             url="https://www.imagemagick.org/")
+                             spkg='imagemagick',
+                             url='https://www.imagemagick.org/')
+
 
 def all_features():
     return [ImageMagick()]

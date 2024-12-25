@@ -205,7 +205,7 @@ class IndexedMonoidElement(MonoidElement):
 
     def _richcmp_(self, other, op):
         r"""
-        Comparisons
+        Comparisons.
 
         TESTS::
 
@@ -271,7 +271,7 @@ class IndexedMonoidElement(MonoidElement):
     def support(self):
         """
         Return a list of the objects indexing ``self`` with
-        non-zero exponents.
+        nonzero exponents.
 
         EXAMPLES::
 
@@ -674,6 +674,7 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
         """
         return copy(self._monomial)
 
+
 class IndexedMonoid(Parent, IndexedGenerators, UniqueRepresentation):
     """
     Base class for monoids with an indexed set of generators.
@@ -859,6 +860,7 @@ class IndexedMonoid(Parent, IndexedGenerators, UniqueRepresentation):
 
     gens = monoid_generators
 
+
 class IndexedFreeMonoid(IndexedMonoid):
     """
     Free monoid with an indexed set of generators.
@@ -938,6 +940,7 @@ class IndexedFreeMonoid(IndexedMonoid):
             return self.element_class(self, ((self._indices(x), ZZ.one()),))
         except (ValueError, TypeError, NotImplementedError): # Backup (e.g., if it is a string)
             return self.element_class(self, ((x, ZZ.one()),))
+
 
 class IndexedFreeAbelianMonoid(IndexedMonoid):
     """

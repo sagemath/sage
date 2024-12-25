@@ -42,12 +42,15 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.manifolds.manifold_homset import TopologicalManifoldHomset
-from sage.manifolds.differentiable.diff_map import DiffMap
 from sage.manifolds.differentiable.curve import DifferentiableCurve
-from sage.manifolds.differentiable.integrated_curve import IntegratedCurve
-from sage.manifolds.differentiable.integrated_curve import IntegratedAutoparallelCurve
-from sage.manifolds.differentiable.integrated_curve import IntegratedGeodesic
+from sage.manifolds.differentiable.diff_map import DiffMap
+from sage.manifolds.differentiable.integrated_curve import (
+    IntegratedAutoparallelCurve,
+    IntegratedCurve,
+    IntegratedGeodesic,
+)
+from sage.manifolds.manifold_homset import TopologicalManifoldHomset
+
 
 class DifferentiableManifoldHomset(TopologicalManifoldHomset):
     r"""
@@ -153,7 +156,6 @@ class DifferentiableManifoldHomset(TopologicalManifoldHomset):
 
     This test suite includes more tests than in the case of ``H``, since ``E``
     has some extra structure (monoid).
-
     """
 
     Element = DiffMap
@@ -179,10 +181,8 @@ class DifferentiableManifoldHomset(TopologicalManifoldHomset):
              2-dimensional differentiable manifold M in Category of smooth
              manifolds over Real Field with 53 bits of precision
             sage: TestSuite(E).run()
-
         """
-        from sage.manifolds.differentiable.manifold import \
-                                                         DifferentiableManifold
+        from sage.manifolds.differentiable.manifold import DifferentiableManifold
         if not isinstance(domain, DifferentiableManifold):
             raise TypeError("domain = {} is not an ".format(domain) +
                             "instance of DifferentiableManifold")
@@ -211,7 +211,6 @@ class DifferentiableManifoldHomset(TopologicalManifoldHomset):
             False
             sage: H._coerce_map_from_(N)
             False
-
         """
         #!# for the time being:
         return False
@@ -368,7 +367,6 @@ class DifferentiableCurveSet(DifferentiableManifoldHomset):
     The test suite is passed by ``EI``::
 
         sage: TestSuite(EI).run()
-
     """
     Element = DifferentiableCurve
 
@@ -405,7 +403,6 @@ class DifferentiableCurveSet(DifferentiableManifoldHomset):
              manifolds over Real Field with 53 bits of precision and Category of
              connected manifolds over Real Field with 53 bits of precision
             sage: TestSuite(H).run()
-
         """
         from sage.manifolds.differentiable.examples.real_line import OpenInterval
         if not isinstance(domain, OpenInterval):
@@ -423,9 +420,7 @@ class DifferentiableCurveSet(DifferentiableManifoldHomset):
         `I \to M`, where `I` is a real interval and `M` some
         differentiable manifold.
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.differentiable.curve.DifferentiableCurve`
+        OUTPUT: :class:`~sage.manifolds.differentiable.curve.DifferentiableCurve`
 
         EXAMPLES::
 
@@ -438,7 +433,6 @@ class DifferentiableCurveSet(DifferentiableManifoldHomset):
             Curve c in the 2-dimensional differentiable manifold M
             sage: c = Hom(R, R)({}, is_identity=True) ; c
             Identity map Id_ℝ of the Real number line ℝ
-
         """
         # Standard construction
         return self.element_class(self, coord_expression=coord_expression,
@@ -450,9 +444,7 @@ class DifferentiableCurveSet(DifferentiableManifoldHomset):
         r"""
         Construct some element of ``self``.
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.differentiable.curve.DifferentiableCurve`
+        OUTPUT: :class:`~sage.manifolds.differentiable.curve.DifferentiableCurve`
 
         EXAMPLES::
 
@@ -481,7 +473,6 @@ class DifferentiableCurveSet(DifferentiableManifoldHomset):
             sage: c.display()
             (0, pi) → (0, pi)
                t ↦ 1/4*pi + 1/2*pi/(t^2 + 1)
-
         """
         from sage.rings.infinity import Infinity
         from sage.rings.rational_field import QQ
@@ -518,6 +509,7 @@ class DifferentiableCurveSet(DifferentiableManifoldHomset):
         return self.element_class(self, coord_expression)
 
 #******************************************************************************
+
 
 class IntegratedCurveSet(DifferentiableCurveSet):
     r"""
@@ -693,7 +685,6 @@ class IntegratedCurveSet(DifferentiableCurveSet):
     skipped for reasons mentioned above::
 
         sage: TestSuite(H).run(skip=["_test_one", "_test_prod"])
-
     """
 
     Element = IntegratedCurve
@@ -724,7 +715,6 @@ class IntegratedCurveSet(DifferentiableCurveSet):
              (-1, 2) in Category of endsets of subobjects of sets and
              topological spaces which actually are integrated curves
             sage: TestSuite(H).run(skip=["_test_one", "_test_prod"])
-
         """
 
         from sage.rings.infinity import Infinity
@@ -768,7 +758,6 @@ class IntegratedCurveSet(DifferentiableCurveSet):
             Set of Morphisms from Real interval (-1, 2) to 3-dimensional
              differentiable manifold M in Category of homsets of topological
              spaces which actually are integrated curves
-
         """
         description = "Set of Morphisms "
         description += "from {} to {} in {} ".format(self._domain,
@@ -784,9 +773,7 @@ class IntegratedCurveSet(DifferentiableCurveSet):
         `I \to M`, where `I` is a real interval and `M` some
         differentiable manifold.
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedCurve`
+        OUTPUT: :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedCurve`
 
         EXAMPLES::
 
@@ -805,7 +792,6 @@ class IntegratedCurveSet(DifferentiableCurveSet):
             sage: c = H(eqns_rhs, vels, t, v, name='c') ; c
             Integrated curve c in the 2-dimensional differentiable
              manifold M
-
         """
         # Standard construction
         return self.element_class(self, equations_rhs, velocities,
@@ -816,9 +802,7 @@ class IntegratedCurveSet(DifferentiableCurveSet):
         r"""
         Construct some element of ``self``.
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedCurve`
+        OUTPUT: :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedCurve`
 
         EXAMPLES::
 
@@ -876,7 +860,6 @@ class IntegratedCurveSet(DifferentiableCurveSet):
             Point on the Real number line ℝ
             sage: p.coordinates()     # abs tol 1e-12
             (0.8409865343211089,)
-
         """
 
         from sage.categories.homset import Hom
@@ -971,7 +954,6 @@ class IntegratedCurveSet(DifferentiableCurveSet):
             ...
             ValueError: the identity is not implemented for integrated
              curves and associated subclasses
-
         """
 
         if self.codomain() != self.domain():
@@ -982,6 +964,7 @@ class IntegratedCurveSet(DifferentiableCurveSet):
                             "subclasses")
 
 #******************************************************************************
+
 
 class IntegratedAutoparallelCurveSet(IntegratedCurveSet):
     r"""
@@ -1130,7 +1113,6 @@ class IntegratedAutoparallelCurveSet(IntegratedCurveSet):
     skipped for reasons mentioned above::
 
         sage: TestSuite(H).run(skip=["_test_one", "_test_prod"])
-
     """
 
     Element = IntegratedAutoparallelCurve
@@ -1164,7 +1146,6 @@ class IntegratedAutoparallelCurveSet(IntegratedCurveSet):
              topological spaces which actually are integrated
              autoparallel curves with respect to a certain affine connection
             sage: TestSuite(H).run(skip=["_test_one", "_test_prod"])
-
         """
 
         from sage.rings.infinity import Infinity
@@ -1209,7 +1190,6 @@ class IntegratedAutoparallelCurveSet(IntegratedCurveSet):
              differentiable manifold M in Category of homsets of topological
              spaces which actually are integrated autoparallel curves with
              respect to a certain affine connection
-
         """
 
         description = "Set of Morphisms "
@@ -1227,9 +1207,7 @@ class IntegratedAutoparallelCurveSet(IntegratedCurveSet):
         autoparallel curve `I \to M`, where `I` is a real interval and
         `M` some differentiable manifold.
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedAutoparallelCurve`
+        OUTPUT: :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedAutoparallelCurve`
 
         EXAMPLES::
 
@@ -1250,7 +1228,6 @@ class IntegratedAutoparallelCurveSet(IntegratedCurveSet):
             sage: c = H(nab, t, v, name='c') ; c
             Integrated autoparallel curve c in the 2-dimensional
              differentiable manifold M
-
         """
         # Standard construction
         return self.element_class(self, affine_connection,
@@ -1261,9 +1238,7 @@ class IntegratedAutoparallelCurveSet(IntegratedCurveSet):
         r"""
         Construct some element of ``self``.
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedAutoparallelCurve`
+        OUTPUT: :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedAutoparallelCurve`
 
         EXAMPLES::
 
@@ -1329,14 +1304,13 @@ class IntegratedAutoparallelCurveSet(IntegratedCurveSet):
             Point on the Real number line ℝ
             sage: p.coordinates()     # abs tol 1e-12
             (1.0565635217644918,)
-
         """
 
+        from sage.categories.homset import Hom
+        from sage.functions.log import exp
         from sage.rings.infinity import Infinity
         from sage.rings.rational_field import QQ
-        from sage.categories.homset import Hom
         from sage.symbolic.ring import var
-        from sage.functions.log import exp
 
         dom = self.domain()
         t = dom.canonical_coordinate()
@@ -1444,6 +1418,7 @@ class IntegratedAutoparallelCurveSet(IntegratedCurveSet):
         # value above
 
 #******************************************************************************
+
 
 class IntegratedGeodesicSet(IntegratedAutoparallelCurveSet):
     r"""
@@ -1586,7 +1561,6 @@ class IntegratedGeodesicSet(IntegratedAutoparallelCurveSet):
     skipped for reasons mentioned above::
 
         sage: TestSuite(H).run(skip=["_test_one", "_test_prod"])
-
     """
 
     Element = IntegratedGeodesic
@@ -1620,7 +1594,6 @@ class IntegratedGeodesicSet(IntegratedAutoparallelCurveSet):
              topological spaces which actually are integrated geodesics
              with respect to a certain metric
             sage: TestSuite(H).run(skip=["_test_one", "_test_prod"])
-
         """
 
         from sage.rings.infinity import Infinity
@@ -1664,7 +1637,6 @@ class IntegratedGeodesicSet(IntegratedAutoparallelCurveSet):
              differentiable manifold M in Category of homsets of topological
              spaces which actually are integrated geodesics with respect to a
              certain metric
-
         """
         description = "Set of Morphisms "
         description += "from {} to {} in {} ".format(self._domain,
@@ -1681,9 +1653,7 @@ class IntegratedGeodesicSet(IntegratedAutoparallelCurveSet):
         `I \to M`, where `I` is a real interval and
         `M` some differentiable manifold.
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedGeodesic`
+        OUTPUT: :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedGeodesic`
 
         EXAMPLES::
 
@@ -1702,7 +1672,6 @@ class IntegratedGeodesicSet(IntegratedAutoparallelCurveSet):
             sage: c = H(g, t, v, name='c') ; c
             Integrated geodesic c in the 2-dimensional differentiable
              manifold M
-
         """
         # Standard construction
         return self.element_class(self, metric, curve_parameter,
@@ -1713,9 +1682,7 @@ class IntegratedGeodesicSet(IntegratedAutoparallelCurveSet):
         r"""
         Construct some element of ``self``.
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedGeodesic`
+        OUTPUT: :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedGeodesic`
 
         EXAMPLES::
 
@@ -1785,12 +1752,11 @@ class IntegratedGeodesicSet(IntegratedAutoparallelCurveSet):
             Point on the Real number line ℝ
             sage: p.coordinates()     # abs tol 1e-12
             (1.0565635217644918,)
-
         """
 
         from sage.categories.homset import Hom
-        from sage.symbolic.ring import var
         from sage.functions.log import exp
+        from sage.symbolic.ring import var
 
         dom = self.domain()
         t = dom.canonical_coordinate()

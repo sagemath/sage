@@ -38,6 +38,7 @@ from sage.categories.fields import Fields
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.rings import Rings
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring_element import LaurentSeries
@@ -48,6 +49,11 @@ try:
     from sage.libs.pari.all import pari_gen
 except ImportError:
     pari_gen = ()
+
+lazy_import('sage.rings.polynomial.laurent_polynomial_ring_base', 'LaurentPolynomialRing_generic')
+lazy_import('sage.rings.lazy_series_ring', ('LazyPowerSeriesRing', 'LazyLaurentSeriesRing'))
+lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_generic')
+lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 
 
 def is_LaurentSeriesRing(x):
@@ -62,12 +68,19 @@ def is_LaurentSeriesRing(x):
         sage: from sage.rings.laurent_series_ring import is_LaurentSeriesRing
         sage: K.<q> = LaurentSeriesRing(QQ)
         sage: is_LaurentSeriesRing(K)
+        doctest:warning...
+        DeprecationWarning: The function is_LaurentSeriesRing is deprecated;
+        use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+        See https://github.com/sagemath/sage/issues/38290 for details.
         True
         sage: L.<z> = LazyLaurentSeriesRing(QQ)
         sage: is_LaurentSeriesRing(L)
         True
     """
-    from sage.rings.lazy_series_ring import LazyLaurentSeriesRing
+    from sage.misc.superseded import deprecation
+    deprecation(38290,
+                "The function is_LaurentSeriesRing is deprecated; "
+                "use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.")
     return isinstance(x, (LaurentSeriesRing, LazyLaurentSeriesRing))
 
 
@@ -207,9 +220,9 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: L.variable_name()
             'q'
         """
-        from .power_series_ring import PowerSeriesRing, is_PowerSeriesRing
+        from .power_series_ring import PowerSeriesRing
 
-        if not kwds and len(args) == 1 and is_PowerSeriesRing(args[0]):
+        if not kwds and len(args) == 1 and isinstance(args[0], (PowerSeriesRing_generic, LazyPowerSeriesRing)):
             power_series = args[0]
         else:
             power_series = PowerSeriesRing(*args, **kwds)
@@ -218,7 +231,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
     def __init__(self, power_series):
         """
-        Initialization
+        Initialization.
 
         EXAMPLES::
 
@@ -284,8 +297,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
     def base_extend(self, R):
         """
         Return the Laurent series ring over R in the same variable as
-        self, assuming there is a canonical coerce map from the base ring
-        of self to R.
+        ``self``, assuming there is a canonical coerce map from the base ring
+        of ``self`` to R.
 
         EXAMPLES::
 
@@ -304,7 +317,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         If the base ring is a field, then Laurent series are already a field.
         If the base ring is a domain, then the Laurent series over its fraction
-        field is returned. Otherwise, raise a ``ValueError``.
+        field is returned. Otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -405,7 +418,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         - ``n`` -- (default: 0) multiply the result by `t^n`
 
         - ``prec`` -- (default: ``infinity``) the precision of the series
-            as an integer.
+            as an integer
 
         EXAMPLES::
 
@@ -675,18 +688,12 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             True
         """
         A = self.base_ring()
-        from sage.rings.polynomial.laurent_polynomial_ring_base import (
-            LaurentPolynomialRing_generic,
-        )
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        from sage.rings.power_series_ring import is_PowerSeriesRing
-
-        if ((is_LaurentSeriesRing(P) or
-             isinstance(P, LaurentPolynomialRing_generic) or
-             is_PowerSeriesRing(P) or
-             is_PolynomialRing(P))
-            and P.variable_name() == self.variable_name()
-            and A.has_coerce_map_from(P.base_ring())):
+        if (isinstance(P, (LaurentSeriesRing, LazyLaurentSeriesRing,
+                           LaurentPolynomialRing_generic,
+                           PowerSeriesRing_generic, LazyPowerSeriesRing,
+                           PolynomialRing_generic))
+                and P.variable_name() == self.variable_name()
+                and A.has_coerce_map_from(P.base_ring())):
             return True
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
@@ -712,7 +719,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             False
         """
         # NOTE: There are no ring homomorphisms from the ring of
-        # all formal power series to most rings, e.g, the p-adic
+        # all formal power series to most rings, e.g, the `p`-adic
         # field, since you can always (mathematically!) construct
         # some power series that does not converge.
         # NOTE: The above claim is wrong when the base ring is Z.
@@ -721,7 +728,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
             return False
         # Note that 0 is not a *ring* homomorphism, and you cannot map to a power series ring
-        if is_LaurentSeriesRing(codomain):
+        if isinstance(codomain, (LaurentSeriesRing, LazyLaurentSeriesRing)):
             return im_gens[0].valuation() > 0 and im_gens[0].is_unit()
         return False
 

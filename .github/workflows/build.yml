@@ -97,12 +97,14 @@ jobs:
           remove-haskell:       true
           remove-codeql:        true
           remove-docker-images: true
+
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
+
       - name: Get changed files and packages
         id: changed-files
-        uses: tj-actions/changed-files@v44
+        uses: tj-actions/changed-files@v45
         with:
           # File extensions for doctests per sage.doctest.control.skipfile
           files_yaml: |
@@ -110,26 +112,47 @@ jobs:
               - 'build/pkgs/*/spkg-configure.m4'
             pkgs:
               - 'build/pkgs/**'
+              - '!build/pkgs/_**'
+              - '!build/pkgs/configure/**'
               - 'pkgs/**'
             doctests:
               - 'src/**/*.{py,pyx,pxd,pxi,sage,spyx,rst,tex}'
               - '!src/{setup,conftest*}.py'
+
       - name: Determine targets to build
         id: build-targets
         run: |
-          uninstall_targets=$(echo $(for a in '' ${{ steps.changed-files.outputs.configures_all_changed_files }}; do echo $a | sed -E 's,build/pkgs/([a-z0-9][_.a-z0-9]*)/spkg-configure[.]m4 *,\1-uninstall,'; done | sort -u))
-          build_targets=$(echo $(for a in '' ${{ steps.changed-files.outputs.pkgs_all_changed_files }}; do SPKG=$(echo $a | sed -E 's,-,_,g;s,(build/)?pkgs/([a-z0-9][-_.a-z0-9]*)/[^ ]* *,\2,;'); if [ -f "build/pkgs/$SPKG/checksums.ini" -o -f "build/pkgs/$SPKG/requirements.txt" -o -f "build/pkgs/$SPKG/spkg-install" ]; then echo "$SPKG-ensure"; fi; done | sort -u))
+          uninstall_targets=$(echo $(
+            for a in '' ${{ steps.changed-files.outputs.configures_all_changed_files }}; do
+              # Extract package name from the file path and append '-uninstall'
+              echo $a | sed -E 's,build/pkgs/([a-z0-9][_.a-z0-9]*)/spkg-configure[.]m4 *,\1-uninstall,'
+            done | sort -u  # Sort and ensure uniqueness
+          ))
+          build_targets=$(echo $(
+            for a in '' ${{ steps.changed-files.outputs.pkgs_all_changed_files }}; do
+              # Extract package name, replace '-' with '_', and strip extra parts from the path
+              SPKG=$(echo $a | sed -E 's,-,_,g;s,(build/)?pkgs/([a-z0-9][-_.a-z0-9]*)/[^ ]* *,\2,;')
+              # Check if key files exist in the package directory
+              if [ -f "build/pkgs/$SPKG/checksums.ini" ] || \
+                 [ -f "build/pkgs/$SPKG/requirements.txt" ] || \
+                 [ -f "build/pkgs/$SPKG/spkg-install" ]; then
+                echo "$SPKG-ensure"  # add the "$SPKG-ensure" target
+              fi
+            done | sort -u  # Sort and ensure uniqueness
+          ))
           if [ -n "$uninstall_targets" ]; then
-              echo "build_targets=$uninstall_targets reconfigure $build_targets ci-build-with-fallback" >> $GITHUB_OUTPUT
+            echo "build_targets=$uninstall_targets reconfigure $build_targets ci-build-with-fallback" >> $GITHUB_OUTPUT
           else
-              echo "build_targets=$build_targets ci-build-with-fallback" >> $GITHUB_OUTPUT
+            echo "build_targets=$build_targets ci-build-with-fallback" >> $GITHUB_OUTPUT
           fi
           cat $GITHUB_OUTPUT
+
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.base_ref }}
           path: worktree-base
         if: github.base_ref && steps.changed-files.outputs.pkgs_all_changed_files
+
       - name: Compute metrics
         run: |
           export PATH=build/bin:$PATH
@@ -140,6 +163,7 @@ jobs:
           else
             sage-package metrics :all:
           fi
+
       - name: Install test prerequisites
         # From docker.yml
         run: |
@@ -147,6 +171,7 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
           sudo apt-get clean
           df -h
+
       - name: Merge CI fixes from sagemath/sage
         # From docker.yml
         # This step needs to happen after the commit sha is put in DOCKER_TAG
@@ -176,7 +201,7 @@ jobs:
 
       - name: Build Docker image
         id: image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           # push and load may not be set together at the moment
           #
@@ -254,9 +279,11 @@ jobs:
           remove-haskell:       true
           remove-codeql:        true
           remove-docker-images: true
+
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
+
       - name: Install test prerequisites
         # From docker.yml
         run: |
@@ -264,6 +291,7 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
           sudo apt-get clean
           df -h
+
       - name: Merge CI fixes from sagemath/sage
         # From docker.yml
         # This step needs to happen after the commit sha is put in DOCKER_TAG
@@ -291,7 +319,7 @@ jobs:
 
       - name: Build Docker image
         id: image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           push:       true
           load:       false
@@ -352,9 +380,11 @@ jobs:
           remove-haskell:       true
           remove-codeql:        true
           remove-docker-images: true
+
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
+
       - name: Install test prerequisites
         # From docker.yml
         run: |
@@ -362,6 +392,7 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
           sudo apt-get clean
           df -h
+
       - name: Merge CI fixes from sagemath/sage
         # From docker.yml
         # This step needs to happen after the commit sha is put in DOCKER_TAG
@@ -389,7 +420,7 @@ jobs:
 
       - name: Build Docker image
         id: image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           push:       true
           load:       false
@@ -442,8 +473,11 @@ jobs:
         if: (success() || failure()) && steps.container.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
+          # The path .coverage is a directory that contains the combined coverage
+          # data file .coverage, which is a hidden file because of the leading dot
           name: coverage-${{ steps.copy-coverage.outputs.tests_id }}
           path: .coverage
+          include-hidden-files: true
 
   coverage-report:
     runs-on: ubuntu-latest
@@ -466,9 +500,11 @@ jobs:
           remove-haskell:       true
           remove-codeql:        true
           remove-docker-images: true
+
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
+
       - name: Install test prerequisites
         # From docker.yml
         run: |
@@ -476,6 +512,7 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
           sudo apt-get clean
           df -h
+
       - name: Merge CI fixes from sagemath/sage
         # From docker.yml
         # This step needs to happen after the commit sha is put in DOCKER_TAG
@@ -503,7 +540,7 @@ jobs:
 
       - name: Build Docker image
         id: image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           push:       true
           load:       false
@@ -530,11 +567,11 @@ jobs:
       # Combining
 
       - name: Download coverage artifacts
+        if: (success() || failure()) && steps.container.outcome == 'success'
         uses: actions/download-artifact@v4
         with:
           path: .coverage
           pattern: coverage-*
-        if: (success() || failure()) && steps.container.outcome == 'success'
 
       - name: Coverage report
         if: (success() || failure()) && steps.container.outcome == 'success'
@@ -552,6 +589,6 @@ jobs:
 
       - name: Upload coverage to codecov
         if: (success() || failure()) && steps.container.outcome == 'success'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           directory: .coverage/coverage-report

@@ -24,14 +24,15 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.latex import latex
-from sage.rings.infinity import infinity, minus_infinity
-from sage.symbolic.ring import SR
-from sage.rings.real_mpfr import RR
-from sage.typeset.unicode_characters import unicode_mathbbR
+from sage.categories.manifolds import Manifolds
 from sage.manifolds.differentiable.manifold import DifferentiableManifold
 from sage.manifolds.structure import RealDifferentialStructure
-from sage.categories.manifolds import Manifolds
+from sage.misc.latex import latex
+from sage.rings.infinity import infinity, minus_infinity
+from sage.rings.real_mpfr import RR
+from sage.symbolic.ring import SR
+from sage.typeset.unicode_characters import unicode_mathbbR
+
 
 class OpenInterval(DifferentiableManifold):
     r"""
@@ -294,7 +295,6 @@ class OpenInterval(DifferentiableManifold):
         Chart ((1/2, 1), (t,))
         sage: XK.coord_range()
         t: (1/2, 1)
-
     """
     @staticmethod
     def __classcall_private__(cls, lower, upper, ambient_interval=None,
@@ -311,7 +311,6 @@ class OpenInterval(DifferentiableManifold):
             sage: J = manifolds.OpenInterval(0,1, ambient_interval=I, coordinate='t')
             sage: I.open_interval(0,1)
             Real interval (0, 1)
-
         """
         if ambient_interval:
             # cope the UniqueRepresentation framework for subintervals and
@@ -338,7 +337,6 @@ class OpenInterval(DifferentiableManifold):
             sage: J = manifolds.OpenInterval(-oo, 2); J
             Real interval (-Infinity, 2)
             sage: TestSuite(J).run(skip='_test_elements')  # pickling of elements fails
-
         """
         if latex_name is None:
             if name is None:
@@ -410,7 +408,6 @@ class OpenInterval(DifferentiableManifold):
             sage: I = manifolds.OpenInterval(-oo,0)
             sage: I
             Real interval (-Infinity, 0)
-
         """
         return "Real interval " + self._name
 
@@ -435,7 +432,6 @@ class OpenInterval(DifferentiableManifold):
             sage: I = manifolds.OpenInterval(-1, 1, names=('x',))
             sage: I._first_ngens(1)
             (x,)
-
         """
         return self._canon_chart[:]
 
@@ -461,14 +457,12 @@ class OpenInterval(DifferentiableManifold):
         - ``name`` -- (default: ``None``) name given to the point
         - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
           point; if none is provided, the LaTeX symbol is set to ``name``
-        - ``check_coords`` -- (default: ``True``) determines whether ``coords``
-          are valid coordinates for the chart ``chart``; for symbolic
-          coordinates, it is recommended to set ``check_coords`` to ``False``
+        - ``check_coords`` -- boolean (default: ``True``); determines whether
+          ``coords`` are valid coordinates for the chart ``chart``. For symbolic
+          coordinates, it is recommended to set ``check_coords`` to ``False``.
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.point.TopologicalManifoldPoint`
-          representing a point in the current interval
+        OUTPUT: :class:`~sage.manifolds.point.TopologicalManifoldPoint`
+        representing a point in the current interval
 
         EXAMPLES::
 
@@ -490,7 +484,6 @@ class OpenInterval(DifferentiableManifold):
             ...
             ValueError: the coordinates (8,) are not valid on the Chart
              ((-1, 4), (t,))
-
         """
         if coords in SR:
             coords = (coords,)
@@ -508,9 +501,7 @@ class OpenInterval(DifferentiableManifold):
         - ``category`` -- (default: ``None``) not used here (to ensure
           compatibility with generic hook ``_Hom_``)
 
-        OUTPUT:
-
-        - the set of curves `I \to M`,  where `I` is ``self``
+        OUTPUT: the set of curves `I \to M`,  where `I` is ``self``
 
         .. SEEALSO::
 
@@ -527,7 +518,6 @@ class OpenInterval(DifferentiableManifold):
              Field with 53 bits of precision
             sage: H is Hom(I, M)
             True
-
         """
         from sage.manifolds.differentiable.manifold_homset import DifferentiableCurveSet
         return DifferentiableCurveSet(self, other)
@@ -536,9 +526,7 @@ class OpenInterval(DifferentiableManifold):
         r"""
         Return the canonical chart defined on ``self``.
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.differentiable.chart.RealDiffChart`
+        OUTPUT: :class:`~sage.manifolds.differentiable.chart.RealDiffChart`
 
         EXAMPLES:
 
@@ -556,7 +544,6 @@ class OpenInterval(DifferentiableManifold):
             sage: I.<x> = manifolds.OpenInterval(0, pi)
             sage: I.canonical_chart()
             Chart ((0, pi), (x,))
-
         """
         return self._canon_chart
 
@@ -564,9 +551,7 @@ class OpenInterval(DifferentiableManifold):
         r"""
         Return the canonical coordinate defined on the interval.
 
-        OUTPUT:
-
-        - the symbolic variable representing the canonical coordinate
+        OUTPUT: the symbolic variable representing the canonical coordinate
 
         EXAMPLES:
 
@@ -595,7 +580,6 @@ class OpenInterval(DifferentiableManifold):
             sage: I.<x> = manifolds.OpenInterval(0, pi)
             sage: I.canonical_coordinate()
             x
-
         """
         return self._canon_chart._xx[0]
 
@@ -618,7 +602,6 @@ class OpenInterval(DifferentiableManifold):
             1/4
             sage: J.inf()
             -Infinity
-
         """
         return self._lower
 
@@ -643,7 +626,6 @@ class OpenInterval(DifferentiableManifold):
             3
             sage: J.sup()
             +Infinity
-
         """
         return self._upper
 
@@ -691,7 +673,6 @@ class OpenInterval(DifferentiableManifold):
 
             sage: I.open_interval(-4, 4) is I
             True
-
         """
         if lower == self._lower and upper == self._upper:
             return self
@@ -860,7 +841,6 @@ class RealLine(OpenInterval):
         Real number line ℝ
         sage: list(R.subset_family())
         [Real interval (0, 1), Real number line ℝ]
-
     """
     @staticmethod
     def __classcall__(cls, name=unicode_mathbbR, latex_name=r'\Bold{R}',
@@ -876,7 +856,6 @@ class RealLine(OpenInterval):
             Real number line ℝ
             sage: R is R1
             True
-
         """
         return super().__classcall__(cls, name=name,
                                      latex_name=latex_name,
@@ -896,7 +875,6 @@ class RealLine(OpenInterval):
             Category of smooth connected manifolds over Real Field with 53 bits
              of precision
             sage: TestSuite(R).run(skip='_test_elements')  # pickling of elements fails
-
         """
         OpenInterval.__init__(self, minus_infinity, infinity, name=name,
                               latex_name=latex_name, coordinate=coordinate,
@@ -914,6 +892,5 @@ class RealLine(OpenInterval):
             sage: R = manifolds.RealLine(name='r')
             sage: R._repr_()
             'Real number line r'
-
         """
         return "Real number line " + self._name

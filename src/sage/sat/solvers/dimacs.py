@@ -6,7 +6,7 @@ infrastructure to make it easy to add new such interfaces and some example inter
 
 Currently, interfaces to **RSat** and **Glucose** are included by default.
 
-.. note::
+.. NOTE::
 
     Our SAT solver interfaces are 1-based, i.e., literals start at 1. This is consistent with the
     popular DIMACS format for SAT solving but not with Pythion's 0-based convention. However, this
@@ -28,23 +28,23 @@ Classes and Methods
 #                  https://www.gnu.org/licenses/
 ##############################################################################
 
-import os
+from pathlib import Path
 import sys
 import subprocess
 import shlex
+from time import sleep
 
 from sage.sat.solvers.satsolver import SatSolver
 from sage.misc.temporary_file import tmp_filename
-from time import sleep
 
 
 class DIMACS(SatSolver):
     """
     Generic DIMACS Solver.
 
-    .. note::
+    .. NOTE::
 
-        Usually, users won't have to use this class directly but some
+        Usually, users will not have to use this class directly but some
         class which inherits from this class.
 
     .. automethod:: __init__
@@ -73,8 +73,7 @@ class DIMACS(SatSolver):
         - ``verbosity`` -- a verbosity level, where zero means silent
           and anything else means verbose output. (default: ``0``)
 
-        - ``**kwds`` -- accepted for compatibility with other solves,
-          ignored.
+        - ``**kwds`` -- accepted for compatibility with other solvers; ignored
 
         TESTS::
 
@@ -137,10 +136,9 @@ class DIMACS(SatSolver):
         """
         if not self._tail.closed:
             self._tail.close()
-        if os.path.exists(self._tail.name):
-            os.unlink(self._tail.name)
-        if self._headname_file_created_during_init and os.path.exists(self._headname):
-            os.unlink(self._headname)
+        Path(self._tail.name).unlink(missing_ok=True)
+        if self._headname_file_created_during_init:
+            Path(self._headname).unlink(missing_ok=True)
 
     def var(self, decision=None):
         """
@@ -148,7 +146,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``decision`` -- accepted for compatibility with other solvers, ignored.
+        - ``decision`` -- accepted for compatibility with other solvers; ignored
 
         EXAMPLES::
 
@@ -183,9 +181,9 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``lits`` -- a tuple of integers != 0
+        - ``lits`` -- tuple of nonzero integers
 
-        .. note::
+        .. NOTE::
 
             If any element ``e`` in ``lits`` has ``abs(e)`` greater
             than the number of variables generated so far, then new
@@ -210,7 +208,7 @@ class DIMACS(SatSolver):
                 self.var()
             l.append(str(lit))
         l.append("0\n")
-        self._tail.write(" ".join(l) )
+        self._tail.write(" ".join(l))
         self._lit += 1
 
     def write(self, filename=None):
@@ -247,19 +245,19 @@ class DIMACS(SatSolver):
         headname = self._headname if filename is None else filename
         head = open(headname, "w")
         head.truncate(0)
-        head.write("p cnf %d %d\n" % (self._var,self._lit))
+        head.write("p cnf %d %d\n" % (self._var, self._lit))
         head.close()
 
         tail = self._tail
         tail.close()
 
-        head = open(headname,"a")
-        tail = open(self._tail.name,"r")
+        head = open(headname, "a")
+        tail = open(self._tail.name)
         head.write(tail.read())
         tail.close()
         head.close()
 
-        self._tail = open(self._tail.name,"a")
+        self._tail = open(self._tail.name, "a")
         return headname
 
     def clauses(self, filename=None):
@@ -302,7 +300,7 @@ class DIMACS(SatSolver):
         else:
             tail = self._tail
             tail.close()
-            tail = open(self._tail.name,"r")
+            tail = open(self._tail.name)
 
             clauses = []
             for line in tail.readlines():
@@ -314,7 +312,7 @@ class DIMACS(SatSolver):
                     if lit == 0:
                         break
                     clause.append(lit)
-                clauses.append( ( tuple(clause), False, None ) )
+                clauses.append((tuple(clause), False, None))
             tail.close()
             self._tail = open(self._tail.name, "a")
             return clauses
@@ -326,7 +324,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``clauses`` -- a list of clauses, either in simple format as a list of
+        - ``clauses`` -- list of clauses, either in simple format as a list of
           literals or in extended format for CryptoMiniSat: a tuple of literals,
           ``is_xor`` and ``rhs``.
 
@@ -363,20 +361,19 @@ class DIMACS(SatSolver):
             1 2 -3 0
             <BLANKLINE>
         """
-        fh = open(filename, "w")
-        fh.write("p cnf %d %d\n" % (nlits,len(clauses)))
-        for clause in clauses:
-            if len(clause) == 3 and clause[1] in (True, False) and clause[2] in (True,False,None):
-                lits, is_xor, rhs = clause
-            else:
-                lits, is_xor, rhs = clause, False, None
+        with open(filename, "w") as fh:
+            fh.write("p cnf %d %d\n" % (nlits, len(clauses)))
+            for clause in clauses:
+                if len(clause) == 3 and clause[1] in (True, False) and clause[2] in (True, False, None):
+                    lits, is_xor, rhs = clause
+                else:
+                    lits, is_xor, rhs = clause, False, None
 
-            if is_xor:
-                closing = lits[-1] if rhs else -lits[-1]
-                fh.write("x" + " ".join(map(str, lits[:-1])) + " %d 0\n" % closing)
-            else:
-                fh.write(" ".join(map(str, lits)) + " 0\n")
-        fh.close()
+                if is_xor:
+                    closing = lits[-1] if rhs else -lits[-1]
+                    fh.write("x" + " ".join(map(str, lits[:-1])) + " %d 0\n" % closing)
+                else:
+                    fh.write(" ".join(map(str, lits)) + " 0\n")
 
     def _run(self):
         r"""
@@ -520,7 +517,6 @@ class DIMACS(SatSolver):
             ....:     except ZeroDivisionError:
             ....:         pass
             sage: solve_sat(F, solver=sage.sat.solvers.RSat)    # optional - rsat, needs sage.rings.finite_rings sage.rings.polynomial.pbori
-
         """
         if assumptions is not None:
             raise NotImplementedError("Assumptions are not supported for DIMACS based solvers.")
@@ -543,6 +539,7 @@ class DIMACS(SatSolver):
             return (None,) + tuple(int(e) > 0 for e in L[:-1])
         else:
             raise ValueError("When parsing the output(={}), no line starts with letter v or s".format(self._output))
+
 
 class RSat(DIMACS):
     """
@@ -576,7 +573,6 @@ class RSat(DIMACS):
         sage: solver.add_clause((-1,-2))
         sage: solver()                            # optional - rsat
         False
-
     """
     command = "rsat {input} -v -s"
 
@@ -642,9 +638,9 @@ class Glucose(DIMACS):
         c...
         s SATISFIABLE
         v -1 -2 ... 100 0
-
     """
     command = "glucose -verb=0 -model {input}"
+
 
 class GlucoseSyrup(DIMACS):
     """
@@ -706,13 +702,13 @@ class GlucoseSyrup(DIMACS):
         c...
         s SATISFIABLE
         v -1 -2 ... 100 0
-
     """
     command = "glucose-syrup -model -verb=0 {input}"
 
+
 class Kissat(DIMACS):
     """
-    An instance of the Kissat SAT solver
+    An instance of the Kissat SAT solver.
 
     For information on Kissat see: http://fmv.jku.at/kissat/
 
@@ -770,7 +766,6 @@ class Kissat(DIMACS):
         v ...
         v ...
         v ... 100 0
-
     """
 
     command = "kissat -q {input}"
