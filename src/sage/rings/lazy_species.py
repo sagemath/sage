@@ -1,3 +1,4 @@
+from sage.misc.lazy_list import lazy_list
 from sage.rings.integer_ring import ZZ
 from sage.rings.lazy_series import LazyCompletionGradedAlgebraElement, LazyModuleElement
 from sage.rings.lazy_series_ring import (LazyCompletionGradedAlgebra,
@@ -22,31 +23,40 @@ import itertools
 from collections import defaultdict
 
 
-def weighted_compositions(n, d, weights, offset=0):
+def weighted_compositions(n, d, weight_multiplicities, _w0=0):
     r"""
     Return all compositions of `n` of weight `d`.
 
-    The weight of a composition `n_1, n_2, \dots` is `\sum_i w_i
-    n_i`.
+    The weight of a composition `n_1, n_2, \dots` is `\sum_i w_i n_i`.
 
-    ``weights`` is assumed to be a weakly increasing list of positive
-    integers.
+    INPUT:
+
+
+    - ``n`` -- a nonnegative integer, the sum of the parts
+    - ``d`` -- a nonnegative integer, the total weight
+    - ``weight_multiplicities`` -- an iterable,
+      ``weight_multiplicities[i]`` is the number of positions with
+      weight `i+1`.
 
     EXAMPLES::
 
         sage: from sage.rings.lazy_species import weighted_compositions
-        sage: list(weighted_compositions(1, 1, [1,1,2]))
-        [[0, 1], [1]]
+        sage: list(weighted_compositions(1, 1, [2,1]))
+        [[1, 0], [0, 1]]
 
-        sage: list(weighted_compositions(2, 1, [1,1,2]))
+        sage: list(weighted_compositions(2, 1, [2,1]))
         []
 
-        sage: list(weighted_compositions(1, 2, [1,1,2,3]))
+        sage: list(weighted_compositions(1, 2, [2,1,1]))
         [[0, 0, 1]]
 
-        sage: list(weighted_compositions(3, 4, [1,1,2,2,3,3,4,4,5]))
-        [[0, 2, 0, 1], [0, 2, 1], [1, 1, 0, 1], [1, 1, 1], [2, 0, 0, 1], [2, 0, 1]]
-
+        sage: list(weighted_compositions(3, 4, [2,2]))
+        [[2, 0, 1, 0],
+         [1, 1, 1, 0],
+         [0, 2, 1, 0],
+         [2, 0, 0, 1],
+         [1, 1, 0, 1],
+         [0, 2, 0, 1]]
     """
     # the empty composition exists if and only if n == d == 0
     if not n:
@@ -56,51 +66,57 @@ def weighted_compositions(n, d, weights, offset=0):
     if not d:
         return
 
-    # otherwise we iterate over the possibilities for the first part
-    if offset < len(weights):
-        w0 = weights[offset]
-    else:
+    # otherwise we iterate over the possibilities for the first
+    # weight_multiplicities[_w0] parts
+    try:
+        if _w0 >= len(weight_multiplicities):
+            return
+    except TypeError:
+        pass
+    if _w0 > d:
         return
-    if w0 > d:
-        return
-    for i in range(min(n, d // w0) + 1):
-        for c in weighted_compositions(n - i, d - i * w0, weights, offset=offset+1):
-            yield [i] + c
+    for s in range(n + 1):
+        for c in weighted_compositions(n - s, d - s * (_w0 + 1), weight_multiplicities, _w0=_w0+1):
+            m = weight_multiplicities[_w0]
+            for v in map(list, IntegerVectors(s, length=m)):
+                yield v + c
 
-
-def weighted_vector_compositions(n_vec, d, weights_vec):
+def weighted_vector_compositions(n_vec, d, weight_multiplicities_vec):
     r"""
     Return all compositions of the vector `n` of weight `d`.
 
     INPUT:
 
-    - ``n_vec``, a `k`-tuple of non-negative integers.
+    - ``n_vec`` -- a `k`-tuple of non-negative integers.
 
-    - ``d``, a non-negative integer.
+    - ``d`` -- a non-negative integer, the total sum of the parts in
+      all components
 
-    - ``weights_vec``, `k`-tuple of weakly increasing lists of
-      positive integers.
+    - ``weight_multiplicities_vec`` -- `k`-tuple of iterables, an
+      iterable, ``weight_multiplicities_vec[j][i]`` is the number of
+      positions with weight `i+1` in the `j`-th component.
 
     EXAMPLES::
 
         sage: from sage.rings.lazy_species import weighted_vector_compositions
-        sage: list(weighted_vector_compositions([1,1], 2, [[1,1,2,3], [1,2,3]]))
-        [([0, 1], [1]), ([1], [1])]
+        sage: list(weighted_vector_compositions([1,1], 2, [[2,1,1], [1,1,1]]))
+        [([1, 0], [1]), ([0, 1], [1])]
 
-        sage: list(weighted_vector_compositions([3,1], 4, [[1,1,2,5], [1,1,2,5]]))
-        [([0, 3], [0, 1]),
-         ([0, 3], [1]),
-         ([1, 2], [0, 1]),
-         ([1, 2], [1]),
+        sage: list(weighted_vector_compositions([3,1], 4, [[2,1,0,0,1], [2,1,0,0,1]]))
+        [([3, 0], [1, 0]),
+         ([3, 0], [0, 1]),
+         ([2, 1], [1, 0]),
          ([2, 1], [0, 1]),
-         ([2, 1], [1]),
-         ([3], [0, 1]),
-         ([3], [1])]
-
+         ([1, 2], [1, 0]),
+         ([1, 2], [0, 1]),
+         ([0, 3], [1, 0]),
+         ([0, 3], [0, 1])]
     """
     k = len(n_vec)
     for d_vec in IntegerVectors(d, length=k):
-        yield from itertools.product(*map(weighted_compositions, n_vec, d_vec, weights_vec))
+        yield from itertools.product(*map(weighted_compositions,
+                                          n_vec, d_vec,
+                                          weight_multiplicities_vec))
 
 ######################################################################
 
@@ -115,7 +131,8 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         sage: from sage.rings.lazy_species import LazySpecies
         sage: L = LazySpecies(ZZ, "X")
         sage: E = L(lambda n: SymmetricGroup(n))
-        sage: 1 / E
+        sage: E_inv = 1 / E
+        sage: E_inv
         1 + (-X) + (-E_2+X^2) + (-E_3+2*X*E_2-X^3)
           + (-E_4+2*X*E_3+E_2^2-3*X^2*E_2+X^4)
           + (-E_5+2*X*E_4+2*E_2*E_3-3*X^2*E_3-3*X*E_2^2+4*X^3*E_2-X^5)
@@ -127,7 +144,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         sage: def coefficient(m):
         ....:     return sum((-1)^len(la) * multinomial((n := la.to_exp())) * prod(E[i]^ni for i, ni in enumerate(n, 1)) for la in Partitions(m))
 
-        sage: all(coefficient(m) == (1/E)[m] for m in range(10))
+        sage: all(coefficient(m) == E_inv[m] for m in range(10))
         True
     """
     def isotype_generating_series(self):
@@ -146,11 +163,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E(C).isotype_generating_series()
             1 + X + 2*X^2 + 3*X^3 + 5*X^4 + 7*X^5 + 11*X^6 + O(X^7)
 
-            sage: from sage.rings.species import PolynomialSpecies
-            sage: L2 = LazySpecies(QQ, "X, Y")
-            sage: P2 = PolynomialSpecies(QQ, "X, Y")
-            sage: X = L2(P2(SymmetricGroup(1), {0: [1]}))
-            sage: Y = L2(P2(SymmetricGroup(1), {1: [1]}))
+            sage: L2.<X, Y> = LazySpecies(QQ)
             sage: E(X + Y).isotype_generating_series()
             1 + (X+Y) + (X^2+X*Y+Y^2) + (X^3+X^2*Y+X*Y^2+Y^3)
             + (X^4+X^3*Y+X^2*Y^2+X*Y^3+Y^4)
@@ -185,7 +198,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(QQ, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: E = L.Sets()
             sage: E.generating_series()
             1 + X + 1/2*X^2 + 1/6*X^3 + 1/24*X^4 + 1/120*X^5 + 1/720*X^6 + O(X^7)
 
@@ -193,11 +206,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: C.generating_series()
             X + 1/2*X^2 + 1/3*X^3 + 1/4*X^4 + 1/5*X^5 + 1/6*X^6 + O(X^7)
 
-            sage: from sage.rings.species import PolynomialSpecies
-            sage: L2 = LazySpecies(QQ, "X, Y")
-            sage: P2 = PolynomialSpecies(QQ, "X, Y")
-            sage: X = L2(P2(SymmetricGroup(1), {0: [1]}))
-            sage: Y = L2(P2(SymmetricGroup(1), {1: [1]}))
+            sage: L2.<X, Y> = LazySpecies(QQ)
             sage: E(X + Y).generating_series()
             1 + (X+Y) + (1/2*X^2+X*Y+1/2*Y^2)
             + (1/6*X^3+1/2*X^2*Y+1/2*X*Y^2+1/6*Y^3)
@@ -235,7 +244,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: from sage.rings.lazy_species import LazySpecies
             sage: L = LazySpecies(ZZ, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: E = L.Sets()
             sage: h = SymmetricFunctions(QQ).h()
             sage: LazySymmetricFunctions(h)(E.cycle_index_series())
             h[] + h[1] + h[2] + h[3] + h[4] + h[5] + h[6] + O^7
@@ -245,13 +254,9 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: s(C.cycle_index_series()[5])
             s[1, 1, 1, 1, 1] + s[2, 2, 1] + 2*s[3, 1, 1] + s[3, 2] + s[5]
 
-            sage: from sage.rings.species import PolynomialSpecies
             sage: L = LazySpecies(QQ, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
-            sage: L2 = LazySpecies(QQ, "X, Y")
-            sage: P2 = PolynomialSpecies(QQ, "X, Y")
-            sage: X = L2(P2(SymmetricGroup(1), {0: [1]}))
-            sage: Y = L2(P2(SymmetricGroup(1), {1: [1]}))
+            sage: E = L.Sets()
+            sage: L2.<X, Y> = LazySpecies(QQ)
             sage: E(X + Y).cycle_index_series()[3]
             1/6*p[] # p[1, 1, 1] + 1/2*p[] # p[2, 1] + 1/3*p[] # p[3]
             + 1/2*p[1] # p[1, 1] + 1/2*p[1] # p[2] + 1/2*p[1, 1] # p[1]
@@ -433,6 +438,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
     def __call__(self, *args):
         """
+
         EXAMPLES::
 
             sage: from sage.rings.lazy_species import LazySpecies
@@ -493,13 +499,94 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E(X)
             1 + X + E_2(X) + E_3(X) + E_4(X) + E_5(X) + E_6(X) + O^7
 
+        It would be extremely nice to allow the following, but this
+        poses theoretical problems::
+
             sage: L.<X> = LazySpecies(QQ)
             sage: E1 = L.Sets(min=1)
             sage: Omega = L.undefined(1)
             sage: L.define_implicitly([Omega], [E1(Omega) - X])
-            sage: Omega[1]
+            sage: Omega[1]  # not tested
         """
+        fP = self.parent()
+        if len(args) != fP._arity:
+            raise ValueError("arity of must be equal to the number of arguments provided")
+        # Find a good parent for the result
+        from sage.structure.element import get_coercion_model
+        cm = get_coercion_model()
+        P = cm.common_parent(self.base_ring(), *[parent(g) for g in args])
+        # f = 0
+        if isinstance(self._coeff_stream, Stream_zero):
+            return P.zero()
+
+        # args = (0, ..., 0)
+        if all((not isinstance(g, LazyModuleElement) and not g)
+               or (isinstance(g, LazyModuleElement)
+                   and isinstance(g._coeff_stream, Stream_zero))
+               for g in args):
+            return P(self[0])
+
         return CompositionSpeciesElement(self, *args)
+
+    def revert(self):
+        r"""
+        Return the compositional inverse of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.lazy_species import LazySpecies
+            sage: L.<X> = LazySpecies(QQ)
+            sage: E1 = L.Sets(1)
+            sage: g = E1.revert()
+            sage: g[:5]
+            [X, -E_2, -E_3 + X*E_2, -E_4 + P_4 + X*E_3 - X^2*E_2]
+
+            sage: E = L.Sets()
+            sage: P = E(X*E1(-X))*(1+X) - 1
+            sage: P.revert()[:5]
+            [X, X^2, X*E_2 + 2*X^3, X*E_3 + 2*X^2*E_2 + {((1,2)(3,4),)} + 5*X^4]
+        """
+        P = self.parent()
+        if P._arity != 1:
+            raise ValueError("arity must be equal to 1")
+        coeff_stream = self._coeff_stream
+        if isinstance(coeff_stream, Stream_zero):
+            raise ValueError("compositional inverse does not exist")
+        R = P._laurent_poly_ring
+        if (isinstance(coeff_stream, Stream_exact)
+            and coeff_stream.order() >= 0
+            and coeff_stream._degree == 2):
+            # self = a + b * p_1; self.revert() = -a/b + 1/b * p_1
+            a = coeff_stream[0]
+            b = coeff_stream[1][Partition([1])]
+            X = R(Partition([1]))
+            coeff_stream = Stream_exact((-a/b, 1/b * X),
+                                        order=0)
+            return P.element_class(P, coeff_stream)
+
+        # TODO: coefficients should not be checked here, it prevents
+        # us from using self.define in some cases!
+        if coeff_stream[0]:
+            raise ValueError("cannot determine whether the compositional inverse exists")
+
+        X_mol = P._laurent_poly_ring._indices.subset(1)[0]  # as a molecular species
+        X = P(SymmetricGroup(1))  # as a lazy species
+
+        def coefficient(n):
+            if n:
+                return 0
+            c = coeff_stream[1].coefficient(X_mol)
+            if c.is_unit():
+                return ~c
+            raise ValueError("compositional inverse does not exist")
+
+        b = P(lambda n: 0 if n else coeff_stream[1].coefficient(X_mol))  # TODO: we want a lazy version of Stream_exact
+        b_inv = P(coefficient)  # TODO: we want a lazy version of Stream_exact
+        g = P.undefined(valuation=1)
+        g.define(b_inv * (X - (self - b * X)(g)))
+        return g
+
+    compositional_inverse = revert
 
 
 class SumSpeciesElement(LazySpeciesElement):
@@ -560,33 +647,18 @@ class CompositionSpeciesElement(LazySpeciesElement):
 
             sage: from sage.rings.lazy_species import LazySpecies
             sage: P.<X> = LazySpecies(QQ)
+            sage: P.zero()(X)
+            0
             sage: X(P.zero())
-
+            0
             sage: (1+X)(P.zero())
+            1
         """
-        fP = parent(left)
-        if len(args) != fP._arity:
-            raise ValueError("arity of must be equal to the number of arguments provided")
-
+        fP = left.parent()
         # Find a good parent for the result
         from sage.structure.element import get_coercion_model
         cm = get_coercion_model()
         P = cm.common_parent(left.base_ring(), *[parent(g) for g in args])
-
-        # f = 0
-        if isinstance(left._coeff_stream, Stream_zero):
-            coeff_stream = Stream_zero()
-            super().__init__(P, coeff_stream)
-            self._left = left
-            self._args = args
-            return
-
-        # args = (0, ..., 0)
-        if all((not isinstance(g, LazyModuleElement) and not g)
-               or (isinstance(g, LazyModuleElement)
-                   and isinstance(g._coeff_stream, Stream_zero))
-               for g in args):
-            return P(left[0])
 
         # f is a constant polynomial
         if (isinstance(left._coeff_stream, Stream_exact)
@@ -607,23 +679,36 @@ class CompositionSpeciesElement(LazySpeciesElement):
         R = P._internal_poly_ring.base_ring()
         L = fP._internal_poly_ring.base_ring()
 
+        def coeff(g, i):
+            c = g._coeff_stream[i]
+            if not isinstance(c, PolynomialSpecies.Element):
+                return R(c)
+            return c
+
+        # args_flat and weights contain one list for each g
+        weight_exp = [lazy_list(lambda j, g=g: len(coeff(g, j+1)))
+                      for g in args]
+        # work around python's scoping rules
+        def flat(g):
+            return itertools.chain.from_iterable((coeff(g, j) for j in itertools.count()))
+        args_flat1 = [lazy_list(flat(g)) for g in args]
+
         def coefficient(n):
             if not n:
                 if left[0]:
                     return R(list(left[0])[0][1])
                 return R.zero()
-            args_flat = [[(M, c) for i in range(n+1) for M, c in g[i]]
-                         for g in args]
-            weights = [[sum(M.grade()) for i in range(n+1) for M, _ in g[i]]
-                       for g in args]
             result = R.zero()
-            for i in range(n // gv + 1):
+            for i in range(1, n // gv + 1):
+                # skip i=0 because it produces a term only for n=0
+
                 # compute homogeneous components
                 lF = defaultdict(L)
                 for M, c in left[i]:
                     lF[M.grade()] += L._from_dict({M: c})
                 for mc, F in lF.items():
-                    for degrees in weighted_vector_compositions(mc, n, weights):
+                    for degrees in weighted_vector_compositions(mc, n, weight_exp):
+                        args_flat = [list(a[0:len(degrees[j])]) for j, a in enumerate(args_flat1)]
                         multiplicities = [c for alpha, g_flat in zip(degrees, args_flat)
                                           for d, (_, c) in zip(alpha, g_flat) if d]
                         molecules = [M for alpha, g_flat in zip(degrees, args_flat)
