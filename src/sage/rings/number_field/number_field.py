@@ -4826,7 +4826,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: K._S_class_group_and_units(tuple(K.primes_above(2) + K.primes_above(3)))
-            ([6*a + 2, -6*a + 3, -1, -12*a - 5], [])
+            ([6*a + 2, -6*a + 3, -1, -12*a - 5], [])  # 64-bit
+            ([6*a + 2, -6*a - 3, -1, -12*a - 5], [])  # 32-bit
         """
         K_pari = self.pari_bnf(proof=proof)
         S_pari = [p.pari_prime() for p in sorted(set(S))]
