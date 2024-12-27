@@ -32,25 +32,28 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 
 import collections.abc
 import doctest
 import platform
 import re
+import sys
 from collections import defaultdict
 from functools import reduce
 from typing import Literal, Union, overload
 
+from sage.doctest.check_tolerance import (
+    ToleranceExceededError,
+    check_tolerance_complex_domain,
+    check_tolerance_real_domain,
+    float_regex,
+)
+from sage.doctest.external import available_software, external_software
+from sage.doctest.marked_output import MarkedOutput
+from sage.doctest.rif_tol import RIFtol, add_tolerance
 from sage.misc.cachefunc import cached_function
 from sage.repl.preparse import preparse, strip_string_literals
-from sage.doctest.rif_tol import RIFtol, add_tolerance
-from sage.doctest.marked_output import MarkedOutput
-from sage.doctest.check_tolerance import (
-    ToleranceExceededError, check_tolerance_real_domain,
-    check_tolerance_complex_domain, float_regex)
-
-from .external import available_software, external_software
-
 
 # This is the correct pattern to match ISO/IEC 6429 ANSI escape sequences:
 ansi_escape_sequence = re.compile(r"(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])")
@@ -71,6 +74,9 @@ optionaltag_regex = re.compile(r"^(\w|[.])+$")
 optionalfiledirective_regex = re.compile(
     r'\s*(#+|%+|r"+|"+|\.\.)\s*sage\.doctest: (.*)'
 )
+
+bitness_marker = re.compile('#.*(32|64)-bit')
+bitness_value = 64 if sys.maxsize > (1 << 32) else 32
 
 
 @overload
@@ -536,7 +542,7 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
     return line
 
 
-def parse_tolerance(source, want):
+def parse_tolerance(source: str, want: str) -> str | MarkedOutput:
     r"""
     Return a version of ``want`` marked up with the tolerance tags
     specified in ``source``.
@@ -570,7 +576,21 @@ def parse_tolerance(source, want):
     safe, literals, state = strip_string_literals(source)
     first_line = safe.split('\n', 1)[0]
     if '#' not in first_line:
-        return want
+        if "#" not in want:
+            return want
+
+        want_32 = ""
+        want_64 = ""
+        for line in want.split("\n"):
+            bitness = bitness_marker.search(line)
+            if bitness:
+                if bitness.groups()[0] == "32":
+                    want_32 += line[:bitness.start()] + "\n"
+                else:
+                    want_64 += line[:bitness.start()] + "\n"
+        if want_32 == "" and want_64 == "":
+            return want
+        return MarkedOutput(want).update(bitness_32=want_32, bitness_64=want_64)
     comment = first_line[first_line.find('#') + 1:]
     comment = comment[comment.index('(') + 1: comment.rindex(')')]
     # strip_string_literals replaces comments
@@ -821,7 +841,7 @@ class SageDocTestParser(doctest.DocTestParser):
         """
         return not (self == other)
 
-    def parse(self, string, *args):
+    def parse(self, string: str, name: str = "<string>") -> list[str | doctest.Example]:
         r"""
         A Sage specialization of :class:`doctest.DocTestParser`.
 
@@ -1037,8 +1057,8 @@ class SageDocTestParser(doctest.DocTestParser):
             string = find_python_continuation.sub(r"\1" + ellipsis_tag + r"\2", string)
         string = find_sage_prompt.sub(r"\1>>> sage: ", string)
         string = find_sage_continuation.sub(r"\1...", string)
-        res = doctest.DocTestParser.parse(self, string, *args)
-        filtered = []
+        res = doctest.DocTestParser.parse(self, string, name)
+        filtered: list[str | doctest.Example] = []
         persistent_optional_tags = self.file_optional_tags
         persistent_optional_tag_setter = None
         persistent_optional_tag_setter_index = None
@@ -1247,7 +1267,7 @@ class SageOutputChecker(doctest.OutputChecker):
             return '<CSI-' + ansi_escape.lstrip('\x1b[\x9b') + '>'
         return ansi_escape_sequence.subn(human_readable, string)[0]
 
-    def check_output(self, want, got, optionflags):
+    def check_output(self, want: str | MarkedOutput, got: str, optionflags: int) -> bool:
         r"""
         Check to see if the output matches the desired output.
 
@@ -1387,6 +1407,10 @@ class SageOutputChecker(doctest.OutputChecker):
                     want, got = check_tolerance_real_domain(want, got)
                 elif want.abs_tol:
                     want, got = check_tolerance_complex_domain(want, got)
+                elif want.bitness_32 and bitness_value == 32:
+                    want = want.bitness_32
+                elif want.bitness_64 and bitness_value == 64:
+                    want = want.bitness_64
         except ToleranceExceededError:
             return False
 
