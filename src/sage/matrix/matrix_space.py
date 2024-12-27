@@ -957,7 +957,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
     def is_exact(self):
         """
-        Test whether elements of this matrix space is exact.
+        Test whether elements of this matrix space are represented exactly.
 
         OUTPUT:
 

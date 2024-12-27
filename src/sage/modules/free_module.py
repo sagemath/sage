@@ -1010,7 +1010,7 @@ class Module_free_ambient(Module):
 
     def is_exact(self):
         """
-        Test whether elements of this module is exact.
+        Test whether elements of this module are represented exactly.
 
         OUTPUT:
 

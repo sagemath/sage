@@ -1076,6 +1076,19 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         a = self.ainvs()
         return y**2 + a[0]*x*y + a[2]*y == x**3 + a[1]*x**2 + a[3]*x + a[4]
 
+    def is_exact(self):
+        """
+        Test whether elements of this elliptic curve are represented exactly.
+
+        EXAMPLES::
+
+            sage: EllipticCurve(QQ, [1, 2]).is_exact()
+            True
+            sage: EllipticCurve(RR, [1, 2]).is_exact()
+            False
+        """
+        return self.__base_ring.is_exact()
+
     def a_invariants(self):
         r"""
         The `a`-invariants of this elliptic curve, as a tuple.

@@ -2863,7 +2863,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     cpdef bint is_exact(self) except -2:
         """
-        Test whether elements of this parent is exact.
+        Test whether elements of this parent are represented exactly.
 
         .. NOTE::
 
