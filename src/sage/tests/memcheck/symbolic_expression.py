@@ -1,7 +1,7 @@
 from sage.tests.memcheck.verify_no_leak import verify_no_leak
 
 
-def test_sqrt_sqrt_2() -> None:
+def check_sqrt_sqrt_2() -> None:
     from sage.misc.functional import sqrt
     T2 = sqrt(2)
 

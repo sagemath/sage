@@ -92,21 +92,21 @@ set_inclusions = [
 sublattice_closed = ['distributive', 'modular', 'semidistributive', 'join_semidistributive', 'meet_semidistributive']
 
 
-def test_attrcall(name, L):
+def check_attrcall(name, L):
     """
     Return a function by name.
 
-    This is a helper function for test_finite_lattice(). This
+    This is a helper function for check_finite_lattice(). This
     will unify all Boolean-valued functions to a function without
     parameters.
 
     EXAMPLES::
 
-        sage: from sage.tests.finite_poset import test_attrcall
+        sage: from sage.tests.finite_poset import check_attrcall
         sage: N5 = posets.PentagonPoset()
-        sage: N5.is_modular() == test_attrcall('is_modular', N5)
+        sage: N5.is_modular() == check_attrcall('is_modular', N5)
         True
-        sage: N5.is_constructible_by_doublings('convex') == test_attrcall('is_doubling_convex', N5)                     # needs sage.combinat
+        sage: N5.is_constructible_by_doublings('convex') == check_attrcall('is_doubling_convex', N5)                     # needs sage.combinat
         True
     """
     if name == 'is_doubling_any':
@@ -124,7 +124,7 @@ def test_attrcall(name, L):
     return attrcall(name)(L)
 
 
-def test_finite_lattice(L):
+def check_finite_lattice(L):
     """
     Test several functions on a given finite lattice.
 
@@ -147,9 +147,9 @@ def test_finite_lattice(L):
 
     EXAMPLES::
 
-        sage: from sage.tests.finite_poset import test_finite_lattice
+        sage: from sage.tests.finite_poset import check_finite_lattice
         sage: L = posets.RandomLattice(10, 0.98)
-        sage: test_finite_lattice(L) is None  # Long time
+        sage: check_finite_lattice(L) is None  # Long time
         True
     """
     from sage.combinat.posets.lattices import LatticePoset
@@ -168,7 +168,7 @@ def test_finite_lattice(L):
         return None
 
     all_props = set(list(implications) + flatten(implications.values()))
-    P = {x: test_attrcall('is_' + x, L) for x in all_props}
+    P = {x: check_attrcall('is_' + x, L) for x in all_props}
 
     ### Relations between boolean-valued properties ###
 
@@ -192,11 +192,11 @@ def test_finite_lattice(L):
     Ldual = L.dual()
     # Selfdual properties
     for p in selfdual_properties:
-        if P[p] != test_attrcall('is_'+p, Ldual):
+        if P[p] != check_attrcall('is_'+p, Ldual):
             raise ValueError("selfdual property %s error" % p)
     # Dual properties and elements
     for p1, p2 in dual_properties:
-        if P[p1] != test_attrcall('is_'+p2, Ldual):
+        if P[p1] != check_attrcall('is_'+p2, Ldual):
             raise ValueError("dual properties error %s" % p1)
     for e1, e2 in dual_elements:
         if set(attrcall(e1)(L)) != set(attrcall(e2)(Ldual)):
@@ -397,7 +397,7 @@ def test_finite_lattice(L):
     # Sublattice-closed properties
     L_ = L.sublattice(Subsets(L).random_element())
     for p in sublattice_closed:
-        if P[p] and not test_attrcall('is_'+p, L_):
+        if P[p] and not check_attrcall('is_'+p, L_):
             raise ValueError("property %s should apply to sublattices" % p)
 
     # Some sublattices
@@ -444,7 +444,7 @@ def test_finite_lattice(L):
         raise ValueError("error in neutral_elements")
 
 
-def test_finite_poset(P):
+def check_finite_poset(P):
     """
     Test several functions on a given finite poset.
 
@@ -458,9 +458,9 @@ def test_finite_poset(P):
 
     EXAMPLES::
 
-        sage: from sage.tests.finite_poset import test_finite_poset
+        sage: from sage.tests.finite_poset import check_finite_poset
         sage: P = posets.RandomPoset(10, 0.15)
-        sage: test_finite_poset(P) is None  # Long time
+        sage: check_finite_poset(P) is None  # Long time
         True
     """
     from sage.combinat.posets.posets import Poset

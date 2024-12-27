@@ -333,14 +333,14 @@ def random_rings(level=MAX_LEVEL):
 
 
 @random_testing
-def test_random_elements(level=MAX_LEVEL, trials=1):
+def check_random_elements(level=MAX_LEVEL, trials=1):
     """
     Create random elements of random rings until a crash occurs, in
     which case an exception is raised.  Defaults to running a single
     trial, but more can be specified.  To run tests in an infinite
     loop, you could use::
 
-        while True: test_random_elements(trials=100, print_seed=True)
+        while True: check_random_elements(trials=100, print_seed=True)
 
     INPUT:
 
@@ -352,7 +352,7 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
     EXAMPLES::
 
         sage: import sage.rings.tests
-        sage: sage.rings.tests.test_random_elements(trials=2, seed=0)                   # needs sage.rings.number_field
+        sage: sage.rings.tests.check_random_elements(trials=2, seed=0)                   # needs sage.rings.number_field
         survived 0 tests
         Rational Field
         -1/2
@@ -363,9 +363,9 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
         ----
 
         sage: # needs sage.rings.finite_rings sage.rings.number_field sage.rings.padics
-        sage: sage.rings.tests.test_random_elements(trials=10)
+        sage: sage.rings.tests.check_random_elements(trials=10)
         survived 0 tests...
-        sage: sage.rings.tests.test_random_elements(trials=1000)  # long time (5 seconds)
+        sage: sage.rings.tests.check_random_elements(trials=1000)  # long time (5 seconds)
         survived 0 tests...
     """
     r = random_rings(level)
@@ -381,7 +381,7 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
 
 
 @random_testing
-def test_random_arith(level=MAX_LEVEL, trials=1):
+def check_random_arith(level=MAX_LEVEL, trials=1):
     """
     Create random elements of random rings and do some arithmetic with them.
 
@@ -389,7 +389,7 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
     raised.  Defaults to running a single trial, but more can be
     specified.  To run tests in an infinite loop, you could use::
 
-        while True: test_random_arith(trials=100, print_seed=True)
+        while True: check_random_arith(trials=100, print_seed=True)
 
     INPUT:
 
@@ -402,7 +402,7 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
 
         sage: # needs sage.rings.finite_rings sage.rings.number_field sage.rings.padics
         sage: import sage.rings.tests
-        sage: sage.rings.tests.test_random_arith(trials=2, seed=0)
+        sage: sage.rings.tests.check_random_arith(trials=2, seed=0)
         survived 0 tests
         Rational Field
         -1/2 -1/95
@@ -411,9 +411,9 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
         Number Field in a with defining polynomial x^2 - 15083 with a = 122.81286577553673?
         a -2*a - 1
         2*a - 30164
-        sage: sage.rings.tests.test_random_arith(trials=10)
+        sage: sage.rings.tests.check_random_arith(trials=10)
         survived 0 tests...
-        sage: sage.rings.tests.test_random_arith(trials=1000)   # long time (5 seconds?)
+        sage: sage.rings.tests.check_random_arith(trials=1000)   # long time (5 seconds?)
         survived 0 tests...
     """
     i = 0
@@ -430,7 +430,7 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
 
 
 @random_testing
-def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
+def check_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
                                   ref_mul=lambda f, g: f._mul_generic(g),
                                   base_ring_random_elt_args=[],
                                   numtests=10, verbose=False):
@@ -441,9 +441,9 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
 
     First check that random tests are reproducible::
 
-        sage: from sage.rings.tests import test_karatsuba_multiplication
-        sage: test_karatsuba_multiplication(ZZ, 6, 5, verbose=True, seed=42)
-        test_karatsuba_multiplication: ring=Univariate Polynomial Ring in x over Integer Ring, threshold=2
+        sage: from sage.rings.tests import check_karatsuba_multiplication
+        sage: check_karatsuba_multiplication(ZZ, 6, 5, verbose=True, seed=42)
+        check_karatsuba_multiplication: ring=Univariate Polynomial Ring in x over Integer Ring, threshold=2
           (x^6 + 4*x^5 + 4*x^4 - 3*x^3 - x^2 - x)*(2*x^4 + 3*x^3 - 20*x^2 - 2*x + 1)
           (4*x^5 + 16*x^2 + x - 41)*(x^2 + x - 1)
           (8*x^2 + 2*x + 1)*(3)
@@ -462,15 +462,15 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
         sage: rings += [GF(49, 'a')]                                                    # needs sage.rings.finite_rings
         sage: rings += [MatrixSpace(GF(17), 3)]                                         # needs sage.modules
         sage: for C in rings:                                                           # needs sage.modules
-        ....:     test_karatsuba_multiplication(C, 10, 10)
+        ....:     check_karatsuba_multiplication(C, 10, 10)
 
     Zero-tests over ``QQbar`` are currently very slow, so we test only very small examples::
 
-        sage: test_karatsuba_multiplication(QQbar, 3, 3, numtests=2)    # long time, needs sage.rings.number_field
+        sage: check_karatsuba_multiplication(QQbar, 3, 3, numtests=2)    # long time, needs sage.rings.number_field
 
     Larger degrees (over ``ZZ``, using FLINT)::
 
-        sage: test_karatsuba_multiplication(ZZ, 1000, 1000,
+        sage: check_karatsuba_multiplication(ZZ, 1000, 1000,
         ....:                               ref_mul=lambda f,g: f*g,
         ....:                               base_ring_random_elt_args=[1000])
 
@@ -478,8 +478,8 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
 
         sage: testrings = [ZZ[I, sqrt(2)], ZZ[I, sqrt(2), sqrt(3)]]     # long time
         sage: for C in testrings:                                       # long time
-        ....:     test_karatsuba_multiplication(C, 100, 100)
-        sage: test_karatsuba_multiplication(ZZ, 10000, 10000,           # long time
+        ....:     check_karatsuba_multiplication(C, 100, 100)
+        sage: check_karatsuba_multiplication(ZZ, 10000, 10000,           # long time
         ....:                               ref_mul=lambda f,g: f*g,
         ....:                               base_ring_random_elt_args=[100000])
     """
@@ -489,7 +489,7 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
     threshold = randint(0, min(maxdeg1, maxdeg2))
     R = PolynomialRing(base_ring, 'x')
     if verbose:
-        print(f"test_karatsuba_multiplication: ring={R}, threshold={threshold}")
+        print(f"check_karatsuba_multiplication: ring={R}, threshold={threshold}")
     for _ in range(numtests):
         f = R.random_element(randint(0, maxdeg1), False, *base_ring_random_elt_args)
         g = R.random_element(randint(0, maxdeg2), False, *base_ring_random_elt_args)
