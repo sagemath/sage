@@ -32,18 +32,23 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from __future__ import annotations
 
 import warnings
+from typing import Any
 
-from sage.structure.sage_object import SageObject
+from typing_extensions import Self
+
 from sage.repl.rich_output.output_basic import (
-    OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputLatex,
+    OutputAsciiArt,
+    OutputPlainText,
+    OutputUnicodeArt,
 )
 from sage.repl.rich_output.output_browser import (
     OutputHtml,
 )
 from sage.repl.rich_output.preferences import DisplayPreferences
+from sage.structure.sage_object import SageObject
 
 
 class DisplayException(Exception):
@@ -185,7 +190,7 @@ class restricted_output:
 
 class DisplayManager(SageObject):
 
-    _instance = None
+    _instance: Self | None = None
 
     def __init__(self):
         """
@@ -205,7 +210,7 @@ class DisplayManager(SageObject):
         self.switch_backend(BackendSimple())
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls) -> Self:
         """
         Get the singleton instance.
 
@@ -771,7 +776,7 @@ class DisplayManager(SageObject):
         """
         return self._supported_output
 
-    def displayhook(self, obj):
+    def displayhook(self, obj: Any) -> None | Any:
         """
         Implementation of the displayhook.
 
