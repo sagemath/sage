@@ -8852,7 +8852,7 @@ class NumberField_absolute(NumberField_generic):
             pass
         f = self.pari_polynomial()
         if optimize:
-            v = f.polred(2)
+            v = f.polredbest(2)
             elts = v[0]
             polys = v[1]
         else:
