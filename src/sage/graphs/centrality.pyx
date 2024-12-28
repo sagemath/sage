@@ -23,6 +23,8 @@ from cysignals.signals cimport sig_check
 from memory_allocator cimport MemoryAllocator
 
 from sage.data_structures.bitset_base cimport *
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
 from sage.graphs.base.static_sparse_graph cimport *
 from sage.libs.gmp.mpq cimport *
 from sage.rings.rational cimport Rational
@@ -115,6 +117,19 @@ def centrality_betweenness(G, bint exact=False, bint normalize=True):
         {0: 0.0, 1: 0.0}
         sage: centrality_betweenness(Graph(2), exact=1)
         {0: 0, 1: 0}
+
+    The method is valid for immutable graphs::
+
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: G.centrality_betweenness() == H.centrality_betweenness()
+        True
+        sage: G.centrality_betweenness(exact=True) == H.centrality_betweenness(exact=True)
+        True
     """
     if exact:
         return centrality_betweenness_C(G, <mpq_t> 0, normalize=normalize)
@@ -146,12 +161,13 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
         return {v: zero for v in G}
 
     # A copy of G, for faster neighbor enumeration
+    cdef StaticSparseCGraph cg
     cdef short_digraph g
 
     # A second copy, to remember the edges used during the BFS (see doc)
     cdef short_digraph bfs_dag
 
-    cdef list int_to_vertex = list(G)
+    cdef list int_to_vertex
 
     cdef int n = G.order()
 
@@ -178,7 +194,14 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
         mpq_init(mpq_tmp)
 
     try:
-        init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+        if isinstance(G, StaticSparseBackend):
+            cg = <StaticSparseCGraph> G._cg
+            g = <short_digraph> cg.g
+            int_to_vertex = cg._vertex_to_labels
+        else:
+            int_to_vertex = list(G)
+            init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+
         init_reverse(bfs_dag, g)
 
         queue = <uint32_t*> check_allocarray(n, sizeof(uint32_t))
@@ -304,7 +327,8 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
             mpq_clear(mpq_tmp)
 
     finally:
-        free_short_digraph(g)
+        if not isinstance(G, StaticSparseBackend):
+            free_short_digraph(g)
         free_short_digraph(bfs_dag)
         bitset_free(seen)
         bitset_free(next_layer)
@@ -667,6 +691,19 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
         True
         sage: all(abs(topk[i][0] - sorted_centr[i]) < 1e-12 for i in range(len(topk)))
         True
+
+    Immutable graphs::
+
+        sage: from sage.graphs.centrality import centrality_closeness_top_k
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: k = randint(1, 10)
+        sage: centrality_closeness_top_k(G, k) == centrality_closeness_top_k(H, k)
+        True
     """
     cdef list res
     if k >= G.order():
@@ -684,12 +721,19 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
         return []
 
     cdef MemoryAllocator mem = MemoryAllocator()
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
     # Copying the whole graph to obtain the list of neighbors quicker than by
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
-    cdef list V = list(G)
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=V)
+    cdef list V
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+        V = cg._vertex_to_labels
+    else:
+        V = list(G)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=V)
     cdef int n = sd.n
     cdef int* reachL = <int*> mem.malloc(n * sizeof(int))
     cdef int* reachU
@@ -824,6 +868,9 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
     if verbose > 0:
         print("Final performance ratio: {}".format(visited / (n * <double> (sd.neighbors[sd.n] - sd.edges))))
 
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
+
     res = [(1.0 / farness[v], V[v]) for v in topk[:k] if v != -1]
     try:
         res = sorted(res, reverse=True)
@@ -884,6 +931,18 @@ def centrality_closeness_random_k(G, int k=1):
         Traceback (most recent call last):
         ...
         ValueError: G must be an undirected Graph
+
+    The method is valid for immutable graphs::
+
+        sage: from sage.graphs.centrality import centrality_closeness_random_k
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: centrality_closeness_random_k(G, 10) == centrality_closeness_random_k(H, 10)
+        True
     """
     G._scream_if_not_simple()
     if G.is_directed():
@@ -905,13 +964,21 @@ def centrality_closeness_random_k(G, int k=1):
     cdef double* partial_farness = <double*> mem.malloc(n * sizeof(double))
     cdef uint32_t* distance
     cdef uint32_t* waiting_list
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
     cdef bitset_t seen
     cdef double farness
     cdef int i, j
     cdef dict closeness_centrality_array = {}
-    cdef list int_to_vertex = list(G)
-    cdef dict vertex_to_int = {v: i for i, v in enumerate(int_to_vertex)}
+    cdef list int_to_vertex
+    cdef dict vertex_to_int
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        int_to_vertex = cg._vertex_to_labels
+        vertex_to_int = cg._vertex_to_int
+    else:
+        int_to_vertex = list(G)
+        vertex_to_int = {v: i for i, v in enumerate(int_to_vertex)}
 
     # Initialize
     for i in range(n):
@@ -939,7 +1006,10 @@ def centrality_closeness_random_k(G, int k=1):
         # Copying the whole graph as a static_sparse_graph for fast shortest
         # paths computation in unweighted graph. This data structure is well
         # documented in module sage.graphs.base.static_sparse_graph
-        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+        if isinstance(G, StaticSparseBackend):
+            sd = <short_digraph> cg.g
+        else:
+            init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
         distance = <uint32_t*> mem.malloc(n * sizeof(uint32_t))
         waiting_list = <uint32_t*> mem.malloc(n * sizeof(uint32_t))
         bitset_init(seen, n)
@@ -955,7 +1025,8 @@ def centrality_closeness_random_k(G, int k=1):
             closeness_centrality_array[int_to_vertex[V[i]]] = (n - 1) / farness
 
         bitset_free(seen)
-        free_short_digraph(sd)
+        if not isinstance(G, StaticSparseBackend):
+            free_short_digraph(sd)
 
     # Estimate the closeness centrality for remaining n-k vertices.
     for i in range(k, n):
