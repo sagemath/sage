@@ -1808,16 +1808,18 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
         Traceback (most recent call last):
         ...
         ValueError: vertex (17) is not a vertex of the graph
+
+    Immutable graphs::
+
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: G.maximum_cardinality_search_M() == H.maximum_cardinality_search_M()
+        True
     """
-    cdef list int_to_vertex = list(G)
-
-    if initial_vertex is None:
-        initial_vertex = 0
-    elif initial_vertex in G:
-        initial_vertex = int_to_vertex.index(initial_vertex)
-    else:
-        raise ValueError("vertex ({0}) is not a vertex of the graph".format(initial_vertex))
-
     cdef int N = G.order()
     if not N:
         return ([], [], [])
@@ -1827,8 +1829,26 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
     # Copying the whole graph to obtain the list of neighbors quicker than by
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+
+    if initial_vertex is None:
+        initial_vertex = 0
+    elif initial_vertex in G:
+        if isinstance(G, StaticSparseBackend):
+            initial_vertex = cg._vertex_to_int[initial_vertex]
+        else:
+            initial_vertex = int_to_vertex.index(initial_vertex)
+    else:
+        raise ValueError("vertex ({0}) is not a vertex of the graph".format(initial_vertex))
 
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int* alpha = <int*>mem.calloc(N, sizeof(int))
@@ -1840,7 +1860,8 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
     maximum_cardinality_search_M_short_digraph(sd, initial_vertex, alpha, alpha_inv, F, X)
     sig_off()
 
-    free_short_digraph(sd)
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
 
     cdef int u, v
     return ([int_to_vertex[alpha[u]] for u in range(N)],
