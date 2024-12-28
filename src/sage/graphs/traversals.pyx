@@ -63,12 +63,11 @@ from collections import deque
 
 from libc.string cimport memset
 from libc.stdint cimport uint32_t
-from libcpp.queue cimport priority_queue
-from libcpp.pair cimport pair
 from libcpp.vector cimport vector
 from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
 
+from sage.data_structures.pairing_heap cimport PairingHeap_of_n_integers
 from sage.graphs.base.c_graph cimport CGraph, CGraphBackend
 from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
 from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
@@ -1388,9 +1387,9 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
         sage: G.maximum_cardinality_search(initial_vertex=0)
         [3, 2, 1, 0]
         sage: G.maximum_cardinality_search(initial_vertex=1)
-        [0, 3, 2, 1]
+        [3, 2, 0, 1]
         sage: G.maximum_cardinality_search(initial_vertex=2)
-        [0, 1, 3, 2]
+        [0, 3, 1, 2]
         sage: G.maximum_cardinality_search(initial_vertex=3)
         [0, 1, 2, 3]
         sage: G.maximum_cardinality_search(initial_vertex=3, reverse=True)
@@ -1475,27 +1474,18 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
 
     cdef int i, u, v
     for i in range(N):
-        weight[i] = 0
-        seen[i] = False
         pred[i] = i
 
-    # We emulate a heap with decrease key operation using a priority queue.
-    # A vertex can be inserted multiple times (up to its degree), but only the
-    # first extraction (with maximum weight) matters. The size of the queue will
-    # never exceed O(m).
-    cdef priority_queue[pair[int, int]] pq
-    pq.push((0, initial_vertex))
+    # We emulate a max-heap data structure using a min-heap with negative values
+    cdef PairingHeap_of_n_integers P = PairingHeap_of_n_integers(N)
+    P.push(initial_vertex, 0)
 
     # The ordering alpha is feed in reversed order and revert afterword
     cdef list alpha = []
 
-    while not pq.empty():
-        _, u = pq.top()
-        pq.pop()
-        if seen[u]:
-            # We use a lazy decrease key mode, so u can be several times in pq
-            continue
-
+    while P:
+        u = P.top_item()
+        P.pop()
         alpha.append(int_to_vertex[u])
         seen[u] = True
 
@@ -1505,7 +1495,7 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
             v = p_tmp[0]
             if not seen[v]:
                 weight[v] += 1
-                pq.push((weight[v], v))
+                P.decrease(v, -weight[v])
                 if pred[v] == v:
                     pred[v] = u
             p_tmp += 1
