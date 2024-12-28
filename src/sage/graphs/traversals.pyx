@@ -1432,17 +1432,27 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
     if N == 1:
         return (list(G), DiGraph(G)) if tree else list(G)
 
-    cdef list int_to_vertex = list(G)
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
+    cdef short_digraph sd
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(G)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
 
     if initial_vertex is None:
         initial_vertex = 0
     elif initial_vertex in G:
-        initial_vertex = int_to_vertex.index(initial_vertex)
+        if isinstance(G, StaticSparseBackend):
+            initial_vertex = cg._vertex_to_int[initial_vertex]
+        else:
+            initial_vertex = int_to_vertex.index(initial_vertex)
     else:
         raise ValueError("vertex ({0}) is not a vertex of the graph".format(initial_vertex))
 
-    cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
     cdef uint32_t** p_vertices = sd.neighbors
     cdef uint32_t* p_tmp
     cdef uint32_t* p_end
@@ -1489,7 +1499,8 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
                     pred[v] = u
             p_tmp += 1
 
-    free_short_digraph(sd)
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
 
     if len(alpha) < N:
         raise ValueError("the input graph is not connected")
