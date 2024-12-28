@@ -1422,6 +1422,17 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
         Traceback (most recent call last):
         ...
         ValueError: vertex (17) is not a vertex of the graph
+
+    Immutable graphs;:
+
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: G.maximum_cardinality_search() == H.maximum_cardinality_search()
+        True
     """
     if tree:
         from sage.graphs.digraph import DiGraph
