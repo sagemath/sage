@@ -25,11 +25,13 @@ AUTHORS:
 from .drinfeld_module import DrinfeldModule
 
 from sage.rings.integer_ring import ZZ
+from sage.rings.infinity import Infinity
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
+lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing')
 
 
 class DrinfeldModule_charzero(DrinfeldModule):
@@ -149,7 +151,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
             c += self._compute_coefficient_exp(i)*self._compute_coefficient_log(j)**(q**i)
         return -c
 
-    def exponential(self, name='z'):
+    def exponential(self, prec=Infinity, name='z'):
         r"""
         Return the exponential of this Drinfeld module.
 
@@ -158,10 +160,12 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         INPUT:
 
+        - ``prec`` -- an integer or ``Infinity`` (default: ``Infinity``);
+          the precision at which the series is returned; if ``Infinity``,
+          a lazy power series in returned
+
         - ``name`` -- string (default: ``'z'``); the name of the
           generator of the lazy power series ring
-
-        OUTPUT: a lazy power series over the base field
 
         EXAMPLES::
 
@@ -169,16 +173,23 @@ class DrinfeldModule_charzero(DrinfeldModule):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, 1])
             sage: q = A.base_ring().cardinality()
+
+        When ``prec`` is ``Infinity`` (which is the default),
+        the exponential is returned as a lazy power series, meaning
+        that any of its coefficients can be computed on demands::
+
             sage: exp = phi.exponential(); exp
             z + ((1/(T^2+T))*z^2) + ((1/(T^8+T^6+T^5+T^3))*z^4) + O(z^8)
-
-        The exponential is returned as a lazy power series, meaning that
-        any of its coefficients can be computed on demands::
-
             sage: exp[2^4]
             1/(T^64 + T^56 + T^52 + ... + T^27 + T^23 + T^15)
             sage: exp[2^5]
             1/(T^160 + T^144 + T^136 + ... + T^55 + T^47 + T^31)
+
+        On the contrary, when ``prec`` is a finite number, all the
+        required coefficients are computed at once::
+
+            sage: phi.exponential(prec=10)
+            z + (1/(T^2 + T))*z^2 + (1/(T^8 + T^6 + T^5 + T^3))*z^4 + (1/(T^24 + T^20 + T^18 + T^17 + T^14 + T^13 + T^11 + T^7))*z^8 + O(z^10)
 
         Example in higher rank::
 
@@ -216,7 +227,6 @@ class DrinfeldModule_charzero(DrinfeldModule):
         See section 4.6 of [Gos1998]_ for the definition of the
         exponential.
         """
-        L = LazyPowerSeriesRing(self._base, name)
         zero = self._base.zero()
         q = self._Fq.cardinality()
 
@@ -228,7 +238,13 @@ class DrinfeldModule_charzero(DrinfeldModule):
                 return self._compute_coefficient_exp(v)
             else:
                 return zero
-        return L(coeff_exp, valuation=1)
+
+        if prec is Infinity:
+            L = LazyPowerSeriesRing(self._base, name)
+            return L(coeff_exp, valuation=1)
+        else:
+            L = PowerSeriesRing(self._base, name, default_prec=prec)
+            return L([0] + [coeff_exp(i) for i in range(1,prec)], prec=prec)
 
     @cached_method
     def _compute_coefficient_log(self, k):
@@ -264,7 +280,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
                 c += self._compute_coefficient_log(i)*self._gen[j]**(q**i)
         return c/(T - T**(q**k))
 
-    def logarithm(self, name='z'):
+    def logarithm(self, prec=Infinity, name='z'):
         r"""
         Return the logarithm of the given Drinfeld module.
 
@@ -275,26 +291,35 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         INPUT:
 
+        - ``prec`` -- an integer or ``Infinity`` (default: ``Infinity``);
+          the precision at which the series is returned; if ``Infinity``,
+          a lazy power series in returned
+
         - ``name`` -- string (default: ``'z'``); the name of the
           generator of the lazy power series ring
-
-        OUTPUT: a lazy power series over the base field
 
         EXAMPLES::
 
             sage: A = GF(2)['T']
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, 1])
+
+        When ``prec`` is ``Infinity`` (which is the default),
+        the logarithm is returned as a lazy power series, meaning
+        that any of its coefficients can be computed on demands::
+
             sage: log = phi.logarithm(); log
             z + ((1/(T^2+T))*z^2) + ((1/(T^6+T^5+T^3+T^2))*z^4) + O(z^8)
-
-        The logarithm is returned as a lazy power series, meaning that
-        any of its coefficients can be computed on demands::
-
             sage: log[2^4]
             1/(T^30 + T^29 + T^27 + ... + T^7 + T^5 + T^4)
             sage: log[2^5]
             1/(T^62 + T^61 + T^59 + ... + T^8 + T^6 + T^5)
+
+        On the contrary, when ``prec`` is a finite number, all the
+        required coefficients are computed at once::
+
+            sage: phi.logarithm(prec=10)
+            z + (1/(T^2 + T))*z^2 + (1/(T^6 + T^5 + T^3 + T^2))*z^4 + (1/(T^14 + T^13 + T^11 + T^10 + T^7 + T^6 + T^4 + T^3))*z^8 + O(z^10)
 
         Example in higher rank::
 
@@ -317,7 +342,6 @@ class DrinfeldModule_charzero(DrinfeldModule):
             sage: log[2**3] == -1/((T**q - T)*(T**(q**2) - T)*(T**(q**3) - T))  # expected value
             True
         """
-        L = LazyPowerSeriesRing(self._base, name)
         q = self._Fq.cardinality()
 
         def coeff_log(k):
@@ -328,7 +352,13 @@ class DrinfeldModule_charzero(DrinfeldModule):
                 return self._compute_coefficient_log(v)
             else:
                 return self._base.zero()
-        return L(coeff_log, valuation=1)
+
+        if prec is Infinity:
+            L = LazyPowerSeriesRing(self._base, name)
+            return L(coeff_log, valuation=1)
+        else:
+            L = PowerSeriesRing(self._base, name, default_prec=prec)
+            return L([0] + [coeff_log(i) for i in range(1, prec)], prec=prec)
 
     @cached_method
     def _compute_goss_polynomial(self, n, q, poly_ring, X):
