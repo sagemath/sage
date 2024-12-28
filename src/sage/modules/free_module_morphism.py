@@ -42,10 +42,10 @@ TESTS::
 
 import sage.modules.free_module as free_module
 
+from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
 from sage.categories.morphism import Morphism
 from sage.modules import free_module_homspace, matrix_morphism
 from sage.structure.richcmp import rich_to_bool, richcmp
-from sage.structure.sequence import Sequence
 
 
 def is_FreeModuleMorphism(x):
@@ -71,7 +71,7 @@ def is_FreeModuleMorphism(x):
     return isinstance(x, FreeModuleMorphism)
 
 
-class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
+class FreeModuleMorphism(matrix_morphism.MatrixMorphism, FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods):
 
     def __init__(self, parent, A, side='left'):
         """
@@ -485,165 +485,6 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         return t
 
     preimage_representative = lift
-
-    def eigenvalues(self, extend=True):
-        r"""
-        Return a list with the eigenvalues of the endomorphism of vector spaces.
-
-        INPUT:
-
-        - ``extend`` -- boolean (default: ``True``); decides if base field
-          extensions should be considered or not
-
-        EXAMPLES:
-
-        We compute the eigenvalues of an endomorphism of `\QQ^3`::
-
-            sage: V = QQ^3
-            sage: H = V.endomorphism_ring()([[1,-1,0], [-1,1,1], [0,3,1]])
-            sage: H.eigenvalues()                                                       # needs sage.rings.number_field
-            [3, 1, -1]
-
-        Note the effect of the ``extend`` option::
-
-            sage: V = QQ^2
-            sage: H = V.endomorphism_ring()([[0,-1], [1,0]])
-            sage: H.eigenvalues()                                                       # needs sage.rings.number_field
-            [-1*I, 1*I]
-            sage: H.eigenvalues(extend=False)                                           # needs sage.libs.pari
-            []
-        """
-        if self.base_ring().is_field():
-            if self.is_endomorphism():
-                return self.matrix().eigenvalues(extend=extend)
-            else:
-                raise TypeError("not an endomorphism")
-        else:
-            raise NotImplementedError("module must be a vector space")
-
-    def eigenvectors(self, extend=True):
-        """
-        Compute the subspace of eigenvectors of a given eigenvalue.
-
-        INPUT:
-
-        - ``extend`` -- boolean (default: ``True``); decides if base field
-          extensions should be considered or not
-
-        OUTPUT:
-
-        A sequence of tuples. Each tuple contains an eigenvalue, a sequence
-        with a basis of the corresponding subspace of eigenvectors, and the
-        algebraic multiplicity of the eigenvalue.
-
-        EXAMPLES::
-
-            sage: # needs sage.rings.number_field
-            sage: V = (QQ^4).subspace([[0,2,1,4], [1,2,5,0], [1,1,1,1]])
-            sage: H = (V.Hom(V))(matrix(QQ, [[0,1,0], [-1,0,0], [0,0,3]]))
-            sage: H.eigenvectors()
-            [(3,    [ (0, 0, 1, -6/7) ], 1),
-             (-1*I, [ (1,  1*I, 0, -0.571428571428572? + 2.428571428571429?*I) ], 1),
-             (1*I,  [ (1, -1*I, 0, -0.571428571428572? - 2.428571428571429?*I) ], 1)]
-            sage: H.eigenvectors(extend=False)
-            [(3, [ (0, 0, 1, -6/7) ], 1)]
-            sage: H1 = (V.Hom(V))(matrix(QQ, [[2,1,0],[0,2,0],[0,0,3]]))
-            sage: H1.eigenvectors()
-            [(3, [ (0, 0, 1, -6/7) ], 1),
-             (2, [ (0, 1, 0, 17/7) ], 2)]
-            sage: H1.eigenvectors(extend=False)
-            [(3, [ (0, 0, 1, -6/7) ], 1),
-             (2, [ (0, 1, 0, 17/7) ], 2)]
-
-        ::
-
-            sage: V = QQ^2
-            sage: m = matrix(2, [1, 1, 0, 1])
-            sage: V.hom(m, side='right').eigenvectors()                                 # needs sage.rings.number_field
-            [(1, [ (1, 0) ], 2)]
-            sage: V.hom(m).eigenvectors()                                               # needs sage.rings.number_field
-            [(1, [ (0, 1) ], 2)]
-        """
-        if self.base_ring().is_field():
-            if self.is_endomorphism():
-                if self.side() == "right":
-                    seigenvec = self.matrix().eigenvectors_right(extend=extend)
-                else:
-                    seigenvec = self.matrix().eigenvectors_left(extend=extend)
-                resu = []
-                for i in seigenvec:
-                    V = self.domain().base_extend(i[0].parent())
-                    svectors = Sequence([V(j * V.basis_matrix()) for j in i[1]], cr=True)
-                    resu.append((i[0], svectors, i[2]))
-                return resu
-            else:
-                raise TypeError("not an endomorphism")
-        else:
-            raise NotImplementedError("module must be a vector space")
-
-    def eigenspaces(self, extend=True):
-        """
-        Compute a list of subspaces formed by eigenvectors of ``self``.
-
-        INPUT:
-
-        - ``extend`` -- boolean (default: ``True``); determines if field
-          extensions should be considered
-
-        OUTPUT: a list of pairs ``(eigenvalue, eigenspace)``
-
-        EXAMPLES::
-
-            sage: V = QQ^3
-            sage: h = V.hom([[1,0,0], [0,0,1], [0,-1,0]], V)
-            sage: h.eigenspaces()                                                       # needs sage.rings.number_field
-            [(1,    Vector space of degree 3 and dimension 1 over Rational Field
-                     Basis matrix:
-                     [1 0 0]),
-             (-1*I, Vector space of degree 3 and dimension 1 over Algebraic Field
-                     Basis matrix:
-                     [  0   1 1*I]),
-             (1*I,  Vector space of degree 3 and dimension 1 over Algebraic Field
-                     Basis matrix:
-                     [   0    1 -1*I])]
-
-            sage: h.eigenspaces(extend=False)                                           # needs sage.rings.number_field
-            [(1,
-              Vector space of degree 3 and dimension 1 over Rational Field
-              Basis matrix:
-              [1 0 0])]
-
-            sage: h = V.hom([[2,1,0], [0,2,0], [0,0,-1]], V)
-            sage: h.eigenspaces()                                                       # needs sage.rings.number_field
-            [(-1, Vector space of degree 3 and dimension 1 over Rational Field
-                   Basis matrix:
-                   [0 0 1]),
-             (2, Vector space of degree 3 and dimension 1 over Rational Field
-                  Basis matrix:
-                  [0 1 0])]
-
-            sage: h = V.hom([[2,1,0], [0,2,0], [0,0,2]], V)
-            sage: h.eigenspaces()                                                       # needs sage.rings.number_field
-            [(2, Vector space of degree 3 and dimension 2 over Rational Field
-                  Basis matrix:
-                  [0 1 0]
-                  [0 0 1])]
-
-        ::
-
-            sage: V = QQ^2; m = matrix(2, [1, 1, 0, 1])
-            sage: V.hom(m, side='right').eigenspaces()                                  # needs sage.rings.number_field
-            [(1, Vector space of degree 2 and dimension 1 over Rational Field
-                  Basis matrix:
-                  [1 0])]
-            sage: V.hom(m).eigenspaces()                                                # needs sage.rings.number_field
-            [(1, Vector space of degree 2 and dimension 1 over Rational Field
-                  Basis matrix:
-                  [0 1])]
-        """
-        ev = self.eigenvectors(extend)
-        return [(vec[0], Sequence(vec[1]).universe().subspace(vec[1]))
-                for vec in ev]
 
 
 class BaseIsomorphism1D(Morphism):

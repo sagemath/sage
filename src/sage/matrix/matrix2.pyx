@@ -6624,7 +6624,7 @@ cdef class Matrix(Matrix1):
         r"""
         Compute the right eigenspaces of a matrix.
 
-        Note that ``eigenspaces_right()`` and ``right_eigenspaces()``
+        Note that :meth:`eigenspaces_right` and :meth:`right_eigenspaces`
         are identical methods.  Here "right" refers to the eigenvectors
         being placed to the right of the matrix.
 
@@ -6640,14 +6640,14 @@ cdef class Matrix(Matrix1):
           - ``'galois'`` -- for each irreducible factor of the characteristic
             polynomial, a single eigenspace will be output for a
             single root/eigenvalue for the irreducible factor
-          - ``None`` -- uses the 'all' format if the base ring is contained
+          - ``None`` -- uses the ``'all'`` format if the base ring is contained
             in an algebraically closed field which is implemented.
-            Otherwise, uses the 'galois' format.
+            Otherwise, uses the ``'galois'`` format.
 
         - ``var`` -- (default: ``'a'``) variable name used to
           represent elements of the root field of each
           irreducible factor of the characteristic polynomial.
-          If var='a', then the root fields will be in terms of
+          If ``var='a'``, then the root fields will be in terms of
           a0, a1, a2, ...., where the numbering runs across all
           the irreducible factors of the characteristic polynomial,
           even for linear factors.
@@ -6658,14 +6658,14 @@ cdef class Matrix(Matrix1):
 
         OUTPUT:
 
-        If algebraic_multiplicity=False, return a list of pairs (e, V)
-        where e is an eigenvalue of the matrix, and V is the corresponding
+        If ``algebraic_multiplicity=False``, return a list of pairs `(e, V)`
+        where `e` is an eigenvalue of the matrix and `V` is the corresponding
         left eigenspace.  For Galois conjugates of eigenvalues, there
         may be just one representative eigenspace, depending on the
         ``format`` keyword.
 
-        If algebraic_multiplicity=True, return a list of triples (e, V, n)
-        where e and V are as above and n is the algebraic multiplicity of
+        If ``algebraic_multiplicity=True``, return a list of triples `(e, V, n)`
+        where `e` and `V` are as above and `n` is the algebraic multiplicity of
         the eigenvalue.
 
         .. warning::
@@ -6984,12 +6984,12 @@ cdef class Matrix(Matrix1):
 
         OUTPUT:
 
-        For each distinct eigenvalue, returns a list of the form (e,V,n)
-        where e is the eigenvalue, V is a list of eigenvectors forming a
-        basis for the corresponding left eigenspace, and n is the algebraic
+        For each distinct eigenvalue, returns a list of the form `(e,V,n)`
+        where `e` is the eigenvalue, `V` is a list of eigenvectors forming a
+        basis for the corresponding left eigenspace, and `n` is the algebraic
         multiplicity of the eigenvalue.
 
-        If the option extend is set to False, then only the eigenvalues that
+        If the option ``extend`` is set to ``False``, then only the eigenvalues that
         live in the base ring are considered.
 
         EXAMPLES:
@@ -7115,9 +7115,9 @@ cdef class Matrix(Matrix1):
 
         OUTPUT:
 
-        For each distinct eigenvalue, returns a list of the form (e,V,n)
-        where e is the eigenvalue, V is a list of eigenvectors forming a
-        basis for the corresponding right eigenspace, and n is the
+        For each distinct eigenvalue, returns a list of the form `(e,V,n)`
+        where `e` is the eigenvalue, `V` is a list of eigenvectors forming a
+        basis for the corresponding right eigenspace, and `n` is the
         algebraic multiplicity of the eigenvalue. If ``extend = True``
         (the default), this will return eigenspaces over the algebraic
         closure of the base field where this is implemented; otherwise
