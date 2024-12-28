@@ -482,6 +482,8 @@ cdef void _estimate_reachable_vertices_dir(short_digraph g, int* reachL, int* re
         reachL[i] = reachL_scc[scc[i]]
         reachU[i] = min(<int>reachU_scc[scc[i]], g.n)
 
+    free_short_digraph(sccgraph)
+
 
 cdef void _compute_reachable_vertices_undir(short_digraph g, int* reachable) noexcept:
     r"""
