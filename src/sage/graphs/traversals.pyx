@@ -69,10 +69,12 @@ from libcpp.vector cimport vector
 from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
 
+from sage.graphs.base.c_graph cimport CGraph, CGraphBackend
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
 from sage.graphs.base.static_sparse_graph cimport out_degree
-from sage.graphs.base.c_graph cimport CGraph, CGraphBackend
 from sage.graphs.graph_decompositions.slice_decomposition cimport \
         extended_lex_BFS
 
@@ -753,8 +755,7 @@ def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorith
     - ``labels`` -- boolean (default: ``False``); whether to return the labels
       assigned to each vertex
 
-    - ``initial_vertex`` -- (default: ``None``) the first vertex to
-      consider
+    - ``initial_vertex`` -- (default: ``None``); the first vertex to consider
 
     - ``algorithm`` -- string (default: ``None``); one of the following
       algorithms:
@@ -819,6 +820,18 @@ def lex_M(self, triangulation=False, labels=False, initial_vertex=None, algorith
         sage: g = Graph([(1, 2), (1, 3), (2, 3), (2, 4), (2, 5), (3, 5), (3, 6), (4, 5), (5, 6)])
         sage: g.lex_M()
         [6, 4, 5, 3, 2, 1]
+
+    The ordering depends on the initial vertex::
+
+        sage: G = graphs.HouseGraph()
+        sage: G.lex_M(algorithm='lex_M_slow', initial_vertex=0)
+        [4, 3, 2, 1, 0]
+        sage: G.lex_M(algorithm='lex_M_slow', initial_vertex=2)
+        [1, 4, 3, 0, 2]
+        sage: G.lex_M(algorithm='lex_M_fast', initial_vertex=0)
+        [4, 3, 2, 1, 0]
+        sage: G.lex_M(algorithm='lex_M_fast', initial_vertex=2)
+        [1, 4, 3, 0, 2]
 
     TESTS:
 
@@ -1127,6 +1140,18 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
         Traceback (most recent call last):
         ...
         ValueError: 'foo' is not a graph vertex
+
+    Immutable graphs::
+
+        sage: from sage.graphs.traversals import lex_M_fast
+        sage: G = graphs.RandomGNP(10, .7)
+        sage: G._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
+        sage: H = Graph(G, immutable=True)
+        sage: H._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
+        sage: lex_M_fast(G) == lex_M_fast(H)
+        True
     """
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError("'{}' is not a graph vertex".format(initial_vertex))
@@ -1136,22 +1161,30 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
 
     # ==> Initialization
 
-    cdef list int_to_v = list(G)
     cdef int i, j, k, v, w, z
 
-    if initial_vertex is not None:
-        # We put the initial vertex at first place in the ordering
-        i = int_to_v.index(initial_vertex)
-        int_to_v[0], int_to_v[i] = int_to_v[i], int_to_v[0]
-
+    cdef list int_to_v
+    cdef StaticSparseCGraph cg
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    if isinstance(G, StaticSparseBackend):
+        cg = <StaticSparseCGraph> G._cg
+        sd = <short_digraph> cg.g
+        int_to_v = cg._vertex_to_labels
+    else:
+        int_to_v = list(G)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+
     cdef uint32_t* p_tmp
     cdef uint32_t* p_end
 
     cdef int n = G.order()
 
     cdef list unnumbered_vertices = list(range(n))
+
+    if initial_vertex is not None:
+        # We put the initial vertex at the first place
+        i = int_to_v.index(initial_vertex)
+        unnumbered_vertices[0], unnumbered_vertices[i] = unnumbered_vertices[i], unnumbered_vertices[0]
 
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef int* label = <int*>mem.allocarray(n, sizeof(int))
@@ -1237,7 +1270,8 @@ def lex_M_fast(G, triangulation=False, initial_vertex=None):
                     k += 2
                 label[w] = k
 
-    free_short_digraph(sd)
+    if not isinstance(G, StaticSparseBackend):
+        free_short_digraph(sd)
 
     cdef list ordering = [int_to_v[alpha[i]] for i in range(n)]
 
