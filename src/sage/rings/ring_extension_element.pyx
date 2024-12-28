@@ -129,6 +129,46 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         wrapper.__doc__ = method.__doc__
         return wrapper
 
+    def __getitem__(self, i):
+        r"""
+        Return the `i`-th item of this element.
+
+        This methods calls the appropriate method of the backend if
+        ``import_methods`` is set to ``True``
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: E = R.over()
+            sage: P = E(x^2 + 2*x + 3)
+            sage: P[0]
+            3
+        """
+        if (<RingExtension_generic>self._parent)._import_methods:
+            output = self._backend[to_backend(i)]
+            return from_backend(output, self._parent)
+        return TypeError("this element is not subscriptable")
+
+    def __call__(self, *args, **kwargs):
+        r"""
+        Call this element.
+
+        This methods calls the appropriate method of the backend if
+        ``import_methods`` is set to ``True``
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: E = R.over()
+            sage: P = E(x^2 + 2*x + 3)
+            sage: P(1)
+            6
+        """
+        if (<RingExtension_generic>self._parent)._import_methods:
+            output = self._backend(*to_backend(args), **to_backend(kwargs))
+            return from_backend(output, self._parent)
+        return TypeError("this element is not callable")            
+
     def __dir__(self):
         """
         Return the list of all the attributes of this element;

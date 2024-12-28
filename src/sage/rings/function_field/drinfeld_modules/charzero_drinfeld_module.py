@@ -24,7 +24,11 @@ AUTHORS:
 
 from .drinfeld_module import DrinfeldModule
 
+from sage.functions.other import ceil
 from sage.rings.integer_ring import ZZ
+
+from sage.matrix.constructor import matrix
+from sage.modules.free_module_element import vector
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
@@ -414,3 +418,182 @@ class DrinfeldModule_charzero(DrinfeldModule):
         X = poly_ring.gen()
         q = self._Fq.cardinality()
         return self._compute_goss_polynomial(n, q, poly_ring, X)
+
+
+class DrinfeldModule_rational(DrinfeldModule_charzero):
+    """
+    A class for Drinfeld modules defined over the fraction
+    field of the underlying function field
+    """
+    def _phiT_matrix(self, polynomial_part):
+        r"""
+        Return the matrix of `\phi_T` modulo `\pi^s` where `s` is
+        chosen such that `\pi^s` is in the domain of convergence
+        of the logarithm.
+
+        It is an helper function; do not call it directly.
+        """
+        A = self.function_ring()
+        Fq = A.base_ring()
+        q = Fq.cardinality()
+        r = self.rank()
+
+        gs = []
+        for g in self.coefficients(sparse=False):
+            g = g.backend(force=True)
+            if g.denominator().is_one():
+                gs.append(A(g.numerator().list()))
+            else:
+                raise ValueError("the Drinfeld module must have polynomial coefficients")
+        s = max(ceil(gs[i].degree() / (q**i - 1)) for i in range(1, r+1)) - 1
+        if s < 0:
+            s = 0
+
+        M = matrix(Fq, s)
+        if polynomial_part:
+            P = vector(A, s)
+        qk = 1
+        for k in range(r+1):
+            for i in range(s):
+                e = (i+1)*qk
+                if polynomial_part:
+                    P[i] += gs[k] >> e
+                for j in range(s):
+                    e -= 1
+                    if e < 0:
+                        break
+                    M[i, j] += gs[k][e]
+            qk *= q
+
+        if polynomial_part:
+            return M, P
+        else:
+            return M
+
+    def class_polynomial(self):
+        r"""
+        Return the class polynomial, that is the Fitting ideal
+        of the class module, of this Drinfeld module.
+
+        EXAMPLES:
+
+        We check that the class module of the Carlitz module
+        is trivial::
+
+            sage: q = 5
+            sage: Fq = GF(q)
+            sage: A = Fq['T']
+            sage: K.<T> = Frac(A)
+            sage: C = DrinfeldModule(A, [T, 1]); C
+            Drinfeld module defined by T |--> t + T
+            sage: C.class_polynomial()
+            1
+
+        When the coefficients of the Drinfeld module have small
+        enough degrees, the class module is always trivial::
+
+            sage: r = 4
+            sage: phi = DrinfeldModule(A, [T] + [A.random_element(degree=q**i) for i in range(1, r+1)])
+            sage: phi.class_polynomial()
+            1
+
+        Here is an example with a nontrivial class module::
+
+            sage: phi = DrinfeldModule(A, [T, -T^(2*q-1) + 2*T^(q-1)])
+            sage: phi.class_polynomial()
+            T + 3
+        """
+        A = self.function_ring()
+        Fq = A.base_ring()
+        M = self._phiT_matrix(False)
+        s = M.nrows()
+        if s == 0:
+            # self is small
+            return A.one()
+
+        v = vector(Fq, s)
+        v[s-1] = 1
+        vs = [v]
+        for i in range(s-1):
+            v = v*M
+            vs.append(v)
+        V = matrix(vs)
+        V.echelonize()
+
+        dim = V.rank()
+        pivots = V.pivots()
+        j = ip = 0
+        for i in range(dim, s):
+            while ip < dim and j == pivots[ip]:
+                j += 1
+                ip += 1
+            V[i,j] = 1
+
+        N = (V * M * ~V).submatrix(dim, dim)
+        return A(N.charpoly())
+
+    def taelman_exponential_unit(self):
+        r"""
+        Return the exponential of the fundamental Taelman unit.
+
+        EXAMPLES:
+
+        The Taelman exponential unit of The Carlitz module is `1`::
+
+            sage: q = 7
+            sage: Fq = GF(q)
+            sage: A = Fq['T']
+            sage: K.<T> = Frac(A)
+            sage: C = DrinfeldModule(A, [T, 1]); C
+            Drinfeld module defined by T |--> t + T
+            sage: C.taelman_exponential_unit()
+            1
+
+        The same occurs more generally when the coefficients of the
+        Drinfeld module have small enough degrees::
+
+            sage: r = 4
+            sage: phi = DrinfeldModule(A, [T] + [A.random_element(degree=q**i) for i in range(1, r+1)])
+            sage: phi.taelman_exponential_unit()
+            1
+
+        Usually, as soon as we leave the world of small Drinfeld modules,
+        Taelman's exponential units are highly non trivial::
+
+            sage: phi = DrinfeldModule(A, [T, T^(2*q+1), T^3])
+            sage: phi.taelman_exponential_unit()
+            T^52 + T^22 + T^8 + T^2 + 1
+        """
+        A = self.function_ring()
+        Fq = A.base_ring()
+        q = Fq.cardinality()
+        M, P = self._phiT_matrix(True)
+        s = M.nrows()
+        if s == 0:
+            # self is small
+            return A(1)
+
+        gs = self.coefficients(sparse=False)
+        v = vector(Fq, s)
+        v[s-1] = 1
+        p = A.zero()
+        vs = [v]
+        ps = [p]
+        for i in range(s):
+            pq = p
+            p = v * P
+            for j in range(len(gs) - 1):
+                p += gs[j] * pq
+                pq = pq ** q
+            p += gs[-1] * pq
+            v = v * M
+            vs.append(v)
+            ps.append(p)
+        vs.reverse()
+        ps.reverse()
+        V = matrix(vs)
+
+        unit = V.left_kernel().basis()[0]
+        expunit = sum(unit[i]*ps[i] for i in range(s+1))
+        expunit /= expunit.numerator().leading_coefficient()
+        return expunit
