@@ -726,7 +726,10 @@ def is_transitive(g, certificate=False):
 
     INPUT:
 
-    - ``certificate`` -- whether to return a certificate for negative answers
+    - ``g`` -- a digraph
+
+    - ``certificate`` -- boolean (default: ``False``); whether to return a
+      certificate for negative answers
 
       - If ``certificate = False`` (default), this method returns ``True`` or
         ``False`` according to the graph.
