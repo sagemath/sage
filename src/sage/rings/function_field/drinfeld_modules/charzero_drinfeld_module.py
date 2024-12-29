@@ -3,9 +3,9 @@ r"""
 Drinfeld modules over rings of characteristic zero
 
 This module provides the classes
-:class:`sage.rings.function_fields.drinfeld_module.charzero_drinfeld_module.DrinfeldModule_charzero`,
+:class:`sage.rings.function_fields.drinfeld_module.charzero_drinfeld_module.DrinfeldModule_charzero` and
 :class:`sage.rings.function_fields.drinfeld_module.charzero_drinfeld_module.DrinfeldModule_rational`,
-which inherits
+which both inherit
 :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
 
 AUTHORS:
@@ -527,8 +527,9 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         When the coefficients of the Drinfeld module have small
         enough degrees, the class module is always trivial::
 
-            sage: r = 4
-            sage: phi = DrinfeldModule(A, [T] + [A.random_element(degree=q**i) for i in range(1, r+1)])
+            sage: gs = [T] + [A.random_element(degree = q^i)
+            ....:             for i in range(1, 5)]
+            sage: phi = DrinfeldModule(A, gs)
             sage: phi.class_polynomial()
             1
 
@@ -606,8 +607,9 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         The same occurs more generally when the coefficients of the
         Drinfeld module have small enough degrees::
 
-            sage: r = 4
-            sage: phi = DrinfeldModule(A, [T] + [A.random_element(degree=q**i) for i in range(1, r+1)])
+            sage: gs = [T] + [A.random_element(degree = q^i - 1)
+            ....:             for i in range(1, 5)]
+            sage: phi = DrinfeldModule(A, gs)
             sage: phi.taelman_exponential_unit()
             1
 
@@ -649,5 +651,6 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
 
         unit = V.left_kernel().basis()[0]
         expunit = sum(unit[i]*ps[i] for i in range(s+1))
-        expunit /= expunit.numerator().leading_coefficient()
+        if expunit:
+            expunit /= expunit.numerator().leading_coefficient()
         return expunit
