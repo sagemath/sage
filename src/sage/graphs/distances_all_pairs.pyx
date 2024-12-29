@@ -2532,7 +2532,7 @@ def distances_distribution(G):
         sage: H = Graph(G, immutable=True)
         sage: H._backend
         <sage.graphs.base.static_sparse_backend.StaticSparseBackend ...>
-        sage: G.distances_distribution() == H.distances_distribution() 
+        sage: G.distances_distribution() == H.distances_distribution()
         True
     """
     cdef size_t n = G.order()
