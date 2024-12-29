@@ -440,7 +440,7 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
           part with negative powers of `u`; if ``True``, return this
           part as a polynomial vector in `T`
 
-        TESTS::
+        EXAMPLES::
 
             sage: q = 5
             sage: Fq = GF(q)
@@ -461,6 +461,7 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
             [0 0 1 0 0]
             [0 0 0 1 1], (T^15 + 1, T^10, T^5, 1, 0)
             )
+
         ::
 
             sage: psi = DrinfeldModule(A, [T, 1/T])
