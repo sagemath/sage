@@ -2,14 +2,16 @@
 r"""
 Drinfeld modules over rings of characteristic zero
 
-This module provides the class
+This module provides the classes
 :class:`sage.rings.function_fields.drinfeld_module.charzero_drinfeld_module.DrinfeldModule_charzero`,
+:class:`sage.rings.function_fields.drinfeld_module.charzero_drinfeld_module.DrinfeldModule_rational`,
 which inherits
 :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
 
 AUTHORS:
 
 - David Ayotte (2023-09)
+- Xavier Caruso (2024-12) - computation of class polynomials and Taelman's units
 """
 
 # *****************************************************************************
@@ -427,11 +429,45 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
     """
     def _phiT_matrix(self, polynomial_part):
         r"""
-        Return the matrix of `\phi_T` modulo `\pi^s` where `s` is
-        chosen such that `\pi^s` is in the domain of convergence
-        of the logarithm.
+        Return the matrix giving the action of `\phi_T` modulo `u^s`
+        where `u = 1/T` is the uniformizer at infinity `s` is chosen
+        such that `u^s` is in the domain of convergence of the logarithm.
 
         It is an helper function; do not call it directly.
+
+        INPUT:
+
+        - ``polynomial_part`` -- boolean; if ``False``, omit the
+          part with negative powers of `u`; if ``True``, return this
+          part as a polynomial vector in `T`
+
+        TESTS::
+
+            sage: q = 5
+            sage: Fq = GF(q)
+            sage: A = Fq['T']
+            sage: K.<T> = Frac(A)
+            sage: phi = DrinfeldModule(A, [T, T^20])
+            sage: phi._phiT_matrix(False)
+            [0 0 0 0]
+            [1 0 0 0]
+            [0 1 0 0]
+            [0 0 1 0]
+            sage: phi._phiT_matrix(True)
+            (
+            [0 0 0 0]
+            [1 0 0 0]
+            [0 1 0 0]
+            [0 0 1 0], (T^15 + 1, T^10, T^5, 1)
+            )
+
+        ::
+
+            sage: psi = DrinfeldModule(A, [T, 1/T])
+            sage: psi._phiT_matrix(False)
+            Traceback (most recent call last):
+            ...
+            ValueError: the Drinfeld module must have polynomial coefficients
         """
         A = self.function_ring()
         Fq = A.base_ring()
@@ -502,13 +538,23 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
             sage: phi = DrinfeldModule(A, [T, -T^(2*q-1) + 2*T^(q-1)])
             sage: phi.class_polynomial()
             T + 3
+
+        TESTS:
+
+        The Drinfeld module must have polynomial coefficients::
+
+            sage: phi = DrinfeldModule(A, [T, 1/T])
+            sage: phi.class_polynomial()
+            Traceback (most recent call last):
+            ...
+            ValueError: the Drinfeld module must have polynomial coefficients
         """
         A = self.function_ring()
         Fq = A.base_ring()
         M = self._phiT_matrix(False)
         s = M.nrows()
         if s == 0:
-            # self is small
+            # small case
             return A.one()
 
         v = vector(Fq, s)
@@ -534,7 +580,16 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
 
     def taelman_exponential_unit(self):
         r"""
-        Return the exponential of the fundamental Taelman unit.
+        Return the exponential of a fundamental Taelman's unit
+        of this Drinfeld module.
+
+        A Taelman's unit is by definition an element `x \in
+        \FF_q((1/T))` whose exponential falls in `\FF_q[T]`.
+
+        Taelman's units form a `\FF_q[T]`-line in `\FF_q((1/T))`;
+        a fundamental unit is by definition a generator of this line.
+
+        We refer to [Tae2012]_ for more details about this construction.
 
         EXAMPLES:
 
@@ -570,8 +625,8 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         M, P = self._phiT_matrix(True)
         s = M.nrows()
         if s == 0:
-            # self is small
-            return A(1)
+            # small case
+            return self.base().one()
 
         gs = self.coefficients(sparse=False)
         v = vector(Fq, s)
