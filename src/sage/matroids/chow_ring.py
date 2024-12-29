@@ -320,7 +320,11 @@ class ChowRing(QuotientRing_generic):
             sage: U46 = matroids.Uniform(4,6)
             sage: C = U46.chow_ring(QQ, False)
             sage: w = C.lefschetz_element(); w
-            -2*A01 - 2*A02 - 2*A03 - 2*A04 - 2*A05 - 2*A12 - 2*A13 - 2*A14 - 2*A15 - 2*A23 - 2*A24 - 2*A25 - 2*A34 - 2*A35 - 2*A45 - 6*A012 - 6*A013 - 6*A014 - 6*A015 - 6*A023 - 6*A024 - 6*A025 - 6*A034 - 6*A035 - 6*A045 - 6*A123 - 6*A124 - 6*A125 - 6*A134 - 6*A135 - 6*A145 - 6*A234 - 6*A235 - 6*A245 - 6*A345 - 30*A012345
+            -2*A01 - 2*A02 - 2*A03 - 2*A04 - 2*A05 - 2*A12 - 2*A13 - 2*A14
+            - 2*A15 - 2*A23 - 2*A24 - 2*A25 - 2*A34 - 2*A35 - 2*A45 - 6*A012
+            - 6*A013 - 6*A014 - 6*A015 - 6*A023 - 6*A024 - 6*A025 - 6*A034
+            - 6*A035 - 6*A045 - 6*A123 - 6*A124 - 6*A125 - 6*A134 - 6*A135
+            - 6*A145 - 6*A234 - 6*A235 - 6*A245 - 6*A345 - 30*A012345
             sage: basis_deg = {}
             sage: for b in C.basis():
             ....:     deg = b.homogeneous_degree()
@@ -339,7 +343,7 @@ class ChowRing(QuotientRing_generic):
         w = sum(len(F) * (len(self.matroid().groundset()) - len(F)) * gen for F, gen in self.flats_generator().items())
         return w
 
-    def poincare_pairing(self, el1, el2, r):
+    def poincare_pairing(self, el1, el2):
         r"""
         Return the Poincaré pairing of any two elements of the
         Chow ring.
@@ -355,6 +359,7 @@ class ChowRing(QuotientRing_generic):
             sage: ch.poincare_pairing(v, u, ch.matroid().rank())
             3
         """
+        r = self._top_degree()
         hom_components1 = el1.lift().homogeneous_components()
         hom_components2 = el2.lift().homogeneous_components()
         new_el = self.base_ring().zero()

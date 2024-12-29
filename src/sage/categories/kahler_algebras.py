@@ -72,7 +72,7 @@ class KahlerAlgebras(Category_over_base_ring):
         def lefschetz_element():
             pass
 
-        def hodge_riemann_relations(self, k, r):
+        def hodge_riemann_relations(self, k):
             r"""
             Return the quadratic form for the corresponding k (< r/2) for the
             Kähler algebra.
@@ -123,6 +123,7 @@ class KahlerAlgebras(Category_over_base_ring):
                 ...
                 ValueError: k must be less than r < 2
             """
+            r = self._top_degree()
             if k > (r/2):
                 raise ValueError("k must be less than r < 2")
             basis_k = []
