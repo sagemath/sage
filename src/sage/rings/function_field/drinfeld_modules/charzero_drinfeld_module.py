@@ -584,9 +584,9 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         of this Drinfeld module.
 
         A Taelman's unit is by definition an element `x \in
-        \FF_q((1/T))` whose exponential falls in `\FF_q[T]`.
+        \mathbb F_q((1/T))` whose exponential falls in `\mathbb F_q[T]`.
 
-        Taelman's units form a `\FF_q[T]`-line in `\FF_q((1/T))`;
+        Taelman's units form a `\mathbb F_q[T]`-line in `\mathbb F_q((1/T))`;
         a fundamental unit is by definition a generator of this line.
 
         We refer to [Tae2012]_ for more details about this construction.
