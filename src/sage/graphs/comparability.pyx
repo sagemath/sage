@@ -262,7 +262,7 @@ def greedy_is_comparability(g, no_certificate=False, equivalence_class=False):
         sage: from sage.graphs.comparability import greedy_is_comparability
         sage: G = Graph([('a', 1), (1, 2), (2, 3)])
         sage: greedy_is_comparability(G, equivalence_class=True)
-        (True, [(2, 3), (2, 1), ('a', 1)])
+        (True, [('a', 1), (2, 1), (2, 3)])
     """
     cdef int i, j
 
@@ -298,6 +298,10 @@ def greedy_is_comparability(g, no_certificate=False, equivalence_class=False):
 
     if isit:
         if equivalence_class:
+            # We use a mapping between vertices and integers to deal with
+            # vertices of different types
+            int_to_vertex = list(g)
+            vertex_to_int = {u: i for i, u in enumerate(int_to_vertex)}
 
             # Returning the largest equivalence class
             cc = max(h.connected_components(sort=False), key=len)
@@ -307,14 +311,16 @@ def greedy_is_comparability(g, no_certificate=False, equivalence_class=False):
                 s = equivalence_classes[v][sid]
 
                 # For each edge we pick the good orientations
+                vi = vertex_to_int[v]
                 if certif[v, sid] == 1:
-                    edges.extend((v, vv) for vv in s)
+                    edges.extend((vi, vertex_to_int[vv]) for vv in s)
                 else:
-                    edges.extend((vv, v) for vv in s)
+                    edges.extend((vertex_to_int[vv], vi) for vv in s)
 
             # We return the value but take care of removing edges that were
             # added twice.
-            return True, list(set(edges))
+            edges = [(int_to_vertex[u], int_to_vertex[v]) for u, v in sorted(set(edges))]
+            return True, edges
 
         return True
 
