@@ -108,7 +108,7 @@ from cysignals.memory cimport check_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_str, sig_off
 
 cimport sage.matrix.matrix_dense as matrix_dense
-from sage.matrix.args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init, MA_ENTRIES_NDARRAY
 from libc.stdio cimport *
 from sage.structure.element cimport (Matrix, Vector)
 from sage.modules.free_module_element cimport FreeModuleElement
@@ -257,8 +257,25 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             []
             sage: Matrix(GF(2),0,2)
             []
+
+        Make sure construction from numpy array is reasonably fast::
+
+            sage: # needs numpy
+            sage: import numpy as np
+            sage: n = 5000
+            sage: M = matrix(GF(2), np.random.randint(0, 2, (n, n)))  # around 700ms
+
+        Unsupported numpy data types (slower but still works)::
+
+            sage: # needs numpy
+            sage: n = 100
+            sage: M = matrix(GF(2), np.random.randint(0, 2, (n, n)).astype(np.float32))
         """
         ma = MatrixArgs_init(parent, entries)
+        if ma.get_type() == MA_ENTRIES_NDARRAY:
+            from ..modules.numpy_util import set_matrix_mod2_from_numpy
+            if set_matrix_mod2_from_numpy(self, ma.entries):
+                return
         for t in ma.iter(coerce, True):
             se = <SparseEntry>t
             mzd_write_bit(self._entries, se.i, se.j, se.entry)

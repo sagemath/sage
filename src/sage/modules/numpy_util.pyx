@@ -1,12 +1,12 @@
 # sage.doctest: optional - numpy
+# cython: fast_getattr=False
+# https://github.com/cython/cython/issues/6442
 r"""
 Utility functions for numpy.
 """
 
 cimport numpy as np
 import numpy as np
-from sage.libs.m4ri cimport *
-from libc.stdint cimport uintptr_t
 
 
 ctypedef fused numpy_integral:
@@ -64,3 +64,32 @@ cpdef int set_mzd_from_numpy(uintptr_t entries_addr, Py_ssize_t degree, x) excep
                 mzd_write_bit(entries, 0, i, x_bool[i])
             return True
     return False
+
+
+cpdef int _set_matrix_mod2_from_numpy_helper(Matrix_mod2_dense a, np.ndarray[numpy_integral, ndim=2] b) except -1:
+    """
+    Internal function, helper for :func:`set_matrix_mod2_from_numpy`.
+    """
+    if not (a.nrows() == b.shape[0] and a.ncols() == b.shape[1]):
+        raise ValueError("shape mismatch")
+    for i in range(b.shape[0]):
+        for j in range(b.shape[1]):
+            a.set_unsafe_int(i, j, b[i, j] & 1)
+    return True
+
+
+cpdef int set_matrix_mod2_from_numpy(Matrix_mod2_dense a, b) except -1:
+    """
+    Try to set the entries of a matrix from a numpy array.
+
+    INPUT:
+
+    - ``a`` -- the destination matrix
+    - ``b`` -- a numpy array, must have dimension 2 and the same shape as ``a``
+
+    OUTPUT: ``True`` if successful, ``False`` otherwise. May throw ``ValueError``.
+    """
+    try:
+        return (<object>_set_matrix_mod2_from_numpy_helper)(a, b)  # https://github.com/cython/cython/issues/6588
+    except TypeError:
+        return False
