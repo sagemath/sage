@@ -26,7 +26,6 @@ AUTHORS:
 
 from .drinfeld_module import DrinfeldModule
 
-from sage.functions.other import ceil
 from sage.rings.integer_ring import ZZ
 
 from sage.matrix.constructor import matrix
@@ -449,18 +448,19 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
             sage: K.<T> = Frac(A)
             sage: phi = DrinfeldModule(A, [T, T^20])
             sage: phi._phiT_matrix(False)
-            [0 0 0 0]
-            [1 0 0 0]
-            [0 1 0 0]
-            [0 0 1 0]
+            [0 0 0 0 0]
+            [1 0 0 0 0]
+            [0 1 0 0 0]
+            [0 0 1 0 0]
+            [0 0 0 1 1]
             sage: phi._phiT_matrix(True)
             (
-            [0 0 0 0]
-            [1 0 0 0]
-            [0 1 0 0]
-            [0 0 1 0], (T^15 + 1, T^10, T^5, 1)
+            [0 0 0 0 0]
+            [1 0 0 0 0]
+            [0 1 0 0 0]
+            [0 0 1 0 0]
+            [0 0 0 1 1], (T^15 + 1, T^10, T^5, 1, 0)
             )
-
         ::
 
             sage: psi = DrinfeldModule(A, [T, 1/T])
@@ -481,9 +481,7 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
                 gs.append(A(g.numerator().list()))
             else:
                 raise ValueError("the Drinfeld module must have polynomial coefficients")
-        s = max(ceil(gs[i].degree() / (q**i - 1)) for i in range(1, r+1)) - 1
-        if s < 0:
-            s = 0
+        s = max(gs[i].degree() // (q**i - 1) for i in range(1, r+1))
 
         M = matrix(Fq, s)
         if polynomial_part:
