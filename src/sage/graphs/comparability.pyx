@@ -199,8 +199,14 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from cysignals.memory cimport sig_free
-from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
+from libc.stdint cimport uint32_t
+from memory_allocator cimport MemoryAllocator
+
+from sage.data_structures.bitset_base cimport *
+from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
+from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
+from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph, free_short_digraph
+
 from copy import copy
 
 
@@ -713,7 +719,7 @@ def is_permutation(g, algorithm='greedy', certificate=False, check=True,
 
 def is_transitive(g, certificate=False):
     r"""
-    Test whether the digraph is transitive.
+    Check whether the digraph is transitive.
 
     A digraph is transitive if for any pair of vertices `u,v\in G` linked by a
     `uv`-path the edge `uv` belongs to `G`.
@@ -749,30 +755,69 @@ def is_transitive(g, certificate=False):
         True
     """
     cdef int n = g.order()
-
     if n <= 2:
         return True
 
-    cdef list int_to_vertex = list(g)
-    cdef unsigned short * distances = c_distances_all_pairs(g, vertex_list=int_to_vertex)
-    cdef unsigned short * c_distances = distances
+    # Copying the whole graph to obtain the list of neighbors quicker than by
+    # calling out_neighbors. This data structure is well documented in the
+    # module sage.graphs.base.static_sparse_graph
+    cdef list int_to_vertex
+    cdef StaticSparseCGraph cg
+    cdef short_digraph sd
+    if isinstance(g, StaticSparseBackend):
+        cg = <StaticSparseCGraph> g._cg
+        sd = <short_digraph> cg.g
+        int_to_vertex = cg._vertex_to_labels
+    else:
+        int_to_vertex = list(g)
+        init_short_digraph(sd, g, edge_labelled=False, vertex_list=int_to_vertex)
 
-    cdef int i, j
+    cdef MemoryAllocator mem = MemoryAllocator()
+    cdef uint32_t * dfs_stack = <uint32_t *> mem.malloc(n * sizeof(uint32_t))
+    cdef bitset_t seen
+    bitset_init(seen, n)
 
-    # Only 3 distances can appear in the matrix of all distances : 0, 1, and
-    # infinity. Anything else is a proof of nontransitivity !
+    cdef uint32_t u, v
+    cdef uint32_t * p_tmp
+    cdef uint32_t * p_end
 
-    for j in range(n):
-        for i in range(n):
-            if c_distances[i] != <unsigned short> -1 and c_distances[i] > 1:
-                sig_free(distances)
-                if certificate:
+    for u in range(n):
 
-                    return int_to_vertex[j], int_to_vertex[i]
-                else:
+        # We perform a depth first search from u and check if we can reach
+        # a vertex that is not a neighbor of u
+
+        # We initialize the dfs with the neighbors of u
+        bitset_clear(seen)
+        bitset_add(seen, u)
+        dfs_stack_end = 0
+        p_tmp = sd.neighbors[u]
+        p_end = sd.neighbors[u + 1]
+        while p_tmp < p_end:
+            v = p_tmp[0]
+            bitset_add(seen, v)
+            dfs_stack[dfs_stack_end] = v
+            dfs_stack_end += 1
+            p_tmp += 1
+
+        # From now on, each newly reached vertex is a certificate
+        while dfs_stack_end:
+            dfs_stack_end -= 1
+            v = dfs_stack[dfs_stack_end]
+            p_tmp = sd.neighbors[v]
+            p_end = sd.neighbors[v + 1]
+            while p_tmp < p_end:
+                if not bitset_in(seen, p_tmp[0]):
+                    v = p_tmp[0]
+                    bitset_free(seen)
+                    if not isinstance(g, StaticSparseBackend):
+                        free_short_digraph(sd)
+                    if certificate:
+                        return (int_to_vertex[u], int_to_vertex[v])
                     return False
+                p_tmp += 1
 
-        c_distances += n
+    bitset_free(seen)
+    if not isinstance(g, StaticSparseBackend):
+        free_short_digraph(sd)
 
-    sig_free(distances)
     return True
