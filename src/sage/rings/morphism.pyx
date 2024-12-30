@@ -1036,7 +1036,7 @@ cdef class RingHomomorphism(RingMap):
         from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
         from sage.rings.quotient_ring import QuotientRing_nc
         from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         B = self.codomain()
         graph, from_B, to_A = self._graph_ideal()
         Q = graph.ring()
@@ -1046,7 +1046,7 @@ cdef class RingHomomorphism(RingMap):
             # from a cached Gröbner basis
             graph_I = graph
         elif isinstance(B, (MPolynomialRing_base,
-                            PolynomialRing_general,
+                            PolynomialRing_generic,
                             QuotientRing_nc,
                             PolynomialQuotientRing_generic)):
             graph_I = graph + from_B(I)
@@ -3139,7 +3139,7 @@ def _tensor_product_ring(B, A):
     from sage.rings.number_field.number_field_base import NumberField
     from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
     from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
-    from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+    from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     from sage.rings.polynomial.term_order import TermOrder
     from sage.rings.quotient_ring import QuotientRing_nc
@@ -3152,8 +3152,7 @@ def _tensor_product_ring(B, A):
 
     def term_order(A):
         # univariate rings do not have a term order
-        if (isinstance(A, (PolynomialRing_general,
-                           PolynomialQuotientRing_generic))
+        if (isinstance(A, (PolynomialRing_generic, PolynomialQuotientRing_generic))
             or (isinstance(A, (NumberField, FiniteField))
                 and not A.is_prime_field())):
             return TermOrder('lex', 1)
@@ -3169,7 +3168,7 @@ def _tensor_product_ring(B, A):
                        order=term_order(B) + term_order(A))
 
     def relations(A, R_gens_A):
-        if isinstance(A, MPolynomialRing_base) or isinstance(A, PolynomialRing_general):
+        if isinstance(A, (MPolynomialRing_base, PolynomialRing_generic)):
             return []
         elif isinstance(A, PolynomialQuotientRing_generic):
             to_R = A.ambient().hom(R_gens_A, R, check=False)
