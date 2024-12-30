@@ -603,15 +603,17 @@ case "$PKG_SRC" in
 esac
 
 # Poison the proxy variable to forbid downloads in spkg-install
-# for normal packages
-case $PKG_SRC_TYPE in
-  normal|wheel)
-    export http_proxy=http://192.0.2.0:5187/
-    export https_proxy=$http_proxy
-    export ftp_proxy=$http_proxy
-    export rsync_proxy=$http_proxy
-    ;;
-esac
+# for normal non-optional packages
+if [ "$PKG_TYPE" != "optional" ]; then
+    case $PKG_SRC_TYPE in
+      normal|wheel)
+        export http_proxy=http://192.0.2.0:5187/
+        export https_proxy=$http_proxy
+        export ftp_proxy=$http_proxy
+        export rsync_proxy=$http_proxy
+        ;;
+    esac
+fi
 
 # Make sage-logger show the full logs
 unset SAGE_SILENT_BUILD
