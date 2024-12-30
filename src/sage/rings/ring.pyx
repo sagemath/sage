@@ -957,7 +957,7 @@ cdef class IntegralDomain(CommutativeRing):
     _default_category = IntegralDomains()
 
     def __init__(self, *args, **kwds):
-        deprecation(37234, "use the category IntegralDomains")
+        deprecation(39227, "use the category IntegralDomains")
         super().__init__(*args, **kwds)
 
 
