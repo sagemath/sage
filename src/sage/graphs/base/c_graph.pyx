@@ -52,6 +52,7 @@ from libcpp.pair cimport pair
 from sage.rings.integer_ring import ZZ
 from cysignals.memory cimport check_allocarray, sig_free
 from sage.data_structures.bitset cimport FrozenBitset
+from sage.data_structures.pairing_heap cimport PairingHeap
 
 
 cdef extern from "Python.h":
@@ -3868,7 +3869,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
             return shortest_path
 
-    def bidirectional_dijkstra(self, x, y, weight_function=None,
+    def bidirectional_dijkstra_old(self, x, y, weight_function=None,
                                distance_flag=False):
         r"""
         Return the shortest path or distance from ``x`` to ``y`` using a
@@ -3899,15 +3900,15 @@ cdef class CGraphBackend(GenericGraphBackend):
 
             sage: G = Graph(graphs.PetersenGraph())
             sage: for (u, v) in G.edges(sort=True, labels=None):
-            ....:    G.set_edge_label(u, v, 1)
-            sage: G.shortest_path(0, 1, by_weight=True)
+            ....:     G.set_edge_label(u, v, 1)
+            sage: G._backend.bidirectional_dijkstra_old(0, 1)
             [0, 1]
-            sage: G.shortest_path_length(0, 1, by_weight=True)
+            sage: G._backend.bidirectional_dijkstra_old(0, 1, distance_flag=True)
             1
             sage: G = DiGraph([(1, 2, {'weight':1}), (1, 3, {'weight':5}), (2, 3, {'weight':1})])
-            sage: G.shortest_path(1, 3, weight_function=lambda e:e[2]['weight'])
+            sage: G._backend.bidirectional_dijkstra_old(1, 3, weight_function=lambda e:e[2]['weight'])
             [1, 2, 3]
-            sage: G.shortest_path_length(1, 3, weight_function=lambda e:e[2]['weight'])
+            sage: G._backend.bidirectional_dijkstra_old(1, 3, weight_function=lambda e:e[2]['weight'], distance_flag=True)
             2
 
         TESTS:
@@ -3915,21 +3916,21 @@ cdef class CGraphBackend(GenericGraphBackend):
         Bugfix from :issue:`7673` ::
 
             sage: G = Graph([(0, 1, 9), (0, 2, 8), (1, 2, 7)])
-            sage: G.shortest_path_length(0, 1, by_weight=True)
+            sage: G._backend.bidirectional_dijkstra_old(0, 1, distance_flag=True)
             9
 
         Bugfix from :issue:`28221` ::
 
             sage: G = Graph([(0, 1, 9.2), (0, 2, 4.5), (1, 2, 4.6)])
-            sage: G.shortest_path_length(0, 1, by_weight=True)
+            sage: G._backend.bidirectional_dijkstra_old(0, 1, distance_flag=True)
             9.1
 
         Bugfix from :issue:`27464` ::
 
             sage: G = DiGraph({0: [1, 2], 1: [4], 2: [3, 4], 4: [5], 5: [6]}, multiedges=True)
             sage: for u, v in list(G.edges(labels=None, sort=False)):
-            ....:    G.set_edge_label(u, v, 1)
-            sage: G.distance(0, 5, by_weight=true)
+            ....:     G.set_edge_label(u, v, 1)
+            sage: G._backend.bidirectional_dijkstra_old(0, 5, distance_flag=true)
             3
         """
         if x == y:
@@ -4066,6 +4067,209 @@ cdef class CGraphBackend(GenericGraphBackend):
             shortest_path.append(y)
 
             return shortest_path
+
+    def bidirectional_dijkstra(self, x, y, weight_function=None,
+                               distance_flag=False):
+        r"""
+        Return the shortest path or distance from ``x`` to ``y`` using a
+        bidirectional version of Dijkstra's algorithm.
+
+        INPUT:
+
+        - ``x`` -- the starting vertex in the shortest path from ``x`` to ``y``
+
+        - ``y`` -- the end vertex in the shortest path from ``x`` to ``y``
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          inputs an edge ``(u, v, l)`` and outputs its weight. If ``None``, we
+          use the edge label ``l`` as a weight, if ``l`` is not ``None``, else
+          ``1`` as a weight.
+
+        - ``distance_flag`` -- boolean (default: ``False``); when set to
+          ``True``, the shortest path distance from ``x`` to ``y`` is returned
+          instead of the path.
+
+        OUTPUT:
+
+        - A list of vertices in the shortest path from ``x`` to ``y`` or
+          distance from ``x`` to ``y`` is returned depending upon the value of
+          parameter ``distance_flag``
+
+        EXAMPLES::
+
+            sage: G = Graph(graphs.PetersenGraph())
+            sage: for (u, v) in G.edges(sort=True, labels=None):
+            ....:     G.set_edge_label(u, v, 1)
+            sage: G.shortest_path(0, 1, by_weight=True)
+            [0, 1]
+            sage: G.shortest_path_length(0, 1, by_weight=True)
+            1
+            sage: G = DiGraph([(1, 2, {'weight':1}), (1, 3, {'weight':5}), (2, 3, {'weight':1})])
+            sage: G.shortest_path(1, 3, weight_function=lambda e:e[2]['weight'])
+            [1, 2, 3]
+            sage: G.shortest_path_length(1, 3, weight_function=lambda e:e[2]['weight'])
+            2
+
+        TESTS:
+
+        Bugfix from :issue:`7673` ::
+
+            sage: G = Graph([(0, 1, 9), (0, 2, 8), (1, 2, 7)])
+            sage: G.shortest_path_length(0, 1, by_weight=True)
+            9
+
+        Bugfix from :issue:`28221` ::
+
+            sage: G = Graph([(0, 1, 9.2), (0, 2, 4.5), (1, 2, 4.6)])
+            sage: G.shortest_path_length(0, 1, by_weight=True)
+            9.1
+
+        Bugfix from :issue:`27464` ::
+
+            sage: G = DiGraph({0: [1, 2], 1: [4], 2: [3, 4], 4: [5], 5: [6]}, multiedges=True)
+            sage: for u, v in list(G.edges(labels=None, sort=False)):
+            ....:     G.set_edge_label(u, v, 1)
+            sage: G.distance(0, 5, by_weight=true)
+            3
+        """
+        if x == y:
+            if distance_flag:
+                return 0
+            else:
+                return [x]
+
+        # As for shortest_path, the roles of x and y are symmetric, hence we
+        # define dictionaries like pred_current and pred_other, which
+        # represent alternatively pred_x or pred_y according to the side
+        # studied.
+        cdef int x_int = self.get_vertex(x)
+        cdef int y_int = self.get_vertex(y)
+        cdef int v = 0
+        cdef int w = 0
+        cdef int pred
+        cdef int side
+        cdef double distance
+
+        # Each vertex knows its predecessors in the search, for each side
+        cdef dict pred_x = {}
+        cdef dict pred_y = {}
+        cdef dict pred_current
+
+        # Stores the distances from x and y
+        cdef dict dist_x = {}
+        cdef dict dist_y = {}
+        cdef dict dist_current
+        cdef dict dist_other
+
+        # We use 2 min-heap data structures (pairing heaps), one for the
+        # exploration from x and the other for the reverse exploration to y.
+        # Each heap associates to a vertex a pair (distance, pred).
+        cdef PairingHeap[int, pair[double, int]] px = PairingHeap[int, pair[double, int]]()
+        cdef PairingHeap[int, pair[double, int]] py = PairingHeap[int, pair[double, int]]()
+        cdef PairingHeap[int, pair[double, int]] * ptmp
+        px.push(x_int, (0, x_int))
+        py.push(y_int, (0, y_int))
+
+        cdef list neighbors
+
+        # Meeting_vertex is a vertex discovered through x and through y
+        # which defines the shortest path found
+        # (of length shortest_path_length).
+        cdef int meeting_vertex = -1
+        cdef double shortest_path_length
+        cdef double f_tmp
+
+        if weight_function is None:
+            def weight_function(e):
+                return 1 if e[2] is None else e[2]
+
+        # As long as the current side (x or y) is not totally explored ...
+        while not (px.empty() and py.empty()):
+            if (px.empty() or
+                    (not py.empty() and px.top_value().first > py.top_value().first)):
+                side = -1
+                ptmp = &py
+            else:  # px is not empty
+                side = 1
+                ptmp = &px
+            v, (distance, pred) = ptmp.top()
+            if meeting_vertex != -1 and distance > shortest_path_length:
+                break
+            ptmp.pop()
+
+            if side == 1:
+                dist_current, dist_other = dist_x, dist_y
+                pred_current = pred_x
+                neighbors = self.cg().out_neighbors(v)
+            else:
+                dist_current, dist_other = dist_y, dist_x
+                pred_current = pred_y
+                neighbors = self.cg().in_neighbors(v)
+
+            dist_current[v] = distance
+            if not distance_flag:
+                pred_current[v] = pred
+
+            if v in dist_other:
+                f_tmp = distance + dist_other[v]
+                if meeting_vertex == -1 or f_tmp < shortest_path_length:
+                    meeting_vertex = v
+                    shortest_path_length = f_tmp
+
+            for w in neighbors:
+                # If w has not yet been extracted from the heap, we check if we
+                # can improve its path
+                if w not in dist_current:
+                    v_obj = self.vertex_label(v)
+                    w_obj = self.vertex_label(w)
+                    if side == -1:
+                        v_obj, w_obj = w_obj, v_obj
+                    if self._multiple_edges:
+                        edge_label = min(weight_function((v_obj, w_obj, l)) for l in self.get_edge_label(v_obj, w_obj))
+                    else:
+                        edge_label = weight_function((v_obj, w_obj, self.get_edge_label(v_obj, w_obj)))
+                    if edge_label < 0:
+                        raise ValueError("the graph contains an edge with negative weight")
+                    f_tmp = distance + edge_label
+                    if ptmp.contains(w):
+                        if ptmp.value(w).first > f_tmp:
+                            ptmp.decrease(w, (f_tmp, v))
+                    else:
+                        ptmp.push(w, (f_tmp, v))
+
+        # No meeting point has been found
+        if meeting_vertex == -1:
+            if distance_flag:
+                from sage.rings.infinity import Infinity
+                return Infinity
+            return []
+
+        if distance_flag:
+            if shortest_path_length in ZZ:
+                return int(shortest_path_length)
+            return shortest_path_length
+
+        # build the shortest path and returns it.
+        cdef list shortest_path = []
+        w = meeting_vertex
+        while w != x_int:
+            shortest_path.append(self.vertex_label(w))
+            w = pred_x[w]
+
+        shortest_path.append(x)
+        shortest_path.reverse()
+
+        if meeting_vertex == y_int:
+            return shortest_path
+
+        w = pred_y[meeting_vertex]
+        while w != y_int:
+            shortest_path.append(self.vertex_label(w))
+            w = pred_y[w]
+
+        shortest_path.append(y)
+
+        return shortest_path
 
     def shortest_path_all_vertices(self, v, cutoff=None,
                                    distance_flag=False):
