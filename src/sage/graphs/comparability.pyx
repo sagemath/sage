@@ -205,7 +205,11 @@ from memory_allocator cimport MemoryAllocator
 from sage.data_structures.bitset_base cimport *
 from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
 from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
-from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph, free_short_digraph
+from sage.graphs.base.static_sparse_graph cimport (short_digraph,
+                                                   init_short_digraph,
+                                                   free_short_digraph,
+                                                   simple_BFS,
+                                                   out_degree)
 
 from copy import copy
 
@@ -776,48 +780,34 @@ def is_transitive(g, certificate=False):
         init_short_digraph(sd, g, edge_labelled=False, vertex_list=int_to_vertex)
 
     cdef MemoryAllocator mem = MemoryAllocator()
-    cdef uint32_t * dfs_stack = <uint32_t *> mem.malloc(n * sizeof(uint32_t))
+    cdef uint32_t * distances = <uint32_t *> mem.malloc(n * sizeof(uint32_t))
+    cdef uint32_t * waiting_list = <uint32_t *> mem.malloc(n * sizeof(uint32_t))
     cdef bitset_t seen
     bitset_init(seen, n)
 
     cdef uint32_t u, v
-    cdef uint32_t * p_tmp
-    cdef uint32_t * p_end
+    cdef int i
 
     for u in range(n):
 
-        # We perform a depth first search from u and check if we can reach
-        # a vertex that is not a neighbor of u
+        # 1. perform a breadth first search from u
+        _ = simple_BFS(sd, u, distances, NULL, waiting_list, seen)
 
-        # We initialize the dfs with the neighbors of u
-        bitset_clear(seen)
-        bitset_add(seen, u)
-        dfs_stack_end = 0
-        p_tmp = sd.neighbors[u]
-        p_end = sd.neighbors[u + 1]
-        while p_tmp < p_end:
-            v = p_tmp[0]
-            bitset_add(seen, v)
-            dfs_stack[dfs_stack_end] = v
-            dfs_stack_end += 1
-            p_tmp += 1
+        # 2. Check whether the BFS reaches vertices that are not in the closed
+        # neighborhood of u.
+        if bitset_len(seen) != out_degree(sd, u) + 1:
+            if certificate:
+                bitset_discard(seen, u)
+                for i in range(out_degree(sd, u)):
+                    bitset_discard(seen, sd.neighbors[u][i])
+                v = bitset_first(seen)
 
-        # From now on, each newly reached vertex is a certificate
-        while dfs_stack_end:
-            dfs_stack_end -= 1
-            v = dfs_stack[dfs_stack_end]
-            p_tmp = sd.neighbors[v]
-            p_end = sd.neighbors[v + 1]
-            while p_tmp < p_end:
-                if not bitset_in(seen, p_tmp[0]):
-                    v = p_tmp[0]
-                    bitset_free(seen)
-                    if not isinstance(g, StaticSparseBackend):
-                        free_short_digraph(sd)
-                    if certificate:
-                        return (int_to_vertex[u], int_to_vertex[v])
-                    return False
-                p_tmp += 1
+            bitset_free(seen)
+            if not isinstance(g, StaticSparseBackend):
+                free_short_digraph(sd)
+            if certificate:
+                return (int_to_vertex[u], int_to_vertex[v])
+            return False
 
     bitset_free(seen)
     if not isinstance(g, StaticSparseBackend):
