@@ -1279,25 +1279,33 @@ cdef class OrbitPartition:
         nwords = (1 << nrows)
         self.nwords = nwords
         self.ncols = ncols
-        self.wd_parent =        <int *> sig_malloc( nwords * sizeof(int) )
-        self.wd_rank =          <int *> sig_malloc( nwords * sizeof(int) )
-        self.wd_min_cell_rep =  <int *> sig_malloc( nwords * sizeof(int) )
-        self.wd_size =          <int *> sig_malloc( nwords * sizeof(int) )
-        self.col_parent =       <int *> sig_malloc( ncols * sizeof(int) )
-        self.col_rank =         <int *> sig_malloc( ncols * sizeof(int) )
-        self.col_min_cell_rep = <int *> sig_malloc( ncols * sizeof(int) )
-        self.col_size =         <int *> sig_malloc( ncols * sizeof(int) )
+        self.wd_parent = <int *> sig_malloc(nwords * sizeof(int))
+        self.wd_rank = <int *> sig_malloc(nwords * sizeof(int))
+        self.wd_min_cell_rep = <int *> sig_malloc(nwords * sizeof(int))
+        self.wd_size = <int *> sig_malloc(nwords * sizeof(int))
+        self.col_parent = <int *> sig_malloc(ncols * sizeof(int))
+        self.col_rank = <int *> sig_malloc(ncols * sizeof(int))
+        self.col_min_cell_rep = <int *> sig_malloc(ncols * sizeof(int))
+        self.col_size = <int *> sig_malloc(ncols * sizeof(int))
         if self.wd_parent is NULL or self.wd_rank is NULL or self.wd_min_cell_rep is NULL \
         or self.wd_size is NULL or self.col_parent is NULL or self.col_rank is NULL \
         or self.col_min_cell_rep is NULL or self.col_size is NULL:
-            if self.wd_parent is not NULL:        sig_free(self.wd_parent)
-            if self.wd_rank is not NULL:          sig_free(self.wd_rank)
-            if self.wd_min_cell_rep is not NULL:  sig_free(self.wd_min_cell_rep)
-            if self.wd_size is not NULL:          sig_free(self.wd_size)
-            if self.col_parent is not NULL:       sig_free(self.col_parent)
-            if self.col_rank is not NULL:         sig_free(self.col_rank)
-            if self.col_min_cell_rep is not NULL: sig_free(self.col_min_cell_rep)
-            if self.col_size is not NULL:         sig_free(self.col_size)
+            if self.wd_parent is not NULL:
+                sig_free(self.wd_parent)
+            if self.wd_rank is not NULL:
+                sig_free(self.wd_rank)
+            if self.wd_min_cell_rep is not NULL:
+                sig_free(self.wd_min_cell_rep)
+            if self.wd_size is not NULL:
+                sig_free(self.wd_size)
+            if self.col_parent is not NULL:
+                sig_free(self.col_parent)
+            if self.col_rank is not NULL:
+                sig_free(self.col_rank)
+            if self.col_min_cell_rep is not NULL:
+                sig_free(self.col_min_cell_rep)
+            if self.col_size is not NULL:
+                sig_free(self.col_size)
             raise MemoryError("Memory.")
         for word from 0 <= word < nwords:
             self.wd_parent[word] = word
@@ -1605,33 +1613,43 @@ cdef class PartitionStack:
         self.flag = (1 << (self.radix-1))
 
         # data
-        self.wd_ents =    <int *> sig_malloc( self.nwords * sizeof_int )
-        self.wd_lvls =    <int *> sig_malloc( self.nwords * sizeof_int )
-        self.col_ents =   <int *> sig_malloc( self.ncols  * sizeof_int )
-        self.col_lvls =   <int *> sig_malloc( self.ncols  * sizeof_int )
+        self.wd_ents = <int *> sig_malloc( self.nwords * sizeof_int )
+        self.wd_lvls = <int *> sig_malloc( self.nwords * sizeof_int )
+        self.col_ents = <int *> sig_malloc( self.ncols  * sizeof_int )
+        self.col_lvls = <int *> sig_malloc( self.ncols  * sizeof_int )
 
         # scratch space
-        self.col_degs =   <int *> sig_malloc( self.ncols  * sizeof_int )
+        self.col_degs = <int *> sig_malloc( self.ncols  * sizeof_int )
         self.col_counts = <int *> sig_malloc( self.nwords * sizeof_int )
         self.col_output = <int *> sig_malloc( self.ncols  * sizeof_int )
-        self.wd_degs =    <int *> sig_malloc( self.nwords * sizeof_int )
-        self.wd_counts =  <int *> sig_malloc( (self.ncols+1)  * sizeof_int )
-        self.wd_output =  <int *> sig_malloc( self.nwords * sizeof_int )
+        self.wd_degs = <int *> sig_malloc( self.nwords * sizeof_int )
+        self.wd_counts = <int *> sig_malloc( (self.ncols+1)  * sizeof_int )
+        self.wd_output = <int *> sig_malloc( self.nwords * sizeof_int )
 
         if self.wd_ents is NULL or self.wd_lvls is NULL or self.col_ents is NULL \
         or self.col_lvls is NULL or self.col_degs is NULL or self.col_counts is NULL \
         or self.col_output is NULL or self.wd_degs is NULL or self.wd_counts is NULL \
         or self.wd_output is NULL:
-            if self.wd_ents is not NULL:    sig_free(self.wd_ents)
-            if self.wd_lvls is not NULL:    sig_free(self.wd_lvls)
-            if self.col_ents is not NULL:   sig_free(self.col_ents)
-            if self.col_lvls is not NULL:   sig_free(self.col_lvls)
-            if self.col_degs is not NULL:   sig_free(self.col_degs)
-            if self.col_counts is not NULL: sig_free(self.col_counts)
-            if self.col_output is not NULL: sig_free(self.col_output)
-            if self.wd_degs is not NULL:    sig_free(self.wd_degs)
-            if self.wd_counts is not NULL:  sig_free(self.wd_counts)
-            if self.wd_output is not NULL:  sig_free(self.wd_output)
+            if self.wd_ents is not NULL:
+                sig_free(self.wd_ents)
+            if self.wd_lvls is not NULL:
+                sig_free(self.wd_lvls)
+            if self.col_ents is not NULL:
+                sig_free(self.col_ents)
+            if self.col_lvls is not NULL:
+                sig_free(self.col_lvls)
+            if self.col_degs is not NULL:
+                sig_free(self.col_degs)
+            if self.col_counts is not NULL:
+                sig_free(self.col_counts)
+            if self.col_output is not NULL:
+                sig_free(self.col_output)
+            if self.wd_degs is not NULL:
+                sig_free(self.wd_degs)
+            if self.wd_counts is not NULL:
+                sig_free(self.wd_counts)
+            if self.wd_output is not NULL:
+                sig_free(self.wd_output)
             raise MemoryError("Memory.")
 
         nwords = self.nwords
@@ -3073,40 +3091,54 @@ cdef class BinaryCodeClassifier:
         self.alpha_size = self.w_gamma_size + self.radix
         self.Phi_size = self.w_gamma_size/self.radix + 1
 
-        self.w_gamma =     <int *> sig_malloc( self.w_gamma_size              * sizeof(int) )
-        self.alpha =       <int *> sig_malloc( self.alpha_size                * sizeof(int) )
-        self.Phi =     <unsigned int *> sig_malloc( self.Phi_size * (self.L+1)     * sizeof(unsigned int) )
-        self.Omega =   <unsigned int *> sig_malloc( self.Phi_size * self.L         * sizeof(unsigned int) )
-        self.W =       <unsigned int *> sig_malloc( self.Phi_size * self.radix * 2 * sizeof(unsigned int) )
+        self.w_gamma = <int *> sig_malloc( self.w_gamma_size * sizeof(int) )
+        self.alpha = <int *> sig_malloc( self.alpha_size * sizeof(int) )
+        self.Phi = <unsigned int *> sig_malloc( self.Phi_size * (self.L+1) * sizeof(unsigned int) )
+        self.Omega = <unsigned int *> sig_malloc( self.Phi_size * self.L * sizeof(unsigned int) )
+        self.W = <unsigned int *> sig_malloc( self.Phi_size * self.radix * 2 * sizeof(unsigned int) )
 
-        self.base =        <int *> sig_malloc( self.radix          * sizeof(int) )
+        self.base = <int *> sig_malloc( self.radix * sizeof(int) )
         self.aut_gp_gens = <int *> sig_malloc( self.aut_gens_size  * sizeof(int) )
-        self.c_gamma =     <int *> sig_malloc( self.radix          * sizeof(int) )
-        self.labeling =    <int *> sig_malloc( self.radix * 3      * sizeof(int) )
-        self.Lambda1 =     <int *> sig_malloc( self.radix * 2      * sizeof(int) )
-        self.Lambda2 =     <int *> sig_malloc( self.radix * 2      * sizeof(int) )
-        self.Lambda3 =     <int *> sig_malloc( self.radix * 2      * sizeof(int) )
-        self.v =           <int *> sig_malloc( self.radix * 2      * sizeof(int) )
-        self.e =           <int *> sig_malloc( self.radix * 2      * sizeof(int) )
+        self.c_gamma = <int *> sig_malloc( self.radix * sizeof(int) )
+        self.labeling = <int *> sig_malloc( self.radix * 3 * sizeof(int) )
+        self.Lambda1 = <int *> sig_malloc( self.radix * 2 * sizeof(int) )
+        self.Lambda2 = <int *> sig_malloc( self.radix * 2 * sizeof(int) )
+        self.Lambda3 = <int *> sig_malloc( self.radix * 2 * sizeof(int) )
+        self.v = <int *> sig_malloc( self.radix * 2 * sizeof(int) )
+        self.e = <int *> sig_malloc( self.radix * 2 * sizeof(int) )
 
         if self.Phi is NULL or self.Omega is NULL or self.W is NULL or self.Lambda1 is NULL \
         or self.Lambda2 is NULL or self.Lambda3 is NULL or self.w_gamma is NULL \
         or self.c_gamma is NULL or self.alpha is NULL or self.v is NULL or self.e is NULL \
         or self.aut_gp_gens is NULL or self.labeling is NULL or self.base is NULL:
-            if self.Phi is not NULL:          sig_free(self.Phi)
-            if self.Omega is not NULL:        sig_free(self.Omega)
-            if self.W is not NULL:            sig_free(self.W)
-            if self.Lambda1 is not NULL:      sig_free(self.Lambda1)
-            if self.Lambda2 is not NULL:      sig_free(self.Lambda2)
-            if self.Lambda3 is not NULL:      sig_free(self.Lambda3)
-            if self.w_gamma is not NULL:      sig_free(self.w_gamma)
-            if self.c_gamma is not NULL:      sig_free(self.c_gamma)
-            if self.alpha is not NULL:        sig_free(self.alpha)
-            if self.v is not NULL:            sig_free(self.v)
-            if self.e is not NULL:            sig_free(self.e)
-            if self.aut_gp_gens is not NULL:  sig_free(self.aut_gp_gens)
-            if self.labeling is not NULL:     sig_free(self.labeling)
-            if self.base is not NULL:         sig_free(self.base)
+            if self.Phi is not NULL:
+                sig_free(self.Phi)
+            if self.Omega is not NULL:
+                sig_free(self.Omega)
+            if self.W is not NULL:
+                sig_free(self.W)
+            if self.Lambda1 is not NULL:
+                sig_free(self.Lambda1)
+            if self.Lambda2 is not NULL:
+                sig_free(self.Lambda2)
+            if self.Lambda3 is not NULL:
+                sig_free(self.Lambda3)
+            if self.w_gamma is not NULL:
+                sig_free(self.w_gamma)
+            if self.c_gamma is not NULL:
+                sig_free(self.c_gamma)
+            if self.alpha is not NULL:
+                sig_free(self.alpha)
+            if self.v is not NULL:
+                sig_free(self.v)
+            if self.e is not NULL:
+                sig_free(self.e)
+            if self.aut_gp_gens is not NULL:
+                sig_free(self.aut_gp_gens)
+            if self.labeling is not NULL:
+                sig_free(self.labeling)
+            if self.base is not NULL:
+                sig_free(self.base)
             raise MemoryError("Memory.")
 
     def __dealloc__(self):
@@ -3371,27 +3403,32 @@ cdef class BinaryCodeClassifier:
                 self.w_gamma_size *= 2
             self.alpha_size = self.w_gamma_size + self.radix
             self.Phi_size = self.w_gamma_size/self.radix + 1
-            self.w_gamma = <int *> sig_realloc(self.w_gamma,   self.w_gamma_size   * sizeof(int) )
-            self.alpha =   <int *> sig_realloc(self.alpha,     self.alpha_size     * sizeof(int) )
-            self.Phi =     <unsigned int *> sig_realloc(self.Phi,   self.Phi_size * self.L         * sizeof(int) )
-            self.Omega =   <unsigned int *> sig_realloc(self.Omega, self.Phi_size * self.L         * sizeof(int) )
-            self.W =       <unsigned int *> sig_realloc(self.W,     self.Phi_size * self.radix * 2 * sizeof(int) )
+            self.w_gamma = <int *> sig_realloc(self.w_gamma, self.w_gamma_size * sizeof(int))
+            self.alpha = <int *> sig_realloc(self.alpha, self.alpha_size * sizeof(int))
+            self.Phi = <unsigned int *> sig_realloc(self.Phi, self.Phi_size * self.L * sizeof(int))
+            self.Omega = <unsigned int *> sig_realloc(self.Omega, self.Phi_size * self.L * sizeof(int))
+            self.W = <unsigned int *> sig_realloc(self.W, self.Phi_size * self.radix * 2 * sizeof(int))
             if self.w_gamma is NULL or self.alpha is NULL or self.Phi is NULL or self.Omega is NULL or self.W is NULL:
-                if self.w_gamma is not NULL: sig_free(self.w_gamma)
-                if self.alpha is not NULL: sig_free(self.alpha)
-                if self.Phi is not NULL: sig_free(self.Phi)
-                if self.Omega is not NULL: sig_free(self.Omega)
-                if self.W is not NULL: sig_free(self.W)
+                if self.w_gamma is not NULL:
+                    sig_free(self.w_gamma)
+                if self.alpha is not NULL:
+                    sig_free(self.alpha)
+                if self.Phi is not NULL:
+                    sig_free(self.Phi)
+                if self.Omega is not NULL:
+                    sig_free(self.Omega)
+                if self.W is not NULL:
+                    sig_free(self.W)
                 raise MemoryError("Memory.")
         for i from 0 <= i < self.Phi_size * self.L:
             self.Omega[i] = 0
         word_gamma = self.w_gamma
         alpha = self.alpha # think of alpha as of length exactly nwords + ncols
-        Phi   = self.Phi
+        Phi = self.Phi
         Omega = self.Omega
-        W     = self.W
-        e     = self.e
-        nu =    PartitionStack(nrows, ncols)
+        W = self.W
+        e = self.e
+        nu = PartitionStack(nrows, ncols)
         Theta = OrbitPartition(nrows, ncols)
 
         # trivial case

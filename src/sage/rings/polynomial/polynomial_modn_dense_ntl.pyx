@@ -656,7 +656,7 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
         for j in range( g[i].degree()+1 ):
             B[i,j] = g[i][j]*X**j
 
-    B =  B.LLL(**kwds)
+    B = B.LLL(**kwds)
 
     f = sum([ZZ(B[0,i]//X**i)*x**i for i in range(B.ncols())])
     R = f.roots()

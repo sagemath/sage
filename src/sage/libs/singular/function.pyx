@@ -808,15 +808,15 @@ cdef class Converter(SageObject):
         """
         Append the number ``n`` to the list.
         """
-        cdef number *_n =  sa2si(n, self._singular_ring)
+        cdef number *_n = sa2si(n, self._singular_ring)
         return self._append(<void *>_n, NUMBER_CMD)
 
     cdef leftv *append_ring(self, r) except NULL:
         """
         Append the ring ``r`` to the list.
         """
-        cdef ring *_r =  access_singular_ring(r)
-        _r.ref+=1
+        cdef ring *_r = access_singular_ring(r)
+        _r.ref += 1
         return self._append(<void *>_r, RING_CMD)
 
     cdef leftv *append_matrix(self, mat) except NULL:
@@ -838,7 +838,7 @@ cdef class Converter(SageObject):
         """
         Append the integer ``n`` to the list.
         """
-        cdef long _n =  n
+        cdef long _n = n
         return self._append(<void*>_n, INT_CMD)
 
     cdef leftv *append_list(self, l) except NULL:
