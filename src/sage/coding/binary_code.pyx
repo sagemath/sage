@@ -62,9 +62,9 @@ cdef inline int min(int a, int b) noexcept:
     else:
         return a
 
-## NOTE - Since most of the functions are used from within the module, cdef'd
-## functions come without an underscore, and the def'd equivalents, which are
-## essentially only for doctesting and debugging, have underscores.
+# NOTE - Since most of the functions are used from within the module, cdef'd
+# functions come without an underscore, and the def'd equivalents, which are
+# essentially only for doctesting and debugging, have underscores.
 
 cdef int *hamming_weights() noexcept:
     cdef int *ham_wts
@@ -1287,9 +1287,10 @@ cdef class OrbitPartition:
         self.col_rank = <int *> sig_malloc(ncols * sizeof(int))
         self.col_min_cell_rep = <int *> sig_malloc(ncols * sizeof(int))
         self.col_size = <int *> sig_malloc(ncols * sizeof(int))
-        if self.wd_parent is NULL or self.wd_rank is NULL or self.wd_min_cell_rep is NULL \
-        or self.wd_size is NULL or self.col_parent is NULL or self.col_rank is NULL \
-        or self.col_min_cell_rep is NULL or self.col_size is NULL:
+        if (self.wd_parent is NULL or self.wd_rank is NULL
+            or self.wd_min_cell_rep is NULL or self.wd_size is NULL
+            or self.col_parent is NULL or self.col_rank is NULL
+                or self.col_min_cell_rep is NULL or self.col_size is NULL):
             if self.wd_parent is not NULL:
                 sig_free(self.wd_parent)
             if self.wd_rank is not NULL:
@@ -1613,10 +1614,10 @@ cdef class PartitionStack:
         self.flag = (1 << (self.radix-1))
 
         # data
-        self.wd_ents = <int *> sig_malloc( self.nwords * sizeof_int )
-        self.wd_lvls = <int *> sig_malloc( self.nwords * sizeof_int )
-        self.col_ents = <int *> sig_malloc( self.ncols  * sizeof_int )
-        self.col_lvls = <int *> sig_malloc( self.ncols  * sizeof_int )
+        self.wd_ents = <int *> sig_malloc(self.nwords * sizeof_int)
+        self.wd_lvls = <int *> sig_malloc(self.nwords * sizeof_int)
+        self.col_ents = <int *> sig_malloc(self.ncols  * sizeof_int)
+        self.col_lvls = <int *> sig_malloc(self.ncols  * sizeof_int)
 
         # scratch space
         self.col_degs = <int *> sig_malloc( self.ncols  * sizeof_int )
