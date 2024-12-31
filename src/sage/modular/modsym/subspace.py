@@ -22,6 +22,7 @@ Subspace of ambient spaces of modular symbols
 import sage.modular.hecke.all as hecke
 import sage.structure.factorization
 import sage.modular.modsym.space
+from sage.misc.cachefunc import cached_method
 
 
 class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, hecke.HeckeSubmodule):
@@ -353,7 +354,8 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
         """
         self.__is_cuspidal = t
 
-    def is_eisenstein(self):
+    @cached_method
+    def is_eisenstein(self) -> bool:
         """
         Return ``True`` if ``self`` is an Eisenstein subspace.
 
@@ -364,12 +366,8 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
             sage: ModularSymbols(22,6).eisenstein_submodule().is_eisenstein()
             True
         """
-        try:
-            return self.__is_eisenstien
-        except AttributeError:
-            C = self.ambient_hecke_module().eisenstein_subspace()
-            self.__is_eisenstein = self.is_submodule(C)
-            return self.__is_eisenstein
+        C = self.ambient_hecke_module().eisenstein_subspace()
+        return self.is_submodule(C)
 
     def _compute_sign_subspace(self, sign, compute_dual=True):
         """

@@ -2162,6 +2162,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
     # Cuspidal torsion groups
     #########################################################
 
+    @cached_method
     def abvarquo_cuspidal_subgroup(self):
         """
         Compute the rational subgroup of the cuspidal subgroup (as an
@@ -2186,10 +2187,6 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             sage: [A.abvarquo_cuspidal_subgroup().invariants() for A in D]
             [(), (), ()]
         """
-        try:
-            return self.__abvarquo_cuspidal_subgroup
-        except AttributeError:
-            pass
         if self.base_ring() != QQ:
             raise ValueError("base ring must be QQ")
         if self.weight() != 2:
@@ -2198,7 +2195,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         phi = self.integral_period_mapping()
 
         # Make a list of all the finite cusps.
-        P = [c for c in M.cusps() if not c.is_infinity()]
+        P = (c for c in M.cusps() if not c.is_infinity())
 
         # Compute the images of the cusp classes (c)-(oo) in the
         # rational homology of the quotient modular abelian variety.
@@ -2209,11 +2206,9 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         # The cuspidal subgroup is then the quotient of that module +
         # H_1(A) by H_1(A)
-        C = (A.ambient_module() + A) / A.ambient_module()
+        return (A.ambient_module() + A) / A.ambient_module()
 
-        self.__abvarquo_cuspidal_subgroup = C
-        return C
-
+    @cached_method
     def abvarquo_rational_cuspidal_subgroup(self):
         r"""
         Compute the rational subgroup of the cuspidal subgroup (as an
@@ -2277,10 +2272,6 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             sage: [A.abelian_variety().rational_torsion_subgroup().multiple_of_order() for A in D]
             [1, 5, 5]
         """
-        try:
-            return self.__abvarquo_rational_cuspidal_subgroup
-        except AttributeError:
-            pass
         if self.base_ring() != QQ:
             raise ValueError("base ring must be QQ")
         if self.weight() != 2:
@@ -2332,7 +2323,6 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             if CQ.cardinality() == 1:
                 break  # done -- no point in wasting more time shrinking CQ
 
-        self.__abvarquo_rational_cuspidal_subgroup = CQ
         return CQ
 
     def _matrix_of_galois_action(self, t, P):

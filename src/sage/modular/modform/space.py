@@ -1551,7 +1551,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         else:
             assert S.dimension() == self.dimension()
             self.__is_cuspidal = True
-        S.__is_eisenstein = (S.dimension() == 0)
+        S.is_eisenstein.set_cache(S.dimension() == 0)
         S.__is_cuspidal = True
         return S
 
@@ -1592,7 +1592,8 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         return (self.cuspidal_submodule() == self)
 
-    def is_eisenstein(self):
+    @cached_method
+    def is_eisenstein(self) -> bool:
         r"""
         Return ``True`` if this space is Eisenstein.
 
@@ -1726,28 +1727,25 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: W.eisenstein_submodule()
             Modular Forms subspace of dimension 0 of Modular Forms space of dimension 11 for Congruence Subgroup Gamma0(6) of weight 10 over Rational Field
         """
-        try:
-            if self.__is_eisenstein:
-                return self
-        except AttributeError:
-            pass
+        if self.is_eisenstein.cache is True:
+            return self
 
         if self.is_ambient():
             raise NotImplementedError("ambient modular forms spaces must override eisenstein_submodule")
         A = self.ambient_module().eisenstein_submodule()
         E = self.intersection(A)
         if E.dimension() < self.dimension():
-            self.__is_eisenstein = False
+            self.is_eisenstein.set_cache(False)
         else:
             assert E.dimension() == self.dimension()
-            self.__is_eisenstein = True
+            self.is_eisenstein.set_cache(True)
         E.__is_cuspidal = (E.dimension() == 0)
-        E.__is_eisenstein = True
+        E.is_eisenstein.set_cache(True)
         return E
 
     def eisenstein_subspace(self):
         """
-        Synonym for eisenstein_submodule.
+        Synonym for Eisenstein_submodule.
 
         EXAMPLES::
 
