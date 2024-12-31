@@ -69,6 +69,22 @@ cpdef int set_mzd_from_numpy(uintptr_t entries_addr, Py_ssize_t degree, x) excep
 cpdef int _set_matrix_mod2_from_numpy_helper(Matrix_mod2_dense a, np.ndarray[numpy_integral, ndim=2] b) except -1:
     """
     Internal function, helper for :func:`set_matrix_mod2_from_numpy`.
+
+    TESTS::
+
+        sage: from sage.modules.numpy_util import _set_matrix_mod2_from_numpy_helper
+        sage: import numpy as np
+        sage: a = matrix(GF(2), 2, 3)
+        sage: b = np.array([[1, 0, 1], [0, 1, 0]], dtype=np.int8)
+        sage: _set_matrix_mod2_from_numpy_helper(a, b)
+        1
+        sage: a
+        [1 0 1]
+        [0 1 0]
+        sage: _set_matrix_mod2_from_numpy_helper(a, np.array([[1, 0], [0, 1]], dtype=np.int8))
+        Traceback (most recent call last):
+        ...
+        ValueError: shape mismatch
     """
     if not (a.nrows() == b.shape[0] and a.ncols() == b.shape[1]):
         raise ValueError("shape mismatch")
@@ -87,7 +103,31 @@ cpdef int set_matrix_mod2_from_numpy(Matrix_mod2_dense a, b) except -1:
     - ``a`` -- the destination matrix
     - ``b`` -- a numpy array, must have dimension 2 and the same shape as ``a``
 
-    OUTPUT: ``True`` if successful, ``False`` otherwise. May throw ``ValueError``.
+    OUTPUT: ``True`` (when used as bool) if successful, ``False`` otherwise. May throw ``ValueError``.
+
+    The exact type of the return value is not guaranteed, in the actual current implementation
+    it is ``1`` for success and ``0`` for failure.
+
+    TESTS::
+
+        sage: from sage.modules.numpy_util import set_matrix_mod2_from_numpy
+        sage: import numpy as np
+        sage: a = matrix(GF(2), 2, 3)
+        sage: b = np.array([[1, 0, 1], [0, 1, 0]], dtype=np.int8)
+        sage: set_matrix_mod2_from_numpy(a, b)
+        1
+        sage: a
+        [1 0 1]
+        [0 1 0]
+        sage: set_matrix_mod2_from_numpy(a, np.array([[1, 0], [0, 1]], dtype=np.int8))
+        Traceback (most recent call last):
+        ...
+        ValueError: shape mismatch
+        sage: # unsupported type (may be supported in the future)
+        sage: set_matrix_mod2_from_numpy(a, np.array([[1, 1, 0], [0, 1, 0]], dtype=np.float64))
+        0
+        sage: set_matrix_mod2_from_numpy(a, np.array([1, 0, 0], dtype=np.int8))  # wrong number of dimensions
+        0
     """
     try:
         return (<object>_set_matrix_mod2_from_numpy_helper)(a, b)  # https://github.com/cython/cython/issues/6588
