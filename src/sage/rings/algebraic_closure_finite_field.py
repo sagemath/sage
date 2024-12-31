@@ -833,7 +833,7 @@ class AlgebraicClosureFiniteField_generic(Field):
         F = self._subfield(n)
         return self(F.gen())
 
-    def gens(self):
+    def gens(self):  # -> Family
         """
         Return a family of generators of ``self``.
 

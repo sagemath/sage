@@ -1263,7 +1263,7 @@ class PolynomialRing_generic(Ring):
             raise IndexError("generator n not defined")
         return self.element_class(self, [0,1], is_gen=True)
 
-    def gens_dict(self):
+    def gens_dict(self) -> dict:
         """
         Return a dictionary whose entries are ``{name:variable,...}``,
         where ``name`` stands for the variable names of this

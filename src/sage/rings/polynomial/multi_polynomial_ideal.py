@@ -448,8 +448,7 @@ class MPolynomialIdeal_magma_repr:
         from sage.rings.polynomial.multi_polynomial_sequence import \
             PolynomialSequence
 
-        B = PolynomialSequence([R(e) for e in mgb], R, immutable=True)
-        return B
+        return PolynomialSequence([R(e) for e in mgb], R, immutable=True)
 
 
 class MPolynomialIdeal_singular_base_repr:
@@ -3919,10 +3918,12 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         return 0
 
     @cached_method
-    def gens(self):
+    def gens(self):  # -> PolynomialSequence
         """
-        Return a set of generators / a basis of this ideal. This is usually the
-        set of generators provided during object creation.
+        Return a set of generators / a basis of this ideal.
+
+        This is usually the set of generators provided during object
+        creation.
 
         EXAMPLES::
 

@@ -493,7 +493,7 @@ class NumberField_relative(NumberField_generic):
         """
         return False
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of this relative number field.
 

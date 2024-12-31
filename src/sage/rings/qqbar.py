@@ -1313,7 +1313,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
         except TypeError:
             return False
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a set of generators for this field.
 
@@ -1811,7 +1811,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
         from sage.rings.rational_field import QQ
         return (AlgebraicClosureFunctor(), QQ)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a set of generators for this field.
 

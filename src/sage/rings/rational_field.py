@@ -918,7 +918,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             assert phi(a) == v, "oops"
         return a
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a tuple of generators of `\QQ`, which is only ``(1,)``.
 
