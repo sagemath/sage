@@ -1745,7 +1745,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def eisenstein_subspace(self):
         """
-        Synonym for Eisenstein_submodule.
+        Synonym for :meth:`eisenstein_submodule`.
 
         EXAMPLES::
 
