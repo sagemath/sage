@@ -53,12 +53,11 @@ AUTHORS:
 
 - Vincent Delecroix (November 2013): additional methods
 """
-
 from sage.misc.abstract_method import abstract_method
 from sage.misc.fast_methods import WithEqualityById
-
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.ring import Field
+from sage.sets.family import AbstractFamily
 from sage.structure.element import Element, FieldElement
 from sage.structure.richcmp import richcmp
 
@@ -833,7 +832,7 @@ class AlgebraicClosureFiniteField_generic(Field):
         F = self._subfield(n)
         return self(F.gen())
 
-    def gens(self):  # -> Family
+    def gens(self) -> AbstractFamily:
         """
         Return a family of generators of ``self``.
 
