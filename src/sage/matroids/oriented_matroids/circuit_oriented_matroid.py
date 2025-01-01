@@ -22,6 +22,7 @@ from __future__ import annotations
 from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
 from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
 
+
 class CircuitOrientedMatroid(OrientedMatroid):
     r"""
     An oriented matroid implemented using circuit axioms.
