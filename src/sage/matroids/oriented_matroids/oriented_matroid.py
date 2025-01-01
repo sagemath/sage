@@ -353,7 +353,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: hash(M)
-            -8378776308224696727
+            -9089696996006063358
         """
         fse = frozenset(self.elements())
         fsgs = frozenset(self._groundset)

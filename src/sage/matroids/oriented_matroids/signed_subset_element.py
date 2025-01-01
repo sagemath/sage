@@ -250,7 +250,7 @@ class SignedSubsetElement(SageObject):
             sage: M = OrientedMatroid(C, key='covector')
             sage: E = M.elements()[0]
             sage: hash(E)
-            1231571227600608182
+            -3307894506099694323
         """
         fsp = frozenset(self._p)
         fsn = frozenset(self._n)
