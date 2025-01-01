@@ -1154,7 +1154,7 @@ cdef class NumpyToSRMorphism(Morphism):
 
         sage: import numpy                                                              # needs numpy
         sage: if int(numpy.version.short_version[0]) > 1:                               # needs numpy
-        ....:     numpy.set_printoptions(legacy="1.25")                                 # needs numpy
+        ....:     _ = numpy.set_printoptions(legacy="1.25")                                 # needs numpy
         sage: f(x) = x^2
         sage: f(numpy.int8('2'))                                                        # needs numpy
         4

@@ -521,7 +521,7 @@ cdef class CoercionModel:
 
         sage: import numpy                                                              # needs numpy
         sage: if int(numpy.version.short_version[0]) > 1:                               # needs numpy
-        ....:     numpy.set_printoptions(legacy="1.25")                                 # needs numpy
+        ....:     _ = numpy.set_printoptions(legacy="1.25")                                 # needs numpy
 
         sage: # needs sage.rings.real_mpfr
         sage: x = polygen(RR)
