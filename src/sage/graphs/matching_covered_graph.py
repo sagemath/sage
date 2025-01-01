@@ -2566,11 +2566,21 @@ class MatchingCoveredGraph(Graph):
             sage: len(L) == len(M)
             True
 
-        A cycle graph of order six of more is a bipartite matching covered
+        A cycle graph of order six or more is a bipartite matching covered
         graph, but is not a brace::
 
             sage: C = graphs.CycleGraph(10)
             sage: G = MatchingCoveredGraph(C)
+            sage: G.is_brace()
+            False
+
+        A ladder graph of order six or more is a bipartite matching covered
+        graph, that is not a brace. The tight cut decomposition of a ladder
+        graph produces a list graphs the underlying graph of each of which
+        is isomorphic to a 4-cycle::
+
+            sage: L = graphs.LadderGraph(10)
+            sage: G = MatchingCoveredGraph(L)
             sage: G.is_brace()
             False
 
@@ -2593,6 +2603,19 @@ class MatchingCoveredGraph(Graph):
             True
             sage: for u, v, *_ in nontrivial_tight_cut:
             ....:     assert (u in nontrivial_odd_component and v not in nontrivial_odd_component)
+            sage: L = graphs.LadderGraph(3) # A ladder graph with two constituent braces
+            sage: G = MatchingCoveredGraph(L)
+            sage: is_brace, nontrivial_tight_cut, nontrivial_odd_component = G.is_brace(coNP_certificate=True)
+            sage: is_brace is False
+            True
+            sage: G1 = L.copy()
+            sage: G1.merge_vertices(list(nontrivial_odd_component))
+            sage: G1.to_simple().is_isomorphic(graphs.CycleGraph(4))
+            True
+            sage: G2 = L.copy()
+            sage: G2.merge_vertices([v for v in G if v not in nontrivial_odd_component])
+            sage: G2.to_simple().is_isomorphic(graphs.CycleGraph(4))
+            True
 
         If the input matching covered graph is nonbipartite, a
         :exc:`ValueError` is thrown::
@@ -2612,7 +2635,6 @@ class MatchingCoveredGraph(Graph):
 
         .. SEEALSO::
 
-            - :meth:`~sage.graphs.graph.Graph.is_bicritical`
             - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.is_brick`
             - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.bricks_and_braces`
             - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_braces`
@@ -2635,7 +2657,7 @@ class MatchingCoveredGraph(Graph):
             H = Graph(self, multiedges=False)
             H.delete_vertices([u, v])
 
-            if not H.is_matching_covered(list(matching - set([e]))):
+            if not H.is_connected()or not H.is_matching_covered(list(matching - set([e]))):
                 if not coNP_certificate:
                     return False
 
@@ -2686,6 +2708,8 @@ class MatchingCoveredGraph(Graph):
                     X = set()
                     dfs(root, X, D.neighbor_out_iterator)
 
+                color_class = None
+
                 for a, b in H.edge_iterator(labels=False, sort_vertices=True):
                     if (a in X) ^ (b in X):
                         x = a if a in A else b
@@ -2694,7 +2718,7 @@ class MatchingCoveredGraph(Graph):
 
                 # Obtain the color class Z ∈ {A, B} such that X ∩ Z is a vertex cover for T(e)
                 # Thus, obtain Y := X + v
-                X.add(u if (not color_class and u in A) or (color_class and u in B) else v)
+                X.add(u if (not color_class and u in A) or (color_class and u in B) or (color_class is None) else v)
 
                 # Compute the nontrivial tight cut C := ∂(Y)
                 C = [(u, v, w) if u in X else (v, u, w)
@@ -2862,6 +2886,7 @@ class MatchingCoveredGraph(Graph):
             - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.bricks_and_braces`
             - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_bricks`
             - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_petersen_bricks`
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.tight_cut_decomposition`
         """
         if self.is_bipartite():
             raise ValueError('the input graph is bipartite')
