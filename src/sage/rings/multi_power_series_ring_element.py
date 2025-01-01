@@ -158,7 +158,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.infinity import infinity, InfinityElement
 from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.power_series_ring_element import PowerSeries
 from sage.structure.richcmp import richcmp
 
@@ -406,7 +406,7 @@ class MPowerSeries(PowerSeries):
                 self._bg_value = parent._send_to_bg(x).add_bigoh(prec)
 
         # test whether x coerces to underlying polynomial ring of parent
-        elif isinstance(xparent, PolynomialRing_general):
+        elif isinstance(xparent, PolynomialRing_generic):
             self._bg_value = parent._send_to_bg(x).add_bigoh(prec)
 
         else:
@@ -1099,7 +1099,7 @@ class MPowerSeries(PowerSeries):
             return self.change_ring(Zmod(other))
         raise NotImplementedError("Mod on multivariate power series ring elements not defined except modulo an integer.")
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=None):
         """
         Return underlying dictionary with keys the exponents and values the
         coefficients of this power series.

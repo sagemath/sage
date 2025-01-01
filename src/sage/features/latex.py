@@ -208,6 +208,7 @@ class dvips(Executable):
         Executable.__init__(self, 'dvips', executable='dvips',
                             url='https://tug.org/texinfohtml/dvips.html')
 
+
 class TeXFile(StaticFile):
     r"""
     A :class:`sage.features.Feature` describing the presence of a TeX file.

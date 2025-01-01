@@ -808,10 +808,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
 
             :meth:`~sage.matroids.oriented_matroids.signed_subset_element.SignedSubsetElement.is_simplicial`
         """
-        for t in self.topes():
-            if not t.is_simplicial():
-                return False
-        return True
+        return all(t.is_simplicial() for t in self.topes())
 
     def is_acyclic(self):
         r"""
@@ -829,10 +826,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             sage: M.is_acyclic()
             True
         """
-        for t in self.topes():
-            if len(t.negatives()) == 0:
-                return True
-        return False
+        return any(len(t.negatives()) == 0 for t in self.topes())
 
     def deletion(self, change_set):
         r"""
