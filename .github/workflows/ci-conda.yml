@@ -24,25 +24,32 @@ jobs:
       fail-fast: false
       matrix:
         # On pushes to tags or branches, test the whole matrix.
-        os: >-
-          ${{ github.event_name == 'pull_request'
-                && fromJson('["ubuntu-latest"]')
-                || fromJson('["ubuntu-latest", "macos-latest", "macos-13"]') }}
-        python: >-
-          ${{ github.event_name == 'pull_request'
-                && fromJson('["3.9"]')
-                || fromJson('["3.9", "3.10", "3.11"]') }}
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - macos-13
+        python:
+          - 3.9
+          - 3.10
+          - 3.11
         # Optional environment is disabled for now as its not yet working
-        # environment: [environment, environment-optional]
+        # conda-env: [environment, environment-optional]
         conda-env: [environment]
+
         # On pull requests, only test two jobs:
         # Ubuntu with Python 3.9, macOS (arm64) with Python 3.11.
         # Build & Test currently uses Python 3.10 (on ubuntu-jammy).
         # Together, they cover the supported minor Python versions.
-        include: >-
-          ${{ github.event_name == 'pull_request'
-                && fromJson('[{"os": "macos-latest", "python": "3.11", "conda-env": "environment"}]')
-                || fromJson('[]') }}
+        is-pull-request: [ ${{ github.event_name == 'pull_request' }} ]
+        exclude:
+          - is-pull-request: true  # trick from https://github.com/orgs/community/discussions/26253#discussioncomment-6745038
+        include:
+          - os: ubuntu-latest
+            python: 3.9
+            conda-env: environment
+          - os: macos-latest
+            python: 3.11
+            conda-env: environment
 
     steps:
       - uses: actions/checkout@v4
@@ -93,12 +100,12 @@ jobs:
           SAGE_NUM_THREADS: 5
 
       - name: Verify dependencies
-        if: success() || failure()
+        if: '!cancelled()'
         shell: bash -l {0}
         run: pip check
 
       - name: Test
-        if: success() || failure()
+        if: '!cancelled()'
         shell: bash -l {0}
         run: ./sage -t --all --baseline-stats-path=.github/workflows/ci-conda-known-test-failures.json -p0
 
