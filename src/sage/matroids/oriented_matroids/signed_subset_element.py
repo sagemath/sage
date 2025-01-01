@@ -255,7 +255,8 @@ class SignedSubsetElement(SageObject):
         fsp = frozenset(self._p)
         fsn = frozenset(self._n)
         fsz = frozenset(self._z)
-        return hash((fsp, fsn, fsz))
+        fsg = frozenset(self._g)
+        return hash((fsp, fsn, fsz, fsg))
 
     def __neg__(self):
         """
@@ -275,10 +276,7 @@ class SignedSubsetElement(SageObject):
             -: 0
             0: 1
         """
-        N = copy.copy(self)
-        N._p = self._n
-        N._n = self._p
-        return N
+        return SignedSubsetElement(parent=self.parent(), groundset=self._g, positives=self._n, negatives=self._p, zeros=self._z)
 
     def __eq__(self, other):
         """
@@ -436,7 +434,7 @@ class SignedSubsetElement(SageObject):
             sage: copy(E) == E
             True
         """
-        return SignedSubsetElement(parent=self.parent(), groundset=self.groundset(), positives=self.positives(), negatives=self.negatives(), zeros=self.zeros())
+        return self
 
     def __deepcopy__(self, memo):
         """
@@ -451,7 +449,7 @@ class SignedSubsetElement(SageObject):
             sage: deepcopy(E) == E
             True
         """
-        return SignedSubsetElement(parent=self.parent(), groundset=self.groundset(), positives=self.positives(), negatives=self.negatives(), zeros=self.zeros())
+        return self
 
     def parent(self):
         """

@@ -479,6 +479,15 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
     def cocircuits(self):
         """
         Return all cocircuits.
+        
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: M = OrientedMatroid([[1],[-1],[0]], key='vector');
+            sage: M.cocircuits()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cocircuits not implemented
         """
         if hasattr(self, "_cocircuits"):
             return self._cocircuits
@@ -1014,6 +1023,18 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
 
         Two oriented matroids are dual if the circuits of one are pairwise
         orthogonal to the circuits of the other.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: C = [((1,4),(2,3)), ((2,3),(1,4))]
+            sage: M = OrientedMatroid(C, key='circuit')
+            sage: M.is_dual_with(M)
+            False
+            sage: Cp = [((1,2),(3,4)), ((3,4),(1,2))]
+            sage: Mp = OrientedMatroid(Cp, key='circuit')
+            sage: M.is_dual_with(Mp)
+            True
         """
         if self._groundset != other.groundset():
             return False
