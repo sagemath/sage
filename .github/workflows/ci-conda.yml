@@ -40,7 +40,8 @@ jobs:
         # Ubuntu with Python 3.9, macOS (arm64) with Python 3.11.
         # Build & Test currently uses Python 3.10 (on ubuntu-jammy).
         # Together, they cover the supported minor Python versions.
-        is-pull-request: [ ${{ github.event_name == 'pull_request' }} ]
+        is-pull-request:
+          - ${{ github.event_name == 'pull_request' }}
         exclude:
           - is-pull-request: true  # trick from https://github.com/orgs/community/discussions/26253#discussioncomment-6745038
         include:
