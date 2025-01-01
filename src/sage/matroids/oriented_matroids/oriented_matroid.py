@@ -479,7 +479,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
     def cocircuits(self):
         """
         Return all cocircuits.
-        
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -1037,6 +1037,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
                 if not u.is_orthogonal_with(v):
                     return False
         return True
+
 
 def deep_tupler(obj):
     r"""
