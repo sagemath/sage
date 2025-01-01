@@ -30,6 +30,8 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.categories.monoids import Monoids
 
 # We need Link to be first in the MRO in order to use its equality, hash, etc.
+
+
 class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A knot.
