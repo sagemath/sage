@@ -1036,7 +1036,7 @@ class MaximalSpechtSubmodule(SymmetricGroupRepresentation, SubmoduleWithBasis):
 
 class SimpleModule(SymmetricGroupRepresentation, QuotientModuleWithBasis):
     r"""
-    The simgle `S_n`-module associated with a partition `\lambda`.
+    The simple `S_n`-module associated with a partition `\lambda`.
 
     The simple module `D^{\lambda}` is the quotient of the Specht module
     `S^{\lambda}` by its :class:`maximal submodule <MaximalSpechtSubmodule>`
