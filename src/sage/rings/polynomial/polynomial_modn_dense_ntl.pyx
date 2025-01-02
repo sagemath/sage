@@ -580,12 +580,9 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, algorithm="sage", **kwds):
         sage: q = next_prime(round(pi.n()*p))                                           # needs sage.symbolic
         sage: N = p*q                                                                   # needs sage.symbolic
 
-    Now we disturb the low 110 bits of `q`::
+    Now we disturb the low 110 bits of `q` and try to recover `q` from it::
 
         sage: qbar = q + ZZ.random_element(0, 2^hidden - 1)                             # needs sage.symbolic
-
-    And try to recover `q` from it::
-
         sage: F.<x> = PolynomialRing(Zmod(N), implementation='NTL')                     # needs sage.symbolic
         sage: f = x - qbar                                                              # needs sage.symbolic
 
@@ -602,6 +599,27 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, algorithm="sage", **kwds):
         verbose 1 (<module>) LLL finished (time = 0.006998)
         sage: q == qbar - d                                                             # needs sage.symbolic
         True
+
+    In general, using ``algorithm="pari"`` will return better results and be quicker. For instance,
+    it is able to recover `q` even if ``hidden`` is set to `120`::
+
+        sage: # needs sage.symbolic
+        sage: set_random_seed(1337)
+        sage: hidden = 120
+        sage: N = p*q
+        sage: qbar = q + ZZ.random_element(0, 2^hidden - 1)
+        sage: f = x - qbar
+        sage: set_verbose(0)
+        sage: f.small_roots(X=2^hidden-1, beta=0.5, algorithm="sage")  # time random
+        []
+        sage: f.small_roots(X=2^hidden-1, beta=0.5, algorithm="pari")  # time random
+        [1203913112977791332288506012179577388]
+        sage: qbar - q == _[0]
+        True
+
+    .. TODO::
+
+        Implement improved lattice constructions for small_roots.
 
     REFERENCES:
 
