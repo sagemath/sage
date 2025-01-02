@@ -76,6 +76,8 @@ class VectorOrientedMatroid(OrientedMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: M = OrientedMatroid(None, key='vector'); M
+            Vector oriented matroid of rank 0
             sage: M = OrientedMatroid([[1],[-1],[0]], key='vector'); M
             Vector oriented matroid of rank 0
             sage: TestSuite(M).run()
@@ -84,11 +86,12 @@ class VectorOrientedMatroid(OrientedMatroid):
 
         # Set up our vectors
         vectors = []
-        for d in data:
-            # Use the appropriate element
-            vectors.append(
-                SignedSubsetElement(self, data=d, groundset=groundset)
-                )
+        if data:
+            for d in data:
+                # Use the appropriate element
+                vectors.append(
+                    SignedSubsetElement(self, data=d, groundset=groundset)
+                    )
 
         # If our groundset is none, make sure the groundsets are the same for
         # all elements
@@ -113,7 +116,12 @@ class VectorOrientedMatroid(OrientedMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: V2 = [[1, 1]]
+            sage: V = [[0,1], [0,-1], [1,0], [-1,0], [0,0], [1,1], [-1,-1], [1,-1], [-1,1]]
+            sage: M = OrientedMatroid(V, key='vector')
+            sage: M.is_valid()
+            True
+
+            sage: V2 = [[1,1]]
             sage: M2 = OrientedMatroid(V2, key='vector')
             sage: M2.is_valid(certificate=True)
             (False,
@@ -122,7 +130,7 @@ class VectorOrientedMatroid(OrientedMatroid):
                0: ,
               'msg': 'every element needs an opposite'})
 
-            sage: V3 = [[1,1], [-1,-1], [0,-1], [0,1], [-1,0], [1,0]]
+            sage: V3 = [[1,1], [-1,-1], [0,-1], [0,1], [-1,0], [1,0], [0,0]]
             sage: M3 = OrientedMatroid(V3, key='vector')
             sage: M3.is_valid(certificate=True)
             (False,
@@ -134,7 +142,7 @@ class VectorOrientedMatroid(OrientedMatroid):
                0: ),
               'msg': 'composition must be in vectors'})
 
-            sage: V4 = [[1,1], [-1,-1]]
+            sage: V4 = [[1,1], [-1,-1], [0,0], [1,0], [-1,0]]
             sage: M4 = OrientedMatroid(V4, key='vector')
             sage: M4.is_valid(certificate=True)
             (False,
@@ -142,9 +150,15 @@ class VectorOrientedMatroid(OrientedMatroid):
                -:
                0: ,
                +:
-               -: 0,1
-               0: ),
+               -: 0
+               0: 1),
               'msg': 'vector elimination failed'})
+
+            sage: V5 = [[1,1], [-1,-1], [1,0], [-1,0]]
+            sage: M5 = OrientedMatroid(V5, key='vector')
+            sage: M5.is_valid(certificate=True)
+            (False,
+             {'elt': None, 'msg': 'empty set is required'})
         """
         vectors = self.vectors()
 
@@ -162,6 +176,16 @@ class VectorOrientedMatroid(OrientedMatroid):
                         }
                     return (False, error_info)
                 return False
+        if not zero_found:
+            if certificate:
+                error_info = {
+                    'msg': "empty set is required",
+                    'elt': None
+                    }
+                return (False, error_info)
+            return False
+
+        for X in vectors:
             for Y in vectors:
                 # Axiom 3: Closed under composition
                 if X.composition(Y) not in vectors:
@@ -201,15 +225,6 @@ class VectorOrientedMatroid(OrientedMatroid):
                                 }
                             return (False, error_info)
                         return False
-
-        if not zero_found:
-            if certificate:
-                error_info = {
-                    'msg': "empty set is required",
-                    'elt': None
-                    }
-                return (False, error_info)
-            return False
 
         if certificate:
             return (True, {})

@@ -162,6 +162,17 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
             Hyperplane arrangement oriented matroid of rank 3
             sage: M2 = M.deletion(H); M2
             Hyperplane arrangement oriented matroid of rank 2
+
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: M.groundset()
+            (Hyperplane 0*t0 + t1 - t2 + 0,
+            Hyperplane t0 - t1 + 0*t2 + 0,
+            Hyperplane t0 + 0*t1 - t2 + 0)
+            sage: D = M.deletion(M.groundset()[0]); D
+            Hyperplane arrangement oriented matroid of rank 2
+            sage: D.groundset()
+            (Hyperplane t0 - t1 + 0*t2 + 0, Hyperplane t0 + 0*t1 - t2 + 0)
         """
         A = self.arrangement()
         if isinstance(hyperplanes, list) or isinstance(hyperplanes, tuple):

@@ -84,6 +84,8 @@ class CircuitOrientedMatroid(OrientedMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: M = OrientedMatroid(key='circuit'); M
+            Circuit oriented matroid of rank 0
             sage: M = OrientedMatroid([[1], [-1]], key='circuit'); M
             Circuit oriented matroid of rank 0
             sage: TestSuite(M).run()
@@ -99,7 +101,7 @@ class CircuitOrientedMatroid(OrientedMatroid):
 
         # If our groundset is none, make sure the groundsets are the same for
         # all elements
-        if groundset is None and len(circuits) > 0:
+        if groundset is None and bool(circuits):
             if len(data[0]) < 3:
                 groundset = []
                 for X in circuits:
@@ -163,6 +165,18 @@ class CircuitOrientedMatroid(OrientedMatroid):
                -:
                0: 2,3,4,
               'msg': 'every element needs an opposite'})
+
+            sage: C5= [((1,),(2,4)), ((1,),(2,3)), ((2,3),(1,)), ((2,4),(1,))]
+            sage: M5 = OrientedMatroid(C5, key='circuit', groundset=[1,2,3,4])
+            sage: M5.is_valid(certificate=True)
+            (False,
+             {'elt': (+: 1
+              -: 2,4
+              0: 3,
+              +: 2,3
+              -: 1
+              0: 4),
+              'msg': 'weak elimination failed'})
         """
         circuits = self.circuits()
 

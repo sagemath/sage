@@ -220,11 +220,53 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             sage: type(M)
             <class 'sage.matroids.oriented_matroids.circuit_oriented_matroid.CircuitOrientedMatroid'>
 
+
         TESTS::
 
             sage: C = [[1, 0, -1], [-1, 0, 1],[0, 0, 0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: TestSuite(M).run()
+
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A, key='circuit')
+            Traceback (most recent call last):
+            ...
+            ValueError: hyperplane arrangements are currently only implemented using covector axioms
+
+            sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='banana')
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid type key
+
+            sage: D = DiGraph({'v1': {'v2': 1, 'v3': 2,'v4': 3},
+            ....:              'v2': {'v3': 4, 'v4': 5},
+            ....:              'v3': {'v4': 6}})
+            sage: M = OrientedMatroid(D, key="covector")
+            Traceback (most recent call last):
+            ...
+            ValueError: digraphs are currently only implemented using circuit axioms
+
+            sage: D = DiGraph({'v1': {'v2': 1, 'v3': 2,'v4': 3},
+            ....:              'v2': {'v3': 4, 'v4': 5},
+            ....:              'v3': {'v4': None}})
+            sage: M = OrientedMatroid(D, key="circuit")
+            Traceback (most recent call last):
+            ...
+            ValueError: edge labels must be set for all edges
+
+            sage: D = DiGraph({'v1': {'v2': 1, 'v3': 2,'v4': 3},
+            ....:              'v2': {'v3': 4, 'v4': 5},
+            ....:              'v3': {'v4': 4}})
+            sage: M = OrientedMatroid(D, key="circuit")
+            Traceback (most recent call last):
+            ...
+            ValueError: edge labels need to be unique
+
+            sage: P = PointConfiguration([[0,1], [1/2,1/2],[1,0]])
+            sage: M = OrientedMatroid(P, key='covector')
+            Traceback (most recent call last):
+            ...
+            ValueError: point configurations are currently only implemented using circuit axioms
         """
         OM = None
 
@@ -253,8 +295,9 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             # we need to add negative edges in order to do all simple cycles
             digraph = copy.copy(data)
             edges = copy.copy(list(digraph.edges(sort=True)))
+            edge_labels = digraph.edge_labels()
             groundset = []
-            if len(edges) != len(set(edges)):
+            if len(edge_labels) != len(set(edge_labels)):
                 raise ValueError('edge labels need to be unique')
             if None in digraph.edge_labels():
                 raise ValueError('edge labels must be set for all edges')
@@ -371,6 +414,13 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             sage: E = M.an_element()
             sage: E in M
             True
+
+            sage: from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
+            sage: C = [((1,4),(2,3)), ((2,3),(1,4))]
+            sage: M = OrientedMatroid(C, key='circuit')
+            sage: E = SignedSubsetElement(M, data=((1,2),(3,4)))
+            sage: E in M
+            False
         """
         try:
             if x in self.elements():
@@ -390,6 +440,13 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             sage: M = OrientedMatroid(A)
             sage: E = M.an_element()
             sage: M(E) == E
+            True
+
+            sage: from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
+            sage: C = [((1,4),(2,3)), ((2,3),(1,4))]
+            sage: M = OrientedMatroid(C, key='circuit')
+            sage: E = SignedSubsetElement(M, data=((1,2),(3,4)))
+            sage: M(E) is None
             True
         """
         try:
@@ -471,6 +528,15 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
              +:
              -: 0
              0: ]
+
+        TESTS::
+
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: M.circuits()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: circuits not implemented
         """
         if hasattr(self, "_circuits"):
             return self._circuits
@@ -512,6 +578,14 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             +:
             -:
             0: 0]
+
+        TESTS::
+            sage: A = hyperplane_arrangements.braid(3)
+            sage: M = OrientedMatroid(A)
+            sage: M.vectors()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: vectors not implemented
         """
         if hasattr(self, "_vectors"):
             return self._vectors
@@ -566,6 +640,14 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             +:
             -: Hyperplane t0 - t1 + 0*t2 + 0,Hyperplane 0*t0 + t1 - t2 + 0,Hyperplane t0 + 0*t1 - t2 + 0
             0: ]
+
+        TESTS::
+
+            sage: M = OrientedMatroid([[1], [-1], [0]], key='vector')
+            sage: M.covectors()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: covectors not implemented
         """
         if hasattr(self, "_covectors"):
             return self._covectors
@@ -581,10 +663,25 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             sage: M = OrientedMatroid([[1], [-1], [0]], key='vector')
             sage: M.convert_to('circuit')
             Circuit oriented matroid of rank 0
+
+        TESTS::
+
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: M = OrientedMatroid([[1], [-1], [0]], key='vector')
             sage: M.convert_to()
             Traceback (most recent call last):
             ...
             TypeError: must be given a type to convert to
+
+            sage: M.convert_to('chirotope')
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: type chirotope not implemented
+
+            sage: M.convert_to('real_hyperplane_arrangement')
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: no real_hyperplane_arrangements() method found in oriented matroid
         """
         from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
         if new_type is None:
@@ -844,16 +941,18 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: A = hyperplane_arrangements.braid(3)
-            sage: M = OrientedMatroid(A)
-            sage: M.groundset()
-            (Hyperplane 0*t0 + t1 - t2 + 0,
-            Hyperplane t0 - t1 + 0*t2 + 0,
-            Hyperplane t0 + 0*t1 - t2 + 0)
-            sage: D = M.deletion(M.groundset()[0]); D
-            Hyperplane arrangement oriented matroid of rank 2
-            sage: D.groundset()
-            (Hyperplane t0 - t1 + 0*t2 + 0, Hyperplane t0 + 0*t1 - t2 + 0)
+            sage: C = [[1,1,1], [1,1,0], [1,1,-1], [1,0,-1], [1,-1,-1],
+            ....:      [0,-1,-1], [-1,-1,-1], [0,1,1], [-1,1,1], [-1,0,1],
+            ....:      [-1,-1,1], [-1,-1,0], [0,0,0]]
+            sage: M = OrientedMatroid(C, key='covector')
+            sage: E1 = M.deletion(1); E1
+            Covector oriented matroid of rank 2
+            sage: E1.groundset()
+            (0, 2)
+            sage: E2 = M.deletion([0,1]); E2
+            Covector oriented matroid of rank 1
+            sage: E2.groundset()
+            (2,)
         """
         if change_set in self._groundset:
             change_set = set([change_set])

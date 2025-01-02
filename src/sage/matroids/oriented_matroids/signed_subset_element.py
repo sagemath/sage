@@ -97,6 +97,10 @@ class SignedSubsetElement(SageObject):
             +:
             -:
             0: 0
+            sage: E = SignedSubsetElement(M,data = {'p':[], 'n':[], 'z':[0]}); E
+            +:
+            -:
+            0: 0
 
         TESTS::
 
@@ -105,6 +109,21 @@ class SignedSubsetElement(SageObject):
             sage: M = OrientedMatroid([[1],[-1]], key='circuit');
             sage: E = SignedSubsetElement(M,data = (0,))
             sage: TestSuite(E).run()
+
+            sage: E = SignedSubsetElement(M,data = ((1,),(0,)));
+            Traceback (most recent call last):
+            ...
+            ValueError: elements must appear in groundset
+
+            sage: E = SignedSubsetElement(M,data = (1,1));
+            Traceback (most recent call last):
+            ...
+            ValueError: length of vector must be same number of elements as ground set
+
+            sage: E = SignedSubsetElement(M,data = []);
+            Traceback (most recent call last):
+            ...
+            ValueError: either positives and negatives are set or data is a tuple, OrientedMatroidELement or a dict
         """
         self._parent = parent
 
@@ -230,6 +249,10 @@ class SignedSubsetElement(SageObject):
             1
             sage: E(2)
             -1
+            sage: E(3)
+            Traceback (most recent call last):
+            ...
+            ValueError: 3 is not in the groundset
         """
         if var in self._p:
             return 1
@@ -237,7 +260,7 @@ class SignedSubsetElement(SageObject):
             return -1
         if var in self._z:
             return 0
-        raise ValueError("not in groundset")
+        raise ValueError(f"{var} is not in the groundset")
 
     def __hash__(self):
         """
@@ -631,6 +654,10 @@ class SignedSubsetElement(SageObject):
             (1,0,1)
             sage: E.reorientation([0,1,2])
             (-1,0,1)
+            sage: E.reorientation([3])
+            Traceback (most recent call last):
+            ...
+            ValueError: 3 is not in the groundset
         """
         if change_set in self.groundset():
             change_set = set([change_set])
@@ -667,6 +694,8 @@ class SignedSubsetElement(SageObject):
             sage: E.restrict_to([2])
             (0,0,-1)
             sage: E.restrict_to([1])
+            (0,0,0)
+            sage: E.restrict_to(1)
             (0,0,0)
         """
         if change_set in self.groundset():
@@ -779,10 +808,6 @@ class SignedSubsetElement(SageObject):
             sage: E3.is_tope()
             False
         """
-        if getattr(self.parent(), 'face_lattice', None) is None:
-            raise TypeError(
-                "topes are only implemented if .face_lattice() is implemented")
-
         return self in self.parent().topes()
 
     def is_simplicial(self):

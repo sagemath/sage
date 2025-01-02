@@ -81,17 +81,22 @@ class CovectorOrientedMatroid(OrientedMatroid):
             sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector'); M
             Covector oriented matroid of rank 1
             sage: TestSuite(M).run()
+
+            sage: M = OrientedMatroid(key='covector'); M
+            Covector oriented matroid of rank 0
         """
         OrientedMatroid.__init__(self)
 
         # Set up our covectors
         covectors = []
-        for d in data:
-            # Ensure we're using the right type.
-            covectors.append(SignedSubsetElement(self, data=d, groundset=groundset))
+        if data:
+            for d in data:
+                # Ensure we're using the right type.
+                covectors.append(SignedSubsetElement(self, data=d, groundset=groundset))
+
         # If our groundset is None, make sure the groundsets are the same for
         # all elements
-        if groundset is None and len(covectors) > 0:
+        if groundset is None and bool(covectors):
             groundset = covectors[0].groundset()
             for X in covectors:
                 if X.groundset() != groundset:
@@ -120,6 +125,8 @@ class CovectorOrientedMatroid(OrientedMatroid):
             rep = f"Covector oriented matroid of rank {self.rank()}"
         except ValueError:
             rep = "Covector oriented matroid"
+        except TypeError:
+            rep = "Covector oriented matroid of rank 0"
         return rep
 
     def is_valid(self, certificate=False) -> bool | tuple[bool, dict]:
@@ -133,6 +140,13 @@ class CovectorOrientedMatroid(OrientedMatroid):
             sage: M.is_valid()
             True
 
+            sage: C1 = [[-1,-1], [1,1]]
+            sage: M1 = OrientedMatroid(C1, key='covector')
+            sage: M1.is_valid(certificate=True)
+            (False,
+             {'elt': None,
+              'msg': 'all zero covector is required'})
+
             sage: C2 = [[0,0], [1,1]]
             sage: M2 = OrientedMatroid(C2, key='covector')
             sage: M2.is_valid(certificate=True)
@@ -142,7 +156,7 @@ class CovectorOrientedMatroid(OrientedMatroid):
                0: ,
               'msg': 'every element needs an opposite'})
 
-            sage: C3 = [[1,1], [-1,-1], [0,1], [1,0], [-1,0], [0,-1]]
+            sage: C3 = [[1,1], [-1,-1], [0,1], [1,0], [-1,0], [0,-1], [0,0]]
             sage: M3 = OrientedMatroid(C3, key='covector')
             sage: M3.is_valid(certificate=True)
             (False,
@@ -182,6 +196,17 @@ class CovectorOrientedMatroid(OrientedMatroid):
                         }
                     return (False, error_info)
                 return False
+
+        if not zero_found:
+            if certificate:
+                error_info = {
+                    'msg': "all zero covector is required",
+                    'elt': None
+                    }
+                return (False, error_info)
+            return False
+
+        for X in covectors:
             for Y in covectors:
                 # Axiom 3: Closed under composition
                 if X.composition(Y) not in covectors:
@@ -215,15 +240,6 @@ class CovectorOrientedMatroid(OrientedMatroid):
                             return (False, error_info)
                         return False
 
-        if not zero_found:
-            if certificate:
-                error_info = {
-                    'msg': "all zero covector is required",
-                    'elt': None
-                    }
-                return (False, error_info)
-            return False
-
         if certificate:
             return (True, {})
         return True
@@ -246,7 +262,6 @@ class CovectorOrientedMatroid(OrientedMatroid):
             sage: M.matroid()
             Matroid of rank 2 on 3 elements with 5 flats
         """
-        from sage.matroids.constructor import Matroid
         from sage.matroids.flats_matroid import FlatsMatroid
         flats = list(set([frozenset(X.zeros()) for X in self.elements()]))
         return FlatsMatroid(groundset=self.groundset(), flats=flats)
