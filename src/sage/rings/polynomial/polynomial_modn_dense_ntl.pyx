@@ -468,7 +468,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
     modular_composition = compose_mod
 
 
-def small_roots(self, X=None, beta=1.0, epsilon=None, algorithm="sage", **kwds):
+def small_roots(self, X=None, beta=1.0, epsilon=None, algorithm="pari", **kwds):
     r"""
     Let `N` be the characteristic of the base ring this polynomial
     is defined over: ``N = self.base_ring().characteristic()``.
@@ -490,7 +490,7 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, algorithm="sage", **kwds):
     - ``beta`` -- compute a root mod `b` where `b` is a factor of `N` and `b
       \ge N^\beta` (default: 1.0, so `b = N`.)
     - ``epsilon`` -- the parameter `\epsilon` described above. (default: `\beta/8`)
-    - ``algorithm`` -- ``"sage"`` (default) or ``"pari"``
+    - ``algorithm`` -- ``"sage"`` or ``"pari"`` (default)
     - ``**kwds`` -- passed through to method :meth:`Matrix_integer_dense.LLL() <sage.matrix.matrix_integer_dense.Matrix_integer_dense.LLL>`
 
     EXAMPLES:
