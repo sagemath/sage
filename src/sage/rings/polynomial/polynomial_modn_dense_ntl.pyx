@@ -468,7 +468,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
     modular_composition = compose_mod
 
 
-def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
+def small_roots(self, X=None, beta=1.0, epsilon=None, algorithm="sage", **kwds):
     r"""
     Let `N` be the characteristic of the base ring this polynomial
     is defined over: ``N = self.base_ring().characteristic()``.
@@ -490,6 +490,7 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
     - ``beta`` -- compute a root mod `b` where `b` is a factor of `N` and `b
       \ge N^\beta` (default: 1.0, so `b = N`.)
     - ``epsilon`` -- the parameter `\epsilon` described above. (default: `\beta/8`)
+    - ``algorithm`` -- ``"sage"`` (default) or ``"pari"``
     - ``**kwds`` -- passed through to method :meth:`Matrix_integer_dense.LLL() <sage.matrix.matrix_integer_dense.Matrix_integer_dense.LLL>`
 
     EXAMPLES:
@@ -646,25 +647,34 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
         X = (0.5 * N**(beta**2/delta - epsilon)).ceil()
     verbose("X = %s"%X, level=2)
 
-    # we could do this much faster, but this is a cheap step
-    # compared to LLL
-    g  = [x**j * N**(m-i) * f**i for i in range(m) for j in range(delta) ]
-    g.extend([x**i * f**m for i in range(t)]) # h
-
-    B = Matrix(ZZ, len(g), delta*m + max(delta,t) )
-    for i in range(B.nrows()):
-        for j in range( g[i].degree()+1 ):
-            B[i,j] = g[i][j]*X**j
-
-    B =  B.LLL(**kwds)
-
-    f = sum([ZZ(B[0,i]//X**i)*x**i for i in range(B.ncols())])
-    R = f.roots()
-
-    ZmodN = self.base_ring()
-    roots = set([ZmodN(r) for r,m in R if abs(r) <= X])
     Nbeta = N**beta
+    ZmodN = self.base_ring()
+
+    if algorithm == "pari":
+        roots = set(map(ZmodN, pari.zncoppersmith(f, N, X=X, B=Nbeta.floor())))
+
+    elif algorithm == "sage":
+        # we could do this much faster, but this is a cheap step
+        # compared to LLL
+        g  = [x**j * N**(m-i) * f**i for i in range(m) for j in range(delta) ]
+        g.extend([x**i * f**m for i in range(t)]) # h
+
+        B = Matrix(ZZ, len(g), delta*m + max(delta,t) )
+        for i in range(B.nrows()):
+            for j in range( g[i].degree()+1 ):
+                B[i,j] = g[i][j]*X**j
+
+        B =  B.LLL(**kwds)
+
+        f = sum([ZZ(B[0,i]//X**i)*x**i for i in range(B.ncols())])
+        R = f.roots()
+        roots = set([ZmodN(r) for r,m in R if abs(r) <= X])
+
+    else:
+        raise ValueError('algorithm must be "pari" or "sage"')
+
     return [root for root in roots if N.gcd(ZZ(self(root))) >= Nbeta]
+
 
 
 cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
