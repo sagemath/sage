@@ -1128,7 +1128,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             self.clear_cache()
 
             sig_on()
-            r =  mzd_echelonize(self._entries, full)
+            r = mzd_echelonize(self._entries, full)
             sig_off()
 
             self.cache('in_echelon_form',True)
@@ -1143,14 +1143,14 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             if 'k' in kwds:
                 k = int(kwds['k'])
 
-                if k<1 or k>16:
+                if k < 1 or k > 16:
                     raise RuntimeError("k must be between 1 and 16")
                 k = round(k)
             else:
                 k = 0
 
             sig_on()
-            r =  mzd_echelonize_m4ri(self._entries, full, k)
+            r = mzd_echelonize_m4ri(self._entries, full, k)
             sig_off()
 
             self.cache('in_echelon_form',True)
@@ -1163,7 +1163,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             self.clear_cache()
 
             sig_on()
-            r =  mzd_echelonize_pluq(self._entries, full)
+            r = mzd_echelonize_pluq(self._entries, full)
             sig_off()
 
             self.cache('in_echelon_form',True)
