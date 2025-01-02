@@ -1,7 +1,7 @@
 """
 Matrix plots
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
 #                     2008 Mike Hansen <mhansen@gmail.com>,
@@ -15,8 +15,8 @@ Matrix plots
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options, suboptions
@@ -30,18 +30,18 @@ class MatrixPlot(GraphicPrimitive):
 
     INPUT:
 
-    - ``xy_data_array`` - list of lists giving matrix values corresponding to
+    - ``xy_data_array`` -- list of lists giving matrix values corresponding to
       the grid
 
-    - ``xrange`` - tuple of 2 floats indicating range for horizontal direction
+    - ``xrange`` -- tuple of 2 floats indicating range for horizontal direction
       (number of columns in the matrix). If ``None``, the defaults are used as
       indicated in :func:`matrix_plot`.
 
-    - ``yrange`` - tuple of 2 floats indicating range for vertical direction
+    - ``yrange`` -- tuple of 2 floats indicating range for vertical direction
       (number of rows in the matrix). If ``None``, the defaults are used as
       indicated in :func:`matrix_plot`.
 
-    - ``options`` - dict of valid plot options to pass to constructor
+    - ``options`` -- dictionary of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -73,7 +73,7 @@ class MatrixPlot(GraphicPrimitive):
     """
     def __init__(self, xy_data_array, xrange, yrange, options):
         """
-        Initializes base class MatrixPlot.
+        Initialize base class MatrixPlot.
 
         EXAMPLES::
 
@@ -98,7 +98,7 @@ class MatrixPlot(GraphicPrimitive):
 
     def get_minmax_data(self):
         """
-        Returns a dictionary with the bounding box data.
+        Return a dictionary with the bounding box data.
 
         EXAMPLES::
 
@@ -162,7 +162,7 @@ class MatrixPlot(GraphicPrimitive):
             sage: m = M[0]; m                                                           # needs sage.symbolic
             MatrixPlot defined by a 5 x 5 data grid
         """
-        return "MatrixPlot defined by a %s x %s data grid" % (self.xy_array_row, self.xy_array_col)
+        return "MatrixPlot defined by a {} x {} data grid".format(self.xy_array_row, self.xy_array_col)
 
     def _render_on_subplot(self, subplot):
         """
@@ -195,9 +195,9 @@ class MatrixPlot(GraphicPrimitive):
                 rowstyle = subdiv_options['style']
                 colstyle = subdiv_options['style']
             if rowstyle is None:
-                rowstyle = dict()
+                rowstyle = {}
             if colstyle is None:
-                colstyle = dict()
+                colstyle = {}
 
             # Make line objects for subdivisions
             from .line import line2d
@@ -224,23 +224,24 @@ class MatrixPlot(GraphicPrimitive):
             extent = (lim['xmin'], lim['xmax'],
                       lim['ymax' if flip_y else 'ymin'],
                       lim['ymin' if flip_y else 'ymax'])
-            opts = dict(cmap=cmap, interpolation='nearest', aspect='equal',
-                      norm=norm, vmin=options['vmin'], vmax=options['vmax'],
-                      origin=('upper' if flip_y else 'lower'),
-                      extent=extent, zorder=options.get('zorder'))
+            opts = {'cmap': cmap, 'interpolation': 'nearest',
+                    'aspect': 'equal', 'norm': norm,
+                    'vmin': options['vmin'], 'vmax': options['vmax'],
+                    'origin': ('upper' if flip_y else 'lower'),
+                    'extent': extent, 'zorder': options.get('zorder')}
             image = subplot.imshow(self.xy_data_array, **opts)
 
             if options.get('colorbar', False):
                 colorbar_options = options['colorbar_options']
                 from matplotlib import colorbar
-                cax,kwds = colorbar.make_axes_gridspec(subplot,**colorbar_options)
+                cax,kwds = colorbar.make_axes_gridspec(subplot, **colorbar_options)
                 colorbar.Colorbar(cax, image, **kwds)
 
         if flip_y:
             subplot.xaxis.tick_top()
         else:
             subplot.xaxis.tick_bottom()
-        subplot.xaxis.set_ticks_position('both') #only tick marks, not tick labels
+        subplot.xaxis.set_ticks_position('both')  # only tick marks, not tick labels
 
 
 @suboptions('colorbar', orientation='vertical', format=None)
@@ -270,28 +271,28 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
 
     INPUT:
 
-    - ``mat`` - a 2D matrix or array
+    - ``mat`` -- a 2D matrix or array
 
-    - ``xrange`` - (default: None) tuple of the horizontal extent
+    - ``xrange`` -- (default: ``None``) tuple of the horizontal extent
       ``(xmin, xmax)`` of the bounding box in which to draw the matrix.  The
       image is stretched individually along x and y to fill the box.
 
-      If None, the extent is determined by the following conditions.  Matrix
+      If ``None``, the extent is determined by the following conditions.  Matrix
       entries have unit size in data coordinates.  Their centers are on integer
       coordinates, and their center coordinates range from 0 to columns-1
       horizontally and from 0 to rows-1 vertically.
 
       If the matrix is sparse, this keyword is ignored.
 
-    - ``yrange`` - (default: None) tuple of the vertical extent
+    - ``yrange`` -- (default: ``None``) tuple of the vertical extent
       ``(ymin, ymax)`` of the bounding box in which to draw the matrix.
       See ``xrange`` for details.
 
     The following input must all be passed in as named parameters, if
     default not used:
 
-    - ``cmap`` - a colormap (default: 'Greys'), the name of a predefined
-      colormap, a list of colors, or an instance of a matplotlib Colormap.
+    - ``cmap`` -- a colormap (default: ``'Greys'``); the name of a predefined
+      colormap, a list of colors, or an instance of a matplotlib Colormap
 
       The list of predefined color maps can be visualized in `matplotlib's
       documentation
@@ -299,43 +300,44 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
       can also type ``import matplotlib.cm; matplotlib.cm.datad.keys()`` to list
       their names.
 
-    - ``colorbar`` -- boolean (default: False) Show a colorbar or not (dense matrices only).
+    - ``colorbar`` -- boolean (default: ``False``); show a colorbar or not
+      (dense matrices only)
 
       The following options are used to adjust the style and placement
       of colorbars.  They have no effect if a colorbar is not shown.
 
-      - ``colorbar_orientation`` -- string (default: 'vertical'),
+      - ``colorbar_orientation`` -- string (default: ``'vertical'``);
         controls placement of the colorbar, can be either 'vertical'
         or 'horizontal'
 
       - ``colorbar_format`` -- a format string, this is used to format
-        the colorbar labels.
+        the colorbar labels
 
-      - ``colorbar_options`` -- a dictionary of options for the matplotlib
+      - ``colorbar_options`` -- dictionary of options for the matplotlib
         colorbar API.  Documentation for the :mod:`matplotlib.colorbar` module
         has details.
 
-    - ``norm`` - If None (default), the value range is scaled to the interval
+    - ``norm`` -- if ``None`` (default), the value range is scaled to the interval
       [0,1].  If 'value', then the actual value is used with no
       scaling.  A :class:`matplotlib.colors.Normalize` instance may
       also passed.
 
-    - ``vmin`` - The minimum value (values below this are set to this value)
+    - ``vmin`` -- the minimum value (values below this are set to this value)
 
-    - ``vmax`` - The maximum value (values above this are set to this value)
+    - ``vmax`` -- the maximum value (values above this are set to this value)
 
-    - ``flip_y`` - (default: True) boolean.  If False, the first row of the
+    - ``flip_y`` -- boolean (default: ``True``); if ``False``, the first row of the
       matrix is on the bottom of the graph.  Otherwise, the first row is on the
       top of the graph.
 
-    - ``subdivisions`` - If True, plot the subdivisions of the matrix as lines.
+    - ``subdivisions`` -- if ``True``, plot the subdivisions of the matrix as lines
 
-    - ``subdivision_boundaries`` - a list of lists in the form
+    - ``subdivision_boundaries`` -- list of lists in the form
       ``[row_subdivisions, column_subdivisions]``, which specifies
       the row and column subdivisions to use.  If not specified,
       defaults to the matrix subdivisions
 
-    - ``subdivision_style`` - a dictionary of properties passed
+    - ``subdivision_style`` -- dictionary of properties passed
       on to the :func:`~sage.plot.line.line2d` command for plotting
       subdivisions.  If this is a two-element list or tuple, then it
       specifies the styles of row and column divisions, respectively.
@@ -510,7 +512,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
         Graphics object consisting of 1 graphics primitive
 
     The title position is adjusted upwards if the ``flip_y`` keyword is set
-    to True (this is the default).::
+    to ``True`` (this is the default).::
 
         sage: matrix_plot(identity_matrix(50), title='identity')
         Graphics object consisting of 1 graphics primitive
@@ -567,10 +569,10 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
     import numpy as np
     import scipy.sparse as scipysparse
     from sage.plot.all import Graphics
-    from sage.structure.element import is_Matrix
+    from sage.structure.element import Matrix
     from sage.rings.real_double import RDF
     orig_mat = mat
-    if is_Matrix(mat):
+    if isinstance(mat, Matrix):
         sparse = mat.is_sparse()
         if sparse:
             entries = list(mat._dict().items())

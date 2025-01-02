@@ -8,8 +8,8 @@
 #   Determine if the system copy of a python package can be used by sage.
 #
 #   This macro uses setuptools.version's pkg_resources to check that the
-#   "install-requires.txt" file for the named package is satisfied, and
-#   it can typically fail in four ways:
+#   "version_requirements.txt" file (or entry in "src/pyproject.toml") for
+#   the named package is satisfied, and it can typically fail in four ways:
 #
 #     1. If --enable-system-site-packages was not passed to ./configure,
 #
@@ -19,8 +19,9 @@
 #
 #     4. If setuptools is not available to the system python,
 #
-#     5. If the contents of install-requires.txt are not met (wrong
-#        version, no version, etc.) by the system python.
+#     5. If the contents of version_requirements.txt (or entry in
+#        "src/pyproject.toml") are not met (wrong version, no version,
+#        etc.) by the system python.
 #
 #   In any of those cases, we set sage_spkg_install_$package to "yes"
 #   so that the corresponding SPKG is installed. Otherwise, we do
@@ -56,29 +57,17 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
                                   config.venv            dnl
                                   2>&AS_MESSAGE_LOG_FD], [
       AC_MSG_RESULT(yes)
-      dnl strip all comments from install-requires.txt; this should leave
-      dnl only a single line containing the version specification for this
-      dnl package. Afterwards, convert all double-quotes to single quotes.
-      dnl Both work, but only single quotes are documented. However, at the
-      dnl time of writing, double quotes are more compatible with our toml
-      dnl generation in ./bootstrap. Converting them from double- to single-
-      dnl quotes on-the-fly here lets us support both (in this macro, at
-      dnl least).
-      SAGE_PKG_VERSPEC=$(sed                   \
-        -e '/^#/d'                             \
-        -e "s/\"/'/g"                          \
-        "./build/pkgs/$1/install-requires.txt"
-      )
-      AC_MSG_CHECKING([for python package $1 ("${SAGE_PKG_VERSPEC}")])
+      dnl SAGE_PKG_VERSPEC is in the format of a toml list, but
+      dnl without surrounding brackets, of single-quoted strings,
+      dnl with any double-quotes escaped by backslash.
+      AS_VAR_SET([SAGE_PKG_VERSPEC], ["SPKG_INSTALL_REQUIRES_]$1["])
+      AC_MSG_CHECKING([for python package $1 (${SAGE_PKG_VERSPEC%,})])
 
       WITH_SAGE_PYTHONUSERBASE([dnl
-        dnl double-quote SAGE_PKG_VERSPEC because platform-specific
-        dnl dependencies like python_version<'3.11' will have single
-        dnl quotes in them. (We normalized the quotes earlier with sed.)
         AS_IF(
-          [config.venv/bin/python3 -c   dnl
-             "import pkg_resources;                                        dnl
-              pkg_resources.require(\"${SAGE_PKG_VERSPEC}\".splitlines())" dnl
+          [config.venv/bin/python3 -c dnl
+             "import pkg_resources; dnl
+              pkg_resources.require((${SAGE_PKG_VERSPEC}))" dnl
            2>&AS_MESSAGE_LOG_FD],
           [AC_MSG_RESULT(yes)],
           [AC_MSG_RESULT(no); sage_spkg_install_$1=yes]

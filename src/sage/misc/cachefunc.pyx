@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Cached Functions and Methods
 
@@ -68,7 +69,7 @@ be defined by simply using the decorator. However, an indirect
 approach is still needed for cpdef methods::
 
     sage: # needs sage.misc.cython
-    sage: cython_code = ['cpdef test_meth(self,x):',
+    sage: cython_code = ['cpdef test_meth(self, x):',
     ....: '    "some doc for a wrapped cython method"',
     ....: '    return -x',
     ....: 'from sage.misc.cachefunc import cached_method',
@@ -153,7 +154,7 @@ hardly by used.
     sage: cython_code = ["from sage.structure.element cimport Element, ElementWithCachedMethod", "from cpython.object cimport PyObject_RichCompare",
     ....: "cdef class MyBrokenElement(Element):",
     ....: "    cdef public object x",
-    ....: "    def __init__(self,P,x):",
+    ....: "    def __init__(self, P, x):",
     ....: "        self.x=x",
     ....: "        Element.__init__(self,P)",
     ....: "    def __neg__(self):",
@@ -168,7 +169,7 @@ hardly by used.
     ....: "        return -self",
     ....: "cdef class MyElement(ElementWithCachedMethod):",
     ....: "    cdef public object x",
-    ....: "    def __init__(self,P,x):",
+    ....: "    def __init__(self, P, x):",
     ....: "        self.x=x",
     ....: "        ElementWithCachedMethod.__init__(self,P)",
     ....: "    def __neg__(self):",
@@ -266,7 +267,7 @@ Introspection works::
     Some doc for direct method
     <BLANKLINE>
     sage: print(sage_getsource(O.wrapped_method))
-    cpdef test_meth(self,x):
+    cpdef test_meth(self, x):
         "some doc for a wrapped cython method"
         return -x
     sage: print(sage_getsource(O.direct_method))
@@ -311,7 +312,7 @@ latter is easy::
     ....: "cdef class MyClass:",
     ....: "    cdef public dict _cached_methods",
     ....: "    @cached_method",
-    ....: "    def f(self, a,b):",
+    ....: "    def f(self, a, b):",
     ....: "        return a*b"]
     sage: cython(os.linesep.join(cython_code))
     sage: P = MyClass()
@@ -332,7 +333,7 @@ enough in the following example::
     ....: "    cdef dict D",
     ....: "    def __init__(self):",
     ....: "        self.D = {}",
-    ....: "    def __setattr__(self, n,v):",
+    ....: "    def __setattr__(self, n, v):",
     ....: "        self.D[n] = v",
     ....: "    def __getattribute__(self, n):",
     ....: "        try:",
@@ -341,7 +342,7 @@ enough in the following example::
     ....: "            pass",
     ....: "        return getattr(type(self),n).__get__(self)",
     ....: "    @cached_method",
-    ....: "    def f(self, a,b):",
+    ....: "    def f(self, a, b):",
     ....: "        return a+b"]
     sage: cython(os.linesep.join(cython_code))
     sage: Q = MyOtherClass()
@@ -441,20 +442,22 @@ from inspect import isfunction
 from sage.misc.weak_dict cimport CachedWeakValueDictionary
 from sage.misc.decorators import decorator_keywords
 
-cdef frozenset special_method_names = frozenset(['__abs__', '__add__',
-            '__and__', '__call__', '__cmp__', '__coerce__', '__complex__', '__contains__', '__del__',
-            '__delattr__', '__delete__', '__delitem__', '__delslice__', '__dir__', '__div__',
-            '__eq__', '__float__', '__floordiv__', '__format__', '__ge__', '__get__', '__getattr__',
-            '__getattribute__', '__getitem__', '__getslice__', '__gt__', '__hash__', '__hex__',
-            '__iadd__', '__iand__', '__idiv__', '__ifloordiv__', '__ilshift__', '__imod__', '__imul__',
-            '__index__', '__init__', '__instancecheck__', '__int__', '__invert__', '__ior__', '__ipow__',
-            '__irshift__', '__isub__', '__iter__', '__itruediv__', '__ixor__', '__le__', '__len__',
-            '__length_hint__', '__long__', '__lshift__', '__lt__', '__missing__', '__mod__', '__mul__',
-            '__ne__', '__neg__', '__new__', '__oct__', '__or__', '__pos__', '__pow__',
-            '__radd__', '__rand__', '__rdiv__', '__repr__', '__reversed__', '__rfloordiv__', '__rlshift__',
-            '__rmod__', '__rmul__', '__ror__', '__rpow__', '__rrshift__', '__rshift__', '__rsub__',
-            '__rtruediv__', '__rxor__', '__set__', '__setattr__', '__setitem__', '__setslice__', '__sizeof__',
-            '__str__', '__sub__', '__subclasscheck__', '__truediv__', '__unicode__', '__xor__', 'next'])
+cdef frozenset special_method_names = frozenset(
+    ['__abs__', '__add__',
+     '__and__', '__call__', '__cmp__', '__coerce__', '__complex__', '__contains__', '__del__',
+     '__delattr__', '__delete__', '__delitem__', '__delslice__', '__dir__', '__div__',
+     '__eq__', '__float__', '__floordiv__', '__format__', '__ge__', '__get__', '__getattr__',
+     '__getattribute__', '__getitem__', '__getslice__', '__gt__', '__hash__', '__hex__',
+     '__iadd__', '__iand__', '__idiv__', '__ifloordiv__', '__ilshift__', '__imod__', '__imul__',
+     '__index__', '__init__', '__instancecheck__', '__int__', '__invert__', '__ior__', '__ipow__',
+     '__irshift__', '__isub__', '__iter__', '__itruediv__', '__ixor__', '__le__', '__len__',
+     '__length_hint__', '__long__', '__lshift__', '__lt__', '__missing__', '__mod__', '__mul__',
+     '__ne__', '__neg__', '__new__', '__oct__', '__or__', '__pos__', '__pow__',
+     '__radd__', '__rand__', '__rdiv__', '__repr__', '__reversed__', '__rfloordiv__', '__rlshift__',
+     '__rmod__', '__rmul__', '__ror__', '__rpow__', '__rrshift__', '__rshift__', '__rsub__',
+     '__rtruediv__', '__rxor__', '__set__', '__setattr__', '__setitem__', '__setslice__', '__sizeof__',
+     '__str__', '__sub__', '__subclasscheck__', '__truediv__', '__unicode__', '__xor__', 'next'])
+
 
 def _cached_function_unpickle(module, name, cache=None):
     """
@@ -466,9 +469,9 @@ def _cached_function_unpickle(module, name, cache=None):
 
     INPUT:
 
-    - ``module`` -- the name of the module to import the function from.
-    - ``name`` -- the name of the cached function.
-    - ``cache`` -- a list of cached key value pairs.
+    - ``module`` -- the name of the module to import the function from
+    - ``name`` -- the name of the cached function
+    - ``cache`` -- list of cached key value pairs
 
     TESTS::
 
@@ -497,12 +500,12 @@ def _cached_function_unpickle(module, name, cache=None):
         True
         sage: f(0)
         0
-
     """
-    ret = getattr(__import__(module, fromlist=['']),name)
+    ret = getattr(__import__(module, fromlist=['']), name)
     if cache is not None:
         ret.cache.update(cache)
     return ret
+
 
 cdef class NonpicklingDict(dict):
     r"""
@@ -515,7 +518,6 @@ cdef class NonpicklingDict(dict):
         sage: d[0] = 0
         sage: loads(dumps(d))
         {}
-
     """
     def __reduce__(self):
         r"""
@@ -528,14 +530,13 @@ cdef class NonpicklingDict(dict):
             sage: d[0] = 0
             sage: d.__reduce__()
             (<class 'sage.misc.cachefunc.NonpicklingDict'>, ())
-
         """
         return NonpicklingDict, ()
 
 
 cdef unhashable_key = object()
 
-cpdef inline dict_key(o) noexcept:
+cpdef inline dict_key(o):
     """
     Return a key to cache object ``o`` in a dict.
 
@@ -560,7 +561,7 @@ cpdef inline dict_key(o) noexcept:
     return o
 
 
-cpdef inline cache_key(o) noexcept:
+cpdef inline cache_key(o):
     r"""
     Helper function to return a hashable key for ``o`` which can be used for
     caching.
@@ -600,7 +601,7 @@ cpdef inline cache_key(o) noexcept:
     return o
 
 
-cdef cache_key_unhashable(o) noexcept:
+cdef cache_key_unhashable(o):
     """
     Return a key for caching an item which is unhashable.
     """
@@ -676,9 +677,9 @@ cdef class CachedFunction():
     caching. In this example we ignore the parameter ``algorithm``::
 
         sage: @cached_function(key=lambda x,y,algorithm: (x,y))
-        ....: def mul(x, y, algorithm="default"):
+        ....: def mul(x, y, algorithm='default'):
         ....:     return x*y
-        sage: mul(1,1,algorithm="default") is mul(1,1,algorithm="algorithm") is mul(1,1) is mul(1,1,'default')
+        sage: mul(1,1,algorithm='default') is mul(1,1,algorithm='algorithm') is mul(1,1) is mul(1,1,'default')
         True
     """
     def __init__(self, f, *, classmethod=False, name=None, key=None, do_pickle=None):
@@ -749,7 +750,6 @@ cdef class CachedFunction():
             sage: f = loads(s)
             sage: len(f.cache)
             100
-
         """
         self.is_classmethod = classmethod
         self._common_init(f, None, name=name, key=key, do_pickle=do_pickle)
@@ -778,15 +778,16 @@ cdef class CachedFunction():
             self.__cached_module__ = f.__module__
         except AttributeError:
             self.__cached_module__ = f.__objclass__.__module__
-        if argument_fixer is not None: # it is None unless the argument fixer
-                                       # was known previously. See #15038.
+        if argument_fixer is not None:
+            # it is None unless the argument fixer
+            # was known previously. See #15038.
             self._argument_fixer = argument_fixer
 
     @property
     def __module__(self):
         return self.__cached_module__
 
-    cdef get_key_args_kwds(self, tuple args, dict kwds) noexcept:
+    cdef get_key_args_kwds(self, tuple args, dict kwds):
         """
         Return the key in the cache to be used when ``args`` and
         ``kwds`` are passed in as parameters.
@@ -812,16 +813,16 @@ cdef class CachedFunction():
             -1
         """
         self._argument_fixer = ArgumentFixer(self.f,
-                classmethod=self.is_classmethod)
+                                             classmethod=self.is_classmethod)
 
-    cdef fix_args_kwds(self, tuple args, dict kwds) noexcept:
+    cdef fix_args_kwds(self, tuple args, dict kwds):
         r"""
         Normalize parameters to obtain a key for the cache.
 
         TESTS::
 
             sage: @cached_function(key=lambda x,y,algorithm: (x,y))
-            ....: def mul(x, y, algorithm="default"):
+            ....: def mul(x, y, algorithm='default'):
             ....:     return x*y
             sage: mul.get_key(1,1,"default")  # indirect doctest
             (1, 1)
@@ -849,10 +850,10 @@ cdef class CachedFunction():
         return _cached_function_unpickle, (self.__cached_module__, self.__name__, self.cache)
 
     #########
-    ## Introspection
-    ##
-    ## We provide some methods explicitly, and
-    ## forward other questions to the cached function.
+    #  Introspection
+    #
+    # We provide some methods explicitly, and
+    # forward other questions to the cached function.
 
     def _instancedoc_(self):
         """
@@ -895,22 +896,22 @@ cdef class CachedFunction():
             try:
                 sourcelines = sage_getsourcelines(f)
                 filename = sage_getfile_relative(f)
-                #this is a rather expensive way of getting the line number, because
-                #retrieving the source requires reading the source file and in many
-                #cases this is not required (in cython it's embedded in the docstring,
-                #on code objects you'll find it in co_filename and co_firstlineno)
-                #however, this hasn't been factored out yet in sageinspect
-                #and the logic in sage_getsourcelines is rather intricate.
-                file_info = "File: {} (starting at line {})".format(filename,sourcelines[1])+os.linesep
+                # this is a rather expensive way of getting the line number, because
+                # retrieving the source requires reading the source file and in many
+                # cases this is not required (in cython it's embedded in the docstring,
+                # on code objects you'll find it in co_filename and co_firstlineno)
+                # however, this hasn't been factored out yet in sageinspect
+                # and the logic in sage_getsourcelines is rather intricate.
+                file_info = "File: {} (starting at line {})".format(filename, sourcelines[1]) + os.linesep
 
-                doc = file_info+doc
+                doc = file_info + doc
             except IOError:
                 pass
         return doc
 
     def _sage_src_(self):
         """
-        Returns the source code for the wrapped function.
+        Return the source code for the wrapped function.
 
         TESTS::
 
@@ -918,14 +919,13 @@ cdef class CachedFunction():
             sage: g = CachedFunction(number_of_partitions)                              # needs sage.combinat
             sage: 'flint' in sage_getsource(g)  # indirect doctest                      # needs sage.combinat
             True
-
         """
         from sage.misc.sageinspect import sage_getsource
         return sage_getsource(self.f)
 
     def _sage_src_lines_(self):
         r"""
-        Returns the list of source lines and the first line number
+        Return the list of source lines and the first line number
         of the wrapped function.
 
         TESTS::
@@ -936,7 +936,6 @@ cdef class CachedFunction():
             sage: l = '        elif algorithm.startswith("macaulay2:"):\n'
             sage: l in sage_getsourcelines(I.groebner_basis)[0]  # indirect doctest
             True
-
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self.f)
@@ -956,7 +955,6 @@ cdef class CachedFunction():
             FullArgSpec(args=['self', 'algorithm', 'deg_bound', 'mult_bound', 'prot'],
                         varargs='args', varkw='kwds', defaults=('', None, None, False),
                         kwonlyargs=[], kwonlydefaults=None, annotations={})
-
         """
         return sage_getargspec(self.f)
 
@@ -998,7 +996,6 @@ cdef class CachedFunction():
             True
             sage: f(y) is not f(x)
             True
-
         """
         k = self.get_key_args_kwds(args, kwds)
 
@@ -1016,7 +1013,7 @@ cdef class CachedFunction():
     def cached(self, *args, **kwds):
         """
         Return the result from the cache if available. If the value is
-        not cached, raise ``KeyError``.
+        not cached, raise :exc:`KeyError`.
 
         EXAMPLES::
 
@@ -1042,7 +1039,7 @@ cdef class CachedFunction():
 
     def is_in_cache(self, *args, **kwds):
         """
-        Checks if the argument list is in the cache.
+        Check if the argument list is in the cache.
 
         EXAMPLES::
 
@@ -1078,7 +1075,6 @@ cdef class CachedFunction():
             1 + O(2)
             sage: f.is_in_cache(x)
             True
-
         """
         k = self.get_key_args_kwds(args, kwds)
         try:
@@ -1233,7 +1229,7 @@ cdef class CachedFunction():
         INPUT:
 
         - ``arglist`` -- list (or iterables) of arguments for which
-          the method shall be precomputed.
+          the method shall be precomputed
 
         - ``num_processes`` -- number of processes used by
           :func:`~sage.parallel.decorate.parallel`
@@ -1255,7 +1251,7 @@ cdef class CachedFunction():
             ak = normalize_input(a)
             if self.get_key_args_kwds(ak[0], ak[1]) not in self.cache:
                 arglist2.append(ak)
-        for ((args,kwargs), val) in P(arglist2):
+        for ((args, kwargs), val) in P(arglist2):
             self.set_cache(val, *args, **kwargs)
 
 
@@ -1328,9 +1324,9 @@ cdef class WeakCachedFunction(CachedFunction):
     caching. In this example we ignore the parameter ``algorithm``::
 
         sage: @weak_cached_function(key=lambda x,algorithm: x)
-        ....: def mod_ring(x, algorithm="default"):
+        ....: def mod_ring(x, algorithm='default'):
         ....:     return IntegerModRing(x)
-        sage: mod_ring(1,algorithm="default") is mod_ring(1,algorithm="algorithm") is mod_ring(1) is mod_ring(1,'default')
+        sage: mod_ring(1,algorithm='default') is mod_ring(1,algorithm='algorithm') is mod_ring(1) is mod_ring(1,'default')
         True
 
     TESTS:
@@ -1453,6 +1449,7 @@ cdef class WeakCachedFunction(CachedFunction):
 
 weak_cached_function = decorator_keywords(WeakCachedFunction)
 
+
 class CachedMethodPickle():
     """
     This class helps to unpickle cached methods.
@@ -1467,7 +1464,7 @@ class CachedMethodPickle():
         we replace the actual cached method by a place holder,
         that kills itself as soon as any attribute is requested.
         Then, the original cached attribute is reinstated. But the
-        cached values are in fact saved (if `do_pickle` is set.)
+        cached values are in fact saved (if ``do_pickle`` is set.)
 
     EXAMPLES::
 
@@ -1553,9 +1550,9 @@ class CachedMethodPickle():
         """
         INPUT:
 
-        - ``inst`` - some instance.
-        - ``name`` (string) - usually the name of an attribute
-          of ``inst`` to which ``self`` is assigned.
+        - ``inst`` -- some instance
+        - ``name`` -- string; usually the name of an attribute
+          of ``inst`` to which ``self`` is assigned
 
         TESTS::
 
@@ -1563,7 +1560,6 @@ class CachedMethodPickle():
             sage: P = CachedMethodPickle(1, 'foo')
             sage: P
             Pickle of the cached method "foo"
-
         """
         self._instance = inst
         self._name = name
@@ -1611,9 +1607,9 @@ class CachedMethodPickle():
              x^2*y*z^3 - x*y^2*z^3 + 2*y^3*z^3 + z^6,
              x*y^3 + y^4 + x*z^3, x^3 + y^3 + z^3]}
         """
-        return CachedMethodPickle,(self._instance,self._name,self._cache)
+        return CachedMethodPickle, (self._instance, self._name, self._cache)
 
-    def __call__(self,*args,**kwds):
+    def __call__(self, *args, **kwds):
         """
         The purpose of this call method is to kill ``self`` and to
         replace it by an actual :class:`CachedMethodCaller`. The last
@@ -1633,19 +1629,18 @@ class CachedMethodPickle():
             [a, b]
             sage: J.gens
             Cached version of <function ...gens at 0x...>
-
         """
         self._instance.__dict__.__delitem__(self._name)
-        CM = getattr(self._instance,self._name)
+        CM = getattr(self._instance, self._name)
         if self._cache is not None:
             if isinstance(CM, CachedMethodCallerNoArgs):
                 CM.cache = self._cache
             else:
                 for k, v in self._cache:
                     CM.cache[k] = v
-        return CM(*args,**kwds)
+        return CM(*args, **kwds)
 
-    def __getattr__(self,s):
+    def __getattr__(self, s):
         """
         TESTS::
 
@@ -1674,14 +1669,14 @@ class CachedMethodPickle():
             Cached version of <function ...groebner_basis at 0x...>
         """
         self._instance.__dict__.__delitem__(self._name)
-        CM = getattr(self._instance,self._name)
+        CM = getattr(self._instance, self._name)
         if self._cache is not None:
             if isinstance(CM, CachedMethodCallerNoArgs):
                 CM.cache = self._cache
             else:
                 for k, v in self._cache:
                     CM.cache[k] = v
-        return getattr(CM,s)
+        return getattr(CM, s)
 
 
 cdef class CachedMethodCaller(CachedFunction):
@@ -1699,7 +1694,7 @@ cdef class CachedMethodCaller(CachedFunction):
 
         sage: class A:
         ....:    @cached_method
-        ....:    def bar(self,x):
+        ....:    def bar(self, x):
         ....:        return x^2
         sage: a = A()
         sage: a.bar
@@ -1725,7 +1720,7 @@ cdef class CachedMethodCaller(CachedFunction):
 
         sage: class A:
         ....:    @cached_method(do_pickle=True)
-        ....:    def bar(self,x):
+        ....:    def bar(self, x):
         ....:        return x^2
 
         sage: __main__.A = A
@@ -1737,7 +1732,6 @@ cdef class CachedMethodCaller(CachedFunction):
         sage: b = loads(dumps(a))
         sage: len(b.bar.cache)
         1
-
     """
     def __init__(self, CachedMethod cachedmethod, inst, *, cache=None, name=None, key=None, do_pickle=None):
         """
@@ -1747,7 +1741,7 @@ cdef class CachedMethodCaller(CachedFunction):
             ....:     def __init__(self, x):
             ....:         self._x = x
             ....:     @cached_method
-            ....:     def f(self,*args):
+            ....:     def f(self, *args):
             ....:         return self._x^2
             sage: a = Foo(2)
             sage: a.f.cache
@@ -1759,7 +1753,7 @@ cdef class CachedMethodCaller(CachedFunction):
         """
         # initialize CachedFunction. Since the cached method is actually bound
         # to an instance, it now makes sense to initialise the ArgumentFixer
-        # and re-use it for all bound cached method callers of the unbound
+        # and reuse it for all bound cached method callers of the unbound
         # cached method.
         if cachedmethod._cachedfunc._argument_fixer is None:
             cachedmethod._cachedfunc.argfix_init()
@@ -1794,10 +1788,10 @@ cdef class CachedMethodCaller(CachedFunction):
             sage: J.groebner_basis
             Cached version of <function ...groebner_basis at 0x...>
         """
-        if isinstance(self._cachedmethod, CachedInParentMethod) or hasattr(self._instance,self._cachedmethod._cache_name):
-            return CachedMethodPickle,(self._instance,self.__name__)
+        if isinstance(self._cachedmethod, CachedInParentMethod) or hasattr(self._instance, self._cachedmethod._cache_name):
+            return CachedMethodPickle, (self._instance, self.__name__)
         else:
-            return CachedMethodPickle,(self._instance,self.__name__,self.cache)
+            return CachedMethodPickle, (self._instance, self.__name__, self.cache)
 
     def _instance_call(self, *args, **kwds):
         """
@@ -1820,7 +1814,7 @@ cdef class CachedMethodCaller(CachedFunction):
             ....:     def __init__(self, x):
             ....:         self._x = x
             ....:     @cached_method
-            ....:     def f(self,n=2):
+            ....:     def f(self, n=2):
             ....:         return self._x^n
             sage: a = Foo(2)
             sage: a.f()
@@ -1841,7 +1835,7 @@ cdef class CachedMethodCaller(CachedFunction):
         """
         return self.f(self._instance, *args, **kwds)
 
-    cdef fix_args_kwds(self, tuple args, dict kwds) noexcept:
+    cdef fix_args_kwds(self, tuple args, dict kwds):
         r"""
         Normalize parameters to obtain a key for the cache.
 
@@ -1852,7 +1846,7 @@ cdef class CachedMethodCaller(CachedFunction):
             ....:     @cached_method(key=_f_normalize)
             ....:     def f(self, x, algorithm='default'): return x
             sage: a = A()
-            sage: a.f(1, algorithm="default") is a.f(1) is a.f(1, algorithm="algorithm")
+            sage: a.f(1, algorithm='default') is a.f(1) is a.f(1, algorithm='algorithm')
             True
         """
         if self._argument_fixer is None:
@@ -1873,7 +1867,7 @@ cdef class CachedMethodCaller(CachedFunction):
             sage: from sage.misc.superseded import deprecated_function_alias
             sage: class Foo:
             ....:     @cached_method
-            ....:     def f(self, x,y=1):
+            ....:     def f(self, x, y=1):
             ....:         return x+y
             ....:     g = deprecated_function_alias(57, f)
             sage: a = Foo()
@@ -1946,7 +1940,6 @@ cdef class CachedMethodCaller(CachedFunction):
             True
             sage: a.f(y) is not a.f(x)
             True
-
         """
         if self._instance is None:
             # cached method bound to a class
@@ -1971,7 +1964,7 @@ cdef class CachedMethodCaller(CachedFunction):
     def cached(self, *args, **kwds):
         """
         Return the result from the cache if available. If the value is
-        not cached, raise ``KeyError``.
+        not cached, raise :exc:`KeyError`.
 
         EXAMPLES::
 
@@ -2053,7 +2046,7 @@ cdef class CachedMethodCaller(CachedFunction):
             True
 
         Any instance of ``Bar`` gets its own instance of
-        :class:`CachedMethodCaller``::
+        :class:`CachedMethodCaller`::
 
             sage: b1.f is b2.f
             False
@@ -2086,7 +2079,6 @@ cdef class CachedMethodCaller(CachedFunction):
             -1
             sage: b.f.cache
             {1: -1}
-
         """
         # This is for Parents or Elements that do not allow attribute assignment
         try:
@@ -2096,17 +2088,18 @@ cdef class CachedMethodCaller(CachedFunction):
 
         cls = type(self)
         Caller = cls(self._cachedmethod, inst,
-                cache=self._cachedmethod._get_instance_cache(inst),
-                name=self._cachedmethod._cachedfunc.__name__, key=self.key, do_pickle=self.do_pickle)
+                     cache=self._cachedmethod._get_instance_cache(inst),
+                     name=self._cachedmethod._cachedfunc.__name__,
+                     key=self.key, do_pickle=self.do_pickle)
 
         try:
-            setattr(inst,self._cachedmethod._cachedfunc.__name__, Caller)
+            setattr(inst, self._cachedmethod._cachedfunc.__name__, Caller)
             return Caller
         except AttributeError:
             pass
         try:
             if inst._cached_methods is None:
-                inst._cached_methods = {self._cachedmethod._cachedfunc.__name__ : Caller}
+                inst._cached_methods = {self._cachedmethod._cachedfunc.__name__: Caller}
             else:
                 (<dict>inst._cached_methods)[self._cachedmethod._cachedfunc.__name__] = Caller
         except AttributeError:
@@ -2122,7 +2115,7 @@ cdef class CachedMethodCaller(CachedFunction):
         INPUT:
 
         - ``arglist`` -- list (or iterables) of arguments for which
-          the method shall be precomputed.
+          the method shall be precomputed
 
         - ``num_processes`` -- number of processes used by
           :func:`~sage.parallel.decorate.parallel`
@@ -2149,7 +2142,7 @@ cdef class CachedMethodCaller(CachedFunction):
             ak = normalize_input(a)
             if self.get_key_args_kwds(ak[0], ak[1]) not in self.cache:
                 arglist2.append(ak)
-        for ((args,kwargs), val) in P(arglist2):
+        for ((args, kwargs), val) in P(arglist2):
             self.set_cache(val, *args, **kwargs)
 
 
@@ -2235,15 +2228,14 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             4
             sage: a.f.cache
             4
-
         """
         # initialize CachedFunction
-        if isinstance(f,str):
+        if isinstance(f, str):
             try:
-                F = getattr(inst.__class__,f)
+                F = getattr(inst.__class__, f)
             except AttributeError:
-                F = getattr(inst,f)
-            if isinstance(F,CachedFunction):
+                F = getattr(inst, f)
+            if isinstance(F, CachedFunction):
                 f = F.f
             else:
                 f = F
@@ -2288,9 +2280,8 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             Cached version of <function ...gens at 0x...>
         """
         if self.do_pickle:
-            return CachedMethodPickle,(self._instance, self.__name__, self.cache)
-        else:
-            return CachedMethodPickle,(self._instance, self.__name__)
+            return CachedMethodPickle, (self._instance, self.__name__, self.cache)
+        return CachedMethodPickle, (self._instance, self.__name__)
 
     def _instance_call(self):
         """
@@ -2306,7 +2297,6 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             False
             sage: I.gens._instance_call() == I.gens()
             True
-
         """
         return self.f(self._instance)
 
@@ -2322,7 +2312,6 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             [a, b]
             sage: I.gens() is I.gens()
             True
-
         """
         if self.cache is None:
             f = self.f
@@ -2360,7 +2349,6 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             sage: I.gens.set_cache(None)
             sage: I.gens()
             [a, b]
-
         """
         self.cache = value
 
@@ -2384,7 +2372,6 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             sage: I.gens.clear_cache()
             sage: I.gens()
             [a, b]
-
         """
         self.cache = None
 
@@ -2407,7 +2394,6 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             [x, y]
             sage: I.gens.is_in_cache()
             True
-
         """
         return self.cache is not None
 
@@ -2459,7 +2445,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
 
         Any instance of ``Bar`` gets its own instance of
-        :class:`CachedMethodCaller``::
+        :class:`CachedMethodCaller`::
 
             sage: b1.f is b2.f
             False
@@ -2473,7 +2459,6 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             True
             sage: b2.f._instance is b2
             True
-
         """
         # This is for Parents or Elements that do not allow attribute assignment
         try:
@@ -2482,13 +2467,13 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             pass
         Caller = CachedMethodCallerNoArgs(inst, self.f, name=self.__name__, do_pickle=self.do_pickle)
         try:
-            setattr(inst,self.__name__, Caller)
+            setattr(inst, self.__name__, Caller)
             return Caller
         except AttributeError:
             pass
         try:
             if inst._cached_methods is None:
-                inst._cached_methods = {self.__name__ : Caller}
+                inst._cached_methods = {self.__name__: Caller}
             else:
                 (<dict>inst._cached_methods)[self.__name__] = Caller
         except AttributeError:
@@ -2505,7 +2490,7 @@ cdef class GloballyCachedMethodCaller(CachedMethodCaller):
     The only difference is that the instance is used as part of the
     key.
     """
-    cdef get_key_args_kwds(self, tuple args, dict kwds) noexcept:
+    cdef get_key_args_kwds(self, tuple args, dict kwds):
         """
         Return the key in the cache to be used when ``args`` and
         ``kwds`` are passed in as parameters.
@@ -2585,7 +2570,7 @@ cdef class CachedMethod():
         ....:     @cached_method(key=_f_normalize)
         ....:     def f(self, x, algorithm='default'): return x
         sage: a = A()
-        sage: a.f(1, algorithm="default") is a.f(1) is a.f(1, algorithm="algorithm")
+        sage: a.f(1, algorithm='default') is a.f(1) is a.f(1, algorithm='algorithm')
         True
 
     The parameter ``do_pickle`` can be used to enable pickling of the cache.
@@ -2637,7 +2622,6 @@ cdef class CachedMethod():
         1
         sage: b.f()
         1
-
     """
     def __init__(self, f, name=None, key=None, do_pickle=None):
         """
@@ -2647,7 +2631,7 @@ cdef class CachedMethod():
             ....:     def __init__(self, x):
             ....:         self._x = x
             ....:     @cached_method
-            ....:     def f(self,n):
+            ....:     def f(self, n):
             ....:         return self._x^n
             ....:     @cached_method
             ....:     def f0(self):
@@ -2711,12 +2695,12 @@ cdef class CachedMethod():
 
     def __call__(self, inst, *args, **kwds):
         """
-        Call the cached method as a function on an instance
+        Call the cached method as a function on an instance.
 
         INPUT:
 
         - ``inst`` -- an instance on which the method is to be called
-        - Further positional or named arguments.
+        - further positional or named arguments
 
         EXAMPLES::
 
@@ -2726,7 +2710,7 @@ cdef class CachedMethod():
             ....:     def __init__(self, x):
             ....:         self._x = x
             ....:     @cached_method
-            ....:     def f(self,n=2):
+            ....:     def f(self, n=2):
             ....:         return self._x^n
             ....:     g = deprecated_function_alias(57, f)
             sage: a = Foo(2)
@@ -2750,7 +2734,7 @@ cdef class CachedMethod():
         """
         return self.__get__(inst)(*args, **kwds)
 
-    cpdef _get_instance_cache(self, inst) noexcept:
+    cpdef _get_instance_cache(self, inst):
         """
         Return the cache dictionary.
 
@@ -2760,7 +2744,7 @@ cdef class CachedMethod():
             ....:     def __init__(self, x):
             ....:         self._x = x
             ....:     @cached_method
-            ....:     def f(self,n=2):
+            ....:     def f(self, n=2):
             ....:         return self._x^n
             sage: a = Foo(2)
             sage: a.f()
@@ -2777,7 +2761,6 @@ cdef class CachedMethod():
             {((2,), ()): 4}
             sage: a._cache__f
             {((2,), ()): 4}
-
         """
         default = {} if self._cachedfunc.do_pickle else NonpicklingDict()
         try:
@@ -2797,7 +2780,7 @@ cdef class CachedMethod():
             ....:     def f(self):
             ....:         return 1
             ....:     @cached_method
-            ....:     def g(self, x,n=3):
+            ....:     def g(self, x, n=3):
             ....:         return x^n
             sage: a = Foo()
             sage: type(a.f)
@@ -2828,7 +2811,6 @@ cdef class CachedMethod():
             0
             sage: a.f.cache
             {1: 0}
-
         """
         # This is for Parents or Elements that do not allow attribute assignment:
         cdef str name
@@ -2847,7 +2829,7 @@ cdef class CachedMethod():
         if self.nargs == 0:
             if isinstance(f, object) and not isfunction(f):
                 try:
-                    if METH_NOARGS&PyCFunction_GetFlags(f.__get__(inst,cls)):
+                    if METH_NOARGS&PyCFunction_GetFlags(f.__get__(inst, cls)):
                         self.nargs = 1
                 except Exception:
                     pass
@@ -2872,7 +2854,7 @@ cdef class CachedMethod():
             pass
         try:
             if inst._cached_methods is None:
-                inst._cached_methods = {name : Caller}
+                inst._cached_methods = {name: Caller}
             else:
                 (<dict>inst._cached_methods)[name] = Caller
         except AttributeError:
@@ -2924,7 +2906,6 @@ cdef class CachedSpecialMethod(CachedMethod):
         5
         sage: hash(c)
         5
-
     """
     def __get__(self, object inst, cls):
         """
@@ -2958,7 +2939,6 @@ cdef class CachedSpecialMethod(CachedMethod):
             0
             sage: a.__hash__.cache
             {1: 0}
-
         """
         # This is for Parents or Elements that do not allow attribute assignment:
         cdef str name
@@ -2993,7 +2973,7 @@ cdef class CachedSpecialMethod(CachedMethod):
                 self.nargs = 1
                 Caller = CachedMethodCallerNoArgs(inst, f, name=name, do_pickle=self._cachedfunc.do_pickle)
             else:
-                self.nargs = 2 # don't need the exact number
+                self.nargs = 2  # don't need the exact number
                 Caller = CachedMethodCaller(self, inst,
                                             cache=self._get_instance_cache(inst),
                                             name=name,
@@ -3009,12 +2989,13 @@ cdef class CachedSpecialMethod(CachedMethod):
                                         do_pickle=self._cachedfunc.do_pickle)
         if inst is not None:
             try:
-                setattr(inst,name, Caller)
+                setattr(inst, name, Caller)
                 return Caller
             except AttributeError:
                 pass
             D[name] = Caller
         return Caller
+
 
 @decorator_keywords
 def cached_method(f, name=None, key=None, do_pickle=None):
@@ -3107,7 +3088,6 @@ def cached_method(f, name=None, key=None, do_pickle=None):
         sage: d = loads(dumps(c))
         sage: hash(d) == hash(c)
         False
-
     """
     cdef str fname = name or f.__name__
     if fname in special_method_names:
@@ -3142,12 +3122,11 @@ cdef class CachedInParentMethod(CachedMethod):
     is assigned to must be hashable.
 
     Examples can be found at :mod:`~sage.misc.cachefunc`.
-
     """
 
     def __init__(self, f, name=None, key=None, do_pickle=None):
         """
-        Constructs a new method with cache stored in the parent of the instance.
+        Construct a new method with cache stored in the parent of the instance.
 
         See also ``cached_method`` and ``cached_function``.
 
@@ -3192,7 +3171,7 @@ cdef class CachedInParentMethod(CachedMethod):
             ....:     @cached_in_parent_method(key=_f_normalize)
             ....:     def f(self, x, algorithm='default'): return x
             sage: a = A()
-            sage: a.f(1, algorithm="default") is a.f(1) is a.f(1, algorithm="algorithm")
+            sage: a.f(1, algorithm='default') is a.f(1) is a.f(1, algorithm='algorithm')
             True
 
         Test that ``do_pickle`` works. Usually the contents of the cache are not
@@ -3233,12 +3212,11 @@ cdef class CachedInParentMethod(CachedMethod):
             sage: b = loads(dumps(a))
             sage: len(b.f.cache)
             1
-
         """
         self._cache_name = '_cache__' + 'element_' + (name or f.__name__)
         self._cachedfunc = CachedFunction(f, classmethod=True, name=name, key=key, do_pickle=do_pickle)
 
-    cpdef _get_instance_cache(self, inst) noexcept:
+    cpdef _get_instance_cache(self, inst):
         """
         Return the cache dictionary, which is stored in the parent.
 
@@ -3295,7 +3273,6 @@ cdef class CachedInParentMethod(CachedMethod):
 
             sage: a.f.cache is b.f.cache is c.f._cachedmethod._get_instance_cache(c)
             True
-
         """
         default = {} if self._cachedfunc.do_pickle else NonpicklingDict()
         if inst is None:
@@ -3305,7 +3282,7 @@ cdef class CachedInParentMethod(CachedMethod):
             return P.__dict__.setdefault(self._cache_name, default)
         except AttributeError:
             pass
-        if not hasattr(P,'_cached_methods'):
+        if not hasattr(P, '_cached_methods'):
             raise TypeError("The parent of this element does not allow attribute assignment\n" +
                             "    and does not descend from the Parent base class.\n" +
                             "    Cannot use CachedInParentMethod.")
@@ -3320,7 +3297,7 @@ cdef class CachedInParentMethod(CachedMethod):
         """
         Caller = GloballyCachedMethodCaller(self, inst, cache=self._get_instance_cache(inst), key=self._cachedfunc.key, do_pickle=self._cachedfunc.do_pickle)
         try:
-            setattr(inst,self._cachedfunc.__name__, Caller)
+            setattr(inst, self._cachedfunc.__name__, Caller)
         except AttributeError:
             pass
         return Caller
@@ -3334,10 +3311,10 @@ class FileCache():
     :class:`FileCache` is a dictionary-like class which stores keys
     and values on disk.  The keys take the form of a tuple ``(A,K)``
 
-    - ``A`` is a tuple of objects ``t`` where each ``t`` is an
-      exact object which is uniquely identified by a short string.
+    - ``A`` -- tuple of objects ``t`` where each ``t`` is an
+      exact object which is uniquely identified by a short string
 
-    - ``K`` is a tuple of tuples ``(s,v)`` where ``s`` is a valid
+    - ``K`` -- tuple of tuples ``(s,v)`` where ``s`` is a valid
       variable name and ``v`` is an exact object which is uniquely
       identified by a short string with letters [a-zA-Z0-9-._]
 
@@ -3407,7 +3384,7 @@ class FileCache():
         l = len(prefix)
         for f in os.listdir(dir):
             if f[:l] == prefix:
-                files.append( dir + f )
+                files.append(dir + f)
         return files
 
     def items(self):
@@ -3491,7 +3468,7 @@ class FileCache():
 
     def clear(self):
         """
-        Clear all key, value pairs from self and unlink the associated files
+        Clear all key, value pairs from ``self`` and unlink the associated files
         from the file cache.
 
         EXAMPLES::
@@ -3534,9 +3511,9 @@ class FileCache():
             sage: print(N[len(dir):])
             foo-1_2
         """
-        a,k = key
-        kwdstr = '_'.join(['%s-%s'%x for x in k])
-        argstr = '_'.join(['%s'%x for x in a])
+        a, k = key
+        kwdstr = '_'.join('%s-%s' % x for x in k)
+        argstr = '_'.join('%s' % x for x in a)
         if kwdstr and argstr:
             keystr = kwdstr + '.' + argstr
         else:
@@ -3581,7 +3558,6 @@ class FileCache():
             Traceback (most recent call last):
             ...
             KeyError: ((1, 2), (('a', 4), ('b', 2)))
-
         """
         from sage.misc.persist import load
 
@@ -3604,7 +3580,7 @@ class FileCache():
 
     def __setitem__(self, key, value):
         """
-        Sets ``self[key] = value`` and stores both key and value on
+        Set ``self[key] = value`` and stores both key and value on
         disk.
 
         EXAMPLES::
@@ -3627,13 +3603,13 @@ class FileCache():
         f = self._filename(key)
 
         save(key, f+'.key.sobj')
-        save((key,value), f + '.sobj')
+        save((key, value), f + '.sobj')
         if self._cache is not None:
             self._cache[key] = value
 
     def __delitem__(self, key):
         """
-        Delete the key,value pair from self and unlink the associated
+        Delete the ``key, value`` pair from ``self`` and unlink the associated
         files from the file cache.
 
         EXAMPLES::
@@ -3711,7 +3687,7 @@ class disk_cached_function:
         sage: foo(200)
         1/200
     """
-    def __init__(self, dir, memory_cache = False, key=None):
+    def __init__(self, dir, memory_cache=False, key=None):
         """
         EXAMPLES::
 

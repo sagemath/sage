@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of ``pdf2svg``
 """
@@ -12,6 +13,7 @@ Feature for testing the presence of ``pdf2svg``
 # ****************************************************************************
 
 from . import Executable
+
 
 class pdf2svg(Executable):
     r"""
@@ -31,9 +33,9 @@ class pdf2svg(Executable):
             sage: isinstance(pdf2svg(), pdf2svg)
             True
         """
-        Executable.__init__(self, "pdf2svg", executable="pdf2svg",
+        Executable.__init__(self, "pdf2svg", executable='pdf2svg',
                             spkg='pdf2svg',
-                            url="http://www.cityinthesky.co.uk/opensource/pdf2svg/")
+                            url='http://www.cityinthesky.co.uk/opensource/pdf2svg/')
 
 
 def all_features():

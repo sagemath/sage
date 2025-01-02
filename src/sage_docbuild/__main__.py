@@ -14,47 +14,62 @@ arguments and options.
 
 Positional arguments::
 
-  DOCUMENT                  name of the document to build. It can be either one
-                            of the documents listed by -D or 'file=/path/to/FILE' to build documentation
-                            for this specific file.
-  FORMAT or COMMAND         document output format (or command)
+  DOCUMENT              name of the document to build. It can be either one of
+                        the documents listed by -D or 'file=/path/to/FILE' to
+                        build documentation for this specific file.
+  FORMAT or COMMAND     document output format (or command)
 
 Standard options::
 
-  -h, --help                show a help message and exit
-  -H, --help-all            show an extended help message and exit
-  -D, --documents           list all available DOCUMENTs
-  -F, --formats             list all output FORMATs
-  -C DOC, --commands DOC    list all COMMANDs for DOCUMENT DOC; use 'all' to list all
-  -i, --inherited           include inherited members in reference manual; may be slow, may fail for PDF output
-  -u, --underscore          include variables prefixed with '_' in reference
-                            manual; may be slow, may fail for PDF output
-  -j, --mathjax, --jsmath   ignored for backwards compatibility
-  --no-plot                 do not include graphics auto-generated using the '.. plot' markup
-  --include-tests-blocks    include TESTS blocks in the reference manual
-  --no-pdf-links            do not include PDF links in DOCUMENT 'website';
-                            FORMATs: html, json, pickle, web
-  --warn-links              issue a warning whenever a link is not properly
-                            resolved; equivalent to '--sphinx-opts -n' (sphinx option: nitpicky)
-  --check-nested            check picklability of nested classes in DOCUMENT 'reference'
-  --no-prune-empty-dirs     do not prune empty directories in the documentation sources
-  -N, --no-colors           do not color output; does not affect children
-  -q, --quiet               work quietly; same as --verbose=0
-  -v LEVEL, --verbose LEVEL report progress at LEVEL=0 (quiet), 1 (normal), 2
-                            (info), or 3 (debug); does not affect children
-  -o DIR, --output DIR      if DOCUMENT is a single file ('file=...'), write output to this directory
+  -h, --help            show a help message and exit
+  -H, --help-all        show an extended help message and exit
+  -D, --documents       list all available DOCUMENTs
+  -F, --formats         list all output FORMATs
+  -C DOC, --commands DOC
+                        list all COMMANDs for DOCUMENT DOC; use 'all' to list all
+  -i, --inherited       include inherited members in reference manual; may be
+                        slow, may fail for PDF output
+  -u, --underscore      include variables prefixed with '_' in reference
+                        manual; may be slow, may fail for PDF output
+  -j, --mathjax, --jsmath
+                        ignored for backwards compatibility
+  --no-plot             do not include graphics auto-generated using the '.. plot' markup
+  --no-preparsed-examples
+                        do not show preparsed versions of EXAMPLES blocks
+  --include-tests-blocks
+                        include TESTS blocks in the reference manual
+  --no-pdf-links        do not include PDF links in DOCUMENT 'website';
+                        FORMATs: html, json, pickle, web
+  --live-doc            make Sage code blocks live for html FORMAT
+  --warn-links          issue a warning whenever a link is not properly
+                        resolved; equivalent to '--sphinx-opts -n' (sphinx
+                        option: nitpicky)
+  --check-nested        check picklability of nested classes in DOCUMENT 'reference'
+  --no-prune-empty-dirs
+                        do not prune empty directories in the documentation source
+  --use-cdns            assume internet connection and use CDNs; in particular,
+                        use MathJax CDN
+  -N, --no-colors       do not color output; does not affect children
+  -q, --quiet           work quietly; same as --verbose=0
+  -v LEVEL, --verbose LEVEL
+                        report progress at LEVEL=0 (quiet), 1 (normal), 2
+                        (info), or 3 (debug); does not affect children
+  -o DIR, --output DIR  if DOCUMENT is a single file ('file=...'), write output
+                        to this directory
 
 Advanced options::
 
-  -S OPTS, --sphinx-opts OPTS pass comma-separated OPTS to sphinx-build; must
-                              precede OPTS with '=', as in '-S=-q,-aE' or '-S="-q,-aE"'
-  -U, --update-mtimes         before building reference manual, update
-                              modification times for auto-generated reST files
-  -k, --keep-going            do not abort on errors but continue as much as
-                              possible after an error
-  --all-documents ARG         if ARG is 'reference', list all subdocuments of
-                              en/reference. If ARG is 'all', list all main documents
+  Use these options with care.
 
+  -S OPTS, --sphinx-opts OPTS
+                        pass comma-separated OPTS to sphinx-build; must precede
+                        OPTS with '=', as in '-S=-q,-aE' or '-S="-q,-aE"'
+  -U, --update-mtimes   before building reference manual, update modification
+                        times for auto-generated reST files
+  -k, --keep-going      Do not abort on errors but continue as much as possible
+                        after an error
+  --all-documents ARG   if ARG is 'reference', list all subdocuments of
+                        en/reference. If ARG is 'all', list all main documents
 """
 
 import logging
@@ -68,6 +83,7 @@ from .builders import DocBuilder, ReferenceBuilder, get_builder, get_documents
 from . import build_options
 
 logger = logging.getLogger(__name__)
+
 
 def format_columns(lst, align='<', cols=None, indent=4, pad=3, width=80):
     """
@@ -309,7 +325,7 @@ def setup_parser():
                           help="check picklability of nested classes in DOCUMENT 'reference'")
     standard.add_argument("--no-prune-empty-dirs", dest="no_prune_empty_dirs",
                           action="store_true",
-                          help="do not prune empty directories in the documentation sources")
+                          help="do not prune empty directories in the documentation source")
     standard.add_argument("--use-cdns", dest="use_cdns", default=False,
                           action="store_true",
                           help="assume internet connection and use CDNs; in particular, use MathJax CDN")
@@ -492,22 +508,24 @@ def main():
 
     build_options.ABORT_ON_ERROR = not args.keep_going
 
+    # Set up Intersphinx cache
+    _ = IntersphinxCache()
+
+    builder = get_builder(name)
+
     if not args.no_prune_empty_dirs:
         # Delete empty directories. This is needed in particular for empty
         # directories due to "git checkout" which never deletes empty
         # directories it leaves behind. See Issue #20010.
         # Issue #31948: This is not parallelization-safe; use the option
         # --no-prune-empty-dirs to turn it off
-        for dirpath, dirnames, filenames in os.walk(SAGE_DOC_SRC, topdown=False):
+        for dirpath, dirnames, filenames in os.walk(builder.dir, topdown=False):
             if not dirnames + filenames:
                 logger.warning('Deleting empty directory {0}'.format(dirpath))
                 os.rmdir(dirpath)
 
-    # Set up Intersphinx cache
-    _ = IntersphinxCache()
-
-    builder = getattr(get_builder(name), typ)
-    builder()
+    build = getattr(builder, typ)
+    build()
 
 
 if __name__ == '__main__':

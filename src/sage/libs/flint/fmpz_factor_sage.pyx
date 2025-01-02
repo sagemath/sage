@@ -2,7 +2,7 @@ from cysignals.signals cimport sig_check
 from sage.libs.flint.fmpz cimport fmpz_get_mpz
 from sage.rings.integer cimport Integer
 
-cdef fmpz_factor_to_pairlist(const fmpz_factor_t factors) noexcept:
+cdef fmpz_factor_to_pairlist(const fmpz_factor_t factors):
     r"""
     Helper function that converts a fmpz_factor_t into a list of
     (factor, exponent) pairs. The factors are Integers, and the

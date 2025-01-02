@@ -38,6 +38,7 @@ from sage.categories.fields import Fields
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.rings import Rings
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring_element import LaurentSeries
@@ -48,6 +49,11 @@ try:
     from sage.libs.pari.all import pari_gen
 except ImportError:
     pari_gen = ()
+
+lazy_import('sage.rings.polynomial.laurent_polynomial_ring_base', 'LaurentPolynomialRing_generic')
+lazy_import('sage.rings.lazy_series_ring', ('LazyPowerSeriesRing', 'LazyLaurentSeriesRing'))
+lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_generic')
+lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 
 
 def is_LaurentSeriesRing(x):
@@ -62,9 +68,20 @@ def is_LaurentSeriesRing(x):
         sage: from sage.rings.laurent_series_ring import is_LaurentSeriesRing
         sage: K.<q> = LaurentSeriesRing(QQ)
         sage: is_LaurentSeriesRing(K)
+        doctest:warning...
+        DeprecationWarning: The function is_LaurentSeriesRing is deprecated;
+        use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.
+        See https://github.com/sagemath/sage/issues/38290 for details.
+        True
+        sage: L.<z> = LazyLaurentSeriesRing(QQ)
+        sage: is_LaurentSeriesRing(L)
         True
     """
-    return isinstance(x, LaurentSeriesRing)
+    from sage.misc.superseded import deprecation
+    deprecation(38290,
+                "The function is_LaurentSeriesRing is deprecated; "
+                "use 'isinstance(..., (LaurentSeriesRing, LazyLaurentSeriesRing))' instead.")
+    return isinstance(x, (LaurentSeriesRing, LazyLaurentSeriesRing))
 
 
 class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
@@ -155,7 +172,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         sage: LaurentSeriesRing(ZZ, 'x').category()
         Category of infinite commutative no zero divisors algebras
          over (Dedekind domains and euclidean domains
-         and infinite enumerated sets and metric spaces)
+         and noetherian rings and infinite enumerated sets and metric spaces)
         sage: LaurentSeriesRing(QQ, 'x').category()
         Join of Category of complete discrete valuation fields and Category of commutative algebras
          over (number fields and quotient fields and metric spaces) and Category of infinite sets
@@ -203,9 +220,9 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: L.variable_name()
             'q'
         """
-        from .power_series_ring import PowerSeriesRing, is_PowerSeriesRing
+        from .power_series_ring import PowerSeriesRing
 
-        if not kwds and len(args) == 1 and is_PowerSeriesRing(args[0]):
+        if not kwds and len(args) == 1 and isinstance(args[0], (PowerSeriesRing_generic, LazyPowerSeriesRing)):
             power_series = args[0]
         else:
             power_series = PowerSeriesRing(*args, **kwds)
@@ -214,7 +231,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
     def __init__(self, power_series):
         """
-        Initialization
+        Initialization.
 
         EXAMPLES::
 
@@ -227,7 +244,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: RZZ.category()
             Category of infinite commutative no zero divisors algebras
              over (Dedekind domains and euclidean domains
-             and infinite enumerated sets and metric spaces)
+             and noetherian rings and infinite enumerated sets
+             and metric spaces)
             sage: TestSuite(RZZ).run()
 
             sage: R1 = LaurentSeriesRing(Zmod(1), 't')
@@ -279,8 +297,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
     def base_extend(self, R):
         """
         Return the Laurent series ring over R in the same variable as
-        self, assuming there is a canonical coerce map from the base ring
-        of self to R.
+        ``self``, assuming there is a canonical coerce map from the base ring
+        of ``self`` to R.
 
         EXAMPLES::
 
@@ -299,7 +317,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         If the base ring is a field, then Laurent series are already a field.
         If the base ring is a domain, then the Laurent series over its fraction
-        field is returned. Otherwise, raise a ``ValueError``.
+        field is returned. Otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -400,7 +418,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         - ``n`` -- (default: 0) multiply the result by `t^n`
 
         - ``prec`` -- (default: ``infinity``) the precision of the series
-            as an integer.
+            as an integer
 
         EXAMPLES::
 
@@ -438,6 +456,17 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             1/2 + 1/4*I*u^2 - 1/8*u^4 - 1/16*I*u^6 + 1/32*u^8 +
             1/64*I*u^10 - 1/128*u^12 - 1/256*I*u^14 + 1/512*u^16 +
             1/1024*I*u^18 + O(u^20)
+
+        Lazy series::
+
+            sage: L.<z> = LazyLaurentSeriesRing(ZZ)
+            sage: R = LaurentSeriesRing(QQ, names='z')
+            sage: R(z^-5 + 1/(1-z))
+            z^-5 + 1 + z + z^2 + z^3 + z^4 + z^5 + z^6 + z^7 + z^8 + z^9 + z^10
+             + z^11 + z^12 + z^13 + z^14 + z^15 + z^16 + z^17 + z^18 + z^19 + O(z^20)
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: R(5 + z - 5*z^7)
+            5 + z - 5*z^7
 
         TESTS:
 
@@ -487,7 +516,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: P({-3: 1})
             x^-3
         """
-        from sage.rings.fraction_field_element import is_FractionFieldElement
+        from sage.rings.fraction_field_element import FractionFieldElement
+        from sage.rings.lazy_series import LazyPowerSeries, LazyLaurentSeries
         from sage.rings.polynomial.multi_polynomial import MPolynomial
         from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.structure.element import parent
@@ -519,11 +549,19 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
                 return (x << n).add_bigoh(bigoh)
             else:  # General case, pretend to be a polynomial
                 return (self(self.polynomial_ring()(x)) << n).add_bigoh(prec)
-        elif (is_FractionFieldElement(x)
+        elif (isinstance(x, FractionFieldElement)
               and (x.base_ring() is self.base_ring() or x.base_ring() == self.base_ring())
               and isinstance(x.numerator(), (Polynomial, MPolynomial))):
             x = self(x.numerator()) / self(x.denominator())
             return (x << n).add_bigoh(prec)
+        elif isinstance(x, (LazyPowerSeries, LazyLaurentSeries)):
+            if prec is infinity:
+                try:
+                    x = self.power_series_ring()(x.polynomial())
+                except ValueError:
+                    x = x.add_bigoh(self.default_prec())
+            else:
+                x = x.add_bigoh(prec)
         return self.element_class(self, x, n).add_bigoh(prec)
 
     def random_element(self, algorithm='default'):
@@ -617,6 +655,10 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             True
             sage: S.has_coerce_map_from(S)
             True
+            sage: S.has_coerce_map_from(LazyLaurentSeriesRing(ZZ, 't'))
+            True
+            sage: S.has_coerce_map_from(LazyPowerSeriesRing(ZZ, 't'))
+            True
 
             sage: S.has_coerce_map_from(QQ)
             False
@@ -640,20 +682,18 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             False
             sage: R.has_coerce_map_from(ZZ['x'])
             True
+            sage: R.has_coerce_map_from(LazyLaurentSeriesRing(ZZ, 't'))
+            True
+            sage: R.has_coerce_map_from(LazyLaurentSeriesRing(ZZ['x'], 't'))
+            True
         """
         A = self.base_ring()
-        from sage.rings.polynomial.laurent_polynomial_ring_base import (
-            LaurentPolynomialRing_generic,
-        )
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        from sage.rings.power_series_ring import is_PowerSeriesRing
-
-        if ((is_LaurentSeriesRing(P) or
-             isinstance(P, LaurentPolynomialRing_generic) or
-             is_PowerSeriesRing(P) or
-             is_PolynomialRing(P))
-            and P.variable_name() == self.variable_name()
-            and A.has_coerce_map_from(P.base_ring())):
+        if (isinstance(P, (LaurentSeriesRing, LazyLaurentSeriesRing,
+                           LaurentPolynomialRing_generic,
+                           PowerSeriesRing_generic, LazyPowerSeriesRing,
+                           PolynomialRing_generic))
+                and P.variable_name() == self.variable_name()
+                and A.has_coerce_map_from(P.base_ring())):
             return True
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
@@ -679,7 +719,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             False
         """
         # NOTE: There are no ring homomorphisms from the ring of
-        # all formal power series to most rings, e.g, the p-adic
+        # all formal power series to most rings, e.g, the `p`-adic
         # field, since you can always (mathematically!) construct
         # some power series that does not converge.
         # NOTE: The above claim is wrong when the base ring is Z.
@@ -688,7 +728,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
             return False
         # Note that 0 is not a *ring* homomorphism, and you cannot map to a power series ring
-        if is_LaurentSeriesRing(codomain):
+        if isinstance(codomain, (LaurentSeriesRing, LazyLaurentSeriesRing)):
             return im_gens[0].valuation() > 0 and im_gens[0].is_unit()
         return False
 

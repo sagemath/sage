@@ -146,9 +146,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         """
         Return the dimension of this Jacobian.
 
-        OUTPUT:
-
-        Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -187,15 +185,13 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         trivial.
 
         This is related to the warning at the top of the
-        `jacobian_endomorphism_utils.py` module.
+        ``jacobian_endomorphism_utils.py`` module.
 
         INPUT:
 
-        - ``self`` -- The Jacobian.
+        - ``self`` -- the Jacobian
 
-        OUTPUT:
-
-        The boolean ``False``; this will be updated by other methods.
+        OUTPUT: the boolean ``False``; this will be updated by other methods
 
         EXAMPLES:
 
@@ -218,15 +214,13 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         trivial.
 
         This is related to the warning at the top of the
-        `jacobian_endomorphism_utils.py` module.
+        ``jacobian_endomorphism_utils.py`` module.
 
         INPUT:
 
-        - ``self`` -- The Jacobian.
+        - ``self`` -- the Jacobian
 
-        OUTPUT:
-
-        The boolean ``False``; this will be updated by other methods.
+        OUTPUT: the boolean ``False``; this will be updated by other methods
 
         EXAMPLES:
 
@@ -253,9 +247,9 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         - ``B`` -- (default: 200) the bound which appears in the statement of
           the algorithm from [Lom2019]_
 
-        - ``proof`` -- (default: False) whether or not to insist on a provably
-          correct answer. This is related to the warning in the docstring
-          of this module: if this function returns ``False``, then
+        - ``proof`` -- boolean (default: ``False``); whether or not to insist
+          on a provably correct answer. This is related to the warning in the
+          docstring of this module: if this function returns ``False``, then
           strictly speaking this has not been proven to be ``False`` until one
           has exhibited a non-trivial endomorphism, which these methods are not
           designed to carry out. If one is convinced that this method should
@@ -324,14 +318,14 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         - ``B`` -- (default: 200) the bound which appears in the statement of
           the algorithm from [Lom2019]_
 
-        - ``proof`` -- (default: False) whether or not to insist on a provably
-          correct answer. This is related to the warning in the module docstring
-          of `jacobian_endomorphisms.py`: if this function returns ``False``, then
-          strictly speaking this has not been proven to be ``False`` until one has
-          exhibited a non-trivial endomorphism, which the methods in that module
-          are not designed to carry out. If one is convinced that this method
-          should return ``True``, but it is returning ``False``, then this can be
-          exhibited by increasing `B`.
+        - ``proof`` -- boolean (default: ``False``); whether or not to insist
+          on a provably correct answer. This is related to the warning in the
+          module docstring of `jacobian_endomorphisms.py`: if this function
+          returns ``False``, then strictly speaking this has not been proven to
+          be ``False`` until one has exhibited a non-trivial endomorphism,
+          which the methods in that module are not designed to carry out. If
+          one is convinced that this method should return ``True``, but it is
+          returning ``False``, then this can be exhibited by increasing `B`.
 
         OUTPUT:
 

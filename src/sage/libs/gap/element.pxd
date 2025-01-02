@@ -18,16 +18,16 @@ cdef Obj make_gap_record(sage_dict) except NULL
 cdef Obj make_gap_integer(sage_int) except NULL
 cdef Obj make_gap_string(sage_string) except NULL
 
-cdef GapElement make_any_gap_element(parent, Obj obj) noexcept
-cdef GapElement make_GapElement(parent, Obj obj) noexcept
-cdef GapElement_List make_GapElement_List(parent, Obj obj) noexcept
-cdef GapElement_Record make_GapElement_Record(parent, Obj obj) noexcept
-cdef GapElement_Integer make_GapElement_Integer(parent, Obj obj) noexcept
-cdef GapElement_Rational make_GapElement_Rational(parent, Obj obj) noexcept
-cdef GapElement_String make_GapElement_String(parent, Obj obj) noexcept
-cdef GapElement_Boolean make_GapElement_Boolean(parent, Obj obj) noexcept
-cdef GapElement_Function make_GapElement_Function(parent, Obj obj) noexcept
-cdef GapElement_Permutation make_GapElement_Permutation(parent, Obj obj) noexcept
+cdef GapElement make_any_gap_element(parent, Obj obj)
+cdef GapElement make_GapElement(parent, Obj obj)
+cdef GapElement_List make_GapElement_List(parent, Obj obj)
+cdef GapElement_Record make_GapElement_Record(parent, Obj obj)
+cdef GapElement_Integer make_GapElement_Integer(parent, Obj obj)
+cdef GapElement_Rational make_GapElement_Rational(parent, Obj obj)
+cdef GapElement_String make_GapElement_String(parent, Obj obj)
+cdef GapElement_Boolean make_GapElement_Boolean(parent, Obj obj)
+cdef GapElement_Function make_GapElement_Function(parent, Obj obj)
+cdef GapElement_Permutation make_GapElement_Permutation(parent, Obj obj)
 
 cdef char *capture_stdout(Obj, Obj) noexcept
 cdef char *gap_element_str(Obj) noexcept
@@ -43,18 +43,18 @@ cdef class GapElement(RingElement):
     cdef bint _compare_by_id
     cdef bint _compare_equal(self, Element other) except -2
     cdef bint _compare_less(self, Element other) except -2
-    cpdef _set_compare_by_id(self) noexcept
-    cpdef _assert_compare_by_id(self) noexcept
+    cpdef _set_compare_by_id(self)
+    cpdef _assert_compare_by_id(self)
 
-    cdef _initialize(self, parent, Obj obj) noexcept
-    cpdef _type_number(self) noexcept
-    cpdef is_bool(self) noexcept
-    cpdef _add_(self, other) noexcept
-    cpdef _mul_(self, other) noexcept
-    cpdef _mod_(self, other) noexcept
-    cpdef _pow_(self, other) noexcept
+    cdef _initialize(self, parent, Obj obj)
+    cpdef _type_number(self)
+    cpdef is_bool(self)
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
+    cpdef _mod_(self, other)
+    cpdef _pow_(self, other)
 
-    cpdef GapElement deepcopy(self, bint mut) noexcept
+    cpdef GapElement deepcopy(self, bint mut)
 
 cdef class GapElement_Integer(GapElement):
     pass
@@ -63,10 +63,10 @@ cdef class GapElement_Rational(GapElement):
     pass
 
 cdef class GapElement_IntegerMod(GapElement):
-    cpdef GapElement_Integer lift(self) noexcept
+    cpdef GapElement_Integer lift(self)
 
 cdef class GapElement_FiniteField(GapElement):
-    cpdef GapElement_Integer lift(self) noexcept
+    cpdef GapElement_Integer lift(self)
 
 cdef class GapElement_Cyclotomic(GapElement):
     pass

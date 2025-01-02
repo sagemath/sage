@@ -13,8 +13,8 @@ cdef class Transformation:
     cdef matrix
     cdef double _matrix_data[12]
     cdef object _svd
-    cpdef transform_point(self, x) noexcept
-    cpdef transform_vector(self, v) noexcept
-    cpdef transform_bounding_box(self, box) noexcept
+    cpdef transform_point(self, x)
+    cpdef transform_vector(self, v)
+    cpdef transform_bounding_box(self, box)
     cdef void transform_point_c(self, point_c* res, point_c P) noexcept
     cdef void transform_vector_c(self, point_c* res, point_c P) noexcept

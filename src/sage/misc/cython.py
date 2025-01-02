@@ -88,33 +88,33 @@ def cython(filename, verbose=0, compile_message=False,
 
     INPUT:
 
-    - ``filename`` -- the name of the file to be compiled. Should end with
-      'pyx'.
+    - ``filename`` -- the name of the file to be compiled; should end with
+      'pyx'
 
-    - ``verbose`` (integer, default 0) -- level of verbosity. A negative
+    - ``verbose`` -- integer (default: 0); level of verbosity. A negative
       value ensures complete silence.
 
-    - ``compile_message`` (bool, default False) -- if True, print
-      ``'Compiling <filename>...'`` to the standard error.
+    - ``compile_message`` -- boolean (default: ``False``); if ``True``, print
+      ``'Compiling <filename>...'`` to the standard error
 
-    - ``use_cache`` (bool, default False) -- if True, check the
+    - ``use_cache`` -- boolean (default: ``False``); if ``True``, check the
       temporary build directory to see if there is already a
       corresponding .so file. If so, and if the .so file is newer than the
       Cython file, don't recompile, just reuse the .so file.
 
-    - ``create_local_c_file`` (bool, default False) -- if True, save a
-      copy of the ``.c`` or ``.cpp`` file in the current directory.
+    - ``create_local_c_file`` -- boolean (default: ``False``); if ``True``, save a
+      copy of the ``.c`` or ``.cpp`` file in the current directory
 
-    - ``annotate`` (bool, default True) -- if True, create an html file which
+    - ``annotate`` -- boolean (default: ``True``); if ``True``, create an html file which
       annotates the conversion from .pyx to .c. By default this is only created
       in the temporary directory, but if ``create_local_c_file`` is also True,
       then save a copy of the .html file in the current directory.
 
-    - ``sage_namespace`` (bool, default True) -- if True, import
-      ``sage.all``.
+    - ``sage_namespace`` -- boolean (default: ``True``); if ``True``, import
+      ``sage.all``
 
-    - ``create_local_so_file`` (bool, default False) -- if True, save a
-      copy of the compiled .so file in the current directory.
+    - ``create_local_so_file`` -- boolean (default: ``False``); if ``True``, save a
+      copy of the compiled .so file in the current directory
 
     OUTPUT: a tuple ``(name, dir)`` where ``name`` is the name
     of the compiled module and ``dir`` is the directory containing
@@ -226,17 +226,6 @@ def cython(filename, verbose=0, compile_message=False,
         ....: from sage.misc.cachefunc cimport cache_key
         ....: ''')
 
-    In Cython 0.29.33 using `from PACKAGE cimport MODULE` is broken
-    when `PACKAGE` is a namespace package, see :issue:`35322`::
-
-        sage: cython('''
-        ....: from sage.misc cimport cachefunc
-        ....: ''')
-        Traceback (most recent call last):
-        ...
-        RuntimeError: Error compiling Cython file:
-        ...
-        ...: 'sage/misc.pxd' not found...
     """
     if not filename.endswith('pyx'):
         print("Warning: file (={}) should have extension .pyx".format(filename), file=sys.stderr)
@@ -348,7 +337,7 @@ def cython(filename, verbose=0, compile_message=False,
                     libraries=standard_libs,
                     library_dirs=standard_libdirs)
 
-    directives = dict(language_level=3, cdivision=True)
+    directives = {'language_level': 3, 'cdivision': True}
 
     try:
         # Change directories to target_dir so that Cython produces the correct
@@ -380,13 +369,7 @@ def cython(filename, verbose=0, compile_message=False,
         cython_messages = re.sub(
             "^.*The keyword 'nogil' should appear at the end of the function signature line. "
             "Placing it before 'except' or 'noexcept' will be disallowed in a future version of Cython.\n",
-            "", cython_messages, 0, re.MULTILINE)
-
-        # workaround for https://github.com/sagemath/sage/issues/37560
-        # triggered by Cython 3.0.9
-        cython_messages = re.sub(
-            "^warning: .*noexcept clause is ignored for function returning Python object\n",
-            "", cython_messages, 0, re.MULTILINE)
+            "", cython_messages, flags=re.MULTILINE)
 
         sys.stderr.write(cython_messages)
         sys.stderr.flush()
@@ -462,11 +445,11 @@ def cython_lambda(vars, expr, verbose=0, **kwds):
 
     INPUT:
 
-    - ``vars`` - list of pairs (variable name, c-data type), where the variable
+    - ``vars`` -- list of pairs (variable name, c-data type), where the variable
       names and data types are strings, OR a string such as ``'double x, int y,
       int z'``
 
-    - ``expr`` - an expression involving the vars and constants; you can access
+    - ``expr`` -- an expression involving the vars and constants; you can access
       objects defined in the current module scope ``globals()`` using
       ``sage.object_name``.
 
@@ -506,7 +489,7 @@ def cython_lambda(vars, expr, verbose=0, **kwds):
     if isinstance(vars, str):
         v = vars
     else:
-        v = ', '.join(['%s %s' % (typ, var) for typ, var in vars])
+        v = ', '.join('%s %s' % (typ, var) for typ, var in vars)
 
     s = """
 cdef class _s:
@@ -529,7 +512,7 @@ def f(%s):
     """ % (v, expr)
     if verbose > 0:
         print(s)
-    tmpfile = tmp_filename(ext=".pyx")
+    tmpfile = tmp_filename(ext='.pyx')
     with open(tmpfile, 'w') as f:
         f.write(s)
 
@@ -544,19 +527,17 @@ def f(%s):
 def cython_import(filename, **kwds):
     """
     Compile a file containing Cython code, then import and return the
-    module.  Raises an ``ImportError`` if anything goes wrong.
+    module.  Raises an :exc:`ImportError` if anything goes wrong.
 
     INPUT:
 
-    - ``filename`` - a string; name of a file that contains Cython
+    - ``filename`` -- string; name of a file that contains Cython
       code
 
     See the function :func:`sage.misc.cython.cython` for documentation
     for the other inputs.
 
-    OUTPUT:
-
-    - the module that contains the compiled Cython code.
+    OUTPUT: the module that contains the compiled Cython code
     """
     name, build_dir = cython(filename, **kwds)
 
@@ -580,12 +561,15 @@ def cython_import_all(filename, globals, **kwds):
 
         from module import *
 
-    Raises an ``ImportError`` exception if anything goes wrong.
+    Raises an :exc:`ImportError` exception if anything goes wrong.
 
     INPUT:
 
-    - ``filename`` - a string; name of a file that contains Cython
+    - ``filename`` -- string; name of a file that contains Cython
       code
+
+    See the function :func:`sage.misc.cython.cython` for documentation
+    for the other inputs.
     """
     m = cython_import(filename, **kwds)
     for k, x in m.__dict__.items():
@@ -627,7 +611,10 @@ def compile_and_load(code, **kwds):
     INPUT:
 
     - ``code`` -- string containing code that could be in a .pyx file
-      that is attached or put in a %cython block in the notebook.
+      that is attached or put in a %cython block in the notebook
+
+    See the function :func:`sage.misc.cython.cython` for documentation
+    for the other inputs.
 
     OUTPUT: a module, which results from compiling the given code and
     importing it
@@ -662,7 +649,7 @@ def compile_and_load(code, **kwds):
         sage: module.evaluate_at_power_of_gen(x^3 + x - 7, 5)  # long time
         x^15 + x^5 - 7
     """
-    tmpfile = tmp_filename(ext=".pyx")
+    tmpfile = tmp_filename(ext='.pyx')
     with open(tmpfile, 'w') as f:
         f.write(code)
     return cython_import(tmpfile, **kwds)
@@ -695,7 +682,7 @@ def cython_compile(code, **kwds):
         Need to create a clever caching system so code only gets
         compiled once.
     """
-    tmpfile = tmp_filename(ext=".pyx")
+    tmpfile = tmp_filename(ext='.pyx')
     with open(tmpfile, 'w') as f:
         f.write(code)
     return cython_import_all(tmpfile, get_globals(), **kwds)

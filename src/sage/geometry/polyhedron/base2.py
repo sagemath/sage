@@ -37,6 +37,7 @@ from sage.rings.integer_ring import ZZ
 from sage.modules.free_module_element import vector
 from .base1 import Polyhedron_base1
 
+
 class Polyhedron_base2(Polyhedron_base1):
     """
     Methods related to lattice points.
@@ -111,10 +112,10 @@ class Polyhedron_base2(Polyhedron_base1):
 
         INPUT:
 
-        - ``envelope`` -- boolean (default: ``False``). If the
+        - ``envelope`` -- boolean (default: ``False``); if the
           polyhedron has non-integral vertices, this option decides
           whether to return a strictly larger lattice polytope or
-          raise a ``ValueError``. This option has no effect if the
+          raise a :exc:`ValueError`. This option has no effect if the
           polyhedron has already integral vertices.
 
         OUTPUT:
@@ -126,11 +127,11 @@ class Polyhedron_base2(Polyhedron_base1):
         but has at least one non-integral vertex, a strictly larger
         lattice polytope is returned.
 
-        If the polyhedron is not compact, a ``NotImplementedError`` is
+        If the polyhedron is not compact, a :exc:`NotImplementedError` is
         raised.
 
         If the polyhedron is not integral and ``envelope=False``, a
-        ``ValueError`` is raised.
+        :exc:`ValueError` is raised.
 
         ALGORITHM:
 
@@ -204,7 +205,7 @@ class Polyhedron_base2(Polyhedron_base1):
         OUTPUT:
 
         The list of integral points in the polyhedron. If the
-        polyhedron is not compact, a ``ValueError`` is raised.
+        polyhedron is not compact, a :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -245,13 +246,13 @@ class Polyhedron_base2(Polyhedron_base1):
 
         INPUT:
 
-        - ``self`` -- A lattice polytope.
+        - ``self`` -- a lattice polytope
 
         OUTPUT:
 
         A list whose entries give the `h^*`-vector.
 
-        .. NOTE:
+        .. NOTE::
 
             The backend of ``self`` should be ``'normaliz'``.
             This function depends on Normaliz (i.e. the ``'pynormaliz'`` optional
@@ -321,15 +322,15 @@ class Polyhedron_base2(Polyhedron_base1):
 
         INPUT:
 
-        - ``self`` -- A lattice polytope.
+        - ``self`` -- a lattice polytope
 
         OUTPUT:
 
         The `h^*`-vector as a list.
 
-        .. NOTE:
+        .. NOTE::
 
-        The backend of ``self`` should be ``'normaliz'``.
+            The backend of ``self`` should be ``'normaliz'``.
 
         TESTS::
 
@@ -379,7 +380,6 @@ class Polyhedron_base2(Polyhedron_base1):
             Traceback (most recent call last):
             ...
             NotImplementedError: ...
-
         """
         return len(self.integral_points())
 
@@ -392,13 +392,13 @@ class Polyhedron_base2(Polyhedron_base1):
 
         INPUT:
 
-        - ``threshold`` -- integer (default: 100000). Use the naive
-          algorithm as long as the bounding box is smaller than this.
+        - ``threshold`` -- integer (default: 100000); use the naive
+          algorithm as long as the bounding box is smaller than this
 
         OUTPUT:
 
         The list of integral points in the polyhedron. If the
-        polyhedron is not compact, a ``ValueError`` is raised.
+        polyhedron is not compact, a :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -532,21 +532,21 @@ class Polyhedron_base2(Polyhedron_base1):
         However, so long as :meth:`integral_points_count` does not need to
         enumerate all integral points, neither does this method. Hence it can
         be significantly faster. If the polyhedron is not compact, a
-        ``ValueError`` is raised.
+        :exc:`ValueError` is raised.
 
         INPUT:
 
-        - ``index`` -- integer. The index of the integral point to be found. If
-          this is not in [0, ``self.integral_point_count()``), an ``IndexError``
+        - ``index`` -- integer; the index of the integral point to be found. If
+          this is not in [0, ``self.integral_point_count()``), an :exc:`IndexError`
           is raised.
 
         - ``**kwds`` -- optional keyword parameters that are passed to
-          :meth:`integral_points_count`.
+          :meth:`integral_points_count`
 
         ALGORITHM:
 
         The function computes each of the components of the requested point in
-        turn. To compute x_i, the ith component, it bisects the upper and lower
+        turn. To compute x_i, the `i`-th component, it bisects the upper and lower
         bounds on x_i given by the bounding box. At each bisection, it uses
         :meth:`integral_points_count` to determine on which side of the
         bisecting hyperplane the requested point lies.
@@ -627,12 +627,12 @@ class Polyhedron_base2(Polyhedron_base1):
         INPUT:
 
         - ``**kwds`` -- optional keyword parameters that are passed to
-          :meth:`get_integral_point`.
+          :meth:`get_integral_point`
 
         OUTPUT:
 
         The integral point in the polyhedron chosen uniformly at random. If the
-        polyhedron is not compact, a ``ValueError`` is raised. If the
+        polyhedron is not compact, a :exc:`ValueError` is raised. If the
         polyhedron does not contain any integral points, an
         :class:`~sage.categories.sets_cat.EmptySetError` is raised.
 
@@ -701,7 +701,7 @@ class Polyhedron_base2(Polyhedron_base1):
         The following keyword arguments are passed to
         :func:`~sage.geometry.polyhedron.generating_function.generating_function_of_integral_points`:
 
-        - ``split`` -- (default: ``False``) a boolean or list
+        - ``split`` -- boolean (default: ``False``) or list
 
           - ``split=False`` computes the generating function directly,
             without any splitting.
@@ -732,7 +732,7 @@ class Polyhedron_base2(Polyhedron_base1):
           The variable names of the Laurent polynomial ring of the output
           are this string followed by an integer.
 
-        - ``names`` -- a list or tuple of names (strings), or a comma separated string
+        - ``names`` -- list or tuple of names (strings), or a comma separated string
 
           ``name`` is extracted from ``names``, therefore ``names`` has to contain
           exactly one variable name, and ``name`` and``names`` cannot be specified
@@ -745,12 +745,12 @@ class Polyhedron_base2(Polyhedron_base1):
           :class:`sage.structure.factorization.Factorization` when creating
           the result.
 
-        - ``sort_factors`` -- (default: ``False``) a boolean
+        - ``sort_factors`` -- boolean (default: ``False``)
 
-          If set, then
-          the factors of the output are sorted such that the numerator is
-          first and only then all factors of the denominator. It is ensured
-          that the sorting is always the same; use this for doctesting.
+          If set, then the factors of the output are sorted such that the
+          numerator is first and only then all factors of the denominator. It
+          is ensured that the sorting is always the same; use this for
+          doctesting.
 
         OUTPUT:
 

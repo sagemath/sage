@@ -52,7 +52,7 @@ obtaining Sage from a package manager, using a container image, or using
 Sage in the cloud.
 
 **This README contains self-contained instructions for building Sage from source.**
-It assumes that you have already cloned the git repository or downloaded the
+This requires you to clone the git repository (as described in this README) or download the
 [sources](https://www.sagemath.org/download-source.html) in the form
 of a tarball.
 
@@ -69,7 +69,7 @@ virtualization).
 
 Detailed information on supported platforms for a specific version of Sage
 can be found in the section _Availability and installation help_ of the
-[release tour](https://wiki.sagemath.org/ReleaseTours) for this version.
+[release tour for this version](https://github.com/sagemath/sage/releases).
 
 We highly appreciate contributions to Sage that fix portability bugs
 and help port Sage to new platforms; let us know at the [sage-devel
@@ -92,7 +92,7 @@ below](#sagemath-docker-images)) or other virtualization solutions.
 [macOS] Preparing the Platform
 ------------------------------
 
-- If your Mac uses the Apple Silicon (M1, M2, M3; arm64) architecture and
+- If your Mac uses the Apple Silicon (M1, M2, M3, M4; arm64) architecture and
   you set up your Mac by transferring files from an older Mac, make sure
   that the directory ``/usr/local`` does not contain an old copy of Homebrew
   (or other software) for the x86_64 architecture that you may have copied
@@ -123,7 +123,7 @@ read the following step-by-step instructions for building Sage.
 The instructions cover all of Linux, macOS, and WSL.
 
 More details, providing a background for these instructions, can be found
-in the [section "Install from Source Code"](https://doc.sagemath.org/html/en/installation/source.html).
+in the section [Install from Source Code](https://doc.sagemath.org/html/en/installation/source.html)
 in the Installation Guide.
 
 
@@ -424,9 +424,9 @@ in the Installation Guide.
         $ sudo ln -s $(./sage -sh -c 'ls $SAGE_ROOT/venv/bin/sage') /usr/local/bin
 
 21. Optional: Set up SageMath as a Jupyter kernel in an existing Jupyter notebook
-    or JupyterLab installation, as described in [section
-    "Launching SageMath"](https://doc.sagemath.org/html/en/installation/launching.html)
-    in the Sage Installation Manual.
+    or JupyterLab installation, as described in the section
+    [Launching SageMath](https://doc.sagemath.org/html/en/installation/launching.html)
+    in the Sage Installation Guide.
 
 Alternative Installation using PyPI
 ---------------
@@ -489,8 +489,8 @@ Troubleshooting
 ---------------
 
 If you have problems building Sage, check the Sage Installation Guide,
-as well as the version-specific Sage Installation FAQ in the [Sage Release
-Tour](https://wiki.sagemath.org/ReleaseTours) corresponding to the
+as well as the version-specific installation help in the [release
+tour](https://github.com/sagemath/sage/releases) corresponding to the
 version that you are installing.
 
 Please do not hesitate to ask for help in the [SageMath forum
@@ -679,7 +679,7 @@ information, patches, and build scripts are in the accompanying
 part of the Sage git repository.
 
 <p align="center">
-   Copyright (C) 2005-2023 The Sage Development Team
+   Copyright (C) 2005-2024 The Sage Development Team
 </p>
 <p align="center">
    https://www.sagemath.org

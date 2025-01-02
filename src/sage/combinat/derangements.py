@@ -89,7 +89,7 @@ class Derangements(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``x`` -- Can be an integer which corresponds to derangements of
+    - ``x`` -- can be an integer which corresponds to derangements of
       `\{1, 2, 3, \ldots, x\}`, a list, or a string
 
     REFERENCES:
@@ -422,7 +422,7 @@ class Derangements(UniqueRepresentation, Parent):
             R = PolynomialRing(QQ, 'x', len(A))
             S = sum(R.gens())
             e = prod((S - x)**y for (x, y) in zip(R.gens(), A))
-            return Integer(e.coefficient(dict([(x, y) for (x, y) in zip(R.gens(), A)])))
+            return Integer(e.coefficient(dict(zip(R.gens(), A))))
         return self._count_der(len(self._set))
 
     def _rand_der(self):

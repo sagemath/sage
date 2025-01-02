@@ -1,4 +1,5 @@
 # distutils: language = c++
+# distutils: extra_compile_args = -std=c++11
 # sage_setup: distribution = sagemath-tdlib
 
 r"""
@@ -139,7 +140,6 @@ def treedecomposition_exact(G, lb=-1):
         sage: T = tdlib.treedecomposition_exact(G)
         sage: G = graphs.PetersenGraph()
         sage: T = tdlib.treedecomposition_exact(G)
-
     """
     cdef vector[unsigned int] V_G, E_G, E_T
     cdef vector[vector[int]] V_T
@@ -171,9 +171,7 @@ def get_width(T):
 
     - ``T`` -- a tree decomposition
 
-    OUTPUT:
-
-    - The width of ``T``
+    OUTPUT: the width of ``T``
 
     EXAMPLES::
 

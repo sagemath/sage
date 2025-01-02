@@ -39,7 +39,6 @@ AUTHORS:
 - Martin Albrecht <malb@informatik.uni-bremen.de> (2006-06-05)
 - William Stein (2006-12-07): editing, lots of docs, etc.
 - Robert Bradshaw (2007-05-23): is_square/sqrt, pow.
-
 """
 
 # ****************************************************************************
@@ -70,7 +69,7 @@ from sage.structure.element cimport Vector
 
 from sage.interfaces.abc import GapElement
 
-cdef object is_IntegerMod
+cdef object IntegerMod_abstract
 cdef object Integer
 cdef object Rational
 cdef object MPolynomial
@@ -81,17 +80,17 @@ cdef void late_import() noexcept:
     """
     Late import of modules
     """
-    global is_IntegerMod, \
+    global IntegerMod_abstract, \
            Integer, \
            Rational, \
            MPolynomial, \
            Polynomial
 
-    if is_IntegerMod is not None:
+    if IntegerMod_abstract is not None:
         return
 
     import sage.rings.finite_rings.integer_mod
-    is_IntegerMod = sage.rings.finite_rings.integer_mod.is_IntegerMod
+    IntegerMod_abstract = sage.rings.finite_rings.integer_mod.IntegerMod_abstract
 
     import sage.rings.integer
     Integer = sage.rings.integer.Integer
@@ -107,7 +106,7 @@ cdef void late_import() noexcept:
 
 
 cdef class Cache_givaro(Cache_base):
-    def __init__(self, parent, unsigned int p, unsigned int k, modulus, repr="poly", cache=False):
+    def __init__(self, parent, unsigned int p, unsigned int k, modulus, repr='poly', cache=False):
         """
         Finite Field.
 
@@ -121,24 +120,22 @@ cdef class Cache_givaro(Cache_base):
 
         - ``name`` -- variable used for poly_repr (default: ``'a'``)
 
-        - ``modulus`` -- a polynomial to use as modulus.
+        - ``modulus`` -- a polynomial to use as modulus
 
-        - ``repr``  -- (default: 'poly') controls the way elements are printed
+        - ``repr`` -- (default: ``'poly'``) controls the way elements are printed
           to the user:
 
           - 'log': repr is :meth:`~FiniteField_givaroElement.log_repr()`
           - 'int': repr is :meth:`~FiniteField_givaroElement.int_repr()`
           - 'poly': repr is :meth:`~FiniteField_givaroElement.poly_repr()`
 
-        - ``cache`` -- (default: ``False``) if ``True`` a cache of all
+        - ``cache`` -- boolean (default: ``False``); if ``True`` a cache of all
           elements of this field is created. Thus, arithmetic does not
           create new elements which speeds calculations up. Also, if many
           elements are needed during a calculation this cache reduces the
           memory requirement as at most :meth:`order()` elements are created.
 
-        OUTPUT:
-
-        Givaro finite field with characteristic `p` and cardinality `p^n`.
+        OUTPUT: Givaro finite field with characteristic `p` and cardinality `p^n`
 
         EXAMPLES:
 
@@ -209,7 +206,7 @@ cdef class Cache_givaro(Cache_base):
             self._array = self.gen_array()
             self._has_array = True
 
-    cdef gen_array(self) noexcept:
+    cdef gen_array(self):
         """
         Generates an array/list/tuple containing all elements of ``self``
         indexed by their power with respect to the internal generator.
@@ -296,13 +293,13 @@ cdef class Cache_givaro(Cache_base):
         self.objectptr.random(generator, res)
         return make_FiniteField_givaroElement(self, res)
 
-    cpdef FiniteField_givaroElement element_from_data(self, e) noexcept:
+    cpdef FiniteField_givaroElement element_from_data(self, e):
         """
         Coerces several data types to ``self``.
 
         INPUT:
 
-        - ``e`` -- data to coerce in.
+        - ``e`` -- data to coerce in
 
         EXAMPLES::
 
@@ -362,7 +359,7 @@ cdef class Cache_givaro(Cache_base):
             else:
                 raise TypeError("unable to coerce from a finite field other than the prime subfield")
 
-        elif isinstance(e, (int, Integer)) or is_IntegerMod(e):
+        elif isinstance(e, (int, Integer)) or isinstance(e, IntegerMod_abstract):
             try:
                 e_int = e % self.characteristic()
                 self.objectptr.initi(res, e_int)
@@ -471,7 +468,7 @@ cdef class Cache_givaro(Cache_base):
 
         return make_FiniteField_givaroElement(self, res)
 
-    cpdef FiniteField_givaroElement gen(self) noexcept:
+    cpdef FiniteField_givaroElement gen(self):
         """
         Return a generator of the field.
 
@@ -498,9 +495,7 @@ cdef class Cache_givaro(Cache_base):
 
         - ``n`` -- log representation of a finite field element
 
-        OUTPUT:
-
-        integer representation of a finite field element.
+        OUTPUT: integer representation of a finite field element
 
         EXAMPLES::
 
@@ -531,9 +526,7 @@ cdef class Cache_givaro(Cache_base):
 
         - ``n`` -- integer representation of a finite field element
 
-        OUTPUT:
-
-        log representation of ``n``
+        OUTPUT: log representation of ``n``
 
         EXAMPLES::
 
@@ -551,7 +544,7 @@ cdef class Cache_givaro(Cache_base):
         sig_off()
         return r
 
-    cpdef FiniteField_givaroElement fetch_int(self, number) noexcept:
+    cpdef FiniteField_givaroElement fetch_int(self, number):
         r"""
         Given an integer ``n`` return a finite field element in ``self``
         which equals ``n`` under the condition that :meth:`gen()` is set to
@@ -686,7 +679,7 @@ cdef class Cache_givaro(Cache_base):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`FiniteField_givaroElement`
 
         EXAMPLES::
 
@@ -707,7 +700,7 @@ cdef class Cache_givaro(Cache_base):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`FiniteField_givaroElement`
 
         EXAMPLES::
 
@@ -728,7 +721,7 @@ cdef class Cache_givaro(Cache_base):
 
         INPUT:
 
-        - ``a,b,c`` -- :class:`FiniteField_givaroElement`
+        - ``a``, ``b``, ``c`` -- :class:`FiniteField_givaroElement`
 
         EXAMPLES::
 
@@ -759,7 +752,7 @@ cdef class Cache_givaro(Cache_base):
             rep = 'int'
         return unpickle_Cache_givaro, (self.parent, p, k, self.parent.polynomial(), rep, self._has_array)
 
-    cdef FiniteField_givaroElement _new_c(self, int value) noexcept:
+    cdef FiniteField_givaroElement _new_c(self, int value):
         return make_FiniteField_givaroElement(self, value)
 
 
@@ -848,7 +841,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
     def __init__(FiniteField_givaroElement self, parent):
         """
-        Initializes an element in parent. It's much better to use
+        Initialize an element in parent. It's much better to use
         parent(<value>) or any specialized method of parent
         like gen() instead. In general do not call this
         constructor directly.
@@ -861,9 +854,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
         - ``parent`` -- base field
 
-        OUTPUT:
-
-        A finite field element.
+        OUTPUT: a finite field element
 
         EXAMPLES::
 
@@ -871,13 +862,12 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: from sage.rings.finite_rings.element_givaro import FiniteField_givaroElement
             sage: FiniteField_givaroElement(k)
             0
-
         """
         FinitePolyExtElement.__init__(self, parent)
         self._cache = parent._cache
         self.element = 0
 
-    cdef FiniteField_givaroElement _new_c(self, int value) noexcept:
+    cdef FiniteField_givaroElement _new_c(self, int value):
         return make_FiniteField_givaroElement(self._cache, value)
 
     def __dealloc__(FiniteField_givaroElement self):
@@ -945,7 +935,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
     def is_unit(FiniteField_givaroElement self):
         """
-        Return ``True`` if self is nonzero, so it is a unit as an element of
+        Return ``True`` if ``self`` is nonzero, so it is a unit as an element of
         the finite field.
 
         EXAMPLES::
@@ -965,7 +955,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
     def is_square(FiniteField_givaroElement self):
         """
-        Return ``True`` if ``self`` is a square in ``self.parent()``
+        Return ``True`` if ``self`` is a square in ``self.parent()``.
 
         ALGORITHM:
 
@@ -1007,20 +997,20 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
     def sqrt(FiniteField_givaroElement self, extend=False, all=False):
         """
         Return a square root of this finite field element in its
-        parent, if there is one.  Otherwise, raise a ``ValueError``.
+        parent, if there is one.  Otherwise, raise a :exc:`ValueError`.
 
         INPUT:
 
-        - ``extend`` -- bool (default: ``True``); if ``True``, return a
+        - ``extend`` -- boolean (default: ``True``); if ``True``, return a
           square root in an extension ring, if necessary. Otherwise,
-          raise a ``ValueError`` if the root is not in the base ring.
+          raise a :exc:`ValueError` if the root is not in the base ring.
 
           .. WARNING::
 
               this option is not implemented!
 
-        - ``all`` -- bool (default: ``False``); if ``True``, return all square
-          roots of ``self``, instead of just one.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return all
+          square roots of ``self``, instead of just one
 
         .. WARNING::
 
@@ -1062,7 +1052,6 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: K.<a> = FiniteField(9)
             sage: a.sqrt(extend = False, all = True)
             []
-
         """
         if all:
             if self.is_square():
@@ -1081,7 +1070,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         else:
             raise ValueError("must be a perfect square.")
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Add two elements.
 
@@ -1096,7 +1085,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
                                   (<FiniteField_givaroElement>right).element)
         return make_FiniteField_givaroElement(self._cache, r)
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Multiply two elements.
 
@@ -1113,9 +1102,9 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
                                   (<FiniteField_givaroElement>right).element)
         return make_FiniteField_givaroElement(self._cache, r)
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
-        Divide two elements
+        Divide two elements.
 
         EXAMPLES::
 
@@ -1135,7 +1124,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
                                   (<FiniteField_givaroElement>right).element)
         return make_FiniteField_givaroElement(self._cache, r)
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Subtract two elements.
 
@@ -1192,7 +1181,6 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             Traceback (most recent call last):
             ...
             ZeroDivisionError: division by zero in finite field
-
         """
         cdef int r = 0
         if self.element == 0:
@@ -1286,7 +1274,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             return make_FiniteField_givaroElement(cache, cache.objectptr.one)
         return make_FiniteField_givaroElement(cache, r)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Comparison of finite field elements is correct or equality
         tests and somewhat random for ``<`` and ``>`` type of
@@ -1334,7 +1322,6 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             Traceback (most recent call last):
             ...
             TypeError: Cannot coerce element to an integer.
-
         """
         cdef int self_int = self._cache.log_to_int(self.element)
         if self_int % self._cache.characteristic() != self_int:
@@ -1351,7 +1338,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         `e = a_0 + a_1 x + a_2 x^2 + \cdots`, the integer representation
         is `a_0 + a_1 p + a_2 p^2 + \cdots`.
 
-        OUTPUT: A Python ``int``.
+        OUTPUT: a Python ``int``
 
         .. SEEALSO::
 
@@ -1412,10 +1399,17 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         """
         return Integer(self._cache.log_to_int(self.element))
 
-    def log(FiniteField_givaroElement self, base):
+    def log(FiniteField_givaroElement self, base, order=None, *, check=False):
         """
         Return the log to the base `b` of ``self``, i.e., an integer `n`
         such that `b^n =` ``self``.
+
+        INPUT:
+
+        - ``base`` -- non-zero field element
+        - ``order`` -- integer (optional), multiple of order of ``base``
+        - ``check`` -- boolean (default: ``False``): If set,
+          test whether the given ``order`` is correct.
 
         .. WARNING::
 
@@ -1430,9 +1424,22 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: a = b^7
             sage: a.log(b)
             7
+
+        TESTS:
+
+        An example for ``check=True``::
+
+            sage: F.<t> = GF(3^5, impl='givaro')
+            sage: t.log(t, 3^4, check=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: 81 is not a multiple of the order of the base
         """
         b = self.parent()(base)
-        return sage.groups.generic.discrete_log(self, b)
+        if (order is not None) and check and not (b**order).is_one():
+            raise ValueError(f"{order} is not a multiple of the order of the base")
+
+        return sage.groups.generic.discrete_log(self, b, ord=order)
 
     def _int_repr(FiniteField_givaroElement self):
         r"""
@@ -1479,7 +1486,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
     def polynomial(FiniteField_givaroElement self, name=None):
         """
-        Return self viewed as a polynomial over
+        Return ``self`` viewed as a polynomial over
         ``self.parent().prime_subfield()``.
 
         EXAMPLES::
@@ -1510,7 +1517,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
     def _magma_init_(self, magma):
         """
-        Return a string representation of self that MAGMA can
+        Return a string representation of ``self`` that MAGMA can
         understand.
 
         EXAMPLES::
@@ -1619,8 +1626,8 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         Return a string that evaluates to the GAP representation of
         this element.
 
-        A ``NotImplementedError`` is raised if ``self.parent().modulus()`` is
-        not a Conway polynomial, as the isomorphism of finite fields is
+        A :exc:`NotImplementedError` is raised if ``self.parent().modulus()``
+        is not a Conway polynomial, as the isomorphism of finite fields is
         not implemented yet.
 
         EXAMPLES::
@@ -1675,7 +1682,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         INPUT:
 
         - ``reverse`` -- reverse the order of the bits from little endian to
-          big endian.
+          big endian
 
         EXAMPLES::
 
@@ -1730,6 +1737,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         """
         return unpickle_FiniteField_givaroElement,(self.parent(),self.element)
 
+
 def unpickle_FiniteField_givaroElement(parent, int x):
     """
     TESTS::
@@ -1740,10 +1748,11 @@ def unpickle_FiniteField_givaroElement(parent, int x):
     """
     return make_FiniteField_givaroElement(parent._cache, x)
 
+
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.rings.finite_field_givaro', 'unpickle_FiniteField_givaroElement', unpickle_FiniteField_givaroElement)
 
-cdef inline FiniteField_givaroElement make_FiniteField_givaroElement(Cache_givaro cache, int x) noexcept:
+cdef inline FiniteField_givaroElement make_FiniteField_givaroElement(Cache_givaro cache, int x):
     cdef FiniteField_givaroElement y
 
     if cache._has_array:

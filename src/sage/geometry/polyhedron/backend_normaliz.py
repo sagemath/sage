@@ -68,18 +68,18 @@ def _format_function_call(fn_name, *v, **k):
 #########################################################################
 class Polyhedron_normaliz(Polyhedron_base_number_field):
     """
-    Polyhedra with normaliz
+    Polyhedra with normaliz.
 
     INPUT:
 
     - ``parent`` -- :class:`~sage.geometry.polyhedron.parent.Polyhedra`
       the parent
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``; the
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``; the
       V-representation of the polyhedron; if ``None``, the polyhedron
       is determined by the H-representation
 
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``; the
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``; the
       H-representation of the polyhedron; if ``None``, the polyhedron
       is determined by the V-representation
 
@@ -200,7 +200,6 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
          the convex hull of 2 vertices
         sage: P.vertices()                                                              # needs sage.rings.number_field sage.symbolic
         (A vertex at (2^(1/3)), A vertex at (sqrt(2)))
-
     """
     def __init__(self, parent, Vrep, Hrep, normaliz_cone=None, normaliz_data=None, internal_base_ring=None, **kwds):
         """
@@ -428,9 +427,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -450,9 +447,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -472,9 +467,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -814,7 +807,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
             from sage.matrix.constructor import Matrix
             lattice = Matrix(ZZ, nmz_vertices + nmz_rays + nmz_lines).saturation()
-            nmz_lattice = [[x for x in y] for y in lattice]
+            nmz_lattice = [list(y) for y in lattice]
 
             if Matrix(ZZ, nmz_vertices + nmz_rays).rank() == Matrix(ZZ, nmz_rays).rank() + 1:
                 # The recession cone is full-dimensional.
@@ -1038,9 +1031,9 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         INPUT:
 
-        - ``data`` -- a dictionary
+        - ``data`` -- dictionary
 
-        - ``verbose`` -- a boolean (default: ``False``)
+        - ``verbose`` -- boolean (default: ``False``)
 
         TESTS::
 
@@ -1061,9 +1054,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         r"""
         Get the data necessary to reproduce the normaliz cone.
 
-        OUTPUT:
-
-        - ``data`` -- a dictionary.
+        OUTPUT: ``data`` -- dictionary
 
         TESTS:
 
@@ -1105,9 +1096,9 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         INPUT:
 
-        - ``data`` -- a dictionary of PyNormaliz cone input properties
+        - ``data`` -- dictionary of PyNormaliz cone input properties
 
-        - ``file_output`` (string; optional) -- a filename to which the
+        - ``file_output`` -- string (optional); a filename to which the
           representation should be written. If set to ``None`` (default),
           representation is returned as a string.
 
@@ -1353,7 +1344,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         INPUT:
 
-        - ``self`` -- A lattice polytope with backend ``'normaliz'``.
+        - ``self`` -- a lattice polytope with backend ``'normaliz'``
 
         OUTPUT:
 
@@ -1623,8 +1614,8 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
     INPUT:
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 
@@ -1647,9 +1638,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         - ``variable`` -- string (default: ``'t'``)
 
-        OUTPUT:
-
-        A rational function.
+        OUTPUT: a rational function
 
         EXAMPLES::
 
@@ -1737,9 +1726,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         - ``variable`` -- string (default: ``'t'``)
 
-        OUTPUT:
-
-        A polynomial or tuple of polynomials.
+        OUTPUT: a polynomial or tuple of polynomials
 
         EXAMPLES::
 
@@ -1810,9 +1797,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         - ``variable`` -- string (default: ``'t'``)
 
-        OUTPUT:
-
-        A rational function.
+        OUTPUT: a rational function
 
         EXAMPLES::
 
@@ -1905,7 +1890,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         OUTPUT:
 
         The list of integral points in the polyhedron. If the
-        polyhedron is not compact, a :class:`ValueError` is raised.
+        polyhedron is not compact, a :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -2121,7 +2106,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         Return the integral points generators of the polyhedron.
 
         Every integral point in the polyhedron can be written as a (unique)
-        non-negative linear combination of integral points contained in the three
+        nonnegative linear combination of integral points contained in the three
         defining parts of the polyhedron: the integral points (the compact
         part), the recession cone, and the lineality space.
 
@@ -2215,7 +2200,6 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         function in `t` with coefficients in the ring of class functions.
         There are several output options to see the intermediary outputs of the
         function.
-
 
         EXAMPLES:
 
@@ -2316,7 +2300,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         # A check on whether the character table has permuted columns
         tbl = G_perm_gap.CharacterTable()
         perm = tbl.IdentificationOfConjugacyClasses()
-        ident_perm = [i for i in range(1, 1 + n_classes)]
+        ident_perm = list(range(1, 1 + n_classes))
         assert perm == ident_perm, "The conjugacy classes don't match with the character table"
 
         # Create fixed subpolytopes and their Ehrhart series
@@ -2374,7 +2358,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         INPUT:
 
-        - ``initial_Hstar`` -- a vector of rational functions in `t`.
+        - ``initial_Hstar`` -- a vector of rational functions in `t`
 
         OUTPUT:
 
@@ -2441,21 +2425,19 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         coefficient of each `t^i` is an effective character in the ring of
         class functions of the acting group. A character `\rho` is effective if
         the coefficients of the irreducible representations in the expression
-        of `\rho` are non-negative integers.
+        of `\rho` are nonnegative integers.
 
         INPUT:
 
         - ``Hstar`` -- a rational function in `t` with coefficients in the ring
-          of class functions.
+          of class functions
 
         - ``Hstar_as_lin_comb`` -- vector. The coefficients of the irreducible
           representations of the acting group in the expression of ``Hstar`` as
           a linear combination of irreducible representations with coefficients
           in the field of rational functions in `t`.
 
-        OUTPUT:
-
-        Boolean. Whether the ``Hstar`` series is effective.
+        OUTPUT: boolean; whether the ``Hstar`` series is effective
 
         EXAMPLES:
 
@@ -2507,8 +2489,8 @@ class Polyhedron_ZZ_normaliz(Polyhedron_QQ_normaliz, Polyhedron_ZZ):
 
     INPUT:
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 

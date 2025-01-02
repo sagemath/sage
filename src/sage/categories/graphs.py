@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Graphs
 """
@@ -14,6 +15,7 @@ from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.simplicial_complexes import SimplicialComplexes
 from sage.categories.sets_cat import Sets
+
 
 class Graphs(Category_singleton):
     r"""

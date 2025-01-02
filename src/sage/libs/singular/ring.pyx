@@ -16,21 +16,22 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.cpython.string cimport str_to_bytes
+from sage.cpython.string cimport str_to_bytes, bytes_to_str
 
 from sage.libs.gmp.types cimport __mpz_struct
-from sage.libs.gmp.mpz cimport mpz_init_set_ui
+from sage.libs.gmp.mpz cimport mpz_init_set
 
 from sage.libs.singular.decl cimport ring, currRing
 from sage.libs.singular.decl cimport rChangeCurrRing, rComplete, rDelete, idInit
 from sage.libs.singular.decl cimport omAlloc0, omStrDup, omAlloc
-from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_rp, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_c, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
+from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_ip, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_c, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
 from sage.libs.singular.decl cimport prCopyR
 from sage.libs.singular.decl cimport n_unknown, n_algExt, n_transExt, n_Z, n_Zn,  n_Znm, n_Z2m
 from sage.libs.singular.decl cimport n_coeffType
 from sage.libs.singular.decl cimport rDefault, GFInfo, ZnmInfo, nInitChar, AlgExtInfo, TransExtInfo
 
 
+from sage.rings.integer cimport Integer
 from sage.rings.integer_ring cimport IntegerRing_class
 from sage.rings.integer_ring import ZZ
 import sage.rings.abc
@@ -51,16 +52,12 @@ from cpython.object cimport Py_EQ, Py_NE
 from collections import defaultdict
 
 
-
-
-
-
 # mapping str --> SINGULAR representation
 order_dict = {
     "dp": ringorder_dp,
     "Dp": ringorder_Dp,
     "lp": ringorder_lp,
-    "rp": ringorder_rp,
+    "ip": ringorder_ip,
     "ds": ringorder_ds,
     "Ds": ringorder_Ds,
     "ls": ringorder_ls,
@@ -71,23 +68,33 @@ order_dict = {
     "a":  ringorder_a,
 }
 
+cdef extern from "singular/Singular/libsingular.h":
+    cdef char * rSimpleOrdStr(rRingOrder_t)
+
+if bytes_to_str(rSimpleOrdStr(ringorder_ip)) == "rp":
+    # compatibility for singular 4.3.2p10 and before
+    order_dict["rp"] = ringorder_ip
+    # also patch term_order mappings
+    from sage.rings.polynomial import term_order
+    term_order.singular_name_mapping['invlex'] = 'rp'
+    term_order.inv_singular_name_mapping['rp'] = 'invlex'
 
 #############################################################################
 cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
-    """
+    r"""
     Create a new Singular ring over the ``base_ring`` in ``n``
     variables with the names ``names`` and the term order
     ``term_order``.
 
     INPUT:
 
-    - ``base_ring`` - a Sage ring
+    - ``base_ring`` -- a Sage ring
 
-    - ``n`` - the number of variables (> 0)
+    - ``n`` -- the number of variables (> 0)
 
-    - ``names`` - a list of names of length ``n``
+    - ``names`` -- list of names of length ``n``
 
-    - ``term_order`` - a term ordering
+    - ``term_order`` -- a term ordering
 
     EXAMPLES::
 
@@ -153,18 +160,136 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         sage: R.<x,y,z> = F[]
         sage: from sage.libs.singular.function import singular_function
         sage: sing_print = singular_function('print')
-        sage: sing_print(R)
-        'polynomial ring, over a field, global ordering\n// coefficients: ZZ/7(a, b)\n// number of vars : 3\n//        block   1 : ordering dp\n//                  : names    x y z\n//        block   2 : ordering C'
+        sage: print(sing_print(R))
+        polynomial ring, over a field, global ordering
+        // coefficients: ZZ/7(a, b)
+        // number of vars : 3
+        //        block   1 : ordering dp
+        //                  : names    x y z
+        //        block   2 : ordering C
 
     ::
 
         sage: F = PolynomialRing(QQ, 's,t').fraction_field()
         sage: R.<x,y,z> = F[]
         sage: from sage.libs.singular.function import singular_function
-        sage: sing_print = singular_function('print')
-        sage: sing_print(R)
-        'polynomial ring, over a field, global ordering\n// coefficients: QQ(s, t)\n// number of vars : 3\n//        block   1 : ordering dp\n//                  : names    x y z\n//        block   2 : ordering C'
+        sage: print(sing_print(R))
+        polynomial ring, over a field, global ordering
+        // coefficients: QQ(s, t)
+        // number of vars : 3
+        //        block   1 : ordering dp
+        //                  : names    x y z
+        //        block   2 : ordering C
 
+    Small primes::
+
+        sage: R = PolynomialRing(GF(2), ("a", "b"), implementation="singular"); print(sing_print(R))
+        polynomial ring, over a field, global ordering
+        // coefficients: ZZ/2
+        // number of vars : 2
+        //        block   1 : ordering dp
+        //                  : names    a b
+        //        block   2 : ordering C
+        sage: R = PolynomialRing(GF(3), ("a", "b"), implementation="singular"); print(sing_print(R))
+        polynomial ring, over a field, global ordering
+        // coefficients: ZZ/3
+        // number of vars : 2
+        //        block   1 : ordering dp
+        //                  : names    a b
+        //        block   2 : ordering C
+        sage: R = PolynomialRing(GF(1000000007), ("a", "b"), implementation="singular"); print(sing_print(R))
+        polynomial ring, over a field, global ordering
+        // coefficients: ZZ/1000000007
+        // number of vars : 2
+        //        block   1 : ordering dp
+        //                  : names    a b
+        //        block   2 : ordering C
+
+    When ``Zmod`` is used, use a different Singular type
+    (note that the print is wrong, the field in fact doesn't have zero-divisors)::
+
+        sage: R = PolynomialRing(Zmod(2), ("a", "b"), implementation="singular"); print(sing_print(R))
+        polynomial ring, over a ring (with zero-divisors), global ordering
+        // coefficients: ZZ/(2)
+        // number of vars : 2
+        //        block   1 : ordering dp
+        //                  : names    a b
+        //        block   2 : ordering C
+        sage: R = PolynomialRing(Zmod(3), ("a", "b"), implementation="singular"); print(sing_print(R))
+        polynomial ring, over a ring (with zero-divisors), global ordering
+        // coefficients: ZZ/(3)
+        // number of vars : 2
+        //        block   1 : ordering dp
+        //                  : names    a b
+        //        block   2 : ordering C
+
+    Large prime (note that the print is wrong, the field in fact doesn't have zero-divisors)::
+
+        sage: R = PolynomialRing(GF(2^128+51), ("a", "b"), implementation="singular"); print(sing_print(R))
+        polynomial ring, over a ring (with zero-divisors), global ordering
+        // coefficients: ZZ/bigint(340282366920938463463374607431768211507)
+        // number of vars : 2
+        //        block   1 : ordering dp
+        //                  : names    a b
+        //        block   2 : ordering C
+
+    Finite field with large degree (note that if stack size is too small and the exponent is too large
+    a stack overflow may happen inside libsingular)::
+
+        sage: R = PolynomialRing(GF(2^160), ("a", "b"), implementation="singular"); print(sing_print(R))
+        polynomial ring, over a field, global ordering
+        // coefficients: ZZ/2[z160]/(z160^160+z160^159+z160^155+z160^154+z160^153+z160^152+z160^151+z160^149+z160^148+z160^147+z160^146+z160^145+z160^144+z160^143+z160^141+z160^139+z160^137+z160^131+z160^129+z160^128+z160^127+z160^126+z160^123+z160^122+z160^121+z160^117+z160^116+z160^115+z160^113+z160^111+z160^110+z160^108+z160^106+z160^102+z160^100+z160^99+z160^97+z160^96+z160^95+z160^94+z160^93+z160^92+z160^91+z160^87+z160^86+z160^82+z160^80+z160^79+z160^78+z160^74+z160^73+z160^72+z160^71+z160^70+z160^67+z160^66+z160^65+z160^62+z160^59+z160^58+z160^57+z160^55+z160^54+z160^53+z160^52+z160^51+z160^49+z160^47+z160^44+z160^40+z160^35+z160^32+z160^30+z160^28+z160^27+z160^26+z160^24+z160^23+z160^21+z160^20+z160^18+z160^16+z160^11+z160^10+z160^8+z160^7+1)
+        // number of vars : 2
+        //        block   1 : ordering dp
+        //                  : names    a b
+        //        block   2 : ordering C
+
+    Integer modulo small power of 2::
+
+        sage: R = PolynomialRing(Zmod(2^32), ("a", "b"), implementation="singular"); print(sing_print(R))
+        polynomial ring, over a ring (with zero-divisors), global ordering
+        // coefficients: ZZ/(2^32)
+        // number of vars : 2
+        //        block   1 : ordering dp
+        //                  : names    a b
+        //        block   2 : ordering C
+
+    Integer modulo large power of 2::
+
+        sage: R = PolynomialRing(Zmod(2^1000), ("a", "b"), implementation="singular"); print(sing_print(R))
+        polynomial ring, over a ring (with zero-divisors), global ordering
+        // coefficients: ZZ/(bigint(2)^1000)
+        // number of vars : 2
+        //        block   1 : ordering dp
+        //                  : names    a b
+        //        block   2 : ordering C
+
+    Integer modulo large power of odd prime::
+
+        sage: R = PolynomialRing(Zmod(3^300), ("a", "b"), implementation="singular"); print(sing_print(R))
+        polynomial ring, over a ring (with zero-divisors), global ordering
+        // coefficients: ZZ/(bigint(3)^300)
+        // number of vars : 2
+        //        block   1 : ordering dp
+        //                  : names    a b
+        //        block   2 : ordering C
+
+    Integer modulo non-prime::
+
+        sage: R = PolynomialRing(Zmod(15^20), ("a", "b"), implementation="singular"); print(sing_print(R))
+        polynomial ring, over a ring (with zero-divisors), global ordering
+        // coefficients: ZZ/bigint(332525673007965087890625)
+        // number of vars : 2
+        //        block   1 : ordering dp
+        //                  : names    a b
+        //        block   2 : ordering C
+
+    Non-prime finite field with large characteristic (not supported, see :issue:`33319`)::
+
+        sage: PolynomialRing(GF((2^31+11)^2), ("a", "b"), implementation="singular")
+        Traceback (most recent call last):
+        ...
+        TypeError: characteristic must be <= 2147483647.
     """
     cdef long cexponent
     cdef GFInfo* _param
@@ -177,7 +302,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     cdef int offset
     cdef int nvars
     cdef int characteristic
-    cdef int modbase
+    cdef Integer ch, modbase
     cdef int ringorder_column_pos
     cdef int ringorder_column_asc
 
@@ -288,12 +413,14 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
     if isinstance(base_ring, RationalField):
         characteristic = 0
-        _ring = rDefault( characteristic ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+        _ring = rDefault(characteristic, nvars, _names, nblcks,
+                         _order, _block0, _block1, _wvhdl)
 
     elif isinstance(base_ring, FractionField_generic) and isinstance(base_ring.base(), (MPolynomialRing_libsingular, PolynomialRing_field)) and isinstance(base_ring.base().base_ring(), RationalField):
         characteristic = 1
         k = PolynomialRing(RationalField(),
-            names=base_ring.variable_names(), order="lex", implementation="singular")
+                           names=base_ring.variable_names(), order='lex',
+                           implementation='singular')
 
         ngens = len(k.gens())
 
@@ -309,18 +436,17 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         _cf = nInitChar(n_transExt, <void *>&trextParam)
 
-
         if (_cf is NULL):
             raise RuntimeError("Failed to allocate _cf ring.")
 
-        _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+        _ring = rDefault (_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     elif isinstance(base_ring, FractionField_generic) and isinstance(base_ring.base(), (MPolynomialRing_libsingular, PolynomialRing_field)) and isinstance(base_ring.base().base_ring(), FiniteField_generic):
         if not base_ring.base_ring().is_prime_field():
             raise NotImplementedError("Transcental extension are not implemented for non-prime finite fields")
         characteristic = int(base_ring.characteristic())
         k = PolynomialRing(base_ring.base_ring(),
-            names=base_ring.variable_names(), order="lex", implementation="singular")
+            names=base_ring.variable_names(), order='lex', implementation='singular')
 
         ngens = len(k.gens())
 
@@ -336,17 +462,15 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         _cf = nInitChar(n_transExt, <void *>&trextParam)
 
-
         if (_cf is NULL):
             raise RuntimeError("Failed to allocate _cf ring.")
 
-        _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
-
+        _ring = rDefault (_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     elif isinstance(base_ring, NumberField) and base_ring.is_absolute():
         characteristic = 1
         k = PolynomialRing(RationalField(),
-            name=base_ring.variable_name(), order="lex", implementation="singular")
+            name=base_ring.variable_name(), order='lex', implementation='singular')
 
         minpoly = base_ring.polynomial()(k.gen())
 
@@ -367,45 +491,63 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         if (_cf is NULL):
             raise RuntimeError("Failed to allocate _cf ring.")
 
-        _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+        _ring = rDefault (_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     elif isinstance(base_ring, IntegerRing_class):
         _cf = nInitChar( n_Z, NULL) # integer coefficient ring
-        _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+        _ring = rDefault (_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
-    elif (isinstance(base_ring, FiniteField_generic) and base_ring.is_prime_field()):
-        if base_ring.characteristic() <= 2147483647:
+    elif isinstance(base_ring, sage.rings.abc.IntegerModRing):
+
+        ch = base_ring.characteristic()
+        if ch < 2:
+            raise NotImplementedError(f"polynomials over {base_ring} are not supported in Singular")
+
+        isprime = ch.is_prime()
+
+        if isprime and ch <= 2147483647 and isinstance(base_ring, FiniteField_generic):
+            # don't use this branch for e.g. Zmod(5)
             characteristic = base_ring.characteristic()
+
+            # example for simpler ring creation interface without monomial orderings:
+            #_ring = rDefault(characteristic, nvars, _names)
+
+            _ring = rDefault(characteristic, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+
         else:
-            raise TypeError("Characteristic p must be <= 2147483647.")
+            modbase, cexponent = ch.perfect_power()
 
-        # example for simpler ring creation interface without monomial orderings:
-        #_ring = rDefault(characteristic, nvars, _names)
+            if modbase == 2 and cexponent > 1:
+                _cf = nInitChar(n_Z2m, <void *>cexponent)
 
-        _ring = rDefault( characteristic , nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+            elif modbase.is_prime() and cexponent > 1:
+                _info.base = <__mpz_struct *>omAlloc(sizeof(__mpz_struct))
+                mpz_init_set(_info.base, modbase.value)
+                _info.exp = cexponent
+                _cf = nInitChar(n_Znm, <void *>&_info)
+
+            else:
+                _info.base = <__mpz_struct *>omAlloc(sizeof(__mpz_struct))
+                mpz_init_set(_info.base, ch.value)
+                _info.exp = 1
+                _cf = nInitChar(n_Zn, <void *>&_info)
+            _ring = rDefault(_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     elif isinstance(base_ring, FiniteField_generic):
-        if base_ring.characteristic() <= 2147483647:
-            characteristic = -base_ring.characteristic() # note the negative characteristic
-        else:
+        assert not base_ring.is_prime_field()  # would have been handled above
+        if base_ring.characteristic() > 2147483647:
             raise TypeError("characteristic must be <= 2147483647.")
 
         # TODO: This is lazy, it should only call Singular stuff not PolynomialRing()
         k = PolynomialRing(base_ring.prime_subfield(),
-            name=base_ring.variable_name(), order="lex", implementation="singular")
+                           name=base_ring.variable_name(), order='lex',
+                           implementation='singular')
         minpoly = base_ring.polynomial()(k.gen())
-
-        ch = base_ring.characteristic()
-        F = ch.factor()
-        assert(len(F)==1)
-
-        modbase = F[0][0]
-        cexponent = F[0][1]
 
         _ext_names = <char**>omAlloc0(sizeof(char*))
         _name = str_to_bytes(k._names[0])
         _ext_names[0] = omStrDup(_name)
-        _cfr = rDefault( modbase, 1, _ext_names )
+        _cfr = rDefault(<int>base_ring.characteristic(), 1, _ext_names)
 
         _cfr.qideal = idInit(1,1)
         rComplete(_cfr, 1)
@@ -416,66 +558,12 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         if (_cf is NULL):
             raise RuntimeError("Failed to allocate _cf ring.")
 
-        _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
-
-    elif isinstance(base_ring, sage.rings.abc.IntegerModRing):
-
-        ch = base_ring.characteristic()
-        if ch < 2:
-            raise NotImplementedError(f"polynomials over {base_ring} are not supported in Singular")
-
-        isprime = ch.is_prime()
-
-        if not isprime and ch.is_power_of(2):
-            exponent = ch.nbits() -1
-            cexponent = exponent
-
-            if exponent <= 30:
-                ringtype = n_Z2m
-            else:
-                ringtype = n_Znm
-
-            if ringtype == n_Znm:
-                F = ch.factor()
-
-                modbase = F[0][0]
-                cexponent = F[0][1]
-
-                _info.base = <__mpz_struct*>omAlloc(sizeof(__mpz_struct))
-                mpz_init_set_ui(_info.base, modbase)
-                _info.exp = cexponent
-                _cf = nInitChar(ringtype, <void *>&_info)
-            else:  # ringtype == n_Z2m
-                _cf = nInitChar(ringtype, <void *>cexponent)
-
-        elif not isprime and ch.is_prime_power() and ch < ZZ(2)**160:
-            F = ch.factor()
-            assert(len(F)==1)
-
-            modbase = F[0][0]
-            cexponent = F[0][1]
-
-            _info.base = <__mpz_struct*>omAlloc(sizeof(__mpz_struct))
-            mpz_init_set_ui(_info.base, modbase)
-            _info.exp = cexponent
-            _cf = nInitChar( n_Znm, <void *>&_info )
-
-        else:
-            try:
-                characteristic = ch
-            except OverflowError:
-                raise NotImplementedError("Characteristic %d too big." % ch)
-
-            _info.base = <__mpz_struct*>omAlloc(sizeof(__mpz_struct))
-            mpz_init_set_ui(_info.base, characteristic)
-            _info.exp = 1
-            _cf = nInitChar( n_Zn, <void *>&_info )
-        _ring = rDefault( _cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
+        _ring = rDefault (_cf, nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
     else:
         raise NotImplementedError(f"polynomials over {base_ring} are not supported in Singular")
 
-    if (_ring is NULL):
+    if _ring is NULL:
         raise ValueError("Failed to allocate Singular ring.")
 
     _ring.ShortOut = 0
@@ -542,9 +630,7 @@ cdef class ring_wrapper_Py():
         """
         Return a hash value so that instances can be used as dictionary keys.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -559,9 +645,7 @@ cdef class ring_wrapper_Py():
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -585,9 +669,7 @@ cdef class ring_wrapper_Py():
 
         - ``right`` -- a :class:`ring_wrapper_Py`
 
-        OUTPUT:
-
-        True if both ``ring_wrapper_Py`` wrap the same pointer.
+        OUTPUT: ``True`` if both ``ring_wrapper_Py`` wrap the same pointer
 
         EXAMPLES::
 
@@ -618,13 +700,13 @@ cdef class ring_wrapper_Py():
         return (self._ring == r._ring) == (op == Py_EQ)
 
 
-cdef wrap_ring(ring* R) noexcept:
+cdef wrap_ring(ring* R):
     """
     Wrap a C ring pointer into a Python object.
 
     INPUT:
 
-    - ``R`` -- a singular ring (a C datastructure).
+    - ``R`` -- a singular ring (a C datastructure)
 
     OUTPUT:
 
@@ -641,7 +723,7 @@ cdef ring *singular_ring_reference(ring *existing_ring) except NULL:
 
     INPUT:
 
-    - ``existing_ring`` -- a Singular ring.
+    - ``existing_ring`` -- a Singular ring
 
     OUTPUT:
 
@@ -745,7 +827,7 @@ cdef void singular_ring_delete(ring *doomed) noexcept:
 #############################################################################
 # helpers for debugging
 
-cpdef poison_currRing(frame, event, arg) noexcept:
+cpdef poison_currRing(frame, event, arg):
     """
     Poison the ``currRing`` pointer.
 
@@ -757,7 +839,7 @@ cpdef poison_currRing(frame, event, arg) noexcept:
     INPUT:
 
     - ``frame``, ``event``, ``arg`` -- the standard arguments for the
-      CPython debugger hook. They are not used.
+      CPython debugger hook; they are not used
 
     OUTPUT:
 
@@ -778,7 +860,7 @@ cpdef poison_currRing(frame, event, arg) noexcept:
     return poison_currRing
 
 
-cpdef print_currRing() noexcept:
+cpdef print_currRing():
     """
     Print the ``currRing`` pointer.
 
@@ -799,7 +881,8 @@ cpdef print_currRing() noexcept:
 
 def currRing_wrapper():
     """
-    Returns a wrapper for the current ring, for use in debugging ring_refcount_dict.
+    Return a wrapper for the current ring, for use in debugging
+    ``ring_refcount_dict``.
 
     EXAMPLES::
 

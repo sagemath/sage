@@ -1,22 +1,31 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Sage Runtime Environment
 
-Verify that importing ``sage.all`` works in Sage's Python without any ``SAGE_``
-environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
-(see also :issue:`29446`)::
+Verify that importing ``sage.all`` works in Sage's Python without any
+``SAGE_`` environment variables, and has the same ``SAGE_ROOT`` and
+``SAGE_LOCAL`` (see also :issue:`29446`). If ``SAGE_ROOT`` is a path,
+we normalize it, but keep in mind that ``SAGE_ROOT`` may also be
+``None``::
 
     sage: env = {k:v for (k,v) in os.environ.items() if not k.startswith("SAGE_")}
     sage: from subprocess import check_output
-    sage: environment = "sage.all"
-    sage: cmd = f"from {environment} import SAGE_ROOT, SAGE_LOCAL; print((SAGE_ROOT, SAGE_LOCAL))"
+    sage: module_name = "sage.all"   # hide .all import from the linter
+    sage: cmd  = f"from {module_name} import SAGE_ROOT, SAGE_LOCAL;"
+    sage: cmd +=  "from os.path import samefile;"
+    sage: if SAGE_ROOT is None:
+    ....:     cmd +=  "s1 = SAGE_ROOT is None;"
+    ....: else:
+    ....:     cmd += f"s1 = samefile(SAGE_ROOT, '{SAGE_ROOT}');"
+    sage: cmd += f"s2 = samefile(SAGE_LOCAL, '{SAGE_LOCAL}');"
+    sage: cmd += "print(s1 and s2);"
     sage: out = check_output([sys.executable, "-c", cmd], env=env).decode().strip()   # long time
-    sage: out == repr((SAGE_ROOT, SAGE_LOCAL))                                        # long time
+    sage: out == "True"                                                               # long time
     True
 
 AUTHORS:
 
 - \R. Andrew Ohana (2012): initial version
-
 """
 
 # ****************************************************************************
@@ -30,8 +39,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing import List, Optional
+from typing import Optional
 import sage
+import platform
 import os
 import socket
 import sys
@@ -74,17 +84,15 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
 
     INPUT:
 
-    - ``key`` -- string.
+    - ``key`` -- string
 
-    - ``fallbacks`` -- tuple containing ``str`` or ``None`` values.
+    - ``fallbacks`` -- tuple containing ``str`` or ``None`` values
 
-    - ``force`` -- boolean (optional, default is ``False``). If
+    - ``force`` -- boolean (default: ``False``); if
       ``True``, skip the environment variable and only use the
-      fallbacks.
+      fallbacks
 
-    OUTPUT:
-
-    The value of the environment variable or its fallbacks.
+    OUTPUT: the value of the environment variable or its fallbacks
 
     EXAMPLES::
 
@@ -146,7 +154,12 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
             import sage_conf
             value = getattr(sage_conf, key, None)
         except ImportError:
-            pass
+            try:
+                import sage.config
+                value = getattr(sage.config, key, None)
+            except ImportError:
+                pass
+
     # Try all fallbacks in order as long as we don't have a value
     for f in fallbacks:
         if value is not None:
@@ -158,7 +171,6 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
 
 
 # system info
-UNAME = var("UNAME", os.uname()[0])
 HOSTNAME = var("HOSTNAME", socket.gethostname())
 LOCAL_IDENTIFIER = var("LOCAL_IDENTIFIER", "{}.{}".format(HOSTNAME, os.getpid()))
 
@@ -186,6 +198,11 @@ SAGE_SRC = var("SAGE_SRC", join(SAGE_ROOT, "src"), SAGE_LIB)
 SAGE_DOC_SRC = var("SAGE_DOC_SRC", join(SAGE_ROOT, "src", "doc"), SAGE_DOC)
 SAGE_PKGS = var("SAGE_PKGS", join(SAGE_ROOT, "build", "pkgs"))
 SAGE_ROOT_GIT = var("SAGE_ROOT_GIT", join(SAGE_ROOT, ".git"))
+
+# Sage doc server (local server with PORT if URL is not given)
+SAGE_DOC_SERVER_URL = var("SAGE_DOC_SERVER_URL")
+# The default port is 0 so that the system will assign a random unused port > 1024
+SAGE_DOC_LOCAL_PORT = var("SAGE_DOC_LOCAL_PORT", "0")
 
 # ~/.sage
 DOT_SAGE = var("DOT_SAGE", join(os.environ.get("HOME"), ".sage"))
@@ -220,7 +237,7 @@ MAXIMA = var("MAXIMA", "maxima")
 MAXIMA_FAS = var("MAXIMA_FAS")
 KENZO_FAS = var("KENZO_FAS")
 SAGE_NAUTY_BINS_PREFIX = var("SAGE_NAUTY_BINS_PREFIX", "")
-SAGE_ECMBIN = var("SAGE_ECMBIN")
+SAGE_ECMBIN = var("SAGE_ECMBIN", "ecm")
 RUBIKS_BINS_PREFIX = var("RUBIKS_BINS_PREFIX", "")
 FOURTITWO_HILBERT = var("FOURTITWO_HILBERT")
 FOURTITWO_MARKOV = var("FOURTITWO_MARKOV")
@@ -276,7 +293,7 @@ def sage_include_directories(use_sources=False):
 
     INPUT:
 
-    -  ``use_sources`` -- (default: False) a boolean
+    - ``use_sources`` -- boolean (default: ``False``)
 
     OUTPUT:
 
@@ -291,7 +308,7 @@ def sage_include_directories(use_sources=False):
         sage: import sage.env
         sage: sage.env.sage_include_directories()
         ['...',
-         '.../numpy/core/include',
+         '.../numpy/...core/include',
          '.../include/python...']
 
     To check that C/C++ files are correctly found, we verify that we can
@@ -329,7 +346,7 @@ def get_cblas_pc_module_name() -> str:
     """
     import pkgconfig
     cblas_pc_modules = CBLAS_PC_MODULES.split(':')
-    return next((blas_lib for blas_lib in cblas_pc_modules if pkgconfig.exists(blas_lib)))
+    return next(blas_lib for blas_lib in cblas_pc_modules if pkgconfig.exists(blas_lib))
 
 
 default_required_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular',
@@ -339,8 +356,7 @@ default_required_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular
 default_optional_modules = ('lapack',)
 
 
-def cython_aliases(required_modules=None,
-                   optional_modules=None):
+def cython_aliases(required_modules=None, optional_modules=None):
     """
     Return the aliases for compiling Cython code. These aliases are
     macros which can occur in ``# distutils`` headers.
@@ -348,10 +364,10 @@ def cython_aliases(required_modules=None,
     INPUT:
 
     - ``required_modules`` -- (default: taken from ``default_required_modules``)
-      iterable of ``str`` values.
+      iterable of string values
 
     - ``optional_modules`` -- (default: taken from ``default_optional_modules``)
-      iterable of ``str`` values.
+      iterable of string values
 
     EXAMPLES::
 
@@ -427,9 +443,9 @@ def cython_aliases(required_modules=None,
                 else:
                     continue
             aliases["ECL_CFLAGS"] = list(filter(lambda s: not s.startswith('-I'), ecl_cflags))
-            aliases["ECL_INCDIR"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-I'), ecl_cflags)))
-            aliases["ECL_LIBDIR"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-L'), ecl_libs)))
-            aliases["ECL_LIBRARIES"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-l'), ecl_libs)))
+            aliases["ECL_INCDIR"] = [s[2:] for s in filter(lambda s: s.startswith('-I'), ecl_cflags)]
+            aliases["ECL_LIBDIR"] = [s[2:] for s in filter(lambda s: s.startswith('-L'), ecl_libs)]
+            aliases["ECL_LIBRARIES"] = [s[2:] for s in filter(lambda s: s.startswith('-l'), ecl_libs)]
             aliases["ECL_LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l', '-L')), ecl_libs))
             continue
         else:

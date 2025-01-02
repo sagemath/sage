@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Lie Conformal Algebras
 
@@ -59,8 +60,7 @@ operation (called the `\lambda`-bracket) `L\otimes L \rightarrow L[\lambda]`
 .. NOTE::
 
     In the literature arbitrary gradings are allowed. In this
-    implementation we only support non-negative rational gradings.
-
+    implementation we only support nonnegative rational gradings.
 
 EXAMPLES:
 

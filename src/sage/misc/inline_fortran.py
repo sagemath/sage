@@ -77,14 +77,13 @@ class InlineFortran:
 
     def eval(self, x, globals=None, locals=None):
         """
-        Compile fortran code ``x`` and adds the functions in it to
-        ``globals``.
+        Compile fortran code ``x`` and adds the functions in it to ``globals``.
 
         INPUT:
 
-        - ``x`` -- Fortran code
+        - ``x`` -- fortran code
 
-        - ``globals`` -- a dict to which to add the functions from the
+        - ``globals`` -- dictionary to which to add the functions from the
           fortran module
 
         - ``locals`` -- ignored
@@ -163,9 +162,7 @@ class InlineFortran:
 
             # What follows are the arguments to f2py itself (appended later
             # just for logical separation)
-            cmd += ['-c', '-m', name, fortran_file, '--quiet',
-                    '--f77exec=sage-inline-fortran',
-                    '--f90exec=sage-inline-fortran'] + s_lib_path + s_lib
+            cmd += ['-c', '-m', name, fortran_file, '--quiet', '--backend', 'meson'] + s_lib_path + s_lib
 
             try:
                 out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)

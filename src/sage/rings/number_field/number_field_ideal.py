@@ -10,7 +10,6 @@ AUTHORS:
   NumberFieldFractionalIdeal now used for all except the 0 ideal
 - Radoslav Kirov and Alyson Deines (2010-06-22):
   prime_to_S_part, is_S_unit, is_S_integral
-
 """
 
 # ****************************************************************************
@@ -101,7 +100,8 @@ class NumberFieldIdeal(Ideal_generic):
 
         - ``field`` -- a number field
 
-        - ``gens`` -- a list of :class:`NumberFieldElement` objects belonging to the field
+        - ``gens`` -- list of :class:`NumberFieldElement` objects belonging to
+          the field
 
         TESTS:
 
@@ -145,12 +145,9 @@ class NumberFieldIdeal(Ideal_generic):
 
         INPUT:
 
+        - ``magma`` -- a Magma interpreter
 
-        -  ``magma`` -- a Magma interpreter
-
-
-        OUTPUT: :class:`MagmaElement` corresponding to this ideal.
-
+        OUTPUT: :class:`MagmaElement` corresponding to this ideal
 
         EXAMPLES::
 
@@ -303,7 +300,8 @@ class NumberFieldIdeal(Ideal_generic):
 
         INPUT:
 
-        - ``x`` -- an element of the number field (or ring of integers) of this ideal.
+        - ``x`` -- an element of the number field (or ring of integers) of this
+          ideal
 
         OUTPUT:
 
@@ -428,11 +426,11 @@ class NumberFieldIdeal(Ideal_generic):
         K = self.number_field()
         return [K(x, check=False) for x in K.pari_zk() * hnf]
 
-    def __repr__(self):
+    def _repr_(self):
         """
         Return the string representation of this number field ideal.
 
-        .. note::
+        .. NOTE::
 
            Only the zero ideal actually has type NumberFieldIdeal; all
            others have type NumberFieldFractionalIdeal.  So this function
@@ -557,7 +555,7 @@ class NumberFieldIdeal(Ideal_generic):
 
     def _pari_init_(self):
         """
-        Return  self in PARI Hermite Normal Form as a string
+        Return ``self`` in PARI Hermite Normal Form as a string.
 
         EXAMPLES::
 
@@ -727,9 +725,9 @@ class NumberFieldIdeal(Ideal_generic):
 
     def reduce_equiv(self):
         """
-        Return a small ideal that is equivalent to self in the group
+        Return a small ideal that is equivalent to ``self`` in the group
         of fractional ideals modulo principal ideals.  Very often (but
-        not always) if self is principal then this function returns
+        not always) if ``self`` is principal then this function returns
         the unit ideal.
 
         ALGORITHM: Calls :pari:`idealred` function.
@@ -849,7 +847,6 @@ class NumberFieldIdeal(Ideal_generic):
             [12, [0, 12]~]
             sage: I.gens_two()
             (12, 0)
-
         """
         try:
             return self.__two_generators
@@ -1066,7 +1063,7 @@ class NumberFieldIdeal(Ideal_generic):
 
         INPUT:
 
-         - ``self`` -- a prime ideal.
+        - ``self`` -- a prime ideal
 
         OUTPUT: a PARI "prime ideal", i.e. a five-component vector `[p,a,e,f,b]`
         representing the prime ideal `p O_K + a O_K`, `e`, `f` as usual, `a` as
@@ -1098,10 +1095,10 @@ class NumberFieldIdeal(Ideal_generic):
 
         - ``self`` -- an ideal
 
-        - ``proof`` -- proof flag.  If ``proof=False``, assume GRH.
+        - ``proof`` -- proof flag.  If ``proof=False``, assume GRH
 
-        - ``gens`` -- (default: False) if True, also computes the reduced
-          generators of the ideal.
+        - ``gens`` -- boolean (default: ``False``); if ``True``, also computes
+          the reduced generators of the ideal
 
         OUTPUT:
 
@@ -1272,7 +1269,7 @@ class NumberFieldIdeal(Ideal_generic):
 
     def is_zero(self):
         """
-        Return ``True`` iff ``self`` is the zero ideal
+        Return ``True`` iff ``self`` is the zero ideal.
 
         Note that `(0)` is a :class:`NumberFieldIdeal`, not a
         :class:`NumberFieldFractionalIdeal`.
@@ -1387,7 +1384,7 @@ class NumberFieldIdeal(Ideal_generic):
 
     def smallest_integer(self):
         r"""
-        Return the smallest non-negative integer in `I \cap \ZZ`,
+        Return the smallest nonnegative integer in `I \cap \ZZ`,
         where `I` is this ideal.  If `I = 0`, returns 0.
 
         EXAMPLES::
@@ -1444,17 +1441,17 @@ class NumberFieldIdeal(Ideal_generic):
 
     def valuation(self, p):
         r"""
-        Return the valuation of self at ``p``.
+        Return the valuation of ``self`` at ``p``.
 
         INPUT:
 
-        - ``p`` -- a prime ideal `\mathfrak{p}` of this number field.
+        - ``p`` -- a prime ideal `\mathfrak{p}` of this number field
 
         OUTPUT:
 
         (integer) The valuation of this fractional ideal at the prime
         `\mathfrak{p}`.  If `\mathfrak{p}` is not prime, raise a
-        :class:`ValueError`.
+        :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -1504,10 +1501,10 @@ class NumberFieldIdeal(Ideal_generic):
 
     def ramification_group(self, v):
         r"""
-        Return the `v`'th ramification group of ``self``, i.e. the set of
+        Return the `v`-th ramification group of ``self``, i.e. the set of
         elements `s` of the Galois group of the number field of ``self``
         (which we assume is Galois) such that `s` acts trivially
-        modulo the `(v+1)`'st power of self. See the
+        modulo the `(v+1)`'st power of ``self``. See the
         :meth:`GaloisGroup.ramification_group` method for
         further examples and doctests.
 
@@ -1542,7 +1539,7 @@ class NumberFieldIdeal(Ideal_generic):
 
         INPUT:
 
-        - ``*args``, ``*kwds`` - Parameters passed to the random integer
+        - ``*args``, ``*kwds`` -- parameters passed to the random integer
           function.  See the documentation of ``ZZ.random_element()`` for
           details.
 
@@ -1558,7 +1555,7 @@ class NumberFieldIdeal(Ideal_generic):
             sage: I = K.ideal(1 - a)
             sage: I.random_element() # random output
             -a^2 - a - 19
-            sage: I.random_element(distribution="uniform") # random output
+            sage: I.random_element(distribution='uniform') # random output
             a^2 - 2*a - 8
             sage: I.random_element(-30, 30) # random output
             -7*a^2 - 17*a - 75
@@ -1608,13 +1605,13 @@ class NumberFieldIdeal(Ideal_generic):
 
         .. MATH:: \left(\frac{\alpha}{\mathbf{P}}\right) \equiv \alpha^{\frac{N(\mathbf{P})-1}{m}} \operatorname{mod} \mathbf{P}
 
-        .. note:: accepts `m=1`, in which case returns 1
+        .. NOTE:: accepts `m=1`, in which case returns 1
 
-        .. note:: can also be called for an element from sage.rings.number_field_element.residue_symbol
+        .. NOTE:: can also be called for an element from sage.rings.number_field_element.residue_symbol
 
-        .. note:: `e` is coerced into the number field of ``self``
+        .. NOTE:: `e` is coerced into the number field of ``self``
 
-        .. note::
+        .. NOTE::
 
             if `m=2`, `e` is an integer, and ``self.number_field()`` has absolute degree 1 (i.e. it is a copy of the rationals),
             then this calls :func:`kronecker_symbol`, which is implemented using GMP.
@@ -1625,9 +1622,7 @@ class NumberFieldIdeal(Ideal_generic):
 
         - ``m`` -- positive integer
 
-        OUTPUT:
-
-        - an m-th root of unity in the number field
+        OUTPUT: an `m`-th root of unity in the number field
 
         EXAMPLES:
 
@@ -1651,7 +1646,6 @@ class NumberFieldIdeal(Ideal_generic):
             Traceback (most recent call last):
             ...
             ValueError: The residue symbol to that power is not defined for the number field
-
         """
         K = self.ring()
         if m == 2 and K.absolute_degree() == 1:
@@ -1781,6 +1775,7 @@ def basis_to_module(B, K):
     C = [to_V(K(b)) for b in B]
     return M.span_of_basis(C)
 
+
 def is_NumberFieldIdeal(x):
     """
     Return ``True`` if `x` is an ideal of a number field.
@@ -1789,6 +1784,10 @@ def is_NumberFieldIdeal(x):
 
         sage: from sage.rings.number_field.number_field_ideal import is_NumberFieldIdeal
         sage: is_NumberFieldIdeal(2/3)
+        doctest:warning...
+        DeprecationWarning: The function is_NumberFieldIdeal is deprecated;
+        use 'isinstance(..., NumberFieldIdeal)' instead.
+        See https://github.com/sagemath/sage/issues/38124 for details.
         False
         sage: is_NumberFieldIdeal(ideal(5))
         False
@@ -1804,6 +1803,10 @@ def is_NumberFieldIdeal(x):
         sage: is_NumberFieldIdeal(Z)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38124,
+                "The function is_NumberFieldIdeal is deprecated; "
+                "use 'isinstance(..., NumberFieldIdeal)' instead.")
     return isinstance(x, NumberFieldIdeal)
 
 
@@ -1833,8 +1836,9 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
     def __init__(self, field, gens, coerce=True):
         """
         INPUT:
-            field -- a number field
-            x -- a list of NumberFieldElements of the field, not all zero
+
+        - ``field`` -- a number field
+        - ``x`` -- list of NumberFieldElements of the field, not all zero
 
         EXAMPLES::
 
@@ -1855,11 +1859,11 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         else:
             raise ValueError("gens must have a nonzero element (zero ideal is not a fractional ideal)")
 
-    def __repr__(self):
+    def _repr_(self):
         """
         Return the string representation of this number field fractional ideal.
 
-        .. note::
+        .. NOTE::
 
            Only the zero ideal actually has type NumberFieldIdeal; all
            others have type NumberFieldFractionalIdeal.
@@ -1877,7 +1881,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
     def divides(self, other):
         """
-        Return ``True`` if this ideal divides other and False otherwise.
+        Return ``True`` if this ideal divides ``other`` and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -2053,7 +2057,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
     def ramification_index(self):
         r"""
         Return the ramification index of this fractional ideal,
-        assuming it is prime.  Otherwise, raise a :class:`ValueError`.
+        assuming it is prime.  Otherwise, raise a :exc:`ValueError`.
 
         The ramification index is the power of this prime appearing in
         the factorization of the prime in `\ZZ` that this prime lies
@@ -2101,7 +2105,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         - `d_i = b_i[i]`, with `\{b_0, b_1, \dots, b_n\}` HNF basis
           of the ideal ``self``.
 
-        .. note::
+        .. NOTE::
 
            The reduced element `g` is not necessarily small. To get a
            small `g` use the method :meth:`small_residue`.
@@ -2157,7 +2161,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         R = self.number_field().maximal_order()
 
-        if not (f in R):
+        if f not in R:
             raise TypeError("reduce only defined for integral elements")
 
         Rbasis = R.basis()
@@ -2166,17 +2170,18 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         M = MatrixSpace(ZZ,n)([R.coordinates(y) for y in self.basis()])
 
         D = M.hermite_form()
-        d = [D[i,i] for i in range(n)]
+        d = [D[i, i] for i in range(n)]
 
         v = R.coordinates(f)
 
         for i in range(n):
-            q, r = ZZ(v[i]).quo_rem(d[i])#v is a vector of rationals, we want division of integers
+            q, r = ZZ(v[i]).quo_rem(d[i])
+            # v is a vector of rationals, we want division of integers
             if 2*r > d[i]:
                 q = q + 1
             v = v - q*D[i]
 
-        return sum([v[i]*Rbasis[i] for i in range(n)])
+        return sum([v[i] * Rbasis[i] for i in range(n)])
 
     def residues(self):
         r"""
@@ -2187,7 +2192,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         OUTPUT:
 
         An iterator through a complete list of residues modulo the integral
-        ideal self. This list is the set of canonical reduced representatives
+        ideal ``self``. This list is the set of canonical reduced representatives
         given by all integral elements with coordinates `(r_0, \dots,r_{n-1})`,
         where:
 
@@ -2251,8 +2256,8 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         INPUT:
 
-        - ``reduce`` -- bool. If ``True`` (default), use ``small_residue`` to get
-          small representatives of the residues.
+        - ``reduce`` -- boolean; if ``True`` (default), use ``small_residue`` to get
+          small representatives of the residues
 
         OUTPUT:
 
@@ -2317,10 +2322,10 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
           an iterator through a list of representatives for the invertible
           residues modulo the integral ideal ``self``.
 
-        - ``reduce`` -- bool. If ``True`` (default), use ``small_residues`` to
-          get small representatives of the residues.
+        - ``reduce`` -- boolean; if ``True`` (default), use ``small_residues`` to
+          get small representatives of the residues
 
-        .. note::
+        .. NOTE::
 
             See also :meth:`invertible_residues` for a simpler version without the subgroup.
 
@@ -2467,13 +2472,11 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         INPUT:
 
         - ``other`` -- another ideal of the same field, or generators
-          of an ideal.
+          of an ideal
 
-        OUTPUT:
+        OUTPUT: ``True`` if ``self`` and ``other`` are coprime, else ``False``
 
-        ``True`` if ``self`` and ``other`` are coprime, else ``False``.
-
-        .. note::
+        .. NOTE::
 
            This function works for fractional ideals as well as
            integral ideals.
@@ -2533,11 +2536,10 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         INPUT:
 
-        - ``J`` -- another integral ideal of the same field as ``self``, which must also be integral.
+        - ``J`` -- another integral ideal of the same field as ``self``, which
+          must also be integral
 
-        OUTPUT:
-
-        an element `l` such that ``l*self`` is coprime to the ideal `J`
+        OUTPUT: an element `l` such that ``l*self`` is coprime to the ideal `J`
 
         .. TODO::
 
@@ -2586,7 +2588,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         element `g` such that `f - g` belongs to the ideal ``self`` (which
         must be integral), and `g` is small.
 
-        .. note::
+        .. NOTE::
 
             The reduced representative returned is not uniquely determined.
 
@@ -2608,7 +2610,6 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
             sage: I = K.ideal(5)
             sage: I.small_residue(a^2 -13)
             a^2 + 5*a - 3
-
         """
         if not self.is_integral():
             raise ValueError("The ideal must be integral")
@@ -2625,9 +2626,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
           `(O_K/I)^*`, which takes more time. By default
           ``flag=1`` (no generators are computed).
 
-        OUTPUT:
-
-        - The pari special structure ``bid``.
+        OUTPUT: the PARI special structure ``bid``
 
         EXAMPLES::
 
@@ -2661,11 +2660,11 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         INPUT:
 
-        - ``flag`` (int default 1) -- when ``flag`` =2, it also
+        - ``flag`` -- integer (default: 1); when ``flag==2``, it also
           computes the generators of the group `(O_K/I)^*`, which
-          takes more time. By default ``flag`` =1 (no generators are
+          takes more time. By default ``flag`` is 1 (no generators are
           computed). In both cases the special PARI structure ``bid``
-          is computed as well.  If ``flag`` =0 (deprecated) it computes
+          is computed as well.  If ``flag`` is 0 (deprecated) it computes
           only the group structure of `(O_K/I)^*` (with generators)
           and not the special ``bid`` structure.
 
@@ -2673,7 +2672,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         The finite abelian group `(O_K/I)^*`.
 
-        .. note::
+        .. NOTE::
 
             Uses the PARI function :pari:`idealstar`. The PARI function outputs
             a special ``bid`` structure which is stored in the internal
@@ -2731,26 +2730,26 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         INPUT:
 
-        - ``x`` -- a non-zero element of the number field of ``self``,
+        - ``x`` -- a nonzero element of the number field of ``self``,
           which must have valuation equal to 0 at all prime ideals in
-          the support of the ideal ``self``.
-        - ``gens`` -- a list of elements of the number field which generate `(R
+          the support of the ideal ``self``
+        - ``gens`` -- list of elements of the number field which generate `(R
           / I)^*`, where `R` is the ring of integers of the field and `I` is
           this ideal, or ``None``. If ``None``, use the generators calculated
           by :meth:`~idealstar`.
-        - ``check`` -- if ``True``, do a consistency check on the results. Ignored
-          if ``gens`` is ``None``.
+        - ``check`` -- if ``True``, do a consistency check on the results.
+          Ignored if ``gens`` is ``None``.
 
         OUTPUT:
 
-        a list of non-negative integers `(x_i)` such that `x =
+        a list of nonnegative integers `(x_i)` such that `x =
         \prod_i g_i^{x_i}` in `(R/I)^*`, where `x_i` are the generators, and
         the list `(x_i)` is lexicographically minimal with respect to this
         requirement. If the `x_i` generate independent cyclic factors of
         order `d_i`, as is the case for the default generators calculated by
         :meth:`~idealstar`, this just means that `0 \le x_i < d_i`.
 
-        A :class:`ValueError` will be raised if the elements specified in ``gens``
+        A :exc:`ValueError` will be raised if the elements specified in ``gens``
         do not in fact generate the unit group (even if the element `x` is in
         the subgroup they generate).
 
@@ -2850,7 +2849,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
     def element_1_mod(self, other):
         r"""
-        Return an element `r` in this ideal such that `1-r` is in ``other``
+        Return an element `r` in this ideal such that `1-r` is in ``other``.
 
         An error is raised if either ideal is not integral of if they
         are not coprime.
@@ -2858,11 +2857,10 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         INPUT:
 
         - ``other`` -- another ideal of the same field, or generators
-          of an ideal.
+          of an ideal
 
-        OUTPUT:
-
-        An element `r` of the ideal self such that `1-r` is in the ideal ``other``
+        OUTPUT: an element `r` of the ideal ``self`` such that `1-r` is in the
+        ideal ``other``
 
         AUTHOR: Maite Aranes (modified to use PARI's :pari:`idealaddtoone` by Francis Clarke)
 
@@ -2968,7 +2966,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         INPUT:
 
-        - ``S`` -- a list of prime ideals
+        - ``S`` -- list of prime ideals
 
         OUTPUT:
 
@@ -3008,10 +3006,10 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         INPUT:
 
-        - ``S`` -- a list of prime ideals (not checked if they are
-          indeed prime).
+        - ``S`` -- list of prime ideals (not checked if they are
+          indeed prime)
 
-        .. note::
+        .. NOTE::
 
            This function assumes that `S` is a list of prime ideals,
            but does not check this.  This function will fail if `S` is
@@ -3039,10 +3037,9 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         INPUT:
 
-        - `S` -- a list of prime ideals (not checked if they are indeed
-          prime).
+        - ``S`` -- list of prime ideals (not checked if they are indeed prime)
 
-        .. note::
+        .. NOTE::
 
            This function assumes that `S` is a list of prime ideals,
            but does not check this.  This function will fail if `S` is
@@ -3051,7 +3048,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         OUTPUT:
 
         ``True``, if the ideal is `S`-integral: that is, if the valuations
-        of the ideal at all primes not in `S` are non-negative. ``False``,
+        of the ideal at all primes not in `S` are nonnegative. ``False``,
         otherwise.
 
         EXAMPLES::
@@ -3080,9 +3077,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         - ``M`` -- an integral ideal of the same field, or generators of an ideal
 
-        OUTPUT:
-
-        An ideal which is the largest divisor of ``self`` that is coprime to `M`.
+        OUTPUT: an ideal which is the largest divisor of ``self`` that is coprime to `M`
 
         AUTHOR: Maite Aranes
 
@@ -3129,10 +3124,10 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
 
         OUTPUT:
 
-        - `V` -- a vector space of characteristic `p`
+        - ``V`` -- a vector space of characteristic `p`
         - ``quo`` -- a partially defined quotient homomorphism from the
           ambient number field to `V`
-        - ``lift`` -- a section of ``quo``.
+        - ``lift`` -- a section of ``quo``
 
         EXAMPLES::
 
@@ -3212,11 +3207,10 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
             sage: FF(a)
             w
 
-        An example of reduction maps to the residue field: these are
-        defined on the whole valuation ring, i.e. the subring of the
-        number field consisting of elements with non-negative
-        valuation.  This shows that the issue raised in :issue:`1951`
-        has been fixed::
+        An example of reduction maps to the residue field: these are defined on
+        the whole valuation ring, i.e. the subring of the number field
+        consisting of elements with nonnegative valuation. This shows that the
+        issue raised in :issue:`1951` has been fixed::
 
             sage: K.<i> = NumberField(x^2 + 1)
             sage: P1, P2 = [g[0] for g in K.factor(5)]; P1, P2
@@ -3267,7 +3261,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
     def residue_class_degree(self):
         r"""
         Return the residue class degree of this fractional ideal,
-        assuming it is prime.  Otherwise, raise a :class:`ValueError`.
+        assuming it is prime. Otherwise, raise a :exc:`ValueError`.
 
         The residue class degree of a prime ideal `I` is the degree of
         the extension `O_K/I` of its prime subfield.
@@ -3316,6 +3310,10 @@ def is_NumberFieldFractionalIdeal(x):
 
         sage: from sage.rings.number_field.number_field_ideal import is_NumberFieldFractionalIdeal
         sage: is_NumberFieldFractionalIdeal(2/3)
+        doctest:warning...
+        DeprecationWarning: The function is_NumberFieldFractionalIdeal is deprecated;
+        use 'isinstance(..., NumberFieldFractionalIdeal)' instead.
+        See https://github.com/sagemath/sage/issues/38124 for details.
         False
         sage: is_NumberFieldFractionalIdeal(ideal(5))
         False
@@ -3330,6 +3328,10 @@ def is_NumberFieldFractionalIdeal(x):
         sage: is_NumberFieldFractionalIdeal(Z)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38124,
+                "The function is_NumberFieldFractionalIdeal is deprecated; "
+                "use 'isinstance(..., NumberFieldFractionalIdeal)' instead.")
     return isinstance(x, NumberFieldFractionalIdeal)
 
 
@@ -3367,7 +3369,7 @@ class QuotientMap:
 
         INPUT:
 
-            x -- an element of the field
+        - ``x`` -- an element of the field
 
         EXAMPLES::
 

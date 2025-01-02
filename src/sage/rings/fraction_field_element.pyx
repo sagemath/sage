@@ -37,12 +37,20 @@ def is_FractionFieldElement(x):
         sage: from sage.rings.fraction_field_element import is_FractionFieldElement
         sage: R.<x> = ZZ[]
         sage: is_FractionFieldElement(x/2)
+        doctest:warning...
+        DeprecationWarning: The function is_FractionFieldElement is deprecated;
+        use 'isinstance(..., FractionFieldElement)' instead.
+        See https://github.com/sagemath/sage/issues/38128 for details.
         False
         sage: is_FractionFieldElement(2/x)
         True
         sage: is_FractionFieldElement(1/3)
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38128,
+                       "The function is_FractionFieldElement is deprecated; "
+                       "use 'isinstance(..., FractionFieldElement)' instead.")
     return isinstance(x, FractionFieldElement)
 
 
@@ -105,7 +113,6 @@ cdef class FractionFieldElement(FieldElement):
             (x + 1)/(x^2 + x + 1)
             sage: K(355/113)
             355/113
-
         """
         FieldElement.__init__(self, parent)
         if coerce:
@@ -160,7 +167,7 @@ cdef class FractionFieldElement(FieldElement):
         nden = codomain.coerce(self._denominator._im_gens_(codomain, im_gens, base_map=base_map))
         return codomain.coerce(nnum/nden)
 
-    cpdef reduce(self) noexcept:
+    cpdef reduce(self):
         """
         Reduce this fraction.
 
@@ -256,8 +263,7 @@ cdef class FractionFieldElement(FieldElement):
         """
         return self._denominator
 
-
-    def is_square(self,root=False):
+    def is_square(self, root=False):
         """
         Return whether or not ``self`` is a perfect square.
 
@@ -267,15 +273,15 @@ cdef class FractionFieldElement(FieldElement):
 
         INPUT:
 
-        -  ``root`` -- whether or not to also return a square
-           root (default: ``False``)
+        - ``root`` -- whether or not to also return a square
+          root (default: ``False``)
 
         OUTPUT:
 
-        -  ``bool`` - whether or not a square
+        - boolean; whether or not a square
 
-        -  ``object`` - (optional) an actual square root if
-           found, and None otherwise.
+        - object (optional); an actual square root if found, and ``None``
+          otherwise
 
         EXAMPLES::
 
@@ -584,7 +590,7 @@ cdef class FractionFieldElement(FieldElement):
 
         return s
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Compute the sum of ``self`` and ``right``.
 
@@ -592,9 +598,7 @@ cdef class FractionFieldElement(FieldElement):
 
         - ``right`` -- ``ModuleElement`` to add to ``self``
 
-        OUTPUT:
-
-        - Sum of ``self`` and ``right``
+        OUTPUT: sum of ``self`` and ``right``
 
         EXAMPLES::
 
@@ -669,17 +673,15 @@ cdef class FractionFieldElement(FieldElement):
         return self.__class__(self._parent, rnum*sden + rden*snum, rden*sden,
             coerce=False, reduce=False)
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
-        Computes the product of ``self`` and ``right``.
+        Compute the product of ``self`` and ``right``.
 
         INPUT:
 
-        - ``right`` - ``RingElement`` to multiply with ``self``
+        - ``right`` -- ``RingElement`` to multiply with ``self``
 
-        OUTPUT:
-
-        - Product of ``self`` and ``right``
+        OUTPUT: product of ``self`` and ``right``
 
         EXAMPLES::
 
@@ -735,17 +737,15 @@ cdef class FractionFieldElement(FieldElement):
         return self.__class__(self._parent, rnum * snum, rden * sden,
             coerce=False, reduce=False)
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
-        Computes the quotient of ``self`` and ``right``.
+        Compute the quotient of ``self`` and ``right``.
 
         INPUT:
 
         - ``right`` -- ``RingElement`` that is the divisor
 
-        OUTPUT:
-
-        Quotient of ``self`` and ``right``
+        OUTPUT: quotient of ``self`` and ``right``
 
         EXAMPLES::
 
@@ -820,7 +820,7 @@ cdef class FractionFieldElement(FieldElement):
 
     def _conversion(self, R):
         r"""
-        Generic conversion
+        Generic conversion.
 
         TESTS::
 
@@ -883,7 +883,7 @@ cdef class FractionFieldElement(FieldElement):
 
     def __pow__(self, right, dummy):
         r"""
-        Returns self raised to the `right^{th}` power.
+        Return ``self`` raised to the ``right``-th power.
 
         Note that we need to check whether or not right is negative so we
         don't set ``_numerator`` or ``_denominator`` to an element of the
@@ -970,7 +970,7 @@ cdef class FractionFieldElement(FieldElement):
         return self.__class__(self._parent,
             self._denominator, self._numerator, coerce=False, reduce=False)
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -1176,7 +1176,7 @@ cdef class FractionFieldElement(FieldElement):
 
     def specialization(self, D=None, phi=None):
         """
-        Returns the specialization of a fraction element of a polynomial ring
+        Return the specialization of a fraction element of a polynomial ring.
         """
         numerator = self.numerator().specialization(D, phi)
         denominator = self.denominator().specialization(D, phi)
@@ -1207,7 +1207,7 @@ cdef class FractionFieldElement_1poly_field(FractionFieldElement):
         if not reduce:
             self.normalize_leading_coefficients()
 
-    cdef normalize_leading_coefficients(self) noexcept:
+    cdef normalize_leading_coefficients(self):
         """
         See :meth:`reduce`.
         """
@@ -1217,7 +1217,7 @@ cdef class FractionFieldElement_1poly_field(FractionFieldElement):
 
     def is_integral(self):
         """
-        Returns whether this element is actually a polynomial.
+        Return whether this element is actually a polynomial.
 
         EXAMPLES::
 
@@ -1237,7 +1237,7 @@ cdef class FractionFieldElement_1poly_field(FractionFieldElement):
 
     def support(self):
         """
-        Returns a sorted list of primes dividing either the numerator or
+        Return a sorted list of primes dividing either the numerator or
         denominator of this element.
 
         EXAMPLES::
@@ -1252,9 +1252,9 @@ cdef class FractionFieldElement_1poly_field(FractionFieldElement):
         L.sort()
         return L
 
-    cpdef reduce(self) noexcept:
+    cpdef reduce(self):
         """
-        Pick a normalized representation of self.
+        Pick a normalized representation of ``self``.
 
         In particular, for any a == b, after normalization they will have the
         same numerator and denominator.
@@ -1277,6 +1277,7 @@ cdef class FractionFieldElement_1poly_field(FractionFieldElement):
             return
         super(self.__class__, self).reduce()
         self.normalize_leading_coefficients()
+
 
 def make_element(parent, numerator, denominator):
     """

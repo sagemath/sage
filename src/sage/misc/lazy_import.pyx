@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Lazy imports
 
@@ -79,7 +80,7 @@ except ImportError:
     FeatureNotPresentError = ()
 
 
-cdef inline obj(x) noexcept:
+cdef inline obj(x):
     if type(x) is LazyImport:
         return (<LazyImport>x).get_object()
     else:
@@ -92,7 +93,7 @@ cdef bint startup_guard = True
 cdef bint finish_startup_called = False
 
 
-cpdef finish_startup() noexcept:
+cpdef finish_startup():
     """
     Finish the startup phase.
 
@@ -113,7 +114,7 @@ cpdef finish_startup() noexcept:
     finish_startup_called = True
 
 
-cpdef ensure_startup_finished() noexcept:
+cpdef ensure_startup_finished():
     """
     Make sure that the startup phase is finished.
 
@@ -133,9 +134,7 @@ cpdef bint is_during_startup() noexcept:
     """
     Return whether Sage is currently starting up.
 
-    OUTPUT:
-
-    Boolean
+    OUTPUT: boolean
 
     TESTS::
 
@@ -147,7 +146,7 @@ cpdef bint is_during_startup() noexcept:
     return startup_guard
 
 
-cpdef test_fake_startup() noexcept:
+cpdef test_fake_startup():
     """
     For testing purposes only.
 
@@ -216,7 +215,7 @@ cdef class LazyImport():
         self._deprecation = deprecation
         self._feature = feature
 
-    cdef inline get_object(self) noexcept:
+    cdef inline get_object(self):
         """
         Faster, Cython-only partially-inlined version of ``_get_object``.
         """
@@ -224,13 +223,11 @@ cdef class LazyImport():
             return self._object
         return self._get_object()
 
-    cpdef _get_object(self) noexcept:
+    cpdef _get_object(self):
         """
         Return the wrapped object, importing it if necessary.
 
-        OUTPUT:
-
-        - the wrapped object
+        OUTPUT: the wrapped object
 
         EXAMPLES::
 
@@ -364,7 +361,7 @@ cdef class LazyImport():
 
     def __getattr__(self, attr):
         """
-        Attribute lookup on self defers to attribute lookup on the
+        Attribute lookup on ``self`` defers to attribute lookup on the
         wrapped object.
 
         EXAMPLES::
@@ -381,7 +378,7 @@ cdef class LazyImport():
 
     def __dir__(self):
         """
-        Tab completion on self defers to completion on the wrapped
+        Tab completion on ``self`` defers to completion on the wrapped
         object.
 
         EXAMPLES::
@@ -395,7 +392,7 @@ cdef class LazyImport():
 
     def __call__(self, *args, **kwds):
         """
-        Calling self calls the wrapped object.
+        Calling ``self`` calls the wrapped object.
 
         EXAMPLES::
 
@@ -909,7 +906,7 @@ cdef class LazyImport():
 
     def __copy__(self):
         """
-        Support copy()
+        Support ``copy()``.
 
         TESTS::
 
@@ -930,7 +927,7 @@ cdef class LazyImport():
 
     def __deepcopy__(self, memo=None):
         """
-        Support copy()
+        Support ``copy()``.
 
         TESTS::
 
@@ -993,7 +990,8 @@ cdef class LazyImport():
 
 
 def lazy_import(module, names, as_=None, *,
-    at_startup=False, namespace=None, deprecation=None, feature=None):
+                at_startup=False, namespace=None,
+                deprecation=None, feature=None):
     """
     Create a lazy import object and inject it into the caller's global
     namespace. For the purposes of introspection and calling, this is
@@ -1002,16 +1000,16 @@ def lazy_import(module, names, as_=None, *,
 
     INPUT:
 
-    - ``module`` -- a string representing the module to import
+    - ``module`` -- string representing the module to import
 
-    - ``names`` -- a string or list of strings representing the names to
+    - ``names`` -- string or list of strings representing the names to
       import from module
 
     - ``as_`` -- (optional) a string or list of strings representing the
       names of the objects in the importing module. This is analogous to
       ``from ... import ... as ...``.
 
-    - ``at_startup`` -- a boolean (default: ``False``);
+    - ``at_startup`` -- boolean (default: ``False``);
       whether the lazy import is supposed to be resolved at startup time
 
     - ``namespace`` -- the namespace where importing the names; by default,
@@ -1076,7 +1074,8 @@ def lazy_import(module, names, as_=None, *,
         ....:             deprecation=14275)
         sage: my_Qp(5)                                                                  # needs sage.rings.padics
         doctest:...: DeprecationWarning:
-        Importing my_Qp from here is deprecated; please use "from sage.rings.padics.factory import Qp as my_Qp" instead.
+        Importing my_Qp from here is deprecated;
+        please use "from sage.rings.padics.factory import Qp as my_Qp" instead.
         See https://github.com/sagemath/sage/issues/14275 for details.
         5-adic Field with capped relative precision 20
 
@@ -1096,10 +1095,12 @@ def lazy_import(module, names, as_=None, *,
         ....:             feature=PythonModule('ppl', spkg='pplpy', type='standard'))
         sage: equation                                                                  # needs pplpy
         <cyfunction equation at ...>
-        sage: lazy_import('PyNormaliz', 'NmzListConeProperties', feature=PythonModule('PyNormaliz', spkg='pynormaliz'))  # optional - pynormaliz
-        sage: NmzListConeProperties  # optional - pynormaliz
+        sage: lazy_import('PyNormaliz', 'NmzListConeProperties',
+        ....:             feature=PythonModule('PyNormaliz', spkg='pynormaliz'))
+        sage: NmzListConeProperties                             # optional - pynormaliz
         <built-in function NmzListConeProperties>
-        sage: lazy_import('foo', 'not_there', feature=PythonModule('foo', spkg='non-existing-package'))
+        sage: lazy_import('foo', 'not_there',
+        ....:             feature=PythonModule('foo', spkg='non-existing-package'))
         sage: not_there
         Failed lazy import:
         foo is not available.
@@ -1117,6 +1118,11 @@ def lazy_import(module, names, as_=None, *,
     if namespace is None:
         namespace = inspect.currentframe().f_locals
     if "*" in names:
+        from sage.misc.superseded import deprecation_cython
+
+        deprecation_cython(37433,
+                           'lazy_import of * is deprecated; provide the names to be imported explicitly')
+
         ix = names.index("*")
         all = get_star_imports(module)
         names[ix:ix+1] = all
@@ -1126,6 +1132,7 @@ def lazy_import(module, names, as_=None, *,
 
 
 star_imports = None
+
 
 def save_cache_file():
     """
@@ -1148,6 +1155,7 @@ def save_cache_file():
     os.makedirs(cache_dir, exist_ok=True)
     with atomic_write(cache_file, binary=True) as f:
         pickle.dump(star_imports, f)
+
 
 def get_star_imports(module_name):
     """

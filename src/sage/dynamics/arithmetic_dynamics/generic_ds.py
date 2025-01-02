@@ -34,9 +34,9 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.lazy_import import lazy_import
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.rational_field import QQ
-from sage.schemes.affine.affine_space import is_AffineSpace
+from sage.schemes.affine.affine_space import AffineSpace_generic
 from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
-from sage.schemes.berkovich.berkovich_space import is_Berkovich_Cp
+from sage.schemes.berkovich.berkovich_space import Berkovich_Cp
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 
 lazy_import('sage.rings.algebraic_closure_finite_field', 'AlgebraicClosureFiniteField_generic')
@@ -50,12 +50,12 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
     INPUT:
 
-    - ``polys_or_rat_fncts`` -- a list of polynomials or rational functions,
+    - ``polys_or_rat_fncts`` -- list of polynomials or rational functions,
       all of which should have the same parent
 
     - ``domain`` -- an affine or projective scheme, or product of
-      projective schemes, on which ``polys`` defines an endomorphism.
-      Subschemes are also ok
+      projective schemes, on which ``polys`` defines an endomorphism
+      (Subschemes are also ok)
 
     - ``names`` -- (default: ``('X', 'Y')``) tuple of strings to be used
       as coordinate names for a projective space that is constructed
@@ -165,10 +165,11 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         if isinstance(morphism_or_polys, SchemeMorphism_polynomial):
             domain = morphism_or_polys.domain()
         if domain is not None:
-            if is_AffineSpace(domain) or isinstance(domain, AlgebraicScheme_subscheme_affine):
+            if isinstance(domain, (AffineSpace_generic,
+                                   AlgebraicScheme_subscheme_affine)):
                 from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
                 return DynamicalSystem_affine(morphism_or_polys, domain)
-            if is_Berkovich_Cp(domain):
+            if isinstance(domain, Berkovich_Cp):
                 from sage.dynamics.arithmetic_dynamics.berkovich_ds import DynamicalSystem_Berkovich
                 return DynamicalSystem_Berkovich(morphism_or_polys,domain)
 
@@ -338,20 +339,20 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
     def field_of_definition_critical(self, return_embedding=False, simplify_all=False, names='a'):
         r"""
-        Return smallest extension of the base field which contains the critical points
+        Return smallest extension of the base field which contains the critical points.
 
         Ambient space of dynamical system must be either the affine line or projective
         line over a number field or finite field.
 
         INPUT:
 
-        - ``return_embedding`` -- (default: ``False``) boolean; If ``True``, return an
+        - ``return_embedding`` -- boolean (default: ``False``); if ``True``, return an
           embedding of base field of dynamical system into the returned number field or
           finite field. Note that computing this embedding might be expensive.
 
-        - ``simplify_all`` -- (default: ``False``) boolean; If ``True``, simplify
+        - ``simplify_all`` -- boolean (default: ``False``); if ``True``, simplify
           intermediate fields and also the resulting number field. Note that this
-          is not implemented for finite fields and has no effect
+          is not implemented for finite fields and has no effect.
 
         - ``names`` -- (optional) string to be used as generator for returned number field
           or finite field
@@ -448,21 +449,21 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
-        - ``formal`` -- (default: ``False``) boolean; ``True`` signals to return number
+        - ``formal`` -- boolean (default: ``False``); ``True`` signals to return number
           field or finite field over which the formal periodic points are defined, where a
           formal periodic point is a root of the ``n``-th dynatomic polynomial.
           ``False`` specifies to find number field or finite field over which all periodic
-          points of the ``n``-th iterate are defined
+          points of the ``n``-th iterate are defined.
 
-        - ``return_embedding`` -- (default: ``False``) boolean; If ``True``, return
+        - ``return_embedding`` -- boolean (default: ``False``); if ``True``, return
           an embedding of base field of dynamical system into the returned number
           field or finite field. Note that computing this embedding might be expensive.
 
-        - ``simplify_all`` -- (default: ``False``) boolean; If ``True``, simplify
+        - ``simplify_all`` -- boolean (default: ``False``); if ``True``, simplify
           intermediate fields and also the resulting number field. Note that this
-          is not implemented for finite fields and has no effect
+          is not implemented for finite fields and has no effect.
 
         - ``names`` -- (optional) string to be used as generator for returned number
           field or finite field
@@ -574,15 +575,15 @@ class DynamicalSystem(SchemeMorphism_polynomial,
 
         - ``point`` -- a point in this map's domain
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
-        - ``return_embedding`` -- (default: ``False``) boolean; If ``True``, return
+        - ``return_embedding`` -- boolean (default: ``False``); if ``True``, return
           an embedding of base field of dynamical system into the returned number
           field or finite field. Note that computing this embedding might be expensive.
 
-        - ``simplify_all`` -- (default: ``False``) boolean; If ``True``, simplify
+        - ``simplify_all`` -- boolean (default: ``False``); if ``True``, simplify
           intermediate fields and also the resulting number field. Note that this
-          is not implemented for finite fields and has no effect
+          is not implemented for finite fields and has no effect.
 
         - ``names`` -- (optional) string to be used as generator for returned
           number field or finite field

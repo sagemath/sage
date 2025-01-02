@@ -13,8 +13,7 @@ from sage.rings.polynomial.polynomial_element cimport Polynomial
 cdef class Polynomial_rational_flint(Polynomial):
     cdef fmpq_poly_t _poly
 
-    cdef Polynomial_rational_flint _new(self) noexcept
-    cpdef _mod_(self, right) noexcept
-    cpdef _unsafe_mutate(self, unsigned long n, value) noexcept
-    cpdef Polynomial truncate(self, long n) noexcept
-
+    cdef Polynomial_rational_flint _new(self)
+    cpdef _mod_(self, right)
+    cpdef _unsafe_mutate(self, unsigned long n, value)
+    cpdef Polynomial truncate(self, long n)

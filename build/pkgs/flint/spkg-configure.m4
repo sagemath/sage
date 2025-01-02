@@ -1,14 +1,14 @@
 SAGE_SPKG_CONFIGURE([flint], [
     SAGE_SPKG_DEPCHECK([mpfr], [
-        AC_CHECK_HEADER(flint/flint.h, [dnl
+        AC_CHECK_HEADERS([flint/flint.h flint/padic.h], [dnl
           dnl gr_get_fexpr appears in Flint 3.0
           AC_SEARCH_LIBS([gr_get_fexpr], [flint], [dnl
-            dnl Flint 3.1 is too new
-            AC_MSG_CHECKING([whether FLINT version is >= 3.1.0])
+            dnl Assume Flint 3.2 is too new
+            AC_MSG_CHECKING([whether FLINT version is >= 3.2.0])
             AC_COMPILE_IFELSE([dnl
               AC_LANG_PROGRAM([[#include <flint/flint.h>
-                                #if __FLINT_RELEASE >= 30100
-                                # error "FLINT 3.1 is too new"
+                                #if __FLINT_RELEASE >= 30200
+                                # error "FLINT 3.2 is too new"
                                 #endif
                               ]])
             ], [dnl

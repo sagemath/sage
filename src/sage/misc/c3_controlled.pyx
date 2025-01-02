@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 The C3 algorithm, under control of a total order
 
@@ -154,7 +155,7 @@ class as its bases. However, this would have several drawbacks:
   point of truth for calculating the bases of each class.
 
 - It increases the complexity of the calculation of the MRO with
-  ``C3``. For example, for a linear hierachy of classes, the
+  ``C3``. For example, for a linear hierarchy of classes, the
   complexity goes from `O(n^2)` to `O(n^3)` which is not acceptable.
 
 - It increases the complexity of inspecting the classes. For example,
@@ -295,7 +296,7 @@ Depending on the linear extension `l` it was necessary to add between
 one and five bases for control; for example, `216` linear extensions
 required the addition of four bases::
 
-    sage: sorted(Word(stats).evaluation_sparse())                                       # needs sage.graphs sage.modules
+    sage: sorted(Word(stats).evaluation_sparse())                                       # needs sage.combinat sage.graphs sage.modules
     [(1, 36), (2, 108), (3, 180), (4, 216), (5, 180)]
 
 We now consider a hierarchy of categories::
@@ -319,9 +320,9 @@ For a typical category, few bases, if any, need to be added to force
     sage: x.mro == x.mro_standard
     False
     sage: x.all_bases_len()
-    70
+    72
     sage: x.all_bases_controlled_len()
-    74
+    76
 
     sage: C = GradedHopfAlgebrasWithBasis(QQ)
     sage: x = HierarchyElement(C, attrcall("super_categories"), attrgetter("_cmp_key"))
@@ -379,7 +380,7 @@ cdef tuple atoms = ("FacadeSets",
                     "MagmasAndAdditiveMagmas", "Rngs", "Domains", "HopfAlgebras")
 
 
-cdef dict flags = { atom: 1 << i for i,atom in enumerate(atoms) }
+cdef dict flags = {atom: 1 << i for i, atom in enumerate(atoms)}
 
 cdef class CmpKey:
     r"""
@@ -495,7 +496,7 @@ cdef class CmpKey:
 
     def __init__(self):
         """
-        Sets the internal category counter to zero.
+        Set the internal category counter to zero.
 
         EXAMPLES::
 
@@ -506,7 +507,7 @@ cdef class CmpKey:
 
     def __get__(self, object inst, object cls):
         """
-        Bind the comparison key to the given instance
+        Bind the comparison key to the given instance.
 
         EXAMPLES::
 
@@ -554,7 +555,6 @@ cdef class CmpKeyNamed:
         True
         sage: Algebras(ZZ)._cmp_key != Algebras(GF(5))._cmp_key
         True
-
     """
     def __get__(self, object inst, object cls):
         """
@@ -564,7 +564,6 @@ cdef class CmpKeyNamed:
             True
             sage: Algebras(ZZ)._cmp_key != Algebras(GF(5))._cmp_key
             True
-
         """
         cdef dict D = cls._make_named_class_cache
         cdef str name = "_cmp_key"
@@ -575,11 +574,12 @@ cdef class CmpKeyNamed:
             return result
         except KeyError:
             pass
-        result = _cmp_key.__get__(inst,cls)
+        result = _cmp_key.__get__(inst, cls)
         D[key] = result
         return result
 
 _cmp_key_named = CmpKeyNamed()
+
 
 ##############################################################################
 
@@ -615,24 +615,24 @@ def C3_merge(list lists):
     cdef list tail, l
     cdef set tailset
 
-    cdef list tails    = [l[::-1]              for l in lists if l]
-    cdef list heads    = [tail.pop()             for tail in tails]
-    cdef list tailsets = [set(O for O in tail) for tail in tails] # <size_t><void *>
+    cdef list tails = [l[::-1] for l in lists if l]
+    cdef list heads = [tail.pop() for tail in tails]
+    cdef list tailsets = [set(O for O in tail) for tail in tails]  # <size_t><void *>
 
     cdef int i, j, nbheads
     nbheads = len(heads)
     cdef bint next_item_found
 
     while nbheads:
-        for i in range(nbheads): # from 0 <= i < nbheads:
+        for i in range(nbheads):
             O = heads[i]
             # Does O appear in none of the tails?  ``all(O not in tail for tail in tailsets)``
             next_item_found = True
-            for j in range(nbheads): #from 0 <= j < nbheads:
+            for j in range(nbheads):
                 if j == i:
                     continue
                 tailset = tailsets[j]
-                if O in tailset: # <size_t><void *>O
+                if O in tailset:  # <size_t><void *>O
                     next_item_found = False
                     break
             if next_item_found:
@@ -640,14 +640,14 @@ def C3_merge(list lists):
                 # Clear O from other heads, removing the line altogether
                 # if the tail is already empty.
                 # j goes down so that ``del heads[j]`` does not screw up the numbering
-                for j in range(nbheads-1, -1, -1): # from nbheads > j >= 0:
-                    if heads[j] == O: # is O
+                for j in range(nbheads-1, -1, -1):
+                    if heads[j] == O:  # is O
                         tail = tails[j]
                         if tail:
                             X = tail.pop()
                             heads[j] = X
                             tailset = tailsets[j]
-                            tailset.remove(X) # <size_t><void *>X)
+                            tailset.remove(X)  # <size_t><void *>X)
                         else:
                             del heads[j]
                             del tails[j]
@@ -656,10 +656,11 @@ def C3_merge(list lists):
                 break
         if not next_item_found:
             # No head is available
-            raise ValueError("Cannot merge the items %s."%', '.join(repr(head) for head in heads))
+            raise ValueError("Cannot merge the items %s." % ', '.join(repr(head) for head in heads))
     return out
 
-cpdef identity(x) noexcept:
+
+cpdef identity(x):
     r"""
     EXAMPLES::
 
@@ -669,7 +670,7 @@ cpdef identity(x) noexcept:
     """
     return x
 
-cpdef tuple C3_sorted_merge(list lists, key=identity) noexcept:
+cpdef tuple C3_sorted_merge(list lists, key=identity):
     r"""
     Return the sorted input lists merged using the ``C3`` algorithm, with a twist.
 
@@ -791,7 +792,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity) noexcept:
     lists = list(lists)
     if not lists:
         raise ValueError("The input should be a non empty list of lists (or iterables)")
-    #for l in lists:
+    # for l in lists:
     #    assert sorted(l, key = key, reverse=True) == l,\
     #        "Each input list should be sorted %s"%l
 
@@ -818,10 +819,10 @@ cpdef tuple C3_sorted_merge(list lists, key=identity) noexcept:
     cdef list tail, l
     cdef set tailset
 
-    cdef list tails    = [l[::-1]                 for l in lists if l]
-    cdef list heads    = [tail.pop()                for tail in tails]
+    cdef list tails = [l[::-1] for l in lists if l]
+    cdef list heads = [tail.pop() for tail in tails]
     cdef set tmp_set
-    cdef list tailsets = [] # remove closure [set(key(O) for O in tail) for tail in tails]
+    cdef list tailsets = []  # remove closure [set(key(O) for O in tail) for tail in tails]
     for tail in tails:
         tmp_set = set()
         for O in tail:
@@ -854,12 +855,12 @@ cpdef tuple C3_sorted_merge(list lists, key=identity) noexcept:
     #             "keys should be distinct"%(tails[i])
 
     while nbheads:
-        #print_state()
-        #check_state()
+        # print_state()
+        # check_state()
         # Find the position of the largest head which will become the next item
-        max_i   = 0
+        max_i = 0
         max_key = key(heads[0])
-        for i in range(1, nbheads): #from 1 <= i < nbheads:
+        for i in range(1, nbheads):
             O = heads[i]
             O_key = key(O)
             if O_key > max_key:
@@ -869,14 +870,14 @@ cpdef tuple C3_sorted_merge(list lists, key=identity) noexcept:
 
         # Find all the bad choices
         max_bad = None
-        for i in range(max_i): #from 0 <= i < max_i:
+        for i in range(max_i):
             O = heads[i]
             # Does O appear in none of the tails?
             O_key = key(O)
             # replace the closure
             # if any(O_key in tailsets[j] for j in range(nbheads) if j != i): continue
             cont = False
-            for j from 0<=j<i:
+            for j in range(i):
                 if O_key in tailsets[j]:
                     cont = True
                     break
@@ -910,14 +911,14 @@ cpdef tuple C3_sorted_merge(list lists, key=identity) noexcept:
                 tailsets[-1].add(key(heads[-1]))
                 heads[-1] = O
             elif O != heads[-1]:
-                assert O_key not in tailsets[-1], "C3 should not have choosen this O"
+                assert O_key not in tailsets[-1], "C3 should not have chosen this O"
                 # Use a heap or something for fast sorted insertion?
                 # Since Python uses TimSort, that's probably not so bad.
                 tails[-1].append(O)
-                tails[-1].sort(key = key)
+                tails[-1].sort(key=key)
                 tailsets[-1].add(O_key)
             suggestion.add(O)
-            #check_state()
+            # check_state()
 
         # Insert max_value in the last list, if needed to hold off the bad items
         if max_bad is not None:
@@ -926,16 +927,16 @@ cpdef tuple C3_sorted_merge(list lists, key=identity) noexcept:
                 if last_head is not None and last_head != max_bad:
                     tails[-1].append(last_head)
                     tailsets[-1].add(key(last_head))
-                    #check_state()
+                    # check_state()
                 heads[-1] = max_value
                 holder[max_bad] = max_value
-                #check_state()
+                # check_state()
 
         out.append(max_value)
         # Clear O from other heads, removing the line altogether
         # if the tail is already empty.
         # j goes down so that ``del heads[j]`` does not screw up the numbering
-        for j in range(nbheads-1, -1, -1):#from nbheads > j >= 0:
+        for j in range(nbheads-1, -1, -1):
             if heads[j] == max_value:
                 tail = tails[j]
                 if tail:
@@ -950,10 +951,10 @@ cpdef tuple C3_sorted_merge(list lists, key=identity) noexcept:
                     nbheads -= 1
                     if last_list_non_empty and j == nbheads:
                         last_list_non_empty = False
-                #check_state()
+                # check_state()
     suggestion.update(holder.values())
-    cdef list suggestion_list = sorted(suggestion, key = key, reverse=True)
-    #assert C3_merge(lists[:-1]+[suggestion_list]) == out
+    cdef list suggestion_list = sorted(suggestion, key=key, reverse=True)
+    # assert C3_merge(lists[:-1]+[suggestion_list]) == out
     return (out, suggestion_list)
 
 
@@ -989,7 +990,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
     EXAMPLES:
 
     See the introduction of this module :mod:`sage.misc.c3_controlled`
-    for many examples. Here we consider a large example, originaly
+    for many examples. Here we consider a large example, originally
     taken from the hierarchy of categories above
     :class:`HopfAlgebrasWithBasis`::
 
@@ -1052,7 +1053,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         [<class '44.cls'>, <class '43.cls'>, <class '42.cls'>, <class '41.cls'>, <class '40.cls'>, <class '39.cls'>, <class '38.cls'>, <class '37.cls'>, <class '36.cls'>, <class '35.cls'>, <class '34.cls'>, <class '33.cls'>, <class '32.cls'>, <class '31.cls'>, <class '30.cls'>, <class '29.cls'>, <class '28.cls'>, <class '27.cls'>, <class '26.cls'>, <class '25.cls'>, <class '24.cls'>, <class '23.cls'>, <class '22.cls'>, <class '21.cls'>, <class '20.cls'>, <class '19.cls'>, <class '18.cls'>, <class '17.cls'>, <class '16.cls'>, <class '15.cls'>, <class '14.cls'>, <class '13.cls'>, <class '12.cls'>, <class '11.cls'>, <class '10.cls'>, <class '9.cls'>, <class '8.cls'>, <class '7.cls'>, <class '6.cls'>, <class '5.cls'>, <class '4.cls'>, <class '3.cls'>, <class '2.cls'>, <class '1.cls'>, <class '0.cls'>, <... 'object'>]
     """
     @staticmethod
-    def __classcall__(cls, value, succ, key = None):
+    def __classcall__(cls, value, succ, key=None):
         """
         EXAMPLES::
 
@@ -1205,7 +1206,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
     @lazy_attribute
     def _bases_controlled(self):
         """
-        A list of bases controlled by :meth:`C3_sorted_merge`
+        A list of bases controlled by :meth:`C3_sorted_merge`.
 
         This triggers the calculation of the MRO using
         :meth:`C3_sorted_merge`, which sets this attribute as a side
@@ -1228,7 +1229,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
     @lazy_attribute
     def mro_standard(self):
         """
-        The MRO for this object, calculated with :meth:`C3_merge`
+        The MRO for this object, calculated with :meth:`C3_merge`.
 
         EXAMPLES::
 
@@ -1352,8 +1353,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         super_classes = tuple(self._from_value(base).cls for base in self._bases_controlled)
         if not super_classes:
             super_classes = (object,)
-        return dynamic_class("%s.cls"%self, super_classes)
-
+        return dynamic_class("%s.cls" % self, super_classes)
 
     @cached_method
     def all_bases(self):
@@ -1373,7 +1373,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
             sage: sorted([x.value for x in HierarchyElement(10, P).all_bases()])
             [1, 2, 5, 10]
         """
-        return {self} | { x for base in self._bases for x in base.all_bases()  }
+        return {self} | {x for base in self._bases for x in base.all_bases()}
 
     def all_bases_len(self):
         """
@@ -1386,7 +1386,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
             sage: HierarchyElement(30, P).all_bases_len()                               # needs sage.graphs
             12
         """
-        return sum( len(x._bases) for x in self.all_bases())
+        return sum(len(x._bases) for x in self.all_bases())
 
     def all_bases_controlled_len(self):
         """
@@ -1399,4 +1399,4 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
             sage: HierarchyElement(30, P).all_bases_controlled_len()                    # needs sage.graphs
             13
         """
-        return sum( len(x._bases_controlled) for x in self.all_bases())
+        return sum(len(x._bases_controlled) for x in self.all_bases())

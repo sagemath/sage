@@ -29,7 +29,7 @@ following additional ways to compute with matrices:
 -  The GSL C-library is included with Sage, and can be used via
    Cython.
 
--  The ``scipy`` module provides support for
+-  The :mod:`scipy:scipy` module provides support for
    *sparse* numerical linear algebra, among many other things.
 
 -  The ``numpy`` module, which you load by typing

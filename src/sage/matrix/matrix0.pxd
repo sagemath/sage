@@ -21,8 +21,8 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef public object _base_ring
     cdef bint _is_immutable
 
-    cpdef _add_(self, other) noexcept
-    cpdef _sub_(self, other) noexcept
+    cpdef _add_(self, other)
+    cpdef _sub_(self, other)
 
     cdef bint _will_use_strassen(self, Matrix right) except -2
     cdef bint _will_use_strassen_echelon(self) except -2
@@ -37,31 +37,31 @@ cdef class Matrix(sage.structure.element.Matrix):
     cdef public object _cache
     cdef long hash  # cached hash value
     cdef void clear_cache(self) noexcept
-    cdef fetch(self, key) noexcept
-    cdef cache(self, key, x) noexcept
+    cdef fetch(self, key)
+    cdef cache(self, key, x)
 
     # Mutability and bounds checking
-    cdef check_bounds(self, Py_ssize_t i, Py_ssize_t j) noexcept
-    cdef check_mutability(self) noexcept
-    cdef check_bounds_and_mutability(self, Py_ssize_t i, Py_ssize_t j) noexcept
+    cdef check_bounds(self, Py_ssize_t i, Py_ssize_t j)
+    cdef check_mutability(self)
+    cdef check_bounds_and_mutability(self, Py_ssize_t i, Py_ssize_t j)
 
     # Unsafe entry access
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x) noexcept
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept
-    cdef _coerce_element(self, x) noexcept
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x)
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j)
+    cdef _coerce_element(self, x)
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1
 
     # Row and column operations
-    cdef check_row_bounds(self, Py_ssize_t r1, Py_ssize_t r2) noexcept
-    cdef check_column_bounds(self, Py_ssize_t c1, Py_ssize_t c2) noexcept
-    cdef check_row_bounds_and_mutability(self, Py_ssize_t r1, Py_ssize_t r2) noexcept
-    cdef check_column_bounds_and_mutability(self, Py_ssize_t c1, Py_ssize_t c2) noexcept
-    cdef swap_rows_c(self, Py_ssize_t r1, Py_ssize_t r2) noexcept
-    cdef swap_columns_c(self, Py_ssize_t c1, Py_ssize_t c2) noexcept
-    cdef add_multiple_of_row_c(self, Py_ssize_t i, Py_ssize_t j,    s, Py_ssize_t col_start) noexcept
-    cdef add_multiple_of_column_c(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t row_start) noexcept
-    cdef rescale_row_c(self, Py_ssize_t i, s, Py_ssize_t start_col) noexcept
-    cdef rescale_col_c(self, Py_ssize_t i, s, Py_ssize_t start_row) noexcept
+    cdef check_row_bounds(self, Py_ssize_t r1, Py_ssize_t r2)
+    cdef check_column_bounds(self, Py_ssize_t c1, Py_ssize_t c2)
+    cdef check_row_bounds_and_mutability(self, Py_ssize_t r1, Py_ssize_t r2)
+    cdef check_column_bounds_and_mutability(self, Py_ssize_t c1, Py_ssize_t c2)
+    cdef swap_rows_c(self, Py_ssize_t r1, Py_ssize_t r2)
+    cdef swap_columns_c(self, Py_ssize_t c1, Py_ssize_t c2)
+    cdef add_multiple_of_row_c(self, Py_ssize_t i, Py_ssize_t j,    s, Py_ssize_t col_start)
+    cdef add_multiple_of_column_c(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t row_start)
+    cdef rescale_row_c(self, Py_ssize_t i, s, Py_ssize_t start_col)
+    cdef rescale_col_c(self, Py_ssize_t i, s, Py_ssize_t start_row)
 
     # Helper function for inverse of sparse matrices
-    cdef build_inverse_from_augmented_sparse(self, A) noexcept
+    cdef build_inverse_from_augmented_sparse(self, A)

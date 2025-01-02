@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 #*****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
@@ -10,7 +11,7 @@
 
 from sage.structure.sage_object cimport SageObject
 
-cpdef check_default_category(default_category, category) noexcept
+cpdef check_default_category(default_category, category)
 
 cdef class CategoryObject(SageObject):
     cdef public dict _cached_methods
@@ -21,7 +22,7 @@ cdef class CategoryObject(SageObject):
     cdef object __weakref__
     cdef long _hash_value
 
-    cdef getattr_from_category(self, name) noexcept
+    cdef getattr_from_category(self, name)
 
-cpdef normalize_names(Py_ssize_t ngens, names) noexcept
+cpdef normalize_names(Py_ssize_t ngens, names)
 cpdef bint certify_names(names) except -1

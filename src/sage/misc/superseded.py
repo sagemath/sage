@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Handling Superseded Functionality
 
@@ -34,12 +35,12 @@ def _check_issue_number(issue_number):
 
     INPUT:
 
-    - ``issue_number`` -- anything.
+    - ``issue_number`` -- anything
 
     OUTPUT:
 
-    This function returns nothing. A ``ValueError`` or ``TypeError`` is
-    raised if the argument cannot be a valid issue number.
+    This function returns nothing. A :exc:`ValueError` or :exc:`TypeError`
+    is raised if the argument cannot be a valid issue number.
 
     EXAMPLES::
 
@@ -73,14 +74,14 @@ def deprecation(issue_number, message, stacklevel=4):
 
     INPUT:
 
-    - ``issue_number`` -- integer. The github issue number where the
-      deprecation is introduced.
+    - ``issue_number`` -- integer; the github issue number where the
+      deprecation is introduced
 
-    - ``message`` -- string. An explanation why things are deprecated
-      and by what it should be replaced.
+    - ``message`` -- string; an explanation why things are deprecated
+      and by what it should be replaced
 
-    - ``stack_level`` -- (default: ``4``) an integer. This is passed on to
-      :func:`warnings.warn`.
+    - ``stack_level`` -- integer (default: `4`); this is passed on to
+      :func:`warnings.warn`
 
     EXAMPLES::
 
@@ -97,13 +98,14 @@ def deprecation(issue_number, message, stacklevel=4):
     """
     warning(issue_number, message, DeprecationWarning, stacklevel)
 
+
 def deprecation_cython(issue_number, message, stacklevel=3):
     r"""
-    Issue a deprecation warning -- for use in cython functions
+    Issue a deprecation warning -- for use in cython functions.
 
     TESTS:
 
-    We check that `deprecation_cython` in a cython function generates a warning
+    We check that ``deprecation_cython`` in a cython function generates a warning
     with the same callsite reference as `deprecation` in a python function, whereas
     `deprecation` in a cython function does not::
 
@@ -135,22 +137,23 @@ def deprecation_cython(issue_number, message, stacklevel=3):
     """
     warning(issue_number, message, DeprecationWarning, stacklevel)
 
+
 def warning(issue_number, message, warning_class=Warning, stacklevel=3):
     r"""
     Issue a warning.
 
     INPUT:
 
-    - ``issue_number`` -- integer. The github issue number where the
-      deprecation is introduced.
+    - ``issue_number`` -- integer; the github issue number where the
+      deprecation is introduced
 
-    - ``message`` -- string. An explanation what is going on.
+    - ``message`` -- string; an explanation what is going on
 
     - ``warning_class`` -- (default: ``Warning``) a class inherited
-      from a Python :class:`~exceptions.Warning`.
+      from a Python :class:`~exceptions.Warning`
 
-    - ``stack_level`` -- (default: ``3``) an integer. This is passed on to
-      :func:`warnings.warn`.
+    - ``stack_level`` -- integer (default: `3`); this is passed on to
+      :func:`warnings.warn`
 
     EXAMPLES::
 
@@ -184,13 +187,13 @@ def experimental_warning(issue_number, message, stacklevel=4):
 
     INPUT:
 
-    - ``issue_number`` -- an integer. The github issue number where the
-      experimental functionality was introduced.
+    - ``issue_number`` -- integer; the github issue number where the
+      experimental functionality was introduced
 
-    - ``message`` -- a string. An explanation what is going on.
+    - ``message`` -- string; an explanation what is going on
 
-    - ``stack_level`` -- (default: ``4``) an integer. This is passed on to
-      :func:`warnings.warn`.
+    - ``stack_level`` -- integer (default: `4`); this is passed on to
+      :func:`warnings.warn`
 
     EXAMPLES::
 
@@ -212,7 +215,7 @@ def experimental_warning(issue_number, message, stacklevel=4):
     warning(issue_number, message, FutureWarning, stacklevel)
 
 
-class experimental():
+class experimental:
     def __init__(self, issue_number, stacklevel=4):
         """
         A decorator which warns about the experimental/unstable status of
@@ -220,11 +223,11 @@ class experimental():
 
         INPUT:
 
-        - ``issue_number`` -- an integer. The github issue number where this
-          code was introduced.
+        - ``issue_number`` -- integer; the github issue number where this
+          code was introduced
 
-        - ``stack_level`` -- (default: ``4``) an integer. This is passed on to
-          :func:`warnings.warn`.
+        - ``stack_level`` -- integer (default: `4`); this is passed on to
+          :func:`warnings.warn`
 
         EXAMPLES::
 
@@ -281,11 +284,9 @@ class experimental():
 
         INPUT:
 
-        - ``func`` -- the function to decorate.
+        - ``func`` -- the function to decorate
 
-        OUTPUT:
-
-        The wrapper to this function.
+        OUTPUT: the wrapper to this function
 
         TESTS::
 
@@ -318,7 +319,7 @@ class experimental():
         return wrapper
 
 
-class __experimental_self_test():
+class __experimental_self_test:
     r"""
     This is a class only to demonstrate with a doc-test that the @experimental
     decorator only issues a warning message once (see :issue:`20601`).
@@ -326,7 +327,7 @@ class __experimental_self_test():
     The test below does not issue a warning message because that warning has
     already been issued by a previous doc-test in the @experimental code. Note
     that this behaviour cannot be demonstrated within a single documentation
-    string: Sphinx will itself supress multiple issued warnings.
+    string: Sphinx will itself suppress multiple issued warnings.
 
     TESTS::
 
@@ -339,7 +340,7 @@ class __experimental_self_test():
         print("I'm " + x)
 
 
-class DeprecatedFunctionAlias():
+class DeprecatedFunctionAlias:
     """
     A wrapper around methods or functions which automatically prints a
     deprecation message. See :func:`deprecated_function_alias`.
@@ -486,7 +487,6 @@ class DeprecatedFunctionAlias():
             3
             sage: a1.f(a2.f(0))
             3
-
         """
         if inst is None:
             return self  # Unbound method lookup on class
@@ -508,8 +508,8 @@ def deprecated_function_alias(issue_number, func):
 
     INPUT:
 
-    - ``issue_number`` -- integer. The github issue number where the
-      deprecation is introduced.
+    - ``issue_number`` -- integer; the github issue number where the
+      deprecation is introduced
 
     - ``func`` -- the function or method to be aliased
 

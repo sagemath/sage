@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Sage's IPython Extension
 
@@ -70,17 +71,18 @@ from sage.env import SAGE_IMPORTALL, SAGE_STARTUP_FILE
 from sage.misc.lazy_import import LazyImport
 from sage.misc.misc import run_once
 
+
 @magics_class
 class SageMagics(Magics):
 
     @line_magic
     def crun(self, s):
         r"""
-        Profile C function calls
+        Profile C function calls.
 
         INPUT:
 
-        - ``s`` -- string. Sage command to profile.
+        - ``s`` -- string; Sage command to profile
 
         EXAMPLES::
 
@@ -103,7 +105,11 @@ class SageMagics(Magics):
         This is designed to be used from the command line as
         ``%runfile /path/to/file``.
 
-        - ``s`` -- string. The file to be loaded.
+        - ``s`` -- string; the file to be loaded
+
+        .. SEEALSO::
+
+            This is the same as :func:`~sage.repl.load.load`.
 
         EXAMPLES::
 
@@ -131,12 +137,16 @@ class SageMagics(Magics):
 
         - ``s`` -- string. The file to be attached
 
+        .. SEEALSO::
+
+            This is the same as :func:`~sage.repl.attach.attach`.
+
         EXAMPLES::
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: from tempfile import NamedTemporaryFile as NTF
-            sage: with NTF(mode="w+t", suffix=".py", delete=False) as f:
+            sage: with NTF(mode='w+t', suffix='.py', delete=False) as f:
             ....:     _ = f.write('a = 2\n')
             sage: shell.run_cell('%attach ' + f.name)
             sage: shell.run_cell('a')
@@ -168,7 +178,7 @@ class SageMagics(Magics):
 
         - ``args`` -- string. The file to be interactively loaded
 
-        .. note::
+        .. NOTE::
 
             Currently, this cannot be completely doctested as it
             relies on :func:`raw_input`.
@@ -300,7 +310,7 @@ class SageMagics(Magics):
                 max_width = 0
             if max_width <= 0:
                 raise ValueError(
-                        "max width must be a positive integer")
+                    "max width must be a positive integer")
             import sage.typeset.character_art as character_art
             character_art.MAX_WIDTH = max_width
             dm.preferences.text = arg0
@@ -333,36 +343,101 @@ class SageMagics(Magics):
     @cell_magic
     def cython(self, line, cell):
         """
-        Cython cell magic
+        Cython cell magic.
 
         This is syntactic sugar on the
         :func:`~sage.misc.cython.cython_compile` function.
 
         INPUT:
 
-        - ``line`` -- ignored.
+        - ``line`` -- parsed as keyword arguments. The allowed arguments are:
 
-        - ``cell`` -- string. The Cython source code to process.
+          - ``--verbose N`` / ``-v N``
+          - ``--compile-message``
+          - ``--use-cache``
+          - ``--create-local-c-file``
+          - ``--annotate``
+          - ``--sage-namespace``
+          - ``--create-local-so-file``
+          - ``--no-compile-message``, ``--no-use-cache``, etc.
 
-        OUTPUT:
+          See :func:`~sage.misc.cython.cython` for details.
 
-        None. The Cython code is compiled and loaded.
+        - ``cell`` -- string; the Cython source code to process
+
+        OUTPUT: none; the Cython code is compiled and loaded
 
         EXAMPLES::
 
+            sage: # needs sage.misc.cython
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell(                                                       # needs sage.misc.cython
+            sage: shell.run_cell(
             ....: '''
-            ....: %%cython
+            ....: %%cython -v1 --annotate --no-sage-namespace
             ....: def f():
             ....:     print('test')
             ....: ''')
-            sage: f()                                                                   # needs sage.misc.cython
+            Compiling ....pyx because it changed.
+            [1/1] Cythonizing ....pyx
+            sage: f()
             test
+
+        TESTS:
+
+        Test unrecognized arguments::
+
+            sage: # needs sage.misc.cython
+            sage: shell.run_cell('''
+            ....: %%cython --some-unrecognized-argument
+            ....: print(1)
+            ....: ''')
+            UsageError: unrecognized arguments: --some-unrecognized-argument
+
+        Test ``--help`` is disabled::
+
+            sage: # needs sage.misc.cython
+            sage: shell.run_cell('''
+            ....: %%cython --help
+            ....: print(1)
+            ....: ''')
+            UsageError: unrecognized arguments: --help
+
+        Test invalid quotes::
+
+            sage: # needs sage.misc.cython
+            sage: shell.run_cell('''
+            ....: %%cython --a='
+            ....: print(1)
+            ....: ''')
+            ...
+            ValueError...Traceback (most recent call last)
+            ...
+            ValueError: No closing quotation
         """
         from sage.misc.cython import cython_compile
-        return cython_compile(cell)
+        import shlex
+        import argparse
+
+        class ExitCatchingArgumentParser(argparse.ArgumentParser):
+            def error(self, message):
+                # exit_on_error=False does not work completely in some Python versions
+                # see https://stackoverflow.com/q/67890157
+                # we raise UsageError to make the interface similar to what happens when e.g.
+                # IPython's ``%run`` gets unrecognized arguments
+                from IPython.core.error import UsageError
+                raise UsageError(message)
+
+        parser = ExitCatchingArgumentParser(prog="%%cython", add_help=False)
+        parser.add_argument("--verbose", "-v", type=int)
+        parser.add_argument("--compile-message", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--use-cache", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--create-local-c-file", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--annotate", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--sage-namespace", action=argparse.BooleanOptionalAction)
+        parser.add_argument("--create-local-so-file", action=argparse.BooleanOptionalAction)
+        args = parser.parse_args(shlex.split(line))
+        return cython_compile(cell, **{k: v for k, v in args.__dict__.items() if v is not None})
 
     @cell_magic
     def fortran(self, line, cell):
@@ -374,13 +449,11 @@ class SageMagics(Magics):
 
         INPUT:
 
-        - ``line`` -- ignored.
+        - ``line`` -- ignored
 
-        - ``cell`` -- string. The Cython source code to process.
+        - ``cell`` -- string; the Cython source code to process
 
-        OUTPUT:
-
-        None. The Fortran code is compiled and loaded.
+        OUTPUT: none; the Fortran code is compiled and loaded
 
         EXAMPLES::
 
@@ -420,7 +493,7 @@ class SageMagics(Magics):
         return fortran(cell)
 
 
-class SageCustomizations():
+class SageCustomizations:
 
     def __init__(self, shell=None):
         """
@@ -437,7 +510,7 @@ class SageCustomizations():
         self.init_line_transforms()
 
         try:
-            import sage.all # until sage's import hell is fixed
+            import sage.all  # until sage's import hell is fixed
         except ImportError:
             import sage.all__sagemath_repl
 
@@ -487,7 +560,7 @@ class SageCustomizations():
         Run Sage's initial startup file.
         """
         try:
-            with open(SAGE_STARTUP_FILE, 'r') as f:
+            with open(SAGE_STARTUP_FILE) as f:
                 self.shell.run_cell(f.read(), store_history=False)
         except OSError:
             pass

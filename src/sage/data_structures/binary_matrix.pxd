@@ -12,8 +12,7 @@ A ``binary_matrix_t`` structure contains:
 - ``mp_bitcnt_t n_rows`` -- number of rows
 
 - ``bitset_t * rows`` -- ``rows[i]`` points toward a block of type ``bitset_t``
-  containing the bits of row `i`.
-
+  containing the bits of row `i`
 """
 
 from sage.data_structures.bitset_base cimport *
@@ -126,7 +125,7 @@ cdef inline bint binary_matrix_get(binary_matrix_t m, mp_bitcnt_t row, mp_bitcnt
     """
     return bitset_in(m.rows[row], col)
 
-cdef inline binary_matrix_print(binary_matrix_t m) noexcept:
+cdef inline binary_matrix_print(binary_matrix_t m):
     r"""
     Print the binary matrix
     """

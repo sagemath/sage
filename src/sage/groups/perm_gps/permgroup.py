@@ -119,13 +119,12 @@ REFERENCES:
 - Dixon, J. and Mortimer, B., Permutation Groups, Springer-Verlag,
   Berlin/New York, 1996.
 
-.. note::
+.. NOTE::
 
-   Though Suzuki groups are okay, Ree groups should *not* be wrapped
-   as permutation groups - the construction is too slow - unless (for
-   small values or the parameter) they are made using explicit
-   generators.
-
+    Though Suzuki groups are okay, Ree groups should *not* be wrapped
+    as permutation groups - the construction is too slow - unless (for
+    small values or the parameter) they are made using explicit
+    generators.
 """
 # ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -166,7 +165,7 @@ def load_hap():
         sage: sage.groups.perm_gps.permgroup.load_hap()         # optional - gap_package_hap
     """
     from sage.features.gap import GapPackage
-    GapPackage("hap", spkg="gap_packages").require()
+    GapPackage("hap", spkg='gap_packages').require()
     libgap.load_package("hap")
 
 
@@ -203,9 +202,10 @@ def hap_decorator(f):
         return f(self, n, p=p)
     return wrapped
 
+
 def direct_product_permgroups(P):
     """
-    Takes the direct product of the permutation groups listed in ``P``.
+    Take the direct product of the permutation groups listed in ``P``.
 
     EXAMPLES::
 
@@ -230,6 +230,7 @@ def direct_product_permgroups(P):
         G = libgap.DirectProduct(*P)
         return PermutationGroup(gap_group=G)
 
+
 def from_gap_list(G, src):
     r"""
     Convert a string giving a list of GAP permutations into a list of
@@ -249,7 +250,7 @@ def from_gap_list(G, src):
     # src is a list of strings, each of which is a permutation of
     # integers in cycle notation. It may contain \n and spaces.
     src = [str(g)[1:].split(")(")
-           for g in str(src).replace(" ","").replace("\n","")[1:-2].split("),")]
+           for g in str(src).replace(" ", "").replace("\n", "")[1:-2].split("),")]
 
     # src is a list of list of strings. Each string is a list of
     # integers separated by ','
@@ -260,6 +261,7 @@ def from_gap_list(G, src):
     # src is now a list of group elements
     return src
 
+
 def PermutationGroup(gens=None, *args, **kwds):
     """
     Return the permutation group associated to `x` (typically a
@@ -267,16 +269,14 @@ def PermutationGroup(gens=None, *args, **kwds):
 
     INPUT:
 
-    -  ``gens`` -- (default: ``None``) list of generators
+    - ``gens`` -- (default: ``None``) list of generators
 
-    -  ``gap_group`` -- (optional) a gap permutation group
+    - ``gap_group`` -- (optional) a gap permutation group
 
-    -  ``canonicalize`` -- boolean (default: ``True``); if ``True``,
-       sort generators and remove duplicates
+    - ``canonicalize`` -- boolean (default: ``True``); if ``True``,
+      sort generators and remove duplicates
 
-    OUTPUT:
-
-    - a permutation group
+    OUTPUT: a permutation group
 
     EXAMPLES::
 
@@ -387,7 +387,6 @@ def PermutationGroup(gens=None, *args, **kwds):
         ...
         DeprecationWarning: gap_group, domain, canonicalize, category will become keyword only
         See https://github.com/sagemath/sage/issues/31510 for details.
-
     """
     if not isinstance(gens, ExpectElement) and hasattr(gens, '_permgroup_'):
         return gens._permgroup_()
@@ -451,12 +450,10 @@ class PermutationGroup_generic(FiniteGroup):
         - ``gap_group`` -- a gap or libgap permutation group, or a string
           defining one (default: ``None``)
 
-        - ``canonicalize`` -- bool (default: ``True``); if ``True``,
+        - ``canonicalize`` -- boolean (default: ``True``); if ``True``,
           sort generators and remove duplicates
 
-        OUTPUT:
-
-        - A permutation group.
+        OUTPUT: a permutation group
 
         EXAMPLES:
 
@@ -478,6 +475,26 @@ class PermutationGroup_generic(FiniteGroup):
             sage: TestSuite(PermutationGroup([[]])).run()
             sage: TestSuite(PermutationGroup([])).run()
             sage: TestSuite(PermutationGroup([(0,1)])).run()
+
+        Check that :issue:`37590` is fixed::
+
+            sage: lgg = libgap.eval("Group((1,2,3,4,5),(4,5,6))")
+            sage: P = PermutationGroup(gap_group=lgg)
+            sage: h = P.hom(codomain=P, im_gens=P.gens())
+            sage: h
+            Group endomorphism of Permutation Group with generators [(1,2,3,4,5), (4,5,6)]
+            sage: P.gens()
+            ((1,2,3,4,5), (4,5,6))
+            sage: P.gap().GeneratorsOfGroup()
+            [ (1,2,3,4,5), (4,5,6) ]
+
+            sage: gg = gap.eval("Group((1,2,3,4,5),(4,5,6))")
+            sage: P = PermutationGroup(gap_group=gg)
+            sage: P.gens()
+            ((1,2,3,4,5), (4,5,6))
+            sage: h = P.hom(codomain=P, im_gens=P.gens())
+            sage: h
+            Group endomorphism of Permutation Group with generators [(1,2,3,4,5), (4,5,6)]
         """
         if (gens is None and gap_group is None):
             raise ValueError("you must specify gens or gap_group")
@@ -496,6 +513,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         if isinstance(gap_group, LibGapElement):
             self._libgap = gap_group
+            canonicalize = False
 
         # Handle the case where only the GAP group is specified.
         if gens is None:
@@ -518,7 +536,7 @@ class PermutationGroup_generic(FiniteGroup):
             # to make the domain contain all integers up to the max.
             # This is needed for backward compatibility
             if all(isinstance(p, (int, Integer)) for p in domain):
-                domain = list(range(min([1] + domain), max([1] + domain)+1))
+                domain = list(range(min([1] + domain), max([1] + domain) + 1))
 
         if domain not in FiniteEnumeratedSets():
             domain = FiniteEnumeratedSet(domain)
@@ -599,7 +617,7 @@ class PermutationGroup_generic(FiniteGroup):
     @cached_method
     def _has_natural_domain(self):
         """
-        Return whether the underlying domain is of the form (1,...,n)
+        Return whether the underlying domain is of the form (1,...,n).
 
         EXAMPLES::
 
@@ -641,9 +659,8 @@ class PermutationGroup_generic(FiniteGroup):
         compatibility and have :class:`sage.groups.libgap_morphism.GroupHomset_libgap` work for permutation
         groups, as well
 
-        OUTPUT:
-
-        an instance of :class:`sage.libs.gap.element.GapElement` representing this group
+        OUTPUT: an instance of :class:`sage.libs.gap.element.GapElement`
+        representing this group
 
         EXAMPLES::
 
@@ -706,9 +723,7 @@ class PermutationGroup_generic(FiniteGroup):
         - ``G`` -- group; the codomain
         - ``cat`` -- category
 
-        OUTPUT:
-
-        The set of homomorphisms from ``self`` to ``G``.
+        OUTPUT: the set of homomorphisms from ``self`` to ``G``
 
         EXAMPLES::
 
@@ -727,7 +742,7 @@ class PermutationGroup_generic(FiniteGroup):
 
     def _magma_init_(self, magma):
         r"""
-        Return a string showing how to declare / initialize self in Magma.
+        Return a string showing how to declare / initialize ``self`` in Magma.
 
         EXAMPLES:
 
@@ -792,7 +807,6 @@ class PermutationGroup_generic(FiniteGroup):
             False
             sage: G != H
             False
-
         """
         if not isinstance(right, PermutationGroup_generic):
             return NotImplemented
@@ -802,7 +816,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         gSelf = self._libgap_()
         gRight = right._libgap_()
-        if op in [op_EQ,op_NE]:
+        if op in [op_EQ, op_NE]:
             return gSelf._richcmp_(gRight, op)
 
         if gSelf.IsSubgroup(gRight):
@@ -885,7 +899,7 @@ class PermutationGroup_generic(FiniteGroup):
             # We check if we can lift ``x`` to ``self`` directly
             #   so we can pass check=False for speed.
             if (isinstance(x_parent, PermutationGroup_subgroup)
-                and x_parent._ambient_group is self):
+                    and x_parent._ambient_group is self):
                 return self.element_class(x, self, check=False)
 
             from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -1149,7 +1163,7 @@ class PermutationGroup_generic(FiniteGroup):
             return self._iteration_monogen()
         else:
             # TODO: this is too slow for moderatly small permutation groups
-            return self.iteration(algorithm="SGS")
+            return self.iteration(algorithm='SGS')
 
     def _iteration_monogen(self):
         r"""
@@ -1173,24 +1187,24 @@ class PermutationGroup_generic(FiniteGroup):
             h *= g
             yield h
 
-    def iteration(self, algorithm="SGS"):
+    def iteration(self, algorithm='SGS'):
         """
         Return an iterator over the elements of this group.
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``"SGS"``) either
+        - ``algorithm`` -- (default: ``'SGS'``) either
 
-          * ``"SGS"`` -- using strong generating system
-          * ``"BFS"`` -- a breadth first search on the Cayley graph with
+          * ``'SGS'`` -- using strong generating system
+          * ``'BFS'`` -- a breadth first search on the Cayley graph with
             respect to ``self.gens()``
-          * ``"DFS"`` -- a depth first search on the Cayley graph with
+          * ``'DFS'`` -- a depth first search on the Cayley graph with
             respect to ``self.gens()``
 
         .. NOTE::
 
-            In general, the algorithm ``"SGS"`` is faster. Yet, for
-            small groups, ``"BFS"`` and ``"DFS"`` might be faster.
+            In general, the algorithm ``'SGS'`` is faster. Yet, for
+            small groups, ``'BFS'`` and ``'DFS'`` might be faster.
 
         .. NOTE::
 
@@ -1204,10 +1218,10 @@ class PermutationGroup_generic(FiniteGroup):
             sage: list(G.iteration())
             [(), (1,2,3), (1,3,2), (2,3), (1,2), (1,3)]
 
-            sage: list(G.iteration(algorithm="BFS"))
+            sage: list(G.iteration(algorithm='BFS'))
             [(), (2,3), (1,2), (1,2,3), (1,3,2), (1,3)]
 
-            sage: list(G.iteration(algorithm="DFS"))
+            sage: list(G.iteration(algorithm='DFS'))
             [(), (1,2), (1,3,2), (1,3), (1,2,3), (2,3)]
 
         TESTS::
@@ -1220,9 +1234,9 @@ class PermutationGroup_generic(FiniteGroup):
 
             sage: sum(1 for x in A.iteration()) == 60000
             True
-            sage: sum(1 for x in A.iteration(algorithm="BFS")) == 60000
+            sage: sum(1 for x in A.iteration(algorithm='BFS')) == 60000
             True
-            sage: sum(1 for x in A.iteration(algorithm="DFS")) == 60000
+            sage: sum(1 for x in A.iteration(algorithm='DFS')) == 60000
             True
         """
         if algorithm == "SGS":
@@ -1235,7 +1249,7 @@ class PermutationGroup_generic(FiniteGroup):
                         for g in S:
                             yield s._mul_(g)
 
-            SGS = self.strong_generating_system(implementation="gap")
+            SGS = self.strong_generating_system(implementation='gap')
             return elements(SGS)
         elif algorithm in ["BFS", "DFS"]:
             from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
@@ -1247,9 +1261,9 @@ class PermutationGroup_generic(FiniteGroup):
             else:
                 enumeration = "depth"
             return iter(RecursivelyEnumeratedSet(
-                                    seeds=seeds,
-                                    successors=successors,
-                                    enumeration=enumeration))
+                seeds=seeds,
+                successors=successors,
+                enumeration=enumeration))
         else:
             raise ValueError("the input algorithm (='%s') must be 'SGS', 'BFS' or 'DFS'" % algorithm)
 
@@ -1432,7 +1446,7 @@ class PermutationGroup_generic(FiniteGroup):
 
     def exponent(self):
         r"""
-        Computes the exponent of the group.
+        Compute the exponent of the group.
 
         The exponent `e` of a group `G` is the LCM of the orders of its
         elements, that is, `e` is the smallest integer such that `g^e=1` for all
@@ -1443,7 +1457,6 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = AlternatingGroup(4)
             sage: G.exponent()
             6
-
         """
         return Integer(self._libgap_().Exponent())
 
@@ -1466,7 +1479,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.largest_moved_point()
             'e'
 
-        .. warning::
+        .. WARNING::
 
            The name of this function is not good; this function
            should be deprecated in term of degree::
@@ -1537,12 +1550,12 @@ class PermutationGroup_generic(FiniteGroup):
             '[1, 2, 3, 4, 5]'
         """
         if domain is None:
-            return repr(list(range(1, self.degree()+1)))
-        else:
-            try:
-                return repr([self._domain_to_gap[point] for point in domain])
-            except KeyError:
-                raise ValueError("domain must be a subdomain of self.domain()")
+            return repr(list(range(1, self.degree() + 1)))
+
+        try:
+            return repr([self._domain_to_gap[point] for point in domain])
+        except KeyError:
+            raise ValueError("domain must be a subdomain of self.domain()")
 
     @cached_method
     def smallest_moved_point(self):
@@ -1567,9 +1580,99 @@ class PermutationGroup_generic(FiniteGroup):
         p = self._libgap_().SmallestMovedPoint()
         return self._domain_from_gap[Integer(p)]
 
-    def representative_action(self,x,y):
+    @cached_method
+    def disjoint_direct_product_decomposition(self):
         r"""
-        Return an element of self that maps `x` to `y` if it exists.
+        Return the finest partition of the underlying set such that ``self``
+        is isomorphic to the direct product of the projections of ``self``
+        onto each part of the partition. Each part is a union of orbits
+        of ``self``.
+
+        The algorithm is from [CJ2022]_, which runs in time polynomial in
+        `n \cdot |X|`, where `n` is the degree of the group and `|X|` is
+        the size of a generating set, see Theorem 4.5.
+
+        EXAMPLES:
+
+        The example from the original paper::
+
+            sage: H = PermutationGroup([[(1,2,3),(7,9,8),(10,12,11)],[(4,5,6),(7,8,9),(10,11,12)],[(5,6),(8,9),(11,12)],[(7,8,9),(10,11,12)]])
+            sage: S = H.disjoint_direct_product_decomposition(); S
+            {{1, 2, 3}, {4, 5, 6, 7, 8, 9, 10, 11, 12}}
+            sage: A = libgap.Stabilizer(H, list(S[0]), libgap.OnTuples); A
+            Group([ (7,8,9)(10,11,12), (5,6)(8,9)(11,12), (4,5,6)(7,8,9)(10,11,12) ])
+            sage: B = libgap.Stabilizer(H, list(S[1]), libgap.OnTuples); B
+            Group([ (1,2,3) ])
+            sage: T = PermutationGroup(gap_group=libgap.DirectProduct(A,B))
+            sage: T.is_isomorphic(H)
+            True
+            sage: PermutationGroup(PermutationGroup(gap_group=A).gens(),domain=list(S[1])).disjoint_direct_product_decomposition()
+            {{4, 5, 6, 7, 8, 9, 10, 11, 12}}
+            sage: PermutationGroup(PermutationGroup(gap_group=B).gens(),domain=list(S[0])).disjoint_direct_product_decomposition()
+            {{1, 2, 3}}
+
+        An example with a different domain::
+
+            sage: PermutationGroup([[('a','c','d'),('b','e')]]).disjoint_direct_product_decomposition()
+            {{'a', 'c', 'd'}, {'b', 'e'}}
+            sage: PermutationGroup([[('a','c','d','b','e')]]).disjoint_direct_product_decomposition()
+            {{'a', 'b', 'c', 'd', 'e'}}
+
+        Counting the number of "connected" permutation groups of degree `n`::
+
+            sage: seq = [sum(1 for G in SymmetricGroup(n).conjugacy_classes_subgroups() if len(G.disjoint_direct_product_decomposition()) == 1) for n in range(1,8)]; seq
+            [1, 1, 2, 6, 6, 27, 20]
+            sage: oeis(seq) # optional -- internet
+            0: A005226: Number of atomic species of degree n; also number of connected permutation groups of degree n.
+        """
+        from sage.combinat.set_partition import SetPartition
+        from sage.sets.disjoint_set import DisjointSet
+        H = self._libgap_()
+        # sort each orbit and order list by smallest element of each orbit
+        O = libgap.List([libgap.ShallowCopy(orbit) for orbit in libgap.Orbits(H)])
+        for orbit in O:
+            libgap.Sort(orbit)
+        O.Sort()
+        num_orbits = len(O)
+        OrbitMapping = dict()
+        for i in range(num_orbits):
+            for x in O[i]:
+                OrbitMapping[x] = i
+        C = libgap.StabChain(H, libgap.Concatenation(O))
+        X = libgap.StrongGeneratorsStabChain(C)
+        P = DisjointSet(num_orbits)
+        R = libgap.List([])
+        identity = libgap.Identity(H)
+        for i in range(num_orbits-1):
+            libgap.Append(R, O[i])
+            Xp = libgap.List([])
+            while True:
+                try:
+                    if libgap.IsSubset(O[i], C['orbit']):
+                        C = C['stabilizer']
+                    else:
+                        break
+                except ValueError:
+                    break
+            for x in X:
+                xs = libgap.SiftedPermutation(C, x)
+                if xs != identity:
+                    libgap.Add(Xp, xs)
+                    if libgap.RestrictedPerm(xs, O[i+1]) != identity:
+                        cj = OrbitMapping[libgap.SmallestMovedPoint(libgap.RestrictedPerm(x, R))]
+                        P.union(i+1, cj)
+                else:
+                    libgap.Add(Xp, x)
+            X = Xp
+        return SetPartition([
+            [self._domain_from_gap[Integer(x)]
+             for i in part
+             for x in O[i]] for part in P] +
+             [[x] for x in self.fixed_points()])
+
+    def representative_action(self, x, y):
+        r"""
+        Return an element of ``self`` that maps `x` to `y` if it exists.
 
         This method wraps the gap function ``RepresentativeAction``, which can
         also return elements that map a given set of points on another set of
@@ -1577,7 +1680,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``x``, ``y`` -- two elements of the domain.
+        - ``x``, ``y`` -- two elements of the domain
 
         EXAMPLES::
 
@@ -1637,27 +1740,27 @@ class PermutationGroup_generic(FiniteGroup):
                      for orbit in orbits.sage())
 
     @cached_method
-    def orbit(self, point, action="OnPoints"):
+    def orbit(self, point, action='OnPoints'):
         """
         Return the orbit of a point under a group action.
 
         INPUT:
 
         - ``point`` -- can be a point or any of the list above, depending on the
-          action to be considered.
+          action to be considered
 
-        - ``action`` -- string. if ``point`` is an element from the domain, a
+        - ``action`` -- string; if ``point`` is an element from the domain, a
           tuple of elements of the domain, a tuple of tuples [...], this
-          variable describes how the group is acting.
+          variable describes how the group is acting
 
           The actions currently available through this method are
-          ``"OnPoints"``, ``"OnTuples"``, ``"OnSets"``, ``"OnPairs"``,
-          ``"OnSetsSets"``, ``"OnSetsDisjointSets"``,
-          ``"OnSetsTuples"``, ``"OnTuplesSets"``,
-          ``"OnTuplesTuples"``. They are taken from GAP's list of
+          ``'OnPoints'``, ``'OnTuples'``, ``'OnSets'``, ``'OnPairs'``,
+          ``'OnSetsSets'``, ``'OnSetsDisjointSets'``,
+          ``'OnSetsTuples'``, ``'OnTuplesSets'``,
+          ``'OnTuplesTuples'``. They are taken from GAP's list of
           group actions, see ``gap.help('Group Actions')``.
 
-          It is set to ``"OnPoints"`` by default. See below for examples.
+          It is set to ``'OnPoints'`` by default. See below for examples.
 
         OUTPUT:
 
@@ -1693,7 +1796,7 @@ class PermutationGroup_generic(FiniteGroup):
         Action of `S_4` on sets of disjoint sets::
 
             sage: S4 = groups.permutation.Symmetric(4)
-            sage: O = S4.orbit(((1,2),(3,4)), action="OnSetsDisjointSets")
+            sage: O = S4.orbit(((1,2),(3,4)), action='OnSetsDisjointSets')
             sage: {1, 2} in O[0] and {3, 4} in O[0]
             True
             sage: {1, 4} in O[1] and {2, 3} in O[1]
@@ -1793,7 +1896,7 @@ class PermutationGroup_generic(FiniteGroup):
                                             self._domain_to_gap[i]))
                 for i in self.orbit(point)]
 
-    def stabilizer(self, point, action="OnPoints"):
+    def stabilizer(self, point, action='OnPoints'):
         """
         Return the subgroup of ``self`` which stabilize the given position.
         ``self`` and its stabilizers must have same degree.
@@ -1801,9 +1904,9 @@ class PermutationGroup_generic(FiniteGroup):
         INPUT:
 
         - ``point`` -- a point of the :meth:`domain`, or a set of points
-          depending on the value of ``action``.
+          depending on the value of ``action``
 
-        - ``action`` -- (string; default ``"OnPoints"``) should the group be
+        - ``action`` -- string (default: ``'OnPoints'``); should the group be
           considered to act on points (``action="OnPoints"``) or on sets of
           points (``action="OnSets"``)? In the latter case, the first argument
           must be a subset of :meth:`domain`.
@@ -1828,7 +1931,7 @@ class PermutationGroup_generic(FiniteGroup):
 
             sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3,4,10)]])
             sage: G.stabilizer(10)
-            Subgroup generated by [(2,3,4), (1,2)(3,4)] of (Permutation Group with generators [(1,2)(3,4), (1,2,3,4,10)])
+            Subgroup generated by [(1,2)(3,4), (2,3,4)] of (Permutation Group with generators [(1,2)(3,4), (1,2,3,4,10)])
             sage: G.stabilizer(1) == G.subgroup(['(2,3)(4,10)', '(2,10,3)'])
             True
             sage: G = PermutationGroup([[(2,3,4)],[(6,7)]])
@@ -1895,7 +1998,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``seed`` (optional, default: ``None``), if given must be a
+        - ``seed`` -- (default: ``None``) if given must be a
           subset of the domain of a base.  When used, an attempt to
           create a base containing all or part of ``seed`` will be
           made.
@@ -1921,7 +2024,6 @@ class PermutationGroup_generic(FiniteGroup):
             [1, 2, 3, 4, 5]
             sage: S.base([1,3,5,7,9,11]) # create a base for M12 with only odd integers
             [1, 3, 5, 7, 9]
-
         """
         if seed is None:
             seed = self.domain()
@@ -1934,7 +2036,7 @@ class PermutationGroup_generic(FiniteGroup):
         stab_chain = self._libgap_().StabChain(seed).BaseStabChain().sage()
         return [self._domain_from_gap[x] for x in stab_chain]
 
-    def strong_generating_system(self, base_of_group=None, implementation="sage"):
+    def strong_generating_system(self, base_of_group=None, implementation='sage'):
         r"""
         Return a Strong Generating System of ``self`` according the given
         base for the right action of ``self`` on itself.
@@ -1957,27 +2059,25 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``base_of_group`` (optional) -- (default: ``[1, 2, 3, ..., d]``)
+        - ``base_of_group`` -- (default: ``[1, 2, 3, ..., d]``)
           a list containing the integers `1, 2, \ldots , d` in any order,
           where `d` is the degree of ``self``
 
-        - ``implementation`` -- (default: ``"sage"``) either
+        - ``implementation`` -- (default: ``'sage'``) either
 
-          * ``"sage"`` -- use the direct implementation in Sage
+          * ``'sage'`` -- use the direct implementation in Sage
 
-          * ``"gap"`` -- if used, the ``base_of_group`` must be ``None``
+          * ``'gap'`` -- if used, the ``base_of_group`` must be ``None``
             and the computation is directly performed in GAP
 
-        OUTPUT:
-
-        A list of lists of permutations from the group, which form a strong
-        generating system.
+        OUTPUT: list of lists of permutations from the group, which forms a
+        strong generating system
 
         .. WARNING::
 
-            The outputs for implementations ``"sage"`` and ``"gap"`` differ:
+            The outputs for implementations ``'sage'`` and ``'gap'`` differ:
             First, the output is reversed, and second, it might be that
-            ``"sage"`` does not contain the trivial subgroup while ``"gap"``
+            ``'sage'`` does not contain the trivial subgroup while ``'gap'``
             does.
 
             Also, both algorithms might yield different results based on the
@@ -2023,7 +2123,7 @@ class PermutationGroup_generic(FiniteGroup):
 
             sage: A = PermutationGroup([(1,2),(1,2,3,4,5,6,7,8,9)])
             sage: X = A.strong_generating_system()
-            sage: Y = A.strong_generating_system(implementation="gap")
+            sage: Y = A.strong_generating_system(implementation='gap')
             sage: [len(x) for x in X]
             [9, 8, 7, 6, 5, 4, 3, 2, 1]
             sage: [len(y) for y in Y]
@@ -2328,7 +2428,7 @@ class PermutationGroup_generic(FiniteGroup):
         OUTPUT:
 
         A positive integer, following GAP's conventions. A
-        :class:`ValueError` is raised if the group is not primitive.
+        :exc:`ValueError` is raised if the group is not primitive.
 
         EXAMPLES::
 
@@ -2409,7 +2509,6 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.frattini_subgroup()
             Subgroup generated by [()] of
              (Symmetric group of order 4! as a permutation group)
-
         """
         return self.subgroup(gap_group=self._libgap_().FrattiniSubgroup())
 
@@ -2430,7 +2529,6 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.fitting_subgroup()
             Subgroup generated by [(1,2)(3,4), (1,3)(2,4)] of
              (Permutation Group with generators [(1,2), (1,2,3,4)])
-
         """
         return self.subgroup(gap_group=self._libgap_().FittingSubgroup())
 
@@ -2445,7 +2543,7 @@ class PermutationGroup_generic(FiniteGroup):
 
             sage: G = SymmetricGroup(4)
             sage: G.solvable_radical()
-            Subgroup generated by [(1,2), (1,2,3,4)] of
+            Subgroup generated by [(1,2,3,4), (1,2)] of
              (Symmetric group of order 4! as a permutation group)
             sage: G = SymmetricGroup(5)
             sage: G.solvable_radical()
@@ -2461,7 +2559,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``other`` - a permutation group.
+        - ``other`` -- a permutation group
 
         OUTPUT:
 
@@ -2502,7 +2600,6 @@ class PermutationGroup_generic(FiniteGroup):
             Traceback (most recent call last):
             ...
             TypeError: junk is not a permutation group
-
         """
         from sage.categories.finite_permutation_groups import FinitePermutationGroups
 
@@ -2581,7 +2678,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = DihedralGroup(6)
             sage: a = PermutationGroupElement("(1,2,3,4)")
             sage: G.conjugate(a)
-            Permutation Group with generators [(1,4)(2,6)(3,5), (1,5,6,2,3,4)]
+            Permutation Group with generators [(1,5,6,2,3,4), (1,4)(2,6)(3,5)]
 
         The element performing the conjugation can be specified in
         several ways.  ::
@@ -2589,15 +2686,15 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = DihedralGroup(6)
             sage: strng = "(1,2,3,4)"
             sage: G.conjugate(strng)
-            Permutation Group with generators [(1,4)(2,6)(3,5), (1,5,6,2,3,4)]
+            Permutation Group with generators [(1,5,6,2,3,4), (1,4)(2,6)(3,5)]
             sage: G = DihedralGroup(6)
             sage: lst = [2,3,4,1]
             sage: G.conjugate(lst)
-            Permutation Group with generators [(1,4)(2,6)(3,5), (1,5,6,2,3,4)]
+            Permutation Group with generators [(1,5,6,2,3,4), (1,4)(2,6)(3,5)]
             sage: G = DihedralGroup(6)
             sage: cycles = [(1,2,3,4)]
             sage: G.conjugate(cycles)
-            Permutation Group with generators [(1,4)(2,6)(3,5), (1,5,6,2,3,4)]
+            Permutation Group with generators [(1,5,6,2,3,4), (1,4)(2,6)(3,5)]
 
         Conjugation is a group automorphism, so conjugate groups
         will be isomorphic. ::
@@ -2636,6 +2733,25 @@ class PermutationGroup_generic(FiniteGroup):
             raise TypeError("{0} does not convert to a permutation group element".format(g))
         return PermutationGroup(gap_group=libgap.ConjugateGroup(self, g))
 
+    def are_conjugate(self, H1, H2):
+        r"""
+        Return whether ``H1`` and ``H2`` are conjugate subgroups in ``G``.
+
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(3)
+            sage: H1 = PermutationGroup([(1,2)])
+            sage: H2 = PermutationGroup([(2,3)])
+            sage: G.are_conjugate(H1, H2)
+            True
+            sage: G = SymmetricGroup(4)
+            sage: H1 = PermutationGroup([[(1,3),(2,4)], [(1,2),(3,4)]])
+            sage: H2 = PermutationGroup([[(1,2)], [(1,2),(3,4)]])
+            sage: G.are_conjugate(H1, H2)
+            False
+        """
+        return libgap.IsConjugate(self, H1, H2).sage()
+
     def direct_product(self, other, maps=True):
         """
         Wraps GAP's ``DirectProduct``, ``Embedding``, and ``Projection``.
@@ -2644,51 +2760,51 @@ class PermutationGroup_generic(FiniteGroup):
         representation for the direct product. The direct product of
         permutation groups will be a permutation group again. For a direct
         product ``D``, the GAP operation ``Embedding(D,i)`` returns the
-        homomorphism embedding the i-th factor into ``D``. The GAP operation
-        ``Projection(D,i)`` gives the projection of ``D`` onto the i-th factor.
+        homomorphism embedding the `i`-th factor into ``D``. The GAP operation
+        ``Projection(D,i)`` gives the projection of ``D`` onto the `i`-th factor.
         This method returns a 5-tuple: a permutation group and 4 morphisms.
 
         INPUT:
 
-        -  ``self``, ``other`` -- permutation groups
+        - ``self``, ``other`` -- permutation groups
 
         OUTPUT:
 
-        -  ``D`` -- a direct product of the inputs, returned as
-           a permutation group as well
+        - ``D`` -- a direct product of the inputs, returned as
+          a permutation group as well
 
-        -  ``iota1`` -- an embedding of ``self`` into ``D``
+        - ``iota1`` -- an embedding of ``self`` into ``D``
 
-        -  ``iota2`` -- an embedding of ``other`` into ``D``
+        - ``iota2`` -- an embedding of ``other`` into ``D``
 
-        -  ``pr1`` -- the projection of ``D`` onto ``self`` (giving a
-           splitting ``1 - other - D - self - 1``)
+        - ``pr1`` -- the projection of ``D`` onto ``self`` (giving a
+          splitting ``1 - other - D - self - 1``)
 
-        -  ``pr2`` -- the projection of ``D`` onto ``other`` (giving a
-           splitting ``1 - self - D - other - 1``)
+        - ``pr2`` -- the projection of ``D`` onto ``other`` (giving a
+          splitting ``1 - self - D - other - 1``)
 
         EXAMPLES::
 
             sage: G = CyclicPermutationGroup(4)
             sage: D = G.direct_product(G, False); D
-            Permutation Group with generators [(5,6,7,8), (1,2,3,4)]
+            Permutation Group with generators [(1,2,3,4), (5,6,7,8)]
             sage: D,iota1,iota2,pr1,pr2 = G.direct_product(G)
             sage: D; iota1; iota2; pr1; pr2
-            Permutation Group with generators [(5,6,7,8), (1,2,3,4)]
+            Permutation Group with generators [(1,2,3,4), (5,6,7,8)]
             Permutation group morphism:
               From: Cyclic group of order 4 as a permutation group
-              To:   Permutation Group with generators [(5,6,7,8), (1,2,3,4)]
+              To:   Permutation Group with generators [(1,2,3,4), (5,6,7,8)]
               Defn: Embedding( Group( [ (1,2,3,4), (5,6,7,8) ] ), 1 )
             Permutation group morphism:
               From: Cyclic group of order 4 as a permutation group
-              To:   Permutation Group with generators [(5,6,7,8), (1,2,3,4)]
+              To:   Permutation Group with generators [(1,2,3,4), (5,6,7,8)]
               Defn: Embedding( Group( [ (1,2,3,4), (5,6,7,8) ] ), 2 )
             Permutation group morphism:
-              From: Permutation Group with generators [(5,6,7,8), (1,2,3,4)]
+              From: Permutation Group with generators [(1,2,3,4), (5,6,7,8)]
               To:   Cyclic group of order 4 as a permutation group
               Defn: Projection( Group( [ (1,2,3,4), (5,6,7,8) ] ), 1 )
             Permutation group morphism:
-              From: Permutation Group with generators [(5,6,7,8), (1,2,3,4)]
+              From: Permutation Group with generators [(1,2,3,4), (5,6,7,8)]
               To:   Cyclic group of order 4 as a permutation group
               Defn: Projection( Group( [ (1,2,3,4), (5,6,7,8) ] ), 2 )
             sage: g = D([(1,3),(2,4)]); g
@@ -2719,16 +2835,16 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``N`` - A group which is acted on by ``self`` and
+        - ``N`` -- a group which is acted on by ``self`` and
           naturally embeds as a normal subgroup of the returned semidirect
-          product.
+          product
 
-        - ``mapping`` -- A pair of lists that together define a
+        - ``mapping`` -- a pair of lists that together define a
           homomorphism, `\phi :` ``self`` `\rightarrow` Aut(``N``), by giving,
           in the second list, the images of the generators of ``self``
-          in the order given in the first list.
+          in the order given in the first list
 
-        - ``check`` -- A boolean that, if set to ``False``, will skip the
+        - ``check`` -- a boolean that, if set to ``False``, will skip the
           initial tests which are made on ``mapping``. This may be beneficial
           for large ``N``, since in such cases the injectivity test can be
           expensive. Set to ``True`` by default.
@@ -2759,7 +2875,6 @@ class PermutationGroup_generic(FiniteGroup):
         not always faithful, and in this case the inputted representations
         of the generators of ``self`` are placed on additional letters
         and adjoined to the output's generators of ``self``.
-
 
         EXAMPLES:
 
@@ -2858,7 +2973,6 @@ class PermutationGroup_generic(FiniteGroup):
         AUTHOR:
 
         - Kevin Halasz (2012-8-12)
-
         """
 
         if check:
@@ -2879,20 +2993,21 @@ class PermutationGroup_generic(FiniteGroup):
                 raise ValueError(msg)
 
         # create a parallel list of the automorphisms of N in GAP
-        libgap.eval('N := Group({})'.format(list(N.gens())))
-        gens_string = ",".join(str(x) for x in N.gens())
-        homomorphism_cmd = 'alpha := GroupHomomorphismByImages(N, N, [{0}],[{1}])'
-        libgap.eval('morphisms := []')
+        N_gap = libgap.eval(f'Group({list(N.gens())})')
+        morphisms = libgap.eval('[]')
+        libgap_gens = N_gap.GeneratorsOfGroup()
         for alpha in mapping[1]:
-            images_string = ",".join(str(alpha(n)) for n in N.gens())
-            libgap.eval(homomorphism_cmd.format(gens_string, images_string))
-            libgap.eval('Add(morphisms, alpha)')
+            images = [alpha(g) for g in N.gens()]
+            alpha_gap = N_gap.GroupHomomorphismByImages(N_gap,
+                                                        libgap_gens, images)
+            morphisms.Add(alpha_gap)
         # create the necessary homomorphism from self into the
         # automorphism group of N in GAP
-        libgap.eval('H := Group({0})'.format(mapping[0]))
-        libgap.eval('phi := GroupHomomorphismByImages(H, AutomorphismGroup(N),{},morphisms)'.format(mapping[0]))
-        libgap.eval('sdp := SemidirectProduct(H, phi, N)')
-        return PermutationGroup(gap_group='sdp')
+        H = libgap.eval(f'Group({mapping[0]})')
+        phi = H.GroupHomomorphismByImages(N_gap.AutomorphismGroup(),
+                                          H.GeneratorsOfGroup(), morphisms)
+        sdp = H.SemidirectProduct(phi, N_gap)
+        return PermutationGroup(gap_group=sdp)
 
     def holomorph(self):
         r"""
@@ -2904,10 +3019,8 @@ class PermutationGroup_generic(FiniteGroup):
 
         See :wikipedia:`Holomorph (mathematics)`
 
-        OUTPUT:
-
-        Return the holomorph of a given group as permutation group
-        via a wrapping of GAP's semidirect product function.
+        OUTPUT: the holomorph of a given group as permutation group
+        via a wrapping of GAP's semidirect product function
 
         EXAMPLES:
 
@@ -2934,7 +3047,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: D4 = DihedralGroup(4)
             sage: H = D4.holomorph()
             sage: H.gens()
-            ((3,8)(4,7), (2,3,5,8), (2,5)(3,8), (1,4,6,7)(2,3,5,8), (1,8)(2,7)(3,6)(4,5))
+            ((2,3,5,8), (2,5)(3,8), (3,8)(4,7), (1,4,6,7)(2,3,5,8), (1,8)(2,7)(3,6)(4,5))
             sage: G = H.subgroup([H.gens()[0],H.gens()[1],H.gens()[2]])
             sage: N = H.subgroup([H.gens()[3],H.gens()[4]])
             sage: N.is_normal(H)
@@ -2954,12 +3067,11 @@ class PermutationGroup_generic(FiniteGroup):
 
         - Kevin Halasz (2012-08-14)
         """
-
-        libgap.eval('G := Group({})'.format(list(self.gens())))
-        libgap.eval('aut := AutomorphismGroup(G)')
-        libgap.eval('alpha := InverseGeneralMapping(NiceMonomorphism(aut))')
-        libgap.eval('product := SemidirectProduct(NiceObject(aut),alpha,G)')
-        return PermutationGroup(gap_group='product')
+        G = libgap.eval(f'Group({list(self.gens())})')
+        aut = G.AutomorphismGroup()
+        alpha = aut.NiceMonomorphism().InverseGeneralMapping()
+        product = aut.NiceObject().SemidirectProduct(alpha, G)
+        return PermutationGroup(gap_group=product)
 
     def subgroup(self, gens=None, gap_group=None, domain=None, category=None, canonicalize=True, check=True):
         """
@@ -2988,9 +3100,7 @@ class PermutationGroup_generic(FiniteGroup):
         - ``libgap_group`` -- an instance of :class:`sage.libs.gap.element.GapElement`
           representing a GAP group whose generators belong to ``self.gap()``
 
-        OUTPUT:
-
-        The corresponding subgroup of ``self`` as an instance of this class
+        OUTPUT: the corresponding subgroup of ``self`` as an instance of this class
 
         EXAMPLES::
 
@@ -3018,19 +3128,16 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``reduced`` -- (default ``False``) if ``True``, :meth:`FinitelyPresentedGroup.simplified
-          <sage.groups.finitely_presented.FinitelyPresentedGroup.simplified>`
+        - ``reduced`` -- (default: ``False``) if ``True``,
+          :meth:`FinitelyPresentedGroup.simplified <sage.groups.finitely_presented.FinitelyPresentedGroup.simplified>`
           is called, attempting to simplify the presentation of the finitely presented group
-          to be returned.
+          to be returned
 
-        OUTPUT:
+        OUTPUT: finite presentation of ``self``, obtained by taking the image
+        of the isomorphism returned by the GAP function
+        ``IsomorphismFpGroupByGenerators``
 
-        Finite presentation of ``self``, obtained by taking the image
-        of the isomorphism returned by the GAP function ``IsomorphismFpGroupByGenerators``.
-
-        ALGORITHM:
-
-        Uses GAP.
+        ALGORITHM: uses GAP
 
         EXAMPLES::
 
@@ -3137,7 +3244,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.quotient(N)
             Permutation Group with generators [(1,2)]
             sage: G.quotient(G)
-            Permutation Group with generators [()]
+            Permutation Group with generators [(), ()]
         """
         Q = self._libgap_() / N._libgap_()
         # Return Q as a permutation group
@@ -3152,7 +3259,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``other`` -- (default: ``None``) a permutation group.
+        - ``other`` -- (default: ``None``) a permutation group
 
         OUTPUT:
 
@@ -3173,7 +3280,7 @@ class PermutationGroup_generic(FiniteGroup):
         The two groups need only be permutation groups, there is no notion
         of requiring them to explicitly be subgroups of some other group.
 
-        .. note::
+        .. NOTE::
 
             For the identical statement, the generators of the returned
             group can vary from one execution to the next.
@@ -3249,7 +3356,7 @@ class PermutationGroup_generic(FiniteGroup):
     @hap_decorator
     def cohomology(self, n, p=0):
         r"""
-        Computes the group cohomology `H^n(G, F)`, where `F = \ZZ`
+        Compute the group cohomology `H^n(G, F)`, where `F = \ZZ`
         if `p=0` and `F = \ZZ / p \ZZ` if `p > 0` is a prime.
 
         Wraps HAP's ``GroupHomology`` function, written by Graham Ellis.
@@ -3334,7 +3441,7 @@ class PermutationGroup_generic(FiniteGroup):
     @hap_decorator
     def homology(self, n, p=0):
         r"""
-        Computes the group homology `H_n(G, F)`, where
+        Compute the group homology `H_n(G, F)`, where
         `F = \ZZ` if `p=0` and `F = \ZZ / p \ZZ` if
         `p > 0` is a prime. Wraps HAP's ``GroupHomology`` function,
         written by Graham Ellis.
@@ -3381,7 +3488,7 @@ class PermutationGroup_generic(FiniteGroup):
     @hap_decorator
     def homology_part(self, n, p=0):
         r"""
-        Computes the `p`-part of the group homology
+        Compute the `p`-part of the group homology
         `H_n(G, F)`, where `F = \ZZ` if `p=0` and
         `F = \ZZ / p \ZZ` if `p > 0` is a prime. Wraps HAP's
         ``Homology`` function, written by Graham Ellis, applied to the
@@ -3489,7 +3596,6 @@ class PermutationGroup_generic(FiniteGroup):
         AUTHORS:
 
         - David Joyner and William Stein (2006-01-04)
-
         """
         G = self._libgap_()
         cl = G.ConjugacyClasses()
@@ -3599,13 +3705,13 @@ class PermutationGroup_generic(FiniteGroup):
               (Permutation Group with generators [(1,2)(3,4), (1,2,3,4)]),
              Subgroup generated by [(2,4)] of
               (Permutation Group with generators [(1,2)(3,4), (1,2,3,4)]),
-             Subgroup generated by [(1,2)(3,4), (1,4)(2,3)] of
+             Subgroup generated by [(1,4)(2,3), (1,2)(3,4)] of
               (Permutation Group with generators [(1,2)(3,4), (1,2,3,4)]),
              Subgroup generated by [(2,4), (1,3)(2,4)] of
               (Permutation Group with generators [(1,2)(3,4), (1,2,3,4)]),
              Subgroup generated by [(1,2,3,4), (1,3)(2,4)] of
               (Permutation Group with generators [(1,2)(3,4), (1,2,3,4)]),
-             Subgroup generated by [(2,4), (1,2)(3,4), (1,4)(2,3)] of
+             Subgroup generated by [(1,4)(2,3), (1,2)(3,4), (2,4)] of
               (Permutation Group with generators [(1,2)(3,4), (1,2,3,4)])]
 
         ::
@@ -3618,7 +3724,7 @@ class PermutationGroup_generic(FiniteGroup):
               (Symmetric group of order 3! as a permutation group),
              Subgroup generated by [(1,2,3)] of
               (Symmetric group of order 3! as a permutation group),
-             Subgroup generated by [(2,3), (1,2,3)] of
+             Subgroup generated by [(1,2,3), (2,3)] of
               (Symmetric group of order 3! as a permutation group)]
 
         AUTHORS:
@@ -3640,7 +3746,7 @@ class PermutationGroup_generic(FiniteGroup):
         with one element on through up to the whole group.
         Conjugacy classes of subgroups are contiguous in the list.
 
-        .. warning::
+        .. WARNING::
 
             For even relatively small groups this method can
             take a very long time to execute, or create vast
@@ -3671,7 +3777,7 @@ class PermutationGroup_generic(FiniteGroup):
               (Symmetric group of order 3! as a permutation group),
              Subgroup generated by [(1,2,3)] of
               (Symmetric group of order 3! as a permutation group),
-             Subgroup generated by [(2,3), (1,2,3)] of
+             Subgroup generated by [(1,2,3), (2,3)] of
               (Symmetric group of order 3! as a permutation group)]
 
             sage: G = CyclicPermutationGroup(14)
@@ -3682,20 +3788,17 @@ class PermutationGroup_generic(FiniteGroup):
               (Cyclic group of order 14 as a permutation group),
              Subgroup generated by [(1,3,5,7,9,11,13)(2,4,6,8,10,12,14)] of
               (Cyclic group of order 14 as a permutation group),
-             Subgroup generated by [(1,2,3,4,5,6,7,8,9,10,11,12,13,14),
-                                    (1,3,5,7,9,11,13)(2,4,6,8,10,12,14)] of
+             Subgroup generated by [(1,3,5,7,9,11,13)(2,4,6,8,10,12,14),
+                                    (1,2,3,4,5,6,7,8,9,10,11,12,13,14)] of
               (Cyclic group of order 14 as a permutation group)]
 
         AUTHOR:
 
         - Rob Beezer (2011-01-24)
         """
-        all_sg = []
         ccs = self._libgap_().ConjugacyClassesSubgroups()
-        for cc in ccs:
-            for h in cc.Elements():
-                all_sg.append(self.subgroup(gap_group=h))
-        return all_sg
+        return [self.subgroup(gap_group=h) for cc in ccs
+                for h in cc.Elements()]
 
     @cached_method
     def _regular_subgroup_gap(self):
@@ -3715,7 +3818,6 @@ class PermutationGroup_generic(FiniteGroup):
             sage: S4._regular_subgroup_gap() # random
             ConjugacyClassSubgroups(SymmetricGroup( [ 1 .. 4 ] ),Group(
             [ (1,4)(2,3), (1,3)(2,4) ] ))
-
         """
         filt = libgap.eval('x -> IsRegular(Representative(x), [1..{}])'.format(
             self.degree()))
@@ -3733,7 +3835,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``return_group`` -- (boolean) If ``True``, a regular
+        - ``return_group`` -- boolean; if ``True``, a regular
           subgroup is returned if there is one, and ``None`` if there isn't.
           When ``return_group=False`` (default), only a boolean indicating
           whether such a group exists is returned instead.
@@ -3755,7 +3857,6 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = graphs.PetersenGraph().automorphism_group()
             sage: G.has_regular_subgroup()
             False
-
         """
         b = False
         G = None
@@ -3781,7 +3882,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``representative`` -- (boolean) whether to return all possible block
+        - ``representative`` -- boolean; whether to return all possible block
           systems of imprimitivity or only one of their representatives (the
           block can be obtained from its representative set `S` by computing the
           orbit of `S` under ``self``).
@@ -3855,10 +3956,10 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``S`` -- a subgroup of ``self``.  An error is raised
-          if ``S`` is not a subgroup.
+        - ``S`` -- a subgroup of ``self``;  an error is raised
+          if ``S`` is not a subgroup
 
-        - ``side`` -- (default: ``'right'``) Determines if right cosets or
+        - ``side`` -- (default: ``'right'``) determines if right cosets or
           left cosets are returned.  ``side`` refers to where the
           representative is placed in the products forming the cosets
           and thus allowable values are only ``'right'`` and ``'left'``.
@@ -3890,7 +3991,7 @@ class PermutationGroup_generic(FiniteGroup):
         the list of cosets, due to the ordering of the representatives).
         See below for examples of this.
 
-        .. note::
+        .. NOTE::
 
             This is a naive implementation intended for instructional
             purposes, and hence is slow for larger groups.  Sage and GAP
@@ -4020,7 +4121,7 @@ class PermutationGroup_generic(FiniteGroup):
 
     def minimal_generating_set(self):
         r"""
-        Return a minimal generating set
+        Return a minimal generating set.
 
         EXAMPLES::
 
@@ -4049,15 +4150,15 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3,4)]])
             sage: g = G([(1,3)])
             sage: G.normalizer(g)
-            Subgroup generated by [(2,4), (1,3)] of
+            Subgroup generated by [(1,3), (2,4)] of
              (Permutation Group with generators [(1,2)(3,4), (1,2,3,4)])
             sage: g = G([(1,2,3,4)])
             sage: G.normalizer(g)
-            Subgroup generated by [(2,4), (1,2,3,4), (1,3)(2,4)] of
+            Subgroup generated by  [(1,2,3,4), (1,3)(2,4), (2,4)] of
              (Permutation Group with generators [(1,2)(3,4), (1,2,3,4)])
             sage: H = G.subgroup([G([(1,2,3,4)])])
             sage: G.normalizer(H)
-            Subgroup generated by [(2,4), (1,2,3,4), (1,3)(2,4)] of
+            Subgroup generated by [(1,2,3,4), (1,3)(2,4), (2,4)] of
              (Permutation Group with generators [(1,2)(3,4), (1,2,3,4)])
         """
         return self.subgroup(gap_group=self._libgap_().Normalizer(g))
@@ -4071,7 +4172,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3,4)]])
             sage: g = G([(1,3)])
             sage: G.centralizer(g)
-            Subgroup generated by [(2,4), (1,3)] of
+            Subgroup generated by [(1,3), (2,4)] of
              (Permutation Group with generators [(1,2)(3,4), (1,2,3,4)])
             sage: g = G([(1,2,3,4)])
             sage: G.centralizer(g)
@@ -4147,7 +4248,7 @@ class PermutationGroup_generic(FiniteGroup):
         return [self.subgroup(gap_group=gap_subgroup)
                 for gap_subgroup in self._libgap_().MaximalNormalSubgroups()]
 
-    ######################  Boolean tests #####################
+    # #####################  Boolean tests #####################
 
     def is_abelian(self):
         """
@@ -4218,15 +4319,11 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
+        - ``self`` -- this group
 
-        -  ``self`` -- this group
+        - ``right`` -- a permutation group
 
-        -  ``right`` -- a permutation group
-
-
-        OUTPUT:
-
-        - ``None`` or a morphism of permutation groups.
+        OUTPUT: ``None``, or a morphism of permutation groups
 
         EXAMPLES::
 
@@ -4271,16 +4368,12 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
+        - ``self`` -- this group
 
-        -  ``self`` -- this group
+        - ``right`` -- a permutation group
 
-        -  ``right`` -- a permutation group
-
-
-        OUTPUT:
-
-        - boolean; ``True`` if ``self`` and ``right`` are isomorphic groups;
-          ``False`` otherwise.
+        OUTPUT: boolean; ``True`` if ``self`` and ``right`` are isomorphic
+        groups; ``False`` otherwise
 
         EXAMPLES::
 
@@ -4373,7 +4466,6 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup(['(1,2,3,4,5)'])
             sage: G.is_pgroup()
             True
-
         """
         return bool(self._libgap_().IsPGroup())
 
@@ -4406,7 +4498,6 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup(['(1,2,3)(4,5)'])
             sage: G.is_simple()
             False
-
         """
         return bool(self._libgap_().IsSimpleGroup())
 
@@ -4560,7 +4651,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        - ``domain`` (optional)
+        - ``domain`` -- optional
 
         .. SEEALSO::
 
@@ -4591,7 +4682,6 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup([[(1,2,3,4)],[(2,4)]])
             sage: G.is_primitive([1,2,3])
             False
-
         """
         #If the domain is not a subset of self.domain(), then the
         #action isn't primitive.
@@ -4627,7 +4717,6 @@ class PermutationGroup_generic(FiniteGroup):
             True
             sage: G.is_semi_regular(G.non_fixed_points())
             False
-
         """
         try:
             domain = libgap.eval(self._domain_gap(domain))
@@ -4660,7 +4749,6 @@ class PermutationGroup_generic(FiniteGroup):
             True
             sage: G.is_regular(G.non_fixed_points())
             False
-
         """
         try:
             domain = libgap.eval(self._domain_gap(domain))
@@ -4696,7 +4784,7 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return bool(self._libgap_().IsNormal(other))
 
-    ############## Series ######################
+    # ############# Series ######################
 
     def composition_series(self):
         """
@@ -4715,7 +4803,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.composition_series()
             [Subgroup generated by [(3,4), (1,2,3)(4,5)] of
               (Permutation Group with generators [(3,4), (1,2,3)(4,5)]),
-             Subgroup generated by [(1,3,5), (1,5)(3,4), (1,5)(2,4)] of
+             Subgroup generated by [(1,5)(3,4), (1,5)(2,4), (1,3,5)] of
               (Permutation Group with generators [(3,4), (1,2,3)(4,5)]),
              Subgroup generated by [()] of
               (Permutation Group with generators [(3,4), (1,2,3)(4,5)])]
@@ -4746,7 +4834,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.derived_series()
             [Subgroup generated by [(3,4), (1,2,3)(4,5)] of
               (Permutation Group with generators [(3,4), (1,2,3)(4,5)]),
-             Subgroup generated by [(1,3,5), (1,5)(3,4), (1,5)(2,4)] of
+             Subgroup generated by [(1,5)(3,4), (1,5)(2,4), (1,3,5)] of
               (Permutation Group with generators [(3,4), (1,2,3)(4,5)])]
         """
         libgap.set_seed()
@@ -4770,7 +4858,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.lower_central_series()
             [Subgroup generated by [(3,4), (1,2,3)(4,5)] of
               (Permutation Group with generators [(3,4), (1,2,3)(4,5)]),
-             Subgroup generated by [(1,3,5), (1,5)(3,4), (1,5)(2,4)] of
+             Subgroup generated by [(1,5)(3,4), (1,5)(2,4), (1,3,5)] of
               (Permutation Group with generators [(3,4), (1,2,3)(4,5)])]
         """
         libgap.set_seed()
@@ -4838,7 +4926,8 @@ class PermutationGroup_generic(FiniteGroup):
             sage: PG.molien_series() == PG1.molien_series()*(1-x)^2
             True
         """
-        pi = self._libgap_().PermutationCharacter(list(self.domain()),libgap.OnPoints)
+        pi = self._libgap_().PermutationCharacter(list(self.domain()),
+                                                  libgap.OnPoints)
         M = pi.MolienSeries()
 
         R = QQ['x']
@@ -4896,7 +4985,6 @@ class PermutationGroup_generic(FiniteGroup):
         AUTHORS:
 
         - David Joyner and Graham Ellis
-
         """
         load_hap()
         from sage.arith.misc import is_prime
@@ -4937,7 +5025,6 @@ class PermutationGroup_generic(FiniteGroup):
 
             sage: PSL(10,2).sylow_subgroup(7)
             Subgroup generated by...
-
         """
         return self.subgroup(gap_group=self._libgap_().SylowSubgroup(p))
 
@@ -4962,14 +5049,13 @@ class PermutationGroup_generic(FiniteGroup):
 
     from sage.groups.generic import structure_description
 
-    def sign_representation(self, base_ring=None, side="twosided"):
+    def sign_representation(self, base_ring=None):
         r"""
         Return the sign representation of ``self`` over ``base_ring``.
 
         INPUT:
 
         - ``base_ring`` -- (optional) the base ring; the default is `\ZZ`
-        - ``side`` -- ignored
 
         EXAMPLES::
 
@@ -5020,10 +5106,10 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
         - ``gens`` -- the generators of the subgroup
 
         - ``gap_group`` -- a GAP permutation group contained in the ambient group;
-          constructed from ``gens`` if not given.
+          constructed from ``gens`` if not given
 
-        - ``check`` -- ``True``: checks if ``gens`` are indeed elements of the
-          ambient group
+        - ``check`` -- boolean (default: ``True``);  checks if ``gens`` are
+          indeed elements of the ambient group
 
         - ``canonicalize`` -- boolean (default: ``True``); if ``True``, sort
           generators and remove duplicates
@@ -5123,7 +5209,8 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
             sage: G
             Symmetric group of order 6! as a permutation group
             sage: G3
-            Subgroup generated by [(1,2), (1,2,3,4,5,6)] of (Symmetric group of order 6! as a permutation group)
+            Subgroup generated by [(1,2,3,4,5,6), (1,2)] of
+             (Symmetric group of order 6! as a permutation group)
             sage: G is G3
             False
             sage: G == G3 # as permutation groups
@@ -5138,7 +5225,6 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
             True
             sage: G.subgroup([G((1,2,3))]) == G.subgroup([G((1,3,2))])
             True
-
         """
         if self is other:
             return rich_to_bool(op, 0)
@@ -5197,7 +5283,7 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
         gens = '\\langle ' + \
                ', '.join([x._latex_() for x in self.gens()]) + ' \\rangle'
         return '\\hbox{Subgroup } %s \\hbox{ of } %s' % \
-                 (gens, self.ambient_group()._latex_())
+            (gens, self.ambient_group()._latex_())
 
     def ambient_group(self):
         """
@@ -5233,7 +5319,6 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
             (Symmetric group of order 3! as a permutation group)
            sage: H.is_normal()
            True
-
         """
         if other is None:
             other = self.ambient_group()
@@ -5242,6 +5327,7 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
 
 # Allow for subclasses to use a different subgroup class
 PermutationGroup_generic.Subgroup = PermutationGroup_subgroup
+
 
 class PermutationGroup_action(PermutationGroup_generic):
     """
@@ -5291,12 +5377,10 @@ class PermutationGroup_action(PermutationGroup_generic):
         - ``gap_group`` -- a gap or libgap permutation group, or a string
           defining one (default: ``None``), this is currently not supported
 
-        - ``canonicalize`` -- bool (default: ``True``); if ``True``,
+        - ``canonicalize`` -- boolean (default: ``True``); if ``True``,
           sort generators and remove duplicates
 
-        OUTPUT:
-
-        - A finite group action given as a permutation group.
+        OUTPUT: a finite group action given as a permutation group
 
         EXAMPLES::
 
@@ -5304,7 +5388,6 @@ class PermutationGroup_action(PermutationGroup_generic):
             sage: G = PermutationGroup(action=a, domain=range(7))                       # needs sage.combinat
             sage: G.orbits()                                                            # needs sage.combinat
             ((0,), (1, 2, 4), (3, 6, 5))
-
         """
         from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
         from sage.sets.disjoint_set import DisjointSet
@@ -5336,7 +5419,7 @@ class PermutationGroup_action(PermutationGroup_generic):
 
     def orbits(self):
         """
-        Returns the orbits of the elements of the domain under the
+        Return the orbits of the elements of the domain under the
         default group action.
 
         EXAMPLES::

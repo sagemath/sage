@@ -35,7 +35,80 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 
-class VermaModule(CombinatorialFreeModule):
+class ModulePrinting:
+    """
+    Helper mixin class for printing the module vectors.
+    """
+    def __init__(self, vector_name='v'):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.lie_algebras.verma_module import ModulePrinting
+            sage: MP = ModulePrinting()
+            sage: TestSuite(MP).run(skip="_test_pickling")
+        """
+        self.__vector_name = vector_name
+
+    def _repr_generator(self, m):
+        r"""
+        Return a string representation of the generator indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: L = lie_algebras.sp(QQ, 4)
+            sage: La = L.cartan_type().root_system().ambient_space().fundamental_weights()
+            sage: M = L.verma_module(-1/2*La[1] + 3/7*La[2])
+            sage: f1, f2 = L.f()
+            sage: x = M.pbw_basis()(L([f1, [f1, f2]]))
+            sage: v = x * M.highest_weight_vector()
+            sage: M._repr_generator(v.leading_support())
+            'f[-2*alpha[1] - alpha[2]]*v[(-1/14, 3/7)]'
+
+            sage: M.highest_weight_vector()
+            v[(-1/14, 3/7)]
+            sage: 2 * M.highest_weight_vector()
+            2*v[(-1/14, 3/7)]
+        """
+        ret = super()._repr_generator(m)
+        if ret == '1':
+            ret = ''
+        else:
+            ret += '*'
+        return ret + self.__vector_name + "[{}]".format(self._weight)
+
+    def _latex_generator(self, m):
+        r"""
+        Return a latex representation of the generator indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: L = lie_algebras.sp(QQ, 4)
+            sage: La = L.cartan_type().root_system().ambient_space().fundamental_weights()
+            sage: M = L.verma_module(-1/2*La[1] + 3/7*La[2])
+            sage: f1, f2 = L.f()
+            sage: x = M.pbw_basis()(L([f1, [f1, f2]]))
+            sage: v = x * M.highest_weight_vector()
+            sage: M._latex_generator(v.leading_support())
+            f_{-2 \alpha_{1} - \alpha_{2}} v_{-\frac{1}{14} e_{0} + \frac{3}{7} e_{1}}
+
+            sage: latex(2 * M.highest_weight_vector())
+            2  v_{-\frac{1}{14} e_{0} + \frac{3}{7} e_{1}}
+            sage: latex(M.highest_weight_vector())
+             v_{-\frac{1}{14} e_{0} + \frac{3}{7} e_{1}}
+        """
+        ret = super()._latex_generator(m)
+        if ret == '1':
+            ret = ''
+        from sage.misc.latex import latex
+        return ret + " {}_{{{}}}".format(self.__vector_name, latex(self._weight))
+
+    _repr_term = _repr_generator
+    _latex_term = _latex_generator
+
+
+class VermaModule(ModulePrinting, CombinatorialFreeModule):
     r"""
     A Verma module.
 
@@ -50,7 +123,7 @@ class VermaModule(CombinatorialFreeModule):
 
     where `F_{\lambda}` is the `U(\mathfrak{b})` module such that
     `h \in U(\mathfrak{h})` acts as multiplication by
-    `\langle \lambda, h \rangle` and `U\mathfrak{g}^+) F_{\lambda} = 0`.
+    `\langle \lambda, h \rangle` and `U(\mathfrak{g}^+) F_{\lambda} = 0`.
 
     INPUT:
 
@@ -118,9 +191,10 @@ class VermaModule(CombinatorialFreeModule):
                                          prefix='', bracket=False, latex_bracket=False,
                                          sorting_key=self._monomial_key,
                                          category=Modules(R).WithBasis().Graded())
+        ModulePrinting.__init__(self)
 
     def _triangular_key(self, x):
-        """
+        r"""
         Return a key for sorting for the index ``x`` that respects
         the triangular decomposition by `U^-, U^0, U^+`.
 
@@ -233,64 +307,8 @@ class VermaModule(CombinatorialFreeModule):
         from sage.misc.latex import latex
         return "M_{{{}}}".format(latex(self._weight))
 
-    def _repr_generator(self, m):
-        r"""
-        Return a string representation of the generator indexed by ``m``.
-
-        EXAMPLES::
-
-            sage: L = lie_algebras.sp(QQ, 4)
-            sage: La = L.cartan_type().root_system().ambient_space().fundamental_weights()
-            sage: M = L.verma_module(-1/2*La[1] + 3/7*La[2])
-            sage: f1, f2 = L.f(1), L.f(2)
-            sage: x = M.pbw_basis()(L([f1, [f1, f2]]))
-            sage: v = x * M.highest_weight_vector()
-            sage: M._repr_generator(v.leading_support())
-            'f[-2*alpha[1] - alpha[2]]*v[(-1/14, 3/7)]'
-
-            sage: M.highest_weight_vector()
-            v[(-1/14, 3/7)]
-            sage: 2 * M.highest_weight_vector()
-            2*v[(-1/14, 3/7)]
-        """
-        ret = super()._repr_generator(m)
-        if ret == '1':
-            ret = ''
-        else:
-            ret += '*'
-        return ret + "v[{}]".format(self._weight)
-
-    def _latex_generator(self, m):
-        r"""
-        Return a latex representation of the generator indexed by ``m``.
-
-        EXAMPLES::
-
-            sage: L = lie_algebras.sp(QQ, 4)
-            sage: La = L.cartan_type().root_system().ambient_space().fundamental_weights()
-            sage: M = L.verma_module(-1/2*La[1] + 3/7*La[2])
-            sage: f1, f2 = L.f(1), L.f(2)
-            sage: x = M.pbw_basis()(L([f1, [f1, f2]]))
-            sage: v = x * M.highest_weight_vector()
-            sage: M._latex_generator(v.leading_support())
-            f_{-2 \alpha_{1} - \alpha_{2}} v_{-\frac{1}{14} e_{0} + \frac{3}{7} e_{1}}
-
-            sage: latex(2 * M.highest_weight_vector())
-            2  v_{-\frac{1}{14} e_{0} + \frac{3}{7} e_{1}}
-            sage: latex(M.highest_weight_vector())
-             v_{-\frac{1}{14} e_{0} + \frac{3}{7} e_{1}}
-        """
-        ret = super()._latex_generator(m)
-        if ret == '1':
-            ret = ''
-        from sage.misc.latex import latex
-        return ret + " v_{{{}}}".format(latex(self._weight))
-
-    _repr_term = _repr_generator
-    _latex_term = _latex_generator
-
     def lie_algebra(self):
-        """
+        r"""
         Return the underlying Lie algebra of ``self``.
 
         EXAMPLES::
@@ -304,7 +322,7 @@ class VermaModule(CombinatorialFreeModule):
         return self._g
 
     def pbw_basis(self):
-        """
+        r"""
         Return the PBW basis of the underlying Lie algebra
         used to define ``self``.
 
@@ -366,6 +384,26 @@ class VermaModule(CombinatorialFreeModule):
         """
         return self._weight
 
+    def dual(self):
+        r"""
+        Return the dual module `M(\lambda)^{\vee}` in Category `\mathcal{O}`.
+
+        EXAMPLES::
+
+            sage: L = lie_algebras.sl(QQ, 2)
+            sage: La = L.cartan_type().root_system().weight_space().fundamental_weights()
+            sage: M = L.verma_module(2*La[1])
+            sage: Mc = M.dual()
+
+            sage: Mp = L.verma_module(-2*La[1])
+            sage: Mp.dual() is Mp
+            True
+        """
+        if self.is_simple():
+            return self
+        from sage.algebras.lie_algebras.bgg_dual_module import BGGDualModule
+        return BGGDualModule(self)
+
     def degree_on_basis(self, m):
         r"""
         Return the degree (or weight) of the basis element indexed by ``m``.
@@ -398,7 +436,7 @@ class VermaModule(CombinatorialFreeModule):
 
         - there is a coercion from ``R`` into the base ring;
         - ``R`` is a Verma module over the same Lie algebra and
-          there is a non-zero Verma module morphism from ``R``
+          there is a nonzero Verma module morphism from ``R``
           into ``self``.
 
         EXAMPLES::
@@ -450,6 +488,47 @@ class VermaModule(CombinatorialFreeModule):
         if isinstance(x, self._pbw.element_class):
             return self.highest_weight_vector()._acted_upon_(x, False)
         return super()._element_constructor_(self, x)
+
+    def contravariant_form(self, x, y):
+        r"""
+        Return the contravariant form of ``x`` and ``y``.
+
+        Let `C(x, y)` denote the (universal) contravariant form on
+        `U(\mathfrak{g})`. Then the contravariant form on `M(\lambda)` is
+        given by evaluating `C(x, y) \in U(\mathfrak{h})` at `\lambda`.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['A', 1])
+            sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
+            sage: M = g.verma_module(2*La[1])
+            sage: U = M.pbw_basis()
+            sage: v = M.highest_weight_vector()
+            sage: e, h, f = U.algebra_generators()
+            sage: elts = [f^k * v for k in range(8)]; elts
+            [v[2*Lambda[1]], f[-alpha[1]]*v[2*Lambda[1]],
+             f[-alpha[1]]^2*v[2*Lambda[1]], f[-alpha[1]]^3*v[2*Lambda[1]],
+             f[-alpha[1]]^4*v[2*Lambda[1]], f[-alpha[1]]^5*v[2*Lambda[1]],
+             f[-alpha[1]]^6*v[2*Lambda[1]], f[-alpha[1]]^7*v[2*Lambda[1]]]
+            sage: matrix([[M.contravariant_form(x, y) for x in elts] for y in elts])
+            [1 0 0 0 0 0 0 0]
+            [0 2 0 0 0 0 0 0]
+            [0 0 4 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+        """
+        pbw = self._pbw
+        I = pbw._indices
+        xlift = pbw.element_class(pbw, {I(m._monomial): c for m, c in x._monomial_coefficients.items()})
+        ylift = pbw.element_class(pbw, {I(m._monomial): c for m, c in y._monomial_coefficients.items()})
+        univ = pbw.contravariant_form(xlift, ylift)
+        la = self._weight
+        R = self.base_ring()
+        return R.sum(c * R.prod(la.scalar(k) ** e for k, e in m._monomial.items())
+                     for m, c in univ._monomial_coefficients.items())
 
     @lazy_attribute
     def _dominant_data(self):
@@ -505,6 +584,66 @@ class VermaModule(CombinatorialFreeModule):
         """
         return not self._dominant_data[0].is_dominant()
 
+    def is_simple(self):
+        r"""
+        Return if ``self`` is a simple module.
+
+        A Verma module `M_{\lambda}` is simple if and only if `\lambda`
+        is *Verma antidominant* in the sense
+
+        .. MATH::
+
+            \langle \lambda + \rho, \alpha^{\vee} \rangle \notin \ZZ_{>0}
+
+        for all positive roots `\alpha`.
+
+        EXAMPLES::
+
+            sage: L = lie_algebras.sl(QQ, 3)
+            sage: La = L.cartan_type().root_system().weight_space().fundamental_weights()
+            sage: L.verma_module(La[1] + La[2]).is_simple()
+            False
+            sage: L.verma_module(-La[1] - La[2]).is_simple()
+            True
+            sage: L.verma_module(3/2*La[1] + 1/2*La[2]).is_simple()
+            False
+            sage: L.verma_module(3/2*La[1] + 1/3*La[2]).is_simple()
+            True
+            sage: L.verma_module(-3*La[1] + 2/3*La[2]).is_simple()
+            True
+        """
+        return self._weight.is_verma_dominant(positive=False)
+
+    def is_projective(self):
+        r"""
+        Return if ``self`` is a projective module in Category `\mathcal{O}`.
+
+        A Verma module `M_{\lambda}` is projective (in Category `\mathcal{O}`
+        if and only if `\lambda` is *Verma dominant* in the sense
+
+        .. MATH::
+
+            \langle \lambda + \rho, \alpha^{\vee} \rangle \notin \ZZ_{<0}
+
+        for all positive roots `\alpha`.
+
+        EXAMPLES::
+
+            sage: L = lie_algebras.sl(QQ, 3)
+            sage: La = L.cartan_type().root_system().weight_space().fundamental_weights()
+            sage: L.verma_module(La[1] + La[2]).is_projective()
+            True
+            sage: L.verma_module(-La[1] - La[2]).is_projective()
+            True
+            sage: L.verma_module(3/2*La[1] + 1/2*La[2]).is_projective()
+            True
+            sage: L.verma_module(3/2*La[1] + 1/3*La[2]).is_projective()
+            True
+            sage: L.verma_module(-3*La[1] + 2/3*La[2]).is_projective()
+            False
+        """
+        return self._weight.is_verma_dominant()
+
     def homogeneous_component_basis(self, d):
         r"""
         Return a basis for the ``d``-th homogeneous component of ``self``.
@@ -528,10 +667,12 @@ class VermaModule(CombinatorialFreeModule):
             sage: M.homogeneous_component_basis(mu - La[1])
             Family ()
         """
-        diff = _convert_wt_to_root(d - self._weight)
+        diff = (d - self._weight)._to_root_vector()
         if diff is None or not all(coeff <= 0 and coeff in ZZ for coeff in diff):
             return Family([])
         return sorted(self._homogeneous_component_f(diff))
+
+    weight_space_basis = homogeneous_component_basis
 
     @cached_method
     def _homogeneous_component_f(self, d):
@@ -590,7 +731,7 @@ class VermaModule(CombinatorialFreeModule):
         The sole purpose of this method is to construct the homset as a
         :class:`~sage.algebras.lie_algebras.verma_module.VermaModuleHomset`.
         If ``category`` is specified and is not a subcategory of
-        ``self.category()``, a :class:`TypeError` is raised instead.
+        ``self.category()``, a :exc:`TypeError` is raised instead.
 
         This method is not meant to be called directly. Please use
         :func:`sage.categories.homset.Hom` instead.
@@ -605,16 +746,21 @@ class VermaModule(CombinatorialFreeModule):
             sage: type(H)
             <...VermaModuleHomset_with_category_with_equality_by_id'>
         """
-        if not (isinstance(Y, VermaModule) and self._g is Y._g):
-            raise TypeError("{} must be a Verma module of {}".format(Y, self._g))
+        from sage.algebras.lie_algebras.bgg_dual_module import BGGDualModule, SimpleModule
+        if not ((isinstance(Y, (VermaModule, SimpleModule))
+                 or (isinstance(Y, BGGDualModule) and Y._module is self))
+                and self._g is Y.lie_algebra()):
+            raise TypeError("{} must be an object in Category O of {}".format(Y, self._g))
         if category is not None and not category.is_subcategory(self.category()):
             raise TypeError("{} is not a subcategory of {}".format(category, self.category()))
         return VermaModuleHomset(self, Y)
 
     class Element(CombinatorialFreeModule.Element):
         def _acted_upon_(self, scalar, self_on_left=False):
-            """
+            r"""
             Return the action of ``scalar`` on ``self``.
+
+            EXAMPLES:
 
             Check that other PBW algebras have an action::
 
@@ -639,6 +785,7 @@ class VermaModule(CombinatorialFreeModule):
             """
             P = self.parent()
             # Check for scalars first
+            # TODO: Pass by these checks if a PBW basis element of the Lie algebra
             if scalar in P.base_ring():
                 # Don't have this be a super call
                 return CombinatorialFreeModule.Element._acted_upon_(self, scalar, self_on_left)
@@ -694,12 +841,14 @@ class VermaModule(CombinatorialFreeModule):
         _lmul_ = _acted_upon_
         _rmul_ = _acted_upon_
 
+
 #####################################################################
-## Morphisms and Homset
+# Morphisms and Homset
+
 
 class VermaModuleMorphism(Morphism):
-    """
-    A morphism of Verma modules.
+    r"""
+    A morphism of a Verma module to another module in Category `\mathcal{O}`.
     """
     def __init__(self, parent, scalar):
         """
@@ -764,7 +913,7 @@ class VermaModuleMorphism(Morphism):
         v = self.domain().highest_weight_vector()
         if not self._scalar:
             return "{} |--> {}".format(v, self.codomain().zero())
-        return "{} |--> {}".format(v, self._scalar * self.parent().singular_vector())
+        return "{} |--> {}".format(v, self._scalar * self.parent().highest_weight_image())
 
     def _richcmp_(self, other, op):
         r"""
@@ -799,7 +948,7 @@ class VermaModuleMorphism(Morphism):
             sage: M = L.verma_module(La[1] + La[2])
             sage: Mp = L.verma_module(M.highest_weight().dot_action([1,2]))
             sage: pbw = M.pbw_basis()
-            sage: f1, f2 = pbw(L.f(1)), pbw(L.f(2))
+            sage: f1, f2 = pbw.f()
             sage: v = Mp.highest_weight_vector()
             sage: phi = Hom(Mp, M).natural_map()
             sage: phi(f1 * v) == f1 * phi(v)
@@ -815,14 +964,14 @@ class VermaModuleMorphism(Morphism):
             sage: psi(v)
             0
         """
-        if not self._scalar or self.parent().singular_vector() is None:
+        if not self._scalar or not self.parent().highest_weight_image():
             return self.codomain().zero()
         mc = x.monomial_coefficients(copy=False)
         return self.codomain().linear_combination((self._on_basis(m), self._scalar * c)
                                                   for m,c in mc.items())
 
     def _on_basis(self, m):
-        """
+        r"""
         Return the image of the basis element indexed by ``m``.
 
         EXAMPLES::
@@ -832,14 +981,17 @@ class VermaModuleMorphism(Morphism):
             sage: M = L.verma_module(La[1] + La[2])
             sage: Mp = L.verma_module(M.highest_weight().dot_action([1,2]))
             sage: pbw = M.pbw_basis()
-            sage: f1, f2 = pbw(L.f(1)), pbw(L.f(2))
+            sage: f1, f2 = pbw.f()
             sage: v = Mp.highest_weight_vector()
             sage: phi = Hom(Mp, M).natural_map()
             sage: phi._on_basis((f1 * v).leading_support()) == f1 * phi(v)
             True
         """
+        vec = self.parent().highest_weight_image()
+        if not vec:
+            return vec
         pbw = self.codomain()._pbw
-        return pbw.monomial(pbw._indices(m.dict())) * self.parent().singular_vector()
+        return pbw.monomial(pbw._indices(m.dict())) * vec
 
     def _add_(self, other):
         """
@@ -906,7 +1058,7 @@ class VermaModuleMorphism(Morphism):
         INPUT:
 
         - ``self``, ``right`` -- maps
-        - homset -- a homset
+        - ``homset`` -- a homset
 
         ASSUMPTION:
 
@@ -935,8 +1087,10 @@ class VermaModuleMorphism(Morphism):
         r"""
         Return if ``self`` is injective or not.
 
-        A Verma module morphism `\phi : M \to M'` is injective if
-        and only if `\dim \hom(M, M') = 1` and `\phi \neq 0`.
+        A morphism `\phi : M \to M'` from a Verma module `M` to another
+        Verma module `M'` is injective if and only if `\dim \hom(M, M') = 1`
+        and `\phi \neq 0`. If `M'` is a dual Verma or simple module, then
+        the result is not injective.
 
         EXAMPLES::
 
@@ -954,15 +1108,20 @@ class VermaModuleMorphism(Morphism):
             sage: psi.is_injective()
             False
         """
-        return self.parent().singular_vector() is not None and bool(self._scalar)
+        if not isinstance(self.codomain(), VermaModule):
+            return False
+        return bool(self._scalar)
 
     def is_surjective(self):
-        """
+        r"""
         Return if ``self`` is surjective or not.
 
-        A Verma module morphism is surjective if and only if the
-        domain is equal to the codomain and it is not the zero
-        morphism.
+        A morphism `\phi : M \to M'` from a Verma module `M` to another
+        Verma module `M'` is surjective if and only if the domain is
+        equal to the codomain and it is not the zero morphism.
+
+        If `M'` is a simple module, then this surjective if and only if
+        `\dim \hom(M, M') = 1` and `\phi \neq 0`.
 
         EXAMPLES::
 
@@ -979,12 +1138,66 @@ class VermaModuleMorphism(Morphism):
             sage: psi.is_surjective()
             False
         """
-        return self.domain() == self.codomain() and bool(self._scalar)
+        if not bool(self._scalar):
+            return False
+
+        if isinstance(self.codomain(), VermaModule):
+            return self.domain() == self.codomain()
+
+        from sage.algebras.lie_algebras.bgg_dual_module import SimpleModule
+        if isinstance(self.codomain(), SimpleModule):
+            return self.domain().highest_weight() == self.codomain().highest_weight()
+
+        return False
+
+    def image(self):
+        r"""
+        Return the image of ``self``.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['B', 2])
+            sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
+            sage: M = g.verma_module(La[1] + 2*La[2])
+            sage: Mp = g.verma_module(La[1] + 3*La[2])
+            sage: phi = Hom(M, Mp).natural_map()
+            sage: phi.image()
+            Free module generated by {} over Rational Field
+            sage: Mc = M.dual()
+            sage: phi = Hom(M, Mc).natural_map()
+            sage: L = phi.image(); L
+            Simple module with highest weight Lambda[1] + 2*Lambda[2] of
+             Lie algebra of ['B', 2] in the Chevalley basis
+            sage: psi = Hom(M, L).natural_map()
+            sage: psi.image()
+            Simple module with highest weight Lambda[1] + 2*Lambda[2] of
+             Lie algebra of ['B', 2] in the Chevalley basis
+        """
+        C = self.codomain()
+        if not bool(self._scalar):
+            return C.submodule([])
+
+        if isinstance(C, VermaModule):
+            if self.domain() == C:
+                return C
+            raise NotImplementedError("submodules of Verma modules not yet implemented")
+
+        from sage.algebras.lie_algebras.bgg_dual_module import BGGDualModule, SimpleModule
+        if isinstance(C, BGGDualModule) and isinstance(C._module, VermaModule):
+            return SimpleModule(C.lie_algebra(), C.highest_weight(), prefix=C._indices.prefix(),
+                                basis_key=C._module._basis_key)
+
+        if isinstance(self.codomain(), SimpleModule):
+            return self.codomain()
+
 
 class VermaModuleHomset(Homset):
     r"""
-    The set of morphisms from one Verma module to another
-    considered as `U(\mathfrak{g})`-representations.
+    The set of morphisms from a Verma module to another module in
+    Category `\mathcal{O}` considered as `U(\mathfrak{g})`-representations.
+
+    This currently assumes the codomain is a Verma module, its dual,
+    or a simple module.
 
     Let `M_{w \cdot \lambda}` and `M_{w' \cdot \lambda'}` be
     Verma modules, `\cdot` is the dot action, and `\lambda + \rho`,
@@ -996,9 +1209,13 @@ class VermaModuleHomset(Homset):
 
     if and only if `\lambda = \lambda'` and `w' \leq w` in Bruhat
     order. Otherwise the homset is 0 dimensional.
+
+    If the codomain is a dual Verma module `M_{\mu}^{\vee}`, then the
+    homset is `\delta_{\lambda\mu}` dimensional. When `\mu = \lambda`,
+    the image is the simple module `L_{\lambda}`.
     """
     def __call__(self, x, **options):
-        """
+        r"""
         Construct a morphism in this homset from ``x`` if possible.
 
         EXAMPLES::
@@ -1054,7 +1271,7 @@ class VermaModuleHomset(Homset):
         return super().__call__(x, **options)
 
     def _an_element_(self):
-        """
+        r"""
         Return an element of ``self``.
 
         EXAMPLES::
@@ -1075,6 +1292,37 @@ class VermaModuleHomset(Homset):
         """
         return self.natural_map()
 
+    def highest_weight_image(self):
+        r"""
+        Return the image of the highest weight vector of the domain
+        in the codomain.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['C', 3])
+            sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
+            sage: M = g.verma_module(La[1] + 2*La[3])
+            sage: Mc = M.dual()
+            sage: H = Hom(M, Mc)
+            sage: H.highest_weight_image()
+            v[Lambda[1] + 2*Lambda[3]]^*
+            sage: L = H.natural_map().image()
+            sage: Hp = Hom(M, L)
+            sage: Hp.highest_weight_image()
+            u[Lambda[1] + 2*Lambda[3]]
+        """
+        C = self.codomain()
+        if isinstance(C, VermaModule):
+            # singular_vector() is cached, so we can safely call it twice
+            if self.singular_vector() is None:
+                return C.zero()
+            return self.singular_vector()
+        # Otherwise, it is a dual Verma or a simple, so the image
+        #   must be the highest weight vector.
+        if self.domain().highest_weight() == C.highest_weight():
+            return C.highest_weight_vector()
+        return C.zero()
+
     @cached_method
     def singular_vector(self):
         r"""
@@ -1085,12 +1333,16 @@ class VermaModuleHomset(Homset):
         ALGORITHM:
 
         We essentially follow the algorithm laid out in [deG2005]_.
-        We use the `\mathfrak{sl}_2` relation on
-        `M_{s_i \cdot \lambda} \to M_{\lambda}`, where
-        `\langle \lambda + \delta, \alpha_i^{\vee} \rangle = m > 0`,
-        i.e., the weight `\lambda` is `i`-dominant with respect to
-        the dot action. From here, we construct the singular vector
-        `f_i^m v_{\lambda}`. We iterate this until we reach `\mu`.
+        We split the main computation into two cases. If there exists
+        an `i` such that `\langle \lambda + \rho, \alpha_i^{\vee}
+        \rangle = m > 0` (i.e., the weight `\lambda` is `i`-dominant
+        with respect to the dot action), then we use the `\mathfrak{sl}_2`
+        relation on `M_{s_i \cdot \lambda} \to M_{\lambda}` to
+        construct the singular vector `f_i^m v_{\lambda}`. Otherwise
+        we find the shortest root `\alpha` such that `\langle \lambda
+        + \rho, \alpha^{\vee} \rangle > 0` and explicitly compute the
+        kernel with respect to the weight basis elements. We iterate
+        this until we reach `\mu`.
 
         EXAMPLES::
 
@@ -1101,13 +1353,15 @@ class VermaModuleHomset(Homset):
             sage: M = L.verma_module(la)
             sage: Mp = L.verma_module(mu)
             sage: H = Hom(Mp, M)
-            sage: H.singular_vector()
+            sage: v = H.singular_vector(); v
             f[-alpha[2]]*f[-alpha[1]]^3*v[Lambda[1] - Lambda[3]]
              + 3*f[-alpha[1]]^2*f[-alpha[1] - alpha[2]]*v[Lambda[1] - Lambda[3]]
+            sage: v.degree() == Mp.highest_weight()
+            True
 
         ::
 
-            sage: L = LieAlgebra(QQ, cartan_type=['F',4])
+            sage: L = LieAlgebra(QQ, cartan_type=['F', 4])
             sage: La = L.cartan_type().root_system().weight_space().fundamental_weights()
             sage: la = La[1] + La[2] - La[3]
             sage: mu = la.dot_action([1,2,3,2])
@@ -1117,7 +1371,9 @@ class VermaModuleHomset(Homset):
             sage: v = H.singular_vector()
             sage: pbw = M.pbw_basis()
             sage: E = [pbw(e) for e in L.e()]
-            sage: all(e * v == M.zero() for e in E)
+            sage: all(e * v == M.zero() for e in E)  # long time
+            True
+            sage: v.degree() == Mp.highest_weight()
             True
 
         When `w \cdot \lambda \notin \lambda + Q^-`, there does not
@@ -1131,6 +1387,24 @@ class VermaModuleHomset(Homset):
             sage: Mp = L.verma_module(mu)
             sage: H = Hom(Mp, M)
             sage: H.singular_vector() is None
+            True
+
+        When we need to apply a non-simple reflection, we can compute
+        the singular vector (see :issue:`36793`)::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
+            sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
+            sage: M = g.verma_module((0*La[1]).dot_action([1]))
+            sage: Mp = g.verma_module((0*La[1]).dot_action([1,2]))
+            sage: H = Hom(Mp, M)
+            sage: v = H.singular_vector(); v
+            1/2*f[-alpha[2]]*f[-alpha[1]]*v[-2*Lambda[1] + Lambda[2]]
+             + f[-alpha[1] - alpha[2]]*v[-2*Lambda[1] + Lambda[2]]
+            sage: pbw = M.pbw_basis()
+            sage: E = [pbw(e) for e in g.e()]
+            sage: all(e * v == M.zero() for e in E)
+            True
+            sage: v.degree() == Mp.highest_weight()
             True
 
         TESTS::
@@ -1152,29 +1426,100 @@ class VermaModuleHomset(Homset):
             return None
 
         from sage.combinat.root_system.coxeter_group import CoxeterGroup
+        from sage.matrix.constructor import matrix
         W = CoxeterGroup(self.domain()._g._cartan_type)
-        wp = W.from_reduced_word(self.domain()._dominant_data[1])
-        w = W.from_reduced_word(self.codomain()._dominant_data[1])
+        # We take the inverse to account for the left versus right action
+        wp = W.from_reduced_word(reversed(self.domain()._dominant_data[1]))
+        w = W.from_reduced_word(reversed(self.codomain()._dominant_data[1]))
         if not w.bruhat_le(wp):
             return None
         C = self.codomain()
         pbw = C._pbw
-        f = C._g.f()
-        F = {i: pbw(f[i]) for i in f.keys()}
-        red_word = (wp * ~w).reduced_word()
+        F = pbw.f()
+        E = pbw.e()
+        index_set = F.keys()
+        cur_w = w
         rho = C._weight.parent().rho()
         ac = C._weight.parent().simple_coroots()
         elt = pbw.one()
         wt = C._weight
-        # Construct the singular vector by iterated embeddings of Verma
-        #   modules (without constructing the modules themselves)
-        for i in reversed(red_word):
-            exp = (wt + rho).scalar(ac[i])
-            if exp not in ZZ or exp < 0:
-                return None
-            elt = F[i]**ZZ(exp) * elt
-            wt = wt.dot_action([i])
-        return C.highest_weight_vector()._acted_upon_(elt, False)
+        pos_roots_by_ht = C._g._cartan_type.root_system().root_lattice().positive_roots_by_height()
+        assert all(sum(rt.coefficients()) == 1 for rt in pos_roots_by_ht[:len(index_set)])
+        # for this, we don't need to check the simple roots
+        pos_roots_by_ht = pos_roots_by_ht[len(index_set):]
+
+        while cur_w != wp:
+            ind = None
+            for i in cur_w.descents(side='right', positive=True):
+                exp = (wt + rho).scalar(ac[i])
+                if exp not in ZZ or exp <= 0:
+                    continue
+                # We need to check that the result is still smaller in Bruhat order
+                next_w = cur_w.apply_simple_reflection_right(i)
+                if not next_w.bruhat_le(wp):
+                    continue
+                ind = i
+                # favor a path in weak order so we only do sl_2 relations
+                if not next_w.weak_le(wp, side="right"):
+                    continue
+                break
+            if ind is None:  # no simple root; need a more general approach
+                # We search for the shortest root that can be applied to minimize
+                #   the size of the basis needed to compute the kernel.
+                for rt in pos_roots_by_ht:
+                    exp = (wt + rho).scalar(rt.associated_coroot())
+                    # We need to check that the result is still smaller in Bruhat order
+                    i, wd = rt.to_simple_root(reduced_word=True)
+                    refl = wd + (i,) + tuple(reversed(wd))
+                    next_w = cur_w.apply_reflections(refl, side='right', word_type="simple")
+                    if exp not in ZZ or exp <= 0:
+                        continue
+                    if not next_w.bruhat_le(wp):
+                        continue
+                    # We construct the Verma module of the appropriate weight in
+                    #   order to reduce the dimension and number of multiplications.
+                    Mp = C._g.verma_module(wt)
+                    basis = sorted(Mp._homogeneous_component_f(-rt.to_vector()), key=str)
+                    for i in index_set:
+                        image = [E[i] * b for b in basis]
+                        supp = set()
+                        for vec in image:
+                            supp.update(vec._monomial_coefficients)
+                        supp = sorted(supp, key=pbw._monomial_key)
+                        if not supp:  # everything is in the kernel
+                            continue
+                        M = matrix(pbw.base_ring(), [[v[s] for v in image] for s in supp])
+                        ker = M.right_kernel_matrix()
+                        basis = [C.linear_combination((basis[j], c) for j, c in kv.iteritems())
+                                 for kv in ker.rows()]
+
+                    assert len(basis) == 1
+                    if Mp is C:  # We've constructed the element in the codomain
+                        assert next_w == wp
+                        assert basis[0].degree() == self.domain().highest_weight()
+                        return basis[0]
+                    pbw_elt = pbw.element_class(pbw, {pbw._indices(m._monomial): c
+                                                      for m, c in basis[0]._monomial_coefficients.items()})
+                    elt = pbw_elt * elt
+                    wt = wt.dot_action(refl)
+                    cur_w = next_w
+                    break
+                else:
+                    #assert False, "unable to find root"
+                    # Have a more explicit check at the beginning using the integral
+                    #   orbit action for the correct version of dominance; see, e.g.,
+                    #   Humphreys "Representations of Semisimple Lie Algebras in the BGG Category O".
+                    return None
+            else:
+                # Construct the singular vector by iterated embeddings of Verma
+                #   modules from the sl_2 relations (without constructing
+                #   the modules themselves)
+                elt = F[ind]**ZZ(exp) * elt
+                wt = wt.dot_action([ind])
+                cur_w = cur_w.apply_simple_reflection_right(ind)
+        ret = C.highest_weight_vector()._acted_upon_(elt, False)
+        assert ret.degree() == self.domain().highest_weight()
+        return ret
 
     @cached_method
     def natural_map(self):
@@ -1207,7 +1552,7 @@ class VermaModuleHomset(Homset):
                      of Lie algebra of ['A', 2] in the Chevalley basis
               Defn: v[Lambda[1] + 2*Lambda[2]] |--> 0
         """
-        if self.singular_vector() is None:
+        if not self.highest_weight_image():
             return self.zero()
         return self.element_class(self, self.base_ring().one())
 
@@ -1234,7 +1579,7 @@ class VermaModuleHomset(Homset):
         return self.element_class(self, self.base_ring().zero())
 
     def dimension(self):
-        """
+        r"""
         Return the dimension of ``self`` (as a vector space over
         the base ring).
 
@@ -1253,12 +1598,12 @@ class VermaModuleHomset(Homset):
             sage: H.dimension()
             0
         """
-        if self.singular_vector() is None:
+        if not self.highest_weight_image():
             return ZZ.zero()
         return ZZ.one()
 
     def basis(self):
-        """
+        r"""
         Return a basis of ``self``.
 
         EXAMPLES::
@@ -1276,50 +1621,8 @@ class VermaModuleHomset(Homset):
             sage: H.basis()
             Family ()
         """
-        if self.singular_vector() is None:
+        if not self.highest_weight_image():
             return Family([])
         return Family([self.natural_map()])
 
     Element = VermaModuleMorphism
-
-
-def _convert_wt_to_root(wt):
-    r"""
-    Helper function to express ``wt`` as a linear combination
-    of simple roots.
-
-    INPUT:
-
-    - ``wt`` -- an element of a weight lattice realization
-
-    OUTPUT:
-
-    A vector over `\QQ` representing ``wt`` as a linear combination
-    of simple roots.
-
-    EXAMPLES::
-
-        sage: from sage.algebras.lie_algebras.verma_module import _convert_wt_to_root
-        sage: P = RootSystem(['A',3]).weight_lattice()
-        sage: La = P.fundamental_weights()
-        sage: [_convert_wt_to_root(al) for al in P.simple_roots()]
-        [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
-        sage: _convert_wt_to_root(La[1] + La[2])
-        (5/4, 3/2, 3/4)
-
-        sage: L = RootSystem(['A',3]).ambient_space()
-        sage: e = L.basis()
-        sage: _convert_wt_to_root(e[0] + 3*e[3])
-        sage: _convert_wt_to_root(e[0] - e[1])
-        (1, 0, 0)
-        sage: _convert_wt_to_root(e[0] + 2*e[1] - 3*e[2])
-        (1, 3, 0)
-    """
-    v = wt.to_vector().change_ring(QQ)
-    al = [a.to_vector() for a in wt.parent().simple_roots()]
-    b = v.parent().linear_dependence([v] + al)
-    if len(b) != 1 or b[0] == 0:
-        return None
-    b = b[0]  # Get the actual vector that gives the linear dependency
-    # Get v as a linear combination of the simple roots
-    return vector(QQ, [-x / b[0] for x in b[1:]])
