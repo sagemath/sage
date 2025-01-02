@@ -3719,6 +3719,9 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         The output is sorted by residue degree first, then by
         underlying prime (or equivalently, by norm).
 
+        If there is a tie, the exact ordering should be assumed to be random.
+        See the remark in :meth:`NumberFieldIdeal._richcmp_`.
+
         EXAMPLES::
 
             sage: x = ZZ['x'].gen()
