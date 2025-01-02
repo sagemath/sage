@@ -142,12 +142,24 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  override_options = ['cython_language=cpp']
+  if name in [
+    'matrix_integer_dense',
+    'matrix_integer_sparse',
+    'matrix_modn_dense_float',
+    'matrix_modn_dense_double',
+    'matrix_modn_sparse',
+  ]
+    # Temporary workaround for https://github.com/linbox-team/linbox/issues/306
+    override_options += ['cpp_std=c++11']
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/matrix',
     install: true,
-    override_options: ['cython_language=cpp'],
+    override_options: override_options,
     include_directories: [
       inc_cpython,
       inc_ext,

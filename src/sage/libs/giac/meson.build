@@ -10,7 +10,11 @@ foreach name, pyx : extension_data_cpp
     sources: pyx,
     subdir: 'sage/libs/giac',
     install: true,
-    override_options: ['cython_language=cpp'],
+    override_options: [
+      'cython_language=cpp',
+      # Temporary workaround for https://github.com/sagemath/sage/issues/38985
+      'cpp_std=c++11',
+    ],
     include_directories: [inc_cpython, inc_ext, inc_rings],
     dependencies: [py_dep, cysignals, giac, gmp],
   )
