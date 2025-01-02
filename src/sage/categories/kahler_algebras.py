@@ -25,6 +25,40 @@ from sage.misc.cachefunc import cached_method
 class KahlerAlgebras(Category_over_base_ring):
     r"""
     The category of graded algebras satisfying the Kähler package.
+    A finite-dimensional graded algebra `\bigoplus_{k=1}^{r}A^k` satisfies
+    the *Kähler package* if the following properties hold:
+
+    - Poincaré duality: There exists a perfect `\mathbb{Z}`-bilinear pairing
+      given by
+
+      .. MATH::
+
+          A^k \times A^{r-k} \longrightarrow \mathbb{Z} \\
+            (a,b) \mapsto \text{deg}(a \cdot b)
+
+    - Hard-Lefschetz Theorem: The graded algebra contains *Lefschetz elements*
+      `\omega \in A^{1}_{\mathbb{R}}` such that multiplication by `\omega` is
+      an injection from `A^k_{\mathbb{R}} \longrightarrow A^{k+1}_{\mathbb{R}}`
+      for all `k < \frac{r}{2}`.
+
+    - Hodge-Riemann-Minikowski Relations: Every Lefchetz element `\omega`,
+      define quadratic forms on `A^{k}_{\mathbb{R}}` given by
+
+      .. MATH::
+
+          a \mapsto (-1)^k \text{deg}(a \cdot \omega^{r-2k} \cdot a)
+
+      This quadratic form becomes positive definite upon restriction to the
+      kernel of the following map
+
+      .. MATH::
+
+          A^k_\mathbb{R} \longrightarrow A^{r-k+1}_\mathbb{R} \\
+                a \mapsto a \cdot \omega^{r-2k+1}
+
+    REFERENCES:
+
+    - [ANR2023]_
 
     EXAMPLES::
 
@@ -63,10 +97,6 @@ class KahlerAlgebras(Category_over_base_ring):
                 2
             """
             return max([b.degree() for b in self.basis()])
-
-  # check all methods with matroids with loops/parallel elements
-  # add properties and Kahler algebra def. Be as detailed as possible
-  # issue with category
 
         @abstract_method
         def lefschetz_element():
