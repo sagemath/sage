@@ -18,7 +18,7 @@ AUTHORS:
 # ****************************************************************************
 
 import itertools
-from sage.rings.rational_field import QQ
+from sage.all import QQ
 from cysignals.signals cimport sig_check
 from sage.structure.element cimport Element
 from sage.structure.coerce cimport coercion_model
@@ -1066,7 +1066,7 @@ cdef class Flag(Element):
         return sf._sub_(of)
 
     def _neg_(self):
-        from sage.rings.integer import Integer
+        from sage.all import Integer
         return self.__mul__(Integer(-1))
 
     def __mul__(self, other):
@@ -1583,7 +1583,7 @@ cdef class Pattern(Element):
 
     def as_flag_algebra_element(self, base=QQ):
         from sage.algebras.flag_algebras import FlagAlgebra
-        from sage.modules.free_module_element import vector
+        from sage.all import vector
 
         targ_alg = FlagAlgebra(self.theory(), base=base, ftype=self.ftype())
         aflags = self.theory().generate(self.size(), self.ftype())
@@ -1622,7 +1622,7 @@ cdef class Pattern(Element):
         return sf._sub_(of)
 
     def _neg_(self):
-        from sage.rings.integer import Integer
+        from sage.all import Integer
         return self.__mul__(Integer(-1))
 
     def __mul__(self, other):
