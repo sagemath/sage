@@ -694,7 +694,6 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, algorithm="pari", **kwds):
     return [root for root in roots if N.gcd(ZZ(self(root))) >= Nbeta]
 
 
-
 cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
     r"""
     Polynomial on `\ZZ/n\ZZ` implemented via NTL.
