@@ -351,7 +351,7 @@ def ModularSymbols(group=1,
         {}
         sage: M = ModularSymbols(11,use_cache=True)
         sage: sage.modular.modsym.modsym._cache
-        {(Congruence Subgroup Gamma0(11), 2, 0, Rational Field): <weakref at ...; to 'ModularSymbolsAmbient_wt2_g0_with_category' at ...>}
+        {(Congruence Subgroup Gamma0(11), 2, 0, Rational Field): <weakref at ...; to '...ModularSymbolsAmbient_wt2_g0_with_category' at ...>}
         sage: M is ModularSymbols(11,use_cache=True)
         True
         sage: M is ModularSymbols(11,use_cache=False)
