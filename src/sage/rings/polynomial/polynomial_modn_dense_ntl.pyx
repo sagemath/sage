@@ -574,6 +574,7 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, algorithm="pari", **kwds):
 
     First, we set up `p`, `q` and `N`::
 
+        sage: set_random_seed(1337)
         sage: length = 512
         sage: hidden = 110
         sage: p = next_prime(2^int(round(length/2)))
@@ -604,9 +605,7 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, algorithm="pari", **kwds):
     it is able to recover `q` even if ``hidden`` is set to `120`::
 
         sage: # needs sage.symbolic
-        sage: set_random_seed(1337)
         sage: hidden = 120
-        sage: N = p*q
         sage: qbar = q + ZZ.random_element(0, 2^hidden - 1)
         sage: f = x - qbar
         sage: set_verbose(0)
