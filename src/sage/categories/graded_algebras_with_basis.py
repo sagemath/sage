@@ -13,6 +13,7 @@ Graded algebras with basis
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.signed_tensor import SignedTensorProductsCategory, tensor_signed
 from sage.misc.cachefunc import cached_method
+from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 
 
 class GradedAlgebrasWithBasis(GradedModulesCategory):
@@ -152,6 +153,9 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
         completion = formal_series_ring
 
     class ElementMethods:
+        pass
+
+    class FiniteDimensional(CategoryWithAxiom_over_base_ring):
         pass
 
     class SignedTensorProducts(SignedTensorProductsCategory):

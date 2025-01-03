@@ -8,6 +8,8 @@ AUTHORS:
 
 from sage.categories.category_types import Category_over_base_ring
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
+from sage.categories.finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
+from sage.categories.filtered_modules_with_basis import FilteredModulesWithBasis
 from sage.misc.abstract_method import abstract_method
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 from sage.misc.cachefunc import cached_method
@@ -67,7 +69,8 @@ class KahlerAlgebras(Category_over_base_ring):
         sage: C = KahlerAlgebras(QQ); C
         Category of kahler algebras over Rational Field
         sage: sorted(C.super_categories(), key=str)
-        [Category of graded algebras with basis over Rational Field]
+        [Category of finite dimensional algebras with basis over Rational
+         Field, Category of graded algebras with basis over Rational Field]
 
     TESTS::
 
@@ -94,7 +97,7 @@ class KahlerAlgebras(Category_over_base_ring):
                 3
                 sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
                 sage: ch._top_degree()
-                2
+                3
             """
             return max([b.degree() for b in self.basis()])
 
@@ -110,7 +113,7 @@ class KahlerAlgebras(Category_over_base_ring):
             EXAMPLES::
 
                 sage: ch = matroids.Uniform(4,6).chow_ring(QQ, False)
-                sage: ch.hodge_riemann_relations(1, ch.matroid().rank() - 1)
+                sage: ch.hodge_riemann_relations(1)
                 Quadratic form in 36 variables over Rational Field with coefficients:
                 [ 3 -1 -1 3 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 3 ]
                 [ * 3 -1 3 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 3 ]
@@ -148,7 +151,7 @@ class KahlerAlgebras(Category_over_base_ring):
                 [ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 3 -1 -1 ]
                 [ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 3 -1 ]
                 [ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 3 ]
-                sage: ch.hodge_riemann_relations(3, ch.matroid().rank() - 1)
+                sage: ch.hodge_riemann_relations(3)
                 Traceback (most recent call last):
                 ...
                 ValueError: k must be less than r < 2
