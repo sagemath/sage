@@ -85,22 +85,6 @@ class KahlerAlgebras(Category_over_base_ring):
         def poincare_pairing():
             pass
 
-        @cached_method
-        def _top_degree(self):
-            r"""
-            Return the top degree of the Kähler algebra.
-
-            EXAMPLES::
-
-                sage: ch = matroids.Uniform(4,6).chow_ring(QQ, False)
-                sage: ch._top_degree()
-                3
-                sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
-                sage: ch._top_degree()
-                3
-            """
-            return max([b.degree() for b in self.basis()])
-
         @abstract_method
         def lefschetz_element():
             pass
