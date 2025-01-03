@@ -184,6 +184,7 @@ List of Poset methods
     :meth:`~FinitePoset.flag_h_polynomial` | Return the flag h-polynomial of the poset.
     :meth:`~FinitePoset.order_polynomial` | Return the order polynomial of the poset.
     :meth:`~FinitePoset.zeta_polynomial` | Return the zeta polynomial of the poset.
+    :meth:`~FinitePoset.apozeta_polynomial` | Return the apozeta polynomial of the poset.
     :meth:`~FinitePoset.M_triangle` | Return the M-triangle of the poset.
     :meth:`~FinitePoset.kazhdan_lusztig_polynomial` | Return the Kazhdan-Lusztig polynomial of the poset.
     :meth:`~FinitePoset.coxeter_polynomial` | Return the characteristic polynomial of the Coxeter transformation.
@@ -7240,6 +7241,8 @@ class FinitePoset(UniqueRepresentation, Parent):
         In particular, `Z(2)` is the number of vertices and `Z(3)` is
         the number of intervals.
 
+        .. SEEALSO:: :meth:`apozeta_polynomial`
+
         EXAMPLES::
 
             sage: posets.ChainPoset(2).zeta_polynomial()
@@ -7279,6 +7282,53 @@ class FinitePoset(UniqueRepresentation, Parent):
             n -= 1
             f = g[n] + f / n
         return f
+
+    def apozeta_polynomial(self):
+        r"""
+        Return the apozeta polynomial of the poset ``self``.
+
+        The poset is assumed to be graded.
+
+        The apozeta polynomial of a poset is the unique polynomial
+        `Z^{a}(q)` such that for every integer `m > 1`, `Z^{a}(m)` is
+        the number of weakly increasing sequences `x_1 \leq x_2 \leq
+        \dots \leq x_{m-1}` of elements of the poset whose largest
+        element belongs to the top level of the poset.
+
+        When the poset `P` has a unique maximal element, this is
+        equal to `Z(q-1)` where `Z` is the zeta polynomial of `P`.
+
+        The name comes from the greek radical ``apo``.
+
+        .. SEEALSO:: :meth:`zeta_polynomial`
+
+        EXAMPLES::
+
+            sage: P = posets.NoncrossingPartitions(SymmetricGroup(4))
+            sage: P.apozeta_polynomial()
+            8/3*q^3 - 10*q^2 + 37/3*q - 5
+
+            sage: P = Poset({"a": "bc", "b": "d", "c": "de"})
+            sage: P.apozeta_polynomial()
+            3/2*q^2 - 5/2*q + 1
+            sage: P.zeta_polynomial()
+            3/2*q^2 - 1/2*q
+
+        TESTS:
+
+        Checking the simplest case::
+
+            sage: Poset({1: []}).apozeta_polynomial()
+            1
+            sage: parent(_)
+            Univariate Polynomial Ring in q over Rational Field
+        """
+        R = PolynomialRing(QQ, 'q')
+        q = R.gen()
+
+        top_level = self.level_sets()[-1]
+        return sum(binomial(q - 2, len(c) - 1)
+                   for c in self.chains() if c and c[-1] in top_level)
 
     def M_triangle(self):
         r"""
