@@ -242,9 +242,8 @@ class DrinfeldModule_charzero(DrinfeldModule):
         if prec is Infinity:
             L = LazyPowerSeriesRing(self._base, name)
             return L(coeff_exp, valuation=1)
-        else:
-            L = PowerSeriesRing(self._base, name, default_prec=prec)
-            return L([0] + [coeff_exp(i) for i in range(1,prec)], prec=prec)
+        L = PowerSeriesRing(self._base, name, default_prec=prec)
+        return L([0] + [coeff_exp(i) for i in range(1,prec)], prec=prec)
 
     @cached_method
     def _compute_coefficient_log(self, k):
