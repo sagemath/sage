@@ -1451,9 +1451,10 @@ class GraphGenerators:
         if matrix_function is None:
             matrix_function = lambda g: g.adjacency_matrix()
 
-        from sage.graphs.graph_generators import graphs as graph_gen
         def prop(x):
             return True
+
+        from sage.graphs.graph_generators import graphs as graph_gen
         if graphs is None:
             graph_list = graph_gen(vertices, property=prop, immutable=immutable)
         elif callable(graphs):
