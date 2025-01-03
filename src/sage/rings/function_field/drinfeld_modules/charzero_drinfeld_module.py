@@ -424,86 +424,109 @@ class DrinfeldModule_charzero(DrinfeldModule):
 class DrinfeldModule_rational(DrinfeldModule_charzero):
     """
     A class for Drinfeld modules defined over the fraction
-    field of the underlying function field
-    """
-    def _phiT_matrix(self, polynomial_part):
-        r"""
-        Return the matrix giving the action of `\phi_T` modulo `u^s`
-        where `u = 1/T` is the uniformizer at infinity `s` is chosen
-        such that `u^s` is in the domain of convergence of the logarithm.
+    field of the underlying function field.
 
-        It is an helper function; do not call it directly.
+    TESTS::
+
+        sage: q = 9
+        sage: Fq = GF(q)
+        sage: A = Fq['T']
+        sage: K.<T> = Frac(A)
+        sage: C = DrinfeldModule(A, [T, 1]); C
+        Drinfeld module defined by T |--> t + T
+        sage: type(C)
+        <class 'sage.rings.function_field.drinfeld_modules.charzero_drinfeld_module.DrinfeldModule_rational_with_category'>
+    """
+    def coefficient_in_function_ring(self, n):
+        r"""
+        Return the `n`-th coefficient of this Drinfeld module as
+        an element of the underlying function ring.
 
         INPUT:
 
-        - ``polynomial_part`` -- boolean; if ``False``, omit the
-          part with negative powers of `u`; if ``True``, return this
-          part as a polynomial vector in `T`
+        - ``n`` -- an integer
 
         EXAMPLES::
 
             sage: q = 5
             sage: Fq = GF(q)
             sage: A = Fq['T']
-            sage: K.<T> = Frac(A)
-            sage: phi = DrinfeldModule(A, [T, T^20])
-            sage: phi._phiT_matrix(False)
-            [0 0 0 0 0]
-            [1 0 0 0 0]
-            [0 1 0 0 0]
-            [0 0 1 0 0]
-            [0 0 0 1 1]
-            sage: phi._phiT_matrix(True)
-            (
-            [0 0 0 0 0]
-            [1 0 0 0 0]
-            [0 1 0 0 0]
-            [0 0 1 0 0]
-            [0 0 0 1 1], (T^15 + 1, T^10, T^5, 1, 0)
-            )
+            sage: R = Fq['U']
+            sage: K.<U> = Frac(R)
+            sage: phi = DrinfeldModule(A, [U, 0, U^2, U^3])
+            sage: phi.coefficient_in_function_ring(2)
+            T^2
 
-        ::
+        Compare with the method meth:`coefficient`::
 
-            sage: psi = DrinfeldModule(A, [T, 1/T])
-            sage: psi._phiT_matrix(False)
+            sage: phi.coefficient(2)
+            U^2
+
+        If the required coefficient is not a polynomials,
+        an error is raised::
+
+            sage: psi = DrinfeldModule(A, [U, 1/U])
+            sage: psi.coefficient_in_function_ring(0)
+            T
+            sage: psi.coefficient_in_function_ring(1)
             Traceback (most recent call last):
             ...
-            ValueError: the Drinfeld module must have polynomial coefficients
+            ValueError: coefficient is not polynomial
         """
         A = self.function_ring()
-        Fq = A.base_ring()
-        q = Fq.cardinality()
-        r = self.rank()
+        g = self.coefficient(n)
+        g = g.backend(force=True)
+        if g.denominator().is_one():
+            return A(g.numerator().list())
+        else:
+            raise ValueError("coefficient is not polynomial")
 
+    def coefficients_in_function_ring(self, sparse=True):
+        r"""
+        Return the coefficients of this Drinfeld module as elements
+        of the underlying function ring.
+
+        INPUT:
+
+        - ``sparse`` -- a boolean (default: ``True``); if ``True``,
+          only return the nonzero coefficients; otherwise, return
+          all of them.
+
+        EXAMPLES::
+
+            sage: q = 5
+            sage: Fq = GF(q)
+            sage: A = Fq['T']
+            sage: R = Fq['U']
+            sage: K.<U> = Frac(R)
+            sage: phi = DrinfeldModule(A, [U, 0, U^2, U^3])
+            sage: phi.coefficients_in_function_ring()
+            [T, T^2, T^3]
+            sage: phi.coefficients_in_function_ring(sparse=False)
+            [T, 0, T^2, T^3]
+
+        Compare with the method meth:`coefficients`::
+
+            sage: phi.coefficients()
+            [U, U^2, U^3]
+
+        If the coefficients are not polynomials, an error is raised::
+
+            sage: psi = DrinfeldModule(A, [U, 1/U])
+            sage: psi.coefficients_in_function_ring()
+            Traceback (most recent call last):
+            ...
+            ValueError: coefficients are not polynomials
+        """
+        A = self.function_ring()
         gs = []
-        for g in self.coefficients(sparse=False):
+        for g in self.coefficients(sparse):
             g = g.backend(force=True)
             if g.denominator().is_one():
                 gs.append(A(g.numerator().list()))
             else:
-                raise ValueError("the Drinfeld module must have polynomial coefficients")
-        s = max(gs[i].degree() // (q**i - 1) for i in range(1, r+1))
-
-        M = matrix(Fq, s)
-        if polynomial_part:
-            P = vector(A, s)
-        qk = 1
-        for k in range(r+1):
-            for i in range(s):
-                e = (i+1)*qk
-                if polynomial_part:
-                    P[i] += gs[k] >> e
-                for j in range(s):
-                    e -= 1
-                    if e < 0:
-                        break
-                    M[i, j] += gs[k][e]
-            qk *= q
-
-        if polynomial_part:
-            return M, P
-        else:
-            return M
+                raise ValueError("coefficients are not polynomials")
+        return gs
 
     def class_polynomial(self):
         r"""
@@ -547,15 +570,31 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
             sage: phi.class_polynomial()
             Traceback (most recent call last):
             ...
-            ValueError: the Drinfeld module must have polynomial coefficients
+            ValueError: coefficients are not polynomials
         """
         A = self.function_ring()
         Fq = A.base_ring()
-        M = self._phiT_matrix(False)
-        s = M.nrows()
+        q = Fq.cardinality()
+        r = self.rank()
+
+        gs = self.coefficients_in_function_ring(sparse=False)
+
+        s = max(gs[i].degree() // (q**i - 1) for i in range(1, r+1))
         if s == 0:
             # small case
             return A.one()
+
+        M = matrix(Fq, s)
+        qk = 1
+        for k in range(r+1):
+            for i in range(s):
+                e = (i+1)*qk
+                for j in range(s):
+                    e -= 1
+                    if e < 0:
+                        break
+                    M[i, j] += gs[k][e]
+            qk *= q
 
         v = vector(Fq, s)
         v[s-1] = 1
@@ -577,80 +616,3 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
 
         N = (V * M * ~V).submatrix(dim, dim)
         return A(N.charpoly())
-
-    def taelman_exponential_unit(self):
-        r"""
-        Return the exponential of a fundamental Taelman's unit
-        of this Drinfeld module.
-
-        A Taelman's unit is by definition an element `x \in
-        \mathbb F_q((1/T))` whose exponential falls in `\mathbb F_q[T]`.
-
-        Taelman's units form a `\mathbb F_q[T]`-line in `\mathbb F_q((1/T))`;
-        a fundamental unit is by definition a generator of this line.
-
-        We refer to [Tae2012]_ for more details about this construction.
-
-        EXAMPLES:
-
-        The Taelman exponential unit of The Carlitz module is `1`::
-
-            sage: q = 7
-            sage: Fq = GF(q)
-            sage: A = Fq['T']
-            sage: K.<T> = Frac(A)
-            sage: C = DrinfeldModule(A, [T, 1]); C
-            Drinfeld module defined by T |--> t + T
-            sage: C.taelman_exponential_unit()
-            1
-
-        The same occurs more generally when the coefficients of the
-        Drinfeld module have small enough degrees::
-
-            sage: gs = [T] + [A.random_element(degree = q^i - 1)
-            ....:             for i in range(1, 5)]
-            sage: phi = DrinfeldModule(A, gs)
-            sage: phi.taelman_exponential_unit()
-            1
-
-        Usually, as soon as we leave the world of small Drinfeld modules,
-        Taelman's exponential units are highly non trivial::
-
-            sage: phi = DrinfeldModule(A, [T, T^(2*q+1), T^3])
-            sage: phi.taelman_exponential_unit()
-            T^52 + T^22 + T^8 + T^2 + 1
-        """
-        A = self.function_ring()
-        Fq = A.base_ring()
-        q = Fq.cardinality()
-        M, P = self._phiT_matrix(True)
-        s = M.nrows()
-        if s == 0:
-            # small case
-            return self.base().one()
-
-        gs = self.coefficients(sparse=False)
-        v = vector(Fq, s)
-        v[s-1] = 1
-        p = A.zero()
-        vs = [v]
-        ps = [p]
-        for i in range(s):
-            pq = p
-            p = v * P
-            for j in range(len(gs) - 1):
-                p += gs[j] * pq
-                pq = pq ** q
-            p += gs[-1] * pq
-            v = v * M
-            vs.append(v)
-            ps.append(p)
-        vs.reverse()
-        ps.reverse()
-        V = matrix(vs)
-
-        unit = V.left_kernel().basis()[0]
-        expunit = sum(unit[i]*ps[i] for i in range(s+1))
-        if expunit:
-            expunit /= expunit.numerator().leading_coefficient()
-        return expunit
