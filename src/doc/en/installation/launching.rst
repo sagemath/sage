@@ -67,9 +67,8 @@ Sage uses the following environment variables when it runs:
 
 - See
   https://docs.python.org/3/using/cmdline.html#environment-variables
-  for more variables used by Python (not an exhaustive list). With
-  Python 3.11 or later, a brief summary can also be obtained by
-  running `python3 --help-env`.
+  for more variables used by Python (not an exhaustive list). 
+  A brief summary can also be obtained by running `python3 --help-env`.
 
 Using a Jupyter Notebook remotely
 ---------------------------------

@@ -188,7 +188,7 @@ jobs:
       #
       CIBW_ARCHS: ${{ matrix.arch }}
       # https://cibuildwheel.readthedocs.io/en/stable/options/#requires-python
-      CIBW_PROJECT_REQUIRES_PYTHON: ">=3.9, <3.13"
+      CIBW_PROJECT_REQUIRES_PYTHON: ">=3.11, <3.13"
       # Environment during wheel build
       CIBW_ENVIRONMENT: "PATH=$(pwd)/prefix/bin:$PATH CPATH=$(pwd)/prefix/include:$CPATH LIBRARY_PATH=$(pwd)/prefix/lib:$LIBRARY_PATH LD_LIBRARY_PATH=$(pwd)/prefix/lib:$LD_LIBRARY_PATH PKG_CONFIG_PATH=$(pwd)/prefix/share/pkgconfig:$PKG_CONFIG_PATH ACLOCAL_PATH=/usr/share/aclocal PIP_CONSTRAINT=$(pwd)/constraints.txt PIP_FIND_LINKS=file://$(pwd)/wheelhouse SAGE_NUM_THREADS=6"
       # Use 'build', not 'pip wheel'
