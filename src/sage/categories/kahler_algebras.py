@@ -34,7 +34,7 @@ class KahlerAlgebras(Category_over_base_ring):
       .. MATH::
 
           A^k \times A^{r-k} \longrightarrow \mathbb{Z} \\
-            (a,b) \mapsto \text{deg}(a \cdot b)
+            (a,b) \mapsto \text{deg}(a \cdot b).
 
     - Hard-Lefschetz Theorem: The graded algebra contains *Lefschetz elements*
       `\omega \in A^{1}_{\mathbb{R}}` such that multiplication by `\omega` is
@@ -54,7 +54,7 @@ class KahlerAlgebras(Category_over_base_ring):
       .. MATH::
 
           A^k_\mathbb{R} \longrightarrow A^{r-k+1}_\mathbb{R} \\
-                a \mapsto a \cdot \omega^{r-2k+1}
+                a \mapsto a \cdot \omega^{r-2k+1}.
 
     REFERENCES:
 
@@ -75,7 +75,7 @@ class KahlerAlgebras(Category_over_base_ring):
         sage: TestSuite(C).run()
     """
     def super_categories(self):
-        return [GradedAlgebrasWithBasis(self.base_ring())]
+        return [GradedAlgebrasWithBasis(self.base_ring()).FiniteDimensional()]
 
     class ParentMethods:
         @abstract_method

@@ -356,7 +356,7 @@ class ChowRing(QuotientRing_generic):
             -1/6*A2*A012345 + 41/48*A012345^2
             sage: v = ch(-A345^2 - 1/4*A345); v
             -A345^2 - 1/4*A345
-            sage: ch.poincare_pairing(v, u, ch.matroid().rank())
+            sage: ch.poincare_pairing(v, u)
             3
         """
         r = self._top_degree()
