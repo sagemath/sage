@@ -2985,6 +2985,15 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             -1
             sage: f.monomial_coefficient(x^10)
             0
+
+        TESTS::
+
+            sage: R.<x,y> = PolynomialRing(ZZ)
+            sage: f = x + y
+            sage: f.monomial_coefficient(x - x)
+            Traceback (most recent call last):
+            ...
+            ValueError: mon must not be equal to 0.
         """
         cdef poly *p = self._poly
         cdef poly *m = mon._poly
@@ -2992,6 +3001,9 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         if mon._parent is not self._parent:
             raise TypeError("mon must have same parent as self.")
+
+        if mon._poly == NULL:
+            raise ValueError("mon must not be equal to 0.")
 
         while p:
             if p_ExpVectorEqual(p, m, r) == 1:
