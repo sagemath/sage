@@ -315,7 +315,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
             sage: log[2^5]
             1/(T^62 + T^61 + T^59 + ... + T^8 + T^6 + T^5)
 
-        On the contrary, when ``prec`` is a finite number, all the
+        If ``prec`` is a finite number, all the
         required coefficients are computed at once::
 
             sage: phi.logarithm(prec=10)
