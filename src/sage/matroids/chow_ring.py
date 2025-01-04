@@ -10,6 +10,7 @@ from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug, AugmentedChowRin
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.categories.kahler_algebras import KahlerAlgebras
 from sage.categories.commutative_rings import CommutativeRings
+from sage.misc.cachefunc import cached_method
 
 
 class ChowRing(QuotientRing_generic):
@@ -96,7 +97,7 @@ class ChowRing(QuotientRing_generic):
                 self._ideal = AugmentedChowRingIdeal_atom_free(M, R)
         else:
             self._ideal = ChowRingIdeal_nonaug(M, R)
-        C = CommutativeRings().Quotients() & KahlerAlgebras(R).FiniteDimensional()
+        C = CommutativeRings().Quotients() & KahlerAlgebras(R)
         QuotientRing_generic.__init__(self, R=self._ideal.ring(),
                                       I=self._ideal,
                                       names=self._ideal.ring().variable_names(),
@@ -197,43 +198,7 @@ class ChowRing(QuotientRing_generic):
         monomial_basis = self._ideal.normal_basis()
         return Family([self.element_class(self, mon, reduce=False) for mon in monomial_basis])
 
-    def flats_generator(self):
-        r"""
-        Return the corresponding generators of flats of the Chow ring.
-
-        EXAMPLES::
-
-            sage: ch = matroids.catalog.NonFano().chow_ring(ZZ, True, 'atom-free')
-            sage: ch.flats_generator()
-            {frozenset({'a'}): Aa,
-            frozenset({'b'}): Ab,
-            frozenset({'c'}): Ac,
-            frozenset({'d'}): Ad,
-            frozenset({'e'}): Ae,
-            frozenset({'f'}): Af,
-            frozenset({'g'}): Ag,
-            frozenset({'a', 'b', 'f'}): Aabf,
-            frozenset({'a', 'c', 'e'}): Aace,
-            frozenset({'a', 'd', 'g'}): Aadg,
-            frozenset({'b', 'c', 'd'}): Abcd,
-            frozenset({'b', 'e', 'g'}): Abeg,
-            frozenset({'c', 'f', 'g'}): Acfg,
-            frozenset({'d', 'e'}): Ade,
-            frozenset({'d', 'f'}): Adf,
-            frozenset({'e', 'f'}): Aef,
-            frozenset({'a', 'b', 'c', 'd', 'e', 'f', 'g'}): Aabcdefg}
-        """
-        flats = [X for i in range(1, self._matroid.rank() + 1)
-                 for X in self._matroid.flats(i)]
-        gens = self.gens()
-        if not (self._augmented and self._presentation == 'fy'):
-            return dict(zip(flats, gens))
-        flats_gen = {}
-        E = list(self.matroid().groundset())
-        for i,F in enumerate(flats):
-            flats_gen[F] = gens[len(E) + i]
-        return flats_gen
-
+    @cached_method
     def lefschetz_element(self):
         r"""
         Return one Lefschetz element of the given Chow ring.
@@ -340,8 +305,9 @@ class ChowRing(QuotientRing_generic):
             sage: len(basis_deg[2])
             36
         """
-        w = sum(len(F) * (len(self.matroid().groundset()) - len(F)) * gen for F, gen in self.flats_generator().items())
-        return w
+        w = sum(len(F) * (len(self.matroid().groundset()) - len(F)) * gen 
+                for F, gen in self.defining_ideal().flat_to_generator_dict().items())
+        return self.ElementClass(self,w)
 
     def poincare_pairing(self, el1, el2):
         r"""
@@ -359,15 +325,14 @@ class ChowRing(QuotientRing_generic):
             sage: ch.poincare_pairing(v, u)
             3
         """
-        r = self._top_degree()
+        r = self.top_degree()
         hom_components1 = el1.lift().homogeneous_components()
         hom_components2 = el2.lift().homogeneous_components()
         new_el = self.base_ring().zero()
         for i in hom_components1:
-            for j in hom_components2:
-                if r - i not in hom_components2:
-                    continue
-                new_el += hom_components1[i] * hom_components2[j]
+            if r - i not in hom_components2:
+                continue
+            new_el += hom_components1[i] * hom_components2[r - i]
         return new_el.degree()
 
     class Element(QuotientRing_generic.Element):

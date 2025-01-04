@@ -82,7 +82,7 @@ class KahlerAlgebras(Category_over_base_ring):
 
     class ParentMethods:
         @abstract_method
-        def poincare_pairing():
+        def poincare_pairing(a,b):
             pass
 
         @abstract_method
@@ -140,7 +140,7 @@ class KahlerAlgebras(Category_over_base_ring):
                 ...
                 ValueError: k must be less than r < 2
             """
-            r = self._top_degree()
+            r = self.top_degree()
             if k > (r/2):
                 raise ValueError("k must be less than r < 2")
             basis_k = []

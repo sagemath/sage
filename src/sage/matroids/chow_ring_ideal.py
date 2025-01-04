@@ -56,6 +56,39 @@ class ChowRingIdeal(MPolynomialIdeal):
         chains = lattice_flats.chains()  #Only chains
         return (ranks, chains)
 
+    def flats_to_generator_dict(self):
+        r"""
+        Return the corresponding generators of flats/groundset elements of
+        Chow ring ideal.
+
+        EXAMPLES::
+
+            sage: ch = matroids.Uniform(4,6).chow_ring(QQ, True, 'atom-free')
+            sage: ch.defining_ideal().flats_to_generator_dict()
+            {frozenset({0}): A0, frozenset({1}): A1, frozenset({2}): A2,
+             frozenset({3}): A3, frozenset({4}): A4, frozenset({5}): A5,
+             frozenset({0, 1}): A01, frozenset({0, 2}): A02,
+             frozenset({0, 3}): A03, frozenset({0, 4}): A04, 
+             frozenset({0, 5}): A05, frozenset({1, 2}): A12,
+             frozenset({1, 3}): A13, frozenset({1, 4}): A14,
+             frozenset({1, 5}): A15, frozenset({2, 3}): A23,
+             frozenset({2, 4}): A24, frozenset({2, 5}): A25,
+             frozenset({3, 4}): A34, frozenset({3, 5}): A35,
+             frozenset({4, 5}): A45, frozenset({0, 1, 2}): A012,
+             frozenset({0, 1, 3}): A013, frozenset({0, 1, 4}): A014,
+             frozenset({0, 1, 5}): A015, frozenset({0, 2, 3}): A023,
+             frozenset({0, 2, 4}): A024, frozenset({0, 2, 5}): A025,
+             frozenset({0, 3, 4}): A034, frozenset({0, 3, 5}): A035,
+             frozenset({0, 4, 5}): A045, frozenset({1, 2, 3}): A123,
+             frozenset({1, 2, 4}): A124, frozenset({1, 2, 5}): A125,
+             frozenset({1, 3, 4}): A134, frozenset({1, 3, 5}): A135,
+             frozenset({1, 4, 5}): A145, frozenset({2, 3, 4}): A234,
+             frozenset({2, 3, 5}): A235, frozenset({2, 4, 5}): A245,
+             frozenset({3, 4, 5}): A345,
+             frozenset({0, 1, 2, 3, 4, 5}): A012345}
+        """
+        flats_gen = self._flats_generator
+        return flats_gen
 
 class ChowRingIdeal_nonaug(ChowRingIdeal):
     r"""
@@ -118,7 +151,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                  for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
         try:
-            poly_ring = PolynomialRing(R, names) #self.ring
+            poly_ring = PolynomialRing(R, names) #  self.ring
         except ValueError: # variables are not proper names
             poly_ring = PolynomialRing(R, 'A', len(flats))
         gens = poly_ring.gens()
