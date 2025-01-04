@@ -19271,7 +19271,16 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.add_clique(range(4), loops=True)
             sage: D.is_clique(directed_clique=True, loops=True)
             True
+
+        Immutable graph::
+
+            sage: Graph(immutable=True).add_clique([1, 2, 3])
+            Traceback (most recent call last):
+            ...
+            ValueError: graph is immutable; please change a copy instead (use function copy())
         """
+        if self.is_immutable():
+            raise ValueError("graph is immutable; please change a copy instead (use function copy())")
         import itertools
         if loops:
             if self.is_directed():
@@ -19337,6 +19346,13 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.add_cycle(['a', 'b', 'c'])
             sage: G.order(), G.size()
             (3, 3)
+
+        Immutable graph::
+
+            sage: Graph(immutable=True).add_cycle([1, 2, 3])
+            Traceback (most recent call last):
+            ...
+            ValueError: graph is immutable; please change a copy instead (use function copy())
         """
         if vertices:
             self.add_path(vertices)
@@ -19373,6 +19389,16 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.add_path(list(range(4)))
             sage: D.edges(sort=True)
             [(0, 1, None), (1, 2, None), (2, 3, None)]
+
+        TESTS:
+
+        Immutable graph::
+
+            sage: Graph(immutable=True).add_path([])
+            sage: Graph(immutable=True).add_path([1, 2, 3])
+            Traceback (most recent call last):
+            ...
+            ValueError: graph is immutable; please change a copy instead (use function copy())
         """
         if not vertices:
             return
