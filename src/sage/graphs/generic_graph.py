@@ -19715,30 +19715,25 @@ class GenericGraph(GenericGraph_pyx):
             sage: D1.union(D2).weighted() or D2.union(D1).weighted()
             False
         """
-        if (self._directed and not other._directed) or (not self._directed and other._directed):
+        if self._directed != other._directed:
             raise TypeError('both arguments must be of the same class')
 
         multiedges = self.allows_multiple_edges() or other.allows_multiple_edges()
         loops = self.allows_loops() or other.allows_loops()
         weighted = self.weighted() and other.weighted()
-
-        if self._directed:
-            from sage.graphs.digraph import DiGraph
-            G = DiGraph(multiedges=multiedges, loops=loops, weighted=weighted)
-        else:
-            from sage.graphs.graph import Graph
-            G = Graph(multiedges=multiedges, loops=loops, weighted=weighted)
-        G.add_vertices(self)
-        G.add_vertices(other)
-        G.add_edges(self.edge_iterator())
-        G.add_edges(other.edge_iterator())
-
         if immutable is None:
             immutable = self.is_immutable() and other.is_immutable()
-        if immutable:
-            G = G.copy(immutable=True)
 
-        return G
+        if self._directed:
+            from sage.graphs.digraph import DiGraph as GT
+        else:
+            from sage.graphs.graph import Graph as GT
+
+        from itertools import chain
+        return GT([chain(self, other),
+                   chain(self.edge_iterator(), other.edge_iterator())],
+                  format='vertices_and_edges', weighted=weighted, loops=loops,
+                  multiedges=multiedges, immutable=immutable)
 
     def cartesian_product(self, other):
         r"""
