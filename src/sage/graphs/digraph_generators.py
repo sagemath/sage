@@ -150,9 +150,6 @@ class DiGraphGenerators:
       dense data structure. See the documentation of
       :class:`~sage.graphs.graph.Graph`.
 
-    - ``immutable`` -- boolean (default: ``False``); whether to return immutable
-      or mutable digraphs.
-
     EXAMPLES:
 
     Print digraphs on 2 or less vertices::
@@ -997,7 +994,7 @@ class DiGraphGenerators:
         G._circle_embedding(list(range(n)))
         return G
 
-    def DeBruijn(self, k, n, vertices='strings', immutable=False):
+    def DeBruijn(self, k, n, vertices='strings'):
         r"""
         Return the De Bruijn digraph with parameters `k,n`.
 
@@ -1023,9 +1020,6 @@ class DiGraphGenerators:
         - ``vertices`` -- string (default: ``'strings'``); whether the vertices
           are words over an alphabet (default) or integers
           (``vertices='string'``)
-
-        - ``immutable`` -- boolean (default: ``False``); whether to return
-          an immutable or mutable digraph.
 
         EXAMPLES:
 
