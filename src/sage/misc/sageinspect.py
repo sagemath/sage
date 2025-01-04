@@ -114,6 +114,7 @@ import functools
 import os
 import tokenize
 import re
+from inspect import Signature, Parameter
 
 try:
     import importlib.machinery as import_machinery
@@ -1410,7 +1411,7 @@ def sage_getargspec(obj):
         FullArgSpec(args=['x', 'y', 'z', 't'], varargs='args', varkw='keywords',
                     defaults=(1, 2), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    We now run sage_getargspec on some functions from the Sage library::
+    We now run :func:`sage_getargspec` on some functions from the Sage library::
 
         sage: sage_getargspec(identity_matrix)                                          # needs sage.modules
         FullArgSpec(args=['ring', 'n', 'sparse'], varargs=None, varkw=None,
@@ -1666,6 +1667,147 @@ def sage_getargspec(obj):
         defaults = None
     return inspect.FullArgSpec(args, varargs, varkw, defaults,
                                kwonlyargs=[], kwonlydefaults=None, annotations={})
+
+
+def _fullargspec_to_signature(fullargspec):
+    """
+    Converts a :class:`FullArgSpec` instance to a :class:`Signature` instance by best effort.
+
+    EXAMPLES::
+
+        sage: from sage.misc.sageinspect import _fullargspec_to_signature
+        sage: from inspect import FullArgSpec
+        sage: fullargspec = FullArgSpec(args=['self', 'x', 'base'], varargs=None, varkw=None, defaults=(None, 0), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (self, x=None, base=0)>
+
+    TESTS::
+
+        sage: fullargspec = FullArgSpec(args=['p', 'r'], varargs='q', varkw='s', defaults=({},), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (p, r={}, *q, **s)>
+        sage: fullargspec = FullArgSpec(args=['r'], varargs=None, varkw=None, defaults=((None, 'u:doing?'),), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (r=(None, 'u:doing?'))>
+        sage: fullargspec = FullArgSpec(args=['x'], varargs=None, varkw=None, defaults=('):',), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (x='):')>
+        sage: fullargspec = FullArgSpec(args=['z'], varargs=None, varkw=None, defaults=({(1, 2, 3): True},), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (z={(1, 2, 3): True})>
+        sage: fullargspec = FullArgSpec(args=['x', 'z'], varargs=None, varkw=None, defaults=({(1, 2, 3): True},), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (x, z={(1, 2, 3): True})>
+        sage: fullargspec = FullArgSpec(args=[], varargs='args', varkw=None, defaults=None, kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (*args)>
+        sage: fullargspec = FullArgSpec(args=[], varargs=None, varkw='args', defaults=None, kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (**args)>
+        sage: fullargspec = FullArgSpec(args=['self', 'x'], varargs='args', varkw=None, defaults=(1,), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (self, x=1, *args)>
+        sage: fullargspec = FullArgSpec(args=['self', 'x'], varargs='args', varkw=None, defaults=(1,), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (self, x=1, *args)>
+        sage: fullargspec = FullArgSpec(args=['x', 'z'], varargs=None, varkw=None, defaults=('a string', {(1, 2, 3): True}), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: _fullargspec_to_signature(fullargspec)
+        <Signature (x='a string', z={(1, 2, 3): True})>
+    """
+    parameters = []
+    defaults_start = len(fullargspec.args) - len(fullargspec.defaults) if fullargspec.defaults else None
+
+    for i, arg in enumerate(fullargspec.args):
+        default = fullargspec.defaults[i - defaults_start] if defaults_start is not None and i >= defaults_start else Parameter.empty
+        param = Parameter(arg, Parameter.POSITIONAL_OR_KEYWORD, default=default)
+        parameters.append(param)
+
+    if fullargspec.varargs:
+        param = Parameter(fullargspec.varargs, Parameter.VAR_POSITIONAL)
+        parameters.append(param)
+
+    if fullargspec.varkw:
+        param = Parameter(fullargspec.varkw, Parameter.VAR_KEYWORD)
+        parameters.append(param)
+
+    for arg in fullargspec.kwonlyargs:
+        param = Parameter(arg, Parameter.KEYWORD_ONLY, default=fullargspec.kwonlydefaults.get(arg, Parameter.empty))
+        parameters.append(param)
+
+    return Signature(parameters)
+
+
+def sage_signature(obj):
+    r"""
+    Return the names and default values of a function's arguments.
+
+    INPUT:
+
+    - ``obj`` -- any callable object
+
+    OUTPUT:
+
+    A :class:`Signature` is returned, as specified by the
+    Python library function :func:`inspect.signature`.
+
+
+    .. NOTE::
+
+        Currently the type information is not returned, because the output
+        is converted from the return value of :func:`sage_getargspec`.
+        This should be changed in the future.
+
+    EXAMPLES::
+
+        sage: from sage.misc.sageinspect import sage_signature
+        sage: def f(x, y, z=1, t=2, *args, **keywords):
+        ....:     pass
+        sage: sage_signature(f)
+        <Signature (x, y, z=1, t=2, *args, **keywords)>
+
+    We now run :func:`sage_signature` on some functions from the Sage library::
+
+        sage: sage_signature(identity_matrix)                                          # needs sage.modules
+        <Signature (ring, n=0, sparse=False)>
+        sage: sage_signature(factor)
+        <Signature (n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds)>
+
+    In the case of a class or a class instance, the `Signature` of the
+    `__new__`, `__init__` or `__call__` method is returned::
+
+        sage: P.<x,y> = QQ[]
+        sage: sage_signature(P)                                                        # needs sage.libs.singular
+        <Signature (base_ring, n, names, order='degrevlex')>
+        sage: sage_signature(P.__class__)                                              # needs sage.libs.singular
+        <Signature (self, x=0, *args, **kwds)>
+
+    The following tests against various bugs that were fixed in
+    :issue:`9976`::
+
+        sage: from sage.rings.polynomial.real_roots import bernstein_polynomial_factory_ratlist     # needs sage.modules
+        sage: sage_signature(bernstein_polynomial_factory_ratlist.coeffs_bitsize)                  # needs sage.modules
+        <Signature (self)>
+        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # needs sage.rings.polynomial.pbori
+        sage: sage_signature(BooleanMonomialMonoid.gen)                                # needs sage.rings.polynomial.pbori
+        <Signature (self, i=0)>
+        sage: I = P*[x,y]
+        sage: sage_signature(I.groebner_basis)                                         # needs sage.libs.singular
+        <Signature (self, algorithm='', deg_bound=None, mult_bound=None, prot=False, *args, **kwds)>
+        sage: cython("cpdef int foo(x,y) except -1: return 1")                          # needs sage.misc.cython
+        sage: sage_signature(foo)                                                      # needs sage.misc.cython
+        <Signature (x, y)>
+
+    If a `functools.partial` instance is involved, we see no other meaningful solution
+    than to return the signature of the underlying function::
+
+        sage: def f(a, b, c, d=1):
+        ....:     return a + b + c + d
+        sage: import functools
+        sage: f1 = functools.partial(f, 1, c=2)
+        sage: sage_signature(f1)
+        <Signature (a, b, c, d=1)>
+    """
+    return _fullargspec_to_signature(sage_getargspec(obj))
 
 
 def formatannotation(annotation, base_module=None):
