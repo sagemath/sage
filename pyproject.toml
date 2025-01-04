@@ -177,3 +177,8 @@ lint = [
   "pycodestyle",
   "flake8-rst-docstrings",
 ]
+dev = [
+  "tqdm",
+  "pygithub",
+  "meson",
+]
