@@ -822,9 +822,9 @@ def is_quasi_difference_matrix(M, G, int k, int lmbda, int mu, int u, verbose=Fa
 
     # Width of the matrix
     for R in M:
-        if len(R)!=k:
+        if len(R) != k:
             if verbose:
-                print("The matrix has {} columns but k={}".format(len(R),k))
+                print("The matrix has {} columns but k={}".format(len(R), k))
             return False
 
     # When |G|=0
@@ -836,10 +836,10 @@ def is_quasi_difference_matrix(M, G, int k, int lmbda, int mu, int u, verbose=Fa
     cdef dict group_to_int = {v:i for i,v in enumerate(int_to_group)}
 
     # Allocations
-    cdef int ** x_minus_y     = <int **> sig_malloc((n+1)*sizeof(int *))
-    cdef int * x_minus_y_data = <int *>  sig_malloc((n+1)*(n+1)*sizeof(int))
-    cdef int * M_c            = <int *>  sig_malloc(k*M_nrows*sizeof(int))
-    cdef int * G_seen         = <int *>  sig_malloc((n+1)*sizeof(int))
+    cdef int ** x_minus_y = <int **> sig_malloc((n+1)*sizeof(int *))
+    cdef int * x_minus_y_data = <int *> sig_malloc((n+1)*(n+1)*sizeof(int))
+    cdef int * M_c = <int *> sig_malloc(k*M_nrows*sizeof(int))
+    cdef int * G_seen = <int *> sig_malloc((n+1)*sizeof(int))
     if (x_minus_y == NULL or x_minus_y_data == NULL or M_c == NULL or G_seen == NULL):
         sig_free(x_minus_y)
         sig_free(x_minus_y_data)

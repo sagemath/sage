@@ -418,7 +418,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         cdef IntegerMod_int n
         cdef Vector_mod2_dense r = right
         cdef m4ri_word tmp = 0
-        n =  IntegerMod_int.__new__(IntegerMod_int)
+        n = IntegerMod_int.__new__(IntegerMod_int)
         IntegerMod_abstract.__init__(n, self.base_ring())
         n.ivalue = 0
         cdef m4ri_word *lrow = mzd_row(self._entries, 0)

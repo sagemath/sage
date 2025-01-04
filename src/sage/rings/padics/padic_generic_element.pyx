@@ -115,7 +115,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         m = min(left.precision_absolute(), right.precision_absolute())
         x_ordp = left.valuation()
-        left_zero =  bool(x_ordp >= m)
+        left_zero = bool(x_ordp >= m)
         y_ordp = right.valuation()
         right_zero = bool(y_ordp >= m)
         # handle approximate zeros

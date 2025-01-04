@@ -432,7 +432,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         _cfr = rDefault( 0, ngens, _ext_names )
         rComplete(_cfr, 1)
 
-        trextParam.r =  _cfr
+        trextParam.r = _cfr
 
         _cf = nInitChar(n_transExt, <void *>&trextParam)
 
@@ -458,7 +458,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         _cfr = rDefault( characteristic, ngens, _ext_names )
         rComplete(_cfr, 1)
 
-        trextParam.r =  _cfr
+        trextParam.r = _cfr
 
         _cf = nInitChar(n_transExt, <void *>&trextParam)
 
@@ -483,7 +483,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         _cfr.qideal = idInit(1,1)
         rComplete(_cfr, 1)
         _cfr.qideal.m[0] = prCopyR(minpoly._poly, k._ring, _cfr)
-        extParam.r =  _cfr
+        extParam.r = _cfr
 
         # _type = nRegister(n_algExt, <cfInitCharProc> naInitChar);
         _cf = nInitChar( n_algExt,  <void *>&extParam) #
@@ -552,7 +552,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
         _cfr.qideal = idInit(1,1)
         rComplete(_cfr, 1)
         _cfr.qideal.m[0] = prCopyR(minpoly._poly, k._ring, _cfr)
-        extParam.r =  _cfr
+        extParam.r = _cfr
         _cf = nInitChar( n_algExt,  <void *>&extParam)
 
         if (_cf is NULL):

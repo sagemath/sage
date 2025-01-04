@@ -45,38 +45,48 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 
-
+import doctest
+import errno
+import gc
+import hashlib
+import linecache
+import multiprocessing
 import os
 import platform
-import sys
-import time
-import signal
-import linecache
-import hashlib
-import multiprocessing
-import warnings
 import re
-import errno
-import doctest
-import traceback
+import signal
+import sys
 import tempfile
+import time
+import traceback
+import typing
+import warnings
 from collections import defaultdict
 from dis import findlinestarts
 from queue import Empty
-import gc
+
 import IPython.lib.pretty
 
-import sage.misc.randstate as randstate
-from sage.misc.timing import walltime
-from .util import Timer, RecordingDict, count_noun
-from .sources import DictAsObject
-from .parsing import OriginalSource, reduce_hex
-from sage.structure.sage_object import SageObject
-from .parsing import SageOutputChecker, pre_hash, get_source, unparse_optional_tags
-from sage.repl.user_globals import set_globals
 from sage.cpython.atexit import restore_atexit
 from sage.cpython.string import bytes_to_str, str_to_bytes
+from sage.doctest.parsing import (
+    OriginalSource,
+    SageOutputChecker,
+    get_source,
+    pre_hash,
+    reduce_hex,
+    unparse_optional_tags,
+)
+from sage.doctest.sources import DictAsObject
+from sage.doctest.util import RecordingDict, Timer, count_noun
+from sage.misc import randstate
+from sage.repl.user_globals import set_globals
+from sage.structure.sage_object import SageObject
+
+if typing.TYPE_CHECKING:
+    from sage.doctest.control import DocTestController
 
 # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork' in
 # multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
@@ -113,7 +123,7 @@ def _sorted_dict_pprinter_factory(start, end):
     return inner
 
 
-def init_sage(controller=None):
+def init_sage(controller: DocTestController | None = None) -> None:
     """
     Import the Sage library.
 
@@ -1710,7 +1720,7 @@ class DocTestDispatcher(SageObject):
     Create parallel :class:`DocTestWorker` processes and dispatches
     doctesting tasks.
     """
-    def __init__(self, controller):
+    def __init__(self, controller: DocTestController):
         """
         INPUT:
 

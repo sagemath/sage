@@ -232,11 +232,7 @@ The main difference is that ``FreeModule`` returns a free module with a
 distinguished basis, while ``FiniteRankFreeModule`` does not::
 
     sage: N.basis()
-    [
-    (1, 0, 0),
-    (0, 1, 0),
-    (0, 0, 1)
-    ]
+    [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
     sage: M.bases()
     []
     sage: M.print_bases()
@@ -378,11 +374,7 @@ created by ``VectorSpace`` is actually a Cartesian power of the base field::
     sage: V is QQ^3
     True
     sage: V.basis()
-    [
-    (1, 0, 0),
-    (0, 1, 0),
-    (0, 0, 1)
-    ]
+    [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
 
 To create a vector space without any distinguished basis, one has to use
 ``FiniteRankFreeModule``::

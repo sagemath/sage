@@ -4623,7 +4623,7 @@ def TricornGraph():
 
     The Tricorn graph is obtained by splicing a complete graph `K_4` with the
     the triangular circular ladder graph `\overline{C_6}`. (Note that this
-    generates a unqiue graph as both of the graphs `K_4` and `\overline{C_6}`
+    generates a unique graph as both of the graphs `K_4` and `\overline{C_6}`
     are vertex-transitive). It is a nonsolid brick. This matching covered graph
     is one of the ten extremal cubic bricks. (A matching covered graph `G` is
     *extremal* if `\Phi(G) = dim(\mathcal{Lin}(G))`, where `\Phi(G)` denotes

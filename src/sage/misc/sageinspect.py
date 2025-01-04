@@ -1986,7 +1986,7 @@ def sage_getdoc(obj, obj_name='', embedded=False):
 
         sage: from sage.misc.sageinspect import sage_getdoc
         sage: sage_getdoc(identity_matrix)[87:124]                                      # needs sage.modules
-        'Return the n x n identity matrix over'
+        '...the n x n identity matrix...'
         sage: def f(a, b, c, d=1): return a+b+c+d
         ...
         sage: import functools

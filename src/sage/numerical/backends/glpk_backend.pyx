@@ -364,7 +364,7 @@ cdef class GLPKBackend(GenericBackend):
         cdef char * n
 
         if name is None:
-            n =  <char *> glp_get_prob_name(self.lp)
+            n = <char *> glp_get_prob_name(self.lp)
             if n == NULL:
                 return ""
             else:
@@ -1446,7 +1446,7 @@ cdef class GLPKBackend(GenericBackend):
             ...
             ValueError: invalid row index 2
         """
-        cdef char *  s
+        cdef char * s
 
         if index < 0 or index > (self.nrows() - 1):
             raise ValueError("invalid row index %d" % index)

@@ -854,7 +854,7 @@ cdef class PuiseuxSeries(AlgebraElement):
             sage: p.exponents()
             [3/4, 4/5, 5/6]
         """
-        return [QQ(n) /  self._e for n in self._l.exponents()]
+        return [QQ(n) / self._e for n in self._l.exponents()]
 
     def __setitem__(self, n, value):
         """

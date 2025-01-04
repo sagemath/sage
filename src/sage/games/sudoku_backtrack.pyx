@@ -71,7 +71,7 @@ def backtrack_all(n, puzzle):
         # location as row and column in square
         # grids are numbered similarly, in row-major order
         row = level // nsquare
-        col = level %  nsquare
+        col = level % nsquare
         grid_corner = (row - (row % n))*nsquare + (col - (col % n))
         grid_row = row // n
         grid_col = col // n
@@ -141,7 +141,7 @@ def backtrack_all(n, puzzle):
                     if available[abox][asymbol] == 0:
                         card[abox] += 1
         # move sideways in search tree to next available symbol
-        symbol +=  1
+        symbol += 1
         while (symbol < nsquare) and (available[level][symbol] != 0):
             symbol += 1
         if symbol == nsquare:

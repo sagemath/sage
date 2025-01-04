@@ -1332,7 +1332,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
                 # the m-components of the probability.
                 alpha_minus = alpha._values[t*N + j] / prob
                 for m in range(M):
-                    numer =  alpha_minus * G.prob_m(obs._values[t], m) * beta._values[t*N + j]
+                    numer = alpha_minus * G.prob_m(obs._values[t], m) * beta._values[t*N + j]
                     mixed_gamma._values[m*T + t] = numer / P
 
         return mixed_gamma

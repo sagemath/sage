@@ -1895,7 +1895,7 @@ class Representation_Symmetric(Representation_abstract, CombinatorialFreeModule)
         R = rep.base_ring()
         dim = rep.dimension()
         if degree not in ZZ or degree < 0:
-            raise ValueError(f"the degree must be a nonnegative integer")
+            raise ValueError("the degree must be a nonnegative integer")
         self._symalg = PolynomialRing(R, 'e', dim)
         self._basis_order = list(rep.basis().keys())
         G = self._symalg.gens()

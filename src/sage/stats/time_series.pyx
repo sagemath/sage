@@ -1971,7 +1971,7 @@ cdef class TimeSeries:
             mid   = n + bin_size/2
             right = n + 2*bin_size/3
 
-            rgbcolor =  'blue' if open < close else 'red'
+            rgbcolor = 'blue' if open < close else 'red'
 
             p += line([(mid, low), (mid, high)], rgbcolor=rgbcolor)
             p += polygon([(left, open), (right, open), (right, close), (left, close)], rgbcolor=rgbcolor)

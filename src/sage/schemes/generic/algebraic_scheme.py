@@ -1196,16 +1196,14 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: PP.<x,y,z,w,v> = ProjectiveSpace(4, QQ)
             sage: V = PP.subscheme((x^2 - y^2 - z^2) * (w^5 - 2*v^2*z^3) * w * (v^3 - x^2*z))
             sage: V.irreducible_components()                                            # needs sage.libs.singular
-            [
-            Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-              w,
-            Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-              x^2 - y^2 - z^2,
-            Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-              x^2*z - v^3,
-            Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-              w^5 - 2*z^3*v^2
-            ]
+            [Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
+               w,
+             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
+               x^2 - y^2 - z^2,
+             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
+               x^2*z - v^3,
+             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
+               w^5 - 2*z^3*v^2]
 
         We verify that the irrelevant ideal is not accidentally returned
         (see :issue:`6920`)::
@@ -1216,9 +1214,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: I = [f] + [f.derivative(zz) for zz in PP.gens()]
             sage: V = PP.subscheme(I)
             sage: V.irreducible_components()                                            # needs sage.libs.singular
-            [
-            <BLANKLINE>
-            ]
+            []
 
         The same polynomial as above defines a scheme with a
         nontrivial irreducible component in affine space (instead of
@@ -1227,13 +1223,11 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: AA.<x,y,z,w> = AffineSpace(4, QQ)
             sage: V = AA.subscheme(I)
             sage: V.irreducible_components()                                            # needs sage.libs.singular
-            [
-            Closed subscheme of Affine Space of dimension 4 over Rational Field defined by:
-              w,
-              z,
-              y,
-              x
-            ]
+            [Closed subscheme of Affine Space of dimension 4 over Rational Field defined by:
+               w,
+               z,
+               y,
+               x]
         """
         try:
             return self.__irreducible_components

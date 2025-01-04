@@ -1351,12 +1351,12 @@ class DocTestController(SageObject):
         opt = self.options
 
         if opt.gdb:
-            cmd = f'''exec gdb --eval-command="run" --args '''
+            cmd = '''exec gdb --eval-command="run" --args '''
             flags = ""
             if opt.logfile:
                 sage_cmd += f" --logfile {shlex.quote(opt.logfile)}"
         elif opt.lldb:
-            cmd = f'''exec lldb --one-line "process launch" --one-line "cont" -- '''
+            cmd = '''exec lldb --one-line "process launch" --one-line "cont" -- '''
             flags = ""
         else:
             if opt.logfile is None:

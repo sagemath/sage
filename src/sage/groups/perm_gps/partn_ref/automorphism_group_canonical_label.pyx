@@ -529,12 +529,12 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
     orbits_of_permutation              = work_space.orbits_of_permutation
 
     current_indicators                 = work_space.int_array
-    first_indicators                   = work_space.int_array +   n
-    permutation                        = work_space.int_array + 2*n
-    id_perm                            = work_space.int_array + 3*n
-    cells_to_refine_by                 = work_space.int_array + 4*n
-    vertices_determining_current_stack = work_space.int_array + 5*n
-    label_perm                         = work_space.int_array + 6*n
+    first_indicators                   = work_space.int_array + n
+    permutation                        = work_space.int_array + 2 * n
+    id_perm                            = work_space.int_array + 3 * n
+    cells_to_refine_by                 = work_space.int_array + 4 * n
+    vertices_determining_current_stack = work_space.int_array + 5 * n
+    label_perm                         = work_space.int_array + 6 * n
 
     fixed_points_of_generators         = work_space.bitset_array
     minimal_cell_reps_of_generators    = work_space.bitset_array + len_of_fp_and_mcr

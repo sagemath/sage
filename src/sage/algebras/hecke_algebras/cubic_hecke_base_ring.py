@@ -683,7 +683,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
 
         if len(cyclotomic_roots) > 0:
             E3 = cyclotomic_roots[0]
-            verbose('thrird root of unity %s found in %s' % (E3, E3.parent()), level=2)
+            verbose('third root of unity %s found in %s' % (E3, E3.parent()), level=2)
 
         if E3 is None:
             raise RuntimeError('cannot find a ring containing a third root of unity for the this choice of cubic roots!')

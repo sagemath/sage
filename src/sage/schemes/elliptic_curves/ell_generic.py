@@ -946,7 +946,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         b = (a1*x + a3)
         f = ((x + a2) * x + a4) * x + a6
 
-        # If possible find the associated y coorindates in L:
+        # If possible find the associated y coordinates in L:
 
         if K.characteristic() == 2:
             R = PolynomialRing(L, 'y')

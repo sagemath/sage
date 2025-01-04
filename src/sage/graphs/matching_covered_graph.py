@@ -2580,7 +2580,7 @@ class MatchingCoveredGraph(Graph):
         INPUT:
 
         - ``vertices`` -- (default: ``None``) iterator container of vertex
-          labels correponding to which the looped edges are to be removed. If
+          labels corresponding to which the looped edges are to be removed. If
           ``vertices`` is ``None``, remove all loops.
 
         OUTPUT:

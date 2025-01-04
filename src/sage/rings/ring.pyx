@@ -23,7 +23,7 @@ The class inheritance hierarchy is:
 
     - :class:`NoetherianRing` (deprecated and essentially removed)
     - :class:`CommutativeAlgebra` (deprecated and essentially removed)
-    - :class:`IntegralDomain` (deprecated)
+    - :class:`IntegralDomain` (deprecated and essentially removed)
 
       - :class:`DedekindDomain` (deprecated and essentially removed)
       - :class:`PrincipalIdealDomain` (deprecated and essentially removed)
@@ -954,50 +954,11 @@ cdef class CommutativeRing(Ring):
 
 
 cdef class IntegralDomain(CommutativeRing):
-    """
-    Generic integral domain class.
-
-    This class is deprecated. Please use the
-    :class:`sage.categories.integral_domains.IntegralDomains`
-    category instead.
-    """
     _default_category = IntegralDomains()
 
-    def __init__(self, base_ring, names=None, normalize=True, category=None):
-        """
-        Initialize ``self``.
-
-        INPUT:
-
-         - ``category`` -- (default: ``None``) a category, or ``None``
-
-        This method is used by all the abstract subclasses of
-        :class:`IntegralDomain`, like :class:`Field`, ... in order to
-        avoid cascade calls Field.__init__ ->
-        IntegralDomain.__init__ ->
-        ...
-
-        EXAMPLES::
-
-            sage: F = IntegralDomain(QQ)
-            sage: F.category()
-            Category of integral domains
-
-            sage: F = Field(QQ)
-            sage: F.category()
-            Category of fields
-
-        The default value for the category is specified by the class
-        attribute ``default_category``::
-
-            sage: IntegralDomain._default_category
-            Category of integral domains
-
-            sage: Field._default_category
-            Category of fields
-        """
-        CommutativeRing.__init__(self, base_ring, names=names, normalize=normalize,
-                                 category=category)
+    def __init__(self, *args, **kwds):
+        deprecation(39227, "use the category IntegralDomains")
+        super().__init__(*args, **kwds)
 
 
 cdef class NoetherianRing(CommutativeRing):

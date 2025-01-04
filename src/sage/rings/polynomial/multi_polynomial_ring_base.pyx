@@ -432,8 +432,8 @@ cdef class MPolynomialRing_base(CommutativeRing):
             Also, if the solution is not unique, it spits out one solution,
             without any notice that there are more.
 
-            Lastly, the interpolation function for univariate polynomial rings
-            is called :meth:`lagrange_polynomial`.
+            For interpolation in the univariate case use
+            :meth:`~sage.rings.polynomial.polynomial_ring.PolynomialRing_field.lagrange_polynomial`.
 
         .. WARNING::
 
@@ -453,7 +453,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         .. SEEALSO::
 
-            :meth:`lagrange_polynomial<sage.rings.polynomial.polynomial_ring.PolynomialRing_field.lagrange_polynomial>`
+            :meth:`~sage.rings.polynomial.polynomial_ring.PolynomialRing_field.lagrange_polynomial`
         """
         from sage.matrix.constructor import matrix
         from sage.modules.free_module_element import vector

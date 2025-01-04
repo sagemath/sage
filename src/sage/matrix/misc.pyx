@@ -222,7 +222,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
     tm = verbose("height_guess = %s" % height_guess, level=2, caller_name="multimod echelon")
 
     if proof:
-        M = self._ncols * height_guess * height  +  1
+        M = self._ncols * height_guess * height + 1
     else:
         M = height_guess + 1
 
