@@ -19509,12 +19509,31 @@ class GenericGraph(GenericGraph_pyx):
             [(2, 3, 1), (3, 2, None)]
             sage: G.to_simple(to_undirected=False, keep_label='max').edges(sort=True)
             [(2, 3, 2), (3, 2, None)]
+
+        TESTS:
+
+        Check the behavior of parameter `ìmmutable``::
+
+            sage: G = Graph([(0, 0), (0, 1)] * 2, loops=True, multiedges=True, immutable=True)
+            sage: H = G.to_simple()
+            sage: H.is_immutable()
+            True
+            sage: H.edges(labels=False)
+            [(0, 1)]
+            sage: H = G.to_simple(immutable=False)
+            sage: H.is_immutable()
+            False
+            sage: G = Graph([(0, 0), (0, 1)] * 2, loops=True, multiedges=True, immutable=False)
+            sage: G.to_simple().is_immutable()
+            False
+            sage: G.to_simple(immutable=True).is_immutable()
+            True
         """
         if to_undirected:
             from sage.graphs.graph import Graph
-            g = Graph(self)
+            g = Graph(self, immutable=False)
         else:
-            g = copy(self)
+            g = self.copy(immutable=False)
         g.allow_loops(False)
         g.allow_multiple_edges(False, keep_label=keep_label)
         if immutable is None:
