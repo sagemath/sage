@@ -5362,20 +5362,32 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: g = graphs.PetersenGraph()
             sage: g.cycle_basis()                                                       # needs networkx, random (changes in networkx 3.2)
-            [[1, 6, 8, 5, 0], [4, 9, 6, 8, 5, 0], [7, 9, 6, 8, 5],
-             [4, 3, 8, 5, 0], [1, 2, 3, 8, 5, 0], [7, 2, 3, 8, 5]]
+            [[6, 8, 5, 7, 9],
+             [2, 3, 8, 5, 7],
+             [4, 3, 8, 5, 7, 9],
+             [4, 0, 5, 7, 9],
+             [2, 1, 0, 5, 7],
+             [6, 1, 0, 5, 7, 9]]
 
         One can also get the result as a list of lists of edges::
 
             sage: g.cycle_basis(output='edge')                                          # needs networkx, random (changes in networkx 3.2)
-            [[(1, 6, None), (6, 8, None), (8, 5, None), (5, 0, None),
-             (0, 1, None)], [(4, 9, None), (9, 6, None), (6, 8, None),
-             (8, 5, None), (5, 0, None), (0, 4, None)], [(7, 9, None),
-             (9, 6, None), (6, 8, None), (8, 5, None), (5, 7, None)],
-             [(4, 3, None), (3, 8, None), (8, 5, None), (5, 0, None),
-             (0, 4, None)], [(1, 2, None), (2, 3, None), (3, 8, None),
-             (8, 5, None), (5, 0, None), (0, 1, None)], [(7, 2, None),
-             (2, 3, None), (3, 8, None), (8, 5, None), (5, 7, None)]]
+            [[(6, 8, None), (8, 5, None), (5, 7, None), (7, 9, None), (9, 6, None)],
+             [(2, 3, None), (3, 8, None), (8, 5, None), (5, 7, None), (7, 2, None)],
+             [(4, 3, None),
+              (3, 8, None),
+              (8, 5, None),
+              (5, 7, None),
+              (7, 9, None),
+              (9, 4, None)],
+             [(4, 0, None), (0, 5, None), (5, 7, None), (7, 9, None), (9, 4, None)],
+             [(2, 1, None), (1, 0, None), (0, 5, None), (5, 7, None), (7, 2, None)],
+             [(6, 1, None),
+              (1, 0, None),
+              (0, 5, None),
+              (5, 7, None),
+              (7, 9, None),
+              (9, 6, None)]]
 
         Checking the given cycles are algebraically free::
 
@@ -5551,9 +5563,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: sorted(g.minimum_cycle_basis(by_weight=False))
             [[1, 2, 3], [1, 3, 4], [5, 6, 7]]
             sage: sorted(g.minimum_cycle_basis(by_weight=True, algorithm='NetworkX'))   # needs networkx, random (changes in networkx 3.2)
-            [[1, 2, 3], [1, 2, 3, 4], [5, 6, 7]]
+            [[2, 3, 1], [2, 3, 4, 1], [6, 7, 5]]
             sage: g.minimum_cycle_basis(by_weight=False, algorithm='NetworkX')          # needs networkx, random (changes in networkx 3.2)
-            [[1, 2, 3], [1, 3, 4], [5, 6, 7]]
+            [[3, 4, 1], [2, 3, 1], [6, 7, 5]]
 
         ::
 
@@ -5561,7 +5573,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: sorted(g.minimum_cycle_basis(by_weight=False))
             [[1, 2, 3, 5], [3, 4, 5]]
             sage: sorted(g.minimum_cycle_basis(by_weight=False, algorithm='NetworkX'))  # needs networkx, random (changes in networkx 3.2)
-            [[1, 2, 3, 5], [3, 4, 5]]
+            [[3, 4, 5], [5, 3, 2, 1]]
 
         TESTS::
 
@@ -23009,68 +23021,55 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: P = graphs.PetersenGraph()
             sage: P.eigenvectors()                                                      # needs sage.modules sage.rings.number_field
-            [(3, [
-            (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-            ], 1), (-2, [
-            (1, 0, 0, 0, -1, -1, -1, 0, 1, 1),
-            (0, 1, 0, 0, -1, 0, -2, -1, 1, 2),
-            (0, 0, 1, 0, -1, 1, -1, -2, 0, 2),
-            (0, 0, 0, 1, -1, 1, 0, -1, -1, 1)
-            ], 4), (1, [
-            (1, 0, 0, 0, 0, 1, -1, 0, 0, -1),
-            (0, 1, 0, 0, 0, -1, 1, -1, 0, 0),
-            (0, 0, 1, 0, 0, 0, -1, 1, -1, 0),
-            (0, 0, 0, 1, 0, 0, 0, -1, 1, -1),
-            (0, 0, 0, 0, 1, -1, 0, 0, -1, 1)
-            ], 5)]
+            [(3, [(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)], 1),
+             (-2,
+              [(1, 0, 0, 0, -1, -1, -1, 0, 1, 1),
+               (0, 1, 0, 0, -1, 0, -2, -1, 1, 2),
+               (0, 0, 1, 0, -1, 1, -1, -2, 0, 2),
+               (0, 0, 0, 1, -1, 1, 0, -1, -1, 1)],
+              4),
+             (1,
+              [(1, 0, 0, 0, 0, 1, -1, 0, 0, -1),
+               (0, 1, 0, 0, 0, -1, 1, -1, 0, 0),
+               (0, 0, 1, 0, 0, 0, -1, 1, -1, 0),
+               (0, 0, 0, 1, 0, 0, 0, -1, 1, -1),
+               (0, 0, 0, 0, 1, -1, 0, 0, -1, 1)],
+              5)]
 
         Eigenspaces for the Laplacian should be identical since the Petersen
         graph is regular.  However, since the output also contains the
         eigenvalues, the two outputs are slightly different::
 
             sage: P.eigenvectors(laplacian=True)                                        # needs sage.modules sage.rings.number_field
-            [(0, [
-            (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-            ], 1), (5, [
-            (1, 0, 0, 0, -1, -1, -1, 0, 1, 1),
-            (0, 1, 0, 0, -1, 0, -2, -1, 1, 2),
-            (0, 0, 1, 0, -1, 1, -1, -2, 0, 2),
-            (0, 0, 0, 1, -1, 1, 0, -1, -1, 1)
-            ], 4), (2, [
-            (1, 0, 0, 0, 0, 1, -1, 0, 0, -1),
-            (0, 1, 0, 0, 0, -1, 1, -1, 0, 0),
-            (0, 0, 1, 0, 0, 0, -1, 1, -1, 0),
-            (0, 0, 0, 1, 0, 0, 0, -1, 1, -1),
-            (0, 0, 0, 0, 1, -1, 0, 0, -1, 1)
-            ], 5)]
+            [(0, [(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)], 1),
+             (5,
+              [(1, 0, 0, 0, -1, -1, -1, 0, 1, 1),
+               (0, 1, 0, 0, -1, 0, -2, -1, 1, 2),
+               (0, 0, 1, 0, -1, 1, -1, -2, 0, 2),
+               (0, 0, 0, 1, -1, 1, 0, -1, -1, 1)],
+              4),
+             (2,
+              [(1, 0, 0, 0, 0, 1, -1, 0, 0, -1),
+               (0, 1, 0, 0, 0, -1, 1, -1, 0, 0),
+               (0, 0, 1, 0, 0, 0, -1, 1, -1, 0),
+               (0, 0, 0, 1, 0, 0, 0, -1, 1, -1),
+               (0, 0, 0, 0, 1, -1, 0, 0, -1, 1)],
+              5)]
 
         ::
 
             sage: C = graphs.CycleGraph(8)
             sage: C.eigenvectors()                                                      # needs sage.modules sage.rings.number_field
-            [(2,
-              [
-              (1, 1, 1, 1, 1, 1, 1, 1)
-              ],
-              1),
-             (-2,
-              [
-              (1, -1, 1, -1, 1, -1, 1, -1)
-              ],
-              1),
-             (0,
-              [
-              (1, 0, -1, 0, 1, 0, -1, 0),
-              (0, 1, 0, -1, 0, 1, 0, -1)
-              ],
+            [(2, [(1, 1, 1, 1, 1, 1, 1, 1)], 1),
+             (-2, [(1, -1, 1, -1, 1, -1, 1, -1)], 1),
+             (0, [(1, 0, -1, 0, 1, 0, -1, 0), (0, 1, 0, -1, 0, 1, 0, -1)], 2),
+             (-1.414213562373095?,
+              [(1, 0, -1, 1.414213562373095?, -1, 0, 1, -1.414213562373095?),
+               (0, 1, -1.414213562373095?, 1, 0, -1, 1.414213562373095?, -1)],
               2),
-             (-1.4142135623...,
-              [(1, 0, -1, 1.4142135623..., -1, 0, 1, -1.4142135623...),
-               (0, 1, -1.4142135623..., 1, 0, -1, 1.4142135623..., -1)],
-              2),
-             (1.4142135623...,
-              [(1, 0, -1, -1.4142135623..., -1, 0, 1, 1.4142135623...),
-               (0, 1, 1.4142135623..., 1, 0, -1, -1.4142135623..., -1)],
+             (1.414213562373095?,
+              [(1, 0, -1, -1.414213562373095?, -1, 0, 1, 1.414213562373095?),
+               (0, 1, 1.414213562373095?, 1, 0, -1, -1.414213562373095?, -1)],
               2)]
 
         A digraph may have complex eigenvalues. Previously, the complex parts of
@@ -23078,16 +23077,12 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: T = DiGraph({0:[1], 1:[2], 2:[0]})
             sage: T.eigenvectors()                                                      # needs sage.modules sage.rings.number_field
-            [(1,
-              [
-              (1, 1, 1)
-              ],
+            [(1, [(1, 1, 1)], 1),
+             (-0.50000000000000000? - 0.866025403784439?*I,
+              [(1, -0.50000000000000000? - 0.866025403784439?*I, -0.50000000000000000? + 0.866025403784439?*I)],
               1),
-             (-0.5000000000... - 0.8660254037...*I,
-              [(1, -0.5000000000... - 0.8660254037...*I, -0.5000000000... + 0.8660254037...*I)],
-              1),
-             (-0.5000000000... + 0.8660254037...*I,
-              [(1, -0.5000000000... + 0.8660254037...*I, -0.5000000000... - 0.8660254037...*I)],
+             (-0.50000000000000000? + 0.866025403784439?*I,
+              [(1, -0.50000000000000000? + 0.866025403784439?*I, -0.50000000000000000? - 0.866025403784439?*I)],
               1)]
         """
         if laplacian:
@@ -23119,48 +23114,50 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: P = graphs.PetersenGraph()
             sage: P.eigenspaces()                                                       # needs sage.modules sage.rings.number_field
-            [
-            (3,  Vector space of degree 10 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [1 1 1 1 1 1 1 1 1 1]),
-            (-2, Vector space of degree 10 and dimension 4 over Rational Field
-                 User basis matrix:
-                 [ 1  0  0  0 -1 -1 -1  0  1  1]
-                 [ 0  1  0  0 -1  0 -2 -1  1  2]
-                 [ 0  0  1  0 -1  1 -1 -2  0  2]
-                 [ 0  0  0  1 -1  1  0 -1 -1  1]),
-            (1,  Vector space of degree 10 and dimension 5 over Rational Field
-                 User basis matrix:
-                 [ 1  0  0  0  0  1 -1  0  0 -1]
-                 [ 0  1  0  0  0 -1  1 -1  0  0]
-                 [ 0  0  1  0  0  0 -1  1 -1  0]
-                 [ 0  0  0  1  0  0  0 -1  1 -1]
-                 [ 0  0  0  0  1 -1  0  0 -1  1])
-            ]
+            [(3,
+              Vector space of degree 10 and dimension 1 over Rational Field
+              User basis matrix:
+              [1 1 1 1 1 1 1 1 1 1]),
+             (-2,
+              Vector space of degree 10 and dimension 4 over Rational Field
+              User basis matrix:
+              [ 1  0  0  0 -1 -1 -1  0  1  1]
+              [ 0  1  0  0 -1  0 -2 -1  1  2]
+              [ 0  0  1  0 -1  1 -1 -2  0  2]
+              [ 0  0  0  1 -1  1  0 -1 -1  1]),
+             (1,
+              Vector space of degree 10 and dimension 5 over Rational Field
+              User basis matrix:
+              [ 1  0  0  0  0  1 -1  0  0 -1]
+              [ 0  1  0  0  0 -1  1 -1  0  0]
+              [ 0  0  1  0  0  0 -1  1 -1  0]
+              [ 0  0  0  1  0  0  0 -1  1 -1]
+              [ 0  0  0  0  1 -1  0  0 -1  1])]
 
         Eigenspaces for the Laplacian should be identical since the Petersen
         graph is regular.  However, since the output also contains the
         eigenvalues, the two outputs are slightly different::
 
             sage: P.eigenspaces(laplacian=True)                                         # needs sage.modules sage.rings.number_field
-            [
-            (0, Vector space of degree 10 and dimension 1 over Rational Field
-                User basis matrix:
-                [1 1 1 1 1 1 1 1 1 1]),
-            (5, Vector space of degree 10 and dimension 4 over Rational Field
-                User basis matrix:
-                [ 1  0  0  0 -1 -1 -1  0  1  1]
-                [ 0  1  0  0 -1  0 -2 -1  1  2]
-                [ 0  0  1  0 -1  1 -1 -2  0  2]
-                [ 0  0  0  1 -1  1  0 -1 -1  1]),
-            (2, Vector space of degree 10 and dimension 5 over Rational Field
-                User basis matrix:
-                [ 1  0  0  0  0  1 -1  0  0 -1]
-                [ 0  1  0  0  0 -1  1 -1  0  0]
-                [ 0  0  1  0  0  0 -1  1 -1  0]
-                [ 0  0  0  1  0  0  0 -1  1 -1]
-                [ 0  0  0  0  1 -1  0  0 -1  1])
-            ]
+            [(0,
+              Vector space of degree 10 and dimension 1 over Rational Field
+              User basis matrix:
+              [1 1 1 1 1 1 1 1 1 1]),
+             (5,
+              Vector space of degree 10 and dimension 4 over Rational Field
+              User basis matrix:
+              [ 1  0  0  0 -1 -1 -1  0  1  1]
+              [ 0  1  0  0 -1  0 -2 -1  1  2]
+              [ 0  0  1  0 -1  1 -1 -2  0  2]
+              [ 0  0  0  1 -1  1  0 -1 -1  1]),
+             (2,
+              Vector space of degree 10 and dimension 5 over Rational Field
+              User basis matrix:
+              [ 1  0  0  0  0  1 -1  0  0 -1]
+              [ 0  1  0  0  0 -1  1 -1  0  0]
+              [ 0  0  1  0  0  0 -1  1 -1  0]
+              [ 0  0  0  1  0  0  0 -1  1 -1]
+              [ 0  0  0  0  1 -1  0  0 -1  1])]
 
         Notice how one eigenspace below is described with a square root of 2.
         For the two possible values (positive and negative) there is a
@@ -23168,38 +23165,38 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: C = graphs.CycleGraph(8)
             sage: C.eigenspaces()                                                       # needs sage.modules sage.rings.number_field
-            [
-            (2,  Vector space of degree 8 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [1 1 1 1 1 1 1 1]),
-            (-2, Vector space of degree 8 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [ 1 -1  1 -1  1 -1  1 -1]),
-            (0,  Vector space of degree 8 and dimension 2 over Rational Field
-                 User basis matrix:
-                 [ 1  0 -1  0  1  0 -1  0]
-                 [ 0  1  0 -1  0  1  0 -1]),
-            (a3, Vector space of degree 8 and dimension 2 over
-                  Number Field in a3 with defining polynomial x^2 - 2
-                 User basis matrix:
-                 [  1   0  -1 -a3  -1   0   1  a3]
-                 [  0   1  a3   1   0  -1 -a3  -1])
-            ]
+            [(2,
+              Vector space of degree 8 and dimension 1 over Rational Field
+              User basis matrix:
+              [1 1 1 1 1 1 1 1]),
+             (-2,
+              Vector space of degree 8 and dimension 1 over Rational Field
+              User basis matrix:
+              [ 1 -1  1 -1  1 -1  1 -1]),
+             (0,
+              Vector space of degree 8 and dimension 2 over Rational Field
+              User basis matrix:
+              [ 1  0 -1  0  1  0 -1  0]
+              [ 0  1  0 -1  0  1  0 -1]),
+             (a3,
+              Vector space of degree 8 and dimension 2 over Number Field in a3 with defining polynomial x^2 - 2
+              User basis matrix:
+              [  1   0  -1 -a3  -1   0   1  a3]
+              [  0   1  a3   1   0  -1 -a3  -1])]
 
         A digraph may have complex eigenvalues and eigenvectors. For a 3-cycle,
         we have::
 
             sage: T = DiGraph({0: [1], 1: [2], 2: [0]})
             sage: T.eigenspaces()                                                       # needs sage.modules sage.rings.number_field
-            [
-            (1,  Vector space of degree 3 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [1 1 1]),
-            (a1, Vector space of degree 3 and dimension 1 over Number Field in a1
-                  with defining polynomial x^2 + x + 1
-                 User basis matrix:
-                 [      1      a1 -a1 - 1])
-            ]
+            [(1,
+              Vector space of degree 3 and dimension 1 over Rational Field
+              User basis matrix:
+              [1 1 1]),
+             (a1,
+              Vector space of degree 3 and dimension 1 over Number Field in a1 with defining polynomial x^2 + x + 1
+              User basis matrix:
+              [      1      a1 -a1 - 1])]
         """
         if laplacian:
             M = self.kirchhoff_matrix(vertices=list(self))
