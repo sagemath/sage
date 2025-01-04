@@ -317,7 +317,7 @@ from sage.combinat.combinatorial_map import combinatorial_map
 lazy_import('sage.combinat.skew_partition', 'SkewPartition')
 lazy_import('sage.combinat.partition_tuple', 'PartitionTuple')
 lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
 lazy_import("sage.symbolic.ring", "var")
 

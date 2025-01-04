@@ -66,7 +66,7 @@ lazy_import("sage.plot.colors", "rainbow")
 
 lazy_import('sage.algebras.quatalg.quaternion_algebra', 'QuaternionAlgebra')
 lazy_import('sage.graphs.graph', 'Graph')
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 lazy_import('sage.plot.colors', 'rainbow')
 lazy_import('sage.rings.number_field.number_field', 'NumberField')
 lazy_import('sage.rings.padics.factory', ['Qp', 'Zp'])

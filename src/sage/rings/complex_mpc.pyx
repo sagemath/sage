@@ -76,7 +76,7 @@ from sage.categories.map cimport Map
 try:
     from sage.libs.pari import pari
     from cypari2.handle_error import PariError
-    from cypari2.gen cimport Gen as pari_gen
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = PariError = ()
 
