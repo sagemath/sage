@@ -2658,7 +2658,7 @@ class MatchingCoveredGraph(Graph):
             H = Graph(self, multiedges=False)
             H.delete_vertices([u, v])
 
-            if not H.is_connected()or not H.is_matching_covered(list(matching - set([e]))):
+            if not H.is_connected() or not H.is_matching_covered(list(matching - set([e]))):
                 if not coNP_certificate:
                     return False
 
