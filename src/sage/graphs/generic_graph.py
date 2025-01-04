@@ -19434,6 +19434,17 @@ class GenericGraph(GenericGraph_pyx):
             Graph on 10 vertices
             sage: g.complement()
             Graph on 10 vertices
+
+        Check the behovior of parameter `ìmmutable``::
+
+            sage: type(Graph().complement()._backend)
+            <class 'sage.graphs.base.dense_graph.DenseGraphBackend'>
+            sage: type(Graph().complement(immutable=True)._backend)
+            <class 'sage.graphs.base.static_sparse_backend.StaticSparseBackend'>
+            sage: type(Graph(immutable=True).complement()._backend)
+            <class 'sage.graphs.base.static_sparse_backend.StaticSparseBackend'>
+            sage: type(Graph(immutable=True).complement(immutable=False)._backend)
+            <class 'sage.graphs.base.dense_graph.DenseGraphBackend'>
         """
         self._scream_if_not_simple()
 
