@@ -94,6 +94,15 @@ platforms = [
     'osx-64', 'linux-64', 'linux-aarch64', 'osx-arm64'
 ]
 
+[tool.pytest.ini_options]
+python_files = "*_test.py"
+norecursedirs = "local prefix venv build builddir pkgs .git src/doc src/bin src/sage_setup/autogen/flint tools"
+# The "no:warnings" is to stop pytest from capturing warnings so that they are printed to the output of the doctest
+addopts = "--import-mode importlib -p no:warnings"
+doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
+# https://docs.pytest.org/en/stable/reference/reference.html#confval-consider_namespace_packages
+consider_namespace_packages = true
+
 # External dependencies in the format proposed by https://peps.python.org/pep-0725
 [external]
 build-requires = [
