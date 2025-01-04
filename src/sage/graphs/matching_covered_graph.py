@@ -97,6 +97,7 @@ AUTHORS:
         ``number_of_braces()`` | Return the number of braces.
         ``number_of_bricks()`` | Return the number of bricks.
         ``number_of_petersen_bricks()`` | Return the number of Petersen bricks.
+        ``tight_cut_decomposition()`` | Return a maximal set of laminar nontrivial tight cuts and a corresponding vertex set partition.
 
     **Removability and ear decomposition**
 
@@ -2983,7 +2984,6 @@ class MatchingCoveredGraph(Graph):
             - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.bricks_and_braces`
             - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_bricks`
             - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.number_of_petersen_bricks`
-            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.tight_cut_decomposition`
         """
         if self.is_bipartite():
             raise ValueError('the input graph is bipartite')
@@ -3400,14 +3400,6 @@ class MatchingCoveredGraph(Graph):
                             'object is not iterable')
 
         return
-
-    @doc_index('Bricks, braces and tight cut decomposition')
-    def tight_cut_decomposition(self):
-        r"""
-        Return a maximal set of laminar nontrivial tight cuts and a
-        corresponding vertex set partition.
-        """
-        raise NotImplementedError()
 
     @doc_index('Miscellaneous methods')
     def update_matching(self, matching):
