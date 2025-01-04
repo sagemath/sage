@@ -12,3 +12,8 @@ lint.select = [
 lint.ignore = [
     "E501", # Line too long - hard to avoid in doctests, and better handled by black.
 ]
+
+[lint.per-file-ignores]
+"all.py" = [
+    "F401", # Unused import - these files are by definition collections of imports.
+]
