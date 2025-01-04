@@ -151,7 +151,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                  for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
         try:
-            poly_ring = PolynomialRing(R, names) # self.ring
+            poly_ring = PolynomialRing(R, names)  # self.ring
         except ValueError: # variables are not proper names
             poly_ring = PolynomialRing(R, 'A', len(flats))
         gens = poly_ring.gens()
