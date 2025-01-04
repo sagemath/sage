@@ -1335,7 +1335,7 @@ class DiGraphGenerators:
         G.name("Kautz digraph (k={}, D={})".format(k, D))
         return G
 
-    def RandomDirectedAcyclicGraph(self, n, p, weight_max=None):
+    def RandomDirectedAcyclicGraph(self, n, p, weight_max=None, immutable=False):
         r"""
         Return a random (weighted) directed acyclic graph of order `n`.
 
@@ -1354,6 +1354,9 @@ class DiGraphGenerators:
         - ``weight_max`` -- (default: ``None``) by default, the returned DAG is
           unweighted. When ``weight_max`` is set to a positive integer, edges
           are assigned a random integer weight between ``1`` and ``weight_max``.
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return an
+          immutable or mutable digraph.
 
         EXAMPLES::
 
@@ -1405,21 +1408,22 @@ class DiGraphGenerators:
         pp = int(round(float(p * RAND_MAX_f)))
 
         if weight_max is None:
-            D = DiGraph(n, name=f"RandomDAG({n}, {p})")
-            D.add_edges((i, j) for i in range(n) for j in range(i) if random() < pp)
+            name = f"RandomDAG({n}, {p})"
+            edges = ((i, j) for i in range(n) for j in range(i) if random() < pp)
 
         else:
             from sage.rings.integer_ring import ZZ
             if weight_max in ZZ and weight_max < 1:
                 raise ValueError("parameter weight_max must be a positive integer")
 
-            D = DiGraph(n, name=f"RandomWeightedDAG({n}, {p}, {weight_max})")
-            D.add_edges((i, j, randint(1, weight_max))
-                        for i in range(n) for j in range(i) if random() < pp)
+            name = f"RandomWeightedDAG({n}, {p}, {weight_max})"
+            edges = ((i, j, randint(1, weight_max))
+                     for i in range(n) for j in range(i) if random() < pp)
 
-        return D
+        return DiGraph([range(n), edges], format='vertices_and_edges',
+                       name=name, immutable=immutable)
 
-    def RandomDirectedGN(self, n, kernel=None, seed=None):
+    def RandomDirectedGN(self, n, kernel=None, seed=None, immutable=False):
         r"""
         Return a random growing network (GN) digraph with `n` vertices.
 
@@ -1438,6 +1442,9 @@ class DiGraphGenerators:
 
         - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the
           random number generator (default: ``None``)
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return an
+          immutable or mutable digraph.
 
         EXAMPLES::
 
@@ -1458,9 +1465,10 @@ class DiGraphGenerators:
         if seed is None:
             seed = int(current_randstate().long_seed() % sys.maxsize)
         import networkx
-        return DiGraph(networkx.gn_graph(n, kernel, seed=seed))
+        return DiGraph(networkx.gn_graph(n, kernel, seed=seed),
+                       immutable=immutable)
 
-    def RandomDirectedGNC(self, n, seed=None):
+    def RandomDirectedGNC(self, n, seed=None, immutable=False):
         r"""
         Return a random growing network with copying (GNC) digraph with `n`
         vertices.
@@ -1478,6 +1486,9 @@ class DiGraphGenerators:
         - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the
           random number generator (default: ``None``)
 
+        - ``immutable`` -- boolean (default: ``False``); whether to return an
+          immutable or mutable digraph.
+
         EXAMPLES::
 
             sage: # needs networkx
@@ -1491,9 +1502,9 @@ class DiGraphGenerators:
         if seed is None:
             seed = int(current_randstate().long_seed() % sys.maxsize)
         import networkx
-        return DiGraph(networkx.gnc_graph(n, seed=seed))
+        return DiGraph(networkx.gnc_graph(n, seed=seed), immutable=immutable)
 
-    def RandomDirectedGNP(self, n, p, loops=False, seed=None):
+    def RandomDirectedGNP(self, n, p, loops=False, seed=None, immutable=False):
         r"""
         Return a random digraph on `n` nodes.
 
@@ -1511,6 +1522,9 @@ class DiGraphGenerators:
 
         - ``seed`` -- integer (default: ``None``); seed for random number
           generator
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return an
+          immutable or mutable digraph.
 
         PLOTTING: When plotting, this graph will use the default spring-layout
         algorithm, unless a position dictionary is specified.
@@ -1530,9 +1544,10 @@ class DiGraphGenerators:
         if seed is None:
             seed = current_randstate().long_seed()
 
-        return RandomGNP(n, p, directed=True, loops=loops, seed=seed)
+        return RandomGNP(n, p, directed=True, loops=loops, seed=seed,
+                         immutable=immutable)
 
-    def RandomDirectedGNM(self, n, m, loops=False):
+    def RandomDirectedGNM(self, n, m, loops=False, immutable=False):
         r"""
         Return a random labelled digraph on `n` nodes and `m` arcs.
 
@@ -1543,6 +1558,9 @@ class DiGraphGenerators:
         - ``m`` -- integer; number of edges
 
         - ``loops`` -- boolean (default: ``False``); whether to allow loops
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return an
+          immutable or mutable digraph.
 
         PLOTTING: When plotting, this graph will use the default spring-layout
         algorithm, unless a position dictionary is specified.
@@ -1586,10 +1604,6 @@ class DiGraphGenerators:
         # When the graph is dense, we actually compute its complement. This will
         # prevent us from drawing the same pair u,v too many times.
 
-        from sage.misc.prandom import _pyrand
-        rand = _pyrand()
-        D = DiGraph(n, loops=loops)
-
         # Ensuring the parameters n,m make sense.
         #
         # If the graph is dense, we actually want to build its complement. We
@@ -1630,9 +1644,10 @@ class DiGraphGenerators:
 
         adj = {i: dict() for i in range(n)}
 
-        # We fill the dictionary structure, but add the corresponding edge in
-        # the graph only if is_dense is False. If it is true, we will add the
-        # edges in a second phase.
+        # We fill the dictionary structure.
+
+        from sage.misc.prandom import _pyrand
+        rand = _pyrand()
 
         while m > 0:
 
@@ -1648,21 +1663,19 @@ class DiGraphGenerators:
             if (u != v or loops) and (v not in adj[u]):
                 adj[u][v] = 1
                 m -= 1
-                if not is_dense:
-                    D.add_edge(u, v)
 
-        # If is_dense is True, it means the graph has not been built. We fill D
-        # with the complement of the edges stored in the adj dictionary
+        # If is_dense is True, we fill the digraph with the complement of the
+        # edges stored in the adj dictionary
 
         if is_dense:
-            for u in range(n):
-                for v in range(n):
-                    if ((u != v) or loops) and (v not in adj[u]):
-                        D.add_edge(u, v)
+            edges = ((u, v) for u in range(n) for v in range(n)
+                         if ((u != v) or loops) and (v not in adj[u]))
+            return DiGraph([range(n), edges], format='vertices_and_edges',
+                           loops=loops, immutable=immutable)
 
-        return D
+        return DiGraph(adj, format='dict_of_lists', loops=loops)
 
-    def RandomDirectedGNR(self, n, p, seed=None):
+    def RandomDirectedGNR(self, n, p, seed=None, immutable=False):
         r"""
         Return a random growing network with redirection (GNR) digraph
         with `n` vertices and redirection probability `p`.
@@ -1682,6 +1695,9 @@ class DiGraphGenerators:
         - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the
           random number generator (default: ``None``)
 
+        - ``immutable`` -- boolean (default: ``False``); whether to return an
+          immutable or mutable digraph.
+
         EXAMPLES::
 
             sage: # needs networkx
@@ -1695,9 +1711,9 @@ class DiGraphGenerators:
         if seed is None:
             seed = int(current_randstate().long_seed() % sys.maxsize)
         import networkx
-        return DiGraph(networkx.gnr_graph(n, p, seed=seed))
+        return DiGraph(networkx.gnr_graph(n, p, seed=seed), immutable=immutable)
 
-    def RandomSemiComplete(self, n):
+    def RandomSemiComplete(self, n, immutable=False):
         r"""
         Return a random semi-complete digraph on `n` vertices.
 
@@ -1717,6 +1733,9 @@ class DiGraphGenerators:
 
         - ``n`` -- integer; the number of nodes
 
+        - ``immutable`` -- boolean (default: ``False``); whether to return an
+          immutable or mutable digraph.
+
         .. SEEALSO::
 
             - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.Complete`
@@ -1734,22 +1753,26 @@ class DiGraphGenerators:
             ...
             ValueError: the number of vertices cannot be strictly negative
         """
-        G = DiGraph(n, name="Random Semi-Complete digraph")
+        if n < 0:
+            raise ValueError('the number of vertices cannot be strictly negative')
 
         # For each pair u,v we choose a random number ``coin`` in [1,3].
         # We select edge `(u,v)` if `coin==1` or `coin==2`.
         # We select edge `(v,u)` if `coin==2` or `coin==3`.
         import itertools
         from sage.misc.prandom import randint
-        for u, v in itertools.combinations(range(n), 2):
-            coin = randint(1, 3)
-            if coin <= 2:
-                G.add_edge(u, v)
-            if coin >= 2:
-                G.add_edge(v, u)
 
+        def edges():
+            for u, v in itertools.combinations(range(n), 2):
+                coin = randint(1, 3)
+                if coin <= 2:
+                    yield (u, v)
+                if coin >= 2:
+                    yield (v, u)
+
+        G = DiGraph([range(n), edges()], format='vertices_and_edges',
+                    immutable=immutable, name="Random Semi-Complete digraph")
         G._circle_embedding(list(range(n)))
-
         return G
 
 # ##############################################################################
