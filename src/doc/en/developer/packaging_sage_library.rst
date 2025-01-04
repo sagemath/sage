@@ -300,8 +300,6 @@ distribution -- which then must be declared as a run-time dependency.
   :mod:`sage.rings.all`.
 
   To audit the Sage library for such imports, use ``sage --tox -e relint``.
-  In most cases, the imports can be fixed automatically using the
-  tool ``sage --fiximports``.
 
 - Replace module-level imports by method-level imports.  Note that
   this comes with a small runtime overhead, which can become

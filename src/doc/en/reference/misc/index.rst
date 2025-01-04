@@ -265,7 +265,6 @@ Miscellaneous Inspection and Development Tools
    sage/misc/sageinspect
    sage/misc/edit_module
    sage/misc/classgraph
-   sage/misc/dev_tools
    sage/misc/function_mangling
    sage/misc/rest_index_of_methods
 
