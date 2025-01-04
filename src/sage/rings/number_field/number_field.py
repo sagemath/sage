@@ -8789,8 +8789,7 @@ class NumberField_absolute(NumberField_generic):
 
             sage: K.<a> = NumberField(2*x^4 + 6*x^2 + 1/2)
             sage: K.subfields()
-            [
-            (Number Field in a0 with defining polynomial x, Ring morphism:
+            [(Number Field in a0 with defining polynomial x, Ring morphism:
               From: Number Field in a0 with defining polynomial x
               To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
               Defn: 0 |--> 0, None),
@@ -8812,8 +8811,7 @@ class NumberField_absolute(NumberField_generic):
               Defn: a4 |--> -a^3 - 1/2*a^2 - 5/2*a - 3/4, Ring morphism:
               From: Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
               To:   Number Field in a4 with defining polynomial x^4 + 1
-              Defn: a |--> 1/2*a4^3 + a4^2 + 1/2*a4)
-            ]
+              Defn: a |--> 1/2*a4^3 + a4^2 + 1/2*a4)]
         """
         return self._subfields_helper(degree=degree, name=name,
                                       both_maps=True, optimize=False)
