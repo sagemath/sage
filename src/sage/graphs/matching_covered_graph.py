@@ -2769,14 +2769,14 @@ class MatchingCoveredGraph(Graph):
           3. a list of set of vertices of one of the shores of those respective
              nontrivial tight cuts.
 
-             i.  In case of nontrivial barrier cuts, each of the shores is a
-                 nontrivial odd component wrt a nontrivial barrier, thus the
-                 returned list forms mutually exclusive collection of (odd)
-                 sets.
+             - In case of nontrivial barrier cuts, each of the shores is a
+               nontrivial odd component wrt a nontrivial barrier, thus the
+               returned list forms mutually exclusive collection of (odd)
+               sets.
 
-             ii. Otherwise each of the nontrivial tight cuts is a 2-separation
-                 cut, each of the shores form a subset sequence, with the `i`th
-                 shore being a proper subset of the `i + 1`th shore.
+             - Otherwise each of the nontrivial tight cuts is a 2-separation
+               cut, each of the shores form a subset sequence, with the `i`th
+               shore being a proper subset of the `i + 1`th shore.
 
           4. a string showing whether the nontrivial tight cuts are barrier
              cuts (if the string is 'nontrivial barrier cuts'), or 2-separation
