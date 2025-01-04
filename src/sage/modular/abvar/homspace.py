@@ -12,10 +12,8 @@ nontrivially in J0(37).
 
     sage: J = J0(37)
     sage: D = J.decomposition() ; D
-    [
-    Simple abelian subvariety 37a(1,37) of dimension 1 of J0(37),
-    Simple abelian subvariety 37b(1,37) of dimension 1 of J0(37)
-    ]
+    [Simple abelian subvariety 37a(1,37) of dimension 1 of J0(37),
+     Simple abelian subvariety 37b(1,37) of dimension 1 of J0(37)]
     sage: D[0].intersection(D[1])
     (Finite subgroup with invariants [2, 2] over QQ of
       Simple abelian subvariety 37a(1,37) of dimension 1 of J0(37),
@@ -101,11 +99,9 @@ The images of the two degeneracy maps are, of course, isogenous.
     sage: J = J0(33)
     sage: D = J.decomposition()
     sage: D
-    [
-    Simple abelian subvariety 11a(1,33) of dimension 1 of J0(33),
-    Simple abelian subvariety 11a(3,33) of dimension 1 of J0(33),
-    Simple abelian subvariety 33a(1,33) of dimension 1 of J0(33)
-    ]
+    [Simple abelian subvariety 11a(1,33) of dimension 1 of J0(33),
+     Simple abelian subvariety 11a(3,33) of dimension 1 of J0(33),
+     Simple abelian subvariety 33a(1,33) of dimension 1 of J0(33)]
     sage: Hom(D[0],D[1]).gens()
     (Abelian variety morphism:
       From: Simple abelian subvariety 11a(1,33) of dimension 1 of J0(33)
@@ -122,10 +118,8 @@ one endomorphism ring for the newform 33a (since it is again
 ::
 
     sage: DD = J.decomposition(simple=False) ; DD
-    [
-    Abelian subvariety of dimension 2 of J0(33),
-    Abelian subvariety of dimension 1 of J0(33)
-    ]
+    [Abelian subvariety of dimension 2 of J0(33),
+     Abelian subvariety of dimension 1 of J0(33)]
     sage: A, B = DD
     sage: A == D[0] + D[1]
     True
@@ -670,12 +664,10 @@ class Homspace(HomsetWithBase):
             [1 1]
             ]
             sage: J = J0(11) * J0(33) ; J.decomposition()
-            [
-            Simple abelian subvariety 11a(1,11) of dimension 1 of J0(11) x J0(33),
-            Simple abelian subvariety 11a(1,33) of dimension 1 of J0(11) x J0(33),
-            Simple abelian subvariety 11a(3,33) of dimension 1 of J0(11) x J0(33),
-            Simple abelian subvariety 33a(1,33) of dimension 1 of J0(11) x J0(33)
-            ]
+            [Simple abelian subvariety 11a(1,11) of dimension 1 of J0(11) x J0(33),
+             Simple abelian subvariety 11a(1,33) of dimension 1 of J0(11) x J0(33),
+             Simple abelian subvariety 11a(3,33) of dimension 1 of J0(11) x J0(33),
+             Simple abelian subvariety 33a(1,33) of dimension 1 of J0(11) x J0(33)]
             sage: J[0].Hom(J[1])._calculate_simple_gens()
             [
             [ 0 -1]
@@ -700,9 +692,7 @@ class Homspace(HomsetWithBase):
         ::
 
             sage: J = J0(23) ; J.decomposition()
-            [
-            Simple abelian variety J0(23) of dimension 2
-            ]
+            [Simple abelian variety J0(23) of dimension 2]
             sage: J[0].Hom(J[0])._calculate_simple_gens()
             [
             [1 0 0 0]  [ 0  1 -1  0]

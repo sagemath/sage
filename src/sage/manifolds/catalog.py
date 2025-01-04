@@ -82,6 +82,7 @@ def Minkowski(positive_spacelike=True, names=None):
         [ 0  0  0 -1]
     """
     from sage.manifolds.manifold import Manifold
+
     M = Manifold(4, 'M', structure='Lorentzian')
     if names is None:
         names = ("t", "x", "y", "z")
@@ -90,8 +91,8 @@ def Minkowski(positive_spacelike=True, names=None):
 
     g = M.metric('g')
     sgn = 1 if positive_spacelike else -1
-    g[0,0] = -sgn
-    g[1,1], g[2,2], g[3,3] = sgn, sgn, sgn
+    g[0, 0] = -sgn
+    g[1, 1], g[2, 2], g[3, 3] = sgn, sgn, sgn
     return M
 
 
@@ -176,48 +177,71 @@ def Kerr(m=1, a=0, coordinates='BL', names=None):
     from sage.functions.trig import cos, sin
     from sage.manifolds.manifold import Manifold
     from sage.misc.functional import sqrt
+
     M = Manifold(4, 'M', structure='Lorentzian')
     if coordinates == "Kerr":
         if names is None:
-            names = (r't:(-oo,+oo)', r'r:(0,+oo)', r'th:(0,pi):\theta',
-                     r'ph:(-pi,pi):periodic:\phi')
+            names = (
+                r't:(-oo,+oo)',
+                r'r:(0,+oo)',
+                r'th:(0,pi):\theta',
+                r'ph:(-pi,pi):periodic:\phi',
+            )
         else:
-            names = (names[0]+r':(-oo,+oo)', names[1]+r':(0,+oo)',
-                     names[2]+r':(0,pi):\theta',
-                     names[3]+r':(-pi,pi):periodic:\phi')
+            names = (
+                names[0] + r':(-oo,+oo)',
+                names[1] + r':(0,+oo)',
+                names[2] + r':(0,pi):\theta',
+                names[3] + r':(-pi,pi):periodic:\phi',
+            )
         C = M.chart(names=names)
         M._first_ngens = C._first_ngens
         g = M.metric('g')
         t, r, th, ph = C[:]
-        rho = sqrt(r**2+a**2*cos(th)**2)
-        g[0, 0], g[1, 1], g[2, 2], g[3, 3] = -(1-2*m*r/rho**2), 1+2*m*r/rho**2,\
-                rho**2, (r**2+a**2+2*a**2*m*r*sin(th)**2/rho**2)*sin(th)**2
-        g[0, 1] = 2*m*r/rho**2
-        g[0, 3] = -2*a*m*r/rho**2*sin(th)**2
-        g[1, 3] = -a*sin(th)**2*(1+2*m*r/rho**2)
+        rho = sqrt(r**2 + a**2 * cos(th)**2)
+        g[0, 0], g[1, 1], g[2, 2], g[3, 3] = (
+            -(1 - 2 * m * r / rho**2),
+            1 + 2 * m * r / rho**2,
+            rho**2,
+            (r**2 + a**2 + 2 * a**2 * m * r * sin(th)**2 / rho**2) * sin(th)**2,
+        )
+        g[0, 1] = 2 * m * r / rho**2
+        g[0, 3] = -2 * a * m * r / rho**2 * sin(th)**2
+        g[1, 3] = -a * sin(th)**2 * (1 + 2 * m * r / rho**2)
         return M
 
     if coordinates == "BL":
         if names is None:
-            names = (r't:(-oo,+oo)', r'r:(0,+oo)', r'th:(0,pi):\theta',
-                     r'ph:(-pi,pi):periodic:\phi')
+            names = (
+                r't:(-oo,+oo)',
+                r'r:(0,+oo)',
+                r'th:(0,pi):\theta',
+                r'ph:(-pi,pi):periodic:\phi',
+            )
         else:
-            names = (names[0]+r':(-oo,+oo)', names[1]+r':(0,+oo)',
-                     names[2]+r':(0,pi):\theta',
-                     names[3]+r':(-pi,pi):periodic:\phi')
+            names = (
+                names[0] + r':(-oo,+oo)',
+                names[1] + r':(0,+oo)',
+                names[2] + r':(0,pi):\theta',
+                names[3] + r':(-pi,pi):periodic:\phi',
+            )
         C = M.chart(names=names)
         M._first_ngens = C._first_ngens
         g = M.metric('g')
         t, r, th, ph = C[:]
-        rho = sqrt(r**2+a**2*cos(th)**2)
-        g[0, 0], g[1, 1], g[2, 2], g[3, 3] = -(1-2*m*r/rho**2), \
-            rho**2/(r**2-2*m*r+a**2), rho**2, \
-            (r**2+a**2+2*m*r*a**2/rho**2*sin(th)**2)*sin(th)**2
-        g[0, 3] = -2*m*r*a*sin(th)**2/rho**2
+        rho = sqrt(r**2 + a**2 * cos(th)**2)
+        g[0, 0], g[1, 1], g[2, 2], g[3, 3] = (
+            -(1 - 2 * m * r / rho**2),
+            rho**2 / (r**2 - 2 * m * r + a**2),
+            rho**2,
+            (r**2 + a**2 + 2 * m * r * a**2 / rho**2 * sin(th)**2) * sin(th)**2,
+        )
+        g[0, 3] = -2 * m * r * a * sin(th)**2 / rho**2
         return M
 
-    raise NotImplementedError("coordinates system not implemented, see help"
-                              " for details")
+    raise NotImplementedError(
+        "coordinates system not implemented, see help for details"
+    )
 
 
 def Torus(R=2, r=1, names=None):
@@ -255,6 +279,7 @@ def Torus(R=2, r=1, names=None):
     from sage.functions.trig import cos, sin
     from sage.manifolds.differentiable.examples.euclidean import EuclideanSpace
     from sage.manifolds.manifold import Manifold
+
     E = EuclideanSpace(3, symbols='X Y Z')
     M = Manifold(2, 'T', ambient=E, structure='Riemannian')
     if names is None:
@@ -263,7 +288,7 @@ def Torus(R=2, r=1, names=None):
     C = M.chart(names=names)
     M._first_ngens = C._first_ngens
     th, ph = C[:]
-    coordfunc = [(R+r*cos(th))*cos(ph), (R+r*cos(th))*sin(ph), r*sin(th)]
+    coordfunc = [(R + r * cos(th)) * cos(ph), (R + r * cos(th)) * sin(ph), r * sin(th)]
     imm = M.diff_map(E, coordfunc)
     M.set_embedding(imm)
     M.induced_metric()
@@ -357,9 +382,12 @@ def RealProjectiveSpace(dim=2):
 
     from sage.manifolds.manifold import Manifold
 
-    P = Manifold(dim, f"RP{dim}",
-                 structure='topological',
-                 latex_name=r"\mathbb{{RP}}^{{{}}}".format(dim))
+    P = Manifold(
+        dim,
+        f"RP{dim}",
+        structure='topological',
+        latex_name=r"\mathbb{{RP}}^{{{}}}".format(dim),
+    )
 
     # the trailing whitespace in the string is intentional for defining charts
     names = [f'x_{i} ' for i in range(dim + 1)]
@@ -373,13 +401,12 @@ def RealProjectiveSpace(dim=2):
         U = P.open_subset(name=f'U{j}', latex_name=f'U_{j}')
 
         # The chart where we assert that x_i == 1
-        Cj = U.chart(''.join(names[:j] + names[j+1:]))
+        Cj = U.chart(''.join(names[:j] + names[j + 1 :]))
         gj = Cj[:]
 
         charts[j] = Cj
 
         for i in range(j):
-
             Ci = charts[i]
             gi = Ci[:]
 
@@ -387,15 +414,19 @@ def RealProjectiveSpace(dim=2):
             xj = gi[j - 1]  # use index j - 1 because i < j and xi is omitted in gi
 
             # the corresponding coordinates in R^{dim+1}
-            d_plus_one_coords = [g/xj for g in gi[:i]] + [1/xj] + [g/xj for g in gi[i:]]
-            cj_new_coords = d_plus_one_coords[:j] + d_plus_one_coords[j+1:]
+            d_plus_one_coords = (
+                [g / xj for g in gi[:i]] + [1 / xj] + [g / xj for g in gi[i:]]
+            )
+            cj_new_coords = d_plus_one_coords[:j] + d_plus_one_coords[j + 1 :]
 
-            Ci_to_Cj = Ci.transition_map(Cj, cj_new_coords,
-                                         restrictions1=xj != 0,
-                                         restrictions2=xi != 0)
+            Ci_to_Cj = Ci.transition_map(
+                Cj, cj_new_coords, restrictions1=xj != 0, restrictions2=xi != 0
+            )
 
-            d_plus_one_coords = [g/xi for g in gj[:j]] + [1/xi] + [g/xi for g in gj[j:]]
-            ci_new_coords = d_plus_one_coords[:i] + d_plus_one_coords[i+1:]
+            d_plus_one_coords = (
+                [g / xi for g in gj[:j]] + [1 / xi] + [g / xi for g in gj[j:]]
+            )
+            ci_new_coords = d_plus_one_coords[:i] + d_plus_one_coords[i + 1 :]
 
             Cj_to_Ci = Ci_to_Cj.set_inverse(*ci_new_coords, check=False)
 
