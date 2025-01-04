@@ -140,10 +140,8 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.rational_field import QQ
-from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.real_mpfr import RealField, RR
 from sage.rings.quotient_ring import QuotientRing_generic
-import sage.groups.generic as generic
 
 from sage.structure.element import AdditiveGroupElement
 from sage.structure.sequence import Sequence

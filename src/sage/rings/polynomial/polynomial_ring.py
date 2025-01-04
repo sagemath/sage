@@ -230,7 +230,6 @@ def is_PolynomialRing(x):
         sage: type(R)
         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
     """
-    from sage.misc.superseded import deprecation
     deprecation(38266,
                 "The function is_PolynomialRing is deprecated; "
                 "use 'isinstance(..., PolynomialRing_generic)' instead.")
