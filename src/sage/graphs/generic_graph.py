@@ -19616,8 +19616,27 @@ class GenericGraph(GenericGraph_pyx):
             Custom path disjoint_union Cycle graph: Graph on 5 vertices
             sage: J.vertices(sort=True)
             [(0, 'a'), (0, 'b'), (1, 0), (1, 1), (1, 2)]
+
+        TESTS:
+
+        Check the behavior of parameter `ìmmutable``::
+
+            sage: G = Graph([(0, 1)])
+            sage: G.disjoint_union(G).is_immutable()
+            False
+            sage: G.disjoint_union(G, immutable=True).is_immutable()
+            True
+            sage: H = G.copy(immutable=True)
+            sage: H.disjoint_union(H).is_immutable()
+            True
+            sage: G.disjoint_union(G, immutable=False).is_immutable()
+            False
+            sage: H.disjoint_union(G).is_immutable()
+            False
+            sage: G.disjoint_union(G, immutable=True).is_immutable()
+            True
         """
-        if (self._directed and not other._directed) or (not self._directed and other._directed):
+        if self._directed != other._directed:
             raise TypeError('both arguments must be of the same class')
 
         if labels not in ['pairs', 'integers']:
@@ -19629,7 +19648,11 @@ class GenericGraph(GenericGraph_pyx):
         else:
             r_self = {v: (0, v) for v in self}
             r_other = {v: (1, v) for v in other}
-        G = self.relabel(r_self, inplace=False).union(other.relabel(r_other, inplace=False), immutable=immutable)
+
+        from itertools import chain
+        vertices = chain(r_self.values(), r_other.values())
+        edges = chain(((r_self[u], r_self[v], w) for u, v, w in self.edge_iterator()),
+                      ((r_other[u], r_other[v], w) for u, v, w in other.edge_iterator()))
 
         a = self.name()
         if not a:
@@ -19637,8 +19660,22 @@ class GenericGraph(GenericGraph_pyx):
         b = other.name()
         if not b:
             b = other._repr_()
-        G._name = '{} disjoint_union {}'.format(a, b)
-        return G
+        name = f"{a} disjoint_union {b}"
+
+        multiedges = self.allows_multiple_edges() or other.allows_multiple_edges()
+        loops = self.allows_loops() or other.allows_loops()
+        weighted = self.weighted() and other.weighted()
+        if immutable is None:
+            immutable = self.is_immutable() and other.is_immutable()
+
+        if self._directed:
+            from sage.graphs.digraph import DiGraph as GT
+        else:
+            from sage.graphs.graph import Graph as GT
+
+        return GT([vertices, edges], format='vertices_and_edges',
+                  weighted=weighted, loops=loops, multiedges=multiedges,
+                  name=name, immutable=immutable)
 
     def union(self, other, immutable=None):
         """
