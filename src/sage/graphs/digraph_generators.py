@@ -1042,6 +1042,7 @@ class DiGraphGenerators:
 
             if not n:
                 multiedges = True
+
                 def edges():
                     v = W[0]
                     vs = v.string_rep()
@@ -1049,6 +1050,7 @@ class DiGraphGenerators:
 
             else:
                 multiedges = False
+
                 def edges():
                     for w in W:
                         ww = w[1:]
