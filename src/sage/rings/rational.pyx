@@ -65,7 +65,7 @@ from cysignals.signals cimport sig_on, sig_off
 import operator
 import fractions
 
-import sage.rings.rational_field
+from sage.rings.rational_field import Q
 
 from sage.arith.long cimport integer_check_long_py
 from sage.categories.morphism cimport Morphism
@@ -73,7 +73,6 @@ from sage.categories.map cimport Map
 from sage.cpython.string cimport char_to_str, str_to_bytes
 from sage.libs.gmp.pylong cimport mpz_set_pylong
 from sage.rings.integer cimport Integer, smallInteger
-from sage.rings.integer_ring import ZZ
 from sage.structure.coerce cimport coercion_model, is_numpy_type
 from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
@@ -182,7 +181,7 @@ cdef Rational_sub_(Rational self, Rational other):
 
     return x
 
-cdef Parent the_rational_ring = sage.rings.rational_field.Q
+cdef Parent the_rational_ring = Q
 
 # make sure zero/one elements are set
 cdef set_zero_one_elements():
@@ -2105,10 +2104,14 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         num, exact = self.numerator().nth_root(n, 1)
         if not exact:
+            from sage.rings.integer_ring import ZZ
+
             raise ValueError("not a perfect %s power" % ZZ(n).ordinal_str())
 
         den, exact = self.denominator().nth_root(n, 1)
         if not exact:
+            from sage.rings.integer_ring import ZZ
+
             raise ValueError("not a perfect %s power" % ZZ(n).ordinal_str())
 
         if negative:
@@ -3195,6 +3198,8 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: (-1/2).log(3)                                                         # needs sage.symbolic
             (I*pi + log(1/2))/log(3)
         """
+        from sage.rings.integer_ring import ZZ
+
         cdef int self_sgn
         if self.denom().is_one():
             return ZZ(self.numer()).log(m, prec)

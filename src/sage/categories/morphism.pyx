@@ -39,8 +39,6 @@ AUTHORS:
 
 from cpython.object cimport *
 
-from sage.misc.constant_function import ConstantFunction
-
 from sage.structure.element cimport Element, ModuleElement
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 from sage.structure.parent cimport Parent
@@ -92,6 +90,8 @@ cdef class Morphism(Map):
             sage: phi
             Defunct morphism
         """
+        from sage.misc.constant_function import ConstantFunction
+
         D = self.domain()
         if D is None:
             return "Defunct morphism"

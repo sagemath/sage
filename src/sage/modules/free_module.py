@@ -194,7 +194,11 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import LazyImport
 from sage.misc.randstate import current_randstate
-from sage.modules import free_module_element
+from sage.modules.free_module_element import (
+    FreeModuleElement,
+    FreeModuleElement_generic_dense,
+    FreeModuleElement_generic_sparse,
+)
 from sage.modules.module import Module
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.structure.factory import UniqueFactory
@@ -212,7 +216,6 @@ from sage.structure.richcmp import (
     richcmp_not_equal,
 )
 from sage.structure.sequence import Sequence
-
 
 ###############################################################################
 #
@@ -776,7 +779,7 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
         return FreeModule(R, 0)
     else:
         x = gens[0]
-        if isinstance(x, free_module_element.FreeModuleElement):
+        if isinstance(x, FreeModuleElement):
             M = x.parent()
         else:
             try:
@@ -950,7 +953,7 @@ class Module_free_ambient(Module):
         """
         if isinstance(x, (int, sage.rings.integer.Integer)) and x == 0:
             return self.zero_vector()
-        elif isinstance(x, free_module_element.FreeModuleElement):
+        elif isinstance(x, FreeModuleElement):
             if x.parent() is self:
                 if copy:
                     return x.__copy__()
@@ -2205,7 +2208,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         if (isinstance(x, (int, sage.rings.integer.Integer)) and x == 0):
             return self.zero_vector()
-        if isinstance(x, free_module_element.FreeModuleElement):
+        if isinstance(x, FreeModuleElement):
             if x.parent() is self:
                 if copy:
                     return x.__copy__()
@@ -7022,7 +7025,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: W.echelon_coordinates([0,0,2,0,-1/2])
             [0, 2]
         """
-        if not isinstance(v, free_module_element.FreeModuleElement):
+        if not isinstance(v, FreeModuleElement):
             v = self.ambient_vector_space()(v)
         elif v.degree() != self.degree():
             raise ArithmeticError("vector is not in free module")
@@ -8051,7 +8054,7 @@ class FreeModule_submodule_field(FreeModule_submodule_with_basis_field):
             sage: vector(QQ, W.echelon_coordinates(v)) * W.basis_matrix()
             (1, 5, 9)
         """
-        if not isinstance(v, free_module_element.FreeModuleElement):
+        if not isinstance(v, FreeModuleElement):
             v = self.ambient_vector_space()(v)
         if v.degree() != self.degree():
             raise ArithmeticError("v (=%s) is not in self" % v)
@@ -8195,7 +8198,7 @@ def element_class(R, is_sparse):
         else:
             if R.order() < MAX_MODULUS:
                 return Vector_modn_dense
-        return free_module_element.FreeModuleElement_generic_dense
+        return FreeModuleElement_generic_dense
     elif isinstance(R, sage.rings.abc.RealDoubleField) and not is_sparse:
         try:
             from sage.modules.vector_real_double_dense import Vector_real_double_dense
@@ -8224,9 +8227,9 @@ def element_class(R, is_sparse):
             return sage.modules.vector_symbolic_sparse.Vector_symbolic_sparse
 
     if is_sparse:
-        return free_module_element.FreeModuleElement_generic_sparse
+        return FreeModuleElement_generic_sparse
     else:
-        return free_module_element.FreeModuleElement_generic_dense
+        return FreeModuleElement_generic_dense
 
 
 @richcmp_method

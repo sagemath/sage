@@ -66,9 +66,7 @@ from sage.structure.richcmp cimport rich_to_bool
 from sage.misc.misc_c import prod
 from sage.misc.randstate cimport randstate, current_randstate, SAGE_RAND_MAX
 
-cimport sage.rings.integer as integer
-
-from sage.rings import ring
+from sage.rings.integer cimport Integer
 
 arith = None
 cdef void late_import() noexcept:
@@ -329,7 +327,7 @@ cdef class IntegerRing_class(CommutativeRing):
         self._populate_coercion_lists_(init_no_parent=True,
                                        convert_method_name='_integer_')
 
-    _element_constructor_ = integer.Integer
+    _element_constructor_ = Integer
 
     def __reduce__(self):
         """
@@ -479,20 +477,20 @@ cdef class IntegerRing_class(CommutativeRing):
         if step is None:
             step = 1
         if type(step) is not int:
-            if not isinstance(step, integer.Integer):
-                step = integer.Integer(step)
+            if not isinstance(step, Integer):
+                step = Integer(step)
             if mpz_fits_slong_p((<Integer>step).value):
                 step = int(step)
-        if not isinstance(start, integer.Integer):
-            start = integer.Integer(start)
-        if not isinstance(end, integer.Integer):
-            end = integer.Integer(end)
-        cdef integer.Integer a = <Integer>start
-        cdef integer.Integer b = <Integer>end
+        if not isinstance(start, Integer):
+            start = Integer(start)
+        if not isinstance(end, Integer):
+            end = Integer(end)
+        cdef Integer a = <Integer>start
+        cdef Integer b = <Integer>end
 
         cdef int step_sign
         cdef long istep
-        cdef integer.Integer zstep, last
+        cdef Integer zstep, last
 
         L = []
         if type(step) is int:
@@ -797,8 +795,8 @@ cdef class IntegerRing_class(CommutativeRing):
             sage: ZZ.random_element() # indirect doctest # random
             6
         """
-        cdef integer.Integer r
-        cdef integer.Integer n_max, n_min, n_width
+        cdef Integer r
+        cdef Integer n_max, n_min, n_width
         cdef randstate rstate = current_randstate()
         cdef int den = rstate.c_random()-SAGE_RAND_MAX/2
         if den == 0: den = 1
@@ -809,11 +807,11 @@ cdef class IntegerRing_class(CommutativeRing):
                 if x is None:
                     mpz_set_si(value, rstate.c_random()%5 - 2)
                 else:
-                    n_max = x if isinstance(x, integer.Integer) else self(x)
+                    n_max = x if isinstance(x, Integer) else self(x)
                     mpz_urandomm(value, rstate.gmp_state, n_max.value)
             else:
-                n_min = x if isinstance(x, integer.Integer) else self(x)
-                n_max = y if isinstance(y, integer.Integer) else self(y)
+                n_min = x if isinstance(x, Integer) else self(x)
+                n_max = y if isinstance(y, Integer) else self(y)
                 n_width = n_max - n_min
                 if mpz_sgn(n_width.value) <= 0:
                     n_min = self(-2)
@@ -954,7 +952,7 @@ cdef class IntegerRing_class(CommutativeRing):
             ...
             TypeError: I must be an ideal of ZZ
         """
-        if isinstance(I, sage.rings.integer.Integer):
+        if isinstance(I, Integer):
             n = I
         elif isinstance(I, sage.rings.ideal.Ideal_generic):
             if not (I.ring() is self):
@@ -1023,7 +1021,7 @@ cdef class IntegerRing_class(CommutativeRing):
             ...
             TypeError: 96 is not prime
         """
-        if isinstance(prime, sage.rings.integer.Integer):
+        if isinstance(prime, Integer):
             p = self.ideal(prime)
         elif isinstance(prime, sage.rings.ideal.Ideal_generic):
             if not (prime.ring() is self):
@@ -1211,9 +1209,9 @@ cdef class IntegerRing_class(CommutativeRing):
             ValueError: n must be positive in zeta()
         """
         if n == 1:
-            return sage.rings.integer.Integer(1)
+            return Integer(1)
         elif n == 2:
-            return sage.rings.integer.Integer(-1)
+            return Integer(-1)
         elif n < 1:
             raise ValueError("n must be positive in zeta()")
         else:
