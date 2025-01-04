@@ -1401,7 +1401,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             # this is our cue that singular uses `rp` instead of `ip`
             if singular_name_mapping['invlex'] == 'rp' and 'doctest' in str(get_display_manager()):
                 s = re.sub('^(// .*block.* : ordering )rp$', '\\1ip',
-                           s, 0, re.MULTILINE)
+                           s, flags=re.MULTILINE)
         return s
 
     def __copy__(self):
@@ -1785,7 +1785,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         # TODO: Refactor imports to move this to the top
         from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict
         from sage.rings.polynomial.multi_polynomial_libsingular import MPolynomialRing_libsingular
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         from sage.rings.polynomial.polydict import ETuple
         from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
         from sage.rings.quotient_ring import QuotientRing_generic
@@ -1876,7 +1876,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
             return R(sage_repr)
 
-        elif isinstance(R, PolynomialRing_general) and (ring_is_fine or can_convert_to_singular(R)):
+        elif isinstance(R, PolynomialRing_generic) and (ring_is_fine or can_convert_to_singular(R)):
 
             sage_repr = [0] * int(self.deg() + 1)
 
