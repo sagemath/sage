@@ -1843,8 +1843,8 @@ class DiGraphGenerators:
           which case returned graphs are always copies.
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
-         immutable or mutable digraphs. When set to ``True``, this parameter
-         implies ``copy=True``.
+          immutable or mutable digraphs. When set to ``True``, this parameter
+          implies ``copy=True``.
 
         EXAMPLES:
 
