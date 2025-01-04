@@ -90,10 +90,7 @@ jobs:
       - name: Install Numpy 2
         if: ${{ matrix.use-numpy-2 }}
         shell: bash -l {0}
-        # fpylll is not yet compatible with numpy==2.0.0
-        run: |
-          conda uninstall fpylll
-          conda install numpy==2.0.0
+        run: conda install numpy==2.0.0
 
       - name: Print Conda environment
         shell: bash -l {0}
