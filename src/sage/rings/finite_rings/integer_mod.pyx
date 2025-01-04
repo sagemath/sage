@@ -87,7 +87,8 @@ from sage.arith.long cimport (
 import sage.rings.rational as rational
 
 try:
-    from sage.libs.pari.all import pari, PariError
+    from sage.libs.pari import pari
+    from cypari2.handle_error import PariError
 except ImportError:
     class PariError(Exception):
         pass

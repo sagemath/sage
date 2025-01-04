@@ -74,7 +74,9 @@ from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
 
 try:
-    from sage.libs.pari.all import pari, pari_gen, PariError
+    from sage.libs.pari import pari
+    from cypari2.handle_error import PariError
+    from cypari2.gen cimport Gen as pari_gen
 except ImportError:
     pari_gen = PariError = ()
 

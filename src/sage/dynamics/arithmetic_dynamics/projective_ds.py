@@ -116,7 +116,7 @@ lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractional
 lazy_import('sage.rings.padics.factory', 'Qp')
 lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
-from sage.libs.pari.all import PariError
+from cypari2.handle_error import PariError
 
 
 class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,

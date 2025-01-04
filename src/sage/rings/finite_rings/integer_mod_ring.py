@@ -77,7 +77,8 @@ import sage.rings.integer_ring as integer_ring
 import sage.rings.quotient_ring as quotient_ring
 
 try:
-    from sage.libs.pari.all import pari, PariError
+    from sage.libs.pari import pari
+    from cypari2.handle_error import PariError
 except ImportError:
     class PariError(Exception):
         pass

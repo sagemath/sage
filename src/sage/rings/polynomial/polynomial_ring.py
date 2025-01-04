@@ -159,7 +159,7 @@ from sage.rings.integer import Integer
 from sage.rings.number_field.number_field_base import NumberField
 
 try:
-    from sage.libs.pari.all import pari_gen
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 
@@ -3608,7 +3608,7 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
         - Jeroen Demeyer (September 2014): add "ffprimroot" algorithm,
           see :issue:`8373`.
         """
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         from sage.rings.finite_rings.conway_polynomials import (conway_polynomial,
                                                                 exists_conway_polynomial)
 

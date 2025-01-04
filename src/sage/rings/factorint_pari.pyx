@@ -16,7 +16,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from sage.rings.integer cimport Integer
 
 

@@ -56,7 +56,7 @@ cimport gmpy2
 gmpy2.import_gmpy2()
 
 try:
-    from sage.libs.pari.all import pari_gen
+    from cypari2.gen cimport Gen as pari_gen
 except ImportError:
     pari_gen = ()
 
