@@ -305,7 +305,7 @@ class MapRelativeVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
             (a + 2*b0, a, 2*b0*a + b0)
         """
         from sage.libs.pari import pari
-        
+
         K = self.codomain()
         B = K.base_field().absolute_field('a')
         # Convert v to a PARI polynomial in x with coefficients that

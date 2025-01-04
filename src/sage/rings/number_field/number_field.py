@@ -4689,7 +4689,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
              with defining polynomial x^2 + 14 with a = 3.741657386773942?*I
         """
         from .class_group import SClassGroup
-        
+
         proof = proof_flag(proof)
         if all(P.is_principal() for P in S):
             C = self.class_group(proof=proof)
@@ -9640,7 +9640,7 @@ class NumberField_absolute(NumberField_generic):
         """
         if prec is None:
             from sage.rings.real_mpfi import RIF
-            
+
             R = RIF
             C = CIF
 
