@@ -13958,8 +13958,8 @@ cpdef new_Expression_symbol(parent, name=None, latex_name=None, domain=None):
 
         e._gobj = GEx(symb)
         parent.symbols[name] = e
-        # if domain is not None:
-        #     send_sage_domain_to_maxima(e, domain)
+        if domain is not None:
+            send_sage_domain_to_maxima(e, domain)
 
     return e
 

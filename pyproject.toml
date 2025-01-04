@@ -19,7 +19,7 @@ dependencies = [
     'six >=1.15.0',
     'conway-polynomials >=0.8',
     'cypari2 >=2.1.1; sys_platform != "win32"',
-    'cysignals >=1.10.2; sys_platform != "win32"',
+    'cysignals >=1.10.2',
     'cython >=3.0, != 3.0.3',
     'gmpy2 ~=2.1.b999',
     'lrcalc ~=2.1; sys_platform != "win32"',

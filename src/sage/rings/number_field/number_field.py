@@ -7213,7 +7213,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
              a^15 - a^12 + a^10 - a^9 - 2*a^8 + 3*a^7 + a^6 - 3*a^5 + a^4 + 4*a^3 - 3*a^2 - 2*a + 2,
              2*a^16 + a^15 - a^11 - 3*a^10 - 4*a^9 - 4*a^8 - 4*a^7 - 5*a^6 - 7*a^5 - 8*a^4 - 6*a^3 - 5*a^2 - 6*a - 7]
         """
-        from sage.rings.unit_group import UnitGroup
+        from sage.rings.number_field.unit_group import UnitGroup
 
         proof = proof_flag(proof)
 
@@ -7331,7 +7331,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: U.log(u)
             (1, 1, 4, 1, 5)
         """
-        from sage.rings.unit_group import UnitGroup
+        from sage.rings.number_field.unit_group import UnitGroup
 
         proof = proof_flag(proof)
 

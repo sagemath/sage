@@ -1543,7 +1543,7 @@ def doublefactorial(n):
 
 
 cdef py_fibonacci(n):
-    from sage.libs.pari.all import pari
+    from sage.libs.pari import pari
     return Integer(pari(n).fibonacci())
 
 cdef py_step(n):

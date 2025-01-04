@@ -68,12 +68,6 @@ jobs:
           activate-environment: sage-dev
           environment-file: environment-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || startsWith(matrix.os, 'ubuntu') && 'linux' || 'win' }}.yml
 
-      - name: Install additional dependencies
-        shell: bash -l {0}
-        if: runner.os == 'windows'
-        run: |
-          pip install gmpy2 cysignals
-
       - name: Print Conda environment
         shell: bash -l {0}
         run: |
@@ -100,7 +94,7 @@ jobs:
           rm -R ./src/sage_setup/
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             # Ignore errors on Windows, for now
-            ./sage -t --all -p4 || true
+            pytest --doctest-ignore-import-errors --doctest -rfEs -s src || true
           else
             ./sage -t --all -p4
           fi

@@ -21,10 +21,10 @@ parser.add_argument(
 options = parser.parse_args()
 
 platforms = {
-    # "linux-64": "linux",
-    # "linux-aarch64": "linux-aarch64",
-    # "osx-64": "macos-x86_64",
-    # "osx-arm64": "macos",
+    "linux-64": "linux",
+    "linux-aarch64": "linux-aarch64",
+    "osx-64": "macos-x86_64",
+    "osx-arm64": "macos",
     "win-64": "win",
 }
 pythons = ["3.9", "3.10", "3.11"]
@@ -54,11 +54,6 @@ def filter_requirements(dependencies: set[str], python: str, platform: str) -> s
     }[platform]
 
     def filter_dep(dep: str):
-        # gmpy2 has to be installed via pip on Windows at the moment until the following PR is merged:
-        # https://github.com/conda-forge/gmpy2-feedstock/pull/43
-        if "gmpy2" in dep and sys_platform == "win32":
-            return None
-
         req = Requirement(dep)
         env = {"python_version": python, "sys_platform": sys_platform}
         if not req.marker or req.marker.evaluate(env):
@@ -226,7 +221,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     }
     python_requirements = filter_requirements(python_requirements, python, platform)
     all_requirements.update(
-        normalize_requirements_list(python_requirements, grayskull_config)
+        normalize_requirements_list(list(python_requirements), grayskull_config)
     )
     all_requirements.remove("<{ pin_compatible('numpy') }}")
     all_requirements.remove("memory_allocator")
