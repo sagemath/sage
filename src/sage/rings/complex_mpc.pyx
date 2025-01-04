@@ -185,7 +185,7 @@ cpdef inline split_complex_string(string, int base=10):
             exponent = '[@p]'
         else:
             exponent = '@'
-            exponent +=  sign + '?' + digit + '+'
+            exponent += sign + '?' + digit + '+'
 
         # Warning: number, imaginary, and complex should be enclosed in parentheses
         # when used as regexp because of alternatives '|'
