@@ -207,7 +207,7 @@ class Category_over_base(CategoryWithParameters):
         from .schemes import Schemes
         for cat in self.super_categories():
             tester.assertTrue(isinstance(cat, (Category_singleton, Category_over_base,
-                                               CategoryWithAxiom_over_base_ring, 
+                                               CategoryWithAxiom_over_base_ring,
                                                Bimodules, Schemes)),
                            "The super categories of a category over base should"
                            " be a category over base (or the related Bimodules)"

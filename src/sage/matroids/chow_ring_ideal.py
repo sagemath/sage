@@ -68,7 +68,7 @@ class ChowRingIdeal(MPolynomialIdeal):
             {frozenset({0}): A0, frozenset({1}): A1, frozenset({2}): A2,
              frozenset({3}): A3, frozenset({4}): A4, frozenset({5}): A5,
              frozenset({0, 1}): A01, frozenset({0, 2}): A02,
-             frozenset({0, 3}): A03, frozenset({0, 4}): A04, 
+             frozenset({0, 3}): A03, frozenset({0, 4}): A04,
              frozenset({0, 5}): A05, frozenset({1, 2}): A12,
              frozenset({1, 3}): A13, frozenset({1, 4}): A14,
              frozenset({1, 5}): A15, frozenset({2, 3}): A23,
@@ -89,6 +89,7 @@ class ChowRingIdeal(MPolynomialIdeal):
         """
         flats_gen = self._flats_generator
         return flats_gen
+
 
 class ChowRingIdeal_nonaug(ChowRingIdeal):
     r"""

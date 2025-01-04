@@ -53,6 +53,9 @@ class ChowRing(QuotientRing_generic):
 
         :mod:`sage.matroids.chow_ring_ideal`
 
+    An important note to be taken is that different presentations of Chow rings
+    of non-simple matroids may not be isomorphic to one another.
+
     INPUT:
 
     - ``M`` -- matroid
@@ -305,8 +308,8 @@ class ChowRing(QuotientRing_generic):
             sage: len(basis_deg[2])
             36
         """
-        w = sum(len(F) * (len(self.matroid().groundset()) - len(F)) * gen 
-                for F, gen in self.defining_ideal().flat_to_generator_dict().items())
+        w = sum(len(F) * (len(self.matroid().groundset()) - len(F)) * gen
+                for F, gen in self.defining_ideal().flats_to_generator_dict().items())
         return self.ElementClass(self,w)
 
     @cached_method
