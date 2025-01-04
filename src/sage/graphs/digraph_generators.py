@@ -150,6 +150,21 @@ class DiGraphGenerators:
       dense data structure. See the documentation of
       :class:`~sage.graphs.graph.Graph`.
 
+    - ``copy`` -- boolean (default: ``True``); whether to make copies of the
+      digraphs before returning them. If set to ``False`` the method returns the
+      digraph it is working on. The second alternative is faster, but modifying
+      any of the digraph instances returned by the method may break the
+      function's behaviour, as it is using these digraphs to compute the next
+      ones: only use ``copy = False`` when you stick to *reading* the digraphs
+      returned.
+
+      This parameter is ignored when ``immutable`` is set to ``True``, in which
+      case returned graphs are always copies.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return immutable
+      or mutable digraphs. When set to ``True``, this parameter implies
+      ``copy=True``.
+
     EXAMPLES:
 
     Print digraphs on 2 or less vertices::
@@ -1780,7 +1795,7 @@ class DiGraphGenerators:
 # ##############################################################################
 
     def __call__(self, vertices=None, property=lambda x: True, augment='edges',
-                 size=None, sparse=True, copy=True):
+                 size=None, sparse=True, copy=True, immutable=False):
         """
         Access the generator of isomorphism class representatives [McK1998]_.
         Iterates over distinct, exhaustive representatives.
@@ -1824,6 +1839,13 @@ class DiGraphGenerators:
           compute the next ones: only use ``copy = False`` when you stick to
           *reading* the digraphs returned.
 
+          This parameter is ignored when ``immutable`` is set to ``True``, in
+          which case returned graphs are always copies.
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return
+         immutable or mutable digraphs. When set to ``True``, this parameter
+         implies ``copy=True``.
+
         EXAMPLES:
 
         Print digraphs on 2 or less vertices::
@@ -1850,7 +1872,6 @@ class DiGraphGenerators:
 
             sage: digraphs?  # not tested
         """
-        from copy import copy as copyfun
         if size is not None:
             def extra_property(x):
                 return x.size() == size
@@ -1865,14 +1886,15 @@ class DiGraphGenerators:
             g = DiGraph(sparse=sparse)
             for gg in canaug_traverse_vert(g, [], vertices, property, dig=True, sparse=sparse):
                 if extra_property(gg):
-                    yield copyfun(gg) if copy else gg
+                    yield gg.copy(immutable=immutable) if copy or immutable else gg
 
         elif augment == 'edges':
 
             if vertices is None:
                 vertices = 0
                 while True:
-                    yield from self(vertices, sparse=sparse, copy=copy)
+                    yield from self(vertices, sparse=sparse, copy=copy,
+                                    immutable=immutable)
                     vertices += 1
 
             from sage.graphs.graph_generators import canaug_traverse_edge
@@ -1886,7 +1908,7 @@ class DiGraphGenerators:
                 gens.append(gen)
             for gg in canaug_traverse_edge(g, gens, property, dig=True, sparse=sparse):
                 if extra_property(gg):
-                    yield copyfun(gg) if copy else gg
+                    yield gg.copy(immutable=immutable) if copy or immutable else gg
         else:
             raise NotImplementedError()
 
