@@ -962,7 +962,7 @@ cdef class BuiltinFunction(Function):
 
             sage: import numpy                                                          # needs numpy
             sage: if int(numpy.version.short_version[0]) > 1:                           # needs numpy
-            ....:     _ = numpy.set_printoptions(legacy="1.25")                             # needs numpy
+            ....:     __ = numpy.set_printoptions(legacy="1.25")                        # needs numpy
 
             sage: sin(numpy.int32(0))                                                   # needs numpy
             0.0
