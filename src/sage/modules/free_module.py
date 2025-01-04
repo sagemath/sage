@@ -223,6 +223,7 @@ from sage.structure.sequence import Sequence
 #
 ###############################################################################
 
+
 class FreeModuleFactory(UniqueFactory):
     r"""
     Factory class for the finite-dimensional free modules with standard basis
