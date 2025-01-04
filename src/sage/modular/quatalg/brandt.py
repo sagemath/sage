@@ -169,11 +169,9 @@ We decompose a Brandt module over both `\ZZ` and `\QQ`. ::
     Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring
     sage: D = B.decomposition()
     sage: D
-    [
-    Subspace of dimension 1 of Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring,
-    Subspace of dimension 1 of Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring,
-    Subspace of dimension 2 of Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring
-    ]
+    [Subspace of dimension 1 of Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring,
+     Subspace of dimension 1 of Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring,
+     Subspace of dimension 2 of Brandt module of dimension 4 of level 43 of weight 2 over Integer Ring]
     sage: D[0].basis()
     ((0, 0, 1, -1),)
     sage: D[1].basis()
