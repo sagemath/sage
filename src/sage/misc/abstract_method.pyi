@@ -1,0 +1,23 @@
+from typing import Callable, Dict, List, Type, Union
+
+def abstract_method(f: Callable = None, optional: bool = False) -> Callable:
+    ...
+
+class AbstractMethod:
+    def __init__(self, f: Callable, optional: bool = False) -> None:
+        ...
+
+    def __repr__(self) -> str:
+        ...
+
+    def _sage_src_lines_(self) -> Union[str, int]:
+        ...
+
+    def __get__(self, instance: object, cls: Type) -> Union[Callable, NotImplementedError]:
+        ...
+
+    def is_optional(self) -> bool:
+        ...
+
+def abstract_methods_of_class(cls: Type) -> Dict[str, List[str]]:
+    ...
