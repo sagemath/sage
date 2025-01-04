@@ -2301,7 +2301,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
                 self._open_affine_index = i
                 break
         else:
-            assert "no projective curve defined"
+            raise ValueError("no projective curve defined")
 
     def function_field(self):
         """
