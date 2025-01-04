@@ -19379,13 +19379,19 @@ class GenericGraph(GenericGraph_pyx):
         self.add_vertices(vertices)
         self.add_edges(zip(vertices[:-1], vertices[1:]))
 
-    def complement(self):
+    def complement(self, immutable=None):
         """
         Return the complement of the (di)graph.
 
         The complement of a graph has the same vertices, but exactly those edges
         that are not in the original graph. This is not well defined for graphs
         with multiple edges.
+
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``None``); whether to return a
+          mutable or an immutable version of ``self``. By default (``None``),
+          the graph and its complement behave the same.
 
         EXAMPLES::
 
@@ -19436,8 +19442,9 @@ class GenericGraph(GenericGraph_pyx):
 
         if self.name():
             G.name("complement({})".format(self.name()))
-
-        if self.is_immutable():
+        if immutable is None:
+            immutable = self.is_immutable()
+        if immutable:
             return G.copy(immutable=True)
         return G
 
