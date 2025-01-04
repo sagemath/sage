@@ -950,7 +950,7 @@ class DiGraphGenerators:
 
         return G
 
-    def DeBruijn(self, k, n, vertices='strings', immutable=True):
+    def DeBruijn(self, k, n, vertices='strings', immutable=False):
         r"""
         Return the De Bruijn digraph with parameters `k,n`.
 
