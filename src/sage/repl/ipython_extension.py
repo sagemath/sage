@@ -575,7 +575,7 @@ class SageCustomizations:
         IPython.core.oinspect.getsource = LazyImport("sage.misc.sagedoc", "my_getsource")
         IPython.core.oinspect.find_file = LazyImport("sage.misc.sageinspect", "sage_getfile")
         IPython.core.oinspect.getargspec = LazyImport("sage.misc.sageinspect", "sage_getargspec")
-        IPython.core.oinspect.signature = LazyImport("sage.misc.sageinspect", "sage_signature")
+        IPython.core.oinspect.signature = LazyImport("sage.misc.sageinspect", "sage_signature")  # pyright: ignore [reportPrivateImportUsage]
 
     def init_line_transforms(self):
         """
