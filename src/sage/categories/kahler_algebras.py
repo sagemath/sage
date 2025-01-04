@@ -83,6 +83,20 @@ class KahlerAlgebras(Category_over_base_ring):
     class ParentMethods:
         @abstract_method
         def poincare_pairing(a,b):
+            r"""
+            Return the Poincaré pairing of two elements of the Kähler algebra.
+
+                EXAMPLES::
+
+                    sage: ch = matroids.catalog.Fano().chow_ring(QQ, True, 'fy')
+                    sage: Ba, Bb, Bc, Bd, Be, Bf, Bg, Babf, Bace, Badg, Bbcd, Bbeg, Bcfg, Bdef, Babcdefg = ch.gens()[8:]
+                    sage: u = ch(-Babf^2 + Bcfg^2 - 8/7*Bc*Babcdefg + 1/2*Bd*Babcdefg - Bf*Babcdefg - Bg*Babcdefg); u
+                    -Babf^2 + Bcfg^2 - 8/7*Bc*Babcdefg + 1/2*Bd*Babcdefg - Bf*Babcdefg - Bg*Babcdefg
+                    sage: v = ch(Bg - 2/37*Babf + Badg + Bbeg + Bcfg + Babcdefg); v
+                    Bg - 2/37*Babf + Badg + Bbeg + Bcfg + Babcdefg
+                    sage: ch.poincare_pairing(v, u)
+                    3
+            """
             pass
 
         @abstract_method

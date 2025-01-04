@@ -156,21 +156,22 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
         pass
 
     class FiniteDimensional(CategoryWithAxiom_over_base_ring):
-        @cached_method
-        def top_degree(self):
-            r"""
-            Return the top degree of the finite dimensional graded algebra.
+        class ParentMethods:
+            @cached_method
+            def top_degree(self):
+                r"""
+                Return the top degree of the finite dimensional graded algebra.
 
-            EXAMPLES::
+                EXAMPLES::
 
-                sage: ch = matroids.Uniform(4,6).chow_ring(QQ, False)
-                sage: ch.top_degree()
-                3
-                sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
-                sage: ch.top_degree()
-                3
-            """
-            return max([b.degree() for b in self.basis()])
+                    sage: ch = matroids.Uniform(4,6).chow_ring(QQ, False)
+                    sage: ch.top_degree()
+                    3
+                    sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
+                    sage: ch.top_degree()
+                    3
+                """
+                return max([b.degree() for b in self.basis()])
 
     class SignedTensorProducts(SignedTensorProductsCategory):
         """

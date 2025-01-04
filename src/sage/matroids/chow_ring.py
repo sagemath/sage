@@ -309,6 +309,7 @@ class ChowRing(QuotientRing_generic):
                 for F, gen in self.defining_ideal().flat_to_generator_dict().items())
         return self.ElementClass(self,w)
 
+    @cached_method
     def poincare_pairing(self, el1, el2):
         r"""
         Return the Poincaré pairing of any two elements of the
