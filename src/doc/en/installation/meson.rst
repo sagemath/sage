@@ -9,11 +9,12 @@ This is a short guide on how to build the Sage from source using Meson.
 Walkthrough
 ===========
 
-Assume we're starting from a clean repo and a fully set up conda environment:
+Assume we're starting from a clean repo and a fully set up conda environment
+(modify ``-linux`` according to your operating system):
         
 .. CODE-BLOCK:: shell-session
 
-    $ mamba env create --file src/environment-3.11.yml --name sage-dev
+    $ mamba env create --file environment-3.11-linux.yml --name sage-dev
     $ conda activate sage-dev
 
 Alternatively, install all build requirements as described in section

@@ -70,11 +70,7 @@ Sageは固有値と固有ベクトルの計算もしてくれる:
     [-2*I, 2*I]
     sage: B = matrix([[1, 3], [3, 1]])
     sage: B.eigenvectors_left()
-    [(4, [
-    (1, 1)
-    ], 1), (-2, [
-    (1, -1)
-    ], 1)]
+    [(4, [(1, 1)], 1), (-2, [(1, -1)], 1)]
 
 
 ( ``eigenvectors_left`` の出力は，三つ組タプル(固有値,固有ベクトル,多重度)のリストになっている．)
@@ -252,4 +248,4 @@ Pythonでは，大文字小文字が区別されることに注意:
     sage: M = MatrixSpace(QQ, 10,10, Sparse=True)
     Traceback (most recent call last):
     ...
-    TypeError: ...__init__() got an unexpected keyword argument 'Sparse'
+    TypeError: ...__init__() got an unexpected keyword argument 'Sparse'...
