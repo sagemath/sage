@@ -2750,13 +2750,38 @@ class MatchingCoveredGraph(Graph):
 
         - If the input nonbipartite matching covered graph is a brick, a
           boolean ``True`` is returned if ``coNP_certificate`` is set to
-          ``False`` otherwise a tuple ``(True, None, None)`` is returned.
+          ``False`` otherwise a 4-tuple ``(True, None, None, None)`` is
+          returned.
 
         - If the input nonbipartite matching covered graph is not a brick, a
           boolean ``False`` is returned if ``coNP_certificate`` is set to
-          ``False`` otherwise a tuple of boolean ``False``, a list of
-          edges constituting a nontrivial tight cut and a set of vertices of
-          one of the shores of the nontrivial tight cut is returned.
+          ``False``.
+
+        - If ``coNP_certificate`` is set to ``True`` and the input nonbipartite
+          graph is not a brick, a 4-tuple of
+
+          1. a boolean ``False``,
+
+          2. a list of list of edges each list constituting a nontrivial tight
+             cut collectively representing a laminar tight cut,
+
+          3. a list of set of vertices of one of the shores of those respective
+             nontrivial tight cuts.
+
+             i.  In case of nontrivial barrier cuts, each of the shores is a
+                 nontrivial odd component wrt a nontrivial barrier, thus the
+                 returned list forms mutually exclusive collection of (odd)
+                 sets.
+
+             ii. Otherwise each of the nontrivial tight cuts is a 2-separation
+                 cut, each of the shores form a subset sequence, with the `i`th
+                 shore being a proper subset of the `i + 1`th shore.
+
+          4. a string showing whether the nontrivial tight cuts are barrier
+             cuts (if the string is 'nontrivial barrier cuts'), or 2-separation
+             cuts (if the string is 'nontrivial 2-separation cuts')
+
+          is returned.
 
         EXAMPLES:
 
@@ -2856,12 +2881,84 @@ class MatchingCoveredGraph(Graph):
             sage: K4 = graphs.CompleteGraph(4)
             sage: G = MatchingCoveredGraph(K4)
             sage: G.is_brick(coNP_certificate=True)
-            (True, None, None)
+            (True, None, None, None)
             sage: # K(4) ⊙ K(3, 3) is nonbipartite but not a brick
             sage: H = graphs.MurtyGraph(); H.delete_edge(0, 1)
             sage: G = MatchingCoveredGraph(H)
             sage: G.is_brick(coNP_certificate=True)
-            (False, [(5, 2, None), (6, 3, None), (7, 4, None)], {5, 6, 7})
+            (False, [[(5, 2, None), (6, 3, None), (7, 4, None)]], [{5, 6, 7}],
+             'nontrivial barrier cuts')
+            sage: H = Graph([
+            ....:     (0, 12), (0, 13), (0, 15), (1, 4), (1, 13), (1, 14),
+            ....:     (1, 19), (2, 4), (2, 13), (2, 14), (2, 17), (3, 9),
+            ....:     (3, 13), (3, 16), (3, 21), (4, 6), (4, 7), (5, 7),
+            ....:     (5, 8), (5, 12), (6, 8), (6, 11), (7, 10), (8, 9),
+            ....:     (9, 10), (10, 11), (11, 12), (14, 15), (14, 16), (15, 16),
+            ....:     (17, 18), (17, 21), (18, 19), (18, 20), (19, 20), (20, 21)
+            ....: ])
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_brick(coNP_certificate=True)
+            (False,
+             [[(12, 0, None), (4, 1, None), (4, 2, None), (9, 3, None)],
+              [(19, 1, None), (17, 2, None), (21, 3, None)],
+              [(15, 0, None), (14, 1, None), (14, 2, None), (16, 3, None)]],
+             [{4, 5, 6, 7, 8, 9, 10, 11, 12}, {17, 18, 19, 20, 21}, {14, 15, 16}],
+             'nontrivial barrier cuts')
+            sage: J = Graph([
+            ....:     (0, 1), (0, 2), (0, 3), (0, 4), (0, 5),
+            ....:     (0, 6), (0, 7), (0, 8), (0, 9), (0, 10),
+            ....:     (1, 2), (1, 11), (2, 11), (3, 4), (3, 11),
+            ....:     (4, 11), (5, 6), (5, 11), (6, 11), (7, 8),
+            ....:     (7, 11), (8, 11), (9, 10), (9, 11), (10, 11)
+            ....: ])
+            sage: G = MatchingCoveredGraph(J)
+            sage: G.is_brick(coNP_certificate=True)
+            (False,
+             [[(0, 3, None),
+               (0, 4, None),
+               (0, 5, None),
+               (0, 6, None),
+               (0, 7, None),
+               (0, 8, None),
+               (0, 9, None),
+               (0, 10, None),
+               (1, 11, None),
+               (2, 11, None)],
+              [(0, 5, None),
+               (0, 6, None),
+               (0, 7, None),
+               (0, 8, None),
+               (0, 9, None),
+               (0, 10, None),
+               (1, 11, None),
+               (2, 11, None),
+               (3, 11, None),
+               (4, 11, None)],
+              [(0, 7, None),
+               (0, 8, None),
+               (0, 9, None),
+               (0, 10, None),
+               (1, 11, None),
+               (2, 11, None),
+               (3, 11, None),
+               (4, 11, None),
+               (5, 11, None),
+               (6, 11, None)],
+              [(0, 9, None),
+               (0, 10, None),
+               (1, 11, None),
+               (2, 11, None),
+               (3, 11, None),
+               (4, 11, None),
+               (5, 11, None),
+               (6, 11, None),
+               (7, 11, None),
+               (8, 11, None)]],
+             [{0, 1, 2},
+              {0, 1, 2, 3, 4},
+              {0, 1, 2, 3, 4, 5, 6},
+              {0, 1, 2, 3, 4, 5, 6, 7, 8}],
+             'nontrivial 2-separation cuts')
 
         If the input matching covered graph is bipartite, a
         :exc:`ValueError` is thrown::
@@ -2908,21 +3005,22 @@ class MatchingCoveredGraph(Graph):
 
             # Let K be a nontrivial odd component of H := G - B. Note that
             # there exists at least one such K since G is nonbipartite
-            nontrivial_odd_component = next(
-                (component for component in H.connected_components(sort=True)
-                if len(component) % 2 and len(component) > 1), None
-            )
+            nontrivial_odd_components = [
+                set(component) for component in H.connected_components(sort=True)
+                if len(component) % 2 and len(component) > 1
+            ]
 
-            # Find a nontrivial barrier cut
-            C = [(u, v, w) if u in nontrivial_odd_component else (v, u, w)
-                for u, v, w in self.edge_iterator()
-                if (u in nontrivial_odd_component) ^ (v in nontrivial_odd_component)]
+            # Find a laminar set of nontrivial barrier cuts
+            C = [[(u, v, w) if u in nontrivial_odd_component else (v, u, w)
+                  for u, v, w in self.edge_iterator()
+                  if (u in nontrivial_odd_component) ^ (v in nontrivial_odd_component)]
+                 for nontrivial_odd_component in nontrivial_odd_components]
 
-            return (False, C, set(nontrivial_odd_component))
+            return (False, C, nontrivial_odd_components, 'nontrivial barrier cuts')
 
         # Check if G is 3-connected
         if self.is_triconnected():
-            return (True, None, None) if coNP_certificate else True
+            return (True, None, None, None) if coNP_certificate else True
 
         # G has a 2-vertex cut
         # Compute the SPQR-tree decomposition
@@ -2934,6 +3032,7 @@ class MatchingCoveredGraph(Graph):
             if u[0] == 'P':
                 two_vertex_cut.extend(u[1])
                 break
+
             elif u[0] == 'S' and u[1].order() > 3:
                 s_vertex_set = set(u[1])
                 s_vertex_set -= {next(u[1].vertex_iterator())} | set(u[1].neighbors(next(u[1].vertex_iterator())))
@@ -2943,6 +3042,7 @@ class MatchingCoveredGraph(Graph):
         if not two_vertex_cut:
             from collections import Counter
             R_frequency = Counter()
+
             for t, g in spqr_tree:
                 if t == 'R':
                     R_frequency.update(g)
@@ -2956,17 +3056,33 @@ class MatchingCoveredGraph(Graph):
         components = H.connected_components(sort=True)
 
         # Find a nontrivial odd component
-        if all(len(c) % 2 for c in components):
-            nontrivial_odd_component = next(c for c in components if len(c) > 1)
-        else:
-            nontrivial_odd_component = components[0] + [two_vertex_cut[0]]
+        nontrivial_tight_cut_variation = None
 
-        C = [(u, v, w) if u in nontrivial_odd_component else (v, u, w)
-            for u, v, w in self.edge_iterator()
-            if (u in nontrivial_odd_component) ^ (v in nontrivial_odd_component)]
+        if all(len(c) % 2 for c in components):
+            nontrivial_tight_cut_variation = 'nontrivial barrier cuts'
+            nontrivial_odd_components = [set(component) for component in components if len(component) > 1]
+
+        else:
+            nontrivial_tight_cut_variation = 'nontrivial 2-separation cuts'
+            nontrivial_odd_components = []
+
+            for index, component in enumerate(components):
+                if index == len(components) - 1:
+                    continue
+                elif not index:
+                    nontrivial_odd_components.append(set(components[0] + [two_vertex_cut[0]]))
+                else:
+                    nontrivial_odd_component = nontrivial_odd_components[-1].copy()
+                    nontrivial_odd_component.update(component)
+                    nontrivial_odd_components.append(nontrivial_odd_component)
+
+        C = [[(u, v, w) if u in nontrivial_odd_component else (v, u, w)
+              for u, v, w in self.edge_iterator()
+              if (u in nontrivial_odd_component) ^ (v in nontrivial_odd_component)]
+             for nontrivial_odd_component in nontrivial_odd_components]
 
         # Edge (u, v, w) in C are formatted so that u is in a nontrivial odd component
-        return (False, C, set(nontrivial_odd_component)) if coNP_certificate else False
+        return (False, C, nontrivial_odd_components, nontrivial_tight_cut_variation) if coNP_certificate else False
 
     @doc_index('Overwritten methods')
     def loop_edges(self, labels=True):
