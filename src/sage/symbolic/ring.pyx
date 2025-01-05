@@ -220,7 +220,8 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             if R._is_numerical():
                 # Almost anything with a coercion into any precision of CC
                 return R not in (RLF, CLF)
-            elif isinstance(R, (PolynomialRing_generic, MPolynomialRing_base, FractionField_generic, LaurentPolynomialRing_generic)):
+            elif isinstance(R, (PolynomialRing_generic, MPolynomialRing_base,
+                                FractionField_generic, LaurentPolynomialRing_generic)):
                 base = R.base_ring()
                 return base is not self and self.has_coerce_map_from(base)
             elif (R is InfinityRing or R is UnsignedInfinityRing
