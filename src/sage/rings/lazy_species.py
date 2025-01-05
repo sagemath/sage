@@ -1,4 +1,4 @@
-"""r
+r"""
 Lazy Combinatorial Species
 
 We regard a combinatorial species as a sequence of group actions of
@@ -527,7 +527,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: A = L.undefined(1)
             sage: A.define(X*E(A))
             sage: A[5]
-            X*E_4 + X^2*E_3 + 3*X^3*E_2 + X*{((1,2)(3,4),)} + 3*X^5
+            X*E_4 + X^2*E_3 + 3*X^3*E_2 + X*E_2(X^2) + 3*X^5
 
             sage: C = L(lambda n: CyclicPermutationGroup(n) if n else 0)
             sage: F = E(C(A))
@@ -611,7 +611,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E = L.Sets()
             sage: P = E(X*E1(-X))*(1+X) - 1
             sage: P.revert()[:5]
-            [X, X^2, X*E_2 + 2*X^3, X*E_3 + 2*X^2*E_2 + {((1,2)(3,4),)} + 5*X^4]
+            [X, X^2, X*E_2 + 2*X^3, X*E_3 + 2*X^2*E_2 + E_2(X^2) + 5*X^4]
         """
         P = self.parent()
         if P._arity != 1:
