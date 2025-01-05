@@ -603,7 +603,7 @@ if __name__ == '__main__':
             else:
                 handle_file(*os.path.split(path))
 
-    print(f"sage --fixdistributions: checking consistency")
+    print("sage --fixdistributions: checking consistency")
 
     for package in ordinary_packages:
         if len(package_distributions_per_directives[package]) > 1:
