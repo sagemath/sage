@@ -69,8 +69,7 @@ class KahlerAlgebras(Category_over_base_ring):
         sage: C = KahlerAlgebras(QQ); C
         Category of kahler algebras over Rational Field
         sage: sorted(C.super_categories(), key=str)
-        [Category of finite dimensional algebras with basis over Rational
-         Field]
+        [Category of finite dimensional algebras with basis over Rational Field]
 
     TESTS::
 
