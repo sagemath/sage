@@ -428,8 +428,8 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         try:
             names_groundset = ['A{}'.format(''.join(str(x))) for x in E]
             names_flats = ['B{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in self._flats]
-            poly_ring = PolynomialRing(R, names_groundset + names_flats) #self.ring()
-        except ValueError: #variables are not proper names
+            poly_ring = PolynomialRing(R, names_groundset + names_flats)  # self.ring()
+        except ValueError:  # variables are not proper names
             poly_ring = PolynomialRing(R, 'A', len(E) + len(self._flats))
         for i, x in enumerate(E):
             self._flats_generator[x] = poly_ring.gens()[i]
@@ -562,7 +562,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             for H in lattice_flats.order_filter([F]):
                 term1 += self._flats_generator[H]
             if term1 != poly_ring.zero():
-                gb.append(term1**(self._matroid.rank(F) + 1))  #5.6 (MM2022)
+                gb.append(term1**(self._matroid.rank(F) + 1))  # 5.6 (MM2022)
                 order_ideal_modified = lattice_flats.order_ideal([F])
                 order_ideal_modified.remove(F)
                 for G in order_ideal_modified:  # nested flats
@@ -679,8 +679,8 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
                        for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in self._flats]
         try:
-            poly_ring = PolynomialRing(R, names) #self.ring
-        except ValueError: # variables are not proper names
+            poly_ring = PolynomialRing(R, names)  # self.ring
+        except ValueError:  # variables are not proper names
             poly_ring = PolynomialRing(R, 'A', len(self._flats))
         gens = poly_ring.gens()
         self._flats_generator = dict(zip(self._flats, gens))
