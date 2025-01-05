@@ -3299,12 +3299,13 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         else:
             # trac 7096
-            # this should take care of the case when the isogeny is not normalized.
+            # this should take care of the case when the isogeny is
+            # not normalized.
             u = self.scaling_factor()
             E2 = E2pr.change_weierstrass_model(u/F(d), 0, 0, 0)
 
             phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
-#            assert phi_hat.scaling_factor() == 1
+            # assert phi_hat.scaling_factor() == 1
 
             for pre_iso in self._codomain.isomorphisms(E1):
                 for post_iso in E2.isomorphisms(self._domain):
@@ -3315,7 +3316,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
                     continue
                 break
             else:
-                assert "bug in dual()"
+                raise RuntimeError("bug in dual()")
 
             return phi_hat._compose_with_isomorphism(pre_iso, post_iso)
 
