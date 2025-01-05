@@ -5825,12 +5825,6 @@ class Graph(GenericGraph):
 
         .. NOTE::
 
-            This method sorts its output before returning it. If you prefer to
-            save the extra time, you can call
-            :class:`sage.graphs.independent_sets.IndependentSets` directly.
-
-        .. NOTE::
-
             Sage's implementation of the enumeration of *maximal* independent
             sets is not much faster than NetworkX' (expect a 2x speedup), which
             is surprising as it is written in Cython. This being said, the
