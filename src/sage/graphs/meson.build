@@ -8,7 +8,7 @@ endif
 cliquer = cc.find_library('cliquer', required: not is_windows, disabler: true)
 
 # Cannot be found via pkg-config
-planarity = cc.find_library('planarity')
+planarity = cc.find_library('planarity', required: not is_windows, disabler: true)
 
 py.install_sources(
   '__init__.py',

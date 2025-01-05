@@ -9,7 +9,8 @@ This is a short guide on how to build the Sage from source using Meson.
 Walkthrough
 ===========
 
-Assume we're starting from a clean repo and a fully set up conda environment:
+Assume we're starting from a clean repo and a fully set up conda environment
+(modify ``-linux`` according to your operating system):
         
 .. tab:: Linux
 

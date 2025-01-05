@@ -17,9 +17,7 @@
     },
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
-        "--rootdir=src/sage",
-        "-c=src/tox.ini",
-        "--doctest-modules"
+        "--doctest"
     ],
     "python.testing.unittestEnabled": false,
     "cSpell.words": [

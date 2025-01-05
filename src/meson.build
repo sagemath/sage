@@ -61,6 +61,7 @@ print(cypari2.__file__.replace('__init__.py', ''))
   ).stdout().strip()
   cypari2 = declare_dependency(include_directories: inc_cypari2)
 endif
+# Cannot be found via pkg-config
 pari = cc.find_library('pari', required: not is_windows, disabler: true)
 
 mpfr = dependency('mpfr')
@@ -89,11 +90,16 @@ endif
 # that too to make the fallback detection with CMake work
 blas_order += ['cblas', 'openblas', 'OpenBLAS', 'flexiblas', 'blis', 'blas']
 blas = dependency(blas_order)
-gsl = dependency('gsl', version: '>=2.5', required: true)
-gd = dependency('gdlib', required: false)
+if is_windows
+  # pkg-config file is wrong on Windows (https://github.com/conda-forge/gsl-feedstock/issues/63)
+  gsl = cc.find_library('gsl', required: false, disabler: true)
+else
+  gsl = dependency('gsl', version: '>=2.5')
+endif
+gd = dependency('gdlib', required: false, version: '>=2.1')
 if not gd.found()
   # Doesn't have a pkg-config file on some systems (https://github.com/conda-forge/libgd-feedstock/issues/55)
-  gd = cc.find_library('gd')
+  gd = cc.find_library('gd', required: not is_windows, disabler: true)
 endif
 # Only some platforms have a standalone math library (https://mesonbuild.com/howtox.html#add-math-library-lm-portably)
 m = cc.find_library('m', required: false)
@@ -103,36 +109,45 @@ if is_windows
 else
   m4ri = dependency('m4ri', version: '>=20140914')
 endif
-
-m4rie = cc.find_library('m4rie', required: not is_windows, disabler: true)
-mtx = cc.find_library('mtx', required: false, disabler: true, has_headers: ['meataxe.h'])
-png = dependency('libpng', required: false)
-if not png.found()
-  png = dependency('libpng16')
+m4rie = dependency('m4rie', required: false)
+if not m4rie.found()
+  # For some reason, m4rie is not found via pkg-config on some systems (eg Conda)
+  m4rie = cc.find_library('m4rie', required: not is_windows, disabler: true)
 endif
-zlib = dependency('zlib')
+# Cannot be found via pkg-config
+mtx = cc.find_library('mtx', required: false, disabler: true, has_headers: ['meataxe.h'])
+png = dependency(['libpng', 'png', 'png16'], version: '>=1.2')
+zlib = dependency('zlib', version: '>=1.2.11')
+# We actually want >= 20231212, but the version number is not updated in the pkgconfig
+# https://github.com/conda-forge/eclib-feedstock/issues/48
+ec = dependency('eclib', required: not is_windows, disabler: true, version: '>=20231211')
 # Cannot be found via pkg-config
 ec = cc.find_library('ec', required: not is_windows, disabler: true)
 ecm = cc.find_library('ecm', required: not is_windows, disabler: true)
+# Cannot be found via pkg-config
 ppl = cc.find_library('ppl', required: not is_windows, disabler: true)
-gmpxx = cc.find_library('gmpxx', required: not is_windows, disabler: true)
-fflas = dependency('fflas-ffpack', required: not is_windows, disabler: true)
+gmpxx = dependency('gmpxx', required: not is_windows, disabler: true)
+fflas = dependency('fflas-ffpack', required: not is_windows, disabler: true, version: '>=2.5.0')
 fplll = dependency('fplll', required: not is_windows, disabler: true)
-givaro = cc.find_library('givaro', required: not is_windows, disabler: true)
-linbox = dependency('linbox', required: false)
+givaro = dependency('givaro', required: not is_windows, disabler: true, version: '>=4.2.0')
+linbox = dependency('linbox', required: false, version: '>=1.7.0')
 if not linbox.found()
   linbox = cc.find_library('linbox', required: not is_windows, disabler: true)
 endif
-mpc = cc.find_library('mpc')
+mpc = cc.find_library('mpc', required: not is_windows, disabler: true)
 mpfi = cc.find_library('mpfi', required: not is_windows, disabler: true)
-# Cannot be found via pkg-config (pkg-config file will be added in 4.13)
-# Test for common.h header that was added in 4.12 as a indirect version check
-gap = cc.find_library(
+
+gap = dependency('libgap', version: '>=4.13.0', required: false)
+if not gap.found()
+  # Fallback in case pkg-config info is not available
+  # Test for common.h header that was added in 4.12 as a indirect version check
+  gap = cc.find_library(
   'gap',
   has_headers: ['gap/common.h'],
   required: not is_windows,
   disabler: true,
 )
+endif
 singular = dependency('Singular', required: not is_windows, disabler: true)
 singular_factory = disabler()
 if singular.found()

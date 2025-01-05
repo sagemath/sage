@@ -81,11 +81,16 @@ jobs:
             export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
             export CC="ccache $CC"
             export CXX="ccache $CXX"
-            pip install --no-build-isolation --config-settings=builddir=builddir . -v
           else
             export LIB="$LIB;$CONDA_PREFIX\\Library\\lib"
-            pip install --no-build-isolation --config-settings=builddir=builddir . -v
           fi
+
+          # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
+          pip install --no-build-isolation --no-deps --config-settings=builddir=builddir . -v
+
+      - name: Verify dependencies
+        shell: bash -l {0}
+        run: pip check
 
       - name: Test
         shell: bash -l {0}
@@ -98,3 +103,10 @@ jobs:
           else
             ./sage -t --all -p4
           fi
+
+      - name: Upload log
+        uses: actions/upload-artifact@v4.5.0
+        if: failure()
+        with:
+          name: ${{ runner.os }}-meson-${{ matrix.python }}-log
+          path: builddir/meson-logs/

@@ -50,11 +50,7 @@ being some basis of the vector space::
     sage: from sage.tensor.modules.comp import Components
     sage: V = VectorSpace(QQ,3)
     sage: basis = V.basis() ; basis
-    [
-    (1, 0, 0),
-    (0, 1, 0),
-    (0, 0, 1)
-    ]
+    [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
     sage: c = Components(QQ, basis, 2) ; c
     2-indices components w.r.t. [
     (1, 0, 0),
@@ -290,11 +286,7 @@ class Components(SageObject):
         sage: from sage.tensor.modules.comp import Components
         sage: V = VectorSpace(QQ,3)
         sage: basis = V.basis() ; basis
-        [
-        (1, 0, 0),
-        (0, 1, 0),
-        (0, 0, 1)
-        ]
+        [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
         sage: c = Components(QQ, basis, 2) ; c
         2-indices components w.r.t. [
         (1, 0, 0),
