@@ -138,7 +138,8 @@ jobs:
           # Disable build isolation following the advice of https://mesonbuild.com/meson-python/how-to-guides/editable-installs.html#build-dependencies
           # Build manually using plain meson instead of using pip because of issues with subprojects
           # https://github.com/mesonbuild/meson-python/issues/598
-          uv pip install --no-build-isolation --no-deps . -v
+          # We have to allow pip to install build dependencies due to https://github.com/astral-sh/uv/issues/10301
+          uv pip install --no-build-isolation . -v
           # meson setup builddir -Dpython.install_env=auto
           # meson compile -C builddir --verbose
           # meson install -C builddir --no-rebuild 
