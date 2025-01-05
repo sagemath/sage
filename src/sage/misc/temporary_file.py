@@ -542,7 +542,9 @@ def spyx_tmp() -> str:
         return _spyx_tmp
 
     # We don't use `tempfile.TemporaryDirectory()` here because it
-    # will be cleaned up on child exit (e.g. for parallel testing)
+    # is not clear when it will or will not be cleaned. Sometimes it
+    # might not be cleaned up at all, and starting in python 3.13 it
+    # might be cleaned up on child exit, breaking parallel testing.
     # For some reason this doesn't affect the `TemporaryDirectory`
     # stored in the global `TMP_DIR_FILENAME_BASE`.
     _spyx_tmp = tmp_dir(name='spyx_')
