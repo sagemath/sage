@@ -25,7 +25,7 @@ points since they cannot create any sort of crossing. ::
     sage: dcrossing([(1,5), (2,4), (4,9), (6,12), (7,10), (10,11)])
     3
 """
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2008 Dan Drake <ddrake@member.ams.org>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -34,8 +34,8 @@ points since they cannot create any sort of crossing. ::
 # your option) any later version.
 #
 # See https://www.gnu.org/licenses/.
-#*****************************************************************************
-from sage.combinat.set_partition import SetPartitions as SetPartitions
+# ****************************************************************************
+from sage.combinat.set_partition import SetPartitions
 
 
 def CompleteMatchings(n):
