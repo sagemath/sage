@@ -20,12 +20,10 @@ en tant que composante irréductible de la réunion.
     Affine Plane Curve over Rational Field defined by
        x^5 + x^3*y^2 + x^2*y^3 + y^5 - x^3 - y^3 - x^2 - y^2 + 1
     sage: D.irreducible_components()
-    [
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      x^2 + y^2 - 1,
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      x^3 + y^3 - 1
-    ]
+    [Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       x^2 + y^2 - 1,
+     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       x^3 + y^3 - 1]
 
 Nous pouvons également trouver tous les points d'intersection des deux
 courbes en les intersectant et en calculant les composantes
@@ -37,6 +35,16 @@ irréductibles.
 
     sage: V = C2.intersection(C3)
     sage: V.irreducible_components()
+    [Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+    y,
+    x - 1,
+    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+    y - 1,
+    x,
+    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+    x + y + 2,
+    2*y^2 + 4*y + 3]
+<<<<<<< HEAD
     [
     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
       y - 1,
@@ -48,6 +56,29 @@ irréductibles.
       x + y + 2,
       2*y^2 + 4*y + 3
     ]
+||||||| c9dd1e85118
+    [
+    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+      y,
+      x - 1,
+    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+      y - 1,
+      x,
+    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+      x + y + 2,
+      2*y^2 + 4*y + 3
+    ]
+=======
+    [Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       y,
+       x - 1,
+     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       y - 1,
+       x,
+     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       x + y + 2,
+       2*y^2 + 4*y + 3]
+>>>>>>> develop
 
 Ainsi, par exemple,  :math:`(1,0)` et :math:`(0,1)` appartiennent aux
 deux courbes (ce dont on pouvait directement s'apercevoir) ; il en va de même des
@@ -332,10 +363,8 @@ caractères, de même qu'une décomposition en produit direct correspondant
     [1, 2, 2, 1, 1, 2, 2, 1]
 
     sage: G.decomposition()
-    [
-    Group of Dirichlet characters modulo 3 with values in Cyclotomic Field of order 6 and degree 2,
-    Group of Dirichlet characters modulo 7 with values in Cyclotomic Field of order 6 and degree 2
-    ]
+    [Group of Dirichlet characters modulo 3 with values in Cyclotomic Field of order 6 and degree 2,
+     Group of Dirichlet characters modulo 7 with values in Cyclotomic Field of order 6 and degree 2]
 
 Construisons à present le groupe de caractères de Dirichlet modulo 20,
 mais à valeur dans  :math:`\QQ(i)`:
@@ -462,9 +491,7 @@ Calculons quelques polynômes caractéristiques et développements en série de 
     [-2  0]
     [ 0 -2]
     sage: S.q_expansion_basis(10)
-    [
-        q - 2*q^2 - q^3 + 2*q^4 + q^5 + 2*q^6 - 2*q^7 - 2*q^9 + O(q^10)
-    ]
+    [q - 2*q^2 - q^3 + 2*q^4 + q^5 + 2*q^6 - 2*q^7 - 2*q^9 + O(q^10)]
 
 On peut même calculer des espaces de formes modulaires avec caractères.
 
@@ -484,10 +511,7 @@ On peut même calculer des espaces de formes modulaires avec caractères.
     sage: S.T(2).charpoly('x').factor()
     (x + zeta6 + 1)^2
     sage: S.q_expansion_basis(10)
-    [
-    q + (-zeta6 - 1)*q^2 + (2*zeta6 - 2)*q^3 + zeta6*q^4 + (-2*zeta6 + 1)*q^5
-      + (-2*zeta6 + 4)*q^6 + (2*zeta6 - 1)*q^8 - zeta6*q^9 + O(q^10)
-    ]
+    [q + (-zeta6 - 1)*q^2 + (2*zeta6 - 2)*q^3 + zeta6*q^4 + (-2*zeta6 + 1)*q^5 + (-2*zeta6 + 4)*q^6 + (2*zeta6 - 1)*q^8 - zeta6*q^9 + O(q^10)]
 
 Voici un autre exemple montrant comment Sage peut calculer l'action d'un
 opérateur de Hecke sur un espace de formes modulaires.

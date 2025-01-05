@@ -511,7 +511,7 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         multi = multi.lstrip().rstrip()
 
         # Next determine coefficient of multinomial
-        c =  si2sa(p_GetCoeff(p, r), r, base)
+        c = si2sa(p_GetCoeff(p, r), r, base)
         if not multi:
             multi = latex(c)
         elif c != 1:
@@ -580,7 +580,7 @@ cdef long singular_polynomial_deg(poly *p, poly *x, ring *r) noexcept:
         if p_GetExp(x, i, r):
             break
     while p:
-        _deg =  p_GetExp(p,i,r)
+        _deg = p_GetExp(p, i, r)
         if _deg > deg:
             deg = _deg
         p = pNext(p)
