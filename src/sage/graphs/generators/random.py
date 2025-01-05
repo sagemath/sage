@@ -1709,7 +1709,7 @@ def RandomKTree(n, k, seed=None):
 
     # A graph with treewidth 0 has no edges
     if k == 0:
-        g = Graph(n, name=f"Random 0-tree")
+        g = Graph(n, name="Random 0-tree")
         return g
 
     if n < k + 1:
@@ -1803,7 +1803,7 @@ def RandomPartialKTree(n, k, x, seed=None):
 
     # A graph with treewidth 0 has no edges
     if k == 0:
-        g = Graph(n, name=f"Random partial 0-tree")
+        g = Graph(n, name="Random partial 0-tree")
         return g
 
     if n < k + 1:
