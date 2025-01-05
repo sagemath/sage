@@ -230,6 +230,11 @@ class NumberFieldIdeal(Ideal_generic):
         can give rise to the same ideal. And this can easily
         be detected using Hermite normal form.
 
+        As an implementation detail (this may change in the future),
+        the Hermite normal form is with respect to the integral basis
+        computed by Pari, and this may be different across different
+        runs and operating systems.
+
         EXAMPLES::
 
             sage: x = polygen(ZZ)
@@ -237,7 +242,7 @@ class NumberFieldIdeal(Ideal_generic):
             Number Field in a with defining polynomial x^2 + 3
             sage: f = K.factor(15); f
             (Fractional ideal (1/2*a + 3/2))^2 * (Fractional ideal (5))
-            sage: (f[0][0] < f[1][0])
+            sage: (f[0][0] < f[1][0])  # potentially random
             True
             sage: (f[0][0] == f[0][0])
             True
