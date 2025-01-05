@@ -171,25 +171,25 @@ class ChowRing(QuotientRing_generic):
 
             sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, True, 'fy')
             sage: ch.basis()
-            Family (1, B1, B1*B012345, B0, B0*B012345, B01, B01^2, B2,
-            B2*B012345, B02, B02^2, B12, B12^2, B3, B3*B012345, B03, B03^2,
-            B13, B13^2, B23, B23^2, B4, B4*B012345, B04, B04^2, B14, B14^2,
-            B24, B24^2, B34, B34^2, B5, B5*B012345, B05, B05^2, B15, B15^2,
-            B25, B25^2, B35, B35^2, B45, B45^2, B012345, B012345^2, B012345^3)
+            Family (1, B0, B0*B012345, B1, B1*B012345, B01, B01^2, B2,
+             B2*B012345, B12, B12^2, B02, B02^2, B3, B3*B012345, B23, B23^2,
+             B13, B13^2, B03, B03^2, B4, B4*B012345, B34, B34^2, B24, B24^2,
+             B14, B14^2, B04, B04^2, B5, B5*B012345, B45, B45^2, B35, B35^2,
+             B25, B25^2, B15, B15^2, B05, B05^2, B012345, B012345^2, B012345^3)
             sage: set(ch.defining_ideal().normal_basis()) == set(ch.basis())
             True
             sage: ch = matroids.catalog.Fano().chow_ring(QQ, False)
             sage: ch.basis()
-            Family (1, Abcd, Aace, Aabf, Adef, Aadg, Abeg, Acfg, Aabcdefg,
-            Aabcdefg^2)
+            Family (1, Abcd, Aace, Adef, Aabf, Acfg, Abeg, Aadg, Aabcdefg,
+             Aabcdefg^2)
             sage: set(ch.defining_ideal().normal_basis()) == set(ch.basis())
             True
             sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
             sage: ch.basis()
-            Family (1, A0, A0*A012345, A2, A2*A012345, A3, A3*A012345, A23,
-            A23^2, A1, A1*A012345, A013, A013^2, A4, A4*A012345, A04, A04^2,
-            A124, A124^2, A5, A5*A012345, A025, A025^2, A15, A15^2, A345,
-            A345^2, A012345, A012345^2, A012345^3)
+            Family (1, A0, A0*A012345, A1, A1*A012345, A2, A2*A012345, A3,
+             A3*A012345, A23, A23^2, A013, A013^2, A4, A4*A012345, A124, A124^2,
+             A04, A04^2, A5, A5*A012345, A345, A345^2, A15, A15^2, A025, A025^2,
+             A012345, A012345^2, A012345^3)
             sage: set(ch.defining_ideal().normal_basis()) == set(ch.basis())
             True
         """
@@ -208,7 +208,7 @@ class ChowRing(QuotientRing_generic):
                 sage: v = ch.an_element(); v
                 -A01 - A02 - A03 - A04 - A05 - A012345
                 sage: v.to_vector()
-                (0, -1, -1, 0, -1, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0)
+                (0, -1, 0, -1, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, 0, -1, -1, 0)
             """
             P = self.parent()
             B = P.basis()
@@ -249,20 +249,20 @@ class ChowRing(QuotientRing_generic):
                 ....:     print(b, b.degree())
                 1 0
                 A01 1
-                A02 1
                 A12 1
-                A03 1
-                A13 1
+                A02 1
                 A23 1
-                A04 1
-                A14 1
-                A24 1
+                A13 1
+                A03 1
                 A34 1
-                A05 1
-                A15 1
-                A25 1
-                A35 1
+                A24 1
+                A14 1
+                A04 1
                 A45 1
+                A35 1
+                A25 1
+                A15 1
+                A05 1
                 A012345 1
                 A012345^2 2
                 sage: v = sum(ch.basis())
@@ -298,18 +298,18 @@ class ChowRing(QuotientRing_generic):
                 Bace^2 2
                 Bf 1
                 Bf*Babcdefg 2
-                Babf 1
-                Babf^2 2
                 Bdef 1
                 Bdef^2 2
+                Babf 1
+                Babf^2 2
                 Bg 1
                 Bg*Babcdefg 2
-                Badg 1
-                Badg^2 2
-                Bbeg 1
-                Bbeg^2 2
                 Bcfg 1
                 Bcfg^2 2
+                Bbeg 1
+                Bbeg^2 2
+                Badg 1
+                Badg^2 2
                 Babcdefg 1
                 Babcdefg^2 2
                 Babcdefg^3 3
