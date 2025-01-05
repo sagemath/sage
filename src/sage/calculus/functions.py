@@ -106,7 +106,7 @@ def wronskian(*args):
         return matrix([row(r) for r in range(len(fs))]).determinant()
 
 
-def jacobian(functions, variables):
+def jacobian(functions, variables, hessian=False, sparse=False, rank=False):
     """
     Return the Jacobian matrix, which is the matrix of partial
     derivatives in which the i,j entry of the Jacobian matrix is the
@@ -147,4 +147,16 @@ def jacobian(functions, variables):
     if not isinstance(variables, (tuple, list, Vector)):
         variables = [variables]
 
-    return matrix([[diff(f, v) for v in variables] for f in functions])
+    jacobian_matrix([[diff(f, v) for v in variables] for f in functions])
+    
+    if sparse:
+        jacobian_matrix = jacobian_matrix.sparse_matrix()
+    if hessian:
+        if len(functions) > 1:
+            raise ValueError("Hessian can only be computed for a single function")
+        hessian_matrix = matrix([[diff(jacobian_matrix[0, j], v) for j, v in enumerate(variables)] for v in variables])
+        return hessian_matrix
+    if rank:
+        return jacobian_matrix, jacobian_matrix.rank()
+    
+    return jacobian_matrix
