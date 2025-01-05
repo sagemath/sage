@@ -20094,7 +20094,7 @@ class GenericGraph(GenericGraph_pyx):
                     G.add_edge((u, v), (w, x))
         return G
 
-    def transitive_closure(self, loops=True):
+    def transitive_closure(self, loops=None, immutable=None):
         r"""
         Return the transitive closure of the (di)graph.
 
@@ -20106,11 +20106,18 @@ class GenericGraph(GenericGraph_pyx):
         acyclic graph is a directed acyclic graph representing the full partial
         order.
 
-        .. NOTE::
+        INPUT:
 
-            If the (di)graph allows loops, its transitive closure will by
-            default have one loop edge per vertex. This can be prevented by
-            disallowing loops in the (di)graph (``self.allow_loops(False)``).
+        - ``loops`` -- boolean (default: ``None``); whether to allow loops in
+          the returned (di)graph. By default (``None``), if the (di)graph allows
+          loops, its transitive closure will have one loop edge per vertex. This
+          can be prevented by disallowing loops in the (di)graph
+          (``self.allow_loops(False)``).
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable transitive closure. ``immutable=None`` (default)
+          means that the (di)graph and its transitive closure will behave the
+          same way.
 
         EXAMPLES::
 
@@ -20138,21 +20145,49 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.transitive_closure().loop_edges(labels=False)
             [(0, 0), (1, 1), (2, 2)]
 
-        ::
+        Check the behavior of parameter ``loops``::
 
             sage: G = graphs.CycleGraph(3)
             sage: G.transitive_closure().loop_edges(labels=False)
             []
+            sage: G.transitive_closure(loops=True).loop_edges(labels=False)
+            [(0, 0), (1, 1), (2, 2)]
             sage: G.allow_loops(True)
             sage: G.transitive_closure().loop_edges(labels=False)
             [(0, 0), (1, 1), (2, 2)]
-        """
-        G = copy(self)
-        G.name('Transitive closure of ' + self.name())
-        G.add_edges(((u, v) for u in G for v in G.breadth_first_search(u)), loops=None)
-        return G
+            sage: G.transitive_closure(loops=False).loop_edges(labels=False)
+            []
 
-    def transitive_reduction(self):
+        Check the behavior of parameter `ìmmutable``::
+
+            sage: G = Graph([(0, 1)])
+            sage: G.transitive_closure().is_immutable()
+            False
+            sage: G.transitive_closure(immutable=True).is_immutable()
+            True
+            sage: G = Graph([(0, 1)], immutable=True)
+            sage: G.transitive_closure().is_immutable()
+            True
+            sage: G.transitive_closure(immutable=False).is_immutable()
+            False
+        """
+        name = f"Transitive closure of {self.name()}"
+        if immutable is None:
+            immutable = self.is_immutable()
+        if loops is None:
+            loops = self.allows_loops()
+        if loops:
+            edges = ((u, v) for u in self for v in self.depth_first_search(u))
+        else:
+            edges = ((u, v) for u in self for v in self.depth_first_search(u) if u != v)
+        if self.is_directed():
+            from sage.graphs.digraph import DiGraph as GT
+        else:
+            from sage.graphs.graph import Graph as GT
+        return GT([self, edges], format='vertices_and_edges', loops=loops,
+                  immutable=immutable, name=name)
+
+    def transitive_reduction(self, immutable=None):
         r"""
         Return a transitive reduction of a graph.
 
@@ -20165,6 +20200,13 @@ class GenericGraph(GenericGraph_pyx):
         A transitive reduction of a complete graph is a tree. A transitive
         reduction of a tree is itself.
 
+        INPUT:
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable transitive closure. ``immutable=None`` (default)
+          means that the (di)graph and its transitive closure will behave the
+          same way.
+
         EXAMPLES::
 
             sage: g = graphs.PathGraph(4)
@@ -20176,35 +20218,65 @@ class GenericGraph(GenericGraph_pyx):
             sage: g = DiGraph({0: [1, 2], 1: [2, 3, 4, 5], 2: [4, 5]})
             sage: g.transitive_reduction().size()
             5
+
+        TESTS:
+
+        Check the behavior of parameter `ìmmutable``::
+
+            sage: G = Graph([(0, 1)])
+            sage: G.transitive_reduction().is_immutable()
+            False
+            sage: G.transitive_reduction(immutable=True).is_immutable()
+            True
+            sage: G = Graph([(0, 1)], immutable=True)
+            sage: G.transitive_reduction().is_immutable()
+            True
+            sage: G = DiGraph([(0, 1), (1, 2), (2, 0)])
+            sage: G.transitive_reduction().is_immutable()
+            False
+            sage: G.transitive_reduction(immutable=True).is_immutable()
+            True
+            sage: G = DiGraph([(0, 1), (1, 2), (2, 0)], immutable=True)
+            sage: G.transitive_reduction().is_immutable()
+            True
         """
+        if immutable is None:
+            immutable = self.is_immutable()
+
         if self.is_directed():
             if self.is_directed_acyclic():
                 from sage.graphs.generic_graph_pyx import transitive_reduction_acyclic
-                return transitive_reduction_acyclic(self)
+                return transitive_reduction_acyclic(self, immutable=immutable)
 
-            G = copy(self)
+            G = self.copy(immutable=False)
             G.allow_multiple_edges(False)
             n = G.order()
-            for e in G.edges(sort=False):
+            for e in list(G.edges(sort=False)):
                 # Try deleting the edge, see if we still have a path between
                 # the vertices.
                 G.delete_edge(e)
                 if G.distance(e[0], e[1]) > n:
                     # oops, we shouldn't have deleted it
                     G.add_edge(e)
+            if immutable:
+                return G.copy(immutable=True)
             return G
 
         # The transitive reduction of each connected component of an
         # undirected graph is a spanning tree
-        from sage.graphs.graph import Graph
         if self.is_connected():
-            return Graph(self.min_spanning_tree(weight_function=lambda e: 1))
-        G = Graph(list(self))
-        for cc in self.connected_components(sort=False):
-            if len(cc) > 1:
-                edges = self.subgraph(cc).min_spanning_tree(weight_function=lambda e: 1)
-                G.add_edges(edges)
-        return G
+            CC = [self]
+        else:
+            CC = (self.subgraph(c)
+                  for c in self.connected_components() if len(c) > 1)
+
+        def edges():
+            for g in CC:
+                yield from g.min_spanning_tree(weight_function=lambda e: 1)
+
+        from sage.graphs.graph import Graph
+        return Graph([self, edges()], format='vertices_and_edges',
+                     immutable=immutable)
 
     def is_transitively_reduced(self):
         r"""
@@ -20226,13 +20298,27 @@ class GenericGraph(GenericGraph_pyx):
             sage: d = DiGraph({0: [1, 2], 1: [2], 2: []})
             sage: d.is_transitively_reduced()
             False
+
+        TESTS:
+
+        Check the behavior of the method for immutable (di)graphs::
+
+            sage: G = DiGraph([(0, 1), (1, 2), (2, 0)], immutable=True)
+            sage: G.is_transitively_reduced()
+            True
+            sage: G = DiGraph(graphs.CompleteGraph(4), immutable=True)
+            sage: G.is_transitively_reduced()
+            False
+            sage: G = Graph([(0, 1), (2, 3)], immutable=True)
+            sage: G.is_transitively_reduced()
+            True
         """
         if self.is_directed():
             if self.is_directed_acyclic():
                 return self == self.transitive_reduction()
 
             from sage.rings.infinity import Infinity
-            G = copy(self)
+            G = self.copy(immutable=False)
             for e in self.edge_iterator():
                 G.delete_edge(e)
                 if G.distance(e[0], e[1]) == Infinity:

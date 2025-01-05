@@ -1558,7 +1558,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     return (True, output)
 
 
-def transitive_reduction_acyclic(G):
+def transitive_reduction_acyclic(G, immutable=None):
     r"""
     Return the transitive reduction of an acyclic digraph.
 
@@ -1566,11 +1566,28 @@ def transitive_reduction_acyclic(G):
 
     - ``G`` -- an acyclic digraph
 
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable transitive closure. ``immutable=None`` (default) means
+      that the (di)graph and its transitive closure will behave the same way.
+
     EXAMPLES::
 
         sage: from sage.graphs.generic_graph_pyx import transitive_reduction_acyclic
         sage: G = posets.BooleanLattice(4).hasse_diagram()
         sage: G == transitive_reduction_acyclic(G.transitive_closure())
+        True
+
+    TESTS:
+
+    Check the behavior of parameter `ìmmutable``::
+
+        sage: G = DiGraph([(0, 1)])
+        sage: transitive_reduction_acyclic(G).is_immutable()
+        False
+        sage: transitive_reduction_acyclic(G, immutable=True).is_immutable()
+        True
+        sage: G = DiGraph([(0, 1)], immutable=True)
+        sage: transitive_reduction_acyclic(G).is_immutable()
         True
     """
     cdef int  n = G.order()
@@ -1615,10 +1632,13 @@ def transitive_reduction_acyclic(G):
             if binary_matrix_get(closure, u, v):
                 useful_edges.append((uu, vv))
 
+    if immutable is None:
+        immutable = G.is_immutable()
+
     from sage.graphs.digraph import DiGraph
-    reduced = DiGraph()
-    reduced.add_edges(useful_edges)
-    reduced.add_vertices(linear_extension)
+    reduced = DiGraph([linear_extension, useful_edges],
+                      format='vertices_and_edges',
+                      immutable=immutable)
 
     binary_matrix_free(closure)
 
