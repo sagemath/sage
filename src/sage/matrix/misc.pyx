@@ -262,7 +262,7 @@ def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, pr
     cdef Integer M
     from sage.arith.misc import integer_floor as floor
     if proof:
-        M = floor(max(1, self._ncols * height_guess * height  +  1))
+        M = floor(max(1, self._ncols * height_guess * height + 1))
     else:
         M = floor(max(1, height_guess + 1))
 
