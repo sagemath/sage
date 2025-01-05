@@ -4853,9 +4853,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         parts_H = [sorted([self._element_to_vertex(e) for e in part]) for
                    part in congruence]
         minimal_vertices = [part[0] for part in parts_H]
-        H = self._hasse_diagram.transitive_closure().subgraph(minimal_vertices).transitive_reduction()
+        H = self._hasse_diagram.transitive_closure().subgraph(minimal_vertices).transitive_reduction(immutable=False)
         if labels == 'integer':
-            H.relabel(list(range(len(minimal_vertices))))
+            H.relabel()
             return LatticePoset(H)
         part_dict = {m[0]: [self._vertex_to_element(x) for x in m] for m
                      in parts_H}
