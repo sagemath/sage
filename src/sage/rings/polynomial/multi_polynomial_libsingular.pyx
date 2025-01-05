@@ -4050,7 +4050,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         _p = p_Head(self._poly, _ring)
         _n = p_GetCoeff(_p, _ring)
 
-        ret =  si2sa(_n, _ring, self._parent._base)
+        ret = si2sa(_n, _ring, self._parent._base)
         p_Delete(&_p, _ring)
         return ret
 
