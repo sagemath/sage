@@ -1099,19 +1099,13 @@ class ToricLattice_sublattice_with_basis(ToricLattice_generic,
         sage: sublattice.has_user_basis()
         True
         sage: sublattice.basis()
-        [
-        N(1, 1, 0),
-        N(3, 2, 1)
-        ]
+        [N(1, 1, 0), N(3, 2, 1)]
 
     Even if you have provided your own basis, you still can access the
     "standard" one::
 
         sage: sublattice.echelonized_basis()
-        [
-        N(1, 0, 1),
-        N(0, 1, -1)
-        ]
+        [N(1, 0, 1), N(0, 1, -1)]
     """
 
     def _repr_(self):
@@ -1245,19 +1239,13 @@ class ToricLattice_sublattice(ToricLattice_sublattice_with_basis,
         sage: sublattice.has_user_basis()
         False
         sage: sublattice.basis()
-        [
-        N(1, 0, 1),
-        N(0, 1, -1)
-        ]
+        [N(1, 0, 1), N(0, 1, -1)]
 
     For sublattices without user-specified basis, the basis obtained above is
     the same as the "standard" one::
 
         sage: sublattice.echelonized_basis()
-        [
-        N(1, 0, 1),
-        N(0, 1, -1)
-        ]
+        [N(1, 0, 1), N(0, 1, -1)]
     """
     pass
 
