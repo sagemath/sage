@@ -1403,13 +1403,6 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
     cdef number *apow1
     cdef number *apow2
 
-    cdef nMapFunc nMapFuncPtr = NULL
-
-    nMapFuncPtr = naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
-
-    if nMapFuncPtr is NULL:
-        raise RuntimeError("Failed to determine nMapFuncPtr")
-
     elem = list(elem)
 
     if _ring != currRing:
@@ -1432,7 +1425,10 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
     rComplete(qqr,1)
     qqr.ShortOut = 0
 
-    nMapFuncPtr = naSetMap(qqr.cf, _ring.cf)  # choose correct mapping function
+    assert _ring.cf.type == n_algExt  # if false naSetMap will segmentation fault (should never happen)
+    cdef nMapFunc nMapFuncPtr = naSetMap(qqr.cf, _ring.cf)  # choose correct mapping function
+    if nMapFuncPtr is NULL:
+        raise RuntimeError("Failed to determine nMapFuncPtr")
     cdef poly *_p
     for i from 0 <= i < len(elem):
         nlCoeff = nlInit2gmp( mpq_numref((<Rational>elem[i]).value), mpq_denref((<Rational>elem[i]).value),  qqr.cf )
