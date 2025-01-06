@@ -1199,7 +1199,7 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
                 if isinstance(frame, CoordFrame):
                     chart = frame._chart
                 else:
-                    chart = self._domain._def_chart #!# to be improved
+                    chart = self._domain._def_chart  # ! # to be improved
                 try:
                     # TODO: do the computation without the 'SR' enforcement
                     mat_self = matrix(
@@ -1370,7 +1370,7 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
         if dest_map.is_identity():
             amb_point = point
         else:
-            amb_point = dest_map(point)  #  "ambient" point
+            amb_point = dest_map(point)  # "ambient" point
         ts = amb_point._manifold.tangent_space(amb_point)
         if self._is_identity:
             return ts.identity_map()

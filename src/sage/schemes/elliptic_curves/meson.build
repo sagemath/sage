@@ -1,6 +1,7 @@
 py.install_sources(
   'BSD.py',
   'Qcurves.py',
+  '__init__.py',
   'addition_formulas_ring.py',
   'all.py',
   'cardinality.py',
