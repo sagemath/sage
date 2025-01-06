@@ -139,8 +139,8 @@ jobs:
           # Build manually using plain meson instead of using pip because of issues with subprojects
           # https://github.com/mesonbuild/meson-python/issues/598
           # We have to install build dependencies due to https://github.com/astral-sh/uv/issues/10301
-          uv pip install meson-python cypari2>=2.1.1 cysignals>=1.11.2 cython>=3.0,!=3.0.3 gmpy2~=2.1.b999 memory_allocator numpy>=1.19 jinja2
-          uv pip install --no-build-isolation . -v
+          # uv pip install meson-python cypari2>=2.1.1 cysignals>=1.11.2 cython>=3.0,!=3.0.3 gmpy2~=2.1.b999 memory_allocator numpy>=1.19 jinja2
+          uv pip install . -v
           # meson setup builddir -Dpython.install_env=auto
           # meson compile -C builddir --verbose
           # meson install -C builddir --no-rebuild 
