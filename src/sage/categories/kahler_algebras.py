@@ -101,6 +101,34 @@ class KahlerAlgebras(Category_over_base_ring):
 
         @abstract_method
         def lefschetz_element():
+            r"""
+            Return one Lefschetz element of the given Kähler algebra.
+
+            EXAMPLES::
+
+                sage: U46 = matroids.Uniform(4,6)
+                sage: C = U46.chow_ring(QQ, False)
+                sage: w = C.lefschetz_element(); w
+                -2*A01 - 2*A02 - 2*A03 - 2*A04 - 2*A05 - 2*A12 - 2*A13 - 2*A14
+                - 2*A15 - 2*A23 - 2*A24 - 2*A25 - 2*A34 - 2*A35 - 2*A45 - 6*A012
+                - 6*A013 - 6*A014 - 6*A015 - 6*A023 - 6*A024 - 6*A025 - 6*A034
+                - 6*A035 - 6*A045 - 6*A123 - 6*A124 - 6*A125 - 6*A134 - 6*A135
+                - 6*A145 - 6*A234 - 6*A235 - 6*A245 - 6*A345 - 30*A012345
+                sage: basis_deg = {}
+                sage: for b in C.basis():
+                ....:     deg = b.homogeneous_degree()
+                ....:     if deg not in basis_deg:
+                ....:         basis_deg[deg] = []
+                ....:     basis_deg[deg].append(b)
+                sage: m = max(basis_deg); m
+                3
+                sage: len(basis_deg[1]) == len(basis_deg[2])
+                True
+                sage: matrix([(w*b).to_vector() for b in basis_deg[1]]).rank()
+                36
+                sage: len(basis_deg[2])
+                36
+            """
             pass
 
         def hodge_riemann_relations(self, k):
