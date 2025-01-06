@@ -47,25 +47,10 @@ jobs:
         # No need to build sagelib; pyright only needs the libraries from which sagelib imports
 
       - name: Static code check with pyright
-        uses: jakebailey/pyright-action@v1
+        uses: jakebailey/pyright-action@v2.3.2
         with:
           version: 1.1.332
-          # Many warnings issued by pyright are not yet helpful because there is not yet enough type information
-          no-comments: true
-          working-directory: ./worktree-image
-        env:
-          # To avoid out of memory errors
-          NODE_OPTIONS: --max-old-space-size=8192
-
-      - name: Static code check with pyright (annotated)
-        if: (success() || failure()) && steps.incremental.outcome == 'success'
-        uses: jakebailey/pyright-action@v1
-        with:
-          version: 1.1.332
-          # Issue errors
-          no-comments: false
-          level: error
-          working-directory: ./worktree-image
+          annotate: "errors"
         env:
           # To avoid out of memory errors
           NODE_OPTIONS: --max-old-space-size=8192
