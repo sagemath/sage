@@ -55,8 +55,6 @@ AUTHORS:
 import math
 from sage.arith.misc import valuation
 
-import sage.rings.abc
-from sage.rings.finite_rings.integer_mod import mod
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen, polygens
 from sage.rings.polynomial.polynomial_element import polynomial_is_variable
@@ -175,14 +173,48 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         self.__divpolys = ({}, {}, {})
 
-        # See #1975: we deliberately set the class to
-        # EllipticCurvePoint_finite_field for finite rings, so that we
-        # can do some arithmetic on points over Z/NZ, for teaching
-        # purposes.
-        if isinstance(K, sage.rings.abc.IntegerModRing):
-            self._point = ell_point.EllipticCurvePoint_finite_field
-
     _point = ell_point.EllipticCurvePoint
+
+    def assume_base_ring_is_field(self, flag=True):
+        r"""
+        Set a flag to pretend that this elliptic curve is defined over a
+        field while doing arithmetic, which is useful in some algorithms.
+
+
+        .. WARNING::
+
+            The flag affects all points created while the flag is set. Note
+            that elliptic curves are unique parents, hence setting this flag
+            may break seemingly unrelated parts of Sage.
+
+        .. NOTE::
+
+            This method is a **hack** provided for educational purposes.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(Zmod(35), [1,1])
+            sage: P = E(-5, 9)
+            sage: 4*P
+            (23 : 26 : 1)
+            sage: 9*P
+            (10 : 11 : 5)
+            sage: E.assume_base_ring_is_field()
+            sage: P = E(-5, 9)
+            sage: 4*P
+            (23 : 26 : 1)
+            sage: 9*P
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: Inverse of 5 does not exist (characteristic = 35 = 5*7)
+        """
+        if flag:
+            if self.__base_ring.is_finite():
+                self._point = ell_point.EllipticCurvePoint_finite_field
+            else:
+                self._point = ell_point.EllipticCurvePoint_field
+        else:
+            self._point = ell_point.EllipticCurvePoint
 
     def _defining_params_(self):
         r"""
@@ -582,7 +614,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             # infinity.
             characteristic = self.base_ring().characteristic()
             if characteristic != 0 and isinstance(args[0][0], Rational) and isinstance(args[0][1], Rational):
-                if mod(args[0][0].denominator(),characteristic) == 0 or mod(args[0][1].denominator(),characteristic) == 0:
+                if characteristic.divides(args[0][0].denominator()) or characteristic.divides(args[0][1].denominator()):
                     return self._reduce_point(args[0], characteristic)
             args = tuple(args[0])
 
@@ -914,7 +946,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         b = (a1*x + a3)
         f = ((x + a2) * x + a4) * x + a6
 
-        # If possible find the associated y coorindates in L:
+        # If possible find the associated y coordinates in L:
 
         if K.characteristic() == 2:
             R = PolynomialRing(L, 'y')

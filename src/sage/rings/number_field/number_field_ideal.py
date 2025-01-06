@@ -230,6 +230,11 @@ class NumberFieldIdeal(Ideal_generic):
         can give rise to the same ideal. And this can easily
         be detected using Hermite normal form.
 
+        As an implementation detail (this may change in the future),
+        the Hermite normal form is with respect to the integral basis
+        computed by Pari, and this may be different across different
+        runs and operating systems.
+
         EXAMPLES::
 
             sage: x = polygen(ZZ)
@@ -237,7 +242,7 @@ class NumberFieldIdeal(Ideal_generic):
             Number Field in a with defining polynomial x^2 + 3
             sage: f = K.factor(15); f
             (Fractional ideal (1/2*a + 3/2))^2 * (Fractional ideal (5))
-            sage: (f[0][0] < f[1][0])
+            sage: (f[0][0] < f[1][0])  # potentially random
             True
             sage: (f[0][0] == f[0][0])
             True
@@ -2170,17 +2175,18 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         M = MatrixSpace(ZZ,n)([R.coordinates(y) for y in self.basis()])
 
         D = M.hermite_form()
-        d = [D[i,i] for i in range(n)]
+        d = [D[i, i] for i in range(n)]
 
         v = R.coordinates(f)
 
         for i in range(n):
-            q, r = ZZ(v[i]).quo_rem(d[i])#v is a vector of rationals, we want division of integers
+            q, r = ZZ(v[i]).quo_rem(d[i])
+            # v is a vector of rationals, we want division of integers
             if 2*r > d[i]:
                 q = q + 1
             v = v - q*D[i]
 
-        return sum([v[i]*Rbasis[i] for i in range(n)])
+        return sum([v[i] * Rbasis[i] for i in range(n)])
 
     def residues(self):
         r"""
