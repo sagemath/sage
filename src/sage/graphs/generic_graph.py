@@ -8742,11 +8742,11 @@ class GenericGraph(GenericGraph_pyx):
             sage: lp2 = g2.longest_path(use_edge_labels=True)
             sage: lp1[0] == lp2[0]
             True
-            sage: not lp1.is_immutable() and lp2.is_immutable()
+            sage: not lp1[1].is_immutable() and lp2[1].is_immutable()
             True
             sage: lp1 = g1.longest_path(use_edge_labels=True, immutable=True)
             sage: lp2 = g2.longest_path(use_edge_labels=True, immutable=False)
-            sage: lp1.is_immutable() and not lp2.is_immutable()
+            sage: lp1[1].is_immutable() and not lp2[1].is_immutable()
             True
         """
         self._scream_if_not_simple()
@@ -9105,7 +9105,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g = Graph(g, immutable=True)
             sage: g.hamiltonian_path().is_immutable()
             True
-            sage: g.hamiltonian_path(, use_edge_labels=True).is_immutable()
+            sage: g.hamiltonian_path(use_edge_labels=True)[1].is_immutable()
             True
         """
         if use_edge_labels or algorithm is None:
@@ -9235,7 +9235,7 @@ class GenericGraph(GenericGraph_pyx):
         tsp.delete_vertices(extra_vertices)
         tsp.name("Hamiltonian path from {}".format(self.name()))
         if immutable:
-            tst = tsp.copy(immutable=True)
+            tsp = tsp.copy(immutable=True)
 
         def weight(label):
             return 1 if label is None else label
