@@ -2550,7 +2550,8 @@ class BipartiteGraph(Graph):
         return B
 
     def canonical_label(self, partition=None, certificate=False,
-                        edge_labels=False, algorithm=None, return_graph=True):
+                        edge_labels=False, algorithm=None, return_graph=True,
+                        immutable=None):
         r"""
         Return the canonical graph.
 
@@ -2590,6 +2591,10 @@ class BipartiteGraph(Graph):
           ``False``, returns the list of edges of the canonical graph
           instead of the canonical graph. Only available when ``'bliss'``
           is explicitly set as algorithm.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable (di)graph. ``immutable=None`` (default) means that
+          the (di)graph and its canonical (di)graph will behave the same way.
 
         EXAMPLES::
 
@@ -2649,6 +2654,19 @@ class BipartiteGraph(Graph):
             sage: B.canonical_label()
             Bipartite multi-graph on 4 vertices
 
+        Check the behavior for immutable graphs::
+
+            sage: G = BipartiteGraph(graphs.CycleGraph(4))
+            sage: G.canonical_label().is_immutable()
+            False
+            sage: G.canonical_label(immutable=True).is_immutable()
+            True
+            sage: G = BipartiteGraph(graphs.CycleGraph(4), immutable=True)
+            sage: G.canonical_label().is_immutable()
+            True
+            sage: G.canonical_label(immutable=False).is_immutable()
+            False
+
         .. SEEALSO::
 
             :meth:`~sage.graphs.generic_graph.GenericGraph.canonical_label()`
@@ -2658,7 +2676,8 @@ class BipartiteGraph(Graph):
                                                    certificate=certificate,
                                                    edge_labels=edge_labels,
                                                    algorithm=algorithm,
-                                                   return_graph=return_graph)
+                                                   return_graph=return_graph,
+                                                   immutable=immutable)
 
         else:
             from sage.groups.perm_gps.partn_ref.refinement_graphs import search_tree
@@ -2697,7 +2716,9 @@ class BipartiteGraph(Graph):
                 a, b, c = search_tree(GC, partition, certificate=True, dig=False)
                 cert = {v: c[G_to[v]] for v in G_to}
 
-            C = self.relabel(perm=cert, inplace=False)
+            if immutable is None:
+                immutable = self.is_immutable()
+            C = self.relabel(perm=cert, inplace=False, immutable=immutable)
 
         C.left = {cert[v] for v in self.left}
         C.right = {cert[v] for v in self.right}
