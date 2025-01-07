@@ -5468,6 +5468,17 @@ class GenericGraph(GenericGraph_pyx):
             [[(2, 3, 'c'), (3, 2, 'b')],
              [(3, 4, 'd'), (4, 1, 'f'), (1, 2, 'a'), (2, 3, 'b')],
              [(3, 4, 'e'), (4, 1, 'f'), (1, 2, 'a'), (2, 3, 'b')]]
+
+        Check that the method is valid for immutable graphs::
+
+            sage: G = Graph(graphs.CycleGraph(3), immutable=True)
+            sage: G.cycle_basis()
+            [[0, 1, 2]]
+            sage: G = Graph([(1, 2, 'a'), (2, 3, 'b'), (2, 3, 'c'),
+            ....:            (3, 4, 'd'), (3, 4, 'e'), (4, 1, 'f')],
+            ....:           multiedges=True, immutable=True)
+            sage: G.cycle_basis()
+            [[3, 2], [4, 1, 2, 3], [4, 1, 2, 3]]
         """
         if output not in ['vertex', 'edge']:
             raise ValueError('output must be either vertex or edge')
@@ -5483,7 +5494,7 @@ class GenericGraph(GenericGraph_pyx):
 
             from sage.graphs.graph import Graph
             T = Graph(self.min_spanning_tree(), multiedges=True, format='list_of_edges')
-            H = self.copy()
+            H = self.copy(immutable=False)
             H.delete_edges(T.edge_iterator())
             root = next(T.vertex_iterator())
             rank = dict(T.breadth_first_search(root, report_distance=True))
@@ -7024,7 +7035,7 @@ class GenericGraph(GenericGraph_pyx):
             if e:
                 e = e.pop()  # just one edge since self and its dual are simple
                 edges.append([v1, v2, self.edge_label(e[0], e[1])])
-        return Graph([verts, edges])
+        return Graph([verts, edges], format='vertices_and_edges')
 
     # Connectivity
 
@@ -8156,6 +8167,7 @@ class GenericGraph(GenericGraph_pyx):
         return val
 
     def longest_cycle(self, induced=False, use_edge_labels=False,
+                      immutable=None,
                       solver=None, verbose=0, *, integrality_tolerance=0.001):
         r"""
         Return the longest (induced) cycle of ``self``.
@@ -8186,6 +8198,10 @@ class GenericGraph(GenericGraph_pyx):
           defined by its label (a label set to ``None`` or ``{}`` being
           considered as a weight of `1`), or to compute a cycle with the largest
           possible number of edges (i.e., edge weights are set to 1)
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable (di)graph. ``immutable=None`` (default) means that
+          the (di)graph and its longest cycle will behave the same way.
 
         - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
@@ -8297,6 +8313,32 @@ class GenericGraph(GenericGraph_pyx):
             longest cycle from Subgraph of (Circuit disjoint_union Circuit): Digraph on 5 vertices
             sage: D.longest_cycle(induced=True)
             longest induced cycle from Subgraph of (Circuit disjoint_union Circuit): Digraph on 5 vertices
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = Graph([(0, 1), (1, 2), (0, 2)], immutable=True)
+            sage: G.longest_cycle().is_immutable()
+            True
+            sage: G = graphs.Grid2dGraph(3, 4)
+            sage: G.longest_cycle(induced=False, immutable=True).is_immutable()
+            True
+            sage: G.longest_cycle(induced=True, immutable=True).is_immutable()
+            True
+            sage: D = digraphs.Circuit(15)
+            sage: for u, v in D.edges(labels=False):
+            ....:     D.set_edge_label(u, v, 1)
+            sage: D.add_edge(0, 10, 50)
+            sage: D.add_edge(11, 1, 1)
+            sage: D.add_edge(13, 0, 1)
+            sage: D.longest_cycle(induced=False, use_edge_labels=False, immutable=True).is_immutable()
+            True
+            sage: D.longest_cycle(induced=False, use_edge_labels=True, immutable=True)[1].is_immutable()
+            True
+            sage: D = DiGraph(D, immutable=True)
+            sage: D.longest_cycle(induced=False, use_edge_labels=True)[1].is_immutable()
+            True
+            sage: D.longest_cycle(induced=False, use_edge_labels=True, immutable=False)[1].is_immutable()
+            False
         """
         self._scream_if_not_simple()
         G = self
@@ -8318,7 +8360,8 @@ class GenericGraph(GenericGraph_pyx):
                 return gg.order()
 
         directed = G.is_directed()
-        immutable = G.is_immutable()
+        if immutable is None:
+            immutable = G.is_immutable()
         if directed:
             from sage.graphs.digraph import DiGraph as MyGraph
             blocks = G.strongly_connected_components()
@@ -8336,6 +8379,7 @@ class GenericGraph(GenericGraph_pyx):
                 h = G.subgraph(vertices=block)
                 C = h.longest_cycle(induced=induced,
                                     use_edge_labels=use_edge_labels,
+                                    immutable=immutable,
                                     solver=solver, verbose=verbose,
                                     integrality_tolerance=integrality_tolerance)
                 if total_weight(C) > best_w:
@@ -8354,8 +8398,7 @@ class GenericGraph(GenericGraph_pyx):
             return MyGraph(name=name, immutable=immutable)
         if (not induced and ((directed and G.order() == 2) or
                              (not directed and G.order() == 3))):
-            answer = G.copy()
-            answer.name(name)
+            answer = MyGraph(G, immutable=immutable, name=name)
             if use_edge_labels:
                 return total_weight(answer), answer
             return answer
@@ -8474,7 +8517,8 @@ class GenericGraph(GenericGraph_pyx):
             best.set_pos({u: pp for u, pp in G.get_pos().items() if u in best})
         return (best_w, best) if use_edge_labels else best
 
-    def longest_path(self, s=None, t=None, use_edge_labels=False, algorithm='MILP',
+    def longest_path(self, s=None, t=None, use_edge_labels=False,
+                     algorithm='MILP', immutable=None,
                      solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
         Return a longest path of ``self``.
@@ -8514,6 +8558,10 @@ class GenericGraph(GenericGraph_pyx):
             an unweighted (di)graph. This heuristic does not take into account
             parameters ``s``, ``t`` and ``use_edge_labels``. An error is raised
             if these parameters are set.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable (di)graph. ``immutable=None`` (default) means that
+          the (di)graph and its longest path will behave the same way.
 
         - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
@@ -8682,6 +8730,24 @@ class GenericGraph(GenericGraph_pyx):
             ...
             ValueError: parameters s, t, and use_edge_labels can not be used in
                         combination with algorithm 'heuristic'
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: # needs sage.numerical.mip
+            sage: g1 =  digraphs.RandomDirectedGNP(15, 0.2)
+            sage: for u,v in g.edge_iterator(labels=False):
+            ....:     g.set_edge_label(u, v, random())
+            sage: g2 = DiGraph(2 * g1, immutable=True)
+            sage: lp1 = g1.longest_path(use_edge_labels=True)
+            sage: lp2 = g2.longest_path(use_edge_labels=True)
+            sage: lp1[0] == lp2[0]
+            True
+            sage: not lp1.is_immutable() and lp2.is_immutable()
+            True
+            sage: lp1 = g1.longest_path(use_edge_labels=True, immutable=True)
+            sage: lp2 = g2.longest_path(use_edge_labels=True, immutable=False)
+            sage: lp1.is_immutable() and not lp2.is_immutable()
+            True
         """
         self._scream_if_not_simple()
 
@@ -8697,16 +8763,19 @@ class GenericGraph(GenericGraph_pyx):
                 raise ValueError("parameters s, t, and use_edge_labels can not "
                                  "be used in combination with algorithm 'heuristic'")
 
+        if immutable is None:
+            immutable = self.is_immutable()
+
         # Quick improvement
         if not self.is_connected():
             if use_edge_labels:
-                return max((g.longest_path(s=s, t=t,
+                return max((g.longest_path(s=s, t=t, immutable=immutable,
                                            use_edge_labels=use_edge_labels,
                                            algorithm=algorithm)
                             for g in self.connected_components_subgraphs()),
                            key=lambda x: x[0])
 
-            return max((g.longest_path(s=s, t=t,
+            return max((g.longest_path(s=s, t=t, immutable=immutable,
                                        use_edge_labels=use_edge_labels,
                                        algorithm=algorithm)
                         for g in self.connected_components_subgraphs()),
@@ -8735,16 +8804,18 @@ class GenericGraph(GenericGraph_pyx):
             (self._directed and (s is not None) and (t is not None) and
              not self.shortest_path(s, t))):
             if self._directed:
-                from sage.graphs.digraph import DiGraph
-                return [0, DiGraph()] if use_edge_labels else DiGraph()
-            from sage.graphs.graph import Graph
-            return [0, Graph()] if use_edge_labels else Graph()
+                from sage.graphs.digraph import DiGraph as MyGraph
+            else:
+                from sage.graphs.graph import Graph as MyGraph
+            GG = MyGraph(immutable=immutable)
+            return [0, GG] if use_edge_labels else GG
 
         # Calling the heuristic if asked
         if algorithm == "heuristic":
             from sage.graphs.generic_graph_pyx import find_hamiltonian as fh
             x = fh(self, find_path=True)[1]
-            return self.subgraph(vertices=x, edges=list(zip(x[:-1], x[1:])))
+            return self.subgraph(vertices=x, edges=list(zip(x[:-1], x[1:])),
+                                 immutable=immutable)
 
         ##################
         # LP Formulation #
@@ -8874,21 +8945,20 @@ class GenericGraph(GenericGraph_pyx):
         edge_used = p.get_values(edge_used, convert=bool, tolerance=integrality_tolerance)
         vertex_used = p.get_values(vertex_used, convert=bool, tolerance=integrality_tolerance)
         if self._directed:
-            g = self.subgraph(vertices=(v for v in self if vertex_used[v]),
-                              edges=((u, v, l) for u, v, l in self.edge_iterator()
-                                     if edge_used[u, v]))
+            edges = ((u, v, l) for u, v, l in self.edge_iterator()
+                     if edge_used[u, v])
         else:
-            g = self.subgraph(
-                vertices=(v for v in self if vertex_used[v]),
-                edges=((u, v, l) for u, v, l in self.edge_iterator()
-                       if edge_used[frozenset((u, v))]))
+            edges = ((u, v, l) for u, v, l in self.edge_iterator()
+                     if edge_used[frozenset((u, v))])
+        g = self.subgraph(vertices=(v for v in self if vertex_used[v]),
+                          edges=edges, immutable=immutable)
         if use_edge_labels:
             return sum(map(weight, g.edge_labels())), g
         return g
 
     def hamiltonian_path(self, s=None, t=None, use_edge_labels=False,
-                         maximize=False, algorithm='MILP', solver=None, verbose=0,
-                         *, integrality_tolerance=1e-3):
+                         maximize=False, algorithm='MILP', immutable=None,
+                         solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
         Return a Hamiltonian path of the current graph/digraph.
 
@@ -8933,6 +9003,10 @@ class GenericGraph(GenericGraph_pyx):
 
           * The backtrack algorithm does not support edge weighting, so setting
             ``use_edge_labels=True`` will force the use of the MILP algorithm.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable (di)graph. ``immutable=None`` (default) means that
+          the (di)graph and its hamiltonian path will behave the same way.
 
         - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
           Linear Programming (MILP) solver to be used. If set to ``None``, the
@@ -9019,6 +9093,20 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             ValueError: algorithm must be either 'backtrack' or 'MILP'
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: # needs sage.numerical.mip
+            sage: g = graphs.Grid2dGraph(3, 3)
+            sage: g.hamiltonian_path().is_immutable()
+            False
+            sage: g.hamiltonian_path(immutable=True).is_immutable()
+            True
+            sage: g = Graph(g, immutable=True)
+            sage: g.hamiltonian_path().is_immutable()
+            True
+            sage: g.hamiltonian_path(, use_edge_labels=True).is_immutable()
+            True
         """
         if use_edge_labels or algorithm is None:
             # We force the algorithm to 'MILP'
@@ -9033,6 +9121,8 @@ class GenericGraph(GenericGraph_pyx):
         if not self.is_connected():
             return (0, None) if use_edge_labels else None
 
+        if immutable is None:
+            immutable = self.is_immutable()
         #
         # Deal with loops and multiple edges
         #
@@ -9096,7 +9186,8 @@ class GenericGraph(GenericGraph_pyx):
                     new_t = ones.pop()
 
         if not use_edge_labels and algorithm == "backtrack":
-            path = g.longest_path(s=new_s, t=new_t, algorithm='backtrack')
+            path = g.longest_path(s=new_s, t=new_t, algorithm='backtrack',
+                                  immutable=immutable)
             return path if path.order() == g.order() else None
 
         #
@@ -9143,6 +9234,8 @@ class GenericGraph(GenericGraph_pyx):
 
         tsp.delete_vertices(extra_vertices)
         tsp.name("Hamiltonian path from {}".format(self.name()))
+        if immutable:
+            tst = tsp.copy(immutable=True)
 
         def weight(label):
             return 1 if label is None else label
@@ -10779,7 +10872,7 @@ class GenericGraph(GenericGraph_pyx):
           solvers over an inexact base ring; see
           :meth:`MixedIntegerLinearProgram.get_values`.
 
-          Only useful when parameter ``ìnteger`` is ``True``.
+          Only useful when parameter ``integer`` is ``True``.
 
         ALGORITHM:
 
