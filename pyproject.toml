@@ -3,7 +3,7 @@ build-backend = 'mesonpy'
 # Minimum requirements for the build system to execute.
 requires = [
     'meson-python',
-    'cypari2 >=2.1.1',
+    'cypari2 >=2.2.1',
     # cysignals 1.11.2 is the newest version that is available on conda:
     # https://github.com/conda-forge/cysignals-feedstock/pull/49
     'cysignals >=1.11.2',
@@ -20,7 +20,7 @@ description = "Sage: Open Source Mathematics Software: Standard Python Library"
 dependencies = [
     'six >=1.15.0',
     'conway-polynomials >=0.8',
-    'cypari2 >=2.1.1',
+    'cypari2 >=2.2.1',
     'cysignals >=1.10.2',
     'cython >=3.0, != 3.0.3',
     'gmpy2 ~=2.1.b999',
