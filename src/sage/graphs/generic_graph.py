@@ -23711,10 +23711,9 @@ class GenericGraph(GenericGraph_pyx):
             raise TypeError("partition (%s) is not valid for this graph: there is a cell of length 0" % partition)
         if self.has_multiple_edges():
             raise TypeError("refinement function does not support multiple edges")
-        G = copy(self)
-        perm_from = list(G)
+        perm_from = list(self)
         perm_to = {v: i for i, v in enumerate(perm_from)}
-        G.relabel(perm=perm_to)
+        G = self.relabel(perm=perm_to, inplace=False, immutable=True)
         partition = [[perm_to[b] for b in cell] for cell in partition]
         n = G.order()
         if sparse:
@@ -23962,6 +23961,18 @@ class GenericGraph(GenericGraph_pyx):
             ....:                           partition=[V])
             sage: str(a2) == str(b2)                            # optional - bliss
             True
+
+        Check the behavior with immutable graphs::
+
+            sage: G = Graph(graphs.PetersenGraph(), immutable=True)
+            sage: G.automorphism_group(return_group=False, orbits=True, algorithm='sage')
+            [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]
+            sage: G = graphs.PetersenGraph()
+            sage: G.allow_multiple_edges(True)
+            sage: G.add_edges(G.edges())
+            sage: G = Graph(G, immutable=True)
+            sage: G.automorphism_group(return_group=False, orbits=True, algorithm='sage')
+            [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]
         """
         from sage.features.bliss import Bliss
         have_bliss = Bliss().is_present()
@@ -24012,7 +24023,7 @@ class GenericGraph(GenericGraph_pyx):
             partition = [list(self)]
 
         if edge_labels or self.has_multiple_edges():
-            ret = graph_isom_equivalent_non_edge_labeled_graph(self, partition,
+            ret = graph_isom_equivalent_non_edge_labeled_graph(self, partition=partition,
                                                                return_relabeling=True,
                                                                ignore_edge_labels=(not edge_labels))
             G, partition, relabeling = ret
@@ -24470,6 +24481,15 @@ class GenericGraph(GenericGraph_pyx):
             (True, {6: 'x', 7: 'y'})
             sage: A.is_isomorphic(B, certificate=True, edge_labels=True)
             (False, None)
+
+        Check the behavior with immutable graphs::
+
+            sage: A = DiGraph([(6,7,'a'), (6,7,'b')], multiedges=True, immutable=True)
+            sage: B = DiGraph([('x','y','u'), ('x','y','v')], multiedges=True)
+            sage: A.is_isomorphic(B, certificate=True)
+            (True, {6: 'x', 7: 'y'})
+            sage: B.is_isomorphic(A, certificate=True)
+            (True, {'x': 6, 'y': 7})
         """
         if not self.order() and not other.order():
             return (True, None) if certificate else True
@@ -24563,7 +24583,8 @@ class GenericGraph(GenericGraph_pyx):
         return True, isom_trans
 
     def canonical_label(self, partition=None, certificate=False,
-                        edge_labels=False, algorithm=None, return_graph=True):
+                        edge_labels=False, algorithm=None, return_graph=True,
+                        immutable=None):
         r"""
         Return the canonical graph.
 
@@ -24603,6 +24624,10 @@ class GenericGraph(GenericGraph_pyx):
           ``False``, returns the list of edges of the canonical graph
           instead of the canonical graph; only available when ``'bliss'``
           is explicitly set as algorithm.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable (di)graph. ``immutable=None`` (default) means that
+          the (di)graph and its canonical (di)graph will behave the same way.
 
         EXAMPLES:
 
@@ -24690,6 +24715,23 @@ class GenericGraph(GenericGraph_pyx):
             Graph on 3 vertices
             sage: C.vertices(sort=True)
             [0, 1, 2]
+            sage: G.canonical_label(algorithm='bliss').is_immutable()           # optional - bliss
+            True
+            sage: G.canonical_label(algorithm='sage').is_immutable()
+            True
+            sage: G.canonical_label(algorithm='bliss', immutable=False).is_immutable()  # optional - bliss
+            False
+            sage: G.canonical_label(algorithm='sage', immutable=False).is_immutable()
+            False
+            sage: G = Graph([[1, 2], [2, 3]])
+            sage: G.canonical_label(algorithm='bliss').is_immutable()           # optional - bliss
+            False
+            sage: G.canonical_label(algorithm='sage').is_immutable()
+            False
+            sage: G.canonical_label(algorithm='bliss', immutable=True).is_immutable()  # optional - bliss
+            True
+            sage: G.canonical_label(algorithm='sage', immutable=True).is_immutable()
+            True
 
         Corner cases::
 
@@ -24767,11 +24809,13 @@ class GenericGraph(GenericGraph_pyx):
 
         if algorithm == 'bliss':
             if return_graph:
-                vert_dict = canonical_form(self, partition, False, edge_labels, True)[1]
+                vert_dict = canonical_form(self, partition=partition, return_graph=False,
+                                           use_edge_labels=edge_labels, certificate=True)[1]
                 if not certificate:
-                    return self.relabel(vert_dict, inplace=False)
-                return (self.relabel(vert_dict, inplace=False), vert_dict)
-            return canonical_form(self, partition, return_graph, edge_labels, certificate)
+                    return self.relabel(vert_dict, inplace=False, immutable=immutable)
+                return (self.relabel(vert_dict, inplace=False, immutable=immutable), vert_dict)
+            return canonical_form(self, partition=partition, return_graph=False,
+                                  use_edge_labels=edge_labels, certificate=certificate)
 
         # algorithm == 'sage':
         from sage.groups.perm_gps.partn_ref.refinement_graphs import search_tree
@@ -24783,7 +24827,8 @@ class GenericGraph(GenericGraph_pyx):
         if partition is None:
             partition = [list(self)]
         if edge_labels or self.has_multiple_edges():
-            G, partition, relabeling = graph_isom_equivalent_non_edge_labeled_graph(self, partition, return_relabeling=True)
+            G, partition, relabeling = graph_isom_equivalent_non_edge_labeled_graph(self, partition=partition,
+                                                                                    return_relabeling=True)
             G_vertices = list(chain(*partition))
             G_to = {u: i for i, u in enumerate(G_vertices)}
             DoDG = DiGraph if self._directed else Graph
@@ -24795,7 +24840,6 @@ class GenericGraph(GenericGraph_pyx):
             partition = [[G_to[vv] for vv in cell] for cell in partition]
             a, b, c = search_tree(GC, partition, certificate=True, dig=dig)
             # c is a permutation to the canonical label of G, which depends only on isomorphism class of self.
-            H = copy(self)
             c_new = {v: c[G_to[relabeling[v]]] for v in self}
         else:
             G_vertices = list(chain(*partition))
@@ -24808,9 +24852,12 @@ class GenericGraph(GenericGraph_pyx):
             GC = HB.c_graph()[0]
             partition = [[G_to[vv] for vv in cell] for cell in partition]
             a, b, c = search_tree(GC, partition, certificate=True, dig=dig)
-            H = copy(self)
             c_new = {v: c[G_to[v]] for v in G_to}
-        H.relabel(c_new)
+
+        if immutable is None:
+            immutable = self.is_immutable()
+        H = self.relabel(perm=c_new, inplace=False, immutable=immutable)
+
         if certificate:
             return H, c_new
         return H
@@ -24915,6 +24962,14 @@ class GenericGraph(GenericGraph_pyx):
         The method also works efficiently with dense simple graphs::
 
             sage: graphs.CompleteBipartiteGraph(50, 50).is_cayley()                     # needs sage.groups
+            True
+
+        Check the behavior with immutable graphs::
+
+            sage: C7 = groups.permutation.Cyclic(7)                                     # needs sage.groups
+            sage: S = [(1,2,3,4,5,6,7), (1,3,5,7,2,4,6), (1,5,2,6,3,7,4)]
+            sage: d = C7.cayley_graph(generators=S)                                     # needs sage.groups
+            sage: d.copy(immutable=True).is_cayley()                                    # needs sage.groups
             True
 
         TESTS::
@@ -25641,7 +25696,8 @@ def tachyon_vertex_plot(g, bgcolor=(1, 1, 1),
 
 def graph_isom_equivalent_non_edge_labeled_graph(g, partition=None, standard_label=None,
                                                  return_relabeling=False, return_edge_labels=False,
-                                                 inplace=False, ignore_edge_labels=False):
+                                                 inplace=False, ignore_edge_labels=False,
+                                                 immutable=None):
     r"""
     Helper function for canonical labeling of edge labeled (di)graphs.
 
@@ -25692,6 +25748,9 @@ def graph_isom_equivalent_non_edge_labeled_graph(g, partition=None, standard_lab
       that attributes of ``g`` are *not* copied for speed issues, only
       edges and vertices.
 
+      This parameter cannot be set to ``True`` if the input graph
+      ``g`` is immutable.
+
     - ``ignore_edge_labels`` -- boolean (default: ``False``); if
       ``True``, ignore edge labels, so when constructing the new
       graph, only multiple edges are replaced with vertices. Labels on
@@ -25699,6 +25758,12 @@ def graph_isom_equivalent_non_edge_labeled_graph(g, partition=None, standard_lab
       so multiple edges with the same multiplicity in the original
       graph correspond to right vertices in the same partition in the
       new graph.
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable (di)graph. ``immutable=None`` (default) means that the
+      (di)graph and the returned (di)graph will behave the same way.
+
+      This parameter is ignored when ``inplace`` is ``True``.
 
     OUTPUT:
 
@@ -25789,7 +25854,47 @@ def graph_isom_equivalent_non_edge_labeled_graph(g, partition=None, standard_lab
         sage: g = graph_isom_equivalent_non_edge_labeled_graph(G)
         sage: g[0].is_bipartite()
         False
+
+    Check the behavior with immutable graphs::
+
+        sage: Him = Graph([(0, 1, 1), (1, 2), (2, 123), ('a', 123)], immutable=True)
+        sage: graph_isom_equivalent_non_edge_labeled_graph(Him, inplace=True)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter 'inplace' cannot be True for immutable graphs
+        sage: g, _ = graph_isom_equivalent_non_edge_labeled_graph(Him)
+        sage: g.is_immutable()
+        True
+        sage: g, _ = graph_isom_equivalent_non_edge_labeled_graph(Him, immutable=False)
+        sage: g.is_immutable()
+        False
+        sage: H = Graph([(0, 1, 1), (1, 2), (2, 123), ('a', 123)], immutable=False)
+        sage: g, _ = graph_isom_equivalent_non_edge_labeled_graph(H, immutable=True)
+        sage: g.is_immutable()
+        True
+        sage: graph_isom_equivalent_non_edge_labeled_graph(H, inplace=True, immutable=True)
+        [[[0, 1, 2, 3, 4], [5]]]
+        sage: H.is_immutable()
+        False
+        sage: G = Graph(multiedges=True, sparse=True)
+        sage: G.add_edges((0, 1, i) for i in range(10))
+        sage: G.add_edge(1, 2, 'string')
+        sage: G.add_edge(2, 123)
+        sage: G.add_edge('a', 123)
+        sage: g = graph_isom_equivalent_non_edge_labeled_graph(G)
+        sage: g[0].is_immutable()
+        False
+        sage: Gim = G.copy(immutable=True)
+        sage: g = graph_isom_equivalent_non_edge_labeled_graph(Gim, standard_label='string',
+        ....:                                                  return_edge_labels=True)
+        sage: g[0].is_immutable()
+        True
     """
+    if inplace and g.is_immutable():
+        raise ValueError("parameter 'inplace' cannot be True for immutable graphs")
+    if immutable is None:
+        immutable = g.is_immutable()
+
     from sage.graphs.graph import Graph
     from sage.graphs.digraph import DiGraph
     from itertools import chain
@@ -25837,7 +25942,7 @@ def graph_isom_equivalent_non_edge_labeled_graph(g, partition=None, standard_lab
         if inplace:
             g._backend = G._backend
     elif not inplace:
-        G = copy(g)
+        G = g.copy(immutable=False)
     else:
         G = g
 
@@ -25937,6 +26042,8 @@ def graph_isom_equivalent_non_edge_labeled_graph(g, partition=None, standard_lab
 
     return_data = []
     if not inplace:
+        if immutable:
+            G = G.copy(immutable=True)
         return_data.append(G)
     return_data.append(new_partition)
     if return_relabeling:
