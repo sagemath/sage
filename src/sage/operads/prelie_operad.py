@@ -13,12 +13,17 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from typing import NewType
+
 from sage.categories.operads_with_basis import OperadsWithBasis
 from sage.categories.cartesian_product import cartesian_product
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.rooted_tree import LabelledRootedTrees
 from sage.functions.other import factorial
 from sage.misc.cachefunc import cached_method
+from sage.sets.family import Family
+
+Label = NewType("label", str)
 
 # PreLie operad : rooted trees
 
@@ -41,7 +46,7 @@ class PreLieOperad(CombinatorialFreeModule):
 
     This class illustrates a minimal implementation of an operad with basis.
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         EXAMPLES::
 
@@ -60,7 +65,7 @@ class PreLieOperad(CombinatorialFreeModule):
 
         INPUT:
 
-        x -- a labelled rooted tree
+        - x -- a labelled rooted tree
 
         EXAMPLES::
 
@@ -75,7 +80,7 @@ class PreLieOperad(CombinatorialFreeModule):
         """
         return x.sort_key()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation.
 
@@ -108,7 +113,7 @@ class PreLieOperad(CombinatorialFreeModule):
         return R
 
     @cached_method
-    def one_basis(self, letter="@"):
+    def one_basis(self, letter: Label = "@"):
         """
         Return the tree with one vertex, which index the one of this operad.
 
@@ -171,7 +176,7 @@ class PreLieOperad(CombinatorialFreeModule):
         F = FreePreLieAlgebra(self.base_ring(), '@')
         return F.basis()[t.shape()]
 
-    def one(self, letter="@"):
+    def one(self, letter: Label = "@"):
         """
         I overload the one of the operad so that it can also serve as the one
         of the Hopf algebra
@@ -245,8 +250,8 @@ class PreLieOperad(CombinatorialFreeModule):
     def composition_on_basis_in_root(self, x, y):
         """
         Return a list of rooted trees obtained from a rooted tree `x`
-        and a rooted tree `y` by the composition `x o_i y` where `i` is the root
-        of `x`.
+        and a rooted tree `y` by the composition `x o_i y` where `i`
+        is the label of the root of `x`.
 
         EXAMPLES::
 
@@ -261,7 +266,7 @@ class PreLieOperad(CombinatorialFreeModule):
                 for graftingFunction in
                 cartesian_product([list(y.paths())] * len(x))]
 
-    def composition_on_basis_list(self, x, y, i):
+    def composition_on_basis_list(self, x, y, i: Label):
         """
         Return a list of rooted trees obtained from a rooted tree `x`
         and a rooted tree `y` by the composition `x o_i y`.
@@ -290,7 +295,7 @@ class PreLieOperad(CombinatorialFreeModule):
                     resu.append(x1)
         return resu
 
-    def composition_on_basis(self, x, y, i):
+    def composition_on_basis(self, x, y, i: Label):
         """
         Return the composition `x o_i y` as a sum of rooted trees,
         for rooted trees `x` and `y`.
@@ -317,7 +322,7 @@ class PreLieOperad(CombinatorialFreeModule):
         return sum(self.basis()[t] for t in
                    self.composition_on_basis_list(x, y, i))
 
-    def operad_generator_basis(self, fstlabel=0, sndlabel=1):
+    def operad_generator_basis(self, label0: Label = "0", label1: Label = "1"):
         """
         Return the generator of ``self`` as a labelled rooted tree.
 
@@ -328,9 +333,9 @@ class PreLieOperad(CombinatorialFreeModule):
             0[1[]]
         """
         LT = self.basis().keys()
-        return LT([LT([], label=sndlabel)], label=fstlabel)
+        return LT([LT([], label=label1)], label=label0)
 
-    def operad_generator(self, fstlabel=0, sndlabel=1):
+    def operad_generator(self, label0: Label = "0", label1: Label = "1"):
         """
         Return the generator of ``self``.
 
@@ -347,9 +352,9 @@ class PreLieOperad(CombinatorialFreeModule):
             sage: A.operad_generator()
             B[0[1[]]]
         """
-        return self.monomial(self.operad_generator_basis(fstlabel, sndlabel))
+        return self.monomial(self.operad_generator_basis(label0, label1))
 
-    def operad_generators(self):
+    def operad_generators(self) -> Family:
         """
         Return the family of generators.
 
@@ -358,7 +363,6 @@ class PreLieOperad(CombinatorialFreeModule):
             sage: PreLieOperad(QQ).operad_generators()
             Finite family {'pre_Lie_product': B[1[2[]]]}
         """
-        from sage.sets.family import Family
         return Family({"pre_Lie_product": self.operad_generator(1, 2)})
 
     def pre_Lie_product(self, x, y):
@@ -374,7 +378,7 @@ class PreLieOperad(CombinatorialFreeModule):
             sage: A.pre_Lie_product(x, y)
             B[a[b[c[d[]]]]] + B[a[b[], c[d[]]]]
         """
-        return self.operad_generator().compose(x, 0).compose(y, 1)
+        return self.operad_generator().compose(x, "0").compose(y, "1")
 
     def operad_morphism_on_basis(self, t, cod):
         """
@@ -461,15 +465,15 @@ class PreLieOperad(CombinatorialFreeModule):
         """
         PL = x.parent()
         if n + 1 > N:
-            return PL(0)
+            return PL.zero()
 
         xx = x.truncate(N + 1 - n)
         yy = y.truncate(N + 1 - n)
         PLT = PL.basis().keys()
-        crln = PL(PLT([PLT([], i + 1) for i in range(n)], 0))
-        resu = crln.compose(xx, 0)
+        crln = PL(PLT([PLT([], str(i + 1)) for i in range(n)], "0"))
+        resu = crln.compose(xx, "0")
         for i in range(1, n + 1):
-            resu = PL.composition_truncated(resu, yy, i, N)
+            resu = PL.composition_truncated(resu, yy, str(i), N)
         return resu
 
     def sum_corolla_prelie(self, n, x, y, N=10):
