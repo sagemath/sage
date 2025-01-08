@@ -1393,6 +1393,13 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
         (a + 1)
         sage: R(F.gen()^5) + 1
         (-a^2 + a + 2)
+
+    Ensures :issue:`36101` is fixed::
+
+        sage: RR.<x, y, r, s0, c0, s1, c1> = AA[]
+        sage: f = -4*r^2+(((1+2*AA(cos(pi/6)))*c0*r+2*c1*r+(1+2*AA(cos(pi/6)))*s0*r+2*s1*r)/2-1/2)^2+((1-(1+2*AA(cos(pi/6)))*c0*r-2*c1*r+(1+2*AA(cos(pi/6)))*s0*r+2*s1*r)/2-1/2)^2
+        sage: f.change_ring( QuadraticField(3) )
+        ...
     """
     cdef int i
     cdef number *n1
