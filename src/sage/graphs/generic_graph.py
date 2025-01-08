@@ -774,9 +774,17 @@ class GenericGraph(GenericGraph_pyx):
                 raise TypeError('multiplication of a graph and a nonpositive integer is not defined')
             if n == 1:
                 return copy(self)
-            return sum([self] * (n - 1), self)
-        else:
-            raise TypeError('multiplication of a graph and something other than an integer is not defined')
+            # Use a logarithmic number of additions to build the result
+            bits = Integer(n).bits()
+            parts = [self]
+            parts.extend(parts[-1] + parts[-1] for _ in range(1, len(bits)))
+            H, _ = parts.pop(), bits.pop()
+            while bits:
+                g, b = parts.pop(), bits.pop()
+                if b:
+                    H += g
+            return H
+        raise TypeError('multiplication of a graph and something other than an integer is not defined')
 
     def __ne__(self, other):
         """
