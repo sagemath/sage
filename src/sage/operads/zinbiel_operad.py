@@ -1,8 +1,8 @@
-from sage.misc.cachefunc import cached_method
 from sage.categories.all import OperadsWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.words.words import Words
 from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2
+from sage.combinat.words.words import Words
+from sage.misc.cachefunc import cached_method
 
 
 class ZinbielOperad(CombinatorialFreeModule):

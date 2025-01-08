@@ -1,7 +1,7 @@
-from sage.misc.cachefunc import cached_method
 from sage.categories.all import OperadsWithBasis
-from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.binary_tree import LabelledBinaryTrees
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.misc.cachefunc import cached_method
 
 
 class DendriformOperad(CombinatorialFreeModule):
@@ -71,9 +71,11 @@ class DendriformOperad(CombinatorialFreeModule):
             sage: f.generating_series()[:5]
             [1, 2, 5, 14]
         """
-        from sage.combinat.species.library import (SingletonSpecies,
-                                                   EmptySetSpecies,
-                                                   CombinatorialSpecies)
+        from sage.combinat.species.library import (
+            CombinatorialSpecies,
+            EmptySetSpecies,
+            SingletonSpecies,
+        )
         X = SingletonSpecies()
         u = EmptySetSpecies()
         R = CombinatorialSpecies()
@@ -183,8 +185,12 @@ class DendriformOperad(CombinatorialFreeModule):
 
     def composition_on_basis(self, x, y, i):
         r"""
-        This computes the composition `x o_i y` as a sum of planar binary trees,
-        for planar binary trees `x` and `y`.
+        Return the composition `x o_i y` as a sum of planar binary trees.
+
+        INPUT:
+
+        - planar binary trees `x` and `y`
+        - composition index `i`
 
         The composition index `i` should be a label of `x`.
 
@@ -218,7 +224,7 @@ class DendriformOperad(CombinatorialFreeModule):
 
     def pre_Lie_product(self, x, y):
         """
-        This computes the pre-Lie product.
+        Return the pre-Lie product of ``x`` and ``y``.
 
         EXAMPLES::
 
@@ -235,7 +241,7 @@ class DendriformOperad(CombinatorialFreeModule):
 
     def associative_product(self, x, y):
         """
-        This computes the associative product.
+        Return the associative product of ``x`` and ``y``.
 
         EXAMPLES::
 
@@ -252,9 +258,11 @@ class DendriformOperad(CombinatorialFreeModule):
 
     def chosen_product(self, x, y, name='assoc'):
         """
-        This computes different binary products.
+        Return one among different binary products.
 
-        assoc, prelie, lie, left_dend, right_dend
+        The possible choices are:
+
+        "assoc", "prelie", "lie", "left_dend", "right_dend"
 
         EXAMPLES::
 

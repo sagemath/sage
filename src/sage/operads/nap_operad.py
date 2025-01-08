@@ -1,7 +1,7 @@
-from sage.misc.cachefunc import cached_method
 from sage.categories.all import OperadsWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.rooted_tree import LabelledRootedTrees
+from sage.misc.cachefunc import cached_method
 
 
 class NapOperad(CombinatorialFreeModule):
@@ -62,9 +62,11 @@ class NapOperad(CombinatorialFreeModule):
             sage: f.generating_series()[:5]
             [1, 1, 3/2, 8/3]
         """
-        from sage.combinat.species.library import (SingletonSpecies,
-                                                   SetSpecies,
-                                                   CombinatorialSpecies)
+        from sage.combinat.species.library import (
+            CombinatorialSpecies,
+            SetSpecies,
+            SingletonSpecies,
+        )
         X = SingletonSpecies()
         E = SetSpecies()
         R = CombinatorialSpecies()

@@ -1,8 +1,7 @@
-from sage.misc.cachefunc import cached_method
 from sage.categories.all import OperadsWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.ordered_tree import LabelledOrderedTrees
-
+from sage.misc.cachefunc import cached_method
 
 LT = LabelledOrderedTrees()
 
@@ -143,7 +142,7 @@ class FreeOperad(CombinatorialFreeModule):
 
     def magmatic_product(self, x, y):
         """
-        This computes the binary magmatic product inside the operad.
+        Return the binary magmatic product of ``x`` and ``y`` inside the operad.
 
         EXAMPLES::
 

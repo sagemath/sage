@@ -13,12 +13,12 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.misc.cachefunc import cached_method
-from sage.functions.other import factorial
 from sage.categories.all import OperadsWithBasis
+from sage.categories.cartesian_product import cartesian_product
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.rooted_tree import LabelledRootedTrees
-from sage.categories.cartesian_product import cartesian_product
+from sage.functions.other import factorial
+from sage.misc.cachefunc import cached_method
 
 # PreLie operad : rooted trees
 
@@ -96,9 +96,11 @@ class PreLieOperad(CombinatorialFreeModule):
             sage: f.generating_series()[:5]
             [1, 1, 3/2, 8/3]
         """
-        from sage.combinat.species.library import (SingletonSpecies,
-                                                   SetSpecies,
-                                                   CombinatorialSpecies)
+        from sage.combinat.species.library import (
+            CombinatorialSpecies,
+            SetSpecies,
+            SingletonSpecies,
+        )
         X = SingletonSpecies()
         E = SetSpecies()
         R = CombinatorialSpecies()
@@ -361,7 +363,7 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def pre_Lie_product(self, x, y):
         """
-        This computes the pre-Lie product inside the operad.
+        Return the pre-Lie product of ``x`` and ``y`` inside the operad.
 
         EXAMPLES::
 

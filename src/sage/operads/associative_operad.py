@@ -1,7 +1,7 @@
-from sage.misc.cachefunc import cached_method
 from sage.categories.all import OperadsWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.words import Words
+from sage.misc.cachefunc import cached_method
 
 
 class AssociativeOperad(CombinatorialFreeModule):
@@ -155,7 +155,7 @@ class AssociativeOperad(CombinatorialFreeModule):
 
     def associative_product(self, x, y):
         """
-        This computes the associative product.
+        Return the associative product of ``x`` and ``y``.
 
         EXAMPLES::
 
