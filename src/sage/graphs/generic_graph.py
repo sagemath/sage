@@ -772,11 +772,11 @@ class GenericGraph(GenericGraph_pyx):
         TESTS::
 
             sage: Graph(1) * -1
-            Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             TypeError: multiplication of a graph and a nonpositive integer is not defined
             sage: Graph(1) * 2.5
-            Traceback (most recent call last)
+            Traceback (most recent call last):
             ...
             TypeError: multiplication of a graph and something other than an integer is not defined
         """
