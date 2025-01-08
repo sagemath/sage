@@ -19473,7 +19473,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.complement()
             Graph on 10 vertices
 
-        Check the behavior of parameter `ìmmutable``::
+        Check the behavior of parameter ``immutable``::
 
             sage: type(Graph().complement()._backend)
             <class 'sage.graphs.base.dense_graph.DenseGraphBackend'>
@@ -19550,7 +19550,7 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS:
 
-        Check the behavior of parameter `ìmmutable``::
+        Check the behavior of parameter ``immutable``::
 
             sage: G = Graph([(0, 0), (0, 1)] * 2, loops=True, multiedges=True, immutable=True)
             sage: H = G.to_simple()
@@ -19631,7 +19631,7 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS:
 
-        Check the behavior of parameter `ìmmutable``::
+        Check the behavior of parameter ``immutable``::
 
             sage: G = Graph([(0, 1)])
             sage: G.disjoint_union(G).is_immutable()
