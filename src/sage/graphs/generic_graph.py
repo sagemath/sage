@@ -768,6 +768,17 @@ class GenericGraph(GenericGraph_pyx):
             [0, 1, 2, 3, 4, 5, 6, 7, 8]
             sage: H = G * 1; H
             Cycle graph: Graph on 3 vertices
+
+        TESTS::
+
+            sage: Graph(1) * -1
+            Traceback (most recent call last)
+            ...
+            TypeError: multiplication of a graph and a nonpositive integer is not defined
+            sage: Graph(1) * 2.5
+            Traceback (most recent call last)
+            ...
+            TypeError: multiplication of a graph and something other than an integer is not defined
         """
         if isinstance(n, (int, Integer)):
             if n < 1:
