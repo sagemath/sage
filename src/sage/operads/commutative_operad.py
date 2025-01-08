@@ -88,7 +88,7 @@ class CommutativeOperad(CombinatorialFreeModule):
             sage: CommutativeOperad(QQ)._from_key("bac")
             B[word: abc]
         """
-        return self._element_constructor(self.basis().keys()(sorted(k)))
+        return self._element_constructor_(self.basis().keys()(sorted(k)))
 
     @cached_method
     def one_basis(self, letter='@'):
