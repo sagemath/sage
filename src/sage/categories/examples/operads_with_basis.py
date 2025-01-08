@@ -38,7 +38,7 @@ class AssociativeOperad(CombinatorialFreeModule):
             An example of an operad with basis: the Associative operad
             over Rational Field
         """
-        return "An example of an operad with basis: the Associative operad over %s"%(self.base_ring())
+        return "An example of an operad with basis: the Associative operad over %s" % (self.base_ring())
 
     @cached_method
     def one_basis(self, letter):
@@ -107,7 +107,7 @@ class AssociativeOperad(CombinatorialFreeModule):
 
     def unlabelling_on_basis(self, t):
         """
-        Removes the labels of a tree in the Associative operad.
+        Remove the labels of a tree in the Associative operad.
 
         EXAMPLES::
 
@@ -148,8 +148,9 @@ class AssociativeOperad(CombinatorialFreeModule):
             sage: A.composition_on_basis(Words("acb"), Words("de"),"c")
             B[word: adeb]
         """
-        if not(i in x):
+        if i not in x:
             raise ValueError("the composition index is not present")
         return self.basis()[self.grafts(x, y, i)]
+
 
 Example = AssociativeOperad

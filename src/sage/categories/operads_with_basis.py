@@ -357,7 +357,9 @@ class OperadsWithBasis(Category_over_base_ring):
                 sage: PL.suspension(t,2)
                 2*B[o[o[]]] + 4*B[o[o[o[]]]] + 4*B[o[o[], o[]]]
             """
-            susp = lambda i, c: (i, q ** (self.degree_on_basis(i) - 1) * c)
+            def susp(i, c):
+                return (i, q ** (self.degree_on_basis(i) - 1) * c)
+
             return s.map_item(susp)
 
         def group_product_with_numbers(self, s, t, N):

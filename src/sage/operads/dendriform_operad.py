@@ -48,7 +48,7 @@ class DendriformOperad(CombinatorialFreeModule):
                                          category=OperadsWithBasis(R),
                                          sorting_key=key)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -131,7 +131,7 @@ class DendriformOperad(CombinatorialFreeModule):
 
     def unlabelling_on_basis(self, t):
         """
-        Removes the labels of a tree in the Dendriform operad.
+        Remove the labels of a tree in the Dendriform operad.
 
         EXAMPLES::
 

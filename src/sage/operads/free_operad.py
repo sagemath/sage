@@ -7,6 +7,9 @@ LT = LabelledOrderedTrees()
 
 
 def map_leaves(self, f):
+    """
+    Apply the function `f` to the leaves.
+    """
     if self.is_empty():
         return self
     if len(self) == 0:
@@ -21,7 +24,7 @@ LT.map_labels = map_leaves
 
 class FreeOperad(CombinatorialFreeModule):
     r"""
-    The free operad over any given set of generators
+    The free operad over any given set of generators.
     """
     def __init__(self, R):
         """
@@ -160,7 +163,7 @@ class FreeOperad(CombinatorialFreeModule):
 
     def operad_morphism_on_basis(self, t, cod, fun=None):
         """
-        Define a morphism from the free operad to the target operad.
+        Apply a morphism from the free operad to the target operad.
 
         INPUT:
 

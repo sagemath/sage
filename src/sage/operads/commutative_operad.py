@@ -37,7 +37,7 @@ class CommutativeOperad(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R, Words(),
                                          category=OperadsWithBasis(R))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -202,7 +202,7 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     def commutative_product(self, x, y):
         """
-        Compute the commutative product.
+        Compute the commutative product of ``x`` and ``y``.
 
         EXAMPLES::
 
@@ -230,7 +230,7 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     def operad_morphism_on_basis(self, t, codomain):
         """
-        Define a morphism from the Commutative operad to the target operad
+        Apply a morphism from the Commutative operad to the target operad.
 
         The target operad has to possess a method called
         ``commutative_product``.

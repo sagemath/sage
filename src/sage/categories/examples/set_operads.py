@@ -194,4 +194,5 @@ class AssociativeOperad(UniqueRepresentation, Parent):
             """
             return self.parent()(''.join(str(f(v)) for v in self.value))
 
+
 Example = AssociativeOperad

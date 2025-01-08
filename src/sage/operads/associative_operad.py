@@ -108,7 +108,7 @@ class AssociativeOperad(CombinatorialFreeModule):
 
     def unlabelling_on_basis(self, t):
         """
-        Removes the labels of a tree in the Associative operad.
+        Remove the labels of a tree in the Associative operad.
 
         EXAMPLES::
 
@@ -171,6 +171,8 @@ class AssociativeOperad(CombinatorialFreeModule):
 
     def operad_generators(self):
         """
+        Return the generators.
+
         EXAMPLES::
 
             sage: AssociativeOperad(QQ).operad_generators()
@@ -181,7 +183,7 @@ class AssociativeOperad(CombinatorialFreeModule):
 
     def operad_morphism_on_basis(self, t, codomain):
         """
-        Defines a morphism from the Associative operad to the target operad
+        Apply a morphism from the Associative operad to the target operad.
 
         The target operad has to possess a method called ``associative_product``.
 

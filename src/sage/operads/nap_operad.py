@@ -39,7 +39,7 @@ class NapOperad(CombinatorialFreeModule):
                                          sorting_key=lambda x: x.sort_key(),
                                          category=(OperadsWithBasis(R),))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

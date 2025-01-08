@@ -42,7 +42,7 @@ class ZinbielOperad(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R, Words(),
                                          category=OperadsWithBasis(R))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

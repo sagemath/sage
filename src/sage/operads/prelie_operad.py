@@ -378,7 +378,7 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def operad_morphism_on_basis(self, t, cod):
         """
-        Define a morphism from the PreLie operad to the target operad.
+        Apply a morphism from the PreLie operad to the target operad.
 
         The target operad has to possess a method called ``pre_Lie_product``.
 
