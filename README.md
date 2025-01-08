@@ -20,7 +20,7 @@ Flag algebras
 -----------------
 
 This repository is a copy of the official SageMath project with additional functionality to handle 
-flag algebraic calculations.
+flag algebraic calculations. Explore the capabilities and functionalities of the package related to flag algebras by visiting the [tutorial notebook](https://github.com/bodnalev/sage/blob/theory-builder/flag_tutorial.ipynb).
 
 Instructions to Build from Source
 ---------------------------------
