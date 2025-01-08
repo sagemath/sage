@@ -225,6 +225,9 @@ import os
 from tqdm import tqdm
 
 def combine(name, *theories, symmetries=False):
+    if not isinstance(name, str):
+        raise ValueError("Name must be a string")
+    
     #Sanity checks
     if len(theories)==0:
         raise ValueError("At least one theory is expected!")
@@ -252,7 +255,6 @@ def combine(name, *theories, symmetries=False):
                 for ll in result_signature:
                     tll = result_signature[ll]
                     if tll["arity"]!=tkk["arity"] or tll["ordered"]!=tkk["ordered"]:
-                        print(tll, tkk, ll)
                         can_symmetry = False
             next_group_increment = max(next_group_increment, tkk["group"]+1)
             tkk["group"] += next_group
@@ -1702,6 +1704,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 m = matrix(QQ, [vector(fvvals*mat) for mat in mult_table])
                 positives_list_exact += list(m.T)
                 print("Done with positivity constraint {}".format(ii))
+        else:
+            e_values = vector(QQ, 0)
         positives_matrix_exact = matrix(QQ, len(positives_list_exact), len(base_flags), positives_list_exact)
 
         print("Done calculating linear constraints")
@@ -1757,7 +1761,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         ls0 = theory0.generate(n)
         ls1 = theory1.generate(n)
         return overlap_generator(n, self, ls0, ls1, tuple())
-
 
     def generate_flags(self, n, ftype=None, run_bound=500000):
         r"""
@@ -1908,15 +1911,19 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         for group, term in zip(groups, terms):
             grouped_terms.setdefault(group, []).append(term)
 
-        group_permutations = {}
-        for group, terms in grouped_terms.items():
-            sym_gr = self._symmetries[group][2]
-            if len(sym_gr)==0:
-                group_permutations[group] = list(itertools.permutations(terms))
-            else:
-                coset_reps = _coset_reps(self._symmetries[group])
-                group_permutations[group] = [[terms[ii] for ii in xx] for xx in coset_reps]
+        # group_permutations = {}
+        # for group, terms in grouped_terms.items():
+        #     sym_gr = self._symmetries[group][2]
+        #     if len(sym_gr)==0:
+        #         group_permutations[group] = list(itertools.permutations(terms))
+        #     else:
+        #         coset_reps = _coset_reps(self._symmetries[group])
+        #         group_permutations[group] = [[terms[ii] for ii in xx] for xx in coset_reps]
         
+        group_permutations = {
+            group: list(itertools.permutations(terms)) for group, terms in grouped_terms.items()
+            }
+
         grouped_permutations = itertools.product(
             *(group_permutations[group] for group in sorted(grouped_terms.keys()))
             )
@@ -2083,14 +2090,16 @@ Color6 = Theory("Color6", relation_name="C6", arity=1)
 Color7 = Theory("Color7", relation_name="C7", arity=1)
 
 #Pre-defined symmetries
-Cyclic3 = [
-    [0, 1], [1, 2], [2, 0],
-    [3, 4], [5, 6], [7, 8],
-    [1, 7], [1, 6],
-    [2, 4], [2, 5],
-    [0, 8], [0, 3],
-    [2, 3], [1, 5], [0, 7]
-]
+def CyclicSymmetry(n):
+    succ = list(range(1, n)) + [0]
+    ret = []
+    for ii in range(n):
+        ret.append([ii, succ[ii]])
+        ret.append([ii, n + ii])
+        ret.append([ii, 2*n + ii])
+        ret.append([n + ii, 2*n + succ[ii]])
+        ret.append([ii, 2*n + succ[ii]])
+    return ret
 K4mSymmetry = [
     [0, 6],
     [1, 6],
@@ -3113,11 +3122,16 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         self._ftype = ftype
         self._index_set = {}
         self._size_set = {}
+        self._curr_excluded = theory._excluded
         Parent.__init__(self, base)
     
     Element = FlagAlgebraElement
     
     def get_index_set(self, n):
+        if self._theory._excluded != self._curr_excluded:
+            self._curr_excluded = self._theory._excluded
+            self._size_set = {}
+            self._index_set = {}
         if n not in self._index_set:
             fls = self.generate_flags(n)
             fldict = dict(zip(fls, range(len(fls))))
@@ -3135,6 +3149,10 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         return indn[flag]
 
     def get_size(self, n):
+        if self._theory._excluded != self._curr_excluded:
+            self._curr_excluded = self._theory._excluded
+            self._size_set = {}
+            self._index_set = {}
         if n not in self._size_set:
             self._size_set[n] = len(self.generate_flags(n))
         return self._size_set[n]
