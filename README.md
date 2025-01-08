@@ -28,8 +28,7 @@ Instructions to Build from Source
 Sage attempts to support all major Linux distributions, recent versions of
 macOS, and Windows (using Windows Subsystem for Linux or
 virtualization). The additional software and packages needed for flag algebraic calculations
-are only tested on a few Debian based distributions. This guide might not work on other operating
-systems or Linux distributions.
+are only tested on a few Debian based distributions and on Mac. This guide is only guaranteed to work on Debian based distributions.
 
 1.  Prepare the environment:
     - At least 10 GB of free space is required.
