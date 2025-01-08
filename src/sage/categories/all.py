@@ -90,6 +90,10 @@ from sage.categories.bialgebras import Bialgebras
 from sage.categories.hopf_algebras import HopfAlgebras
 from sage.categories.lie_algebras import LieAlgebras
 
+# operads
+from .set_operads import SetOperads
+from .operads import Operads
+
 # specific algebras
 from sage.categories.monoid_algebras import MonoidAlgebras
 from sage.categories.group_algebras import GroupAlgebras
@@ -115,6 +119,7 @@ from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.categories.coalgebras_with_basis import CoalgebrasWithBasis
 from sage.categories.bialgebras_with_basis import BialgebrasWithBasis
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
+from .operads_with_basis import OperadsWithBasis
 
 # finite dimensional * with basis
 from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis

@@ -91,6 +91,7 @@ from sage.symbolic.all import *
 from sage.modules.all import *
 from sage.monoids.all import *
 from sage.algebras.all import *
+from sage.operads.all import *
 from sage.modular.all import *
 from sage.sat.all import *
 from sage.schemes.all import *
