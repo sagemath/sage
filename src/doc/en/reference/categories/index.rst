@@ -161,6 +161,8 @@ Individual Categories
    sage/categories/monoids
    sage/categories/number_fields
    sage/categories/objects
+   sage/categories/operads
+   sage/categories/operads_with_basis
    sage/categories/partially_ordered_monoids
    sage/categories/permutation_groups
    sage/categories/pointed_sets
@@ -180,6 +182,7 @@ Individual Categories
    sage/categories/semigroups
    sage/categories/semirings
    sage/categories/semisimple_algebras
+   sage/categories/set_operads
    sage/categories/sets_cat
    sage/categories/sets_with_grading
    sage/categories/sets_with_partial_maps
@@ -265,9 +268,11 @@ Examples of parents using categories
    sage/categories/examples/magmas
    sage/categories/examples/manifolds
    sage/categories/examples/monoids
+   sage/categories/examples/operads_with_basis
    sage/categories/examples/posets
    sage/categories/examples/semigroups
    sage/categories/examples/semigroups_cython
+   sage/categories/examples/set_operads
    sage/categories/examples/sets_cat
    sage/categories/examples/sets_with_grading
    sage/categories/examples/with_realizations
