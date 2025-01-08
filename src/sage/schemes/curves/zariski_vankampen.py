@@ -1426,17 +1426,15 @@ def conjugate_positive_form(braid):
         sage: from sage.schemes.curves.zariski_vankampen import conjugate_positive_form
         sage: B = BraidGroup(4)
         sage: t = B((1, 3, 2, -3, 1, 1))
-        sage: conjugate_positive_form(t)
+        sage: cpf = conjugate_positive_form(t); cpf
         [[(s0*s1)^2, [s0*s2*s1*s0]]]
+        sage: t == prod(prod(b) * a / prod(b) for a, b in cpf)
+        True
         sage: B = BraidGroup(5)
         sage: t = B((1, 2, 3, 4, -1, -2, 3, 3, 2, -4))
         sage: L = conjugate_positive_form(t); L
         [[s0^2, [s0*s1*s2*s1*s3*s2*s1*s0]], [s3*s2, [s0*s1*s2*s1*s3*s2*s1*s0]]]
-        sage: s = B.one()
-        sage: for a, l in L:
-        ....:   b = prod(l)
-        ....:   s *= b * a / b
-        sage: s == t
+        sage: t == prod(prod(b) * a / prod(b) for a, b in L)
         True
         sage: s1 = B.gen(1)^3
         sage: conjugate_positive_form(s1)
@@ -1470,14 +1468,13 @@ def conjugate_positive_form(braid):
         else:
             bra = sg0 * B(a) / sg0
             br1, sg = bra.super_summit_set_element()
-            res = None
             A1 = rightnormalform(sg)
             par = A1[-1][0] % 2
             A1 = [B(a0) for a0 in A1[:-1]]
             res = [br1, A1, par]
             if res[2]:
                 r0 = res[0].Tietze()
-                res[0] = B([i.sign() * (d - abs(i)) for i in r0])
+                res[0] = B([d - i for i in r0])
             res0 = res[:2]
         shorts.append(res0)
     return shorts
