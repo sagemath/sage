@@ -8,7 +8,7 @@ Examples of operads with basis
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.misc.cachefunc import cached_method
-from sage.categories.all import OperadsWithBasis
+from sage.categories.operads_with_basis import OperadsWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.words import Words
 

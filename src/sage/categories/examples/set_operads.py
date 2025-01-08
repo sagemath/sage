@@ -8,7 +8,7 @@ Examples of set operads
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.misc.cachefunc import cached_method
-from sage.categories.all import SetOperads
+from sage.categories.set_operads import SetOperads
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.parent import Parent

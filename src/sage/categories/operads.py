@@ -10,7 +10,7 @@ Operads
 
 from sage.categories.category_types import Category_over_base_ring
 from sage.categories.set_operads import SetOperads
-from sage.categories.all import Modules
+from sage.categories.modules import Modules
 from sage.misc.cachefunc import cached_method
 
 
