@@ -636,6 +636,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         res = [self._an_element_()]
         return res
 
+
     #Persistend data management
     def _calcs_dir(self):
         calcs_dir = os.path.join(os.getenv('HOME'), '.sage', 'calcs')
@@ -1211,10 +1212,13 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         #
 
         e_nonzero_vector_corr = x_vector_corr[-len(e_nonzero_inds):]
-        e_vector_corr = vector(ring, positives_num, dict(zip(e_nonzero_inds, e_nonzero_vector_corr)))
-        if len(e_vector_corr)>0 and min(e_vector_corr)<0:
-            print("Linear coefficient is negative: {}".format(min(e_vector_corr)))
-            return None
+        if len(e_nonzero_vector_corr)>0 and min(e_nonzero_vector_corr)<0:
+            print("Linear coefficient is negative: {}".format(min(e_nonzero_vector_corr)))
+            print("The result will be worse than expected.")
+            e_nonzero_vector_corr = [max(xx, 0) for xx in e_nonzero_vector_corr]
+        e_vector_dict = dict(zip(e_nonzero_inds, e_nonzero_vector_corr))
+        e_vector_corr = vector(ring, positives_num, e_vector_dict)
+        
         
         X_final = []
         slacks = target_vector_exact - positives_matrix_exact.T*e_vector_corr
@@ -1535,7 +1539,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     optimize = optimize_problem
     
     def external_optimize(self, target_element, target_size, maximize=True, positives=None, \
-                         construction=None, file=None):
+                         construction=None, file=None, specific_ftype=None):
         if (not isinstance(file, str)) or file=="":
             raise ValueError("File name is invalid.")
         if not file.endswith(".dat-s"):
@@ -1556,7 +1560,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # Create the relevant ftypes
         #
         
-        ftype_data = self._get_relevant_ftypes(target_size)
+        if specific_ftype==None:
+            ftype_data = self._get_relevant_ftypes(target_size)
+        else:
+            ftype_data = specific_ftype
         print("The relevant ftypes are constructed, their number is {}".format(len(ftype_data)))
         flags = [self.generate_flags(dat[0], dat[1]) for dat in ftype_data]
         flag_sizes = [len(xx) for xx in flags]
@@ -3018,11 +3025,14 @@ class FlagAlgebraElement(Element):
         res = []
         for xx in times:
             der = self.derivative(xx).subs(point, ring=ring)
-            minnz = 1000000
-            for xx in der.values():
-                if int(xx)!=0:
-                    minnz = min(abs(xx), minnz)
-            if minnz != 1000000:
+            minnz = None
+            for yy in der.values():
+                if ring(yy)!=0:
+                    if minnz==None:
+                        minnz = abs(yy)
+                    else:
+                        minnz = min(abs(yy), minnz)
+            if minnz != None:
                 res.append(der/minnz)
         return res
     
