@@ -1,4 +1,4 @@
-from sage.categories.all import OperadsWithBasis
+from sage.categories.operads_with_basis import OperadsWithBasis
 from sage.combinat.binary_tree import LabelledBinaryTrees
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.cachefunc import cached_method

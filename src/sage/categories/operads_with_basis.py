@@ -368,9 +368,8 @@ class OperadsWithBasis(Category_over_base_ring):
 
             INPUT:
 
-            - `s` and `t` are elements of the operad, assumed to be labelled by
-            consecutive integers.
-
+            - `s` and `t` are elements of the operad, assumed
+              to be labelled by consecutive integers
             - `N` -- an integer, the truncation order
 
             EXAMPLES::
@@ -464,9 +463,8 @@ class OperadsWithBasis(Category_over_base_ring):
 
             INPUT:
 
-            - `s` and `t` are elements of the operad, assumed to be labelled by
-            consecutive integers.
-
+            - `s` and `t` are elements of the operad, assumed
+              to be labelled by consecutive integers.
             - `N` -- an integer, the truncation order
 
             EXAMPLES::
