@@ -14,7 +14,7 @@
 Sage is open source mathematical software released under the GNU General Public
 Licence GPLv2+, and includes packages that have [compatible software licenses](./COPYING.txt).
 [People all around the globe](https://www.sagemath.org/development-map.html) have contributed to the
-development of Sage. [Full documentation](https://doc.sagemath.org/html/en/index.html) is available online.
+development of Sage.
 
 Flag algebras
 -----------------
