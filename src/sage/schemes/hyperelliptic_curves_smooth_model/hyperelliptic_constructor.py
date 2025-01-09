@@ -1,82 +1,6 @@
 r"""
-    Constructor for hyperelliptic curves using the smooth model
-
-    In Sage, a hyperelliptic curve of genus `g` is always
-    specified by an (affine) equation in Weierstrass form
-
-    .. MATH::
-
-        y^2 + h(x) y = f(x),
-
-    for some polynomials `h` and `f`. This defines a smooth
-    model in weighted projective space `\PP(1 : g + 1 : 1)`
-
-    .. MATH::
-        Y^2 + H(X,Z) Y = F(X,Z),
-
-    where `H` is the degree `g + 1` homogenization of `h`,
-    and `F` is the degree `2 g + 2` homogenization of `f`.
-
-    There are either 0, 1 or 2 points at infinity (`Z=0`),
-    in which case we say that the hyperelliptic curve is
-    inert, ramified or split, respectively.
-
-
-    EXAMPLES:
-
-    We create a hyperelliptic curve over the rationals::
-
-        sage: R.<x> = PolynomialRing(QQ)
-        sage: H = HyperellipticCurveSmoothModel(x^8+1, x^4+1); H
-        Hyperelliptic Curve over Rational Field defined by y^2 + (x^4 + 1)*y = x^8 + 1
-
-    This hyperelliptic curve has no points at infinity, i.e. `H` is inert::
-        sage: H.points_at_infinity()
-        []
-        sage: H.is_inert()
-        True
-
-    We can extend the base field to obtain a hyperelliptic curve with two points at infinity::
-        sage: K.<alpha> = QQ.extension(x^2+x-1)
-        sage: HK = H.change_ring(K)
-        sage: HK.points_at_infinity()
-        [(1 : alpha : 0), (1 : -alpha - 1 : 0)]
-        sage: HK.is_split()
-        True
-
-    The construction of hyperelliptic curves is supported over different fields. The correct class is chosen automatically::
-        sage: F = FiniteField(13)
-        sage: S.<x> = PolynomialRing(F)
-        sage: HF = HyperellipticCurve(x^5 + x^4 + x^3 + x^2 + x + 1, x^3 + x); HF
-        Hyperelliptic Curve over Finite Field of size 13 defined by y^2 + (x^3 + x)*y = x^5 + x^4 + x^3 + x^2 + x + 1
-        sage: type(HF)
-        <class 'sage.schemes.hyperelliptic_curves.constructor.HyperellipticCurve_g2_FiniteField_with_category'>
-        sage: Q5 = Qp(5,10)
-        sage: T.<x> = Q5[]
-        sage: H5 = HyperellipticCurveSmoothModel(x^7 + 1); H5
-        Hyperelliptic Curve over 5-adic Field with capped relative precision 10 defined by y^2 = x^7 + 1 + O(5^10)
-        sage: type(H5)
-        <class 'sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_padic_field.HyperellipticCurveSmoothModel_padic_field_with_category'>
-
-    The input polynomials need not be monic::
-        sage: R.<x> = QQ[]
-        sage: HyperellipticCurveSmoothModel(3*x^5+1)
-        Hyperelliptic Curve over Rational Field defined by y^2 = 3*x^5 + 1
-
-    The polynomials f and h need to define a smooth curve of genus at least one. In particular polynomials defining elliptic curves are allowed as input.
-        sage: E = HyperellipticCurveSmoothModel(x^3+1)
-        sage: E.genus()
-        1
-        sage: HyperellipticCurveSmoothModel(x)
-        Traceback (most recent call last):
-        ...
-        ValueError: arguments f = x and h = 0 must define a curve of genus at least one.
-
-    The following polynomials define a singular curve and are not allowed as input::
-        sage: C = HyperellipticCurve(x^6 + 2*x - 1, 2*x - 2)
-        Traceback (most recent call last):
-        ...
-        ValueError: not a hyperelliptic curve: singularity in the provided affine patch
+Constructor for hyperelliptic curves using the smooth model
+in weighted projective space `\PP(1 : g + 1 : 1)`.
 
 Adapted from /hyperelliptic/constructor.py
 
@@ -182,10 +106,10 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
     The construction of hyperelliptic curves is supported over different fields. The correct class is chosen automatically::
         sage: F = FiniteField(13)
         sage: S.<x> = PolynomialRing(F)
-        sage: HF = HyperellipticCurve(x^5 + x^4 + x^3 + x^2 + x + 1, x^3 + x); HF
+        sage: HF = HyperellipticCurveSmoothModel(x^5 + x^4 + x^3 + x^2 + x + 1, x^3 + x); HF
         Hyperelliptic Curve over Finite Field of size 13 defined by y^2 + (x^3 + x)*y = x^5 + x^4 + x^3 + x^2 + x + 1
         sage: type(HF)
-        <class 'sage.schemes.hyperelliptic_curves.constructor.HyperellipticCurve_g2_FiniteField_with_category'>
+        <class 'sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_g2.HyperellipticCurveSmoothModel_g2_finite_field_with_category'>
         sage: Q5 = Qp(5,10)
         sage: T.<x> = Q5[]
         sage: H5 = HyperellipticCurveSmoothModel(x^7 + 1); H5
@@ -213,10 +137,11 @@ def HyperellipticCurveSmoothModel(f, h=0, check_squarefree=True):
     The following polynomials define a singular curve and are
     not allowed as input::
 
-        sage: C = HyperellipticCurve(x^6 + 2*x - 1, 2*x - 2)
+        sage: C = HyperellipticCurveSmoothModel(x^6 + 2*x - 1, 2*x - 2)
         Traceback (most recent call last):
         ...
-        ValueError: not a hyperelliptic curve: singularity in the provided affine patch
+        ValueError: singularity in the provided affine patch
+
     """
 
     # ---------------------------

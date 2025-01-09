@@ -1,150 +1,6 @@
 r"""
-    Jacobians of hyperelliptic curves
-
-    In Sage, a hyperelliptic curve `H` of genus `g` is always
-    specified by an (affine) equation in Weierstrass form
-
-    .. MATH::
-
-        H : y^2 + h(x) y = f(x),
-
-    for some polynomials `h` and `f`.
-
-    Elements of the Jacobian of such curves can be identified
-    with equivalence classes of divisors. In the following, we
-    denote by `\infty_+`, \infty_-` the points at infinity of `H`,
-    and we set
-
-    ..MATH::
-        D_\infty =
-        \lceil g/2 \rceil \infty_+ + \lfloor g/2 \rfloor \infty_-.
-
-    Here, `\infty_- = \infty_+`, if `H` is ramified.
-    Unless the genus `g` is odd and `H` is inert, the divisor
-    `D_\infty` is rational. In these cases, any element on
-    the Jacobian admits a unique representative of the form
-
-    ..MATH::
-
-        [P_1 + ... + P_r + n \cdot \infty_+ + m\cdot \infty_- - D_\infty],
-
-    with `n` and `m` non-negative integers and `P_1 + ... + P_r`
-    an affine and reduced  divisor on `H`.
-
     This module implements the arithemtic for Jacobians of
-    hyperelliptic curves. Elements of the Jacobian are represented
-    by tuples of the form `(u, v : n)`, where
-    - (u,v) is the Mumford representative of the divisor `P_1 + ... + P_r`,
-    - n is the coefficient of `\infty_+`
-
-    We note that `m = g - \deg(u) - n` and is therefore omitted in
-    the description. Similarly, if `H` ramified or inert,
-    then `n` can be deduced from `\deg(u)` and `g`. In these cases,
-    `n` is omitted in the description as well.
-
-
-    EXAMPLES:
-
-    We construct the Jacobian of a hyperelliptic curve with affine equation
-    `y^2 + (x^3 + x + 1) y  = 2*x^5 + 4*x^4 + x^3 - x` over the rationals.
-    This curve has two points at infinity::
-
-        sage: R.<x> = QQ[]
-        sage: H = HyperellipticCurveSmoothModel(2*x^5 + 4*x^4 + x^3 - x, x^3 + x + 1)
-        sage: J = Jacobian(H); J
-        Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + x + 1)*y = 2*x^5 + 4*x^4 + x^3 - x
-
-    The points `P = (0, 0)` and `Q = (-1, -1)` are on `H`. We construct the
-    element `D_1 = [P - Q] = [P + (-Q) - D_\infty`] on the Jacobian::
-
-        sage: P = H.point([0, 0])
-        sage: Q = H.point([-1, -1])
-        sage: D1 = J(P,Q); D1
-        (x^2 + x, -2*x : 0)
-
-    Elements of the Jacobian can also be constructed by directly providing
-    the Mumford representation::
-
-        sage: D1 == J(x^2 + x, -2*x, 0)
-        True
-
-    We can also embed single points into the Jacobian. Below we construct
-    `D_2 = [P - P_0]`, where `P_0` is the distinguished point of `H`
-    (by default one of the points at infinity)::
-
-        sage: D2 = J(P); D2
-        (x, 0 : 0)
-        sage: P0 = H.distinguished_point(); P0
-        (1 : 0 : 0)
-        sage: D2 == J(P, P0)
-        True
-
-    We may add elements, or multiply by integers::
-
-        sage: 2*D1
-        (x, -1 : 1)
-        sage: D1 + D2
-        (x^2 + x, -1 : 0)
-        sage: -D2
-        (x, -1 : 1)
-
-    Note that the neutral element is given by `[D_\infty - D_\infty]`,
-    in particular `n = 1`::
-
-        sage: J.zero()
-        (1, 0 : 1)
-
-    There are two more elements of the Jacobian that are only supported
-    at infinity: `[\infty_+ - \infty_-]` and `[\infty_- - \infty_+]`::
-
-        sage: [P_plus, P_minus] = H.points_at_infinity()
-        sage: P_plus == P0
-        True
-        sage: J(P_plus,P_minus)
-        (1, 0 : 2)
-        sage: J(P_minus, P_plus)
-        (1, 0 : 0)
-
-    Now, we consider the Jacobian of a hyperelliptic curve with only one
-    point at infinity, defined over a finite field::
-
-        sage: K = FiniteField(7)
-        sage: R.<x> = K[]
-        sage: H = HyperellipticCurveSmoothModel(x^7 + 3*x + 2)
-        sage: J = Jacobian(H); J
-        Jacobian of Hyperelliptic Curve over Finite Field of size 7 defined by y^2 = x^7 + 3*x + 2
-
-    Elements on the Jacobian can be constructed as before. But the value
-    `n` is not used here, since there is only one point at infinity::
-
-        sage: P = H.point([3, 0])
-        sage: Q = H.point([5, 1])
-        sage: D1 = J(P,Q); D1
-        (x^2 + 6*x + 1, 3*x + 5)
-        sage: D2 = J(x^3 + 3*x^2 + 4*x + 3, 2*x^2 + 4*x)
-        sage: D1 + D2
-        (x^3 + 2, 4)
-
-    Over finite fields, we may also construct random elements and
-    compute the order of the Jacobian::
-
-        sage: J.random_element() #random
-        (x^3 + x^2 + 4*x + 5, 3*x^2 + 3*x)
-        sage: J.order()
-        344
-
-    Note that arithmetic on the Jacobian is not implemented if the
-    underlying hyperelliptic curve is inert (i.e. has no points at
-    infinity) and the genus is odd::
-
-        sage: R.<x> = GF(13)[]
-        sage: H = HyperellipticCurveSmoothModel(x^8+1,x^4+1)
-        sage: J = Jacobian(H); J
-        Jacobian of Hyperelliptic Curve over Finite Field of size 13 defined by y^2 + (x^4 + 1)*y = x^8 + 1
-
-
-    TODO:
-    - finish example for the inert case.
+    hyperelliptic curves. 
 
     AUTHORS:
 
@@ -170,17 +26,73 @@ from sage.schemes.jacobians.abstract_jacobian import Jacobian_generic
 
 
 class HyperellipticJacobian_generic(Jacobian_generic):
-    """
+    r"""
     This is the base class for Jacobians of hyperelliptic curves.
+
+    We represent elements of the Jacobian by tuples of the form 
+    `(u, v : n)`, where
+    - (u,v) is the Mumford representative of a divisor `P_1 + ... + P_r`,
+    - n is a non-negative integer
+
+    This tuple represents the equivalence class
+
+    ..MATH::
+
+        [P_1 + ... + P_r + n \cdot \infty_+ + m\cdot \infty_- - D_\infty],
+        
+    where  `m = g - \deg(u) - n`, and `\infty_+`, \infty_-` are the 
+    points at infinity of the hyperelliptic curve,
+
+    ..MATH::
+        D_\infty =
+        \lceil g/2 \rceil \infty_+ + \lfloor g/2 \rfloor \infty_-.
+        
+    Here, `\infty_- = \infty_+`, if the hyperelliptic curve is ramified.
+        
+    Such a representation exists and is unique, unless the genus `g` is odd 
+    and the curve is inert. 
+        
+    If the hyperelliptic curve is ramified or inert, then `n` can be deduced 
+    from `\deg(u)` and `g`. In these cases, `n` is omitted in the description.
     """
 
     def dimension(self):
         """
         Return the dimension of this Jacobian.
+
+        EXAMPLES: 
+            
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^2, x^4+1); H
+            Hyperelliptic Curve over Rational Field defined by y^2 + (x^4 + 1)*y = x^2
+            sage: J = Jacobian(H)
+            sage: J.dimension()
+            3
         """
         return Integer(self.curve().genus())
 
     def point(self, *mumford, check=True, **kwargs):
+        r"""
+        Return a point on the Jacobian, given:
+
+        1. No arguments or the integer `0`; return `0 \in J`;
+
+        2. A point `P` on `J = Jac(C)`, return `P`;
+
+        3. A point `P` on the curve `H` such that `J = Jac(H)`;
+           return `[P - P_0]`, where `P_0` is the distinguished point of `H`.
+           By default, `P_0 = \infty`;
+
+        4. Two points `P, Q` on the curve `H` such that `J = Jac(H)`;
+           return `[P - Q]`;
+
+        5. Polynomials `(u, v)` such that `v^2 + hv - f \equiv 0 \pmod u`;
+           return `[(u(x), y - v(x))]`.    
+        
+        .. SEEALSO:: 
+        
+            :mod:`sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic`.
+        """
         try:
             return self.point_homset()(*mumford, check=check)
         except AttributeError:
@@ -207,21 +119,63 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
     @cached_method
     def order(self):
+        """
+        Compute the order of the Jacobian.
+
+        .. SEEALSO::
+
+            :meth:`sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic.order`.
+        """
         return self.point_homset().order()
 
     def count_points(self, *args, **kwds):
+        """
+        .. SEEALSO::
+        
+            :meth:`sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic.count_points`.
+        """
         return self.point_homset().count_points(*args, **kwds)
 
     def lift_u(self, *args, **kwds):
+        """
+        Return one or all points with given `u`-coordinate.
+
+        .. SEEALSO::
+        
+            :meth:`sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic.lift_u`.
+        """
         return self.point_homset().lift_u(*args, **kwds)
 
     def random_element(self, *args, **kwds):
+        """
+        Return a random element of the Jacobian.
+
+        .. SEEALSO::
+        
+            :meth:`sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic.random_element`.
+        """
         return self.point_homset().random_element(*args, **kwds)
 
     def points(self, *args, **kwds):
+        """
+        Return all points on the Jacobian.
+
+        .. SEEALSO::
+        
+            :meth:`sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic.points`.
+        """
+
         return self.point_homset().points(*args, **kwds)
 
     def list(self):
+        """
+        Return all points on the Jacobian.
+
+        .. SEEALSO::
+        
+            :meth:`sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic.points`.
+        """
+
         return self.point_homset().points()
 
     def __iter__(self):

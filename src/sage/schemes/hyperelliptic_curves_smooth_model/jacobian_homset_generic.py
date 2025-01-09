@@ -24,16 +24,38 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return self._morphism_element(*args, **kwds)
 
     def curve(self):
-        # It is unlike you will want to use this, as this returns the original curve H even when
+        """
+        On input the set of L-rational points of a Jacobian Jac(H) defined over K,
+        return the curve H.
+
+        NOTE:
+        The base field of H is not extended to L.
+        
+        EXAMPLES::
+            sage: R.<x> = QQ[]
+            sage: K.<omega> = QQ.extension(x^2+x+1)
+            sage: H = HyperellipticCurveSmoothModel(x^6-1)
+            sage: JK = Jacobian(H)(K); JK
+            Abelian group of points on Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^6 - 1
+            sage: JK.curve()
+            Hyperelliptic Curve over Rational Field defined by y^2 = x^6 - 1
+        """
         return self.codomain().curve()
 
     def extended_curve(self):
         """
-        TODO:
+        On input the set of L-rational points of a Jacobian Jac(H) defined over K,
+        return the curve H with base extended to L.
 
         EXAMPLES::
 
-            sage: # TODO
+            sage: R.<x> = QQ[]
+            sage: K.<omega> = QQ.extension(x^2+x+1)
+            sage: H = HyperellipticCurveSmoothModel(x^6-1)
+            sage: JK = Jacobian(H)(K); JK
+            Abelian group of points on Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^6 - 1
+            sage: JK.extended_curve()
+            Hyperelliptic Curve over Number Field in omega with defining polynomial x^2 + x + 1 defined by y^2 = x^6 - 1
         """
         # Code from schemes/generic/homset.py
         if "_extended_curve" in self.__dict__:
@@ -125,8 +147,14 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         of (the affine part of) the divisor [P].
 
         EXAMPLES::
-
-            sage: # TODO
+            
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^5 - 2*x^4 + 2*x^3 - x^2, 1)
+            sage: P = H([2,3]); P
+            (2 : 3 : 1)
+            sage: JQ = H.jacobian()(QQ)
+            sage: JQ.point_to_mumford_coordinates(P)
+            (x - 2, 3)
         """
         R, x = self.extended_curve().polynomial_ring().objgen()
         X, Y, Z = P._coords
@@ -152,7 +180,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
            return `[P - Q]`;
 
         5. Polynomials `(u, v)` such that `v^2 + hv - f \equiv 0 \pmod u`;
-           reutrn `[(u(x), y - v(x))]`.
+           return `[(u(x), y - v(x))]`.
 
         EXAMPLES:
 
@@ -285,6 +313,14 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
     def zero(self, check=True):
         """
         Return the zero element of this jacobian homset.
+
+        EXAMPLES:
+
+            sage: R.<x> = QQ[]
+            sage: H = HyperellipticCurveSmoothModel(x^5 + 1)
+            sage: JQ = H.jacobian()(QQ)
+            sage: JQ.zero()
+            (1, 0)
         """
         H = self.extended_curve()
         R = H.polynomial_ring()
@@ -398,19 +434,43 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         Return the Cantor composition of ``(u1, v1)`` and ``(u2, v2)``.
 
         EXAMPLES::
-
-            sage: # TODO
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurveSmoothModel(x^7 + x^5 + x + 1)
+            sage: JF = Jacobian(H).point_homset()
+            sage: (u1, v1) = (x^3 + 4*x^2, 10*x^2 + 7*x + 1)
+            sage: (u2, v2) = (x^3 + 8*x^2 + 11*x + 2, x^2 + 9*x + 10)
+            sage: JF.cantor_composition(u1, v1, u2, v2)
+            (x^6 + 12*x^5 + 4*x^4 + 7*x^3 + 8*x^2, 5*x^5 + 2*x^4 + 12*x^2 + 7*x + 1)
         """
         u3, v3, _ = self._cantor_composition_generic(u1, v1, u2, v2)
         return u3, v3
 
     def cantor_reduction(self, u0, v0):
         """
-        Return the Cantor reduced ``(u0, v0)``.
+        Apply one reduction step of Cantor's algorithm to  ``(u0, v0)``.
+        
+        Note that, in general, several steps are necessary the
+        representation of a reduced divisor.
 
         EXAMPLES::
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurveSmoothModel(x^7 + x^5 + x + 1)
+            sage: g = H.genus()
+            sage: JF = Jacobian(H).point_homset()
+            sage: (u0, v0) = (x^6 + 12*x^5 + 4*x^4 + 7*x^3 + 8*x^2, 5*x^5 + 2*x^4 + 12*x^2 + 7*x + 1)
+            sage: (u1, v1) = JF.cantor_reduction(u0, v0)
+            sage: u1.degree() <= g 
+            False
+            sage: (u2, v2) = JF.cantor_reduction(u1, v1)
+            sage: u2.degree() <= g
+            True
 
-            sage: # TODO
+        Applying the reduction step to a reduced divisor might have unintended output, 
+        as is illustrated below.            
+        
+            sage: (u3, v3) = JF.cantor_reduction(u2, v2)
+            sage: u3.degree() >= g
+            True
         """
         return self._cantor_reduction_generic(u0, v0)
 

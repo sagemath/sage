@@ -1,5 +1,6 @@
 from sage.groups.generic import order_from_multiple
 from sage.misc.cachefunc import cached_method
+from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.schemes.generic.morphism import SchemeMorphism
 from sage.structure.element import AdditiveGroupElement
@@ -164,6 +165,24 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
 
     @cached_method
     def order(self):
+        """
+        Returns the order of self.
+        This is only implemented over finite fields.
+
+        EXAMPLES:
+
+            sage: K = FiniteField(7)
+            sage: R.<x> = K[]
+            sage: H = HyperellipticCurveSmoothModel(x^6 + 3*x + 2)
+            sage: JK = Jacobian(H)(K)
+            sage: D = JK(x^2 + 5*x + 6, 6*x + 3)
+            sage: D.order()
+            38
+        """
+        if not isinstance(self.base_ring(), FiniteField_generic):
+            raise NotImplementedError(
+                "this is only implemented for Jacobians over a finite field"
+            )
         n = self.parent().order()
         return order_from_multiple(self, n)
 
