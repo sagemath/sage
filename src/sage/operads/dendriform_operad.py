@@ -236,8 +236,8 @@ class DendriformOperad(CombinatorialFreeModule):
             -B[a[b[., .], c[d[., .], .]]] + B[a[c[d[., .], b[., .]], .]] + B[a[b[c[d[., .], .], .], .]]
         """
         LT = self.basis().keys()
-        expr = self.monomial(LT([LT([], label=1), None], label=0)) - self.monomial(LT([None, LT([], label=1)], label=0))
-        return expr.compose(x, 0).compose(y, 1)
+        expr = self.monomial(LT([LT([], label="1"), None], label="0")) - self.monomial(LT([None, LT([], label="1")], label="0"))
+        return expr.compose(x, "0").compose(y, "1")
 
     def associative_product(self, x, y):
         """
@@ -253,8 +253,8 @@ class DendriformOperad(CombinatorialFreeModule):
             B[a[b[., .], c[d[., .], .]]] + B[c[a[b[., .], d[., .]], .]] + B[c[d[a[b[., .], .], .], .]]
         """
         LT = self.basis().keys()
-        expr = self.monomial(LT([LT([], label=0), None], label=1)) + self.monomial(LT([None, LT([], label=1)], label=0))
-        return expr.compose(x, 0).compose(y, 1)
+        expr = self.monomial(LT([LT([], label="0"), None], label="1")) + self.monomial(LT([None, LT([], label="1")], label="0"))
+        return expr.compose(x, "0").compose(y, "1")
 
     def chosen_product(self, x, y, name='assoc'):
         """
@@ -285,18 +285,18 @@ class DendriformOperad(CombinatorialFreeModule):
         """
         LT = self.basis().keys()
         if name == 'assoc':
-            expr = self.monomial(LT([LT([], label=0), None], label=1))
-            expr += self.monomial(LT([None, LT([], label=1)], label=0))
+            expr = self.monomial(LT([LT([], label="0"), None], label="1"))
+            expr += self.monomial(LT([None, LT([], label="1")], label="0"))
         elif name == 'prelie':
-            expr = self.monomial(LT([LT([], label=1), None], label=0))
-            expr -= self.monomial(LT([None, LT([], label=1)], label=0))
+            expr = self.monomial(LT([LT([], label="1"), None], label="0"))
+            expr -= self.monomial(LT([None, LT([], label="1")], label="0"))
         elif name == 'lie':
-            expr = self.monomial(LT([LT([], label=0), None], label=1))
-            expr += self.monomial(LT([None, LT([], label=1)], label=0))
-            expr -= self.monomial(LT([LT([], label=1), None], label=0))
-            expr -= self.monomial(LT([None, LT([], label=0)], label=1))
+            expr = self.monomial(LT([LT([], label="0"), None], label="1"))
+            expr += self.monomial(LT([None, LT([], label="1")], label="0"))
+            expr -= self.monomial(LT([LT([], label="1"), None], label="0"))
+            expr -= self.monomial(LT([None, LT([], label="0")], label="1"))
         elif name == 'left_dend':
-            expr = self.monomial(LT([LT([], label=0), None], label=1))
+            expr = self.monomial(LT([LT([], label="0"), None], label="1"))
         elif name == 'right_dend':
-            expr = self.monomial(LT([None, LT([], label=1)], label=0))
-        return expr.compose(x, 0).compose(y, 1)
+            expr = self.monomial(LT([None, LT([], label="1")], label="0"))
+        return expr.compose(x, "0").compose(y, "1")

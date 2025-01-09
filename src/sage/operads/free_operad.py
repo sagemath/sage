@@ -157,9 +157,9 @@ class FreeOperad(CombinatorialFreeModule):
             B[@[a[b[]], c[d[]]]]
         """
         LT = self.basis().keys()
-        t = LT([LT([], label=0), LT([], label=1)], label='@')
+        t = LT([LT([], label="0"), LT([], label="1")], label='@')
         gen = self.monomial(t)
-        return gen.compose(x, 0).compose(y, 1)
+        return gen.compose(x, "0").compose(y, "1")
 
     def operad_morphism_on_basis(self, t, cod, fun=None):
         """

@@ -213,8 +213,8 @@ class CommutativeOperad(CombinatorialFreeModule):
             sage: A.commutative_product(x, y)
             B[word: abcd]
         """
-        gen = self.basis()[self.basis().keys()([0, 1])]
-        return gen.compose(x, 0).compose(y, 1)
+        gen = self.basis()[self.basis().keys()(["0", "1"])]
+        return gen.compose(x, "0").compose(y, "1")
 
     def operad_generators(self):
         """
