@@ -53,8 +53,10 @@ class ChowRing(QuotientRing_generic):
 
         :mod:`sage.matroids.chow_ring_ideal`
 
-    An important note to be taken is that different presentations of Chow rings
-    of non-simple matroids may not be isomorphic to one another.
+    .. WARNING::
+
+        Different presentations of Chow rings of non-simple matroids may not be
+        isomorphic to one another.
 
     INPUT:
 
@@ -131,7 +133,7 @@ class ChowRing(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: M1 = matroids.Uniform(2,5)
+            sage: M1 = matroids.Uniform(2, 5)
             sage: ch = M1.chow_ring(QQ, False)
             sage: ch._latex_()
             'A(\\begin{array}{l}\n\\text{\\texttt{U(2,{ }5):{ }Matroid{ }of{ }rank{ }2{ }on{ }5{ }elements{ }with{ }circuit{-}closures}}\\\\\n\\text{\\texttt{{\\char`\\{}2:{ }{\\char`\\{}{\\char`\\{}0,{ }1,{ }2,{ }3,{ }4{\\char`\\}}{\\char`\\}}{\\char`\\}}}}\n\\end{array})_{\\Bold{Q}}'
@@ -148,7 +150,7 @@ class ChowRing(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: ch = matroids.Uniform(3,6).chow_ring(QQ, True, 'fy')
+            sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, True, 'fy')
             sage: ch.matroid()
             U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
             {3: {{0, 1, 2, 3, 4, 5}}}
@@ -225,7 +227,7 @@ class ChowRing(QuotientRing_generic):
         It is then multiplied with the elements of FY-monomial bases of
         different degrees::
 
-            sage: ch = matroids.Uniform(4,5).chow_ring(QQ, False)
+            sage: ch = matroids.Uniform(4, 5).chow_ring(QQ, False)
             sage: basis_deg = {}
             sage: for b in ch.basis():
             ....:     deg = b.homogeneous_degree()
@@ -285,7 +287,7 @@ class ChowRing(QuotientRing_generic):
 
         TESTS::
 
-            sage: U46 = matroids.Uniform(4,6)
+            sage: U46 = matroids.Uniform(4, 6)
             sage: C = U46.chow_ring(QQ, False)
             sage: w = C.lefschetz_element(); w
             -2*A01 - 2*A02 - 2*A03 - 2*A04 - 2*A05 - 2*A12 - 2*A13 - 2*A14

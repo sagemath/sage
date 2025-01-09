@@ -73,32 +73,32 @@ class KahlerAlgebras(Category_over_base_ring):
 
         EXAMPLES::
 
-        sage: from sage.categories.kahler_algebras import KahlerAlgebras
+            sage: from sage.categories.kahler_algebras import KahlerAlgebras
 
-        sage: C = KahlerAlgebras(QQ); C
-        Category of kahler algebras over Rational Field
-        sage: sorted(C.super_categories(), key=str)
-        [Category of finite dimensional graded algebras with basis over
-         Rational Field]
+            sage: C = KahlerAlgebras(QQ); C
+            Category of kahler algebras over Rational Field
+            sage: sorted(C.super_categories(), key=str)
+            [Category of finite dimensional graded algebras with basis over
+            Rational Field]
         """
         return [GradedAlgebrasWithBasis(self.base_ring()).FiniteDimensional()]
 
     class ParentMethods:
         @abstract_method
-        def poincare_pairing(self, a,b):
+        def poincare_pairing(self, a, b):
             r"""
             Return the Poincaré pairing of two elements of the Kähler algebra.
 
-                EXAMPLES::
+            EXAMPLES::
 
-                    sage: ch = matroids.catalog.Fano().chow_ring(QQ, True, 'fy')
-                    sage: Ba, Bb, Bc, Bd, Be, Bf, Bg, Babf, Bace, Badg, Bbcd, Bbeg, Bcfg, Bdef, Babcdefg = ch.gens()[8:]
-                    sage: u = ch(-Babf^2 + Bcfg^2 - 8/7*Bc*Babcdefg + 1/2*Bd*Babcdefg - Bf*Babcdefg - Bg*Babcdefg); u
-                    -Babf^2 + Bcfg^2 - 8/7*Bc*Babcdefg + 1/2*Bd*Babcdefg - Bf*Babcdefg - Bg*Babcdefg
-                    sage: v = ch(Bg - 2/37*Babf + Badg + Bbeg + Bcfg + Babcdefg); v
-                    Bg - 2/37*Babf + Badg + Bbeg + Bcfg + Babcdefg
-                    sage: ch.poincare_pairing(v, u)
-                    3
+                sage: ch = matroids.catalog.Fano().chow_ring(QQ, True, 'fy')
+                sage: Ba, Bb, Bc, Bd, Be, Bf, Bg, Babf, Bace, Badg, Bbcd, Bbeg, Bcfg, Bdef, Babcdefg = ch.gens()[8:]
+                sage: u = ch(-Babf^2 + Bcfg^2 - 8/7*Bc*Babcdefg + 1/2*Bd*Babcdefg - Bf*Babcdefg - Bg*Babcdefg); u
+                -Babf^2 + Bcfg^2 - 8/7*Bc*Babcdefg + 1/2*Bd*Babcdefg - Bf*Babcdefg - Bg*Babcdefg
+                sage: v = ch(Bg - 2/37*Babf + Badg + Bbeg + Bcfg + Babcdefg); v
+                Bg - 2/37*Babf + Badg + Bbeg + Bcfg + Babcdefg
+                sage: ch.poincare_pairing(v, u)
+                3
             """
 
         @abstract_method
@@ -108,7 +108,7 @@ class KahlerAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: U46 = matroids.Uniform(4,6)
+                sage: U46 = matroids.Uniform(4, 6)
                 sage: C = U46.chow_ring(QQ, False)
                 sage: w = C.lefschetz_element(); w
                 -2*A01 - 2*A02 - 2*A03 - 2*A04 - 2*A05 - 2*A12 - 2*A13 - 2*A14
@@ -134,12 +134,12 @@ class KahlerAlgebras(Category_over_base_ring):
 
         def hodge_riemann_relations(self, k):
             r"""
-            Return the quadratic form for the corresponding k (< r/2) for the
-            Kähler algebra.
+            Return the quadratic form for the corresponding ``k`` 
+            (`< \frac{r}{2}`) for the Kähler algebra, where `r` is the top degree.
 
             EXAMPLES::
 
-                sage: ch = matroids.Uniform(4,6).chow_ring(QQ, False)
+                sage: ch = matroids.Uniform(4, 6).chow_ring(QQ, False)
                 sage: ch.hodge_riemann_relations(1)
                 Quadratic form in 36 variables over Rational Field with coefficients:
                 [ 3 -1 -1 3 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 3 ]
@@ -181,11 +181,11 @@ class KahlerAlgebras(Category_over_base_ring):
                 sage: ch.hodge_riemann_relations(3)
                 Traceback (most recent call last):
                 ...
-                ValueError: k must be less than r < 2
+                ValueError: k must be less than r/2 < 2
             """
             r = self.top_degree()
             if k > (r/2):
-                raise ValueError("k must be less than r < 2")
+                raise ValueError("k must be less than r/2 < 2")
             basis_k = []
             lefschetz_el = self.lefschetz_element()
             for b in self.basis():

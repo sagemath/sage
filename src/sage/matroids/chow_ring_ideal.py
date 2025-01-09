@@ -21,7 +21,7 @@ class ChowRingIdeal(MPolynomialIdeal):
 
         EXAMPLES::
 
-            sage: ch = matroids.Uniform(3,6).chow_ring(QQ, False)
+            sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False)
             sage: ch.defining_ideal().matroid()
             U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
             {3: {{0, 1, 2, 3, 4, 5}}}
@@ -63,7 +63,7 @@ class ChowRingIdeal(MPolynomialIdeal):
 
         EXAMPLES::
 
-            sage: ch = matroids.Uniform(4,6).chow_ring(QQ, True, 'atom-free')
+            sage: ch = matroids.Uniform(4, 6).chow_ring(QQ, True, 'atom-free')
             sage: ch.defining_ideal().flats_to_generator_dict()
             {frozenset({0}): A0, frozenset({1}): A1, frozenset({2}): A2,
              frozenset({3}): A3, frozenset({4}): A4, frozenset({5}): A5,
@@ -87,8 +87,7 @@ class ChowRingIdeal(MPolynomialIdeal):
              frozenset({3, 4, 5}): A345,
              frozenset({0, 1, 2, 3, 4, 5}): A012345}
         """
-        flats_gen = self._flats_generator
-        return flats_gen
+        return dict(self._flats_generator)
 
 
 class ChowRingIdeal_nonaug(ChowRingIdeal):
@@ -129,7 +128,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
 
     Chow ring ideal of uniform matroid of rank 3 on 6 elements::
 
-        sage: ch = matroids.Uniform(3,6).chow_ring(QQ, False)
+        sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False)
         sage: ch.defining_ideal()
         Chow ring ideal of U(3, 6): Matroid of rank 3 on 6 elements with
          circuit-closures {3: {{0, 1, 2, 3, 4, 5}}} - non augmented
@@ -576,7 +575,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: ch = matroids.Uniform(2,5).chow_ring(QQ, True, 'fy')
+            sage: ch = matroids.Uniform(2, 5).chow_ring(QQ, True, 'fy')
             sage: I = ch.defining_ideal()
             sage: I.normal_basis()
             [1, B0, B1, B2, B3, B4, B01234, B01234^2]
@@ -753,7 +752,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: M1 = matroids.Uniform(3,6)
+            sage: M1 = matroids.Uniform(3, 6)
             sage: ch = M1.chow_ring(QQ, True, 'atom-free')
             sage: ch.defining_ideal().groebner_basis(algorithm='')
             Polynomial Sequence with 253 Polynomials in 22 Variables
