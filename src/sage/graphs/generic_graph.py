@@ -763,7 +763,7 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = graphs.CycleGraph(3)
             sage: H = G * 3; H
-            Cycle graph disjoint_union Cycle graph disjoint_union Cycle graph: Graph on 9 vertices
+            Disjoint union of 3 copies of Cycle graph: Graph on 9 vertices
             sage: H.vertices(sort=True)
             [0, 1, 2, 3, 4, 5, 6, 7, 8]
             sage: H = G * 1; H
@@ -785,16 +785,17 @@ class GenericGraph(GenericGraph_pyx):
                 raise TypeError('multiplication of a graph and a nonpositive integer is not defined')
             if n == 1:
                 return copy(self)
-            # Use a logarithmic number of additions to build the result
-            bits = Integer(n).bits()
-            parts = [self]
-            parts.extend(parts[-1] + parts[-1] for _ in range(1, len(bits)))
-            H, _ = parts.pop(), bits.pop()
-            while bits:
-                g, b = parts.pop(), bits.pop()
-                if b:
-                    H += g
-            return H
+            ns = self.order()
+            ntot = n * ns
+            vint = {u: i for i, u in enumerate(self)}
+            edges = ((i, j, l) for u, v, l in self.edge_iterator()
+                     for i, j in zip(range(vint[u], ntot, ns),
+                                     range(vint[v], ntot, ns)))
+            return self.__class__([range(ntot), edges], format='vertices_and_edges',
+                                  loops=self.allows_loops(),
+                                  multiedges=self.allows_multiple_edges(),
+                                  immutable=self.is_immutable(),
+                                  name=f"Disjoint union of {n} copies of {str(self)}")
         raise TypeError('multiplication of a graph and something other than an integer is not defined')
 
     def __ne__(self, other):
@@ -828,7 +829,7 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = graphs.CycleGraph(3)
             sage: H = int(3) * G; H
-            Cycle graph disjoint_union Cycle graph disjoint_union Cycle graph: Graph on 9 vertices
+            Disjoint union of 3 copies of Cycle graph: Graph on 9 vertices
             sage: H.vertices(sort=True)
             [0, 1, 2, 3, 4, 5, 6, 7, 8]
         """
