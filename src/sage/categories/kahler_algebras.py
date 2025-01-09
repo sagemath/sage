@@ -64,6 +64,8 @@ class KahlerAlgebras(Category_over_base_ring):
 
     TESTS::
 
+        sage: from sage.categories.kahler_algebras import KahlerAlgebras
+
         sage: C = KahlerAlgebras(QQ)
         sage: TestSuite(C).run()
     """
