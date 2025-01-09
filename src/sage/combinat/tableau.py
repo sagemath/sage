@@ -8133,7 +8133,6 @@ class StandardTableaux_shape(StandardTableaux):
 
             yield self.element_class(self, tableau)
 
-        return
 
     def list(self):
         r"""
