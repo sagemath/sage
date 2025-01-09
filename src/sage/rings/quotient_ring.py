@@ -589,7 +589,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         return "%s/%s" % (latex.latex(self.cover_ring()), latex.latex(self.defining_ideal()))
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Tell whether this quotient ring is commutative.
 

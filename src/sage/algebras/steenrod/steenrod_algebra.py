@@ -2827,10 +2827,12 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             tot += 1
         return test
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         r"""
         Return ``True`` if ``self`` is graded commutative, as determined by the
-        profile function.  In particular, a sub-Hopf algebra of the
+        profile function.
+
+        In particular, a sub-Hopf algebra of the
         mod 2 Steenrod algebra is commutative if and only if there is
         an integer `n>0` so that its profile function `e` satisfies
 
