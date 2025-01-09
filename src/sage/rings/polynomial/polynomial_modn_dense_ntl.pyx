@@ -686,10 +686,11 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, small_roots_algorithm="par
             for j in range( g[i].degree()+1 ):
                 B[i,j] = g[i][j]*X**j
 
-        B =  B.LLL(**kwds)
+        B = B.LLL(**kwds)
 
         f = sum([ZZ(B[0,i]//X**i)*x**i for i in range(B.ncols())])
         R = f.roots()
+
         roots = set([ZmodN(r) for r,m in R if abs(r) <= X])
 
     else:
@@ -1879,7 +1880,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             return Polynomial.__call__(self, *args, **kwds)
         arg = args[0]
         cdef ntl_ZZ_p fx = ntl_ZZ_p(0, self.c), x = None
-        if isinstance(arg, int) or isinstance(arg, Integer):
+        if isinstance(arg, (int, Integer)):
             x = ntl_ZZ_p(arg, self.c)
         elif isinstance(arg, Element):
             if <void *>self._parent._base == <void *>(<Element>arg)._parent: # c++ pointer hack

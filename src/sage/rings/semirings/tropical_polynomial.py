@@ -107,7 +107,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         [1, 1]
 
     Even though every tropical polynomials have tropical roots, this does not
-    neccessarily means it can be factored into its linear factors::
+    necessarily means it can be factored into its linear factors::
 
         sage: p1.factor()
         (0) * (0*x^3 + 4*x + 1)
@@ -806,7 +806,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
         .. SEEALSO::
 
-            :meth:`sage.rings.polynomial.polynomial_ring.PolynomialRing_general.random_element`
+            :meth:`sage.rings.polynomial.polynomial_ring.PolynomialRing_generic.random_element`
 
         EXAMPLES:
 
