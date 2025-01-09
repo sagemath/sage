@@ -30,39 +30,48 @@ class KahlerAlgebras(Category_over_base_ring):
     A finite-dimensional graded algebra `\bigoplus_{k=1}^{r}A^k` satisfies
     the *Kähler package* if the following properties hold:
 
-    - Poincaré duality: There exists a perfect `\mathbb{Z}`-bilinear pairing
+    - Poincaré duality: There exists a perfect `\ZZ`-bilinear pairing
       given by
 
       .. MATH::
 
-          A^k \times A^{r-k} \longrightarrow \mathbb{Z} \\
-            (a,b) \mapsto \text{deg}(a \cdot b).
+          A^k \times A^{r-k} \longrightarrow \ZZ \\
+            (a,b) \mapsto \deg(a \cdot b).
 
     - Hard-Lefschetz Theorem: The graded algebra contains *Lefschetz elements*
-      `\omega \in A^{1}_{\mathbb{R}}` such that multiplication by `\omega` is
-      an injection from `A^k_{\mathbb{R}} \longrightarrow A^{k+1}_{\mathbb{R}}`
+      `\omega \in A^{1}_{\RR}` such that multiplication by `\omega` is
+      an injection from `A^k_{\RR} \longrightarrow A^{k+1}_{\RR}`
       for all `k < \frac{r}{2}`.
 
     - Hodge-Riemann-Minikowski Relations: Every Lefchetz element `\omega`,
-      define quadratic forms on `A^{k}_{\mathbb{R}}` given by
+      define quadratic forms on `A^{k}_{\RR}` given by
 
       .. MATH::
 
-          a \mapsto (-1)^k \text{deg}(a \cdot \omega^{r-2k} \cdot a)
+          a \mapsto (-1)^k \deg(a \cdot \omega^{r-2k} \cdot a)
 
       This quadratic form becomes positive definite upon restriction to the
       kernel of the following map
 
       .. MATH::
 
-          A^k_\mathbb{R} \longrightarrow A^{r-k+1}_\mathbb{R} \\
+          A^k_\RR \longrightarrow A^{r-k+1}_\RR \\
                 a \mapsto a \cdot \omega^{r-2k+1}.
 
     REFERENCES:
 
     - [ANR2023]_
 
-    EXAMPLES::
+    TESTS::
+
+        sage: C = KahlerAlgebras(QQ)
+        sage: TestSuite(C).run()
+    """
+    def super_categories(self):
+        r"""
+        Return the super categories of ``self``.
+
+        EXAMPLES::
 
         sage: from sage.categories.kahler_algebras import KahlerAlgebras
 
@@ -71,18 +80,12 @@ class KahlerAlgebras(Category_over_base_ring):
         sage: sorted(C.super_categories(), key=str)
         [Category of finite dimensional graded algebras with basis over
          Rational Field]
-
-    TESTS::
-
-        sage: C = KahlerAlgebras(QQ)
-        sage: TestSuite(C).run()
-    """
-    def super_categories(self):
+        """
         return [GradedAlgebrasWithBasis(self.base_ring()).FiniteDimensional()]
 
     class ParentMethods:
         @abstract_method
-        def poincare_pairing(a,b):
+        def poincare_pairing(self, a,b):
             r"""
             Return the Poincaré pairing of two elements of the Kähler algebra.
 
@@ -97,10 +100,9 @@ class KahlerAlgebras(Category_over_base_ring):
                     sage: ch.poincare_pairing(v, u)
                     3
             """
-            pass
 
         @abstract_method
-        def lefschetz_element():
+        def lefschetz_element(self):
             r"""
             Return one Lefschetz element of the given Kähler algebra.
 
@@ -129,7 +131,6 @@ class KahlerAlgebras(Category_over_base_ring):
                 sage: len(basis_deg[2])
                 36
             """
-            pass
 
         def hodge_riemann_relations(self, k):
             r"""
