@@ -398,10 +398,6 @@ def show_all_calculations(theory_name=None):
             if data != None:
                 print(data["key"][:2])
 
-#From data could be either:
-#-symmetric, then the components are given, with symmetry group
-#-pair combine, then two theories are given
-
 class CombinatorialTheory(Parent, UniqueRepresentation):
     
     Element = Flag
@@ -1786,6 +1782,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     verify = verify_certificate
     
+    
     #Generating flags
     def _guess_number(self, n):
         if n==0:
@@ -1831,7 +1828,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             ret += list(self._sources[1].get_total_excluded(n))
         return tuple(ret)
 
-    def generate_flags(self, n, ftype=None, run_bound=500000, debug=False):
+    def generate_flags(self, n, ftype=None, run_bound=500000):
         r"""
         Returns the list of flags with a given size and ftype
 
@@ -1888,13 +1885,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         if ftype.size()==0:
             def just_generate():
-                if self._sources != None and False:
+                if self._sources != None:
                     t0, t1 = self._sources
                     small0 = t0.generate(n)
                     small1 = t1.generate(n)
-                    if debug:
-                        print("t0 {} has {}".format(t0, len(small0)))
-                        print("t1 {} has {}".format(t1, len(small1)))
                     small_excl = tuple([xx for xx in self._excluded if xx.size()<=n])
                     ret = overlap_generator(n, self, small0, small1, small_excl)
                 else:

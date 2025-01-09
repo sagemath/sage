@@ -101,7 +101,7 @@ cdef dict _perm_pattern_signature(dict blocks, tuple perm, dict orig_sign):
         ret[xx+"_m"] = blocks[perm[ii]+"_m"]
     return ret
 
-# Automorphism operations
+# Group operations
 
 cdef set _generate_group(tuple generators, int n):
     cdef set group = set()
@@ -139,53 +139,73 @@ cdef list _compute_coset_reps(set G, set H, int n):
             coset_reps.append(g)
     return coset_reps
 
-cdef list _inverse_coset_reps(set G, set H, int n):
-    cdef list coset_reps = []
-    cdef tuple g, c, h_tuple
-    cdef int i
-    cdef bint in_existing_coset
-    cdef list h
+cdef inline tuple _compose2(tuple a, tuple b, tuple c, int n):
+    cdef int ii
+    cdef list out_list = [0]*n
+    for ii in range(n):
+        out_list[ii] = a[b[c[ii]]]
+    return tuple(out_list)
+
+cdef inline tuple _compose(tuple a, tuple b, int n):
+    cdef int ii
+    cdef list out_list = [0]*n
+    for ii in range(n):
+        out_list[ii] = a[b[ii]]
+    return tuple(out_list)
+
+cdef tuple _invert_c(tuple p, int n):
+    cdef int ii
+    cdef list inv_list = [0]*n
+    for ii in range(n):
+        inv_list[p[ii]] = ii
+    return tuple(inv_list)
+
+cdef set _generate_coset(set G, tuple sigma, int n):
+    cdef set coset = set()
+    cdef tuple g
     for g in G:
-        in_existing_coset = False
-        for c in coset_reps:
-            h = [0] * n
-            for i in range(n):
-                h[c[i]] = g[i]
-            h_tuple = tuple(h)
-            if h_tuple in H:
-                in_existing_coset = True
-                break
-        if not in_existing_coset:
-            coset_reps.append(_inverse(g, n))
-    return coset_reps
+        coset.add(_compose(g, sigma, n))
+    return coset
 
-cdef tuple _inverse(tuple perm, int n):
-    cdef dict dd = dict(zip(perm, range(n)))
-    return tuple([dd[ii] for ii in range(n)])
-
-cdef list _orbit_reps_under_left(set G, list reps, int n):
-    #TODO cythonize this
+cdef dict _left_coset_representative_map(set G0, int n):
+    cdef dict rep_map = {}
     cdef set visited = set()
-    cdef list final_reps = []
-    cdef tuple r
-    for r in reps:
-        if r not in visited:
-            orbit_queue = [r]
-            visited.add(r)
-            while orbit_queue:
-                front = orbit_queue.pop()
-                for g in G:
-                    newperm = [0] * n
-                    for i in range(n):
-                        newperm[i] = g[front[i]]
-                    cand = tuple(newperm)
-                    if cand in reps and cand not in visited:
-                        visited.add(cand)
-                        orbit_queue.append(cand)
-            final_reps.append(r)
-    return final_reps
+    cdef tuple sigma
+    cdef set coset
+    for sigma in itertools.permutations(range(n)):
+        if sigma in visited:
+            continue
+        rep_map[sigma] = sigma
+        coset = _generate_coset(G0, sigma, n)
+        for c in coset:
+            visited.add(c)
+            rep_map[c] = sigma
+    return rep_map
 
-# Helpers for the inductive generator
+cdef set _find_double_coset_reps(set G0, set G1, dict rep_map, int n):
+    cdef set T = set(rep_map.values())
+    cdef set double_coset_reps = set()
+    cdef tuple t, r, g1
+    cdef tuple g1_inv, r_inv, candidate_g0
+    cdef bint is_new
+    
+    for t in T:
+        is_new = True
+        for r in double_coset_reps:
+            for g1 in G1:
+                g1_inv = _invert_c(g1, n)
+                r_inv = _invert_c(r, n)
+                candidate_g0 = _compose2(t, g1_inv, r_inv, n)
+                if candidate_g0 in G0:
+                    is_new = False
+                    break
+            if not is_new:
+                break
+        if is_new:
+            double_coset_reps.add(t)
+    return double_coset_reps
+
+# Helpers for the generators
 
 cdef int _get_max_arity(dict signature, int n=1000):
     cdef int max_arity = 0
@@ -393,40 +413,40 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, tuple e
     return combined_tuple
 
 cpdef tuple overlap_generator(int n, theoryR, tuple small0, tuple small1, tuple excluded):
-    cdef dict ret = {}
+    cdef list ret = []
 
     cdef int ii, jj
     cdef Flag fl0, fl1, final_flag
 
     cdef set allperm = set(itertools.permutations(range(n)))
 
-    cdef list fl0_reps
+    cdef dict fl0_reps
     cdef set aut0, aut1
     cdef tuple perm, patt
     cdef dict fl0blocks, fl1blocks, overlap, fl0_permed
 
-    #Check ways to combine
     for ii, fl0 in enumerate(small0):
         aut0 = fl0.automorphisms()
         fl0blocks = fl0._blocks
-        fl0_reps = _inverse_coset_reps(allperm, aut0, n)
+        fl0_reps = _left_coset_representative_map(aut0, n)
         for jj, fl1 in enumerate(small1):
             aut1 = fl1.automorphisms()
             fl1blocks = fl1._blocks
-            for perm in _orbit_reps_under_left(aut1, fl0_reps, n):
-                fl0_permed = _perm_blocks(fl0blocks, perm, True)
+            for perm in _find_double_coset_reps(aut0, aut1, fl0_reps, n):
+                fl0_permed = _perm_blocks(fl0blocks, perm)
                 overlap = fl0_permed | fl1blocks
                 final_flag = Flag(theoryR, n, tuple(), **overlap)
                 if _excluded_compatible(n, final_flag, excluded, 0):
-                    patt = (fl0, fl1)
-                    if patt not in ret:
-                        ret[patt] = [final_flag]
-                    elif final_flag not in ret[patt]:
-                        ret[patt].append(final_flag)
-    combined_tuple = tuple(itertools.chain.from_iterable(
-        [ret[key] for key in sorted(ret.keys())]
-    ))
-    return combined_tuple
+                    # patt = (fl0, fl1)
+                    # if patt not in ret:
+                    #     ret[patt] = [final_flag]
+                    # elif final_flag not in ret[patt]:
+                    #     ret[patt].append(final_flag)
+                    ret.append(final_flag)
+    # combined_tuple = tuple(itertools.chain.from_iterable(
+    #     [ret[key] for key in sorted(ret.keys())]
+    # ))
+    return tuple(ret)
 
 
 cdef class Flag(Element):
@@ -931,29 +951,6 @@ cdef class Flag(Element):
                         break
                 if gd:
                     ret.append(xx)
-        return ret
-
-    cpdef list test_overlaps(self, Flag other, theoryR):
-        ret = []
-
-        cdef int n = self.size()
-        aut0 = self.automorphisms()
-        print("self auts ", aut0)
-        fl0blocks = self._blocks
-        cdef set allperm = set(itertools.permutations(range(n)))
-        fl0_reps = _inverse_coset_reps(allperm, aut0, n)
-        print("self cosets ", fl0_reps)
-        
-        aut1 = other.automorphisms()
-        print("other auts ", aut1)
-        fl1blocks = other._blocks
-        test_perms = _orbit_reps_under_left(aut1, fl0_reps, n)
-        print("double coset perms ", test_perms)
-        for perm in test_perms:
-            fl0_permed = _perm_blocks(fl0blocks, perm, True)
-            overlap = fl0_permed | fl1blocks
-            final_flag = Flag(theoryR, n, tuple(), **overlap)
-            ret.append(final_flag)
         return ret
 
     cpdef list _generate_overlaps(self, other_theory, result_theory):
