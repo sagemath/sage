@@ -839,17 +839,13 @@ def RealProjectiveSpace(n):
             name='Minimal triangulation of RP^4')
     if n >= 5:
         # Use the construction given by Datta in Example 3.21.
-        V = set(range(0, n+2))
+        V = set(range(n + 2))
         S = Sphere(n).barycentric_subdivision()
         X = S.facets()
         facets = set()
         for f in X:
-            new = []
-            for v in f:
-                if 0 in v:
-                    new.append(tuple(V.difference(v)))
-                else:
-                    new.append(v)
+            new = [tuple(V.difference(v)) if 0 in V else v
+                   for v in f]
             facets.add(tuple(new))
         return UniqueSimplicialComplex(list(facets),
                                        name='Triangulation of RP^{}'.format(n))

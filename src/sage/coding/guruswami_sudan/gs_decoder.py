@@ -849,15 +849,15 @@ class GRSGuruswamiSudanDecoder(Decoder):
         s = self.multiplicity()
         l = self.list_size()
         tau = self.decoding_radius()
-        ## SETUP INTERPOLATION PROBLEM
+        # SETUP INTERPOLATION PROBLEM
         wy = k-1
-        points = [(alphas[i], r[i]/colmults[i]) for i in range(0,len(alphas))]
-        ## SOLVE INTERPOLATION
+        points = [(alphas[i], r[i]/colmults[i]) for i in range(len(alphas))]
+        # SOLVE INTERPOLATION
         try:
             Q = self.interpolation_algorithm()(points, tau, (s,l), wy)
         except TypeError:
             raise ValueError("The provided interpolation algorithm has a wrong signature. See the documentation of `codes.decoders.GRSGuruswamiSudanDecoder.interpolation_algorithm()` for details")
-        ## EXAMINE THE FACTORS AND CONVERT TO CODEWORDS
+        # EXAMINE THE FACTORS AND CONVERT TO CODEWORDS
         try:
             polynomials = self.rootfinding_algorithm()(Q, maxd=wy)
         except TypeError:
