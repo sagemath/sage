@@ -5,6 +5,15 @@ AUTHORS:
 
 - Shriya M
 """
+# ****************************************************************************
+#       Copyright (C) 2024 Shriya M <25shriya at gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.category_types import Category_over_base_ring
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
@@ -15,15 +24,6 @@ from sage.quadratic_forms.quadratic_form import QuadraticForm
 from sage.misc.cachefunc import cached_method
 
 
-# ****************************************************************************
-#       Copyright (C) 2024 Shriya M <25shriya at gmail.com>
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
-# (at your option) any later version.
-#                  https://www.gnu.org/licenses/
-# ****************************************************************************
 class KahlerAlgebras(Category_over_base_ring):
     r"""
     The category of graded algebras satisfying the Kähler package.
@@ -134,7 +134,7 @@ class KahlerAlgebras(Category_over_base_ring):
 
         def hodge_riemann_relations(self, k):
             r"""
-            Return the quadratic form for the corresponding ``k`` 
+            Return the quadratic form for the corresponding ``k``
             (`< \frac{r}{2}`) for the Kähler algebra, where `r` is the top degree.
 
             EXAMPLES::

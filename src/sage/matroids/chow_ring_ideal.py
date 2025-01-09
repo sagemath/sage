@@ -5,6 +5,15 @@ AUTHORS:
 
 - Shriya M
 """
+# ****************************************************************************
+#       Copyright (C) 2024 Shriya M <25shriya at gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.matroids.utilities import cmp_elements_key
