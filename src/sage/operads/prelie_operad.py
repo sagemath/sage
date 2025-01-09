@@ -452,16 +452,16 @@ class PreLieOperad(CombinatorialFreeModule):
             sage: PL = PreLieOperad(ZZ)
             sage: PLT = PL.basis().keys()
 
-            sage: a = PL(PLT([PLT([],label=None)],label=None))
+            sage: a = PL(PLT([PLT([],label="@")],label="@"))
             sage: PL.corolla(1,a,a)
-            B[None[None[None[None[]]]]] + B[None[None[], None[None[]]]]
+            B[@[@[@[@[]]]]] + B[@[@[], @[@[]]]]
 
             sage: b = PL.one()
             sage: PL.corolla(3,b,b,4)
             B[@[@[], @[], @[]]]
 
             sage: PL.corolla(2,a,b,4)
-            B[None[None[@[], @[]]]] + 2*B[None[@[], None[@[]]]] + B[None[None[], @[], @[]]]
+            B[@[@[@[], @[]]]] + 2*B[@[@[], @[@[]]]] + B[@[@[], @[], @[]]]
         """
         PL = x.parent()
         if n + 1 > N:
