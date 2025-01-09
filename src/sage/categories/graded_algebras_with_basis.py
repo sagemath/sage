@@ -171,7 +171,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
                     sage: ch.top_degree()
                     3
                 """
-                return max([b.degree() for b in self.basis()])
+                return max(b.degree() for b in self.basis())
 
     class SignedTensorProducts(SignedTensorProductsCategory):
         """
