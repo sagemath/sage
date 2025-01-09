@@ -468,7 +468,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
     modular_composition = compose_mod
 
 
-def small_roots(self, X=None, beta=1.0, epsilon=None, algorithm="pari", **kwds):
+def small_roots(self, X=None, beta=1.0, epsilon=None, small_roots_algorithm="pari", **kwds):
     r"""
     Let `N` be the characteristic of the base ring this polynomial
     is defined over: ``N = self.base_ring().characteristic()``.
@@ -486,11 +486,11 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, algorithm="pari", **kwds):
 
     INPUT:
 
-    - ``X`` -- an absolute bound for the root (default: see above)
+    - ``X`` -- an absolute bound for the root (default: see above.)
     - ``beta`` -- compute a root mod `b` where `b` is a factor of `N` and `b
       \ge N^\beta` (default: 1.0, so `b = N`.)
     - ``epsilon`` -- the parameter `\epsilon` described above. (default: `\beta/8`)
-    - ``algorithm`` -- ``"sage"`` or ``"pari"`` (default)
+    - ``small_roots_algorithm`` -- ``"sage"`` or ``"pari"`` (default.)
     - ``**kwds`` -- passed through to method :meth:`Matrix_integer_dense.LLL() <sage.matrix.matrix_integer_dense.Matrix_integer_dense.LLL>`
 
     EXAMPLES:
@@ -600,17 +600,17 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, algorithm="pari", **kwds):
         sage: q == qbar - d                                                             # needs sage.symbolic
         True
 
-    In general, using ``algorithm="pari"`` will return better results and be quicker. For instance,
-    it is able to recover `q` even if ``hidden`` is set to `120`::
+    In general, using ``small_roots_algorithm="pari"`` will return better results and be quicker.
+    For instance, it is able to recover `q` even if ``hidden`` is set to `120`::
 
         sage: # needs sage.symbolic
         sage: hidden = 120
         sage: qbar = q + ZZ.random_element(0, 2^hidden - 1)
         sage: f = x - qbar
         sage: set_verbose(0)
-        sage: f.small_roots(X=2^hidden-1, beta=0.5, algorithm="sage")  # time random
+        sage: f.small_roots(X=2^hidden-1, beta=0.5, small_roots_algorithm="sage")  # time random
         []
-        sage: f.small_roots(X=2^hidden-1, beta=0.5, algorithm="pari")  # time random
+        sage: f.small_roots(X=2^hidden-1, beta=0.5, small_roots_algorithm="pari")  # time random
         [1203913112977791332288506012179577388]
         sage: qbar - q == _[0]
         True
@@ -666,10 +666,16 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, algorithm="pari", **kwds):
     Nbeta = N**beta
     ZmodN = self.base_ring()
 
-    if algorithm == "pari":
-        roots = set(map(ZmodN, pari.zncoppersmith(f, N, X=X, B=Nbeta.floor())))
+    if small_roots_algorithm == "pari":
+        from sage.libs.pari.all import PariError
+        try:
+            roots = set(map(ZmodN, pari.zncoppersmith(f, N, X=X, B=Nbeta.floor())))
+        except PariError:
+            # according to my testing, Sage is never able to return a root when Pari fails (usually
+            # due to OOM.) See discussion in #39243.
+            roots = set([])
 
-    elif algorithm == "sage":
+    elif small_roots_algorithm == "sage":
         # we could do this much faster, but this is a cheap step
         # compared to LLL
         g  = [x**j * N**(m-i) * f**i for i in range(m) for j in range(delta) ]
