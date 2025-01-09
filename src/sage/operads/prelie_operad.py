@@ -23,7 +23,7 @@ from sage.functions.other import factorial
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
 
-Label = NewType("label", str)
+Label = NewType("Label", str)
 
 # PreLie operad : rooted trees
 
