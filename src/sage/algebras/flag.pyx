@@ -25,11 +25,13 @@ from sage.structure.coerce cimport coercion_model
 from blisspy cimport canonical_form_from_edge_list, automorphism_group_gens_from_edge_list
 
 # Elementary block operations
-cdef tuple _subblock_helper(tuple points, tuple block):
+cdef tuple _subblock_helper(tuple points, tuple block, bint inverse = False):
     if len(block)==0:
         return tuple()
     cdef set points_set = set(points)
     cdef dict points_index = {p: i for i, p in enumerate(points)}
+    if inverse:
+        points_index = {i: p for i, p in enumerate(points)}
     cdef list ret = []
     cdef bint gd
     cdef int yy
@@ -54,11 +56,11 @@ cdef dict _merge_blocks(dict block0, dict block1, tuple only_include):
         ])
     return merged
 
-cdef dict _perm_blocks(dict blocks, tuple perm, dict signature=None):
+cdef dict _perm_blocks(dict blocks, tuple perm, bint inverse = False):
     cdef dict ret
     cdef str xx
     ret = {
-        xx: _subblock_helper(perm, blocks[xx]) 
+        xx: _subblock_helper(perm, blocks[xx], inverse) 
         for xx in blocks.keys()
     }
     return ret
@@ -137,6 +139,52 @@ cdef list _compute_coset_reps(set G, set H, int n):
             coset_reps.append(g)
     return coset_reps
 
+cdef list _inverse_coset_reps(set G, set H, int n):
+    cdef list coset_reps = []
+    cdef tuple g, c, h_tuple
+    cdef int i
+    cdef bint in_existing_coset
+    cdef list h
+    for g in G:
+        in_existing_coset = False
+        for c in coset_reps:
+            h = [0] * n
+            for i in range(n):
+                h[c[i]] = g[i]
+            h_tuple = tuple(h)
+            if h_tuple in H:
+                in_existing_coset = True
+                break
+        if not in_existing_coset:
+            coset_reps.append(_inverse(g, n))
+    return coset_reps
+
+cdef tuple _inverse(tuple perm, int n):
+    cdef dict dd = dict(zip(perm, range(n)))
+    return tuple([dd[ii] for ii in range(n)])
+
+cdef list _orbit_reps_under_left(set G, list reps, int n):
+    #TODO cythonize this
+    cdef set visited = set()
+    cdef list final_reps = []
+    cdef tuple r
+    for r in reps:
+        if r not in visited:
+            orbit_queue = [r]
+            visited.add(r)
+            while orbit_queue:
+                front = orbit_queue.pop()
+                for g in G:
+                    newperm = [0] * n
+                    for i in range(n):
+                        newperm[i] = g[front[i]]
+                    cand = tuple(newperm)
+                    if cand in reps and cand not in visited:
+                        visited.add(cand)
+                        orbit_queue.append(cand)
+            final_reps.append(r)
+    return final_reps
+
 # Helpers for the inductive generator
 
 cdef int _get_max_arity(dict signature, int n=1000):
@@ -209,6 +257,7 @@ cdef bint _excluded_compatible(int n, Flag flag, tuple excluded, int max_signatu
     return True
 
 cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, tuple excluded):
+    
     cdef dict signature = theory.signature()
     cdef int max_arity = _get_max_arity(signature, n)
     #Handle the trivial case, when only the empty structure is possible
@@ -269,7 +318,7 @@ cpdef tuple inductive_generator(int n, theory, tuple smaller_structures, tuple e
     cdef bint gd
     cdef dict F_can_perm_blocks
     cdef tuple sign_perm
-
+    
     #Pre calculate the cosets and Fs classes
     for F in smaller_structures:
         for missing_point in range(n-1):
@@ -347,13 +396,26 @@ cpdef tuple overlap_generator(int n, theoryR, tuple small0, tuple small1, tuple 
     cdef dict ret = {}
 
     cdef int ii, jj
-    cdef Flag fl0, fl1, perm0
+    cdef Flag fl0, fl1, final_flag
+
+    cdef set allperm = set(itertools.permutations(range(n)))
+
+    cdef list fl0_reps
+    cdef set aut0, aut1
+    cdef tuple perm, patt
+    cdef dict fl0blocks, fl1blocks, overlap, fl0_permed
 
     #Check ways to combine
     for ii, fl0 in enumerate(small0):
-        for perm0 in fl0.nonequal_permutations():
-            for jj, fl1 in enumerate(small1):
-                overlap = perm0._blocks | fl1._blocks
+        aut0 = fl0.automorphisms()
+        fl0blocks = fl0._blocks
+        fl0_reps = _inverse_coset_reps(allperm, aut0, n)
+        for jj, fl1 in enumerate(small1):
+            aut1 = fl1.automorphisms()
+            fl1blocks = fl1._blocks
+            for perm in _orbit_reps_under_left(aut1, fl0_reps, n):
+                fl0_permed = _perm_blocks(fl0blocks, perm, True)
+                overlap = fl0_permed | fl1blocks
                 final_flag = Flag(theoryR, n, tuple(), **overlap)
                 if _excluded_compatible(n, final_flag, excluded, 0):
                     patt = (fl0, fl1)
@@ -869,6 +931,29 @@ cdef class Flag(Element):
                         break
                 if gd:
                     ret.append(xx)
+        return ret
+
+    cpdef list test_overlaps(self, Flag other, theoryR):
+        ret = []
+
+        cdef int n = self.size()
+        aut0 = self.automorphisms()
+        print("self auts ", aut0)
+        fl0blocks = self._blocks
+        cdef set allperm = set(itertools.permutations(range(n)))
+        fl0_reps = _inverse_coset_reps(allperm, aut0, n)
+        print("self cosets ", fl0_reps)
+        
+        aut1 = other.automorphisms()
+        print("other auts ", aut1)
+        fl1blocks = other._blocks
+        test_perms = _orbit_reps_under_left(aut1, fl0_reps, n)
+        print("double coset perms ", test_perms)
+        for perm in test_perms:
+            fl0_permed = _perm_blocks(fl0blocks, perm, True)
+            overlap = fl0_permed | fl1blocks
+            final_flag = Flag(theoryR, n, tuple(), **overlap)
+            ret.append(final_flag)
         return ret
 
     cpdef list _generate_overlaps(self, other_theory, result_theory):

@@ -232,9 +232,9 @@ def combine(name, *theories, symmetries=False):
     if len(theories)==0:
         raise ValueError("At least one theory is expected!")
     if len(theories)==1:
-        tt = theories[0]
-        tt._name = name
-        return tt
+        import warnings
+        warnings.warn("Warning, only one theory was provided. It will be returned with the same name.")
+        return theories[0]
 
     #Check if we can use symmetry, and the resulting groups
     can_symmetry = True
@@ -263,10 +263,13 @@ def combine(name, *theories, symmetries=False):
         result_excluded += list(theory._excluded)
         next_group += next_group_increment
 
-    if not can_symmetry and (symmetries is not False):
-        import warnings
-        warnings.warn("Warning, the combination can not be symmetric. The symmetries are ignored!", RuntimeWarning)
-        symmetries = False
+    if not can_symmetry:
+        if len(theories)!=2:
+            raise ValueError("Can't combine more than 2 theories with different parameters.")
+        if symmetries is not False:
+            import warnings
+            warnings.warn("Combined theories have different parameters, symmetries will be ignored.")
+            symmetries = False
 
     if symmetries is not False:
         #Make everything in the same group
@@ -290,6 +293,10 @@ def combine(name, *theories, symmetries=False):
         "symmetries": result_symmetry
         }
     ser_data = _serialize_data(theory_data)
+    if len(theories)==2 and not symmetries:
+        ser_data = (tuple(theories), ser_data)
+    else:
+        ser_data = (None, ser_data)
     ret_theory = CombinatorialTheory(name, _from_data=ser_data)
     ret_theory.exclude(result_excluded, force=True)
     return ret_theory
@@ -306,7 +313,7 @@ def _serialize_data(data):
 
 def test_generate():
     def test_theory(TT, nstart, nend, vals):
-        print("\nTesting theory {}".format(str(TT)))
+        print("\nTesting {}".format(str(TT)))
         for ii,jj in enumerate(range(nstart, nend+1)):
             print("Size {}, the number is {} (should be {})".format(
                 jj, 
@@ -316,6 +323,8 @@ def test_generate():
     
     CG = combine("CGraph", Color0, GraphTheory)
     Cs = combine("Cs", Color0, Color1, symmetries=True)
+    CG.clear()
+    Cs.clear()
     test_theory(Color0, 5, 10, [6, 7, 8, 9, 10, 11])
     test_theory(Cs, 3, 8, [13, 22, 34, 50, 70, 95])
     test_theory(GraphTheory, 3, 7, [4, 11, 34, 156, 1044])
@@ -326,14 +335,41 @@ def test_generate():
     Cs.exclude([Cs(1), Cs(1, C0=[[0]], C1=[[0]])])
     GraphTheory.exclude(GraphTheory(3))
     CGp = combine("CGsym", GraphTheory, Cs)
+    CGp.clear()
     test_theory(Cs, 4, 8, [3, 3, 4, 4, 5])
     test_theory(GraphTheory, 3, 8, [3, 7, 14, 38, 107, 410])
     test_theory(CGp, 2, 5, [4, 8, 32, 106])
     Css = combine("Colors3Sym", Color0, Color1, Color2, symmetries=True)
+    Css.clear()
     pe = Css(1)
     p0 = Css.p(1, C2=[0], C1=[0])
     Css.exclude([pe, p0])
     test_theory(Css, 3, 8, [3, 4, 5, 7, 8, 10])
+    Cyc4 = combine("Cyclic4", Color0, Color1, Color2, Color3, symmetries=CyclicSymmetry(4))
+    Cyc4.clear()
+    Cyc4.exclude([
+        Cyc4(1),
+        Cyc4.p(1, C0=[0], C1=[0]),
+        Cyc4.p(1, C0=[0], C2=[0])
+    ])
+    GraphTheory.reset()
+    T4 = combine("Cyclic4Graph", Cyc4, GraphTheory)
+    Cyc6 = combine("Cyclic6", Color0, Color1, Color2, Color3, Color4, Color5, symmetries=CyclicSymmetry(6))
+    Cyc6.clear()
+    Cyc6.exclude([
+        Cyc6(1),
+        Cyc6.p(1, C0=[0], C1=[0]),
+        Cyc6.p(1, C0=[0], C2=[0]),
+        Cyc6.p(1, C0=[0], C3=[0])
+    ])
+    T6 = combine("Cyclic6Graph", Cyc6, GraphTheory)
+    T4.clear()
+    T6.clear()
+    test_theory(Cyc4, 2, 5, [3, 4, 5, 7])
+    test_theory(Cyc6, 2, 4, [3, 4, 5])
+    #test_theory(T4, 2, 5, [3, 4, 5, 7])
+    #test_theory(T6, 2, 4, [3, 4, 5, 7])
+    return T4
 
 def clear_all_calculations(theory_name=None):
     calcs_dir = os.path.join(os.getenv('HOME'), '.sage', 'calcs')
@@ -362,6 +398,10 @@ def show_all_calculations(theory_name=None):
             if data != None:
                 print(data["key"][:2])
 
+#From data could be either:
+#-symmetric, then the components are given, with symmetry group
+#-pair combine, then two theories are given
+
 class CombinatorialTheory(Parent, UniqueRepresentation):
     
     Element = Flag
@@ -387,7 +427,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         self._name = name
         
         if _from_data != None:
-            #This perhaps needs to be sanity checked
+            self._sources = _from_data[0]
+            _from_data = _from_data[1]
+            
             sered_signature = _from_data[0]
             self._signature = {}
             max_group = -1
@@ -407,14 +449,16 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 raise ValueError("Provided data has different symmetry set size than group number")
         else:
             if arity < 1 or (arity not in NN):
-                raise ValueError("Arity must be a positive integer!")
+                raise ValueError("Arity must be nonzero positive integer!")
             self._signature = {relation_name: {
                 "arity": arity,
                 "ordered": is_ordered,
                 "group": 0
             }}
+            self._sources = None
             self._symmetries = ((1, 1, tuple()), )
         self._excluded = tuple()
+        self._no_question = False
         Parent.__init__(self, category=(Sets(), ))
         self._populate_coercion_lists_()
     
@@ -636,7 +680,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         res = [self._an_element_()]
         return res
 
-
     #Persistend data management
     def _calcs_dir(self):
         calcs_dir = os.path.join(os.getenv('HOME'), '.sage', 'calcs')
@@ -716,13 +759,20 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
     def _serialize(self, excluded=None):
         if excluded==None:
-            excluded = self._excluded
+            excluded = self.get_total_excluded(100000)
         else:
             excluded = tuple(excluded)
+        sourceser = None
+        if self._sources != None:
+            sourceser = (
+                self._sources[0]._serialize(),
+                self._sources[1]._serialize()
+            )
         return {
             "name": self._name,
             "signature": self._signature,
             "symmetries": self._symmetries,
+            "sources": sourceser,
             "excluded": tuple([xx._serialize() for xx in excluded])
         }
 
@@ -1740,7 +1790,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     def _guess_number(self, n):
         if n==0:
             return 1
-        excluded = tuple([xx for xx in self._excluded if xx.size()<=n])
+        excluded = self.get_total_excluded(n)
         key = ("generate", n, self._serialize(excluded), self.empty()._serialize())
         loaded = self._load(key=key)
         if loaded != None:
@@ -1769,7 +1819,19 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         ls1 = theory1.generate(n)
         return overlap_generator(n, self, ls0, ls1, tuple())
 
-    def generate_flags(self, n, ftype=None, run_bound=500000):
+    def no_question(self, val):
+        self._no_question = val
+
+    def get_total_excluded(self, n):
+        if self._sources == None:
+            ret = [xx for xx in self._excluded if xx.size()<=n]
+        else:
+            ret = [xx for xx in self._excluded if xx.size()<=n]
+            ret += list(self._sources[0].get_total_excluded(n))
+            ret += list(self._sources[1].get_total_excluded(n))
+        return tuple(ret)
+
+    def generate_flags(self, n, ftype=None, run_bound=500000, debug=False):
         r"""
         Returns the list of flags with a given size and ftype
 
@@ -1818,22 +1880,35 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         
         #Trying to load
-        excluded = tuple([xx for xx in self._excluded if xx.size()<=n])
+        excluded = self.get_total_excluded(n)
         key = ("generate", n, self._serialize(excluded), ftype._serialize())
         loaded = self._load(key=key)
         if loaded != None:
             return loaded
 
         if ftype.size()==0:
-            # Not ftype generation needed, just generate inductively
-            if run_bound==infinity or n<=3:
-                prev = self.generate_flags(n-1, run_bound=run_bound)
-                ret = inductive_generator(n, self, prev, excluded)
+            def just_generate():
+                if self._sources != None and False:
+                    t0, t1 = self._sources
+                    small0 = t0.generate(n)
+                    small1 = t1.generate(n)
+                    if debug:
+                        print("t0 {} has {}".format(t0, len(small0)))
+                        print("t1 {} has {}".format(t1, len(small1)))
+                    small_excl = tuple([xx for xx in self._excluded if xx.size()<=n])
+                    ret = overlap_generator(n, self, small0, small1, small_excl)
+                else:
+                    prev = self.generate_flags(n-1, run_bound=run_bound)
+                    ret = inductive_generator(n, self, prev, excluded)
+                return ret
+
+            # No ftype generation needed, just generate inductively
+            if run_bound==infinity or n<=3 or self._no_question:
+                ret = just_generate()
             else:
                 guess = self._guess_number(n)
                 if guess < run_bound:
-                    prev = self.generate_flags(n-1, run_bound=run_bound)
-                    ret = inductive_generator(n, self, prev, excluded)
+                    ret = just_generate()
                 else:
                     confirm = input("This might take a while: {}. Continue? y/n\n".format(guess))
                     if "y" in confirm.lower():
@@ -2012,7 +2087,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             target_size = n1+n2 - large_size
 
         #Trying to load
-        excluded = tuple([xx for xx in self._excluded if xx.size()<=target_size])
+        excluded = self.get_total_excluded(target_size)
         key = ("table", (n1, n2, target_size), large_ftype._serialize(), tuple(ftype_inj), self._serialize(excluded))
         loaded = self._load(key=key)
         if loaded != None:
