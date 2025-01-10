@@ -76,6 +76,7 @@ Mathematical Structures
 * :doc:`Semirings <semirings/index>`
 * :doc:`Rings <rings/index>`
 * :doc:`Algebras <algebras/index>`
+* :doc:`Operads <operads/index>`
 
 Discrete Mathematics
 --------------------
