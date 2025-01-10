@@ -132,7 +132,6 @@ This base class provides a lot more methods than a general parent::
      'integral_closure',
      'is_commutative',
      'is_field',
-     'krull_dimension',
      'ngens',
      'one',
      'order',
