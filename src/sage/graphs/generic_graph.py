@@ -19021,6 +19021,10 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             ValueError: the start vertex is in the set of forbidden vertices
+            sage: list(G.breadth_first_search(0, forbidden_vertices=[0], distance=2))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
             sage: list(G.breadth_first_search([0, 1], forbidden_vertices=[1]))
             Traceback (most recent call last):
             ...
@@ -19201,6 +19205,10 @@ class GenericGraph(GenericGraph_pyx):
             sage: list(D.depth_first_search(1, ignore_direction=True, edges=True))
             [(1, 3), (3, 6), (6, 7), (7, 5), (5, 4), (1, 2)]
             sage: list(G.depth_first_search(0, forbidden_vertices=[0]))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
+            sage: list(G.depth_first_search(0, forbidden_vertices=[0], edges=True))
             Traceback (most recent call last):
             ...
             ValueError: the start vertex is in the set of forbidden vertices
