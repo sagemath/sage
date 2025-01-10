@@ -399,6 +399,27 @@ def monomial_function(n, e):
     return SBox(X**e)
 
 
+def inversion(n):
+    r"""
+    Return the S-Box constructed from the inversion mapping over `\GF{2^n}` extending `0 \mapsto 0`
+
+    INPUT:
+
+    - ``n`` -- size of the S-Box (i.e. the degree of the finite field extension)
+
+    EXAMPLES::
+
+        sage: from sage.crypto.sboxes import inversion
+        sage: S4 = inversion(4)
+        sage: S4.differential_uniformity()
+        4
+        sage: S5 = inversion(5)
+        sage: S5.differential_uniformity()
+        2
+    """
+    return monomial_function(n, 2**n - 2)
+
+
 # Bijective S-Boxes mapping 9 bits to 9
 # =====================================
 
