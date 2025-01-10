@@ -365,11 +365,10 @@ def test_generate():
     T6 = combine("Cyclic6Graph", Cyc6, GraphTheory)
     T4.clear()
     T6.clear()
-    test_theory(Cyc4, 2, 5, [3, 4, 5, 7])
-    test_theory(Cyc6, 2, 4, [3, 4, 5])
-    #test_theory(T4, 2, 5, [3, 4, 5, 7])
-    #test_theory(T6, 2, 4, [3, 4, 5, 7])
-    return T4
+    test_theory(Cyc4, 4, 9, [10, 14, 22, 30, 43, 55])
+    test_theory(Cyc6, 3, 7, [10, 22, 42, 80, 132])
+    test_theory(T4, 2, 5, [6, 30, 260, 3052])
+    test_theory(T6, 2, 4, [8, 62, 754])
 
 def clear_all_calculations(theory_name=None):
     calcs_dir = os.path.join(os.getenv('HOME'), '.sage', 'calcs')
@@ -771,6 +770,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             "sources": sourceser,
             "excluded": tuple([xx._serialize() for xx in excluded])
         }
+
 
     #Optimizing and rounding
 
@@ -1792,24 +1792,30 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         loaded = self._load(key=key)
         if loaded != None:
             return len(loaded)
-        max_arity = -1
-        for xx in self._signature:
-            max_arity = max(max_arity, self._signature[xx]["arity"])
-        if max_arity==1 or n<max_arity:
-            return 1
-        
-        check_bits = 0
-        for xx in self._signature:
-            arity =self._signature[xx]["arity"]
-            if arity != 1:
-                factor = 1
-                if self._signature[xx]["ordered"]:
-                    factor = factorial(arity)
-                check_bits += factor*(binomial(n-2, arity-2))
-        
-        prev_guess = len(self.generate(n-1))
-        sign_perm = len(self._signature_perms())
-        return binomial(prev_guess + 1, 2) * (2**check_bits) * sign_perm
+        if self._sources==None:
+            max_arity = -1
+            for xx in self._signature:
+                max_arity = max(max_arity, self._signature[xx]["arity"])
+            if max_arity==1 or n<max_arity:
+                return 1
+            
+            check_bits = 0
+            for xx in self._signature:
+                arity =self._signature[xx]["arity"]
+                if arity != 1:
+                    factor = 1
+                    if self._signature[xx]["ordered"]:
+                        factor = factorial(arity)
+                    check_bits += factor*(binomial(n-2, arity-2))
+            
+            prev_guess = len(self.generate(n-1))
+            sign_perm = len(self._signature_perms())
+            return binomial(prev_guess + 1, 2) * (2**check_bits) * sign_perm
+        else:
+            t0, t1 = self._sources
+            guess0 = t0._guess_number(n)
+            guess1 = t1._guess_number(n)
+            return guess0*guess1*8
     
     def generate_with_overlaps(self, theory0, theory1, n):
         ls0 = theory0.generate(n)
