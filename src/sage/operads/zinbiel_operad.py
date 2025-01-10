@@ -23,7 +23,7 @@ class ZinbielOperad(CombinatorialFreeModule):
 
     REFERENCES:
 
-    .. [todo]
+    .. [todo_zinb]
     """
     def __init__(self, R):
         """

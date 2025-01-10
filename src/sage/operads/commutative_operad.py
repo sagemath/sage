@@ -24,7 +24,7 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     REFERENCES:
 
-    .. [todo]
+    .. [todo_comm]
     """
     def __init__(self, R):
         """

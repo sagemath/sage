@@ -25,7 +25,7 @@ class DendriformOperad(CombinatorialFreeModule):
 
     REFERENCES:
 
-    .. [todo]
+    .. [todo_dend]
     """
     def __init__(self, R):
         """
