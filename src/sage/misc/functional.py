@@ -921,7 +921,7 @@ def krull_dimension(x):
         sage: krull_dimension(QQ)
         doctest:warning...:
         DeprecationWarning: please use the krull_dimension method
-        See https://github.com/sagemath/sage/issues/44444 for details.
+        See https://github.com/sagemath/sage/issues/39311 for details.
         0
         sage: ZZ.krull_dimension()
         1
@@ -932,7 +932,7 @@ def krull_dimension(x):
         sage: U.krull_dimension()
         4
     """
-    deprecation(44444, "please use the krull_dimension method")
+    deprecation(39311, "please use the krull_dimension method")
     return x.krull_dimension()
 
 
