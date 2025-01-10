@@ -60,7 +60,7 @@ class CommutativeRings(CategoryWithAxiom):
 
             Fields and PIDs, with Krull dimension equal to 0 and 1,
             respectively, have naive implementations of ``krull_dimension``.
-            Orders in number fields also have Krull dimension 1::
+            Orders in number fields also have Krull dimension 1.
 
             EXAMPLES:
 
