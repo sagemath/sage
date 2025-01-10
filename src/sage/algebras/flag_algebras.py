@@ -298,7 +298,6 @@ def combine(name, *theories, symmetries=False):
     else:
         ser_data = (None, ser_data)
     ret_theory = CombinatorialTheory(name, _from_data=ser_data)
-    ret_theory.exclude(result_excluded, force=True)
     return ret_theory
 
 def _serialize_data(data):
