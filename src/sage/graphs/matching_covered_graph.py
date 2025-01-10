@@ -2661,7 +2661,6 @@ class MatchingCoveredGraph(Graph):
             raise TypeError(f'\'{vertices.__class__.__name__}\' '
                             'object is not iterable')
 
-
     @doc_index('Miscellaneous methods')
     def update_matching(self, matching):
         r"""
