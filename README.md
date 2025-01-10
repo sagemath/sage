@@ -14,13 +14,13 @@
 Sage is open source mathematical software released under the GNU General Public
 Licence GPLv2+, and includes packages that have [compatible software licenses](./COPYING.txt).
 [People all around the globe](https://www.sagemath.org/development-map.html) have contributed to the
-development of Sage. [Full documentation](https://doc.sagemath.org/html/en/index.html) is available online.
+development of Sage.
 
 Flag algebras
 -----------------
 
 This repository is a copy of the official SageMath project with additional functionality to handle 
-flag algebraic calculations.
+flag algebraic calculations. Explore the capabilities and functionalities of the package related to flag algebras by visiting the [tutorial notebook](https://github.com/bodnalev/sage/blob/theory-builder/flag_tutorial.ipynb).
 
 Instructions to Build from Source
 ---------------------------------
@@ -28,8 +28,7 @@ Instructions to Build from Source
 Sage attempts to support all major Linux distributions, recent versions of
 macOS, and Windows (using Windows Subsystem for Linux or
 virtualization). The additional software and packages needed for flag algebraic calculations
-are only tested on a few Debian based distributions. This guide might not work on other operating
-systems or Linux distributions.
+are only tested on a few Debian based distributions and on Mac. This guide is only guaranteed to work on Debian based distributions.
 
 1.  Prepare the environment:
     - At least 10 GB of free space is required.
