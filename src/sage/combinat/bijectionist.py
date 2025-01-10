@@ -2126,11 +2126,6 @@ class Bijectionist(SageObject):
 
         .. TODO::
 
-            create one test with one and one test with two
-            intertwining relations
-
-        .. TODO::
-
             it is not clear whether this method makes sense
 
         EXAMPLES::
@@ -2144,6 +2139,17 @@ class Bijectionist(SageObject):
             sage: bij._P
             {{'a'}, {'b'}, {'c'}, {'d'}}
 
+        However, adding that `'a'` and `'c'` are in the same block,
+        we can infer that also `'b'` and `'d'` are in the same
+        block::
+
+            sage: bij.set_constant_blocks([['a', 'c']])
+            sage: bij._P
+            {{'a', 'c'}, {'b'}, {'d'}}
+            sage: bij._preprocess_intertwining_relations()
+            sage: bij._P
+            {{'a', 'c'}, {'b', 'd'}}
+
         Let a group act on permutations::
 
             sage: A = B = Permutations(3)
@@ -2152,6 +2158,11 @@ class Bijectionist(SageObject):
             sage: bij._preprocess_intertwining_relations()
             sage: bij._P
             {{[1, 2, 3]}, {[1, 3, 2]}, {[2, 1, 3]}, {[2, 3, 1]}, {[3, 1, 2]}, {[3, 2, 1]}}
+
+        Thus, in this case we do not detect the constant blocks::
+
+           sage: bij.constant_blocks(optimal=True)
+           {{[1, 2, 3], [3, 2, 1]}, {[1, 3, 2], [2, 3, 1]}, {[2, 1, 3], [3, 1, 2]}}
         """
         A = self._A
         P = self._P
