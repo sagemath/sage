@@ -3850,7 +3850,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         while w != x_int:
             shortest_path.append(self.vertex_label(w))
             w = pred_x[w]
-            
+
         shortest_path.append(x)
         shortest_path.reverse()
 
