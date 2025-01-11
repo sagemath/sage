@@ -87,9 +87,11 @@ class LieConformalAlgebraWithStructureCoefficients(
       `\lambda`-brackets of the generators::
 
         sage: betagamma_dict = {('b','a'):{0:{('K',0):1}}}
-        sage: V = LieConformalAlgebra(QQ, betagamma_dict, names=('a','b'), weights=(1,0), central_elements=('K',))
+        sage: V = LieConformalAlgebra(QQ, betagamma_dict, names=('a','b'),
+        ....:         weights=(1,0), central_elements=('K',))
         sage: V.category()
-        Category of H-graded finitely generated Lie conformal algebras with basis over Rational Field
+        Category of H-graded finitely generated Lie conformal algebras
+        with basis over Rational Field
         sage: V.inject_variables()
         Defining a, b, K
         sage: a.bracket(b)
@@ -150,7 +152,6 @@ class LieConformalAlgebraWithStructureCoefficients(
         # mypair has a pair of generators
         for mypair, v in s_coeff.items():
             # e.g.  v = { 0: { (L,2):3, (G,3):1}, 1:{(L,1),2} }
-            v = s_coeff[mypair]
             key = tuple(mypair)
             vals = {}
             for l in v:
@@ -293,7 +294,10 @@ class LieConformalAlgebraWithStructureCoefficients(
             Finite family {('L', 'L'): ((0, TL), (1, 2*L), (3, 1/2*C))}
 
             sage: lie_conformal_algebras.NeveuSchwarz(QQ).structure_coefficients()
-            Finite family {('G', 'G'): ((0, 2*L), (2, 2/3*C)),  ('G', 'L'): ((0, 1/2*TG), (1, 3/2*G)),  ('L', 'G'): ((0, TG), (1, 3/2*G)),  ('L', 'L'): ((0, TL), (1, 2*L), (3, 1/2*C))}
+            Finite family {('G', 'G'): ((0, 2*L), (2, 2/3*C)),
+            ('G', 'L'): ((0, 1/2*TG), (1, 3/2*G)),
+            ('L', 'G'): ((0, TG), (1, 3/2*G)),
+            ('L', 'L'): ((0, TL), (1, 2*L), (3, 1/2*C))}
         """
         return self._s_coeff
 
