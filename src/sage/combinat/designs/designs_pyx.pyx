@@ -471,7 +471,7 @@ def is_group_divisible_design(groups, blocks, v, G=None, K=None, lambd=1, verbos
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef unsigned short * matrix = <unsigned short *> mem.calloc(n*n, sizeof(unsigned short))
     if matrix is NULL:
-        raise MemoryError
+        raise MemoryError(f"{n}")
 
     # Counts the number of occurrences of each pair of points
     for b in blocks:
