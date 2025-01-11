@@ -124,7 +124,7 @@ sources = files(
 )
 
 # Library
-libfactory = library(
+libfactory = static_library(
   'factory',
   sources, gen_headers,
   include_directories: inc_dirs,
