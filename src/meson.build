@@ -66,17 +66,11 @@ pari = cc.find_library('pari', required: not is_windows, disabler: true)
 
 mpfr = dependency('mpfr')
 
-if is_windows
-  # Flint on conda currently actives FLINT_USES_PTHREAD, which is not available under msvc
-  # https://github.com/conda-forge/libflint-feedstock/issues/38
-  flint = disabler()
-else
   flint = dependency('flint', version: '>=3.0.0')
   if flint.version().version_compare('<3.1')
     # In older versions of flint, pkg-config file is broken, so we manually use find_library
     # This has been fixed in flint v3.1: https://github.com/flintlib/flint/pull/1647
     flint = cc.find_library('flint')
-  endif
 endif
 
 blas_order = []
