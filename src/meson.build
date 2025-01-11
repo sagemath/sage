@@ -135,7 +135,11 @@ if not linbox.found()
   linbox = cc.find_library('linbox', required: not is_windows, disabler: true)
 endif
 mpc = cc.find_library('mpc', required: not is_windows, disabler: true)
-mpfi = cc.find_library('mpfi', required: not is_windows, disabler: true)
+mpfi = cc.find_library('mpfi', required: false)
+if not mpfi.found()
+  mpfi_proj = subproject('mpfi')
+  mpfi = mpfi_proj.get_variable('mpfi_dep')
+endif
 
 gap = dependency('libgap', version: '>=4.13.0', required: false)
 if not gap.found()

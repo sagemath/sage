@@ -1,0 +1,5 @@
+[wrap-git]
+url = https://gitlab.inria.fr/mpfi/mpfi.git
+revision = head
+depth = 1
+patch_directory = mpfi
