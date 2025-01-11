@@ -555,7 +555,7 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation, immutable=False):
                  immutable=immutable, name="Correlation Graph")
 
 
-def CompleteBipartiteGraph(p, q, set_position=True, immutable=False):
+def CompleteBipartiteGraph(p, q, set_position=True, immutable=False, name=None):
     r"""
     Return a Complete Bipartite Graph on `p + q` vertices.
 
@@ -573,6 +573,9 @@ def CompleteBipartiteGraph(p, q, set_position=True, immutable=False):
 
     - ``immutable`` -- boolean (default: ``False``); whether to return an
       immutable or a mutable graph
+
+    - ``name`` -- string (default: ``None``); used as the name of the returned
+      graph when set
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, each complete bipartite graph
@@ -674,14 +677,19 @@ def CompleteBipartiteGraph(p, q, set_position=True, immutable=False):
 
         sage: graphs.CompleteBipartiteGraph(1, 2, immutable=True).is_immutable()
         True
+
+    Check the behavior of parameter ``name``::
+
+        sage: graphs.CompleteBipartiteGraph(1, 2, name='foo')
+        foo: Graph on 3 vertices
     """
     if p < 0 or q < 0:
         raise ValueError('the arguments p(={}) and q(={}) must be positive integers'.format(p, q))
 
+    name = f"Complete bipartite graph of order {p}+{q}" if name is None else name
     edges = ((i, j) for i in range(p) for j in range(p, p + q))
     G = Graph([range(p + q), edges], format='vertices_and_edges',
-              immutable=immutable,
-              name=f"Complete bipartite graph of order {p}+{q}")
+              immutable=immutable, name=name)
 
     # We now assign positions to vertices:
     # - vertices 0,..,p-1 are placed on the line (0, 1) to (max(p, q), 1)
@@ -755,46 +763,38 @@ def CompleteMultipartiteGraph(L, immutable=False):
     name = "Multipartite Graph with set sizes {}".format(L)
 
     if not r:
-        g = Graph(name=name, immutable=immutable)
-    elif r == 1:
+        return Graph(name=name, immutable=immutable)
+    if r == 1:
         g = Graph(L[0], immutable=immutable, name=name)
         g._line_embedding(range(L[0]), first=(0, 0), last=(L[0], 0))
-    elif r == 2:
-        p, q = L
-        edges = ((i, j) for i in range(p) for j in range(p, p + q))
-        g = Graph([range(p + q), edges], format='vertices_and_edges',
-                  immutable=immutable,
-                  name=name)
-        nmax = max(p, q)
-        g._line_embedding(list(range(p)), first=(0, 1), last=(nmax, 1))
-        g._line_embedding(list(range(p, p + q)), first=(0, 0), last=(nmax, 0))
-    else:
-        # This position code gives bad results on bipartite or isolated graphs
-        points = [(cos(2 * pi * i / r), sin(2 * pi * i / r)) for i in range(r)]
-        slopes = [(points[(i + 1) % r][0] - points[i % r][0],
-                   points[(i + 1) % r][1] - points[i % r][1]) for i in range(r)]
+        return g
+    if r == 2:
+        return CompleteBipartiteGraph(L[0], L[1], immutable=immutable, name=name)
 
-        counter = 0
-        positions = {}
-        for i in range(r):
-            vertex_set_size = L[i] + 1
-            for j in range(1, vertex_set_size):
-                x = points[i][0] + slopes[i][0] * j / vertex_set_size
-                y = points[i][1] + slopes[i][1] * j / vertex_set_size
-                positions[counter] = (x, y)
-                counter += 1
+    # This position code gives bad results on bipartite or isolated graphs
+    points = [(cos(2 * pi * i / r), sin(2 * pi * i / r)) for i in range(r)]
+    slopes = [(points[(i + 1) % r][0] - points[i % r][0],
+               points[(i + 1) % r][1] - points[i % r][1]) for i in range(r)]
 
-        g = Graph(sum(L))
-        s = 0
-        for i in L:
-            g.add_clique(range(s, s + i))
-            s += i
+    counter = 0
+    positions = {}
+    for i in range(r):
+        vertex_set_size = L[i] + 1
+        for j in range(1, vertex_set_size):
+            x = points[i][0] + slopes[i][0] * j / vertex_set_size
+            y = points[i][1] + slopes[i][1] * j / vertex_set_size
+            positions[counter] = (x, y)
+            counter += 1
 
-        g = Graph([range(g.order()), g.complement().edges(sort_vertices=False)],
-                  format='vertices_and_edges', immutable=immutable, name=name,
-                  pos=positions)
+    g = Graph(sum(L))
+    s = 0
+    for i in L:
+        g.add_clique(range(s, s + i))
+        s += i
 
-    return g
+    return Graph([range(g.order()), g.complement().edges(sort_vertices=False)],
+                 format='vertices_and_edges', immutable=immutable, name=name,
+                 pos=positions)
 
 
 def DiamondGraph(immutable=False):
