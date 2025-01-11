@@ -1306,6 +1306,7 @@ def GridGraph(dim_list, immutable=False):
     # Vertices are tuples of dimension n_dim, and the graph contains at
     # least vertex (0, 0, ..., 0)
     V = [tuple([0] * n_dim)]
+
     def edges():
         from itertools import product
         for u in product(*[range(d) for d in dim]):
