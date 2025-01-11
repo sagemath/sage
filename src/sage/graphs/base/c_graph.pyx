@@ -43,16 +43,18 @@ method :meth:`realloc <sage.graphs.base.c_graph.CGraph.realloc>`.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.data_structures.bitset_base cimport *
-from sage.rings.integer cimport smallInteger
-from sage.arith.long cimport pyobject_to_long
+from cysignals.memory cimport check_allocarray, sig_free
+from libcpp.pair cimport pair
 from libcpp.queue cimport queue
 from libcpp.stack cimport stack
-from libcpp.pair cimport pair
-from sage.rings.integer_ring import ZZ
-from cysignals.memory cimport check_allocarray, sig_free
+
+from sage.arith.long cimport pyobject_to_long
 from sage.data_structures.bitset cimport FrozenBitset
+from sage.data_structures.bitset_base cimport *
 from sage.data_structures.pairing_heap cimport PairingHeap
+from sage.rings.integer cimport smallInteger
+
+from sage.rings.integer_ring import ZZ
 
 
 cdef extern from "Python.h":
