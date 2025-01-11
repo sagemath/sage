@@ -20,12 +20,17 @@ from sage.graphs.graph import Graph
 from math import sin, cos, pi
 
 
-def BullGraph():
+def BullGraph(immutable=False):
     r"""
     Return a bull graph with 5 nodes.
 
     A bull graph is named for its shape. It's a triangle with horns.
     See the :wikipedia:`Bull_graph` for more information.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING:
 
@@ -84,13 +89,21 @@ def BullGraph():
         True
         sage: x * (x^2 - x - 3) * (x^2 + x - 1) == charpoly
         True
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.BullGraph(immutable=True).is_immutable()
+        True
     """
     edge_list = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 4)]
     pos_dict = {0: (0, 0), 1: (-1, 1), 2: (1, 1), 3: (-2, 2), 4: (2, 2)}
-    return Graph(edge_list, pos=pos_dict, name="Bull graph")
+    return Graph([range(5), edge_list], format='vertices_and_edges',
+                 immutable=immutable, pos=pos_dict, name="Bull graph")
 
 
-def ButterflyGraph():
+def ButterflyGraph(immutable=False):
     r"""
     Return the butterfly graph.
 
@@ -102,6 +115,11 @@ def ButterflyGraph():
     .. SEEALSO::
 
         - :meth:`~sage.graphs.graph_generators.GraphGenerators.FriendshipGraph`
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -132,6 +150,13 @@ def ButterflyGraph():
         True
         sage: G.chromatic_number()
         3
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.ButterflyGraph(immutable=True).is_immutable()
+        True
     """
     edge_dict = {
         0: [3, 4],
@@ -144,10 +169,11 @@ def ButterflyGraph():
         2: [1, -1],
         3: [-1, -1],
         4: [0, 0]}
-    return Graph(edge_dict, pos=pos_dict, name="Butterfly graph")
+    return Graph(edge_dict, format='dict_of_lists',
+                 immutable=immutable, pos=pos_dict, name="Butterfly graph")
 
 
-def CircularLadderGraph(n):
+def CircularLadderGraph(n, immutable=False):
     r"""
     Return a circular ladder graph with `2 * n` nodes.
 
@@ -165,6 +191,13 @@ def CircularLadderGraph(n):
     When `n == 2`, we rotate the outer circle by an angle of `\pi/8` to ensure
     that all edges are visible (otherwise the 4 vertices of the graph would be
     placed on a single line).
+
+    INPUT:
+
+    - ``n`` -- nonnegative integer
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -187,20 +220,29 @@ def CircularLadderGraph(n):
         ....:    j.append(n)
         sage: G = graphics_array(j)                                                     # needs sage.plot
         sage: G.show()                          # long time                             # needs sage.plot
+
+    TESTS::
+
+        sage: G = graphs.CircularLadderGraph(4, immutable=True)
+        sage: G.is_immutable()
+        True
     """
-    G = Graph(2 * n, name="Circular Ladder graph")
+    from itertools import chain
+    edges_1 = zip(range(n), chain(range(1, n), (0,)))
+    edges_2 = zip(range(n, 2 * n), chain(range(n + 1, 2 * n), (n,)))
+    edges_3 = ((i, i + n) for i in range(n))
+    G = Graph([range(2 * n), chain(edges_1, edges_2, edges_3)],
+              format='vertices_and_edges', immutable=immutable,
+              name="Circular Ladder graph")
     G._circle_embedding(list(range(n)), radius=1, angle=pi/2)
     if n == 2:
         G._circle_embedding(list(range(4)), radius=1, angle=pi/2 + pi/8)
     else:
         G._circle_embedding(list(range(n, 2*n)), radius=2, angle=pi/2)
-    G.add_cycle(list(range(n)))
-    G.add_cycle(list(range(n, 2 * n)))
-    G.add_edges((i, i + n) for i in range(n))
     return G
 
 
-def ClawGraph():
+def ClawGraph(immutable=False):
     """
     Return a claw graph.
 
@@ -208,6 +250,11 @@ def ClawGraph():
     bipartite graph with ``(n1, n2) = (1, 3)``.
 
     PLOTTING: See :meth:`CompleteBipartiteGraph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -220,18 +267,33 @@ def ClawGraph():
         sage: G = graphs.ClawGraph()
         sage: G
         Claw graph: Graph on 4 vertices
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.ClawGraph(immutable=True).is_immutable()
+        True
     """
     edge_list = [(0, 1), (0, 2), (0, 3)]
     pos_dict = {0: (0, 1), 1: (-1, 0), 2: (0, 0), 3: (1, 0)}
-    return Graph(edge_list, pos=pos_dict, name="Claw graph")
+    return Graph([range(4), edge_list], format='vertices_and_edges',
+                 immutable=immutable, pos=pos_dict, name="Claw graph")
 
 
-def CycleGraph(n):
+def CycleGraph(n, immutable=False):
     r"""
     Return a cycle graph with `n` nodes.
 
     A cycle graph is a basic structure which is also typically called an
     `n`-gon.
+
+    INPUT:
+
+    - ``n`` -- nonnegative integer; the number of vertices of the cycle graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, each cycle graph will be
@@ -299,25 +361,39 @@ def CycleGraph(n):
         Traceback (most recent call last):
         ...
         ValueError: parameter n must be a positive integer
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.CycleGraph(4, immutable=True).is_immutable()
+        True
     """
     if n < 0:
         raise ValueError("parameter n must be a positive integer")
 
-    G = Graph(n, name="Cycle graph")
+    from itertools import chain
+    edges = zip(range(n), chain(range(1, n), (0,))) if n > 1 else []
+    G = Graph([range(n), edges], format='vertices_and_edges',
+              immutable=immutable, name="Cycle graph")
     if n == 1:
         G.set_pos({0: (0, 0)})
     else:
         G._circle_embedding(list(range(n)), angle=pi/2)
-        G.add_cycle(list(range(n)))
     return G
 
 
-def CompleteGraph(n):
+def CompleteGraph(n, immutable=False):
     r"""
     Return a complete graph on `n` nodes.
 
     A Complete Graph is a graph in which all nodes are connected to all
     other nodes.
+
+    INPUT:
+
+    - ``n`` -- nonnegative integer; the number of vertices of the complete graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, each complete
@@ -392,17 +468,26 @@ def CompleteGraph(n):
         sage: posdict23 = graphs.CompleteGraph(23)
         sage: spring23.show()                   # long time                             # needs sage.plot
         sage: posdict23.show()                  # long time                             # needs sage.plot
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.CompleteGraph(4, immutable=True).is_immutable()
+        True
     """
-    G = Graph(n, name="Complete graph")
+    from itertools import combinations
+    G = Graph([range(n), combinations(range(n), 2)],
+              format='vertices_and_edges', immutable=immutable,
+              name="Complete graph")
     if n == 1:
         G.set_pos({0: (0, 0)})
     else:
         G._circle_embedding(list(range(n)), angle=pi/2)
-    G.add_edges((i, j) for i in range(n) for j in range(i + 1, n))
     return G
 
 
-def CorrelationGraph(seqs, alpha, include_anticorrelation):
+def CorrelationGraph(seqs, alpha, include_anticorrelation, immutable=False):
     r"""
     Return a correlation graph with a node per sequence in ``seqs``.
 
@@ -422,6 +507,9 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
     - ``include_anticorrelation`` -- boolean; whether to add edges between nodes
       with correlation coefficient less than ``-alpha`` or not
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: # needs numpy
@@ -436,6 +524,17 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
         [(0, 0, None), (0, 1, None), (1, 1, None), (2, 2, None)]
         sage: CG3.edges(sort=False)
         [(0, 0, None), (0, 1, None), (0, 2, None), (1, 1, None), (1, 2, None), (2, 2, None)]
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: # needs numpy
+        sage: from sage.graphs.generators.basic import CorrelationGraph
+        sage: CorrelationGraph(data, 0.9, False, immutable=True).is_immutable()
+        True
+        sage: CorrelationGraph(data, 0.9, True, immutable=True).is_immutable()
+        True
     """
     from numpy import corrcoef
     from sage.matrix.constructor import Matrix
@@ -452,10 +551,11 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
     adjacency_matrix = Matrix(boolean_adjacency_matrix.astype(int))
 
     # call graph constructor
-    return Graph(adjacency_matrix, format='adjacency_matrix', name="Correlation Graph")
+    return Graph(adjacency_matrix, format='adjacency_matrix',
+                 immutable=immutable, name="Correlation Graph")
 
 
-def CompleteBipartiteGraph(p, q, set_position=True):
+def CompleteBipartiteGraph(p, q, set_position=True, immutable=False):
     r"""
     Return a Complete Bipartite Graph on `p + q` vertices.
 
@@ -470,6 +570,9 @@ def CompleteBipartiteGraph(p, q, set_position=True):
     - ``set_position`` -- boolean (default: ``True``); if set to ``True``, we
       assign positions to the vertices so that the set of cardinality `p` is
       on the line `y=1` and the set of cardinality `q` is on the line `y=0`.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, each complete bipartite graph
@@ -566,12 +669,19 @@ def CompleteBipartiteGraph(p, q, set_position=True):
         Traceback (most recent call last):
         ...
         ValueError: the arguments p(=1) and q(=-1) must be positive integers
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.CompleteBipartiteGraph(1, 2, immutable=True).is_immutable()
+        True
     """
     if p < 0 or q < 0:
         raise ValueError('the arguments p(={}) and q(={}) must be positive integers'.format(p, q))
 
-    G = Graph(p + q, name="Complete bipartite graph of order {}+{}".format(p, q))
-    G.add_edges((i, j) for i in range(p) for j in range(p, p + q))
+    edges = ((i, j) for i in range(p) for j in range(p, p + q))
+    G = Graph([range(p + q), edges], format='vertices_and_edges',
+              immutable=immutable,
+              name=f"Complete bipartite graph of order {p}+{q}")
 
     # We now assign positions to vertices:
     # - vertices 0,..,p-1 are placed on the line (0, 1) to (max(p, q), 1)
@@ -585,13 +695,16 @@ def CompleteBipartiteGraph(p, q, set_position=True):
     return G
 
 
-def CompleteMultipartiteGraph(L):
+def CompleteMultipartiteGraph(L, immutable=False):
     r"""
     Return a complete multipartite graph.
 
     INPUT:
 
     - ``L`` -- list of integers; the respective sizes of the components
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Produce a layout of the vertices so that vertices in the same
     vertex set are adjacent and clearly separated from vertices in other vertex
@@ -616,18 +729,45 @@ def CompleteMultipartiteGraph(L):
 
         sage: g.chromatic_number()
         3
+
+    TESTS:
+
+    Prevent negative dimensions::
+
+        sage: graphs.CompleteMultipartiteGraph([1, -1, 2])
+        Traceback (most recent call last):
+        ...
+        ValueError: the sizes of the components must be positive integers
+
+    Check the bahavior of parameter ``immutable``::
+
+        sage: graphs.CompleteMultipartiteGraph([1], immutable=True).is_immutable()
+        True
+        sage: graphs.CompleteMultipartiteGraph([1, 2], immutable=True).is_immutable()
+        True
+        sage: graphs.CompleteMultipartiteGraph([1, 2, 3], immutable=True).is_immutable()
+        True
     """
+    if any(p < 0 for p in L):
+        raise ValueError("the sizes of the components must be positive integers")
+
     r = len(L)  # getting the number of partitions
     name = "Multipartite Graph with set sizes {}".format(L)
 
     if not r:
-        g = Graph()
+        g = Graph(name=name, immutable=immutable)
     elif r == 1:
-        g = Graph(L[0])
+        g = Graph(L[0], immutable=immutable, name=name)
         g._line_embedding(range(L[0]), first=(0, 0), last=(L[0], 0))
     elif r == 2:
-        g = CompleteBipartiteGraph(L[0], L[1])
-        g.name(name)
+        p, q = L
+        edges = ((i, j) for i in range(p) for j in range(p, p + q))
+        g = Graph([range(p + q), edges], format='vertices_and_edges',
+                  immutable=immutable,
+                  name=name)
+        nmax = max(p, q)
+        g._line_embedding(list(range(p)), first=(0, 1), last=(nmax, 1))
+        g._line_embedding(list(range(p, p + q)), first=(0, 0), last=(nmax, 0))
     else:
         # This position code gives bad results on bipartite or isolated graphs
         points = [(cos(2 * pi * i / r), sin(2 * pi * i / r)) for i in range(r)]
@@ -650,18 +790,23 @@ def CompleteMultipartiteGraph(L):
             g.add_clique(range(s, s + i))
             s += i
 
-        g = g.complement()
-        g.set_pos(positions)
+        g = Graph([range(g.order()), g.complement().edges(sort_vertices=False)],
+                  format='vertices_and_edges', immutable=immutable, name=name,
+                  pos=positions)
 
-    g.name(name)
     return g
 
 
-def DiamondGraph():
+def DiamondGraph(immutable=False):
     """
     Return a diamond graph with 4 nodes.
 
     A diamond graph is a square with one pair of diagonal nodes connected.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the diamond graph is drawn as a
@@ -674,17 +819,30 @@ def DiamondGraph():
 
         sage: g = graphs.DiamondGraph()
         sage: g.show()                          # long time                             # needs sage.plot
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.DiamondGraph(immutable=True).is_immutable()
+        True
     """
     pos_dict = {0: (0, 1), 1: (-1, 0), 2: (1, 0), 3: (0, -1)}
     edges = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]
-    return Graph(edges, pos=pos_dict, name="Diamond Graph")
+    return Graph([range(4), edges], format='vertices_and_edges',
+                 immutable=immutable, pos=pos_dict, name="Diamond Graph")
 
 
-def GemGraph():
+def GemGraph(immutable=False):
     """
     Return a gem graph with 5 nodes.
 
     A gem graph is a fan graph (4,1).
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the gem graph is drawn as a gem,
@@ -696,17 +854,30 @@ def GemGraph():
 
         sage: g = graphs.GemGraph()
         sage: g.show()                          # long time                             # needs sage.plot
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.GemGraph(immutable=True).is_immutable()
+        True
     """
     pos_dict = {0: (0.5, 0), 1: (0, 0.75), 2: (0.25, 1), 3: (0.75, 1), 4: (1, 0.75)}
     edges = [(0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (2, 3), (3, 4)]
-    return Graph(edges, pos=pos_dict, name="Gem Graph")
+    return Graph([range(5), edges], format='vertices_and_edges',
+                 immutable=immutable, pos=pos_dict, name="Gem Graph")
 
 
-def ForkGraph():
+def ForkGraph(immutable=False):
     """
     Return a fork graph with 5 nodes.
 
     A fork graph, sometimes also called chair graph, is 5 vertex tree.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the fork graph is drawn as a
@@ -718,15 +889,28 @@ def ForkGraph():
 
         sage: g = graphs.ForkGraph()
         sage: g.show()                          # long time                             # needs sage.plot
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.ForkGraph(immutable=True).is_immutable()
+        True
     """
     pos_dict = {0: (0, 0), 1: (1, 0), 2: (0, 1), 3: (1, 1), 4: (0, 2)}
     edges = [(0, 2), (2, 3), (3, 1), (2, 4)]
-    return Graph(edges, pos=pos_dict, name="Fork Graph")
+    return Graph([range(5), edges], format='vertices_and_edges',
+                 immutable=immutable, pos=pos_dict, name="Fork Graph")
 
 
-def DartGraph():
+def DartGraph(immutable=False):
     """
     Return a dart graph with 5 nodes.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the dart graph is drawn as a
@@ -738,18 +922,31 @@ def DartGraph():
 
         sage: g = graphs.DartGraph()
         sage: g.show()                          # long time                             # needs sage.plot
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.DartGraph(immutable=True).is_immutable()
+        True
     """
     pos_dict = {0: (0, 1), 1: (-1, 0), 2: (1, 0), 3: (0, -1), 4: (0, 0)}
     edges = [(0, 1), (0, 2), (1, 4), (2, 4), (0, 4), (3, 4)]
-    return Graph(edges, pos=pos_dict, name="Dart Graph")
+    return Graph([range(5), edges], format='vertices_and_edges',
+                 immutable=immutable, pos=pos_dict, name="Dart Graph")
 
 
-def EmptyGraph():
+def EmptyGraph(immutable=False):
     """
     Return an empty graph (0 nodes and 0 edges).
 
     This is useful for constructing graphs by adding edges and vertices
     individually or in a loop.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: When plotting, this graph will use the default
     spring-layout algorithm, unless a position dictionary is
@@ -779,11 +976,18 @@ def EmptyGraph():
         sage: for i in range(1, 4):
         ....:     empty2.add_edge(4,i)  # add edges {[1:4],[2:4],[3:4]}
         sage: empty2.show()                     # long time                             # needs sage.plot
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.EmptyGraph(immutable=True).is_immutable()
+        True
     """
-    return Graph(sparse=True)
+    return Graph(sparse=True, immutable=immutable)
 
 
-def ToroidalGrid2dGraph(p, q):
+def ToroidalGrid2dGraph(p, q, immutable=False):
     r"""
     Return a toroidal 2-dimensional grid graph with `p \times q` nodes (`p` rows
     and `q` columns).
@@ -791,6 +995,13 @@ def ToroidalGrid2dGraph(p, q):
     The toroidal 2-dimensional grid with parameters `p,q` is the 2-dimensional
     grid graph with identical parameters to which are added the edges
     `((i, 0), (i, q - 1))` and `((0, i), (p - 1, i))`.
+
+    INPUT:
+
+    - ``p, q`` -- nonnegative integers; the sides of the toroidal grid
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -805,13 +1016,20 @@ def ToroidalGrid2dGraph(p, q):
         False
         sage: tgrid.is_regular()
         True
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.ToroidalGrid2dGraph(2, 3, immutable=True).is_immutable()
+        True
     """
-    g = Grid2dGraph(p, q, set_positions=True)
+    name = f"Toroidal 2D Grid Graph with parameters {p},{q}"
+    g = Grid2dGraph(p, q, set_positions=True, immutable=False)
+    g.name(name)
 
     g.add_edges([((i, 0), (i, q - 1)) for i in range(p)])
     g.add_edges([((0, i), (p - 1, i)) for i in range(q)])
-
-    g.name("Toroidal 2D Grid Graph with parameters {},{}".format(p, q))
 
     pos = g._pos
     p += 0.
@@ -824,10 +1042,12 @@ def ToroidalGrid2dGraph(p, q):
         y += 0.25 * (1.0 + v * (v - q + 1) / vf)
         pos[u, v] = (x, y)
 
+    if immutable:
+        return Graph(g, immutable=True, pos=g.get_pos(), name=name)
     return g
 
 
-def Toroidal6RegularGrid2dGraph(p, q):
+def Toroidal6RegularGrid2dGraph(p, q, immutable=False):
     r"""
     Return a toroidal 6-regular grid.
 
@@ -841,6 +1061,9 @@ def Toroidal6RegularGrid2dGraph(p, q):
     INPUT:
 
     - ``p``, ``q`` -- integers
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -870,19 +1093,27 @@ def Toroidal6RegularGrid2dGraph(p, q):
         Traceback (most recent call last):
         ...
         ValueError: parameters p and q must be integers larger than 3
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.Toroidal6RegularGrid2dGraph(4, 4, immutable=True).is_immutable()
+        True
     """
     if p <= 3 or q <= 3:
         raise ValueError("parameters p and q must be integers larger than 3")
 
-    g = ToroidalGrid2dGraph(p, q)
+    g = ToroidalGrid2dGraph(p, q, immutable=False)
     for u, v in g:
         g.add_edge((u, v), ((u + 1) % p, (v + 1) % q))
 
-    g.name("Toroidal Hexagonal Grid graph on {}x{} elements".format(p, q))
+    name = f"Toroidal Hexagonal Grid graph on {p}x{q} elements"
+    if immutable:
+        return Graph(g, immutable=True, pos=g.get_pos(), name=name)
+    g.name(name)
     return g
 
 
-def Grid2dGraph(p, q, set_positions=True):
+def Grid2dGraph(p, q, set_positions=True, immutable=False, name=None):
     r"""
     Return a `2`-dimensional grid graph with `p \times q` nodes (`p` rows and
     `q` columns).
@@ -897,6 +1128,12 @@ def Grid2dGraph(p, q, set_positions=True):
 
     - ``set_positions`` -- boolean (default: ``True``); whether to set the
       position of the nodes
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
+    - ``name`` -- string (default: ``None``); used as the name of the returned
+      graph when set
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, nodes are labelled in (row,
@@ -929,26 +1166,33 @@ def Grid2dGraph(p, q, set_positions=True):
         sage: g = graphs.Grid2dGraph(5,7)
         sage: g.name()
         '2D Grid Graph for [5, 7]'
+
+    Check the behavior of parameter ``ìmmutable``::
+
+        sage: graphs.Grid2dGraph(2, 3, immutable=True).is_immutable()
+        True
+
+    Check the behavior of parameter ``name``::
+
+        sage: graphs.Grid2dGraph(2, 3, name='foo')
+        foo: Graph on 6 vertices
     """
     if p <= 0 or q <= 0:
         raise ValueError("parameters p and q must be positive integers")
 
-    pos_dict = {}
+    vertices = ((i, j) for i in range(p) for j in range(q))
+    from itertools import chain
+    edges = chain((((i, j), (i + 1, j)) for i in range(p - 1) for j in range(q)),
+                  (((i, j), (i, j + 1)) for i in range(p) for j in range(q - 1)))
+    pos_dict = None
     if set_positions:
-        for i in range(p):
-            y = -i
-            for j in range(q):
-                x = j
-                pos_dict[i, j] = (x, y)
-
-    G = Graph(pos=pos_dict, name="2D Grid Graph for [{}, {}]".format(p, q))
-    G.add_vertices((i, j) for i in range(p) for j in range(q))
-    G.add_edges(((i, j), (i + 1, j)) for i in range(p - 1) for j in range(q))
-    G.add_edges(((i, j), (i, j + 1)) for i in range(p) for j in range(q - 1))
-    return G
+        pos_dict = {(i, j): (j, -i) for i in range(p) for j in range(q)}
+    return Graph([vertices, edges], format='vertices_and_edges',
+                 immutable=immutable, pos=pos_dict,
+                 name=f"2D Grid Graph for [{p}, {q}]" if name is None else name)
 
 
-def GridGraph(dim_list):
+def GridGraph(dim_list, immutable=False):
     r"""
     Return an `n`-dimensional grid graph.
 
@@ -956,6 +1200,9 @@ def GridGraph(dim_list):
 
     - ``dim_list`` -- list of integers representing the number of nodes to
       extend in each dimension
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: When plotting, this graph will use the default spring-layout
     algorithm, unless a position dictionary is specified.
@@ -1028,36 +1275,51 @@ def GridGraph(dim_list):
         Traceback (most recent call last):
         ...
         ValueError: all dimensions must be positive integers
+
+    Check the behavior of parameter ``ìmmutable``::
+
+        sage: graphs.GridGraph([], immutable=True).is_immutable()
+        True
+        sage: graphs.GridGraph([2], immutable=True).is_immutable()
+        True
+        sage: graphs.GridGraph([2, 2], immutable=True).is_immutable()
+        True
+        sage: graphs.GridGraph([2, 2, 2], immutable=True).is_immutable()
+        True
     """
     dim = [int(a) for a in dim_list]
     if any(a <= 0 for a in dim):
         raise ValueError("all dimensions must be positive integers")
 
-    g = Graph()
+    name = "Grid Graph for {}".format(dim)
     n_dim = len(dim)
+    if not n_dim:
+        return Graph(name=name, immutable=immutable)
     if n_dim == 1:
         # Vertices are labeled from 0 to dim[0]-1
-        g = PathGraph(dim[0])
-    elif n_dim == 2:
+        return PathGraph(dim[0], immutable=immutable, name=name)
+    if n_dim == 2:
         # We use the Grid2dGraph generator to also get the positions
-        g = Grid2dGraph(*dim)
-    elif n_dim > 2:
-        # Vertices are tuples of dimension n_dim, and the graph contains at
-        # least vertex (0, 0, ..., 0)
-        g.add_vertex(tuple([0] * n_dim))
-        import itertools
-        for u in itertools.product(*[range(d) for d in dim]):
+        return Grid2dGraph(*dim, immutable=immutable, name=name)
+
+    # Now, n_dim > 2 and we don't set positions
+    # Vertices are tuples of dimension n_dim, and the graph contains at
+    # least vertex (0, 0, ..., 0)
+    V = [tuple([0] * n_dim)]
+    def edges():
+        from itertools import product
+        for u in product(*[range(d) for d in dim]):
             for i in range(n_dim):
                 if u[i] + 1 < dim[i]:
                     v = list(u)
                     v[i] = u[i] + 1
-                    g.add_edge(u, tuple(v))
+                    yield (u, tuple(v))
 
-    g.name("Grid Graph for {}".format(dim))
-    return g
+    return Graph([V, edges()], format='vertices_and_edges',
+                 immutable=immutable, name=name)
 
 
-def HouseGraph():
+def HouseGraph(immutable=False):
     """
     Return a house graph with 5 nodes.
 
@@ -1072,19 +1334,32 @@ def HouseGraph():
     connecting the roof to the wall. The fifth node is the top of the roof,
     connected only to the third and fourth.
 
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES:
 
     Construct and show a house graph::
 
         sage: g = graphs.HouseGraph()
         sage: g.show()                          # long time                             # needs sage.plot
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.HouseGraph(immutable=True).is_immutable()
+        True
     """
     pos_dict = {0: (-1, 0), 1: (1, 0), 2: (-1, 1), 3: (1, 1), 4: (0, 2)}
     edges = [(0, 1), (0, 2), (1, 3), (2, 3), (2, 4), (3, 4)]
-    return Graph(edges, pos=pos_dict, name="House Graph")
+    return Graph([range(5), edges], format='vertices_and_edges',
+                 immutable=immutable, pos=pos_dict, name="House Graph")
 
 
-def HouseXGraph():
+def HouseXGraph(immutable=False):
     """
     Return a house X graph with 5 nodes.
 
@@ -1100,19 +1375,32 @@ def HouseXGraph():
     connecting the roof to the wall. The fifth node is the top of the roof,
     connected only to the third and fourth.
 
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES:
 
     Construct and show a house X graph::
 
         sage: g = graphs.HouseXGraph()
         sage: g.show()                          # long time                             # needs sage.plot
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.HouseXGraph(immutable=True).is_immutable()
+        True
     """
     pos_dict = {0: (-1, 0), 1: (1, 0), 2: (-1, 1), 3: (1, 1), 4: (0, 2)}
     edges = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3), (2, 4), (3, 4)]
-    return Graph(edges, pos=pos_dict, name="House Graph")
+    return Graph([range(5), edges], format='vertices_and_edges',
+                 immutable=immutable, pos=pos_dict, name="House Graph")
 
 
-def LadderGraph(n):
+def LadderGraph(n, immutable=False):
     r"""
     Return a ladder graph with `2 * n` nodes.
 
@@ -1123,6 +1411,13 @@ def LadderGraph(n):
     the spring-layout algorithm. By convention, each ladder graph will be
     displayed horizontally, with the first n nodes displayed left to right on
     the top horizontal line.
+
+    INPUT:
+
+    - ``n`` -- a nonnegative integer; number of nodes is `2n`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -1146,21 +1441,28 @@ def LadderGraph(n):
         ....:     j.append(n)
         sage: G = graphics_array(j)
         sage: G.show()                          # long time
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.LadderGraph(4, immutable=True).is_immutable()
+        True
     """
-    pos_dict = {}
-    for i in range(n):
-        pos_dict[i] = (i, 1)
+    pos_dict = {i: (i, 1) for i in range(n)}
     for i in range(n, 2 * n):
         x = i - n
         pos_dict[i] = (x, 0)
-    G = Graph(2 * n, pos=pos_dict, name="Ladder graph")
-    G.add_path(list(range(n)))
-    G.add_path(list(range(n, 2 * n)))
-    G.add_edges((i, i + n) for i in range(n))
-    return G
+    from itertools import chain
+    edges_1 = zip(range(n), range(1, n))
+    edges_2 = zip(range(n, 2 * n), range(n + 1, 2 * n))
+    edges_3 = ((i, i + n) for i in range(n))
+    return Graph([range(2 * n), chain(edges_1, edges_2, edges_3)],
+                 format='vertices_and_edges', immutable=immutable,
+                 pos=pos_dict, name="Ladder graph")
 
 
-def MoebiusLadderGraph(n):
+def MoebiusLadderGraph(n, immutable=False):
     r"""
     Return a Möbius ladder graph with `2n` nodes
 
@@ -1183,6 +1485,9 @@ def MoebiusLadderGraph(n):
     INPUT:
 
     - ``n`` -- a nonnegative integer; number of nodes is `2n`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -1221,6 +1526,11 @@ def MoebiusLadderGraph(n):
         ...
         ValueError: parameter n must be a nonnegative integer
 
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.MoebiusLadderGraph(4, immutable=True).is_immutable()
+        True
+
     REFERENCES:
 
     - :wikipedia:`Möbius_ladder`
@@ -1237,14 +1547,17 @@ def MoebiusLadderGraph(n):
     if n < 0:
         raise ValueError("parameter n must be a nonnegative integer")
 
-    G = Graph(2 * n, name="Moebius ladder graph")
+    from itertools import chain
+    edges_1 = zip(range(2 * n), chain(range(1, 2 * n), (0,)))
+    edges_2 = ((i, i + n) for i in range(n))
+    G = Graph([range(2 * n), chain(edges_1, edges_2)],
+              format='vertices_and_edges', immutable=immutable,
+              name="Moebius ladder graph")
     G._circle_embedding(list(range(2 * n)), angle=pi/2)
-    G.add_cycle(list(range(2 * n)))
-    G.add_edges((i, i + n) for i in range(n))
     return G
 
 
-def PathGraph(n, pos=None):
+def PathGraph(n, pos=None, immutable=False, name=None):
     r"""
     Return a path graph with `n` nodes.
 
@@ -1254,11 +1567,17 @@ def PathGraph(n, pos=None):
 
     INPUT:
 
-    - ``n`` -- number of nodes of the path graph
+    - ``n`` -- nonnegative integer; number of nodes of the path graph
 
     - ``pos`` -- string (default: ``None``); indicates the embedding to use
       between 'circle', 'line' or the default algorithm. See the plotting
       section below for more detail.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
+    - ``name`` -- string (default: ``None``); used as the name of the returned
+      graph when set
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, the graph may be drawn in one of
@@ -1271,23 +1590,19 @@ def PathGraph(n, pos=None):
     argument) the graph will be drawn as a 'circle' if `10 < n < 41` and as a
     'line' for all other `n`.
 
-    EXAMPLES: Show default drawing by size: 'line': `n \leq 10`
+    EXAMPLES:
 
-    ::
+    Show default drawing by size: 'line': `n \leq 10`::
 
         sage: p = graphs.PathGraph(10)
         sage: p.show()                          # long time                             # needs sage.plot
 
-    'circle': `10 < n < 41`
-
-    ::
+    'circle': `10 < n < 41`::
 
         sage: q = graphs.PathGraph(25)
         sage: q.show()                          # long time                             # needs sage.plot
 
-    'line': `n \geq 41`
-
-    ::
+    'line': `n \geq 41`::
 
         sage: r = graphs.PathGraph(55)
         sage: r.show()                          # long time                             # needs sage.plot
@@ -1296,8 +1611,22 @@ def PathGraph(n, pos=None):
 
         sage: s = graphs.PathGraph(5,'circle')
         sage: s.show()                          # long time                             # needs sage.plot
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.PathGraph(4, immutable=True).is_immutable()
+        True
+
+    Check the behavior of parameter ``name``::
+
+        sage: graphs.PathGraph(4, name='foo')
+        foo: Graph on 4 vertices
     """
-    G = Graph(n, name="Path graph")
+    edges = ((i, i + 1) for i in range(n - 1))
+    G = Graph([range(n), edges], format='vertices_and_edges',
+              immutable=immutable, name="Path graph" if name is None else name)
 
     pos_dict = {}
 
@@ -1347,16 +1676,22 @@ def PathGraph(n, pos=None):
             counter += 1
         G.set_pos(pos_dict)
 
-    G.add_edges((i, i + 1) for i in range(n - 1))
     return G
 
 
-def StarGraph(n):
+def StarGraph(n, immutable=False):
     r"""
     Return a star graph with `n + 1` nodes.
 
     A Star graph is a basic structure where one node is connected to all other
     nodes.
+
+    INPUT:
+
+    - ``n`` -- a nonnegative integer; number of nodes is `n + 1`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: Upon construction, the position dictionary is filled to override
     the spring-layout algorithm. By convention, each star graph will be
@@ -1420,8 +1755,16 @@ def StarGraph(n):
         ....:     j.append(n)
         sage: G = graphics_array(j)
         sage: G.show()                          # long time
+
+    TESTS:
+
+    Check the behavior of parameter ``immutable``::
+
+        sage: graphs.StarGraph(4, immutable=True).is_immutable()
+        True
     """
-    G = Graph({0: list(range(1, n + 1))}, name="Star graph", format='dict_of_lists')
+    G = Graph({0: list(range(1, n + 1))}, format='dict_of_lists',
+              immutable=immutable, name="Star graph")
     G.set_pos({0: (0, 0)})
     G._circle_embedding(list(range(1, n + 1)), angle=pi/2)
     return G
