@@ -102,13 +102,9 @@ foreach name, pyx : extension_data
   elif name == 'polynomial_real_mpfr_dense'
     deps += [mpfr]
   elif name == 'real_roots'
-    deps += [flint, mpfi]
-    if is_windows
-      # Compilation error: include\flint\fmpz_mpoly.h(975): error C2143: syntax error: missing ')' before 'constant'
-      continue
-    endif
+    deps += [mpfi]
   elif name == 'hilbert'
-    deps += [flint, mpfi]
+    deps += [mpfi]
   endif
 
   py.extension_module(

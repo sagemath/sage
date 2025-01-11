@@ -135,7 +135,7 @@ foreach name, pyx : extension_data
   elif name == 'complex_interval'
     deps += [
       mpfi,
-      flint,
+      flint,  # Runtime dependency
     ]
   elif name == 'complex_mpc'
     deps += [gmpy2, mpfr, mpc]
