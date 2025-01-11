@@ -28,6 +28,29 @@ Assume we're starting from a clean repo and a fully set up conda environment
 
 .. tab:: Windows
     
+    .. note::
+
+        Windows support is very experimental and many features are not working
+        yet.
+
+    First you need to install the Microsoft Visual C++ compiler.
+    You can download the 
+    `Visual Studio Build Tools <https://aka.ms/vs/17/release/vs_BuildTools.exe>`_.
+    Make sure to select "VC++ 2022 version xx.x build tools" and "Windows SDK".
+    If you prefer, you can also run the following command to install the necessary
+    components:
+    
+    .. code-block:: shell
+
+        $ winget install Microsoft.VisualStudio.2022.BuildTools --force --override "--wait --passive --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows11SDK.22621"
+ 
+    Alternatively, you can use the compiler that comes bundled with Visual Studio.
+
+    If you haven't already, install the latest version of Conda from
+    `Miniforge <https://github.com/conda-forge/miniforge?tab=readme-ov-file#windows>`_.
+    It is strongly recommended to choose the option to add Conda to the `PATH`
+    during installation (because we will not use the Miniforge prompt).
+
     Open the "VS x64 Native Tools Command Prompt" (for 64bit) or 
     "Developer Command Prompt for VS2022 (or 2019)" (for 32bit).
 
@@ -37,7 +60,17 @@ Assume we're starting from a clean repo and a fully set up conda environment
         $ conda activate sage-dev
         $ set LIB=%CONDA_PREFIX%\Library\lib;%LIB%
 
-    Windows support is experimental and not fully working yet.        
+    Windows support is experimental and not fully working yet.
+    In fact, the Sage prompt is not working at all, but you can use the Python
+    prompt to run certain commands. For example, the following should work:
+
+    .. code-block:: python
+
+        >>> from sage.rings.integer import Integer
+        >>> Integer(5)
+        5
+        >>> Integer(5) + 2.0
+        7.0
 
 
 Alternatively, install all build requirements as described in section
