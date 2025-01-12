@@ -23,7 +23,7 @@ class ZinbielOperad(CombinatorialFreeModule):
 
     REFERENCES:
 
-    - [Loday2001]_
+    - [Lod2001]_
     """
     def __init__(self, R) -> None:
         """
