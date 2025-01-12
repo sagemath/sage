@@ -13,6 +13,8 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     This is an operad on the species of non-empty sets.
 
+    This is one of the most basic operads, with a very simple composition.
+
     EXAMPLES::
 
         sage: A = CommutativeOperad(QQ)
@@ -21,12 +23,8 @@ class CommutativeOperad(CombinatorialFreeModule):
         sage: y = A(W('dc'))
         sage: x.compose(y, 'a')
         B[word: bcd]
-
-    REFERENCES:
-
-    .. [todo_comm]
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         EXAMPLES::
 

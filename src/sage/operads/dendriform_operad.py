@@ -25,9 +25,9 @@ class DendriformOperad(CombinatorialFreeModule):
 
     REFERENCES:
 
-    .. [todo_dend]
+    - [Loday2001]_
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         EXAMPLES::
 
