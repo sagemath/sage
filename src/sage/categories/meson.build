@@ -119,8 +119,8 @@ py.install_sources(
   'integral_domains.py',
   'isomorphic_objects.py',
   'j_trivial_semigroups.py',
-  'kahler_algebras.py'
   'kac_moody_algebras.py',
+  'kahler_algebras.py',
   'l_trivial_semigroups.py',
   'lambda_bracket_algebras.py',
   'lambda_bracket_algebras_with_basis.py',
