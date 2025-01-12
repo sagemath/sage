@@ -777,24 +777,21 @@ def CompleteMultipartiteGraph(L, immutable=False):
                points[(i + 1) % r][1] - points[i % r][1]) for i in range(r)]
 
     counter = 0
+    parts = []
     positions = {}
-    for i in range(r):
-        vertex_set_size = L[i] + 1
+    for i, size in enumerate(L):
+        parts.append(list(range(counter, counter + size)))
+        vertex_set_size = size + 1
         for j in range(1, vertex_set_size):
             x = points[i][0] + slopes[i][0] * j / vertex_set_size
             y = points[i][1] + slopes[i][1] * j / vertex_set_size
             positions[counter] = (x, y)
             counter += 1
 
-    g = Graph(sum(L))
-    s = 0
-    for i in L:
-        g.add_clique(range(s, s + i))
-        s += i
-
-    return Graph([range(g.order()), g.complement().edges(sort_vertices=False)],
-                 format='vertices_and_edges', immutable=immutable, name=name,
-                 pos=positions)
+    from itertools import combinations
+    edges = ((a, b) for A, B in combinations(parts, 2) for a in A for b in B)
+    return Graph([range(counter), edges], format='vertices_and_edges',
+                 immutable=immutable, pos=positions, name=name)
 
 
 def DiamondGraph(immutable=False):
