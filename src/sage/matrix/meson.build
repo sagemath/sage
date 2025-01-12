@@ -97,17 +97,21 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
-  dependencies = [py_dep, cysignals, gmp]
+  deps = [py_dep, cysignals, gmp]
   if name == 'matrix_gfpn_dense'
-    dependencies += [mtx]
+    deps += [mtx]
   elif name == 'matrix_gap'
-    dependencies += [gap]
+    deps += [gap]
   elif name == 'misc_mpfr'
-    dependencies += [mpfr]
+    deps += [mpfr]
   elif name == 'matrix_complex_ball_dense'
-    dependencies += [mpfi]
+    deps += [flint, mpfi]
   elif name == 'misc_flint' or name == 'matrix_rational_sparse' or name == 'change_ring'
-    dependencies += [flint]
+    deps += [flint]
+    if is_windows
+      # Compilation error: include\flint\fmpz_mpoly.h(975): error C2143: syntax error: missing ')' before 'constant'
+      continue
+    endif
   endif
 
   py.extension_module(
@@ -124,8 +128,9 @@ foreach name, pyx : extension_data
       inc_rings,
       inc_rings_finite,
     ],
-    dependencies: dependencies,
+    dependencies: deps,
   )
+  
 endforeach
 
 extension_data_cpp = {
