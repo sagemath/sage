@@ -102,9 +102,9 @@ foreach name, pyx : extension_data
   elif name == 'polynomial_real_mpfr_dense'
     deps += [mpfr]
   elif name == 'real_roots'
-    deps += [mpfi]
+    deps += [flint, mpfi]
   elif name == 'hilbert'
-    deps += [mpfi]
+    deps += [flint, mpfi]
   endif
 
   py.extension_module(
