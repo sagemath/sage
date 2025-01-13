@@ -401,6 +401,7 @@ def monomial_function(n, e):
     X = R.gen()
     return SBox(X**e)
 
+
 def chi(n):
     r"""
     Return the `\chi` function defined over `\GF{2^n}` used in the nonlinear layer of Keccak and Xoodyak.
