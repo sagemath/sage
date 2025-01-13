@@ -1291,9 +1291,6 @@ cdef class OrbitPartition:
             self.col_min_cell_rep[col] = col
             self.col_size[col] = 1
 
-    def __dealloc__(self):
-        pass
-
     def __repr__(self):
         """
         Return a string representation of the orbit partition.
@@ -2976,17 +2973,12 @@ cdef class PartitionStack:
             ([0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 8, 9, 10, 11], [0, 1, 2, 3, 5, 4, 7, 6])
         """
         cdef int i
-        cdef int *word_g = <int *> sig_malloc( self.nwords * sizeof(int) )
-        cdef int *col_g = <int *> sig_malloc( self.ncols * sizeof(int) )
-        if word_g is NULL or col_g is NULL:
-            if word_g is not NULL: sig_free(word_g)
-            if col_g is not NULL: sig_free(col_g)
-            raise MemoryError("Memory.")
+        cdef MemoryAllocator loc_mem = MemoryAllocator()
+        cdef int *word_g = <int *> loc_mem.malloc(self.nwords * sizeof(int))
+        cdef int *col_g = <int *> loc_mem.malloc(self.ncols * sizeof(int))
         self.get_permutation(other, word_g, col_g)
         word_l = [word_g[i] for i from 0 <= i < self.nwords]
         col_l = [col_g[i] for i from 0 <= i < self.ncols]
-        sig_free(word_g)
-        sig_free(col_g)
         return word_l, col_l
 
     cdef void get_permutation(self, PartitionStack other, int *word_gamma, int *col_gamma) noexcept:
