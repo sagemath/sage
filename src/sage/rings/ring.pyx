@@ -253,8 +253,6 @@ cdef class Ring(ParentWithGens):
         # yield an infinite recursion. But when we call it from here, it works.
         # This is done in order to ensure that __init_extra__ is called.
         #
-        # ParentWithGens.__init__(self, base, names=names, normalize=normalize)
-        #
         # This is a low-level class. For performance, we trust that the category
         # is fine, if it is provided. If it isn't, we use the category of rings.
         if category is None:
