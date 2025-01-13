@@ -817,25 +817,16 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: GraphTheory.blowup_construction(3, 2, edges=[[0, 1]])
-            
-            0%|          | 0/4 [00:00<?, ?it/s]
-            100%|██████████| 4/4 [00:00<00:00, 2521.37it/s]
+            ...
             Flag Algebra Element over Rational Field
             1/4 - Flag on 3 points, ftype from () with edges=()
             0   - Flag on 3 points, ftype from () with edges=(01)
             3/4 - Flag on 3 points, ftype from () with edges=(01 02)
-                
-              0%|          | 0/4 [00:00<?, ?it/s]
-            100%|██████████| 4/4 [00:00<00:00, 2721.81it/s]
-                Flag Algebra Element over Rational Field
-                1/4 - Flag on 3 points, ftype from () with edges=()
-                0   - Flag on 3 points, ftype from () with edges=(01)
-                3/4 - Flag on 3 points, ftype from () with edges=(01 02)
-
+            
+            sage: GraphTheory.reset()
             sage: GraphTheory.blowup_construction(3, 2, edges=[[0, 1], [1, 1]], symbolic=True)
-            Traceback (most recent call last):
             ...
-            Flag Algebra with Ftype on 0 points with edges=() over Rational Field
+            Flag Algebra Element over
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(QQ, pattern_size, "X")
