@@ -424,7 +424,7 @@ def chi(n):
     from sage.rings.integer_ring import ZZ
     from sage.rings.finite_rings.finite_field_constructor import GF
     from sage.modules.free_module_element import vector
-    
+
     table = [0]*(1 << n)
 
     for x in range(1 << n):
