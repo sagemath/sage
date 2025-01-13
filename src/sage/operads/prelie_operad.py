@@ -266,9 +266,9 @@ class PreLieOperad(CombinatorialFreeModule):
                 for graftingFunction in
                 cartesian_product([list(y.paths())] * len(x))]
 
-    def composition_on_basis_list(self, x, y, i: Label):
+    def composition_on_basis_iter(self, x, y, i: Label):
         """
-        Return a list of rooted trees obtained from a rooted tree `x`
+        Return an iterator of rooted trees obtained from a rooted tree `x`
         and a rooted tree `y` by the composition `x o_i y`.
 
         The composition index `i` should be a label of `x`.
@@ -279,21 +279,22 @@ class PreLieOperad(CombinatorialFreeModule):
             sage: LT = A.basis().keys()
             sage: y = LT([LT([],'b')], label='a')
             sage: x = LT([LT([],'d')], label='c')
-            sage: A.composition_on_basis_list(x,y,'c')
+            sage: list(A.composition_on_basis_iter(x,y,'c'))
             [a[b[], d[]], a[b[d[]]]]
         """
         if i not in x.labels():
             raise ValueError("the composition index is not present")
-        elif x.label() == i:
-            return self.composition_on_basis_in_root(x, y)
-        resu = []
+
+        if x.label() == i:
+            yield from self.composition_on_basis_in_root(x, y)
+            return
+
         for j in range(len(x)):
             if i in x[j].labels():
-                for sx in self.composition_on_basis_list(x[j], y, i):
+                for sx in self.composition_on_basis_iter(x[j], y, i):
                     with x.clone() as x1:
                         x1[j] = sx
-                    resu.append(x1)
-        return resu
+                    yield x1
 
     def composition_on_basis(self, x, y, i: Label):
         """
@@ -320,7 +321,7 @@ class PreLieOperad(CombinatorialFreeModule):
         if i not in x.labels():
             raise ValueError("the composition index is not present")
         return sum(self.basis()[t] for t in
-                   self.composition_on_basis_list(x, y, i))
+                   self.composition_on_basis_iter(x, y, i))
 
     def operad_generator_basis(self, label0: Label = "0", label1: Label = "1"):
         """

@@ -142,7 +142,7 @@ class DendriformOperad(CombinatorialFreeModule):
         """
         return self.basis()[t.shape()]
 
-    def shuffle_on_basis_list(self, x, y):
+    def shuffle_on_basis_iter(self, x, y):
         """
         Return the shuffle product (associative) of two planar binary
         trees as a list of planar binary trees.
@@ -152,36 +152,43 @@ class DendriformOperad(CombinatorialFreeModule):
             sage: A = DendriformOperad(QQ)
             sage: ouest = A.one_basis("o")
             sage: est = A.one_basis("e")
-            sage: A.shuffle_on_basis_list(ouest,est)
+            sage: list(A.shuffle_on_basis_iter(ouest,est))
             [e[o[., .], .], o[., e[., .]]]
         """
         if x.is_empty():
-            return [y]
-        elif y.is_empty():
-            return [x]
-        return self.composition_on_basis_list(self.basis().keys()([x, None], label='diese'), y, 'diese') + self.composition_on_basis_list(self.basis().keys()([None, y], label='diese'), x, 'diese')
+            yield y
+            return
+        if y.is_empty():
+            yield x
+            return
+        yield from self.composition_on_basis_iter(self.basis().keys()([x, None], label='diese'), y, 'diese')
+        yield from self.composition_on_basis_iter(self.basis().keys()([None, y], label='diese'), x, 'diese')
 
-    def composition_on_basis_list(self, x, y, i):
+    def composition_on_basis_iter(self, x, y, i):
         """
         Return the composition of two planar binary
-        trees in the dendriform operad as a list of planar binary trees.
+        trees in the dendriform operad as an iterator of planar binary trees.
 
         EXAMPLES::
 
             sage: A = DendriformOperad(QQ)
             sage: Trees = A.basis().keys()
-            sage: A.composition_on_basis_list(Trees([],label="a"), Trees([None,Trees([],label="c")],label="d"),"a")
+            sage: list(A.composition_on_basis_iter(Trees([],label="a"), Trees([None,Trees([],label="c")],label="d"),"a"))
             [d[., c[., .]]]
         """
         if i in x[0].labels():
-            return [self.basis().keys()([z, x[1]], label=x.label())
-                    for z in self.composition_on_basis_list(x[0], y, i)]
-        elif i in x[1].labels():
-            return [self.basis().keys()([x[0], z], label=x.label())
-                    for z in self.composition_on_basis_list(x[1], y, i)]
-        return [self.basis().keys()([z, t], label=y.label())
-                for z in self.shuffle_on_basis_list(x[0], y[0])
-                for t in self.shuffle_on_basis_list(y[1], x[1])]
+            for z in self.composition_on_basis_iter(x[0], y, i):
+                yield self.basis().keys()([z, x[1]], label=x.label())
+            return
+
+        if i in x[1].labels():
+            for z in self.composition_on_basis_iter(x[1], y, i):
+                yield self.basis().keys()([x[0], z], label=x.label())
+            return
+
+        for z in self.shuffle_on_basis_iter(x[0], y[0]):
+            for t in self.shuffle_on_basis_iter(y[1], x[1]):
+                yield self.basis().keys()([z, t], label=y.label())
 
     def composition_on_basis(self, x, y, i):
         r"""
@@ -220,7 +227,7 @@ class DendriformOperad(CombinatorialFreeModule):
         if i not in x.labels():
             raise ValueError("the composition index is not present")
         return sum(self.basis()[t] for t in
-                   self.composition_on_basis_list(x, y, i))
+                   self.composition_on_basis_iter(x, y, i))
 
     def pre_Lie_product(self, x, y):
         """

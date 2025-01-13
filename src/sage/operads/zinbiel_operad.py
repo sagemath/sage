@@ -122,7 +122,7 @@ class ZinbielOperad(CombinatorialFreeModule):
         from sage.sets.family import Family
         return Family({"zinbiel_product": self._from_key([1, 2])})
 
-    def composition_on_basis_list(self, x, y, i):
+    def composition_on_basis_iter(self, x, y, i):
         r"""
         Return the composition of two words `x o_i y` as a list of
         words.
@@ -133,21 +133,24 @@ class ZinbielOperad(CombinatorialFreeModule):
 
             sage: A = ZinbielOperad(QQ)
             sage: W = A.basis().keys()
-            sage: list(A.composition_on_basis_list(W("abc"), W("de"), "a"))
+            sage: list(A.composition_on_basis_iter(W("abc"), W("de"), "a"))
             [word: dbce, word: dbec, word: debc]
 
         TESTS::
 
-            sage: A.composition_on_basis_list(W("abc"), W("de"), "f")
+            sage: next(A.composition_on_basis_iter(W("abc"), W("de"), "f"))
             Traceback (most recent call last):
             ...
             ValueError: the composition index is not present
         """
         if i not in x:
             raise ValueError("the composition index is not present")
-        elif x[0] == i:
-            return (y[:1] + u for u in ShuffleProduct_w1w2(x[1:], y[1:]))
-        return (x[:1] + u for u in self.composition_on_basis_list(x[1:], y, i))
+        if x[0] == i:
+            for u in ShuffleProduct_w1w2(x[1:], y[1:]):
+                yield y[:1] + u
+            return
+        for u in self.composition_on_basis_iter(x[1:], y, i):
+            yield x[:1] + u
 
     def composition_on_basis(self, x, y, i):
         """
@@ -178,4 +181,4 @@ class ZinbielOperad(CombinatorialFreeModule):
         if i not in x:
             raise ValueError("the composition index is not present")
         return self.sum_of_monomials(t for t in
-                                     self.composition_on_basis_list(x, y, i))
+                                     self.composition_on_basis_iter(x, y, i))
