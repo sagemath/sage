@@ -504,7 +504,7 @@ class QuotientRing_nc(Parent):
         # However, we don't just want to use the given category without mixing in
         # some quotient stuff - unless Parent.__init__ was called
         # previously, in which case the quotient ring stuff is just
-        # a vaste of time. This is the case for FiniteField_prime_modn.
+        # a waste of time. This is the case for FiniteField_prime_modn.
         if not self._is_category_initialized():
             if category is None:
                 try:
