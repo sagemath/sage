@@ -826,7 +826,11 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             sage: GraphTheory.reset()
             sage: GraphTheory.blowup_construction(3, 2, edges=[[0, 1], [1, 1]], symbolic=True)
             ...
-            Flag Algebra Element over
+            Flag Algebra Element over Multivariate Polynomial Ring in X0, X1 over Rational Field
+            X0^3             - Flag on 3 points, ftype from () with edges=()
+            0                - Flag on 3 points, ftype from () with edges=(01)
+            3*X0^2*X1        - Flag on 3 points, ftype from () with edges=(01 02)
+            3*X0*X1^2 + X1^3 - Flag on 3 points, ftype from () with edges=(01 02 12)
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(QQ, pattern_size, "X")
@@ -881,8 +885,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                     blocks[rel] = bladd
                 res += self(target_size, **blocks).afae() * coeff
         return res
-    
-    #TODO tests up to here
 
     def _adjust_table_phi(self, table_constructor, phi_vectors_exact, test=False, ring=QQ):
         r"""
@@ -1888,14 +1890,14 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
             
             sage: len(GraphTheory.generate_flags(3))
-            3
+            4
         
         There are 6 graph flags with one vertex ftype. The
         "cherry" ([[0, 1], [0, 2]]) and the complement can be 
         marked two different ways to a flag
         
             sage: len(GraphTheory.generate_flags(3, GraphTheory(1, ftype_points=[0])))
-            5
+            6
         
         .. NOTE::
 
@@ -2505,10 +2507,12 @@ class FlagAlgebraElement(Element):
             1 - Flag on 3 points, ftype from () with edges=()
             0 - Flag on 3 points, ftype from () with edges=(01)
             0 - Flag on 3 points, ftype from () with edges=(01 02)
+            0 - Flag on 3 points, ftype from () with edges=(01 02 12)
             sage: g.afae().flags()
             (Flag on 3 points, ftype from () with edges=(),
              Flag on 3 points, ftype from () with edges=(01),
-             Flag on 3 points, ftype from () with edges=(01 02))
+             Flag on 3 points, ftype from () with edges=(01 02),
+             Flag on 3 points, ftype from () with edges=(01 02 12))
 
         .. NOTE::
 
@@ -2546,7 +2550,7 @@ class FlagAlgebraElement(Element):
             
             sage: g = GraphTheory(3)
             sage: g.afae().values()
-            (1, 0, 0)
+            (1, 0, 0, 0)
 
         .. SEEALSO::
 
@@ -2571,7 +2575,7 @@ class FlagAlgebraElement(Element):
             
             sage: g = GraphTheory(3)
             sage: g.afae()._vector_(QQ['x'])
-            (1, 0, 0)
+            (1, 0, 0, 0)
 
         .. SEEALSO::
 
@@ -2589,7 +2593,7 @@ class FlagAlgebraElement(Element):
 
             sage: g = GraphTheory(3)
             sage: len(g.afae())
-            3
+            4
 
         .. SEEALSO::
 
@@ -2615,6 +2619,7 @@ class FlagAlgebraElement(Element):
             (1, Flag on 3 points, ftype from () with edges=())
             (0, Flag on 3 points, ftype from () with edges=(01))
             (0, Flag on 3 points, ftype from () with edges=(01 02))
+            (0, Flag on 3 points, ftype from () with edges=(01 02 12))
 
 
         .. SEEALSO::
@@ -2647,6 +2652,7 @@ class FlagAlgebraElement(Element):
             1 - Flag on 3 points, ftype from () with edges=()
             0 - Flag on 3 points, ftype from () with edges=(01)
             0 - Flag on 3 points, ftype from () with edges=(01 02)
+            0 - Flag on 3 points, ftype from () with edges=(01 02 12)
             
         Long list, only the nonzero entries are displayed::
         
@@ -2735,6 +2741,7 @@ class FlagAlgebraElement(Element):
             2   - Flag on 3 points, ftype from () with edges=()
             2/3 - Flag on 3 points, ftype from () with edges=(01)
             1/3 - Flag on 3 points, ftype from () with edges=(01 02)
+            0   - Flag on 3 points, ftype from () with edges=(01 02 12)
 
         .. NOTE::
 
@@ -2766,6 +2773,7 @@ class FlagAlgebraElement(Element):
             0   - Flag on 3 points, ftype from () with edges=()
             2/3 - Flag on 3 points, ftype from () with edges=(01)
             1/3 - Flag on 3 points, ftype from () with edges=(01 02)
+            0   - Flag on 3 points, ftype from () with edges=(01 02 12)
 
         .. SEEALSO::
 
@@ -2806,6 +2814,7 @@ class FlagAlgebraElement(Element):
             1 - Flag on 3 points, ftype from (2,) with edges=(01)
             0 - Flag on 3 points, ftype from (0,) with edges=(01 02)
             0 - Flag on 3 points, ftype from (1,) with edges=(01 02)
+            0 - Flag on 3 points, ftype from (0,) with edges=(01 02 12)
             
         Can also multiply with constants:
             
@@ -2883,7 +2892,7 @@ class FlagAlgebraElement(Element):
             
             sage: edge = GraphTheory(2, edges=[[0, 1]])
             sage: (edge.afae()<<1).values()
-            (0, 1/3, 2/3)
+            (0, 1/3, 2/3, 1)
 
         .. NOTE::
             
@@ -2941,7 +2950,7 @@ class FlagAlgebraElement(Element):
             
             sage: p_cherry = GraphTheory(3, edges=[[0, 1], [0, 2]], ftype_points=[0])
             sage: p_cherry.afae().project().values()
-            (0, 0, 1/3)
+            (0, 0, 1/3, 0)
 
         .. NOTE::
             
@@ -2975,7 +2984,7 @@ class FlagAlgebraElement(Element):
             
             sage: felem = GraphTheory(2, edges=[[0, 1]], ftype_points=[0]).afae()
             sage: felem.mul_project(felem).values()
-            (0, 0, 1/3)
+            (0, 0, 1/3, 1)
 
         .. NOTE::
             
