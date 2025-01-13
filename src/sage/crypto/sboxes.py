@@ -404,7 +404,8 @@ def monomial_function(n, e):
 
 def chi(n):
     r"""
-    Return the `\chi` function defined over `\GF{2^n}` used in the nonlinear layer of Keccak and Xoodyak.
+    Return the `\chi` function defined over `\GF{2^n}` used in the nonlinear
+    layer of Keccak and Xoodyak.
 
     INPUT:
 
@@ -420,7 +421,8 @@ def chi(n):
         sage: chi(4).is_permutation()
         False
         sage: chi(5)
-        (0, 9, 18, 11, 5, 12, 22, 15, 10, 3, 24, 1, 13, 4, 30, 7, 20, 21, 6, 23, 17, 16, 2, 19, 26, 27, 8, 25, 29, 28, 14, 31)
+        (0, 9, 18, 11, 5, 12, 22, 15, 10, 3, 24, 1, 13, 4, 30, 7, 20, 21, 6,
+        23, 17, 16, 2, 19, 26, 27, 8, 25, 29, 28, 14, 31)
     """
     table = [0]*(1 << n)
 
