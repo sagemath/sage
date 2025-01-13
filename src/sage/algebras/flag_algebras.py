@@ -12,65 +12,6 @@ To find out more about flags, how to create and manipulate them,
 see :mod:`sage.algebras.flag`. This docstring is for combinatorial
 theories and combinatorial optimization problems using flag algebras.
 
-The examples will use ::
-
-    sage: from sage.algebras.flag_algebras import *
-
-To create a `CombinatorialTheory` object we need to first know the signature.
-For example graphs have one relational symbol for the edges, of arity 2.
-We could provide for example `edges=2` as a parameter to the constructor, 
-showing this fact.
-
-In addition we need two important functions:
-
-A generator function, showing the program how to generate elements of 
-the theory for a fixed size. For example, to graphs with ordered vertices (
-or equivalently 0-1 symmetric matrices with 0 diagonal) can be generated
-with the following code ::
-    
-    sage: def test_generator_ov_graph(n):
-    ....:    full = list(itertools.combinations(range(n), int(2)))
-    ....:    for ii in range(binomial(n, 2)+1):
-    ....:        for xx in itertools.combinations(full, int(ii)):
-    ....:            yield {'edges': xx}
-    
-
-This function takes `n` integer as input and returns the possible
-ways one can construct such graphs with ordered vertices. Note
-the elements returned are dictionaries. The key is `'edges'` and
-the value is the actual list of edges. `'edges'` key is important to
-match the one defined in the signature.
-
-The second important function is the identifier function. This takes
-as input an element of the theory, with some of the points marked,
-and returns something that uniquely identifies this element, up to
-automorphism. The automorphisms must respect the marked points. For
-ordered vertex graphs, since there is no automorphism of the vertices
-giving the exact same order this is easy, we can just return the edges
-sorted with the marked points and the total number of points. ::
-    
-    sage: def test_identify_ov_graph(n, ftype_points, edges):
-    ....:    return (n, tuple(ftype_points), \
-    ....:    tuple(sorted(list(edges))))
-    ....: 
-
-For theories where members can have more automorphisms, this might be
-harder. Then to create the theory, provide a name, the two functions and
-the signature ::
-
-    sage: TestOVGraphTheory = CombinatorialTheory('TestOVGraph', \
-    ....: test_generator_ov_graph, test_identify_ov_graph, edges=2)
-
-The following common theories are already implemented:
--GraphTheory
--ThreeGraphTheory
--DiGraphTheory
--TournamentTheory
--PermutationTheory
--OVGraphTheory (graphs with ordered vertices)
--OEGraphTheory (graphs with ordered edges)
--RamseyGraphTheory (see [LiPf2021]_ for explanation)
-
 The rest of this docstring will use `GraphTheory` since the number 
 of structures is realtively small there. `Flag` docstring shows
 ways to create and calculate with flags. To create a flag we need to
@@ -94,26 +35,27 @@ excluding a triangle will make GraphTheory not generate `k3`, or any larger
 flag with induced `k3` in it. We can check this by generating flags of size
 `4` ::
 
-    sage: GraphTheory.generate_flags(4)
-    (Flag on 4 points, ftype from [] with edges=[],
-     Flag on 4 points, ftype from [] with edges=[[0, 3]],
-     Flag on 4 points, ftype from [] with edges=[[0, 3], [1, 3]],
-     Flag on 4 points, ftype from [] with edges=[[0, 3], [1, 3], [2, 3]],
-     Flag on 4 points, ftype from [] with edges=[[0, 2], [1, 3]],
-     Flag on 4 points, ftype from [] with edges=[[0, 2], [0, 3], [1, 3]],
-     Flag on 4 points, ftype from [] with edges=[[0, 2], [0, 3], [1, 2], [1, 3]])
+    sage: GraphTheory.generate(4)
+    (Flag on 4 points, ftype from () with edges=(),
+     Flag on 4 points, ftype from () with edges=(01),
+     Flag on 4 points, ftype from () with edges=(01 03),
+     Flag on 4 points, ftype from () with edges=(02 13),
+     Flag on 4 points, ftype from () with edges=(01 02 03),
+     Flag on 4 points, ftype from () with edges=(01 02 13),
+     Flag on 4 points, ftype from () with edges=(02 03 12 13))
 
-Excluding structures overwrites the previously excluded structures. Calling 
-`exclude` without any arguments excludes nothing, giving back the original
-theory.
+Calling :func:`exclude` adds new structures to the list of flags we don't want
+to generate, and we don't want to appear in larger strctures as an induced
+subflag. To reset the theory and don't exclude anything, call :func:`reset`.
 
 To optimize the density of a flag (or linear combination of flags) in a theory,
-we can call :func:`optimize_problem`. To try to find the maximum number of 
+we can call :func:`optimize`. To try to find the maximum number of 
 edges `e` in `k3` free graphs we can write ::
     
-    sage: x = GraphTheory.optimize_problem(e, 3)
+    sage: x = GraphTheory.optimize(e, 3)
     ...
-    Optimal solution found.
+    Success: SDP solved
+    ...
     sage: abs(x-0.5)<1e-6
     True
     
@@ -121,17 +63,18 @@ The second parameter, `optimize_problem(e, 3)` indicates the maximum size the
 program expands the flags. We can reset the excluded graphs, and try to minimize 
 the density of triangles and empty triples ::
     
-    sage: GraphTheory.exclude()
+    sage: GraphTheory.reset()
     sage: e3 = GraphTheory(3)
-    sage: x = GraphTheory.optimize_problem(e3+k3, 3, maximize=False)
+    sage: x = GraphTheory.optimize(e3+k3, 3, maximize=False)
     ...
     sage: abs(x-0.25)<1e-6
     True
 
-The `solve_problem` function requires csdpy, an sdp solver. But it is possible
+The :func:`optimize` function requires csdpy, an sdp solver. But it is possible
 to get these relations directly, by expressing the inequalities 
 as a sum of squares ::
 
+    sage: GraphTheory.reset()
     sage: GraphTheory.exclude(k3)
     sage: pe = GraphTheory(2, ftype=[0]) - 1/2
     sage: 1/2 >= pe.mul_project(pe) * 2 + e
@@ -187,7 +130,7 @@ These values come from [Bod2023]_::
 
 AUTHORS:
 
-- Levente Bodnar (Dec 2023): Initial version
+- Levente Bodnar (2023-2025): Main development
 
 """
 
@@ -414,7 +357,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         - ``relation_name`` -- string; name of the relation
         - ``arity`` -- integer; arity of the relation
         - ``is_ordered`` -- boolean; if the values are ordered
-        - ``from_data`` -- list; only used internally
+        - ``_from_data`` -- list; only used internally
 
         OUTPUT: A CombinatorialTheory object
         """
@@ -464,16 +407,35 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: from sage.algebras.flag_algebras import *
             sage: print(GraphTheory)
             Theory for Graph
         """
         return 'Theory for {}'.format(self._name)
 
     def signature(self):
+        r"""
+        Returns the signature data for this theory
+
+        OUTPUT: A dictionary containing the signature data
+
+        EXAMPLES::
+
+            sage: GraphTheory.signature()
+            {'edges': {'arity': 2, 'group': 0, 'ordered': False}}
+        """
         return self._signature
 
     def symmetries(self):
+        r"""
+        Returns the symmetry data for this theory
+
+        OUTPUT: A tuple containing the signature data
+
+        EXAMPLES::
+
+            sage: GraphTheory.symmetries()
+            ((1, 1, ()),)
+        """
         return self._symmetries
 
     #Parent methods
@@ -496,21 +458,13 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         Create an empty graph on 3 vertices ::
 
-            sage: from sage.algebras.flag_algebras import *
             sage: GraphTheory(3)
-            Flag on 3 points, ftype from [] with edges=[]
+            Flag on 3 points, ftype from () with edges=()
         
         Create an edge with one point marked as an ftype ::
         
             sage: GraphTheory(2, ftype_points=[0], edges=[[0, 1]])
-            Flag on 2 points, ftype from [0] with edges=[[0, 1]]
-            
-        Create a RamseyGraphTheory flag, a fully colored
-        triangle (useful for calculating R(K_3), see 
-        :func:`solve_problem`) ::
-            
-            sage: RamseyGraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]])
-            Flag on 3 points, ftype from [] with edges=[[0, 1], [0, 2], [1, 2]], edges_marked=[]
+            Flag on 2 points, ftype from (0,) with edges=(01)
 
         .. NOTE::
 
@@ -572,12 +526,11 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: from sage.algebras.flag_algebras import *
             sage: GraphTheory.empty_element()
-            Ftype on 0 points with edges=[]
+            Ftype on 0 points with edges=()
 
         .. NOTE::
-
+            This has an alias called :func:`empty`
             Since the underlying vertex set (empty set)
             is the same as the ftype point set, this is
             an ftype
@@ -594,6 +547,36 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     empty = empty_element
     
     def pattern(self, n, **kwds):
+        r"""
+        Construct patterns for this theory
+
+        INPUT:
+
+        - ``n`` -- the size of the flag
+        - ``**kwds`` -- can contain ftype_points, listing
+            the points that will form part of the ftype;
+            and can contain the blocks for each signature.
+            If they are not included, they are assumed to 
+            be empty lists. Can also contain missing relations
+            for each signature entry.
+
+        OUTPUT: A Pattern with the given parameters
+
+        EXAMPLES::
+
+        Create a pattern on 3 vertices with one edge required
+        and one edge missing ::
+
+            sage: GraphTheory(3, edges=[[0, 1]], edges_m=[[1, 2]])
+            Flag on 3 points, ftype from () with edges=(01)
+
+        .. NOTE::
+            Also has alias :func:`P`, :func:`p`, :func:`Pattern`
+
+        .. SEEALSO::
+
+            :func:`__init__` of :class:`Pattern`
+        """
         ftype_points = tuple()
         if 'ftype_points' in kwds:
             try:
@@ -659,6 +642,11 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             if not provided then returns an element with empty ftype
 
         OUTPUT: A Flag with matching parameters
+
+        EXAMPLES::
+
+            sage: GraphTheory._an_element_()
+            Ftype on 0 points with edges=()
         """
         if ftype==None:
             ftype = self.empty_element()
@@ -670,18 +658,34 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     def some_elements(self):
         r"""
         Returns a list of elements
+
+        EXAMPLES::
+
+            sage: GraphTheory.some_elements()
+            [Ftype on 0 points with edges=()]
         """
         res = [self._an_element_()]
         return res
 
     #Persistend data management
     def _calcs_dir(self):
+        r"""
+        Returns the path where the calculations are stored.
+
+        EXAMPLES::
+
+            sage: GraphTheory._calcs_dir()
+            '/home/bodnalev/.sage/calcs'
+        """
         calcs_dir = os.path.join(os.getenv('HOME'), '.sage', 'calcs')
         if not os.path.exists(calcs_dir):
             os.makedirs(calcs_dir)
         return calcs_dir
 
     def _save(self, data, key=None, path=None, name=None):
+        r"""
+        Saves a calculation to persistent memory.
+        """
         if name==None:
             if key==None:
                 raise ValueError("Either the key or the name must be provided!")
@@ -704,6 +708,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             pickle.dump(save_object, file)
 
     def _load(self, key=None, path=None, name=None):
+        r"""
+        Tries to load a calculation from persistent memory.
+        """
         if key!=None:
             serialized_key = pickle.dumps((self, key))
             hashed_key = hashlib.sha256(serialized_key).hexdigest()
@@ -732,6 +739,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return save_object['data']
 
     def show_files(self):
+        r"""
+        Shows the persistent files saved from this theory.
+        """
         for xx in os.listdir(self._calcs_dir()):
             if xx.startswith(self._name + "."):
                 file_path = os.path.join(self._calcs_dir(), xx)
@@ -741,17 +751,28 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                     print(data["key"][:2])
 
     def clear(self):
+        r"""
+        Clears all calculation from the persistent memory.
+        """
         for xx in os.listdir(self._calcs_dir()):
             if xx.startswith(self._name + "."):
                 file_path = os.path.join(self._calcs_dir(), xx)
                 os.remove(file_path)
-    
-    def _certs_dir(self):
-        if os.path.isdir("../certs"):
-            return "../certs/"
-        return "certs/"
 
     def _serialize(self, excluded=None):
+        r"""
+        Serializes this theory. Note this contains information about 
+        the structures excluded from this theory.
+
+        EXAMPLES::
+
+            sage: GraphTheory._serialize()
+            {'excluded': ((3, (), ((0, 1), (0, 2), (1, 2))),),
+             'name': 'Graph',
+             'signature': {'edges': {'arity': 2, 'group': 0, 'ordered': False}},
+             'sources': None,
+             'symmetries': ((1, 1, ()),)}
+        """
         if excluded==None:
             excluded = self.get_total_excluded(100000)
         else:
@@ -792,6 +813,29 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         OUTPUT: A FlagAlgebraElement with values corresponding to the one resulting from a
             blowup construction
+        
+        EXAMPLES::
+
+            sage: GraphTheory.blowup_construction(3, 2, edges=[[0, 1]])
+            
+            0%|          | 0/4 [00:00<?, ?it/s]
+            100%|██████████| 4/4 [00:00<00:00, 2521.37it/s]
+            Flag Algebra Element over Rational Field
+            1/4 - Flag on 3 points, ftype from () with edges=()
+            0   - Flag on 3 points, ftype from () with edges=(01)
+            3/4 - Flag on 3 points, ftype from () with edges=(01 02)
+                
+              0%|          | 0/4 [00:00<?, ?it/s]
+            100%|██████████| 4/4 [00:00<00:00, 2721.81it/s]
+                Flag Algebra Element over Rational Field
+                1/4 - Flag on 3 points, ftype from () with edges=()
+                0   - Flag on 3 points, ftype from () with edges=(01)
+                3/4 - Flag on 3 points, ftype from () with edges=(01 02)
+
+            sage: GraphTheory.blowup_construction(3, 2, edges=[[0, 1], [1, 1]], symbolic=True)
+            Traceback (most recent call last):
+            ...
+            Flag Algebra with Ftype on 0 points with edges=() over Rational Field
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(QQ, pattern_size, "X")
@@ -847,6 +891,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 res += self(target_size, **blocks).afae() * coeff
         return res
     
+    #TODO tests up to here
+
     def _adjust_table_phi(self, table_constructor, phi_vectors_exact, test=False, ring=QQ):
         r"""
         Helper to modify a table constructor, incorporating extra data from
@@ -1849,19 +1895,20 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         There are 4 graphs on 3 vertices. Flags with empty
         ftype correspond to elements of the theory ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: len(GraphTheory.generate_flags(3))
-            4
+            3
         
         There are 6 graph flags with one vertex ftype. The
         "cherry" ([[0, 1], [0, 2]]) and the complement can be 
         marked two different ways to a flag
         
             sage: len(GraphTheory.generate_flags(3, GraphTheory(1, ftype_points=[0])))
-            6
+            5
         
         .. NOTE::
 
+            :func:`generate` is an alias for this.
             See the notes on :func:`optimize_problem`. A large `n` can
             result in large number of structures.
         """
@@ -2062,14 +2109,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         TESTS::
 
-            sage: from sage.algebras.flag_algebras import *
             sage: table = GraphTheory.mul_project_table(2, 2, GraphTheory(1, ftype_points=[0]), [])
             sage: table[1][0, 0]
             1/3
-            
-            sage: table = RamseyGraphTheory.mul_project_table(3, 3, RamseyGraphTheory(2, ftype_points=[0, 1]), [])
-            sage: table[3][1, 1]
-            1/6
         """
 
         #Sanity checks
@@ -2419,10 +2461,10 @@ class FlagAlgebraElement(Element):
         The ftype of a :class:`Flag` is the same as the ftype of the 
         :class:`FlagAlgebraElement` we can construct from it ::
         
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: g = GraphTheory(3)
             sage: g.ftype()
-            Ftype on 0 points with edges=[]
+            Ftype on 0 points with edges=()
             sage: g.ftype()==g.afae().ftype()
             True
         
@@ -2441,8 +2483,8 @@ class FlagAlgebraElement(Element):
 
         TESTS::
 
-            sage: from sage.algebras.flag_algebras import *
-            sage: FG = FlagAlgebra(QQ, GraphTheory)
+            
+            sage: FG = FlagAlgebra(GraphTheory, QQ)
             sage: FGElem = FG._an_element_()
             sage: FGElem.size() == FGElem.flags()[0].size()
             True
@@ -2465,19 +2507,17 @@ class FlagAlgebraElement(Element):
 
         3 vertex graphs with empty ftype ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: g = GraphTheory(3)
             sage: g.afae()
             Flag Algebra Element over Rational Field
-            1 - Flag on 3 points, ftype from [] with edges=[]
-            0 - Flag on 3 points, ftype from [] with edges=[[0, 2]]
-            0 - Flag on 3 points, ftype from [] with edges=[[0, 2], [1, 2]]
-            0 - Flag on 3 points, ftype from [] with edges=[[0, 1], [0, 2], [1, 2]]
+            1 - Flag on 3 points, ftype from () with edges=()
+            0 - Flag on 3 points, ftype from () with edges=(01)
+            0 - Flag on 3 points, ftype from () with edges=(01 02)
             sage: g.afae().flags()
-            (Flag on 3 points, ftype from [] with edges=[],
-             Flag on 3 points, ftype from [] with edges=[[0, 2]],
-             Flag on 3 points, ftype from [] with edges=[[0, 2], [1, 2]],
-             Flag on 3 points, ftype from [] with edges=[[0, 1], [0, 2], [1, 2]])
+            (Flag on 3 points, ftype from () with edges=(),
+             Flag on 3 points, ftype from () with edges=(01),
+             Flag on 3 points, ftype from () with edges=(01 02))
 
         .. NOTE::
 
@@ -2494,7 +2534,7 @@ class FlagAlgebraElement(Element):
 
         TESTS::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: g.afae().flags() == g.theory().generate_flags(g.size(), g.ftype())
             True
         """
@@ -2512,10 +2552,10 @@ class FlagAlgebraElement(Element):
         A flag transformed to a flag algebra element has 
         all zeroes except one entry, itself ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: g = GraphTheory(3)
             sage: g.afae().values()
-            (1, 0, 0, 0)
+            (1, 0, 0)
 
         .. SEEALSO::
 
@@ -2537,10 +2577,10 @@ class FlagAlgebraElement(Element):
         A flag transformed to a flag algebra element has 
         all zeroes except one entry, itself ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: g = GraphTheory(3)
             sage: g.afae()._vector_(QQ['x'])
-            (1, 0, 0, 0)
+            (1, 0, 0)
 
         .. SEEALSO::
 
@@ -2556,10 +2596,9 @@ class FlagAlgebraElement(Element):
 
         EXAMPLES::
 
-            sage: from sage.algebras.flag_algebras import *
             sage: g = GraphTheory(3)
             sage: len(g.afae())
-            4
+            3
 
         .. SEEALSO::
 
@@ -2579,14 +2618,12 @@ class FlagAlgebraElement(Element):
 
         EXAMPLES::
 
-            sage: from sage.algebras.flag_algebras import *
             sage: g = GraphTheory(3)
             sage: for x in g.afae():
             ....:   print(x)
-            (1, Flag on 3 points, ftype from [] with edges=[])
-            (0, Flag on 3 points, ftype from [] with edges=[[0, 2]])
-            (0, Flag on 3 points, ftype from [] with edges=[[0, 2], [1, 2]])
-            (0, Flag on 3 points, ftype from [] with edges=[[0, 1], [0, 2], [1, 2]])
+            (1, Flag on 3 points, ftype from () with edges=())
+            (0, Flag on 3 points, ftype from () with edges=(01))
+            (0, Flag on 3 points, ftype from () with edges=(01 02))
 
 
         .. SEEALSO::
@@ -2612,27 +2649,22 @@ class FlagAlgebraElement(Element):
 
         Short list, so display all ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: gf = GraphTheory(3).afae()
             sage: gf
             Flag Algebra Element over Rational Field
-            1 - Flag on 3 points, ftype from [] with edges=[]
-            0 - Flag on 3 points, ftype from [] with edges=[[0, 2]]
-            0 - Flag on 3 points, ftype from [] with edges=[[0, 2], [1, 2]]
-            0 - Flag on 3 points, ftype from [] with edges=[[0, 1], [0, 2], [1, 2]]
+            1 - Flag on 3 points, ftype from () with edges=()
+            0 - Flag on 3 points, ftype from () with edges=(01)
+            0 - Flag on 3 points, ftype from () with edges=(01 02)
             
-        Long list, only the nonzero entries are displayed 
-        (for some reason this is failing the doctest, but should show 
-        `Flag Algebra Element over Rational Field
-        1 - Flag on 5 points, ftype from [] with edges=[]
-        1 - Flag on 5 points, ftype from [] with edges=[[0, 3], [1, 4]]
-        
-        ` I can't figure out why)::
+        Long list, only the nonzero entries are displayed::
         
             sage: g1 = GraphTheory(5)
             sage: g2 = GraphTheory(5, edges=[[0, 1], [3, 4]])
             sage: g1+g2
-            ...
+            Flag Algebra Element over Rational Field
+            1 - Flag on 5 points, ftype from () with edges=()
+            1 - Flag on 5 points, ftype from () with edges=(02 14)
             
         .. SEEALSO::
 
@@ -2704,15 +2736,14 @@ class FlagAlgebraElement(Element):
 
         The smaller size is shifted to match the larger ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: g = GraphTheory(3).afae()
             sage: e = GraphTheory(2).afae()
             sage: e+g
             Flag Algebra Element over Rational Field
-            2   - Flag on 3 points, ftype from [] with edges=[]
-            2/3 - Flag on 3 points, ftype from [] with edges=[[0, 2]]
-            1/3 - Flag on 3 points, ftype from [] with edges=[[0, 2], [1, 2]]
-            0   - Flag on 3 points, ftype from [] with edges=[[0, 1], [0, 2], [1, 2]]
+            2   - Flag on 3 points, ftype from () with edges=()
+            2/3 - Flag on 3 points, ftype from () with edges=(01)
+            1/3 - Flag on 3 points, ftype from () with edges=(01 02)
 
         .. NOTE::
 
@@ -2736,15 +2767,14 @@ class FlagAlgebraElement(Element):
 
         This also shifts the smaller flag to match the larger ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: g = GraphTheory(3).afae()
             sage: e = GraphTheory(2).afae()
             sage: e-g
             Flag Algebra Element over Rational Field
-            0   - Flag on 3 points, ftype from [] with edges=[]
-            2/3 - Flag on 3 points, ftype from [] with edges=[[0, 2]]
-            1/3 - Flag on 3 points, ftype from [] with edges=[[0, 2], [1, 2]]
-            0   - Flag on 3 points, ftype from [] with edges=[[0, 1], [0, 2], [1, 2]]
+            0   - Flag on 3 points, ftype from () with edges=()
+            2/3 - Flag on 3 points, ftype from () with edges=(01)
+            1/3 - Flag on 3 points, ftype from () with edges=(01 02)
 
         .. SEEALSO::
 
@@ -2770,7 +2800,7 @@ class FlagAlgebraElement(Element):
 
         Two empty edges multiplied together has size 4 ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: e = GraphTheory(2).afae()
             sage: (e*e).size()
             4
@@ -2780,19 +2810,18 @@ class FlagAlgebraElement(Element):
             sage: pe = GraphTheory(2, ftype=[0])
             sage: pe*pe
             Flag Algebra Element over Rational Field
-            1 - Flag on 3 points, ftype from [0] with edges=[]
-            0 - Flag on 3 points, ftype from [0] with edges=[[0, 2]]
-            1 - Flag on 3 points, ftype from [1] with edges=[[0, 2]]
-            0 - Flag on 3 points, ftype from [0] with edges=[[0, 2], [1, 2]]
-            0 - Flag on 3 points, ftype from [2] with edges=[[0, 2], [1, 2]]
-            0 - Flag on 3 points, ftype from [0] with edges=[[0, 1], [0, 2], [1, 2]]
+            1 - Flag on 3 points, ftype from (0,) with edges=()
+            0 - Flag on 3 points, ftype from (0,) with edges=(01)
+            1 - Flag on 3 points, ftype from (2,) with edges=(01)
+            0 - Flag on 3 points, ftype from (0,) with edges=(01 02)
+            0 - Flag on 3 points, ftype from (1,) with edges=(01 02)
             
         Can also multiply with constants:
             
             sage: pe*3
             Flag Algebra Element over Rational Field
-            3 - Flag on 2 points, ftype from [0] with edges=[]
-            0 - Flag on 2 points, ftype from [0] with edges=[[0, 1]]
+            3 - Flag on 2 points, ftype from (0,) with edges=()
+            0 - Flag on 2 points, ftype from (0,) with edges=(01)
         
         .. NOTE::
             
@@ -2829,14 +2858,14 @@ class FlagAlgebraElement(Element):
 
         If 1 can be divided by that, then the division is allowed ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: var('x')
             x
             sage: g = GraphTheory(2)
             sage: g.afae()/x
             Flag Algebra Element over Symbolic Ring
-            1/x - Flag on 2 points, ftype from [] with edges=[]
-            0   - Flag on 2 points, ftype from [] with edges=[[0, 1]]
+            1/x - Flag on 2 points, ftype from () with edges=()
+            0   - Flag on 2 points, ftype from () with edges=(01)
         
         .. NOTE::
             
@@ -2860,10 +2889,10 @@ class FlagAlgebraElement(Element):
 
         Edge shifted to size `3` ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: edge = GraphTheory(2, edges=[[0, 1]])
             sage: (edge.afae()<<1).values()
-            (0, 1/3, 2/3, 1)
+            (0, 1/3, 2/3)
 
         .. NOTE::
             
@@ -2918,10 +2947,10 @@ class FlagAlgebraElement(Element):
         If the center of a cherry is flagged, then the projection has
         coefficient 1/3 ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: p_cherry = GraphTheory(3, edges=[[0, 1], [0, 2]], ftype_points=[0])
             sage: p_cherry.afae().project().values()
-            (0, 0, 1/3, 0)
+            (0, 0, 1/3)
 
         .. NOTE::
             
@@ -2952,10 +2981,10 @@ class FlagAlgebraElement(Element):
 
         Pointed edge multiplied with itself and projected ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: felem = GraphTheory(2, edges=[[0, 1]], ftype_points=[0]).afae()
             sage: felem.mul_project(felem).values()
-            (0, 0, 1/3, 1)
+            (0, 0, 1/3)
 
         .. NOTE::
             
@@ -2997,7 +3026,7 @@ class FlagAlgebraElement(Element):
 
         Density of an edge in the cherry graph is 2/3 ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: cherry = GraphTheory(3, edges=[[0, 1], [0, 2]]).afae()
             sage: edge = GraphTheory(2, edges=[[0, 1]]).afae()
             sage: cherry.density(edge)
@@ -3121,7 +3150,7 @@ class FlagAlgebraElement(Element):
 
         Trivial example `g <= 2*g` ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: g = GraphTheory(3).afae()
             sage: g <= 2*g
             True
@@ -3183,15 +3212,9 @@ class FlagAlgebra(Parent, UniqueRepresentation):
 
         Create the FlagAlgebra for GraphTheory (without any ftype) ::
 
-            sage: from sage.algebras.flag_algebras import *
             sage: GraphFlagAlgebra = FlagAlgebra(GraphTheory, QQ)
             sage: GraphFlagAlgebra
-            Flag Algebra with Ftype on 0 points with edges=[] over Rational Field
-        
-        Create the FlagAlgebra for TournamentTheory with point ftype ::
-
-            sage: FlagAlgebra(TournamentTheory, QQ, TournamentTheory(1, ftype_points=[0]))
-            Flag Algebra with Ftype on 1 points with edges=[] over Rational Field
+            Flag Algebra with Ftype on 0 points with edges=() over Rational Field
         """
         if ftype==None:
             ftype = theory.empty_element()
@@ -3259,11 +3282,11 @@ class FlagAlgebra(Parent, UniqueRepresentation):
 
         Construct from a constant ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: FA = FlagAlgebra(GraphTheory, QQ)
             sage: FA(3)
             Flag Algebra Element over Rational Field
-            3 - Ftype on 0 points with edges=[]
+            3 - Ftype on 0 points with edges=()
         
         Construct from a flag ::
         
@@ -3271,23 +3294,23 @@ class FlagAlgebra(Parent, UniqueRepresentation):
             sage: el = FA(g)
             sage: el
             Flag Algebra Element over Rational Field
-            1 - Flag on 2 points, ftype from [] with edges=[]
-            0 - Flag on 2 points, ftype from [] with edges=[[0, 1]]
+            1 - Flag on 2 points, ftype from () with edges=()
+            0 - Flag on 2 points, ftype from () with edges=(01)
             
         Construct from a FlagAlgebraElement with smaller base ::
         
             sage: FAX = FlagAlgebra(GraphTheory, QQ['x'])
             sage: FAX(el)
             Flag Algebra Element over Univariate Polynomial Ring in x over Rational Field
-            1 - Flag on 2 points, ftype from [] with edges=[]
-            0 - Flag on 2 points, ftype from [] with edges=[[0, 1]]
+            1 - Flag on 2 points, ftype from () with edges=()
+            0 - Flag on 2 points, ftype from () with edges=(01)
             
         Constructing the element directly from coefficients ::
             
             sage: FA(2, [3, 4])
             Flag Algebra Element over Rational Field
-            3 - Flag on 2 points, ftype from [] with edges=[]
-            4 - Flag on 2 points, ftype from [] with edges=[[0, 1]]
+            3 - Flag on 2 points, ftype from () with edges=()
+            4 - Flag on 2 points, ftype from () with edges=(01)
 
         .. SEEALSO::
 
@@ -3349,9 +3372,9 @@ class FlagAlgebra(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: FlagAlgebra(GraphTheory, QQ)
-            Flag Algebra with Ftype on 0 points with edges=[] over Rational Field
+            Flag Algebra with Ftype on 0 points with edges=() over Rational Field
 
         .. SEEALSO::
 
@@ -3368,10 +3391,10 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         Without specifying anything in the constructor, the ftype
         is empty ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: FA = FlagAlgebra(GraphTheory, QQ)
             sage: FA.ftype()
-            Ftype on 0 points with edges=[]
+            Ftype on 0 points with edges=()
 
         .. NOTE::
 
@@ -3394,7 +3417,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
 
         This is the same as provided in the constructor ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: FA = FlagAlgebra(GraphTheory, QQ)
             sage: FA.theory()
             Theory for Graph
@@ -3416,7 +3439,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: FA = FlagAlgebra(GraphTheory, QQ)
             sage: FA.base_ring()
             Rational Field
@@ -3435,7 +3458,7 @@ class FlagAlgebra(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: FA = FlagAlgebra(GraphTheory, QQ)
             sage: FA.characteristic()
             0
