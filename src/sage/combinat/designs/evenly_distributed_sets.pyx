@@ -172,9 +172,6 @@ cdef class EvenlyDistributedSetsBacktracker:
     # MANAGEMENT OF MEMORY
     cdef MemoryAllocator mem
 
-    def __dealloc__(self):
-        pass
-
     def __init__(self, K, k, up_to_isomorphism=True, check=False):
         r"""
         TESTS::
