@@ -2751,7 +2751,7 @@ class MatchingCoveredGraph(Graph):
 
         - If the input nonbipartite matching covered graph is a brick, a
           boolean ``True`` is returned if ``coNP_certificate`` is set to
-          ``False`` otherwise a 4-tuple ``(True, None, None, None)`` is
+          ``False``, otherwise a 4-tuple ``(True, None, None, None)`` is
           returned.
 
         - If the input nonbipartite matching covered graph is not a brick, a
@@ -2763,20 +2763,20 @@ class MatchingCoveredGraph(Graph):
 
           1. a boolean ``False``,
 
-          2. a list of list of edges each list constituting a nontrivial tight
-             cut collectively representing a laminar tight cut,
+          2. a list of lists of edges, each list constituting a nontrivial
+             tight cut collectively representing a laminar tight cut,
 
           3. a list of set of vertices of one of the shores of those respective
-             nontrivial tight cuts.
+             nontrivial tight cuts:
 
-             - In case of nontrivial barrier cuts, each of the shores is a
-               nontrivial odd component wrt a nontrivial barrier, thus the
-               returned list forms mutually exclusive collection of (odd)
-               sets.
+             #. In case of nontrivial barrier cuts, each of the shores is a
+                nontrivial odd component with respect to a nontrivial barrier,
+                thus the returned list forms mutually exclusive collection of
+                (odd) sets.
 
-             - Otherwise each of the nontrivial tight cuts is a 2-separation
-               cut, each of the shores form a subset sequence, with the `i`th
-               shore being a proper subset of the `i + 1`th shore.
+             #. Otherwise each of the nontrivial tight cuts is a 2-separation
+                cut, each of the shores form a subset sequence, with the
+                `i` th shore being a proper subset of the `i + 1` th shore.
 
           4. a string showing whether the nontrivial tight cuts are barrier
              cuts (if the string is 'nontrivial barrier cuts'), or 2-separation
