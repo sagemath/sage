@@ -825,9 +825,6 @@ cdef class BinaryCode:
             for combination from 0 <= combination < other_nwords:
                 self_words[combination+other_nwords] = self_words[combination] ^ glue_word
 
-    def __dealloc__(self):
-        pass
-
     def __reduce__(self):
         """
         Method for pickling and unpickling BinaryCodes.
