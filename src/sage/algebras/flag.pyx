@@ -593,7 +593,7 @@ cdef class Flag(Element):
             sage: from sage.algebras.flag_algebras import *
             sage: two_pointed_triangle = GraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]], ftype=[0, 1])
             sage: two_pointed_triangle.ftype_points()
-            [0, 1]
+            (0, 1)
 
         .. SEEALSO::
 
@@ -623,13 +623,13 @@ cdef class Flag(Element):
             sage: from sage.algebras.flag_algebras import *
             sage: pointed_triangle = GraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]], ftype=[0])
             sage: pointed_triangle.ftype()
-            Ftype on 1 points with edges=[]
+            Ftype on 1 points with edges=()
         
         And with two points it is ::
         
             sage: two_pointed_triangle = GraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]], ftype=[0, 1])
             sage: two_pointed_triangle.ftype()
-            Ftype on 2 points with edges=[[0, 1]]
+            Ftype on 2 points with edges=(01)
 
         .. NOTE::
 
@@ -1213,8 +1213,8 @@ cdef class Flag(Element):
             sage: g = GraphTheory(2)
             sage: g/x
             Flag Algebra Element over Symbolic Ring
-            1/x - Flag on 2 points, ftype from [] with edges=[]
-            0   - Flag on 2 points, ftype from [] with edges=[[0, 1]]
+            1/x - Flag on 2 points, ftype from () with edges=()
+            0   - Flag on 2 points, ftype from () with edges=(01)
         
         .. NOTE::
 
@@ -1769,8 +1769,8 @@ cdef class Pattern(Element):
             sage: g = GraphTheory(2)
             sage: g/x
             Flag Algebra Element over Symbolic Ring
-            1/x - Flag on 2 points, ftype from [] with edges=[]
-            0   - Flag on 2 points, ftype from [] with edges=[[0, 1]]
+            1/x - Flag on 2 points, ftype from () with edges=()
+            0   - Flag on 2 points, ftype from () with edges=(01)
         
         .. NOTE::
 
