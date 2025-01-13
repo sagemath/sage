@@ -3043,9 +3043,6 @@ cdef class BinaryCodeClassifier:
         self.v = <int *> self.mem.malloc(self.radix * 2 * sizeof(int))
         self.e = <int *> self.mem.malloc(self.radix * 2 * sizeof(int))
 
-    def __dealloc__(self):
-        pass
-
     cdef void record_automorphism(self, int *gamma, int ncols) noexcept:
         cdef int i, j
         if self.aut_gp_index + ncols > self.aut_gens_size:
