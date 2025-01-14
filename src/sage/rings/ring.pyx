@@ -23,7 +23,7 @@ The class inheritance hierarchy is:
 
     - :class:`NoetherianRing` (deprecated and essentially removed)
     - :class:`CommutativeAlgebra` (deprecated and essentially removed)
-    - :class:`IntegralDomain` (deprecated)
+    - :class:`IntegralDomain` (deprecated and essentially removed)
 
       - :class:`DedekindDomain` (deprecated and essentially removed)
       - :class:`PrincipalIdealDomain` (deprecated and essentially removed)
@@ -218,7 +218,7 @@ cdef class Ring(ParentWithGens):
         sage: CDF._repr_option('element_is_atomic')                                     # needs sage.rings.complex_double
         False
 
-    Check that categories correctly implement `is_finite` and `cardinality`::
+    Check that categories correctly implement ``is_finite`` and ``cardinality``::
 
         sage: QQ.is_finite()
         False
@@ -773,25 +773,6 @@ cdef class CommutativeRing(Ring):
         Ring.__init__(self, base_ring, names=names, normalize=normalize,
                       category=category)
 
-    def localization(self, additional_units, names=None, normalize=True, category=None):
-        """
-        Return the localization of ``self`` at the given additional units.
-
-        EXAMPLES::
-
-            sage: R.<x, y> = GF(3)[]
-            sage: R.localization((x*y, x**2 + y**2))                                    # needs sage.rings.finite_rings
-            Multivariate Polynomial Ring in x, y over Finite Field of size 3
-             localized at (y, x, x^2 + y^2)
-            sage: ~y in _                                                               # needs sage.rings.finite_rings
-            True
-        """
-        if not self.is_integral_domain():
-            raise TypeError("self must be an integral domain.")
-
-        from sage.rings.localization import Localization
-        return Localization(self, additional_units, names=names, normalize=normalize, category=category)
-
     def fraction_field(self):
         """
         Return the fraction field of ``self``.
@@ -973,105 +954,12 @@ cdef class CommutativeRing(Ring):
 
 
 cdef class IntegralDomain(CommutativeRing):
-    """
-    Generic integral domain class.
-
-    This class is deprecated. Please use the
-    :class:`sage.categories.integral_domains.IntegralDomains`
-    category instead.
-    """
     _default_category = IntegralDomains()
 
-    def __init__(self, base_ring, names=None, normalize=True, category=None):
-        """
-        Initialize ``self``.
+    def __init__(self, *args, **kwds):
+        deprecation(39227, "use the category IntegralDomains")
+        super().__init__(*args, **kwds)
 
-        INPUT:
-
-         - ``category`` -- (default: ``None``) a category, or ``None``
-
-        This method is used by all the abstract subclasses of
-        :class:`IntegralDomain`, like :class:`Field`, ... in order to
-        avoid cascade calls Field.__init__ ->
-        IntegralDomain.__init__ ->
-        ...
-
-        EXAMPLES::
-
-            sage: F = IntegralDomain(QQ)
-            sage: F.category()
-            Category of integral domains
-
-            sage: F = Field(QQ)
-            sage: F.category()
-            Category of fields
-
-        The default value for the category is specified by the class
-        attribute ``default_category``::
-
-            sage: IntegralDomain._default_category
-            Category of integral domains
-
-            sage: Field._default_category
-            Category of fields
-        """
-        CommutativeRing.__init__(self, base_ring, names=names, normalize=normalize,
-                                 category=category)
-
-    def is_integrally_closed(self):
-        r"""
-        Return ``True`` if this ring is integrally closed in its field of
-        fractions; otherwise return ``False``.
-
-        When no algorithm is implemented for this, then this
-        function raises a :exc:`NotImplementedError`.
-
-        Note that ``is_integrally_closed`` has a naive implementation
-        in fields. For every field `F`, `F` is its own field of fractions,
-        hence every element of `F` is integral over `F`.
-
-        EXAMPLES::
-
-            sage: ZZ.is_integrally_closed()
-            True
-            sage: QQ.is_integrally_closed()
-            True
-            sage: QQbar.is_integrally_closed()                                          # needs sage.rings.number_field
-            True
-            sage: GF(5).is_integrally_closed()
-            True
-            sage: Z5 = Integers(5); Z5
-            Ring of integers modulo 5
-            sage: Z5.is_integrally_closed()
-            Traceback (most recent call last):
-            ...
-            AttributeError: 'IntegerModRing_generic_with_category' object has no attribute 'is_integrally_closed'...
-        """
-        raise NotImplementedError
-
-    def is_field(self, proof=True):
-        r"""
-        Return ``True`` if this ring is a field.
-
-        EXAMPLES::
-
-            sage: GF(7).is_field()
-            True
-
-        The following examples have their own ``is_field`` implementations::
-
-            sage: ZZ.is_field(); QQ.is_field()
-            False
-            True
-            sage: R.<x> = PolynomialRing(QQ); R.is_field()
-            False
-        """
-        if self.is_finite():
-            return True
-        if proof:
-            raise NotImplementedError("unable to determine whether or not is a field.")
-        else:
-            return False
 
 cdef class NoetherianRing(CommutativeRing):
     _default_category = NoetherianRings()
@@ -1224,18 +1112,6 @@ cdef class Field(CommutativeRing):
         EXAMPLES::
 
             sage: Frac(ZZ['x,y']).is_field()
-            True
-        """
-        return True
-
-    def is_integrally_closed(self):
-        """
-        Return ``True`` since fields are trivially integrally closed in
-        their fraction field (since they are their own fraction field).
-
-        EXAMPLES::
-
-            sage: Frac(ZZ['x,y']).is_integrally_closed()
             True
         """
         return True

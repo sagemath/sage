@@ -228,20 +228,20 @@ cdef class EvenlyDistributedSetsBacktracker:
         self.m = (q - 1) // e
         self.K = K
 
-        self.diff    = <unsigned int **> check_calloc(q, sizeof(unsigned int *))
-        self.diff[0] = <unsigned int *>  check_malloc(q*q*sizeof(unsigned int))
+        self.diff = <unsigned int **> check_calloc(q, sizeof(unsigned int *))
+        self.diff[0] = <unsigned int *> check_malloc(q*q*sizeof(unsigned int))
         for i in range(1, self.q):
             self.diff[i] = self.diff[i-1] + q
 
-        self.ratio    = <unsigned int **> check_calloc(q, sizeof(unsigned int *))
-        self.ratio[0] = <unsigned int *>  check_malloc(q*q*sizeof(unsigned int))
+        self.ratio = <unsigned int **> check_calloc(q, sizeof(unsigned int *))
+        self.ratio[0] = <unsigned int *> check_malloc(q*q*sizeof(unsigned int))
         for i in range(1, self.q):
             self.ratio[i] = self.ratio[i-1] + q
 
-        self.B       = <unsigned int *> check_malloc(k*sizeof(unsigned int))
+        self.B = <unsigned int *> check_malloc(k*sizeof(unsigned int))
         self.min_orb = <unsigned int *> check_malloc(q*sizeof(unsigned int))
-        self.cosets  = <unsigned int *> check_malloc(e*sizeof(unsigned int))
-        self.t       = <unsigned int *> check_malloc(e*sizeof(unsigned int))
+        self.cosets = <unsigned int *> check_malloc(e*sizeof(unsigned int))
+        self.t = <unsigned int *> check_malloc(e*sizeof(unsigned int))
 
         x = K.multiplicative_generator()
         list_K = []
@@ -408,7 +408,7 @@ cdef class EvenlyDistributedSetsBacktracker:
         whether the set `f_{ij}(B)` is smaller than `B`.
 
         This is an internal function and should only be call by the backtracker
-        implemented in the method `__iter__`.
+        implemented in the method ``__iter__``.
 
         OUTPUT: ``False`` if ``self.B`` is not minimal
 

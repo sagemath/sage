@@ -102,7 +102,7 @@ class SplittingAlgebraElement(PolynomialQuotientRingElement):
 
         return super().is_unit()
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=True):
         r"""
         Return the dictionary of ``self`` according to its lift to the cover.
 
@@ -119,13 +119,15 @@ class SplittingAlgebraElement(PolynomialQuotientRingElement):
             sage: f.dict()
             {0: 42, 1: 1}
         """
-        return self.lift().monomial_coefficients()
+        return self.lift().monomial_coefficients(copy=copy)
 
     dict = monomial_coefficients
 
 # ------------------------------------------------------------------------------------------------------------------
 # Parent class of the splitting algebra
 # --------------------------------------------------------------------------------------------------------
+
+
 class SplittingAlgebra(PolynomialQuotientRing_domain):
     r"""
     For a given monic polynomial `p(t)` of degree `n` over a commutative

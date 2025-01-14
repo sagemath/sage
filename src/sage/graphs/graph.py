@@ -88,6 +88,8 @@ AUTHORS:
 - Jean-Florent Raymond (2019-04): is_redundant, is_dominating,
    private_neighbors
 
+- Cyril Bouvier (2024-11): is_module
+
 Graph Format
 ------------
 
@@ -5823,12 +5825,6 @@ class Graph(GenericGraph):
 
         .. NOTE::
 
-            This method sorts its output before returning it. If you prefer to
-            save the extra time, you can call
-            :class:`sage.graphs.independent_sets.IndependentSets` directly.
-
-        .. NOTE::
-
             Sage's implementation of the enumeration of *maximal* independent
             sets is not much faster than NetworkX' (expect a 2x speedup), which
             is surprising as it is written in Cython. This being said, the
@@ -7181,8 +7177,109 @@ class Graph(GenericGraph):
             return core
         return list(core.values())
 
-    @doc_index("Leftovers")
-    def modular_decomposition(self, algorithm=None, style='tuple'):
+    @doc_index("Modules")
+    def is_module(self, vertices):
+        r"""
+        Check whether ``vertices`` is a module of ``self``.
+
+        A subset `M` of the vertices of a graph is a module if for every
+        vertex `v` outside of `M`, either all vertices of `M` are neighbors of
+        `v` or all vertices of `M` are not neighbors of `v`.
+
+        INPUT:
+
+        - ``vertices`` -- iterable; a subset of vertices of ``self``
+
+        EXAMPLES:
+
+        The whole graph, the empty set and singletons are trivial modules::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.is_module([])
+            True
+            sage: G.is_module([G.random_vertex()])
+            True
+            sage: G.is_module(G)
+            True
+
+        Prime graphs only have trivial modules::
+
+            sage: G = graphs.PathGraph(5)
+            sage: G.is_prime()
+            True
+            sage: all(not G.is_module(S) for S in subsets(G)
+            ....:                       if len(S) > 1 and len(S) < G.order())
+            True
+
+        For edgeless graphs and complete graphs, all subsets are modules::
+
+            sage: G = Graph(5)
+            sage: all(G.is_module(S) for S in subsets(G))
+            True
+            sage: G = graphs.CompleteGraph(5)
+            sage: all(G.is_module(S) for S in subsets(G))
+            True
+
+        The modules of a graph and of its complements are the same::
+
+            sage: G = graphs.TuranGraph(10, 3)
+            sage: G.is_module([0,1,2])
+            True
+            sage: G.complement().is_module([0,1,2])
+            True
+            sage: G.is_module([3,4,5])
+            True
+            sage: G.complement().is_module([3,4,5])
+            True
+            sage: G.is_module([2,3,4])
+            False
+            sage: G.complement().is_module([2,3,4])
+            False
+            sage: G.is_module([3,4,5,6,7,8,9])
+            True
+            sage: G.complement().is_module([3,4,5,6,7,8,9])
+            True
+
+        Elements of ``vertices`` must be in ``self``::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.is_module(['Terry'])
+            Traceback (most recent call last):
+            ...
+            LookupError: vertex (Terry) is not a vertex of the graph
+            sage: G.is_module([1, 'Graham'])
+            Traceback (most recent call last):
+            ...
+            LookupError: vertex (Graham) is not a vertex of the graph
+        """
+        M = set(vertices)
+
+        for v in M:
+            if v not in self:
+                raise LookupError(f"vertex ({v}) is not a vertex of the graph")
+
+        if len(M) <= 1 or len(M) == self.order():
+            return True
+
+        N = None  # will contains the neighborhood of M
+        for v in M:
+            if N is None:
+                # first iteration, the neighborhood N must be computed
+                N = {u for u in self.neighbor_iterator(v) if u not in M}
+            else:
+                # check that the neighborhood of v is N
+                n = 0
+                for u in self.neighbor_iterator(v):
+                    if u not in M:
+                        n += 1
+                        if u not in N:
+                            return False  # u is a splitter
+                if n != len(N):
+                    return False
+        return True
+
+    @doc_index("Modules")
+    def modular_decomposition(self, algorithm=None, style="tuple"):
         r"""
         Return the modular decomposition of the current graph.
 
@@ -7190,10 +7287,20 @@ class Graph(GenericGraph):
         vertex outside the module is either connected to all members of the
         module or to none of them. Every graph that has a nontrivial module can
         be partitioned into modules, and the increasingly fine partitions into
-        modules form a tree. The ``modular_decomposition`` function returns
-        that tree, using an `O(n^3)` algorithm of [HM1979]_.
+        modules form a tree. The ``modular_decomposition`` method returns
+        that tree.
 
         INPUT:
+
+        - ``algorithm`` -- string (default: ``None``); the algorithm to use
+          among:
+
+          - ``None`` or ``'corneil_habib_paul_tedder'`` -- will use the
+            Corneil-Habib-Paul-Tedder algorithm from [TCHP2008]_, its complexity
+            is linear in the number of vertices and edges.
+
+          - ``'habib_maurer'`` -- will use the Habib-Maurer algorithm from
+            [HM1979]_, its complexity is cubic in the number of vertices.
 
         - ``style`` -- string (default: ``'tuple'``); specifies the output
           format:
@@ -7204,16 +7311,10 @@ class Graph(GenericGraph):
 
         OUTPUT:
 
-        A pair of two values (recursively encoding the decomposition) :
-
-        * The type of the current module :
-
-          * ``'PARALLEL'``
-          * ``'PRIME'``
-          * ``'SERIES'``
-
-        * The list of submodules (as list of pairs ``(type, list)``,
-          recursively...) or the vertex's name if the module is a singleton.
+        The modular decomposition tree, either as nested tuples (if
+        ``style='tuple'``) or as an object of
+        :class:`~sage.combinat.rooted_tree.LabelledRootedTree` (if
+        ``style='tree'``)
 
         Crash course on modular decomposition:
 
@@ -7266,7 +7367,19 @@ class Graph(GenericGraph):
         The Petersen Graph too::
 
             sage: graphs.PetersenGraph().modular_decomposition()
-            (PRIME, [1, 4, 5, 0, 2, 6, 3, 7, 8, 9])
+            (PRIME, [1, 4, 5, 0, 6, 2, 3, 9, 7, 8])
+
+        Graph from the :wikipedia:`Modular_decomposition`::
+
+            sage: G = Graph('Jv\\zoKF@wN?', format='graph6')
+            sage: G.relabel([1..11])
+            sage: G.modular_decomposition()
+            (PRIME,
+             [(SERIES, [4, (PARALLEL, [2, 3])]),
+              1,
+              5,
+              (PARALLEL, [6, 7]),
+              (SERIES, [(PARALLEL, [10, 11]), 9, 8])])
 
         This a clique on 5 vertices with 2 pendant edges, though, has a more
         interesting decomposition::
@@ -7275,14 +7388,20 @@ class Graph(GenericGraph):
             sage: g.add_edge(0,5)
             sage: g.add_edge(0,6)
             sage: g.modular_decomposition()
-            (SERIES, [(PARALLEL, [(SERIES, [1, 2, 3, 4]), 5, 6]), 0])
+            (SERIES, [(PARALLEL, [(SERIES, [3, 4, 2, 1]), 5, 6]), 0])
+
+        Turán graphs are co-graphs::
+
+            sage: graphs.TuranGraph(11, 3).modular_decomposition()
+            (SERIES,
+             [(PARALLEL, [7, 8, 9, 10]), (PARALLEL, [3, 4, 5, 6]), (PARALLEL, [0, 1, 2])])
 
         We can choose output to be a
         :class:`~sage.combinat.rooted_tree.LabelledRootedTree`::
 
             sage: g.modular_decomposition(style='tree')
             SERIES[0[], PARALLEL[5[], 6[], SERIES[1[], 2[], 3[], 4[]]]]
-            sage: ascii_art(g.modular_decomposition(style='tree'))
+            sage: ascii_art(g.modular_decomposition(algorithm="habib_maurer",style='tree'))
               __SERIES
              /      /
             0   ___PARALLEL
@@ -7293,7 +7412,9 @@ class Graph(GenericGraph):
 
         ALGORITHM:
 
-        This function uses the algorithm of M. Habib and M. Maurer [HM1979]_.
+        This function can use either the algorithm of D. Corneil, M. Habib, C.
+        Paul and M. Tedder [TCHP2008]_ or the algorithm of M. Habib and M.
+        Maurer [HM1979]_.
 
         .. SEEALSO::
 
@@ -7301,10 +7422,16 @@ class Graph(GenericGraph):
 
             - :class:`~sage.combinat.rooted_tree.LabelledRootedTree`.
 
+            - :func:`~sage.graphs.graph_decompositions.modular_decomposition.corneil_habib_paul_tedder_algorithm`
+
+            - :func:`~sage.graphs.graph_decompositions.modular_decomposition.habib_maurer_algorithm`
+
         .. NOTE::
 
-            A buggy implementation of linear time algorithm from [TCHP2008]_ was
-            removed in Sage 9.7, see :issue:`25872`.
+            A buggy implementation of the linear time algorithm from [TCHP2008]_
+            was removed in Sage 9.7, see :issue:`25872`. A new implementation
+            was reintroduced in Sage 10.6 after some corrections to the original
+            algorithm, see :issue:`39038`.
 
         TESTS:
 
@@ -7343,41 +7470,33 @@ class Graph(GenericGraph):
             sage: G2 = Graph('F@Nfg')
             sage: G1.is_isomorphic(G2)
             True
-            sage: G1.modular_decomposition()
+            sage: G1.modular_decomposition(algorithm="habib_maurer")
             (PRIME, [1, 2, 5, 6, 0, (PARALLEL, [3, 4])])
-            sage: G2.modular_decomposition()
+            sage: G2.modular_decomposition(algorithm="habib_maurer")
             (PRIME, [5, 6, 3, 4, 2, (PARALLEL, [0, 1])])
+            sage: G1.modular_decomposition(algorithm="corneil_habib_paul_tedder")
+            (PRIME, [6, 5, 1, 2, 0, (PARALLEL, [3, 4])])
+            sage: G2.modular_decomposition(algorithm="corneil_habib_paul_tedder")
+            (PRIME, [6, 5, (PARALLEL, [0, 1]), 2, 3, 4])
 
         Check that :issue:`37631` is fixed::
 
             sage: G = Graph('GxJEE?')
-            sage: G.modular_decomposition(style='tree')
+            sage: G.modular_decomposition(algorithm="habib_maurer",style='tree')
             PRIME[2[], SERIES[0[], 1[]], PARALLEL[3[], 4[]],
                   PARALLEL[5[], 6[], 7[]]]
         """
-        from sage.graphs.graph_decompositions.modular_decomposition import (NodeType,
-                                                                            habib_maurer_algorithm,
-                                                                            create_prime_node,
-                                                                            create_normal_node)
+        from sage.graphs.graph_decompositions.modular_decomposition import \
+                modular_decomposition
 
-        if algorithm is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(25872, "algorithm=... parameter is obsolete and has no effect.")
-        self._scream_if_not_simple()
-
-        if not self.order():
-            D = None
-        elif self.order() == 1:
-            D = create_normal_node(next(self.vertex_iterator()))
-        else:
-            D = habib_maurer_algorithm(self)
+        D = modular_decomposition(self, algorithm=algorithm)
 
         if style == 'tuple':
-            if D is None:
+            if D.is_empty():
                 return tuple()
 
             def relabel(x):
-                if x.node_type == NodeType.NORMAL:
+                if x.is_leaf():
                     return x.children[0]
                 return x.node_type, [relabel(y) for y in x.children]
 
@@ -7385,11 +7504,11 @@ class Graph(GenericGraph):
 
         elif style == 'tree':
             from sage.combinat.rooted_tree import LabelledRootedTree
-            if D is None:
+            if D.is_empty():
                 return LabelledRootedTree([])
 
             def to_tree(x):
-                if x.node_type == NodeType.NORMAL:
+                if x.is_leaf():
                     return LabelledRootedTree([], label=x.children[0])
                 return LabelledRootedTree([to_tree(y) for y in x.children],
                                           label=x.node_type)
@@ -7640,7 +7759,14 @@ class Graph(GenericGraph):
 
         A graph is prime if all its modules are trivial (i.e. empty, all of the
         graph or singletons) -- see :meth:`modular_decomposition`.
-        Use the `O(n^3)` algorithm of [HM1979]_.
+        This method computes the modular decomposition tree using
+        :meth:`~sage.graphs.graph.Graph.modular_decomposition`.
+
+        INPUT:
+
+        - ``algorithm`` -- string (default: ``None``); the algorithm used to
+          compute the modular decomposition tree; the value is forwarded
+          directly to :meth:`~sage.graphs.graph.Graph.modular_decomposition`.
 
         EXAMPLES:
 
@@ -7661,17 +7787,15 @@ class Graph(GenericGraph):
             sage: graphs.EmptyGraph().is_prime()
             True
         """
-        if algorithm is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(25872, "algorithm=... parameter is obsolete and has no effect.")
-        from sage.graphs.graph_decompositions.modular_decomposition import NodeType
+        from sage.graphs.graph_decompositions.modular_decomposition import \
+                modular_decomposition
 
         if self.order() <= 1:
             return True
 
-        D = self.modular_decomposition()
+        MD = modular_decomposition(self, algorithm=algorithm)
 
-        return D[0] == NodeType.PRIME and len(D[1]) == self.order()
+        return MD.is_prime() and len(MD.children) == self.order()
 
     @doc_index("Connectivity, orientations, trees")
     def gomory_hu_tree(self, algorithm=None, solver=None, verbose=0,

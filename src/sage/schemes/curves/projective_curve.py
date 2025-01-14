@@ -1805,7 +1805,6 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             ....:             + (x-18*z)*(z^2+11*x*z-x^2)^2)
             sage: G0 = C.fundamental_group()                    # needs sirocco
             sage: G.is_isomorphic(G0)                           # needs sirocco
-            #I  Forcing finiteness test
             True
             sage: C = P.curve(z)
             sage: C.fundamental_group()                         # needs sirocco
@@ -2301,7 +2300,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
                 self._open_affine_index = i
                 break
         else:
-            assert "no projective curve defined"
+            raise ValueError("no projective curve defined")
 
     def function_field(self):
         """
