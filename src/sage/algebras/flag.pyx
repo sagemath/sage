@@ -3,7 +3,7 @@ Implementation of Flag, elements of :class:`CombinatorialTheory`
 
 AUTHORS:
 
-- Levente Bodnar (Dec 2023): Initial version
+- Levente Bodnar (2023-2025): Main development
 
 """
 
@@ -554,7 +554,6 @@ cdef class Flag(Element):
 
         This is the size parameter in the `Flag` initialization ::
 
-            sage: from sage.algebras.flag_algebras import *
             sage: GraphTheory(4).size()
             4
         """
@@ -590,7 +589,7 @@ cdef class Flag(Element):
 
         EXAMPLES::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: two_pointed_triangle = GraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]], ftype=[0, 1])
             sage: two_pointed_triangle.ftype_points()
             (0, 1)
@@ -620,7 +619,7 @@ cdef class Flag(Element):
 
         Ftype of a pointed triangle is just a point ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: pointed_triangle = GraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]], ftype=[0])
             sage: pointed_triangle.ftype()
             Ftype on 1 points with edges=()
@@ -1177,7 +1176,7 @@ cdef class Flag(Element):
 
         Edge shifted to size `3` ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: edge = GraphTheory(2, edges=[[0, 1]])
             sage: (edge<<1).values()
             (0, 1/3, 2/3, 1)
@@ -1202,7 +1201,7 @@ cdef class Flag(Element):
 
         Divide by `2` ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: g = GraphTheory(3)
             sage: (g/2).values()
             (1/2, 0, 0, 0)
@@ -1284,7 +1283,7 @@ cdef class Flag(Element):
 
         Edge appears in a 4 star ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: star = GraphTheory(4, edges=[[0, 1], [0, 2], [0, 3]])
             sage: edge = GraphTheory(2, edges=[[0, 1]])
             sage: edge <= star
@@ -1363,7 +1362,7 @@ cdef class Flag(Element):
         If the center of a cherry is flagged, then the projection has
         coefficient 1/3 ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: p_cherry = GraphTheory(3, edges=[[0, 1], [0, 2]], ftype_points=[0])
             sage: p_cherry.project().values()
             (0, 0, 1/3, 0)
@@ -1395,7 +1394,7 @@ cdef class Flag(Element):
 
         Pointed edge multiplied with itself and projected ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: p_edge = GraphTheory(2, edges=[[0, 1]], ftype_points=[0])
             sage: p_edge.mul_project(p_edge).values()
             (0, 0, 1/3, 1)
@@ -1424,7 +1423,7 @@ cdef class Flag(Element):
 
         Density of an edge in the cherry graph is 2/3 ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: cherry = GraphTheory(3, edges=[[0, 1], [0, 2]])
             sage: edge = GraphTheory(2, edges=[[0, 1]])
             sage: cherry.density(edge)
@@ -1733,7 +1732,7 @@ cdef class Pattern(Element):
 
         Edge shifted to size `3` ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: edge = GraphTheory(2, edges=[[0, 1]])
             sage: (edge<<1).values()
             (0, 1/3, 2/3, 1)
@@ -1758,7 +1757,7 @@ cdef class Pattern(Element):
 
         Divide by `2` ::
 
-            sage: from sage.algebras.flag_algebras import *
+            
             sage: g = GraphTheory(3)
             sage: (g/2).values()
             (1/2, 0, 0, 0)
