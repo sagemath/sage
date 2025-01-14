@@ -49,3 +49,9 @@ latex_documents = [
   ('index', name + '.tex', project,
    'The Sage Development Team', 'manual'),
 ]
+
+# PDF output: let long decimal expansions in code-blocks wrap rather than
+# overflow beyond page margin
+latex_elements = {
+    'sphinxsetup': 'verbatimforcewraps=true',
+}

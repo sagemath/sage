@@ -50,6 +50,8 @@ latex_documents = [
    'The Sage Development Team', 'manual'),
 ]
 
-# the definition of \\at in the standard preamble of the sphinx doc
-# conflicts with that in babel/french[b]
-latex_elements['preamble'] += '\\let\\at\\undefined'
+# PDF output: let long decimal expansions in code-blocks wrap rather than
+# overflow beyond page margin
+latex_elements = {
+    'sphinxsetup': 'verbatimforcewraps=true',
+}
