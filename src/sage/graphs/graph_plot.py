@@ -753,9 +753,9 @@ class GraphPlot(SageObject):
         style_key_edges = None
         thickness_key_edges = None
         if isinstance(self._options['edge_styles'], dict):
-            style_key_edges = list(self._options['edge_styles'])[0] in self._graph.edges()
+            style_key_edges = next(iter(self._options['edge_styles'])) in self._graph.edges()
         if isinstance(self._options['edge_thicknesses'], dict):
-            thickness_key_edges = list(self._options['edge_thicknesses'])[0] in self._graph.edges()
+            thickness_key_edges = next(iter(self._options['edge_thicknesses'])) in self._graph.edges()
 
         eoptions = {}
         if 'arrowsize' in self._options:
