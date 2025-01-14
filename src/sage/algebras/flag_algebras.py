@@ -57,7 +57,8 @@ class FlagAlgebraElement(Element):
             :func:`FlagAlgebra._element_constructor_`
         """
         if len(values)!=parent.get_size(n):
-            raise ValueError('The coefficients must have the same length as the number of flags')
+            raise ValueError("The coefficients must have the same length " + 
+                             "as the number of flags")
         self._n = n
         base = parent.base()
         self._values = vector(base, values, sparse=True)
@@ -290,12 +291,16 @@ class FlagAlgebraElement(Element):
 
             :func:`Flag._repr_`
         """
-        sttrl = ['Flag Algebra Element over {}'.format(self.parent().base())]
+        sttrl = ['Flag Algebra Element over {}'.format(
+            self.parent().base()
+            )]
         strs = [str(xx) for xx in self.values()]
         maxstrlen = max([len(xx) for xx in strs])
         for ii, fl in enumerate(self.parent().generate(self.size())):
             if len(self)<10:
-                sttrl.append(('{:<'+str(maxstrlen)+'} - {}').format(strs[ii], str(fl)))
+                sttrl.append(('{:<'+str(maxstrlen)+'} - {}').format(
+                    strs[ii], str(fl)
+                    ))
             else:
                 include = True
                 try: 
@@ -303,7 +308,9 @@ class FlagAlgebraElement(Element):
                 except: 
                     include = self.values()[ii]!=0
                 if include:
-                    sttrl.append(('{:<'+str(maxstrlen)+'} - {}').format(strs[ii], str(fl)))
+                    sttrl.append(('{:<'+str(maxstrlen)+'} - {}').format(
+                        strs[ii], str(fl)
+                        ))
         return "\n".join(sttrl)
     
     def base(self):
@@ -327,7 +334,9 @@ class FlagAlgebraElement(Element):
             alg = FlagAlgebra(self.theory(), base, self.ftype())
             return (alg(self), alg(other))
         else:
-            base = get_coercion_model().common_parent(self.base(), other.parent())
+            base = get_coercion_model().common_parent(
+                self.base(), other.parent()
+                )
             alg = FlagAlgebra(self.theory(), base, self.ftype())
             return (alg(self), alg(base(other)))
 
@@ -377,7 +386,8 @@ class FlagAlgebraElement(Element):
             :func:`_sub_`
         """
         nm = max(self.size(), other.size())
-        vals = (self<<(nm-self.size())).values() + (other<<(nm-other.size())).values()
+        vals = (self<<(nm-self.size())).values() + \
+            (other<<(nm-other.size())).values()
         return self.__class__(self.parent(), nm, vals)
     
     def _sub_(self, other):
@@ -405,11 +415,15 @@ class FlagAlgebraElement(Element):
             :func:`_add_`
         """
         nm = max(self.size(), other.size())
-        vals = (self<<(nm-self.size())).values() - (other<<(nm-other.size())).values()
+        vals = (self<<(nm-self.size())).values() - \
+            (other<<(nm-other.size())).values()
         return self.__class__(self.parent(), nm, vals)
     
     def _neg_(self):
-        return self.__class__(self.parent(), self.size(), self.values()*(-1))
+        return self.__class__(
+            self.parent(), 
+            self.size(), 
+            self.values()*(-1))
 
     def _mul_(self, other):
         r"""
@@ -503,7 +517,8 @@ class FlagAlgebraElement(Element):
     
     def __lshift__(self, amount):
         r"""
-        `FlagAlgebraElement`, equal to this, with size is shifted by the amount
+        `FlagAlgebraElement`, equal to this, with size is 
+        shifted by the amount
         
         The result will have size equal to 
         `self.size() + amount`, but the elements will be equal
@@ -531,26 +546,35 @@ class FlagAlgebraElement(Element):
         if amount==0:
             return self
         ressize = amount + self.size()
-        table = self.parent().mpt(self.size(), self.ftype().size(), target_size=ressize)
+        table = self.parent().mpt(self.size(), self.ftype().size(), 
+                                  target_size=ressize)
         vals = [sum(self.values() * mat) for mat in table]
         return self.__class__(self.parent(), ressize, vals)
     
     def __getitem__(self, flag):
         if isinstance(flag, Flag):
             ind = self.parent().get_index(flag)
-        elif isinstance(flag, Integer) and 0 <= flag and flag < self.parent().get_size(self.size()):
+        elif isinstance(flag, Integer) and \
+            0 <= flag and \
+                flag < self.parent().get_size(self.size()):
             ind = flag
         if ind == -1:
-            raise TypeError("Indecies must be Flags with matching ftype and size, or integers. Not {}".format(str(type(flag))))
+            raise TypeError("Indecies must be Flags with matching " + 
+                            "ftype and size, or integers. " + 
+                            "Not {}".format(str(type(flag))))
         return self._values[ind]
     
     def __setitem__(self, flag, value):
         if isinstance(flag, Flag):
             ind = self.parent().get_index(flag)
-        elif isinstance(flag, Integer) and 0 <= flag and flag < self.parent().get_size(self.size()):
+        elif isinstance(flag, Integer) and \
+            0 <= flag and \
+                flag < self.parent().get_size(self.size()):
             ind = flag
         if ind == -1:
-            raise TypeError("Indecies must be Flags with matching ftype and size, or integers. Not {}".format(str(type(flag))))
+            raise TypeError("Indecies must be Flags with matching " + 
+                            "ftype and size, or integers. " + 
+                            "Not {}".format(str(type(flag))))
         self.values()[self.flags().index(flag)] = value
     
     def project(self, ftype_inj=tuple()):
@@ -630,12 +654,20 @@ class FlagAlgebraElement(Element):
         N = -self.ftype().size() + self.size() + other.size()
         if target_size!=None:
             if target_size<N:
-                raise ValueError("Target size is smaller than minimum allowed size for this operation.")
+                raise ValueError(
+                    "Target size is smaller than minimum allowed size " + 
+                    "for this operation."
+                    )
             N = target_size
-        table = self.parent().mpt(self.size(), other.size(), ftype_inj=ftype_inj, target_size=N)
+        table = self.parent().mpt(
+            self.size(), other.size(), 
+            ftype_inj=ftype_inj, target_size=N
+            )
         vals = [self.values() * mat * other.values() for mat in table]
         
-        TargetAlgebra = FlagAlgebra(self.parent().combinatorial_theory(), self.parent().base(), new_ftype)
+        TargetAlgebra = FlagAlgebra(
+            self.parent().combinatorial_theory(), self.parent().base(), new_ftype
+            )
         return TargetAlgebra(N, vals)
     
     def density(self, other):
