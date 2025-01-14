@@ -2212,7 +2212,7 @@ cdef class PartitionStack:
         # location now points to the beginning of the first, smallest,
         # nontrivial cell
         j = location
-        #zero out this level of W:
+        # zero out this level of W:
         ell = 1 + nwords/radix
         if nwords%radix:
             ell += 1
@@ -4175,7 +4175,7 @@ cdef class BinaryCodeClassifier:
                         bingo2 = 0
                         for coset_rep in rt_transversal:
                             hwp = create_word_perm(coset_rep)
-                            #dealloc_word_perm(gwp)
+                            # dealloc_word_perm(gwp)
                             bingo2 = 1
                             for j from 0 <= j < B.nrows:
                                 temp = permute_word_by_wp(hwp, temp_basis[j])

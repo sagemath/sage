@@ -405,10 +405,10 @@ cpdef get_line(start, end):
     return points
 
 # Commented out temporarily for safekeeping, but probably should be deleted
-#def fast_julia_plot(double c_real, double c_imag,
-#                    double x_center, double y_center, double image_width,
-#                    long max_iteration, long pixel_count, long level_sep,
-#                    long color_num, base_color):
+# def fast_julia_plot(double c_real, double c_imag,
+#                     double x_center, double y_center, double image_width,
+#                     long max_iteration, long pixel_count, long level_sep,
+#                     long color_num, base_color):
 
 cpdef fast_julia_plot(double c_real, double c_imag,
   double x_center=0, double y_center=0, double image_width=4,
