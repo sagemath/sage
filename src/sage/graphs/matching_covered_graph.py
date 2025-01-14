@@ -2382,13 +2382,24 @@ class MatchingCoveredGraph(Graph):
 
         - If the input bipartite matching covered graph is a brace, a boolean
           ``True`` is returned if ``coNP_certificate`` is set to ``False``
-          otherwise a tuple ``(True, None, None)`` is returned.
+          otherwise a 5-tuple ``(True, None, None, None, None)`` is returned.
 
         - If the input bipartite matching covered graph is not a brace, a
           boolean ``False`` is returned if ``coNP_certificate`` is set to
-          ``False`` otherwise a tuple of boolean ``False``, a list of
-          edges constituting a nontrivial tight cut and a set of vertices of
-          one of the shores of the nontrivial tight cut is returned.
+          ``False`` otherwise a 5-tuple of
+
+          1. a boolean ``False``,
+
+          2. a list of edges constituting a nontrivial tight cut (which is a
+             nontrivial barrier cut)
+
+          3. a set of vertices of one of the shores of the nontrivial tight cut
+
+          4. a string 'nontrivial tight cut'
+
+          5. a set of vertices showing the respective barrier
+
+          is returned.
 
         EXAMPLES:
 
@@ -2590,10 +2601,11 @@ class MatchingCoveredGraph(Graph):
             sage: H = graphs.HexahedralGraph()
             sage: G = MatchingCoveredGraph(H)
             sage: G.is_brace(coNP_certificate=True)
-            (True, None, None)
+            (True, None, None, None, None)
             sage: C = graphs.CycleGraph(6)
             sage: D = MatchingCoveredGraph(C)
-            sage: is_brace, nontrivial_tight_cut, nontrivial_odd_component = \
+            sage: is_brace, nontrivial_tight_cut, nontrivial_odd_component, \
+            ....: nontrivial_tight_cut_variant, cut_identifier = \
             ....: D.is_brace(coNP_certificate=True)
             sage: is_brace is False
             True
@@ -2602,11 +2614,18 @@ class MatchingCoveredGraph(Graph):
             True
             sage: len(nontrivial_tight_cut) == 2
             True
+            sage: nontrivial_tight_cut_variant
+            'nontrivial barrier cut'
+            sage: # Corresponding barrier
+            sage: cut_identifier == {a for u, v, *_ in nontrivial_tight_cut for a in [u, v] \
+            ....: if a not in nontrivial_odd_component}
+            True
             sage: for u, v, *_ in nontrivial_tight_cut:
             ....:     assert (u in nontrivial_odd_component and v not in nontrivial_odd_component)
             sage: L = graphs.LadderGraph(3) # A ladder graph with two constituent braces
             sage: G = MatchingCoveredGraph(L)
-            sage: is_brace, nontrivial_tight_cut, nontrivial_odd_component = G.is_brace(coNP_certificate=True)
+            sage: is_brace, nontrivial_tight_cut, nontrivial_odd_component, cut_variant, cut_identifier = \
+            ....: G.is_brace(coNP_certificate=True)
             sage: is_brace is False
             True
             sage: G1 = L.copy()
@@ -2616,6 +2635,11 @@ class MatchingCoveredGraph(Graph):
             sage: G2 = L.copy()
             sage: G2.merge_vertices([v for v in G if v not in nontrivial_odd_component])
             sage: G2.to_simple().is_isomorphic(graphs.CycleGraph(4))
+            True
+            sage: cut_variant
+            'nontrivial barrier cut'
+            sage: cut_identifier == {a for u, v, *_ in nontrivial_tight_cut for a in [u, v] \
+            ....: if a not in nontrivial_odd_component}
             True
 
         If the input matching covered graph is nonbipartite, a
@@ -2644,7 +2668,7 @@ class MatchingCoveredGraph(Graph):
             raise ValueError('the input graph is not bipartite')
 
         if self.order() < 6:
-            return (True, None, None) if coNP_certificate else True
+            return (True, None, None, None, None) if coNP_certificate else True
 
         A, B = self.bipartite_sets()
         matching = set(self.get_matching())
@@ -2679,16 +2703,16 @@ class MatchingCoveredGraph(Graph):
 
                 # H(e) is matching covered iff D(e) is strongly connected.
                 # Check if D(e) is strongly connected using Kosaraju's algorithm
-                def dfs(v, visited, neighbor_iterator):
-                    stack = [v]  # a stack of vertices
+                def dfs(x, visited, neighbor_iterator):
+                    stack = [x]  # a stack of xertices
 
                     while stack:
-                        v = stack.pop()
-                        visited.add(v)
+                        x = stack.pop()
+                        visited.add(x)
 
-                        for u in neighbor_iterator(v):
-                            if u not in visited:
-                                stack.append(u)
+                        for y in neighbor_iterator(x):
+                            if y not in visited:
+                                stack.append(y)
 
                 root = next(D.vertex_iterator())
 
@@ -2722,13 +2746,21 @@ class MatchingCoveredGraph(Graph):
                 X.add(u if (not color_class and u in A) or (color_class and u in B) or (color_class is None) else v)
 
                 # Compute the nontrivial tight cut C := ∂(Y)
-                C = [(u, v, w) if u in X else (v, u, w)
-                    for u, v, w in self.edge_iterator(sort_vertices=True)
-                    if (u in X) ^ (v in X)]
+                C = [(x, y, w) if x in X else (y, x, w)
+                    for x, y, w in self.edge_iterator(sort_vertices=True)
+                    if (x in X) ^ (y in X)]
 
-                return (False, C, set(X))
+                # Obtain the barrier Z
+                Z = None
 
-        return (True, None, None) if coNP_certificate else True
+                if (u in X and u in A) or (v in X and v in A):
+                    Z = {b for b in B if b not in X}
+                else:
+                    Z = {a for a in A if a not in X}
+
+                return (False, C, set(X), 'nontrivial barrier cut', Z)
+
+        return (True, None, None, None, None) if coNP_certificate else True
 
     @doc_index('Bricks, braces and tight cut decomposition')
     def is_brick(self, coNP_certificate=False):
