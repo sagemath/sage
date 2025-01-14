@@ -3095,25 +3095,18 @@ class MatchingCoveredGraph(Graph):
         components = H.connected_components(sort=True)
 
         # Find a nontrivial odd component
-        nontrivial_tight_cut_variation = None
+        nontrivial_tight_cut_variation = 'nontrivial 2-separation cut'
+        nontrivial_odd_components = []
 
-        if all(len(c) % 2 for c in components):
-            nontrivial_tight_cut_variation = 'nontrivial barrier cut'
-            nontrivial_odd_components = [set(component) for component in components if len(component) > 1]
-
-        else:
-            nontrivial_tight_cut_variation = 'nontrivial 2-separation cut'
-            nontrivial_odd_components = []
-
-            for index, component in enumerate(components):
-                if index == len(components) - 1:
-                    continue
-                elif not index:
-                    nontrivial_odd_components.append(set(components[0] + [two_vertex_cut[0]]))
-                else:
-                    nontrivial_odd_component = nontrivial_odd_components[-1].copy()
-                    nontrivial_odd_component.update(component)
-                    nontrivial_odd_components.append(nontrivial_odd_component)
+        for index, component in enumerate(components):
+            if index == len(components) - 1:
+                continue
+            elif not index:
+                nontrivial_odd_components.append(set(components[0] + [two_vertex_cut[0]]))
+            else:
+                nontrivial_odd_component = nontrivial_odd_components[-1].copy()
+                nontrivial_odd_component.update(component)
+                nontrivial_odd_components.append(nontrivial_odd_component)
 
         C = [[(u, v, w) if u in nontrivial_odd_component else (v, u, w)
               for u, v, w in self.edge_iterator()
