@@ -2065,7 +2065,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 raise ValueError("ntl only computes HNF for square matrices of full rank.")
 
             import sage.libs.ntl.ntl_mat_ZZ
-            v =  sage.libs.ntl.ntl_mat_ZZ.ntl_mat_ZZ(self._nrows,self._ncols)
+            v = sage.libs.ntl.ntl_mat_ZZ.ntl_mat_ZZ(self._nrows,self._ncols)
             for i from 0 <= i < self._nrows:
                 for j from 0 <= j < self._ncols:
                     v[i,j] = self.get_unsafe(nr-i-1,nc-j-1)
@@ -4813,14 +4813,14 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: w.charpoly().factor()
             (x - 3) * (x + 2)
             sage: w.decomposition()
-            [
-            (Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [ 5 -2], True),
-            (Free module of degree 2 and rank 1 over Integer Ring
-            Echelon basis matrix:
-            [0 1], True)
-            ]
+            [(Free module of degree 2 and rank 1 over Integer Ring
+              Echelon basis matrix:
+              [ 5 -2],
+              True),
+             (Free module of degree 2 and rank 1 over Integer Ring
+              Echelon basis matrix:
+              [0 1],
+              True)]
         """
         F = self.charpoly().factor()
         if len(F) == 1:
@@ -4954,11 +4954,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 row_i = A.row(i)
                 row_n = A.row(n)
 
-                ag = a//g
-                bg = b//g
+                ag = a // g
+                bg = b // g
 
-                new_top = s*row_i  +  t*row_n
-                new_bot = bg*row_i - ag*row_n
+                new_top = s * row_i + t * row_n
+                new_bot = bg * row_i - ag * row_n
 
                 # OK -- now we have to make sure the top part of the matrix
                 # but with row i replaced by
@@ -5725,9 +5725,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         ri = nr
         for i from 0 <= i < nr:
             rj = nc
-            ri =  ri-1
+            ri -= 1
             for j from 0 <= j < nc:
-                rj = rj-1
+                rj -= 1
                 fmpz_init_set(fmpz_mat_entry(A._matrix, rj, ri),
                               fmpz_mat_entry(self._matrix, i, j))
         sig_off()
