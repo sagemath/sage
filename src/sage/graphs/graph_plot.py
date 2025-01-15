@@ -1480,12 +1480,12 @@ class GraphPlot(SageObject):
         ::
 
             sage: D = DiGraph({0:[1,2,3], 2:[1,4], 3:[0]})
-            sage: D.graphplot(label_fontsize=20).show()
+            sage: D.graphplot(label_fontsize=20, arrowsize=10).show()
 
         .. PLOT::
 
             D = DiGraph({0:[1,2,3], 2:[1,4], 3:[0]})
-            sphinx_plot(D.graphplot(label_fontsize=20))
+            sphinx_plot(D.graphplot(label_fontsize=20, arrowsize=10))
 
 
         ::
@@ -1563,6 +1563,31 @@ class GraphPlot(SageObject):
             GP.set_edges(edge_style='solid')
             GP.set_edges(edge_color='black')
             GP.set_edges(edge_styles={'a':'dashed', 'g':'dotted'})
+            sphinx_plot(GP)
+
+        ::
+
+            sage: g = Graph(loops=True, multiedges=True, sparse=True)
+            sage: g.add_edges([(0, 0, 'a'), (0, 0, 'b'), (0, 1, 'c'),
+            ....:              (0, 1, 'd'), (0, 1, 'e'), (0, 1, 'f'),
+            ....:              (0, 1, 'f'), (2, 1, 'g'), (2, 2, 'h')])
+            sage: GP = g.graphplot(vertex_size=100, edge_labels=True,
+            ....:                  color_by_label=True, edge_thickness=3)
+            sage: GP.set_edges(edge_thicknesses={'a':1, 'g':5})
+            sage: GP.plot()
+            Graphics object consisting of 22 graphics primitives
+
+        .. PLOT::
+
+            g = Graph(loops=True, multiedges=True, sparse=True)
+            g.add_edges([(0, 0, 'a'), (0, 0, 'b'), (0, 1, 'c'),
+                         (0, 1, 'd'), (0, 1, 'e'), (0, 1, 'f'),
+                         (0, 1, 'f'), (2, 1, 'g'), (2, 2, 'h')])
+            GP = g.graphplot(vertex_size=100, edge_labels=True,
+                             color_by_label=True, edge_thickness=3)
+            GP.set_edges(edge_style='solid')
+            GP.set_edges(edge_color='black')
+            GP.set_edges(edge_thicknesses={'a':1, 'g':5})
             sphinx_plot(GP)
 
         TESTS:
