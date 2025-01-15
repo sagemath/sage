@@ -101,10 +101,9 @@ class FreeOperad(CombinatorialFreeModule):
         if x.node_number() == 1:
             return y
 
+        j = next(k for k in range(len(x)) if i in x[k].labels())
         with x.clone() as t:
-            for j in range(len(t)):
-                if i in t[j].leaf_labels():
-                    t[j] = self.composition_on_basis_as_tree(t[j], y, i)
+            t[j] = self.composition_on_basis_as_tree(t[j], y, i)
         return t
 
     def composition_on_basis(self, x, y, i):
