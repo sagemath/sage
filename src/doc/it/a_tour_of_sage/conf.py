@@ -51,19 +51,12 @@ latex_documents = [
    'The Sage Development Team', 'manual'),
 ]
 
-
-# PDF output: let long decimal expansions in code-blocks wrap rather than
-# overflow beyond page margin
-latex_elements = {
-    'sphinxsetup': 'verbatimforcewraps=true',
-# TODO: check if the following is valid currently
 # Our Sphinx expects the older behavior of babel-italian where double
 # quotes are active
-    'preamble': r"""
+latex_elements['preamble'] += r"""
 % old babel-italian does not have setactivedoublequote,
 % avoid "undefined control sequence" error
 \providecommand{\setactivedoublequote}{}
 % switch new babel-italian to the old behavior
 \setactivedoublequote
-""",
-}
+"""
