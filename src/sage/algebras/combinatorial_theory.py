@@ -401,7 +401,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             self._sources = None
             self._symmetries = ((1, 1, tuple()), )
         self._excluded = tuple()
-        self._no_question = False
+        self._no_question = True
         Parent.__init__(self, category=(Sets(), ))
         self._populate_coercion_lists_()
     
