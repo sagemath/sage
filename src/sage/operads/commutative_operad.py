@@ -106,7 +106,7 @@ class CommutativeOperad(CombinatorialFreeModule):
         """
         return self.basis().keys()([letter])
 
-    def degree_on_basis(self, t):
+    def degree_on_basis(self, t) -> int:
         """
         Return the degree of a word `t` in the Commutative operad.
 
@@ -124,7 +124,7 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     def map_labels(self, t, f):
         """
-        Map the function `f` on the word `t`.
+        Apply the function `f` on the word `t`.
 
         EXAMPLES::
 

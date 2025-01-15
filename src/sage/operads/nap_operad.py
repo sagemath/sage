@@ -6,9 +6,9 @@ from sage.misc.cachefunc import cached_method
 
 class NapOperad(CombinatorialFreeModule):
     r"""
-    The Nap operad
+    The Nap operad.
 
-    The word Nap stands here for 'Not Associative Permutative'
+    The word Nap stands here for 'Not Associative Permutative'.
 
     This is an operad on the species of rooted trees.
 
@@ -26,7 +26,7 @@ class NapOperad(CombinatorialFreeModule):
         sage: NAP.composition(B[s],B[t],"d")
         B[f[e[], a[b[], c[]]]]
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         EXAMPLES::
 
@@ -142,7 +142,7 @@ class NapOperad(CombinatorialFreeModule):
         elif x.label() == i:
             return self.composition_on_basis_in_root(x, y)
 
-        j = [k for k in range(len(x)) if i in x[k].labels()][0]
+        j = next(k for k in range(len(x)) if i in x[k].labels())
         with x.clone() as x1:
             x1[j] = self.composition_on_basis_as_tree(x[j], y, i)
         return x1

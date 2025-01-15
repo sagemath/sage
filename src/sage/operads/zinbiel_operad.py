@@ -11,6 +11,8 @@ class ZinbielOperad(CombinatorialFreeModule):
 
     This is an operad on the species of non-empty lists.
 
+    The generating operation is some kind of half-shuffle product.
+
     EXAMPLES::
 
         sage: Z = ZinbielOperad(QQ)
