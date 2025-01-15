@@ -1,3 +1,5 @@
+from typing import Iterator
+
 from sage.categories.operads_with_basis import OperadsWithBasis
 from sage.combinat.binary_tree import LabelledBinaryTrees
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -8,7 +10,8 @@ class DendriformOperad(CombinatorialFreeModule):
     r"""
     The Dendriform operad
 
-    This is an operad on the species of planar binary trees.
+    This is an operad on the species of planar binary trees,
+    in the category of vector spaces.
 
     EXAMPLES::
 
@@ -101,7 +104,7 @@ class DendriformOperad(CombinatorialFreeModule):
         """
         return self.basis().keys()([], label=letter)
 
-    def degree_on_basis(self, t):
+    def degree_on_basis(self, t) -> int:
         """
         Return the degree of a tree in the Dendriform operad.
 
@@ -142,7 +145,7 @@ class DendriformOperad(CombinatorialFreeModule):
         """
         return self.basis()[t.shape()]
 
-    def shuffle_on_basis_iter(self, x, y):
+    def shuffle_on_basis_iter(self, x, y) -> Iterator:
         """
         Return the shuffle product (associative) of two planar binary
         trees as a list of planar binary trees.
@@ -164,7 +167,7 @@ class DendriformOperad(CombinatorialFreeModule):
         yield from self.composition_on_basis_iter(self.basis().keys()([x, None], label='diese'), y, 'diese')
         yield from self.composition_on_basis_iter(self.basis().keys()([None, y], label='diese'), x, 'diese')
 
-    def composition_on_basis_iter(self, x, y, i):
+    def composition_on_basis_iter(self, x, y, i) -> Iterator:
         """
         Return the composition of two planar binary
         trees in the dendriform operad as an iterator of planar binary trees.
