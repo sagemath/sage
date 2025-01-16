@@ -1116,7 +1116,6 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         # initializing the basis extension (in case of more than 4 strands)
         # ----------------------------------------------------------------------
         self._init_basis_extension()
-        return
 
     ############################################################################
     # --------------------------------------------------------------------------

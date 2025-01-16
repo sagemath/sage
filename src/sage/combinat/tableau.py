@@ -8133,8 +8133,6 @@ class StandardTableaux_shape(StandardTableaux):
 
             yield self.element_class(self, tableau)
 
-        return
-
     def list(self):
         r"""
         Return a list of the standard Young tableaux of the specified shape.
