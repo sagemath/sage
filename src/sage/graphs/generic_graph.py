@@ -17350,7 +17350,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.shortest_path(4, 8, algorithm='Dijkstra_Bid_NetworkX')              # needs networkx
             [4, 3, 2, 1, 8]
             sage: D.shortest_path(4, 9, algorithm='Dijkstra_Bid')
-            [4, 3, 19, 0, 10, 9]
+            [4, 3, 2, 1, 8, 9]
             sage: D.shortest_path(5, 5)
             [5]
             sage: D.delete_edges(D.edges_incident(13))
