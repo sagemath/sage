@@ -1346,10 +1346,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                         right_q = sorted(all_q - a)
                         sign = Permutation(convert_perm(left_q + right_q)).signature()
                         tens_q[(tuple(left_q), tuple(right_q))] = sign
-                    tens = {}
-                    for l, r in zip(left_p, right_p):
-                        for q in tens_q:
-                            tens[((q[0], l), (q[1], r))] = tens_q[q]
+                    tens = {((q[0], l), (q[1], r)): tq
+                            for l, r in zip(left_p, right_p)
+                            for q, tq in tens_q.items()}
                     return self.tensor_square()._from_dict(tens, coerce=True)
             elif basis == 'serre-cartan':
                 result = self.tensor_square().one()
