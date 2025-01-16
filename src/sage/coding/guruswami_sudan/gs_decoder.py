@@ -14,7 +14,7 @@ AUTHORS:
 - David Lucas, ported the original implementation in Sage
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>
 #                     2015 Johan S. R. Nielsen <jsrn@jsrn.dk>
 #
@@ -22,10 +22,9 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.arith.misc import integer_floor as floor
 from sage.coding.grs_code import GeneralizedReedSolomonCode
 from sage.rings.integer_ring import ZZ
 from sage.coding.decoder import Decoder
