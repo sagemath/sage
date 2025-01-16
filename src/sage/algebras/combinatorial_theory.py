@@ -937,6 +937,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         if len(phi_vectors_exact)==0:
             return table_constructor
 
+        to_pop = []
         for param in table_constructor.keys():
             ns, ftype, target_size = param
             table = self.mul_project_table(ns, ns, ftype, ftype_inj=[], 
@@ -975,8 +976,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                                Zkern * table_constructor[param][ii], 
                                sparse=True)
                                )
-            table_constructor[param] = new_bases
-
+            if len(new_bases)!=0:
+                table_constructor[param] = new_bases
+            else:
+                to_pop.append(param)
+        for param in to_pop:
+            table_constructor.pop(param, None)
         return table_constructor
 
     def _print_eigenvalues(self, table_constructor, sdp_result):
