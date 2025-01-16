@@ -137,6 +137,7 @@ Individual Categories
    sage/categories/integral_domains
    sage/categories/j_trivial_semigroups
    sage/categories/kac_moody_algebras
+   sage/categories/kahler_algebras
    sage/categories/lambda_bracket_algebras
    sage/categories/lambda_bracket_algebras_with_basis
    sage/categories/lattice_posets
