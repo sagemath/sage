@@ -4602,8 +4602,8 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         if Q.is_zero():
             k = 0
         else:
-            for k in range(0,p):
-                Eqp = EllipticCurve(Qp(p, 2), [ ZZ(t) + k * p for t in E.a_invariants() ])
+            for k in range(p):
+                Eqp = EllipticCurve(Qp(p, 2), [ZZ(t) + k * p for t in E.a_invariants()])
 
                 P_Qps = Eqp.lift_x(ZZ(self.x()), all=True)
                 for P_Qp in P_Qps:
