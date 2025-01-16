@@ -11,6 +11,8 @@ Incidence Algebras
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from copy import copy
+from typing import Any
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -18,8 +20,6 @@ from sage.categories.algebras import Algebras
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.matrix.matrix_space import MatrixSpace
-
-from copy import copy
 
 
 class IncidenceAlgebra(CombinatorialFreeModule):
@@ -449,7 +449,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
             sage: TestSuite(R).run()  # long time
         """
         self._ambient = I
-        EC = {}
+        EC: dict[Any, list] = {}
         P = self._ambient._poset
         if not P.is_finite():
             raise NotImplementedError("only implemented for finite posets")
@@ -463,8 +463,8 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
                     break
             if not added:
                 EC[S] = [i]
-        self._equiv_classes = map(sorted, EC.values())
-        self._equiv_classes = {cls[0]: cls for cls in self._equiv_classes}
+        equiv_classes = map(sorted, EC.values())
+        self._equiv_classes = {cls[0]: cls for cls in equiv_classes}
         cat = Algebras(I.base_ring()).FiniteDimensional().WithBasis()
         CombinatorialFreeModule.__init__(self, I.base_ring(),
                                          sorted(self._equiv_classes.keys()),
