@@ -197,7 +197,7 @@ def schur_to_hl(mu, t=None):
     for rg in riggings(mu):
         res[rg[0]] = res.get(rg[0], 0) + weight(rg, t)
 
-    return {key.conjugate(): res[key] for key in res}
+    return {key.conjugate(): value for key, value in res.items()}
 
 
 def riggings(part):
