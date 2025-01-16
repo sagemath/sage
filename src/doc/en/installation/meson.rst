@@ -59,6 +59,7 @@ Assume we're starting from a clean repo and a fully set up conda environment
         $ mamba env create --file environment-3.11-win.yml --name sage-dev
         $ conda activate sage-dev
         $ set LIB=%CONDA_PREFIX%\Library\lib;%LIB%
+        $ set INCLUDE=%CONDA_PREFIX%\Library\include;%INCLUDE%
 
     Windows support is experimental and not fully working yet.
     In fact, the Sage prompt is not working at all, but you can use the Python
