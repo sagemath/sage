@@ -769,9 +769,9 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         return self.gens()[n]
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
-        Return a tuple whose entries are the generators for ``self``.
+        Return the generators for ``self``.
 
         EXAMPLES::
 
