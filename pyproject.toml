@@ -10,7 +10,7 @@ requires = [
     'cython >=3.0, != 3.0.3',
     'gmpy2 ~=2.1.b999',
     'memory_allocator',
-    'numpy >=1.19',
+    'numpy >=1.25',
     'jinja2'
 ]
 [project]
@@ -26,7 +26,7 @@ dependencies = [
     'gmpy2 ~=2.1.b999',
     'lrcalc ~=2.1',
     'memory_allocator',
-    'numpy >=1.19',
+    'numpy >=1.25',
     # Issue #30922: pplpy 0.8.4 and earlier do not declare dependencies correctly
     'pplpy >=0.8.6',
     'primecountpy',
@@ -34,21 +34,13 @@ dependencies = [
     # According to https://github.com/python/typing_extensions/blob/main/CHANGELOG.md,
     # version 4.4.0 adds another Python 3.11 typing backport
     'typing_extensions >= 4.4.0; python_version<"3.11"',
-    'ipython >=7.13.0',
+    'ipython >=8.9.0',
     'pexpect >=4.8.0',
     'sphinx >=5.2, <9',
-    'networkx >=2.4',
-    # 1.8 is known good version.
-    # Per https://docs.scipy.org/doc/scipy/dev/core-dev/index.html#version-numbering
-    # and https://docs.scipy.org/doc/scipy/dev/core-dev/index.html#deprecations,
-    # deprecations cannot be introduced in micro releases.
-    # SciPy devs wait "at least 6 months", "in practice two (minor) releases"
-    # from deprecation to removal of a feature.
-    'scipy >=1.5',
+    'networkx >=3.1',
+    'scipy >=1.11',
     'sympy >=1.6, <2.0',
-    # Issue #33642: Set lower bound for use of matplotlib color maps introduced in #33491,
-    # and to suppress deprecation warnings (https://github.com/matplotlib/matplotlib/pull/21073)
-    'matplotlib >=3.5.1',
+    'matplotlib >=3.7.0',
     'pillow >=7.2.0',
     'mpmath >=1.1.0',
     'ipykernel >=5.2.1',
