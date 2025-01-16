@@ -456,9 +456,9 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
         for i in self._ambient.basis().keys():
             S = P.subposet(P.interval(*i))
             added = False
-            for k in EC:
+            for k, ECk in EC.items():
                 if S._hasse_diagram.is_isomorphic(k._hasse_diagram):
-                    EC[k].append(i)
+                    ECk.append(i)
                     added = True
                     break
             if not added:

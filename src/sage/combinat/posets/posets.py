@@ -2056,10 +2056,10 @@ class FinitePoset(UniqueRepresentation, Parent):
                   'cover_colors': 'edge_colors',
                   'cover_style': 'edge_style',
                   'border': 'graph_border'}
-        for param in rename:
+        for param, value in rename.items():
             tmp = kwds.pop(param, None)
             if tmp is not None:
-                kwds[rename[param]] = tmp
+                kwds[value] = tmp
 
         heights = kwds.pop('heights', None)
         if heights is None:
