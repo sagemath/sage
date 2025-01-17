@@ -401,11 +401,12 @@ def monomial_function(n, e):
 
 def inversion(n):
     r"""
-    Return the S-Box constructed from the inversion mapping over `\GF{2^n}` extending `0 \mapsto 0`
+    Return the S-Box constructed from the inversion mapping over `\GF{2^n}`
+    extending `0 \mapsto 0`.
 
     INPUT:
 
-    - ``n`` -- size of the S-Box (i.e. the degree of the finite field extension)
+    - ``n`` -- size of the S-Box
 
     EXAMPLES::
 
