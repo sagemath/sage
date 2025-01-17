@@ -2213,7 +2213,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 if guess < run_bound:
                     ret = just_generate()
                 else:
-                    confirm = input("A: This might take a while: " + 
+                    confirm = input("This might take a while: " + 
                                     "{}. Continue? y/n\n".format(guess))
                     if "y" in confirm.lower():
                         return self.generate_flags(n, run_bound=infinity)
@@ -2226,10 +2226,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             if run_bound==infinity or guess < run_bound or n<=3 or self._no_question:
                 ret = self._find_ftypes(empstrs, ftype)
             else:
-                confirm = input("B: This might take a while: " + 
+                confirm = input("This might take a while: " + 
                                 "{}. Continue? y/n\n".format(guess))
                 if "y" in confirm.lower():
-                    return self.generate_flags(n, ftype, run_bound=infinity)
+                    ret = self.generate_flags(n, ftype, run_bound=infinity)
                 else:
                     raise RuntimeError("Calculation interrupted")
         self._save(ret, key)
