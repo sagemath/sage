@@ -2139,8 +2139,8 @@ class Bijectionist(SageObject):
             sage: bij._P
             {{'a'}, {'b'}, {'c'}, {'d'}}
 
-        However, adding that `'a'` and `'c'` are in the same block,
-        we can infer that also `'b'` and `'d'` are in the same
+        However, adding that ``'a'`` and ``'c'`` are in the same block,
+        we can infer that also ``'b'`` and ``'d'`` are in the same
         block::
 
             sage: bij.set_constant_blocks([['a', 'c']])
