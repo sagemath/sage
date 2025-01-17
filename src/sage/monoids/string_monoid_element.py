@@ -358,7 +358,7 @@ class StringMonoidElement(FreeMonoidElement):
                 char_dict[i] = 1
         nn = 0
         ci_num = 0
-        for i, ni in char_dict.items():
+        for ni in char_dict.values():
             nn += ni
             ci_num += ni * (ni - 1)
         ci_den = nn * (nn - 1)

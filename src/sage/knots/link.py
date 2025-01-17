@@ -1186,7 +1186,7 @@ class Link(SageObject):
                 else:
                     bases[i, j] = [st]
         complexes = {}
-        for (i, j), bij in bases:
+        for (i, j), bij in bases.items():
             if (i + 1, j) in bases:
                 m = matrix(ring, len(bij), len(bases[(i + 1, j)]))
                 for ii in range(m.nrows()):
