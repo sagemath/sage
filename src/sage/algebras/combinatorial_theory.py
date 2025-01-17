@@ -2124,11 +2124,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             guess1 = t1._guess_number(n)
             return guess0*guess1*8
     
-    def generate_with_overlaps(self, theory0, theory1, n):
-        ls0 = theory0.generate(n)
-        ls1 = theory1.generate(n)
-        return overlap_generator(n, self, ls0, ls1, tuple())
-
     def no_question(self, val=None):
         if val==None:
             val = True
@@ -2218,7 +2213,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 if guess < run_bound:
                     ret = just_generate()
                 else:
-                    confirm = input("This might take a while: " + 
+                    confirm = input("A: This might take a while: " + 
                                     "{}. Continue? y/n\n".format(guess))
                     if "y" in confirm.lower():
                         return self.generate_flags(n, run_bound=infinity)
@@ -2228,10 +2223,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             # First generate the structures without ftypes then find them
             empstrs = self.generate_flags(n)
             guess = len(empstrs) * falling_factorial(n, ftype.size())
-            if guess < run_bound:
+            if run_bound==infinity or guess < run_bound or n<=3 or self._no_question:
                 ret = self._find_ftypes(empstrs, ftype)
             else:
-                confirm = input("This might take a while: " + 
+                confirm = input("B: This might take a while: " + 
                                 "{}. Continue? y/n\n".format(guess))
                 if "y" in confirm.lower():
                     return self.generate_flags(n, ftype, run_bound=infinity)
