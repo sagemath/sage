@@ -449,8 +449,8 @@ class LiE(ExtraTabCompletion, Expect):
 
         # Build the list of all possible command completions
         l = []
-        for key in commands:
-            l += commands[key]
+        for key, com in commands.items():
+            l += com
 
         # Save the data
         self._tab_completion_dict = commands

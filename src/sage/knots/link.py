@@ -1181,25 +1181,26 @@ class Link(SageObject):
         for st in states:
             i, j = st[3], st[4]
             if j == height:
-                if (i,j) in bases:
-                    bases[i,j].append(st)
+                if (i, j) in bases:
+                    bases[i, j].append(st)
                 else:
-                    bases[i,j] = [st]
+                    bases[i, j] = [st]
         complexes = {}
-        for (i, j) in bases:
-            if (i+1, j) in bases:
-                m = matrix(ring, len(bases[(i,j)]), len(bases[(i+1,j)]))
+        for (i, j), bij in bases:
+            if (i + 1, j) in bases:
+                m = matrix(ring, len(bij), len(bases[(i + 1, j)]))
                 for ii in range(m.nrows()):
-                    V1 = bases[(i,j)][ii]
+                    V1 = bij[ii]
                     for jj in range(m.ncols()):
-                        V2 = bases[(i+1, j)][jj]
+                        V2 = bases[(i + 1, j)][jj]
                         V20 = V2[0]
-                        difs = [index for index,value in enumerate(V1[0]) if value != V20[index]]
+                        difs = [index for index, value in enumerate(V1[0])
+                                if value != V20[index]]
                         if len(difs) == 1 and not (V2[2].intersection(V1[1]) or V2[1].intersection(V1[2])):
-                            m[ii,jj] = (-1)**sum(V2[0][x] for x in range(difs[0]+1, ncross))
+                            m[ii, jj] = (-1)**sum(V2[0][x] for x in range(difs[0]+1, ncross))
                             # Here we have the matrix constructed, now we have to put it in the dictionary of complexes
             else:
-                m = matrix(ring, len(bases[(i,j)]), 0)
+                m = matrix(ring, len(bij), 0)
             complexes[i] = m.transpose()
             if (i-1, j) not in bases:
                 complexes[i-1] = matrix(ring, len(bases[(i,j)]), 0)
