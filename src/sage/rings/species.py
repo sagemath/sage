@@ -33,6 +33,7 @@ AUTHORS:
 
 from itertools import accumulate, chain, product
 
+from sage.arith.misc import divisors
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.modules import Modules
 from sage.categories.monoids import Monoids
@@ -48,9 +49,10 @@ from sage.groups.perm_gps.constructor import PermutationGroupElement
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
-from sage.misc.cachefunc import cached_method
+from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
 from sage.monoids.indexed_free_monoid import (IndexedFreeAbelianMonoid,
                                               IndexedFreeAbelianMonoidElement)
@@ -297,13 +299,13 @@ class AtomicSpeciesElement(WithEqualityById,
             sage: len(P.cover_relations())
             7
             sage: sorted(P.cover_relations(), key=str)
-            [[C_4, {((1,2)(3,4),)}],
+            [[C_4, E_2(X^2)],
+             [E_2(E_2), C_4],
+             [E_2(E_2), Pb_4],
+             [E_4, E_2(E_2)],
              [E_4, Eo_4],
-             [E_4, P_4],
              [Eo_4, Pb_4],
-             [P_4, C_4],
-             [P_4, Pb_4],
-             [Pb_4, {((1,2)(3,4),)}]]
+             [Pb_4, E_2(X^2)]]
 
         TESTS::
 
@@ -531,7 +533,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
     def _rename(self, n):
         r"""
-        Names for common species.
+        Give common species of degree `n` their traditional names.
 
         EXAMPLES::
 
@@ -588,6 +590,9 @@ class AtomicSpecies(UniqueRepresentation, Parent):
                 gens = [[(i, n-i+1) for i in range(1, n//2 + 1)],
                         [(i, i+1) for i in range(1, n, 2)]]
                 self(PermutationGroup(gens), pi, check=False).rename(f"Pb_{n}" + sort)
+
+        if self._arity == 1:
+            _ = _atomic_set_like_species(n)
 
     def __contains__(self, x):
         r"""
@@ -940,11 +945,11 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
             sage: X = SetPartitions(4, [2, 2])
             sage: M((X, a, 'left'), {0: X.base_set()})
-            P_4
+            E_2(E_2)
 
             sage: X = SetPartitions(8, [4, 2, 2])
             sage: M((X, a, 'left'), {0: X.base_set()}, check=False)
-            E_4*P_4
+            E_4*E_2(E_2)
 
         TESTS::
 
@@ -1176,23 +1181,23 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: len(P.cover_relations())
                 17
                 sage: sorted(P.cover_relations(), key=str)
-                [[C_4, {((1,2)(3,4),)}],
+                [[C_4, E_2(X^2)],
+                 [E_2(E_2), C_4],
+                 [E_2(E_2), E_2^2],
+                 [E_2(E_2), Pb_4],
+                 [E_2(X^2), X^4],
+                 [E_2^2, E_2(X^2)],
                  [E_2^2, X^2*E_2],
-                 [E_2^2, {((1,2)(3,4),)}],
+                 [E_4, E_2(E_2)],
                  [E_4, Eo_4],
-                 [E_4, P_4],
                  [E_4, X*E_3],
                  [Eo_4, Pb_4],
                  [Eo_4, X*C_3],
-                 [P_4, C_4],
-                 [P_4, E_2^2],
-                 [P_4, Pb_4],
-                 [Pb_4, {((1,2)(3,4),)}],
+                 [Pb_4, E_2(X^2)],
                  [X*C_3, X^4],
                  [X*E_3, X*C_3],
                  [X*E_3, X^2*E_2],
-                 [X^2*E_2, X^4],
-                 [{((1,2)(3,4),)}, X^4]]
+                 [X^2*E_2, X^4]]
 
             TESTS::
 
@@ -1439,7 +1444,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: X(E2)
                 E_2
                 sage: E2(E2)
-                P_4
+                E_2(E_2)
 
                 sage: M = MolecularSpecies(["X","Y"])
                 sage: X = M(SymmetricGroup(1), {0: [1]})
@@ -1637,17 +1642,17 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: P = PolynomialSpecies(QQ, "X")
             sage: sortkey = lambda x: (len(x[1]), sum(x[1].coefficients()), str(x[0]))
             sage: n=4; table(sorted([(m, P.monomial(m).tilde()) for m in M.subset(n)], key=sortkey))
-            X^4               X^4
-            X^2*E_2           2*X^2*E_2
-            {((1,2)(3,4),)}   2*{((1,2)(3,4),)}
-            X*C_3             3*X*C_3
-            C_4               4*C_4
-            E_2^2             4*E_2^2
-            Pb_4              4*Pb_4
-            X*E_3             X*E_3 + X^2*E_2 + X*C_3
-            Eo_4              Eo_4 + 2*X*C_3 + Pb_4
-            P_4               2*P_4 + E_2^2 + Pb_4 + C_4
-            E_4               E_4 + E_2^2 + X*C_3 + P_4 + C_4
+            X^4        X^4
+            E_2(X^2)   2*E_2(X^2)
+            X^2*E_2    2*X^2*E_2
+            X*C_3      3*X*C_3
+            C_4        4*C_4
+            E_2^2      4*E_2^2
+            Pb_4       4*Pb_4
+            X*E_3      X*E_3 + X^2*E_2 + X*C_3
+            Eo_4       Eo_4 + 2*X*C_3 + Pb_4
+            E_2(E_2)   2*E_2(E_2) + E_2^2 + Pb_4 + C_4
+            E_4        E_4 + E_2^2 + X*C_3 + E_2(E_2) + C_4
 
             sage: P.<X,Y> = PolynomialSpecies(QQ)
             sage: E2 = PolynomialSpecies(QQ, "X")(SymmetricGroup(2))
@@ -1864,7 +1869,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
             sage: C4 = P(CyclicPermutationGroup(4))
             sage: C4._compose_with_weighted_singletons(["X"], [-1], [[4]])
-            -C_4 + {((1,2)(3,4),)}
+            -C_4 + E_2(X^2)
 
         Exercise (2.5.17) in [BLL1998]_::
 
@@ -1894,7 +1899,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         TESTS::
 
             sage: (C4+E2^2)._compose_with_weighted_singletons(["X"], [-1], [[4]])
-            -C_4 + E_2^2 + {((1,2)(3,4),)} - 2*X^2*E_2 + X^4
+            -C_4 + E_2^2 + E_2(X^2) - 2*X^2*E_2 + X^4
 
             sage: C4._compose_with_weighted_singletons(["X"], [-1, 0], [[4]])
             Traceback (most recent call last):
@@ -1967,10 +1972,10 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: E2(-X)
             -E_2 + X^2
             sage: E2(X^2)
-            {((1,2)(3,4),)}
+            E_2(X^2)
 
             sage: E2(X + X^2)
-            E_2 + X^3 + {((1,2)(3,4),)}
+            E_2 + X^3 + E_2(X^2)
 
             sage: P2 = PolynomialSpecies(QQ, ["X", "Y"])
             sage: X = P2(SymmetricGroup(1), {0: [1]})
@@ -2194,7 +2199,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: X = SetPartitions(4, 2)
             sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
             sage: P((X, a, 'left'), {0: [1,2,3,4]})
-            X*E_3 + P_4
+            X*E_3 + E_2(E_2)
 
         The species of permutation groups::
 
@@ -2206,7 +2211,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
             ....:     H = S.subgroup(G.conjugate(pi).gens())
             ....:     return next(K for K in X if K == H)
             sage: P((X, act), {0: range(1, n+1)}, check=False)
-            4*E_4 + 4*P_4 + E_2^2 + 2*X*E_3
+            4*E_4 + 4*E_2(E_2) + E_2^2 + 2*X*E_3
 
         Create a multisort species given an action::
 
@@ -2505,3 +2510,42 @@ class PolynomialSpecies(CombinatorialFreeModule):
                          for s in range(self._arity))
 
     Element = PolynomialSpeciesElement
+
+
+@cached_function
+def _atomic_set_like_species(n):
+    r"""
+    Return a list of the atomic set like species of degree `n`,
+    and provide their traditional names.
+
+    INPUT:
+
+        - ``n`` -- positive integer, the degree
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _atomic_set_like_species
+        sage: _atomic_set_like_species(6)
+        [E_2(E_3), E_2(X*E_2), E_2(X^3), E_3(E_2), E_3(X^2), E_6]
+
+        sage: oeis([len(_atomic_set_like_species(n)) for n in range(1,10)])     # optional - internet
+        0: A007650: Number of set-like atomic species of degree n.
+    """
+    M = MolecularSpecies("X")
+    if n == 1:
+        return [M(SymmetricGroup(1))]
+    result = []
+    for d in divisors(n):
+        if d == 1:
+            continue
+        E_d = M(SymmetricGroup(d))
+        if d == n:
+            result.append(E_d)
+            continue
+        for pi in Partitions(n // d):
+            for l_F in cartesian_product([_atomic_set_like_species(p) for p in pi]):
+                G = prod(l_F)
+                F = E_d(G)
+                F.support()[0].rename(f"E_{d}({G})")
+                result.append(F)
+    return result
