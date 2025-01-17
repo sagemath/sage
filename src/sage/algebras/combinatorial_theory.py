@@ -1624,7 +1624,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     def optimize_problem(self, target_element, target_size, maximize=True, 
                          positives=None, construction=None, file=None, 
-                         exact=False, denom=1024, ring=QQ):
+                         exact=False, denom=1024, ring=QQ, specific_ftype=None):
         r"""
         Try to maximize or minimize the value of `target_element`
         
@@ -1677,7 +1677,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # Create the relevant ftypes
         #
         
-        ftype_data = self._get_relevant_ftypes(target_size)
+        if specific_ftype==None:
+            ftype_data = self._get_relevant_ftypes(target_size)
+        else:
+            ftype_data = specific_ftype
         print("The relevant ftypes are constructed, their " + 
               "number is {}".format(len(ftype_data)))
         flags = [self.generate_flags(dat[0], dat[1]) for dat in ftype_data]
@@ -1919,7 +1922,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         #
         # Make sdp data integer and write it to a file
         #
-        sdp_data = self._make_sdp_data_integer(sdp_data)
+        #sdp_data = self._make_sdp_data_integer(sdp_data)
         
         with open(file, "a") as file:
             block_sizes, target, mat_inds, mat_vals = sdp_data
@@ -1927,7 +1930,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             file.write("{}\n{}\n".format(len(target), len(block_sizes)))
             file.write(" ".join(map(str, block_sizes)) + "\n")
             for xx in target:
-                file.write("%.1e " % xx)
+                file.write("%.10e " % xx)
             file.write("\n")
 
             for ii in range(len(mat_vals)):
@@ -1936,7 +1939,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                     mat_inds[ii*4 + 1],
                     mat_inds[ii*4 + 2],
                     mat_inds[ii*4 + 3],
-                    "%.1e" % mat_vals[ii]
+                    "%.10e" % mat_vals[ii]
                 ))
 
     def verify_certificate(self, file_or_cert, target_element, target_size, 
@@ -2085,7 +2088,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return result
     
     verify = verify_certificate
-    
     
     #Generating flags
     def _guess_number(self, n):
