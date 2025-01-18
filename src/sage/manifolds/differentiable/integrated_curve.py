@@ -504,10 +504,11 @@ class IntegratedCurve(DifferentiableCurve):
         parameters = set()
         # extract all the variables appearing in the equations:
         for eqn in equations_rhs:
-            if isinstance(eqn, Expression): # some right hand sides
-            # might merely be real numbers and not expressions, so that
-            # they do not contain any variable, and method 'variables'
-            # could not be called on them
+            if isinstance(eqn, Expression):
+                # some right hand sides
+                # might merely be real numbers and not expressions, so that
+                # they do not contain any variable, and method 'variables'
+                # could not be called on them
                 parameters = parameters.union(eqn.variables())
         # remove the Expressions that should not be treated as
         # parameters (i.e. the coordinate functions, the velocities and
@@ -565,14 +566,14 @@ class IntegratedCurve(DifferentiableCurve):
                 M = M.numpy()
                 for i in range(dim):
                     for j in range(dim):
-                        M[i,j] = fast_callable(SR(M[i, j]), vars=list(CoF[1]._chart[:]), domain=float)
+                        M[i, j] = fast_callable(SR(M[i, j]), vars=list(CoF[1]._chart[:]), domain=float)
 
                 import numpy as np
                 def fast_CoF(pos, vel, M=M):
-                # using default arguments for binding (ugly python)
-                    #print(det(*pos))
-                    return list(np.dot( [[M[j, i](*pos) for i in range(dim)]
-                                    for j in range(dim)], vel))
+                    # using default arguments for binding (ugly python)
+                    # print(det(*pos))
+                    return list(np.dot([[M[j, i](*pos) for i in range(dim)]
+                                        for j in range(dim)], vel))
 
                 self._fast_changes_of_frame[CoF] = fast_CoF
 
@@ -582,7 +583,7 @@ class IntegratedCurve(DifferentiableCurve):
                                for f in transf]
                 self._fast_changes_of_chart[CoC] = fast_transf
 
-        self._velocities = list(velocities) # converts to list
+        self._velocities = list(velocities)  # converts to list
         # since might not already be a list (which is later required)
         self._curve_parameter = curve_parameter
         self._initial_tangent_vector = initial_tangent_vector
@@ -1126,9 +1127,9 @@ class IntegratedCurve(DifferentiableCurve):
 
             for i in range(dim):
                 if isinstance(eqns_num[i], Expression): # some right
-                # hand sides might merely be real numbers and not
-                # expressions, so that they do not contain any variable,
-                # and hence no substitution is required
+                    # hand sides might merely be real numbers and not
+                    # expressions, so that they do not contain any variable,
+                    # and hence no substitution is required
                     eqns_num[i] = eqns_num[i].substitute(parameters_values)
 
             for i in range(dim):
@@ -1147,10 +1148,11 @@ class IntegratedCurve(DifferentiableCurve):
         t_max = numerical_approx(t_max)
 
         for i in range(dim):
-            if not isinstance(eqns_num[i], Expression): # in case of a
-            # right hand side that is not an Expression (and then is a
-            # number), it is needed to be converted to an Expression
-            # since some solvers called below require only expressions
+            if not isinstance(eqns_num[i], Expression):
+                # in case of a
+                # right hand side that is not an Expression (and then is a
+                # number), it is needed to be converted to an Expression
+                # since some solvers called below require only expressions
                 eqns_num[i] = SR(eqns_num[i])
 
         if step is None:
