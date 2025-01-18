@@ -433,8 +433,8 @@ class SageMagics(Magics):
             sage: shell.run_cell('''
             ....: %%cython --view-annotate=xx
             ....: print(1)
-            ....: ''')
-            UsageError: argument --view-annotate: invalid choice: 'xx' (choose from 'none', 'auto', 'webbrowser', 'displayhtml')
+            ....: ''')  # exact error message differ between Python 3.11/3.13
+            UsageError: argument --view-annotate: invalid choice: 'xx' (choose from ...)
 
         Test ``--view-annotate=displayhtml`` (note that in a notebook environment
         an inline HTML frame will be displayed)::

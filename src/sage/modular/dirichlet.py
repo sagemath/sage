@@ -999,10 +999,8 @@ class DirichletCharacter(MultiplicativeGroupElement):
                     v += s
                 m.append(v)
 
-            m = matrix(m)
-
             xx = S.gen()
-            return m.charpoly(xx)
+            return matrix(m).charpoly(xx)
 
         elif algorithm == "pari":
             # Use pari
