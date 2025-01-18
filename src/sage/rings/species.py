@@ -592,8 +592,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
                         [(i, i+1) for i in range(1, n, 2)]]
                 self(PermutationGroup(gens), pi, check=False).rename(f"Pb_{n}" + sort)
 
-        if self._arity == 1:
-            _ = _atomic_set_like_species(n, self._names)
+        _atomic_set_like_species(n, self._names)
 
     def __contains__(self, x):
         r"""
