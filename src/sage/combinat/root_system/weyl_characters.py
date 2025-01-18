@@ -761,14 +761,9 @@ class WeylCharacterRing(CombinatorialFreeModule):
                         next[mu] = next.get(mu, 0) - accum[v]
                         if debug:
                             print("     mu=%s, next[mu]=%s" % (mu, next[mu]))
-            accum = {}
-            for v in next:
-                accum[v] = next[v]
-        ret = {}
-        for v in accum:
-            if accum[v]:
-                ret[self._space.from_vector_notation(v, style='coroots')] = accum[v]
-        return ret
+            accum = dict(next)
+        return {self._space.from_vector_notation(v, style='coroots'): val
+                for v, val in accum.items() if val}
 
     @cached_method
     def _weight_multiplicities(self, x):
