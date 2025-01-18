@@ -90,14 +90,11 @@ cdef class MPolynomialRing_base(CommutativeRing):
         self._term_order = order
         self._has_singular = False  # cannot convert to Singular by default
         self._magma_cache = {}
-        # Ring.__init__ already does assign the names.
-        # It would be a mistake to call ParentWithGens.__init__
-        # as well, assigning the names twice.
-        # ParentWithGens.__init__(self, base_ring, names)
         if base_ring.is_zero():
             category = categories.rings.Rings().Finite()
         else:
             category = polynomial_default_category(base_ring.category(), n)
+        # Ring.__init__ assigns the names.
         Ring.__init__(self, base_ring, names, category=category)
         from sage.combinat.integer_vector import IntegerVectors
         self._indices = IntegerVectors(self._ngens)
