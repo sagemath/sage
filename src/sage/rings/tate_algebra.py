@@ -613,9 +613,9 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
         """
         return self._ngens
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Return the list of generators of this monoid of terms.
+        Return the generators of this monoid of terms.
 
         EXAMPLES::
 
@@ -934,9 +934,9 @@ class TateAlgebra_generic(Parent):
         except IndexError:
             raise ValueError("generator not defined")
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Return the list of generators of this Tate algebra.
+        Return the generators of this Tate algebra.
 
         EXAMPLES::
 

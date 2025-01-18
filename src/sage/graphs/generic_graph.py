@@ -17350,7 +17350,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.shortest_path(4, 8, algorithm='Dijkstra_Bid_NetworkX')              # needs networkx
             [4, 3, 2, 1, 8]
             sage: D.shortest_path(4, 9, algorithm='Dijkstra_Bid')
-            [4, 3, 19, 0, 10, 9]
+            [4, 3, 2, 1, 8, 9]
             sage: D.shortest_path(5, 5)
             [5]
             sage: D.delete_edges(D.edges_incident(13))
@@ -18866,7 +18866,8 @@ class GenericGraph(GenericGraph_pyx):
 
     def breadth_first_search(self, start, ignore_direction=False,
                              distance=None, neighbors=None,
-                             report_distance=False, edges=False):
+                             report_distance=False, edges=False,
+                             forbidden_vertices=None):
         """
         Return an iterator over the vertices in a breadth-first ordering.
 
@@ -18900,6 +18901,9 @@ class GenericGraph(GenericGraph_pyx):
 
           Note that parameters ``edges`` and ``report_distance`` cannot be
           ``True`` simultaneously.
+
+        - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+          avoid during the search. The start vertex ``v`` cannot be in this set.
 
         .. SEEALSO::
 
@@ -18989,6 +18993,12 @@ class GenericGraph(GenericGraph_pyx):
             sage: list(D.breadth_first_search(1, edges=True))
             [(1, 2), (1, 3), (2, 4)]
 
+        BFS in a graph with forbidden vertices::
+
+            sage: G = graphs.PetersenGraph()
+            sage: list(G.breadth_first_search(0, forbidden_vertices=[1, 2]))
+            [0, 4, 5, 3, 9, 7, 8, 6]
+
         TESTS::
 
             sage: D = DiGraph({1: [0], 2: [0]})
@@ -19007,6 +19017,18 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             ValueError: parameters edges and report_distance cannot be ``True`` simultaneously
+            sage: list(G.breadth_first_search(0, forbidden_vertices=[0]))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
+            sage: list(G.breadth_first_search(0, forbidden_vertices=[0], distance=2))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
+            sage: list(G.breadth_first_search([0, 1], forbidden_vertices=[1]))
+            Traceback (most recent call last):
+            ...
+            ValueError: start vertex 1 is in the set of forbidden vertices
         """
         from sage.rings.semirings.non_negative_integer_semiring import NN
         if (distance is not None and distance not in NN):
@@ -19020,17 +19042,23 @@ class GenericGraph(GenericGraph_pyx):
                 and hasattr(self._backend, "breadth_first_search")):
             yield from self._backend.breadth_first_search(
                     start, ignore_direction=ignore_direction,
-                    report_distance=report_distance, edges=edges)
+                    report_distance=report_distance, edges=edges,
+                    forbidden_vertices=forbidden_vertices)
         else:
             if neighbors is None:
                 if not self._directed or ignore_direction:
                     neighbors = self.neighbor_iterator
                 else:
                     neighbors = self.neighbor_out_iterator
-            seen = set()
+            seen = set() if forbidden_vertices is None else set(forbidden_vertices)
             if isinstance(start, list):
+                for s in start:
+                    if s in seen:
+                        raise ValueError(f"start vertex {s} is in the set of forbidden vertices")
                 queue = [(v, 0) for v in start]
             else:
+                if start in seen:
+                    raise ValueError("the start vertex is in the set of forbidden vertices")
                 queue = [(start, 0)]
 
             # Non-existing start vertex is detected later if distance > 0.
@@ -19062,7 +19090,7 @@ class GenericGraph(GenericGraph_pyx):
                                 yield w
 
     def depth_first_search(self, start, ignore_direction=False,
-                           neighbors=None, edges=False):
+                           neighbors=None, edges=False, forbidden_vertices=None):
         """
         Return an iterator over the vertices in a depth-first ordering.
 
@@ -19084,6 +19112,9 @@ class GenericGraph(GenericGraph_pyx):
         - ``edges`` -- boolean (default: ``False``); whether to return the edges
           of the DFS tree in the order of visit or the vertices (default).
           Edges are directed in root to leaf orientation of the tree.
+
+        - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+          avoid during the search. The start vertex ``v`` cannot be in this set.
 
         .. SEEALSO::
 
@@ -19144,6 +19175,12 @@ class GenericGraph(GenericGraph_pyx):
             sage: list(D.depth_first_search(2, edges=True, ignore_direction=True))
             [(2, 3), (3, 4), (2, 1), (1, 0)]
 
+        DFS in a graph with forbidden vertices::
+
+            sage: G = graphs.PetersenGraph()
+            sage: list(G.depth_first_search(0, forbidden_vertices=[1, 2]))
+            [0, 5, 8, 6, 9, 7, 4, 3]
+
         TESTS::
 
             sage: D = DiGraph({1: [0], 2: [0]})
@@ -19167,22 +19204,40 @@ class GenericGraph(GenericGraph_pyx):
             [1, 3, 6, 4, 5, 7, 2]
             sage: list(D.depth_first_search(1, ignore_direction=True, edges=True))
             [(1, 3), (3, 6), (6, 7), (7, 5), (5, 4), (1, 2)]
+            sage: list(G.depth_first_search(0, forbidden_vertices=[0]))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
+            sage: list(G.depth_first_search(0, forbidden_vertices=[0], edges=True))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
+            sage: list(G.depth_first_search([0, 1], forbidden_vertices=[1]))
+            Traceback (most recent call last):
+            ...
+            ValueError: start vertex 1 is in the set of forbidden vertices
         """
         # Preferably use the Cython implementation
         if (neighbors is None and not isinstance(start, list)
                 and hasattr(self._backend, "depth_first_search") and not edges):
-            yield from self._backend.depth_first_search(start, ignore_direction=ignore_direction)
+            yield from self._backend.depth_first_search(start, ignore_direction=ignore_direction,
+                                                        forbidden_vertices=forbidden_vertices)
         else:
             if neighbors is None:
                 if not self._directed or ignore_direction:
                     neighbors = self.neighbor_iterator
                 else:
                     neighbors = self.neighbor_out_iterator
-            seen = set()
+            seen = set(forbidden_vertices) if forbidden_vertices else set()
             if isinstance(start, list):
+                for s in start:
+                    if s in seen:
+                        raise ValueError(f"start vertex {s} is in the set of forbidden vertices")
                 # Reverse the list so that the initial vertices come out in the same order
                 queue = [(v, 0) for v in reversed(start)]
             else:
+                if start in seen:
+                    raise ValueError("the start vertex is in the set of forbidden vertices")
                 queue = [(start, 0)]
 
             if not edges:
