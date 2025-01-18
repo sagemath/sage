@@ -26,13 +26,11 @@
 # no longer generated, but may still be in user worktrees
 /src/lib/pkgconfig
 
-# Conda environment files
-# The files without Python version, with -dev or in src are no longer generated
-# but may still be in users' directories.
+# Conda environment files (auto-generated)
+/environment-3.[0-9].yml
+/environment-3.[0-9][0-9].yml
+# The following files are no longer generated but may still be in users' directories
 /environment.yml
-/environment-3.9.yml
-/environment-3.10.yml
-/environment-3.11.yml
 /environment-dev-3.9.yml
 /environment-dev-3.10.yml
 /environment-dev-3.11.yml
