@@ -7709,12 +7709,12 @@ cdef class Matroid(SageObject):
                         # check if edge (u,v) exists in the auxiliary digraph
                         exist = False
                         if ((u in Y) and (v in E-Y) and
-                            (self.is_dependent(Y|{v})) and
-                            (self.is_independent((Y|{v}) - {u}))):
+                            self.is_dependent(Y|{v}) and
+                                self.is_independent((Y|{v}) - {u})):
                             exist = True
                         if ((u in E-Y) and (v in Y) and
                             (not other.is_independent(Y|{u})) and
-                            (other.is_independent((Y|{u}) - {v}))):
+                                (other.is_independent((Y|{u}) - {v}))):
                             exist = True
                         if exist:
                             stack.append(v)
