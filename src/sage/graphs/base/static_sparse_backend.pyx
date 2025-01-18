@@ -559,9 +559,28 @@ cdef class StaticSparseBackend(CGraphBackend):
         """
         return v in self._vertex_to_int
 
+    def add_vertex(self, object v):
+        r"""
+        Add a vertex to the graph. No way
+
+        INPUT:
+
+        - ``v`` -- a vertex (or not?)
+
+        TESTS::
+
+            sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
+            sage: g = StaticSparseBackend(graphs.PetersenGraph())
+            sage: g.add_vertex(123)
+            Traceback (most recent call last):
+            ...
+            ValueError: graph is immutable; please change a copy instead (use function copy())
+        """
+        raise ValueError("graph is immutable; please change a copy instead (use function copy())")
+
     cpdef add_edge(self, object u, object v, object l, bint directed):
         r"""
-        Set edge label. No way.
+        Add an edge to the graph. No way.
 
         TESTS::
 
@@ -574,9 +593,13 @@ cdef class StaticSparseBackend(CGraphBackend):
         """
         raise ValueError("graph is immutable; please change a copy instead (use function copy())")
 
-    def add_edges(self, edges, directed):
+    def add_edges(self, edges, directed, remove_loops=False):
         r"""
-        Set edge label. No way.
+        Add edges to the graph. No way.
+
+        INPUT:
+
+        - ``edges`` -- a list of edges (or not?)
 
         TESTS::
 
@@ -591,7 +614,11 @@ cdef class StaticSparseBackend(CGraphBackend):
 
     def add_vertices(self, vertices):
         r"""
-        Set edge label. No way.
+        Add vertices to the graph. No way.
+
+        INPUT:
+
+        - ``vertices`` -- a list of vertices (or not?)
 
         TESTS::
 
@@ -604,15 +631,75 @@ cdef class StaticSparseBackend(CGraphBackend):
         """
         raise ValueError("graph is immutable; please change a copy instead (use function copy())")
 
-    cpdef del_edge(self, object u, object v, object l, bint directed):
+    def del_vertex(self, object v):
         r"""
-        Set edge label. No way.
+        Delete a vertex from the graph. No way
+
+        INPUT:
+
+        - ``v`` -- a vertex (or not?)
 
         TESTS::
 
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             sage: g = StaticSparseBackend(graphs.PetersenGraph())
-            sage: g.set_edge_label(1,2,3,True)
+            sage: g.del_vertex(123)
+            Traceback (most recent call last):
+            ...
+            ValueError: graph is immutable; please change a copy instead (use function copy())
+
+        Check that :issue:`39270` is fixed::
+
+            sage: g.del_vertex('a')
+            Traceback (most recent call last):
+            ...
+            ValueError: graph is immutable; please change a copy instead (use function copy())
+        """
+        raise ValueError("graph is immutable; please change a copy instead (use function copy())")
+
+    def del_vertices(self, vertices):
+        r"""
+        Delete vertices from the graph. No way
+
+        INPUT:
+
+        - ``vertices`` -- a list of vertices (or not?)
+
+        TESTS::
+
+            sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
+            sage: g = StaticSparseBackend(graphs.PetersenGraph())
+            sage: g.del_vertices([123, 234])
+            Traceback (most recent call last):
+            ...
+            ValueError: graph is immutable; please change a copy instead (use function copy())
+        """
+        raise ValueError("graph is immutable; please change a copy instead (use function copy())")
+
+    def del_edge(self, object u, object v, object l, bint directed):
+        r"""
+        Delete an edge of the graph. No way.
+
+        TESTS::
+
+            sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
+            sage: g = StaticSparseBackend(graphs.PetersenGraph())
+            sage: g.del_edge(1,2,3,True)
+            Traceback (most recent call last):
+            ...
+            ValueError: graph is immutable; please change a copy instead (use function copy())
+        """
+        raise ValueError("graph is immutable; please change a copy instead (use function copy())")
+
+    def del_edges(self, edges, directed):
+        r"""
+        Delete edges of the graph. No way.
+
+        TESTS::
+
+            sage: from sage.graphs.base.static_sparse_backend import StaticSparseBackend
+            sage: g = StaticSparseBackend(graphs.PetersenGraph())
+            sage: g.del_edges([[1,2,3]], True)
             Traceback (most recent call last):
             ...
             ValueError: graph is immutable; please change a copy instead (use function copy())
