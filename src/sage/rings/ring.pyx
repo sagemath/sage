@@ -253,8 +253,6 @@ cdef class Ring(ParentWithGens):
         # yield an infinite recursion. But when we call it from here, it works.
         # This is done in order to ensure that __init_extra__ is called.
         #
-        # ParentWithGens.__init__(self, base, names=names, normalize=normalize)
-        #
         # This is a low-level class. For performance, we trust that the category
         # is fine, if it is provided. If it isn't, we use the category of rings.
         if category is None:
@@ -761,11 +759,9 @@ cdef class CommutativeRing(Ring):
             sage: Integers(389)['x,y']
             Multivariate Polynomial Ring in x, y over Ring of integers modulo 389
         """
-        try:
-            if not base_ring.is_commutative():
-                raise TypeError("base ring %s is no commutative ring" % base_ring)
-        except AttributeError:
+        if base_ring is not self and base_ring not in _CommutativeRings:
             raise TypeError("base ring %s is no commutative ring" % base_ring)
+
         # This is a low-level class. For performance, we trust that
         # the category is fine, if it is provided. If it isn't, we use
         # the category of commutative rings.
@@ -829,23 +825,6 @@ cdef class CommutativeRing(Ring):
             return self.fraction_field()
         except (NotImplementedError,TypeError):
             return coercion_model.division_parent(self)
-
-    def is_commutative(self):
-        """
-        Return ``True``, since this ring is commutative.
-
-        EXAMPLES::
-
-            sage: QQ.is_commutative()
-            True
-            sage: ZpCA(7).is_commutative()                                              # needs sage.rings.padics
-            True
-            sage: A = QuaternionAlgebra(QQ, -1, -3, names=('i','j','k')); A             # needs sage.combinat sage.modules
-            Quaternion Algebra (-1, -3) with base ring Rational Field
-            sage: A.is_commutative()                                                    # needs sage.combinat sage.modules
-            False
-        """
-        return True
 
     def extension(self, poly, name=None, names=None, **kwds):
         """

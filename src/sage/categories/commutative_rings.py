@@ -46,6 +46,17 @@ class CommutativeRings(CategoryWithAxiom):
 
         sage: GroupAlgebra(CyclicPermutationGroup(3), QQ) in CommutativeRings()     # not implemented, needs sage.groups sage.modules
         True
+
+    Some tests for the method ``is_commutative``::
+
+        sage: QQ.is_commutative()
+        True
+        sage: ZpCA(7).is_commutative()                                              # needs sage.rings.padics
+        True
+        sage: A = QuaternionAlgebra(QQ, -1, -3, names=('i','j','k')); A             # needs sage.combinat sage.modules
+        Quaternion Algebra (-1, -3) with base ring Rational Field
+        sage: A.is_commutative()                                                    # needs sage.combinat sage.modules
+        False
     """
     class ParentMethods:
         def krull_dimension(self):
