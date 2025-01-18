@@ -30,6 +30,7 @@ cdef extern from "./pairing_heap.h" namespace "pairing_heap":
         void decrease(TypeOfItem, TypeOfValue) except +
         bint contains(TypeOfItem)
         TypeOfValue value(TypeOfItem) except +
+        size_t size()
 
     cdef cppclass PairingHeapNodePy:
         PyObject * value           # value associated with the item

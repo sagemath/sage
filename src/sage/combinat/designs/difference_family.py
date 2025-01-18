@@ -292,8 +292,8 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
 
         # Normalized number of occurrences added to counter
         stabi = len(stab[i])
-        for gg in tmp_counter:
-            counter[gg] += tmp_counter[gg]//stabi
+        for gg, tmp_gg in tmp_counter.items():
+            counter[gg] += tmp_gg // stabi
 
     # Check the counter and report any error
     too_few = []

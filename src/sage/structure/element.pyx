@@ -817,9 +817,9 @@ cdef class Element(SageObject):
             ngens = parent.ngens()
         except (AttributeError, NotImplementedError, TypeError):
             return self
-        variables=[]
-        # use "gen" instead of "gens" as a ParentWithGens is not
-        # required to have the latter
+        variables = []
+
+        # using gen instead of gens
         for i in range(ngens):
             gen = parent.gen(i)
             if str(gen) in kwds:

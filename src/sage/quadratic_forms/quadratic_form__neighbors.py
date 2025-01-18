@@ -327,7 +327,7 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=None,
         def p_divisible_vectors(Q, max_neighbors):
             yield from iter(v.lift() for v in Q.orbits_lines_mod_p(p)
                             if v != 0 and Q(v.lift()).valuation(p) > 0)
-            return
+
     elif algorithm == 'exhaustion':
         def p_divisible_vectors(Q, max_neighbors):
             k = 0

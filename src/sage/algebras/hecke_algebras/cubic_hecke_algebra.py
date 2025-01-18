@@ -352,7 +352,7 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
             [(-2*a + u)*b - 2*a^2 + 2*u*a - v     b    0]
             [                               b     1    a]
 
-        using the the ``representation_type`` option::
+        using the ``representation_type`` option::
 
             sage: CHA3.<c0, c1> = algebras.CubicHecke(3)     #  optional gap3
             sage: chevie = CHA3.repr_type.SplitIrredChevie   #  optional gap3
@@ -364,7 +364,7 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
             [            b             0]
             [a^2 - u*a + v    -b - a + u]
 
-        using the the ``original`` option::
+        using the ``original`` option::
 
             sage: c0mo = c0.matrix(original=True)
             sage: c0mo_ch = c0.matrix(representation_type=chevie, original=True) #  optional gap3
@@ -1116,7 +1116,6 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         # initializing the basis extension (in case of more than 4 strands)
         # ----------------------------------------------------------------------
         self._init_basis_extension()
-        return
 
     ############################################################################
     # --------------------------------------------------------------------------

@@ -2116,7 +2116,7 @@ cdef MPF_hypsum(MPF *a, MPF *b, int p, int q, param_types, str ztype, coeffs, z,
             raise ZeroDivisionError
 
         # Multiply real factors
-        for k in range(0, cancellable_real):
+        for k in range(cancellable_real):
             sig_check()
             mpz_mul(PRE, PRE, AREAL[k])
             mpz_fdiv_q(PRE, PRE, BREAL[k])
@@ -2129,7 +2129,7 @@ cdef MPF_hypsum(MPF *a, MPF *b, int p, int q, param_types, str ztype, coeffs, z,
             mpz_mul_2exp(PRE, PRE, wp)
             mpz_fdiv_q(PRE, PRE, BREAL[k])
         if have_complex:
-            for k in range(0, cancellable_real):
+            for k in range(cancellable_real):
                 sig_check()
                 mpz_mul(PIM, PIM, AREAL[k])
                 mpz_fdiv_q(PIM, PIM, BREAL[k])

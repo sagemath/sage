@@ -2801,12 +2801,12 @@ class FreeModuleTensor(ModuleElementWithMutability):
         #
         nb_cov_s = 0  # Number of covariant indices of self not involved in the
                       # contraction
-        for pos in range(k1,k1+l1):
+        for pos in range(k1, k1 + l1):
             if pos not in pos1:
                 nb_cov_s += 1
         nb_con_o = 0  # Number of contravariant indices of other not involved
                       # in the contraction
-        for pos in range(0,k2):
+        for pos in range(k2):
             if pos not in pos2:
                 nb_con_o += 1
         if nb_cov_s != 0 and nb_con_o != 0:

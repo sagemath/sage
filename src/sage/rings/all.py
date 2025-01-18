@@ -12,8 +12,6 @@ Rings
 # ****************************************************************************
 from sage.misc.lazy_import import lazy_import
 
-from sage.rings.all__sagemath_categories import *
-
 # Ring base classes
 from sage.rings.ring import (Ring, Field, CommutativeRing, IntegralDomain,
                              PrincipalIdealDomain)

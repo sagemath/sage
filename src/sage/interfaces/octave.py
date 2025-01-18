@@ -351,7 +351,6 @@ class Octave(Expect):
         if self._expect is not None:
             if verbose:
                 print("Exiting spawned %s process." % self)
-        return
 
     def _start(self):
         """

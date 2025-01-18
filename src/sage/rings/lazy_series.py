@@ -4948,7 +4948,6 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         """
         from sage.misc.superseded import deprecation
         deprecation(32367, "the method compute_coefficients obsolete and has no effect.")
-        return
 
     def _im_gens_(self, codomain, im_gens, base_map=None):
         """

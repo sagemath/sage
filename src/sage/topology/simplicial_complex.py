@@ -1477,7 +1477,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         d = self.dimension()
         f = self.f_vector()  # indexed starting at 0, since it's a Python list
         h = []
-        for j in range(0, d + 2):
+        for j in range(d + 2):
             s = 0
             for i in range(-1, j):
                 s += (-1)**(j-i-1) * binomial(d-i, j-i-1) * f[i+1]

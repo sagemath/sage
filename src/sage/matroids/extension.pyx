@@ -211,6 +211,9 @@ cdef class LinearSubclassesIter:
 
         self._nodes = [first_cut]
 
+    def __iter__(self):
+        return self
+
     def __next__(self):
         """
         Return the next linear subclass.

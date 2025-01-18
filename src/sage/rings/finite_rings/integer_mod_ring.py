@@ -69,7 +69,6 @@ from sage.arith.misc import primitive_root
 from sage.arith.misc import CRT_basis
 from sage.rings.ring import Field, CommutativeRing
 from sage.misc.mrange import cartesian_product_iterator
-import sage.rings.ring as ring
 import sage.rings.abc
 from sage.rings.finite_rings import integer_mod
 import sage.rings.integer as integer
@@ -2030,7 +2029,7 @@ def crt(v):
         1027
     """
     if len(v) == 0:
-        return IntegerModRing(1)(1)
+        return IntegerModRing(1).one()
     x = v[0]
     for i in range(1, len(v)):
         x = x.crt(v[i])

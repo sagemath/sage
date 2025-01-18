@@ -9,7 +9,7 @@ license_files = LICENSE.txt
 include(`setup_cfg_metadata.m4')dnl'
 
 [options]
-python_requires = >=3.9, <3.13
+python_requires = >=3.9, <3.14
 install_requires =
     SPKG_INSTALL_REQUIRES_six
 dnl From build/pkgs/sagelib/dependencies

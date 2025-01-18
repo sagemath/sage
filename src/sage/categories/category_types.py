@@ -202,12 +202,13 @@ class Category_over_base(CategoryWithParameters):
         """
         tester = self._tester(**options)
         from sage.categories.category_singleton import Category_singleton
-
+        from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
         from .bimodules import Bimodules
         from .schemes import Schemes
         for cat in self.super_categories():
             tester.assertTrue(isinstance(cat, (Category_singleton, Category_over_base,
-                                            Bimodules, Schemes)),
+                                               CategoryWithAxiom_over_base_ring,
+                                               Bimodules, Schemes)),
                            "The super categories of a category over base should"
                            " be a category over base (or the related Bimodules)"
                            " or a singleton category")

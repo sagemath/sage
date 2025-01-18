@@ -1775,8 +1775,9 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: C = P.curve(x^2*z - y^3)
             sage: C.fundamental_group()                                 # needs sirocco
             Finitely presented group < x0 | x0^3 >
-            sage: P.curve(z*(x^2*z - y^3)).fundamental_group()          # needs sirocco
-            Finitely presented group < x0, x1 | x1*x0*x1*x0^-1*x1^-1*x0^-1 >
+            sage: g = P.curve(z*(x^2*z - y^3)).fundamental_group()      # needs sirocco
+            sage: g.sorted_presentation()                               # needs sirocco
+            Finitely presented group < x0, x1 | x1^-1*x0^-1*x1^-1*x0*x1*x0 >
 
         In the case of number fields, they need to have an embedding
         into the algebraic field::

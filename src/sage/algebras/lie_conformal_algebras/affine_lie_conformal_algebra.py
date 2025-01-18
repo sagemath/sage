@@ -142,7 +142,7 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
         """
         return self._ct
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The name of this Lie conformal algebra.
 
@@ -152,4 +152,4 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
             The affine Lie conformal algebra of type ['A', 1] over Rational Field
         """
         return "The affine Lie conformal algebra of type {} over {}".format(
-                                                    self._ct,self.base_ring())
+                                                    self._ct, self.base_ring())

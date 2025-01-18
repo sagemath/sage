@@ -1525,7 +1525,7 @@ class GRSGaoDecoder(Decoder):
         """
         G = PolRing.one()
         x = PolRing.gen()
-        for i in range(0, self.code().length()):
+        for i in range(self.code().length()):
             G = G*(x-self.code().evaluation_points()[i])
         return G
 
@@ -1612,11 +1612,10 @@ class GRSGaoDecoder(Decoder):
         if n == C.dimension() or r in C:
             return r, self.connected_encoder().unencode_nocheck(r)
 
-        points = [(alphas[i], r[i]/col_mults[i]) for i in
-                range(0, n)]
+        points = [(alphas[i], r[i]/col_mults[i]) for i in range(n)]
         R = PolRing.lagrange_polynomial(points)
 
-        (Q1, Q0) = self._partial_xgcd(G, R, PolRing)
+        Q1, Q0 = self._partial_xgcd(G, R, PolRing)
 
         h, rem = Q1.quo_rem(Q0)
         if not rem.is_zero():

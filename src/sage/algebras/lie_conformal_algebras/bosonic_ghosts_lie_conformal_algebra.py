@@ -120,7 +120,7 @@ class BosonicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
                          weights=weights,
                          central_elements=('K',))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 
@@ -130,4 +130,4 @@ class BosonicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
             The Bosonic ghosts Lie conformal algebra with generators (beta, gamma, K) over Algebraic Field
         """
         return "The Bosonic ghosts Lie conformal algebra with generators {} "\
-               "over {}".format(self.gens(),self.base_ring())
+            "over {}".format(self.gens(), self.base_ring())

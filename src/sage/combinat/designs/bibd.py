@@ -1277,14 +1277,14 @@ def BIBD_5q_5_for_q_prime_power(q):
 
     d = (q-1)//4
     B = []
-    F = FiniteField(q,'x')
+    F = FiniteField(q, 'x')
     a = F.primitive_element()
-    L = {b:i for i,b in enumerate(F)}
-    for b in L:
-        B.append([i*q + L[b] for i in range(5)])
+    L = {b: i for i, b in enumerate(F)}
+    for b, Lb in L.items():
+        B.append([i*q + Lb for i in range(5)])
         for i in range(5):
             for j in range(d):
-                B.append([        i*q + L[b          ],
+                B.append([        i*q + Lb,
                           ((i+1) % 5)*q + L[ a**j+b    ],
                           ((i+1) % 5)*q + L[-a**j+b    ],
                           ((i+4) % 5)*q + L[ a**(j+d)+b],

@@ -567,7 +567,7 @@ class PHC:
                         t_val = CC(m.group(2), m.group(3))
                         temp_dict = {}
                         temp_dict["t"] = t_val
-                        for i in range(0, count):
+                        for i in range(count):
                             a_line = fh.readline()
                             m = sols_regex.match(a_line)
                             if m:

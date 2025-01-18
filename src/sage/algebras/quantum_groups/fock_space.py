@@ -1751,7 +1751,7 @@ class FockSpaceTruncated(FockSpace):
             self._removable = lambda la,i: [x for x in la.corners()
                                             if la.content(*x, multicharge=F._multicharge) == i]
 
-            indices = Partitions(F._n, max_length=F._k)
+            indices = Partitions(max_length=F._k)
             CombinatorialFreeModule.__init__(self, F.base_ring(), indices,
                                              prefix='', bracket=['|', '>'],
                                              latex_bracket=['\\lvert', '\\rangle'],

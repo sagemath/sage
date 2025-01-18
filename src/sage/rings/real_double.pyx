@@ -132,7 +132,8 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
             sage: TestSuite(R).run()
         """
         from sage.categories.fields import Fields
-        Field.__init__(self, self, category=Fields().Infinite().Metric().Complete())
+        Field.__init__(self, self,
+                       category=Fields().Infinite().Metric().Complete())
         self._populate_coercion_lists_(init_no_parent=True,
                                        convert_method_name='_real_double_')
 

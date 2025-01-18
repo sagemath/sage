@@ -801,7 +801,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         self._classical_embedding = None   # if self._classical_group different from self._classical_base_group
         self._centralizing_matrix = None   # for Assion groups: element in classical base group commuting with self
         self._centralizing_element = None   # image under nat. map of the former one in the proj. classical group
-        return
 
     def _repr_(self):
         r"""
@@ -913,7 +912,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         if self.is_finite() and self.strands() <= 7: # not realistic for larger number of strands
             att_grp_elem_back = self(att_grp_elem)
             tester.assertEqual(att_grp_elem_back, elem)
-        return
 
     def _test_classical_group(self, **options):
         r"""
@@ -934,7 +932,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         classic_grp = self.as_classical_group()
         if self.is_finite():
             self._internal_test_attached_group(classic_grp, tester)
-        return
 
     def _test_permutation_group(self, **options):
         r"""
@@ -955,7 +952,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
             tester = self._tester(**options)
             permgrp = self.as_permutation_group()
             self._internal_test_attached_group(permgrp, tester)
-        return
 
     def _test_matrix_group(self, **options):
         r"""
@@ -1024,7 +1020,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
                 tester = self._tester(**options)
                 reflgrp = self.as_reflection_group()
                 self._internal_test_attached_group(reflgrp, tester)
-        return
 
     # -------------------------------------------------------------------------------
     # -------------------------------------------------------------------------------
@@ -1135,7 +1130,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
             self._centralizing_matrix = centralizing_matrix
             self._centralizing_element = centralizing_element
             self._classical_embedding = embedding
-            return
 
         # -------------------------------------------------------------------------------
         # local methods to set up the classical group (specific part)
@@ -1210,7 +1204,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
             transvec_matrices = [transvec2mat(v) for v in transvections]
 
             set_classical_realization(self, base_group, proj_group, centralizing_matrix, transvec_matrices)
-            return
 
         # -------------------------------------------------------------------------------
         # Case for unitary groups
@@ -1295,7 +1288,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
             transvec_matrices = [transvec2mat(v) for v in transvections]
 
             set_classical_realization(self, base_group, proj_group, centralizing_matrix, transvec_matrices)
-            return
 
         # ----------------------------------------------------------------
         # local functions declaration section finishes here
@@ -1346,7 +1338,6 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
             self._classical_embedding = classical_group
             if self._classical_invariant_form is None:
                 self._classical_invariant_form = classical_group.ambient().invariant_form()
-        return
 
     def _element_constructor_(self, x, **kwds):
         r"""

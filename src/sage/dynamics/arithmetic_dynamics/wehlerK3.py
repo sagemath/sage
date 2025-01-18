@@ -1200,7 +1200,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         e = min(maxexp)
 
         #Fix L and Q
-        for i in range(0,2):
+        for i in range(2):
             while T[i].subs({w1:t1}) == 0:
                 T[i] = T[i]/t
             T[i] = T[i].subs({w1:t1})
@@ -1435,7 +1435,8 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         -phi(self.Hpoly(0, 1, 2))]
         maxexp = []
 
-        #Find highest exponent that we can divide out by to get a nonzero answer
+        # Find highest exponent that we can divide out by to get a
+        # nonzero answer
         for i in range(2, len(T)):
             e = 0
             while (T[i]/t**e).subs({w1:t1}) == 0:
@@ -1444,7 +1445,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         e = min(maxexp)
 
-        for i in range(0, 2):
+        for i in range(2):
             while T[i].subs({w1:t1}) == 0:
                 T[i] = T[i]/t
             T[i] = T[i].subs({w1:t1})

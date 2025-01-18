@@ -1153,7 +1153,6 @@ class CubicHeckeFileCache(SageObject):
         """
         self._data_library.update({self.section.basis_extensions: new_basis_extensions})
         self.write(self.section.basis_extensions)
-        return
 
 
 # -----------------------------------------------------------------------------

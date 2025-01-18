@@ -26,11 +26,10 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.rings.infinity import infinity
+from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-
-from sage.rings.rational_field import QQ
-from sage.rings.infinity import infinity
 
 
 class TropicalVariety(UniqueRepresentation, SageObject):
@@ -188,10 +187,11 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         """
         import operator
         from itertools import combinations
-        from sage.symbolic.ring import SR
-        from sage.symbolic.relation import solve
+
         from sage.arith.misc import gcd
         from sage.rings.semirings.tropical_mpolynomial import TropicalMPolynomial
+        from sage.symbolic.relation import solve
+        from sage.symbolic.ring import SR
 
         if not isinstance(poly, TropicalMPolynomial):
             raise ValueError(f"{poly} is not a multivariate tropical polynomial")
@@ -448,9 +448,10 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             5: [((0, t2, 0), {0 <= t2}), ((1/2*t2, t2, t2), {t2 <= 0})]}
         """
         import operator
+
         from sage.functions.min_max import max_symbolic, min_symbolic
-        from sage.symbolic.relation import solve
         from sage.sets.set import Set
+        from sage.symbolic.relation import solve
 
         def update_result(result):
             sol_param = solve(new_expr, vars)
@@ -592,19 +593,20 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             sage: all(a == vector([0,0,0,0]) for a in [sum(lst) for lst in vec])
             True
         """
-        from sage.symbolic.ring import SR
-        from sage.symbolic.relation import solve
-        from sage.calculus.functional import diff
+        from itertools import combinations
+
         from sage.arith.misc import gcd
+        from sage.calculus.functional import diff
         from sage.matrix.constructor import matrix
         from sage.modules.free_module_element import vector, zero_vector
-        from itertools import combinations
+        from sage.symbolic.relation import solve
+        from sage.symbolic.ring import SR
 
         dim = self.dimension()
         t = SR.var('t')
-        t_vars = [SR.var('t{}'.format(i)) for i in range(dim)]
-        u_vars = [SR.var('u{}'.format(i)) for i in range(dim)]
-        convert_tu = {ti: ui for ti, ui in zip(t_vars, u_vars)}
+        t_vars = [SR.var(f't{i}') for i in range(dim)]
+        u_vars = [SR.var(f'u{i}') for i in range(dim)]
+        convert_tu = dict(zip(t_vars, u_vars))
         CI = self._components_intersection()
         unique_line = set()
         index_line = {}
@@ -657,9 +659,9 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                 if is_unique:
                     new_eqn = tuple([eq.subs(convert_tu) for eq in eqn])
                     cdns = line[1]
-                    new_cdn = set([cdn.subs(convert_tu) for cdn in cdns])
+                    new_cdn = {cdn.subs(convert_tu) for cdn in cdns}
                     unique_line.add(new_eqn)
-                    index_line[index] = tuple([new_eqn, new_cdn])
+                    index_line[index] = (new_eqn, new_cdn)
                     line_comps[index] = [i]
                     index += 1
                 else:
@@ -676,9 +678,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                 for v in l.variables():
                     all_var.add(v)
             for vpar in all_var:
-                par_drv = []
-                for l in line:
-                    par_drv.append(QQ(diff(l, vpar)))
+                par_drv = [QQ(diff(l, vpar)) for l in line]
                 par_drv = vector(par_drv)
                 dir_vecs.append(par_drv)
 
@@ -688,32 +688,24 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                 surface = self._hypersurface[i][0]
                 drv_vectors = []
                 for vpar in self._vars:
-                    temp_vec = []
-                    for s in surface:
-                        temp_vec.append(QQ(diff(s, vpar)))
+                    temp_vec = [QQ(diff(s, vpar)) for s in surface]
                     temp_vec = vector(temp_vec)
                     drv_vectors.append(temp_vec)
                 temp = [t_vars]
-                for vec in drv_vectors:
-                    temp.append(vec)
+                temp.extend(drv_vectors)
                 vec_matrix = matrix(SR, temp)
                 normal_vec = vec_matrix.det()
-                temp_nor = []
-                for tvar in t_vars:
-                    temp_nor.append(QQ(diff(normal_vec, tvar)))
+                temp_nor = [QQ(diff(normal_vec, tvar)) for tvar in t_vars]
                 normal_vec = vector(temp_nor)
                 normal_vec *= 1/gcd(normal_vec)
 
                 # Calculate the weight vector
                 temp_final = [t_vars]
-                for v in dir_vecs:
-                    temp_final.append(v)
+                temp_final.extend(dir_vecs)
                 temp_final.append(normal_vec)
                 vec_matrix = matrix(SR, temp_final)
                 weight_vec = vec_matrix.det()
-                temp_weight = []
-                for tvar in t_vars:
-                    temp_weight.append(QQ(diff(weight_vec, tvar)))
+                temp_weight = [QQ(diff(weight_vec, tvar)) for tvar in t_vars]
                 weight_vec = vector(temp_weight)
                 order = self._hypersurface[i][2]
                 weight_vec *= order
@@ -722,7 +714,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             balance = False
             for i in range(1, len(WV[k])+1):
                 for j in combinations(range(len(WV[k])), i):
-                    test_vectors = [v for v in WV[k]]
+                    test_vectors = list(WV[k])
                     for idx in j:
                         test_vectors[idx] = -test_vectors[idx]
                     if sum(test_vectors) == zero_vector(QQ, dim):
@@ -791,8 +783,8 @@ class TropicalSurface(TropicalVariety):
             sage: p2.tropical_variety()._axes()
             [[-1, 2], [-1, 2], [-1, 2]]
         """
-        from sage.symbolic.relation import solve
         from sage.arith.srange import srange
+        from sage.symbolic.relation import solve
 
         if not self._hypersurface:
             return [[-1, 1], [-1, 1], [-1, 1]]
@@ -911,8 +903,8 @@ class TropicalSurface(TropicalVariety):
             7: {(-1/2, -1, -1), (-1/2, 2, -1), (0, 0, 0), (0, 2, 0)},
             8: {(1, 1, 1), (1, 2, 1), (2, 1, 1), (2, 2, 1)}}
         """
-        from sage.symbolic.relation import solve
         from sage.sets.real_set import RealSet
+        from sage.symbolic.relation import solve
 
         poly_verts = {i: set() for i in range(self.number_of_components())}
         axes = self._axes()
@@ -1057,8 +1049,9 @@ class TropicalSurface(TropicalVariety):
             sphinx_plot(p2.tropical_variety().plot())
         """
         from random import random
-        from sage.plot.graphics import Graphics
+
         from sage.geometry.polyhedron.constructor import Polyhedron
+        from sage.plot.graphics import Graphics
 
         if color == 'random':
             colors = []
@@ -1283,17 +1276,17 @@ class TropicalCurve(TropicalVariety):
                 if lower != -infinity:
                     x = parametric_function[0].subs(**{str(v): lower})
                     y = parametric_function[1].subs(**{str(v): lower})
-                    if (x,y) not in comp_vert:
-                        comp_vert[(x,y)] = [(i, 1)]
+                    if (x, y) not in comp_vert:
+                        comp_vert[(x, y)] = [(i, 1)]
                     else:
-                        comp_vert[(x,y)].append((i, 1))
+                        comp_vert[(x, y)].append((i, 1))
                 if upper != infinity:
                     x = parametric_function[0].subs(**{str(v): upper})
                     y = parametric_function[1].subs(**{str(v): upper})
-                    if (x,y) not in comp_vert:
-                        comp_vert[(x,y)] = [(i, -1)]
+                    if (x, y) not in comp_vert:
+                        comp_vert[(x, y)] = [(i, -1)]
                     else:
-                        comp_vert[(x,y)].append((i, -1))
+                        comp_vert[(x, y)].append((i, -1))
         return comp_vert
 
     def weight_vectors(self):
@@ -1334,9 +1327,9 @@ class TropicalCurve(TropicalVariety):
              (-1, 0): [(-1, 0), (0, -1), (1, 1)],
              (3, 4): [(-1, -1), (0, 1), (1, 0)]}
         """
+        from sage.arith.misc import gcd
         from sage.calculus.functional import diff
         from sage.modules.free_module_element import vector
-        from sage.arith.misc import gcd
 
         if not self._vertices_components():
             return {}
@@ -1636,10 +1629,9 @@ class TropicalCurve(TropicalVariety):
                  + R(4)*x**3*y + x**2*y**2 + R(2)*x*y**3 + y**4)
             sphinx_plot(p3.tropical_variety().plot())
         """
-        from sage.plot.plot import plot
-        from sage.plot.text import text
         from sage.plot.graphics import Graphics
-        from sage.plot.plot import parametric_plot
+        from sage.plot.plot import parametric_plot, plot
+        from sage.plot.text import text
 
         if not self._hypersurface:
             return plot(lambda x: float('nan'), {-1, 1})

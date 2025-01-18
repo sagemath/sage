@@ -723,7 +723,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
         """
         return self._module
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a set of generators of this ideal.
 

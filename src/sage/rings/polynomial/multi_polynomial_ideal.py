@@ -251,7 +251,7 @@ from sage.rings.qqbar_decorators import handle_AA_and_QQbar
 from sage.structure.element import parent
 from sage.structure.richcmp import (op_EQ, op_GE, op_GT, op_LE, op_LT, op_NE,
                                     rich_to_bool, richcmp_method)
-from sage.structure.sequence import Sequence
+from sage.structure.sequence import Sequence, Sequence_generic
 
 try:
     from sage.interfaces.expect import StdOutContext
@@ -448,8 +448,7 @@ class MPolynomialIdeal_magma_repr:
         from sage.rings.polynomial.multi_polynomial_sequence import \
             PolynomialSequence
 
-        B = PolynomialSequence([R(e) for e in mgb], R, immutable=True)
-        return B
+        return PolynomialSequence([R(e) for e in mgb], R, immutable=True)
 
 
 class MPolynomialIdeal_singular_base_repr:
@@ -1161,7 +1160,7 @@ class MPolynomialIdeal_singular_repr(
         else:
             raise TypeError("algorithm '%s' unknown" % algorithm)
 
-        T = Sequence([ MPolynomialIdeal(Q,t) for t in Tbar])
+        T = Sequence([MPolynomialIdeal(Q, t) for t in Tbar])
         return sorted(T, key=lambda x: x.gens())
 
     @require_field
@@ -3919,10 +3918,12 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         return 0
 
     @cached_method
-    def gens(self):
+    def gens(self) -> Sequence_generic:
         """
-        Return a set of generators / a basis of this ideal. This is usually the
-        set of generators provided during object creation.
+        Return a set of generators / a basis of this ideal.
+
+        This is usually the set of generators provided during object
+        creation.
 
         EXAMPLES::
 

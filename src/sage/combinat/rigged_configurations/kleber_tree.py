@@ -666,8 +666,8 @@ class KleberTree(UniqueRepresentation, Parent):
         if not options:
             from copy import copy
             return copy(self._latex_options)
-        for k in options:
-            self._latex_options[k] = options[k]
+        for key, value in options.items():
+            self._latex_options[key] = value
 
     def _latex_(self):
         r"""
