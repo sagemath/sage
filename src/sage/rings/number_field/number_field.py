@@ -8664,7 +8664,7 @@ class NumberField_absolute(NumberField_generic):
         polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^4 + 6*x^2 + 1/2)
-            sage: K.optimized_subfields()
+            sage: K.optimized_subfields()  # random
             [(Number Field in a0 with defining polynomial x,
               Ring morphism:
                 From: Number Field in a0 with defining polynomial x
@@ -8788,8 +8788,20 @@ class NumberField_absolute(NumberField_generic):
         polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^4 + 6*x^2 + 1/2)
-            sage: K.subfields()
-            [(Number Field in a0 with defining polynomial x,
+            sage: sorted(K.subfields(), key=lambda x: x[0].discriminant())
+            [(Number Field in a3 with defining polynomial x^2 + 2,
+              Ring morphism:
+                From: Number Field in a3 with defining polynomial x^2 + 2
+                To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
+                Defn: a3 |--> -2*a^3 - 5*a,
+              None),
+             (Number Field in a2 with defining polynomial x^2 + 4,
+              Ring morphism:
+                From: Number Field in a2 with defining polynomial x^2 + 4
+                To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
+                Defn: a2 |--> 2*a^3 + 7*a,
+              None),
+             (Number Field in a0 with defining polynomial x,
               Ring morphism:
                 From: Number Field in a0 with defining polynomial x
                 To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
@@ -8800,18 +8812,6 @@ class NumberField_absolute(NumberField_generic):
                 From: Number Field in a1 with defining polynomial x^2 - 2
                 To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
                 Defn: a1 |--> -a^2 - 3/2,
-              None),
-             (Number Field in a2 with defining polynomial x^2 + 4,
-              Ring morphism:
-                From: Number Field in a2 with defining polynomial x^2 + 4
-                To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
-                Defn: a2 |--> 2*a^3 + 7*a,
-              None),
-             (Number Field in a3 with defining polynomial x^2 + 2,
-              Ring morphism:
-                From: Number Field in a3 with defining polynomial x^2 + 2
-                To:   Number Field in a with defining polynomial 2*x^4 + 6*x^2 + 1/2
-                Defn: a3 |--> -2*a^3 - 5*a,
               None),
              (Number Field in a4 with defining polynomial x^4 + 1,
               Ring morphism:
