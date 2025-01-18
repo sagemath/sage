@@ -522,7 +522,7 @@ class IntegratedCurve(DifferentiableCurve):
         # extract all the variables appearing in the initial point
         # coordinates:
         for coord in initial_pt_coords:
-            if isinstance(coord,Expression):
+            if isinstance(coord, Expression):
                 parameters = parameters.union(coord.variables())
         # extract all the variables appearing in the initial tangent
         # vector components:
@@ -549,9 +549,9 @@ class IntegratedCurve(DifferentiableCurve):
 
         # define all attributes
         if not isinstance(equations_rhs, dict):
-            self._equations_rhs = list(equations_rhs) # converts to list
+            self._equations_rhs = list(equations_rhs)  # converts to list
             # since might not already be a list (which is later required)
-        else: # case multi charts
+        else:  # case multi charts
             self._equations_rhs = equations_rhs
 
         self._across_charts = across_charts
@@ -569,6 +569,7 @@ class IntegratedCurve(DifferentiableCurve):
                         M[i, j] = fast_callable(SR(M[i, j]), vars=list(CoF[1]._chart[:]), domain=float)
 
                 import numpy as np
+
                 def fast_CoF(pos, vel, M=M):
                     # using default arguments for binding (ugly python)
                     # print(det(*pos))
