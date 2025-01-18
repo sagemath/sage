@@ -35,9 +35,9 @@ REFERENCES:
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
 from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_sparse
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class TropicalPolynomial(Polynomial_generic_sparse):
@@ -371,9 +371,9 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: p3.piecewise_function()
             3*x + 1
         """
-        from sage.symbolic.ring import SR
         from sage.functions.piecewise import piecewise
         from sage.sets.real_set import RealSet
+        from sage.symbolic.ring import SR
 
         x = SR.var('x')
         data = self.monomial_coefficients()
@@ -769,9 +769,9 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         return self.gens()[n]
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
-        Return a tuple whose entries are the generators for ``self``.
+        Return the generators for ``self``.
 
         EXAMPLES::
 
