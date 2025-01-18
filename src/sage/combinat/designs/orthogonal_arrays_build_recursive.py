@@ -837,14 +837,14 @@ def thwart_lemma_4_1(k, n, m, explain_construction=False):
     # - (1+t,t,1+t), (1,1,1), (1+t,t,t), (1,1,2), (0,0,1), (1,0,1), (0,1,1+t),
     #   (0,1,1), (1,0,-t)
     points = [(1+t,t,1+t), (1,1,1), (1+t,t,t), (1,1,2), (0,0,1), (1,0,1), (0,1,1+t), (0,1,1), (1,0,-t)]
-    points = [[K(_) for _ in t] for t in points] # triples of K^3
+    points = [[K(c) for c in t] for t in points] # triples of K^3
     AG_2_3 = []
     for x,y,z in points:
         if z != 0:
-            x,y,z = x/z,y/z,z/z
+            x, y, z = x / z, y / z, K.one()
             AG_2_3.append(relabel[x]+n*relabel[y])
         elif y != 0:
-            x,y,z = x/y,y/y,z
+            x, y = x / y, K.one()
             AG_2_3.append(q**2+relabel[x])
         else:
             AG_2_3.append(q**2+q)
