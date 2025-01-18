@@ -11,7 +11,8 @@ from sage.data_structures.bitset_base cimport *
 
 from libc.string cimport memset
 
-from cysignals.memory cimport sig_malloc, sig_calloc, sig_realloc, sig_free
+from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
+from memory_allocator cimport MemoryAllocator
 
 from sage.misc.unknown import Unknown
 
@@ -305,7 +306,8 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
     cdef int i,j,l
 
     # A copy of OA
-    cdef unsigned short * OAc = <unsigned short *> sig_malloc(k*n2*sizeof(unsigned short))
+    cdef MemoryAllocator mem = MemoryAllocator()
+    cdef unsigned short * OAc = <unsigned short *> mem.malloc(k*n2*sizeof(unsigned short))
 
     cdef unsigned short * C1
     cdef unsigned short * C2
@@ -321,7 +323,6 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
                 if verbose:
                     print({"OA": "{} is not in the interval [0..{}]".format(x,n-1),
                            "MOLS": "Entry {} was expected to be in the interval [0..{}]".format(x,n-1)}[terminology])
-                sig_free(OAc)
                 return False
             OAc[j*n2+i] = x
 
@@ -338,14 +339,12 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
                 bitset_add(seen,n*C1[l]+C2[l])
 
             if bitset_len(seen) != n2: # Have we seen all pairs ?
-                sig_free(OAc)
                 bitset_free(seen)
                 if verbose:
                     print({"OA": "Columns {} and {} are not orthogonal".format(i,j),
                            "MOLS": "Squares {} and {} are not orthogonal".format(i,j)}[terminology])
                 return False
 
-    sig_free(OAc)
     bitset_free(seen)
     return True
 
@@ -469,9 +468,8 @@ def is_group_divisible_design(groups, blocks, v, G=None, K=None, lambd=1, verbos
                     print("{} does not belong to [0,...,{}]".format(x, n-1))
                 return False
 
-    cdef unsigned short * matrix = <unsigned short *> sig_calloc(n*n, sizeof(unsigned short))
-    if matrix is NULL:
-        raise MemoryError
+    cdef MemoryAllocator mem = MemoryAllocator()
+    cdef unsigned short * matrix = <unsigned short *> mem.calloc(n*n, sizeof(unsigned short))
 
     # Counts the number of occurrences of each pair of points
     for b in blocks:
@@ -500,7 +498,6 @@ def is_group_divisible_design(groups, blocks, v, G=None, K=None, lambd=1, verbos
             if not len(g) in G:
                 if verbose:
                     print("a group has size {} while G={}".format(len(g),list(G)))
-                sig_free(matrix)
                 return False
 
     # Checks that two points of the same group were never covered
@@ -513,7 +510,6 @@ def is_group_divisible_design(groups, blocks, v, G=None, K=None, lambd=1, verbos
                 if matrix[ii*n+jj] != 0:
                     if verbose:
                         print("the pair ({},{}) belongs to a group but appears in some block".format(ii, jj))
-                    sig_free(matrix)
                     return False
 
                 # We fill the entries with what is expected by the next loop
@@ -526,10 +522,7 @@ def is_group_divisible_design(groups, blocks, v, G=None, K=None, lambd=1, verbos
             if matrix[i*n+j] != l:
                 if verbose:
                     print("the pair ({},{}) has been seen {} times but lambda={}".format(i,j,matrix[i*n+j],l))
-                sig_free(matrix)
                 return False
-
-    sig_free(matrix)
 
     return True if not guess_groups else (True, groups)
 
@@ -836,16 +829,11 @@ def is_quasi_difference_matrix(M, G, int k, int lmbda, int mu, int u, verbose=Fa
     cdef dict group_to_int = {v:i for i,v in enumerate(int_to_group)}
 
     # Allocations
-    cdef int ** x_minus_y = <int **> sig_malloc((n+1)*sizeof(int *))
-    cdef int * x_minus_y_data = <int *> sig_malloc((n+1)*(n+1)*sizeof(int))
-    cdef int * M_c = <int *> sig_malloc(k*M_nrows*sizeof(int))
-    cdef int * G_seen = <int *> sig_malloc((n+1)*sizeof(int))
-    if (x_minus_y == NULL or x_minus_y_data == NULL or M_c == NULL or G_seen == NULL):
-        sig_free(x_minus_y)
-        sig_free(x_minus_y_data)
-        sig_free(G_seen)
-        sig_free(M_c)
-        raise MemoryError
+    cdef MemoryAllocator mem = MemoryAllocator()
+    cdef int ** x_minus_y = <int **> mem.malloc((n+1)*sizeof(int *))
+    cdef int * x_minus_y_data = <int *> mem.malloc((n+1)*(n+1)*sizeof(int))
+    cdef int * M_c = <int *> mem.malloc(k*M_nrows*sizeof(int))
+    cdef int * G_seen = <int *> mem.malloc((n+1)*sizeof(int))
 
     # The "x-y" table. If g_i, g_j \in G, then x_minus_y[i][j] is equal to
     # group_to_int[g_i-g_j].
@@ -883,10 +871,6 @@ def is_quasi_difference_matrix(M, G, int k, int lmbda, int mu, int u, verbose=Fa
                     if bit:
                         if verbose:
                             print("Row {} contains more than one empty entry".format(i))
-                        sig_free(x_minus_y_data)
-                        sig_free(x_minus_y)
-                        sig_free(G_seen)
-                        sig_free(M_c)
                         return False
                     bit = True
 
@@ -900,10 +884,6 @@ def is_quasi_difference_matrix(M, G, int k, int lmbda, int mu, int u, verbose=Fa
                 if verbose:
                     print("Column {} contains {} empty entries instead of the expected "
                           "lambda.u={}.{}={}".format(j, ii, lmbda, u, lmbda*u))
-                sig_free(x_minus_y_data)
-                sig_free(x_minus_y)
-                sig_free(G_seen)
-                sig_free(M_c)
                 return False
 
     # We are now ready to test every pair of columns
@@ -917,10 +897,6 @@ def is_quasi_difference_matrix(M, G, int k, int lmbda, int mu, int u, verbose=Fa
                 if verbose:
                     print("Columns {} and {} generate 0 exactly {} times "
                           "instead of the expected mu(={})".format(i,j,G_seen[0],mu))
-                sig_free(x_minus_y_data)
-                sig_free(x_minus_y)
-                sig_free(G_seen)
-                sig_free(M_c)
                 return False
 
             for ii in range(1,n): # bad number of g_ii\in G
@@ -929,16 +905,8 @@ def is_quasi_difference_matrix(M, G, int k, int lmbda, int mu, int u, verbose=Fa
                         print("Columns {} and {} do not generate all elements of G "
                          "exactly lambda(={}) times. The element {} appeared {} "
                          "times as a difference.".format(i,j,lmbda,int_to_group[ii],G_seen[ii]))
-                    sig_free(x_minus_y_data)
-                    sig_free(x_minus_y)
-                    sig_free(G_seen)
-                    sig_free(M_c)
                     return False
 
-    sig_free(x_minus_y_data)
-    sig_free(x_minus_y)
-    sig_free(G_seen)
-    sig_free(M_c)
     return True
 
 
