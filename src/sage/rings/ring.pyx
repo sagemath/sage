@@ -23,7 +23,7 @@ The class inheritance hierarchy is:
 
     - :class:`NoetherianRing` (deprecated and essentially removed)
     - :class:`CommutativeAlgebra` (deprecated and essentially removed)
-    - :class:`IntegralDomain` (deprecated)
+    - :class:`IntegralDomain` (deprecated and essentially removed)
 
       - :class:`DedekindDomain` (deprecated and essentially removed)
       - :class:`PrincipalIdealDomain` (deprecated and essentially removed)
@@ -252,8 +252,6 @@ cdef class Ring(ParentWithGens):
         # Its __init__ method does *not* call Parent.__init__, since this would somehow
         # yield an infinite recursion. But when we call it from here, it works.
         # This is done in order to ensure that __init_extra__ is called.
-        #
-        # ParentWithGens.__init__(self, base, names=names, normalize=normalize)
         #
         # This is a low-level class. For performance, we trust that the category
         # is fine, if it is provided. If it isn't, we use the category of rings.
@@ -761,11 +759,9 @@ cdef class CommutativeRing(Ring):
             sage: Integers(389)['x,y']
             Multivariate Polynomial Ring in x, y over Ring of integers modulo 389
         """
-        try:
-            if not base_ring.is_commutative():
-                raise TypeError("base ring %s is no commutative ring" % base_ring)
-        except AttributeError:
+        if base_ring is not self and base_ring not in _CommutativeRings:
             raise TypeError("base ring %s is no commutative ring" % base_ring)
+
         # This is a low-level class. For performance, we trust that
         # the category is fine, if it is provided. If it isn't, we use
         # the category of commutative rings.
@@ -829,23 +825,6 @@ cdef class CommutativeRing(Ring):
             return self.fraction_field()
         except (NotImplementedError,TypeError):
             return coercion_model.division_parent(self)
-
-    def is_commutative(self):
-        """
-        Return ``True``, since this ring is commutative.
-
-        EXAMPLES::
-
-            sage: QQ.is_commutative()
-            True
-            sage: ZpCA(7).is_commutative()                                              # needs sage.rings.padics
-            True
-            sage: A = QuaternionAlgebra(QQ, -1, -3, names=('i','j','k')); A             # needs sage.combinat sage.modules
-            Quaternion Algebra (-1, -3) with base ring Rational Field
-            sage: A.is_commutative()                                                    # needs sage.combinat sage.modules
-            False
-        """
-        return True
 
     def krull_dimension(self):
         """
@@ -954,50 +933,11 @@ cdef class CommutativeRing(Ring):
 
 
 cdef class IntegralDomain(CommutativeRing):
-    """
-    Generic integral domain class.
-
-    This class is deprecated. Please use the
-    :class:`sage.categories.integral_domains.IntegralDomains`
-    category instead.
-    """
     _default_category = IntegralDomains()
 
-    def __init__(self, base_ring, names=None, normalize=True, category=None):
-        """
-        Initialize ``self``.
-
-        INPUT:
-
-         - ``category`` -- (default: ``None``) a category, or ``None``
-
-        This method is used by all the abstract subclasses of
-        :class:`IntegralDomain`, like :class:`Field`, ... in order to
-        avoid cascade calls Field.__init__ ->
-        IntegralDomain.__init__ ->
-        ...
-
-        EXAMPLES::
-
-            sage: F = IntegralDomain(QQ)
-            sage: F.category()
-            Category of integral domains
-
-            sage: F = Field(QQ)
-            sage: F.category()
-            Category of fields
-
-        The default value for the category is specified by the class
-        attribute ``default_category``::
-
-            sage: IntegralDomain._default_category
-            Category of integral domains
-
-            sage: Field._default_category
-            Category of fields
-        """
-        CommutativeRing.__init__(self, base_ring, names=names, normalize=normalize,
-                                 category=category)
+    def __init__(self, *args, **kwds):
+        deprecation(39227, "use the category IntegralDomains")
+        super().__init__(*args, **kwds)
 
 
 cdef class NoetherianRing(CommutativeRing):

@@ -647,6 +647,11 @@ latex_elements['preamble'] = r"""
 \makeatother
 """
 
+# Enable "hard wrapping" long code lines (only applies if breaking
+# long codelines at spaces or other suitable places failed, typically
+# this is for long decimal expansions or possibly long string identifiers)
+latex_elements['sphinxsetup'] = "verbatimforcewraps=true"
+
 # Documents to append as an appendix to all manuals.
 # latex_appendices = []
 
@@ -669,6 +674,7 @@ for macro in sage_latex_macros():
     latex_elements['preamble'] += macro + '\n'
     # used when building html version
     pngmath_latex_preamble += macro + '\n'
+
 
 # ------------------------------------------
 # add custom context variables for templates
@@ -712,9 +718,11 @@ def add_page_context(app, pagename, templatename, context, doctree):
 
 dangling_debug = False
 
+
 def debug_inf(app, message):
     if dangling_debug:
         app.info(message)
+
 
 def call_intersphinx(app, env, node, contnode):
     r"""
@@ -748,6 +756,7 @@ def call_intersphinx(app, env, node, contnode):
     else:
         debug_inf(app, "---- Intersphinx: %s not Found" % node['reftarget'])
     return res
+
 
 def find_sage_dangling_links(app, env, node, contnode):
     r"""
@@ -859,6 +868,7 @@ skip_picklability_check_modules = [
     '__builtin__',
 ]
 
+
 def check_nested_class_picklability(app, what, name, obj, skip, options):
     """
     Print a warning if pickling is broken for nested classes.
@@ -878,6 +888,7 @@ def check_nested_class_picklability(app, what, name, obj, skip, options):
                          'Please set the metaclass of the parent class to '
                          'sage.misc.nested_class.NestedClassMetaclass.' % (
                         v.__module__ + '.' + name + '.' + nm))
+
 
 def skip_member(app, what, name, obj, skip, options):
     """
