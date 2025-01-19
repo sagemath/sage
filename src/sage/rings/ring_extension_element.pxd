@@ -1,4 +1,4 @@
-from sage.rings.ring cimport CommutativeRing
+from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
 from sage.structure.element cimport CommutativeAlgebraElement
 from sage.rings.ring_extension cimport RingExtension_generic
@@ -13,10 +13,8 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
     pass
 
 cdef class RingExtensionWithBasisElement(RingExtensionElement):
-    cdef _vector(self, CommutativeRing base) noexcept
-    cdef _matrix(self, CommutativeRing base) noexcept
-    cdef _trace(self, CommutativeRing base) noexcept
-    cdef _norm(self, CommutativeRing base) noexcept
-    cpdef minpoly(self, base=*, var=*) noexcept
-
-
+    cdef _vector(self, Parent base)
+    cdef _matrix(self, Parent base)
+    cdef _trace(self, Parent base)
+    cdef _norm(self, Parent base)
+    cpdef minpoly(self, base=*, var=*)

@@ -464,7 +464,7 @@ cdef class Letter(Element):
         """
         return self.value
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Return ``True`` if ``left`` compares with ``right`` based on ``op``.
 
@@ -585,7 +585,7 @@ cdef class EmptyLetter(Element):
         """
         return hash(self.value)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Return ``True`` if ``left`` compares with ``right`` based on ``op``.
 
@@ -625,7 +625,7 @@ cdef class EmptyLetter(Element):
         """
         return self._parent.weight_lattice_realization().zero()
 
-    cpdef e(self, int i) noexcept:
+    cpdef e(self, int i):
         """
         Return `e_i` of ``self`` which is ``None``.
 
@@ -636,7 +636,7 @@ cdef class EmptyLetter(Element):
         """
         return None
 
-    cpdef f(self, int i) noexcept:
+    cpdef f(self, int i):
         """
         Return `f_i` of ``self`` which is ``None``.
 
@@ -711,7 +711,7 @@ cdef class Crystal_of_letters_type_A_element(Letter):
         """
         return self._parent.weight_lattice_realization().monomial(self.value-1)
 
-    cpdef Letter e(self, int i) noexcept:
+    cpdef Letter e(self, int i):
         r"""
         Return the action of `e_i` on ``self``.
 
@@ -726,7 +726,7 @@ cdef class Crystal_of_letters_type_A_element(Letter):
         else:
             return None
 
-    cpdef Letter f(self, int i) noexcept:
+    cpdef Letter f(self, int i):
         r"""
         Return the action of `f_i` on ``self``.
 
@@ -804,7 +804,7 @@ cdef class Crystal_of_letters_type_B_element(Letter):
         else:
             return self._parent.weight_lattice_realization()(0)
 
-    cpdef Letter e(self, int i) noexcept:
+    cpdef Letter e(self, int i):
         r"""
         Return the action of `e_i` on ``self``.
 
@@ -833,7 +833,7 @@ cdef class Crystal_of_letters_type_B_element(Letter):
         else:
             return None
 
-    cpdef Letter f(self, int i) noexcept:
+    cpdef Letter f(self, int i):
         r"""
         Return the actions of `f_i` on ``self``.
 
@@ -942,7 +942,7 @@ cdef class Crystal_of_letters_type_C_element(Letter):
         else:
             return self._parent.weight_lattice_realization()(0)
 
-    cpdef Letter e(self, int i) noexcept:
+    cpdef Letter e(self, int i):
         r"""
         Return the action of `e_i` on ``self``.
 
@@ -965,7 +965,7 @@ cdef class Crystal_of_letters_type_C_element(Letter):
         else:
             return None
 
-    cpdef Letter f(self, int i) noexcept:
+    cpdef Letter f(self, int i):
         r"""
         Return the action of `f_i` on ``self``.
 
@@ -1049,7 +1049,7 @@ cdef class Crystal_of_letters_type_D_element(Letter):
         else:
             return self._parent.weight_lattice_realization()(0)
 
-    cpdef Letter e(self, int i) noexcept:
+    cpdef Letter e(self, int i):
         r"""
         Return the action of `e_i` on ``self``.
 
@@ -1082,7 +1082,7 @@ cdef class Crystal_of_letters_type_D_element(Letter):
         else:
             return None
 
-    cpdef Letter f(self, int i) noexcept:
+    cpdef Letter f(self, int i):
         r"""
         Return the action of `f_i` on ``self``.
 
@@ -1188,7 +1188,7 @@ cdef class Crystal_of_letters_type_G_element(Letter):
         else:
             raise RuntimeError("G2 crystal of letters element %d not valid" % self.value)
 
-    cpdef Letter e(self, int i) noexcept:
+    cpdef Letter e(self, int i):
         r"""
         Return the action of `e_i` on ``self``.
 
@@ -1222,7 +1222,7 @@ cdef class Crystal_of_letters_type_G_element(Letter):
             else:
                 return None
 
-    cpdef Letter f(self, int i) noexcept:
+    cpdef Letter f(self, int i):
         r"""
         Return the action of `f_i` on ``self``.
 
@@ -1358,9 +1358,9 @@ cdef class LetterTuple(Element):
         """
         return hash(self.value)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
-        Check comparison between ``left`` and ``right`` based on ``op``
+        Check comparison between ``left`` and ``right`` based on ``op``.
 
         EXAMPLES::
 
@@ -1555,7 +1555,7 @@ cdef class Crystal_of_letters_type_E6_element(LetterTuple):
         R = self._parent.weight_lattice_realization().fundamental_weights()
         return sum(Integer(i).sign() * R[abs(i)] for i in self.value)
 
-    cpdef LetterTuple e(self, int i) noexcept:
+    cpdef LetterTuple e(self, int i):
         r"""
         Return the action of `e_i` on ``self``.
 
@@ -1643,7 +1643,7 @@ cdef class Crystal_of_letters_type_E6_element(LetterTuple):
         else:
             return None
 
-    cpdef LetterTuple f(self, int i) noexcept:
+    cpdef LetterTuple f(self, int i):
         r"""
         Return the action of `f_i` on ``self``.
 
@@ -1774,7 +1774,7 @@ cdef class Crystal_of_letters_type_E6_element_dual(LetterTuple):
             return l[self._parent.list().index(self)]
         return repr(self.value)
 
-    cpdef LetterTuple lift(self) noexcept:
+    cpdef LetterTuple lift(self):
         """
         Lift an element of ``self`` to the crystal of letters
         ``crystals.Letters(['E',6])`` by taking its inverse weight.
@@ -1791,7 +1791,7 @@ cdef class Crystal_of_letters_type_E6_element_dual(LetterTuple):
         #  tuple from a list
         return self._parent._ambient(tuple([-i for i in self.value]))
 
-    cpdef LetterTuple retract(self, LetterTuple p) noexcept:
+    cpdef LetterTuple retract(self, LetterTuple p):
         """
         Retract element ``p``, which is an element in
         ``crystals.Letters(['E',6])`` to an element in
@@ -1814,7 +1814,7 @@ cdef class Crystal_of_letters_type_E6_element_dual(LetterTuple):
         #  tuple from a list
         return self._parent._element_constructor_(tuple([-i for i in p.value]))
 
-    cpdef LetterTuple e(self, int i) noexcept:
+    cpdef LetterTuple e(self, int i):
         r"""
         Return the action of `e_i` on ``self``.
 
@@ -1826,7 +1826,7 @@ cdef class Crystal_of_letters_type_E6_element_dual(LetterTuple):
         """
         return self.retract(self.lift().f(i))
 
-    cpdef LetterTuple f(self, int i) noexcept:
+    cpdef LetterTuple f(self, int i):
         r"""
         Return the action of `f_i` on ``self``.
 
@@ -1956,7 +1956,7 @@ cdef class Crystal_of_letters_type_E7_element(LetterTuple):
         R = self._parent.weight_lattice_realization().fundamental_weights()
         return sum(Integer(i).sign() * R[abs(i)] for i in self.value)
 
-    cpdef LetterTuple e(self, int i) noexcept:
+    cpdef LetterTuple e(self, int i):
         r"""
         Return the action of `e_i` on ``self``.
 
@@ -2138,7 +2138,7 @@ cdef class Crystal_of_letters_type_E7_element(LetterTuple):
         else:
             return None
 
-    cpdef LetterTuple f(self, int i) noexcept:
+    cpdef LetterTuple f(self, int i):
         r"""
         Return the action of `f_i` on ``self``.
 
@@ -2395,7 +2395,7 @@ cdef class BKKLetter(Letter):
             ret = "\\underline{{{}}}".format(ret)
         return ret
 
-    cpdef Letter e(self, int i) noexcept:
+    cpdef Letter e(self, int i):
         r"""
         Return the action of `e_i` on ``self``.
 
@@ -2435,7 +2435,7 @@ cdef class BKKLetter(Letter):
             return self._parent._element_constructor_(-1)
         return None
 
-    cpdef Letter f(self, int i) noexcept:
+    cpdef Letter f(self, int i):
         r"""
         Return the action of `f_i` on ``self``.
 
@@ -2715,7 +2715,7 @@ cdef class QueerLetter_element(Letter):
         """
         return self._parent.weight_lattice_realization().monomial(self.value-1)
 
-    cpdef Letter e(self, int i) noexcept:
+    cpdef Letter e(self, int i):
         r"""
         Return the action of `e_i` on ``self``.
 
@@ -2731,7 +2731,7 @@ cdef class QueerLetter_element(Letter):
             return self._parent._element_constructor_(self.value-1)
         return None
 
-    cpdef Letter f(self, int i) noexcept:
+    cpdef Letter f(self, int i):
         r"""
         Return the action of `f_i` on ``self``.
 
@@ -2823,9 +2823,9 @@ cdef class LetterWrapped(Element):
         """
         return hash(self.value)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
-        Check comparison between ``left`` and ``right`` based on ``op``
+        Check comparison between ``left`` and ``right`` based on ``op``.
 
         EXAMPLES::
 
@@ -2854,7 +2854,7 @@ cdef class LetterWrapped(Element):
             return self.value == x.value or x._parent.lt_elements(x, self)
         return False
 
-    cpdef tuple _to_tuple(self) noexcept:
+    cpdef tuple _to_tuple(self):
         r"""
         Return a tuple encoding the `\varepsilon_i` and `\varphi_i`
         values of ``elt``.
@@ -2923,7 +2923,7 @@ cdef class LetterWrapped(Element):
                 ret+= repr(v)
         return ret + "\\right)"
 
-    cpdef LetterWrapped e(self, int i) noexcept:
+    cpdef LetterWrapped e(self, int i):
         r"""
         Return `e_i` of ``self``.
 
@@ -2939,7 +2939,7 @@ cdef class LetterWrapped(Element):
             return None
         return type(self)(self._parent, ret)
 
-    cpdef LetterWrapped f(self, int i) noexcept:
+    cpdef LetterWrapped f(self, int i):
         r"""
         Return `f_i` of ``self``.
 

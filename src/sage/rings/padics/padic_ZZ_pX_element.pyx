@@ -41,7 +41,7 @@ from sage.libs.ntl.ntl_ZZ_pContext import ntl_ZZ_pContext
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
-from sage.rings.finite_rings.integer_mod import is_IntegerMod
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 from sage.rings.padics.padic_printing cimport pAdicPrinter_class
 from sage.rings.padics.pow_computer_ext cimport PowComputer_ext
 from sage.rings.rational_field import QQ
@@ -55,7 +55,7 @@ big = two**128 + one
 cdef class pAdicZZpXElement(pAdicExtElement):
     def __init__(self, parent):
         """
-        Initialization
+        Initialization.
 
         EXAMPLES::
 
@@ -68,14 +68,14 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
     cdef int _set_from_list(self, L) except -1:
         """
-        Sets ``self`` from a list.
+        Set ``self`` from a list.
 
         The list can contain integers, ``IntegerMods``, rationals, or
         `p`-adic base elements
 
         INPUT:
 
-        - `L` -- a list.
+        - ``L`` -- list
 
         EXAMPLES::
 
@@ -97,17 +97,16 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
     cdef int _set_from_list_rel(self, L, long relprec) except -1:
         """
-        Sets ``self`` from a list.
+        Set ``self`` from a list.
 
         The list can contain integers, ``IntegerMods``, rationals, or
         `p`-adic base elements
 
         INPUT:
 
-        - ``L`` -- a list.
+        - ``L`` -- list
 
-        - ``relprec`` -- an integer, capping the relative precision of
-          ``self``.
+        - ``relprec`` -- integer; capping the relative precision of ``self``
 
         EXAMPLES::
 
@@ -133,11 +132,11 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
         INPUT:
 
-        - ``L`` -- a list of integers, ``IntegerMod``s, rationals, or `p`-adic
-          base elements.
+        - ``L`` -- list of integers, ``IntegerMod``s, rationals, or `p`-adic
+          base elements
 
-        - ``absprec`` -- an integer at which the absolute precision of the
-          result will be capped.
+        - ``absprec`` -- integer at which the absolute precision of the
+          result will be capped
 
         EXAMPLES::
 
@@ -148,7 +147,6 @@ cdef class pAdicZZpXElement(pAdicExtElement):
             1 + 2*w + 3*w^2 + 4*w^3 + O(w^25)
             sage: W([5,10,15,20], absprec=16)  # indirect doctest
             w^5 + 4*w^6 + w^7 + w^8 + 2*w^9 + 4*w^10 + 2*w^11 + 3*w^13 + 2*w^15 + O(w^16)
-
         """
         cdef ntl_ZZ_pContext_class ctx
         L, min_val, ctx = preprocess_list(self, L)
@@ -167,12 +165,12 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
         INPUT:
 
-        - ``L`` -- a list of integers, ``IntegerMod``s, rationals, or `p`-adic
-          base elements.
+        - ``L`` -- list of integers, ``IntegerMod``s, rationals, or `p`-adic
+          base elements
 
-        - ``absprec`` -- an integer at which the absolute precision of the result will be capped.
+        - ``absprec`` -- integer at which the absolute precision of the result will be capped
 
-        - ``relprec`` -- an integer at which the relative precision of the result will be capped.
+        - ``relprec`` -- integer at which the relative precision of the result will be capped
 
         EXAMPLES::
 
@@ -200,16 +198,16 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
     cdef long _check_ZZ_pContext(self, ntl_ZZ_pContext_class ctx) except -1:
         """
-        Checks that the given ``ntl_ZZ_pContext`` is actually a power
+        Check that the given ``ntl_ZZ_pContext`` is actually a power
         of the relevant prime.  If so, returns the exponent.
 
         INPUT:
 
-        - ``ctx`` -- An ``ntl_ZZ_pContext_class``
+        - ``ctx`` -- an ``ntl_ZZ_pContext_class``
 
         OUTPUT:
 
-        - ``val`` -- If ``ctx`` is a context for `p^n`, returns `n`.
+        - ``val`` -- if ``ctx`` is a context for `p^n`, returns `n`.
           Otherwise, raises an error.
 
         EXAMPLES::
@@ -228,9 +226,9 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         else:
             raise ValueError("context must be a power of the appropriate prime")
 
-    cdef ext_p_list_precs(self, bint pos, long prec) noexcept:
+    cdef ext_p_list_precs(self, bint pos, long prec):
         """
-        Returns a list giving a series representation of ``self``.
+        Return a list giving a series representation of ``self``.
 
         - The returned list will consist of:
 
@@ -247,23 +245,23 @@ cdef class pAdicZZpXElement(pAdicExtElement):
             generator (in the unramified case).
 
         Note that zeros are truncated from the returned list, so you
-        must use the valuation() function to completely recover self.
+        must use the valuation() function to completely recover ``self``.
 
         INPUT:
 
-        - ``pos`` -- ``bint``.  If ``True``, all integers will be in
+        - ``pos`` -- bint; if ``True``, all integers will be in
           the range `[0,p-1]`, otherwise they will be in the range
-          `[(1-p)/2, p/2]`.
+          `[(1-p)/2, p/2]`
 
-        - ``prec`` -- How many terms to return in the list.  This is
+        - ``prec`` -- how many terms to return in the list.  This is
           important since shifting in the Eisenstein case can
           introduce random high order bits.  Thus the process would
           not otherwise necessarily terminate at the right point.
 
         OUTPUT:
 
-        - ``L`` -- A list of integers or list of lists giving the
-          series expansion of ``self``.
+        - ``L`` -- list of integers or list of lists giving the
+          series expansion of ``self``
 
         EXAMPLES::
 
@@ -293,7 +291,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         cdef ZZ_pX_c shifter = (<ntl_ZZ_pX>self._ntl_rep()).x
 
         #cdef ntl_ZZ_pContext_class cup = self.prime_pow.get_context(self.prime_pow.prec_cap + (<PowComputer_ZZ_pX_FM_Eis>self.prime_pow).low_length)
-        #cdef ntl_ZZ_pX printer = ntl_ZZ_pX([],cup)
+        #cdef ntl_ZZ_pX printer = ntl_ZZ_pX([], cup)
         #printer.x = ((<PowComputer_ZZ_pX_FM_Eis>self.prime_pow).low_shifter[0]).val()
         #print(printer)
 
@@ -400,7 +398,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
            sage: ((1+2*w)).norm()^5                                                     # needs sage.geometry.polyhedron
            1 + 5^2
 
-        Check that :trac:`11586` has been resolved::
+        Check that :issue:`11586` has been resolved::
 
             sage: R.<x> = QQ[]
             sage: f = x^2 + 3*x + 1
@@ -431,7 +429,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
                 norm_of_uniformizer = (-1)**self.parent().degree() * self.parent().defining_polynomial()[0]
             return self.parent().ground_ring()(self.unit_part().matrix_mod_pn().det()) * norm_of_uniformizer**self.valuation()
 
-    def trace(self, base = None):
+    def trace(self, base=None):
         r"""
         Return the absolute or relative trace of this element.
 
@@ -487,14 +485,13 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
         TESTS:
 
-        We check that :trac:`32072` is resolved::
+        We check that :issue:`32072` is resolved::
 
             sage: F = Qp(2)
             sage: S.<x> = F[]
             sage: L.<w> = F.ext(x^2 - 2)
             sage: L(0, 20).trace()
             O(2^10)
-
         """
         if base is not None:
             if base is self.parent():
@@ -531,7 +528,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
     def _prime_pow(self):
         """
-        Provides access to ``self's`` ``prime_pow``.
+        Provides access to ``self``'s ``prime_pow``.
 
         EXAMPLES::
 
@@ -546,11 +543,11 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
     cdef int _pshift_self(self, long shift) except -1:
         """
-        Multiplies this element by ``p^shift``.
+        Multiply this element by ``p^shift``.
 
         TESTS:
 
-        Check that :trac:`13647` has been fixed::
+        Check that :issue:`13647` has been fixed::
 
             sage: # needs sage.libs.flint
             sage: K = ZpCA(3)
@@ -567,6 +564,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         if shift != 0:
             raise NotImplementedError
 
+
 def _test_preprocess_list(R, L):
     r"""
     Given a list of elements convertible to ``ntl_ZZ_p``s, find the
@@ -577,7 +575,7 @@ def _test_preprocess_list(R, L):
 
     - ``R`` -- a `p`-adic extension ring
 
-    - ``L`` -- a list of rationals, integers, ints, longs,
+    - ``L`` -- list of rationals, integers, ints, longs,
       ``ntl_ZZ_ps``, ``ntl_ZZs``, ``IntegerMods`` or `p`-adic base
       elements
 
@@ -623,7 +621,7 @@ def _test_preprocess_list(R, L):
     return preprocess_list(R(0), L)
 
 
-cdef preprocess_list(pAdicZZpXElement elt, L) noexcept:
+cdef preprocess_list(pAdicZZpXElement elt, L):
     """
     See the documentation for :func:`_test_preprocess_list`.
     """
@@ -649,7 +647,7 @@ cdef preprocess_list(pAdicZZpXElement elt, L) noexcept:
         ctx = ntl_ZZ_pContext(py_tmp)
     else:
         # integers, rationals and things with finite precision
-        # note that min_val will be non-positive since things with finite precision return non-positive valuation from get_val_prec
+        # note that min_val will be nonpositive since things with finite precision return nonpositive valuation from get_val_prec
         py_tmp = ntl_ZZ.__new__(ntl_ZZ)
         py_tmp.x = elt.prime_pow.pow_ZZ_tmp(mpz_get_ui((<Integer>(min_aprec - min_val)).value))[0]
         ctx = ntl_ZZ_pContext(py_tmp)
@@ -664,7 +662,7 @@ cdef preprocess_list(pAdicZZpXElement elt, L) noexcept:
                 L[i] = ntl_ZZ_p(L[i]*pshift_m, ctx)
             elif isinstance(L[i], pAdicGenericElement) and L[i]._is_base_elt(elt.prime_pow.prime):
                 L[i] = ntl_ZZ_p((L[i] >> min_val).lift(), ctx)
-            elif is_IntegerMod(L[i]):
+            elif isinstance(L[i], IntegerMod_abstract):
                 L[i] = ntl_ZZ_p(L[i].lift()*pshift_m, ctx)
             elif (L[i].modulus_context() is not ctx) or min_val != zero:
                 L[i] = ntl_ZZ_p(L[i].lift()*pshift_z, ctx)
@@ -682,7 +680,7 @@ cdef preprocess_list(pAdicZZpXElement elt, L) noexcept:
                 L[i] = ntl_ZZ_p(L[i]//pshift_m, ctx)
             elif isinstance(L[i], pAdicGenericElement) and L[i]._is_base_elt(elt.prime_pow.prime):
                 L[i] = ntl_ZZ_p((L[i] >> min_val).lift(), ctx)
-            elif is_IntegerMod(L[i]):
+            elif isinstance(L[i], IntegerMod_abstract):
                 L[i] = ntl_ZZ_p(L[i].lift()//pshift_m, ctx)
             elif (L[i].modulus_context() is not ctx) or min_val != zero:
                 ZZ_div(tmp, (<ntl_ZZ>L[i].lift()).x, pshift_z.x)
@@ -693,9 +691,10 @@ cdef preprocess_list(pAdicZZpXElement elt, L) noexcept:
         for i from 0 <= i < len(L):
             if isinstance(L[i], (ntl_ZZ, Integer, Rational, int)):
                 L[i] = ntl_ZZ_p(L[i], ctx)
-            elif (isinstance(L[i], pAdicGenericElement) and L[i]._is_base_elt(elt.prime_pow.prime)) or is_IntegerMod(L[i]) or (L[i].modulus_context() is not ctx):
+            elif (isinstance(L[i], pAdicGenericElement) and L[i]._is_base_elt(elt.prime_pow.prime)) or isinstance(L[i], IntegerMod_abstract) or (L[i].modulus_context() is not ctx):
                 L[i] = ntl_ZZ_p(L[i].lift(), ctx)
     return L, min_val, ctx
+
 
 def _find_val_aprec_test(R, L):
     r"""
@@ -705,11 +704,9 @@ def _find_val_aprec_test(R, L):
     INPUT:
 
     - ``R`` -- a `p`-adic extension
-    - ``L`` -- a list of integers, rationals, ``IntegerMods``, etc.
+    - ``L`` -- list of integers, rationals, ``IntegerMods``, etc.
 
-    OUTPUT:
-
-    - ``min_val`` -- the minimum valuation of any element in the list
+    OUTPUT: ``min_val`` -- the minimum valuation of any element in the list
 
     - ``min_aprec`` -- the minimum absolute precision of any element
       in the list; if infinite, a predefined constant ``big`` is
@@ -738,7 +735,8 @@ def _find_val_aprec_test(R, L):
     """
     return find_val_aprec(R.prime_pow, L)
 
-cdef find_val_aprec(PowComputer_ext pp, L) noexcept:
+
+cdef find_val_aprec(PowComputer_ext pp, L):
     r"""
     Given a list ``L``, finds the minimum valuation, minimum absolute
     precision and minimum common type of the elements.
@@ -746,9 +744,9 @@ cdef find_val_aprec(PowComputer_ext pp, L) noexcept:
     INPUT:
 
     - ``pp`` -- a PowComputer_ext for the element that this list is
-      being initialized into.
+      being initialized into
 
-    - ``L`` -- a list of integers, rationals, ``IntegerMods``, etc.
+    - ``L`` -- list of integers, rationals, ``IntegerMods``, etc.
 
     See the documentation for :func:`_find_val_aprec_test` for more details.
     """
@@ -771,6 +769,7 @@ cdef find_val_aprec(PowComputer_ext pp, L) noexcept:
             total_type = cur_type
     return min_val, min_aprec, total_type
 
+
 def _test_get_val_prec(R, a):
     """
     Return valuation, absolute precision and type of an input
@@ -780,7 +779,7 @@ def _test_get_val_prec(R, a):
 
     - ``R`` -- a `p`-adic extension ring to provide a ``PowComputer_ext``
 
-    - ``a`` -- a rational, integer, int, long, ``ntl_ZZ_p``,
+    - ``a`` -- rational, integer, int, long, ``ntl_ZZ_p``,
       ``ntl_ZZ``, ``IntegerMod`` or `p`-adic base element
 
     OUTPUT:
@@ -843,7 +842,8 @@ def _test_get_val_prec(R, a):
     """
     return get_val_prec(R.prime_pow, a)
 
-cdef get_val_prec(PowComputer_ext pp, a) noexcept:
+
+cdef get_val_prec(PowComputer_ext pp, a):
     r"""
     Return valuation, absolute precision and type of an input element.
 
@@ -851,7 +851,7 @@ cdef get_val_prec(PowComputer_ext pp, a) noexcept:
 
     - ``pp`` -- a ``PowComputer_ext``
 
-    - ``a`` -- a rational, integer, int, long, ``ntl_ZZ_p``,
+    - ``a`` -- rational, integer, int, long, ``ntl_ZZ_p``,
       ``ntl_ZZ``, ``IntegerMod`` or `p`-adic base element
 
     See :func:`_test_get_val_prec` for more details.
@@ -887,7 +887,7 @@ cdef get_val_prec(PowComputer_ext pp, a) noexcept:
     cdef mpz_t leftover
     cdef long long_val
     cdef Integer Integer_val
-    if is_IntegerMod(a):
+    if isinstance(a, IntegerMod_abstract):
         mpz_init(leftover)
         long_val = mpz_remove(leftover, (<Integer>a.modulus()).value, pp.prime.value)
         if long_val > 0 and mpz_cmp_ui(leftover, 1) == 0:

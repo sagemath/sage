@@ -3,6 +3,6 @@ cd src
 # Use newer version of config.guess and config.sub (see Issue #23847)
 cp "$SAGE_ROOT"/config/config.* config
 
-sdh_configure --with-lisp=ecl --enable-case-insensitive-file-system-check=no
+sdh_configure --with-lisp="$SAGE_FRICAS_LISP" --enable-case-insensitive-file-system-check=no
 sdh_make
 sdh_make_install -j1

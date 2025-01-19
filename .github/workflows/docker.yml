@@ -18,14 +18,13 @@ on:
         # 'tox -e update_docker_platforms' updates below
         default: >-
           [
-           "ubuntu-trusty-toolchain-gcc_9",
            "ubuntu-xenial-toolchain-gcc_9",
            "ubuntu-bionic-gcc_8",
            "ubuntu-focal",
            "ubuntu-jammy",
            "ubuntu-lunar",
            "ubuntu-mantic",
-           "debian-buster-gcc_spkg",
+           "ubuntu-noble",
            "debian-bullseye",
            "debian-bookworm",
            "debian-trixie",
@@ -36,6 +35,7 @@ on:
            "linuxmint-21",
            "linuxmint-21.1",
            "linuxmint-21.2",
+           "linuxmint-21.3",
            "fedora-30",
            "fedora-31",
            "fedora-32",
@@ -46,16 +46,16 @@ on:
            "fedora-37",
            "fedora-38",
            "fedora-39",
-           "centos-7-devtoolset-gcc_11",
-           "centos-stream-8-python3.9",
-           "centos-stream-9-python3.9",
+           "fedora-40",
+           "fedora-41",
+           "centos-stream-9",
+           "centos-stream-9-python3.12",
            "almalinux-8-python3.9",
            "almalinux-9-python3.11",
            "gentoo-python3.10",
            "gentoo-python3.11",
+           "gentoo-python3.12",
            "archlinux-latest",
-           "opensuse-15.3-gcc_11-python3.9",
-           "opensuse-15.4-gcc_11-python3.10",
            "opensuse-15.5-gcc_11-python3.11",
            "opensuse-tumbleweed-python3.10",
            "opensuse-tumbleweed",
@@ -85,6 +85,9 @@ on:
         description: 'Elapsed time (seconds) at which to kill the build'
         default: 20000
         type: number
+      logs_artifact:
+        default: true
+        type: boolean
       #
       # Publishing to GitHub Packages
       #
@@ -170,7 +173,7 @@ jobs:
           ref: ${{ inputs.sage_ref }}
           fetch-depth: 10000
       - name: Download upstream artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: upstream
           name: ${{ inputs.upstream_artifact }}
@@ -182,8 +185,10 @@ jobs:
           sudo apt-get clean
           df -h
       - name: Update Sage packages from upstream artifact
+        # Handle both the old and new location of write-dockerfile.sh,
+        # because docker.yml is a reusable workflow.
         run: |
-          (export PATH=$(pwd)/build/bin:$PATH; (cd upstream && bash -x update-pkgs.sh) && sed -i.bak '/upstream/d' .dockerignore && echo "/:toolchain:/i ADD upstream upstream" | sed -i.bak -f - build/bin/write-dockerfile.sh && git diff)
+          (export PATH=$(pwd)/build/bin:$PATH; (cd upstream && bash -x update-pkgs.sh) && sed -i.bak '/upstream/d' .dockerignore; for a in build/bin/write-dockerfile.sh .ci/write-dockerfile.sh; do if [ -r $a ]; then echo "/:toolchain:/i ADD upstream upstream" | sed -i.bak -f - $a; fi; done; git diff)
         if: inputs.upstream_artifact
 
       - name: Try to login to ghcr.io
@@ -242,29 +247,73 @@ jobs:
         # The arcane "find" command is a replacement for "pkill make",
         # which we use because pkill is not installed in the "minimal" package
         # configuration on many platforms.
+        #
+        # The "sed" command strips away timestamps from "docker build" (buildkit)
+        # such as "#25 1211.0" at the beginning of each line. The timestamps are
+        # redundant because GH Actions provides timestamps for each line already.
+        # Stripping the timestamps from the beginnings of lines also allows
+        # GitHub Actions to recognize workflow commands such as ::error etc.
+        #
         run: |
           (sleep ${{ inputs.timeout }}; for id in $(docker ps -q); do docker exec $id find /proc -maxdepth 2 -name cmdline -exec bash -c "grep -l [m][a][k][e] {} | cut -d/ -f3 | xargs --no-run-if-empty kill" \;; done) &
-          set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--build-arg NUMPROC=4 --build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=3\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed "/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
+          set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--build-arg NUMPROC=9 --build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=5\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed -E --unbuffered "s/^#[0-9]+ [0-9]+[.][0-9]+ //;/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
       - name: Copy logs from the Docker image or build container
         run: |
           mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"
-          cp -r .tox/$TOX_ENV/Dockerfile .tox/$TOX_ENV/log "artifacts/$LOGS_ARTIFACT_NAME"
-          if [ -f .tox/$TOX_ENV/Dockertags ]; then CONTAINERS=$(docker create $(tail -1 .tox/$TOX_ENV/Dockertags) /bin/bash || true); fi
-          if [ -n "$CONTAINERS" ]; then for CONTAINER in $CONTAINERS; do for ARTIFACT in /sage/logs; do docker cp $CONTAINER:$ARTIFACT artifacts/$LOGS_ARTIFACT_NAME && HAVE_LOG=1; done; if [ -n "$HAVE_LOG" ]; then break; fi; done; fi
+          cp -r .tox/$TOX_ENV/* "artifacts/$LOGS_ARTIFACT_NAME"
+          rm -rf "artifacts/$LOGS_ARTIFACT_NAME"/{bin,lib,pyvenv.cfg}
         if: always()
-      - uses: actions/upload-artifact@v3
+      - name: Upload logs artifact
+        uses: actions/upload-artifact@v4
         with:
           path: artifacts
           name: ${{ env.LOGS_ARTIFACT_NAME }}
-        if: always()
+        if: always() && inputs.logs_artifact
       - name: Print out logs for immediate inspection
         # and markup the output with GitHub Actions logging commands
         run: |
           .github/workflows/scan-logs.sh "artifacts/$LOGS_ARTIFACT_NAME"
         if: always()
-      - name: List docker images
+      - name: List Docker images
         run: |
-          if [ -f .tox/$TOX_ENV/Dockertags ]; then
-             cat .tox/$TOX_ENV/Dockertags
+          if [ -n "$DOCKER_PUSH_REPOSITORY" -a -f .tox/$TOX_ENV/Dockertags.pushed ]; then
+             set -- $(cat .tox/$TOX_ENV/Dockertags.pushed)
+             case $# in
+                 1) images="image";  one_image="the image";;
+                 *) images="images"; one_image="one of the images";;
+             esac
+             echo "::notice title=Docker $images pushed::Pushed $images $*)"
+             echo
+             echo "To pull $one_image and enter the container, type:"
+             echo
+             for TAG in $*; do
+                 echo "  \$ docker run -it $TAG bash"
+             done
+             echo
+             echo "To use $one_image as the base for an incremental build, type:"
+             echo
+             TOX_ENV_SANS_INCREMENTAL=${TOX_ENV/-incremental/}
+             DOCKER_IMAGE=${TOX_ENV_SANS_INCREMENTAL#docker-}
+             for TAG in $*; do
+                 echo -n "  \$"
+                 if [ "$DOCKER_PUSH_REPOSITORY" != "ghcr.io/sagemath/sage/" ]; then
+                     echo -n " FROM_DOCKER_REPOSITORY=$DOCKER_PUSH_REPOSITORY"
+                 fi
+                 eval DOCKER_TARGET=\${TAG#*$DOCKER_IMAGE-}
+                 DOCKER_TARGET=${DOCKER_TARGET%:*}
+                 if [ "$DOCKER_TARGET" != "with-targets" ]; then
+                     echo -n " FROM_DOCKER_TARGET=$DOCKER_TARGET"
+                 fi
+                 echo " FROM_DOCKER_TAG=${TAG#*:} tox -e $TOX_ENV_SANS_INCREMENTAL-incremental"
+             done
+          elif [ -n "$DOCKER_PUSH_REPOSITORY" -a -f .tox/$TOX_ENV/Dockertags ]; then
+             echo "Unable to push Docker images to $DOCKER_PUSH_REPOSITORY."
+             echo "This is normal in a pull request to sagemath/sage or to another user's repository."
+             echo
+             echo "If you need Docker images, "
+             echo " - either run this GitHub Actions workflow in your repository fork"
+             echo " - or use the method described in https://doc.sagemath.org/html/en/developer/portability_testing.html#automatic-docker-based-build-testing-using-tox"
+          else
+             echo "No Docker images created."
           fi
-        if: always()
+        if: always() && ${{ inputs.docker_push_repository }}

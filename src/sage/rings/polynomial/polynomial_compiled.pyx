@@ -20,8 +20,8 @@ from sage.misc.binary_tree cimport BinaryTree
 
 cdef class CompiledPolynomialFunction:
     """
-    Builds a reasonably optimized directed acyclic graph representation
-    for a given polynomial.  A CompiledPolynomialFunction is callable from
+    Build a reasonably optimized directed acyclic graph representation
+    for a given polynomial.  A ``CompiledPolynomialFunction`` is callable from
     python, though it is a little faster to call the eval function from
     pyrex.
 
@@ -95,7 +95,6 @@ cdef class CompiledPolynomialFunction:
           forthcoming) requires the gaps to considered in order, and adds
           additional dummies as it goes.  Hence, the gaps are put into a
           binary tree.
-
         """
         cdef generic_pd max_gap, dag
         cdef BinaryTree gaps
@@ -119,7 +118,7 @@ cdef class CompiledPolynomialFunction:
     def __call__(self, x):
         return self.eval(x)
 
-    cdef object eval(CompiledPolynomialFunction self, object x) noexcept:
+    cdef object eval(CompiledPolynomialFunction self, object x):
         cdef object temp
         try:
             pd_eval(self._dag, x, self._coeffs)  #see further down
@@ -130,7 +129,7 @@ cdef class CompiledPolynomialFunction:
             self._dag.reset()
             raise TypeError(msg)
 
-    cdef object _parse_structure(CompiledPolynomialFunction self) noexcept:
+    cdef object _parse_structure(CompiledPolynomialFunction self):
         """
         Loop through the coefficients of the polynomial, and collect
         coefficient gap widths.  Meanwhile, construct the evaluation
@@ -169,7 +168,7 @@ cdef class CompiledPolynomialFunction:
 
         return gaps, s
 
-    cdef generic_pd _get_gap(CompiledPolynomialFunction self, BinaryTree gaps, int gap) noexcept:
+    cdef generic_pd _get_gap(CompiledPolynomialFunction self, BinaryTree gaps, int gap):
         """
         Find an entry in the BinaryTree gaps, identified by the int gap.
         If such an entry does not exist, create it and put it in the tree.
@@ -232,8 +231,6 @@ cdef class CompiledPolynomialFunction:
 
         The r == 0 case in step 3 is equivalent to binary exponentiation.
         """
-
-
         cdef int m,n,k,r,half
         cdef generic_pd T,N,H
         cdef dummy_pd M
@@ -266,7 +263,6 @@ cdef class CompiledPolynomialFunction:
                     M.fill(mul_pd(self._get_gap(gaps, n*(k-1)), N))
 
             T = gaps.pop_max()
-
 
 
 ########################################################
@@ -331,8 +327,6 @@ cdef class CompiledPolynomialFunction:
 #               reference.
 
 
-
-
 # These inline functions are called wherever a node gets
 # evaluated.  First, pd_eval is called to ensure that the
 # target DAG node will have its .value property set. It
@@ -367,7 +361,7 @@ cdef class generic_pd:
     cdef int eval(generic_pd self, object vars, object coeffs) except -2:
         raise NotImplementedError
 
-    cdef generic_pd nodummies(generic_pd self) noexcept:
+    cdef generic_pd nodummies(generic_pd self):
         return self
 
     cdef void reset(generic_pd self) noexcept:
@@ -381,7 +375,7 @@ cdef class dummy_pd(generic_pd):
     cdef void fill(dummy_pd self, generic_pd link) noexcept:
         self.link = link
 
-    cdef generic_pd nodummies(dummy_pd self) noexcept:
+    cdef generic_pd nodummies(dummy_pd self):
         #sorry guys, this is my stop
         self.link.refs = self.refs
         return self.link.nodummies()
@@ -426,7 +420,7 @@ cdef class unary_pd(generic_pd):
         self.operand = operand
         self.operand.refs += 1
 
-    cdef generic_pd nodummies(self) noexcept:
+    cdef generic_pd nodummies(self):
         self.operand = self.operand.nodummies()
         return self
 
@@ -458,7 +452,6 @@ cdef class pow_pd(unary_pd):
         return "(%s^%s)" % (self.left, self.exponent)
 
 
-
 cdef class binary_pd(generic_pd):
     def __init__(binary_pd self, generic_pd left, generic_pd right):
         generic_pd.__init__(self)
@@ -467,7 +460,7 @@ cdef class binary_pd(generic_pd):
         self.left.refs+= 1
         self.right.refs+= 1
 
-    cdef generic_pd nodummies(self) noexcept:
+    cdef generic_pd nodummies(self):
         self.left = self.left.nodummies()
         self.right = self.right.nodummies()
         return self

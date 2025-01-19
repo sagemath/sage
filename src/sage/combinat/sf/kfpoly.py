@@ -30,7 +30,7 @@ from sage.rings.integer_ring import ZZ
 
 def KostkaFoulkesPolynomial(mu, nu, t=None):
     r"""
-    Returns the Kostka-Foulkes polynomial `K_{\mu, \nu}(t)`.
+    Return the Kostka-Foulkes polynomial `K_{\mu, \nu}(t)`.
 
     INPUT:
 
@@ -197,10 +197,7 @@ def schur_to_hl(mu, t=None):
     for rg in riggings(mu):
         res[rg[0]] = res.get(rg[0], 0) + weight(rg, t)
 
-    d = {}
-    for key in res:
-        d[ key.conjugate() ] = res[key]
-    return d
+    return {key.conjugate(): value for key, value in res.items()}
 
 
 def riggings(part):
@@ -211,9 +208,7 @@ def riggings(part):
 
     - ``part`` -- a partition
 
-    OUTPUT:
-
-    - a list of riggings associated to the partition ``part``
+    OUTPUT: list of riggings associated to the partition ``part``
 
     EXAMPLES::
 
@@ -252,12 +247,10 @@ def compat(n, mu, nu):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
     - ``mu``, ``nu`` -- partitions
 
-    OUTPUT:
-
-    - a list of partitions
+    OUTPUT: list of partitions
 
     EXAMPLES::
 
@@ -304,9 +297,7 @@ def dom(mup, snu):
     - ``mup`` -- a partition conjugate to ``mu``
     - ``snu`` -- a sequence of positive integers
 
-    OUTPUT:
-
-    - a boolean value
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -356,9 +347,7 @@ def weight(rg, t=None):
     - ``rg`` -- a rigging, a list of partitions
     - ``t`` -- an optional parameter, (default: the generator from `\ZZ['t']`)
 
-    OUTPUT:
-
-    - a polynomial in the parameter ``t``
+    OUTPUT: a polynomial in the parameter `t`
 
     EXAMPLES::
 

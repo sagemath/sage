@@ -29,33 +29,31 @@ EXAMPLES::
     Space of 11-adic distributions with k=3 action and precision cap 5
     sage: D([1,2,3,4,5])
     (1 + O(11^5), 2 + O(11^4), 3 + O(11^3), 4 + O(11^2), 5 + O(11))
-
 """
-# ****************************************************************************
+# *************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-# ****************************************************************************
+# *************************************************************************
 
+from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.fields import Fields
+from sage.categories.modules import Modules
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.modules.module import Module
-from sage.structure.parent import Parent
-from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
-from sage.misc.cachefunc import cached_method
-from sage.categories.modules import Modules
+from sage.rings.rational_field import QQ
 from sage.structure.factory import UniqueFactory
-
-from sage.rings.ring import Ring
+from sage.structure.parent import Parent
+from .sigma0 import _default_adjuster
 
 lazy_import('sage.modular.pollack_stevens.dist', 'get_dist_classes')
 lazy_import('sage.rings.padics.factory', ['ZpCA', 'QpCR'])
 lazy_import('sage.rings.padics.padic_generic', 'pAdicGeneric')
-
-from .sigma0 import _default_adjuster
 
 
 class OverconvergentDistributions_factory(UniqueFactory):
@@ -65,16 +63,16 @@ class OverconvergentDistributions_factory(UniqueFactory):
     INPUT:
 
     - ``k`` -- nonnegative integer
-    - ``p`` -- prime number or None
-    - ``prec_cap`` -- positive integer or None
-    - ``base`` -- ring or None
-    - ``character`` -- a Dirichlet character or None
-    - ``adjuster`` -- None or callable that turns 2 x 2 matrices into a 4-tuple
-    - ``act_on_left`` -- bool (default: False)
-    - ``dettwist`` -- integer or None (interpreted as 0)
+    - ``p`` -- prime number or ``None``
+    - ``prec_cap`` -- positive integer or ``None``
+    - ``base`` -- ring or ``None``
+    - ``character`` -- a Dirichlet character or ``None``
+    - ``adjuster`` -- ``None`` or callable that turns 2 x 2 matrices into a 4-tuple
+    - ``act_on_left`` -- boolean (default: ``False``)
+    - ``dettwist`` -- integer or ``None`` (interpreted as 0)
     - ``act_padic`` -- whether monoid should allow `p`-adic coefficients
-    - ``implementation`` -- string (default: None).
-      Either None (for automatic), 'long', or 'vector'
+    - ``implementation`` -- string (default: ``None``); either ``None`` (for
+      automatic), ``'long'``, or ``'vector'``
 
     EXAMPLES::
 
@@ -154,14 +152,16 @@ class Symk_factory(UniqueFactory):
 
     INPUT:
 
-    - ``k`` - (integer): the degree (degree `k` corresponds to weight `k + 2` modular forms)
-    - ``base`` - (ring, default None): the base ring (None is interpreted as `\QQ`)
-    - ``character`` - (Dirichlet character or None, default None) the character
-    - ``adjuster`` - (None or a callable that turns
-      `2 \times 2` matrices into a 4-tuple, default None)
-    - ``act_on_left`` - (boolean, default False) whether to have the group acting
-      on the left rather than the right.
-    - ``dettwist`` (integer or None) -- power of determinant to twist by
+    - ``k`` -- integer; the degree (degree `k` corresponds to weight `k + 2`
+      modular forms)
+    - ``base`` -- ring (default: ``None``); the base ring (``None`` is
+      interpreted as `\QQ`)
+    - ``character`` -- Dirichlet character or ``None`` (default: ``None``)
+    - ``adjuster`` -- ``None`` or a callable that turns `2 \times 2` matrices
+      into a 4-tuple (default: ``None``)
+    - ``act_on_left`` -- boolean (default: ``False``); whether to have the
+      group acting on the left rather than the right
+    - ``dettwist`` -- integer or ``None``; power of determinant to twist by
 
     EXAMPLES::
 
@@ -236,18 +236,18 @@ class OverconvergentDistributions_abstract(Module):
 
     INPUT:
 
-    - ``k``           -- integer; `k` is the usual modular forms weight minus 2
-    - ``p``           -- None or prime
-    - ``prec_cap``    -- None or positive integer
-    - ``base``        -- None or the base ring over which to construct the distributions
-    - ``character``   -- None or Dirichlet character
-    - ``adjuster``    -- None or a way to specify the action among different conventions
-    - ``act_on_left`` -- bool (default: False)
-    - ``dettwist``    -- None or integer (twist by determinant). Ignored for Symk spaces
-    - ``act_padic``   -- bool (default: False) If true, will allow
-      action by `p`-adic matrices.
-    - ``implementation`` -- string (default: None) Either automatic (if None),
-      'vector' or 'long'.
+    - ``k`` -- integer; `k` is the usual modular forms weight minus 2
+    - ``p`` -- ``None`` or prime
+    - ``prec_cap`` -- ``None`` or positive integer
+    - ``base`` -- ``None`` or the base ring over which to construct the distributions
+    - ``character`` -- ``None`` or Dirichlet character
+    - ``adjuster`` -- ``None`` or a way to specify the action among different conventions
+    - ``act_on_left`` -- boolean (default: ``False``)
+    - ``dettwist`` -- ``None`` or integer (twist by determinant); ignored for Symk spaces
+    - ``act_padic`` -- boolean (default: ``False``); if ``True``, will allow
+      action by `p`-adic matrices
+    - ``implementation`` -- string (default: ``None``); either automatic (if ``None``),
+      ``'vector'`` or ``'long'``
 
     EXAMPLES::
 
@@ -281,9 +281,9 @@ class OverconvergentDistributions_abstract(Module):
             ...
             ValueError: p must be prime
         """
-        if not isinstance(base, Ring):
-            raise TypeError("base must be a ring")
-        #from sage.rings.padics.pow_computer import PowComputer
+        if base not in CommutativeRings():
+            raise TypeError("base must be a commutative ring")
+        # from sage.rings.padics.pow_computer import PowComputer
         # should eventually be the PowComputer on ZpCA once that uses longs.
         Dist, WeightKAction = get_dist_classes(p, prec_cap, base,
                                                self.is_symk(), implementation)
@@ -309,7 +309,7 @@ class OverconvergentDistributions_abstract(Module):
 
     def _element_constructor_(self, val, **kwargs):
         """
-        Construct a distribution from data in ``val``
+        Construct a distribution from data in ``val``.
 
         EXAMPLES::
 
@@ -317,9 +317,9 @@ class OverconvergentDistributions_abstract(Module):
             sage: v = V([1,2,3,4,5,6,7]); v
             (1, 2, 3, 4, 5, 6, 7)
         """
-        ordp = kwargs.get('ord',0)
-        check = kwargs.get('check',True)
-        normalize = kwargs.get('normalize',True)
+        ordp = kwargs.get('ord', 0)
+        check = kwargs.get('check', True)
+        normalize = kwargs.get('normalize', True)
         return self.Element(val, self, ordp, check, normalize)
 
     def _coerce_map_from_(self, other):
@@ -380,9 +380,7 @@ class OverconvergentDistributions_abstract(Module):
 
         In case this space is Symk of a non-padic field, we return 0.
 
-        OUTPUT:
-
-        - a prime or 0
+        OUTPUT: a prime or 0
 
         EXAMPLES::
 
@@ -409,13 +407,12 @@ class OverconvergentDistributions_abstract(Module):
 
     def weight(self):
         """
-        Return the weight of this distribution space.  The standard
-        caveat applies, namely that the weight of `Sym^k` is
-        defined to be `k`, not `k+2`.
+        Return the weight of this distribution space.
 
-        OUTPUT:
+        The standard caveat applies, namely that the weight of `Sym^k`
+        is defined to be `k`, not `k+2`.
 
-        - nonnegative integer
+        OUTPUT: nonnegative integer
 
         EXAMPLES::
 
@@ -454,9 +451,9 @@ class OverconvergentDistributions_abstract(Module):
 
         INPUT:
 
-        - ``p`` -- prime or None
-        - ``M`` -- nonnegative integer or None
-        - ``new_base_ring`` -- ring or None
+        - ``p`` -- prime or ``None``
+        - ``M`` -- nonnegative integer or ``None``
+        - ``new_base_ring`` -- ring or ``None``
 
         EXAMPLES::
 
@@ -472,7 +469,7 @@ class OverconvergentDistributions_abstract(Module):
         """
         if self._character is not None:
             if self._character.base_ring() != QQ:
-            # need to change coefficient ring for character
+                # need to change coefficient ring for character
                 raise NotImplementedError
         if M is None:
             M = self._prec_cap + 1
@@ -503,7 +500,8 @@ class OverconvergentDistributions_abstract(Module):
 
         INPUT:
 
-        - ``M`` -- None or nonnegative integer that is at most the precision cap
+        - ``M`` -- ``None`` or nonnegative integer that is at most the
+          precision cap
 
         EXAMPLES::
 
@@ -541,11 +539,11 @@ class OverconvergentDistributions_abstract(Module):
     def random_element(self, M=None, **args):
         """
         Return a random element of the `M`-th approximation module with
-        non-negative valuation.
+        nonnegative valuation.
 
         INPUT:
 
-        - ``M`` -- None or a nonnegative integer
+        - ``M`` -- ``None`` or a nonnegative integer
 
         EXAMPLES::
 
@@ -592,8 +590,8 @@ class OverconvergentDistributions_abstract(Module):
 
         INPUT:
 
-        - ``M`` -- (Default: None) If not None, specifies the ``M``-th approximation module,
-          in case that this makes sense.
+        - ``M`` -- (default: ``None``) if not ``None``, specifies the ``M``-th
+          approximation module, in case that this makes sense
 
         EXAMPLES::
 
@@ -621,7 +619,7 @@ class OverconvergentDistributions_abstract(Module):
 
     def _an_element_(self):
         """
-        Return a typical element of self.
+        Return a typical element of ``self``.
 
         EXAMPLES::
 
@@ -651,10 +649,13 @@ class Symk_class(OverconvergentDistributions_abstract):
         if hasattr(base, 'prime'):
             p = base.prime()
         else:
-            p = ZZ(0)
-        OverconvergentDistributions_abstract.__init__(self, k, p, k + 1, base, character,
-                                        adjuster, act_on_left, dettwist,
-                                        act_padic, implementation)
+            p = ZZ.zero()
+        OverconvergentDistributions_abstract.__init__(self, k, p, k + 1,
+                                                      base, character,
+                                                      adjuster, act_on_left,
+                                                      dettwist,
+                                                      act_padic,
+                                                      implementation)
 
     def _an_element_(self):
         r"""
@@ -682,14 +683,13 @@ class Symk_class(OverconvergentDistributions_abstract):
             Sym^6 Q^2 twisted by Dirichlet character modulo 7 of conductor 7 mapping 3 |--> -1
             sage: Symk(6,character=DirichletGroup(7,QQ).0,dettwist=3)
             Sym^6 Q^2 * det^3 twisted by Dirichlet character modulo 7 of conductor 7 mapping 3 |--> -1
-
         """
         if self.base_ring() is QQ:
             V = 'Q^2'
         elif self.base_ring() is ZZ:
             V = 'Z^2'
         elif isinstance(self.base_ring(), pAdicGeneric) and self.base_ring().degree() == 1:
-            if self.base_ring().is_field():
+            if self.base_ring() in Fields():
                 V = 'Q_%s^2' % self._p
             else:
                 V = 'Z_%s^2' % self._p
@@ -758,7 +758,7 @@ class Symk_class(OverconvergentDistributions_abstract):
 
 class OverconvergentDistributions_class(OverconvergentDistributions_abstract):
     r"""
-    The class of overconvergent distributions
+    The class of overconvergent distributions.
 
     This class represents the module of finite approximation modules, which are finite-dimensional
     spaces with a `\Sigma_0(N)` action which approximate the module of overconvergent distributions.
@@ -828,7 +828,9 @@ class OverconvergentDistributions_class(OverconvergentDistributions_abstract):
         """
         Return space of distributions like this one, but with the base ring changed.
 
-        INPUT: a ring over which the distribution can be coerced.
+        INPUT:
+
+        - ``new_base_ring`` -- a ring over which the distribution can be coerced
 
         EXAMPLES::
 

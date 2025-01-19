@@ -43,6 +43,7 @@ from sage.rings.integer import Integer
 from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.structure.sequence import Sequence
 
+
 class FiniteFieldHomset(RingHomset_generic):
     """
     Set of homomorphisms with domain a given finite field.
@@ -159,7 +160,7 @@ class FiniteFieldHomset(RingHomset_generic):
 
     def is_aut(self):
         """
-        Check if ``self`` is an automorphism
+        Check if ``self`` is an automorphism.
 
         EXAMPLES::
 
@@ -233,39 +234,33 @@ class FiniteFieldHomset(RingHomset_generic):
         Between isomorphic fields with different moduli::
 
             sage: k1 = GF(1009)
-            sage: k2 = GF(1009, modulus="primitive")
+            sage: k2 = GF(1009, modulus='primitive')
             sage: Hom(k1, k2).list()
-            [
-            Ring morphism:
-              From: Finite Field of size 1009
-              To:   Finite Field of size 1009
-              Defn: 1 |--> 1
-            ]
+            [Ring morphism:
+               From: Finite Field of size 1009
+               To:   Finite Field of size 1009
+               Defn: 1 |--> 1]
             sage: Hom(k2, k1).list()
-            [
-            Ring morphism:
-              From: Finite Field of size 1009
-              To:   Finite Field of size 1009
-              Defn: 11 |--> 11
-            ]
+            [Ring morphism:
+               From: Finite Field of size 1009
+               To:   Finite Field of size 1009
+               Defn: 11 |--> 11]
 
-            sage: k1.<a> = GF(1009^2, modulus="first_lexicographic")
-            sage: k2.<b> = GF(1009^2, modulus="conway")
+            sage: k1.<a> = GF(1009^2, modulus='first_lexicographic')
+            sage: k2.<b> = GF(1009^2, modulus='conway')
             sage: Hom(k1, k2).list()
-            [
-            Ring morphism:
-              From: Finite Field in a of size 1009^2
-              To:   Finite Field in b of size 1009^2
-              Defn: a |--> 290*b + 864,
-            Ring morphism:
-              From: Finite Field in a of size 1009^2
-              To:   Finite Field in b of size 1009^2
-              Defn: a |--> 719*b + 145
-            ]
+            [Ring morphism:
+               From: Finite Field in a of size 1009^2
+               To:   Finite Field in b of size 1009^2
+               Defn: a |--> 290*b + 864,
+             Ring morphism:
+               From: Finite Field in a of size 1009^2
+               To:   Finite Field in b of size 1009^2
+               Defn: a |--> 719*b + 145]
 
         TESTS:
 
-        Check that :trac:`11390` is fixed::
+        Check that :issue:`11390` is fixed::
 
             sage: K = GF(1<<16,'a'); L = GF(1<<32,'b')
             sage: K.Hom(L)[0]
@@ -302,16 +297,14 @@ class FiniteFieldHomset(RingHomset_generic):
               To:   Finite Field in b of size 2^10
               Defn: a |--> b^7 + b^5
             sage: H[2:4]
-            [
-            Ring morphism:
-              From: Finite Field in a of size 2^5
-              To:   Finite Field in b of size 2^10
-              Defn: a |--> b^8 + b^6 + b^2,
-            Ring morphism:
-              From: Finite Field in a of size 2^5
-              To:   Finite Field in b of size 2^10
-              Defn: a |--> b^9 + b^7 + b^6 + b^5 + b^4
-            ]
+            [Ring morphism:
+               From: Finite Field in a of size 2^5
+               To:   Finite Field in b of size 2^10
+               Defn: a |--> b^8 + b^6 + b^2,
+             Ring morphism:
+               From: Finite Field in a of size 2^5
+               To:   Finite Field in b of size 2^10
+               Defn: a |--> b^9 + b^7 + b^6 + b^5 + b^4]
         """
         return self.list()[n]
 
@@ -347,8 +340,7 @@ class FiniteFieldHomset(RingHomset_generic):
 
         .. TODO::
 
-            Use a more sophisticated algorithm; see also :trac:`8751`.
-
+            Use a more sophisticated algorithm; see also :issue:`8751`.
         """
         K = self.domain()
         L = self.codomain()

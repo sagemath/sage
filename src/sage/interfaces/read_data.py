@@ -12,17 +12,15 @@ An interface to read data files
 
 def read_data(f, t):
     r"""
-    Read data from file 'f' and class 't' (one element per line),
+    Read data from file ``f`` and class ``t`` (one element per line),
     and returns a list of elements.
 
     INPUT:
 
-    - 'f' -- a file name
-    - 't' -- a class (objects will be coerced to that class)
+    - ``f`` -- a file name
+    - ``t`` -- a class (objects will be coerced to that class)
 
-    OUTPUT:
-
-    a list of elements of class 't'
+    OUTPUT: list of elements of class ``t``
 
     EXAMPLES::
 
@@ -38,7 +36,7 @@ def read_data(f, t):
         sage: l = read_data(indata, RealField(17)); l
         [1.234, 5.678]
     """
-    with open(f, "r") as fp:
+    with open(f) as fp:
         l = []
         while True:
             s = fp.readline().strip()

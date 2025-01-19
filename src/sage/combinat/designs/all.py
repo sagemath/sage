@@ -43,7 +43,8 @@ from sage.misc.lazy_import import lazy_import
 
 
 lazy_import('sage.combinat.designs.incidence_structures', 'IncidenceStructure')
-lazy_import('sage.combinat.designs.incidence_structures', 'IncidenceStructure', 'BlockDesign')
+lazy_import('sage.combinat.designs.incidence_structures',
+            'IncidenceStructure', 'BlockDesign')
 
 lazy_import('sage.combinat.designs.incidence_structures',
             'IncidenceStructure', as_='Hypergraph')
@@ -51,4 +52,6 @@ lazy_import('sage.combinat.designs.incidence_structures',
 lazy_import('sage.combinat.designs.covering_design',
             ['CoveringDesign', 'schonheim', 'trivial_covering_design'])
 
-from . import design_catalog as designs
+from sage.combinat.designs import design_catalog as designs
+del lazy_import
+del install_doc

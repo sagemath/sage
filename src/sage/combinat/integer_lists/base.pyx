@@ -83,7 +83,7 @@ cdef class IntegerListsBackend():
         self.max_length = Integer(max_length) if max_length != Infinity else Infinity
 
         self.min_slope = Integer(min_slope) if min_slope != -Infinity else -Infinity
-        self.max_slope = Integer(max_slope) if max_slope !=  Infinity else Infinity
+        self.max_slope = Integer(max_slope) if max_slope != Infinity else Infinity
 
         self.min_part = Integer(min_part) if min_part != -Infinity else -Infinity
         self.max_part = Integer(max_part) if max_part != Infinity else Infinity
@@ -394,7 +394,7 @@ cdef class Envelope():
             inf
             sage: f.min_slope
             1
-            sage: TestSuite(f).run(skip="_test_pickling")
+            sage: TestSuite(f).run(skip='_test_pickling')
             sage: Envelope(3, sign=1/3, max_slope=-1, min_length=4)
             Traceback (most recent call last):
             ...
@@ -518,7 +518,6 @@ cdef class Envelope():
 
             sage: Envelope(lambda x: 3, sign=-1, min_part=2).limit_start() == Infinity
             True
-
         """
         return self.f_limit_start
 
@@ -526,7 +525,7 @@ cdef class Envelope():
         r"""
         Return a bound on the limit of ``self``.
 
-        OUTPUT: a nonnegative integer or `\infty`
+        OUTPUT: nonnegative integer or `\infty`
 
         This returns some upper bound for the accumulation points of
         this upper envelope. For a lower envelope, a lower bound is
@@ -605,9 +604,9 @@ cdef class Envelope():
 
         INPUT:
 
-        - ``m`` -- a nonnegative integer (starting value)
+        - ``m`` -- nonnegative integer (starting value)
 
-        - ``j`` -- a nonnegative integer (position)
+        - ``j`` -- nonnegative integer (position)
 
         This method adapts this envelope to the additional local
         constraint imposed by having a part `m` at position `j`.

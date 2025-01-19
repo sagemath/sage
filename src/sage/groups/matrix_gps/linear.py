@@ -68,6 +68,8 @@ from sage.groups.matrix_gps.named_group import (
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
 from sage.rings.infinity import Infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.finite_rings.integer_mod_ring import Integers
 
 
 ###############################################################################
@@ -87,13 +89,13 @@ def GL(n, R, var='a'):
 
     INPUT:
 
-    - ``n`` -- a positive integer.
+    - ``n`` -- positive integer
 
-    - ``R`` -- ring or an integer. If an integer is specified, the
-      corresponding finite field is used.
+    - ``R`` -- ring or an integer; if an integer is specified, the
+      corresponding finite field is used
 
     - ``var`` -- variable used to represent generator of the finite
-      field, if needed.
+      field, if needed
 
     EXAMPLES::
 
@@ -201,19 +203,19 @@ def SL(n, R, var='a'):
     matrices that are invertible over the ring `R` with determinant
     one.
 
-    .. note::
+    .. NOTE::
 
         This group is also available via ``groups.matrix.SL()``.
 
     INPUT:
 
-    - ``n`` -- a positive integer.
+    - ``n`` -- positive integer
 
-    - ``R`` -- ring or an integer. If an integer is specified, the
-      corresponding finite field is used.
+    - ``R`` -- ring or integer; if an integer is specified, the
+      corresponding finite field is used
 
     - ``var`` -- variable used to represent generator of the finite
-      field, if needed.
+      field, if needed
 
     EXAMPLES::
 
@@ -308,10 +310,10 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
                 raise TypeError('matrix must have determinant one')
         else:
             if x.determinant() == 0:
-                raise TypeError('matrix must non-zero determinant')
+                raise TypeError('matrix must nonzero determinant')
 
     def order(self):
-        """
+        r"""
         Return the order of ``self``.
 
         EXAMPLES::
@@ -320,16 +322,41 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
             sage: G.order()
             372000
 
+        The order computation also works over the base rings `\ZZ/n\ZZ`::
+
+            sage: GL(4, Integers(15)).order()
+            2815842631680000000
+
+            sage: SL(4, Integers(15)).order()
+            351980328960000000
+
+            sage: G = GL(2, Integers(6))
+            sage: G.order() == len(list(G))
+            True
+
+            sage: H = SL(2, Integers(6))
+            sage: H.order() == len(list(H))
+            True
+
+        Arbitrary base rings are currently not fully supported::
+
+            sage: R.<x> = PolynomialRing(GF(7))
+            sage: S = R.quotient(x^2 + 5)
+            sage: GL(2, S).order()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: order computation of linear groups not fully supported for arbitrary base rings
+
         TESTS:
 
-        Check if :trac:`36876` is fixed::
+        Check if :issue:`36876` is fixed::
 
             sage: SL(1, QQ).order()
             1
             sage: SL(2, ZZ).cardinality()
             +Infinity
 
-        Check if :trac:`35490` is fixed::
+        Check if :issue:`35490` is fixed::
 
             sage: q = 7
             sage: FqT.<T> = GF(q)[]
@@ -340,18 +367,71 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
             True
             sage: S.order()
             117600
-        """
-        n = self.degree()
 
-        if self.base_ring().is_finite():
-            q = self.base_ring().order()
+        Check if :issue:`37934` is fixed::
+
+            sage: GL(2, Integers(4)).order()
+            96
+
+            sage: GL(2, Integers(1)).order()
+            1
+
+            sage: GL(1, ZZ).order()
+            2
+        """
+        def order_over_finite_field(q, n):
             ord = prod(q**n - q**i for i in range(n))
             if self._special:
-                return ord / (q-1)
+                return ord // (q-1)
             return ord
 
-        if self._special and n == 1:
-            return 1
-        return Infinity
+        n = self.degree()
+        R = self.base_ring()
+
+        if R.is_finite():
+            q = R.order()
+
+            if q == 1:
+                return ZZ.one()
+
+            if R.is_field():
+                return order_over_finite_field(q, n)
+
+            if R == Integers(q):
+                ord = ZZ.one()
+
+                # By the Chinese remainder theorem we need to build the product
+                # over the orders of GL(n, ZZ/p^e ZZ) (or SL) for all prime
+                # powers in the factorization of q
+                for (p,e) in q.factor():
+                    ord_base = order_over_finite_field(p, n)
+
+                    if not self._special:
+                        ord *= p**((e-1)*n**2) * ord_base
+
+                    # We apply |SL(n, R)| = |GL(n, R)| / euler_phi(q), but since we
+                    # already iterate over the prime factorization of q, we divide
+                    # out euler_phi(q) iteratively. Noting that (p-1) is already
+                    # handled in the call to order_over_finite_field, we only
+                    # need to remove p^(e-1) compared to the above formula
+                    else:
+                        ord *= p**((e-1)*(n**2-1)) * ord_base
+
+                return ord
+
+            raise NotImplementedError("order computation of linear groups not "
+                                      "fully supported for arbitrary base rings")
+
+        if n > 1 or (R.is_field() and not self._special):
+            return Infinity
+
+        if self._special:
+            return ZZ.one()
+
+        if R == ZZ:
+            return ZZ(2)
+
+        raise NotImplementedError("order computation of linear groups not "
+                                  "fully supported for arbitrary base rings")
 
     cardinality = order

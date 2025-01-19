@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Group Algebras
 
@@ -9,13 +10,13 @@ AUTHOR:
 
 - David Loeffler (2008-08-24): initial version
 - Martin Raum (2009-08): update to use new coercion model -- see
-  :trac:`6670`.
+  :issue:`6670`.
 - John Palmieri (2011-07): more updates to coercion, categories, etc.,
   group algebras constructed using CombinatorialFreeModule -- see
-  :trac:`6670`.
+  :issue:`6670`.
 - Nicolas M. Thiéry (2010-2017), Travis Scrimshaw (2017):
   generalization to a covariant functorial construction for
-  monoid algebras, and beyond -- see e.g. :trac:`18700`.
+  monoid algebras, and beyond -- see e.g. :issue:`18700`.
 """
 
 #*****************************************************************************
@@ -29,6 +30,7 @@ AUTHOR:
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.algebra_functor import AlgebrasCategory
+
 
 class GroupAlgebras(AlgebrasCategory):
     r"""
@@ -127,7 +129,7 @@ class GroupAlgebras(AlgebrasCategory):
 
             EXAMPLES::
 
-                sage: # needs sage.groups sage.modules
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: A = GroupAlgebra(SymmetricGroup(4), QQ)
                 sage: B = GroupAlgebra(SymmetricGroup(3), ZZ)
                 sage: A.has_coerce_map_from(B)
@@ -171,7 +173,7 @@ class GroupAlgebras(AlgebrasCategory):
 
                 sage: GroupAlgebras(QQ).example(GL(3, GF(11))).group()                  # needs sage.groups sage.modules
                 General Linear Group of degree 3 over Finite Field of size 11
-                sage: SymmetricGroup(10).algebra(QQ).group()                            # needs sage.groups sage.modules
+                sage: SymmetricGroup(10).algebra(QQ).group()                            # needs sage.combinat sage.groups sage.modules
                 Symmetric group of order 10! as a permutation group
             """
             return self.basis().keys()
@@ -187,9 +189,7 @@ class GroupAlgebras(AlgebrasCategory):
             classes of the group, and `f_\sigma` is the sum of the
             elements in the conjugacy class of `\sigma`.
 
-            OUTPUT:
-
-            - ``tuple`` of elements of ``self``
+            OUTPUT: tuple of elements of ``self``
 
             .. WARNING::
 
@@ -199,7 +199,7 @@ class GroupAlgebras(AlgebrasCategory):
 
             EXAMPLES::
 
-                sage: SymmetricGroup(3).algebra(QQ).center_basis()                      # needs sage.groups sage.modules
+                sage: SymmetricGroup(3).algebra(QQ).center_basis()                      # needs sage.combinat sage.groups sage.modules
                 ((), (2,3) + (1,2) + (1,3), (1,2,3) + (1,3,2))
 
             .. SEEALSO::
@@ -207,7 +207,7 @@ class GroupAlgebras(AlgebrasCategory):
                 - :meth:`Groups.Algebras.ElementMethods.central_form`
                 - :meth:`Monoids.Algebras.ElementMethods.is_central`
             """
-            return tuple([self.sum_of_monomials(conj) for conj  in
+            return tuple([self.sum_of_monomials(conj) for conj in
                           self.basis().keys().conjugacy_classes()])
 
         # Hopf algebra structure
@@ -238,7 +238,7 @@ class GroupAlgebras(AlgebrasCategory):
             g = self.term(g)
             return tensor([g, g])
 
-        def antipode_on_basis(self,g):
+        def antipode_on_basis(self, g):
             r"""
             Return the antipode of the element ``g`` of the basis.
 
@@ -263,7 +263,7 @@ class GroupAlgebras(AlgebrasCategory):
             """
             return self.term(~g)
 
-        def counit_on_basis(self,g):
+        def counit_on_basis(self, g):
             r"""
             Return the counit of the element ``g`` of the basis.
 
@@ -283,7 +283,7 @@ class GroupAlgebras(AlgebrasCategory):
             """
             return self.base_ring().one()
 
-        def counit(self,x):
+        def counit(self, x):
             r"""
             Return the counit of the element ``x`` of the group
             algebra.
@@ -317,12 +317,12 @@ class GroupAlgebras(AlgebrasCategory):
 
                 sage: # needs sage.groups sage.modules
                 sage: S2 = SymmetricGroup(2)
-                sage: GroupAlgebra(S2).is_integral_domain()
+                sage: GroupAlgebra(S2).is_integral_domain()                             # needs sage.combinat
                 False
                 sage: S1 = SymmetricGroup(1)
-                sage: GroupAlgebra(S1).is_integral_domain()
+                sage: GroupAlgebra(S1).is_integral_domain()                             # needs sage.combinat
                 True
-                sage: GroupAlgebra(S1, IntegerModRing(4)).is_integral_domain()
+                sage: GroupAlgebra(S1, IntegerModRing(4)).is_integral_domain()          # needs sage.combinat
                 False
                 sage: GroupAlgebra(AbelianGroup(1)).is_integral_domain()
                 True
@@ -358,7 +358,7 @@ class GroupAlgebras(AlgebrasCategory):
             return ans
 
         # I haven't written is_noetherian(), because I don't know when group
-        # algebras are noetherian, and I haven't written is_prime_field(), because
+        # algebras are Noetherian, and I haven't written is_prime_field(), because
         # I don't know if that means "is canonically isomorphic to a prime field"
         # or "is identical to a prime field".
 
@@ -398,7 +398,7 @@ class GroupAlgebras(AlgebrasCategory):
 
             EXAMPLES::
 
-                sage: # needs sage.groups sage.modules
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: QS3 = SymmetricGroup(3).algebra(QQ)
                 sage: A = QS3([2,3,1]) + QS3([3,1,2])
                 sage: A.central_form()
@@ -409,7 +409,7 @@ class GroupAlgebras(AlgebrasCategory):
                 4*B[()] + 3*B[(1,2)] + 2*B[(1,2)(3,4)] + 2*B[(1,2,3)] + B[(1,2,3,4)]
 
             The following test fails due to a bug involving combinatorial free modules and
-            the coercion system (see :trac:`28544`)::
+            the coercion system (see :issue:`28544`)::
 
                 sage: # needs sage.groups sage.modules
                 sage: G = PermutationGroup([[(1,2,3),(4,5)], [(3,4)]])

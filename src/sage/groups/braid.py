@@ -51,7 +51,7 @@ AUTHORS:
 - Thierry Monteil: add a ``__hash__`` method consistent with the word
   problem to ensure correct Cayley graph computations.
 - Sebastian Oehms (July and Nov 2018): add other versions for
-  burau_matrix (unitary + simple, see :trac:`25760` and :trac:`26657`)
+  burau_matrix (unitary + simple, see :issue:`25760` and :issue:`26657`)
 - Moritz Firsching (Sept 2021): Colored Jones polynomial
 - Sebastian Oehms (May 2022): add :meth:`links_gould_polynomial`
 """
@@ -67,36 +67,39 @@ AUTHORS:
 ##############################################################################
 
 from itertools import combinations
+
+from sage.algebras.free_algebra import FreeAlgebra
 from sage.categories.action import Action
 from sage.categories.groups import Groups
-from sage.combinat.permutation import Permutation
-from sage.combinat.permutation import Permutations
+from sage.combinat.permutation import Permutation, Permutations
 from sage.combinat.subset import Subsets
 from sage.features.sagemath import sage__libs__braiding
-from sage.groups.artin import FiniteTypeArtinGroup, FiniteTypeArtinGroupElement
-from sage.groups.finitely_presented import FinitelyPresentedGroup
-from sage.groups.finitely_presented import GroupMorphismWithGensImages
-from sage.groups.free_group import FreeGroup, is_FreeGroup
 from sage.functions.generalized import sign
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-from sage.groups.perm_gps.permgroup_named import SymmetricGroupElement
+from sage.groups.artin import FiniteTypeArtinGroup, FiniteTypeArtinGroupElement
+from sage.groups.finitely_presented import (
+    FinitelyPresentedGroup,
+    GroupMorphismWithGensImages,
+)
+from sage.groups.free_group import FreeGroup, is_FreeGroup
+from sage.groups.perm_gps.permgroup_named import SymmetricGroup, SymmetricGroupElement
 from sage.libs.gap.libgap import libgap
 from sage.matrix.constructor import identity_matrix, matrix
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
-from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
-from sage.rings.integer_ring import IntegerRing
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.sets.set import Set
 from sage.structure.element import Expression
-from sage.structure.richcmp import richcmp, rich_to_bool
+from sage.structure.richcmp import rich_to_bool, richcmp
 
 lazy_import('sage.libs.braiding',
             ['leftnormalform', 'rightnormalform', 'centralizer', 'supersummitset', 'greatestcommondivisor',
              'leastcommonmultiple', 'conjugatingbraid', 'ultrasummitset',
-             'thurston_type', 'rigidity', 'sliding_circuits'],
+             'thurston_type', 'rigidity', 'sliding_circuits', 'send_to_sss',
+             'send_to_uss', 'send_to_sc', 'trajectory', 'cyclic_slidings' ],
             feature=sage__libs__braiding())
 lazy_import('sage.knots.knot', 'Knot')
 
@@ -119,7 +122,7 @@ class Braid(FiniteTypeArtinGroupElement):
     """
     def _richcmp_(self, other, op):
         """
-        Compare ``self`` and ``other``
+        Compare ``self`` and ``other``.
 
         TESTS::
 
@@ -170,9 +173,7 @@ class Braid(FiniteTypeArtinGroupElement):
         """
         Return the number of components of the trace closure of the braid.
 
-        OUTPUT:
-
-        Positive integer.
+        OUTPUT: a positive integer
 
         EXAMPLES::
 
@@ -203,10 +204,10 @@ class Braid(FiniteTypeArtinGroupElement):
           return the reduced or unreduced Burau representation, can
           be one of the following:
 
-          * ``True`` or ``'increasing'`` - returns the reduced form using
+          * ``True`` or ``'increasing'`` -- returns the reduced form using
             the basis given by `e_1 - e_i` for `2 \leq i \leq n`
-          * ``'unitary'`` - the unitary form according to Squier [Squ1984]_
-          * ``'simple'`` - returns the reduced form using the basis given
+          * ``'unitary'`` -- the unitary form according to Squier [Squ1984]_
+          * ``'simple'`` -- returns the reduced form using the basis given
             by simple roots `e_i - e_{i+1}`, which yields the matrices
             given on the Wikipedia page
 
@@ -269,7 +270,7 @@ class Braid(FiniteTypeArtinGroupElement):
         - :wikipedia:`Burau_representation`
         - [Squ1984]_
         """
-        R = LaurentPolynomialRing(IntegerRing(), var)
+        R = LaurentPolynomialRing(ZZ, var)
         t = R.gen()
         n = self.strands()
         if not reduced:
@@ -375,9 +376,7 @@ class Braid(FiniteTypeArtinGroupElement):
         - ``normalized`` -- boolean (default: ``True``); whether to
           return the normalized Alexander polynomial
 
-        OUTPUT:
-
-        The Alexander polynomial of the braid closure of the braid.
+        OUTPUT: the Alexander polynomial of the braid closure of the braid
 
         This is computed using the reduced Burau representation. The
         unnormalized Alexander polynomial is a Laurent polynomial,
@@ -422,7 +421,7 @@ class Braid(FiniteTypeArtinGroupElement):
         """
         n = self.strands()
         p = (self.burau_matrix(reduced=True) - identity_matrix(n - 1)).det()
-        K, t = LaurentPolynomialRing(IntegerRing(), var).objgen()
+        K, t = LaurentPolynomialRing(ZZ, var).objgen()
         if p == 0:
             return K.zero()
         qn = sum(t**i for i in range(n))
@@ -442,9 +441,7 @@ class Braid(FiniteTypeArtinGroupElement):
         - ``W`` -- (optional) the permutation group to project
           ``self`` to; the default is ``self.parent().coxeter_group()``
 
-        OUTPUT:
-
-        The image of ``self`` under the natural projection map to ``W``.
+        OUTPUT: the image of ``self`` under the natural projection map to ``W``
 
         EXAMPLES::
 
@@ -471,7 +468,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
     def plot(self, color='rainbow', orientation='bottom-top', gap=0.05, aspect_ratio=1, axes=False, **kwds):
         """
-        Plot the braid
+        Plot the braid.
 
         The following options are available:
 
@@ -495,14 +492,14 @@ class Braid(FiniteTypeArtinGroupElement):
 
             * ``'left-right'``, the braid is printed from left to right
 
-        - ``gap`` -- floating point number (default: 0.05). determines
-          the size of the gap left when a strand goes under another.
+        - ``gap`` -- floating point number (default: 0.05); determines
+          the size of the gap left when a strand goes under another
 
         - ``aspect_ratio`` -- floating point number (default:
-          ``1``). The aspect ratio.
+          ``1``); the aspect ratio
 
         - ``**kwds`` -- other keyword options that are passed to
-          :meth:`~sage.plot.bezier_path` and :meth:`~sage.plot.line`.
+          :meth:`~sage.plot.bezier_path` and :meth:`~sage.plot.line`
 
         EXAMPLES::
 
@@ -526,12 +523,12 @@ class Braid(FiniteTypeArtinGroupElement):
 
             sage: B.<s,t> = BraidGroup(3)
             sage: b = t^-1*s^2
-            sage: b.plot(orientation="left-right", color="red")                         # needs sage.plot
+            sage: b.plot(orientation='left-right', color='red')                         # needs sage.plot
             Graphics object consisting of 12 graphics primitives
         """
         from sage.plot.bezier_path import bezier_path
-        from sage.plot.plot import Graphics, line
         from sage.plot.colors import rainbow
+        from sage.plot.plot import Graphics, line
         if orientation == 'top-bottom':
             orx = 0
             ory = -1
@@ -622,13 +619,13 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b = B([1, 2, 3, 1, 2, 1])
             sage: b.plot3d()                                                            # needs sage.plot sage.symbolic
             Graphics3d Object
-            sage: b.plot3d(color="red")                                                 # needs sage.plot sage.symbolic
+            sage: b.plot3d(color='red')                                                 # needs sage.plot sage.symbolic
             Graphics3d Object
             sage: b.plot3d(color=["red", "blue", "red", "blue"])                        # needs sage.plot sage.symbolic
             Graphics3d Object
         """
-        from sage.plot.plot3d.shapes2 import bezier3d
         from sage.plot.colors import rainbow
+        from sage.plot.plot3d.shapes2 import bezier3d
         b = []
         n = self.strands()
         if isinstance(color, (list, tuple)):
@@ -673,12 +670,11 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
 
-        - ``variables`` -- string (default: ``'x,y'``). A string
-          containing the names of the variables, separated by a comma.
+        - ``variables`` -- string (default: ``'x,y'``); a string
+          containing the names of the variables, separated by a comma
 
-        OUTPUT:
-
-        The matrix corresponding to the Lawrence-Krammer-Bigelow representation of the braid.
+        OUTPUT: the matrix corresponding to the Lawrence-Krammer-Bigelow
+        representation of the braid
 
         EXAMPLES::
 
@@ -731,9 +727,7 @@ class Braid(FiniteTypeArtinGroupElement):
         - ``sparse`` -- boolean (default: ``True``); whether or not the
           result should be given as a sparse matrix
 
-        OUTPUT:
-
-        The matrix of the TL representation of the braid.
+        OUTPUT: the matrix of the TL representation of the braid
 
         The parameter ``sparse`` can be set to ``False`` if it is
         expected that the resulting matrix will not be sparse. We
@@ -785,7 +779,7 @@ class Braid(FiniteTypeArtinGroupElement):
         - [Jon2005]_
         """
         if variab is None:
-            R = LaurentPolynomialRing(IntegerRing(), 'A')
+            R = LaurentPolynomialRing(ZZ, 'A')
         else:
             R = variab.parent()
         rep = self.parent().TL_representation(drain_size, variab)
@@ -806,15 +800,14 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
 
-        - ``symbolics`` -- boolean (default ``False``). If set to ``True`` the
+        - ``symbolics`` -- boolean (default: ``False``); if set to ``True`` the
           coefficients will be contained in the symbolic ring. Per default they
           are elements of a quotient ring of a three variate Laurent polynomial
           ring.
 
-        OUTPUT:
-
-        The representation matrix of ``self`` over the ring according to the choice
-        of the keyword ``symbolics`` (see the corresponding explanation).
+        OUTPUT: the representation matrix of ``self`` over the ring according
+        to the choice of the keyword ``symbolics`` (see the corresponding
+        explanation)
 
         EXAMPLES::
 
@@ -847,11 +840,9 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
 
-        - ``varnames`` -- string (default ``t0, t1``)
+        - ``varnames`` -- string (default: ``'t0, t1'``)
 
-        OUTPUT:
-
-        A Laurent polynomial in the given variable names.
+        OUTPUT: a Laurent polynomial in the given variable names
 
         EXAMPLES::
 
@@ -869,7 +860,6 @@ class Braid(FiniteTypeArtinGroupElement):
 
         - [MW2012]_
         """
-        from sage.rings.integer_ring import ZZ
         if varnames is not None:
             poly = self.links_gould_polynomial(use_symbolics=use_symbolics)
             R = LaurentPolynomialRing(ZZ, varnames)
@@ -900,7 +890,7 @@ class Braid(FiniteTypeArtinGroupElement):
             # Since the result of the calculation is known to be a Laurent polynomial
             # in t0 and t1 all exponents of ltemp must be divisable by 2
             L = ltemp.parent()
-            lred = L({(k[0]/2, k[1]/2): v for k, v in ltemp.dict().items()})
+            lred = L({(k[0]/2, k[1]/2): v for k, v in ltemp.monomial_coefficients().items()})
             t0, t1 = R.gens()
             return lred(t0, t1)
 
@@ -908,9 +898,7 @@ class Braid(FiniteTypeArtinGroupElement):
         r"""
         Return the tropical coordinates of ``self`` in the braid group `B_n`.
 
-        OUTPUT:
-
-        - a list of `2n` tropical integers
+        OUTPUT: list of `2n` tropical integers
 
         EXAMPLES::
 
@@ -949,7 +937,7 @@ class Braid(FiniteTypeArtinGroupElement):
             coord[k+2] = x2 + sign*(min(y2, 0) + min(min(y1, 0) + sign*z, 0))
 
         from sage.rings.semirings.tropical_semiring import TropicalSemiring
-        T = TropicalSemiring(IntegerRing())
+        T = TropicalSemiring(ZZ)
         return [T(_) for _ in coord]
 
     def markov_trace(self, variab=None, normalized=True):
@@ -966,7 +954,7 @@ class Braid(FiniteTypeArtinGroupElement):
           resulting polynomial; if ``None``, then use the variable `A`
           in `\ZZ[A,A^{-1}]`
 
-        - ``normalized`` - boolean (default: ``True``); if specified to be
+        - ``normalized`` -- boolean (default: ``True``); if specified to be
           ``False``, return instead a rescaled Laurent polynomial version of
           the Markov trace
 
@@ -994,9 +982,9 @@ class Braid(FiniteTypeArtinGroupElement):
             Univariate Laurent Polynomial Ring in A over Integer Ring
         """
         if variab is None:
-            R = LaurentPolynomialRing(IntegerRing(), 'A')
+            R = LaurentPolynomialRing(ZZ, 'A')
             A = R.gens()[0]
-            one = IntegerRing().one()
+            one = ZZ.one()
             quantum_integer = lambda d: R({i: one for i in range(-2*d, 2*d+1, 4)})
         else:
             A = variab
@@ -1139,7 +1127,6 @@ class Braid(FiniteTypeArtinGroupElement):
             else:
                 return self._jones_polynomial(variab)
         else:
-            from sage.rings.integer_ring import ZZ
             if variab is None:
                 variab = 't'
             if not isinstance(variab, Expression):
@@ -1203,8 +1190,8 @@ class Braid(FiniteTypeArtinGroupElement):
              ((6, 0),
               [(2, [((1, 1), [], [([(0, 0), (1, 2)], 0), ([(0, 2), (1, 0)], 0)])])])]
         """
-        from sage.graphs.graph import Graph
         from sage.functions.generalized import sgn
+        from sage.graphs.graph import Graph
         crossinglist = self.Tietze()
         ncross = len(crossinglist)
         writhe = 0
@@ -1321,13 +1308,11 @@ class Braid(FiniteTypeArtinGroupElement):
 
         INPUT:
 
-        - ``qagrad`` -- a tuple of the quantum and annular grading to compute
+        - ``qagrad`` -- tuple of the quantum and annular grading to compute
 
         - ``ring`` -- (default: ``ZZ``) the coefficient ring
 
-        OUTPUT:
-
-        The annular Khovanov complex of the braid in the given grading.
+        OUTPUT: the annular Khovanov complex of the braid in the given grading
 
         .. NOTE::
 
@@ -1342,7 +1327,7 @@ class Braid(FiniteTypeArtinGroupElement):
         """
         from sage.homology.chain_complex import ChainComplex
         if ring is None:
-            ring = IntegerRing()
+            ring = ZZ
         states = self._enhanced_states()
         if qagrad in states:
             bases = states[qagrad]
@@ -1368,20 +1353,20 @@ class Braid(FiniteTypeArtinGroupElement):
     def annular_khovanov_complex(self, qagrad=None, ring=None):
         r"""
         Return the annular Khovanov complex of the closure of a braid,
-        as defined in [BG2013]_
+        as defined in [BG2013]_.
 
         INPUT:
 
         - ``qagrad`` -- tuple of quantum and annular grading for which to compute
-          the chain complex. If not specified all gradings are computed.
+          the chain complex; if not specified all gradings are computed
 
-        - ``ring`` -- (default: ``ZZ``) the coefficient ring.
+        - ``ring`` -- (default: ``ZZ``) the coefficient ring
 
         OUTPUT:
 
         The annular Khovanov complex of the braid, given as a dictionary whose
-        keys are tuples of quantum and annular grading.
-        If ``qagrad`` is specified only return the chain complex of that grading.
+        keys are tuples of quantum and annular grading. If ``qagrad`` is
+        specified only return the chain complex of that grading.
 
         EXAMPLES::
 
@@ -1418,13 +1403,13 @@ class Braid(FiniteTypeArtinGroupElement):
              0: []}
         """
         if ring is None:
-            ring = IntegerRing()
+            ring = ZZ
         if qagrad is None:
             return {qa: self._annular_khovanov_complex_cached(qa, ring)
                     for qa in self._enhanced_states()}
         return self._annular_khovanov_complex_cached(qagrad, ring)
 
-    def annular_khovanov_homology(self, qagrad=None, ring=IntegerRing()):
+    def annular_khovanov_homology(self, qagrad=None, ring=ZZ):
         r"""
         Return the annular Khovanov homology of a closure of a braid.
 
@@ -1437,9 +1422,9 @@ class Braid(FiniteTypeArtinGroupElement):
 
         OUTPUT:
 
-        If ``qagrad`` is ``None``, return a dictionary of homogies in all
-        gradings indexed by grading. If qagrad is specified, return homology
-        of that grading.
+        If ``qagrad`` is ``None``, return a dictionary of homologies in all
+        gradings indexed by grading. If ``qagrad`` is specified, return the
+        homology of that grading.
 
         .. NOTE::
 
@@ -1535,10 +1520,8 @@ class Braid(FiniteTypeArtinGroupElement):
         r"""
         Return the left normal form of the braid, in permutation form.
 
-        OUTPUT:
-
-        A tuple whose first element is the power of `\Delta`, and the
-        rest are the permutations corresponding to the simple factors.
+        OUTPUT: tuple whose first element is the power of `\Delta`, and the
+        rest are the permutations corresponding to the simple factors
 
         EXAMPLES::
 
@@ -1633,7 +1616,6 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b = B([2, 1, 3, 2])
             sage: b.centralizer()
             [s1*s0*s2*s1, s0*s2]
-
         """
         c = centralizer(self)
         B = self.parent()
@@ -1641,7 +1623,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
     def super_summit_set(self):
         """
-        Return a list with the super summit set of the braid
+        Return a list with the super summit set of the braid.
 
         EXAMPLES::
 
@@ -1652,7 +1634,6 @@ class Braid(FiniteTypeArtinGroupElement):
              (s0^-1*s1^-1*s0^-1)^2*s1^2*s0^3*s1,
              (s0^-1*s1^-1*s0^-1)^2*s1*s0^3*s1^2,
              s0^-1*s1^-1*s0^-2*s1^-1*s0*s1^3*s0]
-
         """
         sss = supersummitset(self)
         B = self.parent()
@@ -1710,10 +1691,8 @@ class Braid(FiniteTypeArtinGroupElement):
 
         OUTPUT:
 
-        A conjugating braid.
-
-        More precisely, if the output is `d`, `o` equals ``other``, and `s` equals ``self``
-        then `o = d^{-1} \cdot s \cdot d`.
+        A conjugating braid. More precisely, if the output is `d`, `o` equals
+        ``other``, and `s` equals ``self`` then `o = d^{-1} \cdot s \cdot d`.
 
         EXAMPLES::
 
@@ -1765,7 +1744,7 @@ class Braid(FiniteTypeArtinGroupElement):
             cb[0][0] %= 2
             return B._element_from_libbraiding(cb)
 
-    def is_conjugated(self, other):
+    def is_conjugated(self, other) -> bool:
         """
         Check if the two braids are conjugated.
 
@@ -1798,10 +1777,9 @@ class Braid(FiniteTypeArtinGroupElement):
 
         OUTPUT:
 
-        A pure conjugating braid.
-
-        More precisely, if the output is `d`, `o` equals ``other``, and `s` equals ``self``
-        then `o = d^{-1} \cdot s \cdot d`.
+        A pure conjugating braid. More precisely, if the output is `d`, `o`
+        equals ``other``, and `s` equals ``self`` then
+        `o = d^{-1} \cdot s \cdot d`.
 
         EXAMPLES::
 
@@ -1883,7 +1861,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
     def ultra_summit_set(self):
         """
-        Return a list with the orbits of the ultra summit set of ``self``
+        Return a list with the orbits of the ultra summit set of ``self``.
 
         EXAMPLES::
 
@@ -1914,9 +1892,7 @@ class Braid(FiniteTypeArtinGroupElement):
         """
         Return the thurston_type of ``self``.
 
-        OUTPUT:
-
-        One of ``'reducible'``, ``'periodic'`` or ``'pseudo-anosov'``.
+        OUTPUT: one of ``'reducible'``, ``'periodic'`` or ``'pseudo-anosov'``
 
         EXAMPLES::
 
@@ -1933,7 +1909,7 @@ class Braid(FiniteTypeArtinGroupElement):
         """
         return thurston_type(self)
 
-    def is_reducible(self):
+    def is_reducible(self) -> bool:
         """
         Check whether the braid is reducible.
 
@@ -1946,11 +1922,10 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: a = B([2, 2, -1, -1, 2, 2])
             sage: a.is_reducible()
             False
-
         """
         return self.thurston_type() == 'reducible'
 
-    def is_periodic(self):
+    def is_periodic(self) -> bool:
         """
         Check whether the braid is periodic.
 
@@ -1966,9 +1941,9 @@ class Braid(FiniteTypeArtinGroupElement):
         """
         return self.thurston_type() == 'periodic'
 
-    def is_pseudoanosov(self):
+    def is_pseudoanosov(self) -> bool:
         """
-        Check if the braid is pseudo-anosov.
+        Check if the braid is pseudo-Anosov.
 
         EXAMPLES::
 
@@ -2002,9 +1977,7 @@ class Braid(FiniteTypeArtinGroupElement):
         """
         Return the sliding circuits of the braid.
 
-        OUTPUT:
-
-        A list of sliding circuits. Each sliding circuit is itself
+        OUTPUT: list of sliding circuits. Each sliding circuit is itself
         a list of braids.
 
         EXAMPLES::
@@ -2081,9 +2054,7 @@ class Braid(FiniteTypeArtinGroupElement):
           resulting laurent polynomial, which is the base ring for the
           free algebra constructed
 
-        OUTPUT:
-
-        A matrix with elements in the free algebra ``self._algebra``.
+        OUTPUT: a matrix with elements in the free algebra ``self._algebra``
 
         EXAMPLES::
 
@@ -2123,24 +2094,24 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: burau.subs({t:q}).change_ring(db_base) == db_simp
             True
         """
-        R = LaurentPolynomialRing(IntegerRing(), variab)
+        R = LaurentPolynomialRing(ZZ, variab)
+
         n = self.strands()
         tz = self.Tietze()
-        m = len(tz)
-        from sage.algebras.free_algebra import FreeAlgebra
-        alg = FreeAlgebra(R, m*3,
-                          [f'{s}p_{i}' for i in range(m) if tz[i] > 0
-                           for s in 'bca']
-                          + [f'{s}m_{i}' for i in range(m) if tz[i] < 0
-                             for s in 'bca'])
-        gen_indices = ([i for i in range(m) if tz[i] > 0]
-                       + [i for i in range(m) if tz[i] < 0])
+        m3 = len(tz) * 3
+        plus = [i for i, tzi in enumerate(tz) if tzi > 0]
+        minus = [i for i, tzi in enumerate(tz) if tzi < 0]
+        gens_str = [f'{s}p_{i}' for i in plus for s in 'bca']
+        gens_str += [f'{s}m_{i}' for i in minus for s in 'bca']
+        alg_ZZ = FreeAlgebra(ZZ, m3, gens_str)
+        gen_indices = {k: i for i, k in enumerate(plus + minus)}
+        gens = [alg_ZZ.gens()[k:k + 3] for k in range(0, m3, 3)]
 
-        M = identity_matrix(alg, n)
+        M = identity_matrix(alg_ZZ, n)
         for k, i in enumerate(tz):
-            A = identity_matrix(alg, n)
-            gen_index = gen_indices.index(k)
-            b, c, a = alg.gens()[3*gen_index:3*gen_index+3]
+            A = identity_matrix(alg_ZZ, n)
+            b, c, a = gens[gen_indices[k]]
+            # faster using row operations instead ?
             if i > 0:
                 A[i-1, i-1] = a
                 A[i, i] = 0
@@ -2152,7 +2123,9 @@ class Braid(FiniteTypeArtinGroupElement):
                 A[-1-i, -i] = c
                 A[-i, -1-i] = b
             M = M * A
-        return M
+
+        alg_R = FreeAlgebra(R, m3, gens_str)
+        return M.change_ring(alg_R)
 
     def _colored_jones_sum(self, N, qword):
         r"""
@@ -2177,23 +2150,19 @@ class Braid(FiniteTypeArtinGroupElement):
         """
         rqword = RightQuantumWord(qword).reduced_word()
         alg = qword.parent()
-        R = alg.base_ring()
-        result = R.one()
+        result = alg.base_ring().one()
         current_word = alg.one()
-        i = 1
-        continue_summing = True
         # This seemingly infinite sum is always finite if the qword comes
         # from a sum of quantum determinants; because at some point
         # the break condition will become true.
-        while continue_summing:
+        while True:
             current_word *= rqword
-            new_rqw = RightQuantumWord(alg(current_word))
+            new_rqw = RightQuantumWord(current_word)
             current_word = new_rqw.reduced_word()
             new_eps = new_rqw.eps(N)
-            result += new_eps
             if not new_eps:
-                continue_summing = False
-            i += 1
+                break
+            result += new_eps
         return result
 
     def colored_jones_polynomial(self, N, variab=None, try_inverse=True):
@@ -2243,7 +2212,7 @@ class Braid(FiniteTypeArtinGroupElement):
             if variab is None:
                 return cj
             if isinstance(variab, str):
-                variab = LaurentPolynomialRing(IntegerRing(), variab).gen()
+                variab = LaurentPolynomialRing(ZZ, variab).gen()
             return cj.subs(q=variab)
 
         db = self.deformed_burau_matrix('q')[1:, 1:]
@@ -2268,6 +2237,90 @@ class Braid(FiniteTypeArtinGroupElement):
               * self._colored_jones_sum(N, shorter_qword))
         self._cj_with_q[N] = cj.subs({q: 1/q}) if use_inverse else cj
         return self.colored_jones_polynomial(N, variab, try_inverse)
+
+    def super_summit_set_element(self):
+        r"""
+        Return an element of the braid's super summit set and the conjugating
+        braid.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: b = B([1, 2, 1, 2, 3, -1, 2, 1, 3])
+            sage: b.super_summit_set_element()
+            (s0*s2*s0*s1*s2*s1*s0, s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1*s1*s0*s2*s1*s0)
+        """
+        to_sss = send_to_sss(self)
+        B = self.parent()
+        return tuple([B._element_from_libbraiding(b) for b in to_sss])
+
+    def ultra_summit_set_element(self):
+        r"""
+        Return an element of the braid's ultra summit set and the conjugating
+        braid.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: b = B([1, 2, 1, 2, 3, -1, 2, -1, 3])
+            sage: b.ultra_summit_set_element()
+            (s0*s1*s0*s2*s1, s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1*s1*s2*s1^2*s0)
+        """
+        to_uss = send_to_uss(self)
+        B = self.parent()
+        return tuple([B._element_from_libbraiding(b) for b in to_uss])
+
+    def sliding_circuits_element(self):
+        r"""
+        Return an element of the braid's sliding circuits, and the conjugating
+        braid.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: b = B([1, 2, 1, 2, 3, -1, 2, -1, 3])
+            sage: b.sliding_circuits_element()
+            (s0*s1*s0*s2*s1, s0^2*s1*s2)
+        """
+        to_sc = send_to_sc(self)
+        B = self.parent()
+        return tuple([B._element_from_libbraiding(b) for b in to_sc])
+
+    def trajectory(self):
+        r"""
+        Return the braid's trajectory.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: b = B([1, 2, 1, 2, 3, -1, 2, -1, 3])
+            sage: b.trajectory()
+            [s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s2*s0*s1*s2*s1*s0^2*s1*s2^2,
+             s0*s1*s2^3,
+             s0*s1*s2*s1^2,
+             s0*s1*s0*s2*s1]
+        """
+        traj = trajectory(self)
+        B = self.parent()
+        return [B._element_from_libbraiding(b) for b in traj]
+
+    def cyclic_slidings(self):
+        r"""
+        Return the braid's cyclic slidings.
+
+        OUTPUT: The braid's cyclic slidings. Each cyclic sliding is a list of braids.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: b = B([1, 2, 1, 2, 3, -1, 2, 1])
+            sage: b.cyclic_slidings()
+            [[s0*s2*s1*s0*s1*s2, s0*s1*s2*s1*s0^2, s1*s0*s2^2*s1*s0],
+             [s0*s1*s2*s1^2*s0, s0*s1*s2*s1*s0*s2, s1*s0*s2*s0*s1*s2]]
+        """
+        cs = cyclic_slidings(self)
+        B = self.parent()
+        return [[B._element_from_libbraiding(b) for b in t] for t in cs]
 
 
 class RightQuantumWord:
@@ -2312,16 +2365,19 @@ class RightQuantumWord:
             ....: ) = fig_8.deformed_burau_matrix().parent().base_ring().gens()
             sage: q = bp_1.base_ring().gen()
             sage: Q = RightQuantumWord(ap_1*cp_1 + q**3*bm_2*bp_1*am_0*cm_0)
-            sage: TestSuite(Q).run(skip="_test_pickling")
+            sage: TestSuite(Q).run(skip='_test_pickling')
         """
         self._algebra = words.parent()
         self.q = self._algebra.base_ring().gen()
+        self.iq = ~self.q
         self.R = self._algebra.base_ring()
         self._unreduced_words = words
         self._gens = self._algebra._indices.gens()
-        self._gens_index = {g: i for i, g in enumerate(self._gens)}
         self._minus_begin = min((i for i, gen in enumerate(self._gens) if 'm' in str(gen)),
-                                default=len(self._gens))
+                                default=len(self._gens)) // 3
+        split = ((g, str(g), i) for i, g in enumerate(self._gens))
+        self._recognize = {g: (s[0], s[1] == 'm', 3 * (i // 3))
+                           for g, s, i in split}
 
     @lazy_attribute
     def tuples(self):
@@ -2333,10 +2389,8 @@ class RightQuantumWord:
         This is in the reduced form as outlined in Definition 4.1
         of [HL2018]_.
 
-        OUTPUT:
-
-        A dict of tuples of ints corresponding to the exponents in the
-        generators with values in the algebra's base ring.
+        OUTPUT: a dict of tuples of ints corresponding to the exponents in the
+        generators with values in the algebra's base ring
 
         EXAMPLES::
 
@@ -2359,24 +2413,25 @@ class RightQuantumWord:
         """
         from collections import defaultdict
         ret = defaultdict(self.R)
+        convert = self._recognize
+        q = self.q
+        iq = self.iq
         for unreduced_monom, q_power in list(self._unreduced_words):
-            q = self.q
             ret_tuple = [0] * len(self._gens)
             for gen, exp in unreduced_monom:
-                gen_index = self._gens_index[gen]
-                is_minus = bool(gen_index >= self._minus_begin)
-                index = gen_index // 3
+                letter, is_minus, index = convert[gen]
                 # This uses the relations in equations (4.1) and (4.2)
                 # of [HL2018]_.
-                i, j, k = ret_tuple[3*index: 3*index + 3]
-                if not (gen_index + 1) % 3:  # is_a
-                    ret_tuple[3*index: 3*index + 3] = [i, j, k + exp]
-                if not gen_index % 3:  # is_b
-                    ret_tuple[3*index: 3*index + 3] = [i + exp, j, k]
-                    q_power *= q**(2*(k*exp + j*exp)) if is_minus else q**(-2*j*exp)
-                if not (gen_index + 2) % 3:  # is_c
-                    ret_tuple[3*index: 3*index + 3] = [i, j + exp, k]
-                    q_power *= q**(-k*exp) if is_minus else q**(k*exp)
+                if letter == 'a':  # is_a
+                    ret_tuple[index + 2] += exp
+                elif letter == 'b':  # is_b
+                    j, k = ret_tuple[index + 1:index + 3]
+                    ret_tuple[index] += exp
+                    q_power *= q**(2*(k*exp + j*exp)) if is_minus else iq**(2*j*exp)
+                else:  # is_c
+                    k = ret_tuple[index + 2]
+                    ret_tuple[index + 1] += exp
+                    q_power *= iq**(k*exp) if is_minus else q**(k*exp)
             ret[tuple(ret_tuple)] += q_power
         return ret
 
@@ -2384,9 +2439,7 @@ class RightQuantumWord:
         r"""
         Return the (reduced) right quantum word.
 
-        OUTPUT:
-
-        An element in the free algebra.
+        OUTPUT: an element in the free algebra
 
         EXAMPLES::
 
@@ -2441,14 +2494,14 @@ class RightQuantumWord:
 
         INPUT:
 
-        - ``N`` -- an integer; the number of colors
+        - ``N`` -- integer; the number of colors
 
         EXAMPLES::
 
             sage: from sage.groups.braid import RightQuantumWord
             sage: B = BraidGroup(3)
             sage: b = B([1,-2,1,2])
-            sage: db = b.deformed_burau_matrix()[:, :]
+            sage: db = b.deformed_burau_matrix()
             sage: q = db.parent().base_ring().base_ring().gen()
             sage: (bp_0, cp_0, ap_0,
             ....:  bp_2, cp_2, ap_2,
@@ -2477,16 +2530,16 @@ class RightQuantumWord:
             """
             q = self.q
             ret_q = q**sum((N - 1 - q_tuple[3*i + 2])*q_tuple[3*i + 1]
-                           for i in range(self._minus_begin//3))
+                           for i in range(self._minus_begin))
             ret_q *= q**sum((N - 1)*(-q_tuple[rj])
-                            for rj in range(self._minus_begin + 1,
+                            for rj in range(self._minus_begin * 3 + 1,
                                             len(q_tuple), 3))
             ret_q *= prod(prod(1 - q**(N - 1 - q_tuple[3*i + 1] - h)
                                for h in range(q_tuple[3*i + 2]))
-                          for i in range(self._minus_begin//3))
+                          for i in range(self._minus_begin))
             ret_q *= prod(prod(1 - q**(q_tuple[3*j + 1] + k + 1 - N)
                                for k in range(q_tuple[3*j + 2]))
-                          for j in range(self._minus_begin//3,
+                          for j in range(self._minus_begin,
                                          len(q_tuple)//3))
             return ret_q
 
@@ -2535,7 +2588,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
         INPUT:
 
-        - ``names`` -- a tuple of strings; the names of the generators
+        - ``names`` -- tuple of strings; the names of the generators
 
         TESTS::
 
@@ -2546,14 +2599,14 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             sage: B1.category()
             Category of infinite groups
 
-        Check that :trac:`14081` is fixed::
+        Check that :issue:`14081` is fixed::
 
             sage: BraidGroup(2)
             Braid group on 2 strands
             sage: BraidGroup(('a',))
             Braid group on 2 strands
 
-        Check that :trac:`15505` is fixed::
+        Check that :issue:`15505` is fixed::
 
             sage: B = BraidGroup(4)
             sage: B.relations()
@@ -2590,8 +2643,8 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         rels = []
         for i in range(1, n):
             rels.append(free_group([i, i + 1, i, -i - 1, -i, -i - 1]))
-            for j in range(i + 2, n + 1):
-                rels.append(free_group([i, j, -i, -j]))
+            rels.extend(free_group([i, j, -i, -j])
+                        for j in range(i + 2, n + 1))
         cat = Groups().Infinite()
         FinitelyPresentedGroup.__init__(self, free_group, tuple(rels),
                                         category=cat)
@@ -2619,11 +2672,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
     def _repr_(self):
         """
-        Return a string representation
-
-        OUTPUT:
-
-        String.
+        Return a string representation.
 
         TESTS::
 
@@ -2637,9 +2686,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         """
         Return the number of group elements.
 
-        OUTPUT:
-
-        Infinity.
+        OUTPUT: Infinity
 
         TESTS::
 
@@ -2656,10 +2703,8 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         """
         Return an isomorphic permutation group.
 
-        OUTPUT:
-
-        This raises a :class:`ValueError` error since braid groups
-        are infinite.
+        OUTPUT: this raises a :exc:`ValueError` error since braid groups
+        are infinite
 
         TESTS::
 
@@ -2675,9 +2720,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         """
         Return the number of strands.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2753,10 +2796,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
         - Every two strands cross each other at most once.
 
-        OUTPUT:
-
-        A shortest word that represents the braid,
-        in Tietze list form.
+        OUTPUT: a shortest word that represents the braid, in Tietze list form
 
         EXAMPLES::
 
@@ -2777,7 +2817,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
         INPUT:
 
-        - ``symbolics`` -- boolean (default ``False``). If set to ``True`` the
+        - ``symbolics`` -- boolean (default: ``False``); if set to ``True`` the
           coefficients will be contained in the symbolic ring. Per default they
           are elements of a quotient ring of a three variate Laurent polynomial
           ring.
@@ -2803,17 +2843,15 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         d = 4  # dimension of the natural module
         from sage.matrix.special import diagonal_matrix
         if symbolics:
-            from sage.symbolic.ring import SR as BR
-            from sage.calculus.var import var
             from sage.misc.functional import sqrt
-            t0, t1 = var('t0, t1')
+            from sage.symbolic.ring import SR as BR
+            t0, t1 = BR.var('t0, t1')
             s0 = sqrt(t0)
             s1 = sqrt(t1)
             Y = sqrt(-(t0 - 1)*(t1 - 1))
             sparse = False
         else:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            from sage.rings.integer_ring import ZZ
             LR = LaurentPolynomialRing(ZZ, 's0r, s1r')
             PR = PolynomialRing(LR, 'Yr')
             s0r, s1r, Yr = PR.gens_dict_recursive().values()
@@ -2880,16 +2918,14 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
         INPUT:
 
-        - ``braid`` -- tuple of integers. The Tietze list of the
-          braid.
+        - ``braid`` -- tuple of integers; the Tietze list of the
+          braid
 
-        - ``variab`` -- string. the names of the variables that will
+        - ``variab`` -- string. The names of the variables that will
           appear in the matrix. They must be given as a string,
           separated by a comma
 
-        OUTPUT:
-
-        The LKB matrix of the braid, with respect to the variables.
+        OUTPUT: the LKB matrix of the braid, with respect to the variables
 
         TESTS::
 
@@ -2914,7 +2950,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
                 A = A*self._LKB_matrix_((i,), variab)
             return A
         n2 = [set(X) for X in combinations(range(n), 2)]
-        R = LaurentPolynomialRing(IntegerRing(), variab)
+        R = LaurentPolynomialRing(ZZ, variab)
         q = R.gens()[0]
         t = R.gens()[1]
         if not braid:
@@ -3023,7 +3059,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         A basis element is specified as a list of integers obtained by
         considering the pairings as obtained as the 'highest term' of
         trivalent trees marked by Jones--Wenzl projectors (see e.g. [Wan2010]_).
-        In practice, this is a list of non-negative integers whose first
+        In practice, this is a list of nonnegative integers whose first
         element is ``drain_size``, whose last element is `0`, and satisfying
         that consecutive integers have difference `1`. Moreover, the length
         of each basis element is `n + 1`.
@@ -3036,9 +3072,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         - ``drain_size`` -- integer between 0 and the number of strands
           (both inclusive)
 
-        OUTPUT:
-
-        A list of basis elements, each of which is a list of integers.
+        OUTPUT: list of basis elements, each of which is a list of integers
 
         EXAMPLES:
 
@@ -3220,10 +3254,8 @@ class BraidGroup_class(FiniteTypeArtinGroup):
           entries of the matrices; if ``None``, then use a default variable
           in `\ZZ[A,A^{-1}]`
 
-        OUTPUT:
-
-        A list of matrices corresponding to the representations of each
-        of the standard generators and their inverses.
+        OUTPUT: list of matrices corresponding to the representations of each
+        of the standard generators and their inverses
 
         EXAMPLES::
 
@@ -3268,7 +3300,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         if variab is None:
             if drain_size in self._TL_representation_dict:
                 return self._TL_representation_dict[drain_size]
-            R = LaurentPolynomialRing(IntegerRing(), 'A')
+            R = LaurentPolynomialRing(ZZ, 'A')
             A = R.gens()[0]
         else:
             R = variab.parent()
@@ -3311,7 +3343,8 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
     def mapping_class_action(self, F):
         """
-        Return the action of self in the free group F as mapping class group.
+        Return the action of ``self`` in the free group F as mapping class
+        group.
 
         This action corresponds to the action of the braid over the
         punctured disk, whose fundamental group is the free group on
@@ -3321,9 +3354,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         element with a braid. So you generally do not have to
         construct this action yourself.
 
-        OUTPUT:
-
-        A :class:`MappingClassGroupAction`.
+        OUTPUT: a :class:`MappingClassGroupAction`
 
         EXAMPLES::
 
@@ -3370,7 +3401,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
         INPUT:
 
-        - ``nf`` -- a list of lists, as returned by libbraiding
+        - ``nf`` -- list of lists, as returned by libbraiding
 
         EXAMPLES::
 
@@ -3415,7 +3446,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
         INPUT:
 
-        - ``isomorphism`` -- boolean (default ``False``); if ``True``, then an isomorphism
+        - ``isomorphism`` -- boolean (default: ``False``); if ``True``, then an isomorphism
           from ``self`` and the isomorphic group and its inverse is also returned
 
         EXAMPLES::
@@ -3462,7 +3493,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
         INPUT:
 
-        - `H` -- another group
+        - ``H`` -- another group
 
         EXAMPLES::
 
@@ -3502,7 +3533,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
 def BraidGroup(n=None, names='s'):
     """
-    Construct a Braid Group
+    Construct a Braid Group.
 
     INPUT:
 
@@ -3511,7 +3542,7 @@ def BraidGroup(n=None, names='s'):
       group is assumed to have one more strand than generators.
 
     - ``names`` -- string or list/tuple/iterable of strings (default:
-      ``'x'``). The generator names or name prefix.
+      ``'x'``); the generator names or name prefix
 
     EXAMPLES::
 
@@ -3533,7 +3564,7 @@ def BraidGroup(n=None, names='s'):
         (g0, g1)
 
     Since the word problem for the braid groups is solvable, their Cayley graph
-    can be locally obtained as follows (see :trac:`16059`)::
+    can be locally obtained as follows (see :issue:`16059`)::
 
         sage: def ball(group, radius):
         ....:     ret = set()
@@ -3646,13 +3677,11 @@ class MappingClassGroupAction(Action):
 
         INPUT:
 
-        - ``b`` -- a braid.
+        - ``b`` -- a braid
 
-        - ``x`` -- a free group element.
+        - ``x`` -- a free group element
 
-        OUTPUT:
-
-        A new braid.
+        OUTPUT: a new braid
 
         TESTS::
 

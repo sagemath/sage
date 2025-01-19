@@ -39,7 +39,7 @@ manifold endowed with a positive definite metric tensor::
     Riemannian metric g on the Euclidean space E^3
 
 Actually ``RR`` is used here as a proxy for the real field (this should be
-replaced in the future, see the discussion at :trac:`24456`) and the 53 bits of precision play
+replaced in the future, see the discussion at :issue:`24456`) and the 53 bits of precision play
 of course no role for the symbolic computations.
 
 Let us introduce spherical and cylindrical coordinates on

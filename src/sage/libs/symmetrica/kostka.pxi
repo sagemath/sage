@@ -6,9 +6,10 @@ cdef extern from 'symmetrica/def.h':
     INT kostka_tab(OP shape, OP content, OP result)
     INT kostka_tafel(OP n, OP result)
 
+
 def kostka_number_symmetrica(shape, content):
     """
-    computes the kostkanumber, i.e. the number of
+    Compute the kostkanumber, i.e. the number of
     tableaux of given shape, which is a PARTITION object, and
     of given content, which also is a PARTITION object, or a VECTOR
     object with INTEGER entries. The
@@ -53,9 +54,10 @@ def kostka_number_symmetrica(shape, content):
 
     return res
 
+
 def kostka_tab_symmetrica(shape, content):
     """
-    computes the list of tableaux of given shape
+    Compute the list of tableaux of given shape
     and content. shape is a PARTITION object or a
     SKEWPARTITION object and
     content is a PARTITION object or a VECTOR object with
@@ -77,8 +79,6 @@ def kostka_tab_symmetrica(shape, content):
          [[None, 2], [None, 3], [1]]]
         sage: symmetrica.kostka_tab([[2,2],[1]],[1,1,1])
         [[[None, 1], [2, 3]], [[None, 2], [1, 3]]]
-
-
     """
     late_import()
 
@@ -98,7 +98,6 @@ def kostka_tab_symmetrica(shape, content):
         _op_partition(shape, cshape)
 
 
-
     #Check to make sure the content is compatible with the shape.
 
     _op_il_vector(content, ccontent)
@@ -114,9 +113,10 @@ def kostka_tab_symmetrica(shape, content):
 
     return res
 
+
 def kostka_tafel_symmetrica(n):
     """
-    Returns the table of Kostka numbers of weight n.
+    Return the table of Kostka numbers of weight `n`.
 
     EXAMPLES::
 

@@ -3,13 +3,12 @@ Logarithmic functions
 
 AUTHORS:
 
-- Yoora Yi Tenen (2012-11-16): Add documentation for :meth:`log()` (:trac:`12113`)
+- Yoora Yi Tenen (2012-11-16): Add documentation for :meth:`log()` (:issue:`12113`)
 
-- Tomas Kalvoda (2015-04-01): Add :meth:`exp_polar()` (:trac:`18085`)
-
+- Tomas Kalvoda (2015-04-01): Add :meth:`exp_polar()` (:issue:`18085`)
 """
 
-from sage.misc.functional import log as log
+from sage.misc.functional import log
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -63,7 +62,7 @@ class Function_exp(GinacFunction):
 
         sage: exp(float(2.5))
         12.182493960703473
-        sage: exp(RDF('2.5'))
+        sage: exp(RDF('2.5'))                                                           # needs sage.symbolic
         12.182493960703473
 
     To prevent automatic evaluation, use the ``hold`` parameter::
@@ -132,7 +131,7 @@ class Function_exp(GinacFunction):
         sage: conjugate(exp(x))                                                         # needs sage.symbolic
         e^conjugate(x)
 
-    Test simplifications when taking powers of exp (:trac:`7264`)::
+    Test simplifications when taking powers of exp (:issue:`7264`)::
 
         sage: # needs sage.symbolic
         sage: var('a,b,c,II')
@@ -154,12 +153,12 @@ class Function_exp(GinacFunction):
         sage: exp(x)*exp(a)^2
         e^(2*a + x)
 
-    Another instance of the same problem (:trac:`7394`)::
+    Another instance of the same problem (:issue:`7394`)::
 
         sage: 2*sqrt(e)                                                                 # needs sage.symbolic
         2*e^(1/2)
 
-    Check that :trac:`19918` is fixed::
+    Check that :issue:`19918` is fixed::
 
         sage: exp(-x^2).subs(x=oo)                                                      # needs sage.symbolic
         0
@@ -238,7 +237,7 @@ class Function_log1(GinacFunction):
         sage: log(x).subs(x=float(-1))                                                  # needs sage.symbolic
         3.141592653589793j
 
-    :trac:`22142`::
+    :issue:`22142`::
 
         sage: log(QQbar(sqrt(2)))                                                       # needs sage.rings.number_field sage.symbolic
         log(1.414213562373095?)
@@ -361,7 +360,7 @@ class Function_polylog(GinacFunction):
 
         TESTS:
 
-        Check if :trac:`8459` is fixed::
+        Check if :issue:`8459` is fixed::
 
             sage: t = maxima(polylog(5,x)).sage(); t                                    # needs sage.symbolic
             polylog(5, x)
@@ -370,7 +369,7 @@ class Function_polylog(GinacFunction):
             sage: t.subs(x=.5).n()                                                      # needs sage.symbolic
             0.50840057924226...
 
-        Check if :trac:`18386` is fixed::
+        Check if :issue:`18386` is fixed::
 
             sage: polylog(2.0, 1)                                                       # needs sage.symbolic
             1.64493406684823
@@ -396,7 +395,7 @@ class Function_polylog(GinacFunction):
             sage: polylog(1, -1)                # known bug                             # needs sage.symbolic
             -log(2)
 
-        Check for :trac:`21907`::
+        Check for :issue:`21907`::
 
             sage: bool(x*polylog(x,x)==0)                                               # needs sage.symbolic
             False
@@ -522,7 +521,7 @@ class Function_dilog(GinacFunction):
             conjugate(dilog(2))
 
         Check that return type matches argument type where possible
-        (:trac:`18386`)::
+        (:issue:`18386`)::
 
             sage: dilog(0.5)                                                            # needs sage.symbolic
             0.582240526465012
@@ -574,7 +573,7 @@ class Function_lambert_w(BuiltinFunction):
 
     INPUT:
 
-    - ``n`` -- an integer. `n=0` corresponds to the principal branch.
+    - ``n`` -- integer; `n=0` corresponds to the principal branch
 
     - ``z`` -- a complex number
 
@@ -658,7 +657,7 @@ class Function_lambert_w(BuiltinFunction):
 
         TESTS:
 
-        Check that :trac:`25987` is fixed::
+        Check that :issue:`25987` is fixed::
 
             sage: lambert_w(x)._fricas_()                                       # optional - fricas, needs sage.symbolic
             lambertW(x)
@@ -829,7 +828,7 @@ class Function_lambert_w(BuiltinFunction):
 
         TESTS:
 
-        Differentiation in the first parameter raises an error :trac:`14788`::
+        Differentiation in the first parameter raises an error :issue:`14788`::
 
             sage: n = var('n')                                                          # needs sage.symbolic
             sage: lambert_w(n, x).diff(n)                                               # needs sage.symbolic
@@ -921,7 +920,7 @@ class Function_exp_polar(BuiltinFunction):
 
         INPUT:
 
-        - ``z`` -- a complex number `z = a + ib`.
+        - ``z`` -- a complex number `z = a + ib`
 
         OUTPUT:
 
@@ -949,7 +948,7 @@ class Function_exp_polar(BuiltinFunction):
             sage: exp_polar(-4*pi*I)                                                    # needs sage.symbolic
             exp_polar(-4*I*pi)
 
-        This fixes :trac:`18085`::
+        This fixes :issue:`18085`::
 
             sage: integrate(1/sqrt(1+x^3), x, algorithm='sympy')                        # needs sage.symbolic
             1/3*x*gamma(1/3)*hypergeometric((1/3, 1/2), (4/3,), -x^3)/gamma(4/3)
@@ -990,7 +989,6 @@ class Function_exp_polar(BuiltinFunction):
             Traceback (most recent call last):
             ...
             ValueError: invalid attempt to numerically evaluate exp_polar()
-
         """
         if (not isinstance(z, Expression) and
                 bool(-const_pi < imag(z) <= const_pi)):
@@ -1010,7 +1008,7 @@ class Function_exp_polar(BuiltinFunction):
 
         TESTS:
 
-        Check that :trac:`24441` is fixed::
+        Check that :issue:`24441` is fixed::
 
             sage: exp_polar(arcsec(jacobi_sn(1.1*I*x, x)))  # should be fast            # needs sage.symbolic
             exp_polar(arcsec(jacobi_sn(1.10000000000000*I*x, x)))

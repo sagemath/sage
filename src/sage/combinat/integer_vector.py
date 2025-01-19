@@ -28,7 +28,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.combinat.integer_lists import IntegerListsLex
 from itertools import product
 from collections.abc import Sequence
 import numbers
@@ -50,7 +49,7 @@ from sage.rings.integer import Integer
 
 def is_gale_ryser(r, s):
     r"""
-    Tests whether the given sequences satisfy the condition
+    Test whether the given sequences satisfy the condition
     of the Gale-Ryser theorem.
 
     Given a binary matrix `B` of dimension `n\times m`, the
@@ -60,14 +59,14 @@ def is_gale_ryser(r, s):
 
     If, given a binary matrix, these two vectors are easy to compute,
     the Gale-Ryser theorem lets us decide whether, given two
-    non-negative vectors `r,s`, there exists a binary matrix
+    nonnegative vectors `r,s`, there exists a binary matrix
     whose row/column sums vectors are `r` and `s`.
 
     This functions answers accordingly.
 
     INPUT:
 
-    - ``r``, ``s`` -- lists of non-negative integers.
+    - ``r``, ``s`` -- lists of nonnegative integers
 
     ALGORITHM:
 
@@ -104,7 +103,7 @@ def is_gale_ryser(r, s):
     generic-sounding) term ''realizable sequence''.
     """
 
-    # The sequences only contain non-negative integers
+    # The sequences only contain nonnegative integers
     if [x for x in r if x < 0] or [x for x in s if x < 0]:
         return False
 
@@ -124,10 +123,10 @@ def is_gale_ryser(r, s):
     return len(rstar) <= len(s2) and sum(r2) == sum(s2) and rstar.dominates(s)
 
 
-def gale_ryser_theorem(p1, p2, algorithm="gale",
+def gale_ryser_theorem(p1, p2, algorithm='gale',
                        *, solver=None, integrality_tolerance=1e-3):
     r"""
-    Returns the binary matrix given by the Gale-Ryser theorem.
+    Return the binary matrix given by the Gale-Ryser theorem.
 
     The Gale Ryser theorem asserts that if `p_1,p_2` are two
     partitions of `n` of respective lengths `k_1,k_2`, then there is
@@ -137,7 +136,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
 
     INPUT:
 
-    - ``p1, p2``-- list of integers representing the vectors
+    - ``p1``, ``p2`` -- list of integers representing the vectors
       of row/column sums
 
     - ``algorithm`` -- two possible string values:
@@ -145,7 +144,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
       - ``'ryser'`` implements the construction due to Ryser [Ryser63]_.
       - ``'gale'`` (default) implements the construction due to Gale [Gale57]_.
 
-    - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear Programming
+    - ``solver`` -- (default: ``None``) specify a Mixed Integer Linear Programming
       (MILP) solver to be used. If set to ``None``, the default one is used. For
       more information on MILP solvers and which default solver is used, see
       the method
@@ -154,11 +153,9 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
       :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
-      inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`.
+      inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`
 
-    OUTPUT:
-
-    A binary matrix if it exists, ``None`` otherwise.
+    OUTPUT: a binary matrix if it exists, ``None`` otherwise
 
     Gale's Algorithm:
 
@@ -180,7 +177,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
 
     * Construct the `m \times n` matrix `B` from `r` by defining
       the `i`-th row of `B` to be the vector whose first `r_i`
-      entries are `1`, and the remainder are 0's, `1 \leq i \leq m`.
+      entries are `1`, and the remainder are 0s, `1 \leq i \leq m`.
       This maximal matrix `B` with row sum `r` and ones left
       justified has column sum `r^{*}`.
 
@@ -226,27 +223,27 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         sage: from sage.combinat.integer_vector import gale_ryser_theorem
         sage: p1 = [3,3,1,1]
         sage: p2 = [3,3,1,1]
-        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")
+        sage: gale_ryser_theorem(p1, p2, algorithm='ryser')
         [1 1 1 0]
         [1 1 0 1]
         [1 0 0 0]
         [0 1 0 0]
         sage: p1 = [4,2,2]
         sage: p2 = [3,3,1,1]
-        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")
+        sage: gale_ryser_theorem(p1, p2, algorithm='ryser')
         [1 1 1 1]
         [1 1 0 0]
         [1 1 0 0]
         sage: p1 = [4,2,2,0]
         sage: p2 = [3,3,1,1,0,0]
-        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")
+        sage: gale_ryser_theorem(p1, p2, algorithm='ryser')
         [1 1 1 1 0 0]
         [1 1 0 0 0 0]
         [1 1 0 0 0 0]
         [0 0 0 0 0 0]
         sage: p1 = [3,3,2,1]
         sage: p2 = [3,2,2,1,1]
-        sage: print(gale_ryser_theorem(p1, p2, algorithm="gale"))       # not tested
+        sage: print(gale_ryser_theorem(p1, p2, algorithm='gale'))       # not tested
         [1 1 1 0 0]
         [1 1 0 0 1]
         [1 0 1 0 0]
@@ -255,7 +252,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
     With `0` in the sequences, and with unordered inputs::
 
         sage: from sage.combinat.integer_vector import gale_ryser_theorem
-        sage: gale_ryser_theorem([3,3,0,1,1,0], [3,1,3,1,0], algorithm="ryser")         # needs sage.combinat sage.modules
+        sage: gale_ryser_theorem([3,3,0,1,1,0], [3,1,3,1,0], algorithm='ryser')         # needs sage.combinat sage.modules
         [1 1 1 0 0]
         [1 0 1 1 0]
         [0 0 0 0 0]
@@ -263,7 +260,7 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
         [0 0 1 0 0]
         [0 0 0 0 0]
         sage: p1 = [3,1,1,1,1]; p2 = [3,2,2,0]
-        sage: gale_ryser_theorem(p1, p2, algorithm="ryser")                             # needs sage.combinat sage.modules
+        sage: gale_ryser_theorem(p1, p2, algorithm='ryser')                             # needs sage.combinat sage.modules
         [1 1 1 0]
         [1 0 0 0]
         [1 0 0 0]
@@ -296,11 +293,11 @@ def gale_ryser_theorem(p1, p2, algorithm="gale",
 
     Null matrix::
 
-        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm="gale")                   # needs sage.combinat sage.modules
+        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm='gale')                   # needs sage.combinat sage.modules
         [0 0 0 0]
         [0 0 0 0]
         [0 0 0 0]
-        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm="ryser")                  # needs sage.combinat sage.modules
+        sage: gale_ryser_theorem([0,0,0],[0,0,0,0], algorithm='ryser')                  # needs sage.combinat sage.modules
         [0 0 0 0]
         [0 0 0 0]
         [0 0 0 0]
@@ -452,7 +449,7 @@ class IntegerVector(ClonableArray):
     def check(self):
         """
         Check to make sure this is a valid integer vector by making sure
-        all entries are non-negative.
+        all entries are nonnegative.
 
         EXAMPLES::
 
@@ -460,7 +457,7 @@ class IntegerVector(ClonableArray):
             sage: elt = IV([1,2,1])
             sage: elt.check()
 
-        Check :trac:`34510`::
+        Check :issue:`34510`::
 
             sage: IV3 = IntegerVectors(n=3)
             sage: IV3([2,2])
@@ -479,7 +476,7 @@ class IntegerVector(ClonableArray):
             ValueError: [2, 2] doesn't satisfy correct constraints
         """
         if any(x < 0 for x in self):
-            raise ValueError("all entries must be non-negative")
+            raise ValueError("all entries must be nonnegative")
         if self not in self.parent():
             raise ValueError(f"{self} doesn't satisfy correct constraints")
 
@@ -554,7 +551,7 @@ class IntegerVector(ClonableArray):
 
 class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
     """
-    The class of (non-negative) integer vectors.
+    The class of (nonnegative) integer vectors.
 
     INPUT:
 
@@ -567,7 +564,7 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
 
     .. NOTE::
 
-        The entries are non-negative integers.
+        The entries are nonnegative integers.
 
     EXAMPLES:
 
@@ -582,7 +579,7 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
         sage: [1, 0, 0] in IntegerVectors()
         True
 
-    Entries are non-negative::
+    Entries are nonnegative::
 
         sage: [-1, 2] in IntegerVectors()
         False
@@ -696,7 +693,7 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
             ...
             ValueError: k and length both specified
 
-        :trac:`29524`::
+        :issue:`29524`::
 
             sage: IntegerVectors(3, 3/1)
             Traceback (most recent call last):
@@ -786,9 +783,8 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``x`` - a nonnegative integer
-        - ``rtn`` - a list of nonnegative integers
-
+        - ``x`` -- nonnegative integer
+        - ``rtn`` -- list of nonnegative integers
 
         EXAMPLES::
 
@@ -944,7 +940,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
 
         INPUT:
 
-        - ``x`` -- a list with ``sum(x) == n``
+        - ``x`` -- list with ``sum(x) == n``
 
         EXAMPLES::
 
@@ -969,7 +965,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
 
         INPUT:
 
-        - ``x`` -- an integer.
+        - ``x`` -- integer
 
         EXAMPLES::
 
@@ -1079,7 +1075,7 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
 
         INPUT:
 
-        - ``x`` -- a list with ``len(x) == k``
+        - ``x`` -- list with ``len(x) == k``
 
         EXAMPLES::
 
@@ -1104,7 +1100,7 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
 
         INPUT:
 
-        - ``x`` -- an integer such that x < self.cardinality()``
+        - ``x`` -- integer such that ``x < self.cardinality()``
 
         EXAMPLES::
 
@@ -1171,26 +1167,24 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
 
         INPUT:
 
-        -  ``n`` -- degree (must be 0)
+        - ``n`` -- degree (must be 0)
 
-        -  ``k`` -- length of exponent tuples (must be 0)
+        - ``k`` -- length of exponent tuples (must be 0)
 
         EXAMPLES::
 
             sage: IV = IntegerVectors(2,3)
-            sage: IV._list_rec(2,3)
+            sage: list(IV._list_rec(2,3))
             [(2, 0, 0), (1, 1, 0), (1, 0, 1), (0, 2, 0), (0, 1, 1), (0, 0, 2)]
         """
-        res = []
-
         if k == 1:
-            return [(n, )]
+            yield (n,)
+            return
 
         for nbar in range(n + 1):
             n_diff = n - nbar
             for rest in self._list_rec(nbar, k - 1):
-                res.append((n_diff,) + rest)
-        return res
+                yield (n_diff,) + rest
 
     def __iter__(self):
         """
@@ -1288,7 +1282,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
             sage: [3,2,2,1] in IntegerVectors(8, 4)
             True
 
-        Check :trac:`34510`::
+        Check :issue:`34510`::
 
             sage: IV33 = IntegerVectors(n=3, k=3)
             sage: IV33([0])
@@ -1316,7 +1310,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
 
         INPUT:
 
-        - ``x`` -- a list with ``sum(x) == n`` and ``len(x) == k``
+        - ``x`` -- list with ``sum(x) == n`` and ``len(x) == k``
 
         TESTS::
 
@@ -1339,7 +1333,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
 
         INPUT:
 
-        - ``x`` -- an integer such that ``x < self.cardinality()``
+        - ``x`` -- integer such that ``x < self.cardinality()``
 
         EXAMPLES::
 
@@ -1377,9 +1371,9 @@ class IntegerVectors_nnondescents(UniqueRepresentation, IntegerVectors):
 
     The grading parameters on the integer vector `v` are:
 
-    - `n` -- the sum of the parts of `v`,
+    - ``n`` -- the sum of the parts of `v`
 
-    - `c` -- the non descents composition of `v`.
+    - ``c`` -- the non descents composition of `v`
 
     In other words: the length of `v` equals `c_1 + \cdots + c_k`, and `v`
     is decreasing in the consecutive blocs of length `c_1, \ldots, c_k`,
@@ -1723,6 +1717,8 @@ class IntegerVectorsConstraints(IntegerVectors):
             sage: all(map(lambda x: x.cardinality() == len(x.list()), iv))
             True
         """
+        from sage.combinat.integer_lists import IntegerListsLex
+
         if self.n is None:
             if self.k is not None and 'max_part' in self.constraints:
                 n_list = range((self.constraints['max_part'] + 1) * self.k)

@@ -8,6 +8,7 @@ VERSION = "@PACKAGE_VERSION@"
 # to it.
 SAGE_LOCAL = "@prefix@"
 SAGE_ROOT = "@SAGE_ROOT@"
+SAGE_SHARE = "@SAGE_SHARE@"
 
 # The semicolon-separated list of GAP root paths. This is the list of
 # locations that are searched for GAP packages. This is passed directly
@@ -31,6 +32,8 @@ NTL_LIBDIR = "@NTL_LIBDIR@"
 ECL_CONFIG = "@SAGE_ECL_CONFIG@".replace('${prefix}', SAGE_LOCAL)
 
 SAGE_NAUTY_BINS_PREFIX = "@SAGE_NAUTY_BINS_PREFIX@"
+
+SAGE_ECMBIN = "@SAGE_ECMBIN@"
 
 # Names or paths of the 4ti2 executables
 FOURTITWO_HILBERT = "@FOURTITWO_HILBERT@"

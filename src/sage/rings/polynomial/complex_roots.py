@@ -54,9 +54,9 @@ def interval_roots(p, rts, prec):
     and a precision.
 
     We attempt to verify that the estimated roots are in fact distinct
-    roots of the polynomial, using interval arithmetic of precision prec.
+    roots of the polynomial, using interval arithmetic of precision ``prec``.
     If we succeed, we return a list of intervals bounding the roots; if we
-    fail, we return None.
+    fail, we return ``None``.
 
     EXAMPLES::
 
@@ -89,6 +89,7 @@ def interval_roots(p, rts, prec):
         irts.append(irt)
 
     return irts
+
 
 def intervals_disjoint(intvs):
     """
@@ -252,7 +253,7 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
 
     TESTS:
 
-    Verify that :trac:`12026` is fixed::
+    Verify that :issue:`12026` is fixed::
 
         sage: f = matrix(QQ, 8, lambda i, j: 1/(i + j + 1)).charpoly()
         sage: from sage.rings.polynomial.complex_roots import complex_roots

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Quotient fields
 """
@@ -14,9 +15,10 @@ from sage.categories.fields import Fields
 
 from sage.structure.element import coerce_binop
 
+
 class QuotientFields(Category_singleton):
     """
-    The category of quotient fields over an integral domain
+    The category of quotient fields over an integral domain.
 
     EXAMPLES::
 
@@ -55,7 +57,7 @@ class QuotientFields(Category_singleton):
         @coerce_binop
         def gcd(self, other):
             """
-            Greatest common divisor
+            Greatest common divisor.
 
             .. NOTE::
 
@@ -68,7 +70,7 @@ class QuotientFields(Category_singleton):
 
             AUTHOR:
 
-            - Simon King (2011-02): See :trac:`10771`
+            - Simon King (2011-02): See :issue:`10771`
 
             EXAMPLES::
 
@@ -139,7 +141,7 @@ class QuotientFields(Category_singleton):
         @coerce_binop
         def lcm(self, other):
             """
-            Least common multiple
+            Least common multiple.
 
             In a field, the least common multiple is not very informative, as it
             is only determined up to a unit. But in the fraction field of an
@@ -162,7 +164,7 @@ class QuotientFields(Category_singleton):
 
             AUTHOR:
 
-            - Simon King (2011-02): See :trac:`10771`
+            - Simon King (2011-02): See :issue:`10771`
 
             EXAMPLES::
 
@@ -221,7 +223,7 @@ class QuotientFields(Category_singleton):
                 0
 
             Check that it is possible to take lcm of a rational and an integer
-            (:trac:`17852`)::
+            (:issue:`17852`)::
 
                 sage: (1/2).lcm(2)
                 2
@@ -341,12 +343,10 @@ class QuotientFields(Category_singleton):
 
             INPUT:
 
-            - ``*args`` - Arbitrary arguments suitable over the base ring
-            - ``**kwds`` - Arbitrary keyword arguments suitable over the base ring
+            - ``*args`` -- arbitrary arguments suitable over the base ring
+            - ``**kwds`` -- arbitrary keyword arguments suitable over the base ring
 
-            OUTPUT:
-
-            - Factorization of ``self`` over the base ring
+            OUTPUT: factorization of ``self`` over the base ring
 
             EXAMPLES::
 
@@ -355,7 +355,7 @@ class QuotientFields(Category_singleton):
                 sage: f.factor()                                                        # needs sage.libs.pari
                 (x - 3)^-1 * x * (x^2 + 1)
 
-            Here is an example to show that :trac:`7868` has been resolved::
+            Here is an example to show that :issue:`7868` has been resolved::
 
                 sage: R.<x,y> = GF(2)[]
                 sage: f = x*y/(x+y)
@@ -378,9 +378,7 @@ class QuotientFields(Category_singleton):
               whether to decompose prime power denominators as opposed to having
               a single term for each irreducible factor of the denominator
 
-            OUTPUT:
-
-            Partial fraction decomposition of ``self`` over the base ring.
+            OUTPUT: partial fraction decomposition of ``self`` over the base ring
 
             AUTHORS:
 
@@ -481,7 +479,7 @@ class QuotientFields(Category_singleton):
                 sage: whole + sum(parts) == q                                           # needs sage.libs.pari
                 True
 
-            And also over finite fields (see :trac:`6052`, :trac:`9945`)::
+            And also over finite fields (see :issue:`6052`, :issue:`9945`)::
 
                 sage: R.<x> = GF(2)[]
                 sage: q = (x+1)/(x^3+x+1)
@@ -533,7 +531,7 @@ class QuotientFields(Category_singleton):
                 sage: (1/x+1/x^3).partial_fraction_decomposition()                      # needs sage.libs.pari
                 (0, [1/x, 1/x^3])
 
-            This was fixed in :trac:`16240`::
+            This was fixed in :issue:`16240`::
 
                 sage: # needs sage.libs.pari
                 sage: R.<x> = QQ['x']
@@ -630,7 +628,7 @@ class QuotientFields(Category_singleton):
 
         def _derivative(self, var=None):
             r"""
-            Returns the derivative of this rational function with respect to the
+            Return the derivative of this rational function with respect to the
             variable ``var``.
 
             Over a ring with a working gcd implementation, the derivative of a
@@ -640,11 +638,9 @@ class QuotientFields(Category_singleton):
 
             INPUT:
 
-            - ``var`` - Variable with respect to which the derivative is computed
+            - ``var`` -- variable with respect to which the derivative is computed
 
-            OUTPUT:
-
-            - Derivative of ``self`` with respect to ``var``
+            OUTPUT: derivative of ``self`` with respect to ``var``
 
             .. SEEALSO::
 

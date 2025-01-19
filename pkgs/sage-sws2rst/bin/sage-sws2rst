@@ -170,12 +170,12 @@ steps are one way to do so.
 
 REFERENCES:
 
-.. [1] First Steps with Sphinx,
-   http://sphinx.pocoo.org/tutorial.html
+.. [1] Getting Started,
+   https://www.sphinx-doc.org/en/master/usage/quickstart.html
 .. [2] MathJax,
    http://www.mathjax.org/
-.. [3] Defining Document Structure, First Steps with Sphinx,
-   http://sphinx.pocoo.org/tutorial.html#defining-document-structure"""
+.. [3] Defining Document Structure, Getting Started,
+   https://www.sphinx-doc.org/en/master/usage/quickstart.html#defining-document-structure"""
 
 parser = OptionParser(usage=usage)
 parser.add_option("--sphinxify",

@@ -12,27 +12,30 @@ standard tableaux to semistandard tableaux. The local rule is the Bender-Knuth i
 
 EXAMPLES::
 
-    sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],[3,3,2,1],[4,3,3,1,0]])
+    sage: pt = path_tableaux.SemistandardPathTableau([[], [3], [3,2], [3,3,1],
+    ....:                                             [3,3,2,1], [4,3,3,1,0]])
     sage: pt.promotion()
     [(), (2,), (3, 1), (3, 2, 1), (4, 3, 1, 0), (4, 3, 3, 1, 0)]
     sage: pt.evacuation()
     [(), (2,), (4, 0), (4, 2, 0), (4, 3, 1, 0), (4, 3, 3, 1, 0)]
 
-    sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],[3,3,2,1],[9/2,3,3,1,0]])
+    sage: pt = path_tableaux.SemistandardPathTableau([[], [3], [3,2], [3,3,1],
+    ....:                                             [3,3,2,1], [9/2,3,3,1,0]])
     sage: pt.promotion()
     [(), (2,), (3, 1), (3, 2, 1), (9/2, 3, 1, 0), (9/2, 3, 3, 1, 0)]
     sage: pt.evacuation()
     [(), (5/2,), (9/2, 0), (9/2, 2, 0), (9/2, 3, 1, 0), (9/2, 3, 3, 1, 0)]
 
-    sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[4,2],[5,4,1]])
+    sage: pt = path_tableaux.SemistandardPathTableau([[], [3], [4,2], [5,4,1]])
     sage: path_tableaux.CylindricalDiagram(pt)
     [       (),      (3,),    (4, 2), (5, 4, 1)]
     [         ,        (),      (3,),    (5, 2), (5, 4, 1)]
     [         ,          ,        (),      (4,),    (4, 3), (5, 4, 1)]
     [         ,          ,          ,        (),      (3,),    (5, 1), (5, 4, 1)]
 
-    sage: pt2 = path_tableaux.SemistandardPathTableau([[3,2],[3,3,1],[3,3,2,1],[4,3,3,1,0]])
-    sage: pt1 = path_tableaux.SemistandardPathTableau([[],[3],[3,2]])
+    sage: pt2 = path_tableaux.SemistandardPathTableau([[3,2], [3,3,1],
+    ....:                                              [3,3,2,1], [4,3,3,1,0]])
+    sage: pt1 = path_tableaux.SemistandardPathTableau([[], [3], [3,2]])
     sage: pt1.commutor(pt2)
     ([(), (2,), (2, 2), (4, 2, 0)], [(4, 2, 0), (4, 3, 2, 0), (4, 3, 3, 1, 0)])
     sage: pt1.commutor(pt2,verbose=True)
@@ -41,7 +44,9 @@ EXAMPLES::
     [(), (2,), (2, 2), (4, 2, 0)]
     ([(), (2,), (2, 2), (4, 2, 0)], [(4, 2, 0), (4, 3, 2, 0), (4, 3, 3, 1, 0)])
 
-    sage: st = SkewTableau([[None,None,None,4,4,5,6,7],[None,2,4,6,7,7,7],[None,4,5,8,8,9],[None,6,7,10],[None,8,8,11],[None],[4]])
+    sage: st = SkewTableau([[None, None, None, 4, 4, 5, 6, 7], [None, 2, 4, 6, 7, 7, 7],
+    ....:                   [None, 4, 5, 8, 8, 9], [None, 6, 7, 10], [None, 8, 8, 11],
+    ....:                   [None], [4]])
     sage: pt = path_tableaux.SemistandardPathTableau(st)
     sage: bk = [SkewTableau(st.bender_knuth_involution(i+1)) for i in range(10)]
     sage: lr = [pt.local_rule(i+1) for i in range(10)]
@@ -50,17 +55,17 @@ EXAMPLES::
 
 TESTS::
 
-    sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],[3,3,2,1],[4,3,3,1,0]])
+    sage: pt = path_tableaux.SemistandardPathTableau([[], [3], [3,2], [3,3,1], [3,3,2,1], [4,3,3,1,0]])
     sage: TestSuite(pt).run()
 
-    sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],[7/2,3,2,1],[4,3,3,1,0]])
+    sage: pt = path_tableaux.SemistandardPathTableau([[], [3], [3,2], [3,3,1], [7/2,3,2,1], [4,3,3,1,0]])
     sage: TestSuite(pt).run()
     Failure in _test_jdt_promotion:
     Traceback (most recent call last):
     ...
     The following tests failed: _test_jdt_promotion
 
-    sage: pt = path_tableaux.SemistandardPathTableau([[3,2],[3,3,1],[3,3,2,1],[4,3,3,1,0]])
+    sage: pt = path_tableaux.SemistandardPathTableau([[3,2], [3,3,1], [3,3,2,1], [4,3,3,1,0]])
     sage: pt.promotion()
     [(3, 2), (3, 2, 2), (4, 3, 2, 0), (4, 3, 3, 1, 0)]
 
@@ -92,7 +97,7 @@ from sage.rings.semirings.non_negative_integer_semiring import NN
 
 class SemistandardPathTableau(PathTableau):
     r"""
-    An instance is a sequence of lists. Usually the entries will be non-negative integers
+    An instance is a sequence of lists. Usually the entries will be nonnegative integers
     in which case this is the chain of partitions of a (skew) semistandard tableau.
     In general the entries are elements of an ordered abelian group; each list is weakly
     decreasing and successive lists are interleaved.
@@ -109,29 +114,29 @@ class SemistandardPathTableau(PathTableau):
 
     EXAMPLES::
 
-        sage: path_tableaux.SemistandardPathTableau([[],[2],[2,1]])
+        sage: path_tableaux.SemistandardPathTableau([[], [2], [2,1]])
         [(), (2,), (2, 1)]
 
-        sage: gt = GelfandTsetlinPattern([[2,1],[2]])
+        sage: gt = GelfandTsetlinPattern([[2,1], [2]])
         sage: path_tableaux.SemistandardPathTableau(gt)
         [(), (2,), (2, 1)]
 
-        sage: st = SemistandardTableau([[1,1],[2]])
+        sage: st = SemistandardTableau([[1,1], [2]])
         sage: path_tableaux.SemistandardPathTableau(st)
         [(), (2,), (2, 1)]
 
-        sage: st = SkewTableau([[1,1],[2]])
+        sage: st = SkewTableau([[1,1], [2]])
         sage: path_tableaux.SemistandardPathTableau(st)
         [(), (2,), (2, 1)]
 
-        sage: st = SkewTableau([[None,1,1],[2]])
+        sage: st = SkewTableau([[None,1,1], [2]])
         sage: path_tableaux.SemistandardPathTableau(st)
         [(1,), (3, 0), (3, 1, 0)]
 
-        sage: path_tableaux.SemistandardPathTableau([[],[5/2],[7/2,2]])
+        sage: path_tableaux.SemistandardPathTableau([[], [5/2], [7/2,2]])
         [(), (5/2,), (7/2, 2)]
 
-        sage: path_tableaux.SemistandardPathTableau([[],[2.5],[3.5,2]])
+        sage: path_tableaux.SemistandardPathTableau([[], [2.5], [3.5,2]])
         [(), (2.50000000000000,), (3.50000000000000, 2)]
     """
 
@@ -143,7 +148,7 @@ class SemistandardPathTableau(PathTableau):
 
         EXAMPLES::
 
-            sage: t = path_tableaux.SemistandardPathTableau([[],[2]])
+            sage: t = path_tableaux.SemistandardPathTableau([[], [2]])
             sage: t.parent()
             <sage.combinat.path_tableaux.semistandard.SemistandardPathTableaux_with_category object at ...>
         """
@@ -168,7 +173,7 @@ class SemistandardPathTableau(PathTableau):
         elif isinstance(st, GelfandTsetlinPattern):
             w = list(st)
             w.reverse()
-            w = [(),*w]
+            w = [(), *w]
 
         elif isinstance(st, (Tableau,SkewTableau)):
             w = st.to_chain()
@@ -195,25 +200,27 @@ class SemistandardPathTableau(PathTableau):
 
         EXAMPLES::
 
-            sage: path_tableaux.SemistandardPathTableau([[],[3],[2,2]]) # indirect test
+            sage: path_tableaux.SemistandardPathTableau([[], [3], [2,2]])       # indirect doctest
             Traceback (most recent call last):
             ...
-            ValueError: [(), (3,), (2, 2)] does not satisfy the required inequalities in row 1
+            ValueError: [(), (3,), (2, 2)] does not satisfy
+            the required inequalities in row 1
 
-            sage: path_tableaux.SemistandardPathTableau([[],[3/2],[2,5/2]]) # indirect test
+            sage: path_tableaux.SemistandardPathTableau([[], [3/2], [2,5/2]])   # indirect doctest
             Traceback (most recent call last):
             ...
-            ValueError: [(), (3/2,), (2, 5/2)] does not satisfy the required inequalities in row 1
+            ValueError: [(), (3/2,), (2, 5/2)] does not satisfy
+            the required inequalities in row 1
 
 
         TESTS::
 
-            sage: path_tableaux.SemistandardPathTableau([[],[2],[1,2]])
+            sage: path_tableaux.SemistandardPathTableau([[], [2], [1,2]])
             Traceback (most recent call last):
             ...
             ValueError: [(), (2,), (1, 2)] does not satisfy the required inequalities in row 1
 
-            sage: path_tableaux.SemistandardPathTableau([[],[2],[1,2]],check=False)
+            sage: path_tableaux.SemistandardPathTableau([[], [2], [1,2]], check=False)
             [(), (2,), (1, 2)]
         """
         for i in range(1,len(self)-1):
@@ -228,7 +235,7 @@ class SemistandardPathTableau(PathTableau):
 
         EXAMPLES::
 
-            sage: path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],[3,3,2,1]]).size()
+            sage: path_tableaux.SemistandardPathTableau([[], [3], [3,2], [3,3,1], [3,3,2,1]]).size()
             5
         """
         return len(self)
@@ -239,7 +246,7 @@ class SemistandardPathTableau(PathTableau):
 
         EXAMPLES::
 
-            sage: path_tableaux.SemistandardPathTableau([[],[2]]).is_skew()
+            sage: path_tableaux.SemistandardPathTableau([[], [2]]).is_skew()
             False
             sage: path_tableaux.SemistandardPathTableau([[2,1]]).is_skew()
             True
@@ -248,15 +255,15 @@ class SemistandardPathTableau(PathTableau):
 
     def is_integral(self) -> bool:
         """
-        Return ``True`` if all entries are non-negative integers.
+        Return ``True`` if all entries are nonnegative integers.
 
         EXAMPLES::
 
-            sage: path_tableaux.SemistandardPathTableau([[],[3],[3,2]]).is_integral()
+            sage: path_tableaux.SemistandardPathTableau([[], [3], [3,2]]).is_integral()
             True
-            sage: path_tableaux.SemistandardPathTableau([[],[5/2],[7/2,2]]).is_integral()
+            sage: path_tableaux.SemistandardPathTableau([[], [5/2], [7/2,2]]).is_integral()
             False
-            sage: path_tableaux.SemistandardPathTableau([[],[3],[3,-2]]).is_integral()
+            sage: path_tableaux.SemistandardPathTableau([[], [3], [3,-2]]).is_integral()
             False
         """
         return all(i in NN for a in self for i in a)
@@ -271,7 +278,8 @@ class SemistandardPathTableau(PathTableau):
 
         EXAMPLES::
 
-            sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],[3,3,2,1]])
+            sage: pt = path_tableaux.SemistandardPathTableau([[], [3], [3,2],
+            ....:                                             [3,3,1], [3,3,2,1]])
             sage: pt.local_rule(1)
             [(), (2,), (3, 2), (3, 3, 1), (3, 3, 2, 1)]
             sage: pt.local_rule(2)
@@ -281,7 +289,8 @@ class SemistandardPathTableau(PathTableau):
 
         TESTS::
 
-            sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],[3,3,2,1]])
+            sage: pt = path_tableaux.SemistandardPathTableau([[], [3], [3,2],
+            ....:                                             [3,3,1], [3,3,2,1]])
             sage: pt.local_rule(0)
             Traceback (most recent call last):
             ...
@@ -325,26 +334,32 @@ class SemistandardPathTableau(PathTableau):
 
         EXAMPLES::
 
-            sage: st = SkewTableau([[None, None, None, 4],[None,None,1,6],[None,None,5],[2,3]])
+            sage: st = SkewTableau([[None, None, None, 4], [None, None, 1, 6],
+            ....:                   [None, None, 5], [2, 3]])
             sage: path_tableaux.SemistandardPathTableau(st).rectify()
             [(), (1,), (1, 1), (2, 1, 0), (3, 1, 0, 0), (3, 2, 0, 0, 0), (4, 2, 0, 0, 0, 0)]
             sage: path_tableaux.SemistandardPathTableau(st).rectify(verbose=True)
-            [[(3, 2, 2), (3, 3, 2, 0), (3, 3, 2, 1, 0), (3, 3, 2, 2, 0, 0), (4, 3, 2, 2, 0, 0, 0), (4, 3, 3, 2, 0, 0, 0, 0), (4, 4, 3, 2, 0, 0, 0, 0, 0)],
-            [(3, 2), (3, 3, 0), (3, 3, 1, 0), (3, 3, 2, 0, 0), (4, 3, 2, 0, 0, 0), (4, 3, 3, 0, 0, 0, 0), (4, 4, 3, 0, 0, 0, 0, 0)],
-            [(3,), (3, 1), (3, 1, 1), (3, 2, 1, 0), (4, 2, 1, 0, 0), (4, 3, 1, 0, 0, 0), (4, 4, 1, 0, 0, 0, 0)],
-            [(), (1,), (1, 1), (2, 1, 0), (3, 1, 0, 0), (3, 2, 0, 0, 0), (4, 2, 0, 0, 0, 0)]]
+            [[(3, 2, 2), (3, 3, 2, 0), (3, 3, 2, 1, 0), (3, 3, 2, 2, 0, 0),
+              (4, 3, 2, 2, 0, 0, 0), (4, 3, 3, 2, 0, 0, 0, 0), (4, 4, 3, 2, 0, 0, 0, 0, 0)],
+             [(3, 2), (3, 3, 0), (3, 3, 1, 0), (3, 3, 2, 0, 0), (4, 3, 2, 0, 0, 0),
+              (4, 3, 3, 0, 0, 0, 0), (4, 4, 3, 0, 0, 0, 0, 0)],
+             [(3,), (3, 1), (3, 1, 1), (3, 2, 1, 0), (4, 2, 1, 0, 0), (4, 3, 1, 0, 0, 0),
+              (4, 4, 1, 0, 0, 0, 0)],
+             [(), (1,), (1, 1), (2, 1, 0), (3, 1, 0, 0), (3, 2, 0, 0, 0), (4, 2, 0, 0, 0, 0)]]
 
         TESTS::
 
-            sage: S = SemistandardSkewTableaux([[5,3,3],[3,1]],[3,2,2])
+            sage: S = SemistandardSkewTableaux([[5,3,3], [3,1]], [3,2,2])
             sage: LHS = [path_tableaux.SemistandardPathTableau(st.rectify()) for st in S]
             sage: RHS = [path_tableaux.SemistandardPathTableau(st).rectify() for st in S]
             sage: LHS == RHS
             True
 
-            sage: st = SkewTableau([[None, None, None, 4],[None,None,1,6],[None,None,5],[2,3]])
+            sage: st = SkewTableau([[None, None, None, 4], [None, None, 1, 6],
+            ....:                   [None, None, 5], [2, 3]])
             sage: pt = path_tableaux.SemistandardPathTableau(st)
-            sage: SP = [path_tableaux.SemistandardPathTableau(it) for it in StandardTableaux([3,2,2])]
+            sage: SP = [path_tableaux.SemistandardPathTableau(it)
+            ....:       for it in StandardTableaux([3,2,2])]
             sage: len(set(pt.rectify(inner=ip) for ip in SP))
             1
         """
@@ -387,7 +402,8 @@ class SemistandardPathTableau(PathTableau):
 
         EXAMPLES::
 
-            sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],[3,3,2,1],[4,3,3,1,0]])
+            sage: pt = path_tableaux.SemistandardPathTableau([[], [3], [3,2], [3,3,1],
+            ....:                                             [3,3,2,1], [4,3,3,1,0]])
             sage: pt.to_tableau()
             [[1, 1, 1, 5], [2, 2, 3], [3, 4, 5], [4]]
 
@@ -416,13 +432,14 @@ class SemistandardPathTableau(PathTableau):
 
         EXAMPLES::
 
-            sage: pt = path_tableaux.SemistandardPathTableau([[],[3],[3,2],[3,3,1],[3,3,2,1],[4,3,3,1]])
+            sage: pt = path_tableaux.SemistandardPathTableau([[], [3], [3,2], [3,3,1],
+            ....:                                             [3,3,2,1], [4,3,3,1]])
             sage: pt.to_pattern()
             [[4, 3, 3, 1, 0], [3, 3, 2, 1], [3, 3, 1], [3, 2], [3]]
 
         TESTS::
 
-            sage: pt = path_tableaux.SemistandardPathTableau([[3,2],[3,3,1],[3,3,2,1],[4,3,3,1]])
+            sage: pt = path_tableaux.SemistandardPathTableau([[3,2], [3,3,1], [3,3,2,1], [4,3,3,1]])
             sage: pt.to_pattern()
             Traceback (most recent call last):
             ...
@@ -453,14 +470,17 @@ class SemistandardPathTableau(PathTableau):
 
         TESTS::
 
-            sage: pt = path_tableaux.SemistandardPathTableau([(),(1,),(2,1),(4,2),(4,3,1),(4,3,3)])
+            sage: pt = path_tableaux.SemistandardPathTableau([(), (1,), (2,1), (4,2),
+            ....:                                             (4,3,1), (4,3,3)])
             sage: pt._test_jdt_promotion()
 
-            sage: pt = path_tableaux.SemistandardPathTableau([(),(1,),(2,1),(4,2),(4,3,1),(9/2,3,3)])
+            sage: pt = path_tableaux.SemistandardPathTableau([(), (1,), (2,1), (4,2),
+            ....:                                             (4,3,1), (9/2,3,3)])
             sage: pt._test_jdt_promotion()
             Traceback (most recent call last):
             ...
-            ValueError: [(), (1,), (2, 1), (4, 2, 0), (4, 3, 1, 0), (9/2, 3, 3, 0, 0)] must have all entries nonnegative integers
+            ValueError: [(), (1,), (2, 1), (4, 2, 0), (4, 3, 1, 0), (9/2, 3, 3, 0, 0)]
+            must have all entries nonnegative integers
         """
         if not self.is_integral():
             raise ValueError(f"{self} must have all entries nonnegative integers")
@@ -485,6 +505,6 @@ class SemistandardPathTableaux(PathTableaux):
             sage: path_tableaux.SemistandardPathTableaux()._an_element_()
             [(), (2,), (2, 1)]
         """
-        return SemistandardPathTableau([[],[2],[2,1]])
+        return SemistandardPathTableau([[], [2], [2,1]])
 
     Element = SemistandardPathTableau

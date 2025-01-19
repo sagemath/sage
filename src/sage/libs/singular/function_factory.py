@@ -15,7 +15,7 @@ AUTHORS:
 from sage.libs.singular.function import singular_function, lib, list_of_functions
 
 
-class SingularFunctionFactory():
+class SingularFunctionFactory:
     """
     A convenient interface to libsingular functions.
     """

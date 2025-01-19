@@ -26,9 +26,9 @@ quickly::
 By default, :func:`fast_callable` only removes some interpretive
 overhead from the evaluation, but all of the individual arithmetic
 operations are done using standard Sage arithmetic.  This is still a
-huge win over sage.calculus, which evidently has a lot of overhead.
+huge win over :mod:`sage.calculus`, which evidently has a lot of overhead.
 Compare the cost of evaluating Wilkinson's polynomial (in unexpanded
-form) at x=30::
+form) at `x = 30`::
 
     sage: # needs sage.symbolic
     sage: wilk = prod((x-i) for i in [1 .. 20]); wilk
@@ -44,41 +44,41 @@ You can specify a particular domain for the evaluation using
 
     sage: fc_wilk_zz = fast_callable(wilk, vars=[x], domain=ZZ)                         # needs sage.symbolic
 
-The meaning of domain=D is that each intermediate and final result
-is converted to type D.  For instance, the previous example of
-``sin(x) + 3*x^2`` with domain=D would be equivalent to
+The meaning of ``domain=D`` is that each intermediate and final result
+is converted to type ``D``.  For instance, the previous example of
+``sin(x) + 3*x^2`` with ``domain=D`` would be equivalent to
 ``D(D(sin(D(x))) + D(D(3)*D(D(x)^2)))``.  (This example also
 demonstrates the one exception to the general rule: if an exponent is an
-integral constant, then it is not wrapped with D().)
+integral constant, then it is not wrapped with ``D()``.)
 
 At first glance, this seems like a very bad idea if you want to
 compute quickly.  And it is a bad idea, for types where we don't
 have a special interpreter.  It's not too bad of a slowdown, though.
 To mitigate the costs, we check whether the value already has
-the correct parent before we call D.
+the correct parent before we call ``D``.
 
-We don't yet have a special interpreter with domain ZZ, so we can see
-how that compares to the generic fc_wilk example above::
+We don't yet have a special interpreter with domain ``ZZ``, so we can see
+how that compares to the generic ``fc_wilk`` example above::
 
     sage: timeit('fc_wilk_zz(30)')          # random    # long time                     # needs sage.symbolic
     625 loops, best of 3: 15.4 us per loop
 
-However, for other types, using domain=D will get a large speedup,
+However, for other types, using ``domain=D`` will get a large speedup,
 because we have special-purpose interpreters for those types.  One
-example is RDF.  Since with domain=RDF we know that every single
+example is ``RDF``.  Since with ``domain=RDF`` we know that every single
 operation will be floating-point, we can just execute the
 floating-point operations directly and skip all the Python object
-creations that you would get from actually using RDF objects::
+creations that you would get from actually using ``RDF`` objects::
 
     sage: fc_wilk_rdf = fast_callable(wilk, vars=[x], domain=RDF)                       # needs sage.symbolic
     sage: timeit('fc_wilk_rdf(30.0)')       # random    # long time                     # needs sage.symbolic
     625 loops, best of 3: 7 us per loop
 
-The domain does not need to be a Sage type; for instance, domain=float
-also works.  (We actually use the same fast interpreter for domain=float
-and domain=RDF; the only difference is that when domain=RDF is used,
-the return value is an RDF element, and when domain=float is used,
-the return value is a Python float.) ::
+The domain does not need to be a Sage type; for instance, ``domain=float``
+also works.  (We actually use the same fast interpreter for ``domain=float``
+and ``domain=RDF``; the only difference is that when ``domain=RDF`` is used,
+the return value is an ``RDF`` element, and when ``domain=float`` is used,
+the return value is a Python :class:`float`.) ::
 
     sage: fc_wilk_float = fast_callable(wilk, vars=[x], domain=float)                   # needs sage.symbolic
     sage: timeit('fc_wilk_float(30.0)')     # random    # long time                     # needs sage.symbolic
@@ -96,7 +96,6 @@ For ``CC``::
     sage: timeit('fc_wilk_cc(30.0)')        # random    # long time                     # needs sage.symbolic
     625 loops, best of 3: 23 us per loop
 
-
 And support for ``CDF``::
 
     sage: fc_wilk_cdf = fast_callable(wilk, vars=[x], domain=CDF)                       # needs sage.symbolic
@@ -105,9 +104,8 @@ And support for ``CDF``::
 
 Currently, :func:`fast_callable` can accept two kinds of objects:
 polynomials (univariate and multivariate) and symbolic expressions
-(elements of the Symbolic Ring).  (This list is likely to grow
-significantly in the near future.)  For polynomials, you can omit the
-'vars' argument; the variables will default to the ring generators (in
+(elements of the Symbolic Ring).  For polynomials, you can omit the
+``vars`` argument; the variables will default to the ring generators (in
 the order used when creating the ring). ::
 
     sage: K.<x,y,z> = QQ[]
@@ -216,12 +214,12 @@ EXAMPLES::
     sage: f.op_list()                                                                   # needs sage.symbolic
     [('load_arg', 0), ('ipow', 7), ('load_const', 1.0), 'add', 'sqrt', 'return']
 
-To interpret that last line, we load argument 0 ('x' in this case) onto
-the stack, push the constant 7.0 onto the stack, call the pow function
-(which takes 2 arguments from the stack), push the constant 1.0, add the
-top two arguments of the stack, and then call sqrt.
+To interpret that last line, we load argument 0 (``x`` in this case) onto
+the stack, push the constant `7.0` onto the stack, call the :func:`pow`
+functionn(which takes 2 arguments from the stack), push the constant `1.0`,
+add the top two arguments of the stack, and then call :func:`sqrt`.
 
-Here we take sin of the first argument and add it to f::
+Here we take :func:`sin` of the first argument and add it to ``f``::
 
     sage: from sage.ext.fast_callable import ExpressionTreeBuilder
     sage: etb = ExpressionTreeBuilder('x')
@@ -320,24 +318,24 @@ from sage.structure.element cimport Expression as Expression_abc
 def fast_callable(x, domain=None, vars=None,
                   expect_one_var=False):
     r"""
-    Given an expression x, compile it into a form that can be quickly
-    evaluated, given values for the variables in x.
+    Given an expression ``x``, compile it into a form that can be quickly
+    evaluated, given values for the variables in ``x``.
 
-    Currently, x can be an expression object, an element of SR, or a
+    Currently, ``x`` can be an expression object, an element of ``SR``, or a
     (univariate or multivariate) polynomial; this list will probably
     be extended soon.
 
-    By default, x is evaluated the same way that a Python function
-    would evaluate it -- addition maps to PyNumber_Add, etc.  However,
-    you can specify domain=D where D is some Sage parent or Python
+    By default, ``x`` is evaluated the same way that a Python function
+    would evaluate it -- addition maps to ``PyNumber_Add``, etc.  However,
+    you can specify ``domain=D`` where ``D`` is some Sage parent or Python
     type; in this case, all arithmetic is done in that domain.  If we
-    have a special-purpose interpreter for that parent (like RDF or float),
-    domain=... will trigger the use of that interpreter.
+    have a special-purpose interpreter for that parent (like ``RDF`` or
+    :class:`float`), ``domain=...`` will trigger the use of that interpreter.
 
-    If vars is None and x is a polynomial, then we will use the
-    generators of parent(x) as the variables; otherwise, vars must be
-    specified (unless x is a symbolic expression with only one variable,
-    and expect_one_var is True, in which case we will use that variable).
+    If ``vars`` is ``None`` and ``x`` is a polynomial, then we will use the
+    generators of ``parent(x)`` as the variables; otherwise, ``vars`` must be
+    specified (unless ``x`` is a symbolic expression with only one variable,
+    and ``expect_one_var`` is ``True``, in which case we will use that variable).
 
     EXAMPLES::
 
@@ -351,11 +349,11 @@ def fast_callable(x, domain=None, vars=None,
         sage: f(2.0)
         12.9092974268257
 
-    We have special fast interpreters for domain=float and domain=RDF.
+    We have special fast interpreters for ``domain=float`` and ``domain=RDF``.
     (Actually it's the same interpreter; only the return type varies.)
     Note that the float interpreter is not actually more accurate than
-    the RDF interpreter; elements of RDF just don't display all
-    their digits. We have special fast interpreter for domain=CDF::
+    the ``RDF`` interpreter; elements of ``RDF`` just don't display all
+    their digits. We have special fast interpreter for ``domain=CDF``::
 
         sage: # needs sage.symbolic
         sage: f_float = fast_callable(expr, vars=[x], domain=float)
@@ -414,8 +412,8 @@ def fast_callable(x, domain=None, vars=None,
         sage: fc(5, 7)
         0.5514266812416906
 
-    Check that fast_callable also works for symbolic functions with evaluation
-    functions::
+    Check that :func:`fast_callable` also works for symbolic functions with
+    evaluation functions::
 
         sage: # needs sage.symbolic
         sage: def evalf_func(self, x, y, parent):
@@ -477,10 +475,11 @@ def fast_callable(x, domain=None, vars=None,
             x = x.function(*vars)
 
         if vars is None:
-            from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-            from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
-            if is_PolynomialRing(x.parent()) or is_MPolynomialRing(x.parent()):
-                vars = x.parent().variable_names()
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+            from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+            P = x.parent()
+            if isinstance(P, (PolynomialRing_generic, MPolynomialRing_base)):
+                vars = P.variable_names()
             else:
                 # constant
                 vars = ()
@@ -508,16 +507,16 @@ def _builder_and_stream(vars, domain):
     - ``domain`` -- a Sage parent or Python type or ``None``; if non-``None``,
       all arithmetic is done in that domain
 
-    OUTPUT: A :class:`Wrapper`, an class:`InstructionStream`
+    OUTPUT: a :class:`Wrapper`, an class:`InstructionStream`
 
     EXAMPLES::
 
         sage: from sage.ext.fast_callable import _builder_and_stream
         sage: _builder_and_stream(["x", "y"], ZZ)
-        (<class 'sage.ext.interpreters.wrapper_el.Wrapper_el'>,
+        (<class '...interpreters.wrapper_el.Wrapper_el'>,
          <sage.ext.fast_callable.InstructionStream object at 0x...>)
         sage: _builder_and_stream(["x", "y"], RR)                                       # needs sage.rings.real_mpfr
-        (<class 'sage.ext.interpreters.wrapper_rr.Wrapper_rr'>,
+        (<class '...interpreters.wrapper_rr.Wrapper_rr'>,
          <sage.ext.fast_callable.InstructionStream object at 0x...>)
 
     Modularized test with sagemath-categories after :issue:`35095`, which has
@@ -528,7 +527,7 @@ def _builder_and_stream(vars, domain):
         sage: domain = RDF
         sage: from sage.structure.element import Element as domain
         sage: _builder_and_stream(["x", "y"], domain)
-        (<class 'sage.ext.interpreters.wrapper_el.Wrapper_el'>,
+        (<class '...interpreters.wrapper_el.Wrapper_el'>,
          <sage.ext.fast_callable.InstructionStream object at 0x...>)
     """
     if isinstance(domain, sage.rings.abc.RealField):
@@ -576,8 +575,8 @@ def function_name(fn):
     Given a function, return a string giving a name for the function.
 
     For functions we recognize, we use our standard opcode name for the
-    function (so :func:`operator.add` becomes ``'add'``, and :func:`sage.functions.trig.sin`
-    becomes ``'sin'``).
+    function (so :func:`operator.add` becomes ``'add'``, and
+    :func:`sage.functions.trig.sin` becomes ``'sin'``).
 
     For functions we don't recognize, we try to come up with a name,
     but the name will be wrapped in braces; this is a signal that
@@ -608,13 +607,14 @@ def function_name(fn):
     except AttributeError:
         return "{%r}" % fn
 
+
 cdef class ExpressionTreeBuilder:
     r"""
     A class with helper methods for building Expressions.
 
-    An instance of this class is passed to _fast_callable_ methods;
+    An instance of this class is passed to :meth:`_fast_callable_` methods;
     you can also instantiate it yourself to create your own expressions
-    for fast_callable, bypassing _fast_callable_.
+    for :func:`fast_callable`, bypassing :meth:`_fast_callable_`.
 
     EXAMPLES::
 
@@ -630,17 +630,18 @@ cdef class ExpressionTreeBuilder:
 
     def __init__(self, vars, domain=None):
         r"""
-        Initialize an instance of ExpressionTreeBuilder.  Takes
-        a list or tuple of variable names to use, and also an optional
-        domain.  If a domain is given, then creating an ExpressionConstant
-        node with the __call__, make, or constant methods will convert
-        the value into the given domain.
+        Initialize an instance of :class:`ExpressionTreeBuilder`.
+
+        Takes a list or tuple of variable names to use, and also an optional
+        ``domain``.  If a ``domain`` is given, then creating an
+        :class:`ExpressionConstant` node with the :meth:`__call__`, make, or
+        constant methods will convert the value into the given domain.
 
         Note that this is the only effect of the domain parameter.  It
         is quite possible to use different domains for
-        ExpressionTreeBuilder and for fast_callable; in that case,
+        :class:`ExpressionTreeBuilder` and for :func:`fast_callable`; in that case,
         constants will be converted twice (once when building the
-        Expression, and once when generating code).
+        :class:`Expression`, and once when generating code).
 
         EXAMPLES::
 
@@ -665,10 +666,11 @@ cdef class ExpressionTreeBuilder:
 
     def __call__(self, x):
         r"""
-        Try to convert the given value to an Expression.  If it is already
-        an Expression, just return it.  If it has a _fast_callable_
-        method, then call the method with self as an argument.  Otherwise,
-        use self.constant() to turn it into a constant.
+        Try to convert the given value to an :class:`Expression`.
+
+        If it is already an Expression, just return it.  If it has a
+        :meth:`_fast_callable_` method, then call the method with ``self`` as
+        an argument.  Otherwise, use ``self.constant()`` to turn it into a constant.
 
         EXAMPLES::
 
@@ -717,7 +719,7 @@ cdef class ExpressionTreeBuilder:
 
     def constant(self, c):
         r"""
-        Turn the argument into an ExpressionConstant, converting it to
+        Turn the argument into an :class:`ExpressionConstant`, converting it to
         our domain if we have one.
 
         EXAMPLES::
@@ -736,7 +738,7 @@ cdef class ExpressionTreeBuilder:
 
     def var(self, v):
         r"""
-        Turn the argument into an ExpressionVariable.  Look it up in
+        Turn the argument into an :class:`ExpressionVariable`.  Look it up in
         the list of variables.  (Variables are matched by name.)
 
         EXAMPLES::
@@ -791,10 +793,10 @@ cdef class ExpressionTreeBuilder:
         Construct a call node, given a function and a list of arguments.
 
         The arguments will be converted to Expressions using
-        ExpressionTreeBuilder.__call__.
+        :meth:`ExpressionTreeBuilder.__call__`.
 
-        As a special case, notices if the function is operator.pow and
-        the second argument is integral, and constructs an ExpressionIPow
+        As a special case, notice if the function is :func:`operator.pow` and
+        the second argument is integral, and construct an :class:`ExpressionIPow`
         instead.
 
         EXAMPLES::
@@ -838,6 +840,7 @@ cdef class ExpressionTreeBuilder:
                                 self(iftrue),
                                 self(iffalse))
 
+
 # Cache these values, to make expression building a tiny bit faster
 # (by skipping the hash-table lookup in the operator module).
 cdef op_add = operator.add
@@ -855,14 +858,15 @@ cdef op_neg = operator.neg
 cdef op_abs = operator.abs
 cdef op_inv = operator.inv
 
+
 cdef class Expression:
     r"""
-    Represent an expression for fast_callable.
+    Represent an expression for :func:`fast_callable`.
 
     Supports the standard Python arithmetic operators; if arithmetic
     is attempted between an Expression and a non-Expression, the
     non-Expression is converted to an expression (using the
-    __call__ method of the Expression's ExpressionTreeBuilder).
+    :meth:`__call__` method of the Expression's :class:`ExpressionTreeBuilder`).
 
     EXAMPLES::
 
@@ -894,7 +898,7 @@ cdef class Expression:
 
             sage: from sage.ext.fast_callable import ExpressionTreeBuilder
             sage: etb = ExpressionTreeBuilder(vars=(x,))                                # needs sage.symbolic
-            sage: v = etb(3); v # indirect doctest                                      # needs sage.symbolic
+            sage: v = etb(3); v  # indirect doctest                                     # needs sage.symbolic
             3
             sage: v._get_etb() is etb                                                   # needs sage.symbolic
             True
@@ -1036,7 +1040,7 @@ cdef class Expression:
         Compute a power expression from two Expressions.
 
         If the second Expression is a constant integer, then return
-        an ExpressionIPow instead of an ExpressionCall.
+        an :class:`ExpressionIPow` instead of an :class:`ExpressionCall`.
 
         EXAMPLES::
 
@@ -1164,7 +1168,7 @@ cdef class ExpressionConstant(Expression):
 
     def __init__(self, etb, c):
         r"""
-        Initialize an ExpressionConstant.
+        Initialize an :class:`ExpressionConstant`.
 
         EXAMPLES::
 
@@ -1187,7 +1191,7 @@ cdef class ExpressionConstant(Expression):
 
     def value(self):
         r"""
-        Return the constant value of an ExpressionConstant.
+        Return the constant value of an :class:`ExpressionConstant`.
 
         EXAMPLES::
 
@@ -1200,7 +1204,7 @@ cdef class ExpressionConstant(Expression):
 
     def __repr__(self):
         r"""
-        Give a string representing this ExpressionConstant.
+        Give a string representing this :class:`ExpressionConstant`.
         (We use the repr of its value.)
 
         EXAMPLES::
@@ -1254,7 +1258,7 @@ cdef class ExpressionVariable(Expression):
 
     def variable_index(self):
         r"""
-        Return the variable index of an ExpressionVariable.
+        Return the variable index of an :class:`ExpressionVariable`.
 
         EXAMPLES::
 
@@ -1267,7 +1271,7 @@ cdef class ExpressionVariable(Expression):
 
     def __repr__(self):
         r"""
-        Give a string representing this ExpressionVariable.
+        Give a string representing this :class:`ExpressionVariable`.
 
         EXAMPLES::
 
@@ -1287,6 +1291,7 @@ cdef class ExpressionVariable(Expression):
         # from the original expression when we have an Expression.
         return "v_%d" % self._variable_index
 
+
 cdef class ExpressionCall(Expression):
     r"""
     An Expression that represents a function call.
@@ -1303,7 +1308,7 @@ cdef class ExpressionCall(Expression):
 
     def __init__(self, etb, fn, args):
         r"""
-        Initialize an ExpressionCall.
+        Initialize an :class:`ExpressionCall`.
 
         EXAMPLES::
 
@@ -1328,7 +1333,7 @@ cdef class ExpressionCall(Expression):
 
     def function(self):
         r"""
-        Return the function from this ExpressionCall.
+        Return the function from this :class:`ExpressionCall`.
 
         EXAMPLES::
 
@@ -1341,7 +1346,7 @@ cdef class ExpressionCall(Expression):
 
     def arguments(self):
         r"""
-        Return the arguments from this ExpressionCall.
+        Return the arguments from this :class:`ExpressionCall`.
 
         EXAMPLES::
 
@@ -1354,7 +1359,7 @@ cdef class ExpressionCall(Expression):
 
     def __repr__(self):
         r"""
-        Give a string representing this ExpressionCall.
+        Give a string representing this :class:`ExpressionCall`.
 
         EXAMPLES::
 
@@ -1419,7 +1424,7 @@ cdef class ExpressionIPow(Expression):
 
     def base(self):
         r"""
-        Return the base from this ExpressionIPow.
+        Return the base from this :class:`ExpressionIPow`.
 
         EXAMPLES::
 
@@ -1432,7 +1437,7 @@ cdef class ExpressionIPow(Expression):
 
     def exponent(self):
         r"""
-        Return the exponent from this ExpressionIPow.
+        Return the exponent from this :class:`ExpressionIPow`.
 
         EXAMPLES::
 
@@ -1445,7 +1450,7 @@ cdef class ExpressionIPow(Expression):
 
     def __repr__(self):
         r"""
-        Give a string representing this ExpressionIPow.
+        Give a string representing this :class:`ExpressionIPow`.
 
         EXAMPLES::
 
@@ -1467,6 +1472,7 @@ cdef class ExpressionIPow(Expression):
         """
         return 'ipow(%s, %d)' % (repr(self._base), self._exponent)
 
+
 cdef class ExpressionChoice(Expression):
     r"""
     A conditional expression.
@@ -1487,7 +1493,7 @@ cdef class ExpressionChoice(Expression):
 
     def __init__(self, etb, cond, iftrue, iffalse):
         r"""
-        Initialize an ExpressionChoice.
+        Initialize an :class:`ExpressionChoice`.
 
         EXAMPLES::
 
@@ -1515,7 +1521,7 @@ cdef class ExpressionChoice(Expression):
 
     def condition(self):
         r"""
-        Return the condition of an ExpressionChoice.
+        Return the condition of an :class:`ExpressionChoice`.
 
         EXAMPLES::
 
@@ -1529,7 +1535,7 @@ cdef class ExpressionChoice(Expression):
 
     def if_true(self):
         r"""
-        Return the true branch of an ExpressionChoice.
+        Return the true branch of an :class:`ExpressionChoice`.
 
         EXAMPLES::
 
@@ -1543,7 +1549,7 @@ cdef class ExpressionChoice(Expression):
 
     def if_false(self):
         r"""
-        Return the false branch of an ExpressionChoice.
+        Return the false branch of an :class:`ExpressionChoice`.
 
         EXAMPLES::
 
@@ -1557,7 +1563,7 @@ cdef class ExpressionChoice(Expression):
 
     def __repr__(self):
         r"""
-        Give a string representation for this ExpressionChoice.
+        Give a string representation for this :class:`ExpressionChoice`.
         (Based on the syntax for Python conditional expressions.)
 
         EXAMPLES::
@@ -1578,10 +1584,12 @@ cdef class ExpressionChoice(Expression):
                                        repr(self._cond),
                                        repr(self._iffalse))
 
-cpdef _expression_binop_helper(s, o, op) noexcept:
+
+cpdef _expression_binop_helper(s, o, op):
     r"""
-    Make an Expression for (s op o).  Either s or o (or both) must already
-    be an expression.
+    Make an :class:`Expression` for (``s`` ``op`` ``o``).
+
+    Either ``s`` or ``o`` (or both) must already be an :class:`Expression`.
 
     EXAMPLES::
 
@@ -1591,7 +1599,7 @@ cpdef _expression_binop_helper(s, o, op) noexcept:
         sage: etb = ExpressionTreeBuilder(vars=(x,y))                                   # needs sage.symbolic
         sage: x = etb(x)                                                                # needs sage.symbolic
 
-    Now x is an Expression, but y is not.  Still, all the following
+    Now ``x`` is an :class:`Expression`, but ``y`` is not.  Still, all the following
     cases work::
 
         sage: _expression_binop_helper(x, x, operator.add)                              # needs sage.symbolic
@@ -1600,7 +1608,6 @@ cpdef _expression_binop_helper(s, o, op) noexcept:
         add(v_0, v_1)
         sage: _expression_binop_helper(y, x, operator.add)                              # needs sage.symbolic
         add(v_1, v_0)
-
     """
     # The Cython way of handling operator overloading on cdef classes
     # (which is inherited from Python) is quite annoying.  Inside the
@@ -1632,9 +1639,10 @@ cpdef _expression_binop_helper(s, o, op) noexcept:
 
 class IntegerPowerFunction():
     r"""
-    This class represents the function x^n for an arbitrary integral
-    power n.  That is, IntegerPowerFunction(2) is the squaring function;
-    IntegerPowerFunction(-1) is the reciprocal function.
+    This class represents the function `x^n` for an arbitrary integral power `n`.
+
+    That is, ``IntegerPowerFunction(2)`` is the squaring function;
+    ``IntegerPowerFunction(-1)`` is the reciprocal function.
 
     EXAMPLES::
 
@@ -1661,7 +1669,7 @@ class IntegerPowerFunction():
 
     def __init__(self, n):
         r"""
-        Initialize an IntegerPowerFunction.
+        Initialize an :class:`IntegerPowerFunction`.
 
         EXAMPLES::
 
@@ -1678,7 +1686,7 @@ class IntegerPowerFunction():
 
     def __repr__(self):
         r"""
-        Return a string representing this IntegerPowerFunction.
+        Return a string representing this :class:`IntegerPowerFunction`.
 
         EXAMPLES::
 
@@ -1700,7 +1708,7 @@ class IntegerPowerFunction():
 
     def __call__(self, x):
         r"""
-        Call this IntegerPowerFunction, to compute a power of its argument.
+        Call this :class:`IntegerPowerFunction`, to compute a power of its argument.
 
         EXAMPLES::
 
@@ -1713,16 +1721,15 @@ class IntegerPowerFunction():
         """
         return x**self.exponent
 
+
 cdef dict builtin_functions = None
-cpdef dict get_builtin_functions() noexcept:
+cpdef dict get_builtin_functions():
     r"""
-    To handle ExpressionCall, we need to map from Sage and
-    Python functions to opcode names.
+    Return a dictionary from Sage and Python functions to opcode names.
 
-    This returns a dictionary which is that map.
+    The result is cached.
 
-    We delay building builtin_functions to break a circular import
-    between sage.calculus and this file.
+    The dictionary is used in :class:`ExpressionCall`.
 
     EXAMPLES::
 
@@ -1766,21 +1773,23 @@ cpdef dict get_builtin_functions() noexcept:
     builtin_functions[func_all.ln] = 'log'
     return builtin_functions
 
+
 cdef class InstructionStream  # forward declaration
 
-cpdef generate_code(Expression expr, InstructionStream stream) noexcept:
-    r"""
-    Generate code from an Expression tree; write the result into an
-    InstructionStream.
 
-    In fast_callable, first we create an Expression, either directly
-    with an ExpressionTreeBuilder or with _fast_callable_ methods.
-    Then we optimize the Expression in tree form.  (Unfortunately,
+cpdef generate_code(Expression expr, InstructionStream stream):
+    r"""
+    Generate code from an :class:`Expression` tree; write the result into an
+    :class:`InstructionStream`.
+
+    In :func:`fast_callable`, first we create an :class:`Expression`, either directly
+    with an :class:`ExpressionTreeBuilder` or with :meth:`_fast_callable_` methods.
+    Then we optimize the :class:`Expression` in tree form.  (Unfortunately,
     this step is currently missing -- we do no optimizations.)
 
-    Then we linearize the Expression into a sequence of instructions,
-    by walking the Expression and sending the corresponding stack
-    instructions to an InstructionStream.
+    Then we linearize the :class:`Expression` into a sequence of instructions,
+    by walking the :class:`Expression` and sending the corresponding stack
+    instructions to an :class:`InstructionStream`.
 
     EXAMPLES::
 
@@ -1796,7 +1805,7 @@ cpdef generate_code(Expression expr, InstructionStream stream) noexcept:
         sage: instr_stream.instr('return')
         sage: v = Wrapper_py(instr_stream.get_current())
         sage: type(v)
-        <class 'sage.ext.interpreters.wrapper_py.Wrapper_py'>
+        <class '...interpreters.wrapper_py.Wrapper_py'>
         sage: v(7)
         8*pi + 56
 
@@ -1949,7 +1958,7 @@ cpdef generate_code(Expression expr, InstructionStream stream) noexcept:
         1.00000095367477
 
     Make sure we do not overflow the stack with highly nested expressions
-    (:trac:`11766`)::
+    (:issue:`11766`)::
 
         sage: # needs sage.rings.real_mpfr
         sage: R.<x> = CC[]
@@ -2018,14 +2027,16 @@ cpdef generate_code(Expression expr, InstructionStream stream) noexcept:
         else:
             raise ValueError("Unhandled expression kind %s in generate_code" % type(expr))
 
+
 cdef class InterpreterMetadata  # forward declaration
+
 
 cdef class InstructionStream:
     r"""
-    An InstructionStream takes a sequence of instructions (passed in by
+    An :class:`InstructionStream` takes a sequence of instructions (passed in by
     a series of method calls) and computes the data structures needed
     by the interpreter.  This is the stage where we switch from operating
-    on Expression trees to a linear representation.  If we had a peephole
+    on :class:`Expression` trees to a linear representation.  If we had a peephole
     optimizer (we don't) it would go here.
 
     Currently, this class is not very general; it only works for
@@ -2035,7 +2046,7 @@ cdef class InstructionStream:
     a description of the memory chunks involved and the instruction stream
     can handle any interpreter.
 
-    Once you're done adding instructions, you call get_current() to retrieve
+    Once you're done adding instructions, you call :meth:`get_current` to retrieve
     the information needed by the interpreter (as a Python dictionary).
     """
 
@@ -2053,16 +2064,16 @@ cdef class InstructionStream:
 
     def __init__(self, metadata, n_args, domain=None):
         r"""
-        Initialize an InstructionStream.
+        Initialize an :class:`InstructionStream`.
 
         INPUT:
 
-        - metadata -- The metadata_by_opname from a wrapper module
+        - ``metadata`` -- the ``metadata_by_opname`` from a wrapper module
 
-        - n_args -- The number of arguments accessible by the generated code
+        - ``n_args`` -- the number of arguments accessible by the generated code
           (this is just passed to the wrapper class)
 
-        - domain -- The domain of interpretation (this is just passed to the
+        - ``domain`` -- the domain of interpretation (this is just passed to the
           wrapper class)
 
         EXAMPLES::
@@ -2100,7 +2111,7 @@ cdef class InstructionStream:
 
     def load_const(self, c):
         r"""
-        Add a 'load_const' instruction to this InstructionStream.
+        Add a ``'load_const'`` instruction to this :class:`InstructionStream`.
 
         EXAMPLES::
 
@@ -2126,7 +2137,7 @@ cdef class InstructionStream:
 
     def load_arg(self, n):
         r"""
-        Add a 'load_arg' instruction to this InstructionStream.
+        Add a ``'load_arg'`` instruction to this :class:`InstructionStream`.
 
         EXAMPLES::
 
@@ -2145,7 +2156,7 @@ cdef class InstructionStream:
 
     cpdef bint has_instr(self, opname) noexcept:
         r"""
-        Check whether this InstructionStream knows how to generate code
+        Check whether this :class:`InstructionStream` knows how to generate code
         for a given instruction.
 
         EXAMPLES::
@@ -2165,12 +2176,12 @@ cdef class InstructionStream:
 
     def instr(self, opname, *args):
         r"""
-        Generate code in this InstructionStream for the given instruction
+        Generate code in this :class:`InstructionStream` for the given instruction
         and arguments.
 
-        The opname is used to look up a CompilerInstrSpec; the
-        CompilerInstrSpec describes how to interpret the arguments.
-        (This is documented in the class docstring for CompilerInstrSpec.)
+        The opname is used to look up a :class:`CompilerInstrSpec`; the
+        :class:`CompilerInstrSpec` describes how to interpret the arguments.
+        (This is documented in the class docstring for :class:`CompilerInstrSpec`.)
 
         EXAMPLES::
 
@@ -2192,7 +2203,7 @@ cdef class InstructionStream:
         """
         self.instr0(opname, args)
 
-    cdef instr0(self, opname, tuple args) noexcept:
+    cdef instr0(self, opname, tuple args):
         """
         Cdef version of instr. (Can't cpdef because of star args.)
         """
@@ -2245,8 +2256,7 @@ cdef class InstructionStream:
 
     def get_metadata(self):
         r"""
-        Return the interpreter metadata being used by the current
-        InstructionStream.
+        Return the interpreter metadata being used by the current :class:`InstructionStream`.
 
         The code generator sometimes uses this to decide which code
         to generate.
@@ -2266,7 +2276,7 @@ cdef class InstructionStream:
     def current_op_list(self):
         r"""
         Return the list of instructions that have been added to this
-        InstructionStream so far.
+        :class:`InstructionStream` so far.
 
         It's OK to call this, then add more instructions.
 
@@ -2287,11 +2297,11 @@ cdef class InstructionStream:
 
     def get_current(self):
         r"""
-        Return the current state of the InstructionStream, as a dictionary
+        Return the current state of the :class:`InstructionStream`, as a dictionary
         suitable for passing to a wrapper class.
 
         NOTE: The dictionary includes internal data structures of the
-        InstructionStream; you must not modify it.
+        :class:`InstructionStream`; you must not modify it.
 
         EXAMPLES::
 
@@ -2331,17 +2341,18 @@ cdef class InstructionStream:
 
 cdef class InterpreterMetadata():
     r"""
-    The interpreter metadata for a fast_callable interpreter.  Currently
-    consists of a dictionary mapping instruction names to
-    (CompilerInstrSpec, opcode) pairs, a list mapping opcodes to
-    (instruction name, CompilerInstrSpec) pairs, and a range of exponents
-    for which the ipow instruction can be used.  This range can be
-    False (if the ipow instruction should never be used), a pair of
-    two integers (a,b), if ipow should be used for a<=n<=b, or True,
-    if ipow should always be used.  When ipow cannot be used, then
-    we fall back on calling IntegerPowerFunction.
+    The interpreter metadata for a :func:`fast_callable` interpreter.
 
-    See the class docstring for CompilerInstrSpec for more information.
+    Currently consists of a dictionary mapping instruction names to
+    (:class:`CompilerInstrSpec`, opcode) pairs, a list mapping opcodes to
+    (instruction name, :class:`CompilerInstrSpec`) pairs, and a range of exponents
+    for which the ``'ipow'`` instruction can be used.  This range can be
+    ``False`` (if the ``'ipow'`` instruction should never be used), a pair of
+    two integers `(a, b)`, if ``'ipow'`` should be used for `a \le n \le b`, or
+    ``True``, if ``'ipow'`` should always be used.  When ``'ipow'`` cannot be
+    used, then we fall back on calling :class:`IntegerPowerFunction`.
+
+    See the class docstring for :class:`CompilerInstrSpec` for more information.
 
     NOTE: You must not modify the metadata.
     """
@@ -2356,7 +2367,9 @@ cdef class InterpreterMetadata():
         EXAMPLES::
 
             sage: from sage.ext.fast_callable import InterpreterMetadata
-            sage: metadata = InterpreterMetadata(by_opname={'opname dict goes here': True}, by_opcode=['opcode list goes here'], ipow_range=(2, 57))
+            sage: metadata = InterpreterMetadata(by_opname={'opname dict goes here': True},
+            ....:                                by_opcode=['opcode list goes here'],
+            ....:                                ipow_range=(2, 57))
             sage: metadata.by_opname
             {'opname dict goes here': True}
             sage: metadata.by_opcode
@@ -2371,25 +2384,25 @@ cdef class InterpreterMetadata():
 
 class CompilerInstrSpec():
     r"""
-    Describe a single instruction to the fast_callable code generator.
+    Describe a single instruction to the :func:`fast_callable` code generator.
 
     An instruction has a number of stack inputs, a number of stack
     outputs, and a parameter list describing extra arguments that
-    must be passed to the InstructionStream.instr method (that end up
+    must be passed to the :meth:`InstructionStream.instr` method (that end up
     as extra words in the code).
 
     The parameter list is a list of strings.  Each string is one of
     the following:
 
-    - 'args' - The instruction argument refers to an input argument of the
-      wrapper class; it is just appended to the code.
+    - ``'args'`` -- the instruction argument refers to an input argument of the
+      wrapper class; it is just appended to the code
 
-    - 'constants', 'py_constants' - The instruction argument is a value; the
+    - ``'constants'``, ``'py_constants'`` -- the instruction argument is a value; the
       value is added to the corresponding list (if it's not already there) and
       the index is appended to the code.
 
-    - 'n_inputs', 'n_outputs' - The instruction actually takes a variable
-      number of inputs or outputs (the n_inputs and n_outputs attributes of
+    - ``'n_inputs'``, ``'n_outputs'`` -- the instruction actually takes a variable
+      number of inputs or outputs (the ``n_inputs`` and ``n_outputs`` attributes of
       this instruction are ignored). The instruction argument specifies the
       number of inputs or outputs (respectively); it is just appended to the
       code.
@@ -2397,7 +2410,7 @@ class CompilerInstrSpec():
 
     def __init__(self, n_inputs, n_outputs, parameters):
         r"""
-        Initialize a CompilerInstrSpec.
+        Initialize a :class:`CompilerInstrSpec`.
 
         EXAMPLES::
 
@@ -2411,7 +2424,7 @@ class CompilerInstrSpec():
 
     def __repr__(self):
         r"""
-        Give a string representation for this CompilerInstrSpec.
+        Give a string representation for this :class:`CompilerInstrSpec`.
 
         EXAMPLES::
 
@@ -2426,10 +2439,11 @@ class CompilerInstrSpec():
         """
         return "CompilerInstrSpec(%d, %d, %s)" % (self.n_inputs, self.n_outputs, self.parameters)
 
+
 def op_list(args, metadata):
     r"""
-    Given a dictionary with the result of calling get_current on an
-    InstructionStream, and the corresponding interpreter metadata,
+    Given a dictionary with the result of calling :meth:`get_current` on an
+    :class:`InstructionStream`, and the corresponding interpreter metadata,
     return a list of the instructions, in a simple somewhat
     human-readable format.
 
@@ -2439,8 +2453,8 @@ def op_list(args, metadata):
     screen.)
 
     There's probably no reason to call this directly; if you
-    have a wrapper object, call op_list on it; if you have an
-    InstructionStream object, call current_op_list on it.
+    have a wrapper object, call :func:`op_list` on it; if you have an
+    :class:`InstructionStream` object, call :meth:`current_op_list` on it.
 
     EXAMPLES::
 
@@ -2479,8 +2493,9 @@ def op_list(args, metadata):
 
 cdef class Wrapper:
     r"""
-    The parent class for all fast_callable wrappers.  Implements shared
-    behavior (currently only debugging).
+    The parent class for all :func:`fast_callable` wrappers.
+
+    Implements shared behavior (currently only debugging).
     """
 
     def __init__(self, args, metadata):
@@ -2519,8 +2534,7 @@ cdef class Wrapper:
 
     def get_orig_args(self):
         r"""
-        Get the original arguments used when initializing this
-        wrapper.
+        Get the original arguments used when initializing this wrapper.
 
         (Probably only useful when writing doctests.)
 
@@ -2580,15 +2594,15 @@ class FastCallableFloatWrapper:
     faster form with :func:`fast_callable`.  That function takes a
     ``domain`` parameter that forces the end (and all intermediate)
     results of evaluation to a specific type.  Though usually always
-    want the end result to be of type ``float``, correctly choosing
+    want the end result to be of type :class:`float`, correctly choosing
     the ``domain`` presents some problems:
 
-      * ``float`` is a bad choice because it's common for real
+      * :class:`float` is a bad choice because it's common for real
         functions to have complex terms in them. Moreover precision
         issues can produce terms like ``1.0 + 1e-12*I`` that are hard
         to avoid if calling ``real()`` on everything is infeasible.
 
-      * ``complex`` has essentially the same problem as ``float``.
+      * :class:`complex` has essentially the same problem as :class:`float`.
         There are several symbolic functions like :func:`min_symbolic`,
         :func:`max_symbolic`, and :func:`floor` that are unable to
         operate on complex numbers.
@@ -2602,7 +2616,7 @@ class FastCallableFloatWrapper:
         min/max), and supports :func:`floor`. However, most numerical
         functions cannot handle complex numbers, so using ``CDF``
         would require us to wrap every evaluation in a
-        ``CDF``-to-``float`` conversion routine. That would slow
+        ``CDF``-to-:class:`float` conversion routine. That would slow
         things down less than a domain of ``None`` would, but is
         unattractive mainly because of how invasive it would be to
         "fix" the output everywhere.
@@ -2621,8 +2635,8 @@ class FastCallableFloatWrapper:
     :func:`fast_callable`. Whenever we need to support intermediate
     complex terms in a numerical routine, we can set ``domain=CDF``
     while creating its fast-callable incarnation, and then wrap the
-    result in this class. The ``__call__`` method of this class then
-    ensures that the ``CDF`` output is converted to a ``float`` if
+    result in this class. The :meth:`__call__` method of this class then
+    ensures that the ``CDF`` output is converted to a :class:`float` if
     its imaginary part is within an acceptable tolerance.
 
     EXAMPLES:
@@ -2641,11 +2655,10 @@ class FastCallableFloatWrapper:
         ...
         ValueError: complex fast-callable function result
         1.0*I for arguments (-1,)
-
     """
     def __init__(self, ff, imag_tol):
         r"""
-        Construct a ``FastCallableFloatWrapper``.
+        Construct a :class:`FastCallableFloatWrapper`.
 
         INPUT:
 
@@ -2654,13 +2667,13 @@ class FastCallableFloatWrapper:
             with :func:`fast_callable`.
 
           - ``imag_tol`` -- float; how big of an imaginary part we're willing
-            to ignore before raising an error.
+            to ignore before raising an error
 
         OUTPUT:
 
-        An instance of ``FastCallableFloatWrapper`` that can be
-        called just like ``ff``, but that always returns a ``float``
-        if no error is raised. A :class:`ValueError` is raised if the
+        An instance of :class:`FastCallableFloatWrapper` that can be
+        called just like ``ff``, but that always returns a :class:`float`
+        if no error is raised. A :exc:`ValueError` is raised if the
         imaginary part of the result exceeds ``imag_tol``.
 
         EXAMPLES:
@@ -2681,20 +2694,17 @@ class FastCallableFloatWrapper:
             ...
             ValueError: complex fast-callable function result 1e-09*I for
             arguments (1.00000000000000e-9*I,)
-
         """
         self._ff = ff
         self._imag_tol = imag_tol
 
     def __call__(self, *args):
         r"""
-        Evaluate the underlying fast-callable and convert the result to
-        ``float``.
+        Evaluate the underlying fast-callable and convert the result to :class:`float`.
 
         TESTS:
 
-        Evaluation either returns a ``float``, or raises a
-        :class:`ValueError`::
+        Evaluation either returns a :class:`float`, or raises a :exc:`ValueError`::
 
             sage: # needs sage.symbolic
             sage: from sage.ext.fast_callable import FastCallableFloatWrapper
@@ -2707,7 +2717,6 @@ class FastCallableFloatWrapper:
             ....:     result = float(0)
             sage: type(result) is float
             True
-
         """
         z = self._ff(*args)
 

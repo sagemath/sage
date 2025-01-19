@@ -68,7 +68,7 @@ cdef class WordDatatype_char(WordDatatype):
 
     def __cinit__(self):
         r"""
-        Initialization of C attributes
+        Initialization of C attributes.
 
         TESTS::
 
@@ -81,7 +81,7 @@ cdef class WordDatatype_char(WordDatatype):
 
     def __init__(self, parent, data):
         r"""
-        Constructor
+        Constructor.
 
         TESTS::
 
@@ -100,9 +100,9 @@ cdef class WordDatatype_char(WordDatatype):
 
     @cython.boundscheck(False)  # assume that indexing will not cause any IndexErrors
     @cython.wraparound(False)  # not check not correctly handle negative indices
-    cdef _set_data(self, data) noexcept:
+    cdef _set_data(self, data):
         r"""
-        set the attribute ._data and ._length from the sequence data
+        Set the attribute ._data and ._length from the sequence data
         (usually data is a word, a tuple or a list)
         """
         cdef size_t i
@@ -114,9 +114,9 @@ cdef class WordDatatype_char(WordDatatype):
 
     def __dealloc__(self):
         r"""
-        Deallocate memory only if self uses it own memory.
+        Deallocate memory only if ``self`` uses it own memory.
 
-        Note that ``sig_free`` will not deallocate memory if self is the
+        Note that ``sig_free`` will not deallocate memory if ``self`` is the
         master of another word.
         """
         # it is strictly forbidden here to access _master here! (it will be set
@@ -209,7 +209,7 @@ cdef class WordDatatype_char(WordDatatype):
         bitset_free(seen)
         return res
 
-    cdef _new_c(self, unsigned char * data, size_t length, WordDatatype_char master) noexcept:
+    cdef _new_c(self, unsigned char * data, size_t length, WordDatatype_char master):
         r"""
         TO DISCUSS: in Integer (sage.rings.integer) this method is actually an
         external function. But we might want to have several possible inheritance.
@@ -250,7 +250,7 @@ cdef class WordDatatype_char(WordDatatype):
 
         - ``other`` -- a word (WordDatatype_char)
 
-        - ``op`` -- int, from 0 to 5
+        - ``op`` -- integer from 0 to 5
 
         TESTS::
 
@@ -267,7 +267,7 @@ cdef class WordDatatype_char(WordDatatype):
             sage: w > w[1:] or w[1:] < w
             False
 
-        Testing that :trac:`21609` is fixed::
+        Testing that :issue:`21609` is fixed::
 
             sage: w = Word([1,2], alphabet=[1,2])
             sage: z = Word([1,1], alphabet=[1,2])
@@ -284,7 +284,7 @@ cdef class WordDatatype_char(WordDatatype):
             sage: (w>=w, z>=z, w>=z, z>=w)
             (True, True, True, False)
 
-        Testing that :trac:`22717` is fixed::
+        Testing that :issue:`22717` is fixed::
 
             sage: w = Word([1,2], alphabet=[1,2,3])
             sage: z = Word([1,2,3], alphabet=[1,2,3])
@@ -301,7 +301,7 @@ cdef class WordDatatype_char(WordDatatype):
             sage: (w>=w, z>=z, w>=z, z>=w)
             (True, True, False, True)
 
-        Check that :trac:`23317` is fixed::
+        Check that :issue:`23317` is fixed::
 
             sage: L = [Word([2,2], (1,2)), Word([], (1,2))]
             sage: sorted(L)
@@ -356,7 +356,7 @@ cdef class WordDatatype_char(WordDatatype):
             ...
             TypeError: slice indices must be integers or None or have an __index__ method
 
-        Check a weird behavior of PySlice_GetIndicesEx (:trac:`17056`)::
+        Check a weird behavior of PySlice_GetIndicesEx (:issue:`17056`)::
 
             sage: w[1:0]
             word:
@@ -425,7 +425,7 @@ cdef class WordDatatype_char(WordDatatype):
         """
         return reversed_word_iterator(self)
 
-    cdef _concatenate(self, WordDatatype_char other) noexcept:
+    cdef _concatenate(self, WordDatatype_char other):
         cdef unsigned char * data
         data = <unsigned char *>check_allocarray(self._length + other._length, sizeof(unsigned char))
 
@@ -501,11 +501,11 @@ cdef class WordDatatype_char(WordDatatype):
 
     def __pow__(self, exp, mod):
         r"""
-        Power
+        Power.
 
         INPUT:
 
-        -  ``exp``  - an integer, a rational, a float number or plus infinity.
+        - ``exp`` -- integer, rational, float, or plus infinity
 
         TESTS::
 
@@ -607,7 +607,7 @@ cdef class WordDatatype_char(WordDatatype):
 
         TESTS:
 
-        :trac:`19322`::
+        :issue:`19322`::
 
             sage: W = Words([0,1,2])
             sage: w = W([0,1,0,2])
@@ -646,7 +646,7 @@ cdef class WordDatatype_char(WordDatatype):
 
     def is_square(self):
         r"""
-        Return True if self is a square, and False otherwise.
+        Return ``True`` if ``self`` is a square, and ``False`` otherwise.
 
         EXAMPLES::
 

@@ -72,7 +72,7 @@ class FSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         CombinatorialFreeModule.__init__(self, alg.base_ring(),
                                          StandardTableaux(),
                                          category=FSymBases(alg),
-                                         bracket="", prefix=self._prefix)
+                                         bracket='', prefix=self._prefix)
 
     def _coerce_map_from_(self, R):
         r"""
@@ -269,7 +269,7 @@ class FSymBases(Category_realization_of_parent):
             r"""
             The basis elements (optionally: of the specified degree).
 
-            OUTPUT: Family
+            OUTPUT: family
 
             EXAMPLES::
 
@@ -351,7 +351,7 @@ class FSymBases(Category_realization_of_parent):
             INPUT:
 
             - ``basis`` -- a basis of the dual Hopf algebra
-            - ``degree`` -- a non-negative integer
+            - ``degree`` -- nonnegative integer
 
             OUTPUT:
 
@@ -675,10 +675,9 @@ class FreeSymmetricFunctions(UniqueRepresentation, Parent):
             """
             n = t1.size()
             m = n + t2.size()
-            tableaux = []
-            for t in StandardTableaux(m):
-                if t.restrict(n) == t1 and standardize(t.anti_restrict(n).rectify()) == t2:
-                    tableaux.append(t)
+            tableaux = [t for t in StandardTableaux(m)
+                        if t.restrict(n) == t1
+                        and standardize(t.anti_restrict(n).rectify()) == t2]
             return self.sum_of_monomials(tableaux)
 
         @cached_method

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Bimodules
 """
@@ -19,9 +20,11 @@ from sage.categories.rings import Rings
 _Rings = Rings()
 
 #?class Bimodules(Category_over_base_rng, Category_over_base_rng):
+
+
 class Bimodules(CategoryWithParameters):
     """
-    The category of `(R,S)`-bimodules
+    The category of `(R,S)`-bimodules.
 
     For `R` and `S` rings, a `(R,S)`-bimodule `X` is a left `R`-module
     and right `S`-module such that the left and right actions commute:
@@ -60,7 +63,7 @@ class Bimodules(CategoryWithParameters):
         r"""
         Return what the element/parent/... classes depend on.
 
-        Since :trac:`11935`, the element and parent classes of a
+        Since :issue:`11935`, the element and parent classes of a
         bimodule only depend on the categories of the left and right
         base ring.
 
@@ -77,6 +80,7 @@ class Bimodules(CategoryWithParameters):
                  and Category of metric spaces,
              Join of Category of Dedekind domains
                  and Category of euclidean domains
+                 and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces)
 
@@ -85,6 +89,7 @@ class Bimodules(CategoryWithParameters):
             (Category of fields,
              Join of Category of Dedekind domains
              and Category of euclidean domains
+             and Category of noetherian rings
              and Category of infinite enumerated sets
              and Category of metric spaces)
 
@@ -97,7 +102,7 @@ class Bimodules(CategoryWithParameters):
             sage: Bimodules(Fields(), Rings())._make_named_class_key('element_class')
             (Category of fields, Category of rings)
         """
-        return (self._left_base_ring  if isinstance(self._left_base_ring,  Category) else self._left_base_ring.category(),
+        return (self._left_base_ring if isinstance(self._left_base_ring, Category) else self._left_base_ring.category(),
                 self._right_base_ring if isinstance(self._right_base_ring, Category) else self._right_base_ring.category())
 
     @classmethod
@@ -148,7 +153,7 @@ class Bimodules(CategoryWithParameters):
         """
         return self._right_base_ring
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -158,9 +163,9 @@ class Bimodules(CategoryWithParameters):
             {\mathbf{Bimodules}}_{\Bold{Q}, \Bold{Z}}
         """
         from sage.misc.latex import latex
-        return "{{{0}}}_{{{1}, {2}}}".format(Category._latex_(self),
-                                             latex(self._left_base_ring),
-                                             latex(self._right_base_ring))
+        return "{{{}}}_{{{}, {}}}".format(Category._latex_(self),
+                                          latex(self._left_base_ring),
+                                          latex(self._right_base_ring))
 
     def super_categories(self):
         """

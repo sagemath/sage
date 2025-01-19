@@ -20,7 +20,6 @@ EXAMPLES::
 AUTHORS:
 
 - David Kohel (2006-08-04): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>

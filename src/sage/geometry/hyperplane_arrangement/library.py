@@ -12,20 +12,14 @@ about how to construct your own hyperplane arrangements.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.graphs.graph_generators import graphs
+from sage.arith.misc import binomial
+from sage.geometry.hyperplane_arrangement.arrangement import HyperplaneArrangements
 from sage.matrix.constructor import matrix, random_matrix
+from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.rational_field import QQ
 from sage.rings.semirings.non_negative_integer_semiring import NN
-from sage.misc.misc_c import prod
-
-from sage.combinat.combinat import stirling_number2
-from sage.combinat.root_system.cartan_type import CartanType
-from sage.combinat.root_system.root_system import RootSystem
-from sage.arith.misc import binomial
-from sage.rings.polynomial.polynomial_ring import polygen
-
-from sage.geometry.hyperplane_arrangement.arrangement import HyperplaneArrangements
 
 
 def make_parent(base_ring, dimension, names=None):
@@ -93,9 +87,11 @@ class HyperplaneArrangementLibrary:
             sage: hyperplane_arrangements.braid(4)                                      # needs sage.graphs
             Arrangement of 6 hyperplanes of dimension 4 and rank 3
         """
+        from sage.graphs.graph_generators import graphs
+
         x = polygen(QQ, 'x')
         A = self.graphical(graphs.CompleteGraph(n), K, names=names)
-        charpoly = prod(x-i for i in range(n))
+        charpoly = prod(x - i for i in range(n))
         A.characteristic_polynomial.set_cache(charpoly)
         return A
 
@@ -156,7 +152,7 @@ class HyperplaneArrangementLibrary:
         for u, v in G.edge_iterator(labels=False, sort_vertices=False):
             i = vertex_to_int[u]
             j = vertex_to_int[v]
-            hyperplanes.append( x[i] - x[j] - A[i][j])
+            hyperplanes.append(x[i] - x[j] - A[i][j])
             hyperplanes.append(-x[i] + x[j] - A[j][i])
         return H(*hyperplanes)
 
@@ -245,7 +241,7 @@ class HyperplaneArrangementLibrary:
         - ``data`` -- either an integer or a Cartan type (or coercible
           into; see "CartanType")
 
-        - ``K`` -- field (default:``QQ``)
+        - ``K`` -- field (default: ``QQ``)
 
         - ``names`` -- tuple of strings or ``None`` (default); the
           variable names for the ambient space
@@ -278,10 +274,11 @@ class HyperplaneArrangementLibrary:
         If the Cartan type is not crystallographic, the Coxeter arrangement
         is not implemented yet::
 
-            sage: hyperplane_arrangements.Coxeter("H3")
+            sage: hyperplane_arrangements.Coxeter("H3")                                 # needs sage.libs.gap
             Traceback (most recent call last):
             ...
-            NotImplementedError: Coxeter arrangements are not implemented for non crystallographic Cartan types
+            NotImplementedError: Coxeter arrangements are not implemented
+            for non crystallographic Cartan types
 
         The characteristic polynomial is pre-computed using the results
         of Terao, see [Ath2000]_::
@@ -290,7 +287,10 @@ class HyperplaneArrangementLibrary:
             sage: hyperplane_arrangements.Coxeter("A3").characteristic_polynomial()
             x^3 - 6*x^2 + 11*x - 6
         """
+        from sage.combinat.root_system.cartan_type import CartanType
+        from sage.combinat.root_system.root_system import RootSystem
         from sage.combinat.root_system.weyl_group import WeylGroup
+
         if data in NN:
             cartan_type = CartanType(["A", data - 1])
         else:
@@ -367,9 +367,7 @@ class HyperplaneArrangementLibrary:
         - ``names`` -- tuple of strings or ``None`` (default); the
           variable names for the ambient space
 
-        OUTPUT:
-
-        The Shi hyperplane arrangement of the given graph ``G``.
+        OUTPUT: the Shi hyperplane arrangement of the given graph ``G``
 
         EXAMPLES::
 
@@ -456,7 +454,7 @@ class HyperplaneArrangementLibrary:
 
         - ``n`` -- integer
 
-        - ``K`` -- field (default:``QQ``)
+        - ``K`` -- field (default: ``QQ``)
 
         - ``names`` -- tuple of strings or ``None`` (default); the
           variable names for the ambient space
@@ -492,6 +490,8 @@ class HyperplaneArrangementLibrary:
 
         - [AR2012]_
         """
+        from sage.combinat.combinat import stirling_number2
+
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
@@ -502,7 +502,8 @@ class HyperplaneArrangementLibrary:
         A = H(*hyperplanes)
         x = polygen(QQ, 'x')
         charpoly = x * sum([(-1)**k * stirling_number2(n, n-k) *
-                            prod([(x - 1 - j) for j in range(k, n-1)]) for k in range(0, n)])
+                            prod([(x - 1 - j) for j in range(k, n-1)])
+                            for k in range(n)])
         A.characteristic_polynomial.set_cache(charpoly)
         return A
 
@@ -513,13 +514,11 @@ class HyperplaneArrangementLibrary:
         INPUT:
 
         - ``n`` -- integer
-        - ``K`` -- field (default:``QQ``)
+        - ``K`` -- field (default: ``QQ``)
         - ``names`` -- tuple of strings or ``None`` (default); the
           variable names for the ambient space
 
-        OUTPUT:
-
-        The type `B` Ish arrangement, which is the set of `2n^2` hyperplanes
+        OUTPUT: the type `B` Ish arrangement, which is the set of `2n^2` hyperplanes
 
         .. MATH::
 
@@ -541,7 +540,7 @@ class HyperplaneArrangementLibrary:
              Hyperplane t0 + 0*t1 + 0,
              Hyperplane t0 + 0*t1 + 1,
              Hyperplane t0 + t1 + 0)
-            sage: a.cone().is_free()
+            sage: a.cone().is_free()                                                    # needs sage.libs.singular
             True
 
         .. PLOT::
@@ -664,6 +663,8 @@ class HyperplaneArrangementLibrary:
             sage: h.characteristic_polynomial()         # long time
             x^5 - 20*x^4 + 180*x^3 - 790*x^2 + 1380*x
         """
+        from sage.combinat.combinat import stirling_number2
+
         H = make_parent(K, n, names)
         x = H.gens()
         hyperplanes = []
@@ -687,7 +688,7 @@ class HyperplaneArrangementLibrary:
         - ``data`` -- either an integer or a Cartan type (or coercible
           into; see "CartanType")
 
-        - ``K`` -- field (default:``QQ``)
+        - ``K`` -- field (default: ``QQ``)
 
         - ``names`` -- tuple of strings or ``None`` (default); the
           variable names for the ambient space
@@ -778,6 +779,9 @@ class HyperplaneArrangementLibrary:
             sage: h.characteristic_polynomial()
             x^3 - 54*x^2 + 972*x - 5832
         """
+        from sage.combinat.root_system.cartan_type import CartanType
+        from sage.combinat.root_system.root_system import RootSystem
+
         if data in NN:
             cartan_type = CartanType(["A", data - 1])
         else:
@@ -794,7 +798,7 @@ class HyperplaneArrangementLibrary:
         hyperplanes = []
 
         for a in PR:
-            for const in range(-m+1,m+1):
+            for const in range(-m + 1, m + 1):
                 hyperplanes.append(sum(a[j]*x[j] for j in range(d))-const)
         A = H(*hyperplanes)
         x = polygen(QQ, 'x')

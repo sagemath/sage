@@ -27,6 +27,7 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import Singleton
 from sage.modular.modsym.p1list import lift_to_sl2z_llong
 from sage.rings.infinity import Infinity, InfinityRing
@@ -34,8 +35,8 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
 from sage.rings.rational_field import QQ
-from sage.structure.element import Element, is_InfinityElement
-from sage.structure.element import is_Matrix
+from sage.structure.element import Element, InfinityElement
+from sage.structure.element import Matrix
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 
@@ -150,7 +151,7 @@ class Cusp(Element):
             ...
             TypeError: unable to convert (Infinity, +Infinity) to a cusp
 
-        Conversion from PARI is supported (see :trac:`32091`)::
+        Conversion from PARI is supported (see :issue:`32091`)::
 
             sage: Cusp(pari.oo())
             Infinity
@@ -173,7 +174,7 @@ class Cusp(Element):
             elif isinstance(a, Rational):
                 self.__a = a.numer()
                 self.__b = a.denom()
-            elif (is_InfinityElement(a) or
+            elif (isinstance(a, InfinityElement) or
                   (isinstance(a, pari_gen) and a.type() == 't_INFINITY')):
                 self.__a = ZZ.one()
                 self.__b = ZZ.zero()
@@ -195,7 +196,7 @@ class Cusp(Element):
                     self.__a = r.numer()
                     self.__b = r.denom()
                 except (ValueError, TypeError):
-                    raise TypeError("unable to convert %r to a cusp" % a)
+                    raise TypeError(f"unable to convert {a} to a cusp")
             else:
                 try:
                     r = QQ(a)
@@ -205,8 +206,8 @@ class Cusp(Element):
                     raise TypeError("unable to convert %r to a cusp" % a)
             return
 
-        if is_InfinityElement(b):
-            if is_InfinityElement(a) or (isinstance(a, Cusp) and a.is_infinity()):
+        if isinstance(b, InfinityElement):
+            if isinstance(a, InfinityElement) or (isinstance(a, Cusp) and a.is_infinity()):
                 raise TypeError("unable to convert (%r, %r) to a cusp" % (a, b))
             self.__a = ZZ.zero()
             self.__b = ZZ.one()
@@ -220,7 +221,7 @@ class Cusp(Element):
 
         if isinstance(a, (Integer, Rational)):
             r = a / ZZ(b)
-        elif is_InfinityElement(a):
+        elif isinstance(a, InfinityElement):
             self.__a = ZZ.one()
             self.__b = ZZ.zero()
             return
@@ -317,7 +318,7 @@ class Cusp(Element):
 
     def is_infinity(self):
         """
-        Returns True if this is the cusp infinity.
+        Return ``True`` if this is the cusp infinity.
 
         EXAMPLES::
 
@@ -364,6 +365,7 @@ class Cusp(Element):
         """
         return self.__b
 
+    @cached_method
     def _rational_(self):
         """
         Coerce to a rational number.
@@ -379,15 +381,9 @@ class Cusp(Element):
             sage: Cusp(11,2)._rational_()
             11/2
         """
-        try:
-            return self.__rational
-        except AttributeError:
-            pass
-
         if not self.__b:
             raise TypeError("cusp %s is not a rational number" % self)
-        self.__rational = self.__a / self.__b
-        return self.__rational
+        return self.__a / self.__b
 
     def _integer_(self, ZZ=None):
         """
@@ -470,28 +466,28 @@ class Cusp(Element):
 
     def is_gamma0_equiv(self, other, N, transformation=None):
         r"""
-        Return whether self and other are equivalent modulo the action of
+        Return whether ``self`` and ``other`` are equivalent modulo the action of
         `\Gamma_0(N)` via linear fractional transformations.
 
         INPUT:
 
+        - ``other`` -- cusp
 
-        -  ``other`` - Cusp
+        - ``N`` -- integer (specifies the group `\Gamma_0(N)`)
 
-        -  ``N`` - an integer (specifies the group
-           Gamma_0(N))
-
-        -  ``transformation`` - None (default) or either the string 'matrix' or 'corner'. If 'matrix',
-           it also returns a matrix in Gamma_0(N) that sends self to other. The matrix is chosen such that the lower left entry is as small as possible in absolute value. If 'corner' (or True for backwards compatibility), it returns only the upper left entry of such a matrix.
-
+        - ``transformation`` -- ``None`` (default) or either the string 'matrix' or
+          ``'corner'``. If ``'matrix'``, it also returns a matrix in `\Gamma_0(N)` that
+          sends ``self`` to ``other``. The matrix is chosen such that the lower
+          left entry is as small as possible in absolute value. If ``'corner'`` (or
+          ``True`` for backwards compatibility), it returns only the upper left
+          entry of such a matrix.
 
         OUTPUT:
 
+        - a boolean -- ``True`` if ``self`` and ``other`` are equivalent
 
-        -  a boolean - True if self and other are equivalent
-
-        -  a matrix or an integer- returned only if transformation is 'matrix' or 'corner', respectively.
-
+        - a matrix or an integer -- returned only if transformation is 'matrix'
+          or 'corner', respectively
 
         EXAMPLES::
 
@@ -650,31 +646,26 @@ class Cusp(Element):
             return (True, A)
 
     def is_gamma1_equiv(self, other, N):
-        """
-        Return whether self and other are equivalent modulo the action of
-        Gamma_1(N) via linear fractional transformations.
+        r"""
+        Return whether ``self`` and ``other`` are equivalent modulo the action of
+        `\Gamma_1(N)` via linear fractional transformations.
 
         INPUT:
 
+        - ``other`` -- cusp
 
-        -  ``other`` - Cusp
-
-        -  ``N`` - an integer (specifies the group
-           Gamma_1(N))
-
+        - ``N`` -- integer (specifies the group `\Gamma_1(N)`)
 
         OUTPUT:
 
+        - ``bool`` -- ``True`` if ``self`` and ``other`` are equivalent
 
-        -  ``bool`` - True if self and other are equivalent
-
-        -  ``int`` - 0, 1 or -1, gives further information
-           about the equivalence: If the two cusps are u1/v1 and u2/v2, then
-           they are equivalent if and only if v1 = v2 (mod N) and u1 = u2 (mod
-           gcd(v1,N)) or v1 = -v2 (mod N) and u1 = -u2 (mod gcd(v1,N)) The
-           sign is +1 for the first and -1 for the second. If the two cusps
-           are not equivalent then 0 is returned.
-
+        - ``int`` -- 0, 1 or -1, gives further information
+          about the equivalence: If the two cusps are u1/v1 and u2/v2, then
+          they are equivalent if and only if v1 = v2 (mod N) and u1 = u2 (mod
+          gcd(v1,N)) or v1 = -v2 (mod N) and u1 = -u2 (mod gcd(v1,N)) The
+          sign is +1 for the first and -1 for the second. If the two cusps
+          are not equivalent then 0 is returned.
 
         EXAMPLES::
 
@@ -711,9 +702,9 @@ class Cusp(Element):
 
     def is_gamma_h_equiv(self, other, G):
         r"""
-        Return a pair (b, t), where b is True or False as self and other
-        are equivalent under the action of G, and t is 1 or -1, as
-        described below.
+        Return a pair ``(b, t)``, where ``b`` is ``True`` or ``False`` as
+        ``self`` and ``other`` are equivalent under the action of `G`, and `t`
+        is 1 or -1, as described below.
 
         Two cusps `u1/v1` and `u2/v2` are equivalent modulo
         Gamma_H(N) if and only if `v1 =  h*v2 (\mathrm{mod} N)` and
@@ -725,19 +716,15 @@ class Cusp(Element):
 
         INPUT:
 
+        - ``other`` -- cusp
 
-        -  ``other`` - Cusp
-
-        -  ``G`` - a congruence subgroup Gamma_H(N)
-
+        - ``G`` -- a congruence subgroup Gamma_H(N)
 
         OUTPUT:
 
+        - ``bool`` -- ``True`` if ``self`` and ``other`` are equivalent
 
-        -  ``bool`` - True if self and other are equivalent
-
-        -  ``int`` - -1, 0, 1; extra info
-
+        - ``int`` -- -1, 0, 1; extra info
 
         EXAMPLES::
 
@@ -782,10 +769,10 @@ class Cusp(Element):
             sage: G.dimension_cusp_forms(2)
             0
         """
-        from sage.modular.arithgroup.all import is_GammaH
+        from sage.modular.arithgroup.all import GammaH_class
         if not isinstance(other, Cusp):
             other = Cusp(other)
-        if not is_GammaH(G):
+        if not isinstance(G, GammaH_class):
             raise TypeError("G must be a group GammaH(N).")
 
         H = G._list_of_elements_in_H()
@@ -807,7 +794,7 @@ class Cusp(Element):
 
     def _acted_upon_(self, g, self_on_left):
         r"""
-        Implement the left action of `SL_2(\ZZ)` on self.
+        Implement the left action of `SL_2(\ZZ)` on ``self``.
 
         EXAMPLES::
 
@@ -836,7 +823,7 @@ class Cusp(Element):
             Set P^1(QQ) of all cusps
         """
         if not self_on_left:
-            if (is_Matrix(g) and g.base_ring() is ZZ
+            if (isinstance(g, Matrix) and g.base_ring() is ZZ
                     and g.ncols() == 2 == g.nrows()):
                 a, b, c, d = g.list()
                 return Cusp(a * self.__a + b * self.__b,
@@ -873,13 +860,11 @@ class Cusp(Element):
 
         INPUT:
 
-        - `t` -- integer that is coprime to N
+        - ``t`` -- integer that is coprime to N
 
-        - `N` -- positive integer (level)
+        - ``N`` -- positive integer (level)
 
-        OUTPUT:
-
-        - a cusp
+        OUTPUT: a cusp
 
         .. WARNING::
 
@@ -937,7 +922,7 @@ class Cusp(Element):
         TESTS:
 
         Here we check that the Galois action is indeed a permutation on the
-        cusps of Gamma1(48) and check that :trac:`13253` is fixed. ::
+        cusps of Gamma1(48) and check that :issue:`13253` is fixed. ::
 
             sage: # needs sage.libs.pari
             sage: G = Gamma1(48)
@@ -946,7 +931,7 @@ class Cusp(Element):
             ....:   C_permuted = [G.reduce_cusp(c.galois_action(i,48)) for c in C]
             ....:   assert len(set(C_permuted))==len(C)
 
-        We test that Gamma1(19) has 9 rational cusps and check that :trac:`8998`
+        We test that Gamma1(19) has 9 rational cusps and check that :issue:`8998`
         is fixed. ::
 
             sage: # needs sage.libs.pari
@@ -964,7 +949,6 @@ class Cusp(Element):
         AUTHORS:
 
         - William Stein, 2009-04-18
-
         """
         if self.is_infinity():
             return self
@@ -1066,7 +1050,7 @@ class Cusps_class(Singleton, Parent):
 
     def _latex_(self):
         r"""
-        Return latex representation of self.
+        Return latex representation of ``self``.
 
         EXAMPLES::
 

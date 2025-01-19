@@ -14,8 +14,6 @@ cdef extern from "gsl/gsl_odeiv.h":
   #define GSL_ODEIV_JA_EVAL(S,t,y,dfdy,dfdt)  (*((S)->jacobian))(t,y,dfdy,dfdt,(S)->params)
 
 
-
-
   ctypedef struct gsl_odeiv_step_type
 
   ctypedef struct gsl_odeiv_step

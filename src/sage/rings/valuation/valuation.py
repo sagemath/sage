@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Discrete valuations
 
@@ -78,7 +77,6 @@ class DiscretePseudoValuation(Morphism):
     TESTS::
 
         sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
-
     """
     def __init__(self, parent):
         r"""
@@ -87,7 +85,6 @@ class DiscretePseudoValuation(Morphism):
             sage: from sage.rings.valuation.valuation import DiscretePseudoValuation
             sage: isinstance(ZZ.valuation(2), DiscretePseudoValuation)
             True
-
         """
         Morphism.__init__(self, parent=parent)
 
@@ -106,7 +103,6 @@ class DiscretePseudoValuation(Morphism):
             False
             sage: v.is_equivalent(0, 0)
             True
-
         """
         from sage.rings.infinity import infinity
         if self(f) is infinity:
@@ -128,7 +124,6 @@ class DiscretePseudoValuation(Morphism):
             sage: v = QQ.valuation(2)
             sage: hash(v) == hash(v)  # indirect doctest
             True
-
         """
         return self._hash_()
 
@@ -149,7 +144,6 @@ class DiscretePseudoValuation(Morphism):
             sage: v = QQ.valuation(2)
             sage: hash(v) == hash(v)  # indirect doctest
             True
-
         """
         return id(self)
 
@@ -213,7 +207,6 @@ class DiscretePseudoValuation(Morphism):
             sage: v = valuations.TrivialValuation(QQ)
             sage: v == v
             True
-
         """
         return self is other
 
@@ -296,7 +289,6 @@ class InfiniteDiscretePseudoValuation(DiscretePseudoValuation):
         sage: isinstance(w, InfiniteDiscretePseudoValuation)
         True
         sage: TestSuite(w).run()                # long time                             # needs sage.geometry.polyhedron sage.rings.padics
-
     """
     def is_discrete_valuation(self):
         r"""
@@ -312,7 +304,6 @@ class InfiniteDiscretePseudoValuation(DiscretePseudoValuation):
             sage: w = v.augmentation(x, infinity)
             sage: w.is_discrete_valuation()
             False
-
         """
         return False
 
@@ -333,7 +324,6 @@ class NegativeInfiniteDiscretePseudoValuation(InfiniteDiscretePseudoValuation):
     TESTS::
 
         sage: TestSuite(w).run()                # long time
-
     """
     def is_negative_pseudo_valuation(self):
         r"""
@@ -350,7 +340,6 @@ class NegativeInfiniteDiscretePseudoValuation(InfiniteDiscretePseudoValuation):
             sage: w = K.valuation(v)
             sage: w.is_negative_pseudo_valuation()
             True
-
         """
         return True
 
@@ -373,7 +362,6 @@ class DiscreteValuation(DiscretePseudoValuation):
         sage: isinstance(w, DiscreteValuation)
         True
         sage: TestSuite(w).run()                # long time                             # needs sage.geometry.polyhedron sage.rings.padics
-
     """
     def is_discrete_valuation(self):
         r"""
@@ -384,11 +372,10 @@ class DiscreteValuation(DiscretePseudoValuation):
             sage: v = valuations.TrivialValuation(ZZ)
             sage: v.is_discrete_valuation()
             True
-
         """
         return True
 
-    def mac_lane_approximants(self, G, assume_squarefree=False, require_final_EF=True, required_precision=-1, require_incomparability=False, require_maximal_degree=False, algorithm="serial"):
+    def mac_lane_approximants(self, G, assume_squarefree=False, require_final_EF=True, required_precision=-1, require_incomparability=False, require_maximal_degree=False, algorithm='serial'):
         r"""
         Return approximants on `K[x]` for the extensions of this valuation to
         `L=K[x]/(G)`.
@@ -401,14 +388,14 @@ class DiscreteValuation(DiscretePseudoValuation):
         - ``G`` -- a monic squarefree integral polynomial in a
           univariate polynomial ring over the domain of this valuation
 
-        - ``assume_squarefree`` -- a boolean (default: ``False``), whether to
+        - ``assume_squarefree`` -- boolean (default: ``False``); whether to
           assume that ``G`` is squarefree. If ``True``, the squafreeness of
           ``G`` is not verified though it is necessary when
           ``require_final_EF`` is set for the algorithm to terminate.
 
-        - ``require_final_EF`` -- a boolean (default: ``True``); whether to
+        - ``require_final_EF`` -- boolean (default: ``True``); whether to
           require the returned key polynomials to be in one-to-one
-          correspondance to the extensions of this valuation to ``L`` and
+          correspondence to the extensions of this valuation to ``L`` and
           require them to have the ramification index and residue degree of the
           valuations they correspond to.
 
@@ -416,20 +403,20 @@ class DiscreteValuation(DiscretePseudoValuation):
           to require the last key polynomial of the returned valuations to have
           at least that valuation.
 
-        - ``require_incomparability`` -- a boolean (default: ``False``);
+        - ``require_incomparability`` -- boolean (default: ``False``);
           whether to require the returned valuations to be incomparable
           (with respect to the partial order on valuations defined by comparing
           them pointwise.)
 
-        - ``require_maximal_degree`` -- a boolean (default: ``False``); whether
+        - ``require_maximal_degree`` -- boolean (default: ``False``); whether
           to require the last key polynomial of the returned valuation to have
           maximal degree. This is most relevant when using this algorithm to
           compute approximate factorizations of ``G``, when set to ``True``,
           the last key polynomial has the same degree as the corresponding
           factor.
 
-        - ``algorithm`` -- one of ``"serial"`` or ``"parallel"`` (default:
-          ``"serial"``); whether or not to parallelize the algorithm
+        - ``algorithm`` -- one of ``'serial'`` or ``'parallel'`` (default:
+          ``'serial'``); whether or not to parallelize the algorithm
 
         EXAMPLES::
 
@@ -690,7 +677,6 @@ class DiscreteValuation(DiscretePseudoValuation):
                v(x^36 + 60552000*x^33 + 268157412*x^30 + 173881701*x^27 + 266324841*x^24
                   + 83125683*x^21 + 111803814*x^18 + 31925826*x^15 + 205726716*x^12
                   + 17990262*x^9 + 351459648*x^6 + 127014399*x^3 + 359254116) = +Infinity ]]
-
         """
         R = G.parent()
         if R.base_ring() is not self.domain():
@@ -784,7 +770,7 @@ class DiscreteValuation(DiscretePseudoValuation):
                                    reduce_init=[]).run_serial()
         else:
             raise NotImplementedError(algorithm)
-        leafs = set([node.valuation for node in nodes])
+        leafs = {node.valuation for node in nodes}
         for node in nodes:
             if node.parent is None:
                 continue
@@ -822,7 +808,6 @@ class DiscreteValuation(DiscretePseudoValuation):
             4
             sage: v._pow(2, 1000, error=4)
             0
-
         """
         if e == 0:
             return self.domain().one()
@@ -845,8 +830,8 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         - ``valuation`` -- a valuation on the parent of ``G``
 
-        - ``approximants`` -- the output of :meth:`mac_lane_approximants`.
-          If not given, it is computed.
+        - ``approximants`` -- the output of :meth:`mac_lane_approximants`;
+          if not given, it is computed
 
         EXAMPLES::
 
@@ -911,7 +896,6 @@ class DiscreteValuation(DiscretePseudoValuation):
             sage: w = GaussValuation(R, v).augmentation(x + 3, 2)
             sage: v.mac_lane_approximant(G, w)                                          # needs sage.geometry.polyhedron sage.rings.padics
             [ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1 ]
-
         """
         if valuation.restriction(valuation.domain().base_ring()) is not self:
             raise ValueError
@@ -952,7 +936,7 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         - ``G`` -- a monic polynomial over the domain of this valuation
 
-        - ``assume_squarefree`` -- a boolean (default: ``False``), whether to
+        - ``assume_squarefree`` -- boolean (default: ``False``); whether to
           assume ``G`` to be squarefree
 
         - ``required_precision`` -- a number or infinity (default:
@@ -1022,7 +1006,6 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         The underlying algorithm is described in [Mac1936II]_ and thoroughly
         analyzed in [GMN2008]_.
-
         """
         if required_precision is None:
             from sage.rings.infinity import infinity
@@ -1054,16 +1037,15 @@ class DiscreteValuation(DiscretePseudoValuation):
             sage: w = QQ.valuation(2)
             sage: v >= w
             False
-
         """
         if other.is_trivial():
             return other.is_discrete_valuation()
         return super()._ge_(other)
 
 
-class MacLaneApproximantNode():
+class MacLaneApproximantNode:
     r"""
-    A node in the tree computed by :meth:`DiscreteValuation.mac_lane_approximants`
+    A node in the tree computed by :meth:`DiscreteValuation.mac_lane_approximants`.
 
     Leaves in the computation of the tree of approximants
     :meth:`~DiscreteValuation.mac_lane_approximants`. Each vertex consists of a
@@ -1081,7 +1063,6 @@ class MacLaneApproximantNode():
         sage: v = ZZ.valuation(3)
         sage: v.extension(GaussianIntegers())  # indirect doctest                       # needs sage.rings.number_field sage.rings.padics
         3-adic valuation
-
     """
     def __init__(self, valuation, parent, ef, principal_part_bound, coefficients, valuations):
         r"""
@@ -1090,7 +1071,6 @@ class MacLaneApproximantNode():
             sage: from sage.rings.valuation.valuation import MacLaneApproximantNode
             sage: node = MacLaneApproximantNode(QQ.valuation(2), None, 1, None, None, None)
             sage: TestSuite(node).run()
-
         """
         self.valuation = valuation
         self.parent = parent
@@ -1113,7 +1093,6 @@ class MacLaneApproximantNode():
             False
             sage: n == n
             True
-
         """
         if type(self) is not type(other):
             return False
@@ -1132,7 +1111,6 @@ class MacLaneApproximantNode():
             True
             sage: n != n
             False
-
         """
         return not (self == other)
 

@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([pyscipopt], [SAGE_PYTHON_PACKAGE_CHECK([pyscipopt])])

@@ -93,7 +93,7 @@ constructions
     - SERPENT_S0, ..., SERPENT_S7 ([BAK1998]_)
     - KLEIN ([GNL2011]_)
     - MIBS ([ISSK2009)]
-    - Midori_Sb0 (MANTIS, CRAFT), Midori_Sb1 ([BBISHAR2015]_)
+    - Midori_Sb0 (MANTIS, CRAFT, WARP), Midori_Sb1 ([BBISHAR2015]_)
     - Noekeon ([DPVAR2000]_)
     - Piccolo ([SIHMAS2011]_)
     - Panda ([YWHWXSW2014]_)
@@ -203,11 +203,12 @@ def carlet_tang_tang_liao(n, c=None, bf=None):
 
     INPUT:
 
-    - ``n`` -- integer, the bit length of inputs and outputs, has to be even and >= 6
+    - ``n`` -- integer; the bit length of inputs and outputs, has to be even
+      and `\geq 6`
     - ``c`` -- element of `\GF{2^{n-1}}` used in the construction
-        (default: random element)
-    - ``f`` -- Function from `\GF{2^n} \to \GF{2}` or BooleanFunction on `n-1` bits
-        (default: ``x -> (1/(x+1)).trace())``
+      (default: random element)
+    - ``f`` -- function from `\GF{2^n} \to \GF{2}` or BooleanFunction on `n-1`
+      bits (default: ``x -> (1/(x+1)).trace())``)
 
     EXAMPLES::
 
@@ -270,7 +271,7 @@ def gold(n, i):
     INPUT:
 
     - ``n`` -- size of the S-Box
-    - ``i`` -- a positive integer
+    - ``i`` -- positive integer
 
     EXAMPLES::
 
@@ -293,7 +294,7 @@ def kasami(n, i):
     INPUT:
 
     - ``n`` -- size of the S-Box
-    - ``i`` -- a positive integer
+    - ``i`` -- positive integer
 
     EXAMPLES::
 
@@ -396,6 +397,43 @@ def monomial_function(n, e):
     R = PolynomialRing(base_ring, name='X')
     X = R.gen()
     return SBox(X**e)
+
+
+def chi(n):
+    r"""
+    Return the `\chi` function defined over `\GF{2^n}` used in the nonlinear
+    layer of Keccak and Xoodyak.
+
+    INPUT:
+
+    - ``n`` -- size of the S-Box
+
+    EXAMPLES::
+
+        sage: from sage.crypto.sboxes import chi
+        sage: chi(3)
+        (0, 3, 6, 1, 5, 4, 2, 7)
+        sage: chi(3).is_permutation()
+        True
+        sage: chi(4).is_permutation()
+        False
+        sage: chi(5)
+        (0, 9, 18, 11, 5, 12, 22, 15, 10, 3, 24, 1, 13, 4, 30, 7, 20, 21, 6,
+        23, 17, 16, 2, 19, 26, 27, 8, 25, 29, 28, 14, 31)
+    """
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.finite_rings.finite_field_constructor import GF
+    from sage.modules.free_module_element import vector
+
+    table = [0]*(1 << n)
+
+    for x in range(1 << n):
+        vx = vector(GF(2), ZZ(x).digits(base=2, padto=n))
+        vy = [vx[i] + (vx[(i+1) % n] + 1)*vx[(i+2) % n] for i in range(n)]
+        y = ZZ(vy, base=2)
+        table[x] = y
+
+    return SBox(table)
 
 
 # Bijective S-Boxes mapping 9 bits to 9
@@ -1574,6 +1612,7 @@ KLEIN = SBox([0x7,0x4,0xA,0x9,0x1,0xF,0xB,0x0,0xC,0x3,0x2,0x6,0x8,0xE,0xD,0x5])
 MIBS = SBox([4,15,3,8,13,10,12,0,11,5,7,14,2,6,1,9])
 Midori_Sb0 = SBox([0xc,0xa,0xd,0x3,0xe,0xb,0xf,0x7,0x8,0x9,0x1,0x5,0x0,0x2,0x4,0x6])
 MANTIS = Midori_Sb0
+WARP = Midori_Sb0
 CRAFT = Midori_Sb0
 Midori_Sb1 = SBox([0x1,0x0,0x5,0x3,0xe,0x2,0xf,0x7,0xd,0xa,0x9,0xb,0xc,0x8,0x4,0x6])
 Noekeon = SBox([0x7,0xA,0x2,0xC,0x4,0x8,0xF,0x0,0x5,0x9,0x1,0xE,0x3,0xD,0xB,0x6])

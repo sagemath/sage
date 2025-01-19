@@ -18,13 +18,12 @@ Creation of the fixed point of a morphism::
     sage: w.length()
     +Infinity
 
-Computing the n-th letter of a fixed point is fast as it is using the
+Computing the `n`-th letter of a fixed point is fast as it is using the
 abstract numeration system associated to the morphism and the starting
 letter, see chapter 3 of the book [BR2010b]_::
 
     sage: w[10000000]                                                                   # needs sage.modules
     'b'
-
 """
 
 from sage.combinat.words.word_infinite_datatypes import WordDatatype_callable
@@ -43,12 +42,12 @@ class WordDatatype_morphic(WordDatatype_callable):
         r"""
         INPUT:
 
-        - ``parent`` - a parent
-        - ``morphism`` - a word morphism
-        - ``letter`` - a starting letter
-        - ``coding`` - dict (default: ``None``), if ``None``
+        - ``parent`` -- a parent
+        - ``morphism`` -- a word morphism
+        - ``letter`` -- a starting letter
+        - ``coding`` -- dictionary (default: ``None``); if ``None``
           the identity map is used for the coding
-        - ``length`` - integer or ``'finite'`` or ``Infinity`` or
+        - ``length`` -- integer or ``'finite'`` or ``Infinity`` or
           ``'unknown'`` (default: ``Infinity``) the length of the word
 
         EXAMPLES::
@@ -107,7 +106,6 @@ class WordDatatype_morphic(WordDatatype_callable):
             word: dddcdddcba
             sage: list(w[10000:10010]) == L                                             # needs sage.modules
             True
-
         """
         self._parent = parent
         # self._func = callable
@@ -154,7 +152,6 @@ class WordDatatype_morphic(WordDatatype_callable):
               'a',
               {'a': 'a', 'b': 'b'},
               2))
-
         """
         return self.__class__, (self._parent, self._morphism, self._letter,
                                 self._coding, self._len)
@@ -168,9 +165,7 @@ class WordDatatype_morphic(WordDatatype_callable):
 
         - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        list
+        OUTPUT: list
 
         EXAMPLES::
 
@@ -243,12 +238,10 @@ class WordDatatype_morphic(WordDatatype_callable):
 
         INPUT:
 
-        - ``self`` - a fixed point of a morphism
-        - ``key`` - an integer, the position
+        - ``self`` -- a fixed point of a morphism
+        - ``key`` -- integer; the position
 
-        OUTPUT:
-
-        - a letter
+        OUTPUT: a letter
 
         EXAMPLES::
 
@@ -272,7 +265,6 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: w = WordDatatype_morphic(W, m, 'a')
             sage: w._func(5)                                                            # needs sage.modules
             'a'
-
         """
         letter = self._letter
         for a in self.representation(key):
@@ -291,14 +283,12 @@ class WordDatatype_morphic(WordDatatype_callable):
 
         INPUT:
 
-        - ``self`` - an endomorphism, must be prolongable on
-           letter
+        - ``self`` -- an endomorphism, must be prolongable on
+          letter
 
-        - ``letter`` - a letter in the domain of ``self``
+        - ``letter`` -- a letter in the domain of ``self``
 
-        OUTPUT:
-
-        - iterator of the fixed point
+        OUTPUT: iterator of the fixed point
 
         EXAMPLES::
 
@@ -331,7 +321,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             ...
             TypeError: self (=a->ac, b->aac) is not self-composable
 
-        We check that :trac:`8595` is fixed::
+        We check that :issue:`8595` is fixed::
 
             sage: s = WordMorphism({('a', 1):[('a', 1), ('a', 2)], ('a', 2):[('a', 1)]})
             sage: w = s.fixed_point(('a', 1))
@@ -339,7 +329,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: next(it)
             ('a', 1)
 
-        This shows that issue :trac:`13668` has been resolved::
+        This shows that issue :issue:`13668` has been resolved::
 
             sage: s = WordMorphism({1:[1,2],2:[2,3],3:[4],4:[5],5:[6],6:[7],7:[8],8:[9],9:[10],10:[1]})
             sage: (s^7).fixed_points()

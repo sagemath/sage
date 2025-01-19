@@ -14,7 +14,7 @@ cdef Py_ssize_t binary_search0_modn(Py_ssize_t* v, Py_ssize_t n, int_fast64_t x)
 cdef Py_ssize_t binary_search_modn(Py_ssize_t* v, Py_ssize_t n, int_fast64_t x, Py_ssize_t* ins) noexcept
 cdef int_fast64_t get_entry(c_vector_modint* v, Py_ssize_t n) except -1
 cdef bint is_entry_zero_unsafe(c_vector_modint* v, Py_ssize_t n) noexcept
-cdef object to_list(c_vector_modint* v) noexcept
+cdef object to_list(c_vector_modint* v)
 cdef int set_entry(c_vector_modint* v, Py_ssize_t n, int_fast64_t x) except -1
 cdef int add_c_vector_modint_init(c_vector_modint* sum, c_vector_modint* v, c_vector_modint* w, int multiple) except -1
 cdef int scale_c_vector_modint(c_vector_modint* v, int_fast64_t scalar) except -1

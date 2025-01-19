@@ -98,15 +98,13 @@ def pad_right(T, length, zero=0):
 
     INPUT:
 
-    - ``T`` -- A tuple, list or other iterable
+    - ``T`` -- tuple, list or other iterable
 
-    - ``length`` -- a nonnegative integer
+    - ``length`` -- nonnegative integer
 
     - ``zero`` -- (default: ``0``) the elements to pad with
 
-    OUTPUT:
-
-    An object of the same type as ``T``
+    OUTPUT: an object of the same type as ``T``
 
     EXAMPLES::
 
@@ -136,7 +134,7 @@ def value(D, k):
 
     INPUT:
 
-    - ``D`` -- a tuple or other iterable
+    - ``D`` -- tuple or other iterable
 
     - ``k`` -- the base
 
@@ -201,11 +199,11 @@ class RegularSequence(RecognizableSeries):
         When created via the parent :class:`RegularSequenceRing`, then
         the following option is available.
 
-        - ``allow_degenerated_sequence`` -- (default: ``False``) a boolean. If set, then
-          there will be no check if the input is a degenerated sequence
-          (see :meth:`is_degenerated`).
-          Otherwise the input is checked and a :class:`DegeneratedSequenceError`
-          is raised if such a sequence is detected.
+        - ``allow_degenerated_sequence`` -- boolean (default: ``False``); if
+          set, then there will be no check if the input is a degenerated
+          sequence (see :meth:`is_degenerated`). Otherwise the input is checked
+          and a :exc:`DegeneratedSequenceError` is raised if such a sequence
+          is detected.
 
         EXAMPLES::
 
@@ -243,7 +241,7 @@ class RegularSequence(RecognizableSeries):
         r"""
         Return a representation string of this `k`-regular sequence.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         TESTS::
 
@@ -267,7 +265,7 @@ class RegularSequence(RecognizableSeries):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         OUTPUT: an element of the universe of the sequence
 
@@ -337,7 +335,7 @@ class RegularSequence(RecognizableSeries):
     def is_degenerated(self):
         r"""
         Return whether this `k`-regular sequence is degenerated,
-        i.e., whether this `k`-regular sequence does not satisfiy
+        i.e., whether this `k`-regular sequence does not satisfy
         `\mu[0] \mathit{right} = \mathit{right}`.
 
         EXAMPLES::
@@ -370,7 +368,7 @@ class RegularSequence(RecognizableSeries):
     def _error_if_degenerated_(self):
         r"""
         Raise an error if this `k`-regular sequence is degenerated,
-        i.e., if this `k`-regular sequence does not satisfiy
+        i.e., if this `k`-regular sequence does not satisfy
         `\mu[0] \mathit{right} = \mathit{right}`.
 
         TESTS::
@@ -408,9 +406,7 @@ class RegularSequence(RecognizableSeries):
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         ALGORITHM:
 
@@ -494,15 +490,13 @@ class RegularSequence(RecognizableSeries):
 
         INPUT:
 
-        - ``allow_degenerated_sequence`` -- (default: ``False``) a boolean. If set, then
-          there will be no check if the transposed sequence is a degenerated sequence
-          (see :meth:`is_degenerated`).
-          Otherwise the transposed sequence is checked and a :class:`DegeneratedSequenceError`
+        - ``allow_degenerated_sequence`` -- boolean (default: ``False``); if
+          set, then there will be no check if the transposed sequence is a
+          degenerated sequence (see :meth:`is_degenerated`). Otherwise the
+          transposed sequence is checked and a :exc:`DegeneratedSequenceError`
           is raised if such a sequence is detected.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         Each of the matrices in :meth:`mu <mu>` is transposed. Additionally
         the vectors :meth:`left <left>` and :meth:`right <right>` are switched.
@@ -551,9 +545,7 @@ class RegularSequence(RecognizableSeries):
         Return a regular sequence equivalent to this series, but
         with a right minimized linear representation.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         .. SEEALSO::
 
@@ -576,9 +568,9 @@ class RegularSequence(RecognizableSeries):
 
         INPUT:
 
-        - ``a`` -- a nonnegative integer
+        - ``a`` -- nonnegative integer
 
-        - ``b`` -- an integer
+        - ``b`` -- integer
 
           Alternatively, this is allowed to be a dictionary
           `b_j \mapsto c_j`. If so and applied on `f(n)`,
@@ -589,9 +581,7 @@ class RegularSequence(RecognizableSeries):
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         .. NOTE::
 
@@ -863,16 +853,14 @@ class RegularSequence(RecognizableSeries):
 
         INPUT:
 
-        - ``b`` -- an integer
+        - ``b`` -- integer
 
         - ``minimize`` -- (default: ``None``) a boolean or ``None``.
           If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         .. NOTE::
 
@@ -909,16 +897,14 @@ class RegularSequence(RecognizableSeries):
 
         INPUT:
 
-        - ``b`` -- an integer
+        - ``b`` -- integer
 
         - ``minimize`` -- (default: ``None``) a boolean or ``None``.
           If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         .. NOTE::
 
@@ -964,9 +950,7 @@ class RegularSequence(RecognizableSeries):
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         .. NOTE::
 
@@ -1005,9 +989,7 @@ class RegularSequence(RecognizableSeries):
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         EXAMPLES::
 
@@ -1047,9 +1029,7 @@ class RegularSequence(RecognizableSeries):
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         ALGORITHM:
 
@@ -1148,18 +1128,16 @@ class RegularSequence(RecognizableSeries):
 
         INPUT:
 
-        - ``include_n`` -- (default: ``False``) a boolean. If set, then
+        - ``include_n`` -- boolean (default: ``False``); if set, then
           the `n`-th entry of the result is the sum of the entries up
-          to index `n` (included).
+          to index `n` (included)
 
         - ``minimize`` -- (default: ``None``) a boolean or ``None``.
           If ``True``, then :meth:`~RecognizableSeries.minimized` is called after the operation,
           if ``False``, then not. If this argument is ``None``, then
           the default specified by the parent's ``minimize_results`` is used.
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         EXAMPLES::
 
@@ -1323,7 +1301,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
     INPUT:
 
-    - ``k`` -- an integer at least `2` specifying the base
+    - ``k`` -- integer at least `2` specifying the base
 
     - ``coefficient_ring`` -- a (semi-)ring
 
@@ -1350,7 +1328,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
                       category=None,
                       **kwds):
         r"""
-        Normalizes the input in order to ensure a unique
+        Normalize the input in order to ensure a unique
         representation.
 
         For more information see :class:`RegularSequenceRing`.
@@ -1378,7 +1356,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
         INPUT:
 
-        - ``k`` -- an integer at least `2` specifying the base
+        - ``k`` -- integer at least `2` specifying the base
 
         Other input arguments are passed on to
         :meth:`~sage.combinat.recognizable_series.RecognizableSeriesSpace.__init__`.
@@ -1422,7 +1400,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
         r"""
         Return a representation string of this `k`-regular sequence space.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         TESTS::
 
@@ -1438,7 +1416,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         OUTPUT: a word
 
@@ -1499,9 +1477,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
 
         See :class:`TestSuite` for a typical use case.
 
-        OUTPUT:
-
-        An iterator
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -1572,9 +1548,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
           for bootstrapping the guessing by adding information of the
           linear representation of ``sequence`` to the guessed representation
 
-        OUTPUT:
-
-        A :class:`RegularSequence`
+        OUTPUT: a :class:`RegularSequence`
 
         ALGORITHM:
 
@@ -1592,7 +1566,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
         Implicitly, the algorithm also maintains a `d \times n_\mathrm{verify}` matrix ``A``
         (where ``d`` is the dimension of the right vector valued sequence)
         whose columns are the current right vector valued sequence evaluated at
-        the non-negative integers less than `n_\mathrm{verify}` and ensures that this
+        the nonnegative integers less than `n_\mathrm{verify}` and ensures that this
         matrix has full row rank.
 
         EXAMPLES:
@@ -1898,10 +1872,10 @@ class RegularSequenceRing(RecognizableSeriesSpace):
             d = len(seq(0)) + len(lines)
 
             # The following search for an inverse works but is inefficient;
-            # see :trac:`35748` for details.
+            # see :issue:`35748` for details.
             for m_indices in cantor_product(xsrange(n_verify), repeat=d, min_slope=1):
                 # Iterate over all increasing lists of length d consisting
-                # of non-negative integers less than `n_verify`.
+                # of nonnegative integers less than `n_verify`.
 
                 U = Matrix(domain, d, d, [values(m, lines) for m in m_indices]).transpose()
                 try:
@@ -2031,7 +2005,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
         If the recurrence relations are represented by symbolic equations, then
         the following arguments are required:
 
-        - ``equations`` -- A list of equations where the elements have
+        - ``equations`` -- list of equations where the elements have
           either the form
 
           - `f(k^M n + r) = c_{r,l} f(k^m n + l) + c_{r,l + 1} f(k^m n
@@ -2070,18 +2044,18 @@ class RegularSequenceRing(RecognizableSeriesSpace):
           see [HKL2022]_, Definition 3.1, as well as in the description of
           ``equations`` above
 
-        - ``coeffs`` -- a dictionary where ``coeffs[(r, j)]`` is the
+        - ``coeffs`` -- dictionary where ``coeffs[(r, j)]`` is the
           coefficient `c_{r,j}` as given in the description of ``equations`` above.
           If ``coeffs[(r, j)]`` is not given for some ``r`` and ``j``, then it is
           assumed to be zero.
 
-        - ``initial_values`` -- a dictionary mapping integers ``n`` to the
+        - ``initial_values`` -- dictionary mapping integers ``n`` to the
           ``n``-th value of the sequence
 
         Optional keyword-only argument:
 
-        - ``offset`` -- (default: ``0``) an integer. See explanation of
-          ``equations`` above.
+        - ``offset`` -- integer (default: `0`); see explanation of
+          ``equations`` above
 
         - ``inhomogeneities`` -- (default: ``{}``) a dictionary
           mapping integers ``r`` to the inhomogeneity `g_r` as given
@@ -2261,7 +2235,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
             sage: (S - T).is_trivial_zero()  # long time
             True
 
-        Zero-sequence with non-zero initial values::
+        Zero-sequence with nonzero initial values::
 
             sage: Seq2.from_recurrence([
             ....:     f(2*n) == 0, f(2*n + 1) == 0,
@@ -2299,7 +2273,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
             True
 
         Connection between the Stern--Brocot sequence and the number
-        of non-zero elements in the generalized Pascal's triangle (see
+        of nonzero elements in the generalized Pascal's triangle (see
         [LRS2017]_)::
 
             sage: U = Seq2.from_recurrence(M=1, m=0,
@@ -2361,9 +2335,9 @@ class RecurrenceParser:
 
         INPUT:
 
-        - ``k`` -- an integer at least `2` specifying the base
+        - ``k`` -- integer at least `2` specifying the base
 
-        - ``coefficient_ring`` -- a ring.
+        - ``coefficient_ring`` -- a ring
 
         These are the same parameters used when creating
         a :class:`RegularSequenceRing`.
@@ -2745,7 +2719,7 @@ class RecurrenceParser:
             sage: RP.parse_recurrence([f(2*n) == 0, f(2*n + 1) == 0], f, n)
             (1, 0, {}, {})
 
-        We check that the output is of the correct type (:trac:`33158`)::
+        We check that the output is of the correct type (:issue:`33158`)::
 
             sage: RP = RecurrenceParser(2, QQ)
             sage: equations = [
@@ -2764,7 +2738,7 @@ class RecurrenceParser:
             sage: all(v.parent() == QQ for v in initial_values.values())
             True
 
-        This results in giving the correct (see :trac:`33158`) minimization in::
+        This results in giving the correct (see :issue:`33158`) minimization in::
 
             sage: Seq2 = RegularSequenceRing(2, QQ)
             sage: P = Seq2.from_recurrence(equations, f, n)
@@ -3023,14 +2997,14 @@ class RecurrenceParser:
             sage: RP.parse_direct_arguments(1, 1/2, {}, {})
             Traceback (most recent call last):
             ...
-            ValueError: 1/2 is not a non-negative integer.
+            ValueError: 1/2 is not a nonnegative integer.
 
         ::
 
             sage: RP.parse_direct_arguments(1, -1, {}, {})
             Traceback (most recent call last):
             ...
-            ValueError: -1 is not a non-negative integer.
+            ValueError: -1 is not a nonnegative integer.
 
         ::
 
@@ -3093,7 +3067,7 @@ class RecurrenceParser:
             raise ValueError("%s is not a positive integer."
                              % (M,)) from None
         if m not in ZZ or m < 0:
-            raise ValueError("%s is not a non-negative integer."
+            raise ValueError("%s is not a nonnegative integer."
                              % (m,)) from None
         if M <= m:
             raise ValueError("%s is not larger than %s."
@@ -3158,16 +3132,16 @@ class RecurrenceParser:
         - ``ll``, ``uu``, ``n1``, ``dim`` -- parameters and dimension of the
           resulting linear representation, see [HKL2022]_, Theorem A
 
-        - ``coeffs`` -- a dictionary mapping ``(r, j)`` to the coefficients
+        - ``coeffs`` -- dictionary mapping ``(r, j)`` to the coefficients
           `c_{r, j}` as given in [HKL2022]_, Equation (3.1).
           If ``coeffs[(r, j)]`` is not given for some ``r`` and ``j``,
           then it is assumed to be zero.
 
-        - ``initial_values`` -- a dictionary mapping integers ``n`` to the
+        - ``initial_values`` -- dictionary mapping integers ``n`` to the
           ``n``-th value of the sequence
 
-        - ``inhomogeneities`` -- a dictionary mapping integers ``r``
-          to the inhomogeneity `g_r` as given in [HKL2022]_, Corollary D.
+        - ``inhomogeneities`` -- dictionary mapping integers ``r``
+          to the inhomogeneity `g_r` as given in [HKL2022]_, Corollary D
 
         EXAMPLES::
 
@@ -3350,19 +3324,19 @@ class RecurrenceParser:
         - ``ll`` -- parameter of the resulting linear representation,
           see [HKL2022]_, Theorem A
 
-        - ``coeffs`` -- a dictionary where ``coeffs[(r, j)]`` is the
+        - ``coeffs`` -- dictionary where ``coeffs[(r, j)]`` is the
           coefficient `c_{r,j}` as given in :meth:`RegularSequenceRing.from_recurrence`.
           If ``coeffs[(r, j)]`` is not given for some ``r`` and ``j``,
           then it is assumed to be zero.
 
-        - ``initial_values`` -- a dictionary mapping integers ``n`` to the
+        - ``initial_values`` -- dictionary mapping integers ``n`` to the
           ``n``-th value of the sequence
 
         - ``last_value_needed`` -- last initial value which is needed to
           determine the linear representation
 
-        - ``inhomogeneities`` -- a dictionary mapping integers ``r``
-          to the inhomogeneity `g_r` as given in [HKL2022]_, Corollary D.
+        - ``inhomogeneities`` -- dictionary mapping integers ``r``
+          to the inhomogeneity `g_r` as given in [HKL2022]_, Corollary D
 
         OUTPUT:
 
@@ -3552,10 +3526,10 @@ class RecurrenceParser:
         vice versa, i.e.,
 
         - ``ind[i]`` -- a pair ``(j, d)`` representing the sequence `x(k^j n + d)`
-          in the `i`-th component (0-based) of the resulting linear representation,
+          in the `i`-th component (0-based) of the resulting linear representation
 
         - ``ind[(j, d)]`` -- the (0-based) row number of the sequence
-          `x(k^j n + d)` in the linear representation.
+          `x(k^j n + d)` in the linear representation
 
         EXAMPLES::
 
@@ -3718,7 +3692,7 @@ class RecurrenceParser:
         - ``recurrence_rules`` -- a namedtuple generated by
           :meth:`parameters`
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT: a vector
 
@@ -3776,9 +3750,9 @@ class RecurrenceParser:
         - ``recurrence_rules`` -- a namedtuple generated by
           :meth:`parameters`
 
-        - ``rem`` -- an integer between ``0`` and ``k - 1``
+        - ``rem`` -- integer between `0` and `k - 1`
 
-        - ``correct_offset`` -- (default: ``True``) a boolean. If
+        - ``correct_offset`` -- boolean (default: ``True``); if
           ``True``, then the resulting linear representation has no
           offset.  See [HKL2022]_ for more information.
 

@@ -10,7 +10,10 @@ AUTHORS:
 
 
 # ****************************************************************************
-#       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2016      Volker Braun <vbraun.name@gmail.com>
+#                     2020-2024 Matthias Koeppe
+#                     2022      Thierry Monteil
+#                     2024      Marc Culler
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,6 +24,7 @@ AUTHORS:
 
 
 import os
+import re
 import logging
 log = logging.getLogger()
 
@@ -34,6 +38,10 @@ from sage_bootstrap.pypi import PyPiVersion, PyPiNotFound, PyPiError
 from sage_bootstrap.fileserver import FileServer
 from sage_bootstrap.expand_class import PackageClass
 from sage_bootstrap.env import SAGE_DISTFILES
+
+
+# Approximation of https://peps.python.org/pep-0508/#names dependency specification
+dep_re = re.compile('^ *([-A-Z0-9._]+)', re.IGNORECASE)
 
 
 class Application(object):
@@ -57,8 +65,8 @@ class Application(object):
 
         $ sage --package list
         4ti2
-        arb
-        autotools
+        _bootstrap
+        _develop
         [...]
         zlib
 
@@ -66,9 +74,9 @@ class Application(object):
         perl_term_readline_gnu
 
         $ sage -package list --has-file=spkg-configure.m4 --has-file=distros/debian.txt
-        arb
-        boost_cropped
-        brial
+        4ti2
+        _develop
+        _prereq
         [...]
         zlib
         """
@@ -88,7 +96,7 @@ class Application(object):
         source_maxima='normal'
         trees_maxima='SAGE_LOCAL'
         """
-        props = kwds.pop('props', ['path', 'version_with_patchlevel', 'type', 'source', 'trees'])
+        props = kwds.pop('props', ['path', 'version_with_patchlevel', 'type', 'source', 'trees', 'purl'])
         format = kwds.pop('format', 'plain')
         log.debug('Looking up properties')
         pc = PackageClass(*package_classes)
@@ -256,9 +264,12 @@ class Application(object):
         Update a package to the latest version. This modifies the Sage sources.
         """
         pkg = Package(package_name)
+        if pkg.source not in ['normal', 'wheel']:
+            log.debug('update_latest can only update normal and wheel packages; %s is a %s package' % (pkg, pkg.source))
+            return
         dist_name = pkg.distribution_name
         if dist_name is None:
-            log.debug('%s does not have Python distribution info in install-requires.txt' % pkg)
+            log.debug('%s does not have Python distribution info in version_requirements.txt' % pkg)
             return
         if pkg.tarball_pattern.endswith('.whl'):
             source = 'wheel'
@@ -279,7 +290,7 @@ class Application(object):
             'cypari'   # Name conflict
         ]
         # Restrict to normal Python packages
-        pc = PackageClass(package_name_or_class, has_files=['checksums.ini', 'install-requires.txt'])
+        pc = PackageClass(package_name_or_class, has_files=['checksums.ini', 'version_requirements.txt'])
         if not pc.names:
             log.warn('nothing to do (does not name a normal Python package)')
         for package_name in sorted(pc.names):
@@ -304,11 +315,14 @@ class Application(object):
         package.tarball.download(allow_upstream=allow_upstream)
         print(package.tarball.upstream_fqn)
 
-    def download_cls(self, package_name_or_class, allow_upstream=False, on_error='stop'):
+    def download_cls(self, *package_classes, **kwds):
         """
         Download a package or a class of packages
         """
-        pc = PackageClass(package_name_or_class, has_files=['checksums.ini'])
+        allow_upstream = kwds.pop('allow_upstream', False)
+        on_error = kwds.pop('on_error', 'stop')
+        has_files = list(kwds.pop('has_files', []))
+        pc = PackageClass(*package_classes, has_files=has_files + ['checksums.ini'], **kwds)
 
         def download_with_args(package):
             try:
@@ -373,14 +387,15 @@ class Application(object):
         if not os.path.exists(pkg.tarball.upstream_fqn):
             log.info('Ignoring {0} because tarball is not cached'.format(package_name))
             return
-        if pkg.tarball.checksum_verifies():
+        if pkg.tarball.checksum_verifies(force_sha256=True):
             log.info('Checksum of {0} (tarball {1}) unchanged'.format(package_name, pkg.tarball_filename))
         else:
             log.info('Updating checksum of {0} (tarball {1})'.format(package_name, pkg.tarball_filename))
             update.fix_checksum()
 
     def create(self, package_name, version=None, tarball=None, pkg_type=None, upstream_url=None,
-               description=None, license=None, upstream_contact=None, pypi=False, source=None):
+               description=None, license=None, upstream_contact=None, pypi=False, source=None,
+               dependencies=None):
         """
         Create a package
 
@@ -392,7 +407,12 @@ class Application(object):
 
         $ sage --package create jupyterlab_markup --pypi --source wheel --type optional
         """
-        if '-' in package_name:
+        if package_name.startswith('pypi/'):
+            package_name = 'pkg:' + package_name
+        if package_name.startswith('pkg:pypi/'):
+            pypi = True
+            package_name = package_name[len('pkg:pypi/'):].lower().replace('-', '_').replace('.', '_')
+        elif '-' in package_name:
             raise ValueError('package names must not contain dashes, use underscore instead')
         if pypi:
             if source is None:
@@ -410,9 +430,9 @@ class Application(object):
                     tarball = pypi_version.tarball.replace(pypi_version.version, 'VERSION')
                 if not version:
                     version = pypi_version.version
-                # Use a URL from pypi.io instead of the specific URL received from the PyPI query
+                # Use a URL from files.pythonhosted.org instead of the specific URL received from the PyPI query
                 # because it follows a simple pattern.
-                upstream_url = 'https://pypi.io/packages/source/{0:1.1}/{0}/{1}'.format(package_name, tarball)
+                upstream_url = 'https://files.pythonhosted.org/packages/source/{0:1.1}/{0}/{1}'.format(package_name, tarball)
             elif source == 'wheel':
                 if not tarball:
                     tarball = pypi_version.tarball.replace(pypi_version.version, 'VERSION')
@@ -420,7 +440,26 @@ class Application(object):
                     raise ValueError('Only platform-independent wheels can be used for wheel packages, got {0}'.format(tarball))
                 if not version:
                     version = pypi_version.version
-                upstream_url = 'https://pypi.io/packages/{2}/{0:1.1}/{0}/{1}'.format(package_name, tarball, pypi_version.python_version)
+                if dependencies is None:
+                    log.info('Requires-Python: {0}'.format(pypi_version.requires_python))
+                    requires_dist = pypi_version.requires_dist
+                    if requires_dist:
+                        dependencies = []
+                        for item in requires_dist:
+                            if "extra ==" in item:
+                                continue
+                            try:
+                                dep = dep_re.match(item).groups()[0].strip()
+                            except Exception:
+                                continue
+                            dep = 'pkg:pypi/' + dep
+                            try:
+                                dep = Package(dep).name
+                            except ValueError:
+                                self.create(dep, pkg_type=pkg_type)
+                                dep = Package(dep).name
+                            dependencies.append(dep)
+                upstream_url = 'https://files.pythonhosted.org/packages/{2}/{0:1.1}/{0}/{1}'.format(package_name, tarball, pypi_version.python_version)
             if not description:
                 description = pypi_version.summary
             if not license:
@@ -444,7 +483,8 @@ class Application(object):
         if description or license or upstream_contact:
             creator.set_description(description, license, upstream_contact)
         if pypi or source == 'pip':
-            creator.set_python_data_and_scripts(pypi_package_name=pypi_version.name, source=source)
+            creator.set_python_data_and_scripts(pypi_package_name=pypi_version.name, source=source,
+                                                dependencies=dependencies)
         if tarball:
             creator.set_tarball(tarball, upstream_url)
             if upstream_url and version:
