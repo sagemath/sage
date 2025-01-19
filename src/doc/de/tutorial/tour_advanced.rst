@@ -20,12 +20,10 @@ die Kurven als irreduzible Komponenten der Vereinigung zurück erhalten.
     Affine Plane Curve over Rational Field defined by
        x^5 + x^3*y^2 + x^2*y^3 + y^5 - x^3 - y^3 - x^2 - y^2 + 1
     sage: D.irreducible_components()
-    [
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      x^2 + y^2 - 1,
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      x^3 + y^3 - 1
-    ]
+    [Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       x^2 + y^2 - 1,
+     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       x^3 + y^3 - 1]
 
 Wir können auch alle Punkte im Schnitt der beiden Kurven finden, indem
 wir diese schneiden und dann die irreduziblen Komponenten berechnen.
@@ -36,17 +34,15 @@ wir diese schneiden und dann die irreduziblen Komponenten berechnen.
 
     sage: V = C2.intersection(C3)
     sage: V.irreducible_components()
-    [
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      y,
-      x - 1,
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      y - 1,
-      x,
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      x + y + 2,
-      2*y^2 + 4*y + 3
-    ]
+    [Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       y,
+       x - 1,
+     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       y - 1,
+       x,
+     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       x + y + 2,
+       2*y^2 + 4*y + 3]
 
 Also sind zum Beispiel :math:`(1,0)` und :math:`(0,1)` auf beiden
 Kurven (wie man sofort sieht), genauso wie bestimmte (quadratischen)
@@ -333,10 +329,8 @@ Faktorisierung des Moduls entsprechen.
     [1, 2, 2, 1, 1, 2, 2, 1]
 
     sage: G.decomposition()
-    [
-    Group of Dirichlet characters modulo 3 with values in Cyclotomic Field of order 6 and degree 2,
-    Group of Dirichlet characters modulo 7 with values in Cyclotomic Field of order 6 and degree 2
-    ]
+    [Group of Dirichlet characters modulo 3 with values in Cyclotomic Field of order 6 and degree 2,
+     Group of Dirichlet characters modulo 7 with values in Cyclotomic Field of order 6 and degree 2]
 
 Als nächstes konstruieren wir die Gruppe der Dirichlet-Charaktere
 mod 20, jedoch mit Werten in :math:`\QQ(i)`:
@@ -465,9 +459,7 @@ Nun berechnen wir ein paar charakteristische Polynome und
     [-2  0]
     [ 0 -2]
     sage: S.q_expansion_basis(10)
-    [
-        q - 2*q^2 - q^3 + 2*q^4 + q^5 + 2*q^6 - 2*q^7 - 2*q^9 + O(q^10)
-    ]
+    [q - 2*q^2 - q^3 + 2*q^4 + q^5 + 2*q^6 - 2*q^7 - 2*q^9 + O(q^10)]
 
 Wir können sogar Räume von Modulsymbolen mit Charakteren berechnen.
 
@@ -487,10 +479,7 @@ Wir können sogar Räume von Modulsymbolen mit Charakteren berechnen.
     sage: S.T(2).charpoly('x').factor()
     (x + zeta6 + 1)^2
     sage: S.q_expansion_basis(10)
-    [
-    q + (-zeta6 - 1)*q^2 + (2*zeta6 - 2)*q^3 + zeta6*q^4 + (-2*zeta6 + 1)*q^5
-      + (-2*zeta6 + 4)*q^6 + (2*zeta6 - 1)*q^8 - zeta6*q^9 + O(q^10)
-    ]
+    [q + (-zeta6 - 1)*q^2 + (2*zeta6 - 2)*q^3 + zeta6*q^4 + (-2*zeta6 + 1)*q^5 + (-2*zeta6 + 4)*q^6 + (2*zeta6 - 1)*q^8 - zeta6*q^9 + O(q^10)]
 
 Hier ist ein weiteres Beispiel davon wie Sage mit den Operationen von
 Hecke-Operatoren auf dem Raum von Modulformen rechnen kann.
