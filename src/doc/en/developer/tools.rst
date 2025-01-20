@@ -382,7 +382,7 @@ package :mod:`sage.numerical.backends` and some modules in
 
 - VS Code: Install the `Python extension <https://marketplace.visualstudio.com/items?itemName=ms-python.python>`_ and follow the `official VS Code documentation <https://code.visualstudio.com/docs/python/testing>`__.
 
-*Configuration:* :sage_root:`src/conftest.py`
+*Configuration:* :sage_root:`conftest.py`
 
 *Documentation:* https://docs.pytest.org/en/stable/index.html
 
