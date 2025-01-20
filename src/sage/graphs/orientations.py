@@ -50,10 +50,10 @@ from sage.graphs.digraph import DiGraph
 def _initialize_digraph(G, edges, name=None, weighted=None, sparse=None,
                         data_structure=None, immutable=None, hash_labels=None):
     r"""
-    Helper method to return a directed graph built from `G`.
+    Helper method to return a directed graph built from ``G``.
 
     This method returns a digraph with the same set of vertices than the input
-    graph `G` and with specified edges. The data structure can be
+    graph ``G`` and with specified edges. The data structure can be
     specified. Furthermore, all attributes of the graph are copied to the
     returned digraph.
 
