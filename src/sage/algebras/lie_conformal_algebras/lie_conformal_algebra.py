@@ -331,7 +331,7 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
             if key not in known_keywords:
                 raise ValueError("got an unexpected keyword argument '%s'" % key)
 
-        if isinstance(arg0,dict) and arg0:
+        if isinstance(arg0, dict) and arg0:
             graded = kwds.pop("graded", False)
             if weights is not None or graded:
                 from .graded_lie_conformal_algebra import \
