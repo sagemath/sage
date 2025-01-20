@@ -59,7 +59,7 @@ class Gammoid(Matroid):
 
     INPUT:
 
-    - ``D`` -- a loopless DiGraph representing the gammoid
+    - ``D`` -- a loopless digraph representing the gammoid
     - ``roots`` -- a subset of the vertices
     - ``groundset`` -- (optional) a subset of the vertices
 
@@ -89,7 +89,7 @@ class Gammoid(Matroid):
 
     def __init__(self, D, roots, groundset=None):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 
@@ -203,9 +203,9 @@ class Gammoid(Matroid):
 
         .. WARNING::
 
-            This method is linked to __richcmp__ (in Cython) and __cmp__ or
-            __eq__/__ne__ (in Python). If you override one, you should (and in
-            Cython: MUST) override the other!
+            This method is linked to ``__richcmp__`` (in Cython) and ``__cmp__``
+            or ``__eq__``/``__ne__`` (in Python). If you override one, you
+            should (and, in Cython, \emph{must}) override the other!
 
         EXAMPLES::
 
@@ -319,7 +319,7 @@ class Gammoid(Matroid):
 
     def digraph(self):
         """
-        Return the DiGraph associated with the gammoid.
+        Return the digraph associated with the gammoid.
 
         EXAMPLES::
 

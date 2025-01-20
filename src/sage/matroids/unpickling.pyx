@@ -43,9 +43,9 @@ from sage.matroids.minor_matroid import MinorMatroid
 from sage.matroids.transversal_matroid cimport TransversalMatroid
 
 
-#############################################################################
+# ------------
 # BasisMatroid
-#############################################################################
+# ------------
 
 def unpickle_basis_matroid(version, data):
     """
@@ -89,9 +89,9 @@ def unpickle_basis_matroid(version, data):
     return M
 
 
-#############################################################################
+# ---------------
 # CircuitsMatroid
-#############################################################################
+# ---------------
 
 def unpickle_circuits_matroid(version, data):
     """
@@ -130,9 +130,9 @@ def unpickle_circuits_matroid(version, data):
     return M
 
 
-#############################################################################
+# ----------------------
 # CircuitClosuresMatroid
-#############################################################################
+# ----------------------
 
 def unpickle_circuit_closures_matroid(version, data):
     """
@@ -171,9 +171,9 @@ def unpickle_circuit_closures_matroid(version, data):
     return M
 
 
-#############################################################################
+# ------------
 # FlatsMatroid
-#############################################################################
+# ------------
 
 def unpickle_flats_matroid(version, data):
     """
@@ -213,9 +213,9 @@ def unpickle_flats_matroid(version, data):
     return M
 
 
-#############################################################################
+# -----------
 # DualMatroid
-#############################################################################
+# -----------
 
 def unpickle_dual_matroid(version, data):
     """
@@ -252,9 +252,9 @@ def unpickle_dual_matroid(version, data):
     return M
 
 
-#############################################################################
+# -------
 # Gammoid
-#############################################################################
+# -------
 
 def unpickle_gammoid(version, data):
     """
@@ -293,9 +293,9 @@ def unpickle_gammoid(version, data):
     return M
 
 
-#############################################################################
+# ---------------------
 # LeanMatrix subclasses
-#############################################################################
+# ---------------------
 
 def unpickle_generic_matrix(version, data):
     """
@@ -480,9 +480,9 @@ def unpickle_rational_matrix(version, data):
     return A
 
 
-#############################################################################
+# ----------------------------
 # LinearMatroid and subclasses
-#############################################################################
+# ----------------------------
 
 def unpickle_linear_matroid(version, data):
     """
@@ -712,9 +712,9 @@ def unpickle_regular_matroid(version, data):
     return M
 
 
-#############################################################################
-# Minor matroids
-#############################################################################
+# ------------
+# MinorMatroid
+# ------------
 
 def unpickle_minor_matroid(version, data):
     """
@@ -753,9 +753,9 @@ def unpickle_minor_matroid(version, data):
     return M
 
 
-#############################################################################
-# Graphic Matroids
-#############################################################################
+# --------------
+# GraphicMatroid
+# --------------
 
 def unpickle_graphic_matroid(version, data):
     """
@@ -792,9 +792,9 @@ def unpickle_graphic_matroid(version, data):
     return M
 
 
-#############################################################################
-# Transversal matroids
-#############################################################################
+# ------------------
+# TransversalMatroid
+# ------------------
 
 def unpickle_transversal_matroid(version, data):
     """

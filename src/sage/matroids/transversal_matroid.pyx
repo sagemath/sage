@@ -3,7 +3,7 @@ Transversal matroids
 
 A transversal matroid arises from a groundset `E` and a collection `A` of sets
 over the groundset. This can be modeled as a bipartite graph `B`, where the
-vertices the left are groundset elements, the vertices on the right are the
+vertices on the left are groundset elements, the vertices on the right are the
 sets, and edges represent containment. Then a set `X` from the groundset is
 independent if and only if `X` has a matching in `B`.
 
@@ -100,7 +100,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
 
     def __init__(self, sets, groundset=None, set_labels=None, matching=None):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 
@@ -849,8 +849,6 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
         but it is possible for a user to provide invalid input with the ``matching``
         parameter. This checks that the matching provided is indeed a matching, fits in
         the set system, and is maximal.
-
-        OUTPUT: boolean
 
         EXAMPLES::
 
