@@ -182,6 +182,11 @@ class UniqueFactorizationDomains(Category_singleton):
                 # heuristically, polynomials tend to be monic
                 X_it = reversed(X.coefficients())
                 x = next(X_it)
+                # TODO: currently, there is no member of
+                # `UniqueFactorizationDomains` with `is_unit`
+                # significantly slower than `is_one`, see
+                # :issue:`38924` - when such a domain is eventually
+                # implemented, check whether this is a bottleneck
                 if x.is_unit():
                     return None
                 for c in X_it:
