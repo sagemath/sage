@@ -453,7 +453,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
             sage: G = PermutationGroup([[(1,3),(5,7)]], domain=[1,3,5,7])
             sage: A(G, ([1,3], [5,7]))
-            {((1,2)(3,4),): ({1, 2}, {3, 4})}
+            E_2(X*Y)
 
         Test that errors are raised on some possible misuses::
 
@@ -549,9 +549,9 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             sage: A(CyclicPermutationGroup(4), {1: range(1, 5)})
             C_4(Y)
             sage: A(DihedralGroup(4), {0: range(1, 5)})
-            P_4(X)
+            E_2(E_2(X))
             sage: A(DihedralGroup(4), {1: range(1, 5)})
-            P_4(Y)
+            E_2(E_2(Y))
             sage: A(AlternatingGroup(4), {0: range(1, 5)})
             Eo_4(X)
             sage: A(AlternatingGroup(4), {1: range(1, 5)})
@@ -722,11 +722,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
             sage: A = AtomicSpecies("X, Y")
             sage: a = A.an_element(); a
-            {((1,2)(3,4),): ({1, 2}, {3, 4})}
-
-            sage: a.rename("E_2(XY)")
-            sage: a
-            E_2(XY)
+            E_2(X*Y)
         """
         G = PermutationGroup([[(2 * s + 1, 2 * s + 2) for s in range(self._arity)]])
         m = {s: [2 * s + 1, 2 * s + 2] for s in range(self._arity)}
@@ -850,7 +846,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         sage: M = MolecularSpecies("X,Y")
         sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
         sage: M(G, {0: [5,6], 1: [1,2,3,4]})
-        E_2(X)*{((1,2)(3,4),): ({}, {1, 2, 3, 4})}
+        E_2(X)*E_2(Y^2)
     """
     @staticmethod
     def __classcall__(cls, names):
@@ -961,7 +957,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
             sage: G = PermutationGroup([[(2,3),(4,5)]], domain=[2,3,4,5])
             sage: M(G, {0: [2, 3], 1: [4, 5]})
-            E_2(XY)
+            E_2(X*Y)
 
             sage: X = SetPartitions(4, 2)
             sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
@@ -972,7 +968,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
             sage: G = PermutationGroup([[(1,3),(5,7)]], domain=[1,3,5,7])
             sage: M(G, ([1,3], [5,7]))
-            E_2(XY)
+            E_2(X*Y)
 
             sage: G = PermutationGroup([[(1,2), (3,4,5,6)]])
             sage: a = M(G, {0:[1,2], 1:[3,4,5,6]})
@@ -1254,7 +1250,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: M = MolecularSpecies("X,Y")
                 sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
                 sage: A = M(G, {0: [5,6], 1: [1,2,3,4]}); A
-                E_2(X)*{((1,2)(3,4),): ({}, {1, 2, 3, 4})}
+                E_2(X)*E_2(Y^2)
                 sage: A.permutation_group()
                 (Permutation Group with generators [(3,4)(5,6), (1,2)],
                  (frozenset({1, 2}), frozenset({3, 4, 5, 6})))
@@ -1279,7 +1275,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
                 sage: A = M(G, {0: [5,6], 1: [1,2,3,4]})
                 sage: A * B
-                E_2(X)*C_3(X)*{((1,2)(3,4),): ({}, {1, 2, 3, 4})}
+                E_2(X)*C_3(X)*E_2(Y^2)
                 sage: (A*B).permutation_group()
                 (Permutation Group with generators [(6,7)(8,9), (3,4,5), (1,2)],
                  (frozenset({1, 2, 3, 4, 5}), frozenset({6, 7, 8, 9})))
@@ -1657,7 +1653,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: P.<X,Y> = PolynomialSpecies(QQ)
             sage: E2 = PolynomialSpecies(QQ, "X")(SymmetricGroup(2))
             sage: E2(X*Y).tilde()
-            2*E_2(XY)
+            2*E_2(X*Y)
         """
         P = self.parent()
         M = P._indices
@@ -1781,7 +1777,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: P = PolynomialSpecies(ZZ, "X")
             sage: C4 = P(CyclicPermutationGroup(4))
             sage: C4._compose_with_singletons("X, Y", [[2, 2]])
-            E_2(XY) + X^2*Y^2
+            E_2(X*Y) + X^2*Y^2
 
             sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
             sage: F = P(PermutationGroup([[(1,2,3), (4,5,6)]]), {0: [1,2,3], 1: [4,5,6]})
@@ -1874,7 +1870,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         Exercise (2.5.17) in [BLL1998]_::
 
             sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[2, 2]])
-            E_2(XY) + X^2*Y^2
+            E_2(X*Y) + X^2*Y^2
             sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[3, 1]])
             X^3*Y
             sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[4, 0]])
@@ -1883,7 +1879,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         Equation (4.60) in [ALL2002]_::
 
             sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, -1], [[2, 2]])
-            -E_2(XY) + 2*X^2*Y^2
+            -E_2(X*Y) + 2*X^2*Y^2
 
         A bivariate example::
 
@@ -1984,7 +1980,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             E_2(X) + X*Y + E_2(Y)
 
             sage: E2(X*Y)(E2(X), E2(Y))
-            {((7,8), (5,6), (3,4), (1,2), (1,3)(2,4)(5,7)(6,8)): ({1, 2, 3, 4}, {5, 6, 7, 8})}
+            E_2(E_2(X)*E_2(Y))
 
             sage: R.<q> = QQ[]
             sage: P = PolynomialSpecies(R, ["X"])
@@ -2193,7 +2189,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: X = SetPartitions(4, 2)
             sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
             sage: P((X, a, 'left'), {0: [1,2], 1: [3,4]})
-            E_2(X)*E_2(Y) + X^2*E_2(Y) + E_2(XY) + Y^2*E_2(X)
+            E_2(X)*E_2(Y) + X^2*E_2(Y) + E_2(X*Y) + Y^2*E_2(X)
 
             sage: P = PolynomialSpecies(ZZ, ["X"])
             sage: X = SetPartitions(4, 2)
