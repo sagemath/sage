@@ -2174,7 +2174,7 @@ class ParallelogramPolyomino(ClonableList,
             return 0
         return self.lower_heights()[-1]
 
-    def cell_is_inside(self, w, h) -> bool:
+    def cell_is_inside(self, w, h):
         r"""
         Determine whether the cell at a given position
         is inside the parallelogram polyomino.
@@ -2187,8 +2187,8 @@ class ParallelogramPolyomino(ClonableList,
 
         OUTPUT:
 
-        Return ``False`` if there is no cell at the given position,
-        return ``True`` if there is a cell.
+        Return 0 if there is no cell at the given position,
+        return 1 if there is a cell.
 
         EXAMPLES::
 
@@ -2217,8 +2217,10 @@ class ParallelogramPolyomino(ClonableList,
         widths = self.widths()
 
         if h >= len(widths) or h < 0:
-            return False
-        return lower_widths[h] <= w < lower_widths[h] + widths[h]
+            return 0
+        if lower_widths[h] <= w and w < lower_widths[h] + widths[h]:
+            return 1
+        return 0
 
     @cached_method
     def get_array(self):

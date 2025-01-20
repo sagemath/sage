@@ -8083,10 +8083,11 @@ def perm_mh(m, h):
     - Jaap Spies (2006)
     """
     n = m + h
-    A = MatrixSpace(ZZ, m, n).zero()
+    M = MatrixSpace(ZZ, m, n)
+    A = M(0)
     for i in range(m):
-        for j in range(i, n):
-            if j <= i + h:
+        for j in range(n):
+            if i <= j and j <= i + h:
                 A[i, j] = 1
     return A.permanent()
 
