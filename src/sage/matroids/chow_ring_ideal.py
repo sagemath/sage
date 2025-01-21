@@ -341,6 +341,225 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                     monomial_basis.append(expression)
         return PolynomialSequence(R, [monomial_basis])
 
+class ChowRingIdeal_nonaug_af(ChowRingIdeal):
+    def __init__(self, M, R):
+        self._matroid = M
+        flats = [X for i in range(2, self._matroid.rank() + 1)
+                 for X in self._matroid.flats(i)]
+        names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
+        try:
+            poly_ring = PolynomialRing(R, names)  # self.ring
+        except ValueError:  # variables are not proper names
+            poly_ring = PolynomialRing(R, 'A', len(flats))
+        gens = poly_ring.gens()
+        self._flats_generator = dict(zip(flats, gens))
+        MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
+
+    def _gens_constructor(self, poly_ring):
+        E = list(self._matroid.groundset())
+        flats = list(self._flats_generator)
+        lattice_flats = Poset((flats, lambda x, y: x <= y))
+        I = []
+        flats_gen = self._flats_generator
+        subsets = lattice_flats.antichains().elements_of_depth_iterator(2)
+        for subset in subsets:
+            I.append(flats_gen[subset[0]] * flats_gen[subset[1]])  # Stanley-Reisner Ideal
+        J = []
+        for F in flats:
+            term = poly_ring.zero()
+            for i in [el for el in E if el not in F]:
+                for G in lattice_flats.order_filter([F]):
+                    if G >= F.union(frozenset({i})):
+                        term += flats_gen[G]
+            J.append(flats_gen[F] * term)
+        K = []
+        for x, i in enumerate(E):
+            for j in E[x:]:
+                term1 = poly_ring.zero()
+                term2 = poly_ring.zero()
+                for F in flats:
+                    if F >= frozenset({i}).union(frozenset({j})):
+                        term1 += flats_gen[F] ** 2
+                        for G in lattice_flats.order_filter([F]):
+                            if G != F:
+                                term2 += flats_gen[F]*flats_gen[G]
+                K.extend([term1, term2])
+        return I + J + K
+
+    def _repr_(self):
+        return "Chow ring ideal of {} - non augmented in the atom-free presentation".format(self._matroid)
+
+    def _latex_(self):
+        from sage.misc.latex import latex
+        return '(I_{{{M}}} + J_{{{M}}} + K_{{{M}}}'.format(M=latex(self._matroid))
+
+    def groebner_basis(self, algorithm = '', *args, **kwargs):
+        if algorithm == '':
+            algorithm = 'constructed'
+        if algorithm != 'constructed':
+            return super().groebner_basis(algorithm=algorithm, *args, **kwargs)
+        flats = list(self._flats_generator)
+        lattice_flats = Poset((flats, lambda x, y: x <= y))
+        gb = []
+        poly_ring = self.ring()
+        flats_gen = self._flats_generator
+        subsets = lattice_flats.antichains().elements_of_depth_iterator(2)
+        for subset in subsets:
+            gb.append(flats_gen[subset[0]] * flats_gen[subset[1]])
+        subsets = lattice_flats.chains().elements_of_depth_iterator(2)
+        ranks, chains = self._lattice_flats()
+        for subset in subsets:
+            term = poly_ring.zero()
+            for F in lattice_flats.order_filter([subset[1]]):
+                term += flats_gen[F]
+            print(subset)
+            gb.append(flats_gen[subset[0]] * (term ** (ranks[subset[1]] - ranks[subset[0]])))
+        for F in flats:
+            term = poly_ring.zero()
+            for G in lattice_flats.order_filter([F]):
+                term += flats_gen[G]
+            gb.append(term ** ranks[F])
+        return PolynomialSequence(poly_ring, [gb])
+
+    def normal_basis(self, algorithm = '', *args, **kwargs):
+        if algorithm == '':
+            algorithm = 'constructed'
+        if algorithm != 'constructed':
+            return super().normal_basis(algorithm=algorithm, *args, **kwargs)
+        R = self.ring()
+        flats_gen = self._flats_generator
+        monomial_basis = []
+        ranks, chains = self._lattice_flats()
+        for subset in chains:
+            max_powers = []
+            k = len(subset)
+            if not subset:
+                monomial_basis.append(R.one())
+            else:
+                for i in range(k):
+                    if i == 0:
+                        max_powers.append(ranks[subset[i]])
+                    else:
+                        max_powers.append(ranks[subset[i]] - ranks[subset[i-1]])
+                ranges = [range(1, p) for p in max_powers]
+                first_rank = ranks[subset[k-1]]
+                for combination in product(*(r for r in ranges)):
+                    # Generating combinations for all powers from 1 to max_powers
+                    if sum(combination) <= first_rank:
+                        expression = R.one()
+                        for val, c in zip(subset, combination):
+                            expression *= flats_gen[val] ** c
+                        print(subset, expression, combination)
+                        monomial_basis.append(expression)
+        return PolynomialSequence(R, [monomial_basis])
+
+class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
+    def __init__(self, M, R):
+        self._matroid = M
+        flats = [X for i in range(1, self._matroid.rank() + 1)
+                 for X in self._matroid.flats(i)]
+        names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
+        try:
+            poly_ring = PolynomialRing(R, names)  # self.ring
+        except ValueError:  # variables are not proper names
+            poly_ring = PolynomialRing(R, 'A', len(flats))
+        gens = poly_ring.gens()
+        self._flats_generator = dict(zip(flats, gens))
+        MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
+
+    def _gens_constructor(self, poly_ring):
+        flats = list(self._flats_generator)
+        lattice_flats = Poset((flats, lambda x, y: x <= y))
+        flats_gen = self._flats_generator
+        ranks, chains = self._lattice_flats()
+        atoms = [F for F in flats if ranks[F] == 1]
+        I = [flats_gen[a] for a in atoms]
+        J = []
+        subsets = lattice_flats.antichains().elements_of_depth_iterator(2)
+        for subset in subsets:
+            F = subset[0]
+            G = subset[1]
+            term1 = poly_ring.zero()
+            term2 = poly_ring.zero()
+            for H in lattice_flats.order_filter([F]):
+                term1 += lattice_flats.moebius_function(F, H) * flats_gen[H]
+            for H in lattice_flats.order_filter([G]):
+                term2 += lattice_flats.moebius_function(G, H) * flats_gen[H]
+            J.append(term1 * term2)
+        return I + J
+
+    def _repr_(self):
+        return "Chow ring ideal of {} - non augmented in simplicial presentation".format(self._matroid)
+
+    def _latex_(self):
+        from sage.misc.latex import latex
+        return '(I_{{{M}}} + J_{{{M}}}'.format(M=latex(self._matroid))
+
+    def groebner_basis(self, algorithm = '', *args, **kwargs):
+        if algorithm == '':
+            algorithm = 'constructed'
+        if algorithm != 'constructed':
+            return super().groebner_basis(algorithm=algorithm, *args, **kwargs)
+        flats = list(self._flats_generator)
+        lattice_flats = Poset((flats, lambda x, y: x <= y))
+        gb = []
+        poly_ring = self.ring()
+        flats_gen = self._flats_generator
+        ranks, chains = self._lattice_flats()
+        subsets = lattice_flats.antichains().elements_of_depth_iterator(2)
+        for subset in subsets:
+            F = subset[0]
+            G = subset[1]
+            term1 = poly_ring.zero()
+            term2 = poly_ring.zero()
+            for H in lattice_flats.order_filter([F]):
+                term1 += lattice_flats.moebius_function(F, H) * flats_gen[H]
+            for H in lattice_flats.order_filter([G]):
+                term2 += lattice_flats.moebius_function(G, H) * flats_gen[H]
+            gb.append(term1 * term2)
+        subsets = lattice_flats.chains().elements_of_depth_iterator(2)
+        for subset in subsets:
+            F = subset[0]
+            G = subset[1]
+            term = poly_ring.zero()
+            for H in lattice_flats.order_filter([F]):
+                term += lattice_flats.moebius_function(F, H) * flats_gen[H]
+            gb.append(term * (flats_gen[G] ** (ranks[G] - ranks[F])))
+
+        for F in flats:
+            gb.append(flats_gen[F] ** ranks[F])
+        return PolynomialSequence(poly_ring, [gb])
+            
+    def normal_basis(self, algorithm = '', *args, **kwargs):
+        if algorithm == '':
+            algorithm = 'constructed'
+        if algorithm != 'constructed':
+            return super().normal_basis(algorithm=algorithm, *args, **kwargs)
+        r = self._matroid.rank() - 1
+        R = self.ring()
+        flats_gen = self._flats_generator
+        monomial_basis = []
+        ranks, chains = self._lattice_flats()
+        for subset in chains:
+            if not subset:
+                monomial_basis.append(R.one())
+            else:
+                k = len(subset)
+                max_powers = []
+                max_powers.append(ranks[subset[0]])
+                for i in range(1, k):
+                    max_powers.append(ranks[subset[i]] - ranks[subset[i-1]])
+                ranges = [range(1, p) for p in max_powers]
+                ranges[0] = range(1, max_powers[0] + 1)
+                for combination in product(*(r for r in ranges)):
+                    # generating combinations for all powers up to max_powers
+                    expression = R.one()
+                    for val, c in zip(subset, combination):
+                        expression *= flats_gen[val] ** c
+                    if sum(combination) <= r:
+                        monomial_basis.append(expression)
+        return PolynomialSequence(R, [monomial_basis])
+
 
 class AugmentedChowRingIdeal_fy(ChowRingIdeal):
     r"""
