@@ -1,11 +1,14 @@
+"""
+Witt rings: implementation
+"""
 from itertools import product
 
 from sage.categories.commutative_rings import CommutativeRings
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.factory import Zp, Zq
-from sage.rings.polynomial.multi_polynomial import is_MPolynomial
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring import CommutativeRing
 from sage.sets.primes import Primes
@@ -18,11 +21,18 @@ _Primes = Primes()
 
 def _fast_char_p_power(x, n, p=None):
     r"""
-    Raise x^n power in characteristic p
+    Raise x^n power in characteristic p.
 
     If x is not an element of a ring of characteristic p, throw an error.
     If x is an element of GF(p^k), this is already fast.
     However, is x is a polynomial, this seems to be slow?
+
+    EXAMPLES::
+
+        sage: from sage.rings.padics.witt_ring import _fast_char_p_power as fpow
+        sage: t = GF(1913)(33)
+        sage: fpow(t, 77)
+        1371
     """
     if n not in ZZ:
         raise ValueError(f'Exponent {n} is not an integer')
@@ -31,12 +41,13 @@ def _fast_char_p_power(x, n, p=None):
     if x.parent().characteristic() not in _Primes:
         raise ValueError(f'{x} is not in a ring of prime characteristic')
 
-    x_is_Polynomial = is_Polynomial(x)
-    x_is_MPolynomial = is_MPolynomial(x)
+    x_is_Polynomial = isinstance(x, Polynomial)
+    x_is_MPolynomial = isinstance(x, MPolynomial)
 
     if not (x_is_Polynomial or x_is_MPolynomial):
         return x**n
     if (x_is_Polynomial and x.is_gen()) or (x_is_MPolynomial and x.is_generator()):
+        # could be unified !
         return x**n
     if n < 0:
         x = x**-1  # This may throw an error.
@@ -209,8 +220,7 @@ class WittRing_base(CommutativeRing, UniqueRepresentation):
     def teichmuller_lift(self, x):
         if x not in self.base():
             raise Exception(f'{x} not in {self.base()}')
-        else:
-            return self.element_class(self, (x,) + tuple(0 for _ in range(self.prec-1)))
+        return self.element_class(self, (x,) + tuple(0 for _ in range(self.prec-1)))
 
     def is_finite(self):
         return self.base().is_finite()

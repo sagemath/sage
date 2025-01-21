@@ -1,3 +1,6 @@
+"""
+Witt rings: general constructor
+"""
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
 from sage.rings.padics.witt_ring import (
@@ -13,7 +16,28 @@ _Primes = Primes()
 
 
 def WittRing(base_ring, prec=1, p=None, algorithm='auto'):
+    """
+    Return the appropriate Witt ring, depending on the input.
 
+    EXAMPLES::
+
+        sage: WittRing(QQ,p=5)
+        Ring of 5-Witt Vectors of length 1 over Rational Field
+        sage: WittRing(GF(3))
+        Ring of Witt Vectors of length 1 over Finite Field of size 3
+        sage: WittRing(GF(3)['t'])
+        Ring of Witt Vectors of length 1 over Univariate Polynomial Ring in t
+        over Finite Field of size 3
+
+    TESTS::
+
+        sage: A = SymmetricGroup(3).algebra(QQ)
+        sage: WittRing(A)
+        Traceback (most recent call last):
+        ...
+        TypeError: Symmetric group algebra of order 3 over Rational Field
+        is not a commutative ring
+    """
     if base_ring not in _CommutativeRings:
         raise TypeError(f'{base_ring} is not a commutative ring')
 
