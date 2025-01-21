@@ -15,7 +15,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug, AugmentedChowRingIdeal_fy, AugmentedChowRingIdeal_atom_free
+from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug_fy, ChowRingIdeal_nonaug_af, ChowRingIdeal_nonaug_sp, AugmentedChowRingIdeal_fy, AugmentedChowRingIdeal_atom_free
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.categories.kahler_algebras import KahlerAlgebras
 from sage.categories.commutative_rings import CommutativeRings
@@ -110,7 +110,12 @@ class ChowRing(QuotientRing_generic):
             elif presentation == 'atom-free':
                 self._ideal = AugmentedChowRingIdeal_atom_free(M, R)
         else:
-            self._ideal = ChowRingIdeal_nonaug(M, R)
+            if presentation == 'fy':
+                self._ideal = ChowRingIdeal_nonaug_fy(M, R)
+            if presentation == 'atom-free':
+                self._ideal = ChowRingIdeal_nonaug_af(M, R)
+            if presentation == 'simplicial':
+                self._ideal = ChowRingIdeal_nonaug_sp(M, R)
         C = CommutativeRings().Quotients() & KahlerAlgebras(R)
         QuotientRing_generic.__init__(self, R=self._ideal.ring(),
                                       I=self._ideal,

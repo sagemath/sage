@@ -99,12 +99,12 @@ class ChowRingIdeal(MPolynomialIdeal):
         return dict(self._flats_generator)
 
 
-class ChowRingIdeal_nonaug(ChowRingIdeal):
+class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
     r"""
-    The Chow ring ideal of a matroid `M`.
+    The Chow ring ideal of a matroid `M` in Feitchner-Yuzvinsky presentation.
 
-    The *Chow ring ideal* for a matroid `M` is defined as the ideal
-    `(I_M + J_M)` of the polynomial ring
+    The *Chow ring ideal* for a matroid `M` in Feitchner-Yuzvinsky presentation
+    is defined as the ideal `(I_M + J_M)` of the polynomial ring
 
     .. MATH::
 
@@ -224,9 +224,9 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             sage: ch = matroids.catalog.Fano().chow_ring(QQ, False)
             sage: ch.defining_ideal()
             Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements,
-            type (3, 0) - non augmented
+            type (3, 0) - non augmented in Feitchner-Yuzvinsky presentation
         """
-        return "Chow ring ideal of {} - non augmented".format(self._matroid)
+        return "Chow ring ideal of {} - non augmented in Feitchner-Yuzvinksy presentation".format(self._matroid)
 
     def _latex_(self):
         r"""
