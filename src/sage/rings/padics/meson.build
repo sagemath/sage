@@ -46,7 +46,11 @@ py.install_sources(
   'relative_ramified_FP.pxd',
   'tests.py',
   'tutorial.py',
+  'witt_ring.py',
   'unramified_extension_generic.py',
+  'witt_ring_constructor.py',
+  'witt_ring.py',
+  'witt_vector.py',
   subdir: 'sage/rings/padics',
 )
 
