@@ -1,9 +1,23 @@
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import CommutativeRingElement
+from sage.structure.richcmp import op_EQ, op_NE
 
 
 class WittVector_base(CommutativeRingElement):
     def __init__(self, parent, vec=None):
+        """
+        Common class for all kinds of Witt vectors.
+
+        EXAMPLES::
+
+            sage: W = WittRing(GF(3))
+            sage: e = W.one(); e
+            (1)
+            sage: e**2
+            (1)
+            sage: -e
+            (2)
+        """
         self.prec = parent.precision()
         B = parent.base()
         if vec is not None:
@@ -19,13 +33,11 @@ class WittVector_base(CommutativeRingElement):
         return hash(self.vec)
 
     def _richcmp_(self, other, op):
-        from sage.structure.richcmp import op_EQ, op_NE
         if op == op_EQ:
             return self.vec == other.vec
-        elif op == op_NE:
+        if op == op_NE:
             return self.vec != other.vec
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def _repr_(self):
         return '(' + ', '.join(map(str, self.vec)) + ')'
@@ -83,7 +95,7 @@ class WittVector_base(CommutativeRingElement):
         # Otherwise, -1 == (-1, 0, 0, ...)
         if P.prime == 2:
             all_ones = P(tuple(-1 for _ in range(self.prec)))
-            return all_ones*self
+            return all_ones * self
         neg_vec = tuple(-self.vec[i] for i in range(self.prec))
         return C(P, vec=neg_vec)
 
@@ -120,7 +132,7 @@ class WittVector_base(CommutativeRingElement):
         # TODO: Remove the algorithm argument once other algs are implemented
         from sage.rings.padics.witt_ring_constructor import WittRing
         W = WittRing(poly_ring, p=P.prime, prec=P.prec)
-        prod_vec = (W(self.vec)*W(inv_vec)).vec
+        prod_vec = (W(self.vec) * W(inv_vec)).vec
         for i in range(1, self.prec):
             poly = prod_vec[i](inv_vec[1:])
             Y_i = poly.parent().gens()[i-1]
@@ -171,7 +183,7 @@ class WittVector_p_typical(WittVector_base):
             return NotImplemented
 
     def _mul_(self, other):
-        from sage.rings.padics.witt_ring import fast_char_p_power as _fcppow
+        from sage.rings.padics.witt_ring import _fast_char_p_power as _fcppow
         P = self.parent()
         C = self.__class__
 
