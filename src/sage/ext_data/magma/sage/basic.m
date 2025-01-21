@@ -155,11 +155,11 @@ intrinsic SageNamesHelper(X::.) -> MonStgElt
   i := NumberOfNames(X);
   if "$" in Sprint(X.i) then
     /* unnamed variables */
-    return "(" * (&* [ Sprintf("'x%o', ", j) : j in [ 1..i ] ]) * ")"
+    return "(" * (&* [ Sprintf("'x%o', ", j) : j in [ 1..i ] ]) * ")";
   else
     /* named variables */
-    return "(" * (&* [ Sprintf("'%o', ", X.j) : j in [ 1..i ] ]) * ")"
-  end if:
+    return "(" * (&* [ Sprintf("'%o', ", X.j) : j in [ 1..i ] ]) * ")";
+  end if;
 end intrinsic;
 
 intrinsic Sage(X::RngUPol) -> MonStgElt, BoolElt
