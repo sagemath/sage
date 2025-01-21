@@ -463,7 +463,7 @@ class Magma(ExtraTabCompletion, Expect):
             return ''
         return s[i + 1:]
 
-    def __getattr__(self, attrname):
+    def __getattr__(self, attrname) -> MagmaFunction:
         """
         Return a formal wrapper around a Magma function, or raise an
         :exc:`AttributeError` if attrname starts with an underscore.
