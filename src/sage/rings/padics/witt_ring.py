@@ -23,7 +23,8 @@ def _fast_char_p_power(x, n, p=None):
     r"""
     Raise x^n power in characteristic p.
 
-    If x is not an element of a ring of characteristic p, throw an error.
+    If x is not an element of a ring of characteristic p, this throws an error.
+
     If x is an element of GF(p^k), this is already fast.
     However, is x is a polynomial, this seems to be slow?
 
@@ -46,8 +47,7 @@ def _fast_char_p_power(x, n, p=None):
 
     if not (x_is_Polynomial or x_is_MPolynomial):
         return x**n
-    if (x_is_Polynomial and x.is_gen()) or (x_is_MPolynomial and x.is_generator()):
-        # could be unified !
+    if x.is_gen():
         return x**n
     if n < 0:
         x = x**-1  # This may throw an error.

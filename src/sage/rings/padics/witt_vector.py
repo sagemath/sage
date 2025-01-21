@@ -1,3 +1,6 @@
+"""
+Witt vectors
+"""
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import CommutativeRingElement
 from sage.structure.richcmp import op_EQ, op_NE
@@ -29,17 +32,17 @@ class WittVector_base(CommutativeRingElement):
             self.vec = (B(0) for i in range(self.prec))
         CommutativeRingElement.__init__(self, parent)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.vec)
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         if op == op_EQ:
             return self.vec == other.vec
         if op == op_NE:
             return self.vec != other.vec
         return NotImplemented
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return '(' + ', '.join(map(str, self.vec)) + ')'
 
     def _add_(self, other):
@@ -73,9 +76,9 @@ class WittVector_base(CommutativeRingElement):
         # even if ``P._algorithm`` is 'none'.
         if self == P.zero() or other == P.zero():
             return P.zero()
-        elif other == P.one():
+        if other == P.one():
             return self
-        elif self == P.one():
+        if self == P.one():
             return other
 
         alg = P._algorithm
@@ -135,7 +138,7 @@ class WittVector_base(CommutativeRingElement):
         prod_vec = (W(self.vec) * W(inv_vec)).vec
         for i in range(1, self.prec):
             poly = prod_vec[i](inv_vec[1:])
-            Y_i = poly.parent().gens()[i-1]
+            Y_i = poly.parent().gens()[i - 1]
             inv_vec[i] = -poly.constant_coefficient() / poly.monomial_coefficient(Y_i)
 
         return C(P, vec=inv_vec)
@@ -151,7 +154,7 @@ class WittVector_p_typical(WittVector_base):
         # even if ``P._algorithm`` is 'none'.
         if other == P.zero():
             return self
-        elif self == P.zero():
+        if self == P.zero():
             return other
 
         alg = P._algorithm
@@ -170,14 +173,14 @@ class WittVector_p_typical(WittVector_base):
             for n in range(prec):
                 G_n = [x[n], y[n]]
                 for i in range(n):
-                    G_n.append(P.eta_bar(G[i], n-i))
+                    G_n.append(P.eta_bar(G[i], n - i))
                 G.append(G_n)
             sum_vec = tuple(sum(G[i]) for i in range(prec))
             return C(P, vec=sum_vec)
         elif alg == 'Zq_isomorphism':
             x = P._vector_to_series(self.vec)
             y = P._vector_to_series(other.vec)
-            sum_vec = P._series_to_vector(x+y)
+            sum_vec = P._series_to_vector(x + y)
             return C(P, vec=sum_vec)
         else:
             return NotImplemented
@@ -192,9 +195,9 @@ class WittVector_p_typical(WittVector_base):
         # even if ``P._algorithm`` is 'none'.
         if self == P.zero() or other == P.zero():
             return P.zero()
-        elif other == P.one():
+        if other == P.one():
             return self
-        elif self == P.one():
+        if self == P.one():
             return other
 
         alg = P._algorithm
@@ -213,17 +216,17 @@ class WittVector_p_typical(WittVector_base):
             G = [[x[0] * y[0]]]
             for n in range(1, prec):
                 G_n = [_fcppow(x[0], p**n) * y[n], _fcppow(y[0], p**n) * x[n]]
-                G_n.extend(_fcppow(x[i], p**(n-i)) * _fcppow(y[n-i], p**i)
+                G_n.extend(_fcppow(x[i], p**(n - i)) * _fcppow(y[n - i], p**i)
                            for i in range(1, n))
                 for i in range(n):
-                    G_n.append(P.eta_bar(G[i], n-i))
+                    G_n.append(P.eta_bar(G[i], n - i))
                 G.append(G_n)
             prod_vec = tuple(sum(G[i]) for i in range(prec))
             return C(P, vec=prod_vec)
         elif alg == 'Zq_isomorphism':
             x = P._vector_to_series(self.vec)
             y = P._vector_to_series(other.vec)
-            sum_vec = P._series_to_vector(x*y)
+            sum_vec = P._series_to_vector(x * y)
             return C(P, vec=sum_vec)
         else:
             return NotImplemented
@@ -257,8 +260,9 @@ class WittVector_non_p_typical(WittVector_base):
             sum_vec = [x[0] + y[0]]
             for n in range(1, self.prec):
                 next_sum = x[n] + y[n] + \
-                    sum((x[i]**(p**(n-i)) + y[i]**(p**(n-i)) - sum_vec[i]**(p**(n-i)))
-                        / p**(n-i)
+                    sum((x[i]**(p**(n - i)) + y[i]**(p**(n - i))
+                         - sum_vec[i]**(p**(n - i)))
+                        / p**(n - i)
                         for i in range(n))
                 sum_vec.append(next_sum)
 
@@ -295,9 +299,9 @@ class WittVector_non_p_typical(WittVector_base):
             prod_vec = [x[0] * y[0]]
             for n in range(1, self.prec):
                 next_prod = (
-                    sum(p**i * x[i]**(p**(n-i)) for i in range(n + 1)) *
-                    sum(p**i * y[i]**(p**(n-i)) for i in range(n + 1)) -
-                    sum(p**i * prod_vec[i]**(p**(n-i)) for i in range(n))
+                    sum(p**i * x[i]**(p**(n - i)) for i in range(n + 1)) *
+                    sum(p**i * y[i]**(p**(n - i)) for i in range(n + 1)) -
+                    sum(p**i * prod_vec[i]**(p**(n - i)) for i in range(n))
                 ) / p**n
                 prod_vec.append(next_prod)
 
