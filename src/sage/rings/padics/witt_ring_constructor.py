@@ -28,6 +28,9 @@ def WittRing(base_ring, prec=1, p=None, algorithm='auto'):
         sage: WittRing(GF(3)['t'])
         Ring of Witt Vectors of length 1 over Univariate Polynomial Ring in t
         over Finite Field of size 3
+        sage: WittRing(Qp(7), prec=30, p=5)
+        Ring of 5-Witt Vectors of length 30 over 7-adic Field
+        with capped relative precision 20
 
     TESTS::
 
@@ -37,6 +40,17 @@ def WittRing(base_ring, prec=1, p=None, algorithm='auto'):
         ...
         TypeError: Symmetric group algebra of order 3 over Rational Field
         is not a commutative ring
+        sage: WittRing(QQ)
+        Traceback (most recent call last):
+        ...
+        ValueError: Rational Field has non-prime characteristic
+        and no prime was supplied
+
+        sage: WittRing(QQ, p=5, algorithm='moon')
+        Traceback (most recent call last):
+        ...
+        ValueError: algorithm must be one of 'none', 'auto',
+        'standard', 'finotti'
     """
     if base_ring not in _CommutativeRings:
         raise TypeError(f'{base_ring} is not a commutative ring')
