@@ -274,17 +274,20 @@ end intrinsic;
 intrinsic Sage(X::RngSerPow) -> MonStgElt, BoolElt
 {}
   txt := "PowerSeriesRing(%o, %o)";
-  return Sprintf(txt, Sage(BaseRing(X)), SageNamesHelper(X)), false;
+  var := Sprintf("['%o']", X.1);
+  return Sprintf(txt, Sage(BaseRing(X)), var), false;
 end intrinsic;
 
 intrinsic Sage(X::RngSerLaur) -> MonStgElt, BoolElt
 {}
   txt := "LaurentSeriesRing(%o, %o)";
-  return Sprintf(txt, Sage(BaseRing(X)), SageNamesHelper(X)), false;
+  var := Sprintf("['%o']", X.1);
+  return Sprintf(txt, Sage(BaseRing(X)), var), false;
 end intrinsic;
 
 intrinsic Sage(X::RngSerPuis) -> MonStgElt, BoolElt
 {}
   txt := "PuiseuxSeriesRing(%o, %o)";
-  return Sprintf(txt, Sage(BaseRing(X)), SageNamesHelper(X)), false;
+  var := Sprintf("['%o']", X.1);
+  return Sprintf(txt, Sage(BaseRing(X)), var), false;
 end intrinsic;
