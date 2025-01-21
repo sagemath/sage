@@ -533,7 +533,11 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
     def normalize_coordinates(self):
         """
-        Removes the gcd from the coordinates of this point (including `-1`).
+        Removes the gcd from the coordinates of this point (including `-1`)
+        and rescales everything so that the last nonzero entry is as "simple"
+        as possible. The notion of "simple" here depends on the base ring;
+        concretely, the last nonzero coordinate will be `1` in a field and
+        positive over an ordered ring.
 
         .. WARNING:: The gcd will depend on the base ring.
 
@@ -552,7 +556,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: P = ProjectiveSpace(Zp(7), 2, 'x')
             sage: p = P([-5, -15, -2])
             sage: p.normalize_coordinates(); p
-            (5 + O(7^20) : 1 + 2*7 + O(7^20) : 2 + O(7^20))
+            (6 + 3*7 + 3*7^2 + 3*7^3 + 3*7^4 + 3*7^5 + 3*7^6 + 3*7^7 + 3*7^8 + 3*7^9 + 3*7^10 + 3*7^11 + 3*7^12 + 3*7^13 + 3*7^14 + 3*7^15 + 3*7^16 + 3*7^17 + 3*7^18 + 3*7^19 + O(7^20) : 4 + 4*7 + 3*7^2 + 3*7^3 + 3*7^4 + 3*7^5 + 3*7^6 + 3*7^7 + 3*7^8 + 3*7^9 + 3*7^10 + 3*7^11 + 3*7^12 + 3*7^13 + 3*7^14 + 3*7^15 + 3*7^16 + 3*7^17 + 3*7^18 + 3*7^19 + O(7^20) : 1 + O(7^20))
 
         ::
 
@@ -576,8 +580,8 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: R.<c> = PolynomialRing(QQ)
             sage: P = ProjectiveSpace(R, 1)
             sage: Q = P(2*c, 4*c)
-            sage: Q.normalize_coordinates();Q
-            (2 : 4)
+            sage: Q.normalize_coordinates(); Q
+            (1/2 : 1)
 
         A polynomial ring over a ring gives the more intuitive result. ::
 
@@ -614,18 +618,22 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         else:
             GCD = R(gcd(self._coords[0], self._coords[1]))
             index = 2
-            neg = self._coords[0] <= 0 and self._coords[1] <= 0
-            while not GCD.is_one() and index < len(self._coords):
-                neg = self._coords[index] <= 0
+            while not GCD.is_unit() and index < len(self._coords):
                 GCD = R(gcd(GCD, self._coords[index]))
                 index += 1
-            if not GCD.is_one():
+            if not GCD.is_unit():
                 self.scale_by(~GCD)
-            if neg:
-                self.scale_by(-ZZ.one())
+            index = len(self._coords) - 1
+            while not self._coords[index]:
+                index -= 1
+            if self._coords[index].is_unit():
+                if not self._coords[index].is_one():
+                    self.scale_by(~self._coords[index])
+            elif self._coords[index] < 0:
+                self.scale_by(-R.one())
         self._normalized = True
 
-    def dehomogenize(self,n):
+    def dehomogenize(self, n):
         r"""
         Dehomogenizes at the `n`-th coordinate.
 

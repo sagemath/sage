@@ -852,7 +852,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                 raise ValueError("the zero element does not have a well-defined degree")
             if not self.is_homogeneous():
                 raise ValueError("element is not homogeneous")
-            return self.parent().degree_on_basis(self.leading_support())
+            return self.parent().degree_on_basis(next(iter(self.support())))
 
         # default choice for degree; will be overridden as necessary
         degree = homogeneous_degree
@@ -1197,7 +1197,6 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                 from collections import defaultdict
                 from sage.rings.integer_ring import ZZ
                 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-                R = self.base_ring()
                 PR = PolynomialRing(ZZ, 't')
                 dims = defaultdict(ZZ)
                 for b in self.basis():

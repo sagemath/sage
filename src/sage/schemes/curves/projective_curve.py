@@ -1105,7 +1105,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             for i in range(len(L)):
                 degs[i] = min(F.degree(L[i]), degs[i])
         T = []
-        for item in G.dict().items():
+        for item in G.monomial_coefficients().items():
             tup = tuple([item[0][i] - degs[i] for i in range(len(L))])
             T.append((tup, item[1]))
         G = R(dict(T))
@@ -1280,11 +1280,11 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                     if j == 0:
                         div_pow = min(e[1] for e in npoly.exponents())
                         npoly = PP.coordinate_ring()({(v0, v1 - div_pow, v2): g
-                                                      for (v0, v1, v2), g in npoly.dict().items()})
+                                                      for (v0, v1, v2), g in npoly.monomial_coefficients().items()})
                     else:
                         div_pow = min(e[0] for e in npoly.exponents())
                         npoly = PP.coordinate_ring()({(v0 - div_pow, v1, v2): g
-                                                      for (v0, v1, v2), g in npoly.dict().items()})
+                                                      for (v0, v1, v2), g in npoly.monomial_coefficients().items()})
                     # check the degree again
                     if npoly.degree() != d - r:
                         need_continue = True
@@ -1466,7 +1466,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                     # make sure the defining polynomial variable names are the same for K, N
                     N = NumberField(K.defining_polynomial().parent()(F.defining_polynomial()), str(K.gen()))
                     return N.composite_fields(K, both_maps=True)[0][1]*F.embeddings(N)[0]
-        if not self.base_ring() in NumberFields():
+        if self.base_ring() not in NumberFields():
             raise NotImplementedError("the base ring of this curve must be a number field")
         if not self.is_irreducible():
             raise TypeError("this curve must be irreducible")
@@ -1499,7 +1499,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                     try:
                         temp_pt = (temp_qua*temp_exc)(temp_exc.domain()(pts[i]))
                         pts.pop(i)
-                        if not PP(list(temp_pt)) in [PP(list(tpt)) for tpt in pts]:
+                        if PP(list(temp_pt)) not in [PP(list(tpt)) for tpt in pts]:
                             pts.append(temp_pt)
                     except (TypeError, ValueError):
                         pass
@@ -1519,7 +1519,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                 newpts = [PP(list(pt) + [0]) for pt in X.rational_points()]
                 # avoid duplicates
                 for pt in newpts:
-                    if not PP(list(pt)) in [PP(list(tpt)) for tpt in pts]:
+                    if PP(list(pt)) not in [PP(list(tpt)) for tpt in pts]:
                         pts.append(pt)
         return phi
 
@@ -1604,7 +1604,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
         """
         super().__init__(A, X, category=category)
 
-        if not A.base_ring() in Fields():
+        if A.base_ring() not in Fields():
             raise TypeError("curve not defined over a field")
 
         d = super(Curve_generic, self).dimension()
@@ -1775,8 +1775,9 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: C = P.curve(x^2*z - y^3)
             sage: C.fundamental_group()                                 # needs sirocco
             Finitely presented group < x0 | x0^3 >
-            sage: P.curve(z*(x^2*z - y^3)).fundamental_group()          # needs sirocco
-            Finitely presented group < x0, x1 | x1*x0*x1*x0^-1*x1^-1*x0^-1 >
+            sage: g = P.curve(z*(x^2*z - y^3)).fundamental_group()      # needs sirocco
+            sage: g.sorted_presentation()                               # needs sirocco
+            Finitely presented group < x0, x1 | x1^-1*x0^-1*x1^-1*x0*x1*x0 >
 
         In the case of number fields, they need to have an embedding
         into the algebraic field::
@@ -1805,7 +1806,6 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             ....:             + (x-18*z)*(z^2+11*x*z-x^2)^2)
             sage: G0 = C.fundamental_group()                    # needs sirocco
             sage: G.is_isomorphic(G0)                           # needs sirocco
-            #I  Forcing finiteness test
             True
             sage: C = P.curve(z)
             sage: C.fundamental_group()                         # needs sirocco
@@ -2296,12 +2296,12 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         ideal = self.defining_ideal()
         gs = self.ambient_space().gens()
         for i in range(self.ngens()):
-            if not gs[i] in ideal:
+            if gs[i] not in ideal:
                 self._open_affine = self.affine_patch(i)
                 self._open_affine_index = i
                 break
         else:
-            assert "no projective curve defined"
+            raise ValueError("no projective curve defined")
 
     def function_field(self):
         """
@@ -2521,7 +2521,6 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             sage: C.function(C._map_from_function_field(f)) == f
             True
         """
-        F = self._function_field
         S = self.ambient_space().coordinate_ring()
         phi = self._open_affine._nonsingular_model[2]
         i = self._open_affine_index
@@ -2733,7 +2732,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         # determine the affine patch where the point lies
         S = prime.ring()
         for i in range(S.ngens()):
-            if not S.gen(i) in prime:
+            if S.gen(i) not in prime:
                 break
 
         phi = self._map_to_function_field

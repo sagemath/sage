@@ -1068,25 +1068,25 @@ def is_polhill(int v, int k, int l, int mu):
     # We now define the P_{i,j}. see section 6.
 
     P = {}
-    P[0,1] = list(range((-1) + 1                  , 2**(s-2)+1))
-    P[1,1] = list(range((-1) + 2**(s-2)+2         , 2**(s-1)+1))
-    P[2,1] = list(range((-1) + 2**(s-1)+2         , 2**(s-1)+2**(s-2)+1))
-    P[3,1] = list(range((-1) + 2**(s-1)+2**(s-2)+2, 2**(s)+1))
+    P[0, 1] = list(range((-1) + 1, 2**(s-2)+1))
+    P[1, 1] = list(range((-1) + 2**(s-2)+2, 2**(s-1)+1))
+    P[2, 1] = list(range((-1) + 2**(s-1)+2, 2**(s-1)+2**(s-2)+1))
+    P[3, 1] = list(range((-1) + 2**(s-1)+2**(s-2)+2, 2**(s)+1))
 
-    P[0,2] = list(range((-1) + 2**(s-2)+2         , 2**(s-1)+2))
-    P[1,2] = list(range((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+2))
-    P[2,2] = list(range((-1) + 2**(s-1)+2**(s-2)+3, 2**(s)+1)) + [0]
-    P[3,2] = list(range((-1) + 2                  , 2**(s-2)+1))
+    P[0, 2] = list(range((-1) + 2**(s-2)+2, 2**(s-1)+2))
+    P[1, 2] = list(range((-1) + 2**(s-1)+3, 2**(s-1)+2**(s-2)+2))
+    P[2, 2] = list(range((-1) + 2**(s-1)+2**(s-2)+3, 2**(s)+1)) + [0]
+    P[3, 2] = list(range((-1) + 2, 2**(s-2)+1))
 
-    P[0,3] = list(range((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+3))
-    P[1,3] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [0,1]
-    P[2,3] = list(range((-1) + 3                  , 2**(s-2)+2))
-    P[3,3] = list(range((-1) + 2**(s-2)+3         , 2**(s-1)+2))
+    P[0, 3] = list(range((-1) + 2**(s-1)+3, 2**(s-1)+2**(s-2)+3))
+    P[1, 3] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [0,1]
+    P[2, 3] = list(range((-1) + 3, 2**(s-2)+2))
+    P[3, 3] = list(range((-1) + 2**(s-2)+3, 2**(s-1)+2))
 
-    P[0,4] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1))
-    P[1,4] = list(range((-1) + 3                  , 2**(s-2)+1)) + [2**(s-1)+1,2**(s-1)+2**(s-2)+2]
-    P[2,4] = list(range((-1) + 2**(s-2)+3         , 2**(s-1)+1)) + [2**(s-1)+2**(s-2)+1,1]
-    P[3,4] = list(range((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+1)) + [2**(s-2)+1,0]
+    P[0, 4] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1))
+    P[1, 4] = list(range((-1) + 3, 2**(s-2)+1)) + [2**(s-1)+1,2**(s-1)+2**(s-2)+2]
+    P[2, 4] = list(range((-1) + 2**(s-2)+3, 2**(s-1)+1)) + [2**(s-1)+2**(s-2)+1,1]
+    P[3, 4] = list(range((-1) + 2**(s-1)+3, 2**(s-1)+2**(s-2)+1)) + [2**(s-2)+1,0]
 
     R = {x: copy(P[x]) for x in P}
 
@@ -1100,10 +1100,10 @@ def is_polhill(int v, int k, int l, int mu):
 
     # We now define the R_{i,j}. see *end* of section 6.
 
-    R[0,3] = list(range((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+2))
-    R[1,3] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [0,1,2**(s-1)+2**(s-2)+2]
-    R[0,4] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [2**(s-1)+2**(s-2)+2]
-    R[1,4] = list(range((-1) + 3                  , 2**(s-2)+1)) + [2**(s-1)+1]
+    R[0, 3] = list(range((-1) + 2**(s-1)+3, 2**(s-1)+2**(s-2)+2))
+    R[1, 3] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [0,1,2**(s-1)+2**(s-2)+2]
+    R[0, 4] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [2**(s-1)+2**(s-2)+2]
+    R[1, 4] = list(range((-1) + 3, 2**(s-2)+1)) + [2**(s-1)+1]
 
     for x in R:
         R[x] = [K[i] for i in R[x]]
@@ -1840,7 +1840,7 @@ def eigenmatrix(int v, int k, int l, int mu):
         return Matrix(ZZ, [[1, k, v-k-1], [1, r, -r-1], [1, s, -s-1]])
 
 
-cpdef latin_squares_graph_parameters(int v, int k, int l,int mu):
+cpdef latin_squares_graph_parameters(int v, int k, int l, int mu):
     r"""
     Check whether (v,k,l,mu)-strongly regular graph has parameters of an `L_g(n)` s.r.g.
 

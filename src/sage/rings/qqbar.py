@@ -981,9 +981,9 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
 
             numfield_polynomial_flat = numfield.polynomial()(nf_gen)
 
-            polynomial_flat = sum(flat_ring({(0,)+tuple(k):1})
+            polynomial_flat = sum(flat_ring({(0,) + tuple(k): 1})
                                   * v.polynomial()(nf_gen)
-                                  for k,v in numfield_f.dict().items())
+                                  for k, v in numfield_f.monomial_coefficients().items())
 
             norm_flat = polynomial_flat.resultant(numfield_polynomial_flat, nf_gen)
             norm_f = norm_flat((0,)+norm_ring.gens())
@@ -1313,7 +1313,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
         except TypeError:
             return False
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a set of generators for this field.
 
@@ -1811,7 +1811,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
         from sage.rings.rational_field import QQ
         return (AlgebraicClosureFunctor(), QQ)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a set of generators for this field.
 
@@ -2556,7 +2556,8 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
     - ``same_field`` -- boolean (default: ``False``); see below
 
     - ``embedded`` -- boolean (default: ``False``); whether to make the
-      NumberField embedded
+      NumberField embedded, note that this has no effect when the
+      resulting field is ``QQ`` because there is only one ``QQ`` instance
 
     - ``name`` -- string (default: ``'a'``); name of the primitive element
 
@@ -2710,7 +2711,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
         -1
         sage: nfI^2
         -1
-        sage: sum = nfrt2 + nfrt3 + nfI + nfz3; sum
+        sage: sum = nfrt2 + nfrt3 + nfI + nfz3; sum  # random
         a^5 + a^4 - a^3 + 2*a^2 - a - 1
         sage: hom(sum)
         2.646264369941973? + 1.866025403784439?*I
@@ -2827,6 +2828,69 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
            To:   Algebraic Real Field
            Defn: 1 |--> 1)
 
+    Test ``embedded`` for quadratic and cyclotomic fields::
+
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(2/3))], embedded=False, minimal=True); v
+        (Number Field in zeta6 with defining polynomial x^2 - x + 1,
+         [zeta6 - 1],
+         Ring morphism:
+           From: Number Field in zeta6 with defining polynomial x^2 - x + 1
+           To:   Algebraic Field
+           Defn: zeta6 |--> 0.500000000000000? + 0.866025403784439?*I)
+        sage: v[0].coerce_embedding()
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(2/3))], embedded=True, minimal=True); v
+        (Cyclotomic Field of order 6 and degree 2,
+         [zeta6 - 1],
+         Ring morphism:
+           From: Cyclotomic Field of order 6 and degree 2
+           To:   Algebraic Field
+           Defn: zeta6 |--> 0.500000000000000? + 0.866025403784439?*I)
+        sage: v[0].coerce_embedding()
+        Generic morphism:
+          From: Cyclotomic Field of order 6 and degree 2
+          To:   Complex Lazy Field
+          Defn: zeta6 -> 0.500000000000000? + 0.866025403784439?*I
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/2))], embedded=False, minimal=True); v
+        (Number Field in I with defining polynomial x^2 + 1,
+         [I],
+         Ring morphism:
+           From: Number Field in I with defining polynomial x^2 + 1
+           To:   Algebraic Field
+           Defn: I |--> 1*I)
+        sage: v[0].coerce_embedding()
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/2))], embedded=True, minimal=True); v
+        (Number Field in I with defining polynomial x^2 + 1 with I = 1*I,
+         [I],
+         Ring morphism:
+           From: Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+           To:   Algebraic Field
+           Defn: I |--> 1*I)
+        sage: v[0].coerce_embedding()
+        Generic morphism:
+          From: Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+          To:   Complex Lazy Field
+          Defn: I -> 1*I
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/5))], embedded=False, minimal=True); v
+        (Number Field in zeta10 with defining polynomial x^4 - x^3 + x^2 - x + 1,
+         [zeta10],
+         Ring morphism:
+           From: Number Field in zeta10 with defining polynomial x^4 - x^3 + x^2 - x + 1
+           To:   Algebraic Field
+           Defn: zeta10 |--> 0.8090169943749474? + 0.5877852522924731?*I)
+        sage: v[0].coerce_embedding()
+        sage: v = number_field_elements_from_algebraics([QQbar((-1)^(1/5))], embedded=True, minimal=True); v
+        (Cyclotomic Field of order 10 and degree 4,
+         [zeta10],
+         Ring morphism:
+           From: Cyclotomic Field of order 10 and degree 4
+           To:   Algebraic Field
+           Defn: zeta10 |--> 0.8090169943749474? + 0.5877852522924731?*I)
+        sage: v[0].coerce_embedding()
+        Generic morphism:
+          From: Cyclotomic Field of order 10 and degree 4
+          To:   Complex Lazy Field
+          Defn: zeta10 -> 0.809016994374948? + 0.587785252292473?*I
+
     Tests more complicated combinations::
 
         sage: # needs sage.libs.gap sage.symbolic
@@ -2847,10 +2911,10 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
         sage: AA((-1)^(2/3))
         1
         sage: number_field_elements_from_algebraics([(-1)^(2/3)])
-        (Cyclotomic Field of order 6 and degree 2,
+        (Number Field in zeta6 with defining polynomial x^2 - x + 1,
          [zeta6 - 1],
          Ring morphism:
-           From: Cyclotomic Field of order 6 and degree 2
+           From: Number Field in zeta6 with defining polynomial x^2 - x + 1
            To:   Algebraic Field
            Defn: zeta6 |--> 0.500000000000000? + 0.866025403784439?*I)
     """
@@ -2905,17 +2969,23 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
     exact_generator = gen.root_as_algebraic()
     hom = fld.hom([exact_generator])
 
-    if fld is not QQ and embedded:
-        # creates the embedded field
-        embedded_field = NumberField(fld.defining_polynomial(), fld.variable_name(), embedding=exact_generator)
+    if fld is not QQ:
+        # ignore the embedded parameter for QQ
+        # cyclotomic fields are embedded by default
+        # number fields are not embedded by default
+        # if the default embedding is different from what is expected then modify the field
+        if embedded != (fld.coerce_embedding() is not None):
+            # creates the modified field
+            modified_field = NumberField(fld.defining_polynomial(), fld.variable_name(),
+                                         embedding=exact_generator if embedded else None)
 
-        # embeds the numbers
-        inter_hom = fld.hom([embedded_field.gen(0)])
-        nums = [inter_hom(n) for n in nums]
+            # embeds the numbers
+            inter_hom = fld.hom([modified_field.gen(0)])
+            nums = [inter_hom(n) for n in nums]
 
-        # get the field and homomorphism
-        hom = embedded_field.hom([exact_generator])
-        fld = embedded_field
+            # get the field and homomorphism
+            hom = modified_field.hom([exact_generator])
+            fld = modified_field
 
     if single_number:
         nums = nums[0]
@@ -7028,11 +7098,25 @@ class AlgebraicPolynomialTracker(SageObject):
             sage: cp.exactify()
             sage: cp._exact
             True
+
+        TESTS:
+
+        Check that interrupting ``exactify()`` does not lead to incoherent state::
+
+            sage: x = polygen(AA)
+            sage: p = AA(2)^(1/100) * x + AA(3)^(1/100)
+            sage: cp = AA.common_polynomial(p)
+            sage: alarm(0.5); cp.generator()
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
+            sage: alarm(0.5); cp.generator()
+            Traceback (most recent call last):
+            ...
+            AlarmInterrupt
         """
         if self._exact:
             return
-
-        self._exact = True
 
         if self._poly.base_ring() is QQ:
             self._factors = [fac_exp[0] for fac_exp in self._poly.factor()]
@@ -7057,6 +7141,8 @@ class AlgebraicPolynomialTracker(SageObject):
                 fp = fld_poly(coeffs)
 
                 self._factors = [fac_exp[0] for fac_exp in fp.factor()]
+
+        self._exact = True
 
     def factors(self):
         r"""

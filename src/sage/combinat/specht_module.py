@@ -748,14 +748,15 @@ class SpechtModuleTableauxBasis(SpechtModule):
         B = self.basis()
         COB = matrix([b.lift().to_vector() for b in B]).T
         P, L, U = COB.LU()
-        # Since U is upper triangular, the nonzero entriesm must be in the
-        #   upper square portiion of the matrix
+        # Since U is upper triangular, the nonzero entries must be in the
+        # upper square portion of the matrix
         n = len(B)
 
         Uinv = U.matrix_from_rows(range(n)).inverse()
-        # This is a slight abuse as the codomain should be a module with a different
-        #    S_n action, but we only use it internally, so there isn't any problems
-        PLinv = (P*L).inverse()
+        # This is a slight abuse as the codomain should be a module
+        # with a different
+        #  S_n action, but we only use it internally, so there is no problem
+        PLinv = (P * L).inverse()
 
         def retraction(elt):
             vec = PLinv * elt.to_vector(order=self._support_order)
@@ -1035,7 +1036,7 @@ class MaximalSpechtSubmodule(SymmetricGroupRepresentation, SubmoduleWithBasis):
 
 class SimpleModule(SymmetricGroupRepresentation, QuotientModuleWithBasis):
     r"""
-    The simgle `S_n`-module associated with a partition `\lambda`.
+    The simple `S_n`-module associated with a partition `\lambda`.
 
     The simple module `D^{\lambda}` is the quotient of the Specht module
     `S^{\lambda}` by its :class:`maximal submodule <MaximalSpechtSubmodule>`

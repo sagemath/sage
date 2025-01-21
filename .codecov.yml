@@ -17,3 +17,4 @@ coverage:
         target: auto
         threshold: 0%
         base: auto
+        informational: true

@@ -80,12 +80,10 @@ A ``LinearCode`` is instantiated by providing a generator matrix::
     sage: G = MS([[1,1,1,0,0,0,0], [1,0,0,1,1,0,0], [0,1,0,1,0,1,0], [1,1,0,1,0,0,1]])
     sage: C = LinearCode(G)
     sage: C.basis()
-    [
-    (1, 1, 1, 0, 0, 0, 0),
-    (1, 0, 0, 1, 1, 0, 0),
-    (0, 1, 0, 1, 0, 1, 0),
-    (1, 1, 0, 1, 0, 0, 1)
-    ]
+    [(1, 1, 1, 0, 0, 0, 0),
+     (1, 0, 0, 1, 1, 0, 0),
+     (0, 1, 0, 1, 0, 1, 0),
+     (1, 1, 0, 1, 0, 0, 1)]
     sage: c = C.basis()[1]
     sage: c in C
     True
@@ -1261,7 +1259,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         gammaC = n+1-k-d
         return gammaC
 
-    def is_permutation_equivalent(self,other,algorithm=None):
+    def is_permutation_equivalent(self, other, algorithm=None):
         """
         Return ``True`` if ``self`` and ``other`` are permutation equivalent
         codes and ``False`` otherwise.
@@ -2301,11 +2299,9 @@ class LinearCode(AbstractLinearCode):
             ....:             [a, a + 1, 1, a + 1, 1, 0, 0]])
             sage: C = LinearCode(G)
             sage: C.basis()
-            [
-            (1, 0, 0, a + 1, 0, 1, 0),
-            (0, 1, 0, 0, a + 1, 0, 1),
-            (0, 0, 1, a, a + 1, a, a + 1)
-            ]
+            [(1, 0, 0, a + 1, 0, 1, 0),
+             (0, 1, 0, 0, a + 1, 0, 1),
+             (0, 0, 1, a, a + 1, a, a + 1)]
             sage: C.minimum_distance()                                                  # needs sage.libs.gap
             3
 

@@ -1200,7 +1200,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         e = min(maxexp)
 
         #Fix L and Q
-        for i in range(0,2):
+        for i in range(2):
             while T[i].subs({w1:t1}) == 0:
                 T[i] = T[i]/t
             T[i] = T[i].subs({w1:t1})
@@ -1299,7 +1299,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             return Point
         return self.point(Point, False)
 
-    def sigmaY(self,P, **kwds):
+    def sigmaY(self, P, **kwds):
         r"""
         Return the involution on the Wehler K3 surfaces induced by the double covers.
 
@@ -1435,7 +1435,8 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         -phi(self.Hpoly(0, 1, 2))]
         maxexp = []
 
-        #Find highest exponent that we can divide out by to get a nonzero answer
+        # Find highest exponent that we can divide out by to get a
+        # nonzero answer
         for i in range(2, len(T)):
             e = 0
             while (T[i]/t**e).subs({w1:t1}) == 0:
@@ -1444,7 +1445,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
         e = min(maxexp)
 
-        for i in range(0, 2):
+        for i in range(2):
             while T[i].subs({w1:t1}) == 0:
                 T[i] = T[i]/t
             T[i] = T[i].subs({w1:t1})
@@ -1579,7 +1580,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         kwds.update({"check":False})
         return self.sigmaY(A, **kwds)
 
-    def psi(self,a, **kwds):
+    def psi(self, a, **kwds):
         r"""
         Evaluates the function `\psi = \sigma_x \circ \sigma_y`.
 
@@ -2448,7 +2449,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         """
         return self.defining_ideal() == right.defining_ideal()
 
-    def is_symmetric_orbit(self,orbit):
+    def is_symmetric_orbit(self, orbit):
         r"""
         Check to see if the orbit is symmetric (i.e. if one of the points on the
         orbit is fixed by '\sigma_x' or '\sigma_y').

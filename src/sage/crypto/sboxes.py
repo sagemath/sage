@@ -399,6 +399,43 @@ def monomial_function(n, e):
     return SBox(X**e)
 
 
+def chi(n):
+    r"""
+    Return the `\chi` function defined over `\GF{2^n}` used in the nonlinear
+    layer of Keccak and Xoodyak.
+
+    INPUT:
+
+    - ``n`` -- size of the S-Box
+
+    EXAMPLES::
+
+        sage: from sage.crypto.sboxes import chi
+        sage: chi(3)
+        (0, 3, 6, 1, 5, 4, 2, 7)
+        sage: chi(3).is_permutation()
+        True
+        sage: chi(4).is_permutation()
+        False
+        sage: chi(5)
+        (0, 9, 18, 11, 5, 12, 22, 15, 10, 3, 24, 1, 13, 4, 30, 7, 20, 21, 6,
+        23, 17, 16, 2, 19, 26, 27, 8, 25, 29, 28, 14, 31)
+    """
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.finite_rings.finite_field_constructor import GF
+    from sage.modules.free_module_element import vector
+
+    table = [0]*(1 << n)
+
+    for x in range(1 << n):
+        vx = vector(GF(2), ZZ(x).digits(base=2, padto=n))
+        vy = [vx[i] + (vx[(i+1) % n] + 1)*vx[(i+2) % n] for i in range(n)]
+        y = ZZ(vy, base=2)
+        table[x] = y
+
+    return SBox(table)
+
+
 # Bijective S-Boxes mapping 9 bits to 9
 # =====================================
 
