@@ -1,4 +1,3 @@
-from sage.rings.padics.witt_rings import fast_char_p_power as _fcppow
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import CommutativeRingElement
 
@@ -172,6 +171,7 @@ class WittVector_p_typical(WittVector_base):
             return NotImplemented
 
     def _mul_(self, other):
+        from sage.rings.padics.witt_ring import fast_char_p_power as _fcppow
         P = self.parent()
         C = self.__class__
 
