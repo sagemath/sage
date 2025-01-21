@@ -647,6 +647,11 @@ latex_elements['preamble'] = r"""
 \makeatother
 """
 
+# Enable "hard wrapping" long code lines (only applies if breaking
+# long codelines at spaces or other suitable places failed, typically
+# this is for long decimal expansions or possibly long string identifiers)
+latex_elements['sphinxsetup'] = "verbatimforcewraps=true"
+
 # Documents to append as an appendix to all manuals.
 # latex_appendices = []
 
