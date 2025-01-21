@@ -407,6 +407,29 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             s = 'Sparse ' + s
         return s
 
+    def _magma_init_(self, magma):
+        """
+        Used in converting this ring to the corresponding ring in MAGMA.
+
+        EXAMPLES::
+
+            sage: # optional - magma
+            sage: R = LaurentSeriesRing(QQ, 'y')
+            sage: R._magma_init_(magma)
+            'SageCreateWithNames(LaurentSeriesRing(_sage_ref...),["y"])'
+            sage: S = magma(R)
+            sage: S
+            Laurent series field in y over Rational Field
+            sage: S.1
+            y
+            sage: magma(LaurentSeriesRing(GF(7), 'x'))                                     # needs sage.rings.finite_rings
+            Laurent series field in x over GF(7)
+        """
+        B = magma(self.base_ring())
+        Bref = B._ref()
+        s = 'LaurentSeriesRing(%s)' % (Bref)
+        return magma._with_names(s, self.variable_names())
+
     def _element_constructor_(self, x, n=0, prec=infinity):
         r"""
         Construct a Laurent series from `x`.

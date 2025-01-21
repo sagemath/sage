@@ -10,7 +10,7 @@ theory, group theory, combinatorics and algebra.
    You must have Magma installed on your
    computer for this interface to work. Magma is not free, so it is
    not included with Sage, but you can obtain it from
-   http://magma.maths.usyd.edu.au/.
+   https://magma.maths.usyd.edu.au/.
 
 The Magma interface offers three pieces of functionality:
 
