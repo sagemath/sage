@@ -422,6 +422,9 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             Laurent series field in y over Rational Field
             sage: S.1
             y
+            sage: S.sage() == R
+            True
+
             sage: magma(LaurentSeriesRing(GF(7), 'x'))                                     # needs sage.rings.finite_rings
             Laurent series field in x over GF(7)
         """

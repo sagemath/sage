@@ -1235,7 +1235,7 @@ class Magma(ExtraTabCompletion, Expect):
         magma = self
         # coerce each arg to be a Magma element
         if isinstance(gens, (list, tuple)):
-            gens = (magma(z) for z in gens)
+            gens = [magma(z) for z in gens]
             # make comma separated list of names (in Magma) of each of the gens
             v = ', '.join(w.name() for w in gens)
         else:

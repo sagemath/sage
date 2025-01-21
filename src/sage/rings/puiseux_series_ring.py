@@ -292,6 +292,9 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
             Puiseux series field in y over Rational Field
             sage: S.1
             y
+            sage: S.sage() == R
+            True
+
             sage: magma(PuiseuxSeriesRing(GF(7), 'x'))                                     # needs sage.rings.finite_rings
             Puiseux series field in x over GF(7)
         """
