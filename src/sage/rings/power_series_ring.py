@@ -739,7 +739,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             y
             sage: S.sage() == R
             True
-        
+
+            sage: # optional - magma
             sage: magma(PowerSeriesRing(GF(7), 'x'))                                     # needs sage.rings.finite_rings
             Power series ring in x over GF(7)
         """
