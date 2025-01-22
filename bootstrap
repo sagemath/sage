@@ -220,7 +220,7 @@ save () {
     fi
     mkdir -p upstream
     tar zcf "$NEWCONFBALL" \
-	configure \
+	configure real_configure configure_wrapper \
 	config/install-sh config/compile config/config.guess config/config.sub config/missing \
 	build/make/Makefile-auto.in \
 	src/doc/en/installation/*.txt \
