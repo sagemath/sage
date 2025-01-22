@@ -97,9 +97,11 @@ cdef class LaurentSeries(AlgebraElement):
     - ``parent`` -- a Laurent series ring
 
     - ``f`` -- a power series (or something can be coerced
-      to one); note that ``f`` does *not* have to be a unit
+      to one); note that ``f`` does *not* have to be a unit.
+      This can be accessed through :meth:`valuation_zero_part`.
 
-    - ``n`` -- (default: 0) integer
+    - ``n`` -- (default: 0) integer. This can be accessed
+      through :meth:`valuation`.
     """
     def __init__(self, parent, f, n=0):
         r"""
