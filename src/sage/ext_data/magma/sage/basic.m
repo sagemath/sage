@@ -158,8 +158,9 @@ intrinsic SageNamesHelper(X::.) -> MonStgElt
     return "(" * (&* [ Sprintf("'x%o', ", j) : j in [ 1..i ] ]) * ")";
   else
     /* named variables */
-    return "(" * (&* [ Sprintf("'%o', ", X.j) : j in [ 1..i ] ]) * ")";
-  end if;
+    return "(" * (&* [ Sprintf("'%o'.replace('.', ''), ", X.j) : j in [ 1..i ] ]) * ")";
+
+end if;
 end intrinsic;
 
 intrinsic Sage(X::RngUPol) -> MonStgElt, BoolElt
@@ -191,9 +192,16 @@ end intrinsic;
 
 intrinsic Sage(K::FldNum) -> MonStgElt, BoolElt
 {}
-    names := [Sprintf("'%o'.replace('$.', 'a').replace('.', '')", a) : a in GeneratorsSequence(K)];
-    polynomials := DefiningPolynomial(K);
-    return Sprintf("NumberField(%o, %o)", Sage(polynomials), names), false;
+  gens := GeneratorsSequence(K);
+  if "$" in Sprint(gens[1]) then
+    /* unnamed variables */
+    names := "(" * (&* [ Sprintf("'a%o', ", j) : j in [ 1..#gens ] ]) * ")";
+  else
+    /* named variables */
+    names := "(" * (&* [ Sprintf("'%o'.replace('.', ''), ", a) : a in gens]) * ")";
+  end if;
+  polynomials := DefiningPolynomial(K);
+  return Sprintf("NumberField(%o, %o)", Sage(polynomials), names), false;
 end intrinsic;
 
 intrinsic Sage(A::FldNumElt) -> MonStgElt, BoolElt
