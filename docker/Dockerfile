@@ -196,7 +196,7 @@ ARG MAKEFLAGS="-j2"
 ENV MAKEFLAGS $MAKEFLAGS
 ARG SAGE_NUM_THREADS="2"
 ENV SAGE_NUM_THREADS $SAGE_NUM_THREADS
-RUN make configure
+RUN ./bootstrap
 # Old default before https://github.com/sagemath/sage/issues/32406
 RUN ./configure --disable-editable
 RUN make build
