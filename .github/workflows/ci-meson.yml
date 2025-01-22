@@ -24,6 +24,7 @@ jobs:
       matrix:
         os: [ubuntu]
         python: ['3.11', '3.12']
+        editable: [false, true]
 
     steps:
       - uses: actions/checkout@v4
@@ -70,7 +71,7 @@ jobs:
           export CC="ccache $CC"
           export CXX="ccache $CXX"
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
-          pip install --no-build-isolation --no-deps --config-settings=builddir=builddir . -v
+          pip install --no-build-isolation --no-deps --config-settings=builddir=builddir ${{ matrix.editable == 'true' && '--editable' || '' }} . -v
 
       - name: Verify dependencies
         shell: bash -l {0}
