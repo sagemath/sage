@@ -649,6 +649,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             True
             sage: S.has_coerce_map_from(PolynomialRing(ZZ, 't'))
             True
+            sage: S.has_coerce_map_from(Frac(PolynomialRing(ZZ, 't')))
+            False
             sage: S.has_coerce_map_from(LaurentPolynomialRing(ZZ, 't'))
             True
             sage: S.has_coerce_map_from(PowerSeriesRing(ZZ, 't'))
@@ -671,6 +673,12 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: S.has_coerce_map_from(LaurentSeriesRing(QQ, 't'))
             False
 
+            sage: T.<t> = LaurentSeriesRing(QQ)
+            sage: T.has_coerce_map_from(QQ['t'])
+            True
+            sage: T.has_coerce_map_from(Frac(QQ['t']))
+            True
+
             sage: R.<t> = LaurentSeriesRing(QQ['x'])
             sage: R.has_coerce_map_from(QQ[['t']])
             True
@@ -687,7 +695,10 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: R.has_coerce_map_from(LazyLaurentSeriesRing(ZZ['x'], 't'))
             True
         """
+        from sage.rings.fraction_field import FractionField_generic
         A = self.base_ring()
+        if isinstance(P, FractionField_generic) and A.is_field():
+            return self.has_coerce_map_from(P.base())
         if (isinstance(P, (LaurentSeriesRing, LazyLaurentSeriesRing,
                            LaurentPolynomialRing_generic,
                            PowerSeriesRing_generic, LazyPowerSeriesRing,
