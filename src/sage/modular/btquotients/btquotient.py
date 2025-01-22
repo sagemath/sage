@@ -42,6 +42,7 @@ from copy import copy
 from collections import deque
 
 from sage.arith.misc import gcd, xgcd, kronecker_symbol, fundamental_discriminant
+from sage.interfaces.magma import magma
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
@@ -2307,7 +2308,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             [1 0 2 0]
             [0 0 2 0]
             [0 0 0 0]
-            [1 0 2 2]
+            [1 2 2 0]
             ]
         """
         if not self._use_magma or len(self._extra_level) == 0:
@@ -2700,7 +2701,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(5,11,use_magma=True) # optional - magma
             sage: X.get_splitting_field() # optional - magma
-            Number Field in a with defining polynomial X1^2 + 11
+            Number Field in a with defining polynomial x^2 + 11
         """
         if not self._use_magma:
             raise NotImplementedError('Sage does not know yet how to work with the kind of orders that you are trying to use. Try installing Magma first and set it up so that Sage can use it.')
