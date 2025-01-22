@@ -29,6 +29,7 @@ py.install_sources(
   'monoids.py',
   'posets.py',
   'semigroups.py',
+  'semirings.py',
   'sets_cat.py',
   'sets_with_grading.py',
   'with_realizations.py',
