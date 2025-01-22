@@ -81,7 +81,9 @@ jobs:
         shell: bash -l {0}
         run: |
           # We don't install sage_setup, so don't try to test it
-          rm -R ./src/sage_setup/
+          # If editable then deleting the directory will cause sage to detect rebuild, which will cause ninja to fail
+          # so we don't delete the directory in this case
+          ${{ matrix.editable && 'true' || 'rm -R ./src/sage_setup/' }}
           ./sage -t --all -p4
 
       - name: Upload log
