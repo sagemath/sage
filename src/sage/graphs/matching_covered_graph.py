@@ -2580,7 +2580,7 @@ class MatchingCoveredGraph(Graph):
         INPUT:
 
         - ``vertices`` -- (default: ``None``) iterator container of vertex
-          labels correponding to which the looped edges are to be removed. If
+          labels corresponding to which the looped edges are to be removed. If
           ``vertices`` is ``None``, remove all loops.
 
         OUTPUT:
@@ -2660,8 +2660,6 @@ class MatchingCoveredGraph(Graph):
         if vertices is not None and not isinstance(vertices, Iterable):
             raise TypeError(f'\'{vertices.__class__.__name__}\' '
                             'object is not iterable')
-
-        return
 
     @doc_index('Miscellaneous methods')
     def update_matching(self, matching):

@@ -106,7 +106,7 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
         k = mpz_remove(temp.value, mpq_numref((<Rational>x).value), prime_pow.prime.value)
         if k == 0:
             k = -mpz_remove(temp.value, mpq_denref((<Rational>x).value), prime_pow.prime.value)
-    elif isinstance(x, (list,tuple)):
+    elif isinstance(x, (list, tuple)):
         f = prime_pow.f
         if (e == 1 and len(x) > f) or (e != 1 and len(x) > e):
             # could reduce modulo the defining polynomial but that isn't currently supported
@@ -114,11 +114,11 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
         k = maxordp
         shift = 0
         for a in x:
-            if isinstance(a, (list,tuple)):
+            if isinstance(a, (list, tuple)):
                 if e == 1 or f == 1:
                     raise ValueError("nested lists not allowed for unramified and eisenstein extensions")
                 for b in a:
-                    if isinstance(b, (list,tuple)):
+                    if isinstance(b, (list, tuple)):
                         raise ValueError("list nesting too deep")
                     curterm = get_ordp(b, prime_pow)
                     k = min(k, curterm + shift, maxordp)
@@ -191,13 +191,13 @@ cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
     cdef long k, shift, e = prime_pow.e
     cdef Integer prec
     cdef GEN pari_tmp
-    if isinstance(x, int) or isinstance(x, Integer) or isinstance(x, Rational):
+    if isinstance(x, (int, Integer, Rational)):
         return maxordp
-    elif isinstance(x, (list,tuple)):
+    elif isinstance(x, (list, tuple)):
         k = maxordp
         shift = 0
         for a in x:
-            if isinstance(a, (list,tuple)):
+            if isinstance(a, (list, tuple)):
                 for b in a:
                     curterm = get_preccap(b, prime_pow)
                     k = min(k, curterm + shift)

@@ -798,7 +798,7 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
             from sage.rings.semirings.tropical_polynomial import TropicalPolynomialSemiring
             constructor = TropicalPolynomialSemiring
         elif base_ring not in _CommutativeRings:
-            constructor = polynomial_ring.PolynomialRing_general
+            constructor = polynomial_ring.PolynomialRing_generic
         elif base_ring in _CompleteDiscreteValuationRings:
             constructor = polynomial_ring.PolynomialRing_cdvr
         elif base_ring in _CompleteDiscreteValuationFields:

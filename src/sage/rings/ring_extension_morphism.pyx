@@ -461,7 +461,7 @@ cdef class RingExtensionHomomorphism(RingMap):
         if self.base_map() is not None:
             s += "with map on base ring"
             ss = self.base_map()._repr_defn()
-            ss = re.sub('\nwith map on base ring:?$', '', ss, 0, re.MULTILINE)
+            ss = re.sub('\nwith map on base ring:?$', '', ss, flags=re.MULTILINE)
             if ss != "": s += ":\n" + ss
         if s != "" and s[-1] == "\n":
             s = s[:-1]

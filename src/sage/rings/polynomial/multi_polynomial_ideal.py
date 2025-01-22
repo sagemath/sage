@@ -251,7 +251,7 @@ from sage.rings.qqbar_decorators import handle_AA_and_QQbar
 from sage.structure.element import parent
 from sage.structure.richcmp import (op_EQ, op_GE, op_GT, op_LE, op_LT, op_NE,
                                     rich_to_bool, richcmp_method)
-from sage.structure.sequence import Sequence
+from sage.structure.sequence import Sequence, Sequence_generic
 
 try:
     from sage.interfaces.expect import StdOutContext
@@ -448,8 +448,7 @@ class MPolynomialIdeal_magma_repr:
         from sage.rings.polynomial.multi_polynomial_sequence import \
             PolynomialSequence
 
-        B = PolynomialSequence([R(e) for e in mgb], R, immutable=True)
-        return B
+        return PolynomialSequence([R(e) for e in mgb], R, immutable=True)
 
 
 class MPolynomialIdeal_singular_base_repr:
@@ -601,10 +600,10 @@ class MPolynomialIdeal_singular_base_repr:
         """
         from sage.rings.fraction_field import FractionField_generic
         from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         F = self.base_ring()
         if (not isinstance(F, FractionField_generic) or
-            not isinstance(F.ring(), (MPolynomialRing_base, PolynomialRing_general))):
+            not isinstance(F.ring(), (MPolynomialRing_base, PolynomialRing_generic))):
             raise TypeError("the base ring must be a field with parameters")
         from sage.arith.functions import lcm
         from sage.libs.singular.function import lib, singular_function
@@ -1161,7 +1160,7 @@ class MPolynomialIdeal_singular_repr(
         else:
             raise TypeError("algorithm '%s' unknown" % algorithm)
 
-        T = Sequence([ MPolynomialIdeal(Q,t) for t in Tbar])
+        T = Sequence([MPolynomialIdeal(Q, t) for t in Tbar])
         return sorted(T, key=lambda x: x.gens())
 
     @require_field
@@ -3919,10 +3918,12 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         return 0
 
     @cached_method
-    def gens(self):
+    def gens(self) -> Sequence_generic:
         """
-        Return a set of generators / a basis of this ideal. This is usually the
-        set of generators provided during object creation.
+        Return a set of generators / a basis of this ideal.
+
+        This is usually the set of generators provided during object
+        creation.
 
         EXAMPLES::
 
@@ -4528,8 +4529,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: R.<x,y,z> = PolynomialRing(Zmod(2233497349584))
             sage: I = R.ideal([z*(x-3*y), 3^2*x^2-y*z, z^2+y^2])
             sage: I.groebner_basis()
-            [2*z^4, y*z^2 + 81*z^3, 248166372176*z^3, 9*x^2 - y*z, y^2 + z^2, x*z +
-            2233497349581*y*z, 248166372176*y*z]
+            [2*z^4, y*z^2 + 81*z^3, 248166372176*z^3, 9*x^2 + 2233497349583*y*z, y^2 + z^2, x*z + 2233497349581*y*z, 248166372176*y*z]
 
         Sage also supports local orderings::
 
