@@ -950,9 +950,8 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             ret = {v: self.base_ring().one()}
             qm1 = self._q - self.base_ring().one()
             for i in reversed(w.reduced_word()):
-                temp = {} # start from 0
-                for p in ret:
-                    c = ret[p]
+                temp = {}  # start from 0
+                for p, c in ret.items():
                     # We have to flip the side due to Sage's
                     # convention for multiplying permutations
                     pi = p.apply_simple_reflection(i, side='left')
@@ -961,7 +960,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     else:
                         iaxpy(1, {pi: c}, temp)
                 ret = temp
-            return {(L, p): ret[p] for p in ret}
+            return {(L, p): c for p, c in ret.items()}
 
         def _product_Tw_L(self, w, L):
             r"""
@@ -1007,10 +1006,9 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             q = self._q
             one = q.parent().one()
             for i in w.reduced_word()[::-1]:
-                iL = {} # this will become T_i * L, written in standard form
-                for lv in wL:
-                    c = wL[lv]
-                    L = list(lv[0]) # make a copy
+                iL = {}  # this will become T_i * L, written in standard form
+                for lv, c in wL.items():
+                    L = list(lv[0])  # make a copy
                     v = lv[1]
                     a, b = L[i-1], L[i]
                     L[i-1], L[i] = L[i], L[i-1] # swap L_i=L[i-1] and L_{i+1}=L[i]
@@ -1034,7 +1032,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                         c *= (one - q)
                         iaxpy(1, {(tuple(l), v): c for l in Ls}, iL)
 
-                wL = iL # replace wL with iL and repeat
+                wL = iL  # replace wL with iL and repeat
             return self._from_dict(wL, remove_zeros=False, coerce=False)
 
         @cached_method

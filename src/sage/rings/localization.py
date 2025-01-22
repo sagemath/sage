@@ -829,7 +829,7 @@ class Localization(Parent, UniqueRepresentation):
         """
         return self(self.base_ring().gen(i))
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a tuple whose entries are the generators for this
         object, in order.

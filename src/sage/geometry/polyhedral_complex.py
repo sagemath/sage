@@ -412,7 +412,7 @@ class PolyhedralComplex(GenericCellComplex):
             11
         """
         cells = self.cells()
-        dim_index = range(0, self.dimension() + 1)
+        dim_index = range(self.dimension() + 1)
         if not increasing:
             dim_index = reversed(dim_index)
         for d in dim_index:
