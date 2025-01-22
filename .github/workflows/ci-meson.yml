@@ -71,7 +71,7 @@ jobs:
           export CC="ccache $CC"
           export CXX="ccache $CXX"
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
-          pip install --no-build-isolation --no-deps --config-settings=builddir=builddir ${{ matrix.editable == 'true' && '--editable' || '' }} . -v
+          pip install --no-build-isolation --no-deps --config-settings=builddir=builddir ${{ matrix.editable && '--editable' || '' }} . -v
 
       - name: Verify dependencies
         shell: bash -l {0}
