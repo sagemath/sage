@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   test:
-    name: Conda (${{ matrix.os }}, Python ${{ matrix.python }})
+    name: Conda (${{ matrix.os }}, Python ${{ matrix.python }}, editable: ${{ matrix.editable }})
     runs-on: ${{ matrix.os }}-latest
 
     strategy:
