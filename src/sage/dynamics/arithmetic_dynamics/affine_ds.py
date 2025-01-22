@@ -800,7 +800,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         l = identity_matrix(FractionField(self.codomain().base_ring()), N, N)
         Q = P
         J = self.jacobian()
-        for i in range(0, n):
+        for i in range(n):
             R = self(Q)
             l = J(tuple(Q)) * l  # chain rule matrix multiplication
             Q = R
