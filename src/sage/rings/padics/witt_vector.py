@@ -20,6 +20,15 @@ class WittVector_base(CommutativeRingElement):
             (1)
             sage: -e
             (2)
+
+            sage: W = WittRing(GF(3), prec=4)
+            sage: t = W([1,2,0,1])
+            sage: t**2
+            (1, 1, 0, 2)
+            sage: -t
+            (2, 1, 0, 2)
+            sage: 1/t
+            (1, 1, 1, 0)
         """
         self.prec = parent.precision()
         B = parent.base()
@@ -33,9 +42,34 @@ class WittVector_base(CommutativeRingElement):
         CommutativeRingElement.__init__(self, parent)
 
     def __hash__(self) -> int:
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: W = WittRing(GF(3), prec=4)
+            sage: t = W([1,2,0,1])
+            sage: hash(t)  # random
+            -2438844084280889141
+        """
         return hash(self.vec)
 
     def _richcmp_(self, other, op) -> bool:
+        """
+        Compare ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittRing(GF(3), prec=4)
+            sage: t = W([1,2,0,1])
+            sage: u = 1/t
+            sage: u == t
+            False
+            sage: t != t
+            False
+        """
+        if not isinstance(other, WittVector_base):
+            return NotImplemented
         if op == op_EQ:
             return self.vec == other.vec
         if op == op_NE:
@@ -43,9 +77,29 @@ class WittVector_base(CommutativeRingElement):
         return NotImplemented
 
     def _repr_(self) -> str:
+        """
+        Return a string representation.
+
+        EXAMPLES::
+
+            sage: W = WittRing(GF(3), prec=4)
+            sage: t = W([1,2,0,1]); t
+            (1, 2, 0, 1)
+        """
         return '(' + ', '.join(map(str, self.vec)) + ')'
 
     def _add_(self, other):
+        """
+        Return the sum of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittRing(GF(3), prec=4)
+            sage: t = W([1,2,0,1])
+            sage: u = 1/t
+            sage: u + t
+            (2, 1, 1, 1)
+        """
         P = self.parent()
         C = self.__class__
 
@@ -68,6 +122,17 @@ class WittVector_base(CommutativeRingElement):
             return NotImplemented
 
     def _mul_(self, other):
+        """
+        Return the product of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittRing(GF(3), prec=4)
+            sage: t = W([1,2,0,1])
+            sage: u = 1/t + 1
+            sage: u * t
+            (2, 0, 0, 1)
+        """
         P = self.parent()
         C = self.__class__
 
@@ -92,6 +157,16 @@ class WittVector_base(CommutativeRingElement):
             return NotImplemented
 
     def _neg_(self):
+        """
+        Return the opposite of ``self``.
+
+        EXAMPLES::
+
+            sage: W = WittRing(GF(3), prec=4)
+            sage: t = W([1,2,0,1])
+            sage: -t
+            (2, 1, 0, 2)
+        """
         P = self.parent()
         C = self.__class__
         # If p == 2, -1 == (-1, -1, -1, ...)
@@ -103,6 +178,17 @@ class WittVector_base(CommutativeRingElement):
         return C(P, vec=neg_vec)
 
     def _div_(self, other):
+        """
+        Return the quotient of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: W = WittRing(GF(3), prec=4)
+            sage: t = W([1,2,0,1])
+            sage: u = 1/t + 1
+            sage: u / t
+            (2, 1, 2, 1)
+        """
         P = self.parent()
         # As a slight optimization, we'll check for one ahead of time.
         # This has the benefit of allowing us to create polynomials,
@@ -115,6 +201,16 @@ class WittVector_base(CommutativeRingElement):
         return self * other._invert_()
 
     def _invert_(self):
+        """
+        Return the inverse of ``self``.
+
+        EXAMPLES::
+
+            sage: W = WittRing(GF(3), prec=4)
+            sage: t = W([1,2,0,1])
+            sage: ~t
+            (1, 1, 1, 0)
+        """
         if not self.vec[0].is_unit():
             raise ZeroDivisionError(f"Inverse of {self} does not exist.")
         P = self.parent()
