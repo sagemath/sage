@@ -1190,7 +1190,7 @@ cdef number *sa2si_transext_QQ(object elem, ring *_ring) noexcept:
 
     ngens = elem.parent().ngens()
 
-    nMapFuncPtr =  naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
+    nMapFuncPtr = naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
 
     if nMapFuncPtr is NULL:
         raise RuntimeError("Failed to determine nMapFuncPtr")
@@ -1305,7 +1305,7 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring) noexcept:
 
     ngens = elem.parent().ngens()
 
-    nMapFuncPtr =  naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
+    nMapFuncPtr = naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
 
     if nMapFuncPtr is NULL:
         raise RuntimeError("Failed to determine nMapFuncPtr")
@@ -1393,6 +1393,13 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
         (a + 1)
         sage: R(F.gen()^5) + 1
         (-a^2 + a + 2)
+
+    Ensures :issue:`36101` is fixed::
+
+        sage: RR.<x, y, r, s0, c0, s1, c1> = AA[]
+        sage: f = -4*r^2+(((1+2*AA(cos(pi/6)))*c0*r+2*c1*r+(1+2*AA(cos(pi/6)))*s0*r+2*s1*r)/2-1/2)^2+((1-(1+2*AA(cos(pi/6)))*c0*r-2*c1*r+(1+2*AA(cos(pi/6)))*s0*r+2*s1*r)/2-1/2)^2
+        sage: f.change_ring( QuadraticField(3) )
+        ...
     """
     cdef int i
     cdef number *n1
@@ -1402,13 +1409,6 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
     cdef number *naCoeff
     cdef number *apow1
     cdef number *apow2
-
-    cdef nMapFunc nMapFuncPtr = NULL
-
-    nMapFuncPtr =  naSetMap(_ring.cf, currRing.cf) # choose correct mapping function
-
-    if nMapFuncPtr is NULL:
-        raise RuntimeError("Failed to determine nMapFuncPtr")
 
     elem = list(elem)
 
@@ -1432,7 +1432,10 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
     rComplete(qqr,1)
     qqr.ShortOut = 0
 
-    nMapFuncPtr =  naSetMap(qqr.cf, _ring.cf)  # choose correct mapping function
+    assert _ring.cf.type == n_algExt  # if false naSetMap will segmentation fault (should never happen)
+    cdef nMapFunc nMapFuncPtr = naSetMap(qqr.cf, _ring.cf)  # choose correct mapping function
+    if nMapFuncPtr is NULL:
+        raise RuntimeError("Failed to determine nMapFuncPtr")
     cdef poly *_p
     for i from 0 <= i < len(elem):
         nlCoeff = nlInit2gmp( mpq_numref((<Rational>elem[i]).value), mpq_denref((<Rational>elem[i]).value),  qqr.cf )
