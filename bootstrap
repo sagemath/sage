@@ -329,3 +329,5 @@ fi
 if [ $SAVE = yes ]; then
     save
 fi
+mv configure real_configure
+cp configure_wrapper configure
