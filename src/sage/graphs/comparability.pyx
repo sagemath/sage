@@ -15,12 +15,12 @@ The following methods are implemented in this module
     :widths: 30, 70
     :delim: |
 
-    :meth:`~is_comparability_MILP` | Test whether the graph is a comparability graph (MILP)
-    :meth:`~greedy_is_comparability` | Test whether the graph is a comparability graph (greedy algorithm)
-    :meth:`~greedy_is_comparability_with_certificate` | Test whether the graph is a comparability graph and returns certificates (greedy algorithm)
-    :meth:`~is_comparability` | Test whether the graph is a comparability graph
-    :meth:`~is_permutation` | Test whether the graph is a permutation graph.
-    :meth:`~is_transitive` | Test whether the digraph is transitive.
+    :meth:`~is_comparability_MILP` | Check whether the graph is a comparability graph (MILP)
+    :meth:`~greedy_is_comparability` | Check whether the graph is a comparability graph (greedy algorithm)
+    :meth:`~greedy_is_comparability_with_certificate` | Check whether the graph is a comparability graph and returns certificates (greedy algorithm)
+    :meth:`~is_comparability` | Check whether the graph is a comparability graph
+    :meth:`~is_permutation` | Check whether the graph is a permutation graph.
+    :meth:`~is_transitive` | Check whether the digraph is transitive.
 
 Author:
 
@@ -210,7 +210,7 @@ from copy import copy
 
 def greedy_is_comparability(g, no_certificate=False, equivalence_class=False):
     r"""
-    Test whether the graph is a comparability graph (greedy algorithm).
+    Check whether the graph is a comparability graph (greedy algorithm).
 
     This method only returns no-certificates.
 
@@ -218,6 +218,8 @@ def greedy_is_comparability(g, no_certificate=False, equivalence_class=False):
     :mod:`comparability module <sage.graphs.comparability>`.
 
     INPUT:
+
+    - ``g`` -- a graph
 
     - ``no_certificate`` -- whether to return a *no*-certificate when the graph
       is not a comparability graph. This certificate is an odd cycle of edges,
@@ -239,23 +241,33 @@ def greedy_is_comparability(g, no_certificate=False, equivalence_class=False):
 
     The Petersen Graph is not transitively orientable::
 
-      sage: from sage.graphs.comparability import greedy_is_comparability as is_comparability
-      sage: g = graphs.PetersenGraph()
-      sage: is_comparability(g)
-      False
-      sage: is_comparability(g, no_certificate=True)
-      (False, [2, 1, 0, 4, 3, 2])
+        sage: from sage.graphs.comparability import greedy_is_comparability as is_comparability
+        sage: g = graphs.PetersenGraph()
+        sage: is_comparability(g)
+        False
+        sage: is_comparability(g, no_certificate=True)
+        (False, [2, 1, 0, 4, 3, 2])
 
     But the Bull graph is::
 
-      sage: g = graphs.BullGraph()
-      sage: is_comparability(g)
-      True
+        sage: g = graphs.BullGraph()
+        sage: is_comparability(g)
+        True
+
+    TESTS:
+
+    Check that the method is working even when vertices are of incomparable
+    types::
+
+        sage: from sage.graphs.comparability import greedy_is_comparability
+        sage: G = Graph([('a', 1), (1, 2), (2, 3)])
+        sage: greedy_is_comparability(G, equivalence_class=True)
+        (True, [('a', 1), (2, 1), (2, 3)])
     """
     cdef int i, j
 
     # Each vertex can partition its neighbors into equivalence classes
-    equivalence_classes = {}
+    cdef dict equivalence_classes = {}
     for v in g:
         equivalence_classes[v] = g.subgraph(vertices=g.neighbors(v)).complement().connected_components(sort=False)
 
@@ -286,39 +298,43 @@ def greedy_is_comparability(g, no_certificate=False, equivalence_class=False):
 
     if isit:
         if equivalence_class:
+            # We use a mapping between vertices and integers to deal with
+            # vertices of different types
+            int_to_vertex = list(g)
+            vertex_to_int = {u: i for i, u in enumerate(int_to_vertex)}
 
             # Returning the largest equivalence class
-            cc = sorted(h.connected_components(sort=False), key=len)[-1]
+            cc = max(h.connected_components(sort=False), key=len)
 
             edges = []
             for v, sid in cc:
                 s = equivalence_classes[v][sid]
 
                 # For each edge we pick the good orientations
+                vi = vertex_to_int[v]
                 if certif[v, sid] == 1:
-                    for vv in s:
-                        edges.append((v, vv))
+                    edges.extend((vi, vertex_to_int[vv]) for vv in s)
                 else:
-                    for vv in s:
-                        edges.append((vv, v))
+                    edges.extend((vertex_to_int[vv], vi) for vv in s)
 
             # We return the value but take care of removing edges that were
             # added twice.
-            return True, sorted(set(edges))
+            edges = [(int_to_vertex[u], int_to_vertex[v]) for u, v in sorted(set(edges))]
+            return True, edges
 
         return True
 
     if no_certificate:
-        certif.append(certif[0])
         cycle = [v for v, _ in certif]
+        cycle.append(cycle[0])
         return False, cycle
     return False
 
 
 def greedy_is_comparability_with_certificate(g, certificate=False):
     r"""
-    Test whether the graph is a comparability graph and returns
-    certificates(greedy algorithm).
+    Check whether the graph is a comparability graph and returns
+    certificates (greedy algorithm).
 
     This method can return certificates of both *yes* and *no* answers.
 
@@ -326,6 +342,8 @@ def greedy_is_comparability_with_certificate(g, certificate=False):
     :mod:`comparability module <sage.graphs.comparability>`.
 
     INPUT:
+
+    - ``g`` -- a graph
 
     - ``certificate`` -- boolean; whether to return a
       certificate. *Yes*-answers the certificate is a transitive orientation of
@@ -336,24 +354,34 @@ def greedy_is_comparability_with_certificate(g, certificate=False):
 
     The 5-cycle or the Petersen Graph are not transitively orientable::
 
-      sage: from sage.graphs.comparability import greedy_is_comparability_with_certificate as is_comparability
-      sage: is_comparability(graphs.CycleGraph(5), certificate=True)
-      (False, [2, 1, 0, 4, 3, 2])
-      sage: g = graphs.PetersenGraph()
-      sage: is_comparability(g)
-      False
-      sage: is_comparability(g, certificate=True)
-      (False, [2, 1, 0, 4, 3, 2])
+        sage: from sage.graphs.comparability import greedy_is_comparability_with_certificate as is_comparability
+        sage: is_comparability(graphs.CycleGraph(5), certificate=True)
+        (False, [2, 1, 0, 4, 3, 2])
+        sage: g = graphs.PetersenGraph()
+        sage: is_comparability(g)
+        False
+        sage: is_comparability(g, certificate=True)
+        (False, [2, 1, 0, 4, 3, 2])
 
     But the Bull graph is::
 
-      sage: g = graphs.BullGraph()
-      sage: is_comparability(g)
-      True
-      sage: is_comparability(g, certificate = True)
-      (True, Digraph on 5 vertices)
-      sage: is_comparability(g, certificate = True)[1].is_transitive()
-      True
+        sage: g = graphs.BullGraph()
+        sage: is_comparability(g)
+        True
+        sage: is_comparability(g, certificate = True)
+        (True, Digraph on 5 vertices)
+        sage: is_comparability(g, certificate = True)[1].is_transitive()
+        True
+
+    TESTS:
+
+    Check that the method is working even when vertices are of incomparable
+    types::
+
+        sage: from sage.graphs.comparability import greedy_is_comparability_with_certificate
+        sage: G = Graph([('a', 1), (1, 2), (2, 3)])
+        sage: greedy_is_comparability_with_certificate(G, certificate=True)
+        (True, Digraph on 4 vertices)
     """
     isit, certif = greedy_is_comparability(g, no_certificate=True, equivalence_class=True)
     if not isit:
@@ -393,73 +421,70 @@ def greedy_is_comparability_with_certificate(g, certificate=False):
 
 def is_comparability_MILP(g, certificate=False, solver=None, verbose=0):
     r"""
-    Test whether the graph is a comparability graph (MILP).
+    Check whether the graph is a comparability graph (MILP).
 
     INPUT:
 
-    - ``certificate`` -- boolean; whether to return a certificate for
-      yes instances. This method cannot return negative certificates.
+    - ``g`` -- a graph
 
-    - ``solver`` -- (default: ``None``) specify a Linear Program (LP) solver to
-      be used. If set to ``None``, the default one is used. For more information
-      on LP solvers and which default solver is used, see the method
-      :meth:`~sage.numerical.mip.MixedIntegerLinearProgram.solve` of the class
-      :class:`~sage.numerical.mip.MixedIntegerLinearProgram`.
+    - ``certificate`` -- boolean (default: ``False``); whether to return a
+      certificate for yes instances. This method cannot return negative
+      certificates.
+
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
       to 0 by default, which means quiet.
 
-     EXAMPLES:
+    EXAMPLES:
 
     The 5-cycle or the Petersen Graph are not transitively orientable::
 
-      sage: from sage.graphs.comparability import is_comparability_MILP as is_comparability
-      sage: is_comparability(graphs.CycleGraph(5), certificate=True)                    # needs sage.numerical.mip
-      (False, None)
-      sage: g = graphs.PetersenGraph()
-      sage: is_comparability(g, certificate=True)                                       # needs sage.numerical.mip
-      (False, None)
+        sage: from sage.graphs.comparability import is_comparability_MILP as is_comparability
+        sage: is_comparability(graphs.CycleGraph(5), certificate=True)                  # needs sage.numerical.mip
+        (False, None)
+        sage: g = graphs.PetersenGraph()
+        sage: is_comparability(g, certificate=True)                                     # needs sage.numerical.mip
+        (False, None)
 
     But the Bull graph is::
 
-      sage: g = graphs.BullGraph()
-      sage: is_comparability(g)                                                         # needs sage.numerical.mip
-      True
-      sage: is_comparability(g, certificate=True)                                       # needs sage.numerical.mip
-      (True, Digraph on 5 vertices)
-      sage: is_comparability(g, certificate=True)[1].is_transitive()                    # needs sage.numerical.mip
-      True
+        sage: g = graphs.BullGraph()
+        sage: is_comparability(g)                                                       # needs sage.numerical.mip
+        True
+        sage: is_comparability(g, certificate=True)                                     # needs sage.numerical.mip
+        (True, Digraph on 5 vertices)
+        sage: is_comparability(g, certificate=True)[1].is_transitive()                  # needs sage.numerical.mip
+        True
     """
     from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
-    cdef int i
-
     p = MixedIntegerLinearProgram(solver=solver)
     o = p.new_variable(binary=True)
 
     for u, v in g.edge_iterator(labels=False):
         p.add_constraint(o[u, v] + o[v, u] == 1)
 
+    from itertools import combinations
     for u in g:
-        neighbors = g.neighbors(u)
+        for v, vv in combinations(g.neighbors(u), 2):
 
-        for i in range(len(neighbors)):
-            v = neighbors[i]
-            for j in range(i + 1, len(neighbors)):
-                vv = neighbors[j]
+            # If there is an edge between v and vv, we must be sure it is in the
+            # good direction when v-u-vv is a directed path
+            if g.has_edge(v, vv):
+                p.add_constraint(o[u, v] + o[vv, u] - o[vv, v] <= 1)
+                p.add_constraint(o[u, vv] + o[v, u] - o[v, vv] <= 1)
 
-                # If there is an edge between v and vv, we must be
-                # sure it is in the good direction when v-u-vv is a
-                # directed path
-                if g.has_edge(v, vv):
-                    p.add_constraint(o[u, v] + o[vv, u] - o[vv, v] <= 1)
-                    p.add_constraint(o[u, vv] + o[v, u] - o[v, vv] <= 1)
-
-                # If there is no edge, there are only two
-                # orientations possible (see the module's documentation
-                # about edges which imply each other)
-                else:
-                    p.add_constraint(o[u, v] + o[vv, u] <= 1)
-                    p.add_constraint(o[u, vv] + o[v, u] <= 1)
+            # If there is no edge, there are only two orientations possible (see
+            # the module's documentation about edges which imply each other)
+            else:
+                p.add_constraint(o[u, v] + o[vv, u] <= 1)
+                p.add_constraint(o[u, vv] + o[v, u] <= 1)
 
     try:
         p.solve(log=verbose)
@@ -494,11 +519,14 @@ def is_comparability_MILP(g, certificate=False, solver=None, verbose=0):
 def is_comparability(g, algorithm='greedy', certificate=False, check=True,
                      solver=None, verbose=0):
     r"""
-    Test whether the graph is a comparability graph.
+    Check whether the graph is a comparability graph.
 
     INPUT:
 
-    - ``algorithm`` -- choose the implementation used to do the test
+    - ``g`` -- a graph
+
+    - ``algorithm`` -- string (default: ``'greedy'``); choose the implementation
+      used to do the test
 
       - ``'greedy'`` -- a greedy algorithm (see the documentation of the
         :mod:`comparability module <sage.graphs.comparability>`)
@@ -508,20 +536,22 @@ def is_comparability(g, algorithm='greedy', certificate=False, check=True,
         certificates ! When ``certificate = True``, negative certificates are
         always equal to ``None``. ``True`` certificates are valid, though.
 
-    - ``certificate`` -- boolean; whether to return a
+    - ``certificate`` -- boolean (default: ``False``); whether to return a
       certificate. *Yes*-answers the certificate is a transitive orientation of
       `G`, and a *no* certificates is an odd cycle of sequentially forcing
       edges.
 
-    - ``check`` -- boolean; whether to check that the
+    - ``check`` -- boolean (default: ``True``); whether to check that the
       yes-certificates are indeed transitive. As it is very quick
       compared to the rest of the operation, it is enabled by default.
 
-    - ``solver`` -- (default: ``None``) specify a Linear Program (LP) solver to
-      be used. If set to ``None``, the default one is used. For more information
-      on LP solvers and which default solver is used, see the method
-      :meth:`~sage.numerical.mip.MixedIntegerLinearProgram.solve` of the class
-      :class:`~sage.numerical.mip.MixedIntegerLinearProgram`.
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
       to 0 by default, which means quiet.
@@ -537,15 +567,14 @@ def is_comparability(g, algorithm='greedy', certificate=False, check=True,
 
     TESTS:
 
-    Let us ensure that no exception is raised when we go over all
-    small graphs::
+    Let us ensure that no exception is raised when we go over all small graphs::
 
         sage: from sage.graphs.comparability import is_comparability
         sage: [len([g for g in graphs(i) if is_comparability(g, certificate=True)[0]]) for i in range(7)]
         [1, 1, 2, 4, 11, 33, 144]
     """
     g._scream_if_not_simple()
-    if g.size() == 0:
+    if not g.size():
         if certificate:
             from sage.graphs.digraph import DiGraph
             return True, DiGraph(g)
@@ -568,8 +597,8 @@ def is_comparability(g, algorithm='greedy', certificate=False, check=True,
     if check and isit and (not certif.is_transitive()):
         raise ValueError("Looks like there is a bug somewhere. The "
                          "algorithm thinks that the orientation is "
-                         "transitive, but we just checked and it is not."
-                         "Please report the bug on sage-devel, and give"
+                         "transitive, but we just checked and it is not. "
+                         "Please report the bug on sage-devel, and give "
                          "us the graph that made this method fail !")
 
     return isit, certif
@@ -578,15 +607,17 @@ def is_comparability(g, algorithm='greedy', certificate=False, check=True,
 def is_permutation(g, algorithm='greedy', certificate=False, check=True,
                    solver=None, verbose=0):
     r"""
-    Test whether the graph is a permutation graph.
+    Check whether the graph is a permutation graph.
 
     For more information on permutation graphs, refer to the documentation of
     the :mod:`comparability module <sage.graphs.comparability>`.
 
     INPUT:
 
-    - ``algorithm`` -- choose the implementation used for the subcalls to
-      :meth:`is_comparability`
+    - ``g`` -- a graph
+
+    - ``algorithm`` -- string (default: ``'greedy'``); choose the implementation
+      used for the subcalls to :meth:`is_comparability`
 
       - ``'greedy'`` -- a greedy algorithm (see the documentation of the
         :mod:`comparability module <sage.graphs.comparability>`)
@@ -596,20 +627,23 @@ def is_permutation(g, algorithm='greedy', certificate=False, check=True,
         certificates ! When ``certificate = True``, negative certificates are
         always equal to ``None``. ``True`` certificates are valid, though.
 
-    - ``certificate`` -- boolean; whether to return a certificate for the
-      answer given. For ``True`` answers the certificate is a permutation, for
-      ``False`` answers it is a no-certificate for the test of comparability or
-      co-comparability.
+    - ``certificate`` -- boolean (default: ``False``); whether to return a
+      certificate for the answer given. For ``True`` answers the certificate is
+      a permutation, for ``False`` answers it is a no-certificate for the test
+      of comparability or co-comparability.
 
-    - ``check`` -- boolean; whether to check that the permutations returned
-      indeed create the expected Permutation graph. Pretty cheap compared to the
-      rest, hence a good investment. It is enabled by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that the
+      permutations returned indeed create the expected Permutation graph. Pretty
+      cheap compared to the rest, hence a good investment. It is enabled by
+      default.
 
-    - ``solver`` -- (default: ``None``) specify a Linear Program (LP) solver to
-      be used. If set to ``None``, the default one is used. For more information
-      on LP solvers and which default solver is used, see the method
-      :meth:`~sage.numerical.mip.MixedIntegerLinearProgram.solve` of the class
-      :class:`~sage.numerical.mip.MixedIntegerLinearProgram`.
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
       to 0 by default, which means quiet.
@@ -644,33 +678,33 @@ def is_permutation(g, algorithm='greedy', certificate=False, check=True,
 
     Trying random permutations, first with the greedy algorithm::
 
-       sage: from sage.graphs.comparability import is_permutation
-       sage: for i in range(20):
-       ....:     p = Permutations(10).random_element()
-       ....:     g1 = graphs.PermutationGraph(p)
-       ....:     isit, certif = is_permutation(g1, certificate=True)
-       ....:     if not isit:
-       ....:        print("Something is wrong here !!")
-       ....:        break
-       ....:     g2 = graphs.PermutationGraph(*certif)
-       ....:     if not g1.is_isomorphic(g2):
-       ....:        print("Something is wrong here !!")
-       ....:        break
+        sage: from sage.graphs.comparability import is_permutation
+        sage: for i in range(20):
+        ....:     p = Permutations(10).random_element()
+        ....:     g1 = graphs.PermutationGraph(p)
+        ....:     isit, certif = is_permutation(g1, certificate=True)
+        ....:     if not isit:
+        ....:        print("Something is wrong here !!")
+        ....:        break
+        ....:     g2 = graphs.PermutationGraph(*certif)
+        ....:     if not g1.is_isomorphic(g2):
+        ....:        print("Something is wrong here !!")
+        ....:        break
 
     Then with MILP::
 
-       sage: from sage.graphs.comparability import is_permutation
-       sage: for i in range(20):                                                        # needs sage.numerical.mip
-       ....:     p = Permutations(10).random_element()
-       ....:     g1 = graphs.PermutationGraph(p)
-       ....:     isit, certif = is_permutation(g1, algorithm='MILP', certificate=True)
-       ....:     if not isit:
-       ....:        print("Something is wrong here !!")
-       ....:        break
-       ....:     g2 = graphs.PermutationGraph(*certif)
-       ....:     if not g1.is_isomorphic(g2):
-       ....:        print("Something is wrong here !!")
-       ....:        break
+        sage: from sage.graphs.comparability import is_permutation
+        sage: for i in range(20):                                                       # needs sage.numerical.mip
+        ....:     p = Permutations(10).random_element()
+        ....:     g1 = graphs.PermutationGraph(p)
+        ....:     isit, certif = is_permutation(g1, algorithm='MILP', certificate=True)
+        ....:     if not isit:
+        ....:        print("Something is wrong here !!")
+        ....:        break
+        ....:     g2 = graphs.PermutationGraph(*certif)
+        ....:     if not g1.is_isomorphic(g2):
+        ....:        print("Something is wrong here !!")
+        ....:        break
     """
     if not certificate:
         # No certificate... A piece of cake

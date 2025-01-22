@@ -844,7 +844,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         """
         return FrozenBitset()
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Check if ``self`` is a commutative algebra.
 
