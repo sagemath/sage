@@ -2767,15 +2767,6 @@ cdef class Polynomial(CommutativePolynomial):
         if have_same_parent(left, right):
             return (<Element>left)._div_(right)
 
-        # Try division of polynomial by a scalar
-        if isinstance(left, Polynomial):
-            R = (<Polynomial>left)._parent._base
-            try:
-                x = R.coerce(right)
-                return left * ~x
-            except TypeError:
-                pass
-
         # Delegate to coercion model. The line below is basically
         # RingElement.__truediv__(left, right), except that it also
         # works if left is not of type RingElement.
