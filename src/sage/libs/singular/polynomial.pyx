@@ -270,7 +270,7 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
 
     ::
 
-        sage: R.<x, y> = Integers(10)[]
+        sage: R.<x,y> = Integers(10)[]
         sage: l = [i*x+j*y+k for i in range(10) for j in range(10) for k in range(10)]
         sage: l.sort()
         sage: for i in range(len(l)):
