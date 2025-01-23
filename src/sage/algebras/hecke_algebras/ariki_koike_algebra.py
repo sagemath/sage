@@ -828,7 +828,8 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
 
                 sage: L1^2 * T1 * L1^3 * T1
                 -(u0*u1*u2*u3-u0*u1*u2*u3*q)*L2*T[1]
-                 + ((u0*u1*u2+u0*u1*u3+u0*u2*u3+u1*u2*u3)+(-u0*u1*u2-u0*u1*u3-u0*u2*u3-u1*u2*u3)*q)*L1*L2*T[1] - ((u0*u1+u0*u2+u1*u2+u0*u3+u1*u3+u2*u3)+(-u0*u1-u0*u2-u1*u2-u0*u3-u1*u3-u2*u3)*q)*L1^2*L2*T[1]
+                 + ((u0*u1*u2+u0*u1*u3+u0*u2*u3+u1*u2*u3)+(-u0*u1*u2-u0*u1*u3-u0*u2*u3-u1*u2*u3)*q)*L1*L2*T[1] -
+                  ((u0*u1+u0*u2+u1*u2+u0*u3+u1*u3+u2*u3)+(-u0*u1-u0*u2-u1*u2-u0*u3-u1*u3-u2*u3)*q)*L1^2*L2*T[1]
                  + q*L1^2*L2^3
                  + ((u0+u1+u2+u3)+(-u0-u1-u2-u3)*q)*L1^3*L2*T[1]
                  + (1-q)*L1^3*L2^2*T[1]

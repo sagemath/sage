@@ -483,7 +483,8 @@ class Macdonald(UniqueRepresentation):
             sage: Ht = Sym.macdonald().Ht()
             sage: s = Sym.schur()
             sage: Ht(s([2,1]))
-            (q/(q*t^2-t^3-q^2+q*t))*McdHt[1, 1, 1] - ((q^2+q*t+t^2)/(q^2*t^2-q^3-t^3+q*t))*McdHt[2, 1] + (t/(-q^3+q^2*t+q*t-t^2))*McdHt[3]
+            (q/(q*t^2-t^3-q^2+q*t))*McdHt[1, 1, 1] - ((q^2+q*t+t^2)/(q^2*t^2-q^3-t^3+q*t))*McdHt[2, 1] +
+             (t/(-q^3+q^2*t+q*t-t^2))*McdHt[3]
             sage: Ht(s([2]))
             -(q/(-q+t))*McdHt[1, 1] + (t/(-q+t))*McdHt[2]
         """

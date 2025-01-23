@@ -3850,7 +3850,8 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
             sage: p2 = A0*x^2 + A1*y^2 + A2*z^2 + A3*w^2
             sage: q = invariant_theory.quaternary_biquadratic(p1, p2, [w, x, y, z])
             sage: q.J_covariant().factor()
-            z * y * x * w * (-a1*A0 + a0*A1) * (-a2*A0 + a0*A2) * (-a2*A1 + a1*A2) * (a3*A2 - a2*A3) * (a3*A1 - a1*A3) * (a3*A0 - a0*A3)
+            z * y * x * w * (-a1*A0 + a0*A1) * (-a2*A0 + a0*A2) * (-a2*A1 + a1*A2) * (a3*A2 - a2*A3) * (a3*A1 - a1*A3)
+             * (a3*A0 - a0*A3)
         """
         F = self._ring.base_ring()
         return 1/F(16) * self._jacobian_determinant(

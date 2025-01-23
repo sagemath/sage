@@ -30,7 +30,8 @@ case of the 3 strand cubic Hecke algebra::
     sage: braid = BG3((1,2,-1,2,2,-1)); braid
     c0*c1*c0^-1*c1^2*c0^-1
     sage: braid_image = CHA3(braid); braid_image
-    u*c1*c0^-1*c1 + u*v*c0*c1^-1*c0^-1 - u^2*c0^-1*c1 + ((u^2*v-v^2)/w)*c0*c1*c0^-1 + ((u^2-v)/w)*c0*c1*c0 - ((u^3-u*v)/w)*c0*c1 - (u*v-w)*c1^-1
+    u*c1*c0^-1*c1 + u*v*c0*c1^-1*c0^-1 - u^2*c0^-1*c1 + ((u^2*v-v^2)/w)*c0*c1*c0^-1 + ((u^2-v)/w)*c0*c1*c0 -
+     ((u^3-u*v)/w)*c0*c1 - (u*v-w)*c1^-1
 
 If the ring elements `u, v, w` (which will be called the *cubic equation
 parameters* in the sequel) are taken to be `u = v = 0, w = 1` the cubic Hecke
@@ -531,7 +532,8 @@ class CubicHeckeElement(CombinatorialFreeModule.Element):
               over Integer Ring
 
             sage: f = b3_1.formal_markov_trace(extended=True, field_embedding=True); f
-            ((a^2*b*c+a*b^2*c+a*b*c^2+a^2*s^2+a*b*s^2+b^2*s^2+a*c*s^2+b*c*s^2+c^2*s^2)/s)*B[U1] - (a^2*b+a*b^2+a^2*c+2*a*b*c+b^2*c+a*c^2+b*c^2)*B[U2]
+            ((a^2*b*c+a*b^2*c+a*b*c^2+a^2*s^2+a*b*s^2+b^2*s^2+a*c*s^2+b*c*s^2+c^2*s^2)/s)*B[U1] -
+             (a^2*b+a*b^2+a^2*c+2*a*b*c+b^2*c+a*c^2+b*c^2)*B[U2]
             sage: f.parent().base_ring()
             Fraction Field of Multivariate Polynomial Ring in a, b, c, s
               over Cyclotomic Field of order 3 and degree 2
@@ -698,7 +700,10 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         sage: ele = CHA3.an_element(); ele
         -w*s1*s2^-1 + v*s1 + u*s2 - ((v*w-u)/w)
         sage: ele2 = ele**2; ele2
-        w^2*(s1^-1*s2)^2 - u*w^2*s1^-1*s2*s1^-1 - v*w*s2*s1^-1*s2 - v*w^2*s1^-1*s2^-1 + u*w*s1*s2*s1^-1*s2 - u*w*s1^-1*s2*s1 - (u*v*w-2*v*w+2*u)*s1*s2^-1 + u*v*w*s2*s1^-1 + u*v*s2*s1 + v^2*w*s1^-1 - u^2*w*s1*s2*s1^-1 + ((u*v^2*w-2*v^2*w-u*w^2+2*u*v)/w)*s1 + u*v*s1*s2 + (u^2*w+v^2*w)*s2^-1 + ((u^3*w-2*u*v*w+2*u^2)/w)*s2 - ((u^2*v*w^2+v^3*w^2-v^2*w^2+2*u*v*w-u^2)/w^2)
+        w^2*(s1^-1*s2)^2 - u*w^2*s1^-1*s2*s1^-1 - v*w*s2*s1^-1*s2 - v*w^2*s1^-1*s2^-1 + u*w*s1*s2*s1^-1*s2 -
+         u*w*s1^-1*s2*s1 - (u*v*w-2*v*w+2*u)*s1*s2^-1 + u*v*w*s2*s1^-1 + u*v*s2*s1 + v^2*w*s1^-1 - u^2*w*s1*s2*s1^-1 +
+         ((u*v^2*w-2*v^2*w-u*w^2+2*u*v)/w)*s1 + u*v*s1*s2 + (u^2*w+v^2*w)*s2^-1 + ((u^3*w-2*u*v*w+2*u^2)/w)*s2 -
+         ((u^2*v*w^2+v^3*w^2-v^2*w^2+2*u*v*w-u^2)/w^2)
         sage: B3 = CHA3.braid_group()
         sage: braid = B3((2,-1, 2, 1)); braid
         s2*s1^-1*s2*s1
@@ -1187,7 +1192,9 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             sage: braid = B3((1,2,2,-1,2,1,1,-1)); braid
             c0*c1^2*c0^-1*c1*c0
             sage: img_braid = CHA3(braid); img_braid
-            u*w*(c0^-1*c1)^2 + u*v*c0*c1^-1*c0 - u^2*w*c0^-1*c1*c0^-1 - u*v*c1*c0^-1*c1 - (u*v*w-w^2)*c0^-1*c1^-1 + u^2*c0*c1*c0^-1*c1 - (u^2*v-u*w)*c0*c1^-1 + u^2*v*c1*c0^-1 + (u^2-v)*c1*c0 - u^3*c0*c1*c0^-1 + (u*v^2-v*w)*c1^-1
+            u*w*(c0^-1*c1)^2 + u*v*c0*c1^-1*c0 - u^2*w*c0^-1*c1*c0^-1 - u*v*c1*c0^-1*c1 - (u*v*w-w^2)*c0^-1*c1^-1 +
+             u^2*c0*c1*c0^-1*c1 - (u^2*v-u*w)*c0*c1^-1 + u^2*v*c1*c0^-1 + (u^2-v)*c1*c0 - u^3*c0*c1*c0^-1 +
+             (u*v^2-v*w)*c1^-1
             sage: cbraid = CB3(braid); cbraid
             c0*c1^2*c0^-1*c1*c0
             sage: img_cbraid = CHA3(cbraid); img_cbraid
