@@ -2210,7 +2210,15 @@ def unpickle_matrix_mod2_dense_v2(r, c, data, size, immutable=False):
 
     Check that old pickles before :issue:`39367` still work::
 
-        sage: loads(bytes.fromhex('789c6b604a2e4e4c4fd5cb4d2c29caac8052f1b9f92946f129a979c5a95ca5790599c9d939a9f11852f165465c850c1ade5cde5cb1858c1a5e9dfffffff70ef0f6f376f7e6050a4a01310318f27a7b7a7b78bb780741f95c709ad19b19c2f6da0ed4ecf5076442acd73f100551c20634d0c73bc4db15aaec3f481982580a226e8288f920e22e4223a77701d0ce48ef62308fcfeb084c0aca64f49a0aa2b4bdf9bca5a15af880ce74f17604dac6e135132499ecf50344d57b358075789b7b330195b103fd21e85deeb51064e362908c2f441d03147a025debe7ede2b50e24e8e49de0d50464a47ae775961432051532eb0100093b9ba3'))  # hexstring produced with dumps(matrix.zero(GF(2),10,10)).hex()
+        sage: loads(bytes.fromhex(  # hexstring produced with dumps(matrix.zero(GF(2),10,10)).hex()
+        ....:     '789c6b604a2e4e4c4fd5cb4d2c29caac8052f1b9f92946f129a979c5a95ca5'
+        ....:     '790599c9d939a9f11852f165465c850c1ade5cde5cb1858c1a5e9dfffffff7'
+        ....:     '0ef0f6f376f7e6050a4a01310318f27a7b7a7b78bb780741f95c709ad19b19'
+        ....:     'c2f6da0ed4ecf5076442acd73f100551c20634d0c73bc4db15aaec3f481982'
+        ....:     '580a226e8288f920e22e4223a77701d0ce48ef62308fcfeb084c0aca64f49a'
+        ....:     '0aa2b4bdf9bca5a15af880ce74f17604dac6e135132499ecf50344d57b3580'
+        ....:     '75789b7b330195b103fd21e85deeb51064e362908c2f441d03147a025debe7'
+        ....:     'ede2b50e24e8e49de0d50464a47ae775961432051532eb0100093b9ba3'))
         [0 0 0 0 0 0 0 0 0 0]
         [0 0 0 0 0 0 0 0 0 0]
         [0 0 0 0 0 0 0 0 0 0]
