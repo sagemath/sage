@@ -1327,19 +1327,24 @@ class CubicHeckeRingOfDefinition(Localization):
             sage: MT = mt.base_ring()
             sage: f = MT.specialize_homfly(); f
             Composite map:
-              From: Multivariate Polynomial Ring in u, v, w, s over Integer Ring localized at (s, w, v, u)
+              From: Multivariate Polynomial Ring in u, v, w, s over Integer Ring
+                    localized at (s, w, v, u)
               To:   Multivariate Laurent Polynomial Ring in L, M over Integer Ring
               Defn:   Ring morphism:
-                      From: Multivariate Polynomial Ring in u, v, w, s over Integer Ring localized at (s, w, v, u)
-                      To:   Multivariate Polynomial Ring in L, M over Integer Ring localized at (M - 1, M, L)
+                      From: Multivariate Polynomial Ring in u, v, w, s
+                            over Integer Ring localized at (s, w, v, u)
+                      To:   Multivariate Polynomial Ring in L, M
+                            over Integer Ring localized at (M - 1, M, L)
                       Defn: u |--> -M + 1
                             v |--> -M + 1
                             w |--> 1
                             s |--> L
                     then
                       Conversion map:
-                      From: Multivariate Polynomial Ring in L, M over Integer Ring localized at (M - 1, M, L)
-                      To:   Multivariate Laurent Polynomial Ring in L, M over Integer Ring
+                      From: Multivariate Polynomial Ring in L, M
+                            over Integer Ring localized at (M - 1, M, L)
+                      To:   Multivariate Laurent Polynomial Ring in L, M
+                            over Integer Ring
             sage: sup = mt.support()
             sage: h1 = sum(f(mt.coefficient(b)) * b.regular_homfly_polynomial() for b in sup)
             sage: L, M = f.codomain().gens()

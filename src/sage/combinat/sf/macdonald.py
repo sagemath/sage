@@ -483,8 +483,8 @@ class Macdonald(UniqueRepresentation):
             sage: Ht = Sym.macdonald().Ht()
             sage: s = Sym.schur()
             sage: Ht(s([2,1]))
-            (q/(q*t^2-t^3-q^2+q*t))*McdHt[1, 1, 1] - ((q^2+q*t+t^2)/(q^2*t^2-q^3-t^3+q*t))*McdHt[2, 1] +
-             (t/(-q^3+q^2*t+q*t-t^2))*McdHt[3]
+            (q/(q*t^2-t^3-q^2+q*t))*McdHt[1, 1, 1] - ((q^2+q*t+t^2)/(q^2*t^2-q^3-t^3+q*t))*McdHt[2, 1]
+            + (t/(-q^3+q^2*t+q*t-t^2))*McdHt[3]
             sage: Ht(s([2]))
             -(q/(-q+t))*McdHt[1, 1] + (t/(-q+t))*McdHt[2]
         """
@@ -507,7 +507,8 @@ class Macdonald(UniqueRepresentation):
 
             sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
             sage: S = Sym.macdonald().S(); S
-            Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald S basis
+            Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t
+            over Rational Field in the Macdonald S basis
             sage: p = Sym.power()
             sage: p(S[2,1])
             ((1/3*t^3-t^2+t-1/3)/(q^3-3*q^2+3*q-1))*p[1, 1, 1] - ((1/3*t^3-1/3)/(q^3-1))*p[3]

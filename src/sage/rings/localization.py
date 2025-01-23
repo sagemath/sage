@@ -36,8 +36,9 @@ three elements::
     sage: add_units = u + [q, q + 1] + [ui - uj for ui, uj in I if ui != uj]
     sage: add_units += [q*ui - uj for ui, uj in I if ui != uj]
     sage: L = R.localization(tuple(add_units)); L                                       # needs sage.libs.pari
-    Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at (q, q + 1, u2, u1 - u2, u1, u0 - u1,
-     u0 - u2, u0, u2*q - u0, u2*q - u1, u1*q - u0, u1*q - u2, u0*q - u1, u0*q - u2)
+    Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at
+    (q, q + 1, u2, u1 - u2, u1, u0 - u1, u0 - u2, u0, u2*q - u0, u2*q - u1, u1*q - u0,
+     u1*q - u2, u0*q - u1, u0*q - u2)
 
 Define the representation matrices (of one of the three dimensional irreducible representations)::
 
@@ -80,8 +81,9 @@ Obtain specializations in positive characteristic::
     sage: Fp = GF(17)
     sage: f = L.hom((3,5,7,11), codomain=Fp); f
     Ring morphism:
-      From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at (q, q + 1, u2, u1 - u2, u1, u0
-       - u1, u0 - u2, u0, u2*q - u0, u2*q - u1, u1*q - u0, u1*q - u2, u0*q - u1, u0*q - u2)
+      From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at
+            (q, q + 1, u2, u1 - u2, u1, u0 - u1, u0 - u2, u0, u2*q - u0, u2*q - u1,
+             u1*q - u0, u1*q - u2, u0*q - u1, u0*q - u2)
       To:   Finite Field of size 17
       Defn: u0 |--> 3
             u1 |--> 5
@@ -107,8 +109,9 @@ Obtain specializations in characteristic 0::
     sage: # needs sage.libs.pari
     sage: fQ = L.hom((3,5,7,11), codomain=QQ); fQ
     Ring morphism:
-      From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at (q, q + 1, u2, u1 - u2, u1, u0
-       - u1, u0 - u2, u0, u2*q - u0, u2*q - u1, u1*q - u0, u1*q - u2, u0*q - u1, u0*q - u2)
+      From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring
+            localized at (q, q + 1, u2, u1 - u2, u1, u0 - u1, u0 - u2, u0, u2*q - u0,
+            u2*q - u1, u1*q - u0, u1*q - u2, u0*q - u1, u0*q - u2)
       To:   Rational Field
       Defn: u0 |--> 3
             u1 |--> 5
@@ -137,10 +140,11 @@ Obtain specializations in characteristic 0::
     sage: F = T.fraction_field()
     sage: fF = L.hom((x, y, z, t), codomain=F); fF
     Ring morphism:
-      From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at (q, q + 1, u2, u1 - u2, u1, u0
-       - u1, u0 - u2, u0, u2*q - u0, u2*q - u1, u1*q - u0, u1*q - u2, u0*q - u1, u0*q - u2)
-      To:   Fraction Field of Quotient of Multivariate Polynomial Ring in x, y, z, t over Rational Field by the ideal
-       (x + y + z)
+      From: Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring
+            localized at (q, q + 1, u2, u1 - u2, u1, u0 - u1, u0 - u2, u0, u2*q - u0,
+            u2*q - u1, u1*q - u0, u1*q - u2, u0*q - u1, u0*q - u2)
+      To:   Fraction Field of Quotient of Multivariate Polynomial Ring in x, y, z, t
+            over Rational Field by the ideal (x + y + z)
       Defn: u0 |--> -ybar - zbar
             u1 |--> ybar
             u2 |--> zbar

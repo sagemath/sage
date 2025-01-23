@@ -257,19 +257,19 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
 
     TESTS:
 
-    Ensure comparison is transitive::
+    Ensure that comparison is transitive::
 
-        sage: P.<x, y> = GF(5)[]
-        sage: P(1)>P(4)
+        sage: P.<x,y> = GF(5)[]
+        sage: P(1) > P(4)
         False
-        sage: P(4)>P(2)
+        sage: P(4) > P(2)
         True
-        sage: P(2)>P(1)
+        sage: P(2) > P(1)
         True
 
     More tests for :issue:`35681`::
 
-        sage: P.<x, y> = ZZ[]
+        sage: P.<x,y> = ZZ[]
         sage: P(0) > P(-1)
         True
     """
@@ -294,7 +294,7 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
             else:
                 return 1 if r.cf.cfGreaterZero(p_GetCoeff(p, r), r.cf) else -1
 
-        # compare coeffs
+        # compare coefficients
         if not r.cf.cfEqual(p_GetCoeff(p, r), p_GetCoeff(q, r), r.cf):
             return 1 if r.cf.cfGreater(p_GetCoeff(p, r), p_GetCoeff(q, r), r.cf) else -1
 
