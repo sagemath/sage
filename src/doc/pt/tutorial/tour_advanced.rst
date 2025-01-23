@@ -36,49 +36,14 @@ irredutíveis.
     sage: V = C2.intersection(C3)
     sage: V.irreducible_components()
     [Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-    y,
-    x - 1,
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-    y - 1,
-    x,
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-    x + y + 2,
-    2*y^2 + 4*y + 3]
-<<<<<<< HEAD
-    [
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      y - 1,
-      x,
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      y,
-      x - 1,
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      x + y + 2,
-      2*y^2 + 4*y + 3
-    ]
-||||||| c9dd1e85118
-    [
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      y,
-      x - 1,
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      y - 1,
-      x,
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      x + y + 2,
-      2*y^2 + 4*y + 3
-    ]
-=======
-    [Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-       y,
-       x - 1,
-     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
        y - 1,
        x,
      Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       y,
+       x - 1,
+     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
        x + y + 2,
        2*y^2 + 4*y + 3]
->>>>>>> develop
 
 Portanto, por exemplo, :math:`(1,0)` e :math:`(0,1)` estão em ambas as
 curvas (o que é claramente visível), como também estão certos pontos
