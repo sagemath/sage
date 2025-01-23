@@ -146,7 +146,9 @@ EOF
 
     st=$?
     case $st in
-        0) true;; # Success
+        0)  # Success
+            mv configure real_configure
+            cp configure_wrapper configure;;
 
         179|16|63|127)  # no m4 for pkg-config|autotools not installed|or version too old
             if [ $DOWNLOAD = yes ]; then
@@ -329,5 +331,3 @@ fi
 if [ $SAVE = yes ]; then
     save
 fi
-mv configure real_configure
-cp configure_wrapper configure
