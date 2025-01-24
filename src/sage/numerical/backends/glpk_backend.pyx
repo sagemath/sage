@@ -364,7 +364,7 @@ cdef class GLPKBackend(GenericBackend):
         cdef char * n
 
         if name is None:
-            n =  <char *> glp_get_prob_name(self.lp)
+            n = <char *> glp_get_prob_name(self.lp)
             if n == NULL:
                 return ""
             else:
@@ -1446,7 +1446,7 @@ cdef class GLPKBackend(GenericBackend):
             ...
             ValueError: invalid row index 2
         """
-        cdef char *  s
+        cdef char * s
 
         if index < 0 or index > (self.nrows() - 1):
             raise ValueError("invalid row index %d" % index)
@@ -3197,60 +3197,60 @@ solver_parameter_values = {
   'intopt_only': intopt_only,
   'exact_simplex_only': exact_simplex_only,
 
-  'GLP_MSG_OFF' : GLP_MSG_OFF,
-  'GLP_MSG_ON' : GLP_MSG_ON,
-  'GLP_MSG_ERR' : GLP_MSG_ERR,
-  'GLP_MSG_ALL' : GLP_MSG_ALL,
-  'GLP_MSG_DBG' : GLP_MSG_DBG,
+  'GLP_MSG_OFF': GLP_MSG_OFF,
+  'GLP_MSG_ON': GLP_MSG_ON,
+  'GLP_MSG_ERR': GLP_MSG_ERR,
+  'GLP_MSG_ALL': GLP_MSG_ALL,
+  'GLP_MSG_DBG': GLP_MSG_DBG,
 
-  'GLP_PRIMAL' : GLP_PRIMAL,
-  'GLP_DUAL' : GLP_DUAL,
-  'GLP_DUALP' : GLP_DUALP,
+  'GLP_PRIMAL': GLP_PRIMAL,
+  'GLP_DUAL': GLP_DUAL,
+  'GLP_DUALP': GLP_DUALP,
 
-  'GLP_PT_STD' : GLP_PT_STD,
-  'GLP_PT_PSE' : GLP_PT_PSE,
+  'GLP_PT_STD': GLP_PT_STD,
+  'GLP_PT_PSE': GLP_PT_PSE,
 
-  'GLP_RT_STD' : GLP_RT_STD,
-  'GLP_RT_HAR' : GLP_RT_HAR,
+  'GLP_RT_STD': GLP_RT_STD,
+  'GLP_RT_HAR': GLP_RT_HAR,
 
-  'DBL_MAX' : DBL_MAX,
-  'INT_MAX' : INT_MAX,
+  'DBL_MAX': DBL_MAX,
+  'INT_MAX': INT_MAX,
 
-  'GLP_ON' : GLP_ON,
-  'GLP_OFF' : GLP_OFF,
+  'GLP_ON': GLP_ON,
+  'GLP_OFF': GLP_OFF,
 
-  'GLP_BR_FFV' : GLP_BR_FFV,
-  'GLP_BR_LFV' : GLP_BR_LFV,
-  'GLP_BR_MFV' : GLP_BR_MFV,
-  'GLP_BR_DTH' : GLP_BR_DTH,
-  'GLP_BR_PCH' : GLP_BR_PCH,
+  'GLP_BR_FFV': GLP_BR_FFV,
+  'GLP_BR_LFV': GLP_BR_LFV,
+  'GLP_BR_MFV': GLP_BR_MFV,
+  'GLP_BR_DTH': GLP_BR_DTH,
+  'GLP_BR_PCH': GLP_BR_PCH,
 
-  'GLP_BT_DFS' : GLP_BT_DFS,
-  'GLP_BT_BFS' : GLP_BT_BFS,
-  'GLP_BT_BLB' : GLP_BT_BLB,
-  'GLP_BT_BPH' : GLP_BT_BPH,
+  'GLP_BT_DFS': GLP_BT_DFS,
+  'GLP_BT_BFS': GLP_BT_BFS,
+  'GLP_BT_BLB': GLP_BT_BLB,
+  'GLP_BT_BPH': GLP_BT_BPH,
 
-  'GLP_PP_NONE' : GLP_PP_NONE,
-  'GLP_PP_ROOT' : GLP_PP_ROOT,
-  'GLP_PP_ALL' : GLP_PP_ALL,
+  'GLP_PP_NONE': GLP_PP_NONE,
+  'GLP_PP_ROOT': GLP_PP_ROOT,
+  'GLP_PP_ALL': GLP_PP_ALL,
 
-  'GLP_MAX' : GLP_MAX,
-  'GLP_MIN' : GLP_MIN,
-  'GLP_UP' : GLP_UP,
-  'GLP_FR' : GLP_FR,
-  'GLP_DB' : GLP_DB,
-  'GLP_FX' : GLP_FX,
-  'GLP_LO' : GLP_LO,
-  'GLP_CV' : GLP_CV,
-  'GLP_IV' : GLP_IV,
-  'GLP_BV' : GLP_BV,
-  'GLP_MPS_DECK' : GLP_MPS_DECK,
-  'GLP_MPS_FILE' : GLP_MPS_FILE,
+  'GLP_MAX': GLP_MAX,
+  'GLP_MIN': GLP_MIN,
+  'GLP_UP': GLP_UP,
+  'GLP_FR': GLP_FR,
+  'GLP_DB': GLP_DB,
+  'GLP_FX': GLP_FX,
+  'GLP_LO': GLP_LO,
+  'GLP_CV': GLP_CV,
+  'GLP_IV': GLP_IV,
+  'GLP_BV': GLP_BV,
+  'GLP_MPS_DECK': GLP_MPS_DECK,
+  'GLP_MPS_FILE': GLP_MPS_FILE,
 
-  'GLP_UNDEF' : GLP_UNDEF,
-  'GLP_OPT' : GLP_OPT,
-  'GLP_FEAS' : GLP_FEAS,
-  'GLP_NOFEAS' : GLP_NOFEAS
+  'GLP_UNDEF': GLP_UNDEF,
+  'GLP_OPT': GLP_OPT,
+  'GLP_FEAS': GLP_FEAS,
+  'GLP_NOFEAS': GLP_NOFEAS
 
 }
 

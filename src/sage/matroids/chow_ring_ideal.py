@@ -5,6 +5,15 @@ AUTHORS:
 
 - Shriya M
 """
+# ****************************************************************************
+#       Copyright (C) 2024 Shriya M <25shriya at gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.matroids.utilities import cmp_elements_key
@@ -21,7 +30,7 @@ class ChowRingIdeal(MPolynomialIdeal):
 
         EXAMPLES::
 
-            sage: ch = matroids.Uniform(3,6).chow_ring(QQ, False)
+            sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False)
             sage: ch.defining_ideal().matroid()
             U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
             {3: {{0, 1, 2, 3, 4, 5}}}
@@ -53,8 +62,41 @@ class ChowRingIdeal(MPolynomialIdeal):
         flats = list(lattice_flats)
         flats.sort(key=lambda X: (len(X), sorted(X)))
         ranks = {F: self._matroid.rank(F) for F in flats}
-        chains = lattice_flats.chains()  #Only chains
+        chains = lattice_flats.chains()  # Only chains
         return (ranks, chains)
+
+    def flats_to_generator_dict(self):
+        r"""
+        Return the corresponding generators of flats/groundset elements of
+        Chow ring ideal.
+
+        EXAMPLES::
+
+            sage: ch = matroids.Uniform(4, 6).chow_ring(QQ, True, 'atom-free')
+            sage: ch.defining_ideal().flats_to_generator_dict()
+            {frozenset({0}): A0, frozenset({1}): A1, frozenset({2}): A2,
+             frozenset({3}): A3, frozenset({4}): A4, frozenset({5}): A5,
+             frozenset({0, 1}): A01, frozenset({0, 2}): A02,
+             frozenset({0, 3}): A03, frozenset({0, 4}): A04,
+             frozenset({0, 5}): A05, frozenset({1, 2}): A12,
+             frozenset({1, 3}): A13, frozenset({1, 4}): A14,
+             frozenset({1, 5}): A15, frozenset({2, 3}): A23,
+             frozenset({2, 4}): A24, frozenset({2, 5}): A25,
+             frozenset({3, 4}): A34, frozenset({3, 5}): A35,
+             frozenset({4, 5}): A45, frozenset({0, 1, 2}): A012,
+             frozenset({0, 1, 3}): A013, frozenset({0, 1, 4}): A014,
+             frozenset({0, 1, 5}): A015, frozenset({0, 2, 3}): A023,
+             frozenset({0, 2, 4}): A024, frozenset({0, 2, 5}): A025,
+             frozenset({0, 3, 4}): A034, frozenset({0, 3, 5}): A035,
+             frozenset({0, 4, 5}): A045, frozenset({1, 2, 3}): A123,
+             frozenset({1, 2, 4}): A124, frozenset({1, 2, 5}): A125,
+             frozenset({1, 3, 4}): A134, frozenset({1, 3, 5}): A135,
+             frozenset({1, 4, 5}): A145, frozenset({2, 3, 4}): A234,
+             frozenset({2, 3, 5}): A235, frozenset({2, 4, 5}): A245,
+             frozenset({3, 4, 5}): A345,
+             frozenset({0, 1, 2, 3, 4, 5}): A012345}
+        """
+        return dict(self._flats_generator)
 
 
 class ChowRingIdeal_nonaug(ChowRingIdeal):
@@ -95,7 +137,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
 
     Chow ring ideal of uniform matroid of rank 3 on 6 elements::
 
-        sage: ch = matroids.Uniform(3,6).chow_ring(QQ, False)
+        sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False)
         sage: ch.defining_ideal()
         Chow ring ideal of U(3, 6): Matroid of rank 3 on 6 elements with
          circuit-closures {3: {{0, 1, 2, 3, 4, 5}}} - non augmented
@@ -118,8 +160,8 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                  for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
         try:
-            poly_ring = PolynomialRing(R, names) #self.ring
-        except ValueError: # variables are not proper names
+            poly_ring = PolynomialRing(R, names)  # self.ring
+        except ValueError:  # variables are not proper names
             poly_ring = PolynomialRing(R, 'A', len(flats))
         gens = poly_ring.gens()
         self._flats_generator = dict(zip(flats, gens))
@@ -394,8 +436,8 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         try:
             names_groundset = ['A{}'.format(''.join(str(x))) for x in E]
             names_flats = ['B{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in self._flats]
-            poly_ring = PolynomialRing(R, names_groundset + names_flats) #self.ring()
-        except ValueError: #variables are not proper names
+            poly_ring = PolynomialRing(R, names_groundset + names_flats)  # self.ring()
+        except ValueError:  # variables are not proper names
             poly_ring = PolynomialRing(R, 'A', len(E) + len(self._flats))
         for i, x in enumerate(E):
             self._flats_generator[x] = poly_ring.gens()[i]
@@ -528,7 +570,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             for H in lattice_flats.order_filter([F]):
                 term1 += self._flats_generator[H]
             if term1 != poly_ring.zero():
-                gb.append(term1**(self._matroid.rank(F) + 1))  #5.6 (MM2022)
+                gb.append(term1**(self._matroid.rank(F) + 1))  # 5.6 (MM2022)
                 order_ideal_modified = lattice_flats.order_ideal([F])
                 order_ideal_modified.remove(F)
                 for G in order_ideal_modified:  # nested flats
@@ -542,7 +584,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: ch = matroids.Uniform(2,5).chow_ring(QQ, True, 'fy')
+            sage: ch = matroids.Uniform(2, 5).chow_ring(QQ, True, 'fy')
             sage: I = ch.defining_ideal()
             sage: I.normal_basis()
             [1, B0, B1, B2, B3, B4, B01234, B01234^2]
@@ -645,8 +687,8 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
                        for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in self._flats]
         try:
-            poly_ring = PolynomialRing(R, names) #self.ring
-        except ValueError: # variables are not proper names
+            poly_ring = PolynomialRing(R, names)  # self.ring
+        except ValueError:  # variables are not proper names
             poly_ring = PolynomialRing(R, 'A', len(self._flats))
         gens = poly_ring.gens()
         self._flats_generator = dict(zip(self._flats, gens))
@@ -719,7 +761,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: M1 = matroids.Uniform(3,6)
+            sage: M1 = matroids.Uniform(3, 6)
             sage: ch = M1.chow_ring(QQ, True, 'atom-free')
             sage: ch.defining_ideal().groebner_basis(algorithm='')
             Polynomial Sequence with 253 Polynomials in 22 Variables

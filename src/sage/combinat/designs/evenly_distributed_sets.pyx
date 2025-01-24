@@ -18,13 +18,14 @@ Classes and methods
 
 cimport cython
 
-from sage.categories.fields import Fields
 from libc.limits cimport UINT_MAX
 from libc.string cimport memset, memcpy
-
-from cysignals.memory cimport check_malloc, check_calloc, sig_free
+from memory_allocator cimport MemoryAllocator
 
 from sage.rings.integer cimport smallInteger
+
+from sage.categories.fields import Fields
+
 
 cdef class EvenlyDistributedSetsBacktracker:
     r"""
@@ -168,17 +169,8 @@ cdef class EvenlyDistributedSetsBacktracker:
     cdef unsigned int * cosets   # e array: cosets of differences of elts in B
     cdef unsigned int * t        # e array: temporary variable for updates
 
-    def __dealloc__(self):
-        if self.diff != NULL:
-            sig_free(self.diff[0])
-            sig_free(self.diff)
-        if self.ratio != NULL:
-            sig_free(self.ratio[0])
-            sig_free(self.ratio)
-        sig_free(self.min_orb)
-        sig_free(self.B)
-        sig_free(self.cosets)
-        sig_free(self.t)
+    # MANAGEMENT OF MEMORY
+    cdef MemoryAllocator mem
 
     def __init__(self, K, k, up_to_isomorphism=True, check=False):
         r"""
@@ -228,20 +220,21 @@ cdef class EvenlyDistributedSetsBacktracker:
         self.m = (q - 1) // e
         self.K = K
 
-        self.diff    = <unsigned int **> check_calloc(q, sizeof(unsigned int *))
-        self.diff[0] = <unsigned int *>  check_malloc(q*q*sizeof(unsigned int))
+        self.mem = MemoryAllocator()
+        self.diff = <unsigned int **> self.mem.calloc(q, sizeof(unsigned int *))
+        self.diff[0] = <unsigned int *> self.mem.malloc(q*q*sizeof(unsigned int))
         for i in range(1, self.q):
             self.diff[i] = self.diff[i-1] + q
 
-        self.ratio    = <unsigned int **> check_calloc(q, sizeof(unsigned int *))
-        self.ratio[0] = <unsigned int *>  check_malloc(q*q*sizeof(unsigned int))
+        self.ratio = <unsigned int **> self.mem.calloc(q, sizeof(unsigned int *))
+        self.ratio[0] = <unsigned int *> self.mem.malloc(q*q*sizeof(unsigned int))
         for i in range(1, self.q):
             self.ratio[i] = self.ratio[i-1] + q
 
-        self.B       = <unsigned int *> check_malloc(k*sizeof(unsigned int))
-        self.min_orb = <unsigned int *> check_malloc(q*sizeof(unsigned int))
-        self.cosets  = <unsigned int *> check_malloc(e*sizeof(unsigned int))
-        self.t       = <unsigned int *> check_malloc(e*sizeof(unsigned int))
+        self.B = <unsigned int *> self.mem.malloc(k*sizeof(unsigned int))
+        self.min_orb = <unsigned int *> self.mem.malloc(q*sizeof(unsigned int))
+        self.cosets = <unsigned int *> self.mem.malloc(e*sizeof(unsigned int))
+        self.t = <unsigned int *> self.mem.malloc(e*sizeof(unsigned int))
 
         x = K.multiplicative_generator()
         list_K = []

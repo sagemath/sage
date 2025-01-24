@@ -17,7 +17,7 @@ package using
 This will install a `Python wrapper <https://github.com/soehms/database_knotinfo#readme>`__
 for the original databases in Sage. This wrapper perfoms an automatic progress
 of version numbers. For more details and further install instructions please see
-the correspondig web-page.
+the corresponding web-page.
 
 To perform all the doctests concerning the usage of the database on the installation
 add the option ``-c``. In this case (for instance ``sage -f -c database_knotinfo``)
@@ -218,7 +218,7 @@ AUTHORS:
 - Sebastian Oehms August 2020: initial version
 - Sebastian Oehms June   2022: add :meth:`conway_polynomial` and :meth:`khovanov_polynomial` (:issue:`33969`)
 
-Thanks to Chuck Livingston and Allison Moore for their support. For further acknowledgments see the correspondig hompages.
+Thanks to Chuck Livingston and Allison Moore for their support. For further acknowledgments see the corresponding hompages.
 """
 
 
@@ -229,7 +229,7 @@ Thanks to Chuck Livingston and Allison Moore for their support. For further ackn
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 
 

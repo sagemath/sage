@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'artin.py',
   'braid.py',
@@ -37,13 +38,17 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, gmp]
+  if name == 'libgap_wrapper'
+    deps += [gap]
+  endif
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/groups',
     install: true,
     include_directories: [inc_cpython],
-    dependencies: [py_dep, gmp, gap],
+    dependencies: deps,
   )
 endforeach
 
