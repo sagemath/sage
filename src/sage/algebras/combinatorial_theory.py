@@ -402,6 +402,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             self._symmetries = ((1, 1, tuple()), )
         self._excluded = tuple()
         self._no_question = True
+        self._printlevel = 1
         Parent.__init__(self, category=(Sets(), ))
         self._populate_coercion_lists_()
     
@@ -855,7 +856,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         if symmetric:
             terms = ((sum(gs))**target_size).dict()
-            iterator = tqdm(terms)
+            if self._printlevel>0:
+                iterator = tqdm(terms)
+            else:
+                iterator = terms
             for exps in iterator:
                 verts = []
                 for ind, exp in enumerate(exps):
@@ -891,7 +895,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                         )
         else:
             rep = int(target_size if not unordered else target_size - 1)
-            iterator = tqdm(itertools.product(range(pattern_size), repeat=rep))
+            if self._printlevel>0:
+                iterator = tqdm(itertools.product(range(pattern_size), repeat=rep))
+            else:
+                iterator = itertools.product(range(pattern_size), repeat=rep)
             for verts in iterator:
                 if unordered:
                     verts = [0] + list(verts)
@@ -960,7 +967,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 Z = None
                 for Zjj in Zgroup:
                     if test and (not Zjj.is_positive_semidefinite()):
-                        print("Construction based Z matrix for " + 
+                        self.fprint("Construction based Z matrix for " + 
                               "{} is not semidef: {}".format(
                                   ftype, min(Zjj.eigenvalues())
                                   ))
@@ -1138,7 +1145,13 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             ]
 
         table_constructor = {}
-        for ii, dat in (pbar := tqdm(enumerate(ftype_data))):
+        if self._printlevel>0:
+            iterator = tqdm(enumerate(ftype_data))
+            pbar = iterator
+        else:
+            iterator = enumerate(ftype_data)
+            pbar = None
+        for ii, dat in iterator:
             ns, ftype, target_size = dat
             #pre-calculate the table here
             table = self.mul_project_table(
@@ -1156,7 +1169,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             if asym_base.nrows()!=0:
                 bases.append(asym_base)
             table_constructor[dat] = bases
-            pbar.set_description("Done with mult table for {}".format(ftype))
+            if not (pbar is None):
+                pbar.set_description("Done with mult table for {}".format(ftype))
         return table_constructor
     
     def _create_constraints_data(self, positives, target_element, target_size):
@@ -1171,7 +1185,13 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             constraints_vals = []
         else:
             positives_list_exact = []
-            for ii in (pbar:= tqdm(range(len(positives)))):
+            if self._printlevel>0:
+                iterator = tqdm(range(len(positives)))
+                pbar = iterator
+            else:
+                iterator = range(len(positives))
+                pbar = None
+            for ii in iterator:
                 fv = positives[ii]
                 if isinstance(fv, Flag):
                     continue
@@ -1184,9 +1204,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 fvvals = fv.values()
                 m = matrix(QQ, [vector(fvvals*mat) for mat in mult_table])
                 positives_list_exact += list(m.T)
-                pbar.set_description(
-                    "Done with positivity constraint {}".format(ii)
-                    )
+                if not (pbar is None):
+                    pbar.set_description(
+                        "Done with positivity constraint {}".format(ii)
+                        )
             constraints_vals = [0]*len(positives_list_exact)
         
         # The one vector is also calculated here and is a linear constraint
@@ -1228,9 +1249,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         X_matrices_approx = sdp_result['X'][:-2]
         X_matrices_rounded = []
-        print("Rounding X matrices")
-        for X in tqdm(X_matrices_approx):
-
+        self.fprint("Rounding X matrices")
+        if self._printlevel>0:
+            iterator = tqdm(X_matrices_approx)
+        else:
+            iterator = X_matrices_approx
+        for X in iterator:
             Xr = _round_matrix(X, method=0, denom=denom)
             Xnp = np.array(Xr)
             eigenvalues, eigenvectors = LA.eig(Xnp)
@@ -1257,8 +1281,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         slacks = target_vector_exact - positives_matrix_exact.T*e_vector_rounded
         block_index = 0
-        print("Calculating resulting bound")
-        for params in tqdm(table_constructor.keys()):
+        self.fprint("Calculating resulting bound")
+        if self._printlevel > 0:
+            iterator = tqdm(table_constructor.keys())
+        else:
+            iterator = table_constructor.keys()
+        for params in iterator:
             ns, ftype, target_size = params
             table = self.mul_project_table(
                 ns, ns, ftype, ftype_inj=[], target_size=target_size
@@ -1281,7 +1309,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # pad the slacks, so it is all positive where it counts
         slacks -= result*one_vector_exact
         
-        print("The rounded result is {}".format(result))
+        self.fprint("The rounded result is {}".format(result))
         
         return result, X_matrices_rounded, e_vector_rounded, \
             slacks, [phi_vector_rounded]
@@ -1387,7 +1415,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # The relevant entries of M flattened to a matrix this will be indexed by 
         # c_zero_inds and the triples from the types
         
-        print("Rounding X matrices")
+        self.fprint("Rounding X matrices")
         
         M_flat_relevant_matrix_exact = matrix(
             ring, len(c_zero_inds), 0, 0, sparse=True
@@ -1454,7 +1482,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         e_nonzero_vector_corr = x_vector_corr[-len(e_nonzero_inds):]
         if len(e_nonzero_vector_corr)>0 and min(e_nonzero_vector_corr)<0:
-            print("Linear coefficient is negative: {}".format(
+            self.fprint("Linear coefficient is negative: {}".format(
                 min(e_nonzero_vector_corr)
                 ))
             e_nonzero_vector_corr = [max(xx, 0) for xx in e_nonzero_vector_corr]
@@ -1465,8 +1493,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         X_final = []
         slacks = target_vector_exact - positives_matrix_exact.T*e_vector_corr
         block_index = 0
-        print("Calculating resulting bound")
-        for params in tqdm(table_constructor.keys()):
+        self.fprint("Calculating resulting bound")
+        if self._printlevel > 0:
+            iterator = tqdm(table_constructor.keys())
+        else:
+            iterator = table_constructor.keys()
+        for params in iterator:
             ns, ftype, target_size = params
             table = self.mul_project_table(
                 ns, ns, ftype, ftype_inj=[], target_size=target_size
@@ -1480,7 +1512,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 
                 # verify semidefiniteness
                 if not X_ii_small.is_positive_semidefinite():
-                    print("Rounded X matrix "+ 
+                    self.fprint("Rounded X matrix "+ 
                           "{} is not semidefinite: {}".format(
                               block_index+plus_index, 
                               min(X_ii_small.eigenvalues())
@@ -1559,7 +1591,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             P, L, D = X_ii.block_ldlt()
             # last check that D has only diagonals
             if not all([xx[0]==xx[1] for xx in D._dict().keys()]):
-                print("LDLT factoring failed")
+                self.fprint("LDLT factoring failed")
                 return None
             P_dicts.append(P._dict())
             L_mats.append(vector(_flatten_matrix(L.T.rows())))
@@ -1577,6 +1609,11 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         list of base flags, the list of used (typed) flags
         """
         
+        try:
+            os.remove("params.csdp")
+        except OSError:
+            pass
+
         target_size = 0
         typed_flags = {}
         for params in table_constructor.keys():
@@ -1624,7 +1661,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     def optimize_problem(self, target_element, target_size, maximize=True, 
                          positives=None, construction=None, file=None, 
-                         exact=False, denom=1024, ring=QQ, specific_ftype=None):
+                         exact=False, denom=1024, ring=QQ, specific_ftype=None, 
+                         params=None):
         r"""
         Try to maximize or minimize the value of `target_element`
         
@@ -1660,10 +1698,27 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         import time
 
         #
+        # Handling parameters
+        #
+
+        if self._printlevel != 1:
+            if params==None:
+                params = {"printlevel": self._printlevel}
+            else:
+                if "printlevel" not in params:
+                    params["printlevel"] = self._printlevel
+        if params!=None:
+            with open("param.csdp", "w") as paramsfile:
+                for key, value in params.items():
+                    paramsfile.write(f"{key}={value}\n")
+            self._printlevel = params["printlevel"]
+        
+        #
         # Initial setup
         #
+
         base_flags = self.generate_flags(target_size)
-        print("Base flags generated, their number is {}".format(
+        self.fprint("Base flags generated, their number is {}".format(
             len(base_flags)
             ))
         mult = -1 if maximize else 1
@@ -1681,11 +1736,11 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             ftype_data = self._get_relevant_ftypes(target_size)
         else:
             ftype_data = specific_ftype
-        print("The relevant ftypes are constructed, their " + 
+        self.fprint("The relevant ftypes are constructed, their " + 
               "number is {}".format(len(ftype_data)))
         flags = [self.generate_flags(dat[0], dat[1]) for dat in ftype_data]
         flag_sizes = [len(xx) for xx in flags]
-        print("Block sizes before symmetric/asymmetric change is" + 
+        self.fprint("Block sizes before symmetric/asymmetric change is" + 
               " applied: {}".format(flag_sizes))
         
         #
@@ -1698,7 +1753,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         sdp_data = self._tables_to_sdp_data(
             table_constructor, prev_data=sdp_data
             )
-        print("Tables finished")
+        self.fprint("Tables finished")
 
         #
         # Add constraints data and add it to sdp_data
@@ -1710,7 +1765,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         sdp_data = self._constraints_to_sdp_data(
             constraints_data, prev_data=sdp_data
             )
-        print("Constraints finished")
+        self.fprint("Constraints finished")
         
         #
         # If construction is None or [] then run the optimizer 
@@ -1718,7 +1773,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         #
         
         if construction==None or construction==[]:
-            print("Running sdp without construction. " + 
+            self.fprint("Running sdp without construction. " + 
                   "Used block sizes are {}".format(sdp_data[0]))
             
             time.sleep(float(0.1))
@@ -1747,13 +1802,13 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                     alg = FlagAlgebra(self, QQ)
                     construction = alg(target_size, phi_vector_rounded)
                     phipr = str(construction)
-                    print("The initial run gave an accurate "+
+                    self.fprint("The initial run gave an accurate "+
                           "looking construction")
                     if len(phipr)<1000:
-                        print("Rounded construction vector "+
+                        self.fprint("Rounded construction vector "+
                               "is: \n{}".format(phipr))
                 else:
-                    print("The initial run didn't provide an "+
+                    self.fprint("The initial run didn't provide an "+
                           "accurate construction")
                     construction = []
             
@@ -1787,7 +1842,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # Adjust the table to consider the kernel from y_rounded
         #
 
-        print("Adjusting table with kernels from construction")
+        self.fprint("Adjusting table with kernels from construction")
         table_constructor = self._adjust_table_phi(
             table_constructor, phi_vectors_exact, ring=ring
             )
@@ -1803,7 +1858,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # Then run the optimizer
         #
         
-        print("Running SDP after kernel correction. "+
+        self.fprint("Running SDP after kernel correction. "+
               "Used block sizes are {}".format(sdp_data[0]))
         time.sleep(float(0.1))
         final_sol = solve_sdp(*sdp_data)
@@ -1821,20 +1876,20 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 )
         
         
-        print("Starting the rounding of the result")
+        self.fprint("Starting the rounding of the result")
         rounding_output = self._round_sdp_solution_phi(
             final_sol, sdp_data, table_constructor, 
             constraints_data, phi_vectors_exact, 
             denom=denom, ring=ring
             )
         if rounding_output==None:
-            print("Rounding based on construction was unsuccessful")
+            self.fprint("Rounding based on construction was unsuccessful")
             rounding_output = self._round_sdp_solution_no_phi(
                 final_sol, sdp_data, table_constructor, 
                 constraints_data, denom=denom
                 )
         
-        print("Final rounded bound is {}".format(rounding_output[0]*mult))
+        self.fprint("Final rounded bound is {}".format(rounding_output[0]*mult))
         
         if file==None:
             return rounding_output[0] * mult
@@ -1847,6 +1902,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     optimize = optimize_problem
     
+    def fprint(self, *args):
+        if self._printlevel != 0:
+            print(*args)
+
     def external_optimize(self, target_element, target_size, maximize=True, 
                           positives=None, construction=None, file=None, 
                           specific_ftype=None):
@@ -1861,7 +1920,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # Initial setup
         #
         base_flags = self.generate_flags(target_size)
-        print("Base flags generated, their number "+
+        self.fprint("Base flags generated, their number "+
               "is {}".format(len(base_flags)))
         mult = -1 if maximize else 1
         target_vector_exact = (
@@ -1878,11 +1937,11 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             ftype_data = self._get_relevant_ftypes(target_size)
         else:
             ftype_data = specific_ftype
-        print("The relevant ftypes are constructed, "+
+        self.fprint("The relevant ftypes are constructed, "+
               "their number is {}".format(len(ftype_data)))
         flags = [self.generate_flags(dat[0], dat[1]) for dat in ftype_data]
         flag_sizes = [len(xx) for xx in flags]
-        print("Block sizes before symmetric/asymmetric change " + 
+        self.fprint("Block sizes before symmetric/asymmetric change " + 
               "is applied: {}".format(flag_sizes))
         
         #
@@ -1897,14 +1956,14 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 phi_vectors_exact = [construction.values()]
             else:
                 phi_vectors_exact = [xx.values() for xx in construction]
-            print("Adjusting table with kernels from construction")
+            self.fprint("Adjusting table with kernels from construction")
             table_constructor = self._adjust_table_phi(
                 table_constructor, phi_vectors_exact
                 )
         sdp_data = self._tables_to_sdp_data(
             table_constructor, prev_data=sdp_data
             )
-        print("Tables finished")
+        self.fprint("Tables finished")
 
         #
         # Create constraints data and add it to sdp_data
@@ -1916,7 +1975,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         sdp_data = self._constraints_to_sdp_data(
             constraints_data, prev_data=sdp_data
             )
-        print("Constraints finished")
+        self.fprint("Constraints finished")
 
 
         #
@@ -1972,7 +2031,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         if len(e_values)>0 and min(e_values)<0:
             print("Solution is not valid!")
-            print("Linear constraint's coefficient is negative ", 
+            self.fprint("Linear constraint's coefficient is negative ", 
                   min(e_values))
             return -1
         
@@ -1980,12 +2039,16 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # Ps = certificate["P dictionaries"]
         # Ds = certificate["D vectors"]
         # Ls = certificate["L matrices"]
-        print("Checking X matrices")
-        for ii, Xf in tqdm(enumerate(X_flats)):
+        self.fprint("Checking X matrices")
+        if self._printlevel > 0:
+            iterator = tqdm(enumerate(X_flats))
+        else:
+            iterator = enumerate(X_flats)
+        for ii, Xf in iterator:
             X = matrix(QQ, _unflatten_matrix(Xf)[0])
             if not (X.is_positive_semidefinite()):
                 print("Solution is not valid!")
-                print("Matrix {} is not semidefinite".format(ii))
+                self.fprint("Matrix {} is not semidefinite".format(ii))
                 return -1
             # P = matrix(QQ, len(Ddiag), len(Ddiag), Ps[ii], sparse=True)
             # D = diagonal_matrix(QQ, Ddiag, sparse=True)
@@ -1998,7 +2061,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             # X = PL * D * PL.T
             # X_flats.append(vector(QQ, _flatten_matrix(X.rows())))
 
-        print("Solution matrices are all positive semidefinite, " + 
+        self.fprint("Solution matrices are all positive semidefinite, " + 
               "linear coefficients are all non-negative")
 
         #
@@ -2026,8 +2089,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         #
 
         table_list = []
-        print("Calculating multiplication tables")
-        for ii, dat in tqdm(enumerate(ftype_data)):
+        self.fprint("Calculating multiplication tables")
+        if self._printlevel > 0:
+            iterator = tqdm(enumerate(ftype_data))
+        else:
+            iterator = enumerate(ftype_data)
+        for ii, dat in iterator:
             ns, ftype = dat
             #calculate the table
             table = self.mul_project_table(
@@ -2053,7 +2120,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 fvvals = fv.values()
                 m = matrix(QQ, [vector(fvvals*mat) for mat in mult_table])
                 positives_list_exact += list(m.T)
-                print("Done with positivity constraint {}".format(ii))
+                self.fprint("Done with positivity constraint {}".format(ii))
         else:
             e_values = vector(QQ, 0)
         positives_matrix_exact = matrix(
@@ -2062,16 +2129,20 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             positives_list_exact
             )
 
-        print("Done calculating linear constraints")
+        self.fprint("Done calculating linear constraints")
 
         #
         # Calculate the bound the solution provides
         #
         
-        print("Calculating the bound provided by the certificate")
+        self.fprint("Calculating the bound provided by the certificate")
         
         slacks = target_vector_exact - positives_matrix_exact.T*e_values
-        for ii, table in tqdm(enumerate(table_list)):
+        if self._printlevel > 0:
+            iterator = tqdm(enumerate(table_list))
+        else:
+            iterator = enumerate(table_list)
+        for ii, table in iterator:
             for gg, mat_gg in enumerate(table):
                 mat_flat = vector(
                     _flatten_matrix(mat_gg.rows(), doubled=True)
