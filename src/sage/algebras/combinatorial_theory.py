@@ -1609,11 +1609,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         list of base flags, the list of used (typed) flags
         """
         
-        try:
-            os.remove("params.csdp")
-        except OSError:
-            pass
-
         target_size = 0
         typed_flags = {}
         for params in table_constructor.keys():
@@ -1768,6 +1763,26 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         self.fprint("Constraints finished")
         
         #
+        # Helper for returning the data, writing to file, and some cleanup
+        #
+
+        def help_return(value, sdpo=None, roundo=None):
+            try:
+                os.remove("param.csdp")
+            except OSError:
+                pass
+
+            if file==None:
+                return value
+            return self._format_optimizer_output(
+                table_constructor, 
+                mult=mult, 
+                sdp_output=sdpo, 
+                rounding_output=roundo,
+                file=file
+                )
+
+        #
         # If construction is None or [] then run the optimizer 
         # without any construction
         #
@@ -1782,14 +1797,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
             # Format the result and return it if floating point values are fine
             if (not exact):
-                if file==None:
-                    return initial_sol['primal'] * mult
-                return self._format_optimizer_output(
-                    table_constructor, 
-                    mult=mult, 
-                    sdp_output=initial_sol, 
-                    file=file
-                    )
+                return help_return(initial_sol['primal'] * mult, 
+                                   sdpo=initial_sol)
             
             # Guess the construction in this case
             if construction==None:
@@ -1818,14 +1827,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 rounding_output = self._round_sdp_solution_no_phi(
                     initial_sol, sdp_data, table_constructor, 
                     constraints_data, denom=denom)
-                if file==None:
-                    return rounding_output[0] * mult
-                return self._format_optimizer_output(
-                    table_constructor, 
-                    mult=mult, 
-                    rounding_output=rounding_output, 
-                    file=file
-                    )
+                return help_return(rounding_output[0] * mult, roundo=rounding_output)
         
         
         #
@@ -1866,14 +1868,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         # Quickly deal with the case when no rounding is needed
         if (not exact):
-            if file==None:
-                return final_sol['primal'] * mult
-            return self._format_optimizer_output(
-                table_constructor, 
-                mult=mult, 
-                sdp_output=final_sol, 
-                file=file
-                )
+            return help_return(final_sol['primal'] * mult, sdpo=final_sol)
         
         
         self.fprint("Starting the rounding of the result")
@@ -1891,14 +1886,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         
         self.fprint("Final rounded bound is {}".format(rounding_output[0]*mult))
         
-        if file==None:
-            return rounding_output[0] * mult
-        return self._format_optimizer_output(
-            table_constructor, 
-            mult=mult, 
-            rounding_output=rounding_output, 
-            file=file
-            )
+        return help_return(rounding_output[0] * mult, roundo=rounding_output)
     
     optimize = optimize_problem
     
