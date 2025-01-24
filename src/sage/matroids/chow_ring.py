@@ -92,7 +92,7 @@ class ChowRing(QuotientRing_generic):
         Chow ring of P8'': Matroid of rank 4 on 8 elements with 8 nonspanning circuits
         over Rational Field
     """
-    def __init__(self, R, M, augmented, presentation='fy'):
+    def __init__(self, R, M, augmented, presentation=None):
         r"""
         Initialize ``self``.
 

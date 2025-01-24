@@ -500,6 +500,9 @@ REFERENCES:
 .. [BeBo2009] Olivier Bernardi and Nicolas Bonichon, *Intervals in Catalan
               lattices and realizers of triangulations*, JCTA 116 (2009)
 
+.. [BES2024] Spencer Backman, Christopher Eur, and Connor Simpson. *Simplicial generation
+             of Chow rings of matroids*, 2024. :arxiv:`1905.07114`
+
 .. [Best2021] Alex J. Best: Tools and Techniques for Rational Points on Curves.
               PhD Thesis, Boston University, 2021.
 
