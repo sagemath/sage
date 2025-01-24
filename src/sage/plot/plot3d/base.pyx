@@ -975,7 +975,7 @@ cdef class Graphics3d(SageObject):
 %s
 </Scene>
 </X3D>
-"""%(self.viewpoint().x3d_str(), self.x3d_str())
+""" % (self.viewpoint().x3d_str(), self.x3d_str())
 
     ################ TACHYON ################
 
@@ -1001,7 +1001,7 @@ cdef class Graphics3d(SageObject):
     # Instead, the tachyon aspectratio is set to match nonsquare
     # drawing area in "figsize".
 
-    # Parameters are mostly taken from tachyion.py,
+    # Parameters are mostly taken from tachyon.py,
     # but camera_center is renamed camera_position.
     # Apparently reST strips () from default parameters in the automatic documentation.
     # Thus, I replaced () by [] as default values.
@@ -1108,8 +1108,8 @@ resolution {resolution_x:d} {resolution_y:d}
     {render_parameters}
 
 end_scene""".format(
-    #render_params.antialiasing, this only provided the default value of 8
-    scene =  "\n".join(sorted([t.tachyon_str() for t in self.texture_set()])),
+    # render_params.antialiasing, this only provided the default value of 8
+    scene = "\n".join(sorted([t.tachyon_str() for t in self.texture_set()])),
     render_parameters =
              "\n".join(flatten_list(self.tachyon_repr(render_params))),
     viewdir1000=self._tostring(1000*vector(viewdir).normalized().n()),
@@ -1249,7 +1249,7 @@ end_scene""".format(
             f.write('set labelOffset 0 0\n')
 
         # Set the scene background color
-        f.write('background [%s,%s,%s]\n'%tuple([int(a*255) for a in background]))
+        f.write('background [%s,%s,%s]\n' % tuple(int(a*255) for a in background))
         if spin:
             f.write('spin ON\n')
         else:
@@ -2619,11 +2619,11 @@ class TransformGroup(Graphics3dGroup):
         """
         s = "<Transform"
         if self._rot is not None:
-            s += " rotation='%s %s %s %s'"%tuple(self._rot)
+            s += " rotation='%s %s %s %s'" % tuple(self._rot)
         if self._trans is not None:
-            s += " translation='%s %s %s'"%tuple(self._trans)
+            s += " translation='%s %s %s'" % tuple(self._trans)
         if self._scale is not None:
-            s += " scale='%s %s %s'"%tuple(self._scale)
+            s += " scale='%s %s %s'" % tuple(self._scale)
         s += ">\n"
         s += Graphics3dGroup.x3d_str(self)
         s += "\n</Transform>"
@@ -2886,7 +2886,7 @@ class Viewpoint(Graphics3d):
             sage: sphere((0,0,0), 100).viewpoint().x3d_str()
             "<Viewpoint position='0 0 6'/>"
         """
-        return "<Viewpoint position='%s %s %s'/>"%self.pos
+        return "<Viewpoint position='%s %s %s'/>" % self.pos
 
 
 cdef class PrimitiveObject(Graphics3d):

@@ -876,7 +876,7 @@ cdef class IntegerRing_class(CommutativeRing):
             return True
         return super()._repr_option(key)
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Return ``False`` since the integers are not a field.
 
@@ -1142,23 +1142,7 @@ cdef class IntegerRing_class(CommutativeRing):
         """
         return 1
 
-    def is_integrally_closed(self):
-        """
-        Return that the integer ring is, in fact, integrally closed.
-
-        .. NOTE::
-
-            This should rather be inherited from the category
-            of ``DedekindDomains``.
-
-        EXAMPLES::
-
-            sage: ZZ.is_integrally_closed()
-            True
-        """
-        return True
-
-    def completion(self, p, prec, extras = {}):
+    def completion(self, p, prec, extras={}):
         r"""
         Return the metric completion of the integers at the prime `p`.
 

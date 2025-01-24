@@ -1019,7 +1019,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
 
         return (l_cycle_length, r_cycle_length)
 
-    def _contains_sl2(self, a,b,c,d):
+    def _contains_sl2(self, a, b, c, d):
         r"""
         Test whether ``[a,b;c,d]`` is in the group or not.
 
@@ -1145,7 +1145,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
                 return False
         return True
 
-    def _conjugate(self,j0):
+    def _conjugate(self, j0):
         r"""
         Return the conjugate of ``self`` rooted at j0.
 
@@ -1654,7 +1654,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         """
         return False
 
-    def to_even_subgroup(self,relabel=True):
+    def to_even_subgroup(self, relabel=True):
         r"""
         Return the group with `-Id` added in it.
 
@@ -1784,7 +1784,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
                 n += 1
         return n//2
 
-    def cusp_widths(self,exp=False):
+    def cusp_widths(self, exp=False):
         r"""
         Return the list of cusp widths.
 
@@ -2391,7 +2391,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         """
         return self.todd_coxeter()[0]
 
-    def cusp_widths(self,exp=False):
+    def cusp_widths(self, exp=False):
         r"""
         Return the list of cusp widths of the group.
 
@@ -2462,7 +2462,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         else:
             return self
 
-    def one_odd_subgroup(self,random=False):
+    def one_odd_subgroup(self, random=False):
         r"""
         Return an odd subgroup of index 2 in `\Gamma`, where `\Gamma` is this
         subgroup. If the optional argument ``random`` is False (the default),
@@ -2587,16 +2587,22 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         A projective congruence subgroup may have noncongruence liftings, as the example of `\bar{\Gamma}_0(6)` illustrates (see [KSV2011]_)::
 
             sage: X = Gamma0(6).as_permutation_group().odd_subgroups(); Sequence([[u.S2(), u.S3()] for u in X],cr=True)
-            [
-            [(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23), (1,2,3,13,14,15)(4,5,6,16,17,18)(7,8,9,19,20,21)(10,11,12,22,23,24)],
-            [(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23), (1,14,15,13,2,3)(4,5,6,16,17,18)(7,8,9,19,20,21)(10,11,12,22,23,24)],
-            [(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23), (1,2,3,13,14,15)(4,17,6,16,5,18)(7,8,9,19,20,21)(10,11,12,22,23,24)],
-            [(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23), (1,14,15,13,2,3)(4,17,6,16,5,18)(7,8,9,19,20,21)(10,11,12,22,23,24)],
-            [(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23), (1,2,3,13,14,15)(4,5,6,16,17,18)(7,20,9,19,8,21)(10,11,12,22,23,24)],
-            [(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23), (1,14,15,13,2,3)(4,5,6,16,17,18)(7,20,9,19,8,21)(10,11,12,22,23,24)],
-            [(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23), (1,2,3,13,14,15)(4,17,6,16,5,18)(7,20,9,19,8,21)(10,11,12,22,23,24)],
-            [(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23), (1,14,15,13,2,3)(4,17,6,16,5,18)(7,20,9,19,8,21)(10,11,12,22,23,24)]
-            ]
+            [[(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23),
+              (1,2,3,13,14,15)(4,5,6,16,17,18)(7,8,9,19,20,21)(10,11,12,22,23,24)],
+             [(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23),
+              (1,14,15,13,2,3)(4,5,6,16,17,18)(7,8,9,19,20,21)(10,11,12,22,23,24)],
+             [(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23),
+              (1,2,3,13,14,15)(4,17,6,16,5,18)(7,8,9,19,20,21)(10,11,12,22,23,24)],
+             [(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23),
+              (1,14,15,13,2,3)(4,17,6,16,5,18)(7,8,9,19,20,21)(10,11,12,22,23,24)],
+             [(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23),
+              (1,2,3,13,14,15)(4,5,6,16,17,18)(7,20,9,19,8,21)(10,11,12,22,23,24)],
+             [(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23),
+              (1,14,15,13,2,3)(4,5,6,16,17,18)(7,20,9,19,8,21)(10,11,12,22,23,24)],
+             [(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23),
+              (1,2,3,13,14,15)(4,17,6,16,5,18)(7,20,9,19,8,21)(10,11,12,22,23,24)],
+             [(1,3,13,15)(2,4,14,16)(5,7,17,19)(6,10,18,22)(8,12,20,24)(9,11,21,23),
+              (1,14,15,13,2,3)(4,17,6,16,5,18)(7,20,9,19,8,21)(10,11,12,22,23,24)]]
             sage: [u.is_congruence() for u in X]
             [True, False, False, True, True, False, False, True]
         """

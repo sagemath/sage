@@ -233,7 +233,7 @@ class PiecewiseFunction(BuiltinFunction):
                     return subs_map.apply_to(func, 0)
             raise ValueError(f'point {point} is not in the domain')
 
-        raise ValueError('substition not allowed')
+        raise ValueError('substitution not allowed')
 
     @staticmethod
     def in_operands(ex):
@@ -319,7 +319,7 @@ class PiecewiseFunction(BuiltinFunction):
                           for domain, func in parameters],
                          var=variable)
 
-    class EvaluationMethods():
+    class EvaluationMethods:
 
         def __pow__(self, parameters, variable, n):
             """
@@ -673,39 +673,40 @@ class PiecewiseFunction(BuiltinFunction):
             funcs = []
             contains_lower = False
             contains_upper = False
-            for i in range(len(points)-1):
+            for i in range(len(points) - 1):
+                a, b = points[i], points[i + 1]
                 try:
-                    contains_lower = (self.domain().contains(points[i]) or
-                        other.domain().contains(points[i])) and not contains_upper
-                    contains_upper = (self.domain().contains(points[i+1]) or
-                        other.domain().contains(points[i+1]))
+                    contains_lower = (self.domain().contains(a) or
+                        other.domain().contains(a)) and not contains_upper
+                    contains_upper = (self.domain().contains(b) or
+                        other.domain().contains(b))
                     if contains_lower:
                         if contains_upper:
-                            rs = RealSet.closed(points[i], points[i+1])
+                            rs = RealSet.closed(a, b)
                         else:
-                            rs = RealSet.closed_open(points[i], points[i+1])
+                            rs = RealSet.closed_open(a, b)
                     else:
                         if contains_upper:
-                            rs = RealSet.open_closed(points[i], points[i+1])
+                            rs = RealSet.open_closed(a, b)
                         else:
-                            rs = RealSet.open(points[i], points[i+1])
-                    point = (points[i+1] + points[i])/2
+                            rs = RealSet.open(a, b)
+                    point = (b + a) / 2
                 except ValueError:
-                    if points[i] == minus_infinity and points[i+1] == infinity:
+                    if a == minus_infinity and b == infinity:
                         rs = RealSet.open(minus_infinity, infinity)
                         point = 0
-                    elif points[i] == minus_infinity:
+                    elif a == minus_infinity:
                         if contains_lower:
-                            rs = RealSet.unbounded_below_closed(points[i+1])
+                            rs = RealSet.unbounded_below_closed(b)
                         else:
-                            rs = RealSet.unbounded_below_open(points[i+1])
-                        point = points[i+1]-1
-                    elif points[i+1] == infinity:
+                            rs = RealSet.unbounded_below_open(b)
+                        point = b - 1
+                    elif b == infinity:
                         if contains_upper:
-                            rs = RealSet.unbounded_above_closed(points[i])
+                            rs = RealSet.unbounded_above_closed(a)
                         else:
-                            rs = RealSet.unbounded_above_open(points[i])
-                        point = points[i]+1
+                            rs = RealSet.unbounded_above_open(a)
+                        point = a + 1
                     else:
                         raise
                 try:
@@ -835,6 +836,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             Check that the algorithm keyword can be used::
 
+                sage: # needs sage.libs.giac
                 sage: ex = piecewise([([0, 1], 1), ((1, oo), 1/x**2)])
                 sage: integral(ex, x, 0, 100, algorithm='sympy')
                 199/100
@@ -1160,17 +1162,17 @@ class PiecewiseFunction(BuiltinFunction):
                 (s + 1)*e^(-s)/s^2 + 2*e^(-s)/s - 1/s^2
             """
             from sage.symbolic.assumptions import assume, forget
-            from sage.functions.log import exp
 
             x = SR.var(x)
             s = SR.var(s)
             assume(s > 0)
+            exp_sx = (-s * x).exp()
             result = 0
             for domain, f in parameters:
                 for interval in domain:
                     a = interval.lower()
                     b = interval.upper()
-                    result += (SR(f)*exp(-s*x)).integral(x, a, b)
+                    result += (SR(f) * exp_sx).integral(x, a, b)
             forget(s > 0)
             return result
 
@@ -1470,16 +1472,18 @@ class PiecewiseFunction(BuiltinFunction):
 
             EXAMPLES::
 
+                sage: # needs giac
                 sage: ex = piecewise([((0, 1), pi), ([1, 2], x)])
-                sage: f = ex._giac_(); f                                                # needs sage.libs.giac
+                sage: f = ex._giac_(); f
                 piecewise(((sageVARx>0) and (1>sageVARx)),pi,((sageVARx>=1) and (2>=sageVARx)),sageVARx)
-                sage: f.diff(x)                                                         # needs sage.libs.giac
+                sage: f.diff(x)
                 piecewise(((sageVARx>0) and (1>sageVARx)),0,((sageVARx>=1) and (2>=sageVARx)),1)
 
-                sage: ex = piecewise([((-100, -2), 1/x), ((1, +oo), cos(x))])           # needs sage.libs.giac
-                sage: g = ex._giac_(); g                                                # needs sage.libs.giac
+                sage: # needs giac
+                sage: ex = piecewise([((-100, -2), 1/x), ((1, +oo), cos(x))])
+                sage: g = ex._giac_(); g
                 piecewise(((sageVARx>-100) and ((-2)>sageVARx)),1/sageVARx,sageVARx>1,cos(sageVARx))
-                sage: g.diff(x)                                                         # needs sage.libs.giac
+                sage: g.diff(x)
                 piecewise(((sageVARx>-100) and ((-2)>sageVARx)),-1/sageVARx^2,sageVARx>1,-sin(sageVARx))
 
             TESTS::

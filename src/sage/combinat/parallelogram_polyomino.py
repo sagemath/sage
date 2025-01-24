@@ -311,8 +311,7 @@ class LocalOptions:
             {'diagram': 'diagram representation',
             'list': 'list representation'}}
         """
-        for key in options:
-            value = options[key]
+        for key, value in options.items():
             self.__setitem__(key, value)
         for key in get_values:
             return self.__getitem__(key)
@@ -3043,7 +3042,7 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``box_position`` -- the position of the statring cell
+        - ``box_position`` -- the position of the starting cell
 
         - ``direction`` -- the direction (0 or 1)
 

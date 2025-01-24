@@ -2810,18 +2810,8 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False):
         try:
             endo = iso * E.isogeny(None, iso.domain(), degree=q)
         except (NotImplementedError, ValueError):  #FIXME catching ValueError here is a workaround for #38481
-            #FIXME this code could be simplified/optimized after #37388 and/or #35949
-            def _isogs(E, d):
-                if d.is_one():
-                    yield E.identity_morphism()
-                    return
-                l = d.prime_factors()[-1]
-                for phi in E.isogenies_prime_degree(l):
-                    for psi in _isogs(phi.codomain(), d//l):
-                        yield psi * phi
-            endos = (iso*phi for phi in _isogs(E, q) for iso in phi.codomain().isomorphisms(E))
-#            endos = (iso*phi for phi in E.isogenies_degree(q)
-#                             for iso in phi.codomain().isomorphisms(E))
+            endos = (iso*phi for phi in E.isogenies_degree(q)
+                             for iso in phi.codomain().isomorphisms(E))
             endo = next(endo for endo in endos if endo.trace().is_zero())
 
     endo._degree = ZZ(q)
@@ -2942,6 +2932,7 @@ def EllipticCurve_with_order(m, *, D=None):
                         seen.add(Et)
                         yield Et
 
+
 def EllipticCurve_with_prime_order(N):
     r"""
     Given a prime number ``N``, find another prime number `p` and construct an
@@ -2962,7 +2953,7 @@ def EllipticCurve_with_prime_order(N):
     a suitable `D` *incrementally*, by enlarging the table `S` by `log(N)`-size
     interval of primes `p` and testing all products of distinct primes `p` (or
     rather `p^*`). We find this difficult to implement without testing
-    duplicate `D`s, so we instead enlarge the table one prime at a time
+    duplicate `D`\s, so we instead enlarge the table one prime at a time
     (effectively replacing `[r\log(N), (r + 1)\log(N)]` in the paper by `[r,
     r]`). To compensate for the speed loss, we begin the algorithm by
     prefilling `S` with the primes below `1000` (satisfying quadratic
@@ -2970,14 +2961,14 @@ def EllipticCurve_with_prime_order(N):
     to be fast for many purposes, and for most `N` we tested we are able to
     find a suitable small `D` without increasing the size of `S`.
 
-    The paper also doesn't specify how to enumerate such `D`s, which recall
+    The paper also doesn't specify how to enumerate such `D`\s, which recall
     should be product of distinct values in the table `S`. We implement this
     with a priority queue (min heap), which also allows us to search for the
-    suitable `D`s in increasing (absolute value) order. This is suitable for
+    suitable `D`\s in increasing (absolute value) order. This is suitable for
     the algorithm because smaller `D` means the Hilbert class polynomial is
     computed quicker.
 
-    Finally, to avoid repeatedly testing the same `D`s, we require the latest
+    Finally, to avoid repeatedly testing the same `D`\s, we require the latest
     prime to be added to the table to be included as a factor of `D` (see code
     for more explanation). As we need to find integers `x, y` such that `x^2 +
     (-D)y^2 = 4N` with `D < 0` and `N` prime, we actually need `|D| \leq 4N`,
@@ -3022,7 +3013,7 @@ def EllipticCurve_with_prime_order(N):
         sage: E.has_order(N)
         True
 
-    ::
+    Another example for large primes::
 
         sage: N = next_prime(2^256)
         sage: E = next(EllipticCurve_with_prime_order(N)); E                            # random

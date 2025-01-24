@@ -34,7 +34,7 @@ from sage.rings.padics.padic_floating_point_element import pAdicCoercion_ZZ_FP, 
 class pAdicBaseGeneric(pAdicGeneric):
     _implementation = 'GMP'
 
-    def __init__(self, p, prec, print_mode, names, element_class):
+    def __init__(self, p, prec, print_mode, names, element_class, category=None):
         """
         Initialization.
 
@@ -47,7 +47,7 @@ class pAdicBaseGeneric(pAdicGeneric):
             self.prime_pow = PowComputer_flint(p, 1, 1, 1, self.is_field())
         else:
             self.prime_pow = PowComputer(p, max(min(prec - 1, 30), 1), prec, self.is_field(), self._prec_type())
-        pAdicGeneric.__init__(self, self, p, prec, print_mode, names, element_class)
+        pAdicGeneric.__init__(self, self, p, prec, print_mode, names, element_class, category=category)
         if self.is_field():
             if self.is_capped_relative():
                 coerce_list = [pAdicCoercion_ZZ_CR(self), pAdicCoercion_QQ_CR(self)]

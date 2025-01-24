@@ -29,10 +29,11 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.parallel.decorate import parallel
-from sage.parallel.parallelism import Parallelism
 from sage.manifolds.differentiable.affine_connection import AffineConnection
 from sage.manifolds.differentiable.vectorframe import CoordFrame
+from sage.parallel.decorate import parallel
+from sage.parallel.parallelism import Parallelism
+
 
 class LeviCivitaConnection(AffineConnection):
     r"""
@@ -363,9 +364,9 @@ class LeviCivitaConnection(AffineConnection):
             sage: nab._new_coef(e)
             3-indices components w.r.t. Vector frame (M, (e_0,e_1))
         """
-        from sage.tensor.modules.comp import Components, CompWithSym
         from sage.manifolds.differentiable.scalarfield import DiffScalarField
         from sage.manifolds.differentiable.vectorframe import CoordFrame
+        from sage.tensor.modules.comp import Components, CompWithSym
         if isinstance(frame, CoordFrame):
             # the Christoffel symbols are symmetric:
             return CompWithSym(frame._domain.scalar_field_algebra(), frame, 3,
@@ -506,7 +507,7 @@ class LeviCivitaConnection(AffineConnection):
 
                         # definition of the parallel function
                         @parallel(p_iter='multiprocessing',ncpus=nproc)
-                        def make_Connect(local_list_ijk,chart,ginv,gg,manif):
+                        def make_Connect(local_list_ijk, chart, ginv, gg, manif):
                             partial = []
                             for i,j,k in local_list_ijk:
                                 rsum = 0

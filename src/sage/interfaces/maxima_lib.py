@@ -35,7 +35,7 @@ directly, but falls back to the string based conversion used by the
 classical Maxima Pexpect interface in case no new implementation has been made.
 
 This interface is the one used for calculus by Sage
-and is accessible as `maxima_calculus`::
+and is accessible as ``maxima_calculus``::
 
     sage: maxima_calculus
     Maxima_lib
@@ -80,8 +80,8 @@ The output is parseable (i. e. :issue:`31796` is fixed)::
 TESTS:
 
 Check our workaround for a race in ecl works, see :issue:`26968`.
-We use a temporary `MAXIMA_USERDIR` so it's empty; we place it
-in `DOT_SAGE` since we expect it to have more latency than `/tmp`.
+We use a temporary ``MAXIMA_USERDIR`` so it's empty; we place it
+in ``DOT_SAGE`` since we expect it to have more latency than ``/tmp``.
 
     sage: import tempfile, subprocess
     sage: tmpdir = tempfile.TemporaryDirectory(dir=DOT_SAGE)
@@ -1244,8 +1244,8 @@ sage_op_dict = {
     sage.functions.other.conjugate: "$CONJUGATE",
 }
 # we compile the dictionary
-sage_op_dict = dict([(k, EclObject(sage_op_dict[k])) for k in sage_op_dict])
-max_op_dict = dict([(sage_op_dict[k], k) for k in sage_op_dict])
+sage_op_dict = {k: EclObject(sage_op_dict[k]) for k in sage_op_dict}
+max_op_dict = {sage_op_dict[k]: k for k in sage_op_dict}
 
 
 # Here we correct the dictionaries for some simple operators
@@ -1437,7 +1437,7 @@ def max_at_to_sage(expr):
         subsvalues = {v.lhs(): v.rhs() for v in max_to_sr(subsarg)}
     else:
         v = max_to_sr(subsarg)
-        subsvalues = dict([(v.lhs(), v.rhs())])
+        subsvalues = {v.lhs(): v.rhs()}
     return SR(arg).subs(subsvalues)
 
 

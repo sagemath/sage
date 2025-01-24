@@ -60,14 +60,12 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.ring import IntegralDomain
 import sage.rings.fraction_field_element as fraction_field_element
 
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base, is_MPolynomialRing
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
 from sage.rings.polynomial.polydict import PolyDict, ETuple
 from sage.rings.polynomial.term_order import TermOrder
-
 import sage.interfaces.abc
 
 try:
@@ -558,9 +556,9 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         c = self.base_ring()(x)
         return MPolynomial_polydict(self, {self._zero_tuple: c})
 
-# The following methods are handy for implementing Groebner
-# basis algorithms. They do only superficial type/sanity checks
-# and should be called carefully.
+    # The following methods are handy for implementing Groebner
+    # basis algorithms. They do only superficial type/sanity checks
+    # and should be called carefully.
 
     def monomial_quotient(self, f, g, coeff=False):
         r"""
@@ -930,50 +928,18 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         elt = PolyDict({}, check=False)
         for t in terms:
             elt += self(t).element()
-        # NOTE: here we should be using self.element_class but polynomial rings are not complient
-        # with categories...
+        # NOTE: here we should be using self.element_class but
+        # polynomial rings are not complient with categories...
         from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
         return MPolynomial_polydict(self, elt)
 
 
-class MPolynomialRing_polydict_domain(IntegralDomain,
-                                      MPolynomialRing_polydict):
+class MPolynomialRing_polydict_domain(MPolynomialRing_polydict):
     def __init__(self, base_ring, n, names, order):
         order = TermOrder(order, n)
         MPolynomialRing_polydict.__init__(self, base_ring, n, names, order)
-
-    def is_integral_domain(self, proof=True):
-        return True
 
     def is_field(self, proof=True):
         if self.ngens() == 0:
             return self.base_ring().is_field(proof)
         return False
-
-    def ideal(self, *gens, **kwds):
-        """
-        Create an ideal in this polynomial ring.
-        """
-        do_coerce = False
-        if len(gens) == 1:
-            from sage.rings.ideal import Ideal_generic
-            if isinstance(gens[0], Ideal_generic):
-                if gens[0].ring() is self:
-                    return gens[0]
-                gens = gens[0].gens()
-            elif isinstance(gens[0], (list, tuple)):
-                gens = gens[0]
-        if not self._has_singular:
-            # pass through
-            MPolynomialRing_base.ideal(self, gens, **kwds)
-
-        from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
-
-        if isinstance(gens, (sage.interfaces.abc.SingularElement, sage.interfaces.abc.Macaulay2Element)):
-            gens = list(gens)
-            do_coerce = True
-        elif not isinstance(gens, (list, tuple)):
-            gens = [gens]
-        if ('coerce' in kwds and kwds['coerce']) or do_coerce:
-            gens = [self(x) for x in gens]  # this will even coerce from singular ideals correctly!
-        return MPolynomialIdeal(self, gens, **kwds)

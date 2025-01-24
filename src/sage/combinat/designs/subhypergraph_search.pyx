@@ -172,27 +172,27 @@ cdef void h_free(hypergraph h) noexcept:
     h.set_space = NULL
     h.sets = NULL
 
-cdef hypergraph h_init(int n,list H) noexcept:
+cdef hypergraph h_init(int n, list H) noexcept:
     r"""
     Build a C hypergraph from a list `H` of sets on `\{0,...,n-1\}`.
     """
     cdef int x,i
     cdef hypergraph h
-    h.n          = n
-    h.m          = len(H)
-    h.limbs      = (n+63) // 64  # =ceil(n/64)
-    h.names      = <int *>  sig_malloc(sizeof(int)*n)
-    h.sets       = <uint64_t **> sig_malloc(h.m*sizeof(uint64_t *))
-    h.set_space  = <uint64_t *>  sig_calloc(h.m*(h.limbs+1),sizeof(uint64_t))
+    h.n = n
+    h.m = len(H)
+    h.limbs = (n+63) // 64  # =ceil(n/64)
+    h.names = <int *> sig_malloc(sizeof(int)*n)
+    h.sets = <uint64_t **> sig_malloc(h.m*sizeof(uint64_t *))
+    h.set_space = <uint64_t *> sig_calloc(h.m*(h.limbs+1),sizeof(uint64_t))
 
     # Consistency check
     for S in H:
         for x in S:
-            if x<0 or x>=n:
+            if x < 0 or x >= n:
                 h.n = -1
 
-    if (h.names     == NULL or
-        h.sets      == NULL or
+    if (h.names == NULL or
+        h.sets == NULL or
         h.set_space == NULL or
         h.n == -1):
         h.n = -1
@@ -210,7 +210,7 @@ cdef hypergraph h_init(int n,list H) noexcept:
 
     return h
 
-cdef inline void permute(hypergraph * h,int n1,int n2) noexcept:
+cdef inline void permute(hypergraph * h, int n1, int n2) noexcept:
     r"""
     Permutes two points of h inplace.
 
@@ -265,7 +265,7 @@ cdef void trace_hypergraph64(hypergraph * h, int n, hypergraph * tmp) noexcept:
 
     tmp.limbs = 1
 
-cdef int is_subhypergraph_admissible(hypergraph h1,hypergraph * h2_trace,int n,hypergraph tmp1) noexcept:
+cdef int is_subhypergraph_admissible(hypergraph h1, hypergraph * h2_trace, int n, hypergraph tmp1) noexcept:
     r"""
     If there are `c` sets of size `k` containing `S\subseteq \{0,...,n-1\}` in
     `h2`, then there must be `>=c` sets of size `k` containing `S` in h1. This
@@ -308,7 +308,7 @@ cdef int cmp_128_bits(const void * a, const void * b) noexcept nogil:
     else:
         return -1
 
-cdef int is_induced_admissible64(hypergraph h1,hypergraph * h2_induced,int n,hypergraph tmp1) noexcept:
+cdef int is_induced_admissible64(hypergraph h1, hypergraph * h2_induced, int n, hypergraph tmp1) noexcept:
     r"""
     Test if the hypergraph induced in h1 by 0,...,n-1 is equal to the hypergraph
     induced in h2 by 0,...,n-1.
@@ -344,7 +344,7 @@ cdef class SubHypergraphSearch:
     cdef hypergraph * h2_traces
     cdef hypergraph * h2_induced
 
-    def __cinit__(self,H1,H2,induced):
+    def __cinit__(self, H1, H2, induced):
         r"""
         See the documentation's class.
 

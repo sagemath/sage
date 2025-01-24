@@ -44,8 +44,8 @@ REFERENCES:
             1995
 
 .. [Ab2022] Willie Aboumrad,
-        *Quantum compution with anyons: an F-matrix and braid calculator*
-        (2022). https://arxiv.org/abs/2212.00831
+        *Quantum computing with anyons: an F-matrix and braid calculator*
+        (2022). :arxiv:`2212.00831`
 
 .. [Alekseyev2006] \M. Alekseyev:
                    (Forum post on counting irreducible multivariate polynomials),
@@ -76,7 +76,7 @@ REFERENCES:
                     "Lilliput-AE: a New Lightweight Tweakable BlockCipher for Authenticated Encryption with AssociatedData"
                     https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/LILLIPUT-AE-spec.pdf
 
-.. [ABCMT2019] \V. Arul, A. J. Best, E. Costa, R. Magner, and N. Triantafillou, *Computing zeta functions of cyclic covers in large characteristic,* The Open Book Series, vol. 2, no. 1, pp. 37–53, Jan. 2019.
+.. [ABCMT2019] \V. Arul, A. J. Best, E. Costa, R. Magner, and N. Triantafillou, *Computing zeta functions of cyclic covers in large characteristic*, The Open Book Series, vol. 2, no. 1, pp. 37–53, Jan. 2019.
 
 .. [ABZ2007] \R. Aharoni and E. Berger and R. Ziv.
              *Independent systems of representatives in weighted graphs*.
@@ -103,6 +103,10 @@ REFERENCES:
 .. [ABS2004] \N. Alon, I. Benjamini and Alan Stacey, *Percolation on finite
              graphs and isoperimetric inequalities*, The Annals of Probability
              32 (2004), no.  3A, 1727-1745.
+
+.. [ALL2002] P. Auger, G. Labelle and P. Leroux, *Combinatorial
+             addition formulas and applications*, Advances in Applied
+             Mathematics 28 (2002) 302-342.
 
 .. [ASV2020] Federico Ardila, Mariel Supina, and Andrés R. Vindas-Meléndez,
          *The Equivariant Ehrhart Theory of the Permutahedron*,
@@ -238,8 +242,8 @@ REFERENCES:
  .. [AM1990] \R. Abraham and J. E. Marsden, "Foundations of Mechanics",
             Addison-Wesley, 1980.
 
-.. [AM1974] \J. F. Adams and H. R. Margolis, "Sub-Hopf-algebras of the
-            Steenrod algebra," Proc. Cambridge Philos. Soc. 76 (1974),
+.. [AM1974] \J. F. Adams and H. R. Margolis, *Sub-Hopf-algebras of the
+            Steenrod algebra*, Proc. Cambridge Philos. Soc. 76 (1974),
             45-52.
 
 .. [AM2000] \S. Ariki and A. Mathas.
@@ -261,6 +265,9 @@ REFERENCES:
              finite Drinfeld modules.* manuscripta mathematica 93, 1 (01 Aug 1997),
              369–379. https://doi.org/10.1007/BF02677478
 
+.. [ANR2023] Robert Angarone, Anastasia Nathanson, and Victor Reiner. *Chow rings of
+             matroids as permutation representations*, 2023. :arxiv:`2309.14312`.
+
 .. [AP1986] \S. Arnborg, A. Proskurowski,
             *Characterization and Recognition of Partial 3-Trees*,
             SIAM Journal of Alg. and Discrete Methods,
@@ -269,6 +276,10 @@ REFERENCES:
 
 .. [Ap1997] \T. Apostol, Modular functions and Dirichlet series in
             number theory, Springer, 1997 (2nd ed), section 3.7--3.9.
+
+.. [AP2024] William Atherton, Dmitrii V. Pasechnik, *Decline and Fall of the
+            ICALP 2008 Modular Decomposition algorithm*, 2024.
+            :arxiv:`2404.14049`.
 
 .. [APR2001] George E. Andrews, Peter Paule, Axel Riese,
              *MacMahon's partition analysis: the Omega package*,
@@ -433,16 +444,16 @@ REFERENCES:
              Proc. Calgary Internat. Conference 1969, New York, 1970,
              Gordon and Breach.
 
-.. [Bar2006] \G. Bard. 'Accelerating Cryptanalysis with the Method of
-             Four Russians'. Cryptography E-Print Archive
+.. [Bar2006] \G. Bard. *Accelerating Cryptanalysis with the Method of
+             Four Russians*. Cryptography E-Print Archive
              (http://eprint.iacr.org/2006/251.pdf), 2006.
 
 .. [Bat1991] \V. V. Batyrev, *On the classification of smooth projective
              toric varieties*, Tohoku Math. J. **43** (1991), 569-585
 
 .. [Bat1994] Victor V. Batyrev,
-             "Dual polyhedra and mirror symmetry for Calabi-Yau
-             hypersurfaces in toric varieties",
+             *Dual polyhedra and mirror symmetry for Calabi-Yau
+             hypersurfaces in toric varieties*,
              J. Algebraic Geom. 3 (1994), no. 3, 493-535.
              :arxiv:`alg-geom/9310003v1`
 
@@ -489,6 +500,9 @@ REFERENCES:
 .. [BeBo2009] Olivier Bernardi and Nicolas Bonichon, *Intervals in Catalan
               lattices and realizers of triangulations*, JCTA 116 (2009)
 
+.. [Best2021] Alex J. Best: Tools and Techniques for Rational Points on Curves.
+              PhD Thesis, Boston University, 2021.
+
 .. [BBGL2008] \A. Blondin Massé, S. Brlek, A. Garon, and S. Labbé,
               Combinatorial properties of f -palindromes in the
               Thue-Morse sequence. Pure Math. Appl.,
@@ -526,14 +540,14 @@ REFERENCES:
 .. [Bodin2007] \A. Bodin:
             Number of irreducible polynomials in several variables over finite fields,
             The American Mathematical Monthly 115(7), pp. 653-660, 2008.
-            https://arxiv.org/abs/0706.0157
+            :arxiv:`0706.0157`
 
 .. [BH2012] \A. Brouwer and W. Haemers,
             Spectra of graphs,
             Springer, 2012,
             http://homepages.cwi.nl/~aeb/math/ipm/ipm.pdf
 
-.. [BMFPR2011] \M. Bousquet-Melou, É. Fusy, L.-F. Préville-Ratelle,
+.. [BMFPR2011] \M. Bousquet-Mélou, É. Fusy, L.-F. Préville-Ratelle,
                 *The number of intervals in the m-Tamari lattices*.
                 Electronic Journal of Combinatorics 18(2), 2011.
                 :doi:`10.37236/2027`
@@ -699,8 +713,8 @@ REFERENCES:
             Journal of Algebraic Combinatorics (1992), vol.1, n.4, pp329-346,
             :doi:`10.1023/A%3A1022438616684`.
 
-.. [Bec1992] Bernhard Beckermann. "A reliable method for computing M-Padé
-             approximants on arbitrary staircases". J. Comput. Appl. Math.,
+.. [Bec1992] Bernhard Beckermann. *A reliable method for computing M-Padé
+             approximants on arbitrary staircases*. J. Comput. Appl. Math.,
              40(1):19-42, 1992. :doi:`10.1016/0377-0427(92)90039-Z`.
 
 .. [BeCoMe] Frits Beukers, Henri Cohen, Anton Mellit,
@@ -786,15 +800,16 @@ REFERENCES:
 .. [BF2005] \R.L. Burden and J.D. Faires. *Numerical Analysis*.
             8th edition, Thomson Brooks/Cole, 2005.
 
-.. [BFS2004] Magali Bardet, Jean-Charles Faugère, and Bruno Salvy, On
+.. [BFS2004] Magali Bardet, Jean-Charles Faugère, and Bruno Salvy, *On
              the complexity of Groebner basis computation of
-             semi-regular overdetermined algebraic equations.
+             semi-regular overdetermined algebraic equations.*
              Proc. International Conference on Polynomial System
              Solving (ICPSS), pp. 71-75, 2004.
 
 .. [BFSS2006] \A. Bostan, P. Flajolet, B. Salvy and E. Schost, *Fast
               Computation of special resultants*, Journal of Symbolic
               Computation 41 (2006), 1-29
+              :doi:`10.1016/j.jsc.2005.07.001`
 
 .. [BFZ2005] \A. Berenstein, \S. Fomin, and \A. Zelevinsky, *Cluster
              algebras. III. Upper bounds and double Bruhat cells*,
@@ -963,6 +978,10 @@ REFERENCES:
             Anal. Appl. 15 (1994) 804-823.
             :doi:`10.1137/S0895479892230031`
 
+.. [BL1995] W. Bosma, H.W. Lenstra: Complete Systems of Two Addition Laws for
+            Elliptic Curves. Journal of Number Theory, volume 53, issue 2,
+            pages 229-240. 1995.
+
 .. [BHMPW20a] Tom Braden, June Huh, Jacob P. Matherne, Nicholas Proudfoot,
              and Botong Wang, *A semi-small decomposition of the Chow
              ring of a matroid*, :arxiv:`2002.03341` (2020).
@@ -1097,18 +1116,18 @@ REFERENCES:
               lacunas of the Thue-Morse word*, Proc. GASCOM 2008 (June
               16-20 2008, Bibbiena, Arezzo-Italia), 53--67.
 
-.. [BMFPR] \M. Bousquet-Melou, E. Fusy, L.-F. Preville Ratelle.
+.. [BMFPR] \M. Bousquet-Mélou, E. Fusy, L.-F. Preville Ratelle.
            *The number of intervals in the m-Tamari lattices*. :arxiv:`1106.1498`
 
-.. [BMS2006] Bugeaud, Mignotte, and Siksek. "Classical and modular
+.. [BMS2006] Bugeaud, Mignotte, and Siksek. *Classical and modular
              approaches to exponential Diophantine
-             equations: I. Fibonacci and Lucas perfect powers." Annals
+             equations: I. Fibonacci and Lucas perfect powers.* Annals
              of Math, 2006.
 
 .. [BMSS2006] Alin Bostan, Bruno Salvy, François Morain, Éric Schost.
-              Fast algorithms for computing isogenies between elliptic
-              curves. [Research Report] 2006, pp.28. <inria-00091441>
-              https://arxiv.org/pdf/cs/0609020.pdf
+              *Fast algorithms for computing isogenies between elliptic
+              curves*. [Research Report] 2006, pp.28. <inria-00091441>
+              :arxiv:`cs/0609020`
 
 .. [BN2010] \D. Bump and M. Nakasuji.
             Integration on `p`-adic groups and crystal bases.
@@ -1577,12 +1596,13 @@ REFERENCES:
              IV. The quotient groups of the lower central series, Ann. of Math.
              68 (1958) 81--95.
 
-.. [CFZ2000] \J. Cassaigne, S. Ferenczi, L.Q. Zamboni, Imbalances in
-             Arnoux-Rauzy sequences, Ann. Inst. Fourier (Grenoble)
+.. [CFZ2000] \J. Cassaigne, S. Ferenczi, L.Q. Zamboni, *Imbalances in
+             Arnoux-Rauzy sequences*, Ann. Inst. Fourier (Grenoble)
              50 (2000) 1265--1276.
 
-.. [CFZ2002] Chapoton, Fomin, Zelevinsky - Polytopal realizations of
-             generalized associahedra, :arxiv:`math/0202004`.
+.. [CFZ2002] \F. Chapoton, S. Fomin, A. Zelevinsky - *Polytopal realizations of
+             generalized associahedra*, :arxiv:`math/0202004`,
+             :doi:`10.4153/CMB-2002-054-1`
 
 .. [CGHLM2013] \P. Crescenzi, R. Grossi, M. Habib, L. Lanzi, A. Marino.
                *On computing the diameter of real-world undirected graphs*.
@@ -1630,9 +1650,9 @@ REFERENCES:
 .. [Cha18] Frédéric Chapoton, *Some properties of a new partial
            order on Dyck paths*, 2018, :arxiv:`1809.10981`
 
-.. [Cha22005] \B. Cha. Vanishing of some cohomology groups and bounds
+.. [Cha22005] \B. Cha. *Vanishing of some cohomology groups and bounds
               for the Shafarevich-Tate groups of elliptic
-              curves. J. Number Theory, 111:154-178, 2005.
+              curves*. J. Number Theory, 111:154-178, 2005.
 
 .. [Cha2008] Frédéric Chapoton.
              *Sur le nombre d'intervalles dans les treillis de Tamari*.
@@ -1772,13 +1792,13 @@ REFERENCES:
              :doi:`10.1007/978-3-319-07959-2_5`,
              https://hal.inria.fr/hal-00943549/document
 
-.. [CMO2011] \C. Chun, D. Mayhew, J. Oxley, A chain theorem for
-             internally 4-connected binary matroids. J. Combin. Theory
+.. [CMO2011] \C. Chun, D. Mayhew, J. Oxley, *A chain theorem for
+             internally 4-connected binary matroids*. J. Combin. Theory
              Ser. B 101 (2011), 141-189.
 
-.. [CMO2012] \C. Chun, D. Mayhew, J. Oxley,  Towards a splitter
+.. [CMO2012] \C. Chun, D. Mayhew, J. Oxley,  *Towards a splitter
              theorem for internally 4-connected binary
-             matroids. J. Combin. Theory Ser. B 102 (2012), 688-700.
+             matroids*. J. Combin. Theory Ser. B 102 (2012), 688-700.
 
 .. [CMR2005] C\. Cid, S\. Murphy, M\. Robshaw, *Small Scale Variants of
              the AES*; in Proceedings of Fast Software Encryption
@@ -2755,6 +2775,11 @@ REFERENCES:
             Cambridge University Press, Cambridge, 2009.
             See also the `Errata list <http://ac.cs.princeton.edu/errata/>`_.
 
+.. [FSST1986] Michael L. Fredman, Robert Sedgewick, Daniel D. Sleator,
+              and Robert E. Tarjan. *The pairing heap: A new form of
+              self-adjusting heap*, Algorithmica, 1:111-129, 1986.
+              :doi:`10.1007/BF01840439`
+
 .. [FST2012] \A. Felikson, \M. Shapiro, and \P. Tumarkin, *Cluster Algebras of
             Finite Mutation Type Via Unfoldings*, Int Math Res Notices (2012)
             2012 (8): 1768-1804.
@@ -2920,6 +2945,9 @@ REFERENCES:
 .. [GJKPRSS2019] \D. Goudarzi, J. Jean, S. Koelbl, T. Peyrin, M. Rivain, Y. Sasaki, S. M. Sim.
                  "Pyjamask"
                  https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/Pyjamask-spec.pdf
+
+.. [Gou2020] Fernando Q. Gouvêa, *$p$-adic Numbers: An Introduction*,
+            Third Edition.  Springer Nature Switzerland AG, 2020.
 
 .. [GJK+2014] Dimitar Grantcharov, Ji Hye Jung, Seok-Jin Kang, Masaki Kashiwara,
               Myungho Kim. *Crystal bases for the quantum queer superalgebra and
@@ -3204,6 +3232,10 @@ REFERENCES:
              The Electronic Journal of Combinatorics 11 (2004), #R77.
              http://www.combinatorics.org/Volume_11/PDF/v11i1r77.pdf
 
+.. [HaHo2017] Nate Harman and Sam Hopkins,
+              *Quantum integer-valued polynomials*,
+              J. Alg. Comb. 2017, :doi:`10.1007/s10801-016-0717-3`
+
 .. [Hai1989] M.D. Haiman, *On mixed insertion, symmetry, and shifted
              Young tableaux*. Journal of Combinatorial Theory, Series
              A Volume 50, Number 2 (1989), pp. 196-225.
@@ -3217,7 +3249,7 @@ REFERENCES:
              http://www-math.mit.edu/~hajiagha/pp11.ps
 
 .. [Han1960] Haim Hanani,
-             On quadruple systems,
+             *On quadruple systems*,
              pages 145--157, vol. 12,
              Canadian Journal of Mathematics,
              1960
@@ -4696,6 +4728,9 @@ REFERENCES:
              University Press, New York, 1995, With contributions
              by A. Zelevinsky, Oxford Science Publications.
 
+.. [Mac2015] Diane Maclagan and Bernd Sturmfels, *Introduction to
+             Tropical Geometry*, American Mathematical Society, 2015.
+
 .. [MagmaHGM] *Hypergeometric motives* in Magma,
    http://magma.maths.usyd.edu.au/~watkins/papers/HGM-chapter.pdf
 
@@ -4924,6 +4959,9 @@ REFERENCES:
 
 .. [MM2015] \J. Matherne and \G. Muller, *Computing upper cluster algebras*,
             Int. Math. Res. Not. IMRN, 2015, 3121-3149.
+
+.. [MM2022] Matthew Mastroeni and Jason McCullough. *Chow rings of matroids are
+            Koszul*. Mathematische Annalen, 387(3-4):1819-1851, November 2022.
 
 .. [MMRS2022] Ruslan G. Marzo, Rafael A. Melo,  Celso C. Ribeiro and
               Marcio C. Santos: *New formulations and branch-and-cut procedures

@@ -33,9 +33,9 @@ REFERENCES:
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
 
 
 class TropicalMPolynomial(MPolynomial_polydict):
@@ -151,6 +151,23 @@ class TropicalMPolynomial(MPolynomial_polydict):
         p1 = R(3)*a*b + a + R(-1)*b
         sphinx_plot(p1.plot3d())
 
+    Another way to represent tropical curve is through dual subdivision,
+    which is a subdivision of Newton polytope of tropical polynomial::
+
+        sage: p1.newton_polytope()
+        A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
+        sage: p1.dual_subdivision()
+        Polyhedral complex with 1 maximal cell
+
+    .. PLOT::
+        :width: 300 px
+
+        T = TropicalSemiring(QQ, use_min=False)
+        R = PolynomialRing(T, ('a,b'))
+        a, b = R.gen(), R.gen(1)
+        p1 = R(3)*a*b + a + R(-1)*b
+        sphinx_plot(p1.dual_subdivision().plot())
+
     TESTS:
 
     There is no subtraction defined for tropical polynomials::
@@ -196,7 +213,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         return self(tuple(variables))
 
     def plot3d(self, color='random'):
-        """
+        r"""
         Return the 3d plot of ``self``.
 
         Only implemented for tropical polynomial in two variables.
@@ -269,8 +286,9 @@ class TropicalMPolynomial(MPolynomial_polydict):
             multivariate polynomial in two variables
         """
         from random import random
-        from sage.plot.graphics import Graphics
+
         from sage.geometry.polyhedron.constructor import Polyhedron
+        from sage.plot.graphics import Graphics
         from sage.sets.real_set import RealSet
         from sage.symbolic.relation import solve
 
@@ -285,7 +303,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         T = self.parent().base()
         R = self.base_ring().base_ring()
 
-        # Finding the point of curve that touch the edge of the axes
+        # Find the point of curve that touch the edge of the axes
         for comp in tv.components():
             if len(comp[1]) == 1:
                 valid_int = RealSet(comp[1][0])
@@ -359,7 +377,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         curve. For dimensions higher than two, it is referred to as a
         tropical hypersurface.
 
-        OUTPUT: a :class:`sage.rings.semirings.tropical_variety.TropicalVariety`
+        OUTPUT: :class:`sage.rings.semirings.tropical_variety.TropicalVariety`
 
         EXAMPLES:
 
@@ -382,7 +400,11 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p1.tropical_variety()
             Tropical surface of 1*x*y + (-1/2)*x*z + 4*z^2
         """
-        from sage.rings.semirings.tropical_variety import TropicalCurve, TropicalSurface, TropicalVariety
+        from sage.rings.semirings.tropical_variety import (
+            TropicalCurve,
+            TropicalSurface,
+            TropicalVariety,
+        )
 
         if self.parent().ngens() == 2:
             return TropicalCurve(self)
@@ -390,9 +412,246 @@ class TropicalMPolynomial(MPolynomial_polydict):
             return TropicalSurface(self)
         return TropicalVariety(self)
 
+    def newton_polytope(self):
+        r"""
+        Return the Newton polytope of ``self``.
+
+        The Newton polytope is the convex hull of all the points
+        corresponding to the exponents of the monomials of tropical
+        polynomial.
+
+        OUTPUT: :func:`~sage.geometry.polyhedron.constructor.Polyhedron`
+
+        EXAMPLES:
+
+        A Newton polytope for a two-variable tropical polynomial::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = x + y
+            sage: p1.newton_polytope()
+            A 1-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices
+            sage: p1.newton_polytope().Vrepresentation()
+            (A vertex at (0, 1), A vertex at (1, 0))
+            sage: p1.newton_polytope().Hrepresentation()
+            (An equation (1, 1) x - 1 == 0,
+             An inequality (0, -1) x + 1 >= 0,
+             An inequality (0, 1) x + 0 >= 0)
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ)
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
+            p1 = x + y
+            sphinx_plot(p1.newton_polytope().plot())
+
+        A Newton polytope in three dimension::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: p1 = x^2 + x*y*z + x + y + z + R(0)
+            sage: p1.newton_polytope()
+            A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 5 vertices
+            sage: p1.newton_polytope().Vrepresentation()
+            (A vertex at (0, 0, 0),
+            A vertex at (0, 0, 1),
+            A vertex at (0, 1, 0),
+            A vertex at (2, 0, 0),
+            A vertex at (1, 1, 1))
+            sage: p1.newton_polytope().Hrepresentation()
+            (An inequality (0, 1, 0) x + 0 >= 0,
+             An inequality (0, 0, 1) x + 0 >= 0,
+             An inequality (1, 0, 0) x + 0 >= 0,
+             An inequality (1, -1, -1) x + 1 >= 0,
+             An inequality (-1, -2, 1) x + 2 >= 0,
+             An inequality (-1, 1, -2) x + 2 >= 0)
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ)
+            R = PolynomialRing(T, ('x,y,z'))
+            x, y, z = R.gen(), R.gen(1), R.gen(2)
+            p1 = x**2 + x*y*z + x + y + z + R(0)
+            sphinx_plot(p1.newton_polytope().plot())
+        """
+        from sage.geometry.polyhedron.constructor import Polyhedron
+
+        exponents = self.exponents()
+        return Polyhedron(exponents)
+
+    def dual_subdivision(self):
+        """
+        Return the dual subdivision of ``self``.
+
+        Dual subdivision refers to a specific decomposition of the
+        Newton polytope of a tropical polynomial. The term "dual" is
+        used in the sense that the combinatorial structure of the
+        tropical variety is reflected in the dual subdivision.
+        Specifically, vertices of the dual subdivision correspond to
+        the intersection of multiple components. Edges of the dual
+        subdivision correspond to the individual components.
+
+        OUTPUT: :class:`~sage.geometry.polyhedral_complex.PolyhedralComplex`
+
+        EXAMPLES:
+
+        Dual subdivision of a tropical curve::
+
+            sage: T = TropicalSemiring(QQ, use_min=False)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(3) + R(2)*x + R(2)*y + R(3)*x*y + x^2 + y^2
+            sage: pc = p1.dual_subdivision(); pc
+            Polyhedral complex with 4 maximal cells
+            sage: [p.Vrepresentation() for p in pc.maximal_cells_sorted()]
+            [(A vertex at (0, 0), A vertex at (0, 1), A vertex at (1, 1)),
+             (A vertex at (0, 0), A vertex at (1, 0), A vertex at (1, 1)),
+             (A vertex at (0, 1), A vertex at (0, 2), A vertex at (1, 1)),
+             (A vertex at (1, 0), A vertex at (1, 1), A vertex at (2, 0))]
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ,  use_min=False)
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
+            p1 = R(3) + R(2)*x + R(2)*y + R(3)*x*y + x**2 + y**2
+            sphinx_plot(p1.dual_subdivision().plot())
+
+        A subdivision of a pentagonal Newton polytope::
+
+            sage: p2 = R(3) + x^2 + R(-2)*y + R(1/2)*x^2*y + R(2)*x*y^3 + R(-1)*x^3*y^4
+            sage: pc = p2.dual_subdivision(); pc
+            Polyhedral complex with 5 maximal cells
+            sage: [p.Vrepresentation() for p in pc.maximal_cells_sorted()]
+            [(A vertex at (0, 0), A vertex at (0, 1), A vertex at (1, 3)),
+             (A vertex at (0, 0), A vertex at (1, 3), A vertex at (2, 1)),
+             (A vertex at (0, 0), A vertex at (2, 0), A vertex at (2, 1)),
+             (A vertex at (1, 3), A vertex at (2, 1), A vertex at (3, 4)),
+             (A vertex at (2, 0), A vertex at (2, 1), A vertex at (3, 4))]
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ,  use_min=False)
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
+            p2 = R(3) + x**2 + R(-2)*y + R(1/2)*x**2*y + R(2)*x*y**3 + R(-1)*x**3*y**4
+            sphinx_plot(p2.dual_subdivision().plot())
+
+        A subdivision with many faces, not all of which are triangles::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p3 = (R(8) + R(4)*x + R(2)*y + R(1)*x^2 + x*y + R(1)*y^2
+            ....:      + R(2)*x^3 + x^2*y + x*y^2 + R(4)*y^3 + R(8)*x^4
+            ....:      + R(4)*x^3*y + x^2*y^2 + R(2)*x*y^3 + y^4)
+            sage: pc = p3.dual_subdivision(); pc
+            Polyhedral complex with 10 maximal cells
+            sage: [p.Vrepresentation() for p in pc.maximal_cells_sorted()]
+            [(A vertex at (0, 0), A vertex at (0, 1), A vertex at (1, 0)),
+             (A vertex at (0, 1), A vertex at (0, 2), A vertex at (1, 1)),
+             (A vertex at (0, 1), A vertex at (1, 0), A vertex at (2, 0)),
+             (A vertex at (0, 1), A vertex at (1, 1), A vertex at (2, 0)),
+             (A vertex at (0, 2), A vertex at (0, 4), A vertex at (1, 1)),
+             (A vertex at (0, 4),
+              A vertex at (1, 1),
+              A vertex at (2, 1),
+              A vertex at (2, 2)),
+             (A vertex at (1, 1), A vertex at (2, 0), A vertex at (2, 1)),
+             (A vertex at (2, 0), A vertex at (2, 1), A vertex at (3, 0)),
+             (A vertex at (2, 1), A vertex at (2, 2), A vertex at (3, 0)),
+             (A vertex at (2, 2), A vertex at (3, 0), A vertex at (4, 0))]
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ)
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
+            p3 = (R(8) + R(4)*x + R(2)*y + R(1)*x**2 + x*y + R(1)*y**2
+                  + R(2)*x**3 + x**2*y + x*y**2 + R(4)*y**3 + R(8)*x**4
+                  + R(4)*x**3*y + x**2*y**2 + R(2)*x*y**3 + y**4)
+            sphinx_plot(p3.dual_subdivision().plot())
+
+        Dual subdivision of a tropical surface::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: p1 = x + y + z + x^2 + R(1)
+            sage: pc = p1.dual_subdivision(); pc
+            Polyhedral complex with 7 maximal cells
+            sage: [p.Vrepresentation() for p in pc.maximal_cells_sorted()]
+            [(A vertex at (0, 0, 0), A vertex at (0, 0, 1), A vertex at (0, 1, 0)),
+             (A vertex at (0, 0, 0), A vertex at (0, 0, 1), A vertex at (1, 0, 0)),
+             (A vertex at (0, 0, 0), A vertex at (0, 1, 0), A vertex at (1, 0, 0)),
+             (A vertex at (0, 0, 1), A vertex at (0, 1, 0), A vertex at (1, 0, 0)),
+             (A vertex at (0, 0, 1), A vertex at (0, 1, 0), A vertex at (2, 0, 0)),
+             (A vertex at (0, 0, 1), A vertex at (1, 0, 0), A vertex at (2, 0, 0)),
+             (A vertex at (0, 1, 0), A vertex at (1, 0, 0), A vertex at (2, 0, 0))]
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ,  use_min=False)
+            R = PolynomialRing(T, ('x,y,z'))
+            x, y, z = R.gen(), R.gen(1), R.gen(2)
+            p1 = x + y + z + x**2 + R(1)
+            sphinx_plot(p1.dual_subdivision().plot())
+
+        Dual subdivision of a tropical hypersurface::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<a,b,c,d> = PolynomialRing(T)
+            sage: p1 = R(2)*a*b + R(3)*a*c + R(-1)*c^2 + R(-1/3)*a*d
+            sage: pc = p1.dual_subdivision(); pc
+            Polyhedral complex with 4 maximal cells
+            sage: [p.Vrepresentation() for p in pc.maximal_cells_sorted()]
+            [(A vertex at (0, 0, 2, 0),
+             A vertex at (1, 0, 0, 1),
+             A vertex at (1, 0, 1, 0)),
+            (A vertex at (0, 0, 2, 0),
+             A vertex at (1, 0, 0, 1),
+             A vertex at (1, 1, 0, 0)),
+            (A vertex at (0, 0, 2, 0),
+             A vertex at (1, 0, 1, 0),
+             A vertex at (1, 1, 0, 0)),
+            (A vertex at (1, 0, 0, 1),
+             A vertex at (1, 0, 1, 0),
+             A vertex at (1, 1, 0, 0))]
+        """
+        from sage.geometry.polyhedral_complex import PolyhedralComplex
+        from sage.geometry.polyhedron.constructor import Polyhedron
+
+        TV = self.tropical_variety()
+        cycles = []
+
+        if TV.dimension() == 2:
+            for indices in TV._vertices_components().values():
+                cycle = []
+                for index in indices:
+                    cycle.extend(TV._keys[index[0]])
+                cycles.append(cycle)
+        else:
+            line_comps = TV.weight_vectors()[1]
+            for indices in line_comps.values():
+                cycle = []
+                for index in indices:
+                    cycle.extend(TV._keys[index])
+                cycles.append(cycle)
+
+        polyhedron_lst = []
+        for cycle in cycles:
+            polyhedron = Polyhedron(vertices=cycle)
+            polyhedron_lst.append(polyhedron)
+        pc = PolyhedralComplex(polyhedron_lst)
+        return pc
+
     def _repr_(self):
         r"""
-        Return string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -413,7 +672,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
     def _latex_(self):
         r"""
-        Return the latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -471,8 +730,8 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
             sage: R = PolynomialRing(T, 5, 'x')
             sage: TestSuite(R).run()
         """
-        from sage.rings.semirings.tropical_semiring import TropicalSemiring
         from sage.categories.semirings import Semirings
+        from sage.rings.semirings.tropical_semiring import TropicalSemiring
         if not isinstance(base_semiring, TropicalSemiring):
             raise ValueError(f"{base_semiring} is not a tropical semiring")
         Parent.__init__(self, base=base_semiring, names=names, category=Semirings())
@@ -595,7 +854,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         r"""
         Return a random multivariate tropical polynomial from ``self``.
 
-        OUTPUT: a :class:`TropicalMPolynomial`
+        OUTPUT: :class:`TropicalMPolynomial`
 
         .. SEEALSO::
 
@@ -657,7 +916,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         return self.gens()[n]
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 

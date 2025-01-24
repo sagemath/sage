@@ -117,7 +117,6 @@ can be applied on both. Here is what it can do:
     :widths: 30, 70
     :delim: |
 
-    :meth:`~GenericGraph.eulerian_orientation` | Return a DiGraph which is an Eulerian orientation of the current graph.
     :meth:`~GenericGraph.eulerian_circuit` | Return a list of edges forming an Eulerian circuit if one exists.
     :meth:`~GenericGraph.minimum_cycle_basis` | Return a minimum weight cycle basis of the graph.
     :meth:`~GenericGraph.cycle_basis` | Return a list of cycles which form a basis of the cycle space of ``self``.
@@ -297,6 +296,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.show3d` | Plot the graph using :class:`~sage.plot.plot3d.tachyon.Tachyon`, and shows the resulting plot.
     :meth:`~GenericGraph.graphviz_string` | Return a representation in the ``dot`` language.
     :meth:`~GenericGraph.graphviz_to_file_named` | Write a representation in the ``dot`` language in a file.
+    :meth:`~GenericGraph.tikz` | Return a :class:`~sage.misc.latex_standalone.TikzPicture` object representing the (di)graph.
 
 **Algorithmically hard stuff:**
 
@@ -938,6 +938,190 @@ class GenericGraph(GenericGraph_pyx):
         setup_latex_preamble()
 
         return self.latex_options().latex()
+
+    def tikz(self, format=None, edge_labels=None,
+            color_by_label=False, prog='dot', rankdir='down',
+            standalone_config=None, usepackage=None,
+            usetikzlibrary=None, macros=None,
+            use_sage_preamble=None, **kwds):
+        r"""
+        Return a TikzPicture of the graph.
+
+        If graphviz and dot2tex are available, it uses these packages for
+        placements of vertices and edges.
+
+        INPUT:
+
+        - ``format`` -- string (default: ``None``), ``'dot2tex'`` or
+          ``'tkz_graph'``. If ``None``, it is set to ``'dot2tex'`` if
+          dot2tex is present, otherwise it is set to ``'tkz_graph'``.
+        - ``edge_labels`` -- bool (default: ``None``), if ``None``
+          it is set to ``True`` if and only if format is ``'dot2tex'``
+        - ``color_by_label`` -- boolean or dictionary or function (default:
+          ``False``); whether to color each edge with a different color
+          according to its label; the colors are chosen along a rainbow, unless
+          they are specified by a function or dictionary mapping labels to
+          colors;
+
+        When using format ``'dot2tex'``, the following inputs are considered:
+
+        - ``prog`` -- string (default: ``'dot'``) the program used for the
+          layout corresponding to one of the software of the graphviz
+          suite: 'dot', 'neato', 'twopi', 'circo' or 'fdp'.
+        - ``rankdir`` -- string (default: ``'down'``), direction of graph layout
+          when prog is ``'dot'``, possible values are  ``'down'``,
+          ``'up'``, ``'right'`` and ``'left'``.
+        - ``subgraph_clusters`` -- (default: ``[]``) a list of lists of
+          vertices, if supported by the layout engine, nodes belonging to
+          the same cluster subgraph are drawn together, with the entire
+          drawing of the cluster contained within a bounding rectangle.
+
+        Additionnal keywords arguments are forwarded to
+        :meth:`sage.graphs.graph_latex.GraphLatex.set_option`.
+
+        The following inputs define the preamble of the latex standalone
+        document class file containing the tikzpicture:
+
+        - ``standalone_config`` -- list of strings (default: ``["border=4mm"]``);
+          latex document class standalone configuration options
+        - ``usepackage`` -- list of strings (default: ``[]``); latex
+          packages
+        - ``usetikzlibrary`` -- list of strings (default: ``[]``); tikz
+          libraries to use
+        - ``macros`` -- list of strings (default: ``[]``); list of
+          newcommands needed for the picture
+        - ``use_sage_preamble`` -- bool (default: ``None``), if ``None``
+          it is set to ``True`` if and only if format is ``'tkz_graph'``
+
+        OUTPUT:
+
+        An instance of :mod:`sage.misc.latex_standalone.TikzPicture`.
+
+        .. NOTE::
+
+            Prerequisite: dot2tex optional Sage package and graphviz must be
+            installed when using format ``'dot2tex'``.
+
+        EXAMPLES::
+
+            sage: g = graphs.PetersenGraph()
+            sage: tikz = g.tikz()                   # optional - dot2tex graphviz        # long time
+            sage: _ = tikz.pdf(view=False)          # optional - dot2tex graphviz latex  # long time
+
+        ::
+
+            sage: tikz = g.tikz(format='tkz_graph')
+            sage: _ = tikz.pdf(view=False)          # optional - latex
+
+        Using another value for ``prog``::
+
+            sage: tikz = g.tikz(prog='neato')       # optional - dot2tex graphviz        # long time
+            sage: _ = tikz.pdf()                    # optional - dot2tex graphviz latex  # long time
+
+        Using ``color_by_label`` with default rainbow colors::
+
+            sage: G = DiGraph({0: {1: 333, 2: 444}, 1: {0: 444}, 2: {0: 555}})
+            sage: t = G.tikz(color_by_label=True)   # optional - dot2tex graphviz        # long time
+            sage: _ = t.pdf(view=False)             # optional - dot2tex graphviz latex  # long time
+
+        Using ``color_by_label`` with colors given as a dictionary::
+
+            sage: G = DiGraph({0: {1: 333, 2: 444}, 1: {0: 444}, 2: {0: 555}})
+            sage: cbl = {333:'orange', 444: 'yellow', 555: 'purple'}
+            sage: t = G.tikz(color_by_label=cbl)    # optional - dot2tex graphviz        # long time
+            sage: _ = t.pdf(view=False)             # optional - dot2tex graphviz latex  # long time
+
+        Using ``color_by_label`` with colors given as a function::
+
+            sage: G = DiGraph({0: {1: -333, 2: -444}, 1: {0: 444}, 2: {0: 555}})
+            sage: cbl = lambda label:'green' if label >= 0 else 'orange'
+            sage: t = G.tikz(color_by_label=cbl)    # optional - dot2tex graphviz        # long time
+            sage: _ = t.pdf(view=False)             # optional - dot2tex graphviz latex  # long time
+
+        Using another value for ``rankdir``::
+
+            sage: tikz = g.tikz(rankdir='right')    # optional - dot2tex graphviz       # long time
+            sage: _ = tikz.pdf(view=False)          # optional - dot2tex graphviz latex # long time
+
+        Using subgraphs clusters (broken when using labels, see
+        :issue:`22070`)::
+
+            sage: S = FiniteSetMaps(5)
+            sage: I = S((0,1,2,3,4))
+            sage: a = S((0,1,3,0,0))
+            sage: b = S((0,2,4,1,0))
+            sage: roots = [I]
+            sage: succ = lambda v: [v*a,v*b,a*v,b*v]
+            sage: R = RecursivelyEnumeratedSet(roots, succ)
+            sage: G = R.to_digraph()
+            sage: G
+            Looped multi-digraph on 27 vertices
+            sage: C = G.strongly_connected_components()
+            sage: tikz = G.tikz(subgraph_clusters=C)# optional - dot2tex graphviz       # long time
+            sage: tikz.add_usepackage('amstext')    # optional - dot2tex graphviz       # long time
+            sage: _ = tikz.pdf(view=False)          # optional - dot2tex graphviz latex # long time
+
+        An example coming from ``graphviz_string`` documentation in SageMath::
+
+            sage: # needs sage.symbolic
+            sage: f(x) = -1 / x
+            sage: g(x) = 1 / (x + 1)
+            sage: G = DiGraph()
+            sage: G.add_edges((i, f(i), f) for i in (1, 2, 1/2, 1/4))
+            sage: G.add_edges((i, g(i), g) for i in (1, 2, 1/2, 1/4))
+            sage: tikz = G.tikz(format='dot2tex')   # optional - dot2tex graphviz       # long time
+            sage: _ = tikz.pdf(view=False)          # optional - dot2tex graphviz latex # long time
+            sage: def edge_options(data):
+            ....:     u, v, label = data
+            ....:     options = {"color": {f: "red", g: "blue"}[label]}
+            ....:     if (u,v) == (1/2, -2): options["label"]       = "coucou"; options["label_style"] = "string"
+            ....:     if (u,v) == (1/2,2/3): options["dot"]         = "x=1,y=2"
+            ....:     if (u,v) == (1,   -1): options["label_style"] = "latex"
+            ....:     if (u,v) == (1,  1/2): options["dir"]         = "back"
+            ....:     return options
+            sage: tikz = G.tikz(format='dot2tex',   # optional - dot2tex graphviz       # long time
+            ....:               edge_options=edge_options)
+            sage: _ = tikz.pdf(view=False)          # optional - dot2tex graphviz latex # long time
+        """
+        # use format dot2tex by default
+        if format is None:
+            from sage.features import PythonModule
+            if PythonModule("dot2tex").is_present():
+                format = 'dot2tex'
+            else:
+                format = 'tkz_graph'
+
+        # by default draw edge_labels for dot2tex but not for tkz_graph
+        # (because tkz_graph draws None everywhere which is ugly, whereas
+        # dot2tex ignores the labels when they are ``None``)
+        if edge_labels is None:
+            if format == 'tkz_graph':
+                edge_labels = False
+            elif format == 'dot2tex':
+                edge_labels = True
+
+        self.latex_options().set_options(format=format,
+                edge_labels=edge_labels, color_by_label=color_by_label,
+                prog=prog, rankdir=rankdir, **kwds)
+
+        # by default use sage preamble only for format tkz_graph
+        # because content generated by tkz_graph depends on it
+        if use_sage_preamble is None:
+            if format == 'tkz_graph':
+                use_sage_preamble = True
+            elif format == 'dot2tex':
+                use_sage_preamble = False
+
+        if standalone_config is None:
+            standalone_config = ["border=4mm"]
+
+        from sage.misc.latex_standalone import TikzPicture
+        return TikzPicture(self._latex_(),
+                           standalone_config=standalone_config,
+                           usepackage=usepackage,
+                           usetikzlibrary=usetikzlibrary,
+                           macros=macros,
+                           use_sage_preamble=use_sage_preamble)
 
     def _matrix_(self, R=None, vertices=None):
         """
@@ -4547,110 +4731,6 @@ class GenericGraph(GenericGraph_pyx):
 
     num_edges = size
 
-    # Orientations
-
-    def eulerian_orientation(self):
-        r"""
-        Return a DiGraph which is an Eulerian orientation of the current graph.
-
-        An Eulerian graph being a graph such that any vertex has an even degree,
-        an Eulerian orientation of a graph is an orientation of its edges such
-        that each vertex `v` verifies `d^+(v)=d^-(v)=d(v)/2`, where `d^+` and
-        `d^-` respectively represent the out-degree and the in-degree of a
-        vertex.
-
-        If the graph is not Eulerian, the orientation verifies for any vertex
-        `v` that `| d^+(v)-d^-(v) | \leq 1`.
-
-        ALGORITHM:
-
-        This algorithm is a random walk through the edges of the graph, which
-        orients the edges according to the walk. When a vertex is reached which
-        has no non-oriented edge (this vertex must have odd degree), the walk
-        resumes at another vertex of odd degree, if any.
-
-        This algorithm has complexity `O(n+m)` for ``SparseGraph`` and `O(n^2)`
-        for ``DenseGraph``, where `m` is the number of edges in the graph and
-        `n` is the number of vertices in the graph.
-
-        EXAMPLES:
-
-        The CubeGraph with parameter 4, which is regular of even degree, has an
-        Eulerian orientation such that `d^+ = d^-`::
-
-            sage: g = graphs.CubeGraph(4)
-            sage: g.degree()
-            [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
-            sage: o = g.eulerian_orientation()
-            sage: o.in_degree()
-            [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
-            sage: o.out_degree()
-            [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
-
-        Secondly, the Petersen Graph, which is 3 regular has an orientation such
-        that the difference between `d^+` and `d^-` is at most 1::
-
-            sage: g = graphs.PetersenGraph()
-            sage: o = g.eulerian_orientation()
-            sage: o.in_degree()
-            [2, 2, 2, 2, 2, 1, 1, 1, 1, 1]
-            sage: o.out_degree()
-            [1, 1, 1, 1, 1, 2, 2, 2, 2, 2]
-
-        TESTS::
-
-            sage: E0 = Graph(); E4 = Graph(4)  # See trac #21741
-            sage: E0.eulerian_orientation()
-            Digraph on 0 vertices
-            sage: E4.eulerian_orientation()
-            Digraph on 4 vertices
-        """
-        from sage.graphs.digraph import DiGraph
-
-        d = DiGraph()
-        d.add_vertices(self.vertex_iterator())
-
-        if not self.size():
-            return d
-
-        g = copy(self)
-
-        # list of vertices of odd degree
-        odd = [x for x in g.vertex_iterator() if g.degree(x) % 2]
-
-        # Picks the first vertex, which is preferably an odd one
-        if odd:
-            v = odd.pop()
-        else:
-            v = next(g.edge_iterator(labels=None))[0]
-            odd.append(v)
-        # Stops when there is no edge left
-        while True:
-
-            # If there is an edge adjacent to the current one
-            if g.degree(v):
-                e = next(g.edge_iterator(v))
-                g.delete_edge(e)
-                if e[0] != v:
-                    e = (e[1], e[0], e[2])
-                d.add_edge(e)
-                v = e[1]
-
-            # The current vertex is isolated
-            else:
-                odd.remove(v)
-
-                # jumps to another odd vertex if possible
-                if odd:
-                    v = odd.pop()
-                # Else jumps to an even vertex which is not isolated
-                elif g.size():
-                    v = next(g.edge_iterator())[0]
-                    odd.append(v)
-                # If there is none, we are done !
-                else:
-                    return d
-
     def eulerian_circuit(self, return_vertices=False, labels=True, path=False):
         r"""
         Return a list of edges forming an Eulerian circuit if one exists.
@@ -5282,20 +5362,32 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: g = graphs.PetersenGraph()
             sage: g.cycle_basis()                                                       # needs networkx, random (changes in networkx 3.2)
-            [[1, 6, 8, 5, 0], [4, 9, 6, 8, 5, 0], [7, 9, 6, 8, 5],
-             [4, 3, 8, 5, 0], [1, 2, 3, 8, 5, 0], [7, 2, 3, 8, 5]]
+            [[6, 8, 5, 7, 9],
+             [2, 3, 8, 5, 7],
+             [4, 3, 8, 5, 7, 9],
+             [4, 0, 5, 7, 9],
+             [2, 1, 0, 5, 7],
+             [6, 1, 0, 5, 7, 9]]
 
         One can also get the result as a list of lists of edges::
 
             sage: g.cycle_basis(output='edge')                                          # needs networkx, random (changes in networkx 3.2)
-            [[(1, 6, None), (6, 8, None), (8, 5, None), (5, 0, None),
-             (0, 1, None)], [(4, 9, None), (9, 6, None), (6, 8, None),
-             (8, 5, None), (5, 0, None), (0, 4, None)], [(7, 9, None),
-             (9, 6, None), (6, 8, None), (8, 5, None), (5, 7, None)],
-             [(4, 3, None), (3, 8, None), (8, 5, None), (5, 0, None),
-             (0, 4, None)], [(1, 2, None), (2, 3, None), (3, 8, None),
-             (8, 5, None), (5, 0, None), (0, 1, None)], [(7, 2, None),
-             (2, 3, None), (3, 8, None), (8, 5, None), (5, 7, None)]]
+            [[(6, 8, None), (8, 5, None), (5, 7, None), (7, 9, None), (9, 6, None)],
+             [(2, 3, None), (3, 8, None), (8, 5, None), (5, 7, None), (7, 2, None)],
+             [(4, 3, None),
+              (3, 8, None),
+              (8, 5, None),
+              (5, 7, None),
+              (7, 9, None),
+              (9, 4, None)],
+             [(4, 0, None), (0, 5, None), (5, 7, None), (7, 9, None), (9, 4, None)],
+             [(2, 1, None), (1, 0, None), (0, 5, None), (5, 7, None), (7, 2, None)],
+             [(6, 1, None),
+              (1, 0, None),
+              (0, 5, None),
+              (5, 7, None),
+              (7, 9, None),
+              (9, 6, None)]]
 
         Checking the given cycles are algebraically free::
 
@@ -5471,9 +5563,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: sorted(g.minimum_cycle_basis(by_weight=False))
             [[1, 2, 3], [1, 3, 4], [5, 6, 7]]
             sage: sorted(g.minimum_cycle_basis(by_weight=True, algorithm='NetworkX'))   # needs networkx, random (changes in networkx 3.2)
-            [[1, 2, 3], [1, 2, 3, 4], [5, 6, 7]]
+            [[2, 3, 1], [2, 3, 4, 1], [6, 7, 5]]
             sage: g.minimum_cycle_basis(by_weight=False, algorithm='NetworkX')          # needs networkx, random (changes in networkx 3.2)
-            [[1, 2, 3], [1, 3, 4], [5, 6, 7]]
+            [[3, 4, 1], [2, 3, 1], [6, 7, 5]]
 
         ::
 
@@ -5481,7 +5573,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: sorted(g.minimum_cycle_basis(by_weight=False))
             [[1, 2, 3, 5], [3, 4, 5]]
             sage: sorted(g.minimum_cycle_basis(by_weight=False, algorithm='NetworkX'))  # needs networkx, random (changes in networkx 3.2)
-            [[1, 2, 3, 5], [3, 4, 5]]
+            [[3, 4, 5], [5, 3, 2, 1]]
 
         TESTS::
 
@@ -7358,6 +7450,22 @@ class GenericGraph(GenericGraph_pyx):
                 p.add_constraint(pos[root, c] + BFS[u] <= pos[u, c])
 
         # We now solve this program and extract the solution
+
+        from sage.numerical.backends.glpk_backend import GLPKBackend
+        if isinstance(p.get_backend(), GLPKBackend):
+            # The MIP approach with GLPK is prone to compiler and
+            # optimization-level weirdness on some hardware:
+            #
+            #   * https://github.com/sagemath/sage/issues/34575
+            #   * https://github.com/sagemath/sage/issues/38831
+            #
+            # Disabling the presolver manages to perturb reality just
+            # enough in the one scenario that we doctest explicitly to
+            # "fix" the problem. It's also limited enough in scope
+            # that it probably hasn't badly broken some other use
+            # case.
+            p.solver_parameter("presolve_intopt", False)
+
         try:
             p.solve(log=verbose)
         except MIPSolverException:
@@ -14189,7 +14297,7 @@ class GenericGraph(GenericGraph_pyx):
                                  or (v, u) in edges_to_keep_unlabeled)):
                             edges_to_keep.append((u, v, l))
             else:
-                s_vertices = set(vertices)
+                s_vertices = set(G.vertices()) if vertices is None else set(vertices)
                 edges_to_keep = [e for e in self.edges(vertices=vertices, sort=False, sort_vertices=False)
                                  if e[0] in s_vertices and e[1] in s_vertices]
 
@@ -17242,7 +17350,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.shortest_path(4, 8, algorithm='Dijkstra_Bid_NetworkX')              # needs networkx
             [4, 3, 2, 1, 8]
             sage: D.shortest_path(4, 9, algorithm='Dijkstra_Bid')
-            [4, 3, 19, 0, 10, 9]
+            [4, 3, 2, 1, 8, 9]
             sage: D.shortest_path(5, 5)
             [5]
             sage: D.delete_edges(D.edges_incident(13))
@@ -18758,7 +18866,8 @@ class GenericGraph(GenericGraph_pyx):
 
     def breadth_first_search(self, start, ignore_direction=False,
                              distance=None, neighbors=None,
-                             report_distance=False, edges=False):
+                             report_distance=False, edges=False,
+                             forbidden_vertices=None):
         """
         Return an iterator over the vertices in a breadth-first ordering.
 
@@ -18792,6 +18901,9 @@ class GenericGraph(GenericGraph_pyx):
 
           Note that parameters ``edges`` and ``report_distance`` cannot be
           ``True`` simultaneously.
+
+        - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+          avoid during the search. The start vertex ``v`` cannot be in this set.
 
         .. SEEALSO::
 
@@ -18881,6 +18993,12 @@ class GenericGraph(GenericGraph_pyx):
             sage: list(D.breadth_first_search(1, edges=True))
             [(1, 2), (1, 3), (2, 4)]
 
+        BFS in a graph with forbidden vertices::
+
+            sage: G = graphs.PetersenGraph()
+            sage: list(G.breadth_first_search(0, forbidden_vertices=[1, 2]))
+            [0, 4, 5, 3, 9, 7, 8, 6]
+
         TESTS::
 
             sage: D = DiGraph({1: [0], 2: [0]})
@@ -18899,6 +19017,18 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             ValueError: parameters edges and report_distance cannot be ``True`` simultaneously
+            sage: list(G.breadth_first_search(0, forbidden_vertices=[0]))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
+            sage: list(G.breadth_first_search(0, forbidden_vertices=[0], distance=2))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
+            sage: list(G.breadth_first_search([0, 1], forbidden_vertices=[1]))
+            Traceback (most recent call last):
+            ...
+            ValueError: start vertex 1 is in the set of forbidden vertices
         """
         from sage.rings.semirings.non_negative_integer_semiring import NN
         if (distance is not None and distance not in NN):
@@ -18912,17 +19042,23 @@ class GenericGraph(GenericGraph_pyx):
                 and hasattr(self._backend, "breadth_first_search")):
             yield from self._backend.breadth_first_search(
                     start, ignore_direction=ignore_direction,
-                    report_distance=report_distance, edges=edges)
+                    report_distance=report_distance, edges=edges,
+                    forbidden_vertices=forbidden_vertices)
         else:
             if neighbors is None:
                 if not self._directed or ignore_direction:
                     neighbors = self.neighbor_iterator
                 else:
                     neighbors = self.neighbor_out_iterator
-            seen = set()
+            seen = set() if forbidden_vertices is None else set(forbidden_vertices)
             if isinstance(start, list):
+                for s in start:
+                    if s in seen:
+                        raise ValueError(f"start vertex {s} is in the set of forbidden vertices")
                 queue = [(v, 0) for v in start]
             else:
+                if start in seen:
+                    raise ValueError("the start vertex is in the set of forbidden vertices")
                 queue = [(start, 0)]
 
             # Non-existing start vertex is detected later if distance > 0.
@@ -18954,7 +19090,7 @@ class GenericGraph(GenericGraph_pyx):
                                 yield w
 
     def depth_first_search(self, start, ignore_direction=False,
-                           neighbors=None, edges=False):
+                           neighbors=None, edges=False, forbidden_vertices=None):
         """
         Return an iterator over the vertices in a depth-first ordering.
 
@@ -18976,6 +19112,9 @@ class GenericGraph(GenericGraph_pyx):
         - ``edges`` -- boolean (default: ``False``); whether to return the edges
           of the DFS tree in the order of visit or the vertices (default).
           Edges are directed in root to leaf orientation of the tree.
+
+        - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+          avoid during the search. The start vertex ``v`` cannot be in this set.
 
         .. SEEALSO::
 
@@ -19036,6 +19175,12 @@ class GenericGraph(GenericGraph_pyx):
             sage: list(D.depth_first_search(2, edges=True, ignore_direction=True))
             [(2, 3), (3, 4), (2, 1), (1, 0)]
 
+        DFS in a graph with forbidden vertices::
+
+            sage: G = graphs.PetersenGraph()
+            sage: list(G.depth_first_search(0, forbidden_vertices=[1, 2]))
+            [0, 5, 8, 6, 9, 7, 4, 3]
+
         TESTS::
 
             sage: D = DiGraph({1: [0], 2: [0]})
@@ -19059,22 +19204,40 @@ class GenericGraph(GenericGraph_pyx):
             [1, 3, 6, 4, 5, 7, 2]
             sage: list(D.depth_first_search(1, ignore_direction=True, edges=True))
             [(1, 3), (3, 6), (6, 7), (7, 5), (5, 4), (1, 2)]
+            sage: list(G.depth_first_search(0, forbidden_vertices=[0]))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
+            sage: list(G.depth_first_search(0, forbidden_vertices=[0], edges=True))
+            Traceback (most recent call last):
+            ...
+            ValueError: the start vertex is in the set of forbidden vertices
+            sage: list(G.depth_first_search([0, 1], forbidden_vertices=[1]))
+            Traceback (most recent call last):
+            ...
+            ValueError: start vertex 1 is in the set of forbidden vertices
         """
         # Preferably use the Cython implementation
         if (neighbors is None and not isinstance(start, list)
                 and hasattr(self._backend, "depth_first_search") and not edges):
-            yield from self._backend.depth_first_search(start, ignore_direction=ignore_direction)
+            yield from self._backend.depth_first_search(start, ignore_direction=ignore_direction,
+                                                        forbidden_vertices=forbidden_vertices)
         else:
             if neighbors is None:
                 if not self._directed or ignore_direction:
                     neighbors = self.neighbor_iterator
                 else:
                     neighbors = self.neighbor_out_iterator
-            seen = set()
+            seen = set(forbidden_vertices) if forbidden_vertices else set()
             if isinstance(start, list):
+                for s in start:
+                    if s in seen:
+                        raise ValueError(f"start vertex {s} is in the set of forbidden vertices")
                 # Reverse the list so that the initial vertices come out in the same order
                 queue = [(v, 0) for v in reversed(start)]
             else:
+                if start in seen:
+                    raise ValueError("the start vertex is in the set of forbidden vertices")
                 queue = [(start, 0)]
 
             if not edges:
@@ -22913,68 +23076,55 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: P = graphs.PetersenGraph()
             sage: P.eigenvectors()                                                      # needs sage.modules sage.rings.number_field
-            [(3, [
-            (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-            ], 1), (-2, [
-            (1, 0, 0, 0, -1, -1, -1, 0, 1, 1),
-            (0, 1, 0, 0, -1, 0, -2, -1, 1, 2),
-            (0, 0, 1, 0, -1, 1, -1, -2, 0, 2),
-            (0, 0, 0, 1, -1, 1, 0, -1, -1, 1)
-            ], 4), (1, [
-            (1, 0, 0, 0, 0, 1, -1, 0, 0, -1),
-            (0, 1, 0, 0, 0, -1, 1, -1, 0, 0),
-            (0, 0, 1, 0, 0, 0, -1, 1, -1, 0),
-            (0, 0, 0, 1, 0, 0, 0, -1, 1, -1),
-            (0, 0, 0, 0, 1, -1, 0, 0, -1, 1)
-            ], 5)]
+            [(3, [(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)], 1),
+             (-2,
+              [(1, 0, 0, 0, -1, -1, -1, 0, 1, 1),
+               (0, 1, 0, 0, -1, 0, -2, -1, 1, 2),
+               (0, 0, 1, 0, -1, 1, -1, -2, 0, 2),
+               (0, 0, 0, 1, -1, 1, 0, -1, -1, 1)],
+              4),
+             (1,
+              [(1, 0, 0, 0, 0, 1, -1, 0, 0, -1),
+               (0, 1, 0, 0, 0, -1, 1, -1, 0, 0),
+               (0, 0, 1, 0, 0, 0, -1, 1, -1, 0),
+               (0, 0, 0, 1, 0, 0, 0, -1, 1, -1),
+               (0, 0, 0, 0, 1, -1, 0, 0, -1, 1)],
+              5)]
 
         Eigenspaces for the Laplacian should be identical since the Petersen
         graph is regular.  However, since the output also contains the
         eigenvalues, the two outputs are slightly different::
 
             sage: P.eigenvectors(laplacian=True)                                        # needs sage.modules sage.rings.number_field
-            [(0, [
-            (1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-            ], 1), (5, [
-            (1, 0, 0, 0, -1, -1, -1, 0, 1, 1),
-            (0, 1, 0, 0, -1, 0, -2, -1, 1, 2),
-            (0, 0, 1, 0, -1, 1, -1, -2, 0, 2),
-            (0, 0, 0, 1, -1, 1, 0, -1, -1, 1)
-            ], 4), (2, [
-            (1, 0, 0, 0, 0, 1, -1, 0, 0, -1),
-            (0, 1, 0, 0, 0, -1, 1, -1, 0, 0),
-            (0, 0, 1, 0, 0, 0, -1, 1, -1, 0),
-            (0, 0, 0, 1, 0, 0, 0, -1, 1, -1),
-            (0, 0, 0, 0, 1, -1, 0, 0, -1, 1)
-            ], 5)]
+            [(0, [(1, 1, 1, 1, 1, 1, 1, 1, 1, 1)], 1),
+             (5,
+              [(1, 0, 0, 0, -1, -1, -1, 0, 1, 1),
+               (0, 1, 0, 0, -1, 0, -2, -1, 1, 2),
+               (0, 0, 1, 0, -1, 1, -1, -2, 0, 2),
+               (0, 0, 0, 1, -1, 1, 0, -1, -1, 1)],
+              4),
+             (2,
+              [(1, 0, 0, 0, 0, 1, -1, 0, 0, -1),
+               (0, 1, 0, 0, 0, -1, 1, -1, 0, 0),
+               (0, 0, 1, 0, 0, 0, -1, 1, -1, 0),
+               (0, 0, 0, 1, 0, 0, 0, -1, 1, -1),
+               (0, 0, 0, 0, 1, -1, 0, 0, -1, 1)],
+              5)]
 
         ::
 
             sage: C = graphs.CycleGraph(8)
             sage: C.eigenvectors()                                                      # needs sage.modules sage.rings.number_field
-            [(2,
-              [
-              (1, 1, 1, 1, 1, 1, 1, 1)
-              ],
-              1),
-             (-2,
-              [
-              (1, -1, 1, -1, 1, -1, 1, -1)
-              ],
-              1),
-             (0,
-              [
-              (1, 0, -1, 0, 1, 0, -1, 0),
-              (0, 1, 0, -1, 0, 1, 0, -1)
-              ],
+            [(2, [(1, 1, 1, 1, 1, 1, 1, 1)], 1),
+             (-2, [(1, -1, 1, -1, 1, -1, 1, -1)], 1),
+             (0, [(1, 0, -1, 0, 1, 0, -1, 0), (0, 1, 0, -1, 0, 1, 0, -1)], 2),
+             (-1.414213562373095?,
+              [(1, 0, -1, 1.414213562373095?, -1, 0, 1, -1.414213562373095?),
+               (0, 1, -1.414213562373095?, 1, 0, -1, 1.414213562373095?, -1)],
               2),
-             (-1.4142135623...,
-              [(1, 0, -1, 1.4142135623..., -1, 0, 1, -1.4142135623...),
-               (0, 1, -1.4142135623..., 1, 0, -1, 1.4142135623..., -1)],
-              2),
-             (1.4142135623...,
-              [(1, 0, -1, -1.4142135623..., -1, 0, 1, 1.4142135623...),
-               (0, 1, 1.4142135623..., 1, 0, -1, -1.4142135623..., -1)],
+             (1.414213562373095?,
+              [(1, 0, -1, -1.414213562373095?, -1, 0, 1, 1.414213562373095?),
+               (0, 1, 1.414213562373095?, 1, 0, -1, -1.414213562373095?, -1)],
               2)]
 
         A digraph may have complex eigenvalues. Previously, the complex parts of
@@ -22982,16 +23132,12 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: T = DiGraph({0:[1], 1:[2], 2:[0]})
             sage: T.eigenvectors()                                                      # needs sage.modules sage.rings.number_field
-            [(1,
-              [
-              (1, 1, 1)
-              ],
+            [(1, [(1, 1, 1)], 1),
+             (-0.50000000000000000? - 0.866025403784439?*I,
+              [(1, -0.50000000000000000? - 0.866025403784439?*I, -0.50000000000000000? + 0.866025403784439?*I)],
               1),
-             (-0.5000000000... - 0.8660254037...*I,
-              [(1, -0.5000000000... - 0.8660254037...*I, -0.5000000000... + 0.8660254037...*I)],
-              1),
-             (-0.5000000000... + 0.8660254037...*I,
-              [(1, -0.5000000000... + 0.8660254037...*I, -0.5000000000... - 0.8660254037...*I)],
+             (-0.50000000000000000? + 0.866025403784439?*I,
+              [(1, -0.50000000000000000? + 0.866025403784439?*I, -0.50000000000000000? - 0.866025403784439?*I)],
               1)]
         """
         if laplacian:
@@ -23023,48 +23169,50 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: P = graphs.PetersenGraph()
             sage: P.eigenspaces()                                                       # needs sage.modules sage.rings.number_field
-            [
-            (3,  Vector space of degree 10 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [1 1 1 1 1 1 1 1 1 1]),
-            (-2, Vector space of degree 10 and dimension 4 over Rational Field
-                 User basis matrix:
-                 [ 1  0  0  0 -1 -1 -1  0  1  1]
-                 [ 0  1  0  0 -1  0 -2 -1  1  2]
-                 [ 0  0  1  0 -1  1 -1 -2  0  2]
-                 [ 0  0  0  1 -1  1  0 -1 -1  1]),
-            (1,  Vector space of degree 10 and dimension 5 over Rational Field
-                 User basis matrix:
-                 [ 1  0  0  0  0  1 -1  0  0 -1]
-                 [ 0  1  0  0  0 -1  1 -1  0  0]
-                 [ 0  0  1  0  0  0 -1  1 -1  0]
-                 [ 0  0  0  1  0  0  0 -1  1 -1]
-                 [ 0  0  0  0  1 -1  0  0 -1  1])
-            ]
+            [(3,
+              Vector space of degree 10 and dimension 1 over Rational Field
+              User basis matrix:
+              [1 1 1 1 1 1 1 1 1 1]),
+             (-2,
+              Vector space of degree 10 and dimension 4 over Rational Field
+              User basis matrix:
+              [ 1  0  0  0 -1 -1 -1  0  1  1]
+              [ 0  1  0  0 -1  0 -2 -1  1  2]
+              [ 0  0  1  0 -1  1 -1 -2  0  2]
+              [ 0  0  0  1 -1  1  0 -1 -1  1]),
+             (1,
+              Vector space of degree 10 and dimension 5 over Rational Field
+              User basis matrix:
+              [ 1  0  0  0  0  1 -1  0  0 -1]
+              [ 0  1  0  0  0 -1  1 -1  0  0]
+              [ 0  0  1  0  0  0 -1  1 -1  0]
+              [ 0  0  0  1  0  0  0 -1  1 -1]
+              [ 0  0  0  0  1 -1  0  0 -1  1])]
 
         Eigenspaces for the Laplacian should be identical since the Petersen
         graph is regular.  However, since the output also contains the
         eigenvalues, the two outputs are slightly different::
 
             sage: P.eigenspaces(laplacian=True)                                         # needs sage.modules sage.rings.number_field
-            [
-            (0, Vector space of degree 10 and dimension 1 over Rational Field
-                User basis matrix:
-                [1 1 1 1 1 1 1 1 1 1]),
-            (5, Vector space of degree 10 and dimension 4 over Rational Field
-                User basis matrix:
-                [ 1  0  0  0 -1 -1 -1  0  1  1]
-                [ 0  1  0  0 -1  0 -2 -1  1  2]
-                [ 0  0  1  0 -1  1 -1 -2  0  2]
-                [ 0  0  0  1 -1  1  0 -1 -1  1]),
-            (2, Vector space of degree 10 and dimension 5 over Rational Field
-                User basis matrix:
-                [ 1  0  0  0  0  1 -1  0  0 -1]
-                [ 0  1  0  0  0 -1  1 -1  0  0]
-                [ 0  0  1  0  0  0 -1  1 -1  0]
-                [ 0  0  0  1  0  0  0 -1  1 -1]
-                [ 0  0  0  0  1 -1  0  0 -1  1])
-            ]
+            [(0,
+              Vector space of degree 10 and dimension 1 over Rational Field
+              User basis matrix:
+              [1 1 1 1 1 1 1 1 1 1]),
+             (5,
+              Vector space of degree 10 and dimension 4 over Rational Field
+              User basis matrix:
+              [ 1  0  0  0 -1 -1 -1  0  1  1]
+              [ 0  1  0  0 -1  0 -2 -1  1  2]
+              [ 0  0  1  0 -1  1 -1 -2  0  2]
+              [ 0  0  0  1 -1  1  0 -1 -1  1]),
+             (2,
+              Vector space of degree 10 and dimension 5 over Rational Field
+              User basis matrix:
+              [ 1  0  0  0  0  1 -1  0  0 -1]
+              [ 0  1  0  0  0 -1  1 -1  0  0]
+              [ 0  0  1  0  0  0 -1  1 -1  0]
+              [ 0  0  0  1  0  0  0 -1  1 -1]
+              [ 0  0  0  0  1 -1  0  0 -1  1])]
 
         Notice how one eigenspace below is described with a square root of 2.
         For the two possible values (positive and negative) there is a
@@ -23072,38 +23220,38 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: C = graphs.CycleGraph(8)
             sage: C.eigenspaces()                                                       # needs sage.modules sage.rings.number_field
-            [
-            (2,  Vector space of degree 8 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [1 1 1 1 1 1 1 1]),
-            (-2, Vector space of degree 8 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [ 1 -1  1 -1  1 -1  1 -1]),
-            (0,  Vector space of degree 8 and dimension 2 over Rational Field
-                 User basis matrix:
-                 [ 1  0 -1  0  1  0 -1  0]
-                 [ 0  1  0 -1  0  1  0 -1]),
-            (a3, Vector space of degree 8 and dimension 2 over
-                  Number Field in a3 with defining polynomial x^2 - 2
-                 User basis matrix:
-                 [  1   0  -1 -a3  -1   0   1  a3]
-                 [  0   1  a3   1   0  -1 -a3  -1])
-            ]
+            [(2,
+              Vector space of degree 8 and dimension 1 over Rational Field
+              User basis matrix:
+              [1 1 1 1 1 1 1 1]),
+             (-2,
+              Vector space of degree 8 and dimension 1 over Rational Field
+              User basis matrix:
+              [ 1 -1  1 -1  1 -1  1 -1]),
+             (0,
+              Vector space of degree 8 and dimension 2 over Rational Field
+              User basis matrix:
+              [ 1  0 -1  0  1  0 -1  0]
+              [ 0  1  0 -1  0  1  0 -1]),
+             (a3,
+              Vector space of degree 8 and dimension 2 over Number Field in a3 with defining polynomial x^2 - 2
+              User basis matrix:
+              [  1   0  -1 -a3  -1   0   1  a3]
+              [  0   1  a3   1   0  -1 -a3  -1])]
 
         A digraph may have complex eigenvalues and eigenvectors. For a 3-cycle,
         we have::
 
             sage: T = DiGraph({0: [1], 1: [2], 2: [0]})
             sage: T.eigenspaces()                                                       # needs sage.modules sage.rings.number_field
-            [
-            (1,  Vector space of degree 3 and dimension 1 over Rational Field
-                 User basis matrix:
-                 [1 1 1]),
-            (a1, Vector space of degree 3 and dimension 1 over Number Field in a1
-                  with defining polynomial x^2 + x + 1
-                 User basis matrix:
-                 [      1      a1 -a1 - 1])
-            ]
+            [(1,
+              Vector space of degree 3 and dimension 1 over Rational Field
+              User basis matrix:
+              [1 1 1]),
+             (a1,
+              Vector space of degree 3 and dimension 1 over Number Field in a1 with defining polynomial x^2 + x + 1
+              User basis matrix:
+              [      1      a1 -a1 - 1])]
         """
         if laplacian:
             M = self.kirchhoff_matrix(vertices=list(self))

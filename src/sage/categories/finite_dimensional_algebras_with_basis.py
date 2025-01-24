@@ -207,7 +207,6 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 s = 1
                 n = self.dimension()
                 B = [b.on_left_matrix() for b in self.basis()]
-                I = B[0].parent().one()
                 while s <= n:
                     # we use that p_{AB}(x) = p_{BA}(x) here
                     data = [[None]*(len(B)+1) for _ in B]
@@ -1144,7 +1143,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                                                   for f in l[:i]))
 
         @cached_method
-        def is_commutative(self):
+        def is_commutative(self) -> bool:
             """
             Return whether ``self`` is a commutative algebra.
 
@@ -1159,7 +1158,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 True
             """
             B = list(self.basis())
-            try: # See if 1 is a basis element, if so, remove it
+            try:  # See if 1 is a basis element, if so, remove it
                 B.remove(self.one())
             except ValueError:
                 pass
