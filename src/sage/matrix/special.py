@@ -3126,7 +3126,7 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
         ....:               eigenvalues=[2+I, 2-I, 2], dimensions=[1,1,1])
         Traceback (most recent call last):
         ...
-        TypeError: eigenvalues must be integers.
+        TypeError: eigenvalues must be elements of the corresponding ring.
 
     Diagonal matrices must be square. ::
 
@@ -3177,6 +3177,11 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
         ...
         ValueError: each eigenvalue must have a corresponding dimension and each dimension a corresponding eigenvalue.
 
+    The elements of the random matrix must be a member of the correct corresponding ring. ::
+        sage: K = GF(3)
+        sage: random_matrix(K, 3,3,algorithm="diagonalizable").parent()
+        Full MatrixSpace of 3 by 3 dense matrices over Finite Field of size 3
+
     .. TODO::
 
         Modify the routine to allow for complex eigenvalues.
@@ -3189,6 +3194,9 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
     from sage.misc.prandom import randint
 
     size = parent.nrows()
+    ring = parent.base_ring()
+    if ring == QQ:
+        ring = ZZ
     if parent.nrows() != parent.ncols():
         raise TypeError("a diagonalizable matrix must be square.")
     if eigenvalues is not None and dimensions is None:
@@ -3199,7 +3207,7 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
         values = []
         # create a list with "size" number of entries
         for eigen_index in range(size):
-            eigenvalue = randint(-10, 10)
+            eigenvalue = ring(randint(-10, 10))
             values.append(eigenvalue)
         values.sort()
         dimensions = []
@@ -3214,8 +3222,8 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
     size_check = 0
     for check in range(len(dimensions)):
         size_check = size_check + dimensions[check]
-    if not all(x in ZZ for x in eigenvalues):
-        raise TypeError("eigenvalues must be integers.")
+    if not all(x in ring for x in eigenvalues):
+        raise TypeError("eigenvalues must be elements of the corresponding ring.")
     if size != size_check:
         raise ValueError("the size of the matrix must equal the sum of the dimensions.")
     if min(dimensions) < 1:
@@ -3227,7 +3235,7 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
     dimensions = [x[0] for x in dimensions_sort]
     eigenvalues = [x[1] for x in dimensions_sort]
     # Create the matrix of eigenvalues on the diagonal.  Use a lower limit and upper limit determined by the eigenvalue dimensions.
-    diagonal_matrix = matrix(QQ, size)
+    diagonal_matrix = matrix(ring, size)
     up_bound = 0
     low_bound = 0
     for row_index in range(len(dimensions)):
@@ -3237,7 +3245,7 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
         low_bound = low_bound+dimensions[row_index]
     # Create a matrix to hold each of the eigenvectors as its columns, begin with an identity matrix so that after row and column
     # operations the resulting matrix will be unimodular.
-    eigenvector_matrix = matrix(QQ, size, size, 1)
+    eigenvector_matrix = matrix(ring, size, size, 1)
     upper_limit = 0
     lower_limit = 0
     # run the routine over the necessary number of columns corresponding eigenvalue dimension.
