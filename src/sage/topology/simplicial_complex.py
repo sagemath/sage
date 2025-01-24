@@ -3526,18 +3526,44 @@ class SimplicialComplex(Parent, GenericCellComplex):
         EXAMPLES::
 
             sage: X = SimplicialComplex([[1,2], [0], [3]])
-            sage: X._stanley_reisner_base_ring()
+            sage: X._stanley_reisner_base_ring()[0]
             Multivariate Polynomial Ring in x0, x1, x2, x3 over Integer Ring
             sage: Y = SimplicialComplex([['a', 'b', 'c']])
-            sage: Y._stanley_reisner_base_ring(base_ring=QQ)
+            sage: Y._stanley_reisner_base_ring(base_ring=QQ)[0]
             Multivariate Polynomial Ring in a, b, c over Rational Field
+            sage: Fano = matroids.catalog.Fano()
+            sage: Z = Fano.lattice_of_flats().order_complex()
+            sage: Z._stanley_reisner_base_ring(base_ring=QQ)[0]
+            Multivariate Polynomial Ring in x0, x1, x2, x3, x4, x5, x6, x7, x8,
+             x9, x10, x11, x12, x13, x14, x15 over Rational Field
+            sage: Z._stanley_reisner_base_ring(base_ring=QQ)[1]
+            {frozenset(): 0,
+             frozenset({'d', 'e', 'f'}): 1,
+             frozenset({'a', 'c', 'e'}): 2,
+             frozenset({'b'}): 3,
+             frozenset({'c'}): 4,
+             frozenset({'g'}): 5,
+             frozenset({'a', 'b', 'f'}): 6,
+             frozenset({'b', 'c', 'd'}): 7,
+             frozenset({'f'}): 8,
+             frozenset({'a', 'd', 'g'}): 9,
+             frozenset({'c', 'f', 'g'}): 10,
+             frozenset({'e'}): 11,
+             frozenset({'b', 'e', 'g'}): 12,
+             frozenset({'a'}): 13,
+             frozenset({'d'}): 14,
+             frozenset({'a', 'b', 'c', 'd', 'e', 'f', 'g'}): 15}
         """
         verts = self._gen_dict.values()
         try:
             verts = sorted(verts)
         except TypeError:
             verts = sorted(verts, key=str)
-        return PolynomialRing(base_ring, verts)
+        mapping = {v: i for i, v in enumerate(verts)}
+        try:
+            return PolynomialRing(base_ring, verts), mapping
+        except ValueError:  # non alphanumeric variable names
+            return PolynomialRing(base_ring, 'x', len(verts)), mapping
 
     def stanley_reisner_ring(self, base_ring=ZZ):
         """
@@ -3583,13 +3609,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Y.stanley_reisner_ring(base_ring=QQ)
             Multivariate Polynomial Ring in x0, x1, x2, x3, x4 over Rational Field
         """
-        R = self._stanley_reisner_base_ring(base_ring)
-        products = []
-        for f in self.minimal_nonfaces():
-            prod = 1
-            for v in f:
-                prod *= R(self._gen_dict[v])
-            products.append(prod)
+        R, mapping = self._stanley_reisner_base_ring(base_ring)
+        products = [R.prod(R.gen(mapping[self._gen_dict[v]]) for v in f)
+                    for f in self.minimal_nonfaces()]
         return R.quotient(products)
 
     def alexander_dual(self, is_mutable=True):

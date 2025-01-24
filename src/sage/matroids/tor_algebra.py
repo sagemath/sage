@@ -53,14 +53,14 @@ class TorAlgebra(CombinatorialFreeModule):
 
         self._matroid = M
         E = tuple(M.groundset())
+        ordering = {e: i for i, e in enumerate(E)}  # used in case E has incomparable elements
         n = E[-1]
         bases = M.bases()
 
         # get the squarefree basis elements
         # we can skip the full groundset (which necessarily has full rank)
-        sf_basis = [X for k in range(len(E)) for X in combinations(E, k) if not any(B.issubset(frozenset(X)) for B in bases)]
-        #max_comp = []
-        #print(sf_basis)
+        sf_basis = [X for k in range(len(E)) for X in combinations(E, k)
+                    if not any(B.issubset(frozenset(X)) for B in bases)]
         lin_basis = []
         comp_max = []
         for i, X in enumerate(sf_basis):
@@ -70,13 +70,11 @@ class TorAlgebra(CombinatorialFreeModule):
             comp_max.append(comp.pop())
             lin_basis.append(tuple(comp))
 
-        #print(comp_max)
-        #print(lin_basis)
-
         # construct the Kozsul complex
         diffs = {}
         cur_basis = {(X, ()): i for i,X in enumerate(sf_basis)}
         for k in range(1, len(E)):
+            print(cur_basis)
             prev_basis = cur_basis
             cur_basis = {}
             rows = []
@@ -84,24 +82,57 @@ class TorAlgebra(CombinatorialFreeModule):
                 for Y in combinations(L, k):
                     cur_basis[X,Y] = len(cur_basis)
                     row = [0] * len(prev_basis)
+
                     for j in range(k):
+                        # compute multipliciation by x_i from (x_i - x_{\ell_+})
                         assert Y[j] not in X
                         Yp = Y[:j] + Y[j+1:]
-                        Xp = tuple(sorted(X + (Y[j],)))
-                        try:
-                            row[prev_basis[Xp,Yp]] -= (-1) ** j
-                        except KeyError:
-                            #print("bad first term")
-                            pass
-                        Xp = tuple(sorted(X + (comp,)))
+                        Xp = tuple(sorted(X + (Y[j],), key=ordering.__getitem__))
                         try:
                             row[prev_basis[Xp,Yp]] += (-1) ** j
                         except KeyError:
-                            #print("bad second term")
+                            # Xp goes to 0, nothing more to do for this term
                             pass
+
+                    # Compute the multiplication by all x_{\ell_+} from the entire
+                    #   wedge product. We need to do this separately since
+                    #   we need to combine the factors in different ways.
+                    # If new_comp in Y, then this will be (-1)^deg (Y \ new_comp)
+                    # Otherwise we use the following fact:
+                    # d[(a1 - an) ^ (a2 - an) ^ ... ^ (ak - an)] = d[a1 ^ a2 ^ ... ^ ak]
+                    # For example:
+                    #   sage: E.<a,b,c,d,e> = ExteriorAlgebra(QQ)
+                    #   sage: (b+e)*(c+e) - (a+e)*(c+e) + (a+e)*(b+e)
+                    #   a*b - a*c + b*c
+                    #   sage: (b+e)*(c+e)*(d+e) - (a+e)*(c+e)*(d+e) + (a+e)*(b+e)*(d+e) - (a+e)*(b+e)*(c+e)
+                    #   -a*b*c + a*b*d - a*c*d + b*c*d
+                    #   sage: e - (a+e)
+                    #   -a
+                    #   sage: (b+e)*e - (a+e)*e + (a+e)*(b+e)
+                    #   a*b
+                    #   sage: (b+e)*(c+e)*e - (a+e)*(c+e)*e + (a+e)*(b+e)*e - (a+e)*(b+e)*(c+e)
+                    #   -a*b*c
+
+                    Xp = tuple(sorted(X + (comp,), key=ordering.__getitem__))
+                    try:
+                        ind = sf_basis.index(Xp)
+                    except ValueError:
+                        # Xp goes to 0, nothing more to do
+                        rows.append(row)
+                        continue
+                    new_comp = comp_max[ind]
+                    assert ordering[new_comp] < ordering[comp], (new_comp, comp, X, Y)
+                    if new_comp in Y:
+                        assert Y[-1] == new_comp
+                        Yp = Y[:-1]
+                        row[prev_basis[Xp,Yp]] -= (-1) ** len(Yp)
+                    else:
+                        for j in range(k):
+                            Yp = Y[:j] + Y[j+1:]
+                            row[prev_basis[Xp,Yp]] -= (-1) ** j
+
                     rows.append(row)
             diffs[k] = matrix(R, rows).transpose()
-
         self._kozsul_complex = ChainComplex(diffs, degree_of_differential=-1)
         self._cohomology = self._kozsul_complex.homology()
 
