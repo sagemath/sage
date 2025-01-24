@@ -3054,15 +3054,15 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
     """
     Create a random matrix that diagonalizes nicely.
 
-    To be used as a teaching tool.  Return matrices have only real
-    eigenvalues.
+    To be used as a teaching tool. If the ring used is QQ then return matrices
+    have real eigenvalues. Otherwise eignevalues are elements of the ring.
 
     INPUT:
 
     If eigenvalues and dimensions are not specified in a list,
     they will be assigned randomly.
 
-    - ``parent`` -- the desired size of the square matrix
+    - ``parent`` -- the matrix space required
 
     - ``eigenvalues`` -- the list of desired eigenvalues (default=None)
 
@@ -3071,9 +3071,10 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
 
     OUTPUT:
 
-    A square, diagonalizable, matrix with only integer entries. The
-    eigenspaces of this matrix, if computed by hand, give basis
-    vectors with only integer entries.
+    A square, diagonalizable, matrix. If the ring used is QQ then we have
+    integer entries. Otherwise entries are elements of the ring. If the
+    ring used is QQ the eigenspaces of this matrix, if computed by hand,
+    give basis vectors with only integer entries.
 
     .. NOTE::
 
@@ -3120,7 +3121,7 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
 
     TESTS:
 
-    Eigenvalues must all be integers. ::
+    Eigenvalues must all be elements of the ring. ::
 
         sage: random_matrix(QQ, 3, algorithm='diagonalizable',                          # needs sage.symbolic
         ....:               eigenvalues=[2+I, 2-I, 2], dimensions=[1,1,1])
