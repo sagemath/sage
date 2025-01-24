@@ -1982,7 +1982,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         # Convert to the power sum
         p = self.realization_of().power()
         p_x = p(x)
-        expr_k = lambda k: expr.subs(**dict([(str(x),x**k) for x in deg_one]))
+        expr_k = lambda k: expr.subs(**{str(x): x**k for x in deg_one})
         f = lambda m,c: (m, c*prod([expr_k(k) for k in m]))
         return self(p_x.map_item(f))
 
@@ -2284,28 +2284,28 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             sage: c2 == d2
             True
         """
-        #Decide whether we know how to go from self to other or
-        #from other to self
+        # Decide whether we know how to go from self to other or
+        # from other to self
         if to_other_function is not None:
-            known_cache = self_to_other_cache  #the known direction
-            unknown_cache = other_to_self_cache  #the unknown direction
+            known_cache = self_to_other_cache  # the known direction
+            unknown_cache = other_to_self_cache  # the unknown direction
             known_function = to_other_function
         else:
-            unknown_cache = self_to_other_cache  #the known direction
-            known_cache = other_to_self_cache  #the unknown direction
+            unknown_cache = self_to_other_cache  # the known direction
+            known_cache = other_to_self_cache  # the unknown direction
             known_function = to_self_function
 
-        #Do nothing if we've already computed the inverse
-        #for degree n.
+        # Do nothing if we've already computed the inverse
+        # for degree n.
         if n in known_cache and n in unknown_cache:
             return
 
-        #Univariate polynomial arithmetic is faster
-        #over ZZ.  Since that is all we need to compute
-        #the transition matrices between S and P, we
-        #should use that.
-        #Zt = ZZ['t']
-        #t = Zt.gen()
+        # Univariate polynomial arithmetic is faster
+        # over ZZ.  Since that is all we need to compute
+        # the transition matrices between S and P, we
+        # should use that.
+        # Zt = ZZ['t']
+        # t = Zt.gen()
         one = base_ring.one()
         zero = base_ring.zero()
 
@@ -3783,7 +3783,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
     omega_involution = omega
 
-    def theta(self,a):
+    def theta(self, a):
         r"""
         Return the image of ``self`` under the theta endomorphism which sends
         `p_k` to `a \cdot p_k` for every positive integer `k`.
@@ -6747,7 +6747,7 @@ def _nonnegative_coefficients(x):
         sage: _nonnegative_coefficients(x^2-4)
         False
     """
-    if isinstance(x, Polynomial) or isinstance(x, MPolynomial):
+    if isinstance(x, (Polynomial, MPolynomial)):
         return all(c >= 0 for c in x.coefficients(sparse=False))
     else:
         return x >= 0
@@ -6900,7 +6900,7 @@ def _from_polynomial(p, f):
     n = p.parent().ngens()
     if n == 1:
         d = {_Partitions.from_exp([e]): c
-             for e, c in p.dict().items()}
+             for e, c in p.monomial_coefficients().items()}
     else:
         d = {_Partitions.from_exp(e): c
              for e, c in p.iterator_exp_coeff(False)}

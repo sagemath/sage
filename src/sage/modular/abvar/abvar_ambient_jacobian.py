@@ -335,25 +335,19 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
         EXAMPLES::
 
             sage: J0(33).decomposition(simple=False)
-            [
-            Abelian subvariety of dimension 2 of J0(33),
-            Abelian subvariety of dimension 1 of J0(33)
-            ]
+            [Abelian subvariety of dimension 2 of J0(33),
+             Abelian subvariety of dimension 1 of J0(33)]
             sage: J0(33).decomposition(simple=False)[1].is_simple()
             True
             sage: J0(33).decomposition(simple=False)[0].is_simple()
             False
             sage: J0(33).decomposition(simple=False)
-            [
-            Abelian subvariety of dimension 2 of J0(33),
-            Simple abelian subvariety 33a(None,33) of dimension 1 of J0(33)
-            ]
+            [Abelian subvariety of dimension 2 of J0(33),
+             Simple abelian subvariety 33a(None,33) of dimension 1 of J0(33)]
             sage: J0(33).decomposition(simple=True)
-            [
-            Simple abelian subvariety 11a(1,33) of dimension 1 of J0(33),
-            Simple abelian subvariety 11a(3,33) of dimension 1 of J0(33),
-            Simple abelian subvariety 33a(1,33) of dimension 1 of J0(33)
-            ]
+            [Simple abelian subvariety 11a(1,33) of dimension 1 of J0(33),
+             Simple abelian subvariety 11a(3,33) of dimension 1 of J0(33),
+             Simple abelian subvariety 33a(1,33) of dimension 1 of J0(33)]
         """
         try:
             return self.__decomposition[simple]
@@ -409,7 +403,7 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
         if self.dimension() == 0:
             return []
         G = self.group()
-        if not (isinstance(G, Gamma0_class) or isinstance(G, Gamma1_class)):
+        if not isinstance(G, (Gamma0_class, Gamma1_class)):
             return [S.newform(names=names) for S in self.decomposition()]
         Gtype = G.parent()
         N = G.level()

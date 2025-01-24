@@ -991,6 +991,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         return parent.element_class(parent, None, [locus_ieqs, locus_eqns])
 
+
 def combinatorial_face_to_polyhedral_face(polyhedron, combinatorial_face):
     r"""
     Convert a combinatorial face to a face of a polyhedron.

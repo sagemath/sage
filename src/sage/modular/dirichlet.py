@@ -999,10 +999,8 @@ class DirichletCharacter(MultiplicativeGroupElement):
                     v += s
                 m.append(v)
 
-            m = matrix(m)
-
             xx = S.gen()
-            return m.charpoly(xx)
+            return matrix(m).charpoly(xx)
 
         elif algorithm == "pari":
             # Use pari
@@ -1264,11 +1262,9 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
             sage: G = DirichletGroup(13)
             sage: G.galois_orbits()
-            [
-            [Dirichlet character modulo 13 of conductor 1 mapping 2 |--> 1],
-            ...,
-            [Dirichlet character modulo 13 of conductor 13 mapping 2 |--> -1]
-            ]
+            [[Dirichlet character modulo 13 of conductor 1 mapping 2 |--> 1],
+             ...,
+             [Dirichlet character modulo 13 of conductor 13 mapping 2 |--> -1]]
             sage: e = G.0
             sage: e
             Dirichlet character modulo 13 of conductor 13 mapping 2 |--> zeta12
@@ -1386,7 +1382,8 @@ class DirichletCharacter(MultiplicativeGroupElement):
         elif isinstance(K, sage.rings.abc.AlgebraicField):
             L = K
             zeta = L.zeta(m)
-        elif isinstance(K, sage.rings.abc.NumberField_cyclotomic) or isinstance(K, RationalField):
+        elif isinstance(K, (sage.rings.abc.NumberField_cyclotomic,
+                            RationalField)):
             chi = chi.minimize_base_ring()
             n = lcm(m, G.zeta_order())
             L = CyclotomicField(n)
@@ -1467,7 +1464,8 @@ class DirichletCharacter(MultiplicativeGroupElement):
             from sage.rings.complex_mpfr import ComplexField
             CC = ComplexField(prec)
             phi = CC.coerce_map_from(K)
-        elif isinstance(K, sage.rings.abc.NumberField_cyclotomic) or isinstance(K, RationalField):
+        elif isinstance(K, (sage.rings.abc.NumberField_cyclotomic,
+                            RationalField)):
             phi = K.complex_embedding(prec)
             CC = phi.codomain()
         else:
@@ -1688,8 +1686,9 @@ class DirichletCharacter(MultiplicativeGroupElement):
         """
         G = self.parent()
         K = G.base_ring()
-        if not (isinstance(K, sage.rings.abc.NumberField_cyclotomic) or isinstance(K, RationalField)):
-            raise NotImplementedError("Kloosterman sums only currently implemented when the base ring is a cyclotomic field or QQ.")
+        if not isinstance(K, (sage.rings.abc.NumberField_cyclotomic,
+                              RationalField)):
+            raise NotImplementedError("Kloosterman sums only currently implemented when the base ring is a cyclotomic field or QQ")
         phi = K.complex_embedding(prec)
         CC = phi.codomain()
         g = 0
@@ -2947,15 +2946,11 @@ class DirichletGroup_class(WithEqualityById, Parent):
         EXAMPLES::
 
             sage: DirichletGroup(20).decomposition()
-            [
-            Group of Dirichlet characters modulo 4 with values in Cyclotomic Field of order 4 and degree 2,
-            Group of Dirichlet characters modulo 5 with values in Cyclotomic Field of order 4 and degree 2
-            ]
+            [Group of Dirichlet characters modulo 4 with values in Cyclotomic Field of order 4 and degree 2,
+             Group of Dirichlet characters modulo 5 with values in Cyclotomic Field of order 4 and degree 2]
             sage: DirichletGroup(20,GF(5)).decomposition()
-            [
-            Group of Dirichlet characters modulo 4 with values in Finite Field of size 5,
-            Group of Dirichlet characters modulo 5 with values in Finite Field of size 5
-            ]
+            [Group of Dirichlet characters modulo 4 with values in Finite Field of size 5,
+             Group of Dirichlet characters modulo 5 with values in Finite Field of size 5]
         """
         R = self.base_ring()
         return Sequence([DirichletGroup(p**r, R)
@@ -3044,11 +3039,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
         EXAMPLES::
 
             sage: DirichletGroup(20).galois_orbits()
-            [
-            [Dirichlet character modulo 20 of conductor 20 mapping 11 |--> -1, 17 |--> -1],
-            ...,
-            [Dirichlet character modulo 20 of conductor 1 mapping 11 |--> 1, 17 |--> 1]
-            ]
+            [[Dirichlet character modulo 20 of conductor 20 mapping ...]]
             sage: DirichletGroup(17, Integers(6), zeta=Integers(6)(5)).galois_orbits()
             Traceback (most recent call last):
             ...

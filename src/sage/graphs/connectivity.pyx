@@ -26,6 +26,7 @@ Here is what the module can do:
     :meth:`is_cut_edge` | Check whether the input edge is a cut-edge or a bridge.
     :meth:`is_edge_cut` | Check whether the input edges form an edge cut.
     :meth:`is_cut_vertex` | Check whether the input vertex is a cut-vertex.
+    :meth:`is_vertex_cut` | Check whether the input vertices form a vertex cut.
     :meth:`edge_connectivity` | Return the edge connectivity of the graph.
     :meth:`vertex_connectivity` | Return the vertex connectivity of the graph.
 
@@ -74,7 +75,7 @@ from sage.misc.superseded import deprecation
 from sage.sets.disjoint_set cimport DisjointSet
 
 
-def is_connected(G):
+def is_connected(G, forbidden_vertices=None):
     """
     Check whether the (di)graph is connected.
 
@@ -83,6 +84,9 @@ def is_connected(G):
     INPUT:
 
     - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
 
     .. SEEALSO::
 
@@ -98,6 +102,10 @@ def is_connected(G):
         False
         sage: G.add_edge(0,3)
         sage: is_connected(G)
+        True
+        sage: is_connected(G, forbidden_vertices=[3])
+        False
+        sage: is_connected(G, forbidden_vertices=[1])
         True
         sage: D = DiGraph({0: [1, 2], 1: [2], 3: [4, 5], 4: [5]})
         sage: is_connected(D)
@@ -127,14 +135,28 @@ def is_connected(G):
         return True
 
     try:
-        return G._backend.is_connected()
+        return G._backend.is_connected(forbidden_vertices=forbidden_vertices)
     except AttributeError:
-        v = next(G.vertex_iterator())
-        conn_verts = list(G.depth_first_search(v, ignore_direction=True))
-        return len(conn_verts) == G.num_verts()
+        # Search for a vertex in G that is not forbidden
+        forbidden = set(forbidden_vertices) if forbidden_vertices else set()
+        if forbidden:
+            for v in G:
+                if v not in forbidden:
+                    break
+            else:
+                # The empty graph is connected, so the graph with only forbidden
+                # vertices is also connected
+                return True
+        else:
+            v = next(G.vertex_iterator())
+        n = len(forbidden)
+        for _ in G.depth_first_search(v, ignore_direction=True,
+                                      forbidden_vertices=forbidden):
+            n += 1
+        return n == G.num_verts()
 
 
-def connected_components(G, sort=None, key=None):
+def connected_components(G, sort=None, key=None, forbidden_vertices=None):
     """
     Return the list of connected components.
 
@@ -156,6 +178,9 @@ def connected_components(G, sort=None, key=None):
       vertex as its one argument and returns a value that can be used for
       comparisons in the sorting algorithm (we must have ``sort=True``)
 
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
+
     EXAMPLES::
 
         sage: from sage.graphs.connectivity import connected_components
@@ -169,6 +194,12 @@ def connected_components(G, sort=None, key=None):
         [[0, 1, 2, 3], [4, 5, 6]]
         sage: connected_components(D, sort=True, key=lambda x: -x)
         [[3, 2, 1, 0], [6, 5, 4]]
+
+    Connected components in a graph with forbidden vertices::
+
+        sage: G = graphs.PathGraph(5)
+        sage: connected_components(G, sort=True, forbidden_vertices=[2])
+        [[0, 1], [3, 4]]
 
     TESTS:
 
@@ -208,24 +239,28 @@ def connected_components(G, sort=None, key=None):
     if (not sort) and key:
         raise ValueError('sort keyword is False, yet a key function is given')
 
-    cdef set seen = set()
+    cdef set seen = set(forbidden_vertices) if forbidden_vertices else set()
     cdef list components = []
     for v in G:
         if v not in seen:
-            c = connected_component_containing_vertex(G, v, sort=sort, key=key)
+            c = connected_component_containing_vertex(G, v, sort=sort, key=key,
+                                                      forbidden_vertices=forbidden_vertices)
             seen.update(c)
             components.append(c)
     components.sort(key=lambda comp: -len(comp))
     return components
 
 
-def connected_components_number(G):
+def connected_components_number(G, forbidden_vertices=None):
     """
     Return the number of connected components.
 
     INPUT:
 
     - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
 
     EXAMPLES::
 
@@ -238,6 +273,8 @@ def connected_components_number(G):
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: connected_components_number(D)
         2
+        sage: connected_components_number(D, forbidden_vertices=[1, 3])
+        3
 
     TESTS:
 
@@ -249,18 +286,28 @@ def connected_components_number(G):
         ...
         TypeError: the input must be a Sage graph
     """
-    return len(connected_components(G, sort=False))
+    return len(connected_components(G, sort=False,
+                                    forbidden_vertices=forbidden_vertices))
 
 
-def connected_components_subgraphs(G):
+def connected_components_subgraphs(G, forbidden_vertices=None):
     """
     Return a list of connected components as graph objects.
+
+    INPUT:
+
+    - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
 
     EXAMPLES::
 
         sage: from sage.graphs.connectivity import connected_components_subgraphs
         sage: G = Graph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: L = connected_components_subgraphs(G)
+        sage: graphs_list.show_graphs(L)                                                # needs sage.plot
+        sage: L = connected_components_subgraphs(G, forbidden_vertices=[1, 3])
         sage: graphs_list.show_graphs(L)                                                # needs sage.plot
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: L = connected_components_subgraphs(D)
@@ -282,10 +329,13 @@ def connected_components_subgraphs(G):
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
 
-    return [G.subgraph(c, inplace=False) for c in connected_components(G, sort=False)]
+    return [G.subgraph(c, inplace=False)
+            for c in connected_components(G, sort=False,
+                                          forbidden_vertices=forbidden_vertices)]
 
 
-def connected_component_containing_vertex(G, vertex, sort=None, key=None):
+def connected_component_containing_vertex(G, vertex, sort=None, key=None,
+                                          forbidden_vertices=None):
     """
     Return a list of the vertices connected to vertex.
 
@@ -293,7 +343,7 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None):
 
     - ``G`` -- the input graph
 
-    - ``v`` -- the vertex to search for
+    - ``vertex`` -- the vertex to search for
 
     - ``sort`` -- boolean (default: ``None``); if ``True``, vertices inside the
       component are sorted according to the default ordering
@@ -306,6 +356,9 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None):
       vertex as its one argument and returns a value that can be used for
       comparisons in the sorting algorithm (we must have ``sort=True``)
 
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search. The start ``vertex`` cannot be in this set.
+
     EXAMPLES::
 
         sage: from sage.graphs.connectivity import connected_component_containing_vertex
@@ -314,6 +367,8 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None):
         [0, 1, 2, 3]
         sage: G.connected_component_containing_vertex(0, sort=True)
         [0, 1, 2, 3]
+        sage: G.connected_component_containing_vertex(0, sort=True, forbidden_vertices=[1, 3])
+        [0]
         sage: D = DiGraph({0: [1, 3], 1: [2], 2: [3], 4: [5, 6], 5: [6]})
         sage: connected_component_containing_vertex(D, 0, sort=True)
         [0, 1, 2, 3]
@@ -369,20 +424,29 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None):
         raise ValueError('sort keyword is False, yet a key function is given')
 
     try:
-        c = list(G._backend.depth_first_search(vertex, ignore_direction=True))
+        c = list(G._backend.depth_first_search(vertex, ignore_direction=True,
+                                               forbidden_vertices=forbidden_vertices))
     except AttributeError:
-        c = list(G.depth_first_search(vertex, ignore_direction=True))
+        c = list(G.depth_first_search(vertex, ignore_direction=True,
+                                      forbidden_vertices=forbidden_vertices))
 
     if sort:
         return sorted(c, key=key)
     return c
 
 
-def connected_components_sizes(G):
+def connected_components_sizes(G, forbidden_vertices=None):
     """
     Return the sizes of the connected components as a list.
 
     The list is sorted from largest to lower values.
+
+    INPUT:
+
+    - ``G`` -- the input graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
 
     EXAMPLES::
 
@@ -399,6 +463,13 @@ def connected_components_sizes(G):
         [2, 1]
         [3]
         [3]
+        sage: G = graphs.PathGraph(5)
+        sage: G.connected_components_sizes()
+        [5]
+        sage: G.connected_components_sizes(forbidden_vertices=[1])
+        [3, 1]
+        sage: G.connected_components_sizes(forbidden_vertices=[1, 3])
+        [1, 1, 1]
 
     TESTS:
 
@@ -415,7 +486,8 @@ def connected_components_sizes(G):
         raise TypeError("the input must be a Sage graph")
 
     # connected components are sorted from largest to smallest
-    return [len(cc) for cc in connected_components(G, sort=False)]
+    return [len(cc) for cc in connected_components(G, sort=False,
+                                                   forbidden_vertices=forbidden_vertices)]
 
 
 def blocks_and_cut_vertices(G, algorithm='Tarjan_Boost', sort=False, key=None):
@@ -971,12 +1043,158 @@ def is_cut_edge(G, u, v=None, label=None):
     return sol
 
 
+def is_vertex_cut(G, cut, weak=False):
+    r"""
+    Check whether the input vertices form a vertex cut.
+
+    A set of vertices is a vertex cut if its removal from the (di)graph
+    increases the number of (strongly) connected components. This function works
+    with simple graphs as well as graphs with loops and multiple edges.
+
+    INPUT:
+
+    - ``G`` -- a Sage (Di)Graph
+
+    - ``cut`` -- a set of vertices
+
+    - ``weak`` -- boolean (default: ``False``); whether the connectivity of
+      directed graphs is to be taken in the weak sense, that is ignoring edges
+      orientations
+
+    EXAMPLES:
+
+    Giving a cycle graph of order 4::
+
+        sage: from sage.graphs.connectivity import is_vertex_cut
+        sage: G = graphs.CycleGraph(4)
+        sage: is_vertex_cut(G, [0, 1])
+        False
+        sage: is_vertex_cut(G, [0, 2])
+        True
+
+    Giving a disconnected graph::
+
+        sage: from sage.graphs.connectivity import is_vertex_cut
+        sage: G = graphs.CycleGraph(4) * 2
+        sage: G.connected_components()
+        [[0, 1, 2, 3], [4, 5, 6, 7]]
+        sage: is_vertex_cut(G, [0, 2])
+        True
+        sage: is_vertex_cut(G, [4, 6])
+        True
+        sage: is_vertex_cut(G, [0, 6])
+        False
+        sage: is_vertex_cut(G, [0, 4, 6])
+        True
+
+    Comparing the weak and strong connectivity of a digraph::
+
+        sage: D = digraphs.Circuit(6)
+        sage: D.is_strongly_connected()
+        True
+        sage: is_vertex_cut(D, [2])
+        True
+        sage: is_vertex_cut(D, [2], weak=True)
+        False
+
+    Giving a vertex that is not in the graph::
+
+        sage: G = graphs.CompleteGraph(4)
+        sage: is_vertex_cut(G, [7])
+        Traceback (most recent call last):
+        ...
+        ValueError: vertex (7) is not a vertex of the graph
+
+    TESTS:
+
+    If ``G`` is not a Sage graph, an error is raised::
+
+        sage: is_vertex_cut('I am not a graph', [0])
+        Traceback (most recent call last):
+        ...
+        TypeError: the input must be a Sage graph
+    """
+    from sage.graphs.generic_graph import GenericGraph
+    if not isinstance(G, GenericGraph):
+        raise TypeError("the input must be a Sage graph")
+
+    cdef set cutset = set(cut)
+    for u in cutset:
+        if u not in G:
+            raise ValueError("vertex ({0}) is not a vertex of the graph".format(repr(u)))
+
+    if len(cutset) >= G.order() - 1:
+        # A vertex cut must be of size at most n - 2
+        return False
+
+    # We deal with graphs with multiple (strongly) connected components
+    cdef list CC
+    if G.is_directed() and not weak:
+        CC = G.strongly_connected_components()
+    else:
+        CC = G.connected_components(sort=False)
+    if len(CC) > 1:
+        for comp in CC:
+            subcut = cutset.intersection(comp)
+            if subcut and is_vertex_cut(G.subgraph(comp), subcut, weak=weak):
+                return True
+        return False
+
+    cdef list boundary = G.vertex_boundary(cutset)
+    if not boundary:
+        # We need at least 1 vertex in the boundary of the cut
+        return False
+
+    cdef list cases = [(G.neighbor_iterator, boundary)]
+    if not weak and G.is_directed():
+        # Strong connectivity for digraphs.
+        # We perform two DFS starting from an out neighbor of cut and avoiding
+        # cut. The first DFS follows the edges directions, and the second is
+        # in the reverse order. If both allow to reach all neighbors of cut,
+        # then it is not a vertex cut.
+        # We set data for the reverse order
+        in_boundary = set()
+        for u in cutset:
+            in_boundary.update(G.neighbor_in_iterator(u))
+        in_boundary.difference_update(cutset)
+        if not in_boundary:
+            return False
+        cases.append((G.neighbor_in_iterator, list(in_boundary)))
+
+    cdef list queue
+    cdef set seen
+    cdef set targets
+    start = boundary[0]
+
+    for neighbors, this_boundary in cases:
+
+        # We perform a DFS starting from start and avoiding cut
+        queue = [start]
+        seen = set(cutset)
+        seen.add(start)
+        targets = set(this_boundary)
+        targets.discard(start)
+        while queue:
+            v = queue.pop()
+            for w in neighbors(v):
+                if w not in seen:
+                    seen.add(w)
+                    queue.append(w)
+                    targets.discard(w)
+
+        # If some neighbors cannot be reached, we have a vertex cut
+        if targets:
+            return True
+
+    return False
+
+
 def is_cut_vertex(G, u, weak=False):
     r"""
     Check whether the input vertex is a cut-vertex.
 
     A vertex is a cut-vertex if its removal from the (di)graph increases the
-    number of (strongly) connected components. Isolated vertices or leafs are
+    number of (strongly) connected components. Isolated vertices or leaves are
     not cut-vertices. This function works with simple graphs as well as graphs
     with loops and multiple edges.
 
@@ -1010,9 +1228,8 @@ def is_cut_vertex(G, u, weak=False):
 
     Comparing the weak and strong connectivity of a digraph::
 
-        sage: from sage.graphs.connectivity import is_strongly_connected
         sage: D = digraphs.Circuit(6)
-        sage: is_strongly_connected(D)
+        sage: D.is_strongly_connected()
         True
         sage: is_cut_vertex(D, 2)
         True
@@ -1036,70 +1253,7 @@ def is_cut_vertex(G, u, weak=False):
         ...
         TypeError: the input must be a Sage graph
     """
-    from sage.graphs.generic_graph import GenericGraph
-    if not isinstance(G, GenericGraph):
-        raise TypeError("the input must be a Sage graph")
-
-    if u not in G:
-        raise ValueError("vertex ({0}) is not a vertex of the graph".format(repr(u)))
-
-    # Initialization
-    cdef set CC
-    cdef list neighbors_func
-    if not G.is_directed() or weak:
-        # Weak connectivity
-
-        if G.degree(u) < 2:
-            # An isolated or a leaf vertex is not a cut vertex
-            return False
-
-        neighbors_func = [G.neighbor_iterator]
-        start = next(G.neighbor_iterator(u))
-        CC = set(G)
-
-    else:
-        # Strong connectivity for digraphs
-
-        if not G.out_degree(u) or not G.in_degree(u):
-            # A vertex without in or out neighbors is not a cut vertex
-            return False
-
-        # We consider only the strongly connected component containing u
-        CC = set(strongly_connected_component_containing_vertex(G, u))
-
-        # We perform two DFS starting from an out neighbor of u and avoiding
-        # u. The first DFS follows the edges directions, and the second is
-        # in the reverse order. If both allow to reach all neighbors of u,
-        # then u is not a cut vertex
-        neighbors_func = [G.neighbor_out_iterator, G.neighbor_in_iterator]
-        start = next(G.neighbor_out_iterator(u))
-
-    CC.discard(u)
-    CC.discard(start)
-    cdef list queue
-    cdef set seen
-    cdef set targets
-
-    for neighbors in neighbors_func:
-
-        # We perform a DFS starting from a neighbor of u and avoiding u
-        queue = [start]
-        seen = set(queue)
-        targets = CC.intersection(G.neighbor_iterator(u))
-        targets.discard(start)
-        while queue and targets:
-            v = queue.pop()
-            for w in neighbors(v):
-                if w not in seen and w in CC:
-                    seen.add(w)
-                    queue.append(w)
-                    targets.discard(w)
-
-        # If some neighbors cannot be reached, u is a cut vertex.
-        if targets:
-            return True
-
-    return False
+    return is_vertex_cut(G, [u], weak=weak)
 
 
 def edge_connectivity(G,

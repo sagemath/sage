@@ -32,13 +32,15 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
 from sage.categories.modules import Modules
-from sage.tensor.modules.ext_pow_free_module import ExtPowerFreeModule
 from sage.manifolds.differentiable.multivectorfield import (
-                                       MultivectorField, MultivectorFieldParal)
+    MultivectorField,
+    MultivectorFieldParal,
+)
+from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.tensor.modules.ext_pow_free_module import ExtPowerFreeModule
 
 
 class MultivectorModule(UniqueRepresentation, Parent):
@@ -488,6 +490,7 @@ class MultivectorModule(UniqueRepresentation, Parent):
         return self._degree
 
 #***********************************************************************
+
 
 class MultivectorFreeModule(ExtPowerFreeModule):
     r"""

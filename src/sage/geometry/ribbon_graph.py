@@ -32,6 +32,7 @@ from copy import deepcopy
 
 #Auxiliary functions that will be used in the classes.
 
+
 def _find(l, k):
     r"""
     Return the two coordinates of the element ``k`` in the list of
@@ -1078,6 +1079,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
                         PermutationConstructor([tuple(x) for x in aux_rho])
                         )
 
+
 def make_ribbon(g, r):
     r"""
     Return a ribbon graph whose thickening has genus ``g`` and ``r``
@@ -1150,6 +1152,7 @@ def make_ribbon(g, r):
 
     return RibbonGraph(PermutationConstructor([tuple(x) for x in repr_sigma]),
                        PermutationConstructor([tuple(x) for x in repr_rho]))
+
 
 def bipartite_ribbon_graph(p, q):
     r"""

@@ -20,12 +20,10 @@ Sageでは，任意の代数多様体を定義することができるが，そ�
     Affine Plane Curve over Rational Field defined by
        x^5 + x^3*y^2 + x^2*y^3 + y^5 - x^3 - y^3 - x^2 - y^2 + 1
     sage: D.irreducible_components()
-    [
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      x^2 + y^2 - 1,
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      x^3 + y^3 - 1
-    ]
+    [Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       x^2 + y^2 - 1,
+     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       x^3 + y^3 - 1]
 
 以上の2本の曲線の交わりを取れば，全ての交点を求めてその既約成分を計算することもできる．
 
@@ -36,17 +34,15 @@ Sageでは，任意の代数多様体を定義することができるが，そ�
 
     sage: V = C2.intersection(C3)
     sage: V.irreducible_components()
-    [
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      y,
-      x - 1,
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      y - 1,
-      x,
-    Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-      x + y + 2,
-      2*y^2 + 4*y + 3
-    ]
+    [Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       y,
+       x - 1,
+     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       y - 1,
+       x,
+     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       x + y + 2,
+       2*y^2 + 4*y + 3]
 
 というわけで，点 :math:`(1,0)` および :math:`(0,1)` が双方の曲線上にあるのはすぐ見てとることができるし，
 :math:`y` 成分が :math:`2y^2 + 4y + 3=0` を満足する(2次の)点についても同じことだ．
@@ -313,10 +309,8 @@ Cremonaのデータベースへ直接にアクセスすることも可能だ．
     [1, 2, 2, 1, 1, 2, 2, 1]
 
     sage: G.decomposition()
-    [
-    Group of Dirichlet characters modulo 3 with values in Cyclotomic Field of order 6 and degree 2,
-    Group of Dirichlet characters modulo 7 with values in Cyclotomic Field of order 6 and degree 2
-    ]
+    [Group of Dirichlet characters modulo 3 with values in Cyclotomic Field of order 6 and degree 2,
+     Group of Dirichlet characters modulo 7 with values in Cyclotomic Field of order 6 and degree 2]
 
 次に，mod 20，ただし値が :math:`\QQ(i)` 上に収まるディリクレ指標の群を作成する:
 
@@ -438,9 +432,7 @@ Sageを使ってモジュラー空間の次元，モジュラー・シンポル�
     [-2  0]
     [ 0 -2]
     sage: S.q_expansion_basis(10)
-    [
-        q - 2*q^2 - q^3 + 2*q^4 + q^5 + 2*q^6 - 2*q^7 - 2*q^9 + O(q^10)
-    ]
+    [q - 2*q^2 - q^3 + 2*q^4 + q^5 + 2*q^6 - 2*q^7 - 2*q^9 + O(q^10)]
 
 モジュラー・シンボルの空間を，指標を指定して生成することも可能だ．
 
@@ -460,10 +452,7 @@ Sageを使ってモジュラー空間の次元，モジュラー・シンポル�
     sage: S.T(2).charpoly('x').factor()
     (x + zeta6 + 1)^2
     sage: S.q_expansion_basis(10)
-    [
-    q + (-zeta6 - 1)*q^2 + (2*zeta6 - 2)*q^3 + zeta6*q^4 + (-2*zeta6 + 1)*q^5
-      + (-2*zeta6 + 4)*q^6 + (2*zeta6 - 1)*q^8 - zeta6*q^9 + O(q^10)
-    ]
+    [q + (-zeta6 - 1)*q^2 + (2*zeta6 - 2)*q^3 + zeta6*q^4 + (-2*zeta6 + 1)*q^5 + (-2*zeta6 + 4)*q^6 + (2*zeta6 - 1)*q^8 - zeta6*q^9 + O(q^10)]
 
 以下の例では，モジュラー形式によって張られる空間に対するHecke演算子の作用を，Sageでどうやって計算するかを示す．
 

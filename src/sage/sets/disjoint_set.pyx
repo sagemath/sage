@@ -62,7 +62,10 @@ from sage.rings.integer cimport Integer
 from sage.structure.sage_object cimport SageObject
 from cpython.object cimport PyObject_RichCompare
 from sage.groups.perm_gps.partn_ref.data_structures cimport *
-from sage.combinat.set_partition import SetPartition
+from sage.misc.lazy_import import LazyImport
+
+SetPartition = LazyImport('sage.combinat.set_partition', 'SetPartition')
+
 
 cpdef DisjointSet(arg):
     r"""
@@ -553,10 +556,11 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         Add a new element into a new set containing only the new element.
 
         According to :wikipedia:`Disjoint-set_data_structure#Making_new_sets` the
-        `make_set` operation adds a new element into a new set containing only
-        the new element. The new set is added at the end of `self`.
+        ``make_set`` operation adds a new element into a new set containing only
+        the new element. The new set is added at the end of ``self``.
 
         EXAMPLES::
+
             sage: d = DisjointSet(5)
             sage: d.union(1, 2)
             sage: d.union(0, 1)
@@ -565,6 +569,13 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             {{0, 1, 2}, {3}, {4}, {5}}
             sage: d.find(1)
             1
+
+        TESTS::
+
+            sage: d = DisjointSet(0)
+            sage: d.make_set()
+            sage: d
+            {{0}}
         """
         OP_make_set(self._nodes)
 
@@ -830,7 +841,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         cdef int r = <int> OP_find(self._nodes, i)
         return self._int_to_el[r]
 
-    cpdef void union(self, e, f) noexcept:
+    cpdef void union(self, e, f) except *:
         r"""
         Combine the set of ``e`` and the set of ``f`` into one.
 
@@ -858,8 +869,9 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: e
             {{'a', 'b', 'c', 'e'}, {'d'}}
             sage: e.union('a', 2**10)
-            KeyError: 1024
+            Traceback (most recent call last):
             ...
+            KeyError: 1024
         """
         cdef int i = <int> self._el_to_int[e]
         cdef int j = <int> self._el_to_int[f]
@@ -870,8 +882,8 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         Add a new element into a new set containing only the new element.
 
         According to :wikipedia:`Disjoint-set_data_structure#Making_new_sets`
-        the `make_set` operation adds a new element into a new set containing
-        only the new element. The new set is added at the end of `self`.
+        the ``make_set`` operation adds a new element into a new set containing
+        only the new element. The new set is added at the end of ``self``.
 
         INPUT:
 

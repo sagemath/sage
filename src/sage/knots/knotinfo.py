@@ -17,7 +17,7 @@ package using
 This will install a `Python wrapper <https://github.com/soehms/database_knotinfo#readme>`__
 for the original databases in Sage. This wrapper perfoms an automatic progress
 of version numbers. For more details and further install instructions please see
-the correspondig web-page.
+the corresponding web-page.
 
 To perform all the doctests concerning the usage of the database on the installation
 add the option ``-c``. In this case (for instance ``sage -f -c database_knotinfo``)
@@ -218,7 +218,7 @@ AUTHORS:
 - Sebastian Oehms August 2020: initial version
 - Sebastian Oehms June   2022: add :meth:`conway_polynomial` and :meth:`khovanov_polynomial` (:issue:`33969`)
 
-Thanks to Chuck Livingston and Allison Moore for their support. For further acknowledgments see the correspondig hompages.
+Thanks to Chuck Livingston and Allison Moore for their support. For further acknowledgments see the corresponding hompages.
 """
 
 
@@ -229,7 +229,7 @@ Thanks to Chuck Livingston and Allison Moore for their support. For further ackn
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 
 
@@ -790,7 +790,7 @@ class KnotInfoBase(Enum):
             return (1, )
 
         braid_notation = eval_knotinfo(braid_notation)
-        if type(braid_notation) is list:
+        if type(braid_notation) in (list, tuple):
             # in some cases there are a pair of braid representations
             # in the database. If this is the case we select the
             # corresponding to the braid index.
@@ -1184,6 +1184,23 @@ class KnotInfoBase(Enum):
         return None
 
     @cached_method
+    def is_hyperbolic(self):
+        r"""
+        Return whether ``self`` is hyperbolic.
+
+        EXAMPLES::
+
+            sage: KnotInfo.K3_1.is_hyperbolic()
+            False
+            sage: KnotInfo.K5_2.is_hyperbolic()
+            True
+        """
+        geometric_type = self[self.items.geometric_type]
+        if geometric_type == 'hyperbolic':
+            return True
+        return False
+
+    @cached_method
     def is_alternating(self):
         r"""
         Return whether ``self`` is alternating.
@@ -1308,6 +1325,37 @@ class KnotInfoBase(Enum):
             True
         """
         return not knotinfo_bool(self[self.items.unoriented])
+
+    @cached_method
+    def cosmetic_crossing_conjecture_verified(self):
+        r"""
+        Return whether the Cosmetic Crossing Conjecture has been verified
+        for ``self``.
+
+        From the KnotInfo `description page <https://knotinfo.math.indiana.edu/descriptions/cosmetic_crossing.html>`__:
+
+            A crossing change in a diagram of a knot ``K`` is called cosmetic if
+            the resulting diagram also represents ``K``. The cosmetic crossing
+            conjecture posits that for any knot ``K``, the only cosmetic crossing
+            changes are nugatory, i.e. there exists an embedded 2-sphere in
+            ``S3`` which intersects K only at the two points of the relevant
+            crossing. Conversely, it is not hard to see that any nugatory
+            crossing change is cosmetic.
+
+        EXAMPLES::
+
+            sage: knots = [K for K in KnotInfo if K.is_knot() and K.crossing_number() < 10]
+            sage: all(K.cosmetic_crossing_conjecture_verified() for K in knots)
+            True
+        """
+        cosmetic_crossing = self[self.items.cosmetic_crossing]
+        if self.crossing_number() == 0:
+            return True
+        if not cosmetic_crossing or cosmetic_crossing == 'Unknown':
+            return False
+        if not knotinfo_bool(cosmetic_crossing):
+            return True
+        raise AssertionError(f'{self} is a counterexample to the cosmetic crossing conjecture')
 
     @cached_method
     def homfly_polynomial(self, var1='v', var2='z', original=False):
@@ -2658,7 +2706,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             [<KnotInfo.K6_1: '6_1'>, <KnotInfo.K6_2: '6_2'>, <KnotInfo.K6_3: '6_3'>]
         """
         from sage.rings.integer import Integer
-        if not type(item) in (int, Integer):
+        if type(item) not in (int, Integer):
             raise ValueError('item must be an integer')
         l = self.list()
         max_item = len(l)
@@ -2701,7 +2749,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             return self[item]
 
         from sage.rings.integer import Integer
-        if not type(item) in (int, Integer):
+        if type(item) not in (int, Integer):
             raise ValueError('item must be an integer')
         l = self.list()
         max_item = len(l) + 1

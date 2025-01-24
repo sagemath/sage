@@ -2055,14 +2055,14 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         w = self.weight()
         s = self.cells()
 
-        for l in range(1, len(w)+1):
+        for l in range(1, len(w) + 1):
             new_s = [(i, j) for i, j in s if self[i][j] == l]
 
             # If there are no elements that meet the condition
-            if new_s == []:
+            if not new_s:
                 res.append(0)
                 continue
-            x = set((i-j) % (k+1) for i, j in new_s)
+            x = {(i - j) % (k + 1) for i, j in new_s}
             res.append(len(x))
 
         return res
@@ -2955,9 +2955,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         # tableau, by including the identity permutation on the set [1..k].
         k = self.size()
         gens = [list(range(1, k + 1))]
-        for row in self:
-            for j in range(len(row) - 1):
-                gens.append((row[j], row[j + 1]))
+        gens.extend((row[j], row[j + 1])
+                    for row in self for j in range(len(row) - 1))
         return PermutationGroup(gens)
 
     def column_stabilizer(self):
@@ -5842,7 +5841,7 @@ class SemistandardTableaux(Tableaux):
     OUTPUT:
 
     - The appropriate class, after checking basic consistency tests. (For
-      example, specifying ``eval`` implies a value for `max_entry`).
+      example, specifying ``eval`` implies a value for ``max_entry``).
 
     A semistandard tableau is a tableau whose entries are positive integers,
     which are weakly increasing in rows and strictly increasing down columns.
@@ -6974,15 +6973,12 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
         for row in x:
             for i in row:
                 content[i] = content.get(i, 0) + 1
-        content_list = [0]*int(max(content))
+        content_list = [0] * int(max(content))
 
-        for key in content:
-            content_list[key-1] = content[key]
+        for key, c in content.items():
+            content_list[key - 1] = c
 
-        if content_list != self.weight:
-            return False
-
-        return True
+        return content_list == self.weight
 
     def cardinality(self):
         """
@@ -7675,9 +7671,9 @@ class StandardTableaux(SemistandardTableaux):
         """
         if isinstance(x, StandardTableau):
             return True
-        elif Tableaux.__contains__(self, x):
+        if Tableaux.__contains__(self, x):
             flatx = sorted(c for row in x for c in row)
-            return flatx == list(range(1, len(flatx)+1)) and (len(x) == 0 or
+            return all(i == fi for i, fi in enumerate(flatx, start=1)) and (len(x) == 0 or
                      (all(row[i] < row[i+1] for row in x for i in range(len(row)-1)) and
                       all(x[r][c] < x[r+1][c] for r in range(len(x)-1)
                           for c in range(len(x[r+1])))
@@ -8134,8 +8130,6 @@ class StandardTableaux_shape(StandardTableaux):
 
             yield self.element_class(self, tableau)
 
-        return
-
     def list(self):
         r"""
         Return a list of the standard Young tableaux of the specified shape.
@@ -8183,25 +8177,20 @@ class StandardTableaux_shape(StandardTableaux):
         t = [[None] * n for n in p]
 
         # Get the cells in the Young diagram
-        cells = []
-        for i in range(len(p)):
-            for j in range(p[i]):
-                cells.append((i, j))
+        cells = [(i, j) for i in range(len(p)) for j in range(p[i])]
 
         m = sum(p)
-        while m > 0:
+        while m:
             # Choose a cell at random
             cell = random.choice(cells)
 
             # Find a corner
             inner_corners = p.corners()
             while cell not in inner_corners:
-                hooks = []
-                for k in range(cell[1] + 1, p[cell[0]]):
-                    hooks.append((cell[0], k))
-                for k in range(cell[0] + 1, len(p)):
-                    if p[k] > cell[1]:
-                        hooks.append((k, cell[1]))
+                c0, c1 = cell
+                hooks = [(c0, k) for k in range(c1 + 1, p[c0])]
+                hooks.extend((k, c1)
+                             for k in range(c0 + 1, len(p)) if p[k] > c1)
                 cell = random.choice(hooks)
 
             # Assign m to cell

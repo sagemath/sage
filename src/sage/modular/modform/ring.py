@@ -10,7 +10,7 @@ AUTHORS:
 - William Stein (2007-08-24): first version
 - David Ayotte (2021-06): implemented category and Parent/Element frameworks
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein
 #                     2021 David Ayotte
 #
@@ -18,8 +18,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from random import shuffle
 
@@ -89,11 +89,9 @@ def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=Fals
         [          0           1           0      195660    12080128]
         [          0           0           1         -48        1080]
         sage: ModularForms(1, 24).q_echelon_basis(prec=5)
-        [
-        1 + 52416000*q^3 + 39007332000*q^4 + O(q^5),
-        q + 195660*q^3 + 12080128*q^4 + O(q^5),
-        q^2 - 48*q^3 + 1080*q^4 + O(q^5)
-        ]
+        [1 + 52416000*q^3 + 39007332000*q^4 + O(q^5),
+         q + 195660*q^3 + 12080128*q^4 + O(q^5),
+         q^2 - 48*q^3 + 1080*q^4 + O(q^5)]
 
     Test the alternative randomized algorithm::
 
@@ -142,6 +140,7 @@ def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=Fals
         W = V.span(G)
         verbose('span has dimension %s' % W.rank(), t)
         return W
+
 
 @richcmp_method
 class ModularFormsRing(Parent):

@@ -9,25 +9,23 @@ EXAMPLES::
     Modular Forms space of dimension 6 for
      Congruence Subgroup Gamma1(4) of weight 11 over Rational Field
     sage: m.basis()
-    [
-    q - 134*q^5 + O(q^6),
-    q^2 + 80*q^5 + O(q^6),
-    q^3 + 16*q^5 + O(q^6),
-    q^4 - 4*q^5 + O(q^6),
-    1 + 4092/50521*q^2 + 472384/50521*q^3 + 4194300/50521*q^4 + O(q^6),
-    q + 1024*q^2 + 59048*q^3 + 1048576*q^4 + 9765626*q^5 + O(q^6)
-    ]
+    [q - 134*q^5 + O(q^6),
+     q^2 + 80*q^5 + O(q^6),
+     q^3 + 16*q^5 + O(q^6),
+     q^4 - 4*q^5 + O(q^6),
+     1 + 4092/50521*q^2 + 472384/50521*q^3 + 4194300/50521*q^4 + O(q^6),
+     q + 1024*q^2 + 59048*q^3 + 1048576*q^4 + 9765626*q^5 + O(q^6)]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004-2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import weakref
 import re
@@ -94,13 +92,13 @@ def canonical_parameters(group, level, weight, base_ring):
         raise NotImplementedError("weight must be at least 1")
 
     if isinstance(group, dirichlet.DirichletCharacter):
-        if ( group.level() != Integer(level) ):
+        if group.level() != Integer(level):
             raise ValueError("group.level() and level do not match.")
         group = group.minimize_base_ring()
         level = Integer(level)
 
     elif isinstance(group, arithgroup.CongruenceSubgroupBase):
-        if ( Integer(level) != group.level() ):
+        if Integer(level) != group.level():
             raise ValueError("group.level() and level do not match.")
         # normalize the case of SL2Z
         if isinstance(group, arithgroup.SL2Z_class) or \
@@ -131,6 +129,7 @@ def canonical_parameters(group, level, weight, base_ring):
 
 
 _cache = {}
+
 
 def ModularForms_clear_cache():
     """
@@ -269,16 +268,13 @@ def ModularForms(group=1,
         Modular Forms space of dimension 5 for Congruence Subgroup Gamma1(11)
          of weight 1 over Rational Field
         sage: M.basis()
-        [
-        1 + 22*q^5 + O(q^6),
-        q + 4*q^5 + O(q^6),
-        q^2 - 4*q^5 + O(q^6),
-        q^3 - 5*q^5 + O(q^6),
-        q^4 - 3*q^5 + O(q^6)
-        ]
+        [1 + 22*q^5 + O(q^6),
+         q + 4*q^5 + O(q^6),
+         q^2 - 4*q^5 + O(q^6),
+         q^3 - 5*q^5 + O(q^6),
+         q^4 - 3*q^5 + O(q^6)]
         sage: M.cuspidal_subspace().basis()
-        [
-        ]
+        []
         sage: M == M.eisenstein_subspace()
         True
 
@@ -289,10 +285,7 @@ def ModularForms(group=1,
         Modular Forms space of dimension 38 for Congruence Subgroup Gamma1(57)
          of weight 1 over Rational Field
         sage: M.cuspidal_submodule().basis()      # long time
-        [
-        q - q^4 + O(q^6),
-        q^3 - q^4 + O(q^6)
-        ]
+        [q - q^4 + O(q^6), q^3 - q^4 + O(q^6)]
 
     The Eisenstein subspace in weight 1 can be computed quickly, without
     triggering the expensive computation of the cuspidal part::
@@ -309,8 +302,8 @@ def ModularForms(group=1,
     if base_ring is None:
         base_ring = QQ
 
-    if isinstance(group, dirichlet.DirichletCharacter) \
-           or isinstance(group, arithgroup.CongruenceSubgroupBase):
+    if isinstance(group, (dirichlet.DirichletCharacter,
+                          arithgroup.CongruenceSubgroupBase)):
         level = group.level()
     else:
         level = group

@@ -88,6 +88,8 @@ AUTHORS:
 - Jean-Florent Raymond (2019-04): is_redundant, is_dominating,
    private_neighbors
 
+- Cyril Bouvier (2024-11): is_module
+
 Graph Format
 ------------
 
@@ -2695,7 +2697,7 @@ class Graph(GenericGraph):
             return True if not certificate else None
 
         answer = self.is_odd_hole_free(certificate=certificate)
-        if not (answer is True):
+        if answer is not True:
             return answer
 
         return self_complement.is_odd_hole_free(certificate=certificate)
@@ -3019,527 +3021,6 @@ class Graph(GenericGraph):
         b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
         g.delete_edges(e for e in g.edge_iterator(labels=False) if not b[frozenset(e)])
         return g
-
-    # Orientations
-
-    @doc_index("Connectivity, orientations, trees")
-    def strong_orientation(self):
-        r"""
-        Return a strongly connected orientation of the current graph.
-
-        An orientation of an undirected graph is a digraph obtained by giving an
-        unique direction to each of its edges. An orientation is said to be
-        strong if there is a directed path between each pair of vertices.  See
-        also the :wikipedia:`Strongly_connected_component`.
-
-        If the graph is 2-edge-connected, a strongly connected orientation
-        can be found in linear time. If the given graph is not 2-connected,
-        the orientation returned will ensure that each 2-connected component
-        has a strongly connected orientation.
-
-        OUTPUT: a digraph representing an orientation of the current graph
-
-        .. NOTE::
-
-            - This method assumes the graph is connected.
-            - This time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)`
-              for ``DenseGraph`` .
-
-        .. SEEALSO::
-
-            - :meth:`~sage.graphs.graph.Graph.orientations`
-            - :meth:`~sage.graphs.orientations.strong_orientations_iterator`
-            - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.nauty_directg`
-            - :meth:`~sage.graphs.orientations.random_orientation`
-
-        EXAMPLES:
-
-        For a 2-regular graph, a strong orientation gives to each vertex an
-        out-degree equal to 1::
-
-            sage: g = graphs.CycleGraph(5)
-            sage: g.strong_orientation().out_degree()
-            [1, 1, 1, 1, 1]
-
-        The Petersen Graph is 2-edge connected. It then has a strongly connected
-        orientation::
-
-            sage: g = graphs.PetersenGraph()
-            sage: o = g.strong_orientation()
-            sage: len(o.strongly_connected_components())
-            1
-
-        The same goes for the CubeGraph in any dimension ::
-
-            sage: all(len(graphs.CubeGraph(i).strong_orientation().strongly_connected_components()) == 1 for i in range(2,6))
-            True
-
-        A multigraph also has a strong orientation ::
-
-            sage: g = Graph([(1,2),(1,2)], multiedges=True)
-            sage: g.strong_orientation()
-            Multi-digraph on 2 vertices
-        """
-        from sage.graphs.digraph import DiGraph
-        d = DiGraph(multiedges=self.allows_multiple_edges())
-        i = 0
-
-        # The algorithm works through a depth-first search. Any edge
-        # used in the depth-first search is oriented in the direction
-        # in which it has been used. All the other edges are oriented
-        # backward
-
-        v = next(self.vertex_iterator())
-        seen = {}
-        i = 1
-
-        # Time at which the vertices have been discovered
-        seen[v] = i
-
-        # indicates the stack of edges to explore
-        next_ = self.edges_incident(v)
-
-        while next_:
-            e = next_.pop()
-
-            # Ignore loops
-            if e[0] == e[1]:
-                continue
-
-            # We assume e[0] to be a `seen` vertex
-            e = e if seen.get(e[0], False) is not False else (e[1], e[0], e[2])
-
-            # If we discovered a new vertex
-            if seen.get(e[1], False) is False:
-                d.add_edge(e)
-                next_.extend(ee for ee in self.edges_incident(e[1])
-                             if ((e[0], e[1]) != (ee[0], ee[1])) and ((e[0], e[1]) != (ee[1], ee[0])))
-                i += 1
-                seen[e[1]] = i
-
-            # Else, we orient the edges backward
-            else:
-                if seen[e[0]] < seen[e[1]]:
-                    d.add_edge(e[1], e[0], e[2])
-                else:
-                    d.add_edge(e)
-
-        # Case of multiple edges. If another edge has already been inserted, we
-        # add the new one in the opposite direction.
-        tmp = None
-        for e in self.multiple_edges():
-            if tmp == (e[0], e[1]):
-                if d.has_edge(e[0], e[1]):
-                    d.add_edge(e[1], e[0], e[2])
-                else:
-                    d.add_edge(e)
-            tmp = (e[0], e[1])
-
-        return d
-
-    @doc_index("Connectivity, orientations, trees")
-    def minimum_outdegree_orientation(self, use_edge_labels=False, solver=None, verbose=0,
-                                      *, integrality_tolerance=1e-3):
-        r"""
-        Return an orientation of ``self`` with the smallest possible maximum
-        outdegree.
-
-        Given a Graph `G`, it is polynomial to compute an orientation `D` of the
-        edges of `G` such that the maximum out-degree in `D` is minimized. This
-        problem, though, is NP-complete in the weighted case [AMOZ2006]_.
-
-        INPUT:
-
-        - ``use_edge_labels`` -- boolean (default: ``False``)
-
-          - When set to ``True``, uses edge labels as weights to compute the
-            orientation and assumes a weight of `1` when there is no value
-            available for a given edge.
-
-          - When set to ``False`` (default), gives a weight of 1 to all the
-            edges.
-
-        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
-          Linear Programming (MILP) solver to be used. If set to ``None``, the
-          default one is used. For more information on MILP solvers and which
-          default solver is used, see the method :meth:`solve
-          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
-          :class:`MixedIntegerLinearProgram
-          <sage.numerical.mip.MixedIntegerLinearProgram>`.
-
-        - ``verbose`` -- integer (default: 0); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
-
-        - ``integrality_tolerance`` -- float; parameter for use with MILP
-          solvers over an inexact base ring; see
-          :meth:`MixedIntegerLinearProgram.get_values`.
-
-        EXAMPLES:
-
-        Given a complete bipartite graph `K_{n,m}`, the maximum out-degree of an
-        optimal orientation is `\left\lceil \frac {nm} {n+m}\right\rceil`::
-
-            sage: g = graphs.CompleteBipartiteGraph(3,4)
-            sage: o = g.minimum_outdegree_orientation()                                 # needs sage.numerical.mip
-            sage: max(o.out_degree()) == integer_ceil((4*3)/(3+4))                      # needs sage.numerical.mip
-            True
-        """
-        self._scream_if_not_simple()
-        if self.is_directed():
-            raise ValueError("Cannot compute an orientation of a DiGraph. "
-                             "Please convert it to a Graph if you really mean it.")
-
-        if use_edge_labels:
-            from sage.rings.real_mpfr import RR
-
-            def weight(e):
-                l = self.edge_label(e)
-                return l if l in RR else 1
-        else:
-            def weight(e):
-                return 1
-
-        from sage.numerical.mip import MixedIntegerLinearProgram
-
-        p = MixedIntegerLinearProgram(maximization=False, solver=solver)
-        degree = p.new_variable(nonnegative=True)
-
-        # The orientation of an edge is boolean and indicates whether the edge
-        # uv goes from u to v ( equal to 0 ) or from v to u ( equal to 1)
-        orientation = p.new_variable(binary=True)
-
-        # Whether an edge adjacent to a vertex u counts positively or
-        # negatively. To do so, we first fix an arbitrary extremity per edge uv.
-        ext = {frozenset(e): e[0] for e in self.edge_iterator(labels=False)}
-
-        def outgoing(u, e, variable):
-            if u == ext[frozenset(e)]:
-                return variable
-            else:
-                return 1 - variable
-
-        for u in self:
-            p.add_constraint(p.sum(weight(e) * outgoing(u, e, orientation[frozenset(e)])
-                                   for e in self.edge_iterator(vertices=[u], labels=False))
-                             - degree['max'], max=0)
-
-        p.set_objective(degree['max'])
-
-        p.solve(log=verbose)
-
-        orientation = p.get_values(orientation, convert=bool, tolerance=integrality_tolerance)
-
-        # All the edges from self are doubled in O
-        # ( one in each direction )
-        from sage.graphs.digraph import DiGraph
-        O = DiGraph(self)
-
-        # Builds the list of edges that should be removed
-        edges = []
-
-        for e in self.edge_iterator(labels=None):
-            if orientation[frozenset(e)]:
-                edges.append(e[::-1])
-            else:
-                edges.append(e)
-
-        O.delete_edges(edges)
-
-        return O
-
-    @doc_index("Connectivity, orientations, trees")
-    def bounded_outdegree_orientation(self, bound, solver=None, verbose=False,
-                                      *, integrality_tolerance=1e-3):
-        r"""
-        Compute an orientation of ``self`` such that every vertex `v` has
-        out-degree less than `b(v)`
-
-        INPUT:
-
-        - ``bound`` -- maximum bound on the out-degree. Can be of three
-          different types :
-
-         * An integer `k`. In this case, computes an orientation whose maximum
-           out-degree is less than `k`.
-
-         * A dictionary associating to each vertex its associated maximum
-           out-degree.
-
-         * A function associating to each vertex its associated maximum
-           out-degree.
-
-        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
-          Linear Programming (MILP) solver to be used. If set to ``None``, the
-          default one is used. For more information on MILP solvers and which
-          default solver is used, see the method :meth:`solve
-          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
-          :class:`MixedIntegerLinearProgram
-          <sage.numerical.mip.MixedIntegerLinearProgram>`.
-
-        - ``verbose`` -- integer (default: 0); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
-
-        - ``integrality_tolerance`` -- float; parameter for use with MILP
-          solvers over an inexact base ring; see
-          :meth:`MixedIntegerLinearProgram.get_values`.
-
-        OUTPUT:
-
-        A DiGraph representing the orientation if it exists.
-        A :exc:`ValueError` exception is raised otherwise.
-
-        ALGORITHM:
-
-        The problem is solved through a maximum flow :
-
-        Given a graph `G`, we create a ``DiGraph`` `D` defined on `E(G)\cup
-        V(G)\cup \{s,t\}`. We then link `s` to all of `V(G)` (these edges having
-        a capacity equal to the bound associated to each element of `V(G)`), and
-        all the elements of `E(G)` to `t` . We then link each `v \in V(G)` to
-        each of its incident edges in `G`. A maximum integer flow of value
-        `|E(G)|` corresponds to an admissible orientation of `G`. Otherwise,
-        none exists.
-
-        EXAMPLES:
-
-        There is always an orientation of a graph `G` such that a vertex `v` has
-        out-degree at most `\lceil \frac {d(v)} 2 \rceil`::
-
-            sage: g = graphs.RandomGNP(40, .4)
-            sage: b = lambda v: integer_ceil(g.degree(v)/2)
-            sage: D = g.bounded_outdegree_orientation(b)
-            sage: all( D.out_degree(v) <= b(v) for v in g )
-            True
-
-
-        Chvatal's graph, being 4-regular, can be oriented in such a way that its
-        maximum out-degree is 2::
-
-            sage: g = graphs.ChvatalGraph()
-            sage: D = g.bounded_outdegree_orientation(2)
-            sage: max(D.out_degree())
-            2
-
-        For any graph `G`, it is possible to compute an orientation such that
-        the maximum out-degree is at most the maximum average degree of `G`
-        divided by 2. Anything less, though, is impossible.
-
-            sage: g = graphs.RandomGNP(40, .4)
-            sage: mad = g.maximum_average_degree()                                      # needs sage.numerical.mip
-
-        Hence this is possible ::
-
-            sage: d = g.bounded_outdegree_orientation(integer_ceil(mad/2))              # needs sage.numerical.mip
-
-        While this is not::
-
-            sage: try:                                                                  # needs sage.numerical.mip
-            ....:     g.bounded_outdegree_orientation(integer_ceil(mad/2-1))
-            ....:     print("Error")
-            ....: except ValueError:
-            ....:     pass
-
-        TESTS:
-
-        As previously for random graphs, but more intensively::
-
-            sage: for i in range(30):      # long time (up to 6s on sage.math, 2012)
-            ....:     g = graphs.RandomGNP(40, .4)
-            ....:     b = lambda v: integer_ceil(g.degree(v)/2)
-            ....:     D = g.bounded_outdegree_orientation(b)
-            ....:     if not (
-            ....:          all( D.out_degree(v) <= b(v) for v in g ) or
-            ....:          D.size() != g.size()):
-            ....:         print("Something wrong happened")
-        """
-        self._scream_if_not_simple()
-        from sage.graphs.digraph import DiGraph
-        n = self.order()
-
-        if not n:
-            return DiGraph()
-
-        vertices = list(self)
-        vertices_id = {y: x for x, y in enumerate(vertices)}
-
-        b = {}
-
-        # Checking the input type. We make a dictionary out of it
-        if isinstance(bound, dict):
-            b = bound
-        else:
-            try:
-                b = dict(zip(vertices, map(bound, vertices)))
-
-            except TypeError:
-                b = dict(zip(vertices, [bound]*n))
-
-        d = DiGraph()
-
-        # Adding the edges (s,v) and ((u,v),t)
-        d.add_edges(('s', vertices_id[v], b[v]) for v in vertices)
-
-        d.add_edges(((vertices_id[u], vertices_id[v]), 't', 1)
-                    for u, v in self.edges(sort=False, labels=None))
-
-        # each v is linked to its incident edges
-
-        for u, v in self.edge_iterator(labels=None):
-            u, v = vertices_id[u], vertices_id[v]
-            d.add_edge(u, (u, v), 1)
-            d.add_edge(v, (u, v), 1)
-
-        # Solving the maximum flow
-        value, flow = d.flow('s', 't', value_only=False, integer=True,
-                             use_edge_labels=True, solver=solver, verbose=verbose,
-                             integrality_tolerance=integrality_tolerance)
-
-        if value != self.size():
-            raise ValueError("No orientation exists for the given bound")
-
-        D = DiGraph()
-        D.add_vertices(vertices)
-
-        # The flow graph may not contain all the vertices, if they are
-        # not part of the flow...
-
-        for u in [x for x in range(n) if x in flow]:
-
-            for uu, vv in flow.neighbors_out(u):
-                v = vv if vv != u else uu
-                D.add_edge(vertices[u], vertices[v])
-
-        # I do not like when a method destroys the embedding ;-)
-        D.set_pos(self.get_pos())
-
-        return D
-
-    @doc_index("Connectivity, orientations, trees")
-    def orientations(self, data_structure=None, sparse=None):
-        r"""
-        Return an iterator over orientations of ``self``.
-
-        An *orientation* of an undirected graph is a directed graph such that
-        every edge is assigned a direction.  Hence there are `2^s` oriented
-        digraphs for a simple graph with `s` edges.
-
-        INPUT:
-
-        - ``data_structure`` -- one of ``'sparse'``, ``'static_sparse'``, or
-          ``'dense'``; see the documentation of :class:`Graph` or
-          :class:`DiGraph`; default is the data structure of ``self``
-
-        - ``sparse`` -- boolean (default: ``None``); ``sparse=True`` is an alias
-          for ``data_structure="sparse"``, and ``sparse=False`` is an alias for
-          ``data_structure="dense"``. By default (``None``), guess the most
-          suitable data structure.
-
-        .. WARNING::
-
-            This always considers multiple edges of graphs as distinguishable,
-            and hence, may have repeated digraphs.
-
-        .. SEEALSO::
-
-            - :meth:`~sage.graphs.graph.Graph.strong_orientation`
-            - :meth:`~sage.graphs.orientations.strong_orientations_iterator`
-            - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.nauty_directg`
-            - :meth:`~sage.graphs.orientations.random_orientation`
-
-        EXAMPLES::
-
-            sage: G = Graph([[1,2,3], [(1, 2, 'a'), (1, 3, 'b')]], format='vertices_and_edges')
-            sage: it = G.orientations()
-            sage: D = next(it)
-            sage: D.edges(sort=True)
-            [(1, 2, 'a'), (1, 3, 'b')]
-            sage: D = next(it)
-            sage: D.edges(sort=True)
-            [(1, 2, 'a'), (3, 1, 'b')]
-
-        TESTS::
-
-            sage: G = Graph()
-            sage: D = [g for g in G.orientations()]
-            sage: len(D)
-            1
-            sage: D[0]
-            Digraph on 0 vertices
-
-            sage: G = Graph(5)
-            sage: it = G.orientations()
-            sage: D = next(it)
-            sage: D.size()
-            0
-
-            sage: G = Graph([[1,2,'a'], [1,2,'b']], multiedges=True)
-            sage: len(list(G.orientations()))
-            4
-
-            sage: G = Graph([[1,2], [1,1]], loops=True)
-            sage: len(list(G.orientations()))
-            2
-
-            sage: G = Graph([[1,2],[2,3]])
-            sage: next(G.orientations())
-            Digraph on 3 vertices
-            sage: G = graphs.PetersenGraph()
-            sage: next(G.orientations())
-            An orientation of Petersen graph: Digraph on 10 vertices
-
-        An orientation must have the same ground set of vertices as the original
-        graph (:issue:`24366`)::
-
-            sage: G = Graph(1)
-            sage: next(G.orientations())
-            Digraph on 1 vertex
-        """
-        if sparse is not None:
-            if data_structure is not None:
-                raise ValueError("cannot specify both 'sparse' and 'data_structure'")
-            data_structure = "sparse" if sparse else "dense"
-        if data_structure is None:
-            from sage.graphs.base.dense_graph import DenseGraphBackend
-            from sage.graphs.base.sparse_graph import SparseGraphBackend
-            if isinstance(self._backend, DenseGraphBackend):
-                data_structure = "dense"
-            elif isinstance(self._backend, SparseGraphBackend):
-                data_structure = "sparse"
-            else:
-                data_structure = "static_sparse"
-
-        name = self.name()
-        if name:
-            name = 'An orientation of ' + name
-
-        from sage.graphs.digraph import DiGraph
-        if not self.size():
-            D = DiGraph(data=[self.vertices(sort=False), []],
-                        format='vertices_and_edges',
-                        name=name,
-                        pos=self._pos,
-                        multiedges=self.allows_multiple_edges(),
-                        loops=self.allows_loops(),
-                        data_structure=data_structure)
-            if hasattr(self, '_embedding'):
-                D._embedding = copy(self._embedding)
-            yield D
-            return
-
-        E = [[(u, v, label), (v, u, label)] if u != v else [(u, v, label)]
-             for u, v, label in self.edge_iterator()]
-        verts = self.vertices(sort=False)
-        for edges in itertools.product(*E):
-            D = DiGraph(data=[verts, edges],
-                        format='vertices_and_edges',
-                        name=name,
-                        pos=self._pos,
-                        multiedges=self.allows_multiple_edges(),
-                        loops=self.allows_loops(),
-                        data_structure=data_structure)
-            if hasattr(self, '_embedding'):
-                D._embedding = copy(self._embedding)
-            yield D
 
     # Coloring
 
@@ -4120,6 +3601,100 @@ class Graph(GenericGraph):
             if any(not self.is_independent_set(s) for s in sigma):
                 continue
             ret += M.term(sigma.to_composition(), t**asc(sigma))
+        return ret
+
+    @doc_index("Coloring")
+    def tutte_symmetric_function(self, R=None, t=None):
+        r"""
+        Return the Tutte symmetric function of ``self``.
+
+        Let `G` be a graph. The Tutte symmetric function `XB_G` of the graph
+        `G` was introduced in [Sta1998]_. We present the equivalent definition
+        given in [CS2022]_.
+
+        .. MATH::
+
+            XB_G = \sum_{\pi \vdash V} (1+t)^{e(\pi)} \tilde{m}_{\lambda(\pi)},
+
+        where the sum ranges over all set-partitions `\pi` of the vertex set
+        `V`, `\lambda(\pi)` is the partition determined by the sizes of the
+        blocks of `\pi`, and `e(\pi)` is the number of edges whose endpoints
+        lie in the same block of `\pi`. In particular, the coefficients of
+        `XB_G` when expanded in terms of augmented monomial symmetric functions
+        are polynomials in `t` with non-negative integer coefficients.
+
+        For an integer partition `\lambda = 1^{r_1}2^{r_2}\cdots` expressed in
+        the exponential notation, the augmented monomial symmetric function
+        is defined as
+
+        .. MATH::
+
+            \tilde{m}_{\lambda} = \left(\prod_{i} r_i! \right) m_{\lambda}.
+
+        INPUT:
+
+        - ``R`` -- (default: the parent of ``t``) the base ring for the symmetric
+          functions
+
+        - ``t`` -- (default: `t` in `\ZZ[t]`) the parameter `t`
+
+        EXAMPLES::
+
+            sage: p = SymmetricFunctions(ZZ).p()                                        # needs sage.combinat sage.modules
+            sage: G = Graph([[1,2],[2,3],[3,4],[4,1],[1,3]])
+            sage: XB_G = G.tutte_symmetric_function(); XB_G                             # needs sage.combinat sage.modules
+            24*m[1, 1, 1, 1] + (10*t+12)*m[2, 1, 1] + (4*t^2+10*t+6)*m[2, 2]
+             + (2*t^3+8*t^2+10*t+4)*m[3, 1]
+             + (t^5+5*t^4+10*t^3+10*t^2+5*t+1)*m[4]
+            sage: p(XB_G)                                                               # needs sage.combinat sage.modules
+            p[1, 1, 1, 1] + 5*t*p[2, 1, 1] + 2*t^2*p[2, 2]
+             + (2*t^3+8*t^2)*p[3, 1] + (t^5+5*t^4+8*t^3)*p[4]
+
+        Graphs are allowed to have multiedges and loops::
+
+            sage: G = Graph([[1,2],[2,3],[2,3]], multiedges = True)
+            sage: XB_G = G.tutte_symmetric_function(); XB_G                             # needs sage.combinat sage.modules
+            6*m[1, 1, 1] + (t^2+3*t+3)*m[2, 1] + (t^3+3*t^2+3*t+1)*m[3]
+
+        We check that at `t = -1`, we recover the usual chromatic symmetric
+        function::
+
+            sage: G = Graph([[1,2],[1,2],[2,3],[3,4],[4,5]], multiedges=True)
+            sage: XB_G = G.tutte_symmetric_function(t=-1); XB_G                         # needs sage.combinat sage.modules
+            120*m[1, 1, 1, 1, 1] + 36*m[2, 1, 1, 1] + 12*m[2, 2, 1]
+             + 2*m[3, 1, 1] + m[3, 2]
+            sage: X_G = G.chromatic_symmetric_function(); X_G                           # needs sage.combinat sage.modules
+            p[1, 1, 1, 1, 1] - 4*p[2, 1, 1, 1] + 3*p[2, 2, 1] + 3*p[3, 1, 1]
+             - 2*p[3, 2] - 2*p[4, 1] + p[5]
+            sage: XB_G == X_G                                                           # needs sage.combinat sage.modules
+            True
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        from sage.combinat.set_partition import SetPartitions
+        from sage.misc.misc_c import prod
+        from collections import Counter
+
+        if t is None:
+            t = ZZ['t'].gen()
+        if R is None:
+            R = t.parent()
+        m = SymmetricFunctions(R).m()
+        ret = m.zero()
+        V = self.vertices()
+        M = Counter(self.edge_iterator(labels=False))
+        fact = [1]
+        fact.extend(fact[-1] * i for i in range(1, len(V)+1))
+
+        def mono(pi):
+            arcs = 0
+            for s in pi:
+                for u in s:
+                    arcs += sum(M[(u, v)] for v in s if self.has_edge(u, v))
+            return arcs
+
+        for pi in SetPartitions(V):
+            pa = pi.to_partition()
+            ret += prod(fact[i] for i in pa.to_exp()) * m[pa] * (1+t)**mono(pi)
         return ret
 
     @doc_index("Algorithmically hard stuff")
@@ -6250,12 +5825,6 @@ class Graph(GenericGraph):
 
         .. NOTE::
 
-            This method sorts its output before returning it. If you prefer to
-            save the extra time, you can call
-            :class:`sage.graphs.independent_sets.IndependentSets` directly.
-
-        .. NOTE::
-
             Sage's implementation of the enumeration of *maximal* independent
             sets is not much faster than NetworkX' (expect a 2x speedup), which
             is surprising as it is written in Cython. This being said, the
@@ -7608,8 +7177,109 @@ class Graph(GenericGraph):
             return core
         return list(core.values())
 
-    @doc_index("Leftovers")
-    def modular_decomposition(self, algorithm=None, style='tuple'):
+    @doc_index("Modules")
+    def is_module(self, vertices):
+        r"""
+        Check whether ``vertices`` is a module of ``self``.
+
+        A subset `M` of the vertices of a graph is a module if for every
+        vertex `v` outside of `M`, either all vertices of `M` are neighbors of
+        `v` or all vertices of `M` are not neighbors of `v`.
+
+        INPUT:
+
+        - ``vertices`` -- iterable; a subset of vertices of ``self``
+
+        EXAMPLES:
+
+        The whole graph, the empty set and singletons are trivial modules::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.is_module([])
+            True
+            sage: G.is_module([G.random_vertex()])
+            True
+            sage: G.is_module(G)
+            True
+
+        Prime graphs only have trivial modules::
+
+            sage: G = graphs.PathGraph(5)
+            sage: G.is_prime()
+            True
+            sage: all(not G.is_module(S) for S in subsets(G)
+            ....:                       if len(S) > 1 and len(S) < G.order())
+            True
+
+        For edgeless graphs and complete graphs, all subsets are modules::
+
+            sage: G = Graph(5)
+            sage: all(G.is_module(S) for S in subsets(G))
+            True
+            sage: G = graphs.CompleteGraph(5)
+            sage: all(G.is_module(S) for S in subsets(G))
+            True
+
+        The modules of a graph and of its complements are the same::
+
+            sage: G = graphs.TuranGraph(10, 3)
+            sage: G.is_module([0,1,2])
+            True
+            sage: G.complement().is_module([0,1,2])
+            True
+            sage: G.is_module([3,4,5])
+            True
+            sage: G.complement().is_module([3,4,5])
+            True
+            sage: G.is_module([2,3,4])
+            False
+            sage: G.complement().is_module([2,3,4])
+            False
+            sage: G.is_module([3,4,5,6,7,8,9])
+            True
+            sage: G.complement().is_module([3,4,5,6,7,8,9])
+            True
+
+        Elements of ``vertices`` must be in ``self``::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.is_module(['Terry'])
+            Traceback (most recent call last):
+            ...
+            LookupError: vertex (Terry) is not a vertex of the graph
+            sage: G.is_module([1, 'Graham'])
+            Traceback (most recent call last):
+            ...
+            LookupError: vertex (Graham) is not a vertex of the graph
+        """
+        M = set(vertices)
+
+        for v in M:
+            if v not in self:
+                raise LookupError(f"vertex ({v}) is not a vertex of the graph")
+
+        if len(M) <= 1 or len(M) == self.order():
+            return True
+
+        N = None  # will contains the neighborhood of M
+        for v in M:
+            if N is None:
+                # first iteration, the neighborhood N must be computed
+                N = {u for u in self.neighbor_iterator(v) if u not in M}
+            else:
+                # check that the neighborhood of v is N
+                n = 0
+                for u in self.neighbor_iterator(v):
+                    if u not in M:
+                        n += 1
+                        if u not in N:
+                            return False  # u is a splitter
+                if n != len(N):
+                    return False
+        return True
+
+    @doc_index("Modules")
+    def modular_decomposition(self, algorithm=None, style="tuple"):
         r"""
         Return the modular decomposition of the current graph.
 
@@ -7617,10 +7287,20 @@ class Graph(GenericGraph):
         vertex outside the module is either connected to all members of the
         module or to none of them. Every graph that has a nontrivial module can
         be partitioned into modules, and the increasingly fine partitions into
-        modules form a tree. The ``modular_decomposition`` function returns
-        that tree, using an `O(n^3)` algorithm of [HM1979]_.
+        modules form a tree. The ``modular_decomposition`` method returns
+        that tree.
 
         INPUT:
+
+        - ``algorithm`` -- string (default: ``None``); the algorithm to use
+          among:
+
+          - ``None`` or ``'corneil_habib_paul_tedder'`` -- will use the
+            Corneil-Habib-Paul-Tedder algorithm from [TCHP2008]_, its complexity
+            is linear in the number of vertices and edges.
+
+          - ``'habib_maurer'`` -- will use the Habib-Maurer algorithm from
+            [HM1979]_, its complexity is cubic in the number of vertices.
 
         - ``style`` -- string (default: ``'tuple'``); specifies the output
           format:
@@ -7631,16 +7311,10 @@ class Graph(GenericGraph):
 
         OUTPUT:
 
-        A pair of two values (recursively encoding the decomposition) :
-
-        * The type of the current module :
-
-          * ``'PARALLEL'``
-          * ``'PRIME'``
-          * ``'SERIES'``
-
-        * The list of submodules (as list of pairs ``(type, list)``,
-          recursively...) or the vertex's name if the module is a singleton.
+        The modular decomposition tree, either as nested tuples (if
+        ``style='tuple'``) or as an object of
+        :class:`~sage.combinat.rooted_tree.LabelledRootedTree` (if
+        ``style='tree'``)
 
         Crash course on modular decomposition:
 
@@ -7693,7 +7367,19 @@ class Graph(GenericGraph):
         The Petersen Graph too::
 
             sage: graphs.PetersenGraph().modular_decomposition()
-            (PRIME, [1, 4, 5, 0, 2, 6, 3, 7, 8, 9])
+            (PRIME, [1, 4, 5, 0, 6, 2, 3, 9, 7, 8])
+
+        Graph from the :wikipedia:`Modular_decomposition`::
+
+            sage: G = Graph('Jv\\zoKF@wN?', format='graph6')
+            sage: G.relabel([1..11])
+            sage: G.modular_decomposition()
+            (PRIME,
+             [(SERIES, [4, (PARALLEL, [2, 3])]),
+              1,
+              5,
+              (PARALLEL, [6, 7]),
+              (SERIES, [(PARALLEL, [10, 11]), 9, 8])])
 
         This a clique on 5 vertices with 2 pendant edges, though, has a more
         interesting decomposition::
@@ -7702,14 +7388,20 @@ class Graph(GenericGraph):
             sage: g.add_edge(0,5)
             sage: g.add_edge(0,6)
             sage: g.modular_decomposition()
-            (SERIES, [(PARALLEL, [(SERIES, [1, 2, 3, 4]), 5, 6]), 0])
+            (SERIES, [(PARALLEL, [(SERIES, [3, 4, 2, 1]), 5, 6]), 0])
+
+        Turán graphs are co-graphs::
+
+            sage: graphs.TuranGraph(11, 3).modular_decomposition()
+            (SERIES,
+             [(PARALLEL, [7, 8, 9, 10]), (PARALLEL, [3, 4, 5, 6]), (PARALLEL, [0, 1, 2])])
 
         We can choose output to be a
         :class:`~sage.combinat.rooted_tree.LabelledRootedTree`::
 
             sage: g.modular_decomposition(style='tree')
             SERIES[0[], PARALLEL[5[], 6[], SERIES[1[], 2[], 3[], 4[]]]]
-            sage: ascii_art(g.modular_decomposition(style='tree'))
+            sage: ascii_art(g.modular_decomposition(algorithm="habib_maurer",style='tree'))
               __SERIES
              /      /
             0   ___PARALLEL
@@ -7720,7 +7412,9 @@ class Graph(GenericGraph):
 
         ALGORITHM:
 
-        This function uses the algorithm of M. Habib and M. Maurer [HM1979]_.
+        This function can use either the algorithm of D. Corneil, M. Habib, C.
+        Paul and M. Tedder [TCHP2008]_ or the algorithm of M. Habib and M.
+        Maurer [HM1979]_.
 
         .. SEEALSO::
 
@@ -7728,10 +7422,16 @@ class Graph(GenericGraph):
 
             - :class:`~sage.combinat.rooted_tree.LabelledRootedTree`.
 
+            - :func:`~sage.graphs.graph_decompositions.modular_decomposition.corneil_habib_paul_tedder_algorithm`
+
+            - :func:`~sage.graphs.graph_decompositions.modular_decomposition.habib_maurer_algorithm`
+
         .. NOTE::
 
-            A buggy implementation of linear time algorithm from [TCHP2008]_ was
-            removed in Sage 9.7, see :issue:`25872`.
+            A buggy implementation of the linear time algorithm from [TCHP2008]_
+            was removed in Sage 9.7, see :issue:`25872`. A new implementation
+            was reintroduced in Sage 10.6 after some corrections to the original
+            algorithm, see :issue:`39038`.
 
         TESTS:
 
@@ -7770,41 +7470,33 @@ class Graph(GenericGraph):
             sage: G2 = Graph('F@Nfg')
             sage: G1.is_isomorphic(G2)
             True
-            sage: G1.modular_decomposition()
+            sage: G1.modular_decomposition(algorithm="habib_maurer")
             (PRIME, [1, 2, 5, 6, 0, (PARALLEL, [3, 4])])
-            sage: G2.modular_decomposition()
+            sage: G2.modular_decomposition(algorithm="habib_maurer")
             (PRIME, [5, 6, 3, 4, 2, (PARALLEL, [0, 1])])
+            sage: G1.modular_decomposition(algorithm="corneil_habib_paul_tedder")
+            (PRIME, [6, 5, 1, 2, 0, (PARALLEL, [3, 4])])
+            sage: G2.modular_decomposition(algorithm="corneil_habib_paul_tedder")
+            (PRIME, [6, 5, (PARALLEL, [0, 1]), 2, 3, 4])
 
         Check that :issue:`37631` is fixed::
 
             sage: G = Graph('GxJEE?')
-            sage: G.modular_decomposition(style='tree')
+            sage: G.modular_decomposition(algorithm="habib_maurer",style='tree')
             PRIME[2[], SERIES[0[], 1[]], PARALLEL[3[], 4[]],
                   PARALLEL[5[], 6[], 7[]]]
         """
-        from sage.graphs.graph_decompositions.modular_decomposition import (NodeType,
-                                                                            habib_maurer_algorithm,
-                                                                            create_prime_node,
-                                                                            create_normal_node)
+        from sage.graphs.graph_decompositions.modular_decomposition import \
+                modular_decomposition
 
-        if algorithm is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(25872, "algorithm=... parameter is obsolete and has no effect.")
-        self._scream_if_not_simple()
-
-        if not self.order():
-            D = None
-        elif self.order() == 1:
-            D = create_normal_node(next(self.vertex_iterator()))
-        else:
-            D = habib_maurer_algorithm(self)
+        D = modular_decomposition(self, algorithm=algorithm)
 
         if style == 'tuple':
-            if D is None:
+            if D.is_empty():
                 return tuple()
 
             def relabel(x):
-                if x.node_type == NodeType.NORMAL:
+                if x.is_leaf():
                     return x.children[0]
                 return x.node_type, [relabel(y) for y in x.children]
 
@@ -7812,11 +7504,11 @@ class Graph(GenericGraph):
 
         elif style == 'tree':
             from sage.combinat.rooted_tree import LabelledRootedTree
-            if D is None:
+            if D.is_empty():
                 return LabelledRootedTree([])
 
             def to_tree(x):
-                if x.node_type == NodeType.NORMAL:
+                if x.is_leaf():
                     return LabelledRootedTree([], label=x.children[0])
                 return LabelledRootedTree([to_tree(y) for y in x.children],
                                           label=x.node_type)
@@ -8067,7 +7759,14 @@ class Graph(GenericGraph):
 
         A graph is prime if all its modules are trivial (i.e. empty, all of the
         graph or singletons) -- see :meth:`modular_decomposition`.
-        Use the `O(n^3)` algorithm of [HM1979]_.
+        This method computes the modular decomposition tree using
+        :meth:`~sage.graphs.graph.Graph.modular_decomposition`.
+
+        INPUT:
+
+        - ``algorithm`` -- string (default: ``None``); the algorithm used to
+          compute the modular decomposition tree; the value is forwarded
+          directly to :meth:`~sage.graphs.graph.Graph.modular_decomposition`.
 
         EXAMPLES:
 
@@ -8088,109 +7787,19 @@ class Graph(GenericGraph):
             sage: graphs.EmptyGraph().is_prime()
             True
         """
-        if algorithm is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(25872, "algorithm=... parameter is obsolete and has no effect.")
-        from sage.graphs.graph_decompositions.modular_decomposition import NodeType
+        from sage.graphs.graph_decompositions.modular_decomposition import \
+                modular_decomposition
 
         if self.order() <= 1:
             return True
 
-        D = self.modular_decomposition()
+        MD = modular_decomposition(self, algorithm=algorithm)
 
-        return D[0] == NodeType.PRIME and len(D[1]) == self.order()
-
-    def _gomory_hu_tree(self, vertices, algorithm=None):
-        r"""
-        Return a Gomory-Hu tree associated to ``self``.
-
-        This function is the private counterpart of ``gomory_hu_tree()``, with
-        the difference that it has an optional argument needed for recursive
-        computations, which the user is not interested in defining himself.
-
-        See the documentation of ``gomory_hu_tree()`` for more information.
-
-        INPUT:
-
-        - ``vertices`` -- set of "real" vertices, as opposed to the fakes one
-          introduced during the computations. This variable is useful for the
-          algorithm and for recursion purposes.
-
-        - ``algorithm`` -- select the algorithm used by the :meth:`edge_cut`
-          method. Refer to its documentation for allowed values and default
-          behaviour.
-
-        EXAMPLES:
-
-        This function is actually tested in ``gomory_hu_tree()``, this example
-        is only present to have a doctest coverage of 100%::
-
-            sage: g = graphs.PetersenGraph()
-            sage: t = g._gomory_hu_tree(frozenset(g.vertices(sort=False)))
-        """
-        self._scream_if_not_simple()
-
-        # Small case, not really a problem ;-)
-        if len(vertices) == 1:
-            g = Graph()
-            g.add_vertices(vertices)
-            return g
-
-        # Take any two vertices (u,v)
-        it = iter(vertices)
-        u, v = next(it), next(it)
-
-        # Compute a uv min-edge-cut.
-        #
-        # The graph is split into U,V with u \in U and v\in V.
-        flow, edges, [U, V] = self.edge_cut(u, v, use_edge_labels=True,
-                                            vertices=True, algorithm=algorithm)
-
-        # One graph for each part of the previous one
-        gU, gV = self.subgraph(U, immutable=False), self.subgraph(V, immutable=False)
-
-        # A fake vertex fU (resp. fV) to represent U (resp. V)
-        fU = frozenset(U)
-        fV = frozenset(V)
-
-        # Each edge (uu,vv) with uu \in U and vv\in V yields:
-        # - an edge (uu,fV) in gU
-        # - an edge (vv,fU) in gV
-        #
-        # If the same edge is added several times their capacities add up.
-
-        from sage.rings.real_mpfr import RR
-        for uu, vv, capacity in edges:
-            capacity = capacity if capacity in RR else 1
-
-            # Assume uu is in gU
-            if uu in V:
-                uu, vv = vv, uu
-
-            # Create the new edges if necessary
-            if not gU.has_edge(uu, fV):
-                gU.add_edge(uu, fV, 0)
-            if not gV.has_edge(vv, fU):
-                gV.add_edge(vv, fU, 0)
-
-            # update the capacities
-            gU.set_edge_label(uu, fV, gU.edge_label(uu, fV) + capacity)
-            gV.set_edge_label(vv, fU, gV.edge_label(vv, fU) + capacity)
-
-        # Recursion on each side
-        gU_tree = gU._gomory_hu_tree(vertices & frozenset(gU), algorithm=algorithm)
-        gV_tree = gV._gomory_hu_tree(vertices & frozenset(gV), algorithm=algorithm)
-
-        # Union of the two partial trees
-        g = gU_tree.union(gV_tree)
-
-        # An edge to connect them, with the appropriate label
-        g.add_edge(u, v, flow)
-
-        return g
+        return MD.is_prime() and len(MD.children) == self.order()
 
     @doc_index("Connectivity, orientations, trees")
-    def gomory_hu_tree(self, algorithm=None):
+    def gomory_hu_tree(self, algorithm=None, solver=None, verbose=0,
+                       *, integrality_tolerance=1e-3):
         r"""
         Return a Gomory-Hu tree of ``self``.
 
@@ -8210,6 +7819,27 @@ class Graph(GenericGraph):
         - ``algorithm`` -- select the algorithm used by the :meth:`edge_cut`
           method. Refer to its documentation for allowed values and default
           behaviour.
+
+        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
+          Linear Programming (MILP) solver to be used. If set to ``None``, the
+          default one is used. For more information on MILP solvers and which
+          default solver is used, see the method :meth:`solve
+          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+          :class:`MixedIntegerLinearProgram
+          <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+          Only useful when ``algorithm == "LP"``.
+
+        - ``verbose`` -- integer (default: 0); sets the level of
+          verbosity. Set to 0 by default, which means quiet.
+
+          Only useful when ``algorithm == "LP"``.
+
+        - ``integrality_tolerance`` -- float; parameter for use with MILP
+          solvers over an inexact base ring; see
+          :meth:`MixedIntegerLinearProgram.get_values`.
+
+          Only useful when ``algorithm == "LP"``.
 
         OUTPUT: a graph with labeled edges
 
@@ -8269,18 +7899,81 @@ class Graph(GenericGraph):
             sage: graphs.EmptyGraph().gomory_hu_tree()
             Graph on 0 vertices
         """
-        if not self.order():
-            return Graph()
-        if not self.is_connected():
-            g = Graph()
-            for cc in self.connected_components_subgraphs():
-                g = g.union(cc._gomory_hu_tree(frozenset(cc.vertex_iterator()), algorithm=algorithm))
-        else:
-            g = self._gomory_hu_tree(frozenset(self.vertex_iterator()), algorithm=algorithm)
+        self._scream_if_not_simple()
 
+        if self.order() <= 1:
+            return Graph([self, []], format='vertices_and_edges')
+
+        from sage.rings.real_mpfr import RR
+
+        # Graph to store the Gomory-Hu tree
+        T = Graph([self, []], format='vertices_and_edges')
         if self.get_pos() is not None:
-            g.set_pos(dict(self.get_pos()))
-        return g
+            T.set_pos(dict(self.get_pos()))
+
+        # We use a stack to avoid recursion. An element of the stack contains
+        # the graph to be processed and the corresponding set of "real" vertices
+        # (as opposed to the fakes one introduced during the computations.
+        if self.is_connected():
+            stack = [(self, frozenset(self))]
+        else:
+            stack = [(cc, frozenset(cc)) for cc in self.connected_components_subgraphs()]
+
+        # We now iteratively decompose the graph to build the tree
+        while stack:
+            G, vertices = stack.pop()
+
+            if len(vertices) == 1:
+                continue
+
+            # Take any two vertices (u,v)
+            it = iter(vertices)
+            u, v = next(it), next(it)
+
+            # Compute a uv min-edge-cut.
+            #
+            # The graph is split into U,V with u \in U and v\in V.
+            flow, edges, [U, V] = G.edge_cut(u, v, use_edge_labels=True,
+                                             vertices=True, algorithm=algorithm,
+                                             solver=solver, verbose=verbose,
+                                             integrality_tolerance=integrality_tolerance)
+
+            # Add edge (u, v, flow) to the Gomory-Hu tree
+            T.add_edge(u, v, flow)
+
+            # Build one graph for each part of the previous graph and store the
+            # instances to process
+            for X, Y in ((U, V), (V, U)):
+                if len(X) == 1 or len(vertices & frozenset(X)) == 1:
+                    continue
+
+                # build the graph of part X
+                gX = G.subgraph(X, immutable=False)
+
+                # A fake vertex fY to represent Y
+                fY = frozenset(Y)
+
+                # For each edge (x, y) in G with x \in X and y\in Y, add edge
+                # (x, fY) in gX. If the same edge is added several times their
+                # capacities add up.
+                for xx, yy, capacity in edges:
+                    capacity = capacity if capacity in RR else 1
+
+                    # Assume xx is in gX
+                    if xx in fY:
+                        xx, yy = yy, xx
+
+                    # Create the new edge or update its capacity
+                    if gX.has_edge(xx, fY):
+                        gX.set_edge_label(xx, fY, gX.edge_label(xx, fY) + capacity)
+                    else:
+                        gX.add_edge(xx, fY, capacity)
+
+                # Store instance to process
+                stack.append((gX, vertices & frozenset(gX)))
+
+        # Finally return the Gomory-Hu tree
+        return T
 
     @doc_index("Leftovers")
     def two_factor_petersen(self, solver=None, verbose=0, *, integrality_tolerance=1e-3):
@@ -8954,7 +8647,7 @@ class Graph(GenericGraph):
               resistances
 
             * :meth:`effective_resistance` --
-              compuetes effective resistance for a single node pair
+              computes effective resistance for a single node pair
 
             * See :wikipedia:`Resistance_distance` for more details.
 
@@ -9596,7 +9289,15 @@ class Graph(GenericGraph):
     from sage.graphs.tutte_polynomial import tutte_polynomial
     from sage.graphs.lovasz_theta import lovasz_theta
     from sage.graphs.partial_cube import is_partial_cube
-    from sage.graphs.orientations import strong_orientations_iterator, random_orientation, acyclic_orientations
+    from sage.graphs.orientations import orient
+    from sage.graphs.orientations import orientations
+    from sage.graphs.orientations import strong_orientation
+    from sage.graphs.orientations import strong_orientations_iterator
+    from sage.graphs.orientations import random_orientation
+    from sage.graphs.orientations import acyclic_orientations
+    from sage.graphs.orientations import minimum_outdegree_orientation
+    from sage.graphs.orientations import bounded_outdegree_orientation
+    from sage.graphs.orientations import eulerian_orientation
     from sage.graphs.connectivity import bridges, cleave, spqr_tree
     from sage.graphs.connectivity import is_triconnected
     from sage.graphs.comparability import is_comparability
@@ -9646,9 +9347,15 @@ _additional_categories = {
     "is_permutation"            : "Graph properties",
     "tutte_polynomial"          : "Algorithmically hard stuff",
     "lovasz_theta"              : "Leftovers",
+    "orient": "Connectivity, orientations, trees",
+    "orientations": "Connectivity, orientations, trees",
+    "strong_orientation" : "Connectivity, orientations, trees",
     "strong_orientations_iterator" : "Connectivity, orientations, trees",
     "random_orientation"        : "Connectivity, orientations, trees",
     "acyclic_orientations"      : "Connectivity, orientations, trees",
+    "minimum_outdegree_orientation": "Connectivity, orientations, trees",
+    "bounded_outdegree_orientation": "Connectivity, orientations, trees",
+    "eulerian_orientation": "Connectivity, orientations, trees",
     "bridges"                   : "Connectivity, orientations, trees",
     "cleave"                    : "Connectivity, orientations, trees",
     "spqr_tree"                 : "Connectivity, orientations, trees",

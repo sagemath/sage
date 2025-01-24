@@ -66,12 +66,13 @@ def bCheck(c, v, p, b):
         sage: bCheck(11664*b^2 + 70227*b + 76059, 15/2, 3, b)
         -1
     """
-    val = (v+1).floor()
+    val = (v + 1).floor()
     deg = c.degree()
     coeffs = c.coefficients(sparse=False)
     lcoeff = coeffs[deg]
     coeffs.remove(lcoeff)
-    check1 = [(coeffs[i].valuation(p) - lcoeff.valuation(p))/(deg - i) for i in range(0,len(coeffs)) if coeffs[i] != 0]
+    check1 = [(coeffs[i].valuation(p) - lcoeff.valuation(p))/(deg - i)
+              for i in range(len(coeffs)) if coeffs[i] != 0]
     check2 = (val - lcoeff.valuation(p))/deg
     check1.append(check2)
     bval = min(check1)
@@ -473,6 +474,8 @@ def Min(Fun, p, ubRes, conj, all_orbits=False):
 ###################################################
 
 #modification of Bruin-Molnar for all representatives
+
+
 def BM_all_minimal(vp, return_transformation=False, D=None):
     r"""
     Determine a representative in each `SL(2,\ZZ)` orbit with minimal
@@ -590,7 +593,7 @@ def BM_all_minimal(vp, return_transformation=False, D=None):
     for M in all_M:
         new_map = mp.conjugate(M)
         new_map.normalize_coordinates()
-        if not [new_map, M] in all_maps:
+        if [new_map, M] not in all_maps:
             all_maps.append([new_map, M])
 
     #Split into conjugacy classes
@@ -623,6 +626,8 @@ def BM_all_minimal(vp, return_transformation=False, D=None):
 ###################################################
 
 #find minimal model
+
+
 def HS_minimal(f, return_transformation=False, D=None):
     r"""
     Compute a minimal model for the given projective dynamical system.
@@ -713,6 +718,8 @@ def HS_minimal(f, return_transformation=False, D=None):
     return F
 
 #find all representatives of orbits for one prime
+
+
 def HS_all_minimal_p(p, f, m=None, return_transformation=False):
     r"""
     Find a representative in each distinct `SL(2,\ZZ)` orbit with
@@ -814,6 +821,8 @@ def HS_all_minimal_p(p, f, m=None, return_transformation=False):
         return [funct for funct, matr in reps]
 
 #find all representatives of orbits
+
+
 def HS_all_minimal(f, return_transformation=False, D=None):
     r"""
     Determine a representative in each `SL(2,\ZZ)` orbit with minimal resultant.
@@ -905,6 +914,7 @@ def HS_all_minimal(f, return_transformation=False, D=None):
 #
 # Ben Hutz July 2018
 #####################################3
+
 
 def get_bound_dynamical(F, f, m=1, dynatomic=True, prec=53, emb=None):
     """

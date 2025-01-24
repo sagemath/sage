@@ -462,7 +462,7 @@ class ClusterAlgebraElement(ElementWrapper):
             sage: x.d_vector()
             (1, 1, 2, -2)
         """
-        monomials = self.lift().dict()
+        monomials = self.lift().monomial_coefficients()
         minimal = map(min, zip(*monomials))
         return tuple(-vector(minimal))[:self.parent().rank()]
 
@@ -572,12 +572,12 @@ class PrincipalClusterAlgebraElement(ClusterAlgebraElement):
                 components[g_vect] += self.parent().retract(x.monomial_coefficient(m) * m)
             else:
                 components[g_vect] = self.parent().retract(x.monomial_coefficient(m) * m)
-        for g_vect in components:
-            components[g_vect]._is_homogeneous = True
-            components[g_vect]._g_vector = g_vect
+        for g_vect, compo in components.items():
+            compo._is_homogeneous = True
+            compo._g_vector = g_vect
         self._is_homogeneous = (len(components) == 1)
         if self._is_homogeneous:
-            self._g_vector = list(components.keys())[0]
+            self._g_vector = next(iter(components))
         return components
 
     def theta_basis_decomposition(self):
@@ -615,8 +615,9 @@ class PrincipalClusterAlgebraElement(ClusterAlgebraElement):
             f_poly = components[g_vect].F_polynomial()
             g_vect = vector(g_vect)
             while f_poly != zero_U:
-                y_exp = min(f_poly.dict())
-                coeff = f_poly.dict()[y_exp]
+                coeffs = f_poly.monomial_coefficients()
+                y_exp = min(coeffs)
+                coeff = coeffs[y_exp]
                 g_theta = tuple(g_vect + B * vector(y_exp))
                 out[g_theta] = out.get(g_theta, zero_A) + A({zero_t + tuple(y_exp): coeff})
                 f_poly -= U({y_exp: coeff}) * A.theta_basis_F_polynomial(g_theta)

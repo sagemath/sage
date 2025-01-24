@@ -32,18 +32,26 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from __future__ import annotations
 
 import warnings
+from typing import Any
 
-from sage.structure.sage_object import SageObject
+try:
+    from typing import Self  # type: ignore (Python >= 3.11)
+except ImportError:
+    from typing_extensions import Self  # type: ignore (Python 3.9, 3.10)
+
 from sage.repl.rich_output.output_basic import (
-    OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputLatex,
+    OutputAsciiArt,
+    OutputPlainText,
+    OutputUnicodeArt,
 )
 from sage.repl.rich_output.output_browser import (
     OutputHtml,
 )
 from sage.repl.rich_output.preferences import DisplayPreferences
+from sage.structure.sage_object import SageObject
 
 
 class DisplayException(Exception):
@@ -103,7 +111,7 @@ class RichReprWarning(UserWarning):
     pass
 
 
-class restricted_output():
+class restricted_output:
 
     def __init__(self, display_manager, output_classes):
         """
@@ -185,7 +193,7 @@ class restricted_output():
 
 class DisplayManager(SageObject):
 
-    _instance = None
+    _instance: Self | None = None
 
     def __init__(self):
         """
@@ -205,7 +213,7 @@ class DisplayManager(SageObject):
         self.switch_backend(BackendSimple())
 
     @classmethod
-    def get_instance(cls):
+    def get_instance(cls) -> Self:
         """
         Get the singleton instance.
 
@@ -634,10 +642,10 @@ class DisplayManager(SageObject):
         rich_output = self._promote_output(rich_output)
         # check that the output container types are valid for the backend
         supported = self._backend.supported_output()
-        if not (type(plain_text) in supported):
+        if type(plain_text) not in supported:
             raise OutputTypeException(
                 'text output container not supported: {0}'.format(type(plain_text)))
-        if not (type(rich_output) in supported):
+        if type(rich_output) not in supported:
             raise OutputTypeException(
                 'output container not supported: {0}'.format(type(rich_output)))
         return plain_text, rich_output
@@ -771,7 +779,7 @@ class DisplayManager(SageObject):
         """
         return self._supported_output
 
-    def displayhook(self, obj):
+    def displayhook(self, obj: Any) -> None | Any:
         """
         Implementation of the displayhook.
 

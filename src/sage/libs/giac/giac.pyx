@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.giac
 # distutils: libraries = giac
 # distutils: language = c++
 # distutils: extra_compile_args = -std=c++11
@@ -101,6 +102,13 @@ TESTS::
     sage: libgiac(-11^1000)
     -2469932918005826334124088385085221477709733385238396234869182951830739390375433175367866116456946191973803561189036523363533798726571008961243792655536655282201820357872673322901148243453211756020067624545609411212063417307681204817377763465511222635167942816318177424600927358163388910854695041070577642045540560963004207926938348086979035423732739933235077042750354729095729602516751896320598857608367865475244863114521391548985943858154775884418927768284663678512441565517194156946312753546771163991252528017732162399536497445066348868438762510366191040118080751580689254476068034620047646422315123643119627205531371694188794408120267120500325775293645416335230014278578281272863450085145349124727476223298887655183167465713337723258182649072572861625150703747030550736347589416285606367521524529665763903537989935510874657420361426804068643262800901916285076966174176854351055183740078763891951775452021781225066361670593917001215032839838911476044840388663443684517735022039957481918726697789827894303408292584258328090724141496484460001
 
+Ensure that signed infinities get converted correctly::
+
+    sage: libgiac(+Infinity)
+    +infinity
+    sage: libgiac(-Infinity)
+    -infinity
+
 .. SEEALSO::
 
     ``libgiac``, ``giacsettings``, ``Pygen``,``loadgiacgen``
@@ -158,6 +166,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer cimport Integer
+from sage.rings.infinity import AnInfinity
 from sage.rings.rational cimport Rational
 from sage.structure.element cimport Matrix
 
@@ -373,13 +382,8 @@ def _giac(s):
         sage: (1+2*sin(3*x)).solve(x).simplify()
         ...list[-pi/18,7*pi/18]
 
-        sage: libgiac.solve('sin(3*x)>2*sin(x)',x)
-        Traceback (most recent call last):
-        ...
-        RuntimeError: Unable to find numeric values solving equation. For
-        trigonometric equations this may be solved using assumptions, e.g.
-        assume(x>-pi && x<pi) Error: Bad Argument Value
-
+        sage: libgiac.solve('x^3-x>x',x)
+        list[((x>(-sqrt(2))) and (x<0)),x>(sqrt(2))]
 
     You can also add some hypothesis to a giac symbol::
 
@@ -641,11 +645,11 @@ cdef class GiacSetting(Pygen):
         def __get__(self):
             return (self.cas_setup()[6])._val
 
-        def __set__(self,value):
+        def __set__(self, value):
             l = Pygen('cas_setup()').eval()
             pl = [ i for i in l ]
             pl[6] = value
-            Pygen('cas_setup(%s)'%(pl)).eval()
+            Pygen('cas_setup(%s)' % pl).eval()
 
     property sqrtflag:
         r"""
@@ -654,14 +658,14 @@ cdef class GiacSetting(Pygen):
         def __get__(self):
             return (self.cas_setup()[9])._val == 1
 
-        def __set__(self,value):
+        def __set__(self, value):
             l = Pygen('cas_setup()').eval()
             pl = [ i for i in l ]
             if value:
                 pl[9]=1
             else:
                 pl[9]=0
-            Pygen('cas_setup(%s)'%(pl)).eval()
+            Pygen('cas_setup(%s)' % pl).eval()
 
     property complexflag:
         r"""
@@ -682,14 +686,14 @@ cdef class GiacSetting(Pygen):
         def __get__(self):
             return (self.cas_setup()[2])._val == 1
 
-        def __set__(self,value):
+        def __set__(self, value):
             l = Pygen('cas_setup()').eval()
             pl = [ i for i in l ]
             if value:
                 pl[2] = 1
             else:
                 pl[2] = 0
-            Pygen('cas_setup(%s)'%(pl)).eval()
+            Pygen('cas_setup(%s)' % pl).eval()
 
     property eval_level:
         r"""
@@ -711,11 +715,11 @@ cdef class GiacSetting(Pygen):
         def __get__(self):
             return (self.cas_setup()[7][3])._val
 
-        def __set__(self,value):
+        def __set__(self, value):
             l = Pygen('cas_setup()').eval()
             pl = [ i for i in l ]
             pl[7] = [l[7][0],l[7][1],l[7][2], value]
-            Pygen('cas_setup(%s)'%(pl)).eval()
+            Pygen('cas_setup(%s)' % pl).eval()
 
     property proba_epsilon:
         r"""
@@ -735,11 +739,11 @@ cdef class GiacSetting(Pygen):
         def __get__(self):
             return (self.cas_setup()[5][1])._double
 
-        def __set__(self,value):
+        def __set__(self, value):
             l = Pygen('cas_setup()').eval()
             pl = [ i for i in l ]
             pl[5] = [l[5][0],value]
-            Pygen('cas_setup(%s)'%(pl)).eval()
+            Pygen('cas_setup(%s)' % pl).eval()
 
     property epsilon:
         r"""
@@ -758,11 +762,11 @@ cdef class GiacSetting(Pygen):
         def __get__(self):
             return (self.cas_setup()[5][0])._double
 
-        def __set__(self,value):
+        def __set__(self, value):
             l = Pygen('cas_setup()').eval()
             pl = [ i for i in l ]
             pl[5] = [value,l[5][1]]
-            Pygen('cas_setup(%s)'%(pl)).eval()
+            Pygen('cas_setup(%s)' % pl).eval()
 
     property threads:
         r"""
@@ -771,8 +775,8 @@ cdef class GiacSetting(Pygen):
         def __get__(self):
             return (self.cas_setup()[7][0])._val
 
-        def __set__(self,value):
-            Pygen('threads:=%s'%(str(value))).eval()
+        def __set__(self, value):
+            Pygen('threads:=%s' % str(value)).eval()
 
 ########################################################
 #                                                      #
@@ -859,6 +863,8 @@ cdef class Pygen(GiacMethods_base):
                     s = s._giac_init_()
                 except AttributeError:
                     s = SRexpressiontoGiac(s)
+            elif isinstance(s, AnInfinity):
+                s = s._giac_init_()
             if not isinstance(s, str):
                 s = s.__str__()
             sig_on()
@@ -957,7 +963,7 @@ cdef class Pygen(GiacMethods_base):
                     sig_off()
                     return _wrap_gen(result)
                 else:
-                    raise IndexError('list index %s out of range'%(i))
+                    raise IndexError('list index %s out of range' % i)
             else:
                 if isinstance(i, slice):
                     sig_on()
@@ -977,17 +983,18 @@ cdef class Pygen(GiacMethods_base):
                     raise TypeError('gen indexes are not yet implemented')
         # Here we add support to formal variable indexes:
         else:
-            cmd='%s[%s]'%(self,i)
-            ans=Pygen(cmd).eval()
+            cmd = '%s[%s]' % (self, i)
+            ans = Pygen(cmd).eval()
             # if the answer is a string, it must be an error message because self is not a list or a string
             if (ans._type == 12):
-                raise TypeError("Error executing code in Giac\nCODE:\n\t%s\nGiac ERROR:\n\t%s"%(cmd, ans))
+                raise TypeError("Error executing code in Giac\nCODE:\n\t%s\nGiac ERROR:\n\t%s" % (cmd, ans))
             return ans
 
     def __setitem__(self, key, value):
         """
         Set the value of a coefficient of a giac vector or matrix or list.
-           Warning: It is an in place affectation.
+
+        Warning: It is an in place affectation.
 
         TESTS::
 
@@ -1027,9 +1034,9 @@ cdef class Pygen(GiacMethods_base):
         sig_on()
         cdef gen g = gen(<string>encstring23('GIACPY_TMP_NAME050268070969290100291003'),context_ptr)
         GIAC_sto((<Pygen>self).gptr[0],g,1,context_ptr)
-        g=gen(<string>encstring23('GIACPY_TMP_NAME050268070969290100291003[%s]'%(str(key))),context_ptr)
+        g = gen(<string>encstring23('GIACPY_TMP_NAME050268070969290100291003[%s]' % str(key)), context_ptr)
         v=(<Pygen>(Pygen(value).eval())).gptr[0]
-        GIAC_sto(v,g,1,context_ptr)
+        GIAC_sto(v, g, 1, context_ptr)
         Pygen('purge(GIACPY_TMP_NAME050268070969290100291003):;').eval()
         sig_off()
         return
@@ -1220,8 +1227,8 @@ cdef class Pygen(GiacMethods_base):
         return self
 
     # To be able to use the eval function before the GiacMethods initialisation
-    def cas_setup(self,*args):
-        return Pygen('cas_setup')(self,*args)
+    def cas_setup(self, *args):
+        return Pygen('cas_setup')(self, *args)
 
     def savegen(self, str filename):
         """
@@ -1335,7 +1342,7 @@ cdef class Pygen(GiacMethods_base):
         sig_off()
         return result
 
-    def _integer_(self,Z=None):
+    def _integer_(self, Z=None):
         """
         Convert giac integers or modular integers to sage Integers (via gmp).
 
@@ -1796,7 +1803,7 @@ cdef  vecteur _wrap_pylist(L) except +:
 #################################
 #  slice wrapper for a giac list
 #################################
-cdef  vecteur _getgiacslice(Pygen L,slice sl) except +:
+cdef  vecteur _getgiacslice(Pygen L, slice sl) except +:
     cdef vecteur  * V
     cdef int u
 
@@ -2036,7 +2043,7 @@ class GiacInstance:
     def __init__(self):
         self.__dict__.update(GiacMethods)
 
-    def __call__(self,s):
+    def __call__(self, s):
         return _giac(s)
 
     def _sage_doc_(self):

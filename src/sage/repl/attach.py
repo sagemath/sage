@@ -40,7 +40,7 @@ character-by-character::
     ....:     traceback.print_exc(file=sys.stdout)
     Traceback (most recent call last):
     ...
-        exec(preparse_file(f.read()) + "\n", globals)
+        exec(preparse_file(f.read()) + "\n", globals)...
       File "<string>", line 3, in <module>
     ValueError: third
     sage: detach(src)
@@ -52,7 +52,7 @@ character-by-character::
     ....:     traceback.print_exc(file=sys.stdout)
     Traceback (most recent call last):
     ...
-        exec(code, globals)
+        exec(code, globals)...
       File ".../foobar...sage.py", line ..., in <module>
         raise ValueError("third")   # this should appear in the source snippet...
     ValueError: third
@@ -318,8 +318,12 @@ def attach(*files):
 
     .. SEEALSO::
 
-        :meth:`~sage.repl.load.load` is the same as :func:`attach`, but
-        does not automatically reload a file when it changes.
+        :func:`~sage.repl.load.load` is the same as :func:`attach`, but
+        does not automatically reload a file when it changes unless
+        ``attach=True`` is passed.
+
+        ``%attach`` magic can also be used, see
+        :meth:`~sage.repl.ipython_extension.SageMagics.attach`.
 
     EXAMPLES:
 

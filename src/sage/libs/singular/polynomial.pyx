@@ -200,7 +200,7 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args,
         Leaked 0 bytes
     """
     cdef long l = len(args)
-    cdef ideal *to_id = idInit(l,1)
+    cdef ideal *to_id = idInit(l, 1)
     cdef bint constant_args = 1
     for i from 0 <= i < l:
         to_id.m[i]= p_Copy( get_element(args[i]), r)
@@ -391,7 +391,7 @@ cdef int singular_polynomial_pow(poly **ret, poly *p, unsigned long exp, ring *r
 
     if r != currRing:
         rChangeCurrRing(r)
-    cdef int count = singular_polynomial_length_bounded(p,15)
+    cdef int count = singular_polynomial_length_bounded(p, 15)
     if count >= 15 or exp > 15:
         sig_on()
     ret[0] = pPower( p_Copy(p,r), exp)
@@ -504,7 +504,7 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         multi = multi.lstrip().rstrip()
 
         # Next determine coefficient of multinomial
-        c =  si2sa(p_GetCoeff(p, r), r, base)
+        c = si2sa(p_GetCoeff(p, r), r, base)
         if not multi:
             multi = latex(c)
         elif c != 1:
@@ -573,7 +573,7 @@ cdef long singular_polynomial_deg(poly *p, poly *x, ring *r) noexcept:
         if p_GetExp(x, i, r):
             break
     while p:
-        _deg =  p_GetExp(p,i,r)
+        _deg = p_GetExp(p, i, r)
         if _deg > deg:
             deg = _deg
         p = pNext(p)
