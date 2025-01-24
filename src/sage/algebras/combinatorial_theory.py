@@ -1706,7 +1706,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             with open("param.csdp", "w") as paramsfile:
                 for key, value in params.items():
                     paramsfile.write(f"{key}={value}\n")
-            self._printlevel = params["printlevel"]
+            if "printlevel" in params:
+                self._printlevel = params["printlevel"]
+            else:
+                self._printlevel = 1
         
         #
         # Initial setup
