@@ -573,7 +573,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: K(13,7) * a
             (13 + O(13^7))*t^4 + (13^2 + O(13^6))*t^2 + 13^2 + O(13^8)
         """
-        return None
+        # return None #commented this out to see how broken this is
         # The code below has never been tested and is somehow subtly broken.
 
         if self._valaddeds is None:
