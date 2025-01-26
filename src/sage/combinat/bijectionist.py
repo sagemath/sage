@@ -357,6 +357,7 @@ Value restrictions::
     sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
     sage: tau = Permutation.longest_increasing_subsequence_length
     sage: bij = Bijectionist(A, B, tau, value_restrictions=((Permutation([1, 2]), [4, 5]),))
+    sage: next(bij.solutions_iterator())
     Traceback (most recent call last):
     ...
     ValueError: no possible values found for singleton block [[1, 2]]
@@ -494,7 +495,7 @@ class Bijectionist(SageObject):
         Check that large input sets are handled well::
 
             sage: A = B = range(20000)
-            sage: bij = Bijectionist(A, B)                                      # long time
+            sage: bij = Bijectionist(A, B)
         """
         # glossary of standard letters:
         # A, B, Z, W ... finite sets
@@ -612,7 +613,7 @@ class Bijectionist(SageObject):
             for a in p:
                 self._P.union(p[0], a)
 
-        self._compute_possible_block_values()
+        self._possible_block_values = None
 
     def constant_blocks(self, singletons=False, optimal=False):
         r"""
@@ -1093,8 +1094,7 @@ class Bijectionist(SageObject):
             if not self._possible_block_values[p]:
                 if len(block) == 1:
                     raise ValueError(f"no possible values found for singleton block {block}")
-                else:
-                    raise ValueError(f"no possible values found for block {block}")
+                raise ValueError(f"no possible values found for block {block}")
 
     def set_distributions(self, *elements_distributions):
         r"""
@@ -1789,13 +1789,18 @@ class Bijectionist(SageObject):
                         # veto new value and try again
                         tmp_constraints.append(bmilp._x[p, solution[p]] == 0)
 
-        # create dictionary to return
-        possible_values = {}
-        for p in blocks:
-            for a in self._P.root_to_elements_dict()[p]:
-                if optimal:
+            # create dictionary to return
+            possible_values = {}
+            for p in blocks:
+                for a in self._P.root_to_elements_dict()[p]:
                     possible_values[a] = solutions[p]
-                else:
+        else:
+            # create dictionary to return
+            if self._possible_block_values is None:
+                self._compute_possible_block_values()
+            possible_values = {}
+            for p in blocks:
+                for a in self._P.root_to_elements_dict()[p]:
                     possible_values[a] = self._possible_block_values[p]
 
         return possible_values
