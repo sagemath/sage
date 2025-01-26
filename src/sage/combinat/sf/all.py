@@ -1,5 +1,5 @@
 r"""
-Symmetric Functions
+Symmetric functions
 
 - :class:`Introduction to Symmetric Functions <sage.combinat.sf.sf.SymmetricFunctions>`
 
