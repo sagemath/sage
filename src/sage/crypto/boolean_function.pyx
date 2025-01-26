@@ -120,7 +120,6 @@ cdef reed_muller(mp_limb_t* f, int ldn):
     .. MATH:: f(x) = \bigoplus_{support(x)\subset I} a_I
     .. MATH:: a_i  = \bigoplus_{I\subset support(x)} f(x)
 
-
     EXAMPLES::
 
         sage: # needs sage.rings.polynomial.pbori
@@ -366,7 +365,7 @@ cdef class BooleanFunction(SageObject):
 
     def __invert__(self):
         """
-        Return the complement Boolean function of `self`.
+        Return the complement Boolean function of ``self``.
 
         EXAMPLES::
 
@@ -543,11 +542,14 @@ cdef class BooleanFunction(SageObject):
         """
         The truth table of the Boolean function.
 
-        INPUT: a string representing the desired format, can be either
+        INPUT:
 
-        - ``'bin'`` (default): we return a tuple of Boolean values
-        - ``'int'``: we return a tuple of 0 or 1 values
-        - ``'hex'``: we return a string representing the truth table in hexadecimal
+        - ``format`` -- string representing the desired format; can be either
+
+          - ``'bin'`` -- (default) we return a tuple of Boolean values
+          - ``'int'`` -- we return a tuple of 0 or 1 values
+          - ``'hex'`` -- we return a string representing the truth table in
+            hexadecimal
 
         EXAMPLES::
 
@@ -637,10 +639,13 @@ cdef class BooleanFunction(SageObject):
         """
         Return the value of the function for the given input.
 
-        INPUT: either
+        INPUT:
 
-        - a list -- then all elements are evaluated as Booleans
-        - an integer -- then we consider its binary representation
+        - ``x`` -- either:
+
+          - a list: then all elements are evaluated as booleans
+
+          - an integer: then we consider its binary representation
 
         EXAMPLES::
 
@@ -978,7 +983,7 @@ cdef class BooleanFunction(SageObject):
             self._sum_of_square_indicator = sum(a**2 for a in D)
         return self._sum_of_square_indicator
 
-    def annihilator(self,d, dim = False):
+    def annihilator(self, d, dim=False):
         r"""
         Return (if it exists) an annihilator of the boolean function of
         degree at most `d`, that is a Boolean polynomial `g` such that
@@ -989,9 +994,9 @@ cdef class BooleanFunction(SageObject):
 
         INPUT:
 
-        - ``d`` -- an integer;
-        - ``dim`` -- a Boolean (default: ``False``), if ``True``, return also
-          the dimension of the annihilator vector space.
+        - ``d`` -- integer
+        - ``dim`` -- boolean (default: ``False``); if ``True``, return also
+          the dimension of the annihilator vector space
 
         EXAMPLES::
 
@@ -1049,7 +1054,7 @@ cdef class BooleanFunction(SageObject):
         else:
             return res
 
-    def algebraic_immunity(self, annihilator = False):
+    def algebraic_immunity(self, annihilator=False):
         """
         Return the algebraic immunity of the Boolean function.
 
@@ -1272,7 +1277,7 @@ cdef class BooleanFunction(SageObject):
 
     def derivative(self, u):
         r"""
-        Return the derivative in direction of ``u``
+        Return the derivative in direction of ``u``.
 
         INPUT:
 

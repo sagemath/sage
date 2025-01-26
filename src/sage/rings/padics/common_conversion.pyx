@@ -1,9 +1,9 @@
 r"""
-The functions in this file are used in creating new p-adic elements.
+The functions in this file are used in creating new `p`-adic elements.
 
-When creating a p-adic element, the user can specify that the absolute
+When creating a `p`-adic element, the user can specify that the absolute
 precision be bounded and/or that the relative precision be bounded.
-Moreover, different p-adic parents impose their own bounds on the
+Moreover, different `p`-adic parents impose their own bounds on the
 relative or absolute precision of their elements.  The precision
 determines to what power of `p` the defining data will be reduced, but
 the valuation of the resulting element needs to be determined before
@@ -65,9 +65,9 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
 
     INPUT:
 
-    - ``x`` -- data defining a new p-adic element: a Python int, an
+    - ``x`` -- data defining a new `p`-adic element: a Python int, an
       Integer, Rational, an element of Zp or Qp with the same prime, a
-      PARI p-adic element, a list, a tuple, or an IntegerMod.
+      PARI `p`-adic element, a list, a tuple, or an IntegerMod.
 
     - a PowComputer associated to a `p`-adic ring, which determines
       the prime and the ramification degree.
@@ -106,7 +106,7 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
         k = mpz_remove(temp.value, mpq_numref((<Rational>x).value), prime_pow.prime.value)
         if k == 0:
             k = -mpz_remove(temp.value, mpq_denref((<Rational>x).value), prime_pow.prime.value)
-    elif isinstance(x, (list,tuple)):
+    elif isinstance(x, (list, tuple)):
         f = prime_pow.f
         if (e == 1 and len(x) > f) or (e != 1 and len(x) > e):
             # could reduce modulo the defining polynomial but that isn't currently supported
@@ -114,11 +114,11 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
         k = maxordp
         shift = 0
         for a in x:
-            if isinstance(a, (list,tuple)):
+            if isinstance(a, (list, tuple)):
                 if e == 1 or f == 1:
                     raise ValueError("nested lists not allowed for unramified and eisenstein extensions")
                 for b in a:
-                    if isinstance(b, (list,tuple)):
+                    if isinstance(b, (list, tuple)):
                         raise ValueError("list nesting too deep")
                     curterm = get_ordp(b, prime_pow)
                     k = min(k, curterm + shift, maxordp)
@@ -176,9 +176,9 @@ cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
 
     INPUT:
 
-    - ``x`` -- data defining a new p-adic element: an Integer,
+    - ``x`` -- data defining a new `p`-adic element: an Integer,
       Rational, an element of Zp or Qp with the same prime, a PARI
-      p-adic element, a list, a tuple, or an IntegerMod.
+      `p`-adic element, a list, a tuple, or an IntegerMod.
     - ``prime_pow`` -- the PowComputer for the ring into which ``x``
       is being converted.  This is used to determine the prime and the
       ramification degree.
@@ -191,13 +191,13 @@ cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
     cdef long k, shift, e = prime_pow.e
     cdef Integer prec
     cdef GEN pari_tmp
-    if isinstance(x, int) or isinstance(x, Integer) or isinstance(x, Rational):
+    if isinstance(x, (int, Integer, Rational)):
         return maxordp
-    elif isinstance(x, (list,tuple)):
+    elif isinstance(x, (list, tuple)):
         k = maxordp
         shift = 0
         for a in x:
-            if isinstance(a, (list,tuple)):
+            if isinstance(a, (list, tuple)):
                 for b in a:
                     curterm = get_preccap(b, prime_pow)
                     k = min(k, curterm + shift)
@@ -235,10 +235,10 @@ cdef long comb_prec(iprec, long prec) except? -10000:
 
     INPUT:
 
-    - ``iprec`` -- either infinity, an Integer, a Python int or
-      something that can be converted to an Integer.
+    - ``iprec`` -- infinity, integer or something that can be converted to an
+      integer
 
-    - ``prec`` -- a long.
+    - ``prec`` -- a long
     """
     if iprec is infinity: return prec
     cdef Integer intprec
@@ -258,21 +258,21 @@ cdef int _process_args_and_kwds(long *aprec, long *rprec, args, kwds, bint absol
     This function obtains values for absprec and relprec from a
     combination of positional and keyword arguments.
 
-    When creating a p-adic element, the user can pass in two arguments: ``absprec`` and ``relprec``.
+    When creating a `p`-adic element, the user can pass in two arguments: ``absprec`` and ``relprec``.
     In implementing morphisms to speed up conversion from Integers and Rationals,
     we need to determine ``absprec`` and ``relprec`` from the ``args`` and ``kwds`` arguments of
     ``_call_with_args``.  This function collects the code to do so.
 
     INPUT:
 
-    - ``args`` -- a tuple of positional arguments (at most two)
+    - ``args`` -- tuple of positional arguments (at most two)
 
-    - ``kwds`` -- a dictionary of keyword arguments (only
+    - ``kwds`` -- dictionary of keyword arguments (only
       ``'relprec'`` and ``'absprec'`` are used)
 
-    - ``absolute`` -- (boolean) True if the precision cap of the ring
-      is a cap on absolute precision, False if a cap on relative
-      precision.
+    - ``absolute`` -- boolean; ``True`` if the precision cap of the ring
+      is a cap on absolute precision, ``False`` if a cap on relative
+      precision
 
     - ``prime_pow`` -- a
       :class:`sage.rings.padics.pow_computer.PowComputer_class`
@@ -281,10 +281,10 @@ cdef int _process_args_and_kwds(long *aprec, long *rprec, args, kwds, bint absol
     OUTPUT:
 
     - ``aprec`` -- (first argument) the maximum absolute precision of
-      the resulting element.
+      the resulting element
 
     - ``rprec`` -- (second argument) the maximum relative precision of
-      the resulting element.
+      the resulting element
 
     - error status
     """
@@ -321,14 +321,14 @@ cdef inline long cconv_mpq_t_shared(mpz_t out, mpq_t x, long prec, bint absolute
 
     INPUT:
 
-    - ``out`` -- an ``mpz_t`` to store the output.
-    - ``x`` -- an ``mpq_t`` giving the integer to be converted.
-    - ``prec`` -- a long, giving the precision desired: absolute or
-      relative depending on the ``absolute`` input.
-    - ``absolute`` -- if False then extracts the valuation and returns
-                      it, storing the unit in ``out``; if True then
-                      just reduces ``x`` modulo the precision.
-    - ``prime_pow`` -- a PowComputer for the ring.
+    - ``out`` -- an ``mpz_t`` to store the output
+    - ``x`` -- an ``mpq_t`` giving the integer to be converted
+    - ``prec`` -- a long, giving the precision desired; absolute or
+      relative depending on the ``absolute`` input
+    - ``absolute`` -- if ``False`` then extracts the valuation and returns
+      it, storing the unit in ``out``; if ``True`` then just reduces ``x``
+      modulo the precision
+    - ``prime_pow`` -- a PowComputer for the ring
 
     OUTPUT:
 
@@ -362,10 +362,11 @@ cdef inline long cconv_mpq_t_shared(mpz_t out, mpq_t x, long prec, bint absolute
 
 cdef inline int cconv_mpq_t_out_shared(mpq_t out, mpz_t x, long valshift, long prec, PowComputer_class prime_pow) except -1:
     """
-    Converts the underlying `p`-adic element into a rational
+    Convert the underlying `p`-adic element into a rational.
 
-    - ``out`` -- gives a rational approximating the input.  Currently uses rational reconstruction but
-                 may change in the future to use a more naive method
+    - ``out`` -- gives a rational approximating the input. Currently uses
+      rational reconstruction but may change in the future to use a more naive
+      method
     - ``x`` -- an ``mpz_t`` giving the underlying `p`-adic element
     - ``valshift`` -- a long giving the power of `p` to shift `x` by
     -` ``prec`` -- a long, the precision of ``x``, used in rational reconstruction
@@ -392,18 +393,17 @@ cdef inline int cconv_shared(mpz_t out, x, long prec, long valshift, PowComputer
 
     INPUT:
 
-    - ``out`` -- an ``mpz_t`` to store the output.
+    - ``out`` -- an ``mpz_t`` to store the output
 
-    - ``x`` -- a Sage element that can be converted to a `p`-adic element.
+    - ``x`` -- a Sage element that can be converted to a `p`-adic element
 
-    - ``prec`` -- a long, giving the precision desired: absolute if
-                  `valshift = 0`, relative if `valshift != 0`.
+    - ``prec`` -- a long, giving the precision desired; absolute if
+      `valshift = 0`, relative if `valshift != 0`
 
     - ``valshift`` -- the power of the uniformizer to divide by before
-      storing the result in ``out``.
+      storing the result in ``out``
 
-    - ``prime_pow`` -- a PowComputer for the ring.
-
+    - ``prime_pow`` -- a PowComputer for the ring
     """
     if PyLong_Check(x):
         x = Integer(x)
@@ -456,14 +456,14 @@ cdef inline long cconv_mpz_t_shared(mpz_t out, mpz_t x, long prec, bint absolute
 
     INPUT:
 
-    - ``out`` -- an ``mpz_t`` to store the output.
-    - ``x`` -- an ``mpz_t`` giving the integer to be converted.
-    - ``prec`` -- a long, giving the precision desired: absolute or
-                  relative depending on the ``absolute`` input.
-    - ``absolute`` -- if False then extracts the valuation and returns
-                      it, storing the unit in ``out``; if True then
-                      just reduces ``x`` modulo the precision.
-    - ``prime_pow`` -- a PowComputer for the ring.
+    - ``out`` -- an ``mpz_t`` to store the output
+    - ``x`` -- an ``mpz_t`` giving the integer to be converted
+    - ``prec`` -- a long, giving the precision desired; absolute or
+      relative depending on the ``absolute`` input
+    - ``absolute`` -- if ``False`` then extracts the valuation and returns
+      it, storing the unit in ``out``; if ``True`` then just reduces ``x``
+      modulo the precision
+    - ``prime_pow`` -- a PowComputer for the ring
 
     OUTPUT:
 
@@ -483,15 +483,14 @@ cdef inline long cconv_mpz_t_shared(mpz_t out, mpz_t x, long prec, bint absolute
 
 cdef inline int cconv_mpz_t_out_shared(mpz_t out, mpz_t x, long valshift, long prec, PowComputer_class prime_pow) except -1:
     """
-    Converts the underlying `p`-adic element into an integer if
-    possible.
+    Convert the underlying `p`-adic element into an integer if possible.
 
     - ``out`` -- stores the resulting integer as an integer between 0
-      and `p^{prec + valshift}`.
-    - ``x`` -- an ``mpz_t`` giving the underlying `p`-adic element.
-    - ``valshift`` -- a long giving the power of `p` to shift `x` by.
-    -` ``prec`` -- a long, the precision of ``x``: currently not used.
-    - ``prime_pow`` -- a PowComputer for the ring.
+      and `p^{prec + valshift}`
+    - ``x`` -- an ``mpz_t`` giving the underlying `p`-adic element
+    - ``valshift`` -- a long giving the power of `p` to shift `x` by
+    -` ``prec`` -- a long, the precision of ``x``; currently not used
+    - ``prime_pow`` -- a PowComputer for the ring
     """
     if valshift == 0:
         mpz_set(out, x)

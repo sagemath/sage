@@ -178,7 +178,7 @@ class LieAlgebras(Category_over_base_ring):
 
         def extra_super_categories(self):
             """
-            Implements the fact that a finite dimensional Lie algebra over
+            Implement the fact that a finite dimensional Lie algebra over
             a finite ring is finite.
 
             EXAMPLES::
@@ -589,10 +589,11 @@ class LieAlgebras(Category_over_base_ring):
             zero = self.zero()
             return all(x._bracket_(y) == zero for x in G for y in G)
 
-        def is_commutative(self):
+        def is_commutative(self) -> bool:
             """
-            Return if ``self`` is commutative. This is equivalent to ``self``
-            being abelian.
+            Return if ``self`` is commutative.
+
+            This is equivalent to ``self`` being abelian.
 
             EXAMPLES::
 
@@ -645,7 +646,7 @@ class LieAlgebras(Category_over_base_ring):
 
             - ``X`` -- an element of ``self``
             - ``Y`` -- an element of ``self``
-            - ``prec`` -- an integer; the maximum length of Lie brackets to be
+            - ``prec`` -- integer; the maximum length of Lie brackets to be
               considered in the formula
 
             EXAMPLES:
@@ -781,7 +782,7 @@ class LieAlgebras(Category_over_base_ring):
 
             INPUT:
 
-            - ``options`` -- any keyword arguments accepted by :meth:`_tester`.
+            - ``options`` -- any keyword arguments accepted by :meth:`_tester`
 
             EXAMPLES:
 
@@ -820,7 +821,7 @@ class LieAlgebras(Category_over_base_ring):
 
             INPUT:
 
-            - ``options`` -- any keyword arguments accepted by :meth:`_tester`.
+            - ``options`` -- any keyword arguments accepted by :meth:`_tester`
 
             EXAMPLES:
 
@@ -852,7 +853,7 @@ class LieAlgebras(Category_over_base_ring):
 
             INPUT:
 
-            - ``options`` -- any keyword arguments accepted by :meth:`_tester`.
+            - ``options`` -- any keyword arguments accepted by :meth:`_tester`
 
             TESTS::
 
@@ -864,7 +865,7 @@ class LieAlgebras(Category_over_base_ring):
             By default, this method runs the tests only on the
             elements returned by ``self.some_elements()``::
 
-                sage: L = LieAlgebra(QQ, 3, 'x,y,z', representation="polynomial")       # needs sage.combinat sage.modules
+                sage: L = LieAlgebra(QQ, 3, 'x,y,z', representation='polynomial')       # needs sage.combinat sage.modules
                 sage: L.some_elements()                                                 # needs sage.combinat sage.modules
                 [x + y + z]
                 sage: L._test_distributivity()                                          # needs sage.combinat sage.modules
@@ -1043,7 +1044,7 @@ class LiftMorphism(Morphism):
         We skip the category test since this is currently not an element of
         a homspace::
 
-            sage: TestSuite(f).run(skip="_test_category")                               # needs sage.combinat sage.libs.singular sage.modules
+            sage: TestSuite(f).run(skip='_test_category')                               # needs sage.combinat sage.libs.singular sage.modules
         """
         Morphism.__init__(self, Hom(domain, codomain))
 

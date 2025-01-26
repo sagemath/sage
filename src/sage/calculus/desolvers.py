@@ -14,40 +14,40 @@ symbolic variables, for example with ``var("_C")``.
 
 Commands:
 
-- :func:`desolve` -- Compute the "general solution" to a 1st or 2nd order
-  ODE via Maxima.
+- :func:`desolve` -- compute the "general solution" to a 1st or 2nd order
+  ODE via Maxima
 
-- :func:`desolve_laplace` -- Solve an ODE using Laplace transforms via
-  Maxima. Initial conditions are optional.
+- :func:`desolve_laplace` -- solve an ODE using Laplace transforms via
+  Maxima. Initial conditions are optional
 
-- :func:`desolve_rk4` -- Solve numerically an IVP for one first order
-  equation, return list of points or plot.
+- :func:`desolve_rk4` -- solve numerically an IVP for one first order
+  equation, return list of points or plot
 
-- :func:`desolve_system_rk4` -- Solve numerically an IVP for a system of first
-  order equations, return list of points.
+- :func:`desolve_system_rk4` -- solve numerically an IVP for a system of first
+  order equations, return list of points
 
-- :func:`desolve_odeint` -- Solve numerically a system of first-order ordinary
+- :func:`desolve_odeint` -- solve numerically a system of first-order ordinary
   differential equations using :func:`~scipy:scipy.integrate.odeint` from
   the module :mod:`scipy:scipy.integrate`.
 
-- :func:`desolve_system` -- Solve a system of 1st order ODEs of any size using
-  Maxima. Initial conditions are optional.
+- :func:`desolve_system` -- solve a system of 1st order ODEs of any size using
+  Maxima. Initial conditions are optional
 
-- :func:`eulers_method` -- Approximate solution to a 1st order DE,
-  presented as a table.
+- :func:`eulers_method` -- approximate solution to a 1st order DE,
+  presented as a table
 
-- :func:`eulers_method_2x2` -- Approximate solution to a 1st order system
-  of DEs, presented as a table.
+- :func:`eulers_method_2x2` -- approximate solution to a 1st order system
+  of DEs, presented as a table
 
-- :func:`eulers_method_2x2_plot` -- Plot the sequence of points obtained
-  from Euler's method.
+- :func:`eulers_method_2x2_plot` -- plot the sequence of points obtained
+  from Euler's method
 
 The following functions require the optional package ``tides``:
 
-- :func:`desolve_mintides` -- Numerical solution of a system of 1st order ODEs via
-  the Taylor series integrator method implemented in TIDES.
+- :func:`desolve_mintides` -- numerical solution of a system of 1st order ODEs via
+  the Taylor series integrator method implemented in TIDES
 
-- :func:`desolve_tides_mpfr` -- Arbitrary precision Taylor series integrator implemented in TIDES.
+- :func:`desolve_tides_mpfr` -- arbitrary precision Taylor series integrator implemented in TIDES
 
 AUTHORS:
 
@@ -93,10 +93,10 @@ def fricas_desolve(de, dvar, ics, ivar):
 
         sage: x = var('x')
         sage: y = function('y')(x)
-        sage: desolve(diff(y,x) + y - 1, y, algorithm="fricas")             # optional - fricas
+        sage: desolve(diff(y,x) + y - 1, y, algorithm='fricas')             # optional - fricas
         _C0*e^(-x) + 1
 
-        sage: desolve(diff(y, x) + y == y^3*sin(x), y, algorithm="fricas")  # optional - fricas
+        sage: desolve(diff(y, x) + y == y^3*sin(x), y, algorithm='fricas')  # optional - fricas
         -1/5*(2*cos(x)*y(x)^2 + 4*sin(x)*y(x)^2 - 5)*e^(-2*x)/y(x)^2
 
     TESTS::
@@ -133,11 +133,11 @@ def fricas_desolve_system(des, dvars, ics, ivar):
         sage: y = function('y')(t)
         sage: de1 = diff(x,t) + y - 1 == 0
         sage: de2 = diff(y,t) - x + 1 == 0
-        sage: desolve_system([de1, de2], [x, y], algorithm="fricas")          # optional - fricas
+        sage: desolve_system([de1, de2], [x, y], algorithm='fricas')          # optional - fricas
         [x(t) == _C0*cos(t) + cos(t)^2 + _C1*sin(t) + sin(t)^2,
          y(t) == -_C1*cos(t) + _C0*sin(t) + 1]
 
-        sage: desolve_system([de1, de2], [x,y], [0,1,2], algorithm="fricas")  # optional - fricas
+        sage: desolve_system([de1, de2], [x,y], [0,1,2], algorithm='fricas')  # optional - fricas
         [x(t) == cos(t)^2 + sin(t)^2 - sin(t), y(t) == cos(t) + 1]
 
     TESTS::
@@ -154,7 +154,6 @@ def fricas_desolve_system(des, dvars, ics, ivar):
         sage: sol = fricas_desolve_system([de1,de2], [x,y], [0,1,-1], t)  # optional - fricas
         sage: sol                                                         # optional - fricas
         [x(t) == cos(t)^2 + sin(t)^2 + 2*sin(t), y(t) == -2*cos(t) + 1]
-
     """
     from sage.interfaces.fricas import fricas
     from sage.symbolic.ring import SR
@@ -178,7 +177,7 @@ def fricas_desolve_system(des, dvars, ics, ivar):
 
 
 def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
-            algorithm="maxima"):
+            algorithm='maxima'):
     r"""
     Solve a 1st or 2nd order linear ODE, including IVP and BVP.
 
@@ -473,20 +472,20 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
     order linear equations::
 
         sage: de = x^3*diff(y, x, 3) + x^2*diff(y, x, 2) - 2*x*diff(y, x) + 2*y - 2*x^4
-        sage: Y = desolve(de, y, algorithm="fricas"); Y               # optional - fricas
+        sage: Y = desolve(de, y, algorithm='fricas'); Y               # optional - fricas
         (2*x^3 - 3*x^2 + 1)*_C0/x + (x^3 - 1)*_C1/x
          + (x^3 - 3*x^2 - 1)*_C2/x + 1/15*(x^5 - 10*x^3 + 20*x^2 + 4)/x
 
     The initial conditions are then interpreted as `[x_0, y(x_0),
     y'(x_0), \ldots, y^(n)(x_0)]`::
 
-        sage: Y = desolve(de, y, ics=[1,3,7], algorithm="fricas"); Y  # optional - fricas
+        sage: Y = desolve(de, y, ics=[1,3,7], algorithm='fricas'); Y  # optional - fricas
         1/15*(x^5 + 15*x^3 + 50*x^2 - 21)/x
 
     FriCAS can also solve some non-linear equations::
 
         sage: de = diff(y, x) == y / (x+y*log(y))
-        sage: Y = desolve(de, y, algorithm="fricas"); Y               # optional - fricas
+        sage: Y = desolve(de, y, algorithm='fricas'); Y               # optional - fricas
         1/2*(log(y(x))^2*y(x) - 2*x)/y(x)
 
     TESTS:
@@ -674,12 +673,10 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
       `x`), which must be specified if there is more than one
       independent variable in the equation.
 
-    - ``ics`` -- a list of numbers representing initial conditions, (e.g.
+    - ``ics`` -- list of numbers representing initial conditions, (e.g.
       ``f(0)=1``, ``f'(0)=2`` corresponds to ``ics = [0,1,2]``)
 
-    OUTPUT:
-
-    Solution of the ODE as symbolic expression
+    OUTPUT: solution of the ODE as symbolic expression
 
     EXAMPLES::
 
@@ -744,7 +741,7 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
     # maxima("de:"+de._repr_()+"=0;")
     # if ics is not None:
     #     d = len(ics)
-    #     for i in range(0,d-1):
+    #     for i in range(d-1):
     #         ic = "atvalue(diff("+vars[1]+"("+vars[0]+"),"+str(vars[0])+","+str(i)+"),"+str(vars[0])+"="+str(ics[0])+","+str(ics[1+i])+")"
     #         maxima(ic)
     #
@@ -789,7 +786,7 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
     return soln
 
 
-def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
+def desolve_system(des, vars, ics=None, ivar=None, algorithm='maxima'):
     r"""
     Solve a system of any size of 1st order ODEs. Initial conditions
     are optional.
@@ -950,7 +947,7 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
     return soln
 
 
-def eulers_method(f, x0, y0, h, x1, algorithm="table"):
+def eulers_method(f, x0, y0, h, x1, algorithm='table'):
     r"""
     This implements Euler's method for finding numerically the
     solution of the 1st order ODE `y' = f(x,y)`, `y(a)=c`. The ``x``
@@ -976,7 +973,7 @@ def eulers_method(f, x0, y0, h, x1, algorithm="table"):
     ::
 
         sage: x,y = PolynomialRing(QQ,2,"xy").gens()
-        sage: eulers_method(5*x+y-5,0,1,1/2,1,algorithm="none")
+        sage: eulers_method(5*x+y-5,0,1,1/2,1,algorithm='none')
         [[0, 1], [1/2, -1], [1, -11/4], [3/2, -33/8]]
 
     ::
@@ -1008,12 +1005,12 @@ def eulers_method(f, x0, y0, h, x1, algorithm="table"):
 
     ::
 
-        sage: eulers_method(5*x+y-5,0,1,1/2,1,algorithm="none")
+        sage: eulers_method(5*x+y-5,0,1,1/2,1,algorithm='none')
         [[0, 1], [1/2, -1], [1, -11/4], [3/2, -33/8]]
 
     ::
 
-        sage: pts = eulers_method(5*x+y-5,0,1,1/2,1,algorithm="none")
+        sage: pts = eulers_method(5*x+y-5,0,1,1/2,1,algorithm='none')
         sage: P1 = list_plot(pts)                                                       # needs sage.plot
         sage: P2 = line(pts)                                                            # needs sage.plot
         sage: (P1 + P2).show()                                                          # needs sage.plot
@@ -1038,7 +1035,7 @@ def eulers_method(f, x0, y0, h, x1, algorithm="table"):
         return soln
 
 
-def eulers_method_2x2(f, g, t0, x0, y0, h, t1, algorithm="table"):
+def eulers_method_2x2(f, g, t0, x0, y0, h, t1, algorithm='table'):
     r"""
     This implements Euler's method for finding numerically the
     solution of the 1st order system of two ODEs
@@ -1066,7 +1063,7 @@ def eulers_method_2x2(f, g, t0, x0, y0, h, t1, algorithm="table"):
         sage: from sage.calculus.desolvers import eulers_method_2x2
         sage: t, x, y = PolynomialRing(QQ,3,"txy").gens()
         sage: f = x+y+t; g = x-y
-        sage: eulers_method_2x2(f,g, 0, 0, 0, 1/3, 1,algorithm="none")
+        sage: eulers_method_2x2(f,g, 0, 0, 0, 1/3, 1,algorithm='none')
         [[0, 0, 0], [1/3, 0, 0], [2/3, 1/9, 0], [1, 10/27, 1/27], [4/3, 68/81, 4/27]]
 
     ::
@@ -1217,7 +1214,6 @@ def desolve_rk4_determine_bounds(ics, end_points=None):
 
         sage: desolve_rk4_determine_bounds([0,2],[-2,4])
         (-2, 4)
-
     """
     if end_points is None:
         return ics[0], ics[0] + 10
@@ -1264,7 +1260,7 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
 
         - if end_points is [a,b] we integrate between ``min(ics[0], a)`` and ``max(ics[0], b)``
 
-      - ``step`` -- (default:0.1) the length of the step (positive number)
+      - ``step`` -- (default: 0.1) the length of the step (positive number)
 
       - ``output`` -- (default: ``'list'``) one of ``'list'``,
         ``'plot'``, ``'slope_field'`` (graph of the solution with slope field)
@@ -1305,7 +1301,7 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
 
     ALGORITHM:
 
-    4th order Runge-Kutta method. Wrapper for command ``rk`` in
+    `4`-th order Runge-Kutta method. Wrapper for command ``rk`` in
     Maxima's dynamics package.  Perhaps could be faster by using
     fast_float instead.
 
@@ -1361,14 +1357,10 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
             XMAX = XMIN
             YMAX = YMIN
             for s, t in sol:
-                if s > XMAX:
-                    XMAX = s
-                if s < XMIN:
-                    XMIN = s
-                if t > YMAX:
-                    YMAX = t
-                if t < YMIN:
-                    YMIN = t
+                XMAX = max(s, XMAX)
+                XMIN = min(s, XMIN)
+                YMAX = max(t, YMAX)
+                YMIN = min(t, YMIN)
             return plot_slope_field(de, (ivar, XMIN, XMAX), (dvar, YMIN, YMAX)) + R
 
     if not (isinstance(dvar, Expression) and dvar.is_symbol()):
@@ -1390,12 +1382,12 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
 def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1):
     r"""
     Solve numerically a system of first-order ordinary differential
-    equations using the 4th order Runge-Kutta method. Wrapper for
+    equations using the `4`-th order Runge-Kutta method. Wrapper for
     Maxima command ``rk``.
 
     INPUT:
 
-    input is similar to desolve_system and desolve_rk4 commands
+    Input is similar to ``desolve_system`` and ``desolve_rk4`` commands
 
     - ``des`` -- right hand sides of the system
 
@@ -1416,9 +1408,7 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
 
     - ``step`` -- (default: 0.1) the length of the step
 
-    OUTPUT:
-
-    Return a list of points.
+    OUTPUT: a list of points
 
     .. SEEALSO::
 
@@ -1442,7 +1432,7 @@ def desolve_system_rk4(des, vars, ics=None, ivar=None, end_points=None, step=0.1
 
     ALGORITHM:
 
-    4th order Runge-Kutta method. Wrapper for command ``rk`` in Maxima's
+    `4`-th order Runge-Kutta method. Wrapper for command ``rk`` in Maxima's
     dynamics package.  Perhaps could be faster by using ``fast_float``
     instead.
 
@@ -1503,19 +1493,20 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
 
     INPUT:
 
-    - ``des``  -- right hand sides of the system
+    - ``des`` -- right hand sides of the system
 
-    - ``ics``  -- initial conditions
+    - ``ics`` -- initial conditions
 
     - ``times`` -- a sequence of time points in which the solution must be found
 
     - ``dvars`` -- dependent variables. ATTENTION: the order must be the same as
       in ``des``, that means: ``d(dvars[i])/dt=des[i]``
 
-    - ``ivar`` -- independent variable, optional.
+    - ``ivar`` -- independent variable, optional
 
-    - ``compute_jac`` -- boolean. If True, the Jacobian of ``des`` is computed and
-      used during the integration of stiff systems. Default value is False.
+    - ``compute_jac`` -- boolean (default: ``False``); if ``True``, the
+      Jacobian of ``des`` is computed and used during the integration of stiff
+      systems
 
     Other Parameters (taken from the documentation of the
     :func:`~scipy:scipy.integrate.odeint` function from
@@ -1564,9 +1555,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
     - ``mxords`` : integer, (0: solver-determined)
       Maximum order to be allowed for the stiff (BDF) method.
 
-    OUTPUT:
-
-    Return a list with the solution of the system at each time in ``times``.
+    OUTPUT: a list with the solution of the system at each time in ``times``
 
     EXAMPLES:
 
@@ -1700,26 +1689,22 @@ def desolve_mintides(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16):
 
     INPUT:
 
-    - ``f`` -- symbolic function. Its first argument will be the independent
-      variable. Its output should be de derivatives of the dependent variables.
+    - ``f`` -- symbolic function; its first argument will be the independent
+      variable, . Its output should be de derivatives of the dependent variables.
 
-    - ``ics`` -- a list or tuple with the initial conditions.
+    - ``ics`` -- list or tuple with the initial conditions
 
-    - ``initial`` -- the starting value for the independent variable.
+    - ``initial`` -- the starting value for the independent variable
 
-    - ``final`` -- the final value for the independent value.
+    - ``final`` -- the final value for the independent value
 
-    - ``delta`` -- the size of the steps in the output.
+    - ``delta`` -- the size of the steps in the output
 
-    - ``tolrel`` -- the relative tolerance for the method.
+    - ``tolrel`` -- the relative tolerance for the method
 
-    - ``tolabs`` -- the absolute tolerance for the method.
+    - ``tolabs`` -- the absolute tolerance for the method
 
-
-    OUTPUT:
-
-    - A list  with the positions of the IVP.
-
+    OUTPUT: list with the positions of the IVP
 
     EXAMPLES:
 
@@ -1791,28 +1776,24 @@ def desolve_tides_mpfr(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16
 
     INPUT:
 
-    - ``f`` -- symbolic function. Its first argument will be the independent
+    - ``f`` -- symbolic function; its first argument will be the independent
       variable. Its output should be de derivatives of the dependent variables.
 
-    - ``ics`` -- a list or tuple with the initial conditions.
+    - ``ics`` -- list or tuple with the initial conditions
 
-    - ``initial`` -- the starting value for the independent variable.
+    - ``initial`` -- the starting value for the independent variable
 
-    - ``final`` -- the final value for the independent value.
+    - ``final`` -- the final value for the independent value
 
-    - ``delta`` -- the size of the steps in the output.
+    - ``delta`` -- the size of the steps in the output
 
-    - ``tolrel`` -- the relative tolerance for the method.
+    - ``tolrel`` -- the relative tolerance for the method
 
-    - ``tolabs`` -- the absolute tolerance for the method.
+    - ``tolabs`` -- the absolute tolerance for the method
 
-    - ``digits`` -- the digits of precision used in the computation.
+    - ``digits`` -- the digits of precision used in the computation
 
-
-    OUTPUT:
-
-    - A list  with the positions of the IVP.
-
+    OUTPUT: list with the positions of the IVP
 
     EXAMPLES:
 

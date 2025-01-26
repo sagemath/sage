@@ -38,11 +38,9 @@ def ascii_integer(B):
     INPUT:
 
     - ``B`` -- a non-empty binary string or a non-empty list of bits. The
-      number of bits in ``B`` must be 8.
+      number of bits in ``B`` must be 8
 
-    OUTPUT:
-
-    - The ASCII integer corresponding to the 8-bit block ``B``.
+    OUTPUT: the ASCII integer corresponding to the 8-bit block ``B``
 
     EXAMPLES:
 
@@ -95,17 +93,16 @@ def ascii_integer(B):
     return sum([L[7], L[6]*2, L[5]*4, L[4]*8,
                 L[3]*16, L[2]*32, L[1]*64, L[0]*128])
 
+
 def ascii_to_bin(A):
     r"""
     Return the binary representation of the ASCII string ``A``.
 
     INPUT:
 
-    - ``A`` -- a string or list of ASCII characters.
+    - ``A`` -- string or list of ASCII characters
 
-    OUTPUT:
-
-    - The binary representation of ``A``.
+    OUTPUT: the binary representation of ``A``
 
     ALGORITHM:
 
@@ -163,6 +160,7 @@ def ascii_to_bin(A):
     bin = BinaryStrings()
     return bin.encoding("".join(list(A)))
 
+
 def bin_to_ascii(B):
     r"""
     Return the ASCII representation of the binary string ``B``.
@@ -170,11 +168,9 @@ def bin_to_ascii(B):
     INPUT:
 
     - ``B`` -- a non-empty binary string or a non-empty list of bits. The
-      number of bits in ``B`` must be a multiple of 8.
+      number of bits in ``B`` must be a multiple of 8
 
-    OUTPUT:
-
-    - The ASCII string corresponding to ``B``.
+    OUTPUT: the ASCII string corresponding to ``B``
 
     ALGORITHM:
 
@@ -353,17 +349,16 @@ def has_blum_prime(lbound, ubound):
             return True
     return False
 
+
 def is_blum_prime(n):
     r"""
     Determine whether or not ``n`` is a Blum prime.
 
     INPUT:
 
-    - ``n`` a positive prime.
+    - ``n`` -- a positive prime
 
-    OUTPUT:
-
-    - ``True`` if ``n`` is a Blum prime; ``False`` otherwise.
+    OUTPUT: ``True`` if ``n`` is a Blum prime; ``False`` otherwise
 
     Let `n` be a positive prime. Then `n` is a Blum prime if `n` is
     congruent to 3 modulo 4, i.e. `n \equiv 3 \pmod{4}`.
@@ -392,15 +387,16 @@ def is_blum_prime(n):
     else:
         return False
 
+
 def least_significant_bits(n, k):
     r"""
     Return the ``k`` least significant bits of ``n``.
 
     INPUT:
 
-    - ``n`` -- an integer.
+    - ``n`` -- integer
 
-    - ``k`` -- a positive integer.
+    - ``k`` -- positive integer
 
     OUTPUT:
 
@@ -446,6 +442,7 @@ def least_significant_bits(n, k):
     """
     return [int(_) for _ in list(n.binary()[-k:])]
 
+
 def random_blum_prime(lbound, ubound, ntries=100):
     r"""
     A random Blum prime within the specified bounds.
@@ -470,9 +467,7 @@ def random_blum_prime(lbound, ubound, ntries=100):
       perform that many attempts at generating a random Blum prime. This
       might or might not result in a Blum prime.
 
-    OUTPUT:
-
-    - A random Blum prime within the specified lower and upper bounds.
+    OUTPUT: a random Blum prime within the specified lower and upper bounds
 
     .. NOTE::
 

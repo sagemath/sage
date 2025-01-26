@@ -37,6 +37,7 @@ from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModu
 from sage.modules.free_module_element import vector
 from sage.categories.modules_with_basis import ModulesWithBasis
 
+
 class SymmetricGroupRepresentation(Representation_abstract):
     """
     Mixin class for symmetric group (algebra) representations.
@@ -747,14 +748,15 @@ class SpechtModuleTableauxBasis(SpechtModule):
         B = self.basis()
         COB = matrix([b.lift().to_vector() for b in B]).T
         P, L, U = COB.LU()
-        # Since U is upper triangular, the nonzero entriesm must be in the
-        #   upper square portiion of the matrix
+        # Since U is upper triangular, the nonzero entries must be in the
+        # upper square portion of the matrix
         n = len(B)
 
         Uinv = U.matrix_from_rows(range(n)).inverse()
-        # This is a slight abuse as the codomain should be a module with a different
-        #    S_n action, but we only use it internally, so there isn't any problems
-        PLinv = (P*L).inverse()
+        # This is a slight abuse as the codomain should be a module
+        # with a different
+        #  S_n action, but we only use it internally, so there is no problem
+        PLinv = (P * L).inverse()
 
         def retraction(elt):
             vec = PLinv * elt.to_vector(order=self._support_order)
@@ -920,9 +922,9 @@ class SpechtModuleTableauxBasis(SpechtModule):
         G = self._semigroup
 
         def t(i, j):
-            ret = [i for i in range(1, SGA.n+1)]
-            ret[i-1] = j
-            ret[j-1] = i
+            ret = list(range(1, SGA.n + 1))
+            ret[i - 1] = j
+            ret[j - 1] = i
             return SGA(G(ret))
 
         # Construct the hyperplanes
@@ -1034,7 +1036,7 @@ class MaximalSpechtSubmodule(SymmetricGroupRepresentation, SubmoduleWithBasis):
 
 class SimpleModule(SymmetricGroupRepresentation, QuotientModuleWithBasis):
     r"""
-    The simgle `S_n`-module associated with a partition `\lambda`.
+    The simple `S_n`-module associated with a partition `\lambda`.
 
     The simple module `D^{\lambda}` is the quotient of the Specht module
     `S^{\lambda}` by its :class:`maximal submodule <MaximalSpechtSubmodule>`
@@ -1145,18 +1147,12 @@ def _to_diagram(D):
     if isinstance(D, Diagram):
         return D
     if D in _Partitions:
-        D = _Partitions(D).cells()
-    elif D in SkewPartitions():
-        D = SkewPartitions()(D).cells()
-    elif D in IntegerVectors():
-        cells = []
-        for i, row in enumerate(D):
-            for j in range(row):
-                cells.append((i, j))
-        D = cells
-    else:
-        D = [tuple(cell) for cell in D]
-    return D
+        return _Partitions(D).cells()
+    if D in SkewPartitions():
+        return SkewPartitions()(D).cells()
+    if D in IntegerVectors():
+        return [(i, j) for i, row in enumerate(D) for j in range(row)]
+    return [tuple(cell) for cell in D]
 
 
 def specht_module_spanning_set(D, SGA=None):
@@ -1165,8 +1161,8 @@ def specht_module_spanning_set(D, SGA=None):
 
     INPUT:
 
-    - ``D`` -- a list of cells ``(r,c)`` for row ``r`` and column ``c``
-    - ``SGA`` -- optional; a symmetric group algebra
+    - ``D`` -- list of cells ``(r,c)`` for row ``r`` and column ``c``
+    - ``SGA`` -- (optional) a symmetric group algebra
 
     EXAMPLES::
 

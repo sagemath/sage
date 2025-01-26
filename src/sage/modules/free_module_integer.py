@@ -32,6 +32,7 @@ TESTS::
 ##############################################################################
 
 from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.modules.free_module import FreeModule_submodule_with_basis_pid, FreeModule_ambient_pid
@@ -57,8 +58,8 @@ def IntegerLattice(basis, lll_reduce=True):
 
       - an element of an absolute order
 
-    - ``lll_reduce`` -- (default: ``True``) run LLL reduction on the basis
-      on construction.
+    - ``lll_reduce`` -- boolean (default: ``True``); run LLL reduction on the basis
+      on construction
 
     EXAMPLES:
 
@@ -171,7 +172,6 @@ def IntegerLattice(basis, lll_reduce=True):
         [      0       0       0       0       0 1048576       0       0]
         [      0       0       0       0       0       0 1048576       0]
         [      0       0       0       0       0       0       0 1048576]
-
     """
 
     if isinstance(basis, OrderElement_absolute):
@@ -218,7 +218,6 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         [ 2 -1  1  2 -3  2  2  1  0  1]
         sage: L.shortest_vector()
         (-1, 1, 2, -2, 0, 1, 0, -1, 2, 1)
-
     """
     def __init__(self, ambient, basis, check=True, echelonize=False,
                  echelonized_basis=None, already_echelonized=False,
@@ -233,21 +232,21 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         - ``basis`` -- either a list of vectors or a matrix over the integers
 
-        - ``check`` -- (default: ``True``) if ``False``, correctness of
-          the input will not be checked and type conversion may be omitted,
+        - ``check`` -- boolean (default: ``True``); if ``False``, correctness
+          of the input will not be checked and type conversion may be omitted,
           use with care
 
-        - ``echelonize`` -- (default:``False``) if ``True``, ``basis`` will be
+        - ``echelonize`` -- (default: ``False``) if ``True``, ``basis`` will be
           echelonized and the result will be used as the default basis of the
           constructed submodule
 
-        - `` echelonized_basis`` -- (default: ``None``) if not ``None``, must
+        - ``echelonized_basis`` -- (default: ``None``) if not ``None``, must
           be the echelonized basis spanning the same submodule as ``basis``
 
-        - ``already_echelonized`` -- (default: ``False``) if ``True``,
+        - ``already_echelonized`` -- boolean (default: ``False``); if ``True``,
           ``basis`` must be already given in the echelonized form
 
-        - ``lll_reduce`` -- (default: ``True``) run LLL reduction on the basis
+        - ``lll_reduce`` -- boolean (default: ``True``); run LLL reduction on the basis
           on construction
 
         EXAMPLES::
@@ -281,7 +280,6 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             [ 0 -1  1 -4  1 -1  1  0]
             [ 2  0 -3 -1  0 -3  0  0]
             [-1  0 -1  0 -3 -3  0  0]
-
         """
         basis = matrix(ZZ, basis)
         self._basis_is_LLL_reduced = False
@@ -357,9 +355,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         - ``**kwds`` -- passed through to
           :meth:`sage.matrix.matrix_integer_dense.Matrix_integer_dense.LLL`
 
-        OUTPUT:
-
-        An integer matrix which is an LLL-reduced basis for this lattice.
+        OUTPUT: integer matrix which is an LLL-reduced basis for this lattice
 
         EXAMPLES::
 
@@ -384,7 +380,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         basis = matrix(ZZ, len(basis), len(basis[0]), basis)
         basis.set_immutable()
 
-        if self.reduced_basis[0].norm() > basis[0].norm():
+        b0 = basis[0]
+        rb0 = self.reduced_basis[0]
+
+        if rb0.dot_product(rb0) > b0.dot_product(b0):
             self._reduced_basis = basis
         return basis
 
@@ -400,9 +399,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         - ``*kwds`` -- passed through to
           :meth:`sage.matrix.matrix_integer_dense.Matrix_integer_dense.BKZ`
 
-        OUTPUT:
-
-        An integer matrix which is a BKZ-reduced basis for this lattice.
+        OUTPUT: integer matrix which is a BKZ-reduced basis for this lattice
 
         EXAMPLES::
 
@@ -463,9 +460,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         - ``*kwds`` -- passed through to :meth:`BKZ`
 
-        OUTPUT:
-
-        An integer matrix which is a HKZ-reduced basis for this lattice.
+        OUTPUT: integer matrix which is a HKZ-reduced basis for this lattice
 
         EXAMPLES::
 
@@ -484,9 +479,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         r"""
         Return `vol(L)` which is `\sqrt{\det(B \cdot B^T)}` for any basis `B`.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -505,9 +498,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         Return `|\det(G)|`, i.e. the absolute value of the determinant of the
         Gram matrix `B \cdot B^T` for any basis `B`.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -522,9 +513,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         """
         Return ``True`` if this lattice is unimodular.
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -538,25 +527,23 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         return self.volume() == 1
 
     @cached_method
-    def shortest_vector(self, update_reduced_basis=True, algorithm="fplll", *args, **kwds):
+    def shortest_vector(self, update_reduced_basis=True, algorithm='fplll', *args, **kwds):
         r"""
         Return a shortest vector.
 
         INPUT:
 
-        - ``update_reduced_basis`` -- (default: ``True``) set this flag if
-          the found vector should be used to improve the basis
+        - ``update_reduced_basis`` -- boolean (default: ``True``); set this
+          flag if the found vector should be used to improve the basis
 
-        - ``algorithm`` -- (default: ``"fplll"``) either ``"fplll"`` or
-          ``"pari"``
+        - ``algorithm`` -- (default: ``'fplll'``) either ``'fplll'`` or
+          ``'pari'``
 
         - ``*args`` -- passed through to underlying implementation
 
         - ``**kwds`` -- passed through to underlying implementation
 
-        OUTPUT:
-
-        A shortest non-zero vector for this lattice.
+        OUTPUT: a shortest nonzero vector for this lattice
 
         EXAMPLES::
 
@@ -573,11 +560,11 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: min(v.norm().n() for v in L.reduced_basis)                            # needs sage.symbolic
             6.03890756700000e10
 
-            sage: L.shortest_vector(algorithm="pari").norm().n()                        # needs sage.symbolic
+            sage: L.shortest_vector(algorithm='pari').norm().n()                        # needs sage.symbolic
             3.74165738677394
 
             sage: L = IntegerLattice(A, lll_reduce=True)
-            sage: L.shortest_vector(algorithm="pari").norm().n()                        # needs sage.symbolic
+            sage: L.shortest_vector(algorithm='pari').norm().n()                        # needs sage.symbolic
             3.74165738677394
         """
         if algorithm == "pari":
@@ -611,9 +598,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         - ``w`` -- a vector
 
-        OUTPUT:
-
-        Nothing is returned but the internal state is modified.
+        OUTPUT: nothing is returned but the internal state is modified
 
         EXAMPLES::
 
@@ -641,9 +626,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         - ``radius`` -- (default: automatic determination) radius of ball
           containing considered vertices
 
-        OUTPUT:
-
-        The Voronoi cell as a Polyhedron instance.
+        OUTPUT: the Voronoi cell as a Polyhedron instance
 
         The result is cached so that subsequent calls to this function
         return instantly.
@@ -702,9 +685,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         """
         Compute the embedded vectors inducing the Voronoi cell.
 
-        OUTPUT:
-
-        The list of Voronoi relevant vectors.
+        OUTPUT: the list of Voronoi relevant vectors
 
         EXAMPLES::
 
@@ -744,9 +725,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         - ``t`` -- the target vector to compute the closest vector to
 
-        OUTPUT:
-
-        The vector in the lattice closest to ``t``.
+        OUTPUT: the vector in the lattice closest to ``t``
 
         EXAMPLES::
 
@@ -806,16 +785,11 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             i -= 1
         return t - t_new
 
-    def approximate_closest_vector(self, t, delta=None, *args, **kwargs):
+    def approximate_closest_vector(self, t, delta=None, algorithm='embedding', *args, **kwargs):
         r"""
-        Compute a vector `w` such that
-
-        .. MATH::
-
-            |t-w|<(\frac{1}{\delta-\frac{1}{4}})^{d/2}|t-u|
-
-        where `u` is the closest lattice point to `t`, `\delta` is the LLL
-        reduction parameter, and `d` is the dimension of the lattice.
+        Compute a vector `w` in this lattice which is close to the target vector `t`.
+        The ratio `\frac{|t-w|}{|t-u|}`, where `u` is the closest lattice vector to `t`,
+        is exponential in the dimension of the lattice.
 
         This will check whether the basis is already `\delta`-LLL-reduced
         and otherwise it will run LLL to make sure that it is. For more
@@ -827,13 +801,23 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         - ``delta`` -- (default: ``0.99``) the LLL reduction parameter
 
+        - ``algorithm`` -- string (default: 'embedding'):
+
+          - ``'embedding'`` -- embeds the lattice in a d+1 dimensional space
+            and seeks short vectors using LLL. This calls LLL twice but is
+            usually still quick.
+
+          - ``'nearest_plane'`` -- uses the "NEAREST PLANE" algorithm from [Bab86]_
+
+          - ``'rounding_off'`` -- uses the "ROUNDING OFF" algorithm from [Bab86]_.
+            This yields slightly worse results than the other algorithms but is
+            at least faster than ``'nearest_plane'``.
+
         - ``*args`` -- passed through to :meth:`LLL`
 
         - ``**kwds`` -- passed through to :meth:`LLL`
 
-        OUTPUT:
-
-        The vector `w` described above.
+        OUTPUT: the vector `w` described above
 
         EXAMPLES::
 
@@ -849,30 +833,62 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             ....:                     [0, 0, 101, 0], [-28, 39, 45, 1]], lll_reduce=False)
             sage: t = vector([1337]*4)
             sage: L.approximate_closest_vector(t, delta=0.26)
-            (1348, 1340, 1383, 1337)
+            (1331, 1324, 1349, 1334)
             sage: L.approximate_closest_vector(t, delta=0.99)
             (1326, 1349, 1339, 1345)
             sage: L.closest_vector(t)
             (1326, 1349, 1339, 1345)
 
-        ALGORITHM:
-
-        Uses the algorithm from [Bab86]_.
+            sage: # Checking that the other algorithms work
+            sage: L.approximate_closest_vector(t, algorithm='nearest_plane')
+            (1326, 1349, 1339, 1345)
+            sage: L.approximate_closest_vector(t, algorithm='rounding_off')
+            (1331, 1324, 1349, 1334)
         """
         if delta is None:
             delta = ZZ(99)/ZZ(100)
 
-        # bound checks on delta are performed in is_LLL_reduced
+        # Bound checks on delta are performed in is_LLL_reduced
         if not self._reduced_basis.is_LLL_reduced(delta=delta):
             self.LLL(*args, delta=delta, **kwargs)
 
         B = self._reduced_basis
-        G = B.gram_schmidt()[0]
         t = vector(t)
 
-        b = t
-        for i in reversed(range(G.nrows())):
-            b -= B[i] * ((b * G[i]) / (G[i] * G[i])).round("even")
-        return (t - b).change_ring(ZZ)
+        if algorithm == 'embedding':
+            L = matrix(QQ, B.nrows()+1, B.ncols()+1)
+            L.set_block(0, 0, B)
+            L.set_block(B.nrows(), 0, matrix(t))
+            weight = (B[-1]*B[-1]).isqrt()+1  # Norm of the largest vector
+            L[-1, -1] = weight
 
-    babai = approximate_closest_vector
+            # The vector should be the last row but we iterate just in case
+            for v in reversed(L.LLL(delta=delta, *args, **kwargs).rows()):
+                if abs(v[-1]) == weight:
+                    return t - v[:-1]*v[-1].sign()
+            raise ValueError('No suitable vector found in basis.'
+                             'This is a bug, please report it.')
+
+        elif algorithm == 'nearest_plane':
+            G = B.gram_schmidt()[0]
+
+            b = t
+            for i in reversed(range(G.nrows())):
+                b -= B[i] * ((b * G[i]) / (G[i] * G[i])).round("even")
+            return (t - b).change_ring(ZZ)
+
+        elif algorithm == 'rounding_off':
+            # t = x*B might not have a solution over QQ so we instead solve
+            # the system x*B*B^T = t*B^T which will be the "closest" solution
+            # if it does not exist, same effect as using the psuedo-inverse
+            sol = (B*B.T).solve_left(t*B.T)
+            return vector(ZZ, [QQ(x).round('even') for x in sol])*B
+
+        else:
+            raise ValueError("algorithm must be one of 'embedding', 'nearest_plane' or 'rounding_off'")
+
+    def babai(self, *args, **kwargs):
+        """
+        Alias for :meth:`approximate_closest_vector`.
+        """
+        return self.approximate_closest_vector(*args, **kwargs)

@@ -102,7 +102,7 @@ def integer_mod_ring():
 
 def padic_field():
     """
-    Return a random p-adic field modulo n with p at most 10000
+    Return a random `p`-adic field modulo n with p at most 10000
     and precision between 10 and 100.
 
     EXAMPLES::
@@ -344,12 +344,10 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
 
     INPUT:
 
-    - level -- (default: MAX_LEVEL); controls the types of rings to use
-    - trials -- A positive integer (default 1); the number of trials
-      to run.
-    - seed -- the random seed to use; if not specified, uses a truly
-      random seed.
-    - print_seed -- If True (default: ``False``), prints the random seed chosen.
+    - ``level`` -- (default: ``MAX_LEVEL``) controls the types of rings to use
+    - ``trials`` -- a positive integer (default: 1); the number of trials to run
+    - ``seed`` -- the random seed to use; if not specified, uses a truly random seed
+    - ``print_seed`` -- if ``True`` (default: ``False``), prints the random seed chosen
 
     EXAMPLES::
 
@@ -395,12 +393,10 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
 
     INPUT:
 
-    - ``level`` -- (default: ``MAX_LEVEL``); controls the types of rings to use
-    - ``trials`` -- A positive integer (default: 1); the number of trials
-      to run.
-    - ``seed`` -- the random seed to use; if not specified, uses a truly
-      random seed.
-    - ``print_seed`` -- If ``True`` (default: ``False``), prints the random seed chosen.
+    - ``level`` -- (default: ``MAX_LEVEL``) controls the types of rings to use
+    - ``trials`` -- positive integer (default: 1); the number of trials to run
+    - ``seed`` -- the random seed to use; if not specified, uses a truly random seed
+    - ``print_seed`` -- if ``True`` (default: ``False``), prints the random seed chosen
 
     EXAMPLES::
 
@@ -486,7 +482,6 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
         sage: test_karatsuba_multiplication(ZZ, 10000, 10000,           # long time
         ....:                               ref_mul=lambda f,g: f*g,
         ....:                               base_ring_random_elt_args=[100000])
-
     """
     from sage.misc.prandom import randint
     from sage.misc.sage_input import sage_input
@@ -506,4 +501,3 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
             msg += "and\n"
             msg += f"{sage_input(g)}"
             raise ValueError(msg)
-    return

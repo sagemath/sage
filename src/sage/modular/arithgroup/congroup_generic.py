@@ -117,7 +117,7 @@ def CongruenceSubgroup_constructor(*args):
 
 def is_CongruenceSubgroup(x):
     r"""
-    Return True if x is of type CongruenceSubgroup.
+    Return ``True`` if x is of type CongruenceSubgroup.
 
     Note that this may be False even if `x` really is a congruence subgroup --
     it tests whether `x` is "obviously" congruence, i.e.~whether it has a
@@ -169,7 +169,7 @@ class CongruenceSubgroupBase(ArithmeticSubgroup):
 
     def _an_element_(self):
         r"""
-        Return an element of self (mainly for use by the test suite).
+        Return an element of ``self`` (mainly for use by the test suite).
 
         EXAMPLES::
 
@@ -318,7 +318,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
 
     def __reduce__(self):
         r"""
-        Data defining self (for pickling).
+        Data defining ``self`` (for pickling).
 
         EXAMPLES::
 
@@ -332,9 +332,9 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
         """
         return CongruenceSubgroup_constructor, (self.image_mod_n(),)
 
-    def _contains_sl2(self, a,b,c,d):
+    def _contains_sl2(self, a, b, c, d):
         r"""
-        Test whether ``[a,b;c,d]`` is an element of self.
+        Test whether ``[a,b;c,d]`` is an element of ``self``.
 
         EXAMPLES::
 
@@ -369,7 +369,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
 
     def to_even_subgroup(self):
         r"""
-        Return the smallest even subgroup of `SL(2, \ZZ)` containing self.
+        Return the smallest even subgroup of `SL(2, \ZZ)` containing ``self``.
 
         EXAMPLES::
 
@@ -392,7 +392,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -403,7 +403,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
 
     def index(self):
         r"""
-        Return the index of self in the full modular group. This is equal to
+        Return the index of ``self`` in the full modular group. This is equal to
         the index in `SL(2, \ZZ / N\ZZ)` of the image of this group modulo
         `\Gamma(N)`.
 
@@ -416,7 +416,8 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
 
     def image_mod_n(self):
         r"""
-        Return the subgroup of `SL(2, \ZZ / N\ZZ)` of which this is the preimage, where `N` is the level of self.
+        Return the subgroup of `SL(2, \ZZ / N\ZZ)` of which this is the
+        preimage, where `N` is the level of ``self``.
 
         EXAMPLES::
 
@@ -430,6 +431,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
             True
         """
         return self.__G
+
 
 class CongruenceSubgroup(CongruenceSubgroupFromGroup):
     r"""
@@ -453,7 +455,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
         """
         raise NotImplementedError
 
-    def __init__(self,*args, **kwds):
+    def __init__(self, *args, **kwds):
         r"""
         Bypass the init function of the CongruenceSubgroupFromGroup class.
 
@@ -462,11 +464,11 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
             sage: sage.modular.arithgroup.congroup_generic.CongruenceSubgroup(5) # indirect doctest
             Generic congruence subgroup of level 5
         """
-        return CongruenceSubgroupBase.__init__(self, *args, **kwds)
+        CongruenceSubgroupBase.__init__(self, *args, **kwds)
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         NOTE: This function should be overridden by all subclasses.
 
@@ -480,7 +482,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
     def modular_symbols(self, sign=0, weight=2, base_ring=QQ):
         """
         Return the space of modular symbols of the specified weight and sign
-        on the congruence subgroup self.
+        on the congruence subgroup ``self``.
 
         EXAMPLES::
 
@@ -500,7 +502,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
     def modular_abelian_variety(self):
         """
         Return the modular abelian variety corresponding to the congruence
-        subgroup self.
+        subgroup ``self``.
 
         EXAMPLES::
 
@@ -517,7 +519,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
     def _new_group_from_level(self, level):
         r"""
         Return a new group of the same type (Gamma0, Gamma1, or
-        GammaH) as self of the given level. In the case that self is of type
+        GammaH) as ``self`` of the given level. In the case that ``self`` is of type
         GammaH, we take the largest H inside `(\ZZ/ \text{level}\ZZ)^\times`
         which maps to H, namely its inverse image under the natural reduction
         map.
@@ -567,6 +569,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
                 return GammaH(level, [ h % level for h in H ])
         else:
             raise NotImplementedError
+
 
 def _minimize_level(G):
     r"""

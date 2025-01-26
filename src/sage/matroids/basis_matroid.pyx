@@ -133,7 +133,6 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         2
         sage: M1.is_valid()
         False
-
     """
     def __init__(self, M=None, groundset=None, bases=None, nonbases=None, rank=None):
         """
@@ -299,7 +298,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
     # a function that is very efficient for this class
 
-    cpdef bint _is_basis(self, frozenset X):
+    cpdef bint _is_basis(self, frozenset X) noexcept:
         """
         Test if input is a basis.
 
@@ -845,7 +844,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         INPUT:
 
-        - ``other`` -- BasisMatroid
+        - ``other`` -- basisMatroid
         - ``morphism`` -- dictionary with sends each element of the
           groundset of this matroid to a distinct element of the groundset
           of ``other``
@@ -956,7 +955,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         if not isinstance(other, BasisMatroid):
             return self.isomorphism(BasisMatroid(other))
         if self is other:
-            return {e:e for e in self.groundset()}
+            return {e: e for e in self.groundset()}
         if len(self) != len(other):
             return None
         if self.full_rank() != other.full_rank():

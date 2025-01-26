@@ -1,1 +1,2 @@
 lrslib
+lrslib-devel

@@ -208,7 +208,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             return self.imag()
         raise IndexError("i must be between 0 and 1.")
 
-    def __reduce__( self ):
+    def __reduce__(self):
         """
         Pickling support.
 
@@ -249,15 +249,15 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         if not self.real().is_zero():
             s = self.real().str(base=base, style=style)
         if not self.imag().is_zero():
-            y  =  self.imag()
-            if s!="":
+            y  = self.imag()
+            if s:
                 if y < 0:
-                    s = s+" - "
+                    s += " - "
                     y = -y
                 else:
-                    s = s+" + "
-            s = s+"%s*I"%y.str(base=base, style=style)
-        if len(s) == 0:
+                    s += " + "
+            s += "%s*I" % y.str(base=base, style=style)
+        if not s:
             s = "0"
         return s
 
@@ -271,7 +271,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         INPUT:
 
         - ``parent`` -- :class:`~sage.rings.real_mpfr.RealField_class`,
-          target parent.
+          target parent
 
         EXAMPLES::
 
@@ -321,7 +321,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         g = polygon2d([(x0, y0), (x1, y0), (x1, y1), (x0, y1), (x0, y0)],
                 thickness=pointsize/4, **kwds)
         # Nearly empty polygons don't show up.
-        g += self.center().plot(pointsize= pointsize, **kwds)
+        g += self.center().plot(pointsize=pointsize, **kwds)
         return g
 
     def _latex_(self):
@@ -532,7 +532,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
     def overlaps(self, ComplexIntervalFieldElement other):
         """
-        Return ``True`` if ``self`` and other are intervals with at least
+        Return ``True`` if ``self`` and ``other`` are intervals with at least
         one value in common.
 
         EXAMPLES::
@@ -799,16 +799,16 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             sage: b = CIF(-1, (2, 3))
             sage: c = a/b
             sage: c.endpoints()
-            (0.200000000000000 - 2.00000000000000*I,
-             2.30000000000000 - 0.500000000000000*I,
-             0.200000000000000 - 0.500000000000000*I,
-             2.30000000000000 - 2.00000000000000*I)
+            (0.500000000000000 - 1.60000000000000*I,
+             1.50000000000000 - 0.600000000000000*I,
+             0.500000000000000 - 0.600000000000000*I,
+             1.50000000000000 - 1.60000000000000*I)
             sage: c = b/a
             sage: c.endpoints()
-            (0.100000000000000 + 0.250000000000000*I,
-             1.15000000000000 + 1.00000000000000*I,
-             0.100000000000000 + 1.00000000000000*I,
-             1.15000000000000 + 0.250000000000000*I)
+            (0.246153846153846 + 0.317647058823529*I,
+             0.841176470588236 + 0.761538461538462*I,
+             0.246153846153846 + 0.761538461538462*I,
+             0.841176470588236 + 0.317647058823529*I)
         """
         return self * right.__invert__()
 
@@ -854,19 +854,19 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         Note that ``x^2`` is not the same as ``x*x``::
 
             sage: a = CIF(RIF(-1,1))
-            sage: print((a^2).str(style="brackets"))
+            sage: print((a^2).str(style='brackets'))
             [0.0000000000000000 .. 1.0000000000000000]
-            sage: print((a*a).str(style="brackets"))
+            sage: print((a*a).str(style='brackets'))
             [-1.0000000000000000 .. 1.0000000000000000]
             sage: a = CIF(0, RIF(-1,1))
-            sage: print((a^2).str(style="brackets"))
+            sage: print((a^2).str(style='brackets'))
             [-1.0000000000000000 .. -0.0000000000000000]
-            sage: print((a*a).str(style="brackets"))
+            sage: print((a*a).str(style='brackets'))
             [-1.0000000000000000 .. 1.0000000000000000]
             sage: a = CIF(RIF(-1,1), RIF(-1,1))
-            sage: print((a^2).str(style="brackets"))
+            sage: print((a^2).str(style='brackets'))
             [-1.0000000000000000 .. 1.0000000000000000] + [-2.0000000000000000 .. 2.0000000000000000]*I
-            sage: print((a*a).str(style="brackets"))
+            sage: print((a*a).str(style='brackets'))
             [-2.0000000000000000 .. 2.0000000000000000] + [-2.0000000000000000 .. 2.0000000000000000]*I
 
         We can take very high powers::
@@ -876,7 +876,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             sage: s = RealField(27, rnd="RNDZ")(1/2)^(1/3)
             sage: a = CIF(RIF(-s/2,s/2), RIF(-s, s))
             sage: r = a^(10^10000)
-            sage: print(r.str(style="brackets"))
+            sage: print(r.str(style='brackets'))
             [-2.107553304e1028 .. 2.107553304e1028] + [-2.107553304e1028 .. 2.107553304e1028]*I
 
         TESTS::
@@ -973,13 +973,13 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
     def _interface_init_(self, I=None):
         """
-        Raise a ``TypeError``.
+        Raise a :exc:`TypeError`.
 
         This function would return the string representation of ``self``
         that makes sense as a default representation of a complex
         interval in other computer algebra systems. But, most other
         computer algebra systems do not support interval arithmetic,
-        so instead we just raise a ``TypeError``.
+        so instead we just raise a :exc:`TypeError`.
 
         Define the appropriate ``_cas_init_`` function if there is a
         computer algebra system you would like to support.
@@ -992,7 +992,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             ...
             TypeError
 
-        Here a conversion to Maxima happens, which results in a ``TypeError``::
+        Here a conversion to Maxima happens, which results in a :exc:`TypeError`::
 
             sage: a = CIF(2.3)
             sage: maxima(a)                                                             # needs sage.symbolic
@@ -1001,7 +1001,6 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             TypeError
         """
         raise TypeError
-
 
     def _sage_input_(self, sib, coerce):
         r"""
@@ -1135,10 +1134,10 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             sage: a = CIF((1, 2), (3, 4))
             sage: c = a.__invert__()
             sage: c.endpoints()
-            (0.0500000000000000 - 0.400000000000000*I,
-             0.200000000000000 - 0.150000000000000*I,
-             0.0500000000000000 - 0.150000000000000*I,
-             0.200000000000000 - 0.400000000000000*I)
+            (0.0588235294117647 - 0.300000000000000*I,
+             0.153846153846154 - 0.200000000000000*I,
+             0.0588235294117647 - 0.200000000000000*I,
+             0.153846153846154 - 0.300000000000000*I)
 
         TESTS:
 
@@ -1155,7 +1154,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         Test that the bug reported in :issue:`25414` has been fixed::
 
             sage: 1 / CIF(RIF(-1 ,1), 0)
-            [-infinity .. +infinity] + [0.0000000000000000 .. +infinity]*I
+            [.. NaN ..] + [.. NaN ..]*I
 
         Test that the bug reported in :issue:`37927` is fixed::
 
@@ -1166,24 +1165,161 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         - [RL1971]_
         """
-        cdef ComplexIntervalFieldElement x
+        cdef ComplexIntervalFieldElement result
         x = self._new()
 
-        cdef mpfi_t t0, t1
-        mpfi_init2(t0, self._prec)
-        mpfi_init2(t1, self._prec)
+        if mpfi_nan_p(self.__re) or mpfi_nan_p(self.__im):
+            # Return NaN if any input is NaN
+            return x
 
-        mpfi_sqr(t0, self.__re)
-        mpfi_sqr(t1, self.__im)
+        if mpfi_has_zero(self.__re) and mpfi_has_zero(self.__im):
+            # Return NaN when dividing by (a complex interval containing) zero.
+            return x
 
-        mpfi_add(t0, t0, t1)         # now t0 is the norm
-        mpfi_div(x.__re, self.__re, t0)   #     x.__re = self.__re/norm
+        # The algorithm roughly follows [RL1971].
+        #
+        # However, we deviate from [RL1971] significantly and the
+        # documentation here is self-contained and hopefully easier
+        # to follow than [RL1971]. There is a visualization at:
+        # https://www.shadertoy.com/view/M3VXWG
+        #
+        # Note that [RL1971] has several mistakes. For example, when analyzing
+        # the second case where y1 < 0 and y2 > 0 (and x1 >= 0 from earlier
+        # assumptions), they have a subcase "y_1 >= x_1". That inequality can
+        # never be true given the earlier assumptions and should be
+        # "-y_1 >= x_1".
 
-        mpfi_neg(t1, self.__im)
-        mpfi_div(x.__im, t1, t0)  #     x.__im = -self.__im/norm
+        # To maximize symmetry considerations, we actually compute the
+        # circle inversion (z |-> conjugate(1/z)) and conjugate at the end.
 
-        mpfi_clear(t0)
-        mpfi_clear(t1)
+        # Let the input be the complex interval [xmin, xmax] + [ymin, ymax] * I.
+        #
+        # We say that the complex interval is in standard form if either:
+        # (I)  It is contained within the first quadrant. Furthermore its
+        #      left bottom corner is on or below the north east diagonal.
+        #      That is 0 <= ymin <= xmin. Or:
+        # (II) It is contained within the first and fourth quadrant crossing
+        #      the (positive) x-Axis. Furthermore, its midpoint is above the
+        #      x-Axis.
+        #      That is 0 < xmin; ymin < 0 < ymax and |ymin| <= |ymax|.
+        #
+        # Since we already guarded against the input containing zero, we always
+        # can and will bring it into standard form by negating or swapping the
+        # real and imaginary part.
+
+        cdef mpfr_t xmin, xmax, ymin, ymax
+        mpfr_init2(xmin, self._prec)
+        mpfr_init2(xmax, self._prec)
+        mpfr_init2(ymin, self._prec)
+        mpfr_init2(ymax, self._prec)
+
+        mpfi_get_left(xmin, self.__re)
+        mpfi_get_right(xmax, self.__re)
+        mpfi_get_left(ymin, self.__im)
+        mpfi_get_right(ymax, self.__im)
+
+        # Record what mirror symmetries we applied to undo them later.
+        #
+        # We assume that we flip about the coordinate axes before flipping
+        # about the north east diagonal.
+        cdef bint negated_x = False
+        cdef bint negated_y = False
+        cdef bint swapped_xy = False
+
+        # Record whether we are in case (II).
+        cdef bint crosses_x_axis = False
+
+        ########################################################################
+        # Now bring the input into standard form.
+
+        if mpfr_sgn(ymax) <= 0:
+            # Interval below (and possibly touching) x-Axis, flip about it.
+            _negate_interval(ymin, ymax)
+            negated_y = True
+        elif mpfr_sgn(ymin) < 0:
+            # Interval crosses x-Axis
+            crosses_x_axis = True
+        # else: Interval is above x-Axis
+
+        # Negating interval for y and swapping do not commute, so
+        # order of the above and below if-block is important.
+
+        if mpfr_sgn(xmax) <= 0:
+            # Interval left of (and possibly touching) y-Axis, flip about it.
+            _negate_interval(xmin, xmax)
+            negated_x = True
+        elif mpfr_sgn(xmin) < 0:
+            # Interval crosses y-Axis, swap to make it cross x-Axis instead.
+            mpfr_swap(xmin, ymin)
+            mpfr_swap(xmax, ymax)
+            swapped_xy = True
+            crosses_x_axis = True
+        # else: Interval is right of y-Axis
+
+        if crosses_x_axis:
+            # Case (II). Ensure standard condition |ymax| >= |ymin|
+            if mpfr_cmpabs(ymin, ymax) > 0:
+                _negate_interval(ymin, ymax)
+                # Note that we negate after potentially swapping.
+                # Determine what we should have negated before swapping instead.
+                if swapped_xy:
+                    # negated_x cannot be True already.
+                    negated_x = True
+                else:
+                    # negated_y cannot be True already.
+                    negated_y = True
+        else:
+            # Case (I). Ensure standard condition |ymin| <= |xmin|.
+            if mpfr_cmp(xmin, ymin) < 0:
+                mpfr_swap(xmin, ymin)
+                mpfr_swap(xmax, ymax)
+                swapped_xy = True
+
+        ########################################################################
+        # Apply circle inversion
+
+        # Result will be [amin, amax] + [bmin, bmax] * I.
+        cdef mpfr_t amin, amax, bmin, bmax
+
+        mpfr_init2(amin, self._prec)
+        mpfr_init2(amax, self._prec)
+        mpfr_init2(bmin, self._prec)
+        mpfr_init2(bmax, self._prec)
+
+        _circle_invert_standard(
+            amin, amax, bmin, bmax,
+            xmin, xmax, ymin, ymax,
+            crosses_x_axis, self._prec)
+
+        ########################################################################
+        # Undo symmetries applied above.
+
+        if swapped_xy:
+            mpfr_swap(amin, bmin)
+            mpfr_swap(amax, bmax)
+
+        if negated_x:
+            _negate_interval(amin, amax)
+
+        # We sneak in the promised conjugation by
+        # inverting negated_y.
+        if not negated_y:
+            _negate_interval(bmin, bmax)
+
+        ########################################################################
+        # Write out result and free memory
+
+        mpfi_interv_fr(x.__re, amin, amax)
+        mpfi_interv_fr(x.__im, bmin, bmax)
+
+        mpfr_clear(xmin)
+        mpfr_clear(xmax)
+        mpfr_clear(ymin)
+        mpfr_clear(ymax)
+        mpfr_clear(amin)
+        mpfr_clear(amax)
+        mpfr_clear(bmin)
+        mpfr_clear(bmax)
 
         return x
 
@@ -1435,7 +1571,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
     def multiplicative_order(self):
         """
         Return the multiplicative order of this complex number, if known,
-        or raise a ``NotImplementedError``.
+        or raise a :exc:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -1478,7 +1614,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         The argument (angle) of the complex number, normalized
         so that `-\pi < \theta.lower() \leq \pi`.
 
-        We raise a ``ValueError`` if the interval strictly contains 0,
+        We raise a :exc:`ValueError` if the interval strictly contains 0,
         or if the interval contains only 0.
 
         .. WARNING::
@@ -1718,8 +1854,8 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         INPUT:
 
-        - ``all`` -- bool (default: ``False``); if ``True``, return a list
-          of all square roots.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return a list
+          of all square roots
 
         EXAMPLES::
 
@@ -1876,7 +2012,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             sage: CIF(1,1).tan()
             0.27175258531952? + 1.08392332733870?*I
             sage: CIF(2).tan()
-            -2.18503986326152?
+            -2.185039863261519?
             sage: CIF(0,2).tan()
             0.964027580075817?*I
         """
@@ -1965,7 +2101,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             sage: CIF(2).tanh()
             0.964027580075817?
             sage: CIF(0,2).tanh()
-            -2.18503986326152?*I
+            -2.185039863261519?*I
         """
         return self.sinh() / self.cosh()
 
@@ -1987,6 +2123,271 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         from sage.rings.complex_arb import ComplexBallField
         return ComplexBallField(self.prec())(self).zeta(a).\
             _complex_mpfi_(self._parent)
+
+cdef _negate_interval(mpfr_ptr xmin, mpfr_ptr xmax):
+    """
+    Negate interval with endpoints xmin and xmax in place.
+    """
+    mpfr_swap(xmin, xmax)
+    mpfr_neg(xmin, xmin, MPFR_RNDD)
+    mpfr_neg(xmax, xmax, MPFR_RNDU)
+
+cdef _inversion_coordinate(
+    mpfr_ptr result, mpfr_ptr tmp,
+    mpfr_srcptr x, mpfr_srcptr y, mpfr_rnd_t rnd_denom, mpfr_rnd_t rnd):
+    """
+    Compute the x-coordinate of the image of the point (x,y) under inversion.
+    That is compute x / (x^2 + y^2).
+
+    rnd_denom determines how to round when computing the denominator.
+    rnd determines how to round when doing the division.
+
+    This function expects the callee to allocate and pass an mpfr number tmp
+    that will be used for intermediate computations. This way, an allocated
+    mpfr number can be used in multiple calculations.
+    """
+
+    mpfr_sqr(tmp,    x, rnd_denom)
+    mpfr_sqr(result, y, rnd_denom)
+    mpfr_add(tmp, tmp, result, rnd_denom)
+    mpfr_div(result, x, tmp, rnd)
+
+cdef _inversion_coordinate_pos_down(
+    mpfr_ptr result, mpfr_ptr tmp,
+    mpfr_srcptr x, mpfr_srcptr y):
+    """
+    Computes a lower bound for x / (x^2 + y^2) assuming that x is non-negative.
+
+    Note that the result will not be NaN as long as x or y is positive.
+    """
+
+    # Let us check that we do not get NaN.
+    # We need to check mpfr_div since it could return NaN if we divide by zero
+    # (it currently returns +/-inf, but the documentation says this might be
+    # subject to change).
+    # We round up when computing the denominator and thus should get something
+    # positive if x or y is positive. Even if, say, x is so small that squaring
+    # produces something smaller than the smallest positive mpfr floating point
+    # number, we get something non-zero because we round up.
+
+    _inversion_coordinate(
+        result, tmp, x, y,
+        MPFR_RNDU, # denominator rounding
+        MPFR_RNDD) # division rounding
+
+cdef _inversion_coordinate_pos_up(
+    mpfr_ptr result, mpfr_ptr tmp,
+    mpfr_srcptr x, mpfr_srcptr y):
+    """
+    Computes an upper bound for x / (x^2 + y^2) assuming that x is non-negative.
+    """
+    _inversion_coordinate(
+        result, tmp, x, y,
+        MPFR_RNDD, # denominator rounding
+        MPFR_RNDU) # division rounding
+
+cdef _inversion_coordinate_neg_down(
+    mpfr_ptr result, mpfr_ptr tmp,
+    mpfr_srcptr x, mpfr_srcptr y):
+    """
+    Computes a lower bound for x / (x^2 + y^2) assuming that x is non-positive.
+    """
+    _inversion_coordinate(
+        result, tmp, x, y,
+        MPFR_RNDD, # denominator rounding
+        MPFR_RNDD) # division rounding
+
+cdef _circle_invert_standard(
+    mpfr_ptr amin, mpfr_ptr amax, mpfr_ptr bmin, mpfr_ptr bmax,
+    mpfr_srcptr xmin, mpfr_srcptr xmax, mpfr_srcptr ymin, mpfr_srcptr ymax,
+    bint crosses_x_axis, mpfr_prec_t prec):
+    """
+    Assumes that the input [xmin, xmax] + [ymin, ymax] * I is in standard form
+    as described above in ComplexIntervalFieldElement.__invert__ with
+    crosses_x_axis saying whether case (II) applies.
+
+    Computes a complex interval [amin, amax] + [bmin, bmax] * I containing
+    the image of the input under circle inversion f(z) = conjugate(1/z).
+    """
+
+    # Note that, by the maximum principle, it is sufficient to consider the
+    # image of the boundary of the input rect which will be formed by four
+    # arcs or line segments.
+
+    # It is useful to do a case analysis by considering whether the input
+    # crosses the x-Axis, the north east or south east diagonal, respectively.
+    #
+    # Given standard form, the input also has to cross the north east
+    # diagonal and x-Axis if it crosses the south east diagonal.
+    #
+    # Thus, we are left with five cases:
+    #
+    #            NE diagonal    x-Axis    SE diagonal.
+    # 1.
+    # 2.                        crosses
+    # 3.          crosses
+    # 4.          crosses       crosses
+    # 5.          crosses       crosses     crosses
+
+    # The reader can go to https://www.shadertoy.com/view/M3VXWG to explore
+    # the different cases visually.
+
+    # Case 1 is the easiest (and the generic case for small intervals).
+    #
+    # Consider the images
+    #          f(xmin + ymin * I), ..., f(xmax + ymax * I)
+    # of the four corners of the input rect under inversion f.
+    # Now consider the axis-parallel rectangle R that these images span.
+    # In general, the image of the input rect might not be contained in R.
+    # In case 1, however, (and only in case 1) it is and we furthermore know
+    # which image is mapped to which edge of R. Thus, we have:
+    #
+    #     amin = Re(f(xmax + ymax * I))    # Image of right top    corner
+    #     amax = Re(f(xmin + ymin * I))    #          left  bottom corner
+    #     bmin = Im(f(xmax + ymin * I))    #          right bottom corner
+    #          = Re(f(ymin + xmax * I))
+    #     bmax = Im(f(xmin + ymax * I))    #          left  top    corner
+    #          = Re(f(ymax + xmin * I))
+    #
+    # Re(f(...)) can be computed with the correct rounding using one of the
+    # helper functions such as _inversion_coordinate_pos_down.
+
+    # For the other cases, we might need to consider the images of two corners
+    # and take the minimum to compute, say amin.
+
+    # Furthermore, we also need to consider the image of t + xmin * I which is
+    # a circle touching the y-Axis at the origin. Depending on which of the
+    # diagonals and x-Axis the input rect crosses, we need to expand R to
+    # include the lowest, highest or rightmost point on this circle for the
+    # correct result.
+    #
+    # For example, we have
+    # amax = 1 / xmin for case 2 and bmax = 1 / (2 * ymin) for case 3.
+    #
+
+    cdef bint crosses_NE_diagonal = mpfr_cmp(ymax, xmin) > 0
+    cdef bint crosses_both_diagonals = False
+    # Using that input can only cross south east diagonal if it crosses
+    # x-Axis and north east diagonal.
+    if crosses_x_axis and crosses_NE_diagonal:
+        crosses_both_diagonals = mpfr_cmpabs(ymin, xmin) > 0
+
+    # Some temporary variables
+    cdef mpfr_t tmp, min2
+
+    mpfr_init2(tmp, prec)
+    if crosses_NE_diagonal:
+        # Temporary variable needed only in some cases.
+        mpfr_init2(min2, prec)
+
+    ########################################################################
+    # Compute amin
+
+    # Use image of right top corner
+    _inversion_coordinate_pos_down(amin, tmp, xmax, ymax)
+
+    if crosses_NE_diagonal:
+        # Also use image of left top corner.
+
+        # This is because in this case, the image of the left top corner
+        # can be left of the image of the right top corner.
+
+        _inversion_coordinate_pos_down(min2, tmp, xmin, ymax)
+
+        # Note that mpfr_min does not return NaN if one (but not the other)
+        # input is NaN. This could be a problem. Luckily,
+        # _inversion_coordinate_pos_down never produces NaN.
+        mpfr_min(amin, amin, min2, MPFR_RNDD)
+
+        # Note that we do not need to consider the images of the left or right
+        # bottom corner here. Not even in case 5.
+        # This is because in standard form, the top edge is further aways from
+        # the x-Axis than the bottom edge. Thus, the images of the left and
+        # right corner of the top edge is left of those of the bottom edge,
+        # respectively.
+
+        # Potential optimization: if bmax >= amax, we only need to use the
+        # image of the left top corner and skip computing the image of the
+        # right top corner.
+
+    ########################################################################
+    # Compute amax
+
+    if crosses_x_axis:
+        # Use rightmost point on the circle that is the image of
+        # image of t + xmin * I
+        mpfr_ui_div(amax, 1, xmin, MPFR_RNDU)
+    else:
+        # Use image of left bottom corner
+        _inversion_coordinate_pos_up(amax, tmp, xmin, ymin)
+
+    ########################################################################
+    # Compute bmax
+
+    # In case 5, bmin can reuse bmax (up to sign), so we compute bmax first.
+
+    if crosses_NE_diagonal:
+        # Use highest point on the circle that is the image of
+        # t + xmin * I. That is bmax = 1 / (2 * xmin).
+        if crosses_x_axis:
+            # Re-use amax = 1 / xmin.
+            # We can just copy the mantissa and decrease the exponent by 1.
+            mpfr_div_2ui(bmax, amax, 1, MPFR_RNDU)
+        else:
+            # Compute bmax from scratch.
+            mpfr_ui_div(bmax, 1, xmin, MPFR_RNDU)
+            mpfr_div_2ui(bmax, bmax, 1, MPFR_RNDU)
+    else:
+        # Use image of of left top corner
+        _inversion_coordinate_pos_up(bmax, tmp, ymax, xmin)
+
+    ########################################################################
+    # Compute bmin
+
+    # bmin is probably the hardest to compute.
+
+    cdef bint right_edge_crosses_NE_diagonal
+
+    if crosses_x_axis:
+        # ymin and thus bmin will be negative.
+        if crosses_both_diagonals:
+            # We are in case 5.
+            #
+            # Use lowest point on the circle that is the image of
+            # t + xmin * I. That is bmin = -1 / (2 * xmin).
+            #
+            # We can reuse bmax = 1 / (2 * xmin).
+            mpfr_neg(bmin, bmax, MPFR_RNDD)
+        else:
+            # Use image of left bottom corner.
+            _inversion_coordinate_neg_down(bmin, tmp, ymin, xmin)
+    else:
+        # ymin and thus bmin will be non-negative.
+
+        # Use image of right bottom corner.
+        _inversion_coordinate_pos_down(bmin, tmp, ymin, xmax)
+
+        if crosses_NE_diagonal:
+            right_edge_crosses_NE_diagonal = mpfr_cmp(ymax, xmax) > 0
+            if right_edge_crosses_NE_diagonal:
+                # Also use image of right top corner.
+                #
+                # This is similar to the computation of amin which also
+                # considered a second corner when crosses_NE_diagonal.
+                #
+                # In particular, the same comment about NaN applies.
+                #
+                _inversion_coordinate_pos_down(min2, tmp, ymax, xmax)
+
+                # See comment about NaN above.
+                mpfr_min(bmin, bmin, min2, MPFR_RNDD)
+
+    ########################################################################
+    # Free memory
+
+    mpfr_clear(tmp)
+    if crosses_NE_diagonal:
+        mpfr_clear(min2)
 
 
 def make_ComplexIntervalFieldElement0( fld, re, im ):
@@ -2010,16 +2411,16 @@ def create_ComplexIntervalFieldElement(s_real, s_imag=None, int pad=0, min_prec=
 
     INPUT:
 
-    - ``s_real`` -- a string that defines a real number (or something whose
+    - ``s_real`` -- string that defines a real number (or something whose
       string representation defines a number)
 
-    - ``s_imag`` -- a string that defines a real number (or something whose
+    - ``s_imag`` -- string that defines a real number (or something whose
       string representation defines a number)
 
-    - ``pad`` -- an integer at least 0.
+    - ``pad`` -- integer at least 0
 
     - ``min_prec`` -- number will have at least this many bits of precision,
-      no matter what.
+      no matter what
 
     EXAMPLES::
 
@@ -2054,7 +2455,6 @@ def create_ComplexIntervalFieldElement(s_real, s_imag=None, int pad=0, min_prec=
         ....:         assert c_CIFE(0,s).imag()-1 != 0
         ....:     except TypeError:
         ....:         pass
-
     """
     if s_imag is None:
         s_imag = 0

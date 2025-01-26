@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs sage.groups
 r"""
 Access to the KnotInfo database
 
@@ -16,7 +17,7 @@ package using
 This will install a `Python wrapper <https://github.com/soehms/database_knotinfo#readme>`__
 for the original databases in Sage. This wrapper perfoms an automatic progress
 of version numbers. For more details and further install instructions please see
-the correspondig web-page.
+the corresponding web-page.
 
 To perform all the doctests concerning the usage of the database on the installation
 add the option ``-c``. In this case (for instance ``sage -f -c database_knotinfo``)
@@ -156,7 +157,7 @@ Further methods::
     True
     sage: K.is_amphicheiral()
     True
-    sage: K.jones_polynomial()
+    sage: K.jones_polynomial()                                                          # needs sage.symbolic
     t^2 - t - 1/t + 1/t^2 + 1
     sage: K.kauffman_polynomial()
     a^2*z^2 + a*z^3 - a^2 - a*z + 2*z^2 + a^-1*z^3 - 1 - a^-1*z + a^-2*z^2 - a^-2
@@ -203,7 +204,7 @@ in the KnotInfo database::
     ....:           [17,19,8,18], [9,10,11,14], [10,12,13,11],
     ....:           [12,19,15,13], [20,16,14,15], [16,20,17,2]])
     sage: L.get_knotinfo()
-    (<KnotInfo.K0_1: '0_1'>, <SymmetryMutant.itself: 's'>)
+    KnotInfo['K0_1']
 
 
 REFERENCES:
@@ -217,7 +218,7 @@ AUTHORS:
 - Sebastian Oehms August 2020: initial version
 - Sebastian Oehms June   2022: add :meth:`conway_polynomial` and :meth:`khovanov_polynomial` (:issue:`33969`)
 
-Thanks to Chuck Livingston and Allison Moore for their support. For further acknowledgments see the correspondig hompages.
+Thanks to Chuck Livingston and Allison Moore for their support. For further acknowledgments see the corresponding hompages.
 """
 
 
@@ -228,7 +229,7 @@ Thanks to Chuck Livingston and Allison Moore for their support. For further ackn
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 
 
@@ -251,8 +252,8 @@ def eval_knotinfo(string, locals={}, to_tuple=True):
 
     INPUT:
 
-    - ``string``  -- string that gives a value of some database entry
-    - ``locals``      -- dictionary of locals passed to ``sage_eval``
+    - ``string`` -- string that gives a value of some database entry
+    - ``locals`` -- dictionary of locals passed to ``sage_eval``
 
     EXAMPLES::
 
@@ -280,6 +281,7 @@ def eval_knotinfo(string, locals={}, to_tuple=True):
     new_string = new_string.replace(';', ',')
     return sage_eval(new_string, locals=locals)
 
+
 def knotinfo_int(string):
     r"""
     Preparse a string from the KnotInfo database representing an integer.
@@ -305,13 +307,14 @@ def knotinfo_int(string):
     else:
         return int(string)
 
+
 def knotinfo_bool(string):
     r"""
     Preparse a string from the KnotInfo database representing a boolean.
 
     INPUT:
 
-    - ``string``  -- string that gives a value of some database entry
+    - ``string`` -- string that gives a value of some database entry
 
     EXAMPLES::
 
@@ -349,9 +352,9 @@ class SymmetryMutant(Enum):
     """
     itself = 's'
     reverse = 'r'
-    concordance_inverse = 'mr'
+    concordance_inverse = 'c'
     mirror_image = 'm'
-    mixed = 'x' # to be used in connection with KnotInfoSeries
+    mixed = 'x'  # to be used in connection with KnotInfoSeries
     unknown = '?'
 
     def __gt__(self, other):
@@ -365,13 +368,102 @@ class SymmetryMutant(Enum):
             [<SymmetryMutant.mixed: 'x'>,
             <SymmetryMutant.itself: 's'>,
             <SymmetryMutant.reverse: 'r'>,
-            <SymmetryMutant.concordance_inverse: 'mr'>,
             <SymmetryMutant.mirror_image: 'm'>,
+            <SymmetryMutant.concordance_inverse: 'c'>,
             <SymmetryMutant.unknown: '?'>]
         """
         # We use the reversal of the alphabetical order of the values so that
         # `itself` occurs before the mirrored cases
         return self.value < other.value
+
+    def rev(self):
+        r"""
+        Return the reverse of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.knots.knotinfo import SymmetryMutant
+            sage: all( sym.rev().rev() == sym for sym in SymmetryMutant)
+            True
+        """
+        if self is SymmetryMutant.itself:
+            return SymmetryMutant.reverse
+        elif self is SymmetryMutant.reverse:
+            return SymmetryMutant.itself
+        elif self is SymmetryMutant.mirror_image:
+            return SymmetryMutant.concordance_inverse
+        elif self is SymmetryMutant.concordance_inverse:
+            return SymmetryMutant.mirror_image
+        return self
+
+    def mir(self):
+        r"""
+        Return the mirror image of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.knots.knotinfo import SymmetryMutant
+            sage: all( sym.mir().mir() == sym for sym in SymmetryMutant)
+            True
+        """
+        if self is SymmetryMutant.itself:
+            return SymmetryMutant.mirror_image
+        elif self is SymmetryMutant.reverse:
+            return SymmetryMutant.concordance_inverse
+        elif self is SymmetryMutant.mirror_image:
+            return SymmetryMutant.itself
+        elif self is SymmetryMutant.concordance_inverse:
+            return SymmetryMutant.reverse
+        return self
+
+    def matches(self, link):
+        r"""
+        Return the list of other symmetry mutants that give isotopic links
+        with respect to ``link`` and ``self``. For ``self`` is
+        ``SymmetryMutant.unknown`` a boolean is returned which is ``True``
+        if the chirality of ``link`` is unknown.
+
+        EXAMPLES::
+
+            sage: from sage.knots.knotinfo import SymmetryMutant
+            sage: SymmetryMutant.itself.matches(KnotInfo.K6_1)
+            [<SymmetryMutant.reverse: 'r'>]
+            sage: SymmetryMutant.mirror_image.matches(KnotInfo.K6_1)
+            [<SymmetryMutant.concordance_inverse: 'c'>]
+        """
+        rev = link.is_reversible()
+        achp = link.is_amphicheiral(positive=True)
+        ach = link.is_amphicheiral()
+        if self is SymmetryMutant.unknown:
+            if rev is None or ach is None or achp is None:
+                return True
+            else:
+                return False
+        res = []
+        if rev:
+            res.append(self.rev())
+        if achp:
+            res.append(self.mir())
+        if ach:
+            res.append(self.rev().mir())
+        return res
+
+    def is_minimal(self, link):
+        r"""
+        Return whether ``self`` is minimal among its matching mutants.
+
+        EXAMPLES::
+
+            sage: from sage.knots.knotinfo import SymmetryMutant
+            sage: SymmetryMutant.itself.is_minimal(KnotInfo.K6_1)
+            True
+            sage: SymmetryMutant.concordance_inverse.is_minimal(KnotInfo.K6_1)
+            False
+        """
+        if self in [SymmetryMutant.unknown, SymmetryMutant.mixed]:
+            return False
+        matches = self.matches(link)
+        return all(self < other for other in matches)
 
 
 # ---------------------------------------------------------------------------------
@@ -414,7 +506,7 @@ class KnotInfoBase(Enum):
             True
         """
         if self.__class__ is other.__class__:
-            tups = (not self.is_knot(),  self.crossing_number(),  self.value)
+            tups = (not self.is_knot(), self.crossing_number(), self.value)
             tupo = (not other.is_knot(), other.crossing_number(), other.value)
             return tups > tupo
         return NotImplemented
@@ -530,7 +622,7 @@ class KnotInfoBase(Enum):
             sage: L._homfly_pol_ring('u', 'v')
             Multivariate Laurent Polynomial Ring in u, v over Integer Ring
         """
-        K3_1 = Knots().from_table(3,1)
+        K3_1 = Knots().from_table(3, 1)
         return K3_1.homfly_polynomial(var1=var1, var2=var2).parent()
 
     @cached_method
@@ -542,7 +634,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (default: ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -584,7 +676,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (default: ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -627,12 +719,8 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (default: ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
-
-        OUTPUT:
-
-        Python list of
 
         EXAMPLES::
 
@@ -661,7 +749,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (default: ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -702,7 +790,7 @@ class KnotInfoBase(Enum):
             return (1, )
 
         braid_notation = eval_knotinfo(braid_notation)
-        if type(braid_notation) is list:
+        if type(braid_notation) in (list, tuple):
             # in some cases there are a pair of braid representations
             # in the database. If this is the case we select the
             # corresponding to the braid index.
@@ -741,7 +829,6 @@ class KnotInfoBase(Enum):
             Traceback (most recent call last):
             ...
             NotImplementedError: this integer is not provided by the database
-
         """
         if self.is_knot():
             return knotinfo_int(self[self.items.braid_index])
@@ -871,7 +958,7 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: KnotInfo.K5_2.three_genus()     # optional - databsase_knotinfo
+            sage: KnotInfo.K5_2.three_genus()     # optional - database_knotinfo
             1
 
         Note that this differs from the corresponding result in Sage
@@ -899,8 +986,8 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: KnotInfo.K5_2.signature()       # optional - databsase_knotinfo
-            1
+            sage: KnotInfo.K5_2.signature()       # optional - database_knotinfo
+            -2
         """
         return knotinfo_int(self[self.items.signature])
 
@@ -970,7 +1057,7 @@ class KnotInfoBase(Enum):
         if not self.is_knot():
             raise NotImplementedError('this is only available for knots')
 
-        symmetry_type = self[self.items.symmetry_type].strip() # for example K10_88 is a case with trailing whitespaces
+        symmetry_type = self[self.items.symmetry_type].strip()  # for example K10_88 is a case with trailing whitespaces
         if not symmetry_type and self.crossing_number() == 0:
             return 'fully amphicheiral'
         return symmetry_type
@@ -1015,13 +1102,11 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``positive`` -- boolean (default: ``False``) whether to check
+        - ``positive`` -- boolean (default: ``False``); whether to check
           if ``self`` is positive or negative amphicheiral (see documentation
           of :meth:`symmetry_type`)
 
-        OUTPUT:
-
-        Boolean or ``None`` if this cannot be determined.
+        OUTPUT: boolean or ``None`` if this cannot be determined
 
         ``True`` if ``self`` is fully or negative amphicheiral per default. If
         ``positive`` is set to ``True`` than fully and positive amphicheiral
@@ -1097,6 +1182,23 @@ class KnotInfoBase(Enum):
                 return True
 
         return None
+
+    @cached_method
+    def is_hyperbolic(self):
+        r"""
+        Return whether ``self`` is hyperbolic.
+
+        EXAMPLES::
+
+            sage: KnotInfo.K3_1.is_hyperbolic()
+            False
+            sage: KnotInfo.K5_2.is_hyperbolic()
+            True
+        """
+        geometric_type = self[self.items.geometric_type]
+        if geometric_type == 'hyperbolic':
+            return True
+        return False
 
     @cached_method
     def is_alternating(self):
@@ -1225,6 +1327,37 @@ class KnotInfoBase(Enum):
         return not knotinfo_bool(self[self.items.unoriented])
 
     @cached_method
+    def cosmetic_crossing_conjecture_verified(self):
+        r"""
+        Return whether the Cosmetic Crossing Conjecture has been verified
+        for ``self``.
+
+        From the KnotInfo `description page <https://knotinfo.math.indiana.edu/descriptions/cosmetic_crossing.html>`__:
+
+            A crossing change in a diagram of a knot ``K`` is called cosmetic if
+            the resulting diagram also represents ``K``. The cosmetic crossing
+            conjecture posits that for any knot ``K``, the only cosmetic crossing
+            changes are nugatory, i.e. there exists an embedded 2-sphere in
+            ``S3`` which intersects K only at the two points of the relevant
+            crossing. Conversely, it is not hard to see that any nugatory
+            crossing change is cosmetic.
+
+        EXAMPLES::
+
+            sage: knots = [K for K in KnotInfo if K.is_knot() and K.crossing_number() < 10]
+            sage: all(K.cosmetic_crossing_conjecture_verified() for K in knots)
+            True
+        """
+        cosmetic_crossing = self[self.items.cosmetic_crossing]
+        if self.crossing_number() == 0:
+            return True
+        if not cosmetic_crossing or cosmetic_crossing == 'Unknown':
+            return False
+        if not knotinfo_bool(cosmetic_crossing):
+            return True
+        raise AssertionError(f'{self} is a counterexample to the cosmetic crossing conjecture')
+
+    @cached_method
     def homfly_polynomial(self, var1='v', var2='z', original=False):
         r"""
         Return the HOMFLY-PT polynomial according to the value of column
@@ -1243,9 +1376,9 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``var1`` -- string (default ``v``) for the name of the first variable
-        - ``var2`` -- string (default ``z``) for the name of the second variable
-        - ``original`` -- boolean (default ``False``) if set to
+        - ``var1`` -- string (default: ``'v'``); for the name of the first variable
+        - ``var2`` -- string (default: ``'z'``); for the name of the second variable
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -1322,7 +1455,7 @@ class KnotInfoBase(Enum):
                 homfly_polynomial = homfly_polynomial.strip('}')
 
         L, M = R.gens()
-        lc = {'v': L, 'z':M}
+        lc = {'v': L, 'z': M}
         return eval_knotinfo(homfly_polynomial, locals=lc)
 
     @cached_method
@@ -1349,7 +1482,7 @@ class KnotInfoBase(Enum):
 
         - ``var1`` -- (default: ``'a'``) the first variable
         - ``var2`` -- (default: ``'z'``) the second variable
-        - ``original`` -- boolean (default: ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -1361,14 +1494,16 @@ class KnotInfoBase(Enum):
         EXAMPLES::
 
             sage: L = KnotInfo.L2a1_1
+            sage: K = KnotInfo.K4_1
+
             sage: L.kauffman_polynomial()
             a^-1*z - a^-1*z^-1 + a^-2 + a^-3*z - a^-3*z^-1
-            sage: K = KnotInfo.K4_1
             sage: K.kauffman_polynomial()
             a^2*z^2 + a*z^3 - a^2 - a*z + 2*z^2 + a^-1*z^3 - 1 - a^-1*z + a^-2*z^2 - a^-2
 
         Comparison with Jones polynomial::
 
+            sage: # needs sage.symbolic
             sage: k    = _
             sage: a, z = k.variables()
             sage: j    = K.jones_polynomial(skein_normalization=True)
@@ -1404,7 +1539,7 @@ class KnotInfoBase(Enum):
             return R.one()
 
         a, z = R.gens()
-        lc = {'a':  a, 'z': z}
+        lc = {'a': a, 'z': z}
         return R(eval_knotinfo(kauffman_polynomial, locals=lc))
 
     @cached_method
@@ -1429,17 +1564,17 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``variab`` -- variable (default: ``None``) used according to :meth:`Link.jones_polynomial`
-        - ``skein_normalization`` -- boolean (default: ``False``) used according
-          to :meth:`Link.jones_polynomial`
-        - ``puiseux`` -- boolean (default ``True``) only used in case
+        - ``variab`` -- variable (default: ``None``); used according to
+          :meth:`Link.jones_polynomial`
+        - ``skein_normalization`` -- boolean (default: ``False``); used
+          according to :meth:`Link.jones_polynomial`
+        - ``puiseux`` -- boolean (default: ``True``); only used in case
           ``skein_normalization=False``. If set to ``True`` instead of an element
           of the symbolic ring an instance of :class:`~sage.rings.puiseux_series_ring_element.PuiseuxSeries`
           is returned
-        - ``original`` -- boolean (default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
-        - ``use_sqrt`` -- boolean (default ``False``) see the note below
-
+        - ``use_sqrt`` -- boolean (default: ``False``); see the note below
 
         OUTPUT:
 
@@ -1467,7 +1602,7 @@ class KnotInfoBase(Enum):
         EXAMPLES::
 
             sage: K = KnotInfo.K4_1
-            sage: Kj = K.jones_polynomial(); Kj
+            sage: Kj = K.jones_polynomial(); Kj                                         # needs sage.symbolic
             t^2 - t - 1/t + 1/t^2 + 1
             sage: Kjs = K.jones_polynomial(skein_normalization=True); Kjs
             A^-8 - A^-4 + 1 - A^4 + A^8
@@ -1477,17 +1612,17 @@ class KnotInfoBase(Enum):
         for proper links::
 
             sage: L = KnotInfo.L2a1_1
-            sage: Lj = L.jones_polynomial(); Lj
+            sage: Lj = L.jones_polynomial(); Lj                                         # needs sage.symbolic
             -x^5 - x
-            sage: Ljt = L.jones_polynomial(use_sqrt=True); Ljt
+            sage: Ljt = L.jones_polynomial(use_sqrt=True); Ljt                          # needs sage.symbolic
             -t^(5/2) - sqrt(t)
             sage: Ljp = L.jones_polynomial(puiseux=True); Ljp
             -t^(1/2) - t^(5/2)
             sage: Ljs = L.jones_polynomial(skein_normalization=True); Ljs
             -A^2 - A^10
-            sage: Lj.parent()
+            sage: Lj.parent()                                                           # needs sage.symbolic
             Symbolic Ring
-            sage: Ljt.parent()
+            sage: Ljt.parent()                                                          # needs sage.symbolic
             Symbolic Ring
             sage: Ljp.parent()
             Puiseux Series Ring in t over Integer Ring
@@ -1497,17 +1632,17 @@ class KnotInfoBase(Enum):
         Comparison with Sage's results::
 
             sage: k = K.link()
-            sage: kj = k.jones_polynomial()
-            sage: bool(Kj == kj)
+            sage: kj = k.jones_polynomial()                                             # needs sage.symbolic
+            sage: bool(Kj == kj)                                                        # needs sage.symbolic
             True
             sage: kjs = k.jones_polynomial(skein_normalization=True)
             sage: Kjs == kjs
             True
             sage: l = L.link()
-            sage: lj = l.jones_polynomial()
-            sage: bool(Lj == lj)
+            sage: lj = l.jones_polynomial()                                             # needs sage.symbolic
+            sage: bool(Lj == lj)                                                        # needs sage.symbolic
             False
-            sage: bool(Ljt == lj)   # see note above
+            sage: bool(Ljt == lj)   # see note above                                    # needs sage.symbolic
             True
             sage: ljs = l.jones_polynomial(skein_normalization=True)
             sage: Ljs == ljs
@@ -1517,6 +1652,8 @@ class KnotInfoBase(Enum):
         of the positive crossings of the right-handed trefoil)::
 
             sage: K3_1  = KnotInfo.K3_1
+
+            sage: # needs sage.symbolic
             sage: K3_1j = K3_1.jones_polynomial()
             sage: L2a1_1j = Ljt     # see note above
             sage: R = L2a1_1j.parent()
@@ -1575,24 +1712,24 @@ class KnotInfoBase(Enum):
                 R = SR
 
         if not jones_polynomial and self.crossing_number() == 0:
-            return R(1)
+            return R.one()
 
         t = R(variab)
         if skein_normalization:
             if self.is_knot():
-                lc = {'t':  t**4}
+                lc = {'t': t**4}
             else:
-                lc = {'x':  t**2}
+                lc = {'x': t**2}
         else:
             if self.is_knot():
-                lc = {'t':  t}
+                lc = {'t': t}
             elif puiseux:
-                lc = {'x':  t**(1/2)}
+                lc = {'x': t**(1/2)}
             elif use_sqrt:
                 from sage.misc.functional import sqrt
-                lc = {'x':  sqrt(t)}
+                lc = {'x': sqrt(t)}
             else:
-                lc = {'x':  t}
+                lc = {'x': t}
 
         return R(eval_knotinfo(jones_polynomial, locals=lc))
 
@@ -1617,9 +1754,9 @@ class KnotInfoBase(Enum):
         INPUT:
 
         - ``var`` -- (default: ``'t'``) the variable
-        - ``original`` -- boolean (default: ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
-        - ``laurent_poly`` -- boolean (default ``False``) see the note below
+        - ``laurent_poly`` -- boolean (default: ``False``); see the note below
 
         OUTPUT:
 
@@ -1678,7 +1815,7 @@ class KnotInfoBase(Enum):
             return R.one()
 
         t, = R.gens()
-        lc = {'t':  t}
+        lc = {'t': t}
         ap = R(eval_knotinfo(alexander_polynomial, locals=lc))
         if not laurent_poly or ap.is_constant():
             return ap
@@ -1707,7 +1844,7 @@ class KnotInfoBase(Enum):
         INPUT:
 
         - ``var`` -- (default: ``'t'``) the variable
-        - ``original`` -- boolean (default: ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -1725,7 +1862,7 @@ class KnotInfoBase(Enum):
             sage: Lc = L.conway_polynomial(); Lc
             t^3
 
-        Comparision to Sage's results::
+        Comparison to Sage's results::
 
             sage: Kc == K.link().conway_polynomial()
             True
@@ -1734,7 +1871,7 @@ class KnotInfoBase(Enum):
 
         Launch the KnotInfo description web-page::
 
-            sage: K.items.conway_polynomial.description_webpage() # not tested
+            sage: K.items.conway_polynomial.description_webpage()  # not tested
             True
         """
         conway_polynomial = self[self.items.conway_polynomial]
@@ -1749,7 +1886,7 @@ class KnotInfoBase(Enum):
             return R.one()
 
         t, = R.gens()
-        lc = {'z':  t}
+        lc = {'z': t}
         return R(eval_knotinfo(conway_polynomial, locals=lc))
 
     @cached_method
@@ -1831,7 +1968,7 @@ class KnotInfoBase(Enum):
             False
 
 
-        Comparision to Sage's results::
+        Comparison to Sage's results::
 
             sage: Kk == K.link().khovanov_polynomial()
             True
@@ -1963,11 +2100,11 @@ class KnotInfoBase(Enum):
           - ``self.items.dt_notation``    (only for knots and ``snappy=False``)
           - ``self.items.gauss_notation`` (only for knots and ``snappy=False``)
 
-        - ``snappy`` boolean (default ``False``) if set to ``True``
+        - ``snappy`` -- boolean (default: ``False``); if set to ``True``
           the target of the conversion is the ``pip`` installable
           package `SnapPy <https://snappy.math.uic.edu/index.html>`__
           (explicitely, ``spherogram.links.invariants.Link``).
-          If SnapPy is not installed an :class:`ImportError` is raised. To
+          If SnapPy is not installed an :exc:`ImportError` is raised. To
           install SnapPy use ``sage -pip install snappy``.
 
         .. NOTE::
@@ -2096,9 +2233,7 @@ class KnotInfoBase(Enum):
         r"""
         Return whether there is no other isotopic link in the database or not.
 
-        OUTPUT:
-
-        Boolean or ``None`` if this cannot be determined.
+        OUTPUT: boolean or ``None`` if this cannot be determined
 
         EXAMPLES::
 
@@ -2150,7 +2285,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``unique`` -- boolean (default: ``True``) if set to ``False``
+        - ``unique`` -- boolean (default: ``True``); if set to ``False``
           it is only checked if ``self`` is among the recovered items
 
         EXAMPLES::
@@ -2167,8 +2302,13 @@ class KnotInfoBase(Enum):
             False
             sage: L5a1_0.is_recoverable(unique=False)
             True
+
+        TESTS:
+
+            sage: KnotInfo.K12a_165.is_recoverable(unique=False)  # optional - database_knotinfo, long time
+            True
         """
-        def recover(mirror, braid):
+        def recover(sym_mut, braid):
             r"""
             Check if ``self`` can be recovered form its associated
             Sage link.
@@ -2177,37 +2317,42 @@ class KnotInfoBase(Enum):
                 l = self.link(self.items.braid_notation)
             else:
                 l = self.link()
-            if mirror:
-                if self.is_amphicheiral():
-                    # no need to test again
-                    return True
+            if sym_mut is SymmetryMutant.mirror_image:
                 l = l.mirror_image()
+            elif sym_mut is SymmetryMutant.reverse:
+                l = l.reverse()
+            elif sym_mut is SymmetryMutant.concordance_inverse:
+                l = l.mirror_image().reservse()
 
-            def check_result(L, m):
+            def check_result(res):
                 r"""
                 Check a single result from ``get_knotinfo``.
                 """
+                if type(res) is tuple:
+                    L, s = res
+                else:
+                    L, s = res.to_knotinfo()[0]
+                if not isinstance(L, KnotInfoBase):
+                    return False
                 if L != self:
                     return False
-                if mirror:
-                    return m is SymmetryMutant.mirror_image
-                else:
-                    return m is SymmetryMutant.itself
+                return s == sym_mut
 
             try:
-                L, m = l.get_knotinfo()
-                if isinstance(L, KnotInfoBase):
-                    return check_result(L,m)
-                elif unique:
-                    return False
+                res = l.get_knotinfo(unique=unique)
             except NotImplementedError:
-                if unique:
-                    return False
-            Llist = l.get_knotinfo(unique=False)
-            return any(check_result(L, m) for (L, m) in Llist)
+                return False
+            if unique:
+                return check_result(res)
+            else:
+                return any(check_result(r) for r in res)
 
         from sage.misc.misc import some_tuples
-        return all(recover(mirror, braid) for mirror, braid in some_tuples([True, False], 2, 4))
+        if SymmetryMutant.unknown.matches(self):
+            sym_muts = [SymmetryMutant.unknown]
+        else:
+            sym_muts = [s for s in SymmetryMutant if s.is_minimal(self)]
+        return all(recover(sym, braid) for sym, braid in some_tuples(sym_muts, 2, 8))
 
     def inject(self, verbose=True):
         """
@@ -2216,7 +2361,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``verbose`` -- boolean (default: ``True``) to suppress
+        - ``verbose`` -- boolean (default: ``True``); whether to suppress
           the message printed on the invocation
 
         EXAMPLES::
@@ -2239,11 +2384,11 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``oriented`` -- boolean (default: ``False``) it only affects proper links.
-          By default the items of the series will be again series of links
-          collecting all orientation mutants of an unoriented name. To obtain
-          the series of the individual links this keyword has to be set to
-          ``True``.
+        - ``oriented`` -- boolean (default: ``False``); it only affects proper
+          links. By default the items of the series will be again series of
+          links collecting all orientation mutants of an unoriented name. To
+          obtain the series of the individual links this keyword has to be set
+          to ``True``.
 
         EXAMPLES::
 
@@ -2273,11 +2418,11 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``single`` -- boolean (default ``False``) if set to ``True`` only one
-          diagram is shown.
-        - ``new`` -- ``int`` according to :func:`open` of :mod:`webbrowser`
+        - ``single`` -- boolean (default: ``False``); if set to ``True`` only one
+          diagram is shown
+        - ``new`` -- integer according to :func:`open` of :mod:`webbrowser`
           (``0`` default, ``1`` new window, ``2`` new tab)
-        - ``autoraise`` -- boolean (default ``True``)
+        - ``autoraise`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -2304,9 +2449,9 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``new`` -- ``int`` according to :func:`open` of :mod:`webbrowser`
+        - ``new`` -- integer according to :func:`open` of :mod:`webbrowser`
           (``0`` default, ``1`` new window, ``2`` new tab)
-        - ``autoraise`` -- boolean (default ``True``)
+        - ``autoraise`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -2323,9 +2468,9 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``new`` -- ``int`` according to :func:`open` of :mod:`webbrowser`
+        - ``new`` -- integer according to :func:`open` of :mod:`webbrowser`
           (``0`` default, ``1`` new window, ``2`` new tab)
-        - ``autoraise`` -- boolean (default ``True``)
+        - ``autoraise`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -2347,11 +2492,11 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
     INPUT:
 
-    - ``crossing_number`` -- integer giving the crossing numer of this series
+    - ``crossing_number`` -- integer giving the crossing number of this series
       of links
-    - ``is_knot``         -- boolean whether this series is a series of knots
+    - ``is_knot`` -- boolean; whether this series is a series of knots
       or proper links
-    - ``is_alternating``  -- boolean whether this series is restriced to
+    - ``is_alternating`` -- boolean; whether this series is restricted to
       alternating links or not
       This is not relevant for knots with less than 11 crossings
     - ``name_unoriented`` -- string restricting the series to all links with
@@ -2402,24 +2547,24 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``oriented`` -- boolean (default: ``False``) it only affects
+        - ``oriented`` -- boolean (default: ``False``); it only affects
           series of proper links. By default the list items of a series of proper
           links are again series of links collecting all orientation types of an
           unoriented name. To obtain the list of the individual links this
-          keyword has to be set to ``True``
+          keyword has to be set to ``True``.
 
-        - ``comp`` (default: ``None``) if given an integer for this
+        - ``comp`` -- (default: ``None``) if given an integer for this
           keyword the list is restriced to links having the according number
-          of components. This keyword implies ``oriented=True``
+          of components. This keyword implies ``oriented=True``.
 
-        - ``det`` (default: ``None``) if given an integer for this
+        - ``det`` -- (default: ``None``) if given an integer for this
           keyword the list is restriced to links having the according value
-          for its determinant. This keyword implies ``oriented=True``
+          for its determinant. This keyword implies ``oriented=True``.
 
-        - ``homfly`` (default: ``None``) if given a HOMFLY-PT polynomial
+        - ``homfly`` -- (default: ``None``) if given a HOMFLY-PT polynomial
           having ``normalization='vz'`` for this keyword the list is restriced to
           links having the according value for its HOMFLY-PT polynomial. This
-          keyword implies ``oriented=True``
+          keyword implies ``oriented=True``.
 
         EXAMPLES::
 
@@ -2494,16 +2639,16 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``oriented`` -- boolean (default: ``False``) see the
+        - ``oriented`` -- boolean (default: ``False``); see the
           description for :meth:`list`
 
-        - ``comp`` (default: ``None``) see the description for
+        - ``comp`` -- (default: ``None``) see the description for
           :meth:`list`
 
-        - ``det`` (default: ``None``) see the description for
+        - ``det`` -- (default: ``None``) see the description for
           :meth:`list`
 
-        - ``homfly`` (default: ``None``) see the description for
+        - ``homfly`` -- (default: ``None``) see the description for
           :meth:`list`
 
         EXAMPLES::
@@ -2526,7 +2671,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         l = []
         cr = self._crossing_number
         if cr > 0:
-            LS = type(self)(cr - 1, self._is_knot, self._is_alternating, self._name_unoriented )
+            LS = type(self)(cr - 1, self._is_knot, self._is_alternating, self._name_unoriented)
             l = LS.lower_list(oriented=oriented, comp=comp, det=det, homfly=homfly)
         return l + self.list(oriented=oriented, comp=comp, det=det, homfly=homfly)
 
@@ -2561,12 +2706,12 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             [<KnotInfo.K6_1: '6_1'>, <KnotInfo.K6_2: '6_2'>, <KnotInfo.K6_3: '6_3'>]
         """
         from sage.rings.integer import Integer
-        if not type(item) in (int, Integer):
+        if type(item) not in (int, Integer):
             raise ValueError('item must be an integer')
         l = self.list()
         max_item = len(l)
         if item < 0 or item > max_item:
-            raise ValueError('item must be non negative and smaller than %s' % (max_item))
+            raise ValueError('item must be nonnegative and smaller than %s' % (max_item))
 
         return l[item]
 
@@ -2604,7 +2749,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             return self[item]
 
         from sage.rings.integer import Integer
-        if not type(item) in (int, Integer):
+        if type(item) not in (int, Integer):
             raise ValueError('item must be an integer')
         l = self.list()
         max_item = len(l) + 1
@@ -2653,10 +2798,10 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``unique`` -- boolean (default: ``True``) see
+        - ``unique`` -- boolean (default: ``True``); see
           :meth:`KnotInfoBase.is_recoverable`
-        - ``max_samples`` -- non negative integer or ``infinity`` (optional,
-          default ``8``) limits the number of items to check (random sample).
+        - ``max_samples`` -- nonnegative integer or ``infinity``
+          (default: `8`); limits the number of items to check (random sample).
           If set to ``infinity`` then no limit is set.
 
         EXAMPLES::
@@ -2689,20 +2834,23 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: TestSuite(KnotInfo.L5a1_0.series()).run(verbose=True)  # indirec doctest
+            sage: TestSuite(KnotInfo.L5a1_0.series()).run(verbose=True)  # indirect doctest
             running ._test_category() . . . pass
             running ._test_new() . . . pass
             running ._test_not_implemented_methods() . . . pass
             running ._test_pickling() . . . pass
             running ._test_recover() . . . pass
-            sage: TestSuite(KnotInfo.K6_1.series()).run(max_samples=infinity)  # indirec doctest
+            sage: TestSuite(KnotInfo.K6_1.series()).run(max_samples=infinity)  # indirect doctest
         """
         tester = options['tester']
         max_samples = tester._max_samples
-        if max_samples:
-            tester.assertTrue(self.is_recoverable(unique=False, max_samples=max_samples))
-        else:
-            tester.assertTrue(self.is_recoverable(unique=False))
+        try:
+            if max_samples:
+                tester.assertTrue(self.is_recoverable(unique=False, max_samples=max_samples))
+            else:
+                tester.assertTrue(self.is_recoverable(unique=False))
+        except ImportError:
+            pass
 
     def inject(self, verbose=True):
         r"""
@@ -2711,12 +2859,11 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``verbose`` -- boolean (default: ``True``) to suppress
+        - ``verbose`` -- boolean (default: ``True``); to suppress
           the message printed on the invocation
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfoSeries
             sage: KnotInfoSeries(6, True, True).inject()
             Defining K6
             sage: K6(2)

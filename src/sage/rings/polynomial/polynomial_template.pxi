@@ -24,8 +24,10 @@ from sage.libs.pari.all import pari_gen
 
 import operator
 
+
 def make_element(parent, args):
     return parent(*args)
+
 
 cdef inline Polynomial_template element_shift(self, int n):
      if not isinstance(self, Polynomial_template):
@@ -75,7 +77,7 @@ cdef class Polynomial_template(Polynomial):
     We illustrate the generic glueing using univariate polynomials over
     `\mathop{\mathrm{GF}}(2)`.
 
-    .. note::
+    .. NOTE::
 
         Implementations using this template MUST implement coercion from base
         ring elements and :meth:`get_unsafe`. See
@@ -115,16 +117,16 @@ cdef class Polynomial_template(Polynomial):
                 celement_construct(&self.x, (<Polynomial_template>self)._cparent)
                 celement_set(&self.x, &(<Polynomial_template>x).x, (<Polynomial_template>self)._cparent)
             except NotImplementedError:
-                raise TypeError("%s not understood."%x)
+                raise TypeError("%s not understood." % x)
 
-        elif isinstance(x, int) or isinstance(x, Integer):
+        elif isinstance(x, (int, Integer)):
             try:
                 celement_construct(&self.x, (<Polynomial_template>self)._cparent)
                 celement_set_si(&self.x, int(x), (<Polynomial_template>self)._cparent)
             except NotImplementedError:
                 raise TypeError("%s not understood."%x)
 
-        elif isinstance(x, list) or isinstance(x, tuple):
+        elif isinstance(x, (list, tuple)):
             celement_construct(&self.x, (<Polynomial_template>self)._cparent)
             gen = celement_new((<Polynomial_template>self)._cparent)
             monomial = celement_new((<Polynomial_template>self)._cparent)
@@ -340,7 +342,7 @@ cdef class Polynomial_template(Polynomial):
     @coerce_binop
     def gcd(self, Polynomial_template other):
         """
-        Return the greatest common divisor of self and other.
+        Return the greatest common divisor of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -369,7 +371,7 @@ cdef class Polynomial_template(Polynomial):
             sage: f.gcd(g)
             Traceback (most recent call last):
             ...
-            ValueError: non-invertible elements encountered during GCD
+            RuntimeError: FLINT gcd calculation failed
         """
         if celement_is_zero(&self.x, (<Polynomial_template>self)._cparent):
             return other
@@ -392,7 +394,7 @@ cdef class Polynomial_template(Polynomial):
     @coerce_binop
     def xgcd(self, Polynomial_template other):
         """
-        Computes extended gcd of self and other.
+        Compute extended gcd of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -586,7 +588,6 @@ cdef class Polynomial_template(Polynomial):
             return -2
         return result
 
-
     def __pow__(self, ee, modulus):
         """
         EXAMPLES::
@@ -628,7 +629,7 @@ cdef class Polynomial_template(Polynomial):
             0
         """
         if not isinstance(self, Polynomial_template):
-            raise NotImplementedError("%s^%s not defined."%(ee,self))
+            raise NotImplementedError("%s^%s not defined." % (ee, self))
         cdef bint recip = 0, do_sig
 
         cdef long e
@@ -780,7 +781,7 @@ cdef class Polynomial_template(Polynomial):
 
     cpdef Polynomial truncate(self, long n):
         r"""
-        Returns this polynomial mod `x^n`.
+        Return this polynomial mod `x^n`.
 
         EXAMPLES::
 
@@ -816,7 +817,7 @@ cdef class Polynomial_template(Polynomial):
 
     def _singular_(self, singular=None):
         r"""
-        Return Singular representation of this polynomial
+        Return Singular representation of this polynomial.
 
         INPUT:
 

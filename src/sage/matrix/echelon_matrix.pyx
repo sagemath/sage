@@ -25,13 +25,13 @@ def reduced_echelon_matrix_iterator(K, k, n, bint sparse=False, bint copy=True, 
 
     - ``n`` -- number of columns (or the dimension of the ambient space)
 
-    - ``sparse`` -- boolean (default is ``False``)
+    - ``sparse`` -- boolean (default: ``False``)
 
-    - ``copy`` -- boolean. If set to ``False`` then iterator yields the same matrix
-      over and over (but with different entries).  Default is ``True`` which is
-      safer but might be slower.
+    - ``copy`` -- boolean (default: ``True``); if set to ``False`` then
+      iterator yields the same matrix over and over (but with different
+      entries).  Default is ``True`` which is safer but might be slower.
 
-    - ``set_immutable`` -- boolean. If set to ``True`` then the output matrices
+    - ``set_immutable`` -- boolean; if set to ``True`` then the output matrices
       are immutable. This option automatically turns ``copy`` into ``True``.
 
 

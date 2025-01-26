@@ -106,8 +106,8 @@ def read_distribution(src_file):
 
     OUTPUT:
 
-    - a string, the name of the distribution package (``PKG``); or the empty
-      string if no directive was found.
+    A string, the name of the distribution package (``PKG``), or the empty
+    string if no directive was found.
 
     EXAMPLES::
 
@@ -251,7 +251,7 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
 
     INPUT:
 
-    - ``path`` -- a directory name.
+    - ``path`` -- a directory name
 
     - ``distribution_filter`` -- (default: ``None``)
       only consider ``all*.py`` files whose distribution (from a
@@ -307,7 +307,7 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
 @contextmanager
 def cython_namespace_package_support():
     r"""
-    Activate namespace package support in Cython 0.x
+    Activate namespace package support in Cython 0.x.
 
     See https://github.com/cython/cython/issues/2918#issuecomment-991799049
     """
@@ -333,16 +333,16 @@ def walk_packages(path=None, prefix='', onerror=None):
 
     INPUT:
 
-    - ``path`` -- a list of paths to look for modules in or
-      ``None`` (all accessible modules).
+    - ``path`` -- list of paths to look for modules in or
+      ``None`` (all accessible modules)
 
-    - ``prefix`` -- a string to output on the front of every module name
-      on output.
+    - ``prefix`` -- string to output on the front of every module name
+      on output
 
     - ``onerror`` -- a function which gets called with one argument (the
       name of the package which was being imported) if any exception
       occurs while trying to import a package.  If ``None``, ignore
-      :class:`ImportError` but propagate all other exceptions.
+      :exc:`ImportError` but propagate all other exceptions.
 
     EXAMPLES::
 
@@ -469,7 +469,7 @@ if __name__ == '__main__':
                               "do not change files that already have a nonempty directive"))
     parser.add_argument('--set', metavar='DISTRIBUTION', type=str, default=None,
                         help="add or update the 'sage_setup: DISTRIBUTION' directive in FILES")
-    parser.add_argument('--from-egg-info', action="store_true", default=False,
+    parser.add_argument('--from-egg-info', action='store_true', default=False,
                         help="take FILES from pkgs/DISTRIBUTION/DISTRIBUTION.egg-info/SOURCES.txt")
     parser.add_argument("filename", metavar='FILES', nargs='*', type=str,
                         help=("source files or directories (default: all files from SAGE_SRC, "
@@ -603,7 +603,7 @@ if __name__ == '__main__':
             else:
                 handle_file(*os.path.split(path))
 
-    print(f"sage --fixdistributions: checking consistency")
+    print("sage --fixdistributions: checking consistency")
 
     for package in ordinary_packages:
         if len(package_distributions_per_directives[package]) > 1:

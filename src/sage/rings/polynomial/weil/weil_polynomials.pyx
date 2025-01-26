@@ -83,7 +83,7 @@ cdef class dfs_manager:
     """
     Data structure to manage depth-first search.
 
-    Such a structure is created and managed by an instance of `WeilPolynomials_iter`.
+    Such a structure is created and managed by an instance of ``WeilPolynomials_iter``.
     There is generally no need for a user to manipulate it directly.
     """
     cdef int d
@@ -143,7 +143,6 @@ cdef class dfs_manager:
     def __dealloc__(self):
         """
         Deallocate memory.
-
         """
         ps_static_clear(self.ps_st_data)
         self.ps_st_data = NULL
@@ -157,8 +156,8 @@ cdef class dfs_manager:
         """
         Count nodes.
 
-        This method should not be called directly. Instead, use the `node_count` method
-        of an instance of `WeilPolynomials` or `WeilPolynomials_iter`.
+        This method should not be called directly. Instead, use the ``node_count`` method
+        of an instance of ``WeilPolynomials`` or ``WeilPolynomials_iter``.
 
         TESTS::
 
@@ -180,7 +179,7 @@ cdef class dfs_manager:
         Advance the tree exhaustion.
 
         This method should not be called directly. Instead, use the iterator
-        `WeilPolynomials_iter` or the iterable `WeilPolynomials`.
+        ``WeilPolynomials_iter`` or the iterable ``WeilPolynomials``.
 
         TESTS::
 
@@ -230,6 +229,7 @@ cdef class dfs_manager:
             print(u)
             raise RuntimeError("Node limit ({0:%d}) exceeded".format(self.node_limit))
         return ans
+
 
 class WeilPolynomials_iter():
     r"""
@@ -303,13 +303,13 @@ class WeilPolynomials_iter():
             coefflist.append(j)
             modlist.append(k)
         # Remove cofactor from initial coefficients
-        if num_cofactor == 1: #cofactor x + sqrt(q)
+        if num_cofactor == 1:  # cofactor x + sqrt(q)
             for i in range(1, len(coefflist)):
                 coefflist[i] -= coefflist[i-1]*q.sqrt()
-        elif num_cofactor == 2: #cofactor x + sqrt(q)
+        elif num_cofactor == 2:  # cofactor x + sqrt(q)
             for i in range(1, len(coefflist)):
                 coefflist[i] += coefflist[i-1]*q.sqrt()
-        elif num_cofactor == 3: #cofactor x^2 - q
+        elif num_cofactor == 3:  # cofactor x^2 - q
             for i in range(2, len(coefflist)):
                 coefflist[i] += coefflist[i-2]*q
         # Asymmetrize initial coefficients
@@ -333,7 +333,7 @@ class WeilPolynomials_iter():
 
     def __iter__(self):
         r"""
-        Return the iterator (i.e. `self`).
+        Return the iterator (i.e. ``self``).
 
         EXAMPLES::
 
@@ -409,34 +409,34 @@ class WeilPolynomials():
 
     INPUT:
 
-    - ``d`` -- integer, the degree of the polynomials
+    - ``d`` -- integer; the degree of the polynomials
 
-    - ``q`` -- integer, the square of the complex absolute value of the roots
+    - ``q`` -- integer; the square of the complex absolute value of the roots
 
-    - ``sign`` -- integer (default `1`), the sign `s` of the functional equation
+    - ``sign`` -- integer (default: `1`); the sign `s` of the functional equation
 
-    - ``lead`` -- integer, list of integers or pairs of integers (default `1`)
+    - ``lead`` -- integer (default: `1`); list of integers or pairs of integers
 
         These are constraints on the leading coefficients of the generated polynomials.
         If pairs `(a, b)` of integers are given, they are treated as a constraint
         of the form `\equiv a \pmod{b}`; the moduli must be in decreasing order by
         divisibility, and the modulus of the leading coefficient must be 0.
 
-    - ``node_limit`` -- integer (default ``None``)
+    - ``node_limit`` -- integer (default: ``None``)
 
         If set, imposes an upper bound on the number of terminal nodes during the search
-        (will raise a ``RuntimeError`` if exceeded).
+        (will raise a :exc:`RuntimeError` if exceeded).
 
-    - ``parallel`` -- boolean (default ``False``), whether to use multiple processes
+    - ``parallel`` -- boolean (default: ``False``); whether to use multiple processes
 
         If set, will raise an error unless this file was compiled with OpenMP support
         (see instructions at the top of :mod:`sage.rings.polynomial.weil.weil_polynomials`).
 
-    - ``squarefree`` -- boolean (default ``False``),
+    - ``squarefree`` -- boolean (default: ``False``)
 
         If set, only squarefree polynomials will be returned.
 
-    - ``polring`` -- optional, a polynomial ring in which to construct the results
+    - ``polring`` -- (optional) a polynomial ring in which to construct the results
 
     EXAMPLES:
 

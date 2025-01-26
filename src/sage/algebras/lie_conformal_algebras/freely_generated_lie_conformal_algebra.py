@@ -41,7 +41,7 @@ class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
     def __init__(self, R, index_set=None, central_elements=None, category=None,
                  element_class=None, prefix=None, **kwds):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 
@@ -81,8 +81,8 @@ class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
             (B[alpha[1]], B[alphacheck[1]], B[-alpha[1]], B['K'])
         """
         F = Family(self._generators,
-                      lambda i: self.monomial((i,Integer(0))),
-                      name="generator map")
+                   lambda i: self.monomial((i, Integer(0))),
+                   name="generator map")
         from sage.categories.sets_cat import Sets
         if F in Sets().Finite():
             return tuple(F)

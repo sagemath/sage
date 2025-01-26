@@ -56,7 +56,7 @@ TESTS::
 AUTHORS:
 
 - Michael Brickenstein (2009-07): initial implementation, overall design
-- Martin Albrecht (2009-07): clean up, enhancements, etc
+- Martin Albrecht (2009-07): clean up, enhancements, etc.
 - Michael Brickenstein (2009-10): extension to more Singular types
 - Martin Albrecht (2010-01): clean up, support for attributes
 - Simon King (2011-04): include the documentation provided by Singular as a code block
@@ -97,7 +97,7 @@ from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_g
 from sage.libs.singular.decl cimport *
 from sage.libs.singular.option import opt_ctx
 from sage.libs.singular.polynomial cimport singular_vector_maximal_component
-from sage.libs.singular.singular cimport sa2si, si2sa, si2sa_intvec, si2sa_bigintvec
+from sage.libs.singular.singular cimport sa2si, si2sa, si2sa_intvec, si2sa_bigintvec, start_catch_error, check_error
 from sage.libs.singular.singular import error_messages
 
 from sage.interfaces.singular import get_docstring
@@ -352,13 +352,13 @@ cdef leftv* new_leftv(void *data, res_type) noexcept:
     res.rtyp = res_type
     return res
 
-cdef free_leftv(leftv *args, ring *r = NULL):
+cdef free_leftv(leftv *args, ring *r=NULL):
     """
     Kills this ``leftv`` and all ``leftv``s in the tail.
 
     INPUT:
 
-    - ``args`` -- a list of Singular arguments
+    - ``args`` -- list of Singular arguments
     """
     args.CleanUp(r)
     omFreeBin(args, sleftv_bin)
@@ -385,13 +385,9 @@ def is_sage_wrapper_for_singular_ring(ring):
         sage: P = A.g_algebra(relations={y*x:-x*y}, order = 'lex')
         sage: is_sage_wrapper_for_singular_ring(P)
         True
-
     """
-    if isinstance(ring, MPolynomialRing_libsingular):
-        return True
-    if isinstance(ring, NCPolynomialRing_plural):
-        return True
-    return False
+    return isinstance(ring, (MPolynomialRing_libsingular,
+                             NCPolynomialRing_plural))
 
 
 cdef new_sage_polynomial(ring,  poly *p):
@@ -420,7 +416,7 @@ def is_singular_poly_wrapper(p):
 
 def all_singular_poly_wrapper(s):
     """
-    Tests for a sequence ``s``, whether it consists of
+    Test for a sequence ``s``, whether it consists of
     singular polynomials.
 
     EXAMPLES::
@@ -496,7 +492,7 @@ cdef class Converter(SageObject):
 
         INPUT:
 
-        - ``args`` -- a list of Python objects
+        - ``args`` -- list of Python objects
         - ``ring`` -- a multivariate polynomial ring
         - ``attributes`` -- an optional dictionary of Singular
           attributes (default: ``None``)
@@ -524,8 +520,7 @@ cdef class Converter(SageObject):
             elif is_sage_wrapper_for_singular_ring(a):
                 v = self.append_ring(a)
 
-            elif isinstance(a, MPolynomialIdeal) or \
-                    isinstance(a, NCPolynomialIdeal):
+            elif isinstance(a, (MPolynomialIdeal, NCPolynomialIdeal)):
                 v = self.append_ideal(a)
 
             elif isinstance(a, int):
@@ -570,8 +565,7 @@ cdef class Converter(SageObject):
             elif isinstance(a, tuple):
                 is_intvec = True
                 for i in a:
-                    if not (isinstance(i, int)
-                        or isinstance(i, Integer)):
+                    if not isinstance(i, (int, Integer)):
                         is_intvec = False
                         break
                 if is_intvec:
@@ -585,7 +579,7 @@ cdef class Converter(SageObject):
                 v = self.append_int(a)
 
             else:
-                raise TypeError("unknown argument type '%s'"%(type(a),))
+                raise TypeError("unknown argument type '%s'" % (type(a),))
 
             if attributes and a in attributes:
                 for attrib in attributes[a]:
@@ -594,7 +588,7 @@ cdef class Converter(SageObject):
                         atSet(v, omStrDup("isSB"), <void*>val, INT_CMD)
                         setFlag(v, FLAG_STD)
                     else:
-                        raise NotImplementedError("Support for attribute '%s' not implemented yet."%attrib)
+                        raise NotImplementedError("Support for attribute '%s' not implemented yet." % attrib)
 
     def ring(self):
         """
@@ -693,7 +687,7 @@ cdef class Converter(SageObject):
                 result[i,j] = p
         return result
 
-    cdef to_sage_vector_destructive(self, poly *p, free_module = None):
+    cdef to_sage_vector_destructive(self, poly *p, free_module=None):
         cdef int rank
         if free_module:
             rank = free_module.rank()
@@ -809,15 +803,15 @@ cdef class Converter(SageObject):
         """
         Append the number ``n`` to the list.
         """
-        cdef number *_n =  sa2si(n, self._singular_ring)
+        cdef number *_n = sa2si(n, self._singular_ring)
         return self._append(<void *>_n, NUMBER_CMD)
 
     cdef leftv *append_ring(self, r) except NULL:
         """
         Append the ring ``r`` to the list.
         """
-        cdef ring *_r =  access_singular_ring(r)
-        _r.ref+=1
+        cdef ring *_r = access_singular_ring(r)
+        _r.ref += 1
         return self._append(<void *>_r, RING_CMD)
 
     cdef leftv *append_matrix(self, mat) except NULL:
@@ -827,7 +821,7 @@ cdef class Converter(SageObject):
         cdef poly *p
         ncols = mat.ncols()
         nrows = mat.nrows()
-        cdef matrix* _m=mpNew(nrows,ncols)
+        cdef matrix* _m=mpNew(nrows, ncols)
         for i in range(nrows):
             for j in range(ncols):
                 #FIXME
@@ -839,7 +833,7 @@ cdef class Converter(SageObject):
         """
         Append the integer ``n`` to the list.
         """
-        cdef long _n =  n
+        cdef long _n = n
         return self._append(<void*>_n, INT_CMD)
 
     cdef leftv *append_list(self, l) except NULL:
@@ -1209,13 +1203,13 @@ cdef class SingularFunction(SageObject):
 
         INPUT:
 
-        - ``args`` -- a list of arguments
+        - ``args`` -- list of arguments
         - ``ring`` -- a multivariate polynomial ring
         - ``interruptible`` -- if ``True`` pressing :kbd:`Ctrl` + :kbd:`C`
           during the execution of this function will interrupt the computation
           (default: ``True``)
 
-        - ``attributes`` -- a dictionary of optional Singular
+        - ``attributes`` -- dictionary of optional Singular
           attributes assigned to Singular objects (default: ``None``)
 
         If ``ring`` is not specified, it is guessed from the given arguments.
@@ -1303,10 +1297,11 @@ cdef class SingularFunction(SageObject):
                 if dummy_ring is None:
                     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
                     from sage.rings.rational_field import QQ
-                    dummy_ring = PolynomialRing(QQ, "dummy", implementation="singular") # seems a reasonable default
+                    dummy_ring = PolynomialRing(QQ, "dummy", implementation='singular') # seems a reasonable default
                 ring = dummy_ring
-        if not (isinstance(ring, MPolynomialRing_libsingular) or isinstance(ring, NCPolynomialRing_plural)):
-            raise TypeError("cannot call Singular function '%s' with ring parameter of type '%s'" % (self._name,type(ring)))
+        if not isinstance(ring, (MPolynomialRing_libsingular,
+                                 NCPolynomialRing_plural)):
+            raise TypeError("cannot call Singular function '%s' with ring parameter of type '%s'" % (self._name, type(ring)))
         return call_function(self, args, ring, interruptible, attributes)
 
     def _instancedoc_(self):
@@ -1315,7 +1310,7 @@ cdef class SingularFunction(SageObject):
 
             sage: from sage.libs.singular.function import singular_function
             sage: groebner = singular_function('groebner')
-            sage: 'groebner' in groebner.__doc__
+            sage: 'groebner' in groebner.__doc__  # needs info
             True
         """
 
@@ -1331,12 +1326,12 @@ accepts the following keyword parameters:
 
 INPUT:
 
-- ``args`` -- a list of arguments
+- ``args`` -- list of arguments
 - ``ring`` -- a multivariate polynomial ring
 - ``interruptible`` -- if ``True`` pressing :kbd:`Ctrl` + :kbd:`C` during the
   execution of this function will interrupt the computation
   (default: ``True``)
-- ``attributes`` -- a dictionary of optional Singular attributes
+- ``attributes`` -- dictionary of optional Singular attributes
   assigned to Singular objects (default: ``None``)
 
 If ``ring`` is not specified, it is guessed from the given arguments.
@@ -1361,14 +1356,9 @@ EXAMPLES::
      [x2, x1^2],
      [x2, x1^2]]
 
-The Singular documentation for '%s' is given below.
-"""%(self._name,self._name)
-        # Github issue #11268: Include the Singular documentation as a block of code
-        singular_doc = get_docstring(self._name).split('\n')
-        if len(singular_doc) > 1:
-            return prefix + "\n::\n\n"+'\n'.join(["    "+L for L in singular_doc])
-        else:
-            return prefix + "\n::\n\n"+"    Singular documentation not found"
+"""%(self._name)
+        from sage.interfaces.singular import get_docstring
+        return prefix + get_docstring(self._name, prefix=True, code=True)
 
     cdef common_ring(self, tuple args, ring=None):
         """
@@ -1381,7 +1371,7 @@ The Singular documentation for '%s' is given below.
 
         INPUT:
 
-        - ``args`` -- a list of Python objects
+        - ``args`` -- list of Python objects
         - ``ring`` -- an optional ring to check
         """
         from sage.matrix.matrix_mpolynomial_dense import Matrix_mpolynomial_dense
@@ -1456,10 +1446,8 @@ The Singular documentation for '%s' is given below.
 
 cdef inline call_function(SingularFunction self, tuple args, object R, bint signal_handler=True, attributes=None):
     global currRingHdl
-    global errorreported
     global currentVoice
     global myynest
-    global error_messages
 
     cdef ring *si_ring
     if isinstance(R, MPolynomialRing_libsingular):
@@ -1480,29 +1468,28 @@ cdef inline call_function(SingularFunction self, tuple args, object R, bint sign
 
     currentVoice = NULL
     myynest = 0
-    errorreported = 0
-
-    while error_messages:
-        error_messages.pop()
+    start_catch_error()
 
     with opt_ctx: # we are preserving the global options state here
         if signal_handler:
-            sig_on()
-            _res = self.call_handler.handle_call(argument_list, si_ring)
-            sig_off()
+            try:
+                sig_on()
+                _res = self.call_handler.handle_call(argument_list, si_ring)
+                sig_off()
+            finally:
+                s = check_error()
         else:
             _res = self.call_handler.handle_call(argument_list, si_ring)
+            s = check_error()
 
-    if myynest:
-        myynest = 0
+    myynest = 0
 
     if currentVoice:
         currentVoice = NULL
 
-    if errorreported:
-        errorreported = 0
+    if s:
         raise RuntimeError("error in Singular function call %r:\n%s" %
-            (self._name, "\n".join(error_messages)))
+                           (self._name, "\n".join(s)))
 
     res = argument_list.to_python(_res)
 
@@ -1824,13 +1811,52 @@ def lib(name):
         raise NameError("Singular library {!r} not found".format(name))
 
 
+def get_printlevel():
+    """
+    Return the value of the variable ``printlevel``.
+
+    This is useful to switch off and back the comments.
+
+    EXAMPLES::
+
+        sage: from sage.libs.singular.function import get_printlevel, set_printlevel
+        sage: l = get_printlevel()
+        sage: set_printlevel(-1)
+        sage: get_printlevel()
+        -1
+        sage: set_printlevel(l)
+    """
+    global printlevel
+    cdef int pl = printlevel
+    return pl
+
+
+def set_printlevel(l):
+    """
+    Set the  value of the variable ``printlevel``.
+
+    This is useful to switch off and back the comments.
+
+    EXAMPLES::
+
+        sage: from sage.libs.singular.function import get_printlevel, set_printlevel
+        sage: l = get_printlevel()
+        sage: set_printlevel(2)
+        sage: get_printlevel()
+        2
+        sage: set_printlevel(l)
+    """
+    global printlevel
+    printlevel = <int>l
+
+
 def list_of_functions(packages=False):
     """
     Return a list of all function names currently available.
 
     INPUT:
 
-    - ``packages`` -- include local functions in packages.
+    - ``packages`` -- include local functions in packages
 
     EXAMPLES::
 

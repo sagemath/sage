@@ -29,12 +29,10 @@ class VoronoiDiagram(SageObject):
 
     INPUT:
 
-    - ``points`` -- a list of points. Any valid input for the
-      :class:`PointConfiguration` will do.
+    - ``points`` -- list of points; any valid input for the
+      :class:`PointConfiguration` will do
 
-    OUTPUT:
-
-    An instance of the VoronoiDiagram class.
+    OUTPUT: an instance of the VoronoiDiagram class
 
     EXAMPLES:
 
@@ -251,11 +249,9 @@ class VoronoiDiagram(SageObject):
         - ``cell_colors`` -- (default: ``None``) provide the colors for the cells, either as
           dictionary. Randomly colored cells are provided with ``None``.
         - ``**kwds`` -- optional keyword parameters, passed on as arguments for
-          plot().
+          plot()
 
-        OUTPUT:
-
-        A graphics object.
+        OUTPUT: a graphics object
 
         EXAMPLES::
 
@@ -294,7 +290,7 @@ class VoronoiDiagram(SageObject):
                 cell_colors = rainbow(self._n)
                 shuffle(cell_colors)
             else:
-                if not (isinstance(cell_colors, list) or (isinstance(cell_colors, dict))):
+                if not isinstance(cell_colors, (list, dict)):
                     raise AssertionError("'cell_colors' must be a list or a dictionary")
             for i, p in enumerate(self._P):
                 col = cell_colors[i]

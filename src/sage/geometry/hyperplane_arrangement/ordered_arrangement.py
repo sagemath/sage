@@ -115,9 +115,9 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
 
         - ``parent`` -- the parent :class:`OrderedHyperplaneArrangements`
 
-        - ``hyperplanes`` -- a tuple of hyperplanes
+        - ``hyperplanes`` -- tuple of hyperplanes
 
-        - ``check`` -- boolean (default ``True``); whether
+        - ``check`` -- boolean (default: ``True``); whether
           to check input
 
         - ``backend`` -- string (default: ``None``); the backend to
@@ -142,7 +142,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
 
         INPUT:
 
-        - ``proj`` -- (default: ``True``); if the
+        - ``proj`` -- (default: ``True``) if the
           ambient space is affine or projective
 
         OUTPUT:
@@ -224,7 +224,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             mat_rows = mat.rows()[:-1]
             H1b = A1(mat_rows)
             return H1b
-        P = self.intersection_poset(element_label="subspace")
+        P = self.intersection_poset(element_label='subspace')
         center = P.maximal_elements()[0].linear_part()
         n1 = center.dimension()
         U = []
@@ -250,9 +250,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         hyperplane arrangement in `\CC^n` whose equations have
         coefficients in a subfield of `\QQbar`.
 
-        OUTPUT:
-
-        A finitely presented fundamental group.
+        OUTPUT: a finitely presented fundamental group
 
         .. NOTE::
 
@@ -340,9 +338,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         r"""
         Return the meridians of each hyperplane (including the one at infinity).
 
-        OUTPUT:
-
-        A dictionary
+        OUTPUT: a dictionary
 
         .. NOTE::
 
@@ -398,7 +394,6 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             < x0, x1, x2, x3, x4 | x4^-1*x3^-1*x2^-1*x3*x4*x0*x2*x0^-1,
                                    x4^-1*x2^-1*x4*x2, x4^-1*x1^-1*x0^-1*x1*x4*x0,
                                    x4^-1*x1^-1*x0^-1*x4*x0*x1,
-                                   x4^-1*x1^-1*x3*x0*x1*x3^-1*x2^-1*x4*x0^-1*x2,
                                    x3^-1*x2^-1*x1^-1*x0^-1*x3*x0*x1*x2,
                                    x3^-1*x1^-1*x3*x1 >
             sage: G3.abelian_invariants()
@@ -410,9 +405,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             < x0, x1, x2, x3, x4 | x4^-1*x3^-1*x2^-1*x3*x4*x0*x2*x0^-1,
                                    x4^-1*x2^-1*x4*x2, x4^-1*x1^-1*x0^-1*x1*x4*x0,
                                    x4^-1*x1^-1*x0^-1*x4*x0*x1,
-                                   x4^-1*x1^-1*x3*x0*x1*x3^-1*x2^-1*x4*x0^-1*x2,
-                                   x3^-1*x2^-1*x1^-1*x0^-1*x3*x0*x1*x2,
-                                   x3^-1*x1^-1*x3*x1 >
+                                   x3^-1*x2^-1*x1^-1*x0^-1*x3*x0*x1*x2, x3^-1*x1^-1*x3*x1 >
             sage: G4.abelian_invariants()
             (0, 0, 0, 0, 0)
 
@@ -479,9 +472,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         r"""
         Return the meridian of each hyperplane.
 
-        OUTPUT:
-
-        A dictionary
+        OUTPUT: a dictionary
 
         .. NOTE::
 
@@ -558,7 +549,7 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
           preserve signs of hyperplane equations
 
         - ``check`` -- boolean (default: ``True``); whether to
-          perform argument checking.
+          perform argument checking
 
         EXAMPLES::
 
@@ -637,9 +628,7 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 

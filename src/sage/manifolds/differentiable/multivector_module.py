@@ -32,13 +32,15 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
 from sage.categories.modules import Modules
-from sage.tensor.modules.ext_pow_free_module import ExtPowerFreeModule
 from sage.manifolds.differentiable.multivectorfield import (
-                                       MultivectorField, MultivectorFieldParal)
+    MultivectorField,
+    MultivectorFieldParal,
+)
+from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.tensor.modules.ext_pow_free_module import ExtPowerFreeModule
 
 
 class MultivectorModule(UniqueRepresentation, Parent):
@@ -141,7 +143,7 @@ class MultivectorModule(UniqueRepresentation, Parent):
         sage: z is A.zero()
         True
 
-    while non-zero elements are constructed by providing their
+    while nonzero elements are constructed by providing their
     components in a given vector frame::
 
         sage: a = A([[0,3*x],[-3*x,0]], frame=eU, name='a') ; a
@@ -214,7 +216,6 @@ class MultivectorModule(UniqueRepresentation, Parent):
          differentiable manifold M
         sage: a_U.display(eU)
         a = 3*x ∂/∂x∧∂/∂y
-
     """
     Element = MultivectorField
 
@@ -245,7 +246,6 @@ class MultivectorModule(UniqueRepresentation, Parent):
         In the above test suite, ``_test_elements`` is skipped because
         of the ``_test_pickling`` error of the elements (to be fixed in
         :class:`sage.manifolds.differentiable.tensorfield.TensorField`)
-
         """
         domain = vector_field_module._domain
         dest_map = vector_field_module._dest_map
@@ -298,7 +298,6 @@ class MultivectorModule(UniqueRepresentation, Parent):
             a = x*y ∂/∂x∧∂/∂y
             sage: A(0) is A.zero()
             True
-
         """
         try:
             if comp.is_trivial_zero():
@@ -340,7 +339,6 @@ class MultivectorModule(UniqueRepresentation, Parent):
             sage: A._an_element_()
             2-vector field on the 2-dimensional differentiable
              manifold M
-
         """
         resu = self.element_class(self._vmodule, self._degree)
         for oc in self._domain.open_covers(trivial=False):
@@ -369,7 +367,6 @@ class MultivectorModule(UniqueRepresentation, Parent):
             True
             sage: A2._coerce_map_from_(A2U)
             False
-
         """
         if isinstance(other, (MultivectorModule, MultivectorFreeModule)):
             # coercion by domain restriction
@@ -391,7 +388,6 @@ class MultivectorModule(UniqueRepresentation, Parent):
             sage: A2.zero()
             2-vector field zero on the 3-dimensional differentiable
              manifold M
-
         """
         zero = self._element_constructor_(name='zero', latex_name='0')
         for frame in self._domain._frames:
@@ -415,7 +411,6 @@ class MultivectorModule(UniqueRepresentation, Parent):
             sage: A2
             Module A^2(M) of 2-vector fields on the 3-dimensional
              differentiable manifold M
-
         """
         description = "Module "
         if self._name is not None:
@@ -440,7 +435,6 @@ class MultivectorModule(UniqueRepresentation, Parent):
             'A^{2}\\left(\\mathcal{M}\\right)'
             sage: latex(A2)  # indirect doctest
             A^{2}\left(\mathcal{M}\right)
-
         """
         if self._latex_name is None:
             return r'\text{' + str(self) + r'}'
@@ -476,7 +470,6 @@ class MultivectorModule(UniqueRepresentation, Parent):
             sage: A2U.base_module()
             Module X(U) of vector fields on the Open subset U of the
              3-dimensional differentiable manifold M
-
         """
         return self._vmodule
 
@@ -484,9 +477,7 @@ class MultivectorModule(UniqueRepresentation, Parent):
         r"""
         Return the degree of the multivector fields in ``self``.
 
-        OUTPUT:
-
-        - integer `p` such that ``self`` is a set of `p`-vector fields
+        OUTPUT: integer `p` such that ``self`` is a set of `p`-vector fields
 
         EXAMPLES::
 
@@ -495,11 +486,11 @@ class MultivectorModule(UniqueRepresentation, Parent):
             2
             sage: M.multivector_module(3).degree()
             3
-
         """
         return self._degree
 
 #***********************************************************************
+
 
 class MultivectorFreeModule(ExtPowerFreeModule):
     r"""
@@ -589,7 +580,7 @@ class MultivectorFreeModule(ExtPowerFreeModule):
         sage: A(0) is A.zero()
         True
 
-    while non-zero elements are constructed by providing their
+    while nonzero elements are constructed by providing their
     components in a given vector frame::
 
         sage: comp = [[0,3*x,-z],[-3*x,0,4],[z,-4,0]]
@@ -662,7 +653,6 @@ class MultivectorFreeModule(ExtPowerFreeModule):
          differentiable manifold M
         sage: a_U.display()
         a = 3*x ∂/∂x∧∂/∂y - z ∂/∂x∧∂/∂z + 4 ∂/∂y∧∂/∂z
-
     """
 
     Element = MultivectorFieldParal
@@ -682,7 +672,6 @@ class MultivectorFreeModule(ExtPowerFreeModule):
             Free module A^2(M) of 2-vector fields on the 3-dimensional
              differentiable manifold M
             sage: TestSuite(A).run()
-
         """
         domain = vector_field_module._domain
         dest_map = vector_field_module._dest_map
@@ -725,7 +714,6 @@ class MultivectorFreeModule(ExtPowerFreeModule):
             a = x ∂/∂x∧∂/∂y
             sage: A(0) is A.zero()
             True
-
         """
         try:
             if comp.is_trivial_zero():
@@ -775,7 +763,6 @@ class MultivectorFreeModule(ExtPowerFreeModule):
             False
             sage: A2._coerce_map_from_(M.tensor_field_module((2,0)))
             False
-
         """
         if isinstance(other, (MultivectorModule, MultivectorFreeModule)):
             # coercion by domain restriction
@@ -799,7 +786,6 @@ class MultivectorFreeModule(ExtPowerFreeModule):
             sage: A
             Free module A^2(M) of 2-vector fields on
              the 3-dimensional differentiable manifold M
-
         """
         description = "Free module "
         if self._name is not None:

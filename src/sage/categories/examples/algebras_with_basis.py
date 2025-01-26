@@ -19,7 +19,7 @@ from sage.combinat.words.words import Words
 
 class FreeAlgebra(CombinatorialFreeModule):
     r"""
-    An example of an algebra with basis: the free algebra
+    An example of an algebra with basis: the free algebra.
 
     This class illustrates a minimal implementation of an algebra with basis.
     """
@@ -31,7 +31,6 @@ class FreeAlgebra(CombinatorialFreeModule):
             sage: A = AlgebrasWithBasis(QQ).example(); A                                # needs sage.modules
             An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
             sage: TestSuite(A).run()                                                    # needs sage.modules
-
         """
         self._alphabet = alphabet
         CombinatorialFreeModule.__init__(self, R,
@@ -50,10 +49,10 @@ class FreeAlgebra(CombinatorialFreeModule):
     @cached_method
     def one_basis(self):
         """
-        Returns the empty word, which index the one of this algebra,
+        Return the empty word, which index the one of this algebra,
         as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
 
-        EXAMPLES::r
+        EXAMPLES::
 
             sage: A = AlgebrasWithBasis(QQ).example()                                   # needs sage.modules
             sage: A.one_basis()                                                         # needs sage.modules

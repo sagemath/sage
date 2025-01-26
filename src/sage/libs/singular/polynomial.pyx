@@ -142,11 +142,10 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args,
     - ``ret`` -- a pointer to a Singular polynomial to store the result in
     - ``p`` -- a Singular polynomial
     - ``r`` -- a Singular ring
-    - ``args`` -- a list/tuple of elements which can be converted to
-      Singular polynomials using the ``(get_element)`` function
-      provided.
+    - ``args`` -- list/tuple of elements which can be converted to Singular
+      polynomials using the ``(get_element)`` function provided
     - ``(*get_element)`` -- a function to turn a Sage element into a
-      Singular element.
+      Singular element
 
     EXAMPLES::
 
@@ -178,7 +177,7 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args,
 
     Loop (at most 30 times) until we have 6 consecutive zeros when
     calling ``leak(10000)``. Depending on the operating system, it is
-    possible to have several non-zero leak values in the beginning, but
+    possible to have several nonzero leak values in the beginning, but
     after a while we should get only zeros. The fact that we require 6
     zeros also means that Singular's pre-allocated buckets should not
     be sufficient if there really would be a memory leak. ::
@@ -201,7 +200,7 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args,
         Leaked 0 bytes
     """
     cdef long l = len(args)
-    cdef ideal *to_id = idInit(l,1)
+    cdef ideal *to_id = idInit(l, 1)
     cdef bint constant_args = 1
     for i from 0 <= i < l:
         to_id.m[i]= p_Copy( get_element(args[i]), r)
@@ -392,7 +391,7 @@ cdef int singular_polynomial_pow(poly **ret, poly *p, unsigned long exp, ring *r
 
     if r != currRing:
         rChangeCurrRing(r)
-    cdef int count = singular_polynomial_length_bounded(p,15)
+    cdef int count = singular_polynomial_length_bounded(p, 15)
     if count >= 15 or exp > 15:
         sig_on()
     ret[0] = pPower( p_Copy(p,r), exp)
@@ -468,7 +467,7 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         sage: latex(10*x^2 + 1/2*y)
         10 x^{2} + \frac{1}{2} y
 
-    Demonstrate that coefficients over non-atomic representated rings are
+    Demonstrate that coefficients over non-atomic represented rings are
     properly parenthesized (:issue:`11186`)::
 
         sage: x = var('x')
@@ -505,7 +504,7 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         multi = multi.lstrip().rstrip()
 
         # Next determine coefficient of multinomial
-        c =  si2sa(p_GetCoeff(p, r), r, base)
+        c = si2sa(p_GetCoeff(p, r), r, base)
         if not multi:
             multi = latex(c)
         elif c != 1:
@@ -574,7 +573,7 @@ cdef long singular_polynomial_deg(poly *p, poly *x, ring *r) noexcept:
         if p_GetExp(x, i, r):
             break
     while p:
-        _deg =  p_GetExp(p,i,r)
+        _deg = p_GetExp(p, i, r)
         if _deg > deg:
             deg = _deg
         p = pNext(p)
@@ -591,7 +590,7 @@ cdef int singular_polynomial_length_bounded(poly *p, int bound) noexcept:
     INPUT:
 
     - ``p`` -- a Singular polynomial
-    - ``bound`` -- an integer > 0
+    - ``bound`` -- integer > 0
     """
     cdef int count = 0
     while p != NULL and count < bound:
@@ -620,7 +619,7 @@ cdef int singular_polynomial_subst(poly **p, int var_index, poly *value, ring *r
     INPUT:
 
     - ``p`` -- a polynomial
-    - ``var_index`` -- an integer < ngens (zero based indexing)
+    - ``var_index`` -- integer < ngens (zero based indexing)
     - ``value`` -- a polynomial
     - ``r`` -- a ring
     """

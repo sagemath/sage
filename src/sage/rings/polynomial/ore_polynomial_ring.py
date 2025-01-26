@@ -7,6 +7,30 @@ This module provides the
 which constructs a general dense univariate Ore polynomial ring over a
 commutative base with equipped with an endomorphism and/or a derivation.
 
+TESTS:
+
+The Ore polynomial ring is commutative if the twisting morphism is the
+identity and the twisting derivation vanishes. ::
+
+    sage: # needs sage.rings.finite_rings
+    sage: k.<a> = GF(5^3)
+    sage: Frob = k.frobenius_endomorphism()
+    sage: S.<x> = k['x', Frob]
+    sage: S.is_commutative()
+    False
+    sage: T.<y> = k['y', Frob^3]
+    sage: T.is_commutative()
+    True
+
+    sage: R.<t> = GF(5)[]
+    sage: der = R.derivation()
+    sage: A.<d> = R['d', der]
+    sage: A.is_commutative()
+    False
+    sage: B.<b> = R['b', 5*der]
+    sage: B.is_commutative()
+    True
+
 AUTHOR:
 
 - Xavier Caruso (2020-04)
@@ -21,25 +45,21 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from sage.misc.prandom import randint
+from sage.categories.algebras import Algebras
+from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.morphism import Morphism
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
+from sage.misc.prandom import randint
 from sage.rings.infinity import Infinity
-from sage.structure.category_object import normalize_names
-from sage.structure.parent import Parent
-
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer import Integer
-from sage.structure.element import Element
-
-from sage.categories.commutative_rings import CommutativeRings
-from sage.categories.algebras import Algebras
-from sage.rings.ring import _Fields
-
-from sage.categories.morphism import Morphism
-
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomialBaseringInjection
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.ring import _Fields
+from sage.structure.category_object import normalize_names
+from sage.structure.element import Element
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.rings.derivation', 'RingDerivation')
 
@@ -68,9 +88,9 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
     - ``twisting_map`` -- either an endomorphism of the base ring, or
       a (twisted) derivation of it
 
-    - ``names`` -- a string or a list of strings
+    - ``names`` -- string or list of strings
 
-    - ``sparse`` -- a boolean (default: ``False``); currently not supported
+    - ``sparse`` -- boolean (default: ``False``); currently not supported
 
     EXAMPLES:
 
@@ -304,7 +324,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             <class 'sage.rings.polynomial.skew_polynomial_ring.SkewPolynomialRing_finite_field_with_category'>
 
         If there is no twisting derivation and that the twisting morphism is
-        `None` ot the identity, a regular `PolynomialRing` is created, unless
+        ``None`` ot the identity, a regular `PolynomialRing` is created, unless
         specified otherwise::
 
             sage: # needs sage.rings.finite_rings
@@ -348,7 +368,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         except IndexError:
             raise NotImplementedError("multivariate Ore polynomials rings not supported")
 
-        # If `polcast` is `True` and there is no twisting morphism and no
+        # If `polcast` is ``True`` and there is no twisting morphism and no
         # twisting derivation we return a classical polynomial ring
         if polcast and derivation is None and morphism is None:
             return PolynomialRing(base_ring, names, sparse=sparse)
@@ -421,7 +441,11 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         self._morphism = morphism
         self._derivation = derivation
         self._fraction_field = None
-        category = Algebras(base_ring).or_subcategory(category)
+        if morphism is None and derivation is None:
+            cat = Algebras(base_ring).Commutative()
+        else:
+            cat = Algebras(base_ring)
+        category = cat.or_subcategory(category)
         Parent.__init__(self, base_ring, names=name,
                         normalize=True, category=category)
 
@@ -506,7 +530,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             pass
         if isinstance(a, str):
             try:
-                from sage.misc.parser import Parser, LookupNameMaker
+                from sage.misc.parser import LookupNameMaker, Parser
                 R = self.base_ring()
                 p = Parser(Integer, R, LookupNameMaker({self.variable_name(): self.gen()}, R))
                 return self(p.parse(a))
@@ -660,7 +684,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``var`` -- a string representing the name of the new variable
+        - ``var`` -- string representing the name of the new variable
 
         EXAMPLES::
 
@@ -709,7 +733,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
 
         INPUT:
 
-        -  ``n`` -- an integer (default: 1)
+        - ``n`` -- integer (default: 1)
 
         EXAMPLES::
 
@@ -972,7 +996,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         - ``degree`` -- (default: ``(-1,2)``) integer with degree
           or a tuple of integers with minimum and maximum degrees
 
-        - ``monic`` -- (default: ``False``) if ``True``, return a monic
+        - ``monic`` -- boolean (default: ``False``); if ``True``, return a monic
           Ore polynomial
 
         - ``*args``, ``**kwds`` -- passed on to the ``random_element`` method
@@ -1014,7 +1038,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         TESTS:
 
         If the first tuple element is greater than the second, a
-        :class:`ValueError` is raised::
+        :exc:`ValueError` is raised::
 
             sage: S.random_element(degree=(5,4))                                        # needs sage.rings.finite_rings
             Traceback (most recent call last):
@@ -1062,14 +1086,14 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
 
         INPUT:
 
-        -  ``degree`` -- Integer with degree (default: 2)
-           or a tuple of integers with minimum and maximum degrees
+        - ``degree`` -- integer with degree (default: 2)
+          or a tuple of integers with minimum and maximum degrees
 
-        -  ``monic`` -- if ``True``, returns a monic Ore polynomial
-           (default: ``True``)
+        - ``monic`` -- if ``True``, returns a monic Ore polynomial
+          (default: ``True``)
 
-        -  ``*args, **kwds`` -- passed in to the ``random_element`` method for
-           the base ring
+        - ``*args``, ``**kwds`` -- passed in to the ``random_element`` method for
+          the base ring
 
         EXAMPLES::
 
@@ -1094,36 +1118,6 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             irred = self.random_element((degree, degree), monic=monic)
             if irred.is_irreducible():
                 return irred
-
-    def is_commutative(self) -> bool:
-        r"""
-        Return ``True`` if this Ore polynomial ring is commutative.
-
-        This holds if the twisting morphism is the identity and the
-        twisting derivation vanishes.
-
-        EXAMPLES::
-
-            sage: # needs sage.rings.finite_rings
-            sage: k.<a> = GF(5^3)
-            sage: Frob = k.frobenius_endomorphism()
-            sage: S.<x> = k['x', Frob]
-            sage: S.is_commutative()
-            False
-            sage: T.<y> = k['y', Frob^3]
-            sage: T.is_commutative()
-            True
-
-            sage: R.<t> = GF(5)[]
-            sage: der = R.derivation()
-            sage: A.<d> = R['d', der]
-            sage: A.is_commutative()
-            False
-            sage: B.<b> = R['b', 5*der]
-            sage: B.is_commutative()
-            True
-        """
-        return self._morphism is None and self._derivation is None
 
     def is_field(self, proof=False) -> bool:
         r"""

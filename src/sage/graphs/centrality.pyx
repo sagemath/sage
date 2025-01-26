@@ -38,7 +38,7 @@ cimport cython
 
 def centrality_betweenness(G, bint exact=False, bint normalize=True):
     r"""
-    Return the centrality betweenness of `G`
+    Return the centrality betweenness of `G`.
 
     The centrality betweenness of a vertex `v\in G` is defined by:
 
@@ -54,7 +54,7 @@ def centrality_betweenness(G, bint exact=False, bint normalize=True):
     - ``G`` -- a (di)graph
 
     - ``exact`` -- boolean (default: ``False``); whether to compute over
-      rationals or on ``double`` C variables.
+      rationals or on ``double`` C variables
 
     - ``normalize`` -- boolean (default: ``True``); whether to renormalize the
       values by dividing them by `\binom {n-1} 2` (for graphs) or `2\binom {n-1}
@@ -115,7 +115,6 @@ def centrality_betweenness(G, bint exact=False, bint normalize=True):
         {0: 0.0, 1: 0.0}
         sage: centrality_betweenness(Graph(2), exact=1)
         {0: 0, 1: 0}
-
     """
     if exact:
         return centrality_betweenness_C(G, <mpq_t> 0, normalize=normalize)
@@ -125,14 +124,14 @@ def centrality_betweenness(G, bint exact=False, bint normalize=True):
 @cython.cdivision(True)
 cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
     r"""
-    Return the centrality betweenness of G (C implementation)
+    Return the centrality betweenness of G (C implementation).
 
     INPUT:
 
     - ``G`` -- a graph
 
     - ``_`` -- this variable is ignored, only its type matters. If it is of type
-      `mpq_t` then computations are made on `Q`, if it is ``double`` the
+      ``mpq_t`` then computations are made on `Q`, if it is ``double`` the
       computations are made on ``double``.
 
     - ``normalize`` -- boolean (default: ``True``); whether to renormalize the
@@ -179,7 +178,7 @@ cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
         mpq_init(mpq_tmp)
 
     try:
-        init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex, sort_neighbors=False)
+        init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
         init_reverse(bfs_dag, g)
 
         queue = <uint32_t*> check_allocarray(n, sizeof(uint32_t))
@@ -690,7 +689,7 @@ def centrality_closeness_top_k(G, int k=1, int verbose=0):
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef list V = list(G)
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=V, sort_neighbors=False)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=V)
     cdef int n = sd.n
     cdef int* reachL = <int*> mem.malloc(n * sizeof(int))
     cdef int* reachU
@@ -852,9 +851,7 @@ def centrality_closeness_random_k(G, int k=1):
 
     - ``k`` -- integer (default: 1); number of random nodes to choose
 
-    OUTPUT:
-
-    A dictionary associating to each vertex its estimated closeness centrality.
+    OUTPUT: a dictionary associating to each vertex its estimated closeness centrality
 
     EXAMPLES:
 
@@ -887,7 +884,6 @@ def centrality_closeness_random_k(G, int k=1):
         Traceback (most recent call last):
         ...
         ValueError: G must be an undirected Graph
-
     """
     G._scream_if_not_simple()
     if G.is_directed():
@@ -943,7 +939,7 @@ def centrality_closeness_random_k(G, int k=1):
         # Copying the whole graph as a static_sparse_graph for fast shortest
         # paths computation in unweighted graph. This data structure is well
         # documented in module sage.graphs.base.static_sparse_graph
-        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex, sort_neighbors=False)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
         distance = <uint32_t*> mem.malloc(n * sizeof(uint32_t))
         waiting_list = <uint32_t*> mem.malloc(n * sizeof(uint32_t))
         bitset_init(seen, n)

@@ -261,7 +261,8 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
 
         INPUT:
 
-        - ``norm_bound`` -- (positive integer) upper bound on the norm of primes tested.
+        - ``norm_bound`` -- (positive integer) upper bound on the norm of
+          primes tested
 
         EXAMPLES::
 
@@ -302,7 +303,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
                 return P
         raise RuntimeError("No prime of norm less than %s found in class %s" % (norm_bound, c))
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return generators for a representative ideal in this
         (`S`-)ideal class.
@@ -510,9 +511,7 @@ class ClassGroup(AbelianGroupWithValues_class):
 
         This is an alias for :meth:`gens_values`.
 
-        OUTPUT:
-
-        A tuple of ideals, one for each abstract Abelian group generator.
+        OUTPUT: a tuple of ideals, one for each abstract Abelian group generator
 
         EXAMPLES::
 

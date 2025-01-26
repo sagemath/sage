@@ -33,7 +33,7 @@ AUTHORS:
 - Eric Gourgoulhon (2018): initial version
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2018 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -41,7 +41,8 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
+
 
 def grad(scalar):
     r"""
@@ -91,9 +92,9 @@ def grad(scalar):
     :meth:`~sage.manifolds.differentiable.scalarfield.DiffScalarField.gradient`
     of :class:`~sage.manifolds.differentiable.scalarfield.DiffScalarField` for
     more details and examples.
-
     """
     return scalar.gradient()
+
 
 def div(tensor):
     r"""
@@ -165,9 +166,9 @@ def div(tensor):
     :meth:`~sage.manifolds.differentiable.tensorfield.TensorField.divergence`
     of :class:`~sage.manifolds.differentiable.tensorfield.TensorField` for
     more details and examples.
-
     """
     return tensor.divergence()
+
 
 def curl(vector):
     r"""
@@ -233,9 +234,9 @@ def curl(vector):
     :meth:`~sage.manifolds.differentiable.vectorfield.VectorField.curl`
     of :class:`~sage.manifolds.differentiable.vectorfield.VectorField` for more
     details and examples.
-
     """
     return vector.curl()
+
 
 def laplacian(field):
     r"""
@@ -294,9 +295,9 @@ def laplacian(field):
     :meth:`~sage.manifolds.differentiable.tensorfield.TensorField.laplacian`
     of :class:`~sage.manifolds.differentiable.tensorfield.TensorField` for
     more details and examples.
-
     """
     return field.laplacian()
+
 
 def dalembertian(field):
     r"""
@@ -350,8 +351,8 @@ def dalembertian(field):
     :meth:`~sage.manifolds.differentiable.tensorfield.TensorField.dalembertian`
     of :class:`~sage.manifolds.differentiable.tensorfield.TensorField` for
     more details and examples.
-
     """
     return field.dalembertian()
+
 
 # NB: norm() is already defined in src/sage/misc/functional.py

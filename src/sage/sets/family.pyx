@@ -337,7 +337,10 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
 
         sage: f = Family(list(range(1,27)), lambda i: chr(i+96))
         sage: f
-            Finite family {1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h', 9: 'i', 10: 'j', 11: 'k', 12: 'l', 13: 'm', 14: 'n', 15: 'o', 16: 'p', 17: 'q', 18: 'r', 19: 's', 20: 't', 21: 'u', 22: 'v', 23: 'w', 24: 'x', 25: 'y', 26: 'z'}
+        Finite family {1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g',
+        8: 'h', 9: 'i', 10: 'j', 11: 'k', 12: 'l', 13: 'm', 14: 'n', 15: 'o',
+        16: 'p', 17: 'q', 18: 'r', 19: 's', 20: 't', 21: 'u', 22: 'v', 23: 'w',
+        24: 'x', 25: 'y', 26: 'z'}
         sage: f[2]
         'b'
 
@@ -421,13 +424,13 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
 
 cdef class AbstractFamily(Parent):
     """
-    The abstract class for family
+    The abstract class for family.
 
     Any family belongs to a class which inherits from :class:`AbstractFamily`.
     """
     def hidden_keys(self):
         """
-        Returns the hidden keys of the family, if any.
+        Return the hidden keys of the family, if any.
 
         EXAMPLES::
 
@@ -500,9 +503,7 @@ cdef class AbstractFamily(Parent):
     def map(self, f, name=None):
         r"""
         Return the family `( f(\mathtt{self}[i]) )_{i \in I}`, where
-        `I` is the index set of self.
-
-        .. TODO:: good name?
+        `I` is the index set of ``self``.
 
         EXAMPLES::
 
@@ -519,9 +520,8 @@ cdef class AbstractFamily(Parent):
     @cached_method
     def inverse_family(self):
         """
-        Returns the inverse family, with keys and values
-        exchanged. This presumes that there are no duplicate values in
-        ``self``.
+        Return the inverse family, with keys and values exchanged. This
+        presumes that there are no duplicate values in ``self``.
 
         This default implementation is not lazy and therefore will
         only work with not too big finite families. It is also cached
@@ -575,7 +575,6 @@ cdef class FiniteFamily(AbstractFamily):
         sage: f = FiniteFamily({"a": "aa", "b": "bb", "c" : "cc" }, keys = ["c", "a", "b"])
         sage: list(f)
         ['cc', 'aa', 'bb']
-
     """
 
     def __init__(self, dictionary, keys=None):
@@ -649,7 +648,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     def keys(self):
         """
-        Returns the index set of this family
+        Return the index set of this family.
 
         EXAMPLES::
 
@@ -662,7 +661,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     def values(self):
         """
-        Returns the elements of this family
+        Return the elements of this family.
 
         EXAMPLES::
 
@@ -677,7 +676,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     def has_key(self, k):
         """
-        Returns whether ``k`` is a key of ``self``
+        Return whether ``k`` is a key of ``self``.
 
         EXAMPLES::
 
@@ -753,7 +752,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     def __len__(self):
         """
-        Returns the number of elements in self.
+        Return the number of elements in ``self``.
 
         EXAMPLES::
 
@@ -766,7 +765,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     def cardinality(self):
         """
-        Returns the number of elements in self.
+        Return the number of elements in ``self``.
 
         EXAMPLES::
 
@@ -884,7 +883,7 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
 
     def hidden_keys(self):
         """
-        Returns self's hidden keys.
+        Return ``self``'s hidden keys.
 
         EXAMPLES::
 
@@ -1090,7 +1089,7 @@ class LazyFamily(AbstractFamily):
 
     def keys(self):
         """
-        Returns self's keys.
+        Return ``self``'s keys.
 
         EXAMPLES::
 
@@ -1103,7 +1102,7 @@ class LazyFamily(AbstractFamily):
 
     def cardinality(self):
         """
-        Return the number of elements in self.
+        Return the number of elements in ``self``.
 
         EXAMPLES::
 
@@ -1306,7 +1305,7 @@ class TrivialFamily(AbstractFamily):
 
     def keys(self):
         """
-        Returns self's keys.
+        Return ``self``'s keys.
 
         EXAMPLES::
 
@@ -1319,7 +1318,7 @@ class TrivialFamily(AbstractFamily):
 
     def cardinality(self):
         """
-        Return the number of elements in self.
+        Return the number of elements in ``self``.
 
         EXAMPLES::
 
@@ -1487,7 +1486,7 @@ class EnumeratedFamily(LazyFamily):
 
     def cardinality(self):
         """
-        Return the number of elements in self.
+        Return the number of elements in ``self``.
 
         EXAMPLES::
 

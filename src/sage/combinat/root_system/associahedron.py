@@ -337,7 +337,7 @@ class Associahedra_base:
 
     Importantly, the parent knows the dimension of the ambient
     space. If you try to construct an associahedron of a different
-    dimension, a :class:`ValueError` is raised::
+    dimension, a :exc:`ValueError` is raised::
 
         sage: parent(['A',3])
         Traceback (most recent call last):
@@ -387,15 +387,13 @@ class Associahedra_base:
 
     def _coerce_map_from_(self, X):
         r"""
-        Return whether there is a coercion from ``X``
+        Return whether there is a coercion from ``X``.
 
         INPUT:
 
-        - ``X`` -- anything.
+        - ``X`` -- anything
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

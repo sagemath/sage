@@ -76,24 +76,6 @@ jobs:
             upstream
           name: release_dist
 
-  release:
-
-    needs: release_dist
-    runs-on: ubuntu-latest
-    if: (success() || failure()) && github.repository == 'sagemath/sage' && startsWith(github.ref, 'refs/tags/') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: release_dist
-      - uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
-          files: |
-            dist/*
-            upstream/*
-    permissions:
-      contents: write
-
   sdists_for_pypi:
 
     runs-on: ubuntu-latest
@@ -123,6 +105,57 @@ jobs:
           skip-existing: true
           verbose: true
         if: env.CAN_DEPLOY == 'true'
+
+  release:
+
+    needs: [release_dist, sdists_for_pypi]
+    runs-on: ubuntu-latest
+    if: (success() || failure()) && github.repository == 'sagemath/sage' && startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release_dist
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          latest_release_tag=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases \
+          | jq -r 'sort_by(.created_at) | last(.[]).tag_name')
+          release_notes=$(curl -s \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }}/releases/generate-notes \
+            -d "{
+              \"tag_name\": \"${{ github.ref_name }}\",
+              \"previous_tag_name\": \"$latest_release_tag\"
+            }" | jq -r '.body')
+          # escape special characters for json
+          release_notes=$(jq -R -s '.' <<< "$release_notes")
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }}/releases \
+            -d "{
+              \"tag_name\": \"${{ github.ref_name }}\",
+              \"prerelease\": ${{ contains(github.ref, 'beta') || contains(github.ref, 'rc') }},
+              \"body\": $release_notes
+            }"
+      - name: Create release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*
+            upstream/*
+    permissions:
+      contents: write
 
   noarch_wheels_for_pypi:
 
@@ -155,40 +188,47 @@ jobs:
         if: env.CAN_DEPLOY == 'true'
 
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}, arch ${{ matrix.arch }}
+    name: wheels ${{ matrix.build }}*_${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     needs: sdists_for_pypi
     strategy:
       fail-fast: false
       matrix:
+        os:      [ubuntu-latest]
+        arch:    [x86_64, i686, aarch64]
+        build:   [manylinux, musllinux]
         include:
-          - os: ubuntu-latest
-            arch: x86_64
-          - os: ubuntu-latest
-            arch: i686
           - os: macos-13
             arch: x86_64
+            build: macosx
           - os: macos-14
             arch: arm64
+            build: macosx
     env:
       CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
       # SPKGs to install as system packages
       SPKGS: _bootstrap _prereq
       # Non-Python packages to install as spkgs
       TARGETS_PRE: gmp mpfr mpc bliss coxeter3 mcqd meataxe sirocco boost_cropped tdlib
+      CIBW_BUILD: "*${{ matrix.build }}*"
       # Disable building PyPy wheels on all platforms
-      # Disable musllinux until #33083 provides alpine package information
-      CIBW_SKIP: "pp* *-musllinux*"
+      CIBW_SKIP: "pp*"
       #
       CIBW_ARCHS: ${{ matrix.arch }}
       # https://cibuildwheel.readthedocs.io/en/stable/options/#requires-python
       CIBW_PROJECT_REQUIRES_PYTHON: ">=3.9, <3.13"
       # Environment during wheel build
-      CIBW_ENVIRONMENT: "PATH=$(pwd)/prefix/bin:$PATH CPATH=$(pwd)/prefix/include:$CPATH LIBRARY_PATH=$(pwd)/prefix/lib:$LIBRARY_PATH LD_LIBRARY_PATH=$(pwd)/prefix/lib:$LD_LIBRARY_PATH PKG_CONFIG_PATH=$(pwd)/prefix/share/pkgconfig:$PKG_CONFIG_PATH ACLOCAL_PATH=/usr/share/aclocal PIP_CONSTRAINT=$(pwd)/constraints.txt"
+      CIBW_ENVIRONMENT: "PATH=$(pwd)/prefix/bin:$PATH CPATH=$(pwd)/prefix/include:$CPATH LIBRARY_PATH=$(pwd)/prefix/lib:$LIBRARY_PATH LD_LIBRARY_PATH=$(pwd)/prefix/lib:$LD_LIBRARY_PATH PKG_CONFIG_PATH=$(pwd)/prefix/share/pkgconfig:$PKG_CONFIG_PATH ACLOCAL_PATH=/usr/share/aclocal PIP_CONSTRAINT=$(pwd)/constraints.txt PIP_FIND_LINKS=file://$(pwd)/wheelhouse SAGE_NUM_THREADS=6"
       # Use 'build', not 'pip wheel'
       CIBW_BUILD_FRONTEND: build
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        if: runner.os == 'Linux' && matrix.arch != 'x86_64' && matrix.arch != 'i686'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
 
       - uses: actions/download-artifact@v4
         with:
@@ -209,7 +249,7 @@ jobs:
           eval $(sage-print-system-package-command auto --sudo --yes --no-install-recommends --spkg install _bootstrap)
           ./bootstrap
 
-      - name: Build platform wheels
+      - name: Unpack and prepare
         # We build the wheels from the sdists so that MANIFEST filtering becomes effective.
         # But we must run cibuildwheel with the unpacked source directory, not a tarball,
         # so that SAGE_ROOT is copied into the build containers.
@@ -223,21 +263,44 @@ jobs:
         #
         # omit sagemath-{meataxe,sirocco} for now -- needs sagemath-modules
         run: |
-          "${{ steps.python.outputs.python-path }}" -m pip install pipx
+          "${{ steps.python.outputs.python-path }}" -m pip install cibuildwheel==2.18.0
           export PATH=build/bin:$PATH
-          export CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || echo error ignored) ) && if cp /host/sage-\$AUDITWHEEL_PLAT/config.status . 2>/dev/null; then chmod +x config.status; fi && if [ -x ./config.status ]; then ./config.status; else ./configure --enable-build-as-root ${{ startsWith(matrix.os, 'ubuntu') && '--prefix=/host/sage-\$AUDITWHEEL_PLAT' || '' }} && cp config.status prefix/; fi && MAKE=\"make -j6\" make V=0 $TARGETS_PRE && (echo \"sage_conf @ file://\$(pwd)/pkgs/sage-conf\" && echo \"sage_setup @ file://\$(pwd)/pkgs/sage-setup\") > constraints.txt"
+          echo CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || $(sage-print-system-package-command alpine --yes --no-install-recommends install $(sage-get-system-packages alpine $SPKGS)) || echo error ignored) ) && if cp /host/sage-\$AUDITWHEEL_PLAT/config.status . 2>/dev/null; then chmod +x config.status; fi && if [ -x ./config.status ]; then ./config.status; else ./configure --enable-build-as-root ${{ startsWith(matrix.os, 'ubuntu') && '--prefix=/host/sage-\$AUDITWHEEL_PLAT' || '' }} && cp config.status prefix/; fi && MAKE=\"make -j6\" make V=0 $TARGETS_PRE && (echo \"sage_conf @ file://\$(pwd)/pkgs/sage-conf\" && echo \"sage_setup @ file://\$(pwd)/pkgs/sage-setup\") > constraints.txt" >> "$GITHUB_ENV"
           mkdir -p unpacked
-          for pkg in sagemath*objects sagemath*categories sagemath*bliss sagemath*coxeter3 sagemath*mcqd sagemath*tdlib; do
-              case "$pkg:${{ matrix.arch }}" in
-                  sagemath*tdlib:i686) continue;;  # broken - boost-related
-              esac
-              (cd unpacked && tar xfz - ) < dist/$pkg*.tar.gz
-              "${{ steps.python.outputs.python-path }}" -m pipx run cibuildwheel==2.18.0 unpacked/$pkg*
+          for sdist in dist/$pkg*.tar.gz; do
+              (cd unpacked && tar xfz - ) < $sdist
           done
+
+      - name: sagemath-objects
+        run: |
+          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*objects*
+
+      - name: sagemath-categories
+        run: |
+          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*categories*
+
+      - name: sagemath-bliss
+        run: |
+          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*bliss*
+
+      - name: sagemath-coxeter3
+        run: |
+          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*coxeter3*
+
+      - name: sagemath-mcqd
+        run: |
+          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*mcqd*
+
+      - name: sagemath-tdlib
+        run: |
+          case "${{ matrix.arch }}" in
+              i686) ;;  # broken - boost-related
+              *) "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*tdlib*
+          esac
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-${{ matrix.arch }}-wheels
+          name: ${{ matrix.os }}-${{ matrix.build }}-${{ matrix.arch }}-wheels
           path: ./wheelhouse/*.whl
 
   upload_wheels:
@@ -250,7 +313,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          pattern: "*-*-wheels"
+          pattern: "*-*-*-wheels"
           path: wheelhouse
           merge-multiple: true
 

@@ -125,7 +125,7 @@ def _guess_variables(polynomial, *args):
     INPUT:
 
     - ``polynomial`` -- a polynomial, or a list/tuple of polynomials
-      in the same polynomial ring.
+      in the same polynomial ring
 
     - ``*args`` -- the variables. If none are specified, all variables
       in ``polynomial`` are returned. If a list or tuple is passed,
@@ -177,10 +177,10 @@ def transvectant(f, g, h=1, scale='default'):
 
     INPUT:
 
-    - ``f``, ``g`` -- two homogeneous binary forms in the same polynomial ring.
+    - ``f``, ``g`` -- two homogeneous binary forms in the same polynomial ring
 
-    - ``h`` -- the order of the transvectant. If it is not specified,
-      the first transvectant is returned.
+    - ``h`` -- the order of the transvectant; if it is not specified,
+      the first transvectant is returned
 
     - ``scale`` -- the scaling factor applied to the result. Possible values
       are ``'default'`` and ``'none'``. The ``'default'`` scaling factor is
@@ -286,7 +286,7 @@ def transvectant(f, g, h=1, scale='default'):
             dg = g.form().derivative(x,h-j).derivative(y,j)
             return (-1)**j * binomial(h,j) * df * dg
         tv = scalar * sum([diff(j) for j in range(h+1)])
-        if not tv.parent() is R:
+        if tv.parent() is not R:
             S = tv.parent()
             x = S(x)
             y = S(y)
@@ -336,9 +336,7 @@ class FormsBase(SageObject):
           homogeneous degree. Must be a covariant, that is, polynomial
           in the given :meth:`variables`
 
-        OUTPUT:
-
-        The Jacobian determinant with respect to the variables.
+        OUTPUT: the Jacobian determinant with respect to the variables
 
         EXAMPLES::
 
@@ -424,10 +422,8 @@ class FormsBase(SageObject):
         """
         Return whether the forms were defined by homogeneous polynomials.
 
-        OUTPUT:
-
-        Boolean. Whether the user originally defined the form via
-        homogeneous variables.
+        OUTPUT: boolean; whether the user originally defined the form via
+        homogeneous variables
 
         EXAMPLES::
 
@@ -462,14 +458,14 @@ class AlgebraicForm(FormsBase):
 
     INPUT:
 
-    - ``n`` -- The number of variables.
+    - ``n`` -- the number of variables
 
-    - ``d`` -- The degree of the polynomial.
+    - ``d`` -- the degree of the polynomial
 
-    - ``polynomial`` -- The polynomial.
+    - ``polynomial`` -- the polynomial
 
-    - ``*args`` -- The variables, as a single list/tuple, multiple
-      arguments, or ``None`` to use all variables of the polynomial.
+    - ``*args`` -- the variables, as a single list/tuple, multiple
+      arguments, or ``None`` to use all variables of the polynomial
 
     Derived classes must implement the same arguments for the
     constructor.
@@ -578,8 +574,8 @@ class AlgebraicForm(FormsBase):
 
         INPUT:
 
-        - ``method_name`` -- string. The name of the method that
-          returns the invariant / covariant to test.
+        - ``method_name`` -- string; the name of the method that
+          returns the invariant / covariant to test
 
         - ``g`` -- an `SL(n,\CC)` matrix or ``None`` (default). The
           test will be to check that the covariant transforms
@@ -587,8 +583,8 @@ class AlgebraicForm(FormsBase):
           the homogeneous variables. If ``None``, a random matrix will
           be picked.
 
-        - ``invariant`` -- boolean. Whether to additionally test that
-          it is an invariant.
+        - ``invariant`` -- boolean; whether to additionally test that
+          it is an invariant
 
         EXAMPLES::
 
@@ -644,9 +640,7 @@ class AlgebraicForm(FormsBase):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -688,9 +682,7 @@ class AlgebraicForm(FormsBase):
         """
         Return the defining polynomial.
 
-        OUTPUT:
-
-        The polynomial used to define the algebraic form.
+        OUTPUT: the polynomial used to define the algebraic form
 
         EXAMPLES::
 
@@ -712,7 +704,7 @@ class AlgebraicForm(FormsBase):
         INPUT:
 
         - ``var`` -- either a variable name, variable index or a
-          variable (default: ``'h'``).
+          variable (default: ``'h'``)
 
         OUTPUT:
 
@@ -768,8 +760,8 @@ class AlgebraicForm(FormsBase):
 
         - ``polynomial`` -- the input polynomial
 
-        - ``monomials`` -- a list of all the monomials in the polynomial
-          ring. If less monomials are passed, an exception is thrown.
+        - ``monomials`` -- list of all the monomials in the polynomial
+          ring; if less monomials are passed, an exception is thrown
 
         OUTPUT:
 
@@ -892,9 +884,9 @@ class AlgebraicForm(FormsBase):
         INPUT:
 
         - ``g`` -- a `GL(n,\CC)` matrix or a dictionary with the
-           variables as keys. A matrix is used to define the linear
-           transformation of homogeneous variables, a dictionary acts
-           by substitution of the variables.
+          variables as keys. A matrix is used to define the linear
+          transformation of homogeneous variables, a dictionary acts
+          by substitution of the variables.
 
         OUTPUT:
 
@@ -994,12 +986,10 @@ class QuadraticForm(AlgebraicForm):
 
         INPUT:
 
-        - ``discriminant`` -- Value of the discriminant used to reconstruct
-          the binary quadratic.
+        - ``discriminant`` -- value of the discriminant used to reconstruct
+          the binary quadratic
 
-        OUTPUT:
-
-        A QuadraticForm with 2 variables.
+        OUTPUT: a QuadraticForm with 2 variables
 
         EXAMPLES::
 
@@ -1108,7 +1098,7 @@ class QuadraticForm(AlgebraicForm):
     @cached_method
     def matrix(self):
         r"""
-        Return the quadratic form as a symmetric matrix
+        Return the quadratic form as a symmetric matrix.
 
         OUTPUT:
 
@@ -1181,12 +1171,10 @@ class QuadraticForm(AlgebraicForm):
 
         INPUT:
 
-        - ``type`` -- The type of invariants to return. The default choice
-          is to return the discriminant.
+        - ``type`` -- the type of invariants to return; the default choice
+          is to return the discriminant
 
-        OUTPUT:
-
-        The invariants of the binary quadratic.
+        OUTPUT: the invariants of the binary quadratic
 
         EXAMPLES::
 
@@ -1199,7 +1187,6 @@ class QuadraticForm(AlgebraicForm):
             Traceback (most recent call last):
             ...
             ValueError: unknown type of invariants unknown for a binary quadratic
-
         """
         if type == 'discriminant':
             return (self.discriminant(),)
@@ -1439,9 +1426,7 @@ class BinaryQuartic(AlgebraicForm):
         r"""
         One of the Eisenstein invariants of a binary quartic.
 
-        OUTPUT:
-
-        The Eisenstein D-invariant of the quartic.
+        OUTPUT: the Eisenstein D-invariant of the quartic
 
         .. MATH::
 
@@ -1468,9 +1453,7 @@ class BinaryQuartic(AlgebraicForm):
         r"""
         One of the Eisenstein invariants of a binary quartic.
 
-        OUTPUT:
-
-        The Eisenstein E-invariant of the quartic.
+        OUTPUT: the Eisenstein E-invariant of the quartic
 
         .. MATH::
 
@@ -1497,9 +1480,7 @@ class BinaryQuartic(AlgebraicForm):
         r"""
         The g-covariant of a binary quartic.
 
-        OUTPUT:
-
-        The g-covariant of the quartic.
+        OUTPUT: the g-covariant of the quartic
 
         .. MATH::
 
@@ -1548,9 +1529,7 @@ class BinaryQuartic(AlgebraicForm):
         r"""
         The h-covariant of a binary quartic.
 
-        OUTPUT:
-
-        The h-covariant of the quartic.
+        OUTPUT: the h-covariant of the quartic
 
         .. MATH::
 
@@ -1680,12 +1659,10 @@ class BinaryQuintic(AlgebraicForm):
 
         INPUT:
 
-        - ``invariants`` -- A list or tuple of invariants that are used to
-          reconstruct the binary quintic.
+        - ``invariants`` -- list or tuple of invariants that are used to
+          reconstruct the binary quintic
 
-        OUTPUT:
-
-        A BinaryQuintic.
+        OUTPUT: a BinaryQuintic
 
         EXAMPLES::
 
@@ -1797,9 +1774,7 @@ class BinaryQuintic(AlgebraicForm):
           as polynomial (default). If it is ``True`` the result is returned as
           an object of the class :class:`AlgebraicForm`.
 
-        OUTPUT:
-
-        The `H`-covariant of the binary quintic as polynomial or as binary form.
+        OUTPUT: the `H`-covariant of the binary quintic as polynomial or as binary form
 
         EXAMPLES::
 
@@ -1834,9 +1809,7 @@ class BinaryQuintic(AlgebraicForm):
           as polynomial (default). If it is ``True`` the result is returned as
           an object of the class :class:`AlgebraicForm`.
 
-        OUTPUT:
-
-        The `i`-covariant of the binary quintic as polynomial or as binary form.
+        OUTPUT: the `i`-covariant of the binary quintic as polynomial or as binary form
 
         EXAMPLES::
 
@@ -1868,9 +1841,7 @@ class BinaryQuintic(AlgebraicForm):
           as polynomial (default). If it is ``True`` the result is returned as
           an object of the class :class:`AlgebraicForm`.
 
-        OUTPUT:
-
-        The `T`-covariant of the binary quintic as polynomial or as binary form.
+        OUTPUT: the `T`-covariant of the binary quintic as polynomial or as binary form
 
         EXAMPLES::
 
@@ -1907,9 +1878,7 @@ class BinaryQuintic(AlgebraicForm):
           as polynomial (default). If it is ``True`` the result is returned as
           an object of the class :class:`AlgebraicForm`.
 
-        OUTPUT:
-
-        The `j`-covariant of the binary quintic as polynomial or as binary form.
+        OUTPUT: the `j`-covariant of the binary quintic as polynomial or as binary form
 
         EXAMPLES::
 
@@ -2185,9 +2154,7 @@ class BinaryQuintic(AlgebraicForm):
         """
         Return the invariant `A` of a binary quintic.
 
-        OUTPUT:
-
-        The `A`-invariant of the binary quintic.
+        OUTPUT: the `A`-invariant of the binary quintic
 
         EXAMPLES::
 
@@ -2213,9 +2180,7 @@ class BinaryQuintic(AlgebraicForm):
         """
         Return the invariant `B` of a binary quintic.
 
-        OUTPUT:
-
-        The `B`-invariant of the binary quintic.
+        OUTPUT: the `B`-invariant of the binary quintic
 
         EXAMPLES::
 
@@ -2245,9 +2210,7 @@ class BinaryQuintic(AlgebraicForm):
         """
         Return the invariant `C` of a binary quintic.
 
-        OUTPUT:
-
-        The `C`-invariant of the binary quintic.
+        OUTPUT: the `C`-invariant of the binary quintic
 
         EXAMPLES::
 
@@ -2276,9 +2239,7 @@ class BinaryQuintic(AlgebraicForm):
         """
         Return the invariant `R` of a binary quintic.
 
-        OUTPUT:
-
-        The `R`-invariant of the binary quintic.
+        OUTPUT: the `R`-invariant of the binary quintic
 
         EXAMPLES::
 
@@ -2310,12 +2271,10 @@ class BinaryQuintic(AlgebraicForm):
 
         INPUT:
 
-        - ``type`` -- The type of invariants to return. The default choice
-          is to return the Clebsch invariants.
+        - ``type`` -- the type of invariants to return; the default choice
+          is to return the Clebsch invariants
 
-        OUTPUT:
-
-        The invariants of the binary quintic.
+        OUTPUT: the invariants of the binary quintic
 
         EXAMPLES::
 
@@ -2331,7 +2290,6 @@ class BinaryQuintic(AlgebraicForm):
             Traceback (most recent call last):
             ...
             ValueError: unknown type of invariants unknown for a binary quintic
-
         """
         if type == 'clebsch':
             return self.clebsch_invariants(as_tuple=True)
@@ -2348,9 +2306,7 @@ class BinaryQuintic(AlgebraicForm):
 
         The following invariants are returned: `A`, `B`, `C` and `R`.
 
-        OUTPUT:
-
-        The Clebsch invariants of the binary quintic.
+        OUTPUT: the Clebsch invariants of the binary quintic
 
         EXAMPLES::
 
@@ -2368,7 +2324,6 @@ class BinaryQuintic(AlgebraicForm):
              4983526016/390625,
              -247056495846408/244140625,
              -148978972828696847376/30517578125)
-
         """
         if self._ring.characteristic() in [2, 3, 5]:
             raise NotImplementedError('no invariants implemented for fields '
@@ -2396,9 +2351,7 @@ class BinaryQuintic(AlgebraicForm):
         of the Clebsch invariants, such that they still generate the ring of
         invariants.
 
-        OUTPUT:
-
-        The arithmetic invariants of the binary quintic. They are given by
+        OUTPUT: the arithmetic invariants of the binary quintic. They are given by
 
         .. MATH::
 
@@ -2433,7 +2386,6 @@ class BinaryQuintic(AlgebraicForm):
             sage: invs = quintic.arithmetic_invariants()
             sage: [invs[x].content() for x in invs]
             [1, 1, 1, 1]
-
         """
         R = self._ring
         clebsch = self.clebsch_invariants()
@@ -2459,10 +2411,10 @@ class BinaryQuintic(AlgebraicForm):
 
         INPUT:
 
-        - ``reduce_gcd`` -- If set to ``True``, then a variant of this canonical
+        - ``reduce_gcd`` -- if set to ``True``, then a variant of this canonical
           form is computed where the coefficients are coprime integers. The
-          obtained form is then unique up to multiplication by a unit.
-          See also :meth:`~sage.rings.invariants.reconstruction.binary_quintic_from_invariants`'.
+          obtained form is then unique up to multiplication by a unit. See also
+          :meth:`~sage.rings.invariants.reconstruction.binary_quintic_from_invariants`'.
 
         OUTPUT:
 
@@ -2495,14 +2447,14 @@ class BinaryQuintic(AlgebraicForm):
 
 def _covariant_conic(A_scaled_coeffs, B_scaled_coeffs, monomials):
     """
-    Helper function for :meth:`TernaryQuadratic.covariant_conic`
+    Helper function for :meth:`TernaryQuadratic.covariant_conic`.
 
     INPUT:
 
-    - ``A_scaled_coeffs``, ``B_scaled_coeffs`` -- The scaled
-      coefficients of the two ternary quadratics.
+    - ``A_scaled_coeffs``, ``B_scaled_coeffs`` -- the scaled
+      coefficients of the two ternary quadratics
 
-    - ``monomials`` -- The monomials :meth:`~TernaryQuadratic.monomials`.
+    - ``monomials`` -- the monomials :meth:`~TernaryQuadratic.monomials`
 
     OUTPUT:
 
@@ -2656,7 +2608,7 @@ class TernaryQuadratic(QuadraticForm):
 
         INPUT:
 
-        - ``other`` -- Another ternary quadratic.
+        - ``other`` -- another ternary quadratic
 
         OUTPUT:
 
@@ -3102,7 +3054,7 @@ class SeveralAlgebraicForms(FormsBase):
 
     INPUT:
 
-    - ``forms`` -- a list/tuple/iterable of at least one
+    - ``forms`` -- list/tuple/iterable of at least one
       :class:`AlgebraicForm` object, all with the same number of
       variables. Interpreted as multiple homogeneous polynomials in a
       common polynomial ring.
@@ -3244,7 +3196,7 @@ class SeveralAlgebraicForms(FormsBase):
         INPUT:
 
         - ``var`` -- either a variable name, variable index or a
-          variable (default: ``'h'``).
+          variable (default: ``'h'``)
 
         OUTPUT:
 
@@ -3275,8 +3227,8 @@ class SeveralAlgebraicForms(FormsBase):
 
         INPUT:
 
-        - ``method_name`` -- string. The name of the method that
-          returns the invariant / covariant to test.
+        - ``method_name`` -- string; the name of the method that
+          returns the invariant / covariant to test
 
         - ``g`` -- a `SL(n,\CC)` matrix or ``None`` (default). The
           test will be to check that the covariant transforms
@@ -3284,8 +3236,8 @@ class SeveralAlgebraicForms(FormsBase):
           the homogeneous variables. If ``None``, a random matrix will
           be picked.
 
-        - ``invariant`` -- boolean. Whether to additionally test that
-          it is an invariant.
+        - ``invariant`` -- boolean; whether to additionally test that
+          it is an invariant
 
         EXAMPLES::
 
@@ -3327,9 +3279,7 @@ class TwoAlgebraicForms(SeveralAlgebraicForms):
         """
         Return the first of the two forms.
 
-        OUTPUT:
-
-        The first algebraic form used in the definition.
+        OUTPUT: the first algebraic form used in the definition
 
         EXAMPLES::
 
@@ -3351,9 +3301,7 @@ class TwoAlgebraicForms(SeveralAlgebraicForms):
         """
         Return the second of the two forms.
 
-        OUTPUT:
-
-        The second form used in the definition.
+        OUTPUT: the second form used in the definition
 
         EXAMPLES::
 
@@ -3550,7 +3498,7 @@ class TwoTernaryQuadratics(TwoAlgebraicForms):
 
             sage: R.<x,y,z> = QQ[]
             sage: monomials = [x^2, x*y, y^2, x*z, y*z, z^2]
-            sage: def q_rnd():  return sum(randint(-1000,1000)*m for m in monomials)
+            sage: def q_rnd():  return sum(randint(-1000, 1000)*m for m in monomials)
             sage: biquadratic = invariant_theory.ternary_biquadratic(q_rnd(), q_rnd(), [x,y,z])
             sage: Delta = biquadratic.Delta_invariant()
             sage: Theta = biquadratic.Theta_invariant()
@@ -3564,7 +3512,7 @@ class TwoTernaryQuadratics(TwoAlgebraicForms):
             0
 
         If the arguments are not the invariants and covariants then
-        the output is some (generically non-zero) polynomial::
+        the output is some (generically nonzero) polynomial::
 
             sage: biquadratic.syzygy(1, 1, 1, 1, 1, 1, 1, x)
             1/64*x^2 + 1
@@ -3600,8 +3548,8 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
 
     REFERENCES:
 
-    -  section on "Invariants and Covariants of
-       Systems of Quadrics" in [Sal1958]_, [Sal1965]_
+    - section on "Invariants and Covariants of
+      Systems of Quadrics" in [Sal1958]_, [Sal1965]_
 
     TESTS::
 
@@ -3932,7 +3880,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
 
             sage: R.<w,x,y,z> = QQ[]
             sage: monomials = [x^2, x*y, y^2, x*z, y*z, z^2, x*w, y*w, z*w, w^2]
-            sage: def q_rnd():  return sum(randint(-1000,1000)*m for m in monomials)
+            sage: def q_rnd():  return sum(randint(-1000, 1000)*m for m in monomials)
             sage: biquadratic = invariant_theory.quaternary_biquadratic(q_rnd(), q_rnd())
             sage: Delta = biquadratic.Delta_invariant()
             sage: Theta = biquadratic.Theta_invariant()
@@ -3948,7 +3896,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
             0
 
         If the arguments are not the invariants and covariants then
-        the output is some (generically non-zero) polynomial::
+        the output is some (generically nonzero) polynomial::
 
             sage: biquadratic.syzygy(1, 1, 1, 1, 1, 1, 1, 1, 1, x)
             -x^2 + 1
@@ -4011,7 +3959,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
 
 ######################################################################
 
-class InvariantTheoryFactory():
+class InvariantTheoryFactory:
     """
     Factory object for invariants of multilinear forms.
 
@@ -4032,9 +3980,7 @@ class InvariantTheoryFactory():
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -4049,7 +3995,7 @@ class InvariantTheoryFactory():
 
         INPUT:
 
-        - ``polynomial`` -- a homogeneous or inhomogeneous quadratic form.
+        - ``polynomial`` -- a homogeneous or inhomogeneous quadratic form
 
         - ``*args`` -- the variables as multiple arguments, or as a
           single list/tuple. If the last argument is ``None``, the
@@ -4094,10 +4040,10 @@ class InvariantTheoryFactory():
 
         INPUT:
 
-        - ``polynomial`` -- an inhomogeneous quadratic form.
+        - ``polynomial`` -- an inhomogeneous quadratic form
 
         - ``*args`` -- the variables as multiple arguments, or as a
-          single list/tuple.
+          single list/tuple
 
         EXAMPLES::
 
@@ -4123,7 +4069,7 @@ class InvariantTheoryFactory():
 
         INPUT:
 
-        - ``quadratic`` -- a quadratic form.
+        - ``quadratic`` -- a quadratic form
 
         - ``x``, ``y`` -- the homogeneous variables. If ``y`` is
           ``None``, the quadratic is assumed to be inhomogeneous.
@@ -4150,11 +4096,10 @@ class InvariantTheoryFactory():
 
         INPUT:
 
-        - ``quadratic`` -- a quadratic form.
+        - ``quadratic`` -- a quadratic form
 
         - ``w``, ``x``, ``y``, ``z`` -- the homogeneous variables. If
-          ``z`` is ``None``, the quadratic is assumed to be
-          inhomogeneous.
+          ``z`` is ``None``, the quadratic is assumed to be inhomogeneous.
 
         REFERENCES:
 
@@ -4199,7 +4144,7 @@ class InvariantTheoryFactory():
 
         INPUT:
 
-        - ``quartic`` -- a quartic.
+        - ``quartic`` -- a quartic
 
         - ``x``, ``y`` -- the homogeneous variables. If ``y`` is
           ``None``, the quartic is assumed to be inhomogeneous.
@@ -4286,17 +4231,17 @@ class InvariantTheoryFactory():
 
         INPUT:
 
-        - ``degree`` -- The degree of the binary form.
+        - ``degree`` -- the degree of the binary form
 
-        - ``invariants`` -- A list or tuple of values of the invariants of the
-          binary form.
+        - ``invariants`` -- list or tuple of values of the invariants of the
+          binary form
 
-        - ``variables`` -- A list or tuple of two variables that are used for
+        - ``variables`` -- list or tuple of two variables that are used for
           the resulting form (only if ``as_form`` is ``True``). If no variables
           are provided, two abstract variables ``x`` and ``z`` will be used.
 
-        - ``as_form`` -- boolean. If ``False``, the function will return a tuple
-          of coefficients of a binary form.
+        - ``as_form`` -- boolean; if ``False``, the function will return a tuple
+          of coefficients of a binary form
 
         OUTPUT:
 
@@ -4309,7 +4254,7 @@ class InvariantTheoryFactory():
         based on the value of the discriminant. See also
         :meth:`binary_quadratic_coefficients_from_invariants` and
         :meth:`binary_cubic_coefficients_from_invariants`. These methods will always return the
-        same result if the discriminant is non-zero::
+        same result if the discriminant is nonzero::
 
             sage: discriminant = 1
             sage: invariant_theory.binary_form_from_invariants(2, [discriminant])
@@ -4318,7 +4263,7 @@ class InvariantTheoryFactory():
             (0, 1, -1, 0)
 
         For binary cubics, there is no class implemented yet, so ``as_form=True``
-        will yield an ``NotImplementedError``::
+        will yield a :exc:`NotImplementedError`::
 
             sage: invariant_theory.binary_form_from_invariants(3, [discriminant])
             Traceback (most recent call last):
@@ -4457,7 +4402,7 @@ class InvariantTheoryFactory():
         INPUT:
 
         - ``quadratic`` -- a homogeneous quadratic in 3 homogeneous
-          variables, or an inhomogeneous quadratic in 2 variables.
+          variables, or an inhomogeneous quadratic in 2 variables
 
         - ``x``, ``y``, ``z`` -- the variables. If ``z`` is ``None``,
           the quadratic is assumed to be inhomogeneous.
@@ -4533,7 +4478,7 @@ class InvariantTheoryFactory():
         INPUT:
 
         - ``cubic`` -- a homogeneous cubic in 3 homogeneous variables,
-          or an inhomogeneous cubic in 2 variables.
+          or an inhomogeneous cubic in 2 variables
 
         - ``x``, ``y``, ``z`` -- the variables. If ``z`` is ``None``, the
           cubic is assumed to be inhomogeneous.

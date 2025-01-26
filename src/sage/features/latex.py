@@ -24,7 +24,7 @@ latex_spkg = 'texlive'
 
 class LaTeX(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``latex``
+    A :class:`~sage.features.Feature` describing the presence of ``latex``.
 
     EXAMPLES::
 
@@ -59,7 +59,7 @@ class LaTeX(Executable):
             sage: print(result.reason)                # not tested
             Running latex on a sample file
             (with command='latex -interaction=nonstopmode tmp_wmpos8ak.tex')
-            returned non-zero exit status='1' with stderr=''
+            returned nonzero exit status='1' with stderr=''
             and stdout='This is pdfTeX,
             ...
             Runaway argument?
@@ -95,7 +95,7 @@ class LaTeX(Executable):
             return FeatureTestResult(self, True)
         else:
             return FeatureTestResult(self, False, reason="Running latex on "
-                                     "a sample file (with command='{}') returned non-zero "
+                                     "a sample file (with command='{}') returned nonzero "
                                      "exit status='{}' with stderr='{}' "
                                      "and stdout='{}'".format(result.args,
                                                               result.returncode,
@@ -105,7 +105,7 @@ class LaTeX(Executable):
 
 class latex(LaTeX):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``latex``
+    A :class:`~sage.features.Feature` describing the presence of ``latex``.
 
     EXAMPLES::
 
@@ -126,7 +126,7 @@ class latex(LaTeX):
 
 class pdflatex(LaTeX):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``pdflatex``
+    A :class:`~sage.features.Feature` describing the presence of ``pdflatex``.
 
     EXAMPLES::
 
@@ -147,7 +147,7 @@ class pdflatex(LaTeX):
 
 class xelatex(LaTeX):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``xelatex``
+    A :class:`~sage.features.Feature` describing the presence of ``xelatex``.
 
     EXAMPLES::
 
@@ -168,7 +168,7 @@ class xelatex(LaTeX):
 
 class lualatex(LaTeX):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``lualatex``
+    A :class:`~sage.features.Feature` describing the presence of ``lualatex``.
 
     EXAMPLES::
 
@@ -189,7 +189,7 @@ class lualatex(LaTeX):
 
 class dvips(Executable):
     r"""
-    A :class:`~sage.features.Feature` describing the presence of ``dvips``
+    A :class:`~sage.features.Feature` describing the presence of ``dvips``.
 
     EXAMPLES::
 
@@ -205,12 +205,13 @@ class dvips(Executable):
             sage: isinstance(dvips(), dvips)
             True
         """
-        Executable.__init__(self, "dvips", executable="dvips",
-                            url="https://tug.org/texinfohtml/dvips.html")
+        Executable.__init__(self, 'dvips', executable='dvips',
+                            url='https://tug.org/texinfohtml/dvips.html')
+
 
 class TeXFile(StaticFile):
     r"""
-    A :class:`sage.features.Feature` describing the presence of a TeX file
+    A :class:`sage.features.Feature` describing the presence of a TeX file.
 
     EXAMPLES::
 

@@ -15,7 +15,7 @@ def test_loop_1():
     """
     libgap.collect()
     for i in range(10000):
-        G = libgap.CyclicGroup(2)
+        _ = libgap.CyclicGroup(2)
 
 
 def test_loop_2():
@@ -28,7 +28,7 @@ def test_loop_2():
     G = libgap.FreeGroup(2)
     a, b = G.GeneratorsOfGroup()
     for i in range(100):
-        rel = libgap([a**2, b**2, a*b*a*b])
+        rel = libgap([a**2, b**2, a * b * a * b])
         H = G / rel
         H1 = H.GeneratorsOfGroup()[0]
         n = H1.Order()

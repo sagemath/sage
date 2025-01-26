@@ -16,7 +16,7 @@ For the parent class see ``padic_extension_leaves.pyx``.
 The underlying implementation is through NTL's ``ZZ_pX`` class.  Each
 element contains the following data:
 
-- ``value`` (``ZZ_pX_c``) -- An ntl ``ZZ_pX`` storing the value.  The
+- ``value`` (``ZZ_pX_c``) -- an ntl ``ZZ_pX`` storing the value.  The
   variable `x` is the uniformizer in the case of Eisenstein extensions.
   This ``ZZ_pX`` is created with global ntl modulus determined by the
   parent's precision cap and shared among all elements.
@@ -27,9 +27,9 @@ element contains the following data:
 
   * ``prime_pow.deg`` -- the degree of the extension
 
-  * ``prime_pow.e``   -- the ramification index
+  * ``prime_pow.e`` -- the ramification index
 
-  * ``prime_pow.f``   -- the inertia degree
+  * ``prime_pow.f`` -- the inertia degree
 
   * ``prime_pow.prec_cap`` -- the unramified precision cap: for
     Eisenstein extensions this is the smallest power of `p` that is
@@ -56,7 +56,7 @@ element contains the following data:
     ``prime_pow.restore_top_context`` -- restores the given context
 
   * ``prime_pow.get_modulus``, ``get_modulus_capdiv``,
-    ``get_top_modulus`` -- Returns a ``ZZ_pX_Modulus_c*`` pointing to
+    ``get_top_modulus`` -- returns a ``ZZ_pX_Modulus_c*`` pointing to
     a polynomial modulus defined modulo `p^n` (appropriately divided
     by ``prime_pow.e`` in the capdiv case).
 
@@ -152,7 +152,7 @@ from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 cdef class pAdicZZpXFMElement(pAdicZZpXElement):
     def __init__(self, parent, x, absprec=None, relprec=None, empty=False):
         r"""
-        Creates an element of a fixed modulus, unramified or
+        Create an element of a fixed modulus, unramified or
         eisenstein extension of `\ZZ_p` or `\QQ_p`.
 
         INPUT:
@@ -160,7 +160,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         - ``parent`` -- either an ``EisensteinRingFixedMod`` or
           ``UnramifiedRingFixedMod``
 
-        - ``x`` -- an integer, rational, `p`-adic element, polynomial,
+        - ``x`` -- integer, rational, `p`-adic element, polynomial,
           list, integer_mod, pari int/frac/poly_t/pol_mod, an
           ``ntl_ZZ_pX``, an ``ntl_ZZX``, an ``ntl_ZZ``, or an
           ``ntl_ZZ_p``
@@ -196,7 +196,6 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: W.<a> = R.extension(a^2 + 1)
             sage: W(W.residue_field().zero())
             0
-
         """
         pAdicZZpXElement.__init__(self, parent)
         if empty:
@@ -283,7 +282,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cdef int _set_from_mpz(self, mpz_t x) except -1:
         """
-        Sets ``self`` from an ``mpz_t``.
+        Set ``self`` from an ``mpz_t``.
 
         EXAMPLES::
 
@@ -307,7 +306,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cdef int _set_from_mpq(self, mpq_t x) except -1:
         """
-        Sets ``self`` from an ``mpq_t``.
+        Set ``self`` from an ``mpq_t``.
 
         EXAMPLES::
 
@@ -341,7 +340,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cdef int _set_from_ZZ_pX(self, ZZ_pX_c* poly, ntl_ZZ_pContext_class ctx) except -1:
         """
-        Sets ``self`` from a ``ZZ_pX_c``.
+        Set ``self`` from a ``ZZ_pX_c``.
 
         EXAMPLES::
 
@@ -361,7 +360,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cdef int _set_from_ZZX(self, ZZX_c poly) except -1:
         """
-        Sets ``self`` from a ``ZZX`` with relative precision bounded
+        Set ``self`` from a ``ZZX`` with relative precision bounded
         by ``relprec`` and absolute precision bounded by ``absprec``.
 
         EXAMPLES::
@@ -381,7 +380,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cpdef bint _is_inexact_zero(self) except -1:
         """
-        Tests if ``self`` is an inexact zero.
+        Test if ``self`` is an inexact zero.
 
         EXAMPLES::
 
@@ -477,7 +476,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         Return the inverse of ``self``, as long as ``self`` is a unit.
 
-        If ``self`` is not a unit, raises a ``ValueError``.
+        If ``self`` is not a unit, raises a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -573,7 +572,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         Divide ``self`` by the uniformizer raised to the power ``n``.
 
-        Throws away the non-positive part of the series expansion.
+        Throws away the nonpositive part of the series expansion.
         The top digits will be garbage.  If ``n`` is negative, left
         shifts by ``-n``.
 
@@ -631,7 +630,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         Divide ``self`` by the uniformizer raised to the power ``n``.
 
-        Throws away the non-positive part of the series expansion.
+        Throws away the nonpositive part of the series expansion.
         The top digits will be garbage.  If ``n`` is negative, left
         shifts by ``-n``.
 
@@ -662,7 +661,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cpdef _neg_(self):
         """
-        Returns ``-self``.
+        Return ``-self``.
 
         EXAMPLES::
 
@@ -687,7 +686,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     def __pow__(pAdicZZpXFMElement self, right, m): # m ignored
         """
-        Computes ``self`` ^ ``right``.
+        Compute ``self`` ^ ``right``.
 
         EXAMPLES::
 
@@ -725,7 +724,6 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: W.<w> = R.ext(f)
             sage: type(W(0)^0) == type(W(0))
             True
-
         """
         if not isinstance(right, Integer):
             right = Integer(right)
@@ -819,9 +817,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cpdef _div_(self, _right):
         """
-        Returns the quotient of ``self`` by ``right``.
+        Return the quotient of ``self`` by ``right``.
 
-        If ``right`` is not a unit, raises a ``ValueError``.
+        If ``right`` is not a unit, raises a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -843,7 +841,6 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: R.<t> = Zq(8,2,'fixed-mod')
             sage: 1/(t+t^2)
             (t + 1) + t^2*2
-
         """
         cdef pAdicZZpXFMElement right = <pAdicZZpXFMElement>_right
         if right.valuation_c() > 0:
@@ -882,7 +879,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         ans.value = self.value # does this actually copy correctly
         return ans
 
-    def is_zero(self, absprec = None):
+    def is_zero(self, absprec=None):
         """
         Return whether the valuation of ``self`` is at least
         ``absprec``; if ``absprec`` is ``None``, return whether
@@ -930,11 +927,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer
+        - ``absprec`` -- integer
 
-        OUTPUT:
-
-        A new element truncated modulo `\pi^{\mbox{absprec}}`.
+        OUTPUT: a new element truncated modulo `\pi^{\mbox{absprec}}`
 
         EXAMPLES::
 
@@ -1043,7 +1038,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             ZZ_pX_MulMod_pre(cur.x, cur.x, x, m[0])
         return matrix(R, n, n,  L)
 
-#     def matrix(self, base = None):
+#     def matrix(self, base=None):
 #         """
 #         If base is None, return the matrix of right multiplication by
 #         the element on the power basis `1, x, x^2, \ldots, x^{d-1}`
@@ -1255,7 +1250,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
 #    def lift(self):
 #        """
-#        Returns an element of a number field defined by the same polynomial as self's parent that is congruent to self modulo an appropriate ideal.
+#        Returns an element of a number field defined by the same polynomial as
+#        ``self``'s parent that is congruent to self modulo an appropriate ideal.
 
 #        Not currently implemented.
 #        """
@@ -1308,7 +1304,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         INPUT:
 
-        - ``n`` -- integer (default ``None``); if given, returns the
+        - ``n`` -- integer (default: ``None``); if given, returns the
           corresponding entry in the expansion
 
         EXAMPLES::
@@ -1351,7 +1347,6 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: L.<a> = K.extension(a^2 - 3)
             sage: a.residue()
             0
-
         """
         if lift_mode == 'teichmuller':
             zero = self.parent()(0)
@@ -1385,9 +1380,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
                 return zero
         return [zero] * ordp + ulist
 
-    def teichmuller_expansion(self, n = None):
+    def teichmuller_expansion(self, n=None):
         r"""
-        Return a list `[a_0, a_1, \ldots, a_n]` such that
+        Return a list `[a_0, a_1, \ldots, a_n]` such that.
 
         - `a_i^q = a_i`
         - ``self.unit_part()`` = `\sum_{i = 0}^n a_i \pi^i`, where `\pi` is a
@@ -1395,7 +1390,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         INPUT:
 
-        - ``n`` -- integer (default ``None``); f given, returns the corresponding
+        - ``n`` -- integer (default: ``None``); if given, returns the corresponding
           entry in the expansion
 
         EXAMPLES::
@@ -1520,8 +1515,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 #     def multiplicative_order(self):
 #         """
 #         Returns the multiplicative order of self, ie the smallest
-#         positive n so that there is an exact p-adic element congruent
-#         to self modulo self's precision that is an nth root of unity.
+#         positive `n` so that there is an exact `p`-adic element congruent
+#         to self modulo ``self``'s precision that is an `n`-th root of unity.
 
 #         Note: unlike the case for Qp and Zp, it is possible to have
 #         non-teichmuller elements with finite orders.  This can happen
@@ -1530,16 +1525,14 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
 #         INPUT:
 
-#             - self -- a p-adic element
-#             - prec -- an integer
+#         - ``self`` -- a `p`-adic element
+#         - ``prec`` -- integer
 
-#         OUTPUT:
-
-#             - integer -- the multiplicative order of self
+#         OUTPUT: integer; the multiplicative order of self
 #         """
 #         raise NotImplementedError
 
-#     def padded_list(self, n, lift_mode = 'simple'):
+#     def padded_list(self, n, lift_mode='simple'):
 #         """
 #         Returns a list of coefficients of pi starting with `pi^0` up to
 #         `pi^n` exclusive (padded with zeros if needed)

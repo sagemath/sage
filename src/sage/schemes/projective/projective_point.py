@@ -26,26 +26,29 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from copy import copy
+
+from sage.arith.functions import lcm
+from sage.arith.misc import gcd
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.number_fields import NumberFields
-_NumberFields = NumberFields()
-from sage.rings.integer_ring import ZZ
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.rings.abc import Order
 from sage.rings.fraction_field import FractionField
-from sage.rings.number_field.order import Order as NumberFieldOrder
-from sage.rings.qqbar import number_field_elements_from_algebraics
+from sage.rings.integer_ring import ZZ
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
-from sage.arith.misc import GCD as gcd
-from sage.arith.functions import lcm
-from sage.misc.misc_c import prod
-
-from copy import copy
+from sage.rings.ring import CommutativeRing
 from sage.schemes.generic.morphism import (SchemeMorphism,
-                                           is_SchemeMorphism,
                                            SchemeMorphism_point)
 from sage.structure.element import AdditiveGroupElement
-from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp, op_EQ, op_NE
+from sage.structure.sequence import Sequence
+
+lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
+
+_NumberFields = NumberFields()
 
 
 # --------------------
@@ -58,18 +61,17 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
     INPUT:
 
-    -  ``X`` -- a homset of a subscheme of an ambient projective space over a ring `K`.
+    - ``X`` -- a homset of a subscheme of an ambient projective space over a ring `K`
 
-    - ``v`` -- a list or tuple of coordinates in `K`.
+    - ``v`` -- list or tuple of coordinates in `K`
 
-    - ``check`` -- boolean (default:``True``). Whether to check the input for consistency.
+    - ``check`` -- boolean (default: ``True``); whether to check the input for consistency
 
     EXAMPLES::
 
         sage: P = ProjectiveSpace(2, ZZ)
         sage: P(2,3,4)
         (2 : 3 : 4)
-
     """
 
     def __init__(self, X, v, check=True):
@@ -161,10 +163,8 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         SchemeMorphism.__init__(self, X)
 
         if check:
-            from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
-            from sage.rings.ring import CommutativeRing
             d = X.codomain().ambient_space().ngens()
-            if is_SchemeMorphism(v) or isinstance(v, EllipticCurvePoint_field):
+            if isinstance(v, SchemeMorphism):
                 v = list(v)
             else:
                 try:
@@ -184,7 +184,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
             if R in IntegralDomains():
                 # Over integral domains, any tuple with at least one
-                # non-zero coordinate is a valid projective point.
+                # nonzero coordinate is a valid projective point.
                 if not any(v):
                     raise ValueError(f"{v} does not define a valid projective "
                                      "point since all entries are zero")
@@ -209,9 +209,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         - ``right`` -- a point on projective space
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -386,7 +384,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         equal hash values. If the base ring is not an integral domain,
         return the hash of the parent.
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -428,7 +426,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
     def _matrix_times_point_(self, mat, dom):
         r"""
-        Multiplies the point by a matrix ``mat`` on the left.
+        Multiply the point by a matrix ``mat`` on the left.
 
         INPUT:
 
@@ -487,14 +485,14 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         """
         Scale the coordinates of the point by ``t``.
 
-        A :class:`TypeError` occurs if the point is not in the
+        A :exc:`TypeError` occurs if the point is not in the
         base_ring of the codomain after scaling.
 
         INPUT:
 
-        - ``t`` -- a ring element.
+        - ``t`` -- a ring element
 
-        OUTPUT: None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -535,11 +533,15 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
     def normalize_coordinates(self):
         """
-        Removes the gcd from the coordinates of this point (including `-1`).
+        Removes the gcd from the coordinates of this point (including `-1`)
+        and rescales everything so that the last nonzero entry is as "simple"
+        as possible. The notion of "simple" here depends on the base ring;
+        concretely, the last nonzero coordinate will be `1` in a field and
+        positive over an ordered ring.
 
         .. WARNING:: The gcd will depend on the base ring.
 
-        OUTPUT: None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -554,7 +556,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: P = ProjectiveSpace(Zp(7), 2, 'x')
             sage: p = P([-5, -15, -2])
             sage: p.normalize_coordinates(); p
-            (5 + O(7^20) : 1 + 2*7 + O(7^20) : 2 + O(7^20))
+            (6 + 3*7 + 3*7^2 + 3*7^3 + 3*7^4 + 3*7^5 + 3*7^6 + 3*7^7 + 3*7^8 + 3*7^9 + 3*7^10 + 3*7^11 + 3*7^12 + 3*7^13 + 3*7^14 + 3*7^15 + 3*7^16 + 3*7^17 + 3*7^18 + 3*7^19 + O(7^20) : 4 + 4*7 + 3*7^2 + 3*7^3 + 3*7^4 + 3*7^5 + 3*7^6 + 3*7^7 + 3*7^8 + 3*7^9 + 3*7^10 + 3*7^11 + 3*7^12 + 3*7^13 + 3*7^14 + 3*7^15 + 3*7^16 + 3*7^17 + 3*7^18 + 3*7^19 + O(7^20) : 1 + O(7^20))
 
         ::
 
@@ -578,8 +580,8 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: R.<c> = PolynomialRing(QQ)
             sage: P = ProjectiveSpace(R, 1)
             sage: Q = P(2*c, 4*c)
-            sage: Q.normalize_coordinates();Q
-            (2 : 4)
+            sage: Q.normalize_coordinates(); Q
+            (1/2 : 1)
 
         A polynomial ring over a ring gives the more intuitive result. ::
 
@@ -616,28 +618,30 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         else:
             GCD = R(gcd(self._coords[0], self._coords[1]))
             index = 2
-            neg = self._coords[0] <= 0 and self._coords[1] <= 0
-            while not GCD.is_one() and index < len(self._coords):
-                neg = self._coords[index] <= 0
+            while not GCD.is_unit() and index < len(self._coords):
                 GCD = R(gcd(GCD, self._coords[index]))
                 index += 1
-            if not GCD.is_one():
+            if not GCD.is_unit():
                 self.scale_by(~GCD)
-            if neg:
-                self.scale_by(-ZZ.one())
+            index = len(self._coords) - 1
+            while not self._coords[index]:
+                index -= 1
+            if self._coords[index].is_unit():
+                if not self._coords[index].is_one():
+                    self.scale_by(~self._coords[index])
+            elif self._coords[index] < 0:
+                self.scale_by(-R.one())
         self._normalized = True
 
-    def dehomogenize(self,n):
+    def dehomogenize(self, n):
         r"""
         Dehomogenizes at the `n`-th coordinate.
 
         INPUT:
 
-        - ``n`` -- non-negative integer.
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - :class:`SchemeMorphism_point_affine`.
+        OUTPUT: :class:`SchemeMorphism_point_affine`
 
         EXAMPLES::
 
@@ -690,11 +694,9 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -749,7 +751,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         if prec is None:
             prec = 53
         K = self.codomain().base_ring()
-        if K in _NumberFields or isinstance(K, NumberFieldOrder) or K == ZZ:
+        if K in _NumberFields or K is ZZ or isinstance(K, Order):
             P = self
         else:
             try:
@@ -758,7 +760,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
                 raise TypeError("must be defined over an algebraic field")
             else:
                 K = P.codomain().base_ring()
-        if isinstance(K, NumberFieldOrder):
+        if isinstance(K, Order):
             K = K.number_field()
         # first get rid of the denominators
         denom = lcm([xi.denominator() for xi in P])
@@ -776,18 +778,16 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
     def local_height(self, v, prec=None):
         r"""
-        Returns the maximum of the local height of the coordinates of this point.
+        Return the maximum of the local height of the coordinates of this point.
 
         INPUT:
 
-        - ``v`` -- a prime or prime ideal of the base ring.
+        - ``v`` -- a prime or prime ideal of the base ring
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -810,18 +810,16 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
     def local_height_arch(self, i, prec=None):
         r"""
-        Returns the maximum of the local heights at the ``i``-th infinite place of this point.
+        Return the maximum of the local heights at the ``i``-th infinite place of this point.
 
         INPUT:
 
-        - ``i`` -- an integer.
+        - ``i`` -- integer
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -848,17 +846,18 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
     def multiplier(self, f, n, check=True):
         r"""
-        Returns the multiplier of this point of period ``n`` by the function ``f``.
+        Return the multiplier of this point of period ``n`` by the function ``f``.
 
         ``f`` must be an endomorphism of projective space.
 
         INPUT:
 
-        - ``f`` -- a endomorphism of this point's codomain.
+        - ``f`` -- a endomorphism of this point's codomain
 
-        - ``n`` -- a positive integer, the period of this point.
+        - ``n`` -- positive integer; the period of this point
 
-        - ``check`` -- check if ``P`` is periodic of period ``n``, Default:True.
+        - ``check`` -- boolean (default: ``True``); check if ``P`` is periodic
+          of period ``n``
 
         OUTPUT:
 
@@ -906,18 +905,18 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         INPUT:
 
-        - ``f`` -- an endomorphism of this point's codomain.
+        - ``f`` -- an endomorphism of this point's codomain
 
         kwds:
 
-        - ``err`` -- a positive real number (default: 0.1).
+        - ``err`` -- a positive real number (default: 0.1)
 
-        - ``return_period`` -- boolean (default: ``False``).
+        - ``return_period`` -- boolean (default: ``False``)
 
 
         OUTPUT:
 
-        - boolean -- ``True`` if preperiodic.
+        - boolean; ``True`` if preperiodic.
 
         - if ``return_period`` is ``True``, then ``(0,0)`` if wandering, and ``(m,n)``
           if preperiod ``m`` and period ``n``.
@@ -1058,13 +1057,13 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
 
     INPUT:
 
-    -  ``X`` -- a homset of a subscheme of an ambient projective space
-       over a field `K`.
+    - ``X`` -- a homset of a subscheme of an ambient projective space
+      over a field `K`
 
-    - ``v`` -- a list or tuple of coordinates in `K`.
+    - ``v`` -- list or tuple of coordinates in `K`
 
-    - ``check`` -- boolean (default:``True``). Whether to
-      check the input for consistency.
+    - ``check`` -- boolean (default: ``True``); whether to
+      check the input for consistency
 
     EXAMPLES::
 
@@ -1080,7 +1079,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
 
         See :class:`SchemeMorphism_point_projective_ring` for details.
 
-        This function still normalizes points so that the rightmost non-zero coordinate is 1.
+        This function still normalizes points so that the rightmost nonzero coordinate is 1.
         This is to maintain functionality with current
         implementations of curves in projectives space (plane, conic, elliptic, etc).
         The :class:`SchemeMorphism_point_projective_ring` is for general use.
@@ -1138,10 +1137,8 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         self._normalized = False
 
         if check:
-            from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
-            from sage.rings.ring import CommutativeRing
             d = X.codomain().ambient_space().ngens()
-            if is_SchemeMorphism(v) or isinstance(v, EllipticCurvePoint_field):
+            if isinstance(v, SchemeMorphism):
                 v = list(v)
             else:
                 try:
@@ -1179,9 +1176,9 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
 
     def __hash__(self):
         """
-        Computes the hash value of this point.
+        Compute the hash value of this point.
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1195,9 +1192,9 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
 
     def normalize_coordinates(self):
         r"""
-        Normalizes the point so that the last non-zero coordinate is `1`.
+        Normalize the point so that the last nonzero coordinate is `1`.
 
-        OUTPUT: None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -1290,9 +1287,9 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
 
     def clear_denominators(self):
         r"""
-        scales by the least common multiple of the denominators.
+        Scale by the least common multiple of the denominators.
 
-        OUTPUT: None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -1339,9 +1336,9 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
 
         INPUT:
 
-        - ``X`` -- a subscheme in the same ambient space as that of the codomain of this point.
+        - ``X`` -- a subscheme in the same ambient space as that of the codomain of this point
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1380,7 +1377,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         Uses the subscheme multiplicity implementation. This point must be a point on
         a projective subscheme.
 
-        OUTPUT: an integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1431,9 +1428,9 @@ class SchemeMorphism_point_projective_finite_field(SchemeMorphism_point_projecti
 
     def __hash__(self):
         r"""
-        Returns the integer hash of this point.
+        Return the integer hash of this point.
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 

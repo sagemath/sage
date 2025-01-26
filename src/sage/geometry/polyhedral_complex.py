@@ -150,7 +150,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     INPUT:
 
-    - ``maximal_cells`` -- a list, a tuple, or a dictionary (indexed by
+    - ``maximal_cells`` -- list, tuple, or dictionary (indexed by
       dimension) of cells of the Complex. Each cell is of class
       :class:`Polyhedron` of the same ambient dimension. To set up a
       :class:PolyhedralComplex, it is sufficient to provide the maximal
@@ -165,7 +165,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     - ``face_to_face_check`` -- boolean (default: ``False``);
       if ``True``, then the constructor checks whether the cells
-      are face-to-face, and it raises a :class:`ValueError` if they are not
+      are face-to-face, and it raises a :exc:`ValueError` if they are not
 
     - ``is_mutable`` and ``is_immutable`` -- boolean (default: ``True`` and
       ``False`` respectively); set ``is_mutable=False`` or ``is_immutable=True``
@@ -394,7 +394,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``increasing`` -- (default ``True``) if ``True``, return
+        - ``increasing`` -- boolean (default: ``True``); if ``True``, return
           cells in increasing order of dimension, thus starting with the
           zero-dimensional cells; otherwise it returns cells in decreasing
           order of dimension
@@ -412,7 +412,7 @@ class PolyhedralComplex(GenericCellComplex):
             11
         """
         cells = self.cells()
-        dim_index = range(0, self.dimension() + 1)
+        dim_index = range(self.dimension() + 1)
         if not increasing:
             dim_index = reversed(dim_index)
         for d in dim_index:
@@ -425,7 +425,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``n`` -- non-negative integer; the dimension
+        - ``n`` -- nonnegative integer; the dimension
         - ``subcomplex`` -- (optional) if a subcomplex is given then
           return the cells which are **not** in this subcomplex
 
@@ -509,7 +509,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``increasing`` -- (default: ``False``) if ``True``, return
+        - ``increasing`` -- boolean (default: ``False``); if ``True``, return
           maximal cells in increasing order of dimension.
           Otherwise it returns cells in decreasing order of dimension.
 
@@ -552,7 +552,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``n`` -- non-negative integer; the dimension
+        - ``n`` -- nonnegative integer; the dimension
 
         .. NOTE::
 
@@ -594,7 +594,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``n`` -- (non-negative integer) the dimension
+        - ``n`` -- nonnegative integer; the dimension
 
         .. WARNING::
 
@@ -730,15 +730,15 @@ class PolyhedralComplex(GenericCellComplex):
           can be passed to :func:`exploded_plot`:
 
           - ``center`` -- (default: ``None``, denoting the origin) the center of explosion
-          - ``sticky_vertices`` -- (default: ``False``) boolean or dict.
-            Whether to draw line segments between shared vertices of the given polyhedra.
+          - ``sticky_vertices`` -- (default: ``False``) boolean or dict;
+            whether to draw line segments between shared vertices of the given polyhedra.
             A dict gives options for :func:`sage.plot.line`.
           - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center`` is
             a vertex of some of the polyhedra, whether to draw line segments connecting the
             ``center`` to the shifted copies of these vertices.
             A dict gives options for :func:`sage.plot.line`.
 
-        - ``color`` -- (default: ``None``) if ``"rainbow"``, assign a different color
+        - ``color`` -- (default: ``None``) if ``'rainbow'``, assign a different color
           to every maximal cell; otherwise, passed on to
           :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
 
@@ -775,7 +775,6 @@ class PolyhedralComplex(GenericCellComplex):
             ....:         Polyhedron(rays=[[-1,0,0], [0,1,0], [0,0,1]])])
             sage: g5 = pc5.plot(explosion_factor=0.3, color='rainbow', alpha=0.8,       # needs sage.plot
             ....:               point={'size': 20}, axes=False, online=True)
-
         """
         if self.dimension() > 3:
             raise ValueError("cannot plot in high dimension")
@@ -946,7 +945,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     def __contains__(self, x):
         """
-        True if ``x`` is a polyhedron which is contained in this complex.
+        Return ``True`` if ``x`` is a polyhedron which is contained in this complex.
 
         EXAMPLES::
 
@@ -972,7 +971,7 @@ class PolyhedralComplex(GenericCellComplex):
     def __call__(self, x):
         """
         If ``x`` is a polyhedron in this complex, return it.
-        Otherwise, raise a :class:`ValueError`.
+        Otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -1062,7 +1061,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     def is_compact(self):
         """
-        Test for boundedness of the polyhedral complex
+        Test for boundedness of the polyhedral complex.
 
         EXAMPLES::
 
@@ -1080,7 +1079,7 @@ class PolyhedralComplex(GenericCellComplex):
         Return the 1-skeleton of this polyhedral complex, as a graph.
 
         The vertices of the graph are of type ``vector``. This raises
-        a :class:`NotImplementedError` if the polyhedral complex is unbounded.
+        a :exc:`NotImplementedError` if the polyhedral complex is unbounded.
 
         .. WARNING::
 
@@ -1319,7 +1318,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``n`` -- non-negative integer; the dimension
+        - ``n`` -- nonnegative integer; the dimension
 
         .. SEEALSO::
 
@@ -1676,9 +1675,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         - ``right`` -- the other polyhedral complex (the right-hand factor)
 
-        OUTPUT:
-
-        - the product ``self x right``
+        OUTPUT: the product ``self x right``
 
         EXAMPLES::
 
@@ -2077,8 +2074,7 @@ class PolyhedralComplex(GenericCellComplex):
                 raise ValueError("the cell is not face-to-face with complex")
         # update dim and maximal cells
         d = cell.dimension()
-        if d > self._dim:
-            self._dim = d
+        self._dim = max(d, self._dim)
         maximal_cells = poset.maximal_elements()    # a list
         self._maximal_cells = cells_list_to_cells_dict(maximal_cells)
         # update convexity if self was known to be convex, reset otherwise.
@@ -2139,7 +2135,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         TESTS:
 
-        Check that ValueError and empty complex are treated properly::
+        Check that :exc:`ValueError` and empty complex are treated properly::
 
             sage: p = Polyhedron(vertices=[[1]])
             sage: pc = PolyhedralComplex([p])
@@ -2275,7 +2271,7 @@ class PolyhedralComplex(GenericCellComplex):
         Test if this polyhedral complex is a simplicial fan.
 
         A polyhedral complex is a **simplicial fan** if all of its (maximal)
-        cells are simplical cones, i.e., every cell is a pointed cone (with
+        cells are simplicial cones, i.e., every cell is a pointed cone (with
         vertex being the origin) generated by `d` linearly independent rays,
         where `d` is the dimension of the cone.
 
@@ -2462,7 +2458,7 @@ class PolyhedralComplex(GenericCellComplex):
             return PolyhedralComplex(cones, maximality_check=False,
                                      backend=self._backend)
         else:
-            # TODO: `self`` is unbounded, make it projectively simplicial.
+            # TODO: ``self`` is unbounded, make it projectively simplicial.
             # (1) homogenize self of dim d to fan in space of dim d+1;
             # (2) call fan.subdivide(make_simplicial=True);
             # (3) take section back to the space of dim d.
@@ -2506,28 +2502,35 @@ def exploded_plot(polyhedra, *,
                   center=None, explosion_factor=1, sticky_vertices=False,
                   sticky_center=True, point=None, **kwds):
     r"""
-    Return a plot of several ``polyhedra`` in one figure with extra space between them.
+    Return a plot of several ``polyhedra`` in one figure with extra space
+    between them.
 
     INPUT:
 
-    - ``polyhedra`` -- an iterable of :class:`~sage.geometry.polyhedron.base.Polyhedron_base` objects
+    - ``polyhedra`` -- an iterable of
+      :class:`~sage.geometry.polyhedron.base.Polyhedron_base` objects
 
-    - ``center`` -- (default: ``None``, denoting the origin) the center of explosion
+    - ``center`` -- (default: ``None``, denoting the origin) the center of
+      explosion
 
-    - ``explosion_factor`` -- (default: 1) a nonnegative number; translate polyhedra by this
-      factor of the distance from ``center`` to their center
+    - ``explosion_factor`` -- (default: 1) a nonnegative number; translate
+      polyhedra by this factor of the distance from ``center`` to their center
 
-    - ``sticky_vertices`` -- (default: ``False``) boolean or dict. Whether to draw line segments between shared
-      vertices of the given polyhedra. A dict gives options for :func:`sage.plot.line`.
+    - ``sticky_vertices`` -- (default: ``False``) boolean or dict; whether to
+      draw line segments between shared vertices of the given polyhedra. A dict
+      gives options for :func:`sage.plot.line`.
 
-    - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center`` is a vertex of some
-      of the polyhedra, whether to draw line segments connecting the ``center`` to the shifted copies
-      of these vertices. A dict gives options for :func:`sage.plot.line`.
+    - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center``
+      is a vertex of some of the polyhedra, whether to draw line segments
+      connecting the ``center`` to the shifted copies of these vertices. A dict
+      gives options for :func:`sage.plot.line`.
 
-    - ``color`` -- (default: ``None``) if ``"rainbow"``, assign a different color to every maximal cell and
-      every vertex; otherwise, passed on to :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+    - ``color`` -- (default: ``None``) if ``'rainbow'``, assign a different
+      color to every maximal cell and every vertex; otherwise, passed on to
+      :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`
 
-    - other keyword arguments are passed on to :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+    - other keyword arguments are passed on to
+      :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`
 
     EXAMPLES::
 

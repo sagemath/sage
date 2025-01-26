@@ -43,6 +43,8 @@ tutorial latex`` (for example), and look at the resulting LaTeX file in
 contain '\newcommand' lines for each of the entries in ``macros``.
 """
 
+import importlib
+
 
 def produce_latex_macro(name, *sample_args):
     r"""
@@ -50,9 +52,9 @@ def produce_latex_macro(name, *sample_args):
 
     INPUT:
 
-    -  ``name`` -- name of macro to be defined, also name of corresponding Sage object
+    - ``name`` -- name of macro to be defined, also name of corresponding Sage object
 
-    -  ``sample_args`` -- (optional) sample arguments for this Sage object
+    - ``sample_args`` -- (optional) sample arguments for this Sage object
 
     EXAMPLES::
 
@@ -69,7 +71,7 @@ def produce_latex_macro(name, *sample_args):
          sage: produce_latex_macro('GF', 37)
          '\\newcommand{\\GF}[1]{\\Bold{F}_{#1}}'
 
-    If the Sage object is not in the global name space, describe it
+    If the Sage object is not in the global namespace, describe it
     like so::
 
          sage: produce_latex_macro('sage.rings.finite_rings.finite_field_constructor.FiniteField', 3)
@@ -84,22 +86,16 @@ def produce_latex_macro(name, *sample_args):
     else:
         module, real_name = names_split
     newcommand = '\\newcommand{\\' + real_name + '}'
-    count = 0
-    args = "("
-    for x in sample_args:
-        count += 1
-        args += str(x) + ','
-    args += ')'
-    exec('from ' + module + ' import ' + real_name)
-    if count:
-        defn = '[' + str(count) + ']{'
-        defn += eval('str(LatexCall()(' + real_name + args + '))') + '}'
+    sage_object = getattr(importlib.import_module(module), real_name)
+    if sample_args:
+        defn = '[' + str(len(sample_args)) + ']{'
+        defn += str(LatexCall()(sage_object(*sample_args))) + '}'
     else:
-        defn = '{' + eval('str(LatexCall()(' + real_name + '))') + '}'
-    count = 0
-    for x in sample_args:
-        count += 1
-        defn = defn.replace(str(x), "#" + str(count))
+        defn = '{' + str(LatexCall()(sage_object)) + '}'
+    for i, x in enumerate(sample_args):
+        s = str(x)
+        assert s in defn
+        defn = defn.replace(s, "#" + str(i+1))
     return newcommand + defn
 
 
@@ -110,7 +106,7 @@ def convert_latex_macro_to_mathjax(macro):
 
     INPUT:
 
-    -  ``macro`` -- LaTeX macro definition
+    - ``macro`` -- LaTeX macro definition
 
     See the web page
     https://docs.mathjax.org/en/latest/input/tex/macros.html for a

@@ -157,7 +157,7 @@ def spol(f, g):
 
     INPUT:
 
-    -  ``f, g`` -- polynomials
+    - ``f``, ``g`` -- polynomials
 
     OUTPUT: the S-polynomial of f and g
 
@@ -301,7 +301,7 @@ def update(G, B, h):
 
     - ``G`` -- an intermediate Groebner basis
 
-    - ``B`` -- a set of critical pairs
+    - ``B`` -- set of critical pairs
 
     - ``h`` -- a polynomial
 
@@ -378,7 +378,7 @@ def select(P):
 
     INPUT:
 
-    - ``P`` -- a list of critical pairs
+    - ``P`` -- list of critical pairs
 
     OUTPUT: an element of P
 
@@ -401,7 +401,7 @@ def inter_reduction(Q):
 
     INPUT:
 
-    - ``Q`` -- a set of polynomials
+    - ``Q`` -- set of polynomials
 
     OUTPUT:
 

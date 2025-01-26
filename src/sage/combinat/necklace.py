@@ -47,7 +47,7 @@ def Necklaces(content):
 
     INPUT:
 
-    - ``content`` -- a list or tuple of non-negative integers
+    - ``content`` -- list or tuple of nonnegative integers
 
     EXAMPLES::
 
@@ -75,7 +75,7 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``content`` -- a list or tuple of non-negative integers
+    - ``content`` -- list or tuple of nonnegative integers
     """
     @staticmethod
     def __classcall_private__(cls, content):
@@ -134,7 +134,7 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``x`` -- a list of integers
+        - ``x`` -- list of integers
 
         EXAMPLES::
 
@@ -360,12 +360,11 @@ def _fast_fixed_content(a, content, t, p, k, r, s, dll, equality=False):
             content[j] += 1
             j = dll.next(j)
         a[t - 1] = k - 1
-    return
 
 
-################################
-# List Fixed Content Algorithm #
-################################
+# ###############################
+# List Fixed Content Algorithm  #
+# ###############################
 def _lfc(content, equality=False):
     """
     EXAMPLES::
@@ -456,12 +455,12 @@ def _sfc(content, equality=False):
 
     INPUT:
 
-    - ``content`` -- a list of non-negative integers with no leading 0s
+    - ``content`` -- list of nonnegative integers with no leading 0s
     - ``equality`` -- boolean (default: ``True``)
 
     .. WARNING::
 
-        You will get incorrect results if there are leading 0's in ``content``.
+        You will get incorrect results if there are leading 0s in ``content``.
         See :issue:`12997` and :issue:`17436`.
 
     EXAMPLES::

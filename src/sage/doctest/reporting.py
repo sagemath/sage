@@ -10,7 +10,7 @@ It also computes the exit status in the ``error_status`` attribute of
 - 1: Doctest failure
 - 2: Bad command line syntax or invalid options
 - 4: Test timed out
-- 8: Test exited with non-zero status
+- 8: Test exited with nonzero status
 - 16: Test crashed with a signal (e.g. segmentation fault)
 - 32: TAB character found
 - 64: Internal error in the doctesting framework
@@ -49,6 +49,7 @@ from sage.structure.sage_object import SageObject
 from sage.doctest.util import count_noun
 from sage.doctest.sources import DictAsObject
 from .external import available_software
+
 
 def signal_name(sig):
     """
@@ -91,6 +92,7 @@ def signal_name(sig):
         return "bus error"
     return "signal %s" % sig
 
+
 class DocTestReporter(SageObject):
     """
     This class reports to the users on the results of doctests.
@@ -102,9 +104,9 @@ class DocTestReporter(SageObject):
         INPUT:
 
         - ``controller`` -- a
-          :class:`sage.doctest.control.DocTestController` instance.
+          :class:`sage.doctest.control.DocTestController` instance;
           Note that some methods assume that appropriate tests have
-          been run by the controller.
+          been run by the controller
 
         EXAMPLES::
 
@@ -152,7 +154,6 @@ class DocTestReporter(SageObject):
             sage: DTR = DocTestReporter(DC)
             sage: DTR.were_doctests_with_optional_tag_run('latex')   # optional - latex
             True
-
         """
         if self.controller.options.optional is True or tag in self.controller.options.optional:
             return True
@@ -227,11 +228,11 @@ class DocTestReporter(SageObject):
 
         - ``source`` -- a source from :mod:`sage.doctest.sources`
 
-        - ``fail_msg`` -- a string
+        - ``fail_msg`` -- string
 
-        - ``event`` -- a string
+        - ``event`` -- string
 
-        - ``output`` -- optional string
+        - ``output`` -- (optional) string
 
         EXAMPLES::
 
@@ -293,25 +294,22 @@ class DocTestReporter(SageObject):
 
         - ``source`` -- a source from :mod:`sage.doctest.sources`
 
-        - ``timeout`` -- a boolean, whether doctests timed out
+        - ``timeout`` -- boolean; whether doctests timed out
 
-        - ``return_code`` -- an int, the return code of the process
-          running doctests on that file.
+        - ``return_code`` -- integer; the return code of the process
+          running doctests on that file
 
-        - ``results`` -- (irrelevant if ``timeout`` or
-          ``return_code``), a tuple
+        - ``results`` -- (irrelevant if ``timeout`` or ``return_code``) a tuple
 
           - ``ntests`` -- the number of doctests
 
           - ``timings`` -- a
             :class:`sage.doctest.sources.DictAsObject` instance
-            storing timing data.
+            storing timing data
 
-        - ``output`` -- a string, printed if there was some kind of
-          failure
+        - ``output`` -- string; printed if there was some kind of failure
 
-        - ``pid`` -- optional integer (default: ``None``). The pid of
-          the worker process.
+        - ``pid`` -- integer (default: ``None``); the pid of the worker process
 
         EXAMPLES::
 
@@ -407,7 +405,7 @@ class DocTestReporter(SageObject):
             0
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
             ....:            "Good tests")
-                [... tests, ... s]
+                [... tests, ...s wall]
             sage: DTR.stats
             {'sage.doctest.reporting': {'ntests': ..., 'walltime': ...}}
 
@@ -418,7 +416,7 @@ class DocTestReporter(SageObject):
             1
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
             ....:            "Doctest output including the failure...")
-                [... tests, 1 failure, ... s]
+                [... tests, 1 failure, ...s wall]
 
         If the user has requested that we report on skipped doctests,
         we do so::
@@ -437,7 +435,7 @@ class DocTestReporter(SageObject):
                 5 magma tests not run
                 2 not tested tests not run
                 0 tests not run because we ran out of time
-                [... tests, ... s]
+                [... tests, ...s wall]
 
         Test an internal error in the reporter::
 
@@ -470,7 +468,7 @@ class DocTestReporter(SageObject):
             1
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
             ....:            "Failed test")
-                [... tests, 1 failure, ... s]
+                [... tests, 1 failure, ...s wall]
         """
         log = self.controller.log
         process_name = 'process (pid={0})'.format(pid) if pid else 'process'
@@ -629,7 +627,7 @@ class DocTestReporter(SageObject):
                     else:
                         total = count_noun(ntests, "test")
                     if not (self.controller.options.only_errors and not f):
-                        log("    [%s, %s%.2f s]" % (total, "%s, " % (count_noun(f, "failure")) if f else "", wall))
+                        log("    [%s, %s%.2fs wall]" % (total, "%s, " % (count_noun(f, "failure")) if f else "", wall))
 
             self.sources_completed += 1
 
@@ -684,13 +682,13 @@ class DocTestReporter(SageObject):
             0
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
             ....:            "Good tests")
-                [... tests, ... s]
+                [... tests, ...s wall]
             sage: runner.failures = 1
             sage: runner.update_results(D)
             1
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
             ....:            "Doctest output including the failure...")
-                [... tests, 1 failure, ... s]
+                [... tests, 1 failure, ...s wall]
 
         Now we can show the output of finalize::
 

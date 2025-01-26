@@ -79,7 +79,7 @@ class PlaneCurveArrangementElement(Element):
 
         - ``parent`` -- the parent :class:`PlaneCurveArrangements`
 
-        - ``curves`` -- a tuple of curves
+        - ``curves`` -- tuple of curves
 
         EXAMPLES::
 
@@ -111,10 +111,6 @@ class PlaneCurveArrangementElement(Element):
 
         - ``i`` -- integer
 
-        OUTPUT:
-
-        The `i`-th curve.
-
         EXAMPLES::
 
             sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
@@ -138,9 +134,7 @@ class PlaneCurveArrangementElement(Element):
         r"""
         Return the number of curves in the arrangement.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -159,9 +153,7 @@ class PlaneCurveArrangementElement(Element):
         r"""
         Return the curves in the arrangement as a tuple.
 
-        OUTPUT:
-
-        A tuple.
+        OUTPUT: a tuple
 
         EXAMPLES::
 
@@ -182,9 +174,7 @@ class PlaneCurveArrangementElement(Element):
         r"""
         String representation for a curve arrangement.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -237,9 +227,7 @@ class PlaneCurveArrangementElement(Element):
         - ``other`` -- a curve arrangement or something that can
           be converted into a curve arrangement
 
-        OUTPUT:
-
-        A new curve arrangement.
+        OUTPUT: a new curve arrangement
 
         EXAMPLES::
 
@@ -334,9 +322,7 @@ class PlaneCurveArrangementElement(Element):
         """
         Return the coordinate ring of ``self``.
 
-        OUTPUT:
-
-        The coordinate ring of the curve arrangement.
+        OUTPUT: the coordinate ring of the curve arrangement
 
         EXAMPLES::
 
@@ -450,7 +436,7 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
 
         - ``parent`` -- the parent :class:`AffinePlaneCurveArrangements`
 
-        - ``curves`` -- a tuple of curves
+        - ``curves`` -- tuple of curves
 
         EXAMPLES::
 
@@ -499,9 +485,7 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
         - ``projective`` -- boolean (default: ``False``); to be used in the
           method for projective curves
 
-        OUTPUT:
-
-        A finitely presented group.
+        OUTPUT: a finitely presented group
 
         .. NOTE::
 
@@ -529,7 +513,7 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             {0: [x1, x2], 1: [x0], 2: [x3], 3: [x3^-1*x2^-1*x1^-1*x0^-1]}
             sage: A.fundamental_group(vertical=False)
             Finitely presented group
-            < x0, x1, x2 | x2^-1*x1^-1*x2*x1, x1*x0*x1^-1*x0^-1, (x0*x2)^2*(x0^-1*x2^-1)^2 >
+            < x0, x1, x2 | x2*x1^-1*x2^-1*x1, x1*x0*x1^-1*x0^-1, (x0*x2)^2*(x0^-1*x2^-1)^2 >
             sage: A.meridians(vertical=False)
             {0: [x2, x0*x2*x0^-1], 1: [x1], 2: [x0], 3: [x0*x2^-1*x0^-1*x2^-1*x1^-1*x0^-1]}
             sage: G = A.fundamental_group(simplified=False, vertical=False)
@@ -799,7 +783,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
 
         - ``parent`` -- the parent :class:`ProjectivePlaneCurveArrangements`
 
-        - ``curves`` -- a tuple of curves
+        - ``curves`` -- tuple of curves
 
         EXAMPLES::
 
@@ -832,9 +816,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
         - ``simplified`` -- boolean (default: ``True``); set if the group
           is simplified
 
-        OUTPUT:
-
-        A finitely presented group.
+        OUTPUT: a finitely presented group
 
         .. NOTE::
 
@@ -852,7 +834,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             sage: A.fundamental_group().sorted_presentation()
             Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >
             sage: A.meridians()
-            {0: [x1], 1: [x0], 2: [x1^-1*x0^-1*x1^-1]}
+            {0: [x1], 1: [x0], 2: [x0^-1*x1^-2]}
             sage: G = A.fundamental_group(simplified=False)
             sage: G.sorted_presentation()
             Finitely presented group
@@ -963,7 +945,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             sage: A.fundamental_group().sorted_presentation()
             Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0 >
             sage: A.meridians()
-            {0: [x1], 1: [x0], 2: [x1^-1*x0^-1*x1^-1]}
+            {0: [x1], 1: [x0], 2: [x0^-1*x1^-2]}
             sage: A = H(y^2 + x*z, z, x)
             sage: A.fundamental_group()
             Finitely presented group < x0, x1 | (x1*x0)^2*(x1^-1*x0^-1)^2 >
@@ -1045,9 +1027,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         """
         Return the coordinate ring.
 
-        OUTPUT:
-
-        The coordinate ring of the curve arrangement.
+        OUTPUT: the coordinate ring of the curve arrangement
 
         EXAMPLES::
 
@@ -1063,7 +1043,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``base_ring`` -- a ring; the new base ring.
+        - ``base_ring`` -- a ring; the new base ring
 
         OUTPUT:
 
@@ -1106,9 +1086,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1180,11 +1158,9 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
     @cached_method
     def ngens(self):
         """
-        Return the number of variables, i.e. 2 or 3, kept for completness.
+        Return the number of variables, i.e. 2 or 3, kept for completeness.
 
-        OUTPUT:
-
-        An integer, 2 or 3, depending if the arrangement is projective or affine.
+        OUTPUT: integer, 2 or 3, depending if the arrangement is projective or affine
 
         EXAMPLES::
 
@@ -1201,9 +1177,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         """
         Return the coordinates.
 
-        OUTPUT:
-
-        A tuple of linear expressions, one for each linear variable.
+        OUTPUT: a tuple of linear expressions, one for each linear variable
 
         EXAMPLES::
 
@@ -1224,9 +1198,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
 
         - ``i`` -- integer
 
-        OUTPUT:
-
-        A variable.
+        OUTPUT: a variable
 
         EXAMPLES::
 

@@ -47,8 +47,9 @@ on:
            "fedora-38",
            "fedora-39",
            "fedora-40",
-           "centos-7-devtoolset-gcc_11",
-           "centos-stream-9-python3.9",
+           "fedora-41",
+           "centos-stream-9",
+           "centos-stream-9-python3.12",
            "almalinux-8-python3.9",
            "almalinux-9-python3.11",
            "gentoo-python3.10",
@@ -84,6 +85,9 @@ on:
         description: 'Elapsed time (seconds) at which to kill the build'
         default: 20000
         type: number
+      logs_artifact:
+        default: true
+        type: boolean
       #
       # Publishing to GitHub Packages
       #
@@ -169,7 +173,7 @@ jobs:
           ref: ${{ inputs.sage_ref }}
           fetch-depth: 10000
       - name: Download upstream artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: upstream
           name: ${{ inputs.upstream_artifact }}
@@ -243,20 +247,28 @@ jobs:
         # The arcane "find" command is a replacement for "pkill make",
         # which we use because pkill is not installed in the "minimal" package
         # configuration on many platforms.
+        #
+        # The "sed" command strips away timestamps from "docker build" (buildkit)
+        # such as "#25 1211.0" at the beginning of each line. The timestamps are
+        # redundant because GH Actions provides timestamps for each line already.
+        # Stripping the timestamps from the beginnings of lines also allows
+        # GitHub Actions to recognize workflow commands such as ::error etc.
+        #
         run: |
           (sleep ${{ inputs.timeout }}; for id in $(docker ps -q); do docker exec $id find /proc -maxdepth 2 -name cmdline -exec bash -c "grep -l [m][a][k][e] {} | cut -d/ -f3 | xargs --no-run-if-empty kill" \;; done) &
-          set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--build-arg NUMPROC=9 --build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=5\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed "/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
+          set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--build-arg NUMPROC=9 --build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=5\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed -E --unbuffered "s/^#[0-9]+ [0-9]+[.][0-9]+ //;/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
       - name: Copy logs from the Docker image or build container
         run: |
           mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"
           cp -r .tox/$TOX_ENV/* "artifacts/$LOGS_ARTIFACT_NAME"
           rm -rf "artifacts/$LOGS_ARTIFACT_NAME"/{bin,lib,pyvenv.cfg}
         if: always()
-      - uses: actions/upload-artifact@v3
+      - name: Upload logs artifact
+        uses: actions/upload-artifact@v4
         with:
           path: artifacts
           name: ${{ env.LOGS_ARTIFACT_NAME }}
-        if: always()
+        if: always() && inputs.logs_artifact
       - name: Print out logs for immediate inspection
         # and markup the output with GitHub Actions logging commands
         run: |

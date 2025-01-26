@@ -73,7 +73,7 @@ def _latex_module(R, m):
     INPUT:
 
     - ``R`` -- a commutative ring
-    - ``m`` -- non-negative integer
+    - ``m`` -- nonnegative integer
 
     This is used by the ``_latex_`` method for chain complexes.
 
@@ -101,30 +101,28 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
     INPUT:
 
     - ``data`` -- the data defining the chain complex; see below for
-      more details.
+      more details
 
     The following keyword arguments are supported:
 
-    - ``base_ring`` -- a commutative ring (optional), the ring over
+    - ``base_ring`` -- a commutative ring (optional); the ring over
       which the chain complex is defined. If this is not specified,
       it is determined by the data defining the chain complex.
 
     - ``grading_group`` -- a additive free abelian group (optional,
-      default ``ZZ``), the group over which the chain complex is
-      indexed.
+      default ``ZZ``); the group over which the chain complex is
+      indexed
 
     - ``degree_of_differential`` -- element of grading_group
-      (default: ``1``). The degree of the differential.
+      (default: ``1``); the degree of the differential
 
-    - ``degree`` -- alias for ``degree_of_differential``.
+    - ``degree`` -- alias for ``degree_of_differential``
 
-    - ``check`` -- boolean (default: ``True``). If ``True``,
+    - ``check`` -- boolean (default: ``True``); if ``True``,
       check that each consecutive pair of differentials are
-      composable and have composite equal to zero.
+      composable and have composite equal to zero
 
-    OUTPUT:
-
-    A chain complex.
+    OUTPUT: a chain complex
 
     .. WARNING::
 
@@ -323,7 +321,7 @@ class Chain_class(ModuleElement):
 
     def __init__(self, parent, vectors, check=True):
         r"""
-        A Chain in a Chain Complex
+        A Chain in a Chain Complex.
 
         A chain is collection of module elements for each module `C_n`
         of the chain complex `(C_n, d_n)`. There is no restriction on
@@ -425,7 +423,6 @@ class Chain_class(ModuleElement):
             sage: C = ChainComplex(base_ring=ZZ)
             sage: ascii_art(C())
             0
-
         """
         from sage.typeset.ascii_art import AsciiArt
 
@@ -485,15 +482,15 @@ class Chain_class(ModuleElement):
         from sage.typeset.unicode_art import UnicodeArt
 
         def arrow_art(d):
-            d_str = [u'  d_{0}  '.format(d)]
-            arrow = u' <' + u'─' * (len(d_str[0]) - 3) + u' '
+            d_str = ['  d_{0}  '.format(d)]
+            arrow = ' <' + '─' * (len(d_str[0]) - 3) + ' '
             d_str.append(arrow)
             return UnicodeArt(d_str, baseline=0)
 
         def vector_art(d):
             v = self.vector(d)
             if not v.degree():
-                return UnicodeArt([u'0'])
+                return UnicodeArt(['0'])
             w = matrix(v).transpose()
             return w._unicode_art_()
 
@@ -502,27 +499,25 @@ class Chain_class(ModuleElement):
         for ordered in chain_complex.ordered_degrees():
             ordered = list(reversed(ordered))
             if not ordered:
-                return UnicodeArt([u'0'])
+                return UnicodeArt(['0'])
             result_ordered = vector_art(ordered[0] +
                                         chain_complex.degree_of_differential())
             for n in ordered:
                 result_ordered += arrow_art(n) + vector_art(n)
             result = [result_ordered] + result
         if len(result) == 0:
-            return UnicodeArt([u'0'])
+            return UnicodeArt(['0'])
         concatenated = result[0]
         for r in result[1:]:
-            concatenated += UnicodeArt([u' ... ']) + r
+            concatenated += UnicodeArt([' ... ']) + r
         return concatenated
 
     def is_cycle(self):
         """
         Return whether the chain is a cycle.
 
-        OUTPUT:
-
-        Boolean. Whether the elements of the chain are in the kernel
-        of the differentials.
+        OUTPUT: boolean; whether the elements of the chain are in the kernel
+        of the differentials
 
         EXAMPLES::
 
@@ -544,7 +539,7 @@ class Chain_class(ModuleElement):
 
         OUTPUT:
 
-        Boolean. Whether the elements of the chain are in the image of
+        boolean; whether the elements of the chain are in the image of
         the differentials.
 
         EXAMPLES::
@@ -570,7 +565,7 @@ class Chain_class(ModuleElement):
 
     def _add_(self, other):
         """
-        Module addition
+        Module addition.
 
         EXAMPLES::
 
@@ -594,7 +589,7 @@ class Chain_class(ModuleElement):
 
     def _lmul_(self, scalar):
         """
-        Scalar multiplication
+        Scalar multiplication.
 
         EXAMPLES::
 
@@ -766,7 +761,7 @@ class ChainComplex_class(Parent):
     @cached_method
     def rank(self, degree, ring=None):
         r"""
-        Return the rank of a differential
+        Return the rank of a differential.
 
         INPUT:
 
@@ -851,7 +846,7 @@ class ChainComplex_class(Parent):
     @cached_method
     def ordered_degrees(self, start=None, exclude_first=False):
         r"""
-        Sort the degrees in the order determined by the differential
+        Sort the degrees in the order determined by the differential.
 
         INPUT:
 
@@ -860,12 +855,10 @@ class ChainComplex_class(Parent):
 
         - ``exclude_first`` -- boolean (optional; default:
           ``False``); whether to exclude the lowest degree -- this is a
-          handy way to just get the degrees of the non-zero modules,
+          handy way to just get the degrees of the nonzero modules,
           as the domain of the first differential is zero.
 
-        OUTPUT:
-
-        If ``start`` has been specified, the longest tuple of degrees
+        OUTPUT: if ``start`` has been specified, the longest tuple of degrees
 
         * containing ``start`` (unless ``start`` would be the first
           and ``exclude_first=True``),
@@ -875,7 +868,7 @@ class ChainComplex_class(Parent):
         * such that none of the corresponding differentials are `0\times 0`.
 
         If ``start`` has not been specified, a tuple of such tuples of
-        degrees. One for each sequence of non-zero differentials. They
+        degrees. One for each sequence of nonzero differentials. They
         are returned in sort order.
 
         EXAMPLES::
@@ -926,11 +919,9 @@ class ChainComplex_class(Parent):
 
     def degree_of_differential(self):
         """
-        Return the degree of the differentials of the complex
+        Return the degree of the differentials of the complex.
 
-        OUTPUT:
-
-        An element of the grading group.
+        OUTPUT: an element of the grading group
 
         EXAMPLES::
 
@@ -1045,7 +1036,7 @@ class ChainComplex_class(Parent):
 
         INPUT:
 
-        - ``degree`` -- an element of the grading group or ``None`` (default).
+        - ``degree`` -- an element of the grading group or ``None`` (default)
 
         OUTPUT:
 
@@ -1072,7 +1063,7 @@ class ChainComplex_class(Parent):
 
     def __hash__(self):
         """
-        The hash is formed by combining the hashes of
+        The hash is formed by combining the hashes of.
 
         - the base ring
         - the differentials -- the matrices and their degrees
@@ -1393,7 +1384,7 @@ class ChainComplex_class(Parent):
         INPUT:
 
         - ``deg`` -- an element of the grading group for the chain
-          complex or None (default ``None``); if ``None``,
+          complex or ``None`` (default: ``None``); if ``None``,
           then return every Betti number, as a dictionary indexed by
           degree, or if an element of the grading group, then return
           the Betti number in that degree
@@ -1442,11 +1433,11 @@ class ChainComplex_class(Parent):
 
         INPUT:
 
-        -  ``max_prime`` -- prime number; search for torsion mod `p` for
-           all `p` strictly less than this number
+        - ``max_prime`` -- prime number; search for torsion mod `p` for
+          all `p` strictly less than this number
 
-        -  ``min_prime`` -- prime (default: 2); search for
-           torsion mod `p` for primes at least as big as this
+        - ``min_prime`` -- prime (default: 2); search for
+          torsion mod `p` for primes at least as big as this
 
         Return a list of pairs `(p, d)` where `p` is a prime at which
         there is torsion and `d` is a list of dimensions in which this
@@ -1562,7 +1553,7 @@ class ChainComplex_class(Parent):
 
         INPUT:
 
-        - ``n`` -- an integer (default: 1)
+        - ``n`` -- integer (default: 1)
 
         The *shift* operation is also sometimes called *translation* or
         *suspension*.
@@ -1730,33 +1721,33 @@ class ChainComplex_class(Parent):
         def arrow_art(n):
             d_n = self.differential(n)
             if not d_n.nrows() or not d_n.ncols():
-                return UnicodeArt([u'<──'])
+                return UnicodeArt(['<──'])
             d_str = list(d_n._unicode_art_())
-            arrow = u'<' + u'─' * (len(d_str[0]) - 1)
+            arrow = '<' + '─' * (len(d_str[0]) - 1)
             d_str.append(arrow)
             return UnicodeArt(d_str)
 
         def module_art(n):
             C_n = self.free_module(n)
             if not C_n.rank():
-                return UnicodeArt([u' 0 '])
+                return UnicodeArt([' 0 '])
             else:
-                return UnicodeArt([u' C_{0} '.format(n)])
+                return UnicodeArt([' C_{0} '.format(n)])
 
         result = []
         for ordered in self.ordered_degrees():
             ordered = list(reversed(ordered))
             if not ordered:
-                return UnicodeArt([u'0'])
+                return UnicodeArt(['0'])
             result_ordered = module_art(ordered[0] + self.degree_of_differential())
             for n in ordered:
                 result_ordered += arrow_art(n) + module_art(n)
             result = [result_ordered] + result
         if len(result) == 0:
-            return UnicodeArt([u'0'])
+            return UnicodeArt(['0'])
         concatenated = result[0]
         for r in result[1:]:
-            concatenated += UnicodeArt([u' ... ']) + r
+            concatenated += UnicodeArt([' ... ']) + r
         return concatenated
 
     def _latex_(self):
@@ -1826,7 +1817,7 @@ class ChainComplex_class(Parent):
 
         INPUT:
 
-        - ``subdivide`` -- (default: ``False``) whether to subdivide the
+        - ``subdivide`` -- boolean (default: ``False``); whether to subdivide the
           the differential matrices
 
         EXAMPLES::
@@ -1954,7 +1945,7 @@ class ChainComplex_class(Parent):
 
         INPUT:
 
-        - ``subdivide`` -- (default: ``False``) whether to subdivide the
+        - ``subdivide`` -- boolean (default: ``False``); whether to subdivide the
           the differential matrices
 
         .. TODO::
