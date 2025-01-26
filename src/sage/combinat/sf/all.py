@@ -1,7 +1,7 @@
 r"""
 Symmetric functions
 
-- :class:`Introduction to Symmetric Functions <sage.combinat.sf.sf.SymmetricFunctions>`
+- :class:`Introduction to symmetric functions <sage.combinat.sf.sf.SymmetricFunctions>`
 
 - :ref:`sage.combinat.sf.sfa`
 - :ref:`sage.combinat.sf.sf`

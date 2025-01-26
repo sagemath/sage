@@ -1,5 +1,5 @@
 """
-Combinatorial Species
+Combinatorial species
 
 This file defines the main classes for working with combinatorial
 species, operations on them, as well as some implementations of

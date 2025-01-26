@@ -1,5 +1,5 @@
 r"""
-Abstract Recursive Trees
+Abstract recursive trees
 
 The purpose of this class is to help implement trees with a specific structure
 on the children of each node. For instance, one could want to define a tree in

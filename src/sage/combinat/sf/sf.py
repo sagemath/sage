@@ -2,7 +2,7 @@
 """
 Symmetric functions, with their multiple realizations
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2009-2012 Jason Bandlow <jbandlow@gmail.com>
 #                     2012 Anne Schilling <anne at math.ucdavis.edu>
@@ -19,7 +19,7 @@ Symmetric functions, with their multiple realizations
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
@@ -795,32 +795,32 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-        .. [FD06] Francois Descouens, Making research on symmetric functions using MuPAD-Combinat.
-                 In Andres Iglesias and Nobuki Takayama, editors, 2nd International Congress on Mathematical Software (ICMS'06),
-                 volume 4151 of LNCS, pages 407-418, Castro Urdiales, Spain, September 2006. Springer-Verlag.
-                 :arxiv:`0806.1873`
+    .. [FD06] Francois Descouens, Making research on symmetric functions using MuPAD-Combinat.
+             In Andres Iglesias and Nobuki Takayama, editors, 2nd International Congress on Mathematical Software (ICMS'06),
+             volume 4151 of LNCS, pages 407-418, Castro Urdiales, Spain, September 2006. Springer-Verlag.
+             :arxiv:`0806.1873`
 
-        .. [HT04] Florent Hivert and Nicolas M. Thiery,
-                 MuPAD-Combinat, an open-source package for research in algebraic combinatorics.
-                 Sem. Lothar. Combin., 51 :Art. B51z, 70 pp. (electronic), 2004.
-                 http://mupad-combinat.sf.net/.
+    .. [HT04] Florent Hivert and Nicolas M. Thiery,
+             MuPAD-Combinat, an open-source package for research in algebraic combinatorics.
+             Sem. Lothar. Combin., 51 :Art. B51z, 70 pp. (electronic), 2004.
+             http://mupad-combinat.sf.net/.
 
-        .. [MAC] Ian Macdonald, Symmetric Functions and Orthogonal Polynomials,
-                 Second edition. With contributions by A. Zelevinsky. Oxford Mathematical Monographs.
-                 Oxford Science Publications. The Clarendon Press, Oxford University Press, New York, 1995. x+475 pp.
-                 ISBN: 0-19-853489-2
+    .. [MAC] Ian Macdonald, Symmetric Functions and Orthogonal Polynomials,
+             Second edition. With contributions by A. Zelevinsky. Oxford Mathematical Monographs.
+             Oxford Science Publications. The Clarendon Press, Oxford University Press, New York, 1995. x+475 pp.
+             ISBN: 0-19-853489-2
 
-        .. [STA] Richard Stanley, Enumerative combinatorics. Vol. 2.
-                 With a foreword by Gian-Carlo Rota and appendix 1 by Sergey Fomin.
-                 Cambridge Studies in Advanced Mathematics, 62. Cambridge University Press, Cambridge, 1999. xii+581 pp.
-                 ISBN: 0-521-56069-1; 0-521-78987-7
+    .. [STA] Richard Stanley, Enumerative combinatorics. Vol. 2.
+             With a foreword by Gian-Carlo Rota and appendix 1 by Sergey Fomin.
+             Cambridge Studies in Advanced Mathematics, 62. Cambridge University Press, Cambridge, 1999. xii+581 pp.
+             ISBN: 0-521-56069-1; 0-521-78987-7
 
-        .. [ST94]  Scharf, Thomas, Thibon, Jean-Yves,
-                 A Hopf-algebra approach to inner plethysm.
-                 Adv. Math.  104  (1994),  no. 1, 30-58.
-                 :doi:`10.1006/aima.1994.1019`
+    .. [ST94]  Scharf, Thomas, Thibon, Jean-Yves,
+             A Hopf-algebra approach to inner plethysm.
+             Adv. Math.  104  (1994),  no. 1, 30-58.
+             :doi:`10.1006/aima.1994.1019`
 
-    .. rubric:: Further tests
+    .. RUBRIC:: Further tests
 
     TESTS::
 

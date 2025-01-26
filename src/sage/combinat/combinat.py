@@ -7,65 +7,61 @@ docstrings.
 
 **Numbers:**
 
--  Bell numbers, :func:`bell_number`
+- Bell numbers :func:`bell_number`
 
--  Catalan numbers, :func:`catalan_number`
+- Catalan numbers :func:`catalan_number`
 
--  Narayana numbers, :func:`narayana_number`
+- Narayana numbers :func:`narayana_number`
 
--  Euler numbers, :func:`euler_number`
+- Euler numbers :func:`euler_number`
 
--  Eulerian numbers, :func:`eulerian_number`
+- Eulerian numbers :func:`eulerian_number`
 
--  Fibonacci numbers, :func:`fibonacci`
+- Fibonacci numbers :func:`fibonacci`
 
--  Lucas numbers, :func:`lucas_number1`, :func:`lucas_number2`.
+- Lucas numbers :func:`lucas_number1`, :func:`lucas_number2`
 
--  Stirling numbers, :func:`stirling_number1`,
-   :func:`stirling_number2`.
+- Stirling numbers :func:`stirling_number1`, :func:`stirling_number2`
 
--  Polygonal numbers, :func:`polygonal_number`
+- Polygonal numbers :func:`polygonal_number`
 
 **Polynomials**
 
--  Eulerian polynomial, :func:`eulerian_polynomial`
+- Eulerian polynomial :func:`eulerian_polynomial`
 
--  Bernoulli polynomials, :func:`bernoulli_polynomial`
+- Bernoulli polynomials :func:`bernoulli_polynomial`
 
 **Sets:**
 
--  Tuples of a multiset, :func:`tuples` and :func:`number_of_tuples`. An
-   ordered tuple of length `k` of a set `S` is a ordered selection with
-   repetitions of `S` and is represented by a sorted list of length `k`
-   containing elements from `S`.
+- Tuples of a multiset :func:`tuples`, :func:`number_of_tuples`
 
--  Unordered tuples of a set, :func:`unordered_tuples` and
-   :func:`number_of_unordered_tuples`. An unordered tuple of length `k` of a
-   set `S` is an unordered selection with repetitions of `S` and is represented
-   by a sorted list of length `k` containing elements from `S`.
+- Unordered tuples of a set :func:`unordered_tuples`, :func:`number_of_unordered_tuples`
 
 **Combinatorial functions from other modules:**
 
--  :func:`sage.arith.misc.binomial` binomial coefficient
+- Binomial coefficient :func:`sage.arith.misc.binomial`
 
--  :func:`sage.arith.misc.factorial` factorial
+- Factorial :func:`sage.arith.misc.factorial`
 
--  :func:`sage.arith.misc.falling_factorial` falling power
+- Falling power :func:`sage.arith.misc.falling_factorial`
 
--  :func:`sage.arith.misc.rising_factorial` rising power
+- Rising power :func:`sage.arith.misc.rising_factorial`
 
--  :func:`sage.combinat.partition.number_of_partitions` number of partitions
+- Number of partitions :func:`sage.combinat.partition.number_of_partitions`
 
--  :func:`sage.combinat.q_analogues.gaussian_binomial` Gaussian binomial coefficient
+- Gaussian binomial coefficient :func:`sage.combinat.q_analogues.gaussian_binomial`
 
 .. TODO::
 
     Add GUAVA commands:
-        * VandermondeMat
-        * GrayMat returns a list of all different vectors of length n over
-          the field F, using Gray ordering.
-    Add (not in GAP):
-        * Rencontres numbers (:wikipedia:`Rencontres_number`)
+
+    * VandermondeMat
+    * GrayMat returns a list of all different vectors of length n over
+      the field F, using Gray ordering.
+
+    Add commands not in GAP:
+
+    * Rencontres numbers (:wikipedia:`Rencontres_number`)
 
 REFERENCES:
 

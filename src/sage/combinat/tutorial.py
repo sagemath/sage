@@ -1,5 +1,5 @@
 r"""
-Introduction to combinatorics in Sage
+Combinatorics in Sage
 
 This thematic tutorial is a translation by Hugh Thomas of the
 combinatorics chapter written by Nicolas M. Thiéry in the book "Calcul

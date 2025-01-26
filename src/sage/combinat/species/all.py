@@ -1,10 +1,6 @@
 r"""
 Combinatorial species
 
-.. TODO:: Short blurb about species
-
-.. TODO:: Proofread / point to the main classes rather than the modules?
-
 Introductory material
 ---------------------
 

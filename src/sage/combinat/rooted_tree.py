@@ -1,5 +1,5 @@
 r"""
-Rooted (Unordered) Trees
+Rooted (unordered) trees
 
 AUTHORS:
 

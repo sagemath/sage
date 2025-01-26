@@ -1,5 +1,5 @@
 r"""
-Suffix tries and Suffix trees
+Suffix tries and suffix trees
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Franco Saliola <saliola@gmail.com>
@@ -22,9 +22,9 @@ from sage.rings.integer import Integer
 lazy_import('sage.graphs.digraph', 'DiGraph')
 
 
-################################################################################
+# ------------
 # Suffix Tries
-################################################################################
+# ------------
 
 
 class SuffixTrie(SageObject):
@@ -502,9 +502,10 @@ class SuffixTrie(SageObject):
         """
         self.plot(*args, **kwds).show()
 
-################################################################################
+
+# ------------
 # Suffix Trees
-################################################################################
+# ------------
 
 
 class ImplicitSuffixTree(SageObject):
@@ -768,14 +769,12 @@ class ImplicitSuffixTree(SageObject):
                     return ((k, p), s)
         return None
 
-    #####
     # The following are not necessary for constructing the implicit suffix
     # tree; they add additional functionality to the class.
-    #####
 
-    #####
+    # -------------
     # Visualization
-    #####
+    # -------------
 
     def _repr_(self) -> str:
         r"""
@@ -917,9 +916,9 @@ class ImplicitSuffixTree(SageObject):
         """
         self.plot(word_labels=word_labels, *args, **kwds).show()
 
-    #####
+    # ---------------
     # Various methods
-    #####
+    # ---------------
 
     def __eq__(self, other) -> bool:
         r"""
@@ -1503,9 +1502,9 @@ class ImplicitSuffixTree(SageObject):
             l.reverse()
         return P
 
-    #####
+    # ---------------------
     # Miscellaneous methods
-    #####
+    # ---------------------
 
     def uncompactify(self):
         r"""
@@ -1571,9 +1570,10 @@ class ImplicitSuffixTree(SageObject):
                     new_node += 1
         return d
 
-################################################################################
+
+# ---------------------
 # Decorated Suffix Tree
-################################################################################
+# ---------------------
 
 
 class DecoratedSuffixTree(ImplicitSuffixTree):

@@ -1,22 +1,22 @@
 r"""
 Combinatorics
 
-Introductory material
----------------------
+Introduction
+------------
 
 - :ref:`sage.combinat.quickref`
 - :ref:`sage.combinat.tutorial`
 
-Thematic indexes
-----------------
+Topics
+------
 
 - :ref:`sage.combinat.counting`
 - :ref:`sage.combinat.enumerated_sets`
 - :ref:`sage.combinat.catalog_partitions`
 - :ref:`sage.combinat.finite_state_machine`
+- :ref:`sage.combinat.posets.all`
 - :ref:`sage.combinat.species.all`
 - :ref:`sage.combinat.designs.all`
-- :ref:`sage.combinat.posets.all`
 - :ref:`sage.combinat.words.all`
 - :ref:`sage.combinat.bijectionist`
 - :ref:`sage.combinat.chas.all`
@@ -25,7 +25,6 @@ Thematic indexes
 - :ref:`sage.combinat.root_system.all`
 - :ref:`sage.combinat.sf.all`
 - :ref:`sage.combinat.fully_commutative_elements`
-
 
 Utilities
 ---------

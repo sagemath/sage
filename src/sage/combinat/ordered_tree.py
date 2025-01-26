@@ -1,5 +1,5 @@
 """
-Ordered Rooted Trees
+Ordered rooted trees
 
 AUTHORS:
 
