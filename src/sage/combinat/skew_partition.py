@@ -1,5 +1,5 @@
 r"""
-Skew Partitions
+Skew partitions
 
 A skew partition ``skp`` of size `n` is a pair of
 partitions `[p_1, p_2]` where `p_1` is a
