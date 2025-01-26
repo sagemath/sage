@@ -10,15 +10,6 @@ Introductory material
 Thematic indexes
 ----------------
 
-- :ref:`sage.combinat.algebraic_combinatorics`
-
-  - :ref:`sage.combinat.chas.all`
-  - :ref:`sage.combinat.cluster_algebra_quiver.all`
-  - :ref:`sage.combinat.crystals.all`
-  - :ref:`sage.combinat.root_system.all`
-  - :ref:`sage.combinat.sf.all`
-  - :class:`~sage.combinat.fully_commutative_elements.FullyCommutativeElements`
-
 - :ref:`sage.combinat.counting`
 - :ref:`sage.combinat.enumerated_sets`
 - :ref:`sage.combinat.catalog_partitions`
@@ -28,21 +19,21 @@ Thematic indexes
 - :ref:`sage.combinat.posets.all`
 - :ref:`sage.combinat.words.all`
 - :ref:`sage.combinat.bijectionist`
+- :ref:`sage.combinat.chas.all`
+- :ref:`sage.combinat.cluster_algebra_quiver.all`
+- :ref:`sage.combinat.crystals.all`
+- :ref:`sage.combinat.root_system.all`
+- :ref:`sage.combinat.sf.all`
+- :ref:`sage.combinat.fully_commutative_elements`
+
 
 Utilities
 ---------
 
 - :ref:`sage.combinat.output`
 - :ref:`sage.combinat.ranker`
-- :func:`Combinatorial maps <sage.combinat.combinatorial_map.combinatorial_map>`
+- :ref:`sage.combinat.combinatorial_map`
 - :ref:`sage.combinat.misc`
-
-Related topics
---------------
-
-- :ref:`sage.coding`
-- :ref:`sage.dynamics`
-- :ref:`sage.graphs`
 """
 from sage.misc.namespace_package import install_doc, install_dict
 # install the docstring of this module to the containing package

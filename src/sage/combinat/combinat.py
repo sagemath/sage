@@ -1,28 +1,23 @@
 r"""
-Combinatorial Functions
+Combinatorial functions
 
 This module implements some combinatorial functions, as listed
 below. For a more detailed description, see the relevant
 docstrings.
 
-**Sequences:**
+**Numbers:**
 
 -  Bell numbers, :func:`bell_number`
 
--  Catalan numbers, :func:`catalan_number` (not to be
-   confused with the Catalan constant)
+-  Catalan numbers, :func:`catalan_number`
 
 -  Narayana numbers, :func:`narayana_number`
 
--  Euler numbers, :func:`euler_number` (Maxima)
+-  Euler numbers, :func:`euler_number`
 
 -  Eulerian numbers, :func:`eulerian_number`
 
--  Eulerian polynomial, :func:`eulerian_polynomial`
-
--  Fibonacci numbers, :func:`fibonacci` (PARI) and
-   :func:`fibonacci_number` (GAP) The PARI version is
-   better.
+-  Fibonacci numbers, :func:`fibonacci`
 
 -  Lucas numbers, :func:`lucas_number1`, :func:`lucas_number2`.
 
@@ -31,60 +26,37 @@ docstrings.
 
 -  Polygonal numbers, :func:`polygonal_number`
 
-**Set-theoretic constructions:**
+**Polynomials**
 
--  Derangements of a multiset, :func:`derangements` and
-   :func:`number_of_derangements`.
-
--  Tuples of a multiset, :func:`tuples` and
-   :func:`number_of_tuples`. An ordered tuple of length k of
-   set S is a ordered selection with repetitions of S and is
-   represented by a sorted list of length k containing elements from
-   S.
-
--  Unordered tuples of a set, :func:`unordered_tuples` and
-   :func:`number_of_unordered_tuples`. An unordered tuple
-   of length k of set S is an unordered selection with repetitions of S
-   and is represented by a sorted list of length k containing elements
-   from S.
-
-**Related functions:**
+-  Eulerian polynomial, :func:`eulerian_polynomial`
 
 -  Bernoulli polynomials, :func:`bernoulli_polynomial`
 
-**From other modules, listed for completeness:**
+**Sets:**
 
-The package :mod:`sage.arith` contains the following
-combinatorial functions:
+-  Tuples of a multiset, :func:`tuples` and :func:`number_of_tuples`. An
+   ordered tuple of length `k` of a set `S` is a ordered selection with
+   repetitions of `S` and is represented by a sorted list of length `k`
+   containing elements from `S`.
 
--  :func:`binomial` the binomial coefficient (wrapped from PARI)
+-  Unordered tuples of a set, :func:`unordered_tuples` and
+   :func:`number_of_unordered_tuples`. An unordered tuple of length `k` of a
+   set `S` is an unordered selection with repetitions of `S` and is represented
+   by a sorted list of length `k` containing elements from `S`.
 
--  :func:`factorial` (wrapped from PARI)
+**Combinatorial functions from other modules:**
 
--  :func:`falling_factorial` Definition: for integer
-   `a \ge 0` we have `x(x-1) \cdots (x-a+1)`. In all
-   other cases we use the GAMMA-function:
-   `\frac {\Gamma(x+1)} {\Gamma(x-a+1)}`.
+-  :func:`sage.arith.misc.binomial` binomial coefficient
 
--  :func:`rising_factorial` Definition: for integer
-   `a \ge 0` we have `x(x+1) \cdots (x+a-1)`. In all
-   other cases we use the GAMMA-function:
-   `\frac {\Gamma(x+a)} {\Gamma(x)}`.
+-  :func:`sage.arith.misc.factorial` factorial
 
--  :func:`number_of_partitions` (wrapped from PARI) the
-   *number* of partitions:
+-  :func:`sage.arith.misc.falling_factorial` falling power
 
--  :func:`sage.combinat.q_analogues.gaussian_binomial` the Gaussian binomial
+-  :func:`sage.arith.misc.rising_factorial` rising power
 
-.. MATH::
+-  :func:`sage.combinat.partition.number_of_partitions` number of partitions
 
-    \binom{n}{k}_q = \frac{(1-q^m)(1-q^{m-1})\cdots (1-q^{m-r+1})}{(1-q)(1-q^2)\cdots (1-q^r)}.
-
-The ``sage.groups.perm_gps.permgroup_elements``
-contains the following combinatorial functions:
-
--  matrix method of :class:`PermutationGroupElement` yielding the
-   permutation matrix of the group element.
+-  :func:`sage.combinat.q_analogues.gaussian_binomial` Gaussian binomial coefficient
 
 .. TODO::
 

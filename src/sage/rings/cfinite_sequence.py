@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.symbolic
 r"""
-C-Finite Sequences
+C-Finite sequences
 
 C-finite infinite sequences satisfy homogeneous linear recurrences with constant coefficients:
 
