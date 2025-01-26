@@ -19815,7 +19815,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: B.is_isomorphic(Q.subgraph(V))                                        # needs sage.combinat
             True
 
-        Check the behavior of parameter `ìmmutable``::
+        Check the behavior of parameter ``immutable``::
 
             sage: A = Graph([(0, 1)])
             sage: B = Graph([('a', 'b')], immutable=True)
@@ -19930,7 +19930,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: T.is_isomorphic(digraphs.DeBruijn(2 * 3, 3))
             True
 
-        Check the behavior of parameter `ìmmutable``::
+        Check the behavior of parameter ``immutable``::
 
             sage: A = Graph([(0, 1)])
             sage: B = Graph([('a', 'b')], immutable=True)
@@ -20040,7 +20040,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: T.is_isomorphic(J.lexicographic_product(I))
             False
 
-        Check the behavior of parameter `ìmmutable``::
+        Check the behavior of parameter ``immutable``::
 
             sage: A = Graph([(0, 1)])
             sage: B = Graph([('a', 'b')], immutable=True)
@@ -20152,7 +20152,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: product_size == expected
             True
 
-        Check the behavior of parameter `ìmmutable``::
+        Check the behavior of parameter ``immutable``::
 
             sage: A = Graph([(0, 1)])
             sage: B = Graph([('a', 'b')], immutable=True)
@@ -20266,7 +20266,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: T.is_isomorphic(J.disjunctive_product(I))
             True
 
-        Check the behavior of parameter `ìmmutable``::
+        Check the behavior of parameter ``immutable``::
 
             sage: A = Graph([(0, 1)])
             sage: B = Graph([('a', 'b')], immutable=True)
