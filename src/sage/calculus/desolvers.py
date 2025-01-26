@@ -741,7 +741,7 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
     # maxima("de:"+de._repr_()+"=0;")
     # if ics is not None:
     #     d = len(ics)
-    #     for i in range(0,d-1):
+    #     for i in range(d-1):
     #         ic = "atvalue(diff("+vars[1]+"("+vars[0]+"),"+str(vars[0])+","+str(i)+"),"+str(vars[0])+"="+str(ics[0])+","+str(ics[1+i])+")"
     #         maxima(ic)
     #

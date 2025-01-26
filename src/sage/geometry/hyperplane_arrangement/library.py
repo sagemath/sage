@@ -502,7 +502,8 @@ class HyperplaneArrangementLibrary:
         A = H(*hyperplanes)
         x = polygen(QQ, 'x')
         charpoly = x * sum([(-1)**k * stirling_number2(n, n-k) *
-                            prod([(x - 1 - j) for j in range(k, n-1)]) for k in range(0, n)])
+                            prod([(x - 1 - j) for j in range(k, n-1)])
+                            for k in range(n)])
         A.characteristic_polynomial.set_cache(charpoly)
         return A
 
