@@ -192,6 +192,18 @@ class Fields(CategoryWithAxiom):
     Finite = LazyImport('sage.categories.finite_fields', 'FiniteFields', at_startup=True)
 
     class ParentMethods:
+        def krull_dimension(self):
+            """
+            Return the Krull dimension of this field, which is 0.
+
+            EXAMPLES::
+
+                sage: QQ.krull_dimension()
+                0
+                sage: Frac(QQ['x,y']).krull_dimension()
+                0
+            """
+            return 0
 
         def is_field(self, proof=True):
             r"""
