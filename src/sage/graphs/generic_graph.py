@@ -20213,7 +20213,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.transitive_closure(loops=False).loop_edges(labels=False)
             []
 
-        Check the behavior of parameter `ìmmutable``::
+        Check the behavior of parameter ``immutable``::
 
             sage: G = Graph([(0, 1)])
             sage: G.transitive_closure().is_immutable()
@@ -20276,7 +20276,7 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS:
 
-        Check the behavior of parameter `ìmmutable``::
+        Check the behavior of parameter ``immutable``::
 
             sage: G = Graph([(0, 1)])
             sage: G.transitive_reduction().is_immutable()
