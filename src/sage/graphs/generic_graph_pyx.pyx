@@ -1579,7 +1579,7 @@ def transitive_reduction_acyclic(G, immutable=None):
 
     TESTS:
 
-    Check the behavior of parameter `ìmmutable``::
+    Check the behavior of parameter ``immutable``::
 
         sage: G = DiGraph([(0, 1)])
         sage: transitive_reduction_acyclic(G).is_immutable()
