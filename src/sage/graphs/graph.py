@@ -5271,42 +5271,12 @@ class Graph(GenericGraph):
             sage: D.get_vertices()
             {0: 'foo', 1: None, 2: None}
         """
-        if sparse is not None:
-            if data_structure is not None:
-                raise ValueError("The 'sparse' argument is an alias for "
-                                 "'data_structure'. Please do not define both.")
-            data_structure = "sparse" if sparse else "dense"
-
-        if data_structure is None:
-            from sage.graphs.base.dense_graph import DenseGraphBackend
-            from sage.graphs.base.sparse_graph import SparseGraphBackend
-            if isinstance(self._backend, DenseGraphBackend):
-                data_structure = "dense"
-            elif isinstance(self._backend, SparseGraphBackend):
-                data_structure = "sparse"
-            else:
-                data_structure = "static_sparse"
-        from sage.graphs.digraph import DiGraph
-        D = DiGraph(name=self.name(),
-                    pos=self.get_pos(),
-                    multiedges=self.allows_multiple_edges(),
-                    loops=self.allows_loops(),
-                    data_structure=(data_structure if data_structure != "static_sparse"
-                                    else "sparse"))  # we need a mutable copy
-
-        D.add_vertices(self.vertex_iterator())
-        D.set_vertices(self.get_vertices())
-        for u, v, l in self.edge_iterator():
-            D.add_edge(u, v, l)
-            D.add_edge(v, u, l)
-        if hasattr(self, '_embedding'):
-            D._embedding = copy(self._embedding)
-        D._weighted = self._weighted
-
-        if data_structure == "static_sparse":
-            D = D.copy(data_structure=data_structure)
-
-        return D
+        from sage.graphs.orientations import _initialize_digraph
+        from itertools import chain
+        edges = chain(self.edge_iterator(),
+                      ((v, u, l) for u, v, l in self.edge_iterator()))
+        return _initialize_digraph(self, edges, name=self.name(),
+                                   data_structure=data_structure, sparse=sparse)
 
     @doc_index("Basic methods")
     def to_undirected(self):
