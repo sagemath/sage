@@ -1037,8 +1037,8 @@ def lah_number(n, k) -> Integer:
         return ZZ.zero()
     if k == 0:
         return ZZ.zero() if n else ZZ.one()
-    a = n.factorial() // k.factorial()
-    return a**2 * k // (n * (n - k).factorial())
+    a = n.binomial(k)
+    return a * k // n * a * (n - k).factorial()
 
 
 def polygonal_number(s, n):
