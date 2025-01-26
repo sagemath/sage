@@ -1002,7 +1002,7 @@ def three_factor_product(k, n1, n2, n3, check=False, explain_construction=False)
       Rolf S. Rees,
       Journal of Combinatorial Designs 1.1 (1993): 15-26.
     """
-    assert n1 <= n2 and n2 <= n3
+    assert n1 <= n2 <= n3
 
     if explain_construction:
         return ("Three-factor product with n={}.{}.{} from:\n" +

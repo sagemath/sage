@@ -5500,7 +5500,7 @@ class Graph(GenericGraph):
         # Triangles
         K3 = Graph({1: [2, 3], 2: [3]}, format='dict_of_lists')
         for x, y, z in G.subgraph_search_iterator(K3, return_graphs=False):
-            if x < y and y < z:
+            if x < y < z:
                 T.append([x, y, z])
 
         # Triples with just one edge
