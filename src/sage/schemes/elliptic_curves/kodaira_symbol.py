@@ -7,7 +7,7 @@ Kodaira symbols encode the type of reduction of an elliptic curve at a
 The standard notation for Kodaira Symbols is as a string which is one
 of `\rm{I}_m`, `\rm{II}`, `\rm{III}`, `\rm{IV}`, `\rm{I}^*_m`,
 `\rm{II}^*`, `\rm{III}^*`, `\rm{IV}^*`, where `m` denotes a
-nonnegative integer.  These have been encoded by single integers by
+non-negative integer.  These have been encoded by single integers by
 different people.  For convenience we give here the conversion table
 between strings, the eclib coding and the PARI encoding.
 
@@ -41,6 +41,8 @@ AUTHORS:
 - David Roe       <roed@math.harvard.edu>
 
 - John Cremona
+
+- Katie Ahrens (ASCII art and "show" method)  
 """
 
 # ****************************************************************************
@@ -62,6 +64,7 @@ AUTHORS:
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.integer import Integer
+from sage.env import SAGE_ROOT
 import weakref
 
 
@@ -74,13 +77,14 @@ class KodairaSymbol_class(SageObject):
     Users should use the ``KodairaSymbol()`` function to construct
     Kodaira Symbols rather than use the class constructor directly.
     """
+ 
     def __init__(self, symbol):
         r"""
         Constructor for Kodaira Symbol class.
 
         INPUT:
 
-        - ``symbol`` -- string or integer; the string should be a
+        - ``symbol`` (string or integer) -- The string should be a
           standard string representation (e.g. III*) of a Kodaira
           symbol, which will be parsed.  Alternatively, use the PARI
           encoding of Kodaira symbols as integers.
@@ -97,7 +101,7 @@ class KodairaSymbol_class(SageObject):
             sage: KodairaSymbol_class('In')
             In
 
-        Check that :issue:`31147` is fixed::
+        Check that :trac:`31147` is fixed::
 
             sage: latex(KodairaSymbol_class(-14))
             I_{10}^{*}
@@ -306,6 +310,65 @@ class KodairaSymbol_class(SageObject):
         """
         return self._pari
 
+    def _parse_ascii(self):
+        """Parses ascii art representation of Kodaira symbols.
+          
+         Called by the show() method"""
+
+        string = str(self)
+        if string.startswith('I') and list(string)[1]=='0' and list(string)[-1]=='*':
+            string="I_0*"
+        elif string.startswith('I') and list(string)[1].isdigit() and list(string)[-1]=='*':
+            string="I_n*"
+        elif string.startswith('I') and list(string)[1].isdigit():
+            string="I_n"
+        elif string=="In":
+            string="I_n"
+        with open(f"{SAGE_ROOT}/src/sage/schemes/elliptic_curves/kodaira_art", "r") as op:
+            kodaira_art = op.readlines()
+        start=kodaira_art.index(string+"\n")
+        end=kodaira_art.index("END\n", start)        
+        return "".join(kodaira_art[start+2:end])
+
+
+    def show(self):
+     
+        """
+        Show the ascii art representation of the Kodaira symbol.
+        Returns None. 
+
+
+        KodairaSymbol_class('In').show()
+
+        _/___\_
+        /  1  \ 1
+        :     :
+        :     :
+        \____/_
+         \  /  1
+           1
+
+       KodairaSymbol_class('III*').show()
+
+         \   \ / 3
+       1  \ 2/ \
+          / \   \
+         /   \  |\
+                |
+         _______|
+            2   |
+               4|
+                |/
+           \/   /
+           /\  /|
+         1/ 2\/3|
+         /   /\
+
+            
+        """
+        print()
+        print(self._parse_ascii())
+        return 
 
 _ks_cache = {}
 
@@ -316,9 +379,7 @@ def KodairaSymbol(symbol):
 
     INPUT:
 
-    - ``symbol`` -- string or integer; either a string of the form
-      "I0", "I1", ..., "In", "II", "III", "IV", "I0*", "I1*", ..., "In*", "II*", "III*", or "IV*",
-      or an integer encoding a Kodaira symbol using PARI's conventions
+    - ``symbol`` (string or integer) -- Either a string of the form "I0", "I1", ..., "In", "II", "III", "IV", "I0*", "I1*", ..., "In*", "II*", "III*", or "IV*", or an integer encoding a Kodaira symbol using PARI's conventions.
 
     OUTPUT:
 
@@ -333,11 +394,25 @@ def KodairaSymbol(symbol):
         [I0*, II*, III*, IV*, I1*, I2*, I3*, I4*, I5*]
         sage: all(KS(str(KS(n))) == KS(n) for n in range(-10,10) if n != 0)
         True
+
+    You can use the show() method here too: 
+
+    KS(2).show()
+
+     \     /
+      \   /
+       \ /
+        |
+     1  |
+
+
     """
+
     if symbol in _ks_cache:
         ks = _ks_cache[symbol]()
         if ks is not None:
             return ks
+      
     ks = KodairaSymbol_class(symbol)
     _ks_cache[symbol] = weakref.ref(ks)
     return ks
