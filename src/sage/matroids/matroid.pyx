@@ -1634,7 +1634,7 @@ cdef class Matroid(SageObject):
         S = frozenset(X)
         while cur != len(S):
             cur = len(S)
-            cl = frozenset([])
+            cl = frozenset()
             for T in combinations(S, min(k, cur)):
                 cl = cl.union(self._closure(frozenset(T)))
             S = cl
@@ -3944,9 +3944,9 @@ cdef class Matroid(SageObject):
 
         .. WARNING::
 
-            This method is linked to ``__richcmp__`` (in Cython) and
-            ``__cmp__`` or ``__eq__``/``__ne__`` (in Python). If you override
-            one, you should (and in Cython: MUST) override the other!
+            This method is linked to ``__richcmp__`` (in Cython) and ``__cmp__``
+            or ``__eq__``/``__ne__`` (in Python). If you override one, you
+            should (and, in Cython, \emph{must}) override the other!
 
         EXAMPLES::
 
@@ -4339,7 +4339,7 @@ cdef class Matroid(SageObject):
             return None
         l = newlabel(self.groundset())
         return self._extension(l, [])._minor(contractions=frozenset([l]),
-                                             deletions=frozenset([]))
+                                             deletions=frozenset())
 
     cpdef has_minor(self, N, bint certificate=False):
         """
@@ -4684,7 +4684,7 @@ cdef class Matroid(SageObject):
         extension by a loop::
 
             sage: M = matroids.catalog.Vamos()
-            sage: frozenset([]) in M.modular_cut(['ab', 'cd'])
+            sage: frozenset() in M.modular_cut(['ab', 'cd'])
             True
 
         In any extension of the matroid `S_8 \setminus h`, a point on the
@@ -4943,14 +4943,14 @@ cdef class Matroid(SageObject):
             3
         """
         E = set(self.groundset())
-        E.difference_update(self._closure(frozenset([])))  # groundset minus loops
+        E.difference_update(self._closure(frozenset()))  # groundset minus loops
         res = set([])
 
         while E:
             e = E.pop()
             res.add(e)
             E.difference_update(self._closure(frozenset([e])))
-        return self._minor(contractions=frozenset([]),
+        return self._minor(contractions=frozenset(),
                            deletions=self.groundset().difference(res))
 
     cpdef cosimplify(self):
@@ -4979,7 +4979,7 @@ cdef class Matroid(SageObject):
             3
         """
         E = set(self.groundset())
-        E.difference_update(self._coclosure(frozenset([])))  # groundset minus coloops
+        E.difference_update(self._coclosure(frozenset()))  # groundset minus coloops
         res = set([])
 
         while E:
@@ -4987,7 +4987,7 @@ cdef class Matroid(SageObject):
             res.add(e)
             E.difference_update(self._coclosure(frozenset([e])))
         return self._minor(contractions=self.groundset().difference(res),
-                           deletions=frozenset([]))
+                           deletions=frozenset())
 
     cpdef is_simple(self):
         """
