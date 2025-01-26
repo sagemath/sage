@@ -4312,9 +4312,9 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: R.<a,b,c,d> = QQ[]
             sage: f =  (-2) * (a - d) * (-a + b) * (b - d) * (a - c) * (b - c) * (c - d)
             sage: F = f.factor(); F
-            (-2) * (c - d) * (-b + c) * (b - d) * (-a + c) * (-a + b) * (a - d)
+            (-2) * (-a + c) * (-a + b) * (-b + c) * (c - d) * (b - d) * (a - d)
             sage: F[0][0]
-            c - d
+            -a + c
             sage: F.unit()
             -2
 
