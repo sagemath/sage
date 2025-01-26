@@ -2915,6 +2915,38 @@ class MatchingCoveredGraph(Graph):
             sage: G.is_bicritical()
             True
 
+        Examples of nonbipartite matching covered graphs that are not
+        bricks::
+
+            sage: H = Graph([
+            ....:     (0, 3), (0, 4), (0, 7),
+            ....:     (1, 3), (1, 5), (1, 7),
+            ....:     (2, 3), (2, 6), (2, 7),
+            ....:     (4, 5), (4, 6), (5, 6)
+            ....: ])
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_bipartite()
+            False
+            sage: G.is_bicritical()
+            False
+            sage: G.is_triconnected()
+            True
+            sage: G.is_brick()
+            False
+            sage: H = Graph([
+            ....:     (0, 1), (0, 2), (0, 3), (0, 4), (1, 2),
+            ....:     (1, 5), (2, 5), (3, 4), (3, 5), (4, 5)
+            ....: ])
+            sage: G = MatchingCoveredGraph(H)
+            sage: G.is_bipartite()
+            False
+            sage: G.is_bicritical()
+            True
+            sage: G.is_triconnected()
+            False
+            sage: G.is_brick()
+            False
+
         One may set the ``coNP_certificate`` to be ``True``::
 
             sage: K4 = graphs.CompleteGraph(4)
