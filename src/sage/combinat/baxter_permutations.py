@@ -1,13 +1,11 @@
 """
 Baxter permutations
 """
-
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.combinat.permutation import Permutations
-
 from sage.rings.integer_ring import ZZ
+from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class BaxterPermutations(UniqueRepresentation, Parent):
@@ -228,12 +226,11 @@ class BaxterPermutations_size(BaxterPermutations):
             Integer Ring
         """
         if self._n == 0:
-            return 1
-        from sage.arith.misc import binomial
-        return sum((binomial(self._n + 1, k) *
-                    binomial(self._n + 1, k + 1) *
-                    binomial(self._n + 1, k + 2)) //
-                   ((self._n + 1) * binomial(self._n + 1, 2))
+            return ZZ.one()
+        n = self._n + 1
+        return sum((n.binomial(k) *
+                    n.binomial(k + 1) *
+                    n.binomial(k + 2)) // (n * n.binomial(2))
                    for k in range(self._n))
 
 

@@ -13,7 +13,6 @@ Affine Permutations
 # ****************************************************************************
 from itertools import repeat
 
-from sage.arith.misc import binomial
 from sage.categories.affine_weyl_groups import AffineWeylGroups
 from sage.combinat.composition import Composition
 from sage.combinat.partition import Partition
@@ -77,13 +76,13 @@ class AffinePermutation(ClonableArray):
         """
         if check:
             lst = [ZZ(val) for val in lst]
-        self.k = parent.k
+        self.k = ZZ(parent.k)
         self.n = self.k + 1
-        #This N doesn't matter for type A, but comes up in all other types.
+        # This N doesn't matter for type A, but comes up in all other types.
         if parent.cartan_type()[0] == 'A':
             self.N = self.n
         elif parent.cartan_type()[0] in ['B', 'C', 'D']:
-            self.N = 2*self.k + 1
+            self.N = 2 * self.k + 1
         elif parent.cartan_type()[0] == 'G':
             self.N = 6
         else:
@@ -245,7 +244,7 @@ class AffinePermutation(ClonableArray):
         """
         return self == self.parent().one() or self.descents(side) == [i]
 
-    def index_set(self):
+    def index_set(self) -> tuple:
         r"""
         Index set of the affine permutation group.
 
@@ -255,7 +254,7 @@ class AffinePermutation(ClonableArray):
             sage: A.index_set()
             (0, 1, 2, 3, 4, 5, 6, 7)
         """
-        return tuple(range(self.k+1))
+        return tuple(range(self.k + 1))
 
     def lower_covers(self, side='right'):
         r"""
@@ -440,13 +439,14 @@ class AffinePermutationTypeA(AffinePermutation):
         if not self:
             return
         k = self.parent().k
-        #Type A.
+        # Type A
         if len(self) != k + 1:
-            raise ValueError("length of list must be k+1="+str(k+1))
-        if binomial(k+2,2) != sum(self):
-            raise ValueError("window does not sum to " + str(binomial((k+2),2)))
-        l = sorted([i % (k+1) for i in self])
-        if l != list(range(k+1)):
+            raise ValueError(f"length of list must be k+1={k + 1}")
+        sigma = (k + 2).binomial(2)
+        if sigma != sum(self):
+            raise ValueError(f"window does not sum to {sigma}")
+        l = sorted(i % (k + 1) for i in self)
+        if any(i != j for i, j in enumerate(l)):
             raise ValueError("entries must have distinct residues")
 
     def value(self, i, base_window=False):
@@ -2001,9 +2001,9 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
     methods for the specific affine permutation groups.
     """
 
-    #----------------------
-    #Type-free methods.
-    #----------------------
+    # ----------------------
+    # Type-free methods.
+    # ----------------------
 
     def __init__(self, cartan_type):
         r"""
@@ -2014,13 +2014,13 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, category=AffineWeylGroups())
         ct = CartanType(cartan_type)
-        self.k = ct.n
+        self.k = ZZ(ct.n)
         self.n = ct.rank()
-        #This N doesn't matter for type A, but comes up in all other types.
+        # This N doesn't matter for type A, but comes up in all other types.
         if ct.letter == 'A':
             self.N = self.k + 1
         elif ct.letter == 'B' or ct.letter == 'C' or ct.letter == 'D':
-            self.N = 2*self.k + 1
+            self.N = 2 * self.k + 1
         elif ct.letter == 'G':
             self.N = 6
         self._cartan_type = ct
@@ -2034,14 +2034,14 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
         """
         return self.element_class(self, *args, **keywords)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
             sage: AffinePermutationGroup(['A',7,1])
             The group of affine permutations of type ['A', 7, 1]
         """
-        return "The group of affine permutations of type "+str(self.cartan_type())
+        return "The group of affine permutations of type " + str(self.cartan_type())
 
     def _test_enumeration(self, n=4, **options):
         r"""

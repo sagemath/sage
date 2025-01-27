@@ -544,13 +544,13 @@ class DyckWord(CombinatorialElement):
             row = "  " * (n - alst[-1] - 1) + final_fall + "\n"
             for i in range(n - 1):
                 c = 0
-                row = row + "  "*(n-i-2-alst[-i-2])
+                row = row + "  " * (n-i-2-alst[-i-2])
                 c += n-i-2-alst[-i-2]
                 if alst[-i-2]+1 != alst[-i-1]:
                     row += " _"
                 c += alst[-i-2] - alst[-i-1]
                 if underpath:
-                    row += "__"*(alst[-i-2]-alst[-i-1])+"|" + labels[-1] + "x "*(n-c-2-i) + " ."*i + "\n"
+                    row += "__" * (alst[-i-2]-alst[-i-1]) + "|" + labels[-1] + "x "*(n-c-2-i) + " ." * i + "\n"
                 else:
                     row += "__"*(alst[-i-2]-alst[-i-1])+"| " + "x "*(n-c-2-i) + " ."*i + labels[-1] + "\n"
                 labels.pop()
@@ -3780,8 +3780,7 @@ class DyckWords_size(DyckWords):
             ....:      for p in range(7))
             True
         """
-        from sage.arith.misc import binomial
-        return (self.k1 - self.k2 + 1) * binomial(self.k1 + self.k2, self.k2) // (self.k1 + 1)
+        return (self.k1 - self.k2 + 1) * (self.k1 + self.k2).binomial(self.k2) // (self.k1 + 1)
 
 ################################################################
 # Complete Dyck words
