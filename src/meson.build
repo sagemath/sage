@@ -108,12 +108,7 @@ if not gd.found()
 endif
 # Only some platforms have a standalone math library (https://mesonbuild.com/howtox.html#add-math-library-lm-portably)
 m = cc.find_library('m', required: false)
-if is_windows
-  # Compilation errors on Windows (https://github.com/conda-forge/m4ri-feedstock/issues/15)
-  m4ri = disabler()
-else
-  m4ri = dependency('m4ri', version: '>=20140914')
-endif
+m4ri = dependency('m4ri', version: '>=20140914')
 m4rie = dependency('m4rie', required: false)
 if not m4rie.found()
   # For some reason, m4rie is not found via pkg-config on some systems (eg Conda)
