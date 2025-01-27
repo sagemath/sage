@@ -2861,7 +2861,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             LR = LaurentPolynomialRing(ZZ, 's0r, s1r')
             s0r, s1r = LR.gens()
             PR = PolynomialRing(LR, 'Yr')
-            Yr = PR.gens()
+            Yr = PR.gen()
             pqr = Yr**2 + (s0r**2 - 1) * (s1r**2 - 1)
             BR = PR.quotient_ring(pqr)
             s0 = BR(s0r)
