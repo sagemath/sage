@@ -1,3 +1,6 @@
+"""
+The Zinbiel operad
+"""
 from sage.categories.operads_with_basis import OperadsWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2

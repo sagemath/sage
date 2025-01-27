@@ -1,5 +1,5 @@
 """
-The Commutative Operad
+The Commutative operad
 """
 from sage.categories.operads_with_basis import OperadsWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule

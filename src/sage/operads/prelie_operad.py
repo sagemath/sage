@@ -1,9 +1,9 @@
 r"""
-The Pre-Lie Operad
+The Pre-Lie operad
 
 AUTHORS:
 
-- Florent Hivert, Frédéric Chapoton (2011-2016)
+- Florent Hivert, Frédéric Chapoton (2011-2025)
 """
 # ****************************************************************************
 #       Copyright (C) 2010 Florent Hivert <Florent.Hivert@lri.fr>,

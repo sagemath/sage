@@ -1,3 +1,6 @@
+"""
+The Dendriform operad
+"""
 from typing import Iterator
 
 from sage.categories.operads_with_basis import OperadsWithBasis
