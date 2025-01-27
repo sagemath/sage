@@ -83,6 +83,7 @@ jobs:
             export CXX="ccache $CXX"
           else
             export LIB="$LIB;$CONDA_PREFIX\\Library\\lib"
+            export INCLUDE="$INCLUDE;$CONDA_PREFIX\\Library\\include"
           fi
 
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
