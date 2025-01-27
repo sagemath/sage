@@ -55,6 +55,7 @@ Here is what the module can do:
     :meth:`is_triconnected` | Check whether the graph is triconnected.
     :meth:`spqr_tree` | Return a SPQR-tree representing the triconnected components of the graph.
     :meth:`spqr_tree_to_graph` | Return the graph represented by the SPQR-tree `T`.
+    :meth:`minimal_separators` | Return an iterator over the minimal separators of ``G``.
 
 Methods
 -------
@@ -134,11 +135,12 @@ def is_connected(G, forbidden_vertices=None):
     if not G.order():
         return True
 
+    forbidden = None if forbidden_vertices is None else set(forbidden_vertices)
+
     try:
-        return G._backend.is_connected(forbidden_vertices=forbidden_vertices)
+        return G._backend.is_connected(forbidden_vertices=forbidden)
     except AttributeError:
         # Search for a vertex in G that is not forbidden
-        forbidden = set(forbidden_vertices) if forbidden_vertices else set()
         if forbidden:
             for v in G:
                 if v not in forbidden:
@@ -200,6 +202,9 @@ def connected_components(G, sort=None, key=None, forbidden_vertices=None):
         sage: G = graphs.PathGraph(5)
         sage: connected_components(G, sort=True, forbidden_vertices=[2])
         [[0, 1], [3, 4]]
+        sage: connected_components(G, sort=True,
+        ....:     forbidden_vertices=G.neighbor_iterator(2, closed=True))
+        [[0], [4]]
 
     TESTS:
 
@@ -244,7 +249,7 @@ def connected_components(G, sort=None, key=None, forbidden_vertices=None):
     for v in G:
         if v not in seen:
             c = connected_component_containing_vertex(G, v, sort=sort, key=key,
-                                                      forbidden_vertices=forbidden_vertices)
+                                                      forbidden_vertices=seen)
             seen.update(c)
             components.append(c)
     components.sort(key=lambda comp: -len(comp))
@@ -423,12 +428,14 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None,
     if (not sort) and key:
         raise ValueError('sort keyword is False, yet a key function is given')
 
+    forbidden = None if forbidden_vertices is None else list(forbidden_vertices)
+
     try:
         c = list(G._backend.depth_first_search(vertex, ignore_direction=True,
-                                               forbidden_vertices=forbidden_vertices))
+                                               forbidden_vertices=forbidden))
     except AttributeError:
         c = list(G.depth_first_search(vertex, ignore_direction=True,
-                                      forbidden_vertices=forbidden_vertices))
+                                      forbidden_vertices=forbidden))
 
     if sort:
         return sorted(c, key=key)
@@ -1254,6 +1261,104 @@ def is_cut_vertex(G, u, weak=False):
         TypeError: the input must be a Sage graph
     """
     return is_vertex_cut(G, [u], weak=weak)
+
+
+def minimal_separators(G, forbidden_vertices=None):
+    r"""
+    Return an iterator over the minimal separators of ``G``.
+
+    A separator in a graph is a set of vertices whose removal increases the
+    number of connected components. In other words, a separator is a vertex
+    cut. This method implements the algorithm proposed in [BBC2000]_.
+    It computes the set `S` of minimal separators of a graph in `O(n^3)` time
+    per separator, and so overall in `O(n^3 |S|)` time.
+
+    .. WARNING::
+
+        Note that all separators are recorded during the execution of the
+        algorithm and so the memory consumption of this method might be huge.
+
+    INPUT:
+
+    - ``G`` -- an undirected graph
+
+    - ``forbidden_vertices`` -- list (default: ``None``); set of vertices to
+      avoid during the search
+
+    EXAMPLES::
+
+        sage: P = graphs.PathGraph(5)
+        sage: sorted(sorted(sep) for sep in P.minimal_separators())
+        [[1], [2], [3]]
+        sage: C = graphs.CycleGraph(6)
+        sage: sorted(sorted(sep) for sep in C.minimal_separators())
+        [[0, 2], [0, 3], [0, 4], [1, 3], [1, 4], [1, 5], [2, 4], [2, 5], [3, 5]]
+        sage: sorted(sorted(sep) for sep in C.minimal_separators(forbidden_vertices=[0]))
+        [[2], [3], [4]]
+        sage: sorted(sorted(sep) for sep in (P + C).minimal_separators())
+        [[1], [2], [3], [5, 7], [5, 8], [5, 9], [6, 8],
+         [6, 9], [6, 10], [7, 9], [7, 10], [8, 10]]
+        sage: sorted(sorted(sep) for sep in (P + C).minimal_separators(forbidden_vertices=[10]))
+        [[1], [2], [3], [6], [7], [8]]
+
+        sage: G = graphs.RandomGNP(10, .3)
+        sage: all(G.is_vertex_cut(sep) for sep in G.minimal_separators())
+        True
+
+    TESTS::
+
+        sage: list(Graph().minimal_separators())
+        []
+        sage: list(Graph(1).minimal_separators())
+        []
+        sage: list(Graph(2).minimal_separators())
+        []
+        sage: from sage.graphs.connectivity import minimal_separators
+        sage: list(minimal_separators(DiGraph()))
+        Traceback (most recent call last):
+        ...
+        ValueError: the input must be an undirected graph
+    """
+    from sage.graphs.graph import Graph
+    if not isinstance(G, Graph):
+        raise ValueError("the input must be an undirected graph")
+
+    if forbidden_vertices is not None and G.order() >= 3:
+        # Build the subgraph with active vertices
+        G = G.subgraph(set(G).difference(forbidden_vertices), immutable=True)
+
+    if G.order() < 3:
+        return
+    if not G.is_connected():
+        for cc in G.connected_components(sort=False):
+            if len(cc) > 2:
+                yield from minimal_separators(G.subgraph(cc))
+        return
+
+    # Initialization - identify separators needing further inspection
+    cdef list to_explore = []
+    for v in G:
+        # iterate over the connected components of G \ N[v]
+        for comp in G.connected_components(sort=False, forbidden_vertices=G.neighbor_iterator(v, closed=True)):
+            # The vertex boundary of comp in G is a separator
+            nh = G.vertex_boundary(comp)
+            if nh:
+                to_explore.append(frozenset(nh))
+
+    # Generation of all minimal separators
+    cdef set separators = set()
+    while to_explore:
+        sep = to_explore.pop()
+        if sep in separators:
+            continue
+        yield set(sep)
+        separators.add(sep)
+        for v in sep:
+            # iterate over the connected components of G \ sep \ N(v)
+            for comp in G.connected_components(sort=False, forbidden_vertices=sep.union(G.neighbor_iterator(v))):
+                nh = G.vertex_boundary(comp)
+                if nh:
+                    to_explore.append(frozenset(nh))
 
 
 def edge_connectivity(G,
