@@ -293,11 +293,11 @@ def number_of_SSRCT(content_comp, shape_comp):
         else:
             return ZZ.zero()
     s = ZZ.zero()
-    cond = lambda al,be: all(al[j] <= be_val
-                             and not any(al[i] <= k and k <= be[i]
-                                         for k in range(al[j], be_val)
-                                         for i in range(j))
-                             for j, be_val in enumerate(be))
+    cond = lambda al, be: all(al[j] <= be_val
+                              and not any(al[i] <= k <= be[i]
+                                          for k in range(al[j], be_val)
+                                          for i in range(j))
+                              for j, be_val in enumerate(be))
     C = Compositions(content_comp.size()-content_comp[0],
                      inner=[1]*len(shape_comp),
                      outer=list(shape_comp))

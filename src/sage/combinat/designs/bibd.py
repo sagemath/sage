@@ -613,7 +613,7 @@ def BIBD_from_TD(v, k, existence=False):
 
         BIBD = TDkv._blocks
         for i in range(k):
-            BIBD.extend([[x+i*v for x in B] for B in BIBDvk])
+            BIBD.extend([x+i*v for x in B] for B in BIBDvk)
 
     # Second construction
     elif ((v-1) % k == 0 and
@@ -630,7 +630,7 @@ def BIBD_from_TD(v, k, existence=False):
         inf = v*k
         BIBD = TDkv
         for i in range(k):
-            BIBD.extend([[inf if x == v else x+i*v for x in B] for B in BIBDv1k])
+            BIBD.extend([inf if x == v else x+i*v for x in B] for B in BIBDv1k)
 
     # Third construction
     elif ((v-k) % k == 0 and
@@ -650,7 +650,8 @@ def BIBD_from_TD(v, k, existence=False):
         BIBDvpkk = [B for B in BIBDvpkk if min(B) < v]
 
         for i in range(k):
-            BIBD.extend([[(x-v)+inf if x >= v else x+i*v for x in B] for B in BIBDvpkk])
+            BIBD.extend([(x-v)+inf if x >= v else x+i*v for x in B]
+                        for B in BIBDvpkk)
 
         BIBD.append(list(range(k * v, v * k + k)))
 
