@@ -410,7 +410,7 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
                  for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
         try:
-            poly_ring = PolynomialRing(R, names)  # self.ring
+            poly_ring = PolynomialRing(R, names, len(names))  # Change for all ideals, refactor
         except ValueError:  # variables are not proper names
             poly_ring = PolynomialRing(R, 'A', len(flats))
         gens = poly_ring.gens()
@@ -459,7 +459,7 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
         """
         E = list(self._matroid.groundset())
         flats = list(self._flats_generator)
-        lattice_flats = Poset((flats, lambda x, y: x <= y))
+        lattice_flats = Poset((flats, lambda x, y: x <= y))  # use lattice of flats of matroid, use Hasse diagram
         I = []
         flats_gen = self._flats_generator
         subsets = lattice_flats.antichains().elements_of_depth_iterator(2)
@@ -474,17 +474,17 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
                         term += flats_gen[G]
             J.append(flats_gen[F] * term)
         K = []
-        for x, i in enumerate(E):
-            for j in E[x:]:
+        for x, i in enumerate(E):  # use combinations from itertools
+            for j in E[x + 1:]:
                 term1 = poly_ring.zero()
                 term2 = poly_ring.zero()
                 for F in flats:
-                    if F >= frozenset({i}).union(frozenset({j})):
+                    if F >= frozenset({i}).union(frozenset({j})):  #define union outside
                         term1 += flats_gen[F] ** 2
                         for G in lattice_flats.order_filter([F]):
                             if G != F:
                                 term2 += flats_gen[F]*flats_gen[G]
-                K.extend([term1, term2])
+                K.append(term1 + (2 * term2))
         return I + J + K
 
     def _repr_(self):
@@ -666,7 +666,7 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
                  for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
         try:
-            poly_ring = PolynomialRing(R, names)  # self.ring
+            poly_ring = PolynomialRing(R, names, len(names))  # self.ring
         except ValueError:  # variables are not proper names
             poly_ring = PolynomialRing(R, 'A', len(flats))
         gens = poly_ring.gens()
