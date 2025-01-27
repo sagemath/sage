@@ -617,7 +617,7 @@ cdef codeword *expand_to_ortho_basis(BinaryCode B, int n) noexcept:
         i = k
         word = <codeword>1 << k
         k += 1
-    else: # NOTE THIS WILL NEVER HAPPEN AS CURRENTLY SET UP!
+    else:  # NOTE THIS WILL NEVER HAPPEN AS CURRENTLY SET UP!
         temp = (<codeword>1 << k) - 1
         i = k
         word = <codeword>1 << k
@@ -813,7 +813,7 @@ cdef class BinaryCode:
                     combination ^= (1 << j)
                     word ^= self_basis[j]
 
-        else: # isinstance(arg1, BinaryCode)
+        else:  # isinstance(arg1, BinaryCode)
             other_basis = other.basis
             for i from 0 <= i < nrows-1:
                 self_basis[i] = other_basis[i]
@@ -2423,9 +2423,12 @@ cdef class PartitionStack:
         cdef int *self_wd_lvls = self.wd_lvls
         cdef int *self_wd_ents = self.wd_ents
         while True:
-            if CG.is_one(self_wd_ents[wd_ptr], col): i += 1
-            if self_wd_lvls[wd_ptr] > k: wd_ptr += 1
-            else: break
+            if CG.is_one(self_wd_ents[wd_ptr], col):
+                i += 1
+            if self_wd_lvls[wd_ptr] > k:
+                wd_ptr += 1
+            else:
+                break
         return i
 
     def _wd_degree(self, C, wd, col_ptr, k):
@@ -3347,15 +3350,17 @@ cdef class BinaryCodeClassifier:
                 if qzb > 0: zb__Lambda_rho[k] = Lambda[k]
                 state = 3
 
-            elif state == 3: # attempt to rule out automorphisms while moving down the tree
+            elif state == 3:  # attempt to rule out automorphisms while moving down the tree
                 # if k > hzf, then we know that nu currently does not look like zeta, the first
                 # terminal node encountered, thus there is no automorphism to discover. If qzb < 0,
                 # i.e. Lambda[k] < zb[k], then the indicator is not maximal, and we can't reach a
                 # canonical leaf. If neither of these is the case, then proceed to state 4.
-                if hzf__h_zeta <= k or qzb >= 0: state = 4
-                else: state = 6
+                if hzf__h_zeta <= k or qzb >= 0:
+                    state = 4
+                else:
+                    state = 6
 
-            elif state == 4: # at this point we have -not- ruled out the presence of automorphisms
+            elif state == 4:  # at this point we have -not- ruled out the presence of automorphisms
                 if nu.is_discrete(k):
                     state = 7
                     continue  # we have a terminal node, so process it
@@ -3368,7 +3373,7 @@ cdef class BinaryCodeClassifier:
                 e[k] = 0 # see state 12 and 17
                 state = 2 # continue down the tree
 
-            elif state == 5: # same as state 3, but in the case where we haven't yet defined zeta
+            elif state == 5:  # same as state 3, but in the case where we haven't yet defined zeta
                              # i.e. this is our first time down the tree. Once we get to the bottom,
                              # we will have zeta = nu = rho, so we do:
                 zf__Lambda_zeta[k] = Lambda[k]

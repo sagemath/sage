@@ -1505,11 +1505,15 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         n = Integer(n)
         if n == 0:
             if self == 1:
-                if all: return [K(a) for a in range(1,K.order())]
-                else: return self
+                if all:
+                    return [K(a) for a in range(1, K.order())]
+                else:
+                    return self
             else:
-                if all: return []
-                else: raise ValueError
+                if all:
+                    return []
+                else:
+                    raise ValueError
         F = K.factored_order()
         if len(F) == 0:
             if all:
@@ -1533,8 +1537,10 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         p, k = F[0]
         if self.is_zero():
             if n < 0:
-                if all: return []
-                else: raise ValueError
+                if all:
+                    return []
+                else:
+                    raise ValueError
             if all:
                 if k == 1:
                     return [self]
@@ -1547,12 +1553,13 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             try:
                 self = ~self
             except ZeroDivisionError:
-                if all: return []
-                else: raise ValueError
+                if all:
+                    return []
+                else:
+                    raise ValueError
             n = -n
         if p == 2 and k == 1:
-            if all: return [self]
-            else: return self
+            return [self] if all else self
         if k > 1:
             pval, upart = self.lift().val_unit(p)
             if not n.divides(pval):
@@ -1571,21 +1578,29 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                 sign = [1]
                 if self % 4 == 3:
                     if n % 2 == 0:
-                        if all: return []
-                        else: raise ValueError("no nth root")
+                        if all:
+                            return []
+                        else:
+                            raise ValueError("no nth root")
                     else:
                         sign = [-1]
                         self = -self
                 elif n % 2 == 0:
                     if k > 2 and self % 8 == 5:
-                        if all: return []
-                        else: raise ValueError("no nth root")
+                        if all:
+                            return []
+                        else:
+                            raise ValueError("no nth root")
                     sign = [1, -1]
                 if k == 2:
-                    if all: return [K(s) for s in sign[:2]]
-                    else: return K(sign[0])
-                if all: modp = [mod(self,8)]
-                else: modp = mod(self,8)
+                    if all:
+                        return [K(s) for s in sign[:2]]
+                    else:
+                        return K(sign[0])
+                if all:
+                    modp = [mod(self,8)]
+                else:
+                    modp = mod(self,8)
             else:
                 sign = [1]
                 modp = self % p
@@ -1602,8 +1617,10 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     else:
                         return K(modp.lift())
                 else:
-                    if all: return []
-                    else: raise ValueError("no nth root")
+                    if all:
+                        return []
+                    else:
+                        raise ValueError("no nth root")
             if all:
                 ans = [plog // n + p**(k - nval) * i for i in range(p**nval)]
                 ans = [s*K(R.teichmuller(m) * a.exp()) for a in ans for m in modp for s in sign]
@@ -3193,10 +3210,12 @@ cdef int_fast32_t mod_pow_int(int_fast32_t base, int_fast32_t exp, int_fast32_t 
         if exp == 4: return (prod * prod) % n
 
     pow2 = base
-    if exp % 2: prod = base
-    else: prod = 1
+    if exp % 2:
+        prod = base
+    else:
+        prod = 1
     exp = exp >> 1
-    while(exp != 0):
+    while exp != 0:
         pow2 = pow2 * pow2
         if pow2 >= INTEGER_MOD_INT32_LIMIT: pow2 = pow2 % n
         if exp % 2:
@@ -3855,10 +3874,12 @@ cdef int_fast64_t mod_pow_int64(int_fast64_t base, int_fast64_t exp, int_fast64_
         if exp == 4: return (prod * prod) % n
 
     pow2 = base
-    if exp % 2: prod = base
-    else: prod = 1
+    if exp % 2:
+        prod = base
+    else:
+        prod = 1
     exp = exp >> 1
-    while(exp != 0):
+    while exp != 0:
         pow2 = pow2 * pow2
         if pow2 >= INTEGER_MOD_INT64_LIMIT: pow2 = pow2 % n
         if exp % 2:

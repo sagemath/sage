@@ -87,14 +87,15 @@ cdef class FiniteRingElement(CommutativeRingElement):
         gcd = n.gcd(q-1)
         if self.is_one():
             if gcd == 1:
-                if all: return [self]
-                else: return self
+                return [self] if all else self
             else:
                 nthroot = K.zeta(gcd)
                 return [nthroot**a for a in range(gcd)] if all else nthroot
         if gcd == q-1:
-            if all: return []
-            else: raise ValueError("no nth root")
+            if all:
+                return []
+            else:
+                raise ValueError("no nth root")
         gcd, alpha, _ = n.xgcd(q-1)  # gcd = alpha*n + beta*(q-1), so 1/n = alpha/gcd (mod q-1)
         if gcd == 1:
             return [self**alpha] if all else self**alpha
@@ -102,8 +103,10 @@ cdef class FiniteRingElement(CommutativeRingElement):
         n = gcd
         q1overn = (q-1)//n
         if self**q1overn != 1:
-            if all: return []
-            else: raise ValueError("no nth root")
+            if all:
+                return []
+            else:
+                raise ValueError("no nth root")
         self = self**alpha
         if cunningham:
             from sage.rings.factorint import factor_cunningham
@@ -921,20 +924,25 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         if self.is_zero():
             if n <= 0:
-                if all: return []
-                else: raise ValueError
-            if all: return [self]
-            else: return self
+                if all:
+                    return []
+                else:
+                    raise ValueError
+            return [self] if all else self
         if n < 0:
             self = ~self
             n = -n
         elif n == 0:
             if self == 1:
-                if all: return [a for a in self.parent().list() if a != 0]
-                else: return self
+                if all:
+                    return [a for a in self.parent().list() if a != 0]
+                else:
+                    return self
             else:
-                if all: return []
-                else: raise ValueError
+                if all:
+                    return []
+                else:
+                    raise ValueError
         if extend:
             raise NotImplementedError
         n = Integer(n)
