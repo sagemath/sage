@@ -608,8 +608,8 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
         u_height = sum([max(u_log[k], 0) for k in range(r + 1)])
         unit_height_dict[u] = u_height
         if u_height < inter_bound:
-                U0.append(u)
-        if inter_bound <= u_height and u_height < b - (t/12):
+            U0.append(u)
+        if inter_bound <= u_height < b - (t/12):
             U0_tilde.append(u)
         if u_height > t/12 + d_tilde:
             U_copy.remove(u)
