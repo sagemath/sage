@@ -67,9 +67,14 @@ pari = cc.find_library('pari', required: not is_windows, disabler: true)
 mpfr = dependency('mpfr')
 
 if is_windows
-  # Flint on conda currently actives FLINT_USES_PTHREAD, which is not available under msvc
-  # https://github.com/conda-forge/libflint-feedstock/issues/38
-  flint = disabler()
+  # In its currently released version, flint is not working on Windows; thus always use subproject
+  #flint = dependency('flint', version: '>=3.1.3')
+  cmake = import('cmake')
+  cmake_opts = cmake.subproject_options()
+  cmake_opts.add_cmake_defines({'BUILD_SHARED_LIBS': 'OFF'})
+  flint_proj = cmake.subproject('flint', options: cmake_opts)
+  flint = flint_proj.dependency('flint')
+  meson.override_dependency('flint', flint)
 else
   flint = dependency('flint', version: '>=3.0.0')
   if flint.version().version_compare('<3.1')
