@@ -35,11 +35,11 @@ wir diese schneiden und dann die irreduziblen Komponenten berechnen.
     sage: V = C2.intersection(C3)
     sage: V.irreducible_components()
     [Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
-       y,
-       x - 1,
-     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
        y - 1,
        x,
+     Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+       y,
+       x - 1,
      Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
        x + y + 2,
        2*y^2 + 4*y + 3]
