@@ -4,7 +4,8 @@ Braid groups
 Braid groups are implemented as a particular case of finitely presented groups,
 but with a lot of specific methods for braids.
 
-A braid group can be created by giving the number of strands, and the name of the generators::
+A braid group can be created by giving the number of strands, and the name
+of the generators::
 
     sage: BraidGroup(3)
     Braid group on 3 strands
@@ -15,8 +16,8 @@ A braid group can be created by giving the number of strands, and the name of th
     sage: BraidGroup(3,'a,b').gens()
     (a, b)
 
-The elements can be created by operating with the generators, or by passing a list
-with the indices of the letters to the group::
+The elements can be created by operating with the generators, or by passing
+a list with the indices of the letters to the group::
 
     sage: B.<s0,s1,s2> = BraidGroup(4)
     sage: s0*s1*s0
@@ -81,7 +82,8 @@ from sage.groups.finitely_presented import (
     GroupMorphismWithGensImages,
 )
 from sage.groups.free_group import FreeGroup, is_FreeGroup
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup, SymmetricGroupElement
+from sage.groups.perm_gps.permgroup_named import (SymmetricGroup,
+                                                  SymmetricGroupElement)
 from sage.libs.gap.libgap import libgap
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.misc.cachefunc import cached_method
@@ -96,10 +98,11 @@ from sage.structure.element import Expression
 from sage.structure.richcmp import rich_to_bool, richcmp
 
 lazy_import('sage.libs.braiding',
-            ['leftnormalform', 'rightnormalform', 'centralizer', 'supersummitset', 'greatestcommondivisor',
+            ['leftnormalform', 'rightnormalform', 'centralizer',
+             'supersummitset', 'greatestcommondivisor',
              'leastcommonmultiple', 'conjugatingbraid', 'ultrasummitset',
              'thurston_type', 'rigidity', 'sliding_circuits', 'send_to_sss',
-             'send_to_uss', 'send_to_sc', 'trajectory', 'cyclic_slidings' ],
+             'send_to_uss', 'send_to_sc', 'trajectory', 'cyclic_slidings'],
             feature=sage__libs__braiding())
 lazy_import('sage.knots.knot', 'Knot')
 
@@ -466,7 +469,8 @@ class Braid(FiniteTypeArtinGroupElement):
         """
         return self.coxeter_group_element(W)
 
-    def plot(self, color='rainbow', orientation='bottom-top', gap=0.05, aspect_ratio=1, axes=False, **kwds):
+    def plot(self, color='rainbow', orientation='bottom-top', gap=0.05,
+             aspect_ratio=1, axes=False, **kwds):
         """
         Plot the braid.
 
@@ -598,7 +602,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
     def plot3d(self, color='rainbow'):
         """
-        Plots the braid in 3d.
+        Plot the braid in 3d.
 
         The following option is available:
 
@@ -796,6 +800,7 @@ class Braid(FiniteTypeArtinGroupElement):
         r"""
         Return the representation matrix of ``self`` according to the R-matrix
         representation being attached to the quantum superalgebra `\mathfrak{sl}_q(2|1)`.
+
         See [MW2012]_, section 3 and references given there.
 
         INPUT:
@@ -827,15 +832,16 @@ class Braid(FiniteTypeArtinGroupElement):
         M = rep[0][0].parent().one()
         for i in self.Tietze():
             if i > 0:
-                M = M*rep[i-1][0]
+                M = M * rep[i-1][0]
             if i < 0:
-                M = M*rep[-i-1][1]
+                M = M * rep[-i-1][1]
         return M
 
     @cached_method
     def links_gould_polynomial(self, varnames=None, use_symbolics=False):
         r"""
         Return the Links-Gould polynomial of the closure of ``self``.
+
         See [MW2012]_, section 3 and references given there.
 
         INPUT:
@@ -872,12 +878,13 @@ class Braid(FiniteTypeArtinGroupElement):
         mu = rep[ln - 1]  # quantum trace factor
         M = mu * self.links_gould_matrix(symbolics=use_symbolics)
         d1, d2 = M.dimensions()
-        e = d1//4
+        e = d1 // 4
         B = M.base_ring()
         R = LaurentPolynomialRing(ZZ, varnames)
 
         # partial quantum trace according to I. Marin section 2.5
-        part_trace = matrix(B, 4, 4, lambda i, j: sum(M[e * i + k, e * j + k] for k in range(e)))
+        part_trace = matrix(B, 4, 4, lambda i, j: sum(M[e * i + k, e * j + k]
+                                                      for k in range(e)))
         ptemp = part_trace[0, 0]  # part_trace == psymb*M.parent().one()
         if use_symbolics:
             v1, v2 = R.variable_names()
@@ -888,13 +895,13 @@ class Braid(FiniteTypeArtinGroupElement):
         else:
             ltemp = ptemp.lift().constant_coefficient()
             # Since the result of the calculation is known to be a Laurent polynomial
-            # in t0 and t1 all exponents of ltemp must be divisable by 2
+            # in t0 and t1 all exponents of ltemp must be divisible by 2
             L = ltemp.parent()
             lred = L({(k[0]/2, k[1]/2): v for k, v in ltemp.monomial_coefficients().items()})
             t0, t1 = R.gens()
             return lred(t0, t1)
 
-    def tropical_coordinates(self):
+    def tropical_coordinates(self) -> list:
         r"""
         Return the tropical coordinates of ``self`` in the braid group `B_n`.
 
@@ -938,7 +945,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
         from sage.rings.semirings.tropical_semiring import TropicalSemiring
         T = TropicalSemiring(ZZ)
-        return [T(_) for _ in coord]
+        return [T(c) for c in coord]
 
     def markov_trace(self, variab=None, normalized=True):
         r"""
@@ -1606,7 +1613,7 @@ class Braid(FiniteTypeArtinGroupElement):
         B = self.parent()
         return tuple([B(b) for b in rnf[:-1]] + [B.delta()**rnf[-1][0]])
 
-    def centralizer(self):
+    def centralizer(self) -> list:
         """
         Return a list of generators of the centralizer of the braid.
 
@@ -1621,7 +1628,7 @@ class Braid(FiniteTypeArtinGroupElement):
         B = self.parent()
         return [B._element_from_libbraiding(b) for b in c]
 
-    def super_summit_set(self):
+    def super_summit_set(self) -> list:
         """
         Return a list with the super summit set of the braid.
 
@@ -1739,10 +1746,9 @@ class Braid(FiniteTypeArtinGroupElement):
         cb = conjugatingbraid(self, other)
         if not cb:
             return None
-        else:
-            B = self.parent()
-            cb[0][0] %= 2
-            return B._element_from_libbraiding(cb)
+        B = self.parent()
+        cb[0][0] %= 2
+        return B._element_from_libbraiding(cb)
 
     def is_conjugated(self, other) -> bool:
         """
@@ -1859,7 +1865,7 @@ class Braid(FiniteTypeArtinGroupElement):
         n2 = len(b2.Tietze())
         return b2 if n2 <= n0 else b0
 
-    def ultra_summit_set(self):
+    def ultra_summit_set(self) -> list:
         """
         Return a list with the orbits of the ultra summit set of ``self``.
 
@@ -1888,7 +1894,7 @@ class Braid(FiniteTypeArtinGroupElement):
         B = self.parent()
         return [[B._element_from_libbraiding(i) for i in s] for s in uss]
 
-    def thurston_type(self):
+    def thurston_type(self) -> str:
         """
         Return the thurston_type of ``self``.
 
@@ -1973,7 +1979,7 @@ class Braid(FiniteTypeArtinGroupElement):
         """
         return Integer(rigidity(self))
 
-    def sliding_circuits(self):
+    def sliding_circuits(self) -> list:
         """
         Return the sliding circuits of the braid.
 
@@ -2270,7 +2276,7 @@ class Braid(FiniteTypeArtinGroupElement):
         B = self.parent()
         return tuple([B._element_from_libbraiding(b) for b in to_uss])
 
-    def sliding_circuits_element(self):
+    def sliding_circuits_element(self) -> tuple:
         r"""
         Return an element of the braid's sliding circuits, and the conjugating
         braid.
@@ -2286,7 +2292,7 @@ class Braid(FiniteTypeArtinGroupElement):
         B = self.parent()
         return tuple([B._element_from_libbraiding(b) for b in to_sc])
 
-    def trajectory(self):
+    def trajectory(self) -> list:
         r"""
         Return the braid's trajectory.
 
@@ -2304,7 +2310,7 @@ class Braid(FiniteTypeArtinGroupElement):
         B = self.parent()
         return [B._element_from_libbraiding(b) for b in traj]
 
-    def cyclic_slidings(self):
+    def cyclic_slidings(self) -> list:
         r"""
         Return the braid's cyclic slidings.
 
@@ -2484,6 +2490,7 @@ class RightQuantumWord:
         def tuple_to_word(q_tuple):
             return M.prod(self._gens[i]**exp
                           for i, exp in enumerate(q_tuple))
+
         ret = {tuple_to_word(q_tuple): q_factor
                for q_tuple, q_factor in self.tuples.items() if q_factor}
         return self._algebra._from_dict(ret, remove_zeros=False)
@@ -2546,7 +2553,7 @@ class RightQuantumWord:
         return sum(q_factor * eps_monom(q_tuple)
                    for q_tuple, q_factor in self.tuples.items())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -2582,7 +2589,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
     """
     Element = Braid
 
-    def __init__(self, names):
+    def __init__(self, names) -> None:
         """
         Python constructor.
 
@@ -2657,7 +2664,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         # For caching hermitian form of unitary Burau representation
         self._hermitian_form = None
 
-    def __reduce__(self):
+    def __reduce__(self) -> tuple:
         """
         TESTS::
 
@@ -2670,7 +2677,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         """
         return (BraidGroup_class, (self.variable_names(), ))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -2761,7 +2768,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         """
         return self.gen(0)
 
-    def some_elements(self):
+    def some_elements(self) -> list:
         """
         Return a list of some elements of the braid group.
 
@@ -2778,7 +2785,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         elements_list.append(elements_list[-1]**self.strands())
         return elements_list
 
-    def _standard_lift_Tietze(self, p):
+    def _standard_lift_Tietze(self, p) -> tuple:
         """
         Helper for :meth:`_standard_lift_Tietze`.
 
@@ -2806,8 +2813,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             (1, 2, 3, 4, 1, 2)
         """
         G = SymmetricGroup(self.strands())
-        pl = G(p)
-        return tuple(pl.reduced_word())
+        return tuple(G(p).reduced_word())
 
     @cached_method
     def _links_gould_representation(self, symbolics=False):
@@ -2853,8 +2859,9 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         else:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             LR = LaurentPolynomialRing(ZZ, 's0r, s1r')
+            s0r, s1r = LR.gens()
             PR = PolynomialRing(LR, 'Yr')
-            s0r, s1r, Yr = PR.gens_dict_recursive().values()
+            Yr = PR.gens()
             pqr = Yr**2 + (s0r**2 - 1) * (s1r**2 - 1)
             BR = PR.quotient_ring(pqr)
             s0 = BR(s0r)
@@ -3419,9 +3426,10 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         r"""
         Return the mirror involution of ``self``.
 
-        This automorphism maps a braid to another one by replacing each generator
-        in its word by the inverse. In general this is different from the inverse
-        of the braid since the order of the generators in the word is not reversed.
+        This automorphism maps a braid to another one by replacing
+        each generator in its word by the inverse. In general this is
+        different from the inverse of the braid since the order of the
+        generators in the word is not reversed.
 
         EXAMPLES::
 
@@ -3485,7 +3493,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         h2 = G.hom(codomain=self, im_gens=[self(a) for a in L2], check=False)
         return (G, h1, h2)
 
-    def epimorphisms(self, H):
+    def epimorphisms(self, H) -> list:
         r"""
         Return the epimorphisms from ``self`` to ``H``, up to automorphism of `H` passing
         through the :meth:`two generator presentation
@@ -3518,12 +3526,15 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         Gg = libgap(G)
         Hg = libgap(H)
         gquotients = Gg.GQuotients(Hg)
-        hom1g = libgap.GroupHomomorphismByImagesNC(G0g, Gg, [libgap(hom1(u)) for u in self.gens()])
+        hom1g = libgap.GroupHomomorphismByImagesNC(G0g, Gg,
+                                                   [libgap(hom1(u))
+                                                    for u in self.gens()])
         g0quotients = [hom1g * h for h in gquotients]
         res = []
         # the following closure is needed to attach a specific value of quo to
         # each function in the different morphisms
-        fmap = lambda tup: (lambda a: H(prod(tup[abs(i)-1]**sign(i) for i in a.Tietze())))
+        fmap = lambda tup: (lambda a: H(prod(tup[abs(i)-1]**sign(i)
+                                             for i in a.Tietze())))
         for quo in g0quotients:
             tup = tuple(H(quo.ImageElm(i.gap()).sage()) for i in self.gens())
             fhom = GroupMorphismWithGensImages(HomSpace, fmap(tup))
@@ -3651,7 +3662,8 @@ class MappingClassGroupAction(Action):
 
         sage: A = B.mapping_class_action(F)
         sage: A
-        Right action by Braid group on 4 strands on Free Group on generators {x0, x1, x2, x3}
+        Right action by Braid group on 4 strands on Free Group
+        on generators {x0, x1, x2, x3}
         sage: A(x0, s1)
         x0
         sage: A(x1, s1)
@@ -3659,14 +3671,15 @@ class MappingClassGroupAction(Action):
         sage: A(x1^-1, s1)
         x1*x2^-1*x1^-1
     """
-    def __init__(self, G, M):
+    def __init__(self, G, M) -> None:
         """
         TESTS::
 
             sage: B = BraidGroup(3)
             sage: G = FreeGroup('a, b, c')
             sage: B.mapping_class_action(G) # indirect doctest
-            Right action by Braid group on 3 strands on Free Group on generators {a, b, c}
+            Right action by Braid group on 3 strands on Free Group
+            on generators {a, b, c}
         """
         import operator
         Action.__init__(self, G, M, False, operator.mul)
