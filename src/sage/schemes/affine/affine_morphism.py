@@ -541,7 +541,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             Scheme endomorphism of Projective Space of dimension 1
              over Algebraic Field
               Defn: Defined on coordinates by sending (x0 : x1) to
-                    (x0*x1 : 1/2*x0^2 + x0*x1 + 3/2*x1^2)
+                    (2*x0*x1 : x0^2 + 2*x0*x1 + 3*x1^2)
 
         ::
 
