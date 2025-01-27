@@ -13,13 +13,6 @@ from grayskull.strategy.py_toml import get_all_toml_info
 from grayskull.strategy.pypi import extract_requirements, normalize_requirements_list
 from packaging.requirements import Requirement
 
-# Get source directory from command line arguments
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "sourcedir", help="Source directory", nargs="?", default=".", type=Path
-)
-options = parser.parse_args()
-
 platforms = {
     "linux-64": "linux",
     "linux-aarch64": "linux-aarch64",
@@ -27,7 +20,22 @@ platforms = {
     "osx-arm64": "macos",
     "win-64": "win",
 }
-pythons = ["3.11", "3.12"]
+
+# Get source directory from command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "sourcedir", help="Source directory", nargs="?", default=".", type=Path
+)
+parser.add_argument(
+    "-s",
+    "--systems",
+    help="Operating systems to build for; default is all",
+    nargs="+",
+    type=str,
+    choices=platforms.keys(),
+)
+options = parser.parse_args()
+pythons = ["3.11", "3.12", "3.13"]
 tags = [""]
 
 
@@ -65,13 +73,16 @@ def filter_requirements(dependencies: set[str], python: str, platform: str) -> s
     return set(filter(None, map(filter_dep, dependencies)))
 
 
-def update_conda(source_dir: Path) -> None:
+def update_conda(source_dir: Path, systems: list[str] | None) -> None:
     pyproject_toml = source_dir / "pyproject.toml"
     if not pyproject_toml.exists():
         print(f"pyproject.toml not found in {pyproject_toml}")
         return
 
     for platform_key, platform_value in platforms.items():
+        if systems and platform_key not in systems:
+            continue
+
         for python in pythons:
             dependencies = get_dependencies(pyproject_toml, python, platform_key)
             for tag in tags:
@@ -140,7 +151,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     all_requirements.add("blas=2.*=openblas")
     all_requirements.remove("{{ compiler('c') }}")
     all_requirements.remove("{{ compiler('cxx') }}")
-    # all_requirements.remove("{{ compiler('fortran') }}")
+    all_requirements.remove("{{ compiler'fortran' }}")
     all_requirements.add("fortran-compiler")
     if platform == "win-64":
         all_requirements.add("vs2022_win-64")
@@ -154,10 +165,8 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     # Filter out packages that are not available on Windows
     if platform == "win-64":
         # Remove packages that are not available on Windows
-        all_requirements.difference_update(
-            (
+        all_requirements.difference_update((
                 "bc",
-                "bdw-gc",
                 "brial",
                 "cddlib",
                 "cliquer",
@@ -187,7 +196,6 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
                 "ncurses",
                 "ntl",
                 "palp",
-                "pari",
                 "patch",
                 "ppl",
                 "primecount",
@@ -198,8 +206,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
                 "tachyon",
                 "tar",
                 "texinfo",
-            )
-        )
+        ))
 
     # Correct pypi name for some packages
     python_requirements = set(pyproject_metadata.get("install_requires", []))
@@ -225,6 +232,12 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     )
     all_requirements.remove("<{ pin_compatible('numpy') }}")
     all_requirements.remove("memory_allocator")
+    if platform == "win-64":
+        # Flint needs pthread.h
+        all_requirements.add("winpthreads-devel")
+        # Workaround for https://github.com/conda-forge/libpng-feedstock/issues/47
+        all_requirements.add("zlib")
+    
     if platform != "win-64":
         # Needed to run configure/bootstrap, can be deleted once we fully migrated to meson
         all_requirements.add("autoconf")
@@ -246,4 +259,4 @@ def get_dev_dependencies(pyproject_toml: Path) -> list[str]:
     return dev_dependencies
 
 
-update_conda(options.sourcedir)
+update_conda(options.sourcedir, options.systems)
