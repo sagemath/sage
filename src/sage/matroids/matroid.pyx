@@ -6212,33 +6212,45 @@ cdef class Matroid(SageObject):
             False
         """
         if self.rank() >= 2:
-            for X in combinations(self.groundset(), self.rank() - 1):
-                if not self._is_independent(frozenset(X)):
-                    return False
+            for _ in self.dependent_sets_iterator(self.rank() - 1):
+                return False
         return True
 
     cpdef bint is_sparse_paving(self) noexcept:
         """
         Return if ``self`` is sparse-paving.
 
-        A matroid is sparse-paving if the symmetric difference of every pair
-        of circuits is greater than 2.
+        A matroid is sparse-paving if it is paving and its dual is paving.
 
         OUTPUT: boolean
+
+        ALGORITHM:
+
+        First, check that the matroid is paving. Then, verify that the
+        symmetric difference of every pair of distinct `r`-circuits is greater
+        than 2.
 
         EXAMPLES::
 
             sage: M = matroids.catalog.Vamos()
             sage: M.is_sparse_paving()
+            True
+            sage: M = matroids.catalog.N1()
+            sage: M.is_sparse_paving()
             False
-            sage: M = matroids.catalog.Fano()
+
+        TESTS::
+
+            sage: M = matroids.Uniform(4, 50)  # fast because we don't check M.dual().is_paving()
             sage: M.is_sparse_paving()
             True
+            sage: for M in matroids.AllMatroids(8):
+            ....:    assert M.is_sparse_paving() == (M.is_paving() and M.dual().is_paving())
         """
         if not self.is_paving():
             return False
         from itertools import combinations
-        for (C1, C2) in combinations(self.circuits_iterator(), 2):
+        for (C1, C2) in combinations(self.nonbases_iterator(), 2):
             if len(C1 ^ C2) <= 2:
                 return False
         return True
