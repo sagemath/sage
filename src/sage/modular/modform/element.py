@@ -2502,9 +2502,8 @@ class Newform(ModularForm_abstract):
                     h, tau = g.minimal_twist(p=None)
                     M = chi.modulus().lcm(tau.modulus())
                     return (h, chi.extend(M)*tau.extend(M))
-            else:
-                # f locally minimal at all p, hence globally minimal
-                return (self, DirichletGroup(1, self.base_ring())(1))
+            # f locally minimal at all p, hence globally minimal
+            return (self, DirichletGroup(1, self.base_ring())(1))
 
         p = ZZ(p)
         N = self.level()
