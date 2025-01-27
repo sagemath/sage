@@ -3689,6 +3689,9 @@ REFERENCES:
 .. [Ja1971] \N. Jacobson. *Exceptional Lie Algebras*. Marcel Dekker,
             Inc. New York. 1971. IBSN No. 0-8247-1326-5.
 
+.. [Jer2006] Mark Jerrum. *Two remarks concerning balanced matroids*.
+             Combinatorica 26, no. 6 (2006): 733-742.
+
 .. [Jet2008] \D. Jetchev. Global divisibility of Heegner points and
              Tamagawa numbers. Compos. Math. 144 (2008), no. 4, 811--826.
 
@@ -4990,6 +4993,10 @@ REFERENCES:
 .. [MNO1994] Alexander Molev, Maxim Nazarov, and Grigori Olshanski.
              *Yangians and classical Lie algebras*. (1994)
              :arxiv:`hep-th/9409025`
+
+.. [MNWW2011] Dillon Mayhew, Mike Newman, Dominic Welsh, and Geoff Whittle.
+              *On the asymptotic proportion of connected matroids*.
+              European Journal of Combinatorics. 2011 Aug 1;32(6):882-90.
 
 .. [Mol2007] Alexander Ivanovich Molev.
              *Yangians and Classical Lie Algebras*.

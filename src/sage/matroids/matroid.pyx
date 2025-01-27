@@ -6210,6 +6210,10 @@ cdef class Matroid(SageObject):
             sage: M = matroids.Theta(4)
             sage: M.is_paving()
             False
+
+        REFERENCES:
+
+        [Oxl2011]_, p. 24.
         """
         if self.rank() >= 2:
             for _ in self.dependent_sets_iterator(self.rank() - 1):
@@ -6239,12 +6243,17 @@ cdef class Matroid(SageObject):
             sage: M.is_sparse_paving()
             False
 
+        REFERENCES:
+
+        The definition of sparse-paving matroids can be found in [MNWW2011]_.
+        The algorithm uses an alternative characterization from [Jer2006]_.
+
         TESTS::
 
             sage: M = matroids.Uniform(4, 50)  # fast because we don't check M.dual().is_paving()
             sage: M.is_sparse_paving()
             True
-            sage: for M in matroids.AllMatroids(8):
+            sage: for M in matroids.AllMatroids(8):  # optional - matroid_database
             ....:    assert M.is_sparse_paving() == (M.is_paving() and M.dual().is_paving())
         """
         if not self.is_paving():
