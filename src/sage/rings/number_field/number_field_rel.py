@@ -302,7 +302,7 @@ class NumberField_relative(NumberField_generic):
             raise ValueError("base field and extension cannot have the same name %r" % name)
         if polynomial.parent().base_ring() != base:
             polynomial = polynomial.change_ring(base)
-            #raise ValueError, "The polynomial must be defined over the base field"
+            # raise ValueError("The polynomial must be defined over the base field")
 
         # Generate the nf and bnf corresponding to the base field
         # defined as polynomials in y, e.g. for rnfisfree

@@ -131,7 +131,6 @@ This base class provides a lot more methods than a general parent::
      'gens',
      'integral_closure',
      'is_field',
-     'krull_dimension',
      'ngens',
      'one',
      'order',

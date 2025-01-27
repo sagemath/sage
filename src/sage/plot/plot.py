@@ -2051,13 +2051,15 @@ def plot(funcs, *args, **kwds):
         elif n == 1:
             G = _plot(funcs, *args, **kwds)
         elif n == 2:
-        # if there are two extra args, then pull them out and pass them as a tuple
+            # if there are two extra args, then pull them out
+            # and pass them as a tuple
             xmin = args[0]
             xmax = args[1]
             args = args[2:]
             G = _plot(funcs, (xmin, xmax), *args, **kwds)
         elif n == 3:
-        # if there are three extra args, then pull them out and pass them as a tuple
+            # if there are three extra args, then pull them out
+            # and pass them as a tuple
             var = args[0]
             xmin = args[1]
             xmax = args[2]

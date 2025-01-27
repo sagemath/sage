@@ -2596,7 +2596,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
         i = int(i)
         j = int(j)
 
-        if 0 < i and i < self._n:
+        if 0 < i < self._n:
             if b is None:
                 by_to_j = self._series_ring_y << (j - 1)
             else:

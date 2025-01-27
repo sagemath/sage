@@ -2584,10 +2584,10 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         covers = []
         for a, b in ints:
-            covers.extend([[(a, b), (a, bb)] for bb in self.upper_covers(b)])
+            covers.extend([(a, b), (a, bb)] for bb in self.upper_covers(b))
             if a != b:
-                covers.extend([[(a, b), (aa, b)] for aa in self.upper_covers(a)
-                               if self.le(aa, b)])
+                covers.extend([(a, b), (aa, b)] for aa in self.upper_covers(a)
+                              if self.le(aa, b))
 
         dg = DiGraph([ints, covers], format='vertices_and_edges')
         return constructor(dg, cover_relations=True)

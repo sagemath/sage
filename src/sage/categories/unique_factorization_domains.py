@@ -152,7 +152,7 @@ class UniqueFactorizationDomains(Category_singleton):
                 sage: S.<T> = R[]
                 sage: p = (-3*x^2 - x)*T^3 - 3*x*T^2 + (x^2 - x)*T + 2*x^2 + 3*x - 2
                 sage: q = (-x^2 - 4*x - 5)*T^2 + (6*x^2 + x + 1)*T + 2*x^2 - x
-                sage: quo,rem=p.pseudo_quo_rem(q); quo,rem
+                sage: quo, rem = p.pseudo_quo_rem(q); quo, rem
                 ((3*x^4 + 13*x^3 + 19*x^2 + 5*x)*T + 18*x^4 + 12*x^3 + 16*x^2 + 16*x,
                  (-113*x^6 - 106*x^5 - 133*x^4 - 101*x^3 - 42*x^2 - 41*x)*T
                          - 34*x^6 + 13*x^5 + 54*x^4 + 126*x^3 + 134*x^2 - 5*x - 50)
@@ -167,50 +167,71 @@ class UniqueFactorizationDomains(Category_singleton):
                 sage: g = 4*x + 2
                 sage: f.gcd(g).parent() is R
                 True
+
+            A slightly more exotic base ring::
+
+                sage: P = PolynomialRing(QQbar, 4, "x")
+                sage: p = sum(QQbar.zeta(i + 1) * P.gen(i) for i in range(4))
+                sage: ((p^4 - 1).gcd(p^3 + 1) / (p + 1)).is_unit()
+                True
             """
+            def content(X):
+                """
+                Return the content of ``X`` up to a unit.
+                """
+                # heuristically, polynomials tend to be monic
+                X_it = reversed(X.coefficients())
+                x = next(X_it)
+                # TODO: currently, there is no member of
+                # `UniqueFactorizationDomains` with `is_unit`
+                # significantly slower than `is_one`, see
+                # :issue:`38924` - when such a domain is eventually
+                # implemented, check whether this is a bottleneck
+                if x.is_unit():
+                    return None
+                for c in X_it:
+                    x = x.gcd(c)
+                    if x.is_unit():
+                        return None
+                return x
+
             if f.degree() < g.degree():
-                A,B = g, f
+                A, B = g, f
             else:
-                A,B = f, g
+                A, B = f, g
 
             if B.is_zero():
                 return A
 
-            a = b = self.zero()
-            for c in A.coefficients():
-                a = a.gcd(c)
-                if a.is_one():
-                    break
-            for c in B.coefficients():
-                b = b.gcd(c)
-                if b.is_one():
-                    break
+            a = content(A)
+            if a is not None:
+                A //= a
+            b = content(B)
+            if b is not None:
+                B //= b
 
-            d = a.gcd(b)
-            A = A // a
-            B = B // b
-            g = h = 1
-
-            delta = A.degree()-B.degree()
-            _,R = A.pseudo_quo_rem(B)
-
+            one = A.base_ring().one()
+            if a is not None and b is not None:
+                d = a.gcd(b)
+            else:
+                d = one
+            g = h = one
+            delta = A.degree() - B.degree()
+            _, R = A.pseudo_quo_rem(B)
             while R.degree() > 0:
                 A = B
-                B = R // (g*h**delta)
+                h_delta = h**delta
+                B = R // (g * h_delta)
                 g = A.leading_coefficient()
-                h = h*g**delta // h**delta
+                h = h * g**delta // h_delta
                 delta = A.degree() - B.degree()
                 _, R = A.pseudo_quo_rem(B)
 
             if R.is_zero():
-                b = self.zero()
-                for c in B.coefficients():
-                    b = b.gcd(c)
-                    if b.is_one():
-                        break
-
-                return d*B // b
-
+                b = content(B)
+                if b is None:
+                    return d * B
+                return d * B // b
             return f.parent()(d)
 
     class ElementMethods:

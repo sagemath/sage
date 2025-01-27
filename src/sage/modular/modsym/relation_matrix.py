@@ -243,8 +243,8 @@ def T_relation_matrix_wtk_g0(syms, mod, field, sparse):
                 v[j0] += s0
             else:
                 v[j0] = s0
-        for j0 in v:
-            entries[(row, j0)] = v[j0]
+        for j0, vj0 in v.items():
+            entries[(row, j0)] = vj0
         row += 1
 
     MAT = MatrixSpace(field, row, len(syms), sparse=True)

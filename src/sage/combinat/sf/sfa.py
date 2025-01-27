@@ -3145,7 +3145,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: R.<x, y> = QQ[]
             sage: s = SymmetricFunctions(R.fraction_field()).s()
             sage: factor((s[3] + x*s[2,1] + 1)*(3*y*s[2] + s[4,1] + x*y))
-            (-s[] + (-x)*s[2, 1] - s[3]) * ((-x*y)*s[] + (-3*y)*s[2] - s[4, 1])
+            (-s[] - x*s[2, 1] - s[3]) * (-x*y*s[] - 3*y*s[2] - s[4, 1])
 
         TESTS::
 
@@ -3833,7 +3833,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: q,t = QQqt.gens()
             sage: p = SymmetricFunctions(QQqt).p()
             sage: p([2]).theta_qt(q,t)
-            ((-q^2+1)/(-t^2+1))*p[2]
+            -((q^2-1)/(-t^2+1))*p[2]
             sage: p([2,1]).theta_qt(q,t)
             ((q^3-q^2-q+1)/(t^3-t^2-t+1))*p[2, 1]
             sage: p(0).theta_qt(q=1,t=3)
@@ -3892,13 +3892,13 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: q,t = QQqt.gens()
             sage: p = SymmetricFunctions(QQqt).p()
             sage: p[5].omega_qt()
-            ((-q^5+1)/(-t^5+1))*p[5]
+            -((q^5-1)/(-t^5+1))*p[5]
             sage: p[5].omega_qt(q,t)
-            ((-q^5+1)/(-t^5+1))*p[5]
+            -((q^5-1)/(-t^5+1))*p[5]
             sage: p([2]).omega_qt(q,t)
             ((q^2-1)/(-t^2+1))*p[2]
             sage: p([2,1]).omega_qt(q,t)
-            ((-q^3+q^2+q-1)/(t^3-t^2-t+1))*p[2, 1]
+            -((q^3-q^2-q+1)/(t^3-t^2-t+1))*p[2, 1]
             sage: p([3,2]).omega_qt(5,q)
             -(2976/(q^5-q^3-q^2+1))*p[3, 2]
             sage: p(0).omega_qt()
@@ -3911,11 +3911,11 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: H([1,1]).omega_qt(q,t)
             ((2*q^2-2*q*t-2*q+2*t)/(t^3-t^2-t+1))*McdH[1, 1] + ((q-1)/(t-1))*McdH[2]
             sage: H([1,1]).omega_qt(t,q)
-            ((-t^3+t^2+t-1)/(-q^3+q^2+q-1))*McdH[2]
+            -((t^3-t^2-t+1)/(-q^3+q^2+q-1))*McdH[2]
             sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
             sage: S = Sym.macdonald().S()
             sage: S([1,1]).omega_qt()
-            ((q^2-q*t-q+t)/(t^3-t^2-t+1))*McdS[1, 1] + ((-q^2*t+q*t+q-1)/(-t^3+t^2+t-1))*McdS[2]
+            ((q^2-q*t-q+t)/(t^3-t^2-t+1))*McdS[1, 1] - ((q^2*t-q*t-q+1)/(-t^3+t^2+t-1))*McdS[2]
             sage: s = Sym.schur()
             sage: s(S([1,1]).omega_qt())
             s[2]
@@ -4859,14 +4859,14 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
             sage: p = Sym.power()
             sage: p([1,1]).nabla()
-            (-1/2*q*t+1/2*q+1/2*t+1/2)*p[1, 1] + (1/2*q*t-1/2*q-1/2*t+1/2)*p[2]
+            -(1/2*q*t-1/2*q-1/2*t-1/2)*p[1, 1] + (1/2*q*t-1/2*q-1/2*t+1/2)*p[2]
             sage: p([2,1]).nabla(q=1)
-            (-t-1)*p[1, 1, 1] + t*p[2, 1]
+            -(t+1)*p[1, 1, 1] + t*p[2, 1]
             sage: p([2]).nabla(q=1)*p([1]).nabla(q=1)
-            (-t-1)*p[1, 1, 1] + t*p[2, 1]
+            -(t+1)*p[1, 1, 1] + t*p[2, 1]
             sage: s = Sym.schur()
             sage: s([2,1]).nabla()
-            (-q^3*t-q^2*t^2-q*t^3)*s[1, 1, 1] + (-q^2*t-q*t^2)*s[2, 1]
+            -(q^3*t+q^2*t^2+q*t^3)*s[1, 1, 1] - (q^2*t+q*t^2)*s[2, 1]
             sage: s([1,1,1]).nabla()
             (q^3+q^2*t+q*t^2+t^3+q*t)*s[1, 1, 1] + (q^2+q*t+t^2+q+t)*s[2, 1] + s[3]
             sage: s([1,1,1]).nabla(t=1)
@@ -4876,9 +4876,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: s(1).nabla()
             s[]
             sage: s([2,1]).nabla(power=-1)
-            ((-q-t)/(q^2*t^2))*s[2, 1] + ((q^2+q*t+t^2)/(-q^3*t^3))*s[3]
+            -((q+t)/(q^2*t^2))*s[2, 1] + ((q^2+q*t+t^2)/(-q^3*t^3))*s[3]
             sage: (s([2])+s([3])).nabla()
-            (-q*t)*s[1, 1] + (q^3*t^2+q^2*t^3)*s[1, 1, 1] + q^2*t^2*s[2, 1]
+            -q*t*s[1, 1] + (q^3*t^2+q^2*t^3)*s[1, 1, 1] + q^2*t^2*s[2, 1]
         """
         parent = self.parent()
         BR = parent.base_ring()

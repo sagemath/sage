@@ -800,17 +800,17 @@ class KRTableauxTypeHorizonal(KirillovReshetikhinTableaux):
             shape_list.append(0)
 
         lst = []
-        for col in range(1, self._s+1):
+        for col in range(1, self._s + 1):
             if (self._s - col) % 2 == 0:
-                lst.extend( [self.letters(self._r - x) for x in range(self._r)] )
+                lst.extend(self.letters(self._r - x) for x in range(self._r))
             else:
                 m = self._r
                 for j, val in enumerate(shape_list):
                     if col >= val:
                         m = j
                         break
-                lst.extend([self.letters(-x) for x in range(m+1, self._r+1)])
-                lst.extend([self.letters(m - x) for x in range(m)])
+                lst.extend(self.letters(-x) for x in range(m + 1, self._r + 1))
+                lst.extend(self.letters(m - x) for x in range(m))
 
         return self.element_class(self, lst)
 

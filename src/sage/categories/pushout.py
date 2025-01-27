@@ -3925,8 +3925,8 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         sage: FS = BlackBoxConstructionFunctor(singular)
         sage: FS(QQ['t'])                                                               # needs sage.libs.singular
         polynomial ring, over a field, global ordering
-        //   coefficients: QQ
-        //   number of vars : 1
+        // coefficients: QQ...
+        // number of vars : 1
         //        block   1 : ordering lp
         //                  : names    t
         //        block   2 : ordering C

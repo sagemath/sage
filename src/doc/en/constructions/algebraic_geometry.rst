@@ -162,14 +162,12 @@ Other methods
 
        sage: singular.LIB("brnoeth.lib")
        sage: s = singular.ring(2,'(x,y)','lp')
-       ...
        sage: f = singular.poly('x3y+y3+x')
-       ...
        sage: klein1 = f.Adj_div(); print(klein1)
        [1]:
           [1]:
-             //   coefficients: ZZ/2
-       //   number of vars : 2
+             // coefficients: ZZ/2...
+       // number of vars : 2
        //        block   1 : ordering lp
        //                  : names    x y
        //        block   2 : ordering C
@@ -191,14 +189,14 @@ Other methods
        sage: print(klein1)
        [1]:
           [1]:
-             //   coefficients: ZZ/2
-       //   number of vars : 2
+             // coefficients: ZZ/2...
+       // number of vars : 2
        //        block   1 : ordering lp
        //                  : names    x y
        //        block   2 : ordering C
           [2]:
-             //   coefficients: ZZ/2
-       //   number of vars : 3
+             // coefficients: ZZ/2...
+       // number of vars : 3
        //        block   1 : ordering lp
        //                  : names    x y z
        //        block   2 : ordering C
@@ -214,8 +212,8 @@ Other methods
        [5]:
           [1]:
              [1]:
-                //   coefficients: ZZ/2
-       //   number of vars : 3
+                // coefficients: ZZ/2...
+       // number of vars : 3
        //        block   1 : ordering ls
        //                  : names    x y t
        //        block   2 : ordering C

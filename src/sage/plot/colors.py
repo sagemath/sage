@@ -1022,8 +1022,8 @@ class ColorsDict(dict):
             148
         """
         # Convert the colors_dict defined above to Color instances.
-        for k in colors_dict:
-            self[k] = Color(colors_dict[k])
+        for k, col in colors_dict.items():
+            self[k] = Color(col)
 
     def __getattr__(self, name):
         """

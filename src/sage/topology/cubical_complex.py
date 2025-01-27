@@ -1472,13 +1472,13 @@ class CubicalComplex(GenericCellComplex):
             ...
             NotImplementedError: suspensions are not implemented for cubical complexes
         """
-#         if n<0:
-#             raise ValueError, "n must be nonnegative."
-#         if n==0:
-#             return self
-#         if n==1:
-#             return self.join(cubical_complexes.Sphere(0))
-#         return self.suspension().suspension(int(n-1))
+        # if n < 0:
+        #     raise ValueError("n must be nonnegative")
+        # if n == 0:
+        #     return self
+        # if n == 1:
+        #     return self.join(cubical_complexes.Sphere(0))
+        # return self.suspension().suspension(int(n-1))
         raise NotImplementedError("suspensions are not implemented for cubical complexes")
 
     def product(self, other):

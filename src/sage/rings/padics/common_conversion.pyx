@@ -1,4 +1,6 @@
 r"""
+Tools for creation of `p`-adic elements
+
 The functions in this file are used in creating new `p`-adic elements.
 
 When creating a `p`-adic element, the user can specify that the absolute
@@ -49,7 +51,7 @@ cdef Rational rat_temp = PY_NEW(Rational)
 
 cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
     """
-    This function determines the valuation of the `p`-adic element
+    Determine the valuation of the `p`-adic element
     that will result from the given data ``x``.
 
     Note that the valuation can differ depending on the ring: if the
@@ -160,7 +162,7 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
 
 cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
     """
-    This function determines the maximum absolute precision possible
+    Determine the maximum absolute precision possible
     for an element created from the given data ``x``.
 
     Note that the valuation can differ depending on the ring: if the
@@ -231,7 +233,7 @@ cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
 
 cdef long comb_prec(iprec, long prec) except? -10000:
     """
-    This function returns the minimum of iprec and prec.
+    Return the minimum of ``iprec`` and ``prec``.
 
     INPUT:
 
@@ -255,7 +257,7 @@ cdef long comb_prec(iprec, long prec) except? -10000:
 
 cdef int _process_args_and_kwds(long *aprec, long *rprec, args, kwds, bint absolute, PowComputer_class prime_pow) except -1:
     """
-    This function obtains values for absprec and relprec from a
+    Obtain values for ``absprec`` and ``relprec`` from a
     combination of positional and keyword arguments.
 
     When creating a `p`-adic element, the user can pass in two arguments: ``absprec`` and ``relprec``.
@@ -332,7 +334,7 @@ cdef inline long cconv_mpq_t_shared(mpz_t out, mpq_t x, long prec, bint absolute
 
     OUTPUT:
 
-    - If ``absolute`` is False then returns the valuation that was
+    - If ``absolute`` is ``False`` then returns the valuation that was
       extracted (``maxordp`` when `x = 0`).
     """
     cdef long numval, denval
@@ -363,6 +365,8 @@ cdef inline long cconv_mpq_t_shared(mpz_t out, mpq_t x, long prec, bint absolute
 cdef inline int cconv_mpq_t_out_shared(mpq_t out, mpz_t x, long valshift, long prec, PowComputer_class prime_pow) except -1:
     """
     Convert the underlying `p`-adic element into a rational.
+
+    INPUT:
 
     - ``out`` -- gives a rational approximating the input. Currently uses
       rational reconstruction but may change in the future to use a more naive
@@ -447,11 +451,11 @@ cdef inline int cconv_shared(mpz_t out, x, long prec, long valshift, PowComputer
         else:
             raise NotImplementedError
     else:
-        raise NotImplementedError("No conversion defined for %s which is a %s in %s"%(x,type(x),x.parent() if hasattr(x,"parent") else "no parent"))
+        raise NotImplementedError("No conversion defined for %s which is a %s in %s" % (x, type(x), x.parent() if hasattr(x, "parent") else "no parent"))
 
 cdef inline long cconv_mpz_t_shared(mpz_t out, mpz_t x, long prec, bint absolute, PowComputer_class prime_pow) except -2:
     """
-    A fast pathway for conversion of integers that doesn't require
+    A fast pathway for conversion of integers that does not require
     precomputation of the valuation.
 
     INPUT:
@@ -484,6 +488,8 @@ cdef inline long cconv_mpz_t_shared(mpz_t out, mpz_t x, long prec, bint absolute
 cdef inline int cconv_mpz_t_out_shared(mpz_t out, mpz_t x, long valshift, long prec, PowComputer_class prime_pow) except -1:
     """
     Convert the underlying `p`-adic element into an integer if possible.
+
+    INPUT:
 
     - ``out`` -- stores the resulting integer as an integer between 0
       and `p^{prec + valshift}`

@@ -812,7 +812,7 @@ class ManinRelations(PollackStevensModularDomain):
             # interior path on either of the last two cusps
 
             for s in range(r + 2, len(cusps)):
-            # s is in the index of the cusp on the right of the path
+                # s is in the index of the cusp on the right of the path
                 cusp1 = cusps[r]
                 cusp2 = cusps[s]
                 if self.is_unimodular_path(cusp1, cusp2):
@@ -1213,10 +1213,10 @@ class ManinRelations(PollackStevensModularDomain):
 
                         if (b1 ** 2 + b2 ** 2 + b1 * b2) % N != 0:
 
-                        # this congruence is exactly equivalent to
-                        # gam * [0 -1; 1 -1] * gam^(-1) is in Gamma_0(N)
-                        # where gam is the matrix corresponding to the
-                        # unimodular path connecting cusp1 to cusp2
+                            # this congruence is exactly equivalent to
+                            # gam * [0 -1; 1 -1] * gam^(-1) is in Gamma_0(N)
+                            # where gam is the matrix corresponding to the
+                            # unimodular path connecting cusp1 to cusp2
 
                             C[s] = "i"  # The '?' is changed to an 'i'
                              # indicating that a new cusp needs to

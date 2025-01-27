@@ -2608,7 +2608,7 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
             raise TypeError("modulus must be a polynomial")
         if names is not None and not isinstance(names, str):
             names = str(names)
-            #raise TypeError, "names must be a string"
+            # raise TypeError("names must be a string")
         q = Integer(q)
         F = q.factor()
         if len(F) != 1:

@@ -328,7 +328,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False,
             g.neighbors[j][0] = i
             # Note: cannot use the dereference Cython operator here, do not
             # known why but the following line does not compile
-            #dereference(g.neighbors[j]) = i
+            # dereference(g.neighbors[j]) = i
             if edge_labelled:
                 edge_labels[g.neighbors[j] - g.edges] = e[2]
             postincrement(g.neighbors[j])  # increment pointer to next item

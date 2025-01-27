@@ -1735,8 +1735,8 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 #        """
 #        from sage.modular.modform.all import ModularForms
 #        if self.ambient_module() != right.ambient_module():
-#            raise ArithmeticError, "Intersection of %s and %s not defined."%\
-#                                   (self, right)
+#            raise ArithmeticError("Intersection of %s and %s not defined." %
+#                                  (self, right))
 #        V = self.embedded_submodule().intersection(right.embedded_submodule())
 #        return ModularForms(self.ambient_module(),V)
 #        return self.span([ self(b) for b in V.basis() ])

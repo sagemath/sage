@@ -358,12 +358,11 @@ class StringMonoidElement(FreeMonoidElement):
                 char_dict[i] = 1
         nn = 0
         ci_num = 0
-        for i in char_dict.keys():
-            ni = char_dict[i]
+        for ni in char_dict.values():
             nn += ni
-            ci_num += ni*(ni-1)
-        ci_den = nn*(nn-1)
-        return RR(ci_num)/ci_den
+            ci_num += ni * (ni - 1)
+        ci_den = nn * (nn - 1)
+        return RR(ci_num) / ci_den
 
     def character_count(self):
         r"""

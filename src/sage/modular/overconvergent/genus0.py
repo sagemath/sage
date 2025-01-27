@@ -1187,7 +1187,7 @@ class OverconvergentModularFormsSpace(Module):
             F = self.base_ring()
 
         if F.is_exact():
-            # raise TypeError, "cannot calculate eigenfunctions over exact base fields"
+            # raise TypeError("cannot calculate eigenfunctions over exact base fields")
             F = pAdicField(self.prime(), 100)  # noqa:F821
 
         m = self.hecke_matrix(self.prime(), n, use_recurrence=True, exact_arith=exact_arith)

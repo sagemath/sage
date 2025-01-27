@@ -1590,7 +1590,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         edges = [(i, i + 1) for i in range(1, n)]
         edges.extend([(n, n + 1), (n, n + 2), (n + 1, n + 3), (n + 2, n + 3)])
-        edges.extend([(i, i + 1) for i in range(n + 3, 2 * n + 2)])
+        edges.extend((i, i + 1) for i in range(n + 3, 2 * n + 2))
         p = DiGraph([list(range(1, 2 * n + 3)), edges])
         return DCompletePoset(p)
 

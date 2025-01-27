@@ -192,6 +192,18 @@ class Fields(CategoryWithAxiom):
     Finite = LazyImport('sage.categories.finite_fields', 'FiniteFields', at_startup=True)
 
     class ParentMethods:
+        def krull_dimension(self):
+            """
+            Return the Krull dimension of this field, which is 0.
+
+            EXAMPLES::
+
+                sage: QQ.krull_dimension()
+                0
+                sage: Frac(QQ['x,y']).krull_dimension()
+                0
+            """
+            return 0
 
         def is_field(self, proof=True):
             r"""
@@ -673,6 +685,11 @@ class Fields(CategoryWithAxiom):
                 sage: gcd(0.0, 0.0)                                                     # needs sage.rings.real_mpfr
                 0.000000000000000
 
+            TESTS::
+
+                sage: QQbar(0).gcd(QQbar.zeta(3))
+                1
+
             AUTHOR:
 
             - Simon King (2011-02) -- :issue:`10771`
@@ -687,7 +704,7 @@ class Fields(CategoryWithAxiom):
                 from sage.rings.integer_ring import ZZ
                 try:
                     return P(ZZ(self).gcd(ZZ(other)))
-                except TypeError:
+                except (TypeError, ValueError):
                     pass
 
             if self == P.zero() and other == P.zero():
