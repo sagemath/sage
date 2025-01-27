@@ -1774,7 +1774,8 @@ def branching_rule(Rtype, Stype, rule='default'):
             if all(t[0] == 'A' for t in stypes):
                 def rule(x):
                     ret = [sum(x[i*ns[1]:(i+1)*ns[1]]) for i in range(ns[0])]
-                    ret.extend([sum(x[ns[1]*j+i] for j in range(ns[0])) for i in range(ns[1])])
+                    ret.extend(sum(x[ns[1]*j+i] for j in range(ns[0]))
+                               for i in range(ns[1]))
                     return ret
                 return BranchingRule(Rtype, Stype, rule, "tensor")
             else:
