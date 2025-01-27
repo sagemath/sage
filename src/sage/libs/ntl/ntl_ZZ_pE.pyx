@@ -121,6 +121,7 @@ cdef class ntl_ZZ_pE():
             elif isinstance(v, Integer):
                 mpz_to_ZZ(&temp, (<Integer>v).value)
                 self.x = ZZ_to_ZZ_pE(temp)
+
             else:
                 str_v = str(v)  # can cause modulus to change; Issue #25790
                 self.c.restore_c()
