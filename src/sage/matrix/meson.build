@@ -108,10 +108,6 @@ foreach name, pyx : extension_data
     deps += [flint, mpfi]
   elif name == 'misc_flint' or name == 'matrix_rational_sparse' or name == 'change_ring'
     deps += [flint]
-    if is_windows
-      # Compilation error: include\flint\fmpz_mpoly.h(975): error C2143: syntax error: missing ')' before 'constant'
-      continue
-    endif
   endif
 
   py.extension_module(
