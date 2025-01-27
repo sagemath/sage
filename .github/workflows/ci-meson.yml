@@ -64,7 +64,9 @@ jobs:
         uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: ${{ matrix.python }}
-          miniforge-version: latest
+          # Disabled for now due to
+          # https://github.com/conda-incubator/setup-miniconda/issues/379
+          # miniforge-version: latest
           use-mamba: true
           channels: conda-forge
           channel-priority: true
