@@ -1031,6 +1031,8 @@ def lah_number(n, k) -> Integer:
         return ZZ.zero()
     if k == 0:
         return ZZ.zero() if n else ZZ.one()
+    # Exact form of the formula was chosen for performance after extensive
+    # experiments. See Issue #39379.
     a = n.binomial(k)
     return a * k // n * a * (n - k).factorial()
 
