@@ -87,7 +87,7 @@ else:
     python_packages = find_namespace_packages(where=SAGE_SRC, include=['sage', 'sage.*'])
     log.debug(f"python_packages = {python_packages}")
 
-    log.info(f"Discovering Python/Cython source code... done")
+    log.info("Discovering Python/Cython source code... done")
 
     # from sage_build_cython:
     import Cython.Compiler.Options
