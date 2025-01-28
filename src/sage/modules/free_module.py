@@ -73,18 +73,50 @@ Base ring::
 Enumeration of `\ZZ^n` happens in order of increasing `1`-norm
 primarily and increasing `\infty`-norm secondarily::
 
-    sage: print([v for _,v in zip(range(31), ZZ^3)])
+    sage: from itertools import islice
+    sage: list(islice(ZZ^3, 0, 31))
     [(0, 0, 0),
      (1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1),
      (1, 1, 0), (-1, 1, 0), (1, -1, 0), (-1, -1, 0), (1, 0, 1), (-1, 0, 1), (1, 0, -1), (-1, 0, -1), (0, 1, 1), (0, -1, 1), (0, 1, -1), (0, -1, -1),
      (2, 0, 0), (-2, 0, 0), (0, 2, 0), (0, -2, 0), (0, 0, 2), (0, 0, -2),
      (1, 1, 1), (-1, 1, 1), (1, -1, 1), (-1, -1, 1), (1, 1, -1), ...]
 
-For other infinite enumerated base rings (i.e., rings which
-are objects of the category :class:`InfiniteEnumeratedSets`),
-a free module of rank `r` is enumerated by applying
-:meth:`FreeModule_ambient.linear_combination_of_basis`
-to all vectors in `\ZZ^r`, enumerated in the way shown above.
+For other infinite enumerated base rings, a free module of rank `r`
+is enumerated in an unspecified order, it is only guaranteed that
+every element will eventually be seen exactly once.
+
+    sage: list(islice(QQ^3, 0, 31))
+    [(0, 0, 0),
+     (0, 0, 1),
+     (0, 1, 0),
+     (0, 1, 1),
+     (1, 0, 0),
+     (1, 0, 1),
+     (1, 1, 0),
+     (1, 1, 1),
+     (0, 0, -1),
+     (1, 0, -1),
+     (0, 1, -1),
+     (1, 1, -1),
+     (0, -1, 0),
+     (1, -1, 0),
+     (0, -1, 1),
+     (1, -1, 1),
+     (0, -1, -1),
+     (1, -1, -1),
+     (-1, 0, 0),
+     (-1, 1, 0),
+     (-1, 0, 1),
+     (-1, 1, 1),
+     (-1, 0, -1),
+     (-1, 1, -1),
+     (-1, -1, 0),
+     (-1, -1, 1),
+     (-1, -1, -1),
+     (0, 0, 1/2),
+     (1, 0, 1/2),
+     (-1, 0, 1/2),
+     (0, 1, 1/2)]
 
 TESTS:
 
@@ -187,7 +219,6 @@ import sage.rings.integer_ring
 import sage.rings.rational_field
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.misc.cachefunc import cached_method
@@ -2424,8 +2455,7 @@ class FreeModule_generic(Module_free_ambient):
             sage: [x for x in W]                                                        # needs sage.rings.finite_rings
             [(0, 0), (a, a), (a + 1, a + 1), (1, 1)]
 
-        Free modules over enumerated infinite rings (i.e., those in the
-        category :class:`InfiniteEnumeratedSets`) iterate over module
+        Free modules over ``ZZ`` iterate over module
         elements ordered by (primarily) the 1-norm and (secondarily) the
         `\infty`-norm of their coordinate vectors::
 
@@ -2456,6 +2486,135 @@ class FreeModule_generic(Module_free_ambient):
             True
             sage: [sum(o <= b and m <= b for o,m in norms) for b in range(8)]  # did not miss any
             [1, 11, 61, 231, 681, 1683, 3653, 7183]
+
+        Other infinite countable base rings (order is not guaranteed, as long as all elements
+        are eventually seen exactly once)::
+
+            sage: from itertools import islice
+            sage: list(islice(QQ^1, 30))
+            [(0),
+             (1),
+             (-1),
+             (1/2),
+             (-1/2),
+             (2),
+             (-2),
+             (1/3),
+             (-1/3),
+             (3),
+             (-3),
+             (2/3),
+             (-2/3),
+             (3/2),
+             (-3/2),
+             (1/4),
+             (-1/4),
+             (4),
+             (-4),
+             (3/4),
+             (-3/4),
+             (4/3),
+             (-4/3),
+             (1/5),
+             (-1/5),
+             (5),
+             (-5),
+             (2/5),
+             (-2/5),
+             (5/2)]
+            sage: list(islice(QQ^3, 30))
+            [(0, 0, 0),
+             (0, 0, 1),
+             (0, 1, 0),
+             (0, 1, 1),
+             (1, 0, 0),
+             (1, 0, 1),
+             (1, 1, 0),
+             (1, 1, 1),
+             (0, 0, -1),
+             (1, 0, -1),
+             (0, 1, -1),
+             (1, 1, -1),
+             (0, -1, 0),
+             (1, -1, 0),
+             (0, -1, 1),
+             (1, -1, 1),
+             (0, -1, -1),
+             (1, -1, -1),
+             (-1, 0, 0),
+             (-1, 1, 0),
+             (-1, 0, 1),
+             (-1, 1, 1),
+             (-1, 0, -1),
+             (-1, 1, -1),
+             (-1, -1, 0),
+             (-1, -1, 1),
+             (-1, -1, -1),
+             (0, 0, 1/2),
+             (1, 0, 1/2),
+             (-1, 0, 1/2)]
+            sage: list(islice(QQ[I]^1, 30))
+            [(0),
+             (1),
+             (I),
+             (-1),
+             (I + 1),
+             (-I),
+             (1/2),
+             (I - 1),
+             (-I + 1),
+             (1/2*I),
+             (-1/2),
+             (I + 1/2),
+             (-I - 1),
+             (1/2*I + 1),
+             (-1/2*I),
+             (2),
+             (I - 1/2),
+             (-I + 1/2),
+             (1/2*I - 1),
+             (-1/2*I + 1),
+             (2*I),
+             (-2),
+             (I + 2),
+             (-I - 1/2),
+             (1/2*I + 1/2),
+             (-1/2*I - 1),
+             (2*I + 1),
+             (-2*I),
+             (1/3),
+             (I - 2)]
+            sage: list(islice(QQ[I]^3, 30))
+            [(0, 0, 0),
+             (0, 0, 1),
+             (0, 1, 0),
+             (0, 1, 1),
+             (1, 0, 0),
+             (1, 0, 1),
+             (1, 1, 0),
+             (1, 1, 1),
+             (0, 0, I),
+             (1, 0, I),
+             (0, 1, I),
+             (1, 1, I),
+             (0, I, 0),
+             (1, I, 0),
+             (0, I, 1),
+             (1, I, 1),
+             (0, I, I),
+             (1, I, I),
+             (I, 0, 0),
+             (I, 1, 0),
+             (I, 0, 1),
+             (I, 1, 1),
+             (I, 0, I),
+             (I, 1, I),
+             (I, I, 0),
+             (I, I, 1),
+             (I, I, I),
+             (0, 0, -1),
+             (1, 0, -1),
+             (I, 0, -1)]
         """
         G = self.gens()
         if not G:
@@ -2464,7 +2623,7 @@ class FreeModule_generic(Module_free_ambient):
 
         R = self.base_ring()
 
-        if R in InfiniteEnumeratedSets():
+        if R is sage.rings.integer_ring.ZZ:
             # This makes iter(ZZ^n) produce vectors in a "natural" order,
             # rather than only vectors with the first component nonzero.
             # Algorithm: Initial version which ordered by max-norm due to
@@ -2492,6 +2651,30 @@ class FreeModule_generic(Module_free_ambient):
                     for vec in aux(n, norm, max_):
                         yield self.linear_combination_of_basis(vec)
             assert False  # should loop forever
+
+        def tuples_of_first_n(first_count, length):
+            """
+            Iterates over all tuples of length ``length`` with elements
+            being the first ``first_count`` elements of ``R``.
+            """
+            nonlocal R
+            if length == 0:
+                yield ()
+                return
+            for first in itertools.islice(R, 0, first_count):
+                for rest in tuples_of_first_n(first_count, length - 1):
+                    yield (first,) + rest
+
+        if R.cardinality() == sage.rings.infinity.Infinity:
+            for i, furthest_element in enumerate(R):
+                for furthest_element_mask in itertools.product((0, 1), repeat=len(G)):
+                    if not any(furthest_element_mask): continue
+                    for rest in tuples_of_first_n(i, len(G) - sum(furthest_element_mask)):
+                        rest = list(rest)
+                        vec = [furthest_element if mask else rest.pop() for mask in furthest_element_mask]
+                        assert not rest
+                        yield self.linear_combination_of_basis(vec)
+            assert False, "should loop forever"
 
         iters = [iter(R) for _ in range(len(G))]
         for x in iters:
