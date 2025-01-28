@@ -1827,6 +1827,12 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: A.set_immutable()
             sage: loads(dumps(A)).is_immutable()
             True
+
+        Check that :issue:`39367` is achieved::
+
+            sage: l = len(dumps(random_matrix(GF(2), 2000, 2000))); l  # random   # previously ~ 785000
+            610207
+            sage: assert l < 650000
         """
         cdef int i,j, r,c, size
 
@@ -1845,11 +1851,17 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
                 if mzd_read_bit(self._entries, i, j):
                     gdImageSetPixel(im, j, i, black )
 
-        cdef signed char *buf = <signed char*>gdImagePngPtr(im, &size)
+        cdef char *buf
+        try:
+            buf = <char*>gdImagePngPtr(im, &size)
+        finally:
+            gdImageDestroy(im)
 
-        data = [buf[i] for i in range(size)]
-        gdFree(buf)
-        gdImageDestroy(im)
+        cdef bytes data
+        try:
+            data = buf[:size]
+        finally:  # recommended by https://cython.readthedocs.io/en/latest/src/tutorial/strings.html
+            gdFree(buf)
         return unpickle_matrix_mod2_dense_v2, (r,c, data, size, self._is_immutable)
 
     cpdef _export_as_string(self):
@@ -2223,6 +2235,28 @@ def unpickle_matrix_mod2_dense_v2(r, c, data, size, immutable=False):
         sage: loads(s)
         [1 0]
         [0 1]
+
+    Check that old pickles before :issue:`39367` still work::
+
+        sage: loads(bytes.fromhex(  # hexstring produced with dumps(matrix.zero(GF(2),10,10)).hex()
+        ....:     '789c6b604a2e4e4c4fd5cb4d2c29caac8052f1b9f92946f129a979c5a95ca5'
+        ....:     '790599c9d939a9f11852f165465c850c1ade5cde5cb1858c1a5e9dfffffff7'
+        ....:     '0ef0f6f376f7e6050a4a01310318f27a7b7a7b78bb780741f95c709ad19b19'
+        ....:     'c2f6da0ed4ecf5076442acd73f100551c20634d0c73bc4db15aaec3f481982'
+        ....:     '580a226e8288f920e22e4223a77701d0ce48ef62308fcfeb084c0aca64f49a'
+        ....:     '0aa2b4bdf9bca5a15af880ce74f17604dac6e135132499ecf50344d57b3580'
+        ....:     '75789b7b330195b103fd21e85deeb51064e362908c2f441d03147a025debe7'
+        ....:     'ede2b50e24e8e49de0d50464a47ae775961432051532eb0100093b9ba3'))
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
+        [0 0 0 0 0 0 0 0 0 0]
     """
     from sage.matrix.constructor import Matrix
     from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
@@ -2234,15 +2268,21 @@ def unpickle_matrix_mod2_dense_v2(r, c, data, size, immutable=False):
     if r == 0 or c == 0:
         return A
 
-    cdef signed char *buf = <signed char*>check_malloc(size)
-    for i from 0 <= i < size:
-        buf[i] = data[i]
+    cdef signed char *buf
+    cdef gdImagePtr im
+    if isinstance(data, bytes):
+        sig_on()
+        im = gdImageCreateFromPngPtr(size, <char *><bytes>data)
+        sig_off()
+    else:
+        buf = <signed char*>check_malloc(size)
+        for i from 0 <= i < size:
+            buf[i] = data[i]
 
-    sig_on()
-    cdef gdImagePtr im = gdImageCreateFromPngPtr(size, buf)
-    sig_off()
-
-    sig_free(buf)
+        sig_on()
+        im = gdImageCreateFromPngPtr(size, buf)
+        sig_off()
+        sig_free(buf)
 
     if gdImageSX(im) != c or gdImageSY(im) != r:
         raise TypeError("Pickled data dimension doesn't match.")
