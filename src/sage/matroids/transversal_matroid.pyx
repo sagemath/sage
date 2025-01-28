@@ -783,17 +783,17 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             else:
                 new_sets.append(s)
 
+        groundset = self._groundset.union([element])
         if newset:
             if newset is True:
-                newset = newlabel(self._groundset.union(labels))
+                newset = newlabel(groundset.union(labels))
             new_sets.append([element])
             labels = list(labels)  # Make a shallow copy since we mutate it
             labels.append(newset)
 
-        groundset = self._groundset.union([element])
         return TransversalMatroid(new_sets, groundset, labels)
 
-    def transversal_extensions(self, element=None, sets=[]):
+    def transversal_extensions(self, element=None, sets=None):
         r"""
         Return an iterator of extensions based on the transversal presentation.
 
@@ -831,7 +831,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             raise ValueError("cannot extend by element already in groundset")
 
         labels = self._set_labels_input
-        if not sets:
+        if sets is None:
             sets = labels
         elif not set(sets).issubset(labels):
             raise ValueError("sets do not match presentation")
