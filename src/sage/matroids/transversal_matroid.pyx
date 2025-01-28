@@ -668,7 +668,7 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             labels.append(l)
         return TransversalMatroid(sets, groundset=self.groundset(), set_labels=labels)
 
-    cpdef transversal_extension(self, element=None, newset=False, sets=[]):
+    cpdef transversal_extension(self, element=None, newset=False, sets=None):
         r"""
         Return a :class:`TransversalMatroid` extended by an element.
 
@@ -751,6 +751,8 @@ cdef class TransversalMatroid(BasisExchangeMatroid):
             Transversal matroid of rank 3 on 5 elements, with 3 sets
             sage: Ne = N.transversal_extension(element='f', sets=['s2'])
         """
+        if sets is None:
+            sets = []
         cdef set parsed_sets = set(sets)
         if element is None:
             element = newlabel(self._groundset)
