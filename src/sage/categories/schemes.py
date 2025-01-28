@@ -29,7 +29,7 @@ from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.categories.map', 'Map')
 lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
-lazy_import('sage.schemes.generic.scheme', 'Scheme')
+lazy_import('sage.schemes.generic.scheme', ['Scheme', 'AffineScheme'])
 
 
 class Schemes(Category):
@@ -198,7 +198,6 @@ class Schemes_over_base(Category_over_base):
             sage: Schemes(Spec(ZZ)) # indirect doctest
             Category of schemes over Integer Ring
         """
-        from sage.schemes.generic.scheme import AffineScheme
         base = self.base()
         if isinstance(base, AffineScheme):
             base = base.coordinate_ring()
@@ -229,8 +228,7 @@ class AbelianVarieties(Schemes_over_base):
             sage: AbelianVarieties(QQ) is AbelianVarieties(Spec(QQ))  # indirect doctest
             True
         """
-        from sage.schemes.generic.scheme import Scheme, AffineScheme
-        if not isinstance(base, Schme):
+        if not isinstance(base, Scheme):
             base = Schemes()(base)
         if not (isinstance(base, AffineScheme) and base.coordinate_ring() in Fields()):
             raise ValueError('category of abelian varieties is only defined over fields')
@@ -286,8 +284,7 @@ class AbelianVarieties(Schemes_over_base):
             sage: AbelianVarieties(Spec(QQ))  # indirect doctest
             Category of abelian varieties over Rational Field
         """
-        from sage.schemes.generic.scheme import is_AffineScheme
-        if is_AffineScheme(self.base_scheme()):
+        if isinstance(self.base_scheme(), AffineScheme):
             return "abelian varieties over %s" % self.base_scheme().coordinate_ring()
         else:
             return "abelian varieties over %s" % self.base_scheme()
@@ -378,7 +375,6 @@ class Jacobians(Schemes_over_base):
             sage: Jacobians(Spec(QQ))
             Category of Jacobians over Rational Field
         """
-        from sage.schemes.generic.scheme import AffineScheme
         if isinstance(base, AffineScheme):
             base = base.coordinate_ring()
         if base not in Fields():
