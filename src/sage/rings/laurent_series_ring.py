@@ -42,7 +42,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring_element import LaurentSeries
-from sage.rings.ring import CommutativeRing
+from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 try:
@@ -84,7 +84,7 @@ def is_LaurentSeriesRing(x):
     return isinstance(x, (LaurentSeriesRing, LazyLaurentSeriesRing))
 
 
-class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
+class LaurentSeriesRing(UniqueRepresentation, Parent):
     r"""
     Univariate Laurent Series Ring.
 
@@ -290,9 +290,9 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         self._power_series_ring = power_series
         self._one_element = self.element_class(self, power_series.one())
-        CommutativeRing.__init__(self, base_ring,
-                names=power_series.variable_names(),
-                category=category)
+        Parent.__init__(self, base_ring,
+                        names=power_series.variable_names(),
+                        category=category)
 
     def base_extend(self, R):
         """
@@ -813,6 +813,16 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         if n != 0:
             raise IndexError("generator {} not defined".format(n))
         return self.element_class(self, [0, 1])
+
+    def gens(self) -> tuple:
+        """
+        EXAMPLES::
+
+            sage: R = LaurentSeriesRing(QQ, "x")
+            sage: R.gens()
+            (x,)
+        """
+        return (self.gen(),)
 
     def uniformizer(self):
         """
