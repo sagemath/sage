@@ -76,6 +76,7 @@ from sage.arith.power cimport generic_power
 from sage.arith.misc import crt
 from sage.arith.long cimport pyobject_to_long
 from sage.misc.mrange import cartesian_product_iterator
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.structure.factorization import Factorization
 from sage.structure.richcmp cimport (richcmp, richcmp_item,
         rich_to_bool, rich_to_bool_sgn)
@@ -1509,7 +1510,14 @@ cdef class Polynomial(CommutativePolynomial):
             sage: ~f
             1/(x - 90283)
         """
-        return self.parent().one() / self
+        try:
+            return self.parent().one() / self
+        except TypeError:
+            try:
+                return self.inverse_of_unit()
+            except (ArithmeticError, NotImplementedError):
+                pass
+            raise
 
     def inverse_of_unit(self):
         """
@@ -1531,12 +1539,32 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: Integers(1)['x'](0).inverse_of_unit()
             0
+            sage: R.<x> = Zmod(16)[]
+            sage: f = 2*x + 1
+            sage: g = f.inverse_of_unit(); g
+            8*x^3 + 4*x^2 + 14*x + 1
+            sage: ~f
+            8*x^3 + 4*x^2 + 14*x + 1
+            sage: g.parent()
+            Univariate Polynomial Ring in x over Ring of integers modulo 16
+            sage: f*g
+            1
         """
         d = self.degree()
         if d > 0:
             if not self.is_unit():
                 raise ArithmeticError(f"{self} is not a unit in {self.parent()}")
             else:
+                R = self.base_ring()
+                if isinstance(R, sage.rings.abc.IntegerModRing):
+                    n, e = R.cardinality().perfect_power()
+                    if e > 1:
+                        f = self.change_ring(IntegerModRing(n))
+                        assert f.is_unit()  # because self.is_unit()
+                        g = f.inverse_of_unit().change_ring(R)
+                        # then self * g = 1 (mod n)
+                        # (self * g)^n^(e-1) = 1 (mod n^e)
+                        return (self * g)**(n**(e-1) - 1) * g
                 raise NotImplementedError("polynomial inversion over non-integral domains not implemented")
         elif d == -1:
             cst = self._parent._base.zero()
