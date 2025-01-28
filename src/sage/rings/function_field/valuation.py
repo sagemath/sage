@@ -157,6 +157,7 @@ from sage.rings.valuation.valuation import DiscreteValuation, DiscretePseudoValu
 from sage.rings.valuation.trivial_valuation import TrivialValuation
 from sage.rings.valuation.mapped_valuation import FiniteExtensionFromLimitValuation, MappedValuation_base
 
+
 class FunctionFieldValuationFactory(UniqueFactory):
     r"""
     Create a valuation on ``domain`` corresponding to ``prime``.

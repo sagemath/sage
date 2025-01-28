@@ -34,7 +34,7 @@ permissions:
 
 jobs:
 
-  # standard-pre and standard (without ptest) for the default platform (used by build.yml etc.)
+  # standard (without ptest) for the default platform (used by build.yml etc.)
   default:
     uses: ./.github/workflows/docker.yml
     with:
@@ -50,28 +50,32 @@ jobs:
       tox_packages_factors: >-
         ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      logs_artifact: false
 
   # All platforms. This duplicates the default platform, but why not,
   # it makes it more robust regarding random timeouts.
 
-  standard-pre:
+  standard:
     if: ${{ success() || failure() }}
     uses: ./.github/workflows/docker.yml
     with:
       # Build from scratch
-      docker_targets: "with-system-packages configured with-targets-pre"
+      free_disk_space: true
+      docker_targets: "with-system-packages configured with-targets-pre with-targets with-targets-optional"
       # FIXME: duplicated from env.TARGETS
       targets_pre: all-sage-local
+      targets: build doc-html
+      targets_optional: ptest
       tox_packages_factors: >-
           ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
-      # Make sure that all "standard-pre" jobs can start simultaneously,
+      # Make sure that all "standard" jobs can start simultaneously,
       # so that runners are available by the time that "default" starts.
       max_parallel: 50
 
-  standard:
+  standard-constraints_pkgs-norequirements:
     if: ${{ success() || failure() }}
-    needs: [standard-pre]
+    needs: [standard]
     uses: ./.github/workflows/docker.yml
     with:
       # Build incrementally from previous stage (pre)
@@ -79,20 +83,15 @@ jobs:
       free_disk_space: true
       from_docker_repository: ghcr.io/${{ github.repository }}/
       from_docker_target: "with-targets-pre"
-      docker_targets: "with-targets with-targets-optional"
-      # FIXME: duplicated from env.TARGETS
-      targets: build doc-html
-      targets_optional: ptest
+      docker_targets: "with-targets-pre"
+      targets_pre: all-sage-local python3-ensure tox-ensure sagelib-tox-sagepython-constraints_pkgs-norequirements
       tox_packages_factors: >-
           ["standard"]
-      docker_push_repository: ghcr.io/${{ github.repository }}/
-      # Reduce from 30 to 20 because it runs in parallel with 'standard-sitepackages'
-      # and 'minimal-pre' below
-      max_parallel: 20
+      max_parallel: 15
 
   standard-sitepackages:
     if: ${{ success() || failure() }}
-    needs: [standard-pre]
+    needs: [standard]
     uses: ./.github/workflows/docker.yml
     with:
       # Build incrementally from previous stage (pre)
@@ -128,38 +127,22 @@ jobs:
       docker_push_repository: ghcr.io/${{ github.repository }}/
       max_parallel: 8
 
-  minimal-pre:
+  minimal:
     if: ${{ success() || failure() }}
     uses: ./.github/workflows/docker.yml
     with:
       # Build from scratch
-      docker_targets: "with-system-packages configured with-targets-pre"
+      free_disk_space: true
+      docker_targets: "with-system-packages configured with-targets-pre with-targets with-targets-optional"
       # FIXME: duplicated from env.TARGETS
       targets_pre: all-sage-local
-      tox_packages_factors: >-
-          ["minimal"]
-      docker_push_repository: ghcr.io/${{ github.repository }}/
-      # Reduced from 30 because it may run in parallel with 'standard' and 'standard-sitepackages' above.
-      # Calibrated for clogging the job pipeline until the "default" job has finished.
-      max_parallel: 24
-
-  minimal:
-    if: ${{ success() || failure() }}
-    needs: [minimal-pre]
-    uses: ./.github/workflows/docker.yml
-    with:
-      # Build incrementally from previous stage (pre)
-      incremental: true
-      free_disk_space: true
-      from_docker_repository: ghcr.io/${{ github.repository }}/
-      from_docker_target: "with-targets-pre"
-      docker_targets: "with-targets with-targets-optional"
-      # FIXME: duplicated from env.TARGETS
       targets: build doc-html
       targets_optional: ptest
       tox_packages_factors: >-
           ["minimal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
+      # Reduced from 30 because it may run in parallel with 'standard' and 'standard-sitepackages' above.
+      # Calibrated for clogging the job pipeline until the "default" job has finished.
       max_parallel: 24
 
   maximal-pre:
@@ -176,7 +159,7 @@ jobs:
           ["maximal"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
 
-  optional-0-o:
+  optional:
     if: ${{ success() || failure() }}
     needs: [maximal-pre]
     uses: ./.github/workflows/docker.yml
@@ -188,13 +171,12 @@ jobs:
       tox_packages_factors: >-
           ["maximal"]
       docker_targets: "with-targets-optional"
-      # [0-9a-o] excludes _, in particular package _develop
-      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[0-9a-o]))'
+      # We remove packages starting with _, in particular package _develop
+      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep -v ^_))'
 
-
-  optional-p-z:
+  experimental:
     if: ${{ success() || failure() }}
-    needs: [optional-0-o]
+    needs: [optional]
     uses: ./.github/workflows/docker.yml
     with:
       incremental: true
@@ -204,33 +186,4 @@ jobs:
       tox_packages_factors: >-
           ["maximal"]
       docker_targets: "with-targets-optional"
-      # [0-9a-o] excludes _, in particular package _develop
-      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :optional: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[p-z]))'
-
-  experimental-0-o:
-    if: ${{ success() || failure() }}
-    needs: [optional-p-z]
-    uses: ./.github/workflows/docker.yml
-    with:
-      incremental: true
-      free_disk_space: true
-      from_docker_repository: ghcr.io/${{ github.repository }}/
-      from_docker_target: "with-targets-pre"
-      tox_packages_factors: >-
-          ["maximal"]
-      docker_targets: "with-targets-optional"
-      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :experimental: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[0-9a-o]))'
-
-  experimental-p-z:
-    if: ${{ success() || failure() }}
-    needs: [experimental-0-o]
-    uses: ./.github/workflows/docker.yml
-    with:
-      incremental: true
-      free_disk_space: true
-      from_docker_repository: ghcr.io/${{ github.repository }}/
-      from_docker_target: "with-targets-pre"
-      tox_packages_factors: >-
-          ["maximal"]
-      docker_targets: "with-targets-optional"
-      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :experimental: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc | grep ^[p-z]))'
+      targets_optional: '$(echo $(export PATH=build/bin:$PATH && sage-package list :experimental: --has-file "spkg-install.in|spkg-install|requirements.txt" --no-file "huge|has_nonfree_dependencies" | grep -v sagemath_doc))'

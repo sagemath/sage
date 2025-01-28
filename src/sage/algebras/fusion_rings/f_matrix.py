@@ -189,7 +189,7 @@ class FMatrix(SageObject):
         sage: f.f_from(s, s, s, s), f.f_to(s, s, s, s)
         ([i0, p], [i0, p])
 
-    The last two statments show that the possible values of
+    The last two statements show that the possible values of
     `X` and `Y` when `A = B = C = D = s` are `i_0` and `p`.
 
     The F-matrix is computed by solving the so-called
@@ -1991,7 +1991,7 @@ class FMatrix(SageObject):
 
     def find_orthogonal_solution(self, checkpoint=False, save_results='', warm_start='', use_mp=True, verbose=True):
         r"""
-        Solve the the hexagon and pentagon relations, along with
+        Solve the hexagon and pentagon relations, along with
         orthogonality constraints, to evaluate an orthogonal F-matrix.
 
         INPUT:

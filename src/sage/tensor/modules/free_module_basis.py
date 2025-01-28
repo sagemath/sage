@@ -35,6 +35,7 @@ from sage.rings.integer_ring import ZZ
 from sage.sets.family import AbstractFamily
 from sage.structure.unique_representation import UniqueRepresentation
 
+
 class Basis_abstract(UniqueRepresentation, AbstractFamily):
     """
     Abstract base class for (dual) bases of free modules.
@@ -419,6 +420,7 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
 
 #******************************************************************************
 
+
 class FreeModuleCoBasis(Basis_abstract):
     r"""
     Dual basis of a free module over a commutative ring.
@@ -498,7 +500,7 @@ class FreeModuleCoBasis(Basis_abstract):
         Basis_abstract.__init__(self, basis._fmodule, symbol, latex_symbol,
                                 indices, latex_indices)
         # The individual linear forms:
-        vl = list()
+        vl = []
         fmodule = self._fmodule
         ring_one = fmodule._ring.one()
         for i in fmodule.irange():
@@ -548,6 +550,7 @@ class FreeModuleCoBasis(Basis_abstract):
         return "Dual basis {} on the {}".format(self._name, self._fmodule)
 
 #******************************************************************************
+
 
 class FreeModuleBasis(Basis_abstract):
     r"""
@@ -716,7 +719,7 @@ class FreeModuleBasis(Basis_abstract):
         # The basis is added to the module list of bases
         fmodule._known_bases.append(self)
         # The individual vectors:
-        vl = list()
+        vl = []
         ring_one = fmodule._ring.one()
         for i in fmodule.irange():
             v = fmodule.element_class(fmodule)

@@ -307,10 +307,10 @@ cdef class TimeSeries:
         if len(self) > max_print:
             v0 = self[:max_print//2]
             v1 = self[-max_print//2:]
-            return '[' + ', '.join(format%x for x in v0) + ' ... ' + \
-                         ', '.join(format%x for x in v1) + ']'
+            return '[' + ', '.join(format % x for x in v0) + ' ... ' + \
+                         ', '.join(format % x for x in v1) + ']'
         else:
-            return '[' + ', '.join(format%x for x in self) + ']'
+            return '[' + ', '.join(format % x for x in self) + ']'
 
     def __len__(self):
         r"""
@@ -465,7 +465,7 @@ cdef class TimeSeries:
         """
         cdef Py_ssize_t i
         cdef TimeSeries t = new_time_series(self._length)
-        memcpy(t._values, self._values , sizeof(double)*self._length)
+        memcpy(t._values, self._values, sizeof(double)*self._length)
         return t
 
     def __add__(left, right):
@@ -557,7 +557,7 @@ cdef class TimeSeries:
             memcpy(v._values + i*T._length, T._values, sizeof(double)*T._length)
         return v
 
-    def autoregressive_fit(self,M):
+    def autoregressive_fit(self, M):
         r"""
         This method fits the time series to an autoregressive process
         of order ``M``. That is, we assume the process is given by
@@ -782,7 +782,7 @@ cdef class TimeSeries:
             t._values[i] = self._values[i] if self._values[i] >= 0 else -self._values[i]
         return t
 
-    def diffs(self, Py_ssize_t k = 1):
+    def diffs(self, Py_ssize_t k=1):
         r"""
         Return the new time series got by taking the differences of
         successive terms in the time series.  So if ``self`` is the time
@@ -1971,7 +1971,7 @@ cdef class TimeSeries:
             mid   = n + bin_size/2
             right = n + 2*bin_size/3
 
-            rgbcolor =  'blue' if open < close else 'red'
+            rgbcolor = 'blue' if open < close else 'red'
 
             p += line([(mid, low), (mid, high)], rgbcolor=rgbcolor)
             p += polygon([(left, open), (right, open), (right, close), (left, close)], rgbcolor=rgbcolor)
@@ -2024,7 +2024,7 @@ cdef class TimeSeries:
             sage: v
             [20.0000, -3.0000, 4.5000, -2.0000]
         """
-        cnumpy.import_array() #This must be called before using the numpy C/api or you will get segfault
+        cnumpy.import_array()  # This must be called before using the numpy C/api or you will get segfault
         cdef cnumpy.npy_intp dims[1]
         dims[0] = self._length
         cdef cnumpy.ndarray n = cnumpy.PyArray_SimpleNewFromData(1, dims, cnumpy.NPY_DOUBLE, self._values)

@@ -71,7 +71,7 @@ cdef class ModularSymbols:
             sage: CremonaModularSymbols(37, cuspidal=True).__repr__()
             'Cremona Cuspidal Modular Symbols space of dimension 4 for Gamma_0(37) of weight 2 with sign 0'
         """
-        return "Cremona %sModular Symbols space of dimension %s for Gamma_0(%s) of weight 2 with sign %s"%(
+        return "Cremona %sModular Symbols space of dimension %s for Gamma_0(%s) of weight 2 with sign %s" % (
             'Cuspidal ' if self.is_cuspidal() else '',
             self.dimension(), self.level(), self.sign())
 

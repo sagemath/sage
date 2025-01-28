@@ -291,7 +291,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         return all([self[i,j].is_constant()
             for j in range(self.ncols()) for i in range(self.nrows())])
 
-    def coefficient_matrix(self,d,row_wise=True):
+    def coefficient_matrix(self, d, row_wise=True):
         r"""
         Return the constant matrix which is obtained from this matrix by taking
         the coefficient of its entries with degree specified by `d`.
@@ -2845,7 +2845,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             with the required degree property
 
         In the latter case (rank-deficient or strictly fewer rows than columns,
-        with no solution to `A = XB`), there might stil be a quotient and
+        with no solution to `A = XB`), there might still be a quotient and
         remainder, in which case this method will find it via normal form
         computation::
 
@@ -3106,7 +3106,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         If the option ``row_wise`` is set to ``False``, the same operation is
         performed, but with everything considered column-wise: column space of
         `B`, `i` th column of `R` and `A`, column-wise `s`-leading positions
-        and `s`-Popov form, and submatrices `R_{J,*}` and `P_{J,*}`.
+        and `s`-Popov form, and submatrices `R_{J, *}` and `P_{J, *}`.
 
         The operation above can be seen as a matrix generalization of division
         with remainder for univariate polynomials. If the option

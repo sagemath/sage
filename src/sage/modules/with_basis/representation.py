@@ -21,11 +21,11 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import Element
 from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModule_Tensor
-from sage.modules.with_basis.subquotient import SubmoduleWithBasis
 from sage.categories.modules import Modules
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModuleWithBasis
+
 
 class Representation_abstract:
     """
@@ -685,8 +685,8 @@ class Representation_abstract:
             5
         """
         if not is_closed and gens:
-            R = self.base_ring()
-            repr_mats = [self.representation_matrix(g) for g in self._semigroup.gens()]
+            repr_mats = [self.representation_matrix(g)
+                         for g in self._semigroup.gens()]
             amb_dim = self.dimension()
             SM = matrix([v._vector_() for v in gens])
             SM.echelonize()
@@ -1489,7 +1489,7 @@ class Representation_Tensor(Representation_abstract, CombinatorialFreeModule_Ten
         reps = sum((module._sets if isinstance(module, Representation_Tensor) else (module,) for module in reps), ())
         if all('FiniteDimensional' in M.category().axioms() for M in reps):
             options['category'] = options['category'].FiniteDimensional()
-        return super(Representation_Tensor, cls).__classcall__(cls, reps, **options)
+        return super().__classcall__(cls, reps, **options)
 
     def __init__(self, reps, **options):
         r"""
@@ -1894,7 +1894,7 @@ class Representation_Symmetric(Representation_abstract, CombinatorialFreeModule)
         R = rep.base_ring()
         dim = rep.dimension()
         if degree not in ZZ or degree < 0:
-            raise ValueError(f"the degree must be a nonnegative integer")
+            raise ValueError("the degree must be a nonnegative integer")
         self._symalg = PolynomialRing(R, 'e', dim)
         self._basis_order = list(rep.basis().keys())
         G = self._symalg.gens()
@@ -2892,7 +2892,6 @@ class SchurFunctorRepresentation(Subrepresentation):
             keys = list(V.basis().keys())
 
         ambient = tensor([V]*d)
-        I = ambient.indices()
         cla = SymmetricGroupAlgebra(R, SymmetricGroup(d)).young_symmetrizer(shape)
         mc = cla.monomial_coefficients(copy=False)
         gens = [ambient.sum_of_terms((tuple([k[i-1] for i in p.tuple()]), coeff)

@@ -455,7 +455,7 @@ class AbstractSimplex_class(SageObject):
 
     def __ne__(self, other):
         """
-        This returns the negation of `__eq__`.
+        This returns the negation of ``__eq__``.
 
         EXAMPLES::
 
@@ -2119,16 +2119,17 @@ class SimplicialSet_arbitrary(Parent):
             sage: BC3.betti(range(4))                                                   # needs sage.groups sage.modules
             {0: 1, 1: 0, 2: 0, 3: 0}
         """
-        dict = {}
+        dic = {}
         H = self.homology(dim, base_ring=QQ, subcomplex=subcomplex)
         try:
             for n in H.keys():
-                dict[n] = H[n].dimension()
+                dic[n] = H[n].dimension()
                 if n == 0:
-                    dict[n] += 1
-            return dict
+                    dic[n] += 1
         except AttributeError:
             return H.dimension()
+        else:
+            return dic
 
     def n_chains(self, n, base_ring=ZZ, cochains=False):
         r"""

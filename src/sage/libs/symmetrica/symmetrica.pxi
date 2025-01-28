@@ -436,7 +436,7 @@ cdef void late_import() noexcept:
     prod = sage.misc.all.prod
 
     import sage.rings.polynomial.polynomial_ring_constructor
-    PolynomialRing =  sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing
+    PolynomialRing = sage.rings.polynomial.polynomial_ring_constructor.PolynomialRing
 
     import sage.rings.all
     QQ = sage.rings.all.QQ
@@ -941,7 +941,7 @@ cdef void* _op_elmsym(object d, OP res) noexcept: #Elementary symmetric function
         pointer = s_s_n(pointer)
 
 
-cdef object _py_homsym(OP a): #Homogenous symmetric functions
+cdef object _py_homsym(OP a):  # Homogeneous symmetric functions
     late_import()
     z_elt = _py_schur_general(a)
     if len(z_elt) == 0:
@@ -954,7 +954,7 @@ cdef object _py_homsym(OP a): #Homogenous symmetric functions
     z._monomial_coefficients = z_elt
     return z
 
-cdef void* _op_homsym(object d, OP res) noexcept: #Homogenous symmetric functions
+cdef void* _op_homsym(object d, OP res) noexcept:  # Homogeneous symmetric functions
     cdef OP pointer = res
     _op_schur_general(d, res)
     while pointer != NULL:

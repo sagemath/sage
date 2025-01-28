@@ -219,6 +219,38 @@ class ModularForm_abstract(ModuleElement):
         """
         return str(self.q_expansion())
 
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        TESTS::
+
+            sage: M = EisensteinForms(96, 2)
+            sage: M.6
+            O(q^6)
+            sage: M.7
+            O(q^6)
+            sage: pari(M.6) == pari(M.7)
+            False
+            sage: pari(M.6).mfcoefs(10)
+            [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]
+
+            sage: M = ModularForms(DirichletGroup(17).0^2, 2)
+            sage: pari(M.0).mfcoefs(5)
+            [0, 1, Mod(-t^3 + t^2 - 1, t^4 + 1), Mod(t^3 - t^2 - t - 1, t^4 + 1), Mod(2*t^3 - t^2 + 2*t, t^4 + 1), Mod(-t^3 - t^2, t^4 + 1)]
+            sage: M.0.qexp(5)
+            q + (-zeta8^3 + zeta8^2 - 1)*q^2 + (zeta8^3 - zeta8^2 - zeta8 - 1)*q^3 + (2*zeta8^3 - zeta8^2 + 2*zeta8)*q^4 + O(q^5)
+        """
+        from sage.libs.pari import pari
+        from sage.rings.number_field.number_field_element import NumberFieldElement
+        M = pari(self.parent())
+        f = self.qexp(self.parent().sturm_bound())
+        coefficients = [
+            x.__pari__('t') if isinstance(x, NumberFieldElement) else x
+            for x in f]
+        # we cannot compute pari(f) directly because we need to set the variable name as t
+        return M.mflinear(M.mftobasis(coefficients + [0] * (f.prec() - len(coefficients))))
+
     def __call__(self, x, prec=None):
         """
         Evaluate the `q`-expansion of this modular form at x.
@@ -233,8 +265,149 @@ class ModularForm_abstract(ModuleElement):
 
             sage: f(0)
             0
+
+        Evaluate numerically::
+
+            sage: f = ModularForms(1, 12).0
+            sage: f(0.3)  # rel tol 1e-12
+            2.34524576548591e-6
+            sage: f = EisensteinForms(1, 4).0
+            sage: f(0.9)  # rel tol 1e-12
+            1.26475942209241e7
+
+        TESTS::
+
+            sage: f = ModularForms(96, 2).0
+            sage: f(0.3)  # rel tol 1e-12
+            0.299999997396191
+            sage: f(0.0+0.0*I)
+            0
+
+        For simplicity, ``float`` or ``complex`` input are converted to ``CC``, except for
+        input ``0`` where exact result is returned::
+
+            sage: result = f(0.3r); result  # rel tol 1e-12
+            0.299999997396191
+            sage: result.parent()
+            Complex Field with 53 bits of precision
+            sage: result = f(0.3r + 0.3jr); result  # rel tol 1e-12
+            0.299999359878484 + 0.299999359878484*I
+            sage: result.parent()
+            Complex Field with 53 bits of precision
+
+        Symbolic numerical values use precision of ``CC`` by default::
+
+            sage: f(sqrt(1/2))  # rel tol 1e-12
+            0.700041406692037
+            sage: f(sqrt(1/2)*QQbar.zeta(8))  # rel tol 1e-12
+            0.496956554651376 + 0.496956554651376*I
+
+        Higher precision::
+
+            sage: f(ComplexField(128)(0.3))  # rel tol 1e-36
+            0.29999999739619131029285166058750164058
+            sage: f(ComplexField(128)(1+2*I)/3)  # rel tol 1e-36
+            0.32165384572356882556790532669389900691 + 0.67061244638367586302820790711257777390*I
+
+        Confirm numerical evaluation matches the q-expansion::
+
+            sage: f = EisensteinForms(1, 4).0
+            sage: f(0.3)  # rel tol 1e-12
+            741.741819297986
+            sage: f.qexp(50).polynomial()(0.3)  # rel tol 1e-12
+            741.741819297986
+
+        With a nontrivial character::
+
+            sage: M = ModularForms(DirichletGroup(17).0^2, 2)
+            sage: M.0(0.5)  # rel tol 1e-12
+            0.166916655031616 + 0.0111529051752428*I
+            sage: M.0.qexp(60).polynomial()(0.5)  # rel tol 1e-12
+            0.166916655031616 + 0.0111529051752428*I
+
+        Higher precision::
+
+            sage: f(ComplexField(128)(1+2*I)/3)  # rel tol 1e-36
+            429.19994832206294278688085399056359632 - 786.15736284188243351153830824852974995*I
+            sage: f.qexp(400).polynomial()(ComplexField(128)(1+2*I)/3)  # rel tol 1e-36
+            429.19994832206294278688085399056359631 - 786.15736284188243351153830824852974999*I
+
+        Check ``SR`` does not make the result lose precision::
+
+            sage: f(ComplexField(128)(1+2*I)/3 + x - x)  # rel tol 1e-36
+            429.19994832206294278688085399056359632 - 786.15736284188243351153830824852974995*I
         """
+        from sage.rings.integer import Integer
+        from sage.misc.functional import log
+        from sage.structure.element import parent
+        from sage.rings.complex_mpfr import ComplexNumber
+        from sage.rings.cc import CC
+        from sage.rings.real_mpfr import RealNumber
+        from sage.symbolic.constants import pi
+        from sage.rings.imaginary_unit import I  # import from here instead of sage.symbolic.constants to avoid cast to SR
+        from sage.symbolic.expression import Expression
+        if isinstance(x, Expression):
+            try:
+                x = x.pyobject()
+            except TypeError:
+                pass
+        if x in CC:
+            if x == 0:
+                return self.qexp(1)[0]
+            if not isinstance(x, (RealNumber, ComplexNumber)):
+                x = CC(x)  # might lose precision if this is done unconditionally (TODO what about interval and ball types?)
+        if isinstance(x, (RealNumber, ComplexNumber)):
+            return self.eval_at_tau(log(x)/(2*parent(x)(pi)*I))  # cast to parent(x) to force numerical evaluation of pi
         return self.q_expansion(prec)(x)
+
+    def eval_at_tau(self, tau):
+        r"""
+        Evaluate this modular form at the half-period ratio `\tau`.
+        This is related to `q` by `q = e^{2\pi i \tau}`.
+
+        EXAMPLES::
+
+            sage: f = ModularForms(1, 12).0
+            sage: f.eval_at_tau(0.3 * I)  # rel tol 1e-12
+            0.00150904633897550
+
+        TESTS:
+
+        Symbolic numerical values use precision of ``CC`` by default::
+
+            sage: f.eval_at_tau(sqrt(1/5)*I)  # rel tol 1e-12
+            0.0123633234207127
+            sage: f.eval_at_tau(sqrt(1/2)*QQbar.zeta(8))  # rel tol 1e-12
+            -0.114263670441098
+
+        For simplicity, ``complex`` input are converted to ``CC``::
+
+            sage: result = f.eval_at_tau(0.3jr); result  # rel tol 1e-12
+            0.00150904633897550
+            sage: result.parent()
+            Complex Field with 53 bits of precision
+
+        Check ``SR`` does not make the result lose precision::
+
+            sage: f = EisensteinForms(1, 4).0
+            sage: f.eval_at_tau(ComplexField(128)(1+2*I)/3 + x - x)  # rel tol 1e-36
+            -1.0451570582202060056197878314286036966 + 2.7225112098519803098203933583286590274*I
+        """
+        from sage.libs.pari.convert_sage import gen_to_sage
+        from sage.libs.pari import pari
+        from sage.rings.cc import CC
+        from sage.rings.complex_mpfr import ComplexNumber, ComplexField
+        from sage.rings.real_mpfr import RealNumber
+        from sage.symbolic.expression import Expression
+        if isinstance(tau, Expression):
+            try:
+                tau = tau.pyobject()
+            except TypeError:
+                pass
+        if not isinstance(tau, (RealNumber, ComplexNumber)):
+            tau = CC(tau)
+        precision = tau.prec()
+        return ComplexField(precision)(pari.mfeval(self.parent(), self, tau, precision=precision))
 
     @cached_method
     def valuation(self):
@@ -1716,10 +1889,8 @@ class Newform(ModularForm_abstract):
             [Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 4 for Gamma_0(43) of weight 2 with sign 1 over Rational Field,
             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 4 for Gamma_0(43) of weight 2 with sign 1 over Rational Field]
             sage: ModularSymbols(43,2,sign=1).cuspidal_subspace().new_subspace().decomposition()
-            [
-            Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 4 for Gamma_0(43) of weight 2 with sign 1 over Rational Field,
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 4 for Gamma_0(43) of weight 2 with sign 1 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 1 of Modular Symbols space of dimension 4 for Gamma_0(43) of weight 2 with sign 1 over Rational Field,
+             Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 4 for Gamma_0(43) of weight 2 with sign 1 over Rational Field]
         """
         return self.__modsym_space
 
@@ -2908,24 +3079,18 @@ class EisensteinSeries(ModularFormElement):
 
         sage: E = EisensteinForms(1,12)
         sage: E.eisenstein_series()
-        [
-        691/65520 + q + 2049*q^2 + 177148*q^3 + 4196353*q^4 + 48828126*q^5 + O(q^6)
-        ]
+        [691/65520 + q + 2049*q^2 + 177148*q^3 + 4196353*q^4 + 48828126*q^5 + O(q^6)]
         sage: E = EisensteinForms(11,2)
         sage: E.eisenstein_series()
-        [
-        5/12 + q + 3*q^2 + 4*q^3 + 7*q^4 + 6*q^5 + O(q^6)
-        ]
+        [5/12 + q + 3*q^2 + 4*q^3 + 7*q^4 + 6*q^5 + O(q^6)]
         sage: E = EisensteinForms(Gamma1(7),2)
         sage: E.set_precision(4)
         sage: E.eisenstein_series()
-        [
-        1/4 + q + 3*q^2 + 4*q^3 + O(q^4),
-        1/7*zeta6 - 3/7 + q + (-2*zeta6 + 1)*q^2 + (3*zeta6 - 2)*q^3 + O(q^4),
-        q + (-zeta6 + 2)*q^2 + (zeta6 + 2)*q^3 + O(q^4),
-        -1/7*zeta6 - 2/7 + q + (2*zeta6 - 1)*q^2 + (-3*zeta6 + 1)*q^3 + O(q^4),
-        q + (zeta6 + 1)*q^2 + (-zeta6 + 3)*q^3 + O(q^4)
-        ]
+        [1/4 + q + 3*q^2 + 4*q^3 + O(q^4),
+         1/7*zeta6 - 3/7 + q + (-2*zeta6 + 1)*q^2 + (3*zeta6 - 2)*q^3 + O(q^4),
+         q + (-zeta6 + 2)*q^2 + (zeta6 + 2)*q^3 + O(q^4),
+         -1/7*zeta6 - 2/7 + q + (2*zeta6 - 1)*q^2 + (-3*zeta6 + 1)*q^3 + O(q^4),
+         q + (zeta6 + 1)*q^2 + (-zeta6 + 3)*q^3 + O(q^4)]
     """
     def __init__(self, parent, vector, t, chi, psi):
         """
@@ -2935,24 +3100,18 @@ class EisensteinSeries(ModularFormElement):
 
             sage: E = EisensteinForms(1,12)  # indirect doctest
             sage: E.eisenstein_series()
-            [
-            691/65520 + q + 2049*q^2 + 177148*q^3 + 4196353*q^4 + 48828126*q^5 + O(q^6)
-            ]
+            [691/65520 + q + 2049*q^2 + 177148*q^3 + 4196353*q^4 + 48828126*q^5 + O(q^6)]
             sage: E = EisensteinForms(11,2)
             sage: E.eisenstein_series()
-            [
-            5/12 + q + 3*q^2 + 4*q^3 + 7*q^4 + 6*q^5 + O(q^6)
-            ]
+            [5/12 + q + 3*q^2 + 4*q^3 + 7*q^4 + 6*q^5 + O(q^6)]
             sage: E = EisensteinForms(Gamma1(7),2)
             sage: E.set_precision(4)
             sage: E.eisenstein_series()
-            [
-            1/4 + q + 3*q^2 + 4*q^3 + O(q^4),
-            1/7*zeta6 - 3/7 + q + (-2*zeta6 + 1)*q^2 + (3*zeta6 - 2)*q^3 + O(q^4),
-            q + (-zeta6 + 2)*q^2 + (zeta6 + 2)*q^3 + O(q^4),
-            -1/7*zeta6 - 2/7 + q + (2*zeta6 - 1)*q^2 + (-3*zeta6 + 1)*q^3 + O(q^4),
-            q + (zeta6 + 1)*q^2 + (-zeta6 + 3)*q^3 + O(q^4)
-            ]
+            [1/4 + q + 3*q^2 + 4*q^3 + O(q^4),
+             1/7*zeta6 - 3/7 + q + (-2*zeta6 + 1)*q^2 + (3*zeta6 - 2)*q^3 + O(q^4),
+             q + (-zeta6 + 2)*q^2 + (zeta6 + 2)*q^3 + O(q^4),
+             -1/7*zeta6 - 2/7 + q + (2*zeta6 - 1)*q^2 + (-3*zeta6 + 1)*q^3 + O(q^4),
+             q + (zeta6 + 1)*q^2 + (-zeta6 + 3)*q^3 + O(q^4)]
         """
         N = parent.level()
         K = parent.base_ring()
@@ -3178,10 +3337,8 @@ class EisensteinSeries(ModularFormElement):
 
             sage: chi = DirichletGroup(7)[4]
             sage: E = EisensteinForms(chi).eisenstein_series() ; E
-            [
-            -1/7*zeta6 - 2/7 + q + (2*zeta6 - 1)*q^2 + (-3*zeta6 + 1)*q^3 + (-2*zeta6 - 1)*q^4 + (5*zeta6 - 4)*q^5 + O(q^6),
-            q + (zeta6 + 1)*q^2 + (-zeta6 + 3)*q^3 + (zeta6 + 2)*q^4 + (zeta6 + 4)*q^5 + O(q^6)
-            ]
+            [-1/7*zeta6 - 2/7 + q + (2*zeta6 - 1)*q^2 + (-3*zeta6 + 1)*q^3 + (-2*zeta6 - 1)*q^4 + (5*zeta6 - 4)*q^5 + O(q^6),
+             q + (zeta6 + 1)*q^2 + (-zeta6 + 3)*q^3 + (zeta6 + 2)*q^4 + (zeta6 + 4)*q^5 + O(q^6)]
             sage: E[0].character() == chi
             True
             sage: E[1].character() == chi

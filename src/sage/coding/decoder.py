@@ -23,6 +23,7 @@ AUTHORS:
 from sage.misc.abstract_method import abstract_method
 from sage.structure.sage_object import SageObject
 
+
 class Decoder(SageObject):
     r"""
     Abstract top-class for :class:`Decoder` objects.

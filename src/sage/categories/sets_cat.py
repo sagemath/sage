@@ -1750,8 +1750,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
     class ElementMethods:
         ## Should eventually contain the basic operations which are no math
         ## latex, hash, ...
-        ##def equal(x,y):
-        ##def =(x,y):
+        ##def equal(x, y):
+        ##def =(x, y):
 
         # Used by Element._test_category
         _dummy_attribute = None
@@ -2802,7 +2802,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: R in A.realizations()  # indirect doctest
                     True
 
-                Note: the test above uses ``QQ[x]`` to not interfer
+                Note: the test above uses ``QQ[x]`` to not interfere
                 with other tests.
                 """
                 assert realization.realization_of() is self

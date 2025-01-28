@@ -656,7 +656,7 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
         for j in range( g[i].degree()+1 ):
             B[i,j] = g[i][j]*X**j
 
-    B =  B.LLL(**kwds)
+    B = B.LLL(**kwds)
 
     f = sum([ZZ(B[0,i]//X**i)*x**i for i in range(B.ncols())])
     R = f.roots()
@@ -1253,6 +1253,22 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
             sage: S.<y> = PolynomialRing(Integers(5), implementation='NTL')
             sage: f(y)
             y^3 + 2
+
+        TESTS::
+
+            sage: R.<x> = PolynomialRing(Integers(100), implementation='NTL')
+            sage: f = x^3 + 7
+            sage: f(1).parent() == R.base_ring()
+            True
+            sage: f(int(1)).parent() == R.base_ring()
+            True
+            sage: f(x + 1).parent() == f.parent()
+            True
+
+            sage: R.<x> = PolynomialRing(Zmod(12), 'x', implementation='NTL')
+            sage: u = Zmod(4)(3)
+            sage: x(u).parent() == u.parent()
+            True
         """
         if len(args) != 1 or len(kwds) != 0:
             return Polynomial.__call__(self, *args, **kwds)
@@ -1273,7 +1289,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
             return Polynomial.__call__(self, *args, **kwds)
         else:
             zz_pX_eval(fx.x, self.x, x.x)
-            return self._parent(int(fx))
+            return self._parent._base(int(fx))
 
 
 cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
@@ -1808,12 +1824,31 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             sage: S.<y> = PolynomialRing(Integers(5), implementation='NTL')
             sage: f(y)
             y^3 + 2
+
+        TESTS::
+
+            sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
+            sage: f = x^3 + 7
+            sage: f(1).parent() == R.base_ring()
+            True
+            sage: f(int(1)).parent() == R.base_ring()
+            True
+            sage: f(x + 1).parent() == f.parent()
+            True
+
+            sage: R.<x> = PolynomialRing(Zmod(10^30), 'x', implementation='NTL')
+            sage: u = Zmod(10^29)(3)
+            sage: x(u).parent() == u.parent()
+            True
+            sage: v = Zmod(10)(3)
+            sage: x(v).parent() == v.parent()
+            True
         """
         if len(args) != 1 or len(kwds) != 0:
             return Polynomial.__call__(self, *args, **kwds)
         arg = args[0]
         cdef ntl_ZZ_p fx = ntl_ZZ_p(0, self.c), x = None
-        if isinstance(arg, int) or isinstance(arg, Integer):
+        if isinstance(arg, (int, Integer)):
             x = ntl_ZZ_p(arg, self.c)
         elif isinstance(arg, Element):
             if <void *>self._parent._base == <void *>(<Element>arg)._parent: # c++ pointer hack
@@ -1826,7 +1861,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             return Polynomial.__call__(self, *args, **kwds)
         else:
             ZZ_pX_eval(fx.x, self.x, x.x)
-            return self._parent(fx._integer_())
+            return self._parent._base(fx._integer_())
 
 
 cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):

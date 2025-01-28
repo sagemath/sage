@@ -30,12 +30,13 @@ AUTHORS:
 #******************************************************************************
 
 from sage.categories.vector_bundles import VectorBundles
-from sage.rings.cc import CC
-from sage.rings.real_mpfr import RR
 from sage.manifolds.vector_bundle import TopologicalVectorBundle
-from sage.rings.infinity import infinity
 from sage.misc.superseded import deprecated_function_alias
+from sage.rings.cc import CC
+from sage.rings.infinity import infinity
 from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
+
 
 class DifferentiableVectorBundle(TopologicalVectorBundle):
     r"""
@@ -157,7 +158,7 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
             Further examples can be found in
             :class:`~sage.manifolds.differentiable.bundle_connection.BundleConnection`.
         """
-        from .bundle_connection import BundleConnection
+        from sage.manifolds.differentiable.bundle_connection import BundleConnection
         return BundleConnection(self, name, latex_name)
 
     def characteristic_cohomology_class_ring(self, base=QQ):
@@ -185,7 +186,9 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
             Characteristic cohomology class (1 + p_1)(TM) of the Tangent bundle
              TM over the 4-dimensional differentiable manifold M
         """
-        from .characteristic_cohomology_class import CharacteristicCohomologyClassRing
+        from sage.manifolds.differentiable.characteristic_cohomology_class import (
+            CharacteristicCohomologyClassRing,
+        )
 
         return CharacteristicCohomologyClassRing(base, self)
 
@@ -332,6 +335,7 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
         return self._total_space
 
 # *****************************************************************************
+
 
 class TensorBundle(DifferentiableVectorBundle):
     r"""
@@ -1642,7 +1646,7 @@ class TensorBundle(DifferentiableVectorBundle):
 
         EXAMPLES:
 
-        In the trivial case, i.e. if the destination map is the identitiy
+        In the trivial case, i.e. if the destination map is the identity
         and the tangent bundle is covered by one frame, the orientation is
         easily obtained::
 

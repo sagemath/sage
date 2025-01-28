@@ -7,7 +7,7 @@ AUTHORS:
 
 - William Stein and Robert Bradshaw (2008-01): Many improvements
 """
-#*****************************************************************************
+# ****************************************************************************
 #      Copyright (C) 2007 William Stein <wstein@gmail.com>
 #      Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
 #
@@ -20,10 +20,11 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import math
+
 from . import shapes
 
 from .base import PrimitiveObject, point_list_bounding_box
@@ -34,10 +35,9 @@ from sage.misc.decorators import options, rename_keyword
 from sage.arith.srange import srange
 
 from .texture import Texture
-
-TACHYON_PIXEL = 1/200.0
-
 from .shapes import Text, Sphere
+
+TACHYON_PIXEL = 1 / 200.0
 
 
 @rename_keyword(alpha='opacity')
@@ -437,8 +437,10 @@ def frame3d(lower_left, upper_right, **kwds):
     """
     x0, y0, z0 = lower_left
     x1, y1, z1 = upper_right
-    L1 = line3d([(x0, y0, z0), (x0, y1, z0), (x1, y1, z0), (x1, y0, z0),  (x0, y0, z0),  # top square
-                 (x0, y0, z1), (x0, y1, z1), (x1, y1, z1), (x1, y0, z1),  (x0, y0, z1)],  # bottom square
+    L1 = line3d([(x0, y0, z0), (x0, y1, z0), (x1, y1, z0),
+                 (x1, y0, z0), (x0, y0, z0),  # top square
+                 (x0, y0, z1), (x0, y1, z1), (x1, y1, z1),
+                 (x1, y0, z1), (x0, y0, z1)],  # bottom square
                 **kwds)
     # 3 additional lines joining top to bottom
     v2 = line3d([(x0, y1, z0), (x0, y1, z1)], **kwds)
@@ -514,10 +516,12 @@ def frame_labels(lower_left, upper_right,
     # Helper function for formatting the frame labels
     from math import log
     log10 = log(10)
-    nd = lambda a: int(log(a)/log10)
+
+    def nd(a):
+        return int(log(a) / log10)
 
     def fmt_string(a):
-        b = a/2.0
+        b = a / 2.0
         if b >= 1:
             return "%.1f"
         n = max(0, 2 - nd(a/2.0))
@@ -525,7 +529,7 @@ def frame_labels(lower_left, upper_right,
 
     # Slightly faster than mean for this situation
     def avg(a, b):
-        return (a+b)/2.0
+        return (a + b) / 2.0
 
     color = (0.3, 0.3, 0.3)
 
@@ -720,8 +724,8 @@ def ruler_frame(lower_left, upper_right, ticks=4, sub_ticks=4, **kwds):
         sphinx_plot(ruler_frame([1,2,3],vector([2,3,4]),ticks=6, sub_ticks=2, color='red'))
     """
     return ruler(lower_left, (upper_right[0], lower_left[1], lower_left[2]), ticks=ticks, sub_ticks=sub_ticks, absolute=True, **kwds) \
-         + ruler(lower_left, (lower_left[0], upper_right[1], lower_left[2]), ticks=ticks, sub_ticks=sub_ticks, absolute=True, **kwds) \
-         + ruler(lower_left, (lower_left[0], lower_left[1], upper_right[2]), ticks=ticks, sub_ticks=sub_ticks, absolute=True, **kwds)
+        + ruler(lower_left, (lower_left[0], upper_right[1], lower_left[2]), ticks=ticks, sub_ticks=sub_ticks, absolute=True, **kwds) \
+        + ruler(lower_left, (lower_left[0], lower_left[1], upper_right[2]), ticks=ticks, sub_ticks=sub_ticks, absolute=True, **kwds)
 
 
 ###########################
@@ -1141,8 +1145,8 @@ class Line(PrimitiveObject):
                 cmd = ('FCylinder base {pos[0]!r} {pos[1]!r} {pos[2]!r} '
                        'apex {apex[0]!r} {apex[1]!r} {apex[2]!r} '
                        'rad {radius!r} {texture}').format(
-                               pos=(px, py, pz), apex=(x, y, z), radius=radius,
-                               texture=self.texture.id)
+                           pos=(px, py, pz), apex=(x, y, z), radius=radius,
+                           texture=self.texture.id)
                 cmds.append(cmd)
             px, py, pz = x, y, z
         return cmds

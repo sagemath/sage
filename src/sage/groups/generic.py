@@ -1257,6 +1257,17 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
         sage: K.<a> = GF(3^60)
         sage: order_from_multiple(a, 3^60 - 1, operation='*', check=False)
         42391158275216203514294433200
+
+    TESTS:
+
+    Check that :issue:`38489` is fixed::
+
+        sage: from sage.groups.generic import order_from_multiple
+        sage: plist = [43, 257, 547, 881]
+        sage: m = prod(plist[:-1])
+        sage: elt = Zmod(m)(plist[-1])
+        sage: order_from_multiple(elt, m, plist=plist)
+        6044897
     """
     Z = integer_ring.ZZ
 
@@ -1325,6 +1336,8 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
                 if abs(sum_left + v - (S / 2)) > abs(sum_left - (S / 2)):
                     break
                 sum_left += v
+            if not 0 < k < l:
+                k = l // 2
             L1 = L[:k]
             L2 = L[k:]
             # recursive calls
@@ -1489,12 +1502,18 @@ def has_order(P, n, operation='+'):
         sage: has_order(x, -8)
         False
 
+    Check for :issue:`38708`::
+
+        sage: has_order(Mod(2,3), int(2), operation='*')
+        True
+
     .. NOTE::
 
         In some cases, order *testing* can be much faster than
         *computing* the order using :func:`order_from_multiple`.
     """
-    if isinstance(n, sage.rings.integer.Integer):
+    if not isinstance(n, sage.structure.factorization.Factorization):
+        n = integer_ring.ZZ(n)
         if n <= 0:
             return False
         n = n.factor()

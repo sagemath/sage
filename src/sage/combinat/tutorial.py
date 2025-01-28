@@ -844,15 +844,15 @@ Set partitions::
 
 Partial orders on a set of `8` elements, up to isomorphism::
 
-    sage: C = Posets(8); C
-    Posets containing 8 elements
+    sage: C = Posets(7); C
+    Posets containing 7 elements
     sage: C.cardinality()
-    16999
+    2045
 
 ::
 
     sage: C.unrank(20).plot()
-    Graphics object consisting of 20 graphics primitives
+    Graphics object consisting of ... graphics primitives
 
 .. image:: ../../media/a_poset.png
 
@@ -1314,7 +1314,7 @@ This model of computation, called *continuation*, is very useful in
 combinatorics, especially when combined with recursion. Here is how to
 generate all words of a given length on a given alphabet::
 
-    sage: def words(alphabet,l):
+    sage: def words(alphabet, l):
     ....:    if l == 0:
     ....:        yield []
     ....:    else:

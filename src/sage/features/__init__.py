@@ -418,6 +418,7 @@ class Feature(TrivialUniqueRepresentation):
             return True
         return False
 
+
 class FeatureNotPresentError(RuntimeError):
     r"""
     A missing feature error.
@@ -467,7 +468,7 @@ class FeatureNotPresentError(RuntimeError):
         return "\n".join(lines)
 
 
-class FeatureTestResult():
+class FeatureTestResult:
     r"""
     The result of a :meth:`Feature.is_present` call.
 

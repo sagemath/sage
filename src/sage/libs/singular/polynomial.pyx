@@ -200,7 +200,7 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args,
         Leaked 0 bytes
     """
     cdef long l = len(args)
-    cdef ideal *to_id = idInit(l,1)
+    cdef ideal *to_id = idInit(l, 1)
     cdef bint constant_args = 1
     for i from 0 <= i < l:
         to_id.m[i]= p_Copy( get_element(args[i]), r)
@@ -254,45 +254,62 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
 
         sage: (2/3*x^2 + 1/2*y + 3) > (2/3*x^2 + 1/4*y + 10)
         True
+
+    TESTS:
+
+    Ensure that comparison is transitive (as long as ``cfGreater`` is transitive and
+    consistent with ``cfGreaterZero``, see :issue:`39018` for more details)::
+
+        sage: P.<x,y> = GF(5)[]
+        sage: P(1) > P(4)
+        False
+        sage: P(4) > P(2)
+        True
+        sage: P(2) > P(1)
+        True
+
+    ::
+
+        sage: R.<x,y> = Integers(10)[]
+        sage: l = [i*x+j*y+k for i in range(10) for j in range(10) for k in range(10)]
+        sage: l.sort()
+        sage: for i in range(len(l)):
+        ....:     for b in l[:i]:
+        ....:         assert b < l[i], (b, l[i])
+
+    More tests for :issue:`35681`::
+
+        sage: P.<x,y> = ZZ[]
+        sage: P(0) > P(-1)
+        True
     """
     cdef number *h
-    cdef int ret = 0
+    cdef int tmp
 
     if r != currRing:
         rChangeCurrRing(r)
 
-    # handle special cases first (slight slowdown, as special cases
-    # are - well - special
-    if p == NULL:
-        if q == NULL:
-            # compare 0, 0
-            return 0
-        elif p_IsConstant(q,r):
-            # compare 0, const
-            return 1-2*r.cf.cfGreaterZero(p_GetCoeff(q,r), r.cf) # -1: <, 1: > #
-    elif q == NULL:
-        if p_IsConstant(p,r):
-            # compare const, 0
-            return -1+2*r.cf.cfGreaterZero(p_GetCoeff(p,r), r.cf) # -1: <, 1: >
+    while True:
+        if p == NULL:
+            if q == NULL:
+                return 0
+            return -1 if r.cf.cfGreaterZero(p_GetCoeff(q, r), r.cf) else 1
+        elif q == NULL:
+            return 1 if r.cf.cfGreaterZero(p_GetCoeff(p, r), r.cf) else -1
 
-    while ret==0 and p!=NULL and q!=NULL:
-        ret = p_Cmp( p, q, r)
+        tmp = p_Cmp(p, q, r)
+        if tmp != 0:
+            if tmp < 0:
+                return -1 if r.cf.cfGreaterZero(p_GetCoeff(q, r), r.cf) else 1
+            else:
+                return 1 if r.cf.cfGreaterZero(p_GetCoeff(p, r), r.cf) else -1
 
-        if ret==0:
-            h = r.cf.cfSub(p_GetCoeff(p, r),p_GetCoeff(q, r),r.cf)
-            # compare coeffs
-            ret = -1+r.cf.cfIsZero(h,r.cf)+2*r.cf.cfGreaterZero(h, r.cf) # -1: <, 0:==, 1: >
-            n_Delete(&h, r.cf)
+        # compare coefficients
+        if not r.cf.cfEqual(p_GetCoeff(p, r), p_GetCoeff(q, r), r.cf):
+            return 1 if r.cf.cfGreater(p_GetCoeff(p, r), p_GetCoeff(q, r), r.cf) else -1
+
         p = pNext(p)
         q = pNext(q)
-
-    if ret==0:
-        if p==NULL and q != NULL:
-            ret = -1
-        elif p!=NULL and q==NULL:
-            ret = 1
-
-    return ret
 
 cdef int singular_polynomial_mul(poly** ret, poly *p, poly *q, ring *r) except -1:
     """
@@ -391,7 +408,7 @@ cdef int singular_polynomial_pow(poly **ret, poly *p, unsigned long exp, ring *r
 
     if r != currRing:
         rChangeCurrRing(r)
-    cdef int count = singular_polynomial_length_bounded(p,15)
+    cdef int count = singular_polynomial_length_bounded(p, 15)
     if count >= 15 or exp > 15:
         sig_on()
     ret[0] = pPower( p_Copy(p,r), exp)
@@ -467,7 +484,7 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         sage: latex(10*x^2 + 1/2*y)
         10 x^{2} + \frac{1}{2} y
 
-    Demonstrate that coefficients over non-atomic representated rings are
+    Demonstrate that coefficients over non-atomic represented rings are
     properly parenthesized (:issue:`11186`)::
 
         sage: x = var('x')
@@ -504,7 +521,7 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         multi = multi.lstrip().rstrip()
 
         # Next determine coefficient of multinomial
-        c =  si2sa(p_GetCoeff(p, r), r, base)
+        c = si2sa(p_GetCoeff(p, r), r, base)
         if not multi:
             multi = latex(c)
         elif c != 1:
@@ -573,7 +590,7 @@ cdef long singular_polynomial_deg(poly *p, poly *x, ring *r) noexcept:
         if p_GetExp(x, i, r):
             break
     while p:
-        _deg =  p_GetExp(p,i,r)
+        _deg = p_GetExp(p, i, r)
         if _deg > deg:
             deg = _deg
         p = pNext(p)

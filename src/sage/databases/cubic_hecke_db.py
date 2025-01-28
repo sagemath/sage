@@ -117,7 +117,9 @@ def simplify(mat):
     d = mat.dict()
     if isinstance(B, CubicHeckeExtensionRing):
         # Laurent polynomial cannot be reconstructed from string
-        res = {k: {tuple(j): u.dict() for j, u in v.dict().items()} for k, v in d.items()}
+        res = {k: {tuple(j): u.monomial_coefficients()
+                   for j, u in v.monomial_coefficients().items()}
+               for k, v in d.items()}
     else:
         res = {k: str(v) for k, v in d.items()}
     return res
@@ -661,7 +663,7 @@ class CubicHeckeFileCache(SageObject):
           in the case of cubic Hecke algebras on more than 4 strands
         - ``markov_trace`` -- file cache for intermediate results of long
           calculations in order to recover the results already obtained by
-          preboius attemps of calculation until the corresponding intermediate
+          previous attemps of calculation until the corresponding intermediate
           step
 
         EXAMPLES::
@@ -727,7 +729,7 @@ class CubicHeckeFileCache(SageObject):
 
     def _warn_incompatibility(self, fname):
         """
-        Warn the user that he has an incomaptible file cache under `Sage_DOT`
+        Warn the user that he has an incomaptible file cache under ``Sage_DOT``
         and move it away to another file (marked with timestamp).
 
         EXAMPLES::
@@ -1065,7 +1067,7 @@ class CubicHeckeFileCache(SageObject):
             sage: cha_fc.is_empty(CubicHeckeFileCache.section.braid_images)
             True
             sage: b2_img = CHA2(b2); b2_img
-            w*c^-1 + u*c + (-v)
+            w*c^-1 + u*c - v
             sage: cha_fc.write_braid_image(b2.Tietze(), b2_img.to_vector())
             sage: cha_fc.read_braid_image(b2.Tietze(), ring_of_definition)
             (-v, u, w)
@@ -1100,7 +1102,7 @@ class CubicHeckeFileCache(SageObject):
             sage: B2 = BraidGroup(2)
             sage: b, = B2.gens(); b3 = b**3
             sage: b3_img = CHA2(b3); b3_img
-            u*w*c^-1 + (u^2-v)*c + (-u*v+w)
+            u*w*c^-1 + (u^2-v)*c - (u*v-w)
             sage: cha_fc.write_braid_image(b3.Tietze(), b3_img.to_vector())
             sage: cha_fc.read_braid_image(b3.Tietze(), ring_of_definition)
             (-u*v + w, u^2 - v, u*w)
@@ -1151,7 +1153,6 @@ class CubicHeckeFileCache(SageObject):
         """
         self._data_library.update({self.section.basis_extensions: new_basis_extensions})
         self.write(self.section.basis_extensions)
-        return
 
 
 # -----------------------------------------------------------------------------
@@ -1285,6 +1286,7 @@ def read_basis(num_strands=3):
         -1], [2, -1, 2], [1, 2, -1, 2], [-1, 2, -1, 2]]
     return data[num_strands]
 
+
 def read_irr(variables, num_strands=3):
     r"""
     Return precomputed data of Ivan Marin.
@@ -1327,6 +1329,7 @@ def read_irr(variables, num_strands=3):
         -1/(a*b), (2, 2): 1/a}, {(0, 0): 1/a, (0, 1): 1/(a*b), (0, 2):
         1/b, (1, 1): 1/b, (1, 2): a/b + b/c, (2, 2): 1/c}]])
     return data[num_strands]
+
 
 def read_regl(variables, num_strands=3):
     r"""
@@ -1400,6 +1403,7 @@ def read_regl(variables, num_strands=3):
         (20, 20): v/w, (20, 23): v, (21, 13): -v/w, (21, 19): 1/w,
         (22, 6): 1/w, (22, 13): u/w, (22, 22): v/w, (23, 13): 1}]])
     return data[num_strands]
+
 
 def read_regr(variables, num_strands=3):
     r"""

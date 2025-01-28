@@ -185,7 +185,7 @@ cpdef inline split_complex_string(string, int base=10):
             exponent = '[@p]'
         else:
             exponent = '@'
-            exponent +=  sign + '?' + digit + '+'
+            exponent += sign + '?' + digit + '+'
 
         # Warning: number, imaginary, and complex should be enclosed in parentheses
         # when used as regexp because of alternatives '|'
@@ -2103,7 +2103,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         cdef MPComplexNumber z, x
         x = <MPComplexNumber>self
         z = x._new()
-        mpc_mul_2si(z.value , x.value, n, (<MPComplexField_class>x._parent).__rnd)
+        mpc_mul_2si(z.value, x.value, n, (<MPComplexField_class>x._parent).__rnd)
         return z
 
     def __rshift__(self, n):
@@ -2122,7 +2122,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         cdef MPComplexNumber z, x
         x = <MPComplexNumber>self
         z = x._new()
-        mpc_div_2si(z.value , x.value, n, (<MPComplexField_class>x._parent).__rnd)
+        mpc_div_2si(z.value, x.value, n, (<MPComplexField_class>x._parent).__rnd)
         return z
 
     def nth_root(self, n, all=False):

@@ -82,7 +82,7 @@ def theta_by_pari(self, Max, var_str='q', safe_flag=True):
     output, or the original output.  It is only meaningful when a
     vector is returned, otherwise a copy is automatically made in
     creating the power series.  By default ``safe_flag=True``, so we
-    return a copy of the cached information.  If this is set to False,
+    return a copy of the cached information.  If this is set to ``False``,
     then the routine is much faster but the return values are
     vulnerable to being corrupted by the user.
 
@@ -112,7 +112,7 @@ def theta_by_pari(self, Max, var_str='q', safe_flag=True):
         self.__theta_vec = theta_vec
 
     # Return the answer
-    if var_str == '':
+    if not var_str:
         if safe_flag:
             return deepcopy(theta_vec)         # We must make a copy here to insure the integrity of the cached version!
         else:
@@ -121,16 +121,16 @@ def theta_by_pari(self, Max, var_str='q', safe_flag=True):
         return PowerSeriesRing(ZZ, var_str)(theta_vec, Max)
 
 
-# -------------  Compute the theta function by using an explicit Cholesky decomposition ------------
+# -- Compute the theta function by using an explicit Cholesky decomposition --
 
 
-##########################################################################
-# Routines to compute the Fourier expansion of the theta function of Q ##
-# (to a given precision) via a Cholesky decomposition over RR.         ##
-#                                                                      ##
-# The Cholesky code was taken from:                                    ##
-# ~/Documents/290_Project/C/Ver13.2__3-5-2007/Matrix_mpz/Matrix_mpz.cc ##
-##########################################################################
+########################################################################
+# Routines to compute the Fourier expansion of the theta function of Q #
+# (to a given precision) via a Cholesky decomposition over RR.         #
+#                                                                      #
+# The Cholesky code was taken from:                                    #
+# ~/Documents/290_Project/C/Ver13.2__3-5-2007/Matrix_mpz/Matrix_mpz.cc #
+########################################################################
 
 
 def theta_by_cholesky(self, q_prec):
@@ -144,24 +144,24 @@ def theta_by_cholesky(self, q_prec):
 
     Cohen's "A Course in Computational Algebraic Number Theory" book, p 102.
 
-    EXAMPLES::
+    EXAMPLES:
 
-        # Check the sum of 4 squares form against Jacobi's formula
+    Check the sum of 4 squares form against Jacobi's formula::
+
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
         sage: Theta = Q.theta_by_cholesky(10)
         sage: Theta
         1 + 8*q + 24*q^2 + 32*q^3 + 24*q^4 + 48*q^5 + 96*q^6
          + 64*q^7 + 24*q^8 + 104*q^9 + 144*q^10
-        sage: Expected = [1] + [8*sum([d for d in divisors(n) if d%4 != 0])
+        sage: Expected = [1] + [8*sum(d for d in divisors(n) if d%4)
         ....:                   for n in range(1, 11)]
         sage: Expected
         [1, 8, 24, 32, 24, 48, 96, 64, 24, 104, 144]
         sage: Theta.list() == Expected
         True
 
-    ::
+    Check the form `x^2 + 3y^2 + 5z^2 + 7w^2` represents everything except 2 and 22.::
 
-        # Check the form x^2 + 3y^2 + 5z^2 + 7w^2 represents everything except 2 and 22.
         sage: Q = DiagonalQuadraticForm(ZZ, [1,3,5,7])
         sage: Theta = Q.theta_by_cholesky(50)
         sage: Theta_list = Theta.list()
@@ -176,10 +176,10 @@ def theta_by_cholesky(self, q_prec):
     from sage.rings.real_mpfr import RealField
 
     n = self.dim()
-    theta = [0 for i in range(q_prec + 1)]
+    theta = [0] * (q_prec + 1)
     PS = PowerSeriesRing(ZZ, 'q')
 
-    bit_prec = 53                                       # TO DO: Set this precision to reflect the appropriate roundoff
+    bit_prec = 53                  # TO DO: Set this precision to reflect the appropriate roundoff
     Cholesky = self.cholesky_decomposition(bit_prec)     # error estimate, to be confident through our desired q-precision.
     Q = Cholesky      # <----  REDUNDANT!!!
     R = RealField(bit_prec)
@@ -187,8 +187,8 @@ def theta_by_cholesky(self, q_prec):
 
     # 1. Initialize
     i = n - 1
-    T = [R(0) for j in range(n)]
-    U = [R(0) for j in range(n)]
+    T = [R.zero()] * n
+    U = [R.zero()] * n
     T[i] = R(q_prec)
     U[i] = 0
     L = [0] * n
@@ -251,10 +251,7 @@ def theta_by_cholesky(self, q_prec):
             theta[Q_val] += 2
 
         # 5. Check if x = 0, for exit condition. =)
-        done_flag = True
-        for j in range(n):
-            if x[j] != 0:
-                done_flag = False
+        done_flag = all(x[j] == 0 for j in range(n))
 
     # Set the value: theta[0] = 1
     theta[0] = 1
@@ -263,7 +260,7 @@ def theta_by_cholesky(self, q_prec):
     return PS(theta)
 
 
-def theta_series_degree_2(Q, prec):
+def theta_series_degree_2(Q, prec) -> dict:
     r"""
     Compute the theta series of degree 2 for the quadratic form `Q`.
 
@@ -322,14 +319,14 @@ def theta_series_degree_2(Q, prec):
     H = Q.Hessian_matrix()
 
     t = cputime()
-    max = (X + 1) // 4
-    v_list = (Q.vectors_by_length(max))        # assume a>0
-    v_list = [[V(_) for _ in vs] for vs in v_list]  # coerce vectors into V
+    maxi = (X + 1) // 4
+    v_list = (Q.vectors_by_length(maxi))        # assume a>0
+    v_list = [[V(c) for c in vs] for vs in v_list]  # coerce vectors into V
     verbose("Computed vectors_by_length", t)
 
     # Deal with the singular part
     coeffs = {(0, 0, 0): ZZ.one()}
-    for i in range(1, max + 1):
+    for i in range(1, maxi + 1):
         coeffs[(0, 0, i)] = ZZ(2) * len(v_list[i])
 
     # Now deal with the non-singular part

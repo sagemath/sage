@@ -1261,7 +1261,7 @@ cdef MPF_complex_sqrt(MPF *c, MPF *d, MPF *a, MPF *b, MPopts opts):
     bneg = MPF_sgn(b) <= 0
     if apos:
         # real part
-        MPF_hypot(&t, a, b, wpopts)  #t = abs(a+bi) + a
+        MPF_hypot(&t, a, b, wpopts)  # t = abs(a+bi) + a
         MPF_add(&t, &t, a, wpopts)
         MPF_set(&u, &t)
         mpz_sub_ui(u.exp, u.exp, 1)  # u = t / 2
@@ -1276,10 +1276,10 @@ cdef MPF_complex_sqrt(MPF *c, MPF *d, MPF *a, MPF *b, MPopts opts):
         MPF_sub(&t, &t, a, wpopts)
         MPF_set(&u, &t)
         mpz_sub_ui(u.exp, u.exp, 1)  # u = t / 2
-        MPF_sqrt(d, &u, opts) # im = sqrt(u)
+        MPF_sqrt(d, &u, opts)  # im = sqrt(u)
         mpz_add_ui(t.exp, t.exp, 1)  # t = 2*t
         MPF_sqrt(&u, &t, wpopts)   # u = sqrt(t)
-        MPF_div(c, &v, &u, opts) # re = b / u
+        MPF_div(c, &v, &u, opts)  # re = b / u
         if bneg:
             MPF_neg(c, c)
             MPF_neg(d, d)
@@ -2116,7 +2116,7 @@ cdef MPF_hypsum(MPF *a, MPF *b, int p, int q, param_types, str ztype, coeffs, z,
             raise ZeroDivisionError
 
         # Multiply real factors
-        for k in range(0, cancellable_real):
+        for k in range(cancellable_real):
             sig_check()
             mpz_mul(PRE, PRE, AREAL[k])
             mpz_fdiv_q(PRE, PRE, BREAL[k])
@@ -2129,7 +2129,7 @@ cdef MPF_hypsum(MPF *a, MPF *b, int p, int q, param_types, str ztype, coeffs, z,
             mpz_mul_2exp(PRE, PRE, wp)
             mpz_fdiv_q(PRE, PRE, BREAL[k])
         if have_complex:
-            for k in range(0, cancellable_real):
+            for k in range(cancellable_real):
                 sig_check()
                 mpz_mul(PIM, PIM, AREAL[k])
                 mpz_fdiv_q(PIM, PIM, BREAL[k])

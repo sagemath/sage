@@ -125,7 +125,7 @@ class SpikeFunction:
         x = float(x)
         for i in range(len(self.support)):
             z = self.support[i]
-            if z - eps <= x and x <= z + eps:
+            if z - eps <= x <= z + eps:
                 return self.height[i], i
         return float(0), -1
 
@@ -147,7 +147,7 @@ class SpikeFunction:
         """
         return self._eval(x)[0]
 
-    def plot_fft_abs(self, samples=2**12, xmin=None, xmax=None,  **kwds):
+    def plot_fft_abs(self, samples=2**12, xmin=None, xmax=None, **kwds):
         """
         Plot of (absolute values of) Fast Fourier Transform of
         the spike function with given number of samples.
@@ -166,7 +166,7 @@ class SpikeFunction:
         k = vector(RDF, [abs(z[i]) for i in range(len(z)//2)])
         return k.plot(xmin=0, xmax=1, **kwds)
 
-    def plot_fft_arg(self, samples=2**12, xmin=None, xmax=None,  **kwds):
+    def plot_fft_arg(self, samples=2**12, xmin=None, xmax=None, **kwds):
         """
         Plot of (absolute values of) Fast Fourier Transform of
         the spike function with given number of samples.

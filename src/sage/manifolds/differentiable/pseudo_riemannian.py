@@ -267,12 +267,16 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.infinity import infinity
-from sage.manifolds.structure import (PseudoRiemannianStructure,
-                                      RiemannianStructure, LorentzianStructure)
 from sage.manifolds.differentiable.manifold import DifferentiableManifold
+from sage.manifolds.structure import (
+    LorentzianStructure,
+    PseudoRiemannianStructure,
+    RiemannianStructure,
+)
+from sage.rings.infinity import infinity
 
 ###############################################################################
+
 
 class PseudoRiemannianManifold(DifferentiableManifold):
     r"""

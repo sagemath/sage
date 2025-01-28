@@ -2214,9 +2214,9 @@ class SR_gf2n(SR_generic):
             True
         """
         if isinstance(l, Matrix):
-            ret = [e for e in l.transpose().list()[0:-1:self.e]]
+            ret = l.transpose().list()[0:-1:self.e]
         else:
-            ret = [e for e in l[0:-1:self.e]]
+            ret = l[0:-1:self.e]
 
         if isinstance(l, list):
             return ret
@@ -2248,8 +2248,8 @@ class SR_gf2n(SR_generic):
         bs = r*c*e
         shift_rows = matrix(k, bs, bs)
         I = MatrixSpace(k, e, e)(1)
-        for x in range(0, c):
-            for y in range(0, r):
+        for x in range(c):
+            for y in range(r):
                 _r = ((x*r)+y) * e
                 _c = (((x*r)+((r+1)*y)) * e) % bs
                 self._insert_matrix_into_matrix(shift_rows, I, _r, _c)
@@ -2290,14 +2290,14 @@ class SR_gf2n(SR_generic):
         if e == 4:
             l = [k.from_integer(x) for x in (5, 1, 12, 5)]
             for k in range( 0, length ):
-                for i in range(0, 4):
-                    for j in range(0, 4):
+                for i in range(4):
+                    for j in range(4):
                         lin[k*4+j, k*4+i] = l[(i-j) % 4] ** (2**j)
         elif e == 8:
             l = [k.from_integer(x) for x in (5, 9, 249, 37, 244, 1, 181, 143)]
             for k in range( 0, length ):
-                for i in range(0, 8):
-                    for j in range(0, 8):
+                for i in range(8):
+                    for j in range(8):
                         lin[k*8+j, k*8+i] = l[(i-j) % 8] ** (2**j)
 
         return lin
@@ -2447,6 +2447,7 @@ class SR_gf2n(SR_generic):
 
         _vars = self.vars(name, i, l, e)
         return [_vars[e*j+k]**2 - _vars[e*j+(k+1) % e] for j in range(l) for k in range(e)]
+
 
 class SR_gf2(SR_generic):
     def __init__(self, n=1, r=1, c=1, e=4, star=False, **kwargs):
@@ -2650,8 +2651,8 @@ class SR_gf2(SR_generic):
         k = self.k
         bs = r*c
         shift_rows = matrix(k, r*c, r*c)
-        for x in range(0, c):
-            for y in range(0, r):
+        for x in range(c):
+            for y in range(r):
                 _r = ((x*r)+y)
                 _c = ((x*r)+((r+1)*y)) % bs
                 shift_rows[_r, _c] = 1
@@ -3162,6 +3163,7 @@ class SR_gf2(SR_generic):
         _vars = self.vars(name, i, l, e)
         return [_vars[e*j+k]**2 - _vars[e*j+k] for j in range(l) for k in range(e)]
 
+
 class SR_gf2_2(SR_gf2):
     """
     This is an example how to customize the SR constructor.
@@ -3246,6 +3248,7 @@ class SR_gf2_2(SR_gf2):
         F = S.polynomials(w, x, degree=e-2, groebner=groebner)
         return F
 
+
 class AllowZeroInversionsContext:
     """
     Temporarily allow zero inversion.
@@ -3293,6 +3296,7 @@ class AllowZeroInversionsContext:
             False
         """
         self.sr._allow_zero_inversions = self.allow_zero_inversions
+
 
 def test_consistency(max_n=2, **kwargs):
     r"""

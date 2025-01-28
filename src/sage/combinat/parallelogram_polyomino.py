@@ -311,8 +311,7 @@ class LocalOptions:
             {'diagram': 'diagram representation',
             'list': 'list representation'}}
         """
-        for key in options:
-            value = options[key]
+        for key, value in options.items():
             self.__setitem__(key, value)
         for key in get_values:
             return self.__getitem__(key)
@@ -1974,12 +1973,9 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp.widths()
             []
         """
-        widths = []
         uw = self.upper_widths()
         lw = self.lower_widths()
-        for i in range(len(lw)):
-            widths.append(uw[i] - lw[i])
-        return widths
+        return [up - lo for up, lo in zip(uw, lw)]
 
     def degree_convexity(self) -> int:
         r"""
@@ -3046,7 +3042,7 @@ class ParallelogramPolyomino(ClonableList,
 
         INPUT:
 
-        - ``box_position`` -- the position of the statring cell
+        - ``box_position`` -- the position of the starting cell
 
         - ``direction`` -- the direction (0 or 1)
 
@@ -3387,11 +3383,10 @@ class ParallelogramPolyomino(ClonableList,
             sage: pp.set_options(drawing_components=dict(tree=True))
             sage: view(pp) # not tested
         """
-        result = []
-        for h in range(1, self.height()):
-            result.append(self._get_node_position_at_row(h))
-        for w in range(1, self.width()):
-            result.append(self._get_node_position_at_column(w))
+        result = [self._get_node_position_at_row(h)
+                  for h in range(1, self.height())]
+        result.extend(self._get_node_position_at_column(w)
+                      for w in range(1, self.width()))
         return result
 
     def get_right_BS_nodes(self):

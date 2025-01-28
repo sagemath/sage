@@ -227,8 +227,26 @@ FRICAS_ERROR_IN_LIBRARY_CODE = ">> Error detected within library code:"
 # between ' and ".
 FRICAS_INIT_CODE = (
     ")set functions compile on",
-    ")set message autoload off",
-    ")set message type off",
+    ")set message any          on",
+    ")set message autoload     off",
+    ")set message bottomup     off",
+    ")set message dropmap      off",
+    ")set message expose       off",
+    ")set message file         off",
+    ")set message frame        off",
+    ")set message highlighting off",
+    ")set message instant      off",
+    ")set message insteach     off",
+    ")set message interponly   off",
+    ")set message prompt       step",
+    ")set message selection    off",
+    ")set message set          off",
+    ")set message startup      on",
+    ")set message storage      off",
+    ")set message testing      off",
+    ")set message time         off",
+    ")set message type         off",
+    ")set message void         off",
     ")set output length " + str(FRICAS_LINE_LENGTH),
     ")lisp (setf |$ioHook|"
     "            (lambda (x &optional args)"
@@ -1963,7 +1981,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         if head == "Factored":
             l = P.new('[[f.factor, f.exponent] for f in factors(%s)]' % self._name).sage()
-            return Factorization([(p, e) for p, e in l])
+            return Factorization(list(l))
 
         if head == "UnivariatePolynomial":
             base_ring = self._get_sage_type(domain[2])

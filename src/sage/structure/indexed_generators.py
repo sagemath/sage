@@ -14,7 +14,7 @@ Indexed Generators
 from sage.structure.category_object import normalize_names
 
 
-class IndexedGenerators():
+class IndexedGenerators:
     r"""nodetex
     Abstract base class for parents whose elements consist of generators
     indexed by an arbitrary set.
@@ -316,7 +316,7 @@ class IndexedGenerators():
                     return names[m]
                 except KeyError:
                     return None
-            else: # treat it like a list
+            else:  # treat it like a list
                 try:
                     i = self._indices.rank(m)
                 except (AttributeError, TypeError, KeyError, ValueError):
@@ -458,7 +458,7 @@ class IndexedGenerators():
                 return self.prefix() + left + (', '.join(repr(val) for val in m)) + right
         if not quotes and isinstance(m, str):
             return self.prefix() + left + m + right
-        return self.prefix() + left + repr(m) + right # mind the (m), to accept a tuple for m
+        return self.prefix() + left + repr(m) + right  # mind the (m), to accept a tuple for m
 
     def _ascii_art_generator(self, m):
         r"""
@@ -649,6 +649,7 @@ class IndexedGenerators():
         if prefix == "":
             return left + s + right
         return "%s_{%s}" % (prefix, s)
+
 
 def split_index_keywords(kwds):
     """

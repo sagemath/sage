@@ -1103,6 +1103,7 @@ class SmoothCharacterGroupQp(SmoothCharacterGroupGeneric):
         nr = self.character(0, [-1])
         return sorted([nr] + list(ram) + [f*nr for f in ram])
 
+
 class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
     r"""
     The group of smooth characters of `E^\times`, where `E` is a quadratic extension of `\QQ_p`.
@@ -1390,6 +1391,7 @@ class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
         if not all( chiE(qs[i]) == vals[i] for i in range(len(qs)) ) or chiE.restrict_to_Qp() != chi:
             raise ValueError("Invalid values for extension")
         return chiE
+
 
 class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupQuadratic):
     r"""

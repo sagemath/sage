@@ -48,6 +48,7 @@ from sage.misc.cachefunc import cached_method
 
 from sage.rings.infinity import infinity
 
+
 class PadicValuationFactory(UniqueFactory):
     r"""
     Create a ``prime``-adic valuation on ``R``.
@@ -553,8 +554,8 @@ class pAdicValuation_base(DiscreteValuation):
         """
         R = G.parent()
 
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-        if not isinstance(R, PolynomialRing_general) or R.base_ring() is not self.domain() or not G.is_monic():
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        if not isinstance(R, PolynomialRing_generic) or R.base_ring() is not self.domain() or not G.is_monic():
             raise ValueError("G must be a monic univariate polynomial over the domain of this valuation")
         if not assume_squarefree and not G.is_squarefree():
             raise ValueError("G must be squarefree")
@@ -650,8 +651,8 @@ class pAdicValuation_base(DiscreteValuation):
         """
         R = G.parent()
 
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-        if not isinstance(R, PolynomialRing_general) or R.base_ring() is not self.domain() or not G.is_monic():
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        if not isinstance(R, PolynomialRing_generic) or R.base_ring() is not self.domain() or not G.is_monic():
             raise ValueError("G must be a monic univariate polynomial over the domain of this valuation")
         if not assume_squarefree and not G.is_squarefree():
             raise ValueError("G must be squarefree")
@@ -1390,6 +1391,7 @@ class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_
                 approximant = self._base_valuation.change_domain(G.parent())._initial_approximation
                 return [pAdicValuation(ring, approximant)]
         return super().extensions(ring)
+
 
 def _fraction_field(ring):
     r"""

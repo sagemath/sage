@@ -1515,7 +1515,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: (1+a)*3 # indirect doctest
             3*a + 3
         """
-        cdef Rational c =  <Rational>_c
+        cdef Rational c = <Rational>_c
         cdef NumberFieldElement_quadratic res = <NumberFieldElement_quadratic>self._new()
         mpz_mul(res.a, self.a, mpq_numref(c.value))
         mpz_mul(res.b, self.b, mpq_numref(c.value))
@@ -1532,7 +1532,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: 5*(a-1/5) # indirect doctest
             5*a - 1
         """
-        cdef Rational c =  <Rational>_c
+        cdef Rational c = <Rational>_c
         cdef NumberFieldElement_quadratic res = <NumberFieldElement_quadratic>self._new()
         mpz_mul(res.a, self.a, mpq_numref(c.value))
         mpz_mul(res.b, self.b, mpq_numref(c.value))
@@ -2866,7 +2866,7 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
             -13
             sage: w.inverse_mod(13).parent() == OE
             True
-            sage: w.inverse_mod(2*OE)
+            sage: w.inverse_mod(2)
             Traceback (most recent call last):
             ...
             ZeroDivisionError: w is not invertible modulo Fractional ideal (2)

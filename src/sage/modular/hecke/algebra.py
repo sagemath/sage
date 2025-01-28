@@ -26,7 +26,7 @@ the full Hecke algebra, only with the anemic algebra.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.rings.infinity import infinity
 from sage.categories.algebras import Algebras
@@ -35,12 +35,12 @@ from sage.arith.functions import lcm
 from sage.arith.misc import gcd
 from sage.misc.latex import latex
 from sage.matrix.matrix_space import MatrixSpace
-from sage.rings.ring import CommutativeRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.element import Element
 from sage.structure.unique_representation import CachedRepresentation
 from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_method, richcmp
 
 
@@ -91,7 +91,6 @@ def _heckebasis(M):
     MM = MatrixSpace(QQ, d)
     S = []
     Denom = []
-    B = []
     B1 = []
     for i in range(1, M.hecke_bound() + 1):
         v = M.hecke_operator(i).matrix()
@@ -99,11 +98,9 @@ def _heckebasis(M):
         Denom.append(den)
         S.append(v)
     den = lcm(Denom)
-    for m in S:
-        B.append(WW((den * m).list()))
+    B = [WW((den * m).list()) for m in S]
     UU = WW.submodule(B)
-    B = UU.basis()
-    for u in B:
+    for u in UU.basis():
         u1 = u.list()
         m1 = M.hecke_algebra()(MM(u1), check=False)
         B1.append((1 / den) * m1)
@@ -111,7 +108,7 @@ def _heckebasis(M):
 
 
 @richcmp_method
-class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
+class HeckeAlgebra_base(CachedRepresentation, Parent):
     """
     Base class for algebras of Hecke operators on a fixed Hecke module.
 
@@ -186,8 +183,7 @@ class HeckeAlgebra_base(CachedRepresentation, CommutativeRing):
             raise TypeError(msg)
         self.__M = M
         cat = Algebras(M.base_ring()).Commutative()
-        CommutativeRing.__init__(self, base_ring=M.base_ring(),
-                                 category=cat)
+        Parent.__init__(self, base=M.base_ring(), category=cat)
 
     def _an_element_(self):
         r"""

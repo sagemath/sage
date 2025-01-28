@@ -292,7 +292,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         """
         return len(m)
 
-    ## Multiplication
+    # Multiplication
 
     def product_on_basis(self, a, b):
         r"""
@@ -557,7 +557,7 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
     defines the action we want, but since the groundset is `\{0,1,2\}`
     we first add `1` and then subtract `1`::
 
-        sage: def on_groundset(g,x):
+        sage: def on_groundset(g, x):
         ....:     return g(x+1)-1
 
     Now that we have defined an action we can create the invariant, and
@@ -625,7 +625,7 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
             ....:             [0,0,-1,0,-1,-1]])
             sage: M = Matroid(A);
             sage: G = SymmetricGroup(6)
-            sage: def on_groundset(g,x): return g(x+1)-1
+            sage: def on_groundset(g, x): return g(x+1)-1
             sage: import __main__; __main__.on_groundset = on_groundset
             sage: OTG = M.orlik_terao_algebra(QQ, invariant = (G,on_groundset))
             sage: TestSuite(OTG).run()
@@ -687,7 +687,7 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
             sage: A = matrix([[1,1,0],[-1,0,1],[0,-1,-1]])
             sage: M = Matroid(A)
             sage: G = SymmetricGroup(3)
-            sage: def on_groundset(g,x):
+            sage: def on_groundset(g, x):
             ....:     return g(x+1)-1
             sage: OTG = M.orlik_terao_algebra(QQ, invariant=(G,on_groundset))
             sage: OTG.construction() is None
@@ -718,7 +718,7 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
             sage: M.groundset()
             frozenset({0, 1, 2})
             sage: G = SymmetricGroup(3)
-            sage: def on_groundset(g,x):
+            sage: def on_groundset(g, x):
             ....:     return g(x+1)-1
             sage: OTG = M.orlik_terao_algebra(QQ, invariant=(G,on_groundset))
             sage: def act(g):

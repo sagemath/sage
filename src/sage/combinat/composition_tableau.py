@@ -211,10 +211,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
             sage: CompositionTableau([[1],[3,2],[4,4]]).descent_set()
             [1, 3]
         """
-        cols = {}
-        for row in self:
-            for col, i in enumerate(row):
-                cols[i] = col
+        cols = {i: col for row in self for col, i in enumerate(row)}
         return sorted(i for i in cols if i + 1 in cols and cols[i + 1] >= cols[i])
 
     def descent_composition(self):
@@ -826,7 +823,7 @@ class CompositionTableauxBacktracker(GenericBacktracker):
             # We check to make sure that k does not violate the Triple Rule
             if j != 0 and i != 0 and any(k == obj_copy[m][j] for m in range(i)):
                 continue
-            if j != 0 and i != 0 and any(obj_copy[m][j] < k and k <= obj_copy[m][j - 1]
+            if j != 0 and i != 0 and any(obj_copy[m][j] < k <= obj_copy[m][j - 1]
                                          for m in range(i)):
                 continue
 

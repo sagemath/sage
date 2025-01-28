@@ -592,8 +592,8 @@ class TamariIntervalPoset(Element,
         n = self._size
         m = other.size()
         relations = self._poset.cover_relations()
-        relations.extend([(i + n, j + n)
-                          for i, j in other._poset.cover_relations_iterator()])
+        relations.extend((i + n, j + n)
+                         for i, j in other._poset.cover_relations_iterator())
         P = FinitePoset(DiGraph([list(range(1, n + m + 1)), relations],
                                 format='vertices_and_edges'))  # type:ignore
         return TamariIntervalPoset(P, check=False)  # type:ignore
@@ -1980,9 +1980,9 @@ class TamariIntervalPoset(Element,
         relations = [(i - start + 1, j - start + 1)
                      for (i, j) in self.increasing_cover_relations()
                      if i >= start and j < end]
-        relations.extend([(j - start + 1, i - start + 1)
-                          for (j, i) in self.decreasing_cover_relations()
-                          if i >= start and j < end])
+        relations.extend((j - start + 1, i - start + 1)
+                         for (j, i) in self.decreasing_cover_relations()
+                         if i >= start and j < end)
         return TamariIntervalPoset(end - start, relations, check=False)
 
     sub_poset = subposet
@@ -3110,7 +3110,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
             rroots, rrelations, rindex = get_relations(bt[1], start=index + 1)
             roots.append(index)
             relations.extend(rrelations)
-            relations.extend([(j, index) for j in rroots])
+            relations.extend((j, index) for j in rroots)
             return roots, relations, rindex
 
         _, relations, index = get_relations(binary_tree)
@@ -3224,7 +3224,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
             roots, relations, rindex = get_relations(bt[1], start=index + 1)
             roots.append(index)
             relations.extend(lrelations)
-            relations.extend([(j, index) for j in lroots])
+            relations.extend((j, index) for j in lroots)
             return roots, relations, rindex
 
         _, relations, index = get_relations(binary_tree)
@@ -3533,8 +3533,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
 
         liste = clockwise_labelling(graph0, -1)[1:]
         relabelling = {l: i for i, l in enumerate(liste)}
-        for l in [-1, -2, -3]:
-            relabelling[l] = l
+        relabelling.update((i, i) for i in [-1, -2, -3])
         new_graph = graph.relabel(relabelling, inplace=False)
 
         dyckword_top = []

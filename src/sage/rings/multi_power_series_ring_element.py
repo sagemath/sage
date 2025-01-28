@@ -158,7 +158,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.infinity import infinity, InfinityElement
 from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.power_series_ring_element import PowerSeries
 from sage.structure.richcmp import richcmp
 
@@ -406,7 +406,7 @@ class MPowerSeries(PowerSeries):
                 self._bg_value = parent._send_to_bg(x).add_bigoh(prec)
 
         # test whether x coerces to underlying polynomial ring of parent
-        elif isinstance(xparent, PolynomialRing_general):
+        elif isinstance(xparent, PolynomialRing_generic):
             self._bg_value = parent._send_to_bg(x).add_bigoh(prec)
 
         else:
@@ -567,7 +567,7 @@ class MPowerSeries(PowerSeries):
         base_map = kwds.get('base_map')
         if base_map is None:
             base_map = lambda t: t
-        for m, c in self.dict().items():
+        for m, c in self.monomial_coefficients().items():
             y += base_map(c)*prod([x[i]**m[i] for i in range(n) if m[i] != 0])
         if self.prec() == infinity:
             return y
@@ -671,7 +671,7 @@ class MPowerSeries(PowerSeries):
         else:
             return codomain(self._subs_formal(*im_gens, base_map=base_map))
 
-    def __getitem__(self,n):
+    def __getitem__(self, n):
         """
         Return summand of total degree ``n``.
 
@@ -1099,7 +1099,7 @@ class MPowerSeries(PowerSeries):
             return self.change_ring(Zmod(other))
         raise NotImplementedError("Mod on multivariate power series ring elements not defined except modulo an integer.")
 
-    def dict(self):
+    def monomial_coefficients(self, copy=None):
         """
         Return underlying dictionary with keys the exponents and values the
         coefficients of this power series.
@@ -1116,6 +1116,14 @@ class MPowerSeries(PowerSeries):
             sage: m = 2/3*t0*t1^15*t3^48 - t0^15*t1^21*t2^28*t3^5
             sage: m2 = 1/2*t0^12*t1^29*t2^46*t3^6 - 1/4*t0^39*t1^5*t2^23*t3^30 + M.O(100)
             sage: s = m + m2
+            sage: s.monomial_coefficients()
+            {(1, 15, 0, 48): 2/3,
+             (12, 29, 46, 6): 1/2,
+             (15, 21, 28, 5): -1,
+             (39, 5, 23, 30): -1/4}
+
+        ``dict`` is an alias::
+
             sage: s.dict()
             {(1, 15, 0, 48): 2/3,
              (12, 29, 46, 6): 1/2,
@@ -1124,8 +1132,10 @@ class MPowerSeries(PowerSeries):
         """
         out_dict = {}
         for j in self._bg_value.coefficients():
-            out_dict.update(j.dict())
+            out_dict.update(j.monomial_coefficients())
         return out_dict
+
+    dict = monomial_coefficients
 
     def polynomial(self):
         """
@@ -1224,7 +1234,7 @@ class MPowerSeries(PowerSeries):
             True
         """
         if self.is_sparse():
-            return self.dict()
+            return self.monomial_coefficients()
         tmp = {}
         for j in self._bg_value.coefficients():
             for m in j.monomials():
@@ -1727,7 +1737,7 @@ class MPowerSeries(PowerSeries):
         xxe = xx.exponents()[0]
         pos = [i for i, c in enumerate(xxe) if c != 0][0]  # get the position of the variable
         res = {mon.eadd(xxe): R(co / (mon[pos]+1))
-               for mon, co in self.dict().items()}
+               for mon, co in self.monomial_coefficients().items()}
         return P( res ).add_bigoh(self.prec()+1)
 
     def ogf(self):
@@ -2095,7 +2105,7 @@ class MPowerSeries(PowerSeries):
         raise NotImplementedError("laurent_series not defined for multivariate power series.")
 
 
-class MO():
+class MO:
     """
     Object representing a zero element with given precision.
 
@@ -2120,7 +2130,7 @@ class MO():
         sage: w^2
         1 + 2*a + O(a, b, c)^2
     """
-    def __init__(self,x):
+    def __init__(self, x):
         """
         Initialize ``self``.
 

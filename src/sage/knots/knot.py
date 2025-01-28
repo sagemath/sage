@@ -30,6 +30,8 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.categories.monoids import Monoids
 
 # We need Link to be first in the MRO in order to use its equality, hash, etc.
+
+
 class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A knot.
@@ -200,14 +202,14 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
                 x, y, xx, yy = xx, yy, x, y
             if y < b:
                 if xx < a:
-                    M[a][b] = u"╯"
+                    M[a][b] = "╯"
                 else:
-                    M[a][b] = u"╮"
+                    M[a][b] = "╮"
             else:
                 if xx < a:
-                    M[a][b] = u"╰"
+                    M[a][b] = "╰"
                 else:
-                    M[a][b] = u"╭"
+                    M[a][b] = "╭"
 
         for ab, cd in graphe.edge_iterator(labels=False):
             a, b = ab
@@ -215,21 +217,21 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
             if a == c:
                 b, d = sorted((b, d))
                 for i in range(b + 1, d):
-                    M[a][i] = u"─"
+                    M[a][i] = "─"
             else:
                 a, c = sorted((a, c))
                 for i in range(a + 1, c):
-                    M[i][b] = u"│"
+                    M[i][b] = "│"
 
         if style == 0:
-            H = u"┿"
-            V = u"╂"
+            H = "┿"
+            V = "╂"
         elif style == 1:
-            H = u"━"
-            V = u"┃"
+            H = "━"
+            V = "┃"
         elif style == 2:
-            H = u"─"
-            V = u"│"
+            H = "─"
+            V = "│"
 
         for x, y in hori:
             M[x][y] = H
@@ -290,7 +292,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
                     crossing = i
                     break
             if not string_found:
-                for i in range(0, crossing):
+                for i in range(crossing):
                     if abs(b[i]) == string or abs(b[i]) == string - 1:
                         string_found = True
                         crossing = i

@@ -378,7 +378,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         s += ']' if self._upper_closed else ')'
         return s
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return a latex representation of ``self``.
 
@@ -392,7 +392,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         from sage.misc.latex import latex
         if self.is_point():
             # Converting to str avoids the extra whitespace
-            # that LatexExpr add on concenation. We do not need
+            # that LatexExpr add on concatenation. We do not need
             # the whitespace because we are wrapping it in
             # non-letter characters.
             return r'\{' + str(latex(self.lower())) + r'\}'
@@ -2537,11 +2537,9 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             s = RealSet(real_set)
             if s.n_components() > 0:
                 lower_s = s[0]._scan_lower()
-                if lower_s < lower_scan:
-                    lower_scan = lower_s
+                lower_scan = min(lower_s, lower_scan)
                 upper_s = s[-1]._scan_upper()
-                if upper_s > upper_scan:
-                    upper_scan = upper_s
+                upper_scan = max(upper_s, upper_scan)
         if lower_scan < upper_scan:
             lower, lower_closed = lower_scan[0][0], lower_scan[0][1] == 0
             upper, upper_closed = upper_scan[0][0], upper_scan[0][1] > 0

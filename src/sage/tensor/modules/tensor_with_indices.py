@@ -27,6 +27,7 @@ from itertools import combinations
 # The dot is special syntax for unnamed index positions.
 _alph_or_dot_pattern = r"([.]|[^\d\W_])"
 
+
 class TensorWithIndices(SageObject):
     r"""
     Index notation for tensors.
@@ -936,7 +937,7 @@ class TensorWithIndices(SageObject):
         swap_params = list(combinations(range(self._tensor.tensor_rank()+1), 3))
 
         # The associated permutation is as follows
-        def swap(param,N):
+        def swap(param, N):
             i,j,k = param
             L = list(range(1,N+1))
             L = L[:i] + L[j:k] + L[i:j] + L[k:]

@@ -106,6 +106,7 @@ class _default_adjuster(Sigma0ActionAdjuster):
         """
         return tuple(g.list())
 
+
 class Sigma0_factory(UniqueFactory):
     r"""
     Create the monoid of non-singular matrices, upper triangular mod `N`.

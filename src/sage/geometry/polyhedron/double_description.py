@@ -704,6 +704,7 @@ class StandardDoubleDescriptionPair(DoubleDescriptionPair):
         self.R = R_pos + R_nul + R_new
         self.A.append(a)
 
+
 class StandardAlgorithm(Problem):
     """
     Standard implementation of the double description algorithm.

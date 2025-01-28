@@ -44,16 +44,18 @@ REFERENCES:
 # *****************************************************************************
 
 from __future__ import annotations
-from typing import Optional, Union, TYPE_CHECKING
-from sage.misc.cachefunc import cached_method
-from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
+
+from typing import TYPE_CHECKING, Optional, Union
+
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+from sage.misc.cachefunc import cached_method
+from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
 
 if TYPE_CHECKING:
-    from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
     from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
     from sage.manifolds.differentiable.symplectic_form import SymplecticForm
+    from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
 
 
 class DiffForm(TensorField):
@@ -442,8 +444,8 @@ class DiffForm(TensorField):
             True
         """
         from sage.tensor.modules.format_utilities import (
-            format_unop_txt,
             format_unop_latex,
+            format_unop_txt,
         )
 
         vmodule = self._vmodule  # shortcut
@@ -525,8 +527,8 @@ class DiffForm(TensorField):
         """
         if other._tensor_rank == 0:
             return self * other
-        from sage.typeset.unicode_characters import unicode_wedge
         from sage.tensor.modules.format_utilities import is_atomic
+        from sage.typeset.unicode_characters import unicode_wedge
         if self._domain.is_subset(other._domain):
             if not self._ambient_domain.is_subset(other._ambient_domain):
                 raise ValueError("incompatible ambient domains for exterior product")
@@ -762,15 +764,15 @@ class DiffForm(TensorField):
         """
         from sage.functions.other import factorial
         from sage.tensor.modules.format_utilities import (
-            format_unop_txt,
             format_unop_latex,
+            format_unop_txt,
         )
 
         if nondegenerate_tensor is None:
             nondegenerate_tensor = self._vmodule._ambient_domain.metric()
 
         p = self.tensor_type()[1]
-        # For performance reasons, we raise the indicies of the volume form
+        # For performance reasons, we raise the indices of the volume form
         # and not of the differential form; in the symplectic case this is wrong by
         # a factor of (-1)^p, which will be corrected below
         eps = nondegenerate_tensor.volume_form(p)
@@ -787,7 +789,7 @@ class DiffForm(TensorField):
                     result = result * nondegenerate_tensor._indic_signat
             from sage.manifolds.differentiable.symplectic_form import SymplecticForm
             if isinstance(nondegenerate_tensor, SymplecticForm):
-                # correction because we lifted the indicies of the volume (see above)
+                # correction because we lifted the indices of the volume (see above)
                 result = result * (-1)**p
 
         result.set_name(
@@ -1438,10 +1440,12 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
             sage: a.lie_der(v) == v.contract(diff(a)) + diff(a(v)) # long time
             True
         """
-        from sage.tensor.modules.format_utilities import (format_unop_txt,
-                                                          format_unop_latex)
-        from sage.tensor.modules.comp import CompFullyAntiSym
         from sage.manifolds.differentiable.vectorframe import CoordFrame
+        from sage.tensor.modules.comp import CompFullyAntiSym
+        from sage.tensor.modules.format_utilities import (
+            format_unop_latex,
+            format_unop_txt,
+        )
         fmodule = self._fmodule # shortcut
         rname = format_unop_txt('d', self._name)
         rlname = format_unop_latex(r'\mathrm{d}', self._latex_name)

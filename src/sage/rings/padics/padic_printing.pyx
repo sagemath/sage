@@ -76,7 +76,7 @@ class pAdicPrinterDefaults(SageObject):
     """
     This class stores global defaults for `p`-adic printing.
     """
-    def __init__(self, mode = 'series', pos = True, max_ram_terms = -1, max_unram_terms = -1, max_terse_terms = -1, sep = "|", alphabet = None):
+    def __init__(self, mode='series', pos=True, max_ram_terms=-1, max_unram_terms=-1, max_terse_terms=-1, sep="|", alphabet=None):
         r"""
         Instances of this class store global defaults used in
         determining printing options during the creation of `p`-adic
@@ -150,7 +150,7 @@ class pAdicPrinterDefaults(SageObject):
             else:
                 raise ValueError("invalid printing mode")
 
-    def allow_negatives(self, neg = None):
+    def allow_negatives(self, neg=None):
         r"""
         Controls whether or not to display a balanced representation.
 
@@ -172,7 +172,7 @@ class pAdicPrinterDefaults(SageObject):
         else:
             self._pos = not neg
 
-    def max_series_terms(self, max = None):
+    def max_series_terms(self, max=None):
         r"""
         Controls the maximum number of terms shown when printing in
         ``'series'``, ``'digits'`` or ``'bars'`` mode.
@@ -197,7 +197,7 @@ class pAdicPrinterDefaults(SageObject):
         else:
             self._max_ram_terms = int(max)
 
-    def max_unram_terms(self, max = None):
+    def max_unram_terms(self, max=None):
         r"""
         For rings with non-prime residue fields, controls how many
         terms appear in the coefficient of each ``pi^n`` when printing in
@@ -222,7 +222,7 @@ class pAdicPrinterDefaults(SageObject):
         else:
             self._max_unram_terms = int(max)
 
-    def max_poly_terms(self, max = None):
+    def max_poly_terms(self, max=None):
         r"""
         Controls the number of terms appearing when printing
         polynomial representations in ``'terse'`` or ``'val-unit'`` modes.
@@ -248,7 +248,7 @@ class pAdicPrinterDefaults(SageObject):
         else:
             self._max_terse_terms = int(max)
 
-    def sep(self, sep = None):
+    def sep(self, sep=None):
         r"""
         Controls the separator used in ``'bars'`` mode.
 
@@ -271,7 +271,7 @@ class pAdicPrinterDefaults(SageObject):
         else:
             self._sep = str(sep)
 
-    def alphabet(self, alphabet = None):
+    def alphabet(self, alphabet=None):
         r"""
         Controls the alphabet used to translate `p`-adic digits into
         strings (so that no separator need be used in ``'digits'`` mode).
@@ -832,7 +832,7 @@ cdef class pAdicPrinter_class(SageObject):
         else:
             return trim_zeros(list(value.unit_part().expansion(lift_mode='smallest')))
 
-    def repr_gen(self, elt, do_latex, pos = None, mode = None, ram_name = None):
+    def repr_gen(self, elt, do_latex, pos=None, mode=None, ram_name=None):
         """
         The entry point for printing an element.
 
@@ -1401,7 +1401,7 @@ cdef class pAdicPrinter_class(SageObject):
                         return s
                     else:
                         count += 1
-                        if count == max_unram_terms: #this will never trigger if max_unram_terms == -1
+                        if count == max_unram_terms:  # this will never trigger if max_unram_terms == -1
                             newj = len(L) - 1
                             while L[newj] == 0:
                                 newj -= 1
@@ -1424,7 +1424,7 @@ cdef class pAdicPrinter_class(SageObject):
                         return s
                     else:
                         count += 1
-                        if count == max_unram_terms: #this will never trigger if max_unram_terms == -1
+                        if count == max_unram_terms:  # this will never trigger if max_unram_terms == -1
                             newj = 0
                             while L[newj] == 0:
                                 newj += 1

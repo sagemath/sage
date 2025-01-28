@@ -136,7 +136,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
     """
     def __init__(self, M=None, groundset=None, bases=None, nonbases=None, rank=None):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 
@@ -298,7 +298,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
     # a function that is very efficient for this class
 
-    cpdef bint _is_basis(self, frozenset X):
+    cpdef bint _is_basis(self, frozenset X) noexcept:
         """
         Test if input is a basis.
 
@@ -955,7 +955,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         if not isinstance(other, BasisMatroid):
             return self.isomorphism(BasisMatroid(other))
         if self is other:
-            return {e:e for e in self.groundset()}
+            return {e: e for e in self.groundset()}
         if len(self) != len(other):
             return None
         if self.full_rank() != other.full_rank():
@@ -1086,9 +1086,9 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         .. WARNING::
 
-            This method is linked to __richcmp__ (in Cython) and __cmp__ or
-            __eq__/__ne__ (in Python). If you override one, you should (and in
-            Cython: MUST) override the other!
+            This method is linked to ``__richcmp__`` (in Cython) and ``__cmp__``
+            or ``__eq__``/``__ne__`` (in Python). If you override one, you
+            should (and, in Cython, \emph{must}) override the other!
 
         EXAMPLES::
 

@@ -2409,7 +2409,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             if not hasattr(self, '_curve'):
                 if self._Q.degree() == 3:
                     ainvs = [0, self._Q[2], 0, self._Q[1], self._Q[0]]
-                    self._curve = EllipticCurve(ainvs, check_squarefree=R.is_field())
+                    self._curve = EllipticCurve(ainvs)
                 else:
                     self._curve = HyperellipticCurve(self._Q, check_squarefree=R.is_field())
 
@@ -2596,7 +2596,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
         i = int(i)
         j = int(j)
 
-        if 0 < i and i < self._n:
+        if 0 < i < self._n:
             if b is None:
                 by_to_j = self._series_ring_y << (j - 1)
             else:

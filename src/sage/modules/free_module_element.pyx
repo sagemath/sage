@@ -104,13 +104,13 @@ This is a test from :issue:`20211`::
     [1]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 cimport cython
 from cpython.slice cimport PySlice_GetIndicesEx
@@ -486,6 +486,16 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         sage: vector(S, 3)                                                              # needs sage.rings.finite_rings
         ...
         (0, 0, 0)
+
+    We check that ``sparse`` is respected for numpy arrays::
+
+        sage: # needs numpy
+        sage: import numpy
+        sage: a = numpy.array([1,2,3], dtype=numpy.float64)
+        sage: v = vector(a, sparse=True); v
+        (1.0, 2.0, 3.0)
+        sage: v.is_sparse()
+        True
     """
     from sage.modules.free_module import FreeModule
     # We first efficiently handle the important special case of the zero vector
@@ -563,7 +573,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     except ImportError:
         pass
     else:
-        if isinstance(v, ndarray):
+        if isinstance(v, ndarray) and not sparse:
             if len(v.shape) != 1:
                 raise TypeError("cannot convert %r-dimensional array to a vector" % len(v.shape))
             from sage.modules.free_module import VectorSpace
@@ -1007,20 +1017,20 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         EXAMPLES::
 
             sage: v = vector(ZZ, 4, range(4))
-            sage: giac(v) + v                                                           # needs sage.libs.giac
+            sage: giac(v) + v                                                           # needs giac
             [0,2,4,6]
 
         ::
 
             sage: v = vector(QQ, 3, [2/3, 0, 5/4])
-            sage: giac(v)                                                               # needs sage.libs.giac
+            sage: giac(v)                                                               # needs giac
             [2/3,0,5/4]
 
         ::
 
             sage: P.<x> = ZZ[]
             sage: v = vector(P, 3, [x^2 + 2, 2*x + 1, -2*x^2 + 4*x])
-            sage: giac(v)                                                               # needs sage.libs.giac
+            sage: giac(v)                                                               # needs giac
             [sageVARx^2+2,2*sageVARx+1,-2*sageVARx^2+4*sageVARx]
         """
         return self.list()
@@ -2204,8 +2214,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             else:
                 sep=", "
             entry = S[i]
-            #if i > 0:
-            #    entry = " "*(width-len(entry)) + entry
+            # if i > 0:
+            #     entry = " "*(width-len(entry)) + entry
             s = s + entry + sep
         s = s + ")"
         return s
@@ -2231,7 +2241,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: maple(v)  # optional - maple
             Vector[row](3, [x^2+2,2*x+1,-2*x^2+4*x])
         """
-        return "Vector[row](%s)"%(str(self.list()))
+        return "Vector[row](%s)" % str(self.list())
 
     def degree(self):
         """
@@ -2329,9 +2339,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                 e[i] = c
         return e
 
-    #############################
+    # ############################
     # Plotting
-    #############################
+    # ############################
     def plot(self, plot_type=None, start=None, **kwds):
         """
         INPUT:
@@ -2685,7 +2695,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                 return self._parent.coordinate_ring().zero()
             return self._dot_product_(r)
         if self._degree != r._degree:
-            raise ArithmeticError("degrees (%s and %s) must be the same"%(self.degree(), right.degree()))
+            raise ArithmeticError("degrees (%s and %s) must be the same" % (self.degree(), right.degree()))
         # Base rings are not equal => use dot product with coercion
         return self._dot_product_coerce_(r)
 
@@ -3441,7 +3451,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         The more general :meth:`sage.matrix.matrix2.tensor_product` is an
         operation on a pair of matrices.  If we construct a pair of vectors
         as a column vector and a row vector, then an outer product and a
-        tensor product are identical.  Thus `tensor_product` is a synonym
+        tensor product are identical.  Thus ``tensor_product`` is a synonym
         for this method.  ::
 
             sage: u = vector(QQ, [1/2, 1/3, 1/4, 1/5])
@@ -4037,7 +4047,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         Differentiate with respect to var by differentiating each element
         with respect to var.
 
-        .. seealso:
+        .. SEEALSO::
 
            :meth:`derivative`
 
@@ -4131,7 +4141,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             (1/2, 1/3, -cos(1) + 1)
         """
         from sage.misc.functional import integral
-        return self.apply_map(lambda x: integral(x,*args, **kwds))
+        return self.apply_map(lambda x: integral(x, *args, **kwds))
 
     integrate = integral
 
@@ -4169,11 +4179,11 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         # return self.apply_map(lambda x: x.nintegral(*args, **kwds) for x in self)
 
         if self.is_sparse():
-            v = [(i,z.nintegral(*args,**kwds)) for i,z in self.dict(copy=False).items()]
+            v = [(i,z.nintegral(*args, **kwds)) for i,z in self.dict(copy=False).items()]
             answers = dict([(i,a[0]) for i,a in v])
             v=dict(v)
         else:
-            v = [z.nintegral(*args,**kwds) for z in self.list()]
+            v = [z.nintegral(*args, **kwds) for z in self.list()]
             answers = [a[0] for a in v]
 
         return (vector(answers,sparse=self.is_sparse()), v)
@@ -4262,9 +4272,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         return vector(coeffs)
 
 
-#############################################
+# ############################################
 # Generic dense element
-#############################################
+# ############################################
 
 @cython.binding(True)
 def make_FreeModuleElement_generic_dense(parent, entries, degree):
@@ -4724,9 +4734,9 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         return vector(CallableSymbolicExpressionRing(args), self.list())
 
 
-#############################################
+# ############################################
 # Generic sparse element
-#############################################
+# ############################################
 
 @cython.binding(True)
 def make_FreeModuleElement_generic_sparse(parent, entries, degree):
@@ -4840,7 +4850,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         We can initialize with dicts, lists, tuples and derived types::
 
             sage: from sage.modules.free_module_element import FreeModuleElement_generic_sparse
-            sage: def S(R,n):
+            sage: def S(R, n):
             ....:     return FreeModule(R, n, sparse=True)
 
             sage: # needs sage.symbolic

@@ -172,7 +172,7 @@ class BGGDualModule(CombinatorialFreeModule):
         return self._module._repr_generator(m) + "^*"
 
     def _latex_generator(self, m):
-        """
+        r"""
         Return a latex representation of the generator indexed by ``m``.
 
         EXAMPLES::
@@ -423,7 +423,7 @@ class BGGDualModule(CombinatorialFreeModule):
 
 
 #####################################################################
-## Simple modules
+# Simple modules
 
 
 # This is an abuse as the monoid is not free.
@@ -1152,6 +1152,7 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
 
         _lmul_ = _acted_upon_
         _rmul_ = _acted_upon_
+
 
 class FiniteDimensionalSimpleModule(SimpleModule):
     """
