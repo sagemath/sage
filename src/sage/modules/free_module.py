@@ -85,6 +85,8 @@ For other infinite enumerated base rings, a free module of rank `r`
 is enumerated in an unspecified order, it is only guaranteed that
 every element will eventually be seen exactly once.
 
+::
+
     sage: list(islice(QQ^3, 0, 31))
     [(0, 0, 0),
      (0, 0, 1),
@@ -2668,7 +2670,8 @@ class FreeModule_generic(Module_free_ambient):
         if R.cardinality() == sage.rings.infinity.Infinity:
             for i, furthest_element in enumerate(R):
                 for furthest_element_mask in itertools.product((0, 1), repeat=len(G)):
-                    if not any(furthest_element_mask): continue
+                    if not any(furthest_element_mask):
+                        continue
                     for rest in tuples_of_first_n(i, len(G) - sum(furthest_element_mask)):
                         rest = list(rest)
                         vec = [furthest_element if mask else rest.pop() for mask in furthest_element_mask]
