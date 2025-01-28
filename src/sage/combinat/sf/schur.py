@@ -224,6 +224,14 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             return (-1)**m * self([a+b for (a,b) in zip(ga, range(-r,0))])
         return self.zero()
 
+    def _magma_init_(self, magma):
+        """
+        Used in converting this ring to the corresponding ring in MAGMA.
+        """
+        B = magma(self.base_ring())
+        Bref = B._ref()
+        return f"SymmetricFunctionAlgebraSchur({Bref})"
+
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
         def __pow__(self, n):
             """

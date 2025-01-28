@@ -98,6 +98,14 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
         T = self.tensor_square()
         return T.sum_of_monomials( (P(j), P(i-j)) for j in range(i+1) )
 
+    def _magma_init_(self, magma):
+        """
+        Used in converting this ring to the corresponding ring in MAGMA.
+        """
+        B = magma(self.base_ring())
+        Bref = B._ref()
+        return f"SymmetricFunctionAlgebraElementary({Bref})"
+
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
         def omega(self):
             r"""

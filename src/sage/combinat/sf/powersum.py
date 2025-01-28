@@ -216,6 +216,14 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
         """
         return self.base_ring().sum(d*list(rho).count(d) for d in divisors(k))
 
+    def _magma_init_(self, magma):
+        """
+        Used in converting this ring to the corresponding ring in MAGMA.
+        """
+        B = magma(self.base_ring())
+        Bref = B._ref()
+        return f"SymmetricFunctionAlgebraPower({Bref})"
+
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
         def omega(self):
             r"""

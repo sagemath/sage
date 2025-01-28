@@ -276,6 +276,14 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         s = self.realization_of().schur()
         return self(s.antipode(s(element)))
 
+    def _magma_init_(self, magma):
+        """
+        Used in converting this ring to the corresponding ring in MAGMA.
+        """
+        B = magma(self.base_ring())
+        Bref = B._ref()
+        return f"SymmetricFunctionAlgebraMonomial({Bref})"
+
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
         def expand(self, n, alphabet='x'):
             """

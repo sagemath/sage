@@ -233,6 +233,33 @@ seq := [K!gens[i] : i in [1..#gens]];
 return Sprintf("%o.ideal(%o)", Sage(K),Sage(seq)), true;
 end intrinsic;
 
+/* Symmetric functions */
+
+intrinsic Sage(X::AlgSym) -> MonStgElt, BoolElt
+{}
+if HasSchurBasis(X) then
+  return Sprintf("SymmetricFunctions(%o).s()", Sage(BaseRing(X))), false;
+elif HasHomogeneousBasis(X) then
+  return Sprintf("SymmetricFunctions(%o).h()", Sage(BaseRing(X))), false;
+elif HasElementaryBasis(X) then
+  return Sprintf("SymmetricFunctions(%o).e()", Sage(BaseRing(X))), false;
+elif HasPowerSumBasis(X) then
+  return Sprintf("SymmetricFunctions(%o).p()", Sage(BaseRing(X))), false;
+elif HasMonomialBasis(X) then
+  return Sprintf("SymmetricFunctions(%o).m()", Sage(BaseRing(X))), false;
+end if;
+end intrinsic;
+
+intrinsic Sage(X::AlgSymElt) -> MonStgElt, BoolElt
+{}
+PA := Parent(X);
+SF := Sage(PA);
+BR := Sage(BaseRing(PA));
+parts, coeffs := Support(X);
+dict := (&* [ Sprintf("Partition(%o):%o(%o),", Sage(parts[i]), BR, Sage(coeffs[i])) : i in [1..#parts] ]);
+return Sprintf("%o._from_dict({%o})", SF, dict), false;
+end intrinsic;
+
 /* Elliptic curves */
 
 intrinsic Sage(X::CrvEll) -> MonStgElt, BoolElt
