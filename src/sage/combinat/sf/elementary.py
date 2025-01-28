@@ -105,12 +105,12 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
         EXAMPLES::
 
             sage: # optional - magma
-            sage: S = SymmetricFunctions(QQ).e()
-            sage: t = 4*S[3,2]+9
+            sage: E = SymmetricFunctions(QQ).e()
+            sage: t = 4*E[3,2]+9
             sage: mt = magma(t); mt
             9 + 4*$.[3,2]
             sage: mt.sage()
-            9*p[] + 4*e[3, 2]
+            9*e[] + 4*e[3, 2]
         """
         B = magma(self.base_ring())
         Bref = B._ref()

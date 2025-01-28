@@ -283,12 +283,12 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         EXAMPLES::
 
             sage: # optional - magma
-            sage: S = SymmetricFunctions(QQ).m()
-            sage: t = 4*S[3,2]+9
+            sage: M = SymmetricFunctions(QQ).m()
+            sage: t = 4*M[3,2]+9
             sage: mt = magma(t); mt
             9 + 4*$.[3,2]
             sage: mt.sage()
-            9*p[] + 4*m[3, 2]
+            9*m[] + 4*m[3, 2]
         """
         B = magma(self.base_ring())
         Bref = B._ref()

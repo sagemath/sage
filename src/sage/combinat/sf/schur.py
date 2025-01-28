@@ -236,7 +236,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             sage: mt = magma(t); mt
             9 + 4*$.[3,2]
             sage: mt.sage()
-            9*p[] + 4*s[3, 2]
+            9*s[] + 4*s[3, 2]
         """
         B = magma(self.base_ring())
         Bref = B._ref()

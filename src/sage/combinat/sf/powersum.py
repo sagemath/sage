@@ -223,8 +223,8 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
         EXAMPLES::
 
             sage: # optional - magma
-            sage: S = SymmetricFunctions(QQ).p()
-            sage: t = 4*S[3,2]+9
+            sage: P = SymmetricFunctions(QQ).p()
+            sage: t = 4*P[3,2]+9
             sage: mt = magma(t); mt
             9 + 4*$.[3,2]
             sage: mt.sage()
