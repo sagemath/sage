@@ -219,6 +219,16 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
     def _magma_init_(self, magma):
         """
         Used in converting this ring to the corresponding ring in MAGMA.
+
+        EXAMPLES::
+
+            sage: # optional - magma
+            sage: S = SymmetricFunctions(QQ).p()
+            sage: t = 4*S[3,2]+9
+            sage: mt = magma(t); mt
+            9 + 4*$.[3,2]
+            sage: mt.sage()
+            9*p[] + 4*p[3, 2]
         """
         B = magma(self.base_ring())
         Bref = B._ref()
