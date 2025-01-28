@@ -3102,14 +3102,12 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
     with a check that if eigenvectors were calculated by hand
     entries would all be integers. ::
 
-        sage: eigenvalues = [ZZ.random_element() for _ in range(3)]
-        sage: B = random_matrix(QQ, 6, algorithm='diagonalizable',
-        ....:                   eigenvalues=eigenvalues, dimensions=[2,3,1])
-        sage: all(x in ZZ for x in (B-(-12*identity_matrix(6))).rref().list())
-        True
-        sage: all(x in ZZ for x in (B-(4*identity_matrix(6))).rref().list())
-        True
-        sage: all(x in ZZ for x in (B-(6*identity_matrix(6))).rref().list())
+        sage: N = randint(5, 15)
+        sage: dimensions = Compositions(N).random_element()
+        sage: eigenvalues = [ZZ.random_element() for _ in dimensions]
+        sage: B = random_matrix(QQ, N, algorithm='diagonalizable',
+        ....:                   eigenvalues=eigenvalues, dimensions=dimensions)
+        sage: all(x in ZZ for l in eigenvalues for x in (B - l).rref().list())
         True
 
         sage: # needs sage.rings.number_field
@@ -3223,9 +3221,13 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
     if len(eigenvalues) != len(dimensions):
         raise ValueError("each eigenvalue must have a corresponding dimension and each dimension a corresponding eigenvalue.")
     # sort the dimensions in order of increasing size, and sort the eigenvalues list in an identical fashion, to maintain corresponding values.
-    dimensions_sort = sorted(zip(dimensions, eigenvalues))
-    dimensions = [x[0] for x in dimensions_sort]
-    eigenvalues = [x[1] for x in dimensions_sort]
+    from collections import defaultdict
+    dimensions_sort = defaultdict(ZZ)
+    for dim, eig in zip(dimensions, eigenvalues):
+        dimensions_sort[eig] += dim
+    dimensions_sort = sorted(dimensions_sort.items(), key=lambda pr: pr[1])
+    eigenvalues = [x[0] for x in dimensions_sort]
+    dimensions = [x[1] for x in dimensions_sort]
     # Create the matrix of eigenvalues on the diagonal.  Use a lower limit and upper limit determined by the eigenvalue dimensions.
     diagonal_matrix = matrix(QQ, size)
     up_bound = 0
