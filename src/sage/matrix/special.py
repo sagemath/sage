@@ -241,10 +241,10 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
 
       - ``'unimodular'`` -- creates a matrix of determinant 1
 
-      - ``'diagonalizable'`` -- if the base ring is ``QQ`` creates a
-      diagonalizable matrix whose eigenvectors, if computed by hand,
-      will have only integer entries. See the documentation of
-      :meth:`~sage.matrix.special.random_diagonalizable_matrix`
+      - ``'diagonalizable'`` -- creates a diagonalizable matrix. if the
+      base ring is ``QQ`` creates a diagonalizable matrix whose eigenvectors,
+      if computed by hand, will have only integer entries. See the
+      documentation of :meth:`~sage.matrix.special.random_diagonalizable_matrix`
       for more information
 
     - ``implementation`` -- (``None`` or string or a matrix class) a possible
@@ -3066,7 +3066,7 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
     If eigenvalues and dimensions are not specified in a list,
     they will be assigned randomly.
 
-    - ``parent`` -- the corresponding matrix space of the base ring
+    - ``parent`` -- the desired parent of the square matrix (a matrix space)
 
     - ``eigenvalues`` -- the list of desired eigenvalues (default=None)
 
@@ -3076,9 +3076,9 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
     OUTPUT:
 
     A square, diagonalizable, matrix. Elements of the matrix are elements
-    of the base ring. If the ring used is ``QQ`` then we have integer entries.
-    If the base ring used is ``QQ`` the eigenspaces of this matrix, if computed
-    by hand, gives basis vectors with only integer entries.
+    of the base ring. If the ring used is ``QQ`` then we have integer entries,
+    and the eigenspaces of this matrix, if computed by hand, gives basis
+    vectors with only integer entries.
 
     .. NOTE::
 
@@ -3249,7 +3249,7 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
         low_bound = low_bound+dimensions[row_index]
     # Create a matrix to hold each of the eigenvectors as its columns, begin with an identity matrix so that after row and column
     # operations the resulting matrix will be unimodular.
-    eigenvector_matrix = matrix.identity(ring, size, size)
+    eigenvector_matrix = matrix.identity(ring, size)
     upper_limit = 0
     lower_limit = 0
     # run the routine over the necessary number of columns corresponding eigenvalue dimension.
