@@ -267,7 +267,7 @@ cdef class Riemann_Map:
             ymax = cps.imag.max()
             ymin = cps.imag.min()
         space = 0.1 * max(xmax - xmin, ymax - ymin)
-        #The default plotting window for this map.
+        # The default plotting window for this map.
         self.cps = cps
         self.dps = dps
         self.x_range = (xmin - space, xmax + space)
@@ -1134,10 +1134,10 @@ cpdef get_derivatives(np.ndarray[COMPLEX_T, ndim=2] z_values, FLOAT_T xstep,
     cdef np.ndarray[FLOAT_T, ndim = 2] dr, dtheta, zabs
     imax = len(z_values)-2
     jmax = len(z_values[0])-2
-    #(f(x+delta)-f(x-delta))/2delta
+    # (f(x+delta)-f(x-delta))/2delta
     xderiv = (z_values[1:-1,2:]-z_values[1:-1,:-2])/(2*xstep)
-    #b/c the function is analytic, we know the magnitude of its
-    #derivative is equal in all directions
+    # b/c the function is analytic, we know the magnitude of its
+    # derivative is equal in all directions
     dr = np.abs(xderiv)
     # the abs(derivative) scaled by distance from origin
     zabs = np.abs(z_values[1:-1,1:-1])
@@ -1242,15 +1242,15 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
         spoke_angles = srange(-PI,PI+TWOPI/spokes,TWOPI/spokes)
     else:
         spoke_angles = []
-    for i in range(imax-2): # the d arrays are 1 smaller on each side
+    for i in range(imax-2):  # the d arrays are 1 smaller on each side
         for j in range(jmax-2):
             z = z_values[i+1,j+1]
             mag = abs(z)
             arg = phase(z)
             dmag = dr[i,j]
             darg = dtheta[i,j]
-            #points that change too rapidly are presumed to be borders
-            #points that are too small are presumed to be outside
+            # points that change too rapidly are presumed to be borders
+            # points that are too small are presumed to be outside
             if darg < DMAX and mag > min_mag:
                 for target in circ_radii:
                     if abs(mag - target)/dmag < precision:
