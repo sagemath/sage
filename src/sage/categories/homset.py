@@ -663,10 +663,10 @@ class Homset(Set_generic):
         if check:
             if not isinstance(category, Category):
                 raise TypeError("category (=%s) must be a category" % category)
-            #if not X in category:
-            #    raise TypeError, "X (=%s) must be in category (=%s)"%(X, category)
-            #if not Y in category:
-            #    raise TypeError, "Y (=%s) must be in category (=%s)"%(Y, category)
+            # if not X in category:
+            #     raise TypeError("X (=%s) must be in category (=%s)" % (X, category))
+            # if not Y in category:
+            #     raise TypeError("Y (=%s) must be in category (=%s)" % (Y, category))
 
         if base is None and hasattr(category, "WithBasis"):
             # The above is a lame but fast check that category is a
