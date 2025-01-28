@@ -140,24 +140,24 @@ def ReflectionGroup(*args, **kwds):
             X = arg
 
         # precheck for valid input data
-        if not (isinstance(X, (CartanType_abstract,tuple)) or (X in ZZ and 4 <= X <= 37)):
+        if not (isinstance(X, (CartanType_abstract, tuple)) or (X in ZZ and 4 <= X <= 37)):
             raise ValueError(error_msg % X)
 
         # transforming two reducible types and an irreducible type
         if isinstance(X, CartanType_abstract):
             if not X.is_finite():
                 raise ValueError(error_msg % X)
-            if hasattr(X,"cartan_type"):
+            if hasattr(X, "cartan_type"):
                 X = X.cartan_type()
             if X.is_irreducible():
                 W_types.extend([(X.letter, X.n)])
             else:
-                W_types.extend([(x.letter, x.n) for x in X.component_types()])
+                W_types.extend((x.letter, x.n) for x in X.component_types())
 
-        elif X == (2,2,2) or X == ('I',2):
-            W_types.extend([('A',1), ('A',1)])
+        elif X == (2, 2, 2) or X == ('I', 2):
+            W_types.extend([('A', 1), ('A', 1)])
 
-        elif X == (2,2,3):
+        elif X == (2, 2, 3):
             W_types.extend([('A', 3)])
 
         else:
