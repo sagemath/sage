@@ -2,6 +2,7 @@
 Baxter permutations
 """
 from sage.combinat.permutation import Permutations
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.structure.parent import Parent
@@ -77,11 +78,11 @@ class BaxterPermutations_size(BaxterPermutations):
             Baxter permutations of size 5
         """
         self.element_class = Permutations(n).element_class
-        self._n = ZZ(n)
+        self._n = Integer(n)
         from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
         super().__init__(category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -91,9 +92,9 @@ class BaxterPermutations_size(BaxterPermutations):
             sage: BaxterPermutations_size(5)
             Baxter permutations of size 5
         """
-        return "Baxter permutations of size %s" % self._n
+        return f"Baxter permutations of size {self._n}"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if and only if ``x`` is a Baxter permutation of
         size ``self._n``.

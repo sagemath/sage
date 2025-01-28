@@ -25,7 +25,7 @@ from sage.combinat.dyck_word import DyckWords
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.subset import powerset
 from sage.misc.cachefunc import cached_method
-from sage.rings.integer_ring import ZZ
+from sage.rings.integer import Integer
 from sage.structure.element import Element, get_coercion_model
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
@@ -164,7 +164,7 @@ class BlobDiagrams(Parent, UniqueRepresentation):
             sage: BD4 = BlobDiagrams(4)
             sage: TestSuite(BD4).run()
         """
-        self._n = ZZ(n)
+        self._n = Integer(n)
         self._TL_diagrams = TemperleyLiebDiagrams(n)
         Parent.__init__(self, category=FiniteEnumeratedSets())
 

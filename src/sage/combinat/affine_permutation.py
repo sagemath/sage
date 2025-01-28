@@ -22,7 +22,7 @@ from sage.misc.constant_function import ConstantFunction
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.prandom import randint
-from sage.rings.integer_ring import ZZ
+from sage.rings.integer import Integer
 from sage.structure.list_clone import ClonableArray
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -75,8 +75,8 @@ class AffinePermutation(ClonableArray):
             Type A affine permutation with window [1, 2, 3, 4]
         """
         if check:
-            lst = [ZZ(val) for val in lst]
-        self.k = ZZ(parent.k)
+            lst = [Integer(val) for val in lst]
+        self.k = parent.k
         self.n = self.k + 1
         # This N doesn't matter for type A, but comes up in all other types.
         if parent.cartan_type()[0] == 'A':
@@ -2014,7 +2014,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, category=AffineWeylGroups())
         ct = CartanType(cartan_type)
-        self.k = ZZ(ct.n)
+        self.k = Integer(ct.n)
         self.n = ct.rank()
         # This N doesn't matter for type A, but comes up in all other types.
         if ct.letter == 'A':
