@@ -16,15 +16,15 @@ AUTHORS:
 - John Cremona (2014): added some docstrings and doctests
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 Robert Bradshaw <robertwb@math.washington.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 import numpy as np
 cimport numpy as np
