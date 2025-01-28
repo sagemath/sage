@@ -51,7 +51,7 @@ dependencies:
   - cxx-compiler=1.9.0=h20888b2_0
   - cycler=0.12.1=pyhd8ed1ab_1
   - cypari2=2.2.1=py311h29339b9_0
-  - cysignals=1.12.2=py311hc356e98_1
+  - cysignals=1.12.3=py311hc356e98_0
   - cython=3.0.11=py311h4cb39f0_3
   - debugpy=1.8.12=py311hc356e98_0
   - decorator=5.1.1=pyhd8ed1ab_1
