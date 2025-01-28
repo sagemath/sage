@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.giac
 """
 Wrappers for Giac functions
 
@@ -35,7 +36,7 @@ from .giac import giacsettings, libgiac
 
 #  Remarks for doctests:
 #     1) The first time that the c++ library giac is loaded a message appears.
-#        This message is version and arch dependant.
+#        This message is version and arch dependent.
 #     2) When proba_epsilon is too bad (>1e-6?) setting it to a better value
 #        will give an additional message like the following one:
 #       Restoring proba epsilon to 1e-6 from 1e-12
@@ -87,7 +88,7 @@ def local_giacsettings(func):
 
     EXAMPLES::
 
-        sage: def testf(a,b):
+        sage: def testf(a, b):
         ....:    giacsettings.proba_epsilon = a/100
         ....:    giacsettings.threads = b+2
         ....:    return (giacsettings.proba_epsilon, giacsettings.threads)
@@ -146,7 +147,7 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
       for giac. If ``None``, the global ``giacpy_sage.giacsettings.threads`` is
       considered.
 
-    - ``prot`` -- boolean (default: ``False``); if ``True`` print detailled informations
+    - ``prot`` -- boolean (default: ``False``); if ``True`` print detailed information
 
     - ``elim_variables`` -- (default: ``None``) a list of variables to eliminate
       from the ideal
@@ -208,7 +209,7 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         ...
         Time: CPU 168.98 s, Wall: 94.13 s
 
-    You can get detailled information by setting ``prot=True``
+    You can get detailed information by setting ``prot=True``
 
     ::
 
@@ -286,7 +287,7 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         return PolynomialSequence([P(0)], P, immutable=True)
 
     # check for name confusions
-    blackgiacconstants = ['i', 'e'] # NB e^k is expanded to exp(k)
+    blackgiacconstants = ['i', 'e']  # NB e^k is expanded to exp(k)
     blacklist = blackgiacconstants + [str(j) for j in libgiac.VARS()]
     problematicnames = sorted(set(P.gens_dict()).intersection(blacklist))
 
@@ -335,8 +336,8 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
                 var_names = var_names[:len(blocks[0])]
             else:
                 raise NotImplementedError(
-                        "%s is not a supported term order in "
-                        "Giac Groebner bases." % P.term_order())
+                    "%s is not a supported term order in "
+                    "Giac Groebner bases." % P.term_order())
 
         # compute de groebner basis with giac
         gb_giac = F.gbasis(list(var_names), giac_order)

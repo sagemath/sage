@@ -484,10 +484,7 @@ def AllExactCovers(M):
     ones = []
     r = 1    # damn 1-indexing
     for R in M.rows():
-        row = []
-        for i in range(len(R)):
-            if R[i]:
-                row.append(i + 1)  # damn 1-indexing
+        row = [i for i, Ri in enumerate(R, start=1) if Ri]
         ones.append([r, row])
         r += 1
     for s in DLXMatrix(ones):

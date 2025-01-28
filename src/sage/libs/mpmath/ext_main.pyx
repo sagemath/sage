@@ -386,7 +386,7 @@ cdef MPopts global_opts
 global_context = None
 
 cdef class Context:
-    cdef public mpf, mpc, constant #, def_mp_function
+    cdef public mpf, mpc, constant  # , def_mp_function
     cdef public trap_complex
     cdef public pretty
 
@@ -580,8 +580,7 @@ cdef class Context:
             s = (<mpc>x).re.special
             t = (<mpc>x).im.special
             return s == S_NAN or t == S_NAN
-        if type(x) is int or type(x) is long or isinstance(x, Integer) \
-            or isinstance(x, rationallib.mpq):
+        if isinstance(x, (int, Integer, rationallib.mpq)):
             return False
         typ = MPF_set_any(&tmp_opx_re, &tmp_opx_im, x, global_opts, 0)
         if typ == 1:
@@ -622,8 +621,7 @@ cdef class Context:
             s = (<mpc>x).re.special
             t = (<mpc>x).im.special
             return s == S_INF or s == S_NINF or t == S_INF or t == S_NINF
-        if type(x) is int or type(x) is long or isinstance(x, Integer) \
-            or isinstance(x, rationallib.mpq):
+        if isinstance(x, (int, Integer, rationallib.mpq)):
             return False
         typ = MPF_set_any(&tmp_opx_re, &tmp_opx_im, x, global_opts, 0)
         if typ == 1:
@@ -671,8 +669,7 @@ cdef class Context:
             if re == libmp.fzero: return im_normal
             if im == libmp.fzero: return re_normal
             return re_normal and im_normal
-        if type(x) is int or type(x) is long or isinstance(x, Integer) \
-            or isinstance(x, rationallib.mpq):
+        if isinstance(x, (int, Integer, rationallib.mpq)):
             return bool(x)
         x = ctx.convert(x)
         if hasattr(x, '_mpf_') or hasattr(x, '_mpc_'):
@@ -708,7 +705,7 @@ cdef class Context:
         cdef MPF v
         cdef MPF w
         cdef int typ
-        if type(x) is int or type(x) is long or isinstance(x, Integer):
+        if isinstance(x, (int, Integer)):
             return True
         if isinstance(x, mpf):
             v = (<mpf>x).value
@@ -983,7 +980,6 @@ cdef class Context:
         TESTS::
 
             sage: from mpmath import mp
-            sage: mp.pretty = True
             sage: (x, T) = mp._convert_param(3)
             sage: (x, type(x).__name__, T)
             (3, 'int', 'Z')
@@ -991,11 +987,11 @@ cdef class Context:
             sage: (x, type(x).__name__, T)
             (mpq(5,2), 'mpq', 'Q')
             sage: (x, T) = mp._convert_param(2.3)
-            sage: (x, type(x).__name__, T)
-            (2.3, 'mpf', 'R')
+            sage: (str(x), type(x).__name__, T)
+            ('2.3', 'mpf', 'R')
             sage: (x, T) = mp._convert_param(2+3j)
             sage: (x, type(x).__name__, T)
-            ((2.0 + 3.0j), 'mpc', 'C')
+            (mpc(real='2.0', imag='3.0'), 'mpc', 'C')
             sage: mp.pretty = False
         """
         cdef MPF v
@@ -1056,7 +1052,6 @@ cdef class Context:
         TESTS::
 
             sage: from mpmath import *
-            sage: mp.pretty = True
             sage: mag(10), mag(10.0), mag(mpf(10)), int(ceil(log(10,2)))
             (4, 4, 4, 4)
             sage: mag(10j), mag(10+10j)
@@ -1064,7 +1059,7 @@ cdef class Context:
             sage: mag(0.01), int(ceil(log(0.01,2)))
             (-6, -6)
             sage: mag(0), mag(inf), mag(-inf), mag(nan)
-            (-inf, +inf, +inf, nan)
+            (mpf('-inf'), mpf('+inf'), mpf('+inf'), mpf('nan'))
 
     ::
 
@@ -2203,12 +2198,13 @@ cdef class constant(mpf_base):
         Represent ``self`` as a string. With mp.pretty=False, the
         representation differs from that of an ordinary mpf::
 
-            sage: from mpmath import mp, pi
-            sage: mp.pretty = True
-            sage: repr(pi)
+            sage: from mpmath import mp
+            sage: mp2 = mp.clone()
+            sage: mp2.pretty = True
+            sage: repr(mp2.pi)
             '3.14159265358979'
-            sage: mp.pretty = False
-            sage: repr(pi)
+            sage: mp2.pretty = False
+            sage: repr(mp2.pi)
             '<pi: 3.14159~>'
         """
         if global_context.pretty:
@@ -2374,11 +2370,12 @@ cdef class mpc(mpnumber):
         TESTS::
 
             sage: from mpmath import mp
-            sage: mp.pretty = True
-            sage: repr(mp.mpc(2,3))
+            sage: mp2 = mp.clone()
+            sage: mp2.pretty = True
+            sage: repr(mp2.mpc(2,3))
             '(2.0 + 3.0j)'
-            sage: mp.pretty = False
-            sage: repr(mp.mpc(2,3))
+            sage: mp2.pretty = False
+            sage: repr(mp2.mpc(2,3))
             "mpc(real='2.0', imag='3.0')"
         """
         if global_context.pretty:

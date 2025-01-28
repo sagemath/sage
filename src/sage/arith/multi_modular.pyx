@@ -196,11 +196,11 @@ cdef class MultiModularBasis_base():
         while True:
             if len(known_primes) >= self._num_primes:
                 raise RuntimeError("there are not enough primes in the interval [%s, %s] to complete this multimodular computation" % (self._l_bound, self._u_bound))
-            p = random_prime(self._u_bound, lbound =self._l_bound)
+            p = random_prime(self._u_bound, lbound=self._l_bound)
             if p not in known_primes:
                 return p
 
-    def extend_with_primes(self, plist, partial_products = None, check=True):
+    def extend_with_primes(self, plist, partial_products=None, check=True):
         """
         Extend the stored list of moduli with the given primes in ``plist``.
 

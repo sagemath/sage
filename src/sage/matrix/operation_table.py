@@ -576,8 +576,7 @@ class OperationTable(SageObject):
             width = 0
             for e in self._elts:
                 estr = repr(e)
-                if len(estr) > width:
-                    width = len(estr)
+                width = max(len(estr), width)
                 name_list.append(estr)
         elif isinstance(names, list):
             if len(names) != self._n:
@@ -588,8 +587,7 @@ class OperationTable(SageObject):
                 if not isinstance(name, str):
                     raise ValueError(
                         'list of element names must only contain strings, not %s' % name)
-                if len(name) > width:
-                    width = len(name)
+                width = max(len(name), width)
                 name_list.append(name)
         else:
             raise ValueError(
@@ -779,7 +777,6 @@ class OperationTable(SageObject):
             raise ValueError('LaTeX symbol must be a string, not %s' % latex)
         self._ascii_symbol = ascii
         self._latex_symbol = latex
-        return None
 
     def column_keys(self):
         r"""
@@ -933,7 +930,6 @@ class OperationTable(SageObject):
             (1,2)
         """
         self._width, self._names, self._name_dict = self._name_maker(names)
-        return None
 
     def matrix_of_variables(self):
         r"""

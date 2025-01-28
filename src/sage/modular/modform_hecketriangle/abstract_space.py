@@ -23,7 +23,7 @@ from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.power_series_ring import PowerSeriesRing_generic
 from sage.rings.rational_field import QQ
 from sage.structure.element import parent
@@ -263,14 +263,14 @@ class FormsSpace_abstract(FormsRing_abstract):
                 return self.construct_quasi_form(el)
         if isinstance(el, FreeModuleElement) and (self.module() is P or self.ambient_module() is P):
             return self.element_from_ambient_coordinates(el)
-        if (not self.is_ambient()) and (isinstance(el, list) or isinstance(el, tuple) or isinstance(el, FreeModuleElement)) and len(el) == self.rank():
+        if not self.is_ambient() and isinstance(el, (list, tuple, FreeModuleElement)) and len(el) == self.rank():
             try:
                 return self.element_from_coordinates(el)
             except (ArithmeticError, TypeError):
                 pass
         if self.ambient_module() and self.ambient_module().has_coerce_map_from(P):
             return self.element_from_ambient_coordinates(self.ambient_module()(el))
-        if (isinstance(el,list) or isinstance(el, tuple)) and len(el) == self.degree():
+        if isinstance(el, (list, tuple)) and len(el) == self.degree():
             try:
                 return self.element_from_ambient_coordinates(el)
             except (ArithmeticError, TypeError):
@@ -1707,7 +1707,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         """
 
         base_ring = laurent_series.base_ring()
-        if isinstance(base_ring.base(), PolynomialRing_general):
+        if isinstance(base_ring.base(), PolynomialRing_generic):
             if not (self.coeff_ring().has_coerce_map_from(base_ring)):
                 raise ValueError("The Laurent coefficients don't coerce into the coefficient ring of self!")
         elif rationalize:
@@ -2001,7 +2001,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         """
 
         base_ring = laurent_series.base_ring()
-        if isinstance(base_ring.base(), PolynomialRing_general):
+        if isinstance(base_ring.base(), PolynomialRing_generic):
             if not (self.coeff_ring().has_coerce_map_from(base_ring)):
                 raise ValueError("The Laurent coefficients don't coerce into the coefficient ring of self!")
         elif rationalize:
@@ -2269,7 +2269,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         # If the coefficients already coerce to our coefficient ring
         # and are in polynomial form we simply return the Laurent series
-        if (isinstance(base_ring.base(), PolynomialRing_general)):
+        if (isinstance(base_ring.base(), PolynomialRing_generic)):
             if (self.coeff_ring().has_coerce_map_from(base_ring)):
                 return laurent_series
             else:

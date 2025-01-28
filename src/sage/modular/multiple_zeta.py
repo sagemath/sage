@@ -167,7 +167,7 @@ REFERENCES:
 # ****************************************************************************
 from __future__ import annotations
 import numbers
-from typing import Iterator
+from collections.abc import Iterator
 from itertools import product
 
 from sage.misc.fast_methods import Singleton
@@ -202,13 +202,17 @@ lazy_import('sage.libs.pari.all', 'pari')
 # using the following convention
 # (3, 5) <---> (sign) * [1,0,0,1,0,0,0,0]
 # taken from the Maple implementation by F. Brown
-B_data = [[], [], [(2,)], [(3,)], [], [(5,)], [], [(7,)], [(3, 5)], [(9,)],
-          [(3, 7)], [(11,), (3, 3, 5)], [(5, 7), (5, 3, 2, 2)],
-          [(13,), (3, 5, 5), (3, 3, 7)], [(5, 9), (3, 11), (3, 3, 3, 5)],
-          [(15,), (3, 5, 7), (3, 3, 9), (5, 3, 3, 2, 2)],
-          [(11, 5), (13, 3), (5, 5, 3, 3), (7, 3, 3, 3), (7, 5, 2, 2)],
-          [(17,), (7, 5, 5), (9, 3, 5), (9, 5, 3), (11, 3, 3),
-           (5, 3, 3, 3, 3), (5, 5, 3, 2, 2)]]
+B_data: list[list[tuple]] = [[], [], [(2,)], [(3,)], [], [(5,)], [],
+                             [(7,)], [(3, 5)], [(9,)],
+                             [(3, 7)], [(11,), (3, 3, 5)],
+                             [(5, 7), (5, 3, 2, 2)],
+                             [(13,), (3, 5, 5), (3, 3, 7)],
+                             [(5, 9), (3, 11), (3, 3, 3, 5)],
+                             [(15,), (3, 5, 7), (3, 3, 9), (5, 3, 3, 2, 2)],
+                             [(11, 5), (13, 3), (5, 5, 3, 3),
+                              (7, 3, 3, 3), (7, 5, 2, 2)],
+                             [(17,), (7, 5, 5), (9, 3, 5), (9, 5, 3),
+                              (11, 3, 3), (5, 3, 3, 3, 3), (5, 5, 3, 2, 2)]]
 
 Words10 = Words((1, 0), infinite=False)
 
@@ -1050,7 +1054,7 @@ class Multizetas(CombinatorialFreeModule):
         dim = len(self((d,)).phi_as_vector())
         V = VectorSpace(QQ, dim)
         U = V.subspace([])
-        basis = []
+        basis: list = []
         k = 1
         while len(basis) < dim:
             for c in Compositions(d, length=k):

@@ -7,13 +7,14 @@ requires = [
     # version constraint for macOS Big Sur support (see https://github.com/sagemath/sage/issues/31050)
     'wheel >=0.36.2',
     'cypari2 >=2.1.1',
-    'cysignals >=1.11.4',
+    'cysignals >=1.10.2',
     # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
     'cython >=3.0, != 3.0.3, <4.0',
     'gmpy2 ~=2.1.b999',
     'memory_allocator',
     'numpy >=1.19',
     'pkgconfig',
+    'jinja2',
 ]
 build-backend = "setuptools.build_meta"
 

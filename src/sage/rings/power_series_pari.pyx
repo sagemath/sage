@@ -416,7 +416,7 @@ cdef class PowerSeries_pari(PowerSeries):
         # to an ideal I, and the element a lies in I.  Here we only
         # implement a few special cases.
         from sage.rings.padics.padic_generic import pAdicGeneric
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         from sage.rings.power_series_ring import PowerSeriesRing_generic
         from sage.rings.laurent_series_ring import LaurentSeriesRing
         if isinstance(Q, pAdicGeneric):
@@ -433,7 +433,7 @@ cdef class PowerSeries_pari(PowerSeries):
             # subst(1 + O(x), x, 1/y) yields O(y^-1).
             if a.valuation() <= 0:
                 raise ValueError("can only substitute elements of positive valuation")
-        elif isinstance(Q, PolynomialRing_general):
+        elif isinstance(Q, PolynomialRing_generic):
             Q = Q.completion(Q.gen())
         elif Q.is_exact() and not a:
             pass
@@ -734,7 +734,7 @@ cdef class PowerSeries_pari(PowerSeries):
         else:
             return [R(g)] + [R.zero()] * (n - 1)
 
-    def dict(self):
+    def monomial_coefficients(self, copy=None):
         """
         Return a dictionary of coefficients for ``self``.
 
@@ -746,10 +746,17 @@ cdef class PowerSeries_pari(PowerSeries):
 
             sage: R.<t> = PowerSeriesRing(ZZ, implementation='pari')
             sage: f = 1 + t^10 + O(t^12)
+            sage: f.monomial_coefficients()
+            {0: 1, 10: 1}
+
+        ``dict`` is an alias::
+
             sage: f.dict()
             {0: 1, 10: 1}
         """
-        return self.polynomial().dict()
+        return self.polynomial().monomial_coefficients()
+
+    dict = monomial_coefficients
 
     def _derivative(self, var=None):
         """

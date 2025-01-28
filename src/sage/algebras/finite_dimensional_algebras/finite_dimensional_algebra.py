@@ -1,7 +1,7 @@
 """
 Finite-Dimensional Algebras
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2011 Johan Bosman <johan.g.bosman@gmail.com>
 #  Copyright (C) 2011, 2013 Peter Bruin <peter.bruin@math.uzh.ch>
 #  Copyright (C) 2011 Michiel Kosters <kosters@gmail.com>
@@ -9,8 +9,8 @@ Finite-Dimensional Algebras
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  http:s//www.gnu.org/licenses/
+# ***************************************************************************
 
 from .finite_dimensional_algebra_element import FiniteDimensionalAlgebraElement
 from .finite_dimensional_algebra_ideal import FiniteDimensionalAlgebraIdeal
@@ -20,15 +20,15 @@ from sage.rings.integer_ring import ZZ
 from sage.categories.magmatic_algebras import MagmaticAlgebras
 from sage.matrix.constructor import matrix
 from sage.structure.element import Matrix
-from sage.rings.ring import Algebra
 from sage.structure.category_object import normalize_names
+from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 from sage.misc.cachefunc import cached_method
 from functools import reduce
 
 
-class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
+class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
     r"""
     Create a finite-dimensional `k`-algebra from a multiplication table.
 
@@ -187,7 +187,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         self._table = table
         self._assume_associative = "Associative" in category.axioms()
         # No further validity checks necessary!
-        Algebra.__init__(self, base_ring=k, names=names, category=category)
+        Parent.__init__(self, base=k, names=names, category=category)
 
     def _repr_(self):
         """
@@ -303,10 +303,10 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
             ....:                                      Matrix([[0, 1], [0, 0]])])
             sage: A.basis()
-            Family (e0, e1)
+            Finite family {0: e0, 1: e1}
         """
         from sage.sets.family import Family
-        return Family(self.gens())
+        return Family({i: self.gen(i) for i in range(self.ngens())})
 
     def __iter__(self):
         """
@@ -497,7 +497,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         return True
 
     @cached_method
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Return ``True`` if ``self`` is commutative.
 

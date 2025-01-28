@@ -521,16 +521,16 @@ cdef class LeanMatrix:
         for z in range(self.ncols()):
             if z in P_cols+Q_cols:
                 continue
-            sol,cert = self.shifting(P_rows,P_cols,Q_rows,Q_cols,z,None,m)
+            sol, cert = self.shifting(P_rows, P_cols, Q_rows, Q_cols, z, None, m)
             if sol:
                 return True, cert
-            sol,cert = self.shifting(Q_rows,Q_cols,P_rows,P_cols,None,z,m)
+            sol, cert = self.shifting(Q_rows, Q_cols, P_rows, P_cols, None, z, m)
             if sol:
                 return True, cert
-            sol,cert = self.shifting(P_rows,P_cols,Q_rows,Q_cols,None,z,m)
+            sol, cert = self.shifting(P_rows, P_cols, Q_rows, Q_cols, None, z, m)
             if sol:
                 return True, cert
-            sol,cert = self.shifting(Q_rows,Q_cols,P_rows,P_cols,z,None,m)
+            sol, cert = self.shifting(Q_rows, Q_cols, P_rows, P_cols, z, None, m)
             if sol:
                 return True, cert
         return False, None
@@ -593,33 +593,36 @@ cdef class LeanMatrix:
 
         cdef list lU_2 = sorted(list(U_2))
         cdef list lV_2 = sorted(list(V_2))
-        cdef dict rU = dict(zip(lU_2,range(len(U_2))))
-        cdef dict rV = dict(zip(lV_2,range(len(V_2))))
+        cdef dict rU = dict(zip(lU_2, range(len(U_2))))
+        cdef dict rV = dict(zip(lV_2, range(len(V_2))))
 
         # find a unique representation of every column in U_1xY_3 using columns in U_1xV_2
         B = self.matrix_from_rows_and_columns(list(U_1), range(len(Y)))
         B.gauss_jordan_reduce(lV_2)
         # find a unique representation of every rows in X_3xV_1 using rows in U_2xV_1
-        BT = self.matrix_from_rows_and_columns(range(len(X)),list(V_1)).transpose()
+        BT = self.matrix_from_rows_and_columns(range(len(X)),
+                                               list(V_1)).transpose()
         BT.gauss_jordan_reduce(lU_2)
 
         cdef set X_p = set(X_1)
         cdef set Y_p = set(Y_1)
         while True:
-            #rowshifts
-            X_p_new = set([])
+            # rowshifts
+            X_p_new = set()
             for x in set(X_3):
                 for y in Y_p:
-                    if sum([BT.get_unsafe(rU[u],x)*self.get_unsafe(u,y) for u in U_2]) != self.get_unsafe(x,y):
+                    if sum([BT.get_unsafe(rU[u], x) * self.get_unsafe(u, y)
+                            for u in U_2]) != self.get_unsafe(x, y):
                         X_1.append(x)
                         X_3.remove(x)
                         X_p_new.add(x)
                         break
-            #colshifts
-            Y_p_new = set([])
+            # colshifts
+            Y_p_new = set()
             for y in set(Y_3):
                 for x in X_p:
-                    if sum([B.get_unsafe(rV[v],y)*self.get_unsafe(x,v) for v in V_2]) != self.get_unsafe(x,y):
+                    if sum([B.get_unsafe(rV[v], y) * self.get_unsafe(x, v)
+                            for v in V_2]) != self.get_unsafe(x, y):
                         Y_1.append(y)
                         Y_3.remove(y)
                         Y_p_new.add(y)
@@ -670,7 +673,7 @@ cdef class GenericMatrix(LeanMatrix):
 
     def __init__(self, long nrows, long ncols, M=None, ring=None):
         """
-        See class docstring for full information.
+        See the class docstring for full information.
 
         EXAMPLES::
 
@@ -979,7 +982,7 @@ cdef class BinaryMatrix(LeanMatrix):
 
     def __init__(self, long m, long n, object M=None, object ring=None):
         """
-        See class docstring for full specification.
+        See the class docstring for full specification.
 
         EXAMPLES::
 
@@ -1327,7 +1330,7 @@ cdef class BinaryMatrix(LeanMatrix):
         for r in range(len(rows)):
             row = self._M[rows[r]]
             row2 = A._M[r]
-            bitset_intersection(row2, row, mask) # yes, this is safe
+            bitset_intersection(row2, row, mask)  # yes, this is safe
             for g in range(lg):
                 if bitset_in(row, cols[g]):
                     bitset_add(row2, gaps[g])
@@ -1602,7 +1605,7 @@ cdef class TernaryMatrix(LeanMatrix):
 
     def __init__(self, long m, long n, M=None, ring=None):
         """
-        See class docstring for full specification.
+        See the class docstring for full specification.
 
         EXAMPLES::
 
@@ -2006,8 +2009,8 @@ cdef class TernaryMatrix(LeanMatrix):
             row1 = self._M1[rows[r]]
             row0_2 = A._M0[r]
             row1_2 = A._M1[r]
-            bitset_intersection(row0_2, row0, mask) # yes, this is safe
-            bitset_intersection(row1_2, row1, mask) # yes, this is safe
+            bitset_intersection(row0_2, row0, mask)  # yes, this is safe
+            bitset_intersection(row1_2, row1, mask)  # yes, this is safe
             for g in range(lg):
                 p = cols[g]
                 if bitset_in(row0, p):
@@ -2154,7 +2157,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
 
     def __init__(self, long m, long n, M=None, ring=None):
         """
-        See class docstring for full specification.
+        See the class docstring for full specification.
 
         EXAMPLES::
 
@@ -2550,7 +2553,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
         Return a submatrix indexed by indicated rows and columns, as well as
         the column order of the resulting submatrix.
         """
-        cdef QuaternaryMatrix A = QuaternaryMatrix(len(rows), len(columns), ring = self._gf4)
+        cdef QuaternaryMatrix A = QuaternaryMatrix(len(rows), len(columns), ring=self._gf4)
         cdef long r, c, lc, lg
         cdef mp_bitcnt_t *cols
         # deal with trivial case
@@ -2590,7 +2593,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
             row1 = self._M1[rows[r]]
             row0_2 = A._M0[r]
             row1_2 = A._M1[r]
-            bitset_intersection(row0_2, row0, mask) # yes, this is safe
+            bitset_intersection(row0_2, row0, mask)  # yes, this is safe
             bitset_intersection(row1_2, row1, mask)
             for g in range(lg):
                 p = cols[g]
@@ -2772,7 +2775,7 @@ cdef class PlusMinusOneMatrix(LeanMatrix):
 
     def __init__(self, long nrows, long ncols, M=None, ring=None):
         """
-        See class docstring for full information.
+        See the class docstring for full information.
 
         EXAMPLES::
 
@@ -3206,7 +3209,7 @@ cdef class RationalMatrix(LeanMatrix):
 
     def __init__(self, long nrows, long ncols, M=None, ring=None):
         """
-        See class docstring for full information.
+        See the class docstring for full information.
 
         EXAMPLES::
 
@@ -3233,11 +3236,11 @@ cdef class RationalMatrix(LeanMatrix):
             elif isinstance(M, LeanMatrix):
                 for i in range(M.nrows()):
                     for j in range(M.ncols()):
-                        mpq_set(self._entries[i * self._ncols + j], Rational((<LeanMatrix>M).get_unsafe(i,j)).value)
+                        mpq_set(self._entries[i * self._ncols + j], Rational((<LeanMatrix>M).get_unsafe(i, j)).value)
             else:  # Sage Matrix or otherwise
                 for i in range(M.nrows()):
                     for j in range(M.ncols()):
-                        mpq_set(self._entries[i * self._ncols + j], Rational(M[i,j]).value)
+                        mpq_set(self._entries[i * self._ncols + j], Rational(M[i, j]).value)
 
     def __dealloc__(self):
         """
@@ -3358,7 +3361,7 @@ cdef class RationalMatrix(LeanMatrix):
         A = RationalMatrix(self._nrows, self._ncols + Mn)
         for i in range(self._nrows):
             for j in range(self._ncols):
-                mpq_set(A._entries[A.index(i,j)], self._entries[self.index(i,j)])
+                mpq_set(A._entries[A.index(i, j)], self._entries[self.index(i, j)])
                 mpq_set(A._entries[i*A._ncols + self._ncols + j], (<RationalMatrix>M)._entries[i*Mn + j])
         return A
 
@@ -3366,9 +3369,10 @@ cdef class RationalMatrix(LeanMatrix):
         cdef RationalMatrix A = RationalMatrix(self._nrows, self._ncols + self._nrows)
         cdef long i, j
         for i in range(self._nrows):
-            mpq_set_si(A._entries[A.index(i,i)], 1, 1)
+            mpq_set_si(A._entries[A.index(i, i)], 1, 1)
             for j in range(self._ncols):
-                mpq_set(A._entries[A.index(i,self._nrows+j)], self._entries[self.index(i,j)])
+                mpq_set(A._entries[A.index(i, self._nrows + j)],
+                        self._entries[self.index(i, j)])
         return A
 
     cpdef base_ring(self):

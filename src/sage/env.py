@@ -2,16 +2,25 @@
 r"""
 Sage Runtime Environment
 
-Verify that importing ``sage.all`` works in Sage's Python without any ``SAGE_``
-environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
-(see also :issue:`29446`)::
+Verify that importing ``sage.all`` works in Sage's Python without any
+``SAGE_`` environment variables, and has the same ``SAGE_ROOT`` and
+``SAGE_LOCAL`` (see also :issue:`29446`). If ``SAGE_ROOT`` is a path,
+we normalize it, but keep in mind that ``SAGE_ROOT`` may also be
+``None``::
 
     sage: env = {k:v for (k,v) in os.environ.items() if not k.startswith("SAGE_")}
     sage: from subprocess import check_output
-    sage: environment = "sage.all"
-    sage: cmd = f"from {environment} import SAGE_ROOT, SAGE_LOCAL; print((SAGE_ROOT, SAGE_LOCAL))"
+    sage: module_name = "sage.all"   # hide .all import from the linter
+    sage: cmd  = f"from {module_name} import SAGE_ROOT, SAGE_LOCAL;"
+    sage: cmd +=  "from os.path import samefile;"
+    sage: if SAGE_ROOT is None:
+    ....:     cmd +=  "s1 = SAGE_ROOT is None;"
+    ....: else:
+    ....:     cmd += f"s1 = samefile(SAGE_ROOT, '{SAGE_ROOT}');"
+    sage: cmd += f"s2 = samefile(SAGE_LOCAL, '{SAGE_LOCAL}');"
+    sage: cmd += "print(s1 and s2);"
     sage: out = check_output([sys.executable, "-c", cmd], env=env).decode().strip()   # long time
-    sage: out == repr((SAGE_ROOT, SAGE_LOCAL))                                        # long time
+    sage: out == "True"                                                               # long time
     True
 
 AUTHORS:
@@ -30,8 +39,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing import List, Optional
+from typing import Optional
 import sage
+import platform
 import os
 import socket
 import sys
@@ -144,7 +154,12 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
             import sage_conf
             value = getattr(sage_conf, key, None)
         except ImportError:
-            pass
+            try:
+                import sage.config
+                value = getattr(sage.config, key, None)
+            except ImportError:
+                pass
+
     # Try all fallbacks in order as long as we don't have a value
     for f in fallbacks:
         if value is not None:
@@ -156,7 +171,6 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
 
 
 # system info
-UNAME = var("UNAME", os.uname()[0])
 HOSTNAME = var("HOSTNAME", socket.gethostname())
 LOCAL_IDENTIFIER = var("LOCAL_IDENTIFIER", "{}.{}".format(HOSTNAME, os.getpid()))
 
@@ -332,7 +346,7 @@ def get_cblas_pc_module_name() -> str:
     """
     import pkgconfig
     cblas_pc_modules = CBLAS_PC_MODULES.split(':')
-    return next((blas_lib for blas_lib in cblas_pc_modules if pkgconfig.exists(blas_lib)))
+    return next(blas_lib for blas_lib in cblas_pc_modules if pkgconfig.exists(blas_lib))
 
 
 default_required_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular',

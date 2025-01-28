@@ -51,6 +51,7 @@ from sage.misc.misc_c import prod
 # A utility function to allow the same code to be used over QQ and
 # over number fields:
 
+
 def _ideal_generator(I):
     r"""
     Return the generator of a principal ideal.
@@ -77,6 +78,7 @@ def _ideal_generator(I):
     except AttributeError:
         return I.abs()
 
+
 def _coords_in_C_p(I, C, p):
     r"""
     Return coordinates of the ideal ``I`` with respect to a basis of
@@ -99,7 +101,7 @@ def _coords_in_C_p(I, C, p):
     ALGORITHM:
 
     Find the coordinates of `[I]` with respect to generators of `C` as
-    an abelian group, check that coordidates are 0 in cyclic factors
+    an abelian group, check that coordinates are 0 in cyclic factors
     of order prime to `p`, and return the list of `c/(n/p)` (mod `p`)
     for coordinates `c` for each cyclic factor of order `n` which is a
     multiple of `p`.
@@ -130,7 +132,8 @@ def _coords_in_C_p(I, C, p):
         return [(coords[i] // n) % p for i, n in p_indices]
     raise ValueError("The {} power of {} is not principal".format(p.ordinal_str(),I))
 
-def _coords_in_C_mod_p(I,C,p):
+
+def _coords_in_C_mod_p(I, C, p):
     r"""
     Return coordinates of the ideal ``I`` with respect to a basis of
     the `p`-cotorsion of the ideal class group ``C``.
@@ -181,6 +184,7 @@ def _coords_in_C_mod_p(I,C,p):
     coords = C(I).exponents()
     return [coords[i] % p for i in p_indices]
 
+
 def _root_ideal(I, C, p):
     r"""
     Return a `p`-th root of an ideal with respect to the class group.
@@ -230,6 +234,7 @@ def _root_ideal(I, C, p):
 
     return prod([gen ** wi for wi, gen in zip(w, cyclic_gens)], C.number_field().ideal(1))
 
+
 def coords_in_U_mod_p(u, U, p):
     r"""
     Return coordinates of a unit ``u`` with respect to a basis of the
@@ -276,6 +281,7 @@ def coords_in_U_mod_p(u, U, p):
     coords = U.log(u)
     start = 1 - int(p.divides(U.zeta_order())) # 0 or 1
     return [c % p for c in coords[start:]]
+
 
 def basis_for_p_cokernel(S, C, p):
     r"""

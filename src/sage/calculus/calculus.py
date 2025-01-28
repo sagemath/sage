@@ -385,8 +385,9 @@ Ensure that :issue:`8624` is fixed::
     2*pi
 
 Ensure that :issue:`25626` is fixed. As the form of the answer is dependent of
-the giac version, we simplify it (see :issue:`34037`). ::
+the giac version, we simplify it (see :issue:`34037`)::
 
+    sage: # needs sage.libs.giac
     sage: t = SR.var('t')
     sage: integrate(exp(t)/(t + 1)^2, t, algorithm='giac').full_simplify()
     ((t + 1)*Ei(t + 1) - e^(t + 1))/(t*e + e)
@@ -407,7 +408,7 @@ To check that :issue:`14821` is fixed::
     0.6321205588285577
     sage: result = integral(exp(-300.0/(-0.064*x+14.0)),x,0.0,120.0)
     ...
-    sage: result
+    sage: result  # abs tol 1e-10
     4.62770039817000e-9
 
 To check that :issue:`27092` is fixed::
@@ -568,6 +569,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
 
     An example of this summation with Giac::
 
+        sage: # needs giac
         sage: symbolic_sum(1/(1+k^2), k, -oo, oo, algorithm='giac').factor()
         pi*(e^(2*pi) + 1)/((e^pi + 1)*(e^pi - 1))
 
@@ -843,7 +845,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
 
       - ``'maxima'`` -- use Maxima (the default)
 
-      - ``'giac'`` -- use Giac
+      - ``'giac'`` -- use Giac (optional)
 
       - ``'sympy'`` -- use SymPy
 
@@ -1296,7 +1298,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
 
     With the standard package Giac::
 
-        sage: from sage.libs.giac.giac import libgiac     # random
+        sage: # needs sage.libs.giac
         sage: (exp(-x)/(2+sin(x))).limit(x=oo, algorithm='giac')
         0
         sage: limit(e^(-1/x), x=0, dir='right', algorithm='giac')
@@ -1564,7 +1566,7 @@ def laplace(ex, t, s, algorithm='maxima'):
 
       - ``'sympy'`` -- use SymPy
 
-      - ``'giac'`` -- use Giac
+      - ``'giac'`` -- use Giac (optional)
 
     .. NOTE::
 
@@ -1668,7 +1670,7 @@ def laplace(ex, t, s, algorithm='maxima'):
         (0, True)
         sage: F        # random - sympy <1.9 includes undefined heaviside(0) in answer
         1
-        sage: laplace(dirac_delta(t), t, s, algorithm='giac')
+        sage: laplace(dirac_delta(t), t, s, algorithm='giac')  # needs giac
         1
 
     Heaviside step function can be handled with different interfaces.
@@ -1677,8 +1679,9 @@ def laplace(ex, t, s, algorithm='maxima'):
         sage: laplace(heaviside(t-1), t, s)
         e^(-s)/s
 
-    Try with giac::
+    Try with giac, if it is installed::
 
+        sage: # needs giac
         sage: laplace(heaviside(t-1), t, s, algorithm='giac')
         e^(-s)/s
 
@@ -1691,6 +1694,7 @@ def laplace(ex, t, s, algorithm='maxima'):
 
     Testing Giac::
 
+        sage: # needs giac
         sage: var('t, s')
         (t, s)
         sage: laplace(5*cos(3*t-2)*heaviside(t-2), t, s, algorithm='giac')
@@ -1699,13 +1703,14 @@ def laplace(ex, t, s, algorithm='maxima'):
     Check unevaluated expression from Giac (it is locale-dependent, see
     :issue:`22833`)::
 
-        sage: var('n')
-        n
+        sage: # needs giac
+        sage: n = SR.var('n')
         sage: laplace(t^n, t, s, algorithm='giac')
         laplace(t^n, t, s)
 
     Testing SymPy::
 
+        sage: n = SR.var('n')
         sage: F, a, cond = laplace(t^n, t, s, algorithm='sympy')
         sage: a, cond
         (0, re(n) > -1)
@@ -1806,7 +1811,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
 
       - ``'sympy'`` -- use SymPy
 
-      - ``'giac'`` -- use Giac
+      - ``'giac'`` -- use Giac (optional)
 
     .. SEEALSO::
 
@@ -1843,11 +1848,13 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
 
     The same instance with Giac::
 
+        sage: # needs giac
         sage: inverse_laplace(1/s^2*exp(-s), s, t, algorithm='giac')
         (t - 1)*heaviside(t - 1)
 
     Transform a rational expression::
 
+        sage: # needs giac
         sage: inverse_laplace((2*s^2*exp(-2*s) - exp(-s))/(s^3+1), s, t,
         ....:                 algorithm='giac')
         -1/3*(sqrt(3)*e^(1/2*t - 1/2)*sin(1/2*sqrt(3)*(t - 1))
@@ -1864,7 +1871,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
         dirac_delta(t)
         sage: inverse_laplace(1, s, t, algorithm='sympy')
         dirac_delta(t)
-        sage: inverse_laplace(1, s, t, algorithm='giac')
+        sage: inverse_laplace(1, s, t, algorithm='giac')  # needs giac
         dirac_delta(t)
 
     TESTS:
@@ -1878,6 +1885,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
 
     Testing Giac::
 
+        sage: # needs giac
         sage: inverse_laplace(exp(-s)/s, s, t, algorithm='giac')
         heaviside(t - 1)
 
@@ -1888,12 +1896,14 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
 
     Testing unevaluated expression from Giac::
 
-        sage: n = var('n')
+        sage: # needs giac
+        sage: n = SR.var('n')
         sage: inverse_laplace(1/s^n, s, t, algorithm='giac')
         ilt(1/(s^n), t, s)
 
     Try with Maxima::
 
+        sage: n = SR.var('n')
         sage: inverse_laplace(1/s^n, s, t, algorithm='maxima')
         ilt(1/(s^n), s, t)
 
@@ -1909,6 +1919,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
 
     Testing the same with Giac::
 
+        sage: # needs giac
         sage: inverse_laplace(cos(s), s, t, algorithm='giac')
         ilt(cos(s), t, s)
     """
@@ -2220,7 +2231,7 @@ def _is_function(v):
         x^2 + 1
     """
     # note that Sage variables are callable, so we only check the type
-    return isinstance(v, Function) or isinstance(v, FunctionType)
+    return isinstance(v, (Function, FunctionType))
 
 
 def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
@@ -2472,13 +2483,18 @@ def _find_var(name, interface=None):
 
     EXAMPLES::
 
-        sage: y = var('y')
+        sage: y = SR.var('y')
         sage: sage.calculus.calculus._find_var('y')
         y
         sage: sage.calculus.calculus._find_var('I')
         I
         sage: sage.calculus.calculus._find_var(repr(maxima(y)), interface='maxima')
         y
+
+    ::
+
+        sage: # needs giac
+        sage: y = SR.var('y')
         sage: sage.calculus.calculus._find_var(repr(giac(y)), interface='giac')
         y
     """
@@ -2585,6 +2601,7 @@ def symbolic_expression_from_string(s, syms=None, accept_sequence=False, *, pars
 
     The Giac interface uses a different parser (:issue:`30133`)::
 
+        sage: # needs giac
         sage: from sage.calculus.calculus import SR_parser_giac
         sage: symbolic_expression_from_string(repr(giac(SR.var('e'))), parser=SR_parser_giac)
         e

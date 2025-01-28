@@ -111,11 +111,12 @@ import sage.rings.abc
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module import FreeModule_generic_pid
-from sage.rings.complex_mpfr import ComplexField, ComplexNumber
+from sage.rings.complex_mpfr import ComplexField, ComplexNumber, ComplexField_class
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
+from sage.rings.qqbar import AA, QQbar
 from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RealField, RealNumber
+from sage.rings.real_mpfr import RealField, RealField_class, RealNumber
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
 
@@ -212,9 +213,16 @@ class PeriodLattice_ell(PeriodLattice):
             sage: L = PeriodLattice_ell(E,emb)
             sage: L == loads(dumps(L))
             True
-        """
-        from sage.rings.qqbar import AA, QQbar
 
+        Elliptic curve over imaginary number field without ``embedding`` specified::
+
+            sage: E = EllipticCurve(QQ[I], [5, -3*I])
+            sage: L = PeriodLattice_ell(E, embedding=None)
+            sage: L.elliptic_logarithm(E(I+1, I+2))  # abs tol 1e-15
+            -0.773376784700140 - 0.177736018028666*I
+            sage: L.elliptic_exponential(_)  # abs tol 1e-15
+            (1.00000000000000 - 1.00000000000000*I : 2.00000000000000 - 1.00000000000000*I : 1.00000000000000)
+        """
         # First we cache the elliptic curve with this period lattice:
 
         self.E = E
@@ -223,12 +231,20 @@ class PeriodLattice_ell(PeriodLattice):
         # the given embedding:
 
         K = E.base_field()
+        self.is_approximate = isinstance(K, (RealField_class, ComplexField_class))
         if embedding is None:
-            embs = K.embeddings(AA)
-            real = len(embs) > 0
-            if not real:
-                embs = K.embeddings(QQbar)
-            embedding = embs[0]
+            if K in (AA, QQbar):
+                embedding = K.hom(QQbar)
+                real = K == AA
+            elif self.is_approximate:
+                embedding = K.hom(K)
+                real = isinstance(K, RealField_class)
+            else:
+                embs = K.embeddings(AA)
+                real = len(embs) > 0
+                if not real:
+                    embs = K.embeddings(QQbar)
+                embedding = embs[0]
         else:
             embedding = refine_embedding(embedding, Infinity)
             real = embedding(K.gen()).imag().is_zero()
@@ -255,20 +271,24 @@ class PeriodLattice_ell(PeriodLattice):
         # The ei are used both for period computation and elliptic
         # logarithms.
 
-        self.Ebar = self.E.change_ring(self.embedding)
-        self.f2 = self.Ebar.two_division_polynomial()
+        if self.is_approximate:
+            self.f2 = self.E.two_division_polynomial()
+        else:
+            self.Ebar = self.E.change_ring(self.embedding)
+            self.f2 = self.Ebar.two_division_polynomial()
         if self.real_flag == 1: # positive discriminant
-            self._ei = self.f2.roots(AA,multiplicities=False)
+            self._ei = self.f2.roots(K if self.is_approximate else AA,multiplicities=False)
             self._ei.sort()  # e1 < e2 < e3
             e1, e2, e3 = self._ei
         elif self.real_flag == -1: # negative discriminant
-            self._ei = self.f2.roots(QQbar, multiplicities=False)
+            self._ei = self.f2.roots(ComplexField(K.precision()) if self.is_approximate else QQbar, multiplicities=False)
             self._ei = sorted(self._ei, key=lambda z: z.imag())
             e1, e3, e2 = self._ei # so e3 is real
-            e3 = AA(e3)
+            if not self.is_approximate:
+                e3 = AA(e3)
             self._ei = [e1, e2, e3]
         else:
-            self._ei = self.f2.roots(QQbar, multiplicities=False)
+            self._ei = self.f2.roots(ComplexField(K.precision()) if self.is_approximate else QQbar, multiplicities=False)
             e1, e2, e3 = self._ei
 
         # The quantities sqrt(e_i-e_j) are cached (as elements of
@@ -329,7 +349,8 @@ class PeriodLattice_ell(PeriodLattice):
                To:   Algebraic Real Field
                Defn: a |--> 1.259921049894873?
         """
-        if self.E.base_field() is QQ:
+        K = self.E.base_field()
+        if K in (QQ, AA, QQbar) or isinstance(K, (RealField_class, ComplexField_class)):
             return "Period lattice associated to %s" % (self.E)
         return "Period lattice associated to %s with respect to the embedding %s" % (self.E, self.embedding)
 
@@ -364,8 +385,8 @@ class PeriodLattice_ell(PeriodLattice):
             sage: P = E([-1,1])
             sage: P.is_on_identity_component ()
             False
-            sage: L(P, prec=96)
-            0.4793482501902193161295330101 + 0.985868850775824102211203849...*I
+            sage: L(P, prec=96)  # abs tol 1e-27
+            0.4793482501902193161295330101 + 0.985868850775824102211203849*I
             sage: Q = E([3,5])
             sage: Q.is_on_identity_component()
             True
@@ -413,7 +434,7 @@ class PeriodLattice_ell(PeriodLattice):
         (tuple of Complex) `(\omega_1,\omega_2)` where the lattice is
         `\ZZ\omega_1 + \ZZ\omega_2`.  If the lattice is real then
         `\omega_1` is real and positive, `\Im(\omega_2)>0` and
-        `\Re(\omega_1/\omega_2)` is either `0` (for rectangular
+        `\Re(\omega_2/\omega_1)` is either `0` (for rectangular
         lattices) or `\frac{1}{2}` (for non-rectangular lattices).
         Otherwise, `\omega_1/\omega_2` is in the fundamental region of
         the upper half-plane.  If the latter normalisation is required
@@ -498,7 +519,7 @@ class PeriodLattice_ell(PeriodLattice):
         (tuple of Complex) `(\omega_1,\omega_2)` where the lattice is
         `\ZZ\omega_1 + \ZZ\omega_2`.  If the lattice is real then
         `\omega_1` is real and positive, `\Im(\omega_2)>0` and
-        `\Re(\omega_1/\omega_2)` is either `0` (for rectangular
+        `\Re(\omega_2/\omega_1)` is either `0` (for rectangular
         lattices) or `\frac{1}{2}` (for non-rectangular lattices).
         Otherwise, `\omega_1/\omega_2` is in the fundamental region of
         the upper half-plane.  If the latter normalisation is required
@@ -631,6 +652,13 @@ class PeriodLattice_ell(PeriodLattice):
         return w1/w2
 
     @cached_method
+    def _compute_default_prec(self):
+        r"""
+        Internal function to compute the default precision to be used if nothing is passed in.
+        """
+        return self.E.base_field().precision() if self.is_approximate else RealField().precision()
+
+    @cached_method
     def _compute_periods_real(self, prec=None, algorithm='sage'):
         r"""
         Internal function to compute the periods (real embedding case).
@@ -650,7 +678,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         (tuple of Complex) `(\omega_1,\omega_2)` where the lattice has
         the form `\ZZ\omega_1 + \ZZ\omega_2`, `\omega_1` is real and
-        `\omega_1/\omega_2` has real part either `0` or `frac{1}{2}`.
+        `\omega_2/\omega_1` has real part either `0` or `frac{1}{2}`.
 
         EXAMPLES::
 
@@ -670,13 +698,13 @@ class PeriodLattice_ell(PeriodLattice):
             1.9072648860892725468182549468 - 1.3404778596244020196600112394*I)
         """
         if prec is None:
-            prec = 53
+            prec = self._compute_default_prec()
         R = RealField(prec)
         C = ComplexField(prec)
 
         if algorithm == 'pari':
             ainvs = self.E.a_invariants()
-            if self.E.base_field() is not QQ:
+            if self.E.base_field() is not QQ and not self.is_approximate:
                 ainvs = [C(self.embedding(ai)).real() for ai in ainvs]
 
             # The precision for omega() is determined by ellinit()
@@ -688,9 +716,8 @@ class PeriodLattice_ell(PeriodLattice):
             raise ValueError("invalid value of 'algorithm' parameter")
 
         pi = R.pi()
-        # Up to now everything has been exact in AA or QQbar, but now
-        # we must go transcendental.  Only now is the desired
-        # precision used!
+        # Up to now everything has been exact in AA or QQbar (unless self.is_approximate),
+        # but now we must go transcendental.  Only now is the desired precision used!
         if self.real_flag == 1: # positive discriminant
             a, b, c = (R(x) for x in self._abc)
             w1 = R(pi/a.agm(b))   # least real period
@@ -758,12 +785,11 @@ class PeriodLattice_ell(PeriodLattice):
             0.692321964451917
         """
         if prec is None:
-            prec = RealField().precision()
+            prec = self._compute_default_prec()
         C = ComplexField(prec)
 
-        # Up to now everything has been exact in AA, but now we
-        # must go transcendental.  Only now is the desired
-        # precision used!
+        # Up to now everything has been exact in AA or QQbar (unless self.is_approximate),
+        # but now we must go transcendental.  Only now is the desired precision used!
         pi = C.pi()
         a, b, c = (C(x) for x in self._abc)
         if (a+b).abs() < (a-b).abs():
@@ -1107,7 +1133,7 @@ class PeriodLattice_ell(PeriodLattice):
             2.60912163570108 - 0.200865080824587*I
         """
         if prec is None:
-            prec = RealField().precision()
+            prec = self._compute_default_prec()
         try:
             return self.E.pari_curve().ellsigma(z, flag, precision=prec)
         except AttributeError:
@@ -1211,14 +1237,14 @@ class PeriodLattice_ell(PeriodLattice):
             sage: L = E.period_lattice()
             sage: w1, w2 = L.basis(prec=100)
             sage: P = E([-1,1])
-            sage: zP = P.elliptic_logarithm(precision=100); zP
+            sage: zP = P.elliptic_logarithm(precision=100); zP  # abs tol 1e-28
             0.47934825019021931612953301006 + 0.98586885077582410221120384908*I
-            sage: L.coordinates(zP)
+            sage: L.coordinates(zP)  # abs tol 1e-28
             (0.19249290511394227352563996419, 0.50000000000000000000000000000)
-            sage: sum([x*w for x, w in zip(L.coordinates(zP), L.basis(prec=100))])
+            sage: sum([x*w for x, w in zip(L.coordinates(zP), L.basis(prec=100))])  # abs tol 1e-28
             0.47934825019021931612953301006 + 0.98586885077582410221120384908*I
 
-            sage: L.coordinates(12*w1 + 23*w2)
+            sage: L.coordinates(12*w1 + 23*w2)  # abs tol 1e-28
             (12.000000000000000000000000000, 23.000000000000000000000000000)
             sage: L.coordinates(12*w1 + 23*w2, rounding='floor')
             (11, 22)
@@ -1276,17 +1302,17 @@ class PeriodLattice_ell(PeriodLattice):
             sage: L = E.period_lattice()
             sage: w1, w2 = L.basis(prec=100)
             sage: P = E([-1,1])
-            sage: zP = P.elliptic_logarithm(precision=100); zP
+            sage: zP = P.elliptic_logarithm(precision=100); zP  # abs tol 1e-28
             0.47934825019021931612953301006 + 0.98586885077582410221120384908*I
-            sage: z = zP + 10*w1 - 20*w2; z
+            sage: z = zP + 10*w1 - 20*w2; z  # abs tol 1e-28
             25.381473858740770069343110929 - 38.448885180257139986236950114*I
-            sage: L.reduce(z)
+            sage: L.reduce(z)  # abs tol 1e-28
             0.47934825019021931612953301006 + 0.98586885077582410221120384908*I
-            sage: L.elliptic_logarithm(2*P)
+            sage: L.elliptic_logarithm(2*P)  # abs tol 1e-15
             0.958696500380439
-            sage: L.reduce(L.elliptic_logarithm(2*P))
+            sage: L.reduce(L.elliptic_logarithm(2*P))  # abs tol 1e-15
             0.958696500380439
-            sage: L.reduce(L.elliptic_logarithm(2*P) + 10*w1 - 20*w2)
+            sage: L.reduce(L.elliptic_logarithm(2*P) + 10*w1 - 20*w2)  # abs tol 1e-15
             0.958696500380444
         """
         C = z.parent()
@@ -1366,12 +1392,12 @@ class PeriodLattice_ell(PeriodLattice):
 
         The elliptic log from the real coordinates::
 
-            sage: L.e_log_RC(xP, yP)
+            sage: L.e_log_RC(xP, yP)  # abs tol 1e-15
             0.479348250190219 + 0.985868850775824*I
 
         The same elliptic log from the algebraic point::
 
-            sage: L(P)
+            sage: L(P)  # abs tol 1e-15
             0.479348250190219 + 0.985868850775824*I
 
         A number field example::
@@ -1383,10 +1409,10 @@ class PeriodLattice_ell(PeriodLattice):
             sage: v = K.real_places()[0]
             sage: L = E.period_lattice(v)
             sage: P = E.lift_x(1/3*a^2 + a + 5/3)
-            sage: L(P)
+            sage: L(P)  # abs tol 1e-15
             3.51086196882538
             sage: xP, yP = [v(c) for c in P.xy()]
-            sage: L.e_log_RC(xP, yP)
+            sage: L.e_log_RC(xP, yP)  # abs tol 1e-15
             3.51086196882538
 
         Elliptic logs of real points which do not come from algebraic
@@ -1396,11 +1422,11 @@ class PeriodLattice_ell(PeriodLattice):
             sage: ER = EllipticCurve([v(ai) for ai in E.a_invariants()])
             sage: P = ER.lift_x(12.34)
             sage: xP, yP = P.xy()
-            sage: xP, yP
+            sage: xP, yP  # abs tol 1e-15
             (12.3400000000000, -43.3628968710567)
-            sage: L.e_log_RC(xP, yP)
+            sage: L.e_log_RC(xP, yP)  # abs tol 1e-15
             0.284656841192041
-            sage: xP, yP = ER.lift_x(0).xy()
+            sage: xP, yP = ER.lift_x(0).xy()  # abs tol 1e-15
             sage: L.e_log_RC(xP, yP)
             1.34921304541057
 
@@ -1410,18 +1436,18 @@ class PeriodLattice_ell(PeriodLattice):
             sage: v = K.complex_embeddings()[0]
             sage: L = E.period_lattice(v)
             sage: P = E.lift_x(1/3*a^2 + a + 5/3)
-            sage: L(P)
+            sage: L(P)  # abs tol 1e-15
             1.68207104397706 - 1.87873661686704*I
             sage: xP, yP = [v(c) for c in P.xy()]
-            sage: L.e_log_RC(xP, yP)
+            sage: L.e_log_RC(xP, yP)  # abs tol 1e-15
             1.68207104397706 - 1.87873661686704*I
             sage: EC = EllipticCurve([v(ai) for ai in E.a_invariants()])
             sage: xP, yP = EC.lift_x(0).xy()
-            sage: L.e_log_RC(xP, yP)
+            sage: L.e_log_RC(xP, yP)  # abs tol 1e-15
             2.06711431204080 - 1.73451485683471*I
         """
         if prec is None:
-            prec = RealField().precision()
+            prec = self._compute_default_prec()
         # Note: using log2(prec) + 3 guard bits is usually enough.
         # To avoid computing a logarithm, we use 40 guard bits which
         # should be largely enough in practice.
@@ -1709,11 +1735,61 @@ class PeriodLattice_ell(PeriodLattice):
             1.17058357737548897849026170185581196033579563441850967539191867385734983296504066660506637438866628981886518901958717288150400849746892393771983141354 - 1.13513899565966043682474529757126359416758251309237866586896869548539516543734207347695898664875799307727928332953834601460994992792519799260968053875*I
             sage: L.elliptic_logarithm(P, prec=1000)
             1.17058357737548897849026170185581196033579563441850967539191867385734983296504066660506637438866628981886518901958717288150400849746892393771983141354014895386251320571643977497740116710952913769943240797618468987304985625823413440999754037939123032233879499904283600304184828809773650066658885672885 - 1.13513899565966043682474529757126359416758251309237866586896869548539516543734207347695898664875799307727928332953834601460994992792519799260968053875387282656993476491590607092182964878750169490985439873220720963653658829712494879003124071110818175013453207439440032582917366703476398880865439217473*I
+
+        Elliptic curve over ``QQbar``::
+
+            sage: E = EllipticCurve(QQbar, [sqrt(2), I])
+            sage: L = E.period_lattice()
+            sage: P = E.lift_x(3)
+            sage: L.elliptic_logarithm(P)
+            -1.97657221097437 - 1.05021415535949*I
+            sage: L.elliptic_exponential(_)  # abs tol 1e-15
+            (3.00000000000000 + 9.20856947066460e-16*I : -5.59022723358798 - 0.0894418024719718*I : 1.00000000000000)
+            sage: L.elliptic_logarithm(P, prec=100)  # abs tol 1e-15
+            -3.4730631218714889933426781799 + 0.44627675553762761312098773197*I
+            sage: L.elliptic_exponential(_)  # abs tol 1e-28
+            (3.0000000000000000000000000000 - 1.4773628579202938936348512161e-30*I : -5.5902272335879800026836302686 - 0.089441802471969391005702381090*I : 1.0000000000000000000000000000)
+
+        Real approximate field, negative discriminant. Note that the output precision uses the precision of the base field::
+
+            sage: E = EllipticCurve(RealField(100), [1, 6])
+            sage: L = E.period_lattice()
+            sage: L.real_flag
+            -1
+            sage: P = E(3, 6)
+            sage: L.elliptic_logarithm(P)
+            2.4593388737550379526023682666
+            sage: L.elliptic_exponential(_)
+            (3.0000000000000000000000000000 : 5.9999999999999999999999999999 : 1.0000000000000000000000000000)
+
+        Real approximate field, positive discriminant::
+
+            sage: E = EllipticCurve(RealField(100), [-4, 3])
+            sage: L = E.period_lattice()
+            sage: L.real_flag
+            1
+            sage: P = E.lift_x(4)
+            sage: L.elliptic_logarithm(P)
+            0.51188849089267627141925354967
+            sage: L.elliptic_exponential(_)
+            (4.0000000000000000000000000000 : -7.1414284285428499979993998114 : 1.0000000000000000000000000000)
+
+        Complex approximate field::
+
+            sage: E = EllipticCurve(ComplexField(100), [I, 3*I+4])
+            sage: L = E.period_lattice()
+            sage: L.real_flag
+            0
+            sage: P = E.lift_x(4)
+            sage: L.elliptic_logarithm(P)
+            -1.1447032790074574712147458157 - 0.72429843602171875396186134806*I
+            sage: L.elliptic_exponential(_)
+            (4.0000000000000000000000000000 + 1.2025589033682610849950210280e-30*I : -8.2570982991257407680322611854 - 0.42387771989714340809597881586*I : 1.0000000000000000000000000000)
         """
         if P.curve() is not self.E:
             raise ValueError("Point is on the wrong curve")
         if prec is None:
-            prec = RealField().precision()
+            prec = self._compute_default_prec()
         if P.is_zero():
             return ComplexField(prec)(0)
 
@@ -1826,8 +1902,8 @@ class PeriodLattice_ell(PeriodLattice):
             sage: E = EllipticCurve('37a')
             sage: K.<a> = QuadraticField(-5)
             sage: L = E.change_ring(K).period_lattice(K.places()[0])
-            sage: L.elliptic_exponential(CDF(.1,.1))
-            (0.0000142854026029... - 49.9960001066650*I
+            sage: L.elliptic_exponential(CDF(.1,.1))  # abs tol 1e-15
+            (0.0000142854026029 - 49.9960001066650*I
              : 249.520141250950 + 250.019855549131*I : 1.00000000000000)
             sage: L.elliptic_exponential(CDF(.1,.1), to_curve=False)
             (0.0000142854026029447 - 49.9960001066650*I,
@@ -1926,7 +2002,10 @@ class PeriodLattice_ell(PeriodLattice):
 
         if to_curve:
             K = x.parent()
-            v = refine_embedding(self.embedding, Infinity)
+            if self.is_approximate:
+                v = self.embedding
+            else:
+                v = refine_embedding(self.embedding, Infinity)
             a1, a2, a3, a4, a6 = (K(v(a)) for a in self.E.ainvs())
             b2 = K(v(self.E.b2()))
             x = x - b2 / 12

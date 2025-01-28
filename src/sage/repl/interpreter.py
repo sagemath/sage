@@ -75,13 +75,13 @@ Check that Cython source code appears in tracebacks::
 
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
-    sage: print("dummy line"); shell.run_cell('1/0') # see #25320 for the reason of the `...` and the dummy line in this test
-    dummy line
+    sage: shell.run_cell('1/0') # known bug (meson doesn't include the Cython source code)
     ...
     ZeroDivisionError...Traceback (most recent call last)
     ...
     ----> 1 Integer(1)/Integer(0)
-    .../sage/rings/integer.pyx... in sage.rings.integer.Integer...div...
+    ...
+    ...integer.pyx... in sage.rings.integer.Integer...div...
     ...
     -> ...                  raise ZeroDivisionError("rational division by zero")
        ....:            x = <Rational> Rational.__new__(Rational)
@@ -197,7 +197,7 @@ def preparser(on=True):
 ##############################
 # Sage[Terminal]InteractiveShell
 ##############################
-class SageShellOverride():
+class SageShellOverride:
     """
     Mixin to override methods in IPython's [Terminal]InteractiveShell
     classes.
@@ -311,6 +311,7 @@ class SageTerminalInteractiveShell(SageShellOverride, TerminalInteractiveShell):
         signal.signal(signal.SIGINT, sigint)
         pythonapi.PyOS_setsig(signal.SIGINT, sigint_os)
         return text
+
 
 class SageTestShell(SageShellOverride, TerminalInteractiveShell):
     """
@@ -770,7 +771,8 @@ class SageCrashHandler(IPAppCrashHandler):
         contact_email = 'sage-support@googlegroups.com'
         bug_tracker = 'https://github.com/sagemath/sage/issues'
         CrashHandler.__init__(self,
-            app, contact_name, contact_email, bug_tracker, show_crash_traceback=True)
+                              app, contact_name, contact_email,
+                              bug_tracker, show_crash_traceback=True)
         self.crash_report_fname = 'Sage_crash_report.txt'
 
 

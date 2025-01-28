@@ -41,7 +41,6 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.prandom import randrange
 from sage.rings.integer cimport Integer
 import sage.rings.abc
-from sage.misc.superseded import deprecation_cython as deprecation, deprecated_function_alias
 
 # Copied from sage.misc.fast_methods, used in __hash__() below.
 cdef int SIZEOF_VOID_P_SHIFT = 8*sizeof(void *) - 4
@@ -457,8 +456,6 @@ cdef class FiniteField(Field):
             r = r * g + self(d)
         return r
 
-    fetch_int = deprecated_function_alias(33941, from_integer)
-
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
         Return ``True`` if the map from ``self`` to codomain sending
@@ -846,7 +843,7 @@ cdef class FiniteField(Field):
         """
         return 1
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Return whether or not the finite field is a field, i.e.,
         always returns ``True``.
@@ -1361,7 +1358,7 @@ cdef class FiniteField(Field):
             False
         """
         from sage.rings.integer_ring import ZZ
-        if R is int or R is long or R is ZZ:
+        if R is int or R is ZZ:
             return True
         if isinstance(R, sage.rings.abc.IntegerModRing) and self.characteristic().divides(R.characteristic()):
             return R.hom((self.one(),), check=False)
@@ -1871,6 +1868,12 @@ cdef class FiniteField(Field):
             sage: F.gen(3)
             z3
 
+        For finite fields, the algebraic closure is always (isomorphic
+        to) the algebraic closure of the prime field::
+
+            sage: GF(5^2).algebraic_closure() == F
+            True
+
         The default name is 'z' but you can change it through the option
         ``name``::
 
@@ -1890,13 +1893,18 @@ cdef class FiniteField(Field):
 
         .. NOTE::
 
-            This is currently only implemented for prime fields.
+            For non-prime finite fields, this method currently simply
+            returns the algebraic closure of the prime field. This may
+            or may not change in the future when extension towers are
+            supported properly.
 
         TESTS::
 
             sage: GF(5).algebraic_closure() is GF(5).algebraic_closure()
             True
         """
+        if not self.is_prime_field():
+            return self.prime_subfield().algebraic_closure()
         from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField
         return AlgebraicClosureFiniteField(self, name, **kwds)
 
@@ -1919,6 +1927,76 @@ cdef class FiniteField(Field):
         n = self.degree()
         return (exists_conway_polynomial(p, n)
                 and self.polynomial() == self.polynomial_ring()(conway_polynomial(p, n)))
+
+    def an_embedding(self, K):
+        r"""
+        Return some embedding of this field into another field `K`,
+        and raise a :class:`ValueError` if none exists.
+
+        .. SEEALSO::
+
+            :meth:`sage.rings.ring.Field.an_embedding`
+
+        EXAMPLES::
+
+            sage: GF(4,'a').an_embedding(GF(2).algebraic_closure())
+            Ring morphism:
+              From: Finite Field in a of size 2^2
+              To:   Algebraic closure of Finite Field of size 2
+              Defn: a |--> ...
+        """
+        if self.characteristic() != K.characteristic():
+            raise ValueError(f'no embedding from {self} to {K}: incompatible characteristics')
+        try:
+            return super().an_embedding(K)
+        except (NotImplementedError, ValueError):
+            pass
+        if K not in FiniteFields():
+            from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
+            if not isinstance(K, AlgebraicClosureFiniteField_generic):
+                raise NotImplementedError('computing embeddings into this ring not implemented')
+        g = self.gen()
+        if (emb := K.coerce_map_from(self)) is not None:
+            return self.hom([emb(g)])
+        try:
+            r = g.minpoly().change_ring(K).any_root()
+        except ValueError:
+            raise ValueError(f'no embedding from {self} to {K}')
+        return self.hom([r])
+
+    def embeddings(self, K):
+        r"""
+        Return a list of all embeddings of this field in another field `K`.
+
+        EXAMPLES::
+
+            sage: GF(2).embeddings(GF(4))
+            [Ring morphism:
+               From: Finite Field of size 2
+               To:   Finite Field in z2 of size 2^2
+               Defn: 1 |--> 1]
+            sage: GF(4).embeddings(GF(2).algebraic_closure())
+            [Ring morphism:
+               From: Finite Field in z2 of size 2^2
+               To:   Algebraic closure of Finite Field of size 2
+               Defn: z2 |--> z2,
+             Ring morphism:
+               From: Finite Field in z2 of size 2^2
+               To:   Algebraic closure of Finite Field of size 2
+               Defn: z2 |--> z2 + 1]
+        """
+        if self.characteristic() != K.characteristic():
+            return []
+        if K not in FiniteFields():
+            from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
+            if not isinstance(K, AlgebraicClosureFiniteField_generic):
+                raise NotImplementedError('computing embeddings into this ring not implemented')
+        g = self.gen()
+        rs = []
+        if (emb := K.coerce_map_from(self)) is not None:
+            rs.append(emb(g))
+        rs += [r for r,_ in g.minpoly().roots(ring=K) if r not in rs]
+        return [self.hom([r]) for r in rs]
 
     def frobenius_endomorphism(self, n=1):
         """

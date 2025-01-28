@@ -459,7 +459,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         return self._backend.base_ring()
 
-    def set_problem_name(self,name):
+    def set_problem_name(self, name):
         r"""
         Set the name of the ``SemidefiniteProgram``.
 
@@ -803,8 +803,8 @@ cdef class SemidefiniteProgram(SageObject):
         if obj is not None:
             f = obj.dict()
         else:
-            f = {-1 : 0}
-        d = f.pop(-1,self._backend.zero())
+            f = {-1: 0}
+        d = f.pop(-1, self._backend.zero())
 
         for i in range(self._backend.ncols()):
             values.append(f.get(i,self._backend.zero()))
@@ -892,7 +892,8 @@ cdef class SemidefiniteProgram(SageObject):
         from sage.numerical.linear_tensor_constraints import LinearTensorConstraint
         from sage.numerical.linear_tensor import LinearTensor
 
-        if isinstance(linear_function, LinearTensorConstraint) or isinstance(linear_function, LinearConstraint):
+        if isinstance(linear_function, (LinearTensorConstraint,
+                                        LinearConstraint)):
             c = linear_function
             if c.is_equation():
                 self.add_constraint(c.lhs()-c.rhs(), name=name)
@@ -900,7 +901,7 @@ cdef class SemidefiniteProgram(SageObject):
             else:
                 self.add_constraint(c.lhs()-c.rhs(), name=name)
 
-        elif isinstance(linear_function, LinearFunction) or isinstance(linear_function, LinearTensor):
+        elif isinstance(linear_function, (LinearFunction, LinearTensor)):
             l = sorted(linear_function.dict().items())
             self._backend.add_linear_constraint(l, name)
 
@@ -1049,7 +1050,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         return self._backend.slack(i, sparse=sparse)
 
-    def solver_parameter(self, name, value = None):
+    def solver_parameter(self, name, value=None):
         """
         Return or define a solver parameter.
 
@@ -1256,7 +1257,7 @@ cdef class SDPVariable(Element):
         zero = self._p._backend.zero()
         name = self._name + "[" + str(i) + "]" if self._name else None
         j = self._p._backend.add_variable( obj=zero, name=name)
-        v = self._p.linear_function({j : 1})
+        v = self._p.linear_function({j: 1})
         self._p._variables[v] = j
         self._dict[i] = v
         return v

@@ -105,7 +105,7 @@ def deprecation_cython(issue_number, message, stacklevel=3):
 
     TESTS:
 
-    We check that `deprecation_cython` in a cython function generates a warning
+    We check that ``deprecation_cython`` in a cython function generates a warning
     with the same callsite reference as `deprecation` in a python function, whereas
     `deprecation` in a cython function does not::
 
@@ -327,7 +327,7 @@ class __experimental_self_test:
     The test below does not issue a warning message because that warning has
     already been issued by a previous doc-test in the @experimental code. Note
     that this behaviour cannot be demonstrated within a single documentation
-    string: Sphinx will itself supress multiple issued warnings.
+    string: Sphinx will itself suppress multiple issued warnings.
 
     TESTS::
 

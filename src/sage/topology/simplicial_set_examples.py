@@ -30,7 +30,7 @@ AUTHORS:
 # ****************************************************************************
 
 import re
-import os
+from pathlib import Path
 
 from sage.env import SAGE_ENV
 from sage.misc.cachefunc import cached_method, cached_function
@@ -47,6 +47,8 @@ import sage.topology.simplicial_complex_catalog as simplicial_complexes
 
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.categories.simplicial_sets', 'SimplicialSets')
+
+kenzo_path = Path(SAGE_ENV['SAGE_EXTCODE']) / 'kenzo'
 
 
 # ######################################################################
@@ -96,7 +98,7 @@ class Nerve(SimplicialSet_arbitrary):
         # of monoid elements). Omit the base point.
         self._simplex_data = ()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``True`` if ``self`` and ``other`` are equal.
 
@@ -119,9 +121,9 @@ class Nerve(SimplicialSet_arbitrary):
                 and self._monoid == other._monoid
                 and self.base_point() == other.base_point())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
-        Return the negation of `__eq__`.
+        Return the negation of ``__eq__``.
 
         EXAMPLES::
 
@@ -214,13 +216,13 @@ class Nerve(SimplicialSet_arbitrary):
                     face_dict[(g,)] = x
             start = 1
 
-        for d in range(start+1, n+1):
+        for d in range(start + 1, n + 1):
             for g in monoid:
                 if g == one:
                     continue
                 new_faces = {}
                 for t in face_dict.keys():
-                    if len(t) != d-1:
+                    if len(t) != d - 1:
                         continue
                     # chain: chain of group elements to multiply,
                     # as a tuple.
@@ -235,8 +237,8 @@ class Nerve(SimplicialSet_arbitrary):
 
                     # Compute faces of x.
                     faces = [face_dict[chain[1:]]]
-                    for i in range(d-1):
-                        product = chain[i] * chain[i+1]
+                    for i in range(d - 1):
+                        product = chain[i] * chain[i + 1]
                         if product == one:
                             # Degenerate.
                             if d == 2:
@@ -294,11 +296,11 @@ def Sphere(n):
         w_0 = AbstractSimplex(0, name='w_0')
         return SimplicialSet_finite({v_0: None, w_0: None}, base_point=v_0,
                                     name='S^0')
-    degens = range(n-2, -1, -1)
+    degens = range(n - 2, -1, -1)
     degen_v = v_0.apply_degeneracies(*degens)
     sigma = AbstractSimplex(n, name='sigma_{}'.format(n),
                             latex_name='\\sigma_{}'.format(n))
-    return SimplicialSet_finite({sigma: [degen_v] * (n+1)}, base_point=v_0,
+    return SimplicialSet_finite({sigma: [degen_v] * (n + 1)}, base_point=v_0,
                                 name='S^{}'.format(n),
                                 latex_name='S^{{{}}}'.format(n))
 
@@ -616,22 +618,20 @@ def ComplexProjectiveSpace(n):
                                  latex_name='CP^{2}')
         return K
     if n == 3:
-        file = os.path.join(SAGE_ENV['SAGE_EXTCODE'], 'kenzo', 'CP3.txt')
+        file = kenzo_path / 'CP3.txt'
         data = simplicial_data_from_kenzo_output(file)
-        v = [_ for _ in data.keys() if _.dimension() == 0][0]
-        K = SimplicialSet_finite(data, base_point=v, name='CP^3',
-                                 latex_name='CP^{3}')
-        return K
+        v = [sigma for sigma in data if sigma.dimension() == 0][0]
+        return SimplicialSet_finite(data, base_point=v, name='CP^3',
+                                    latex_name='CP^{3}')
     if n == 4:
-        file = os.path.join(SAGE_ENV['SAGE_EXTCODE'], 'kenzo', 'CP4.txt')
+        file = kenzo_path / 'CP4.txt'
         data = simplicial_data_from_kenzo_output(file)
-        v = [_ for _ in data.keys() if _.dimension() == 0][0]
-        K = SimplicialSet_finite(data, base_point=v, name='CP^4',
-                                 latex_name='CP^{4}')
-        return K
+        v = [sigma for sigma in data if sigma.dimension() == 0][0]
+        return SimplicialSet_finite(data, base_point=v, name='CP^4',
+                                    latex_name='CP^{4}')
 
 
-def simplicial_data_from_kenzo_output(filename):
+def simplicial_data_from_kenzo_output(filename) -> dict:
     """
     Return data to construct a simplicial set, given Kenzo output.
 
@@ -649,14 +649,15 @@ def simplicial_data_from_kenzo_output(filename):
 
         sage: from sage.topology.simplicial_set_examples import simplicial_data_from_kenzo_output
         sage: from sage.topology.simplicial_set import SimplicialSet
-        sage: sphere = os.path.join(SAGE_ENV['SAGE_EXTCODE'], 'kenzo', 'S4.txt')
+        sage: from pathlib import Path
+        sage: sphere = Path(SAGE_ENV['SAGE_EXTCODE']) / 'kenzo' /'S4.txt'
         sage: S4 = SimplicialSet(simplicial_data_from_kenzo_output(sphere))             # needs pyparsing
         sage: S4.homology(reduced=False)                                                # needs pyparsing
         {0: Z, 1: 0, 2: 0, 3: 0, 4: Z}
     """
     from pyparsing import OneOrMore, nestedExpr
 
-    with open(filename, 'r') as f:
+    with open(filename) as f:
         data = f.read()
     dim = 0
     start = 0
@@ -667,7 +668,7 @@ def simplicial_data_from_kenzo_output(filename):
     dim_idx = data.find('Dimension = {}:'.format(dim), start)
     while dim_idx != -1:
         start = dim_idx + len('Dimension = {}:'.format(dim))
-        new_dim_idx = data.find('Dimension = {}:'.format(dim+1), start)
+        new_dim_idx = data.find('Dimension = {}:'.format(dim + 1), start)
         if new_dim_idx == -1:
             end = len(data)
         else:

@@ -194,14 +194,15 @@ def find_replacements(location, package_regex=None, verbose=False):
                     to_exec = to_exec.replace("'", '').replace('"', '')
                     if (to_exec[-1] == ','):
                         to_exec = to_exec[:-1]
-                    exec(to_exec)
+                    glob = dict()
+                    exec(to_exec, glob)
                 except ModuleNotFoundError as err:
                     print(f'ModuleNotFoundError: {err} found when trying to execute {to_exec}')
                 except ImportError as err:
                     print(f'ImportError: {err} found when trying to execute {to_exec}')
 
                 try:  # try to evaluate the list of module names to get a list of the modules themselves which we can call import_statements on
-                    modules = eval(to_eval)
+                    modules = eval(to_eval, glob)
                 except NameError as err:
                     print(f'NameError: {err} found when trying to evaluate {to_eval} at {location}:{row_index + 1}')
                 except SyntaxError as err:
@@ -456,8 +457,8 @@ if __name__ == "__main__":
     finally:
         # Print report also when interrupted
         if verbosity:
-            log_messages = sorted(log_messages.rstrip().split('\n'))
-            for i, message in enumerate(log_messages, start=1):
+            log_messages_split = sorted(log_messages.rstrip().split('\n'))
+            for i, message in enumerate(log_messages_split, start=1):
                 # add index to each line
                 print(f'{i}. {message.rstrip()}')
         report = 'REPORT:\n'

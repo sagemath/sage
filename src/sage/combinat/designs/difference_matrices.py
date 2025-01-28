@@ -19,6 +19,7 @@ from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from .designs_pyx import is_difference_matrix
 from .database import DM as DM_constructions
 
+
 @cached_function
 def find_product_decomposition(g, k, lmbda=1):
     r"""
@@ -71,6 +72,7 @@ def find_product_decomposition(g, k, lmbda=1):
 
     return False
 
+
 def difference_matrix_product(k, M1, G1, lmbda1, M2, G2, lmbda2, check=True):
     r"""
     Return the product of the ``(G1, k, lmbda1)`` and ``(G2, k, lmbda2)``
@@ -121,7 +123,8 @@ def difference_matrix_product(k, M1, G1, lmbda1, M2, G2, lmbda2, check=True):
 
     return G,M
 
-def difference_matrix(g,k,lmbda=1,existence=False,check=True):
+
+def difference_matrix(g, k, lmbda=1, existence=False, check=True):
     r"""
     Return a `(g,k,\lambda)`-difference matrix.
 

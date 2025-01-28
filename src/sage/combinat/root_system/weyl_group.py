@@ -1090,8 +1090,18 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
             (1,7,5,3)(2,4,6,8)
             (2,8)(3,7)(4,6)
             (1,5)(2,6)(3,7)(4,8)
+
+        TESTS::
+
+            sage: W = WeylGroup(["A",0], implementation='permutation')
+            sage: list(W)
+            [()]
+            sage: W[0]
+            ()
         """
         from sage.combinat.root_system.reflection_group_c import Iterator
+        if self.rank() == 0:
+            return iter([self.one()])
         return iter(Iterator(self, N=self.number_of_reflections(),
                              algorithm=algorithm, tracking_words=tracking_words))
 

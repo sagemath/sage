@@ -1,6 +1,6 @@
-#cdivision=False
-#cython: cdivision_warnings=False
-#cython: profile=False
+# cdivision=False
+# cython: cdivision_warnings=False
+# cython: profile=False
 r"""
 Modular symbols by numerical integration
 
@@ -256,9 +256,9 @@ cdef llong llxgcd(llong a, llong b, llong *ss, llong *tt) except -1:
     q = 0
     r = 0
     s = 1
-    while (b):
+    while b:
         c = a % b
-        quot = a/b
+        quot = a // b
         a = b
         b = c
         new_r = p - quot*r
@@ -365,9 +365,9 @@ cdef int proj_normalise(llong N, llong u, llong  v,
     # Now g = s*u + t*N, so s is a "pseudo-inverse" of u mod N
     # Adjust s modulo N/g so it is coprime to N.
     if g != 1:
-        d = N / g
+        d = N // g
         while llgcd(s, N) != 1:
-            s = (s+d) % N
+            s = (s + d) % N
     # verbose("       now g=%s, s=%s, t=%s" % (g,s,t), level=5)
 
     # Multiply [u,v] by s; then [s*u,s*v] = [g,s*v] (mod N)
@@ -376,7 +376,7 @@ cdef int proj_normalise(llong N, llong u, llong  v,
     min_v = v
     min_t = 1
     if g != 1:
-        Ng = N / g
+        Ng = N // g
         vNg = (v * Ng) % N
         t = 1
         k = 2
@@ -456,24 +456,24 @@ cdef int best_proj_point(llong u, llong v, llong N,
     else:  # cases like (p:q) mod p*q drop here
         p = llgcd(u, N)
         q = llgcd(v, N)
-        Nnew = N / p / q
-        w = ((u/p) * llinvmod(v/q, Nnew)) % Nnew
-        y0 = N/q
+        Nnew = (N // p) // q
+        w = ((u // p) * llinvmod(v // q, Nnew)) % Nnew
+        y0 = N // q
         y1 = <llong>0
         x0 = w*p
         x1 = q
 
     # y will always be the longer and x the shorter
-    while llabs(x0) + llabs(x1) < llabs(y0)+llabs(y1):
+    while llabs(x0) + llabs(x1) < llabs(y0) + llabs(y1):
         if llsign(x0) == llsign(x1):
-            r = (y0+y1) / (x0+x1)
+            r = (y0+y1) // (x0+x1)
         else:
-            r = (y0-y1) / (x0-x1)
+            r = (y0-y1) // (x0-x1)
         t0 = y0 - r * x0
         t1 = y1 - r * x1
         s0 = t0 - x0
         s1 = t1 - x1
-        if llabs(s0)+llabs(s1) < llabs(t0)+llabs(t1):
+        if llabs(s0) + llabs(s1) < llabs(t0) + llabs(t1):
             t0 = s0
             t1 = s1
         # t is now the shortest vector on the line y + RR x
@@ -593,7 +593,7 @@ cdef class _CuspsForModularSymbolNumerical:
             a -= m
         self._r = Rational((a, m))
         B = llgcd(m, N)
-        self._width = N / B
+        self._width = N // B
         self._a = a
         self._m = m
         self._N_level = N
@@ -625,7 +625,7 @@ cdef class _CuspsForModularSymbolNumerical:
         # verbose("       enter atkin_lehner for cusp r=%s" % self._r, level=5)
         Q = self._width
         B = llgcd(self._m, self._N_level)
-        c = self._m / B
+        c = self._m // B
         if llgcd(Q, B) != 1:
             raise ValueError("This cusp is not in the Atkin-Lehner "
                              "orbit of oo.")
@@ -1254,8 +1254,8 @@ cdef class ModularSymbolNumerical:
 
         if err > 0.1:
             # the following did not work (compilation failed)
-            #from warnings import warn
-            #warn(Rounded an error of %s, looks like a bug." % err,
+            # from warnings import warn
+            # warn(Rounded an error of %s, looks like a bug." % err,
             # RuntimeWarning, stacklevel=5)
             print ("Warning: Rounded an error of ", err, ", looks like a bug "
                    + "in mod_sym_num.pyx.")
@@ -1411,8 +1411,8 @@ cdef class ModularSymbolNumerical:
         cdef ComplexNumber q, s
         cdef int n
 
-        #self.nc_sums += 1
-        #self.nc_terms += Integer(number_of_terms)
+        # self.nc_sums += 1
+        # self.nc_terms += Integer(number_of_terms)
 
         if number_of_terms > 10000000:
             print("Warning: more than 10^7 terms to sum")
@@ -1467,12 +1467,12 @@ cdef class ModularSymbolNumerical:
         #        " T=%s" % (tau,number_of_terms), level=5)
         cdef complex q, s
         cdef int n
-        #self.nc_sums += 1
-        #self.nc_terms += Integer(number_of_terms)
+        # self.nc_sums += 1
+        # self.nc_terms += Integer(number_of_terms)
 
         if number_of_terms > 10000000:
             print("Warning: more than 10^7 terms to sum")
-            #raise Warning("more than 10^7 terms to sum")
+            # raise Warning("more than 10^7 terms to sum")
         if number_of_terms > self._lans:
             self._add_an_coefficients(number_of_terms)
 
@@ -1525,8 +1525,8 @@ cdef class ModularSymbolNumerical:
         #        " T=%s" % (y,m,number_of_terms), level=5)
         cdef double q, qq
         cdef int n, i
-        #self.nc_sums += 1
-        #self.nc_terms += Integer(number_of_terms)
+        # self.nc_sums += 1
+        # self.nc_terms += Integer(number_of_terms)
 
         if number_of_terms > 10000000:
             print(" Warning: more than 10^7 terms to sum")
@@ -1605,8 +1605,8 @@ cdef class ModularSymbolNumerical:
         #        " T=%s" % (y,m,number_of_terms), level=5)
         cdef RealNumber q, qq
         cdef int n, i
-        #self.nc_sums += 1
-        #self.nc_terms += Integer(number_of_terms)
+        # self.nc_sums += 1
+        # self.nc_terms += Integer(number_of_terms)
 
         if number_of_terms > 10000000:
             print(" Warning: more than 10^7 terms to sum")
@@ -2125,12 +2125,12 @@ cdef class ModularSymbolNumerical:
             verbose("   yields %s " % int2c, level=3)
             ans = int2c + int1c
         else:  # use_partials
-            g = llgcd(Q,QQ)
+            g = llgcd(Q, QQ)
             D = Q * QQ
             D /= g
             D *= llabs(a*mm-aa*m)
-            xi = (Q*aa*u+v*mm) * QQ /g * llsign(a*mm-aa*m)
-            xixi = (QQ*a*uu+vv*m) * Q /g * llsign(aa*m-a*mm)
+            xi = (Q*aa*u+v*mm) * (QQ // g) * llsign(a*mm-aa*m)
+            xixi = (QQ*a*uu+vv*m) * (Q // g) * llsign(aa*m-a*mm)
             z = Q * QQ * (a*mm-aa*m)**2
             ka = self._kappa(D, z, eps/2)
             twopii = TWOPI * complex("j")
@@ -2293,7 +2293,7 @@ cdef class ModularSymbolNumerical:
         if method == "direct" or method == "both":
             verbose(" using the direct integration from %s to %s with "
                     "%s terms to sum" % (r, rr, T), level=2)
-            #self.nc_direct += 1
+            # self.nc_direct += 1
             ans = self._from_r_to_rr_approx_direct(r, rr, epsQ, epsQQ,
                                                    wQ, wQQ, T, prec, eps,
                                                    use_partials)
@@ -2303,7 +2303,7 @@ cdef class ModularSymbolNumerical:
         if method == "indirect" or method == "both":
             verbose("  using the indirect integration from %s to %s "
                     "with %s terms to sum" % (r, rr, T1+T2), level=2)
-            #self.nc_indirect += 1
+            # self.nc_indirect += 1
             ans2 = (self._from_ioo_to_r_approx(r, eps/2,
                                                use_partials=use_partials)
                     - self._from_ioo_to_r_approx(rr, eps/2,
@@ -2787,33 +2787,33 @@ cdef class ModularSymbolNumerical:
         else:
             # (c:d) = (u:v) but c and d are fairly small
             # in absolute value
-            Mu = llgcd(u,N)
-            Qu = N/Mu
-            Mv = llgcd(v,N)
-            Qv = N/Mv
-            isunitary = (llgcd(Qu,Mu) == 1 and llgcd(Qv,Mv) == 1)
+            Mu = llgcd(u, N)
+            Qu = N // Mu
+            Mv = llgcd(v, N)
+            Qv = N // Mv
+            isunitary = (llgcd(Qu, Mu) == 1 and llgcd(Qv, Mv) == 1)
             if isunitary:  # unitary case
                 _ = best_proj_point(u, v, self._N_E, &c, &d)
             else:  # at least one of the two cusps is not unitary
                 du = llgcd(Qu,Mu)
-                dv = llgcd(Qv,Mv)
-                NMM = N/Mv/Mu
+                dv = llgcd(Qv, Mv)
+                NMM = N // Mv // Mu
                 if dv == 1:
                     c = Mu
-                    d = llinvmod(u/Mu, NMM)
+                    d = llinvmod(u // Mu, NMM)
                     d *= v
-                    d = d % (N/Mu)
+                    d = d % (N // Mu)
                     while llgcd(c,d) != 1:
-                        d += N/Mu
+                        d += N // Mu
                     d = d % N
                     # now (u:v) = (c:d) with c as small as possible.
                 else:
                     d = Mv
-                    c = llinvmod(v/Mv, NMM)
+                    c = llinvmod(v // Mv, NMM)
                     c *= u
-                    c = c % (N/Mv)
-                    while llgcd(c,d) != 1:
-                        c += N/Mv
+                    c = c % (N // Mv)
+                    while llgcd(c, d) != 1:
+                        c += N // Mv
                     c = c % N
                     # now (u:v) = (c:d) with d as small as possible.
             # verbose("   better representant on P^1: "
@@ -3170,8 +3170,8 @@ cdef class ModularSymbolNumerical:
 
         RR = RealField(53)
         N = self._N_E
-        Q = N / llgcd(m,N)
-        if llgcd(m,Q) > 1:
+        Q = N // llgcd(m, N)
+        if llgcd(m, Q) > 1:
             raise NotImplementedError("Only implemented for cusps that are "
                                       "in the Atkin-Lehner orbit of oo")
         # verbose("   compute all partial sums with denominator m=%s" % m,

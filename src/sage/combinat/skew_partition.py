@@ -1009,12 +1009,9 @@ class SkewPartition(CombinatorialElement):
         """
         N = len(self[0])
         mu_betas = [x - j for j, x in enumerate(self[1])]
-        mu_betas.extend([- j for j in range(len(self[1]), N)])
-        res = 0
-        for i, x in enumerate(self[0]):
-            if (x - i) not in mu_betas:
-                res += 1
-        return res
+        mu_betas.extend(- j for j in range(len(self[1]), N))
+        return sum(1 for i, x in enumerate(self[0])
+                   if (x - i) not in mu_betas)
 
     def cells(self):
         """
@@ -1032,12 +1029,9 @@ class SkewPartition(CombinatorialElement):
         """
         outer = self.outer()
         inner = self.inner()[:]
-        inner += [0]*(len(outer)-len(inner))
-        res = []
-        for i in range(len(outer)):
-            for j in range(inner[i], outer[i]):
-                res.append( (i,j) )
-        return res
+        inner += [0] * (len(outer) - len(inner))
+        return [(i, j) for i, outi in enumerate(outer)
+                for j in range(inner[i], outi)]
 
     def to_list(self):
         """
@@ -1148,15 +1142,13 @@ class SkewPartition(CombinatorialElement):
             sage: skp.rows_intersection_set() == cells
             True
         """
-        res = []
         outer = self.outer()
         inner = self.inner()
-        inner += [0] * int(len(outer)-len(inner))
+        inner += [0] * (len(outer) - len(inner))
 
-        for i in range(len(outer)):
-            for j in range(outer[i]):
-                if outer[i] != inner[i]:
-                    res.append((i,j))
+        res = [(i, j) for i, outi in enumerate(outer)
+               for j in range(outi)
+               if outi != inner[i]]
         return Set(res)
 
     def columns_intersection_set(self):
@@ -1238,7 +1230,7 @@ class SkewPartition(CombinatorialElement):
         h = SymmetricFunctions(QQ).homogeneous()
         H = MatrixSpace(h, nn)
 
-        q = q + [0]*int(nn-len(q))
+        q = q + [0] * (nn - len(q))
         m = []
         for i in range(1,nn+1):
             row = []

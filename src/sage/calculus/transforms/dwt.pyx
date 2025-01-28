@@ -103,11 +103,11 @@ cdef class DiscreteWaveletTransform(GSLDoubleArray):
     """
     Discrete wavelet transform class.
     """
-    def __cinit__(self,size_t n,size_t stride, wavelet_type, size_t wavelet_k):
+    def __cinit__(self, size_t n, size_t stride, wavelet_type, size_t wavelet_k):
         self.wavelet = NULL
         self.workspace = NULL
 
-    def __init__(self,size_t n,size_t stride, wavelet_type, size_t wavelet_k):
+    def __init__(self, size_t n, size_t stride, wavelet_type, size_t wavelet_k):
         if not is2pow(n):
             raise NotImplementedError("discrete wavelet transform only implemented when n is a 2-power")
         GSLDoubleArray.__init__(self,n,stride)

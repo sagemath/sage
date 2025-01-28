@@ -88,7 +88,7 @@ class ShardPosetElement(tuple):
             Digraph on 3 vertices
         """
         self.runs = p.decreasing_runs(as_tuple=True)
-        self.run_indices = [None] * (len(p) + 1)
+        self.run_indices = [0] * (len(p) + 1)
         for i, bloc in enumerate(self.runs):
             for j in bloc:
                 self.run_indices[j] = i
@@ -127,7 +127,7 @@ class ShardPosetElement(tuple):
             sage: e1 <= e0
             False
         """
-        if type(self) is not type(other) or len(self) != len(other):
+        if not isinstance(other, ShardPosetElement) or len(self) != len(other):
             raise TypeError("these are not comparable")
         if self.runs == other.runs:
             return True
