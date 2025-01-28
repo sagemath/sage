@@ -139,14 +139,10 @@ class Jacobian_generic(Scheme):
         if C.dimension() != 1:
             raise ValueError("C (=%s) must have dimension 1." % C)
         self.__curve = C
-<<<<<<< HEAD
         # I am not sure how to deal with non-smooth curves...
         # TODO: Isolate the smooth case into a Jacobian_AbelianVariety or something
-        category = AbelianVarieties(C.base_scheme()) if C.is_smooth() else None
+        category = Jacobians(C.base_scheme()).or_subcategory(category) if C.is_smooth() else None
         Scheme.__init__(self, C.base_scheme(), category=category)
-=======
-        Scheme.__init__(self, C.base_scheme(), category=Jacobians(C.base_ring()).or_subcategory(category))
->>>>>>> origin/develop
 
     def __richcmp__(self, J, op):
         """
