@@ -377,8 +377,7 @@ class ModularForm_abstract(ModuleElement):
             self.__coefficients
         except AttributeError:
             self.__coefficients = {}
-        if isinstance(X, (int, Integer)):
-            X = list(range(1, X + 1))
+        X = list(range(1, ZZ(X) + 1))
         Y = [n for n in X if n not in self.__coefficients]
         v = self._compute(Y)
         for i in range(len(v)):
@@ -2590,7 +2589,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         Testing modular forms of nontrivial character::
 
-            sage: F = ModularForms(DirichletGroup(17).0^2,2).2
+            sage: F = ModularForms(DirichletGroup(17).0^2, 2).2
             sage: F3 = F^3; F3
             q^3 + (-3*zeta8^2 + 6)*q^4 + (-12*zeta8^2 + 3*zeta8 + 18)*q^5 + O(q^6)
             sage: F3.qexp(6) == F.qexp(6)^3
@@ -3452,7 +3451,7 @@ class GradedModularFormElement(ModuleElement):
 
         INPUT:
 
-        - ``X`` -- an iterator or an integer. If ``X`` is an iterator, a list
+        - ``X`` -- an iterable or an integer. If ``X`` is iterable, a list
           containing all `a_{X_i}` is returned. If ``X`` is an integer, it must
           be positive, in which case the coefficients `a_1` to `a_X` are
           returned in a list.
