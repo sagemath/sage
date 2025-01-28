@@ -104,6 +104,7 @@ A parent ``P`` is in a category ``C`` if ``P.category()`` is a subcategory of
 
 import inspect
 from warnings import warn
+from itertools import zip_longest
 from sage.misc.abstract_method import abstract_method, abstract_methods_of_class
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.c3_controlled import _cmp_key, _cmp_key_named, C3_sorted_merge
@@ -113,6 +114,7 @@ from sage.misc.weak_dict import WeakValueDictionary
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.debug_options import debug
 from sage.structure.dynamic_class import DynamicMetaclass, dynamic_class
 
 from sage.categories.category_cy_helper import category_sort_key, _sort_uniq, _flatten_categories, join_as_tuple
@@ -943,6 +945,20 @@ class Category(UniqueRepresentation, SageObject):
             appropriate. Simply because lazy attributes are much
             faster than any method.
 
+        .. NOTE::
+
+            This is not the same as the concept of super category in mathematics.
+            In fact, this is not even the opposite relation of :meth:`is_subcategory`::
+
+                sage: A = VectorSpaces(QQ); A
+                Category of vector spaces over Rational Field
+                sage: B = VectorSpaces(QQ.category()); B
+                Category of vector spaces over (number fields and quotient fields and metric spaces)
+                sage: A.is_subcategory(B)
+                True
+                sage: B in A.all_super_categories()
+                False
+
         EXAMPLES::
 
             sage: C = Rings(); C
@@ -1379,8 +1395,6 @@ class Category(UniqueRepresentation, SageObject):
             method resolution order of the parent and element
             classes. This method checks this.
 
-        .. TODO:: currently, this won't work for hom categories.
-
         EXAMPLES::
 
             sage: C = HopfAlgebrasWithBasis(QQ)
@@ -1622,8 +1636,25 @@ class Category(UniqueRepresentation, SageObject):
             sage: type(cls)
             <class 'sage.structure.dynamic_class.DynamicMetaclass'>
         """
-        return self._make_named_class('subcategory_class', 'SubcategoryMethods',
-                                      cache=False, picklable=False)
+        if debug.test_category_graph:
+            _ = self._all_super_categories
+        subcategory_class = self._make_named_class('subcategory_class', 'SubcategoryMethods',
+                                                   cache=False, picklable=False)
+        if debug.test_category_graph:
+            # see also _test_category_graph()
+            previous_all_super_categories = self.__dict__.get("_all_super_categories", None)
+            for C in self._all_super_categories_proper:
+                assert "subcategory_class" in C.__dict__  # avoid Heisenbug (relies on implementation detail of lazy_attribute)
+            mismatch = [(i, a, b)
+                        for i, (a, b) in enumerate(zip_longest(
+                            subcategory_class.mro()[1:],
+                            [C.subcategory_class for C in self._all_super_categories_proper] + [object]
+                            ))
+                        if a is None or b is None or a != b]
+            if mismatch:
+                print(f"Category graph does not match with Python MRO: {subcategory_class=} {subcategory_class.mro()=} {mismatch=}")
+                # we cannot even print self._all_super_categories here otherwise there's a risk of infinite recursion
+        return subcategory_class
 
     @lazy_attribute
     def parent_class(self):
@@ -1668,7 +1699,15 @@ class Category(UniqueRepresentation, SageObject):
         :class:`~sage.categories.category_types.Category_over_base` and
         :class:`sage.categories.category.JoinCategory`.
         """
-        return self._make_named_class('parent_class', 'ParentMethods')
+        if debug.test_category_graph:
+            _ = self._all_super_categories
+        parent_class = self._make_named_class('parent_class', 'ParentMethods')
+        if debug.test_category_graph:
+            # see also _test_category_graph()
+            if parent_class.mro()[1:] != [C.parent_class for C in self._all_super_categories_proper] + [object]:
+                print(f"Category graph does not match with Python MRO: {parent_class=} {parent_class.mro()=} {self._all_super_categories=}")
+        return parent_class
+
 
     @lazy_attribute
     def element_class(self):
@@ -1714,7 +1753,15 @@ class Category(UniqueRepresentation, SageObject):
 
         .. SEEALSO:: :meth:`parent_class`
         """
-        return self._make_named_class('element_class', 'ElementMethods')
+        if debug.test_category_graph:
+            _ = self._all_super_categories
+        element_class = self._make_named_class('element_class', 'ElementMethods')
+        if debug.test_category_graph:
+            # see also _test_category_graph()
+            assert self is self._all_super_categories[0]
+            if element_class.mro()[1:] != [C.element_class for C in self._all_super_categories_proper] + [object]:
+                print(f"Category graph does not match with Python MRO: {element_class=} {element_class.mro()=} {self._all_super_categories=}")
+        return element_class
 
     @lazy_attribute
     def morphism_class(self):
@@ -1757,7 +1804,7 @@ class Category(UniqueRepresentation, SageObject):
     # Operations on the lattice of categories
     def is_subcategory(self, c):
         """
-        Return ``True`` if ``self`` is naturally embedded as a subcategory of `c`.
+        Return ``True`` if there is a natural forgetful functor from ``self`` to `c`.
 
         EXAMPLES::
 
@@ -2046,13 +2093,18 @@ class Category(UniqueRepresentation, SageObject):
         Return the subcategory of the objects of ``self`` satisfying
         the given ``axiom``.
 
+        Note that this is a private method thus should not be directly
+        used, see below.
+
         INPUT:
 
         - ``axiom`` -- string, the name of an axiom
 
         EXAMPLES::
 
-            sage: Sets()._with_axiom("Finite")
+            sage: Sets()._with_axiom("Finite")  # not idiomatic
+            Category of finite sets
+            sage: Sets().Finite()  # recommended
             Category of finite sets
 
             sage: type(Magmas().Finite().Commutative())
@@ -2068,7 +2120,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: Sets()._with_axiom("Associative")
             Category of sets
 
-        .. WARNING:: This may be changed in the future to raising an error.
+        .. WARNING:: This may be changed in the future to raise an error.
         """
         return Category.join(self._with_axiom_as_tuple(axiom))
 
@@ -2697,6 +2749,29 @@ class CategoryWithParameters(Category):
         sage: C1.parent_class is C3.parent_class
         False
 
+    .. NOTE::
+
+        If category ``A`` is a supercategory of category ``B``,
+        and category ``B`` uses the optimization, then so must ``A``.
+
+        For example, ``Modules(ZZ)`` is a supercategory of ``Algebras(ZZ)``,
+        and ``Algebras(ZZ)`` implements the optimization::
+
+            sage: isinstance(Algebras(ZZ), CategoryWithParameters)
+            True
+            sage: Algebras(ZZ).parent_class is Algebras(ZZ.category()).parent_class
+            True
+            sage: Modules(ZZ) in Algebras(ZZ).all_super_categories()
+            True
+
+        This forces ``Modules(ZZ)`` to also implement the optimization::
+
+            sage: Modules(ZZ).parent_class is Modules(ZZ.category()).parent_class
+            True
+
+        This is because the Python MRO must match the supercategory hierarchy.
+        See :meth:`Category._test_category_graph`.
+
     .. automethod:: Category._make_named_class
     """
 
@@ -2803,14 +2878,49 @@ class CategoryWithParameters(Category):
         cls = self.__class__
         if isinstance(cls, DynamicMetaclass):
             cls = cls.__base__
+        if debug.test_category_graph and hasattr(self, "_Category_over_base__base"):
+            previous_base = self._Category_over_base__base
+            if hasattr(previous_base, "category"):
+                previous_base_category = previous_base.category()
         key = (cls, name, self._make_named_class_key(name))
+        if debug.test_category_graph:
+            key2 = (cls, name, self._make_named_class_key(name))
+            assert key == key2
+        if debug.test_category_graph and key in self._make_named_class_cache:
+            old_cls = self._make_named_class_cache[key]
+            last_category = self._make_named_class_last_category_cache[key]
+            # new_cls = Category._make_named_class(self, name, method_provider, cache=cache, **options)
+            # if old_cls.mro()[1:] != new_cls.mro()[1:]:
+            # ^ cannot do the above because :meth:`_make_named_class` may refine the category of the ring thus modifies key
+            # mismatch = [(i, a, b)
+            #             for i, (a, b) in enumerate(zip(self._all_super_categories[1:], last_category._all_super_categories[1:]))
+            #             if getattr(a, name) != getattr(b, name)]
+            # ^ cannot do the above because :meth:`getattr(a, name)` may also refine the category (Heisenbug)
+            mismatch = [(i, a, b)
+                        for i, (a, b) in enumerate(zip_longest(self._all_super_categories[1:], last_category._all_super_categories[1:]))
+                        if a is None or b is None or (name in a.__dict__ and name in b.__dict__ and a.__dict__[name] != b.__dict__[name])]
+            if mismatch:
+                key3 = (cls, name, self._make_named_class_key(name))
+                print(f"Categories with same _make_named_class_key has different MRO: {self._all_super_categories=}",
+                      f"{last_category=} {last_category._all_super_categories=} {mismatch=}" +
+                      (" (probably Heisenbug)" if key3 != key else ""))
         try:
             return self._make_named_class_cache[key]
         except KeyError:
             pass
         result = Category._make_named_class(self, name, method_provider,
                                             cache=cache, **options)
+        # the object in the parameter may have had its category refined, which modifies the key, needs to recompute
+        # (problem with mutable objects)
+        if key != (cls, name, self._make_named_class_key(name)):
+            # throw result away and recompute
+            return self._make_named_class(name, method_provider, cache=cache, **options)
         self._make_named_class_cache[key] = result
+        if debug.test_category_graph:
+            if not hasattr(CategoryWithParameters, '_make_named_class_last_category_cache'):
+                CategoryWithParameters._make_named_class_last_category_cache = {}
+            # if C._make_named_class(name) was called, then _make_named_class_last_category_cache[key] = C
+            self._make_named_class_last_category_cache[key] = self
         return result
 
     @abstract_method
@@ -2835,24 +2945,14 @@ class CategoryWithParameters(Category):
         The parent class of an algebra depends only on the category of the base ring::
 
             sage: Algebras(ZZ)._make_named_class_key("parent_class")
-            Join of Category of Dedekind domains
-                 and Category of euclidean domains
-                 and Category of noetherian rings
-                 and Category of infinite enumerated sets
-                 and Category of metric spaces
+            <class 'sage.categories.category.JoinCategory.parent_class'>
 
         The morphism class of a bimodule depends only on the category
         of the left and right base rings::
 
             sage: Bimodules(QQ, ZZ)._make_named_class_key("morphism_class")
-            (Join of Category of number fields
-                 and Category of quotient fields
-                 and Category of metric spaces,
-             Join of Category of Dedekind domains
-                 and Category of euclidean domains
-                 and Category of noetherian rings
-                 and Category of infinite enumerated sets
-                 and Category of metric spaces)
+            (<class 'sage.categories.category.JoinCategory.morphism_class'>,
+             <class 'sage.categories.category.JoinCategory.morphism_class'>)
 
         The element class of a join category depends only on the
         element class of its super categories::
@@ -2976,21 +3076,13 @@ class JoinCategory(CategoryWithParameters):
         EXAMPLES::
 
             sage: Modules(ZZ)._make_named_class_key('element_class')
-            Join of Category of Dedekind domains
-                 and Category of euclidean domains
-                 and Category of noetherian rings
-                 and Category of infinite enumerated sets
-                 and Category of metric spaces
+            <class 'sage.categories.category.JoinCategory.element_class'>
             sage: Modules(QQ)._make_named_class_key('parent_class')
-            Join of Category of number fields
-             and Category of quotient fields
-             and Category of metric spaces
+            <class 'sage.categories.category.JoinCategory.parent_class'>
             sage: Schemes(Spec(ZZ))._make_named_class_key('parent_class')
-            Category of schemes
+            <class 'sage.categories.schemes.Schemes.parent_class'>
             sage: ModularAbelianVarieties(QQ)._make_named_class_key('parent_class')
-            Join of Category of number fields
-             and Category of quotient fields
-             and Category of metric spaces
+            <class 'sage.categories.category.JoinCategory.parent_class'>
         """
         return tuple(getattr(cat, name) for cat in self._super_categories)
 
@@ -3064,6 +3156,9 @@ class JoinCategory(CategoryWithParameters):
         """
         Return the category obtained by adding an axiom to ``self``.
 
+        As with :meth:`Category._with_axiom`, using this method directly is
+        not idiomatic.
+
         .. NOTE::
 
             This is just an optimization of
@@ -3073,7 +3168,9 @@ class JoinCategory(CategoryWithParameters):
         EXAMPLES::
 
             sage: C = Category.join([Monoids(), Posets()])
-            sage: C._with_axioms(["Finite"])
+            sage: C._with_axioms(["Finite"])  # not idiomatic
+            Join of Category of finite monoids and Category of finite posets
+            sage: C.Finite()  # recommended
             Join of Category of finite monoids and Category of finite posets
 
         TESTS:

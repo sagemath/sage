@@ -75,35 +75,24 @@ class Bimodules(CategoryWithParameters):
         EXAMPLES::
 
             sage: Bimodules(QQ,ZZ)._make_named_class_key('parent_class')
-            (Join of Category of number fields
-                 and Category of quotient fields
-                 and Category of metric spaces,
-             Join of Category of Dedekind domains
-                 and Category of euclidean domains
-                 and Category of noetherian rings
-                 and Category of infinite enumerated sets
-                 and Category of metric spaces)
+            (<class 'sage.categories.category.JoinCategory.parent_class'>,
+             <class 'sage.categories.category.JoinCategory.parent_class'>)
 
 
             sage: Bimodules(Fields(), ZZ)._make_named_class_key('element_class')
-            (Category of fields,
-             Join of Category of Dedekind domains
-             and Category of euclidean domains
-             and Category of noetherian rings
-             and Category of infinite enumerated sets
-             and Category of metric spaces)
+            (<class 'sage.categories.fields.Fields.element_class'>,
+             <class 'sage.categories.category.JoinCategory.element_class'>)
 
             sage: Bimodules(QQ, Rings())._make_named_class_key('element_class')
-            (Join of Category of number fields
-                 and Category of quotient fields
-                 and Category of metric spaces,
-             Category of rings)
+            (<class 'sage.categories.category.JoinCategory.element_class'>,
+             <class 'sage.categories.rings.Rings.element_class'>)
 
             sage: Bimodules(Fields(), Rings())._make_named_class_key('element_class')
-            (Category of fields, Category of rings)
+            (<class 'sage.categories.fields.Fields.element_class'>,
+             <class 'sage.categories.rings.Rings.element_class'>)
         """
-        return (self._left_base_ring if isinstance(self._left_base_ring, Category) else self._left_base_ring.category(),
-                self._right_base_ring if isinstance(self._right_base_ring, Category) else self._right_base_ring.category())
+        return (getattr(self._left_base_ring if isinstance(self._left_base_ring, Category) else self._left_base_ring.category(), name),
+                getattr(self._right_base_ring if isinstance(self._right_base_ring, Category) else self._right_base_ring.category(), name))
 
     @classmethod
     def an_instance(cls):

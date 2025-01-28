@@ -43,6 +43,7 @@ from sage.symbolic.expression cimport (
     new_Expression_symbol,
 )
 
+from sage.categories.fields import Fields
 from sage.categories.commutative_rings import CommutativeRings
 from sage.structure.element cimport Element, Expression
 from sage.structure.parent cimport Parent

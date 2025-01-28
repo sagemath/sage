@@ -229,27 +229,17 @@ class Category_over_base(CategoryWithParameters):
         EXAMPLES::
 
             sage: Modules(ZZ)._make_named_class_key('element_class')
-            Join of Category of Dedekind domains
-             and Category of euclidean domains
-             and Category of noetherian rings
-             and Category of infinite enumerated sets
-             and Category of metric spaces
+            <class 'sage.categories.category.JoinCategory.element_class'>
             sage: Modules(QQ)._make_named_class_key('parent_class')
-            Join of Category of number fields
-             and Category of quotient fields
-             and Category of metric spaces
+            <class 'sage.categories.category.JoinCategory.parent_class'>
             sage: Schemes(Spec(ZZ))._make_named_class_key('parent_class')
-            Category of schemes
+            <class 'sage.categories.schemes.Schemes.parent_class'>
             sage: ModularAbelianVarieties(QQ)._make_named_class_key('parent_class')
-            Join of Category of number fields
-             and Category of quotient fields
-             and Category of metric spaces
+            <class 'sage.categories.category.JoinCategory.parent_class'>
             sage: Algebras(Fields())._make_named_class_key('morphism_class')
-            Category of fields
+            <class 'sage.categories.fields.Fields.morphism_class'>
         """
-        if isinstance(self.__base, Category):
-            return self.__base
-        return self.__base.category()
+        return getattr(self.__base if isinstance(self.__base, Category) else self.__base.category(), name)
 
     @classmethod
     def an_instance(cls):

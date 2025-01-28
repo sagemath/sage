@@ -2,5 +2,7 @@
 cdef class DebugOptions_class:
     cdef public bint unique_parent_warnings
     cdef public bint refine_category_hash_check
+    cdef public bint test_category_graph
+    cdef public bint test_nonrecursive_cachefunc
 
 cdef DebugOptions_class debug
