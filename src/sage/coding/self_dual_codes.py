@@ -612,19 +612,19 @@ def self_dual_binary_codes(n):
         return self_dual_codes
 
     if n == 20:
-    # all of these of these are Type I; 2 of these codes
-    # are formally equivalent but with different automorphism groups;
-    # one of these has a unique codeword of lowest weight
-        A10 = MatrixSpace(_F,10,10)([[1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-                                     [1, 1, 1, 0, 1, 0, 1, 0, 1, 1],
-                                     [1, 0, 0, 1, 0, 1, 0, 1, 0, 1],
-                                     [0, 0, 0, 1, 1, 1, 0, 1, 0, 1],
-                                     [0, 0, 1, 1, 0, 1, 0, 1, 0, 1],
-                                     [0, 0, 0, 1, 0, 1, 1, 1, 0, 1],
-                                     [0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-                                     [0, 0, 0, 1, 0, 0, 0, 0, 1, 1],
-                                     [0, 0, 0, 0, 0, 1, 0, 0, 1, 1],
-                                     [0, 0, 0, 0, 0, 0, 0, 1, 1, 1]])
+        # all of these of these are Type I; 2 of these codes
+        # are formally equivalent but with different automorphism groups;
+        # one of these has a unique codeword of lowest weight
+        A10 = MatrixSpace(_F, 10, 10)([[1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+                                       [1, 1, 1, 0, 1, 0, 1, 0, 1, 1],
+                                       [1, 0, 0, 1, 0, 1, 0, 1, 0, 1],
+                                       [0, 0, 0, 1, 1, 1, 0, 1, 0, 1],
+                                       [0, 0, 1, 1, 0, 1, 0, 1, 0, 1],
+                                       [0, 0, 0, 1, 0, 1, 1, 1, 0, 1],
+                                       [0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+                                       [0, 0, 0, 1, 0, 0, 0, 0, 1, 1],
+                                       [0, 0, 0, 0, 0, 1, 0, 0, 1, 1],
+                                       [0, 0, 0, 0, 0, 0, 0, 1, 1, 1]])
         # [20,0]:
         genmat = _I2(n).augment(_I2(n))
         # G = PermutationGroup( ["(10,20)", "(9,10)(19,20)", "(8,9)(18,19)", "(7,8)(17,18)", "(6,7)(16,17)",\
