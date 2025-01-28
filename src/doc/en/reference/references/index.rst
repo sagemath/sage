@@ -490,6 +490,11 @@ REFERENCES:
                         "Spook:  Sponge-Based Leakage-Resilient AuthenticatedEncryption with a Masked Tweakable Block Cipher"
                         https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/Spook-spec.pdf
 
+.. [BBC2000] Anne Berry, Jean-Paul Bordat, Olivier Cogis. *Generating all the
+             minimal separators of a graph*. International Journal of
+             Foundations of Computer Science, 11(3):397-403, 2000.
+             :doi:`10.1142/S0129054100000211`
+
 .. [BCDM2019] \T. Beyne, Y. L. Chen, C. Dobraunig, B. Mennink. *Elephant v1* (2019)
               https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/elephant-spec.pdf
 
@@ -872,7 +877,7 @@ REFERENCES:
 .. [BrHu2019] Petter Brändén, June Huh. *Lorentzian polynomials*.
               Ann. Math. (2) 192, No. 3, 821-891 (2020).
               :arxiv:`1902.03719`, :doi:`10.4007/annals.2020.192.3.4`.
-        
+
 .. [Bru2014] Erwan Brugalle and Kristin Shaw. *A bit of tropical geometry*.
              Amer. Math. Monthly, 121(7):563-589, 2014.
 
@@ -1152,6 +1157,10 @@ REFERENCES:
              :doi:`10.1016/S0304-3975(97)00228-4`.
 
 .. [Bo2009] Bosch, S., Algebra, Springer 2009
+
+.. [Bon2017] Joseph E. Bonin, *Lattices Related to Extensions of
+             Presentations of Transversal Matroids*.
+             Electronic Journal of Combinatorics (2017), #P1.49.
 
 .. [Bor1993] Lev A. Borisov,
              "Towards the mirror symmetry for Calabi-Yau complete
@@ -5243,7 +5252,7 @@ REFERENCES:
 .. [NT2007] Serguei Norine and Robin Thomas. *Minimally Non-Pfaffian Graphs*.
             Combinatorica, vol. 27, no. 5, pages: 587 -- 600, Springer. 2007.
             :doi:`10.1016/j.jctb.2007.12.005`.
-            
+
 .. [Nur2004] K. Nurmela. *Upper bounds for covering arrays by tabu search*.
              Discrete Applied Math., 138 (2004), 143-152.
 
@@ -6193,7 +6202,7 @@ REFERENCES:
              of the chromatic polynomial of a graph*, Adv. Math., ***111***
              no.1 (1995), 166-194. :doi:`10.1006/aima.1995.1020`.
 
-.. [Sta1998] \R. P. Stanley, *Graph colorings and related symmetric functions: 
+.. [Sta1998] \R. P. Stanley, *Graph colorings and related symmetric functions:
              ideas and applications A description of results, interesting applications,
              & notable open problems*, Discrete Mathematics, 193, no.1-3, (1998),
              267-286. :doi:`10.1016/S0012-365X(98)00146-0`.

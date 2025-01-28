@@ -1268,8 +1268,8 @@ class QuotientRing_nc(ring.Ring):
             sage: S = R.quotient_ring(x^2 + y^2)
             sage: S._singular_()                                                        # needs sage.libs.singular
             polynomial ring, over a field, global ordering
-            //   coefficients: QQ
-            //   number of vars : 2
+            // coefficients: QQ...
+            // number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y
             //        block   2 : ordering C
