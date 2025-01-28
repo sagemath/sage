@@ -33,7 +33,7 @@ class CartanType(SageObject, CartanType_abstract):
 
     INPUT:
 
-    - ``types`` -- a list of simple Cartan types
+    - ``types`` -- list of simple Cartan types
 
     EXAMPLES::
 
@@ -90,7 +90,7 @@ class CartanType(SageObject, CartanType_abstract):
              ((1, 0), 5), ((1, 1), 6), ((1, 2), 7), ((1, 3), 8), ((1, 4), 9), ((1, 5), 10),
              ((2, 1), 11), ((2, 2), 12), ((2, 3), 13)]
 
-        Similarly, the attribute `_shifts` specifies by how much the
+        Similarly, the attribute ``_shifts`` specifies by how much the
         indices of the bases of the ambient spaces of the components
         are shifted in the ambient space of this Cartan type::
 
@@ -212,7 +212,7 @@ class CartanType(SageObject, CartanType_abstract):
 
     def type(self):
         """
-        Returns "reducible" since the type is reducible.
+        Return ``"reducible"`` since the type is reducible.
 
         EXAMPLES::
 
@@ -223,7 +223,7 @@ class CartanType(SageObject, CartanType_abstract):
 
     def rank(self):
         """
-        Returns the rank of self.
+        Return the rank of ``self``.
 
         EXAMPLES::
 
@@ -235,7 +235,7 @@ class CartanType(SageObject, CartanType_abstract):
     @cached_method
     def index_set(self):
         r"""
-        Implements :meth:`CartanType_abstract.index_set`.
+        Implement :meth:`CartanType_abstract.index_set`.
 
         For the moment, the index set is always of the form `\{1, \ldots, n\}`.
 
@@ -276,7 +276,7 @@ class CartanType(SageObject, CartanType_abstract):
 
     def dynkin_diagram(self):
         """
-        Returns a Dynkin diagram for type reducible.
+        Return a Dynkin diagram for type reducible.
 
         EXAMPLES::
 
@@ -298,7 +298,6 @@ class CartanType(SageObject, CartanType_abstract):
             O---O
             5   6
             F4xA2
-
         """
         from .dynkin_diagram import DynkinDiagram_class
         relabelling = self._index_relabelling
@@ -420,7 +419,7 @@ class CartanType(SageObject, CartanType_abstract):
 
     def is_affine(self):
         """
-        Report that this reducible Cartan type is not affine
+        Report that this reducible Cartan type is not affine.
 
         EXAMPLES::
 
@@ -465,7 +464,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
         sage: RootSystem("A2xB2").ambient_space()
         Ambient space of the Root system of type A2xB2
-
     """
 
     def cartan_type(self):
@@ -497,7 +495,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
     def ambient_spaces(self):
         """
-        Returns a list of the irreducible Cartan types of which the
+        Return a list of the irreducible Cartan types of which the
         given reducible Cartan type is a product.
 
         EXAMPLES::
@@ -509,14 +507,14 @@ class AmbientSpace(ambient_space.AmbientSpace):
         return [t.root_system().ambient_space() for t in self.component_types()]
 
     def inject_weights(self, i, v):
-        """
+        r"""
         Produces the corresponding element of the lattice.
 
         INPUT:
 
-        - ``i`` - an integer in range(self.components)
+        - ``i`` -- integer in ``range(self.components)``
 
-        - ``v`` - a vector in the i-th component weight lattice
+        - ``v`` -- a vector in the `i`-th component weight lattice
 
         EXAMPLES::
 
@@ -527,7 +525,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             [(1, 1, 0, 0, 0), (0, 0, 0, 1/2, 1/2)]
         """
         shift = self.root_system.cartan_type()._shifts[i]
-        return self._from_dict( dict([(shift+k, c) for (k,c) in v ]))
+        return self._from_dict({shift + k: c for k, c in v})
 
     @cached_method
     def simple_root(self, i):

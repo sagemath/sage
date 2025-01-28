@@ -22,7 +22,7 @@ from . import degenmap
 from . import module
 from . import submodule
 
-from sage.modules.free_module import FreeModule, is_FreeModule
+from sage.modules.free_module import FreeModule, FreeModule_generic
 from sage.rings.integer import Integer
 
 import sage.arith.all as arith
@@ -41,6 +41,10 @@ def is_AmbientHeckeModule(x) -> bool:
 
         sage: from sage.modular.hecke.ambient_module import is_AmbientHeckeModule
         sage: is_AmbientHeckeModule(ModularSymbols(6))
+        doctest:warning...
+        DeprecationWarning: the function is_AmbientHeckeModule is deprecated;
+        use 'isinstance(..., AmbientHeckeModule)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         True
         sage: is_AmbientHeckeModule(ModularSymbols(6).cuspidal_subspace())
         False
@@ -49,6 +53,8 @@ def is_AmbientHeckeModule(x) -> bool:
         sage: is_AmbientHeckeModule(BrandtModule(2, 3))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_AmbientHeckeModule is deprecated; use 'isinstance(..., AmbientHeckeModule)' instead")
     return isinstance(x, AmbientHeckeModule)
 
 
@@ -81,9 +87,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         """
         Return the rank of this ambient Hecke module.
 
-        OUTPUT:
-
-        Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -161,7 +165,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
     def _hecke_image_of_ith_basis_element(self, n, i):
         """
-        Return the image under the Hecke operator T_n of the i-th basis
+        Return the image under the Hecke operator `T_n` of the `i`-th basis
         element.
 
         EXAMPLES::
@@ -238,10 +242,8 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         try:
             return self.__decomposition_matrix_cache
         except AttributeError:
-            rows = []
-            for A in self.decomposition():
-                for x in A.basis():
-                    rows.append(x.list())
+            rows = [x.list() for A in self.decomposition()
+                    for x in A.basis()]
             A = matrix_space.MatrixSpace(self.base_ring(), self.rank())(rows)
             self.__decomposition_matrix_cache = A
             return self.__decomposition_matrix_cache
@@ -280,28 +282,29 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
         INPUT:
 
-        -  ``codomain`` - a Hecke module, which should be of the same type as
-           self, or a positive integer (in which case Sage will use
-           :meth:`~hecke_module_of_level` to find the "natural" module of the
-           corresponding level).
-        -  ``t`` - int, the parameter of the degeneracy map, i.e., the map is
-           related to `f(q)` - `f(q^t)`.
+        - ``codomain`` -- a Hecke module, which should be of the same type as
+          self, or a positive integer (in which case Sage will use
+          :meth:`~hecke_module_of_level` to find the "natural" module of the
+          corresponding level).
+        - ``t`` -- integer; the parameter of the degeneracy map, i.e., the map
+          is related to `f(q)` - `f(q^t)`
 
-        OUTPUT: A morphism from ``self`` to ``codomain``.
+        OUTPUT: a morphism from ``self`` to ``codomain``
 
         EXAMPLES::
 
             sage: M = ModularSymbols(11,sign=1)
             sage: d1 = M.degeneracy_map(33); d1
-            Hecke module morphism degeneracy map corresponding to f(q) |--> f(q) defined by the matrix
+            Hecke module morphism degeneracy map corresponding to f(q) |--> f(q)
+            defined by the matrix
             [ 1  0  0  0 -2 -1]
             [ 0 -1  1  0  0  0]
-            Domain: Modular Symbols space of dimension 2 for Gamma_0(11) of weight ...
+            Domain:   Modular Symbols space of dimension 2 for Gamma_0(11) of weight ...
             Codomain: Modular Symbols space of dimension 6 for Gamma_0(33) of weight ...
-            sage: M.degeneracy_map(33,3).matrix()
+            sage: M.degeneracy_map(33, 3).matrix()
             [ 3  2  0  2 -2  1]
             [ 0  0 -1  1  0  0]
-            sage: M = ModularSymbols(33,sign=1)
+            sage: M = ModularSymbols(33, sign=1)
             sage: d2 = M.degeneracy_map(11); d2.matrix()
             [ 1  0]
             [ 0 -2]
@@ -315,9 +318,10 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
         ::
 
-            sage: M = ModularSymbols(3,12,sign=1)
+            sage: M = ModularSymbols(3, 12, sign=1)
             sage: M.degeneracy_map(1)
-            Hecke module morphism degeneracy map corresponding to f(q) |--> f(q) defined by the matrix
+            Hecke module morphism degeneracy map corresponding to f(q) |--> f(q)
+            defined by the matrix
             [1 0]
             [0 0]
             [0 1]
@@ -341,23 +345,23 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
             sage: D = ModularSymbols(10,4).cuspidal_submodule().decomposition()
             sage: D
-            [
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 10 for Gamma_0(10) of weight 4 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 10 for Gamma_0(10) of weight 4 with sign 0 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 10 for Gamma_0(10) of weight 4 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 10 for Gamma_0(10) of weight 4 with sign 0 over Rational Field]
             sage: D[1].degeneracy_map(5)
             Hecke module morphism defined by the matrix
             [   0    0   -1    1]
             [   0  1/2  3/2   -2]
             [   0   -1    1    0]
             [   0 -3/4 -1/4    1]
-            Domain: Modular Symbols subspace of dimension 4 of Modular Symbols space ...
+            Domain:   Modular Symbols subspace of dimension 4 of Modular Symbols space ...
             Codomain: Modular Symbols space of dimension 4 for Gamma_0(5) of weight ...
 
         We check for a subtle caching bug that came up in work on :issue:`10453`::
 
             sage: loads(dumps(J0(33).decomposition()[0].modular_symbols()))
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 9 for Gamma_0(33) of weight 2 with sign 0 over Rational Field
+            Modular Symbols subspace of dimension 2 of
+             Modular Symbols space of dimension 9 for
+              Gamma_0(33) of weight 2 with sign 0 over Rational Field
 
         We check that certain absurd inputs are correctly caught::
 
@@ -367,7 +371,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
             ...
             ValueError: the characters of the domain and codomain must match
         """
-        if is_AmbientHeckeModule(codomain):
+        if isinstance(codomain, AmbientHeckeModule):
             M = codomain
             level = int(M.level())
         else:
@@ -430,9 +434,9 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
     def dual_free_module(self):
         r"""
-        The free module dual to self, as a submodule of the dual
+        The free module dual to ``self``, as a submodule of the dual
         module of the ambient space. As this space is ambient anyway,
-        this just returns self.free_module().
+        this just returns ``self.free_module()``.
 
         EXAMPLES::
 
@@ -450,20 +454,18 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
         INPUT:
 
+        - ``self`` -- Hecke module invariant under the Hecke operator of index
+           `n`
 
-        -  ``self`` - Hecke module invariant under the Hecke operator of index
-           n.
+        - ``n`` --- a positive integer.
 
-        -  ``int n`` - a positive integer.
-
-        -  ``var`` - variable of polynomial (default `x`)
-
+        - ``var`` --- variable of polynomial (default: ``'x'``)
 
         OUTPUT:
 
-        -  ``list`` - list of the pairs (g,e), where g is an
-           irreducible factor of the characteristic polynomial of T_n, and e
-           is its multiplicity.
+        - ``list`` -- list of the pairs `(g,e)`, where `g` is an
+          irreducible factor of the characteristic polynomial of `T_n`, and `e`
+          is its multiplicity.
 
         EXAMPLES::
 
@@ -497,13 +499,13 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
     def hecke_bound(self):
         r"""
-        Return an integer B such that the Hecke operators `T_n`, for `n\leq B`,
+        Return an integer `B` such that the Hecke operators `T_n`, for `n\leq B`,
         generate the full Hecke algebra as a module over the base ring. Note
         that we include the `n` with `n` not coprime to the level.
 
         At present this returns an unproven guess for non-cuspidal spaces which
-        appears to be valid for `M_k(\Gamma_0(N))`, where k and N are the
-        weight and level of self. (It is clearly valid for *cuspidal* spaces
+        appears to be valid for `M_k(\Gamma_0(N))`, where `k` and `N` are the
+        weight and level of ``self``. (It is clearly valid for *cuspidal* spaces
         of any fixed character, as a consequence of the Sturm bound theorem.)
         It returns a hopelessly wrong answer for spaces of full level
         `\Gamma_1`.
@@ -514,7 +516,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
             sage: ModularSymbols(17, 4).hecke_bound()
             15
-            sage: ModularSymbols(Gamma1(17), 4).hecke_bound() # wrong!
+            sage: ModularSymbols(Gamma1(17), 4).hecke_bound()  # wrong!
             15
         """
         from sage.misc.verbose import verbose
@@ -528,10 +530,10 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
     def hecke_module_of_level(self, level):
         r"""
-        Return the Hecke module corresponding to self at the given level, which
-        should be either a divisor or a multiple of the level of self.
+        Return the Hecke module corresponding to ``self`` at the given level, which
+        should be either a divisor or a multiple of the level of ``self``.
 
-        This raises NotImplementedError, and should be overridden in
+        This raises :exc:`NotImplementedError`, and should be overridden in
         derived classes.
 
         EXAMPLES::
@@ -550,13 +552,11 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
         INPUT:
 
-        -  ``i`` - nonnegative integer
+        - ``i`` -- nonnegative integer
 
-        -  ``v`` - a list of positive integer
+        - ``v`` -- list of positive integer
 
-        OUTPUT:
-
-        -  ``matrix`` - whose rows are the Hecke images
+        OUTPUT: ``matrix`` -- whose rows are the Hecke images
 
         EXAMPLES::
 
@@ -578,7 +578,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
     def intersection(self, other):
         """
-        Return the intersection of self and other, which must both lie in
+        Return the intersection of ``self`` and ``other``, which must both lie in
         a common ambient space of modular symbols.
 
         EXAMPLES::
@@ -603,8 +603,8 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
         .. warning::
 
-           self can only be ambient by being of type
-           AmbientHeckeModule.
+           ``self`` can only be ambient by being of type
+           :class:`AmbientHeckeModule`.
 
            For example, decomposing a simple ambient space yields a
            single factor, and that factor is *not* considered an
@@ -699,32 +699,31 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
     def linear_combination_of_basis(self, v):
         r"""
-        Given a list or vector of length equal to the dimension of self,
+        Given a list or vector of length equal to the dimension of ``self``,
         construct the appropriate linear combination of the basis vectors of
-        self.
+        ``self``.
 
         EXAMPLES::
 
             sage: ModularForms(3, 12).linear_combination_of_basis([1,0,0,0,1])
             2*q + 2049*q^2 + 177147*q^3 + 4196177*q^4 + 48830556*q^5 + O(q^6)
-
         """
         return self(v)
 
     def new_submodule(self, p=None):
         """
-        Return the new or p-new submodule of self.
+        Return the new or `p`-new submodule of ``self``.
 
         INPUT:
 
-        -  ``p`` - (default: None); if not None, return only
-           the p-new submodule.
+        - ``p`` -- (default: ``None``) if not ``None``, return only
+          the `p`-new submodule
 
-        OUTPUT: the new or p-new submodule of self, i.e. the intersection of
+        OUTPUT: the new or `p`-new submodule of ``self``, i.e. the intersection of
         the kernel of the degeneracy lowering maps to level `N/p` (for the
         given prime `p`, or for all prime divisors of `N` if `p` is not given).
 
-        If self is cuspidal this is a Hecke-invariant complement of the
+        If ``self`` is cuspidal, this is a Hecke-invariant complement of the
         corresponding old submodule, but this may break down on Eisenstein
         subspaces (see the amusing example in William Stein's book of a form
         which is new and old at the same time).
@@ -799,7 +798,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
     def nonembedded_free_module(self):
         r"""
-        Return the free module corresponding to self as an abstract free module
+        Return the free module corresponding to ``self`` as an abstract free module
         (rather than as a submodule of an ambient free module).
 
         As this module is ambient anyway, this just returns
@@ -815,16 +814,16 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
     def old_submodule(self, p=None):
         """
-        Return the old or p-old submodule of self, i.e. the sum of the images
+        Return the old or `p`-old submodule of ``self``, i.e. the sum of the images
         of the degeneracy maps from level `N/p` (for the given prime `p`, or
         for all primes `p` dividing `N` if `p` is not given).
 
         INPUT:
 
-        - ``p`` - (default: None); if not None, return only the p-old
-          submodule.
+        - ``p`` -- (default: ``None``) if not ``None``, return only the `p`-old
+          submodule
 
-        OUTPUT: the old or p-old submodule of self
+        OUTPUT: the old or `p`-old submodule of ``self``
 
         EXAMPLES::
 
@@ -841,15 +840,19 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
             sage: e = DirichletGroup(16)([-1, 1])
             sage: M = ModularSymbols(e, 3, sign=1); M
-            Modular Symbols space of dimension 4 and level 16, weight 3, character [-1, 1], sign 1, over Rational Field
+            Modular Symbols space of dimension 4 and level 16, weight 3,
+             character [-1, 1], sign 1, over Rational Field
             sage: M.old_submodule()
-            Modular Symbols subspace of dimension 3 of Modular Symbols space of dimension 4 and level 16, weight 3, character [-1, 1], sign 1, over Rational Field
+            Modular Symbols subspace of dimension 3 of
+             Modular Symbols space of dimension 4 and level 16, weight 3,
+              character [-1, 1], sign 1, over Rational Field
 
         Illustrate that :issue:`10664` is fixed::
 
             sage: ModularSymbols(DirichletGroup(42)[7], 6, sign=1).old_subspace(3)
-            Modular Symbols subspace of dimension 0 of Modular Symbols space of dimension 40 and level 42, weight 6, character [-1, -1], sign 1, over Rational Field
-
+            Modular Symbols subspace of dimension 0 of
+             Modular Symbols space of dimension 40 and level 42, weight 6,
+              character [-1, -1], sign 1, over Rational Field
         """
         try:
             if self.__is_old[p]:
@@ -918,16 +921,18 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
     def submodule(self, M, Mdual=None, check=True):
         """
         Return the Hecke submodule of ``self`` generated by `M`, which may be a
-        submodule of the free module of self, or a list of elements of self.
+        submodule of the free module of ``self``, or a list of elements of ``self``.
 
         EXAMPLES::
 
             sage: M = ModularForms(37, 2)
             sage: A = M.submodule([M.newforms()[0].element(), M.newforms()[1].element()]); A
-            Modular Forms subspace of dimension 2 of Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(37) of weight 2 over Rational Field
+            Modular Forms subspace of dimension 2 of
+             Modular Forms space of dimension 3 for
+              Congruence Subgroup Gamma0(37) of weight 2 over Rational Field
         """
         if check:
-            if not is_FreeModule(M):
+            if not isinstance(M, FreeModule_generic):
                 V = self.free_module()
                 if isinstance(M, (list, tuple)):
                     M = V.span([V(x.element()) for x in M])
@@ -956,39 +961,43 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
     def submodule_from_nonembedded_module(self, V, Vdual=None, check=True):
         """
         Create a submodule of this module, from a submodule of an ambient free
-        module of the same rank as the rank of self.
+        module of the same rank as the rank of ``self``.
 
         INPUT:
 
-        -  ``V`` - submodule of ambient free module of the same rank as the
-           rank of self.
+        - ``V`` -- submodule of ambient free module of the same rank as the
+          rank of ``self``
 
-        -  ``Vdual`` - used to pass in dual submodule (may be None)
+        - ``Vdual`` -- used to pass in dual submodule (may be ``None``)
 
-        -  ``check`` - whether to check that submodule is Hecke equivariant
+        - ``check`` -- whether to check that submodule is Hecke-equivariant
 
-        OUTPUT: Hecke submodule of self
+        OUTPUT: Hecke submodule of ``self``
 
         EXAMPLES::
 
             sage: V = QQ^8
             sage: ModularForms(24, 2).submodule_from_nonembedded_module(V.submodule([0]))
-            Modular Forms subspace of dimension 0 of Modular Forms space of dimension 8 for Congruence Subgroup Gamma0(24) of weight 2 over Rational Field
+            Modular Forms subspace of dimension 0 of
+             Modular Forms space of dimension 8 for
+              Congruence Subgroup Gamma0(24) of weight 2 over Rational Field
         """
         return self.submodule(V, Vdual, check=check)
 
     def submodule_generated_by_images(self, M):
         """
         Return the submodule of this ambient modular symbols space
-        generated by the images under all degeneracy maps of M.
+        generated by the images under all degeneracy maps of `M`.
 
-        The space M must have the same weight, sign, and group or
+        The space `M` must have the same weight, sign, and group or
         character as this ambient space.
 
         EXAMPLES::
 
             sage: ModularSymbols(6, 12).submodule_generated_by_images(ModularSymbols(1,12))
-            Modular Symbols subspace of dimension 12 of Modular Symbols space of dimension 22 for Gamma_0(6) of weight 12 with sign 0 over Rational Field
+            Modular Symbols subspace of dimension 12 of
+             Modular Symbols space of dimension 22 for
+              Gamma_0(6) of weight 12 with sign 0 over Rational Field
         """
         S = self.zero_submodule()
         if self.level() % M.level() == 0:

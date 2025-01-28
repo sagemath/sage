@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Metaclass for inheriting comparison functions
 
@@ -25,7 +26,7 @@ AUTHOR:
 - Jeroen Demeyer (2015-05-22): initial version, see :issue:`18329`
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -33,7 +34,7 @@ AUTHOR:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from cpython.object cimport PyTypeObject
 from sage.misc.classcall_metaclass cimport ClasscallMetaclass

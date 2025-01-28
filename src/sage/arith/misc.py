@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Miscellaneous arithmetic functions
 
@@ -24,6 +23,7 @@ from sage.misc.misc_c import prod
 
 from sage.structure.element import parent
 from sage.structure.coerce import py_scalar_to_element
+from sage.structure.sequence import Sequence
 
 from sage.rings.integer import Integer, GCD_list
 from sage.rings.integer_ring import ZZ
@@ -58,7 +58,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
     is not found, then ``None`` will be returned. If ``proof=True`` then
     the result is returned only if it can be proved correct (i.e. the
     only possible minimal polynomial satisfying the height bound, or no
-    such polynomial exists). Otherwise a :class:`ValueError` is raised
+    such polynomial exists). Otherwise a :exc:`ValueError` is raised
     indicating that higher precision is required.
 
     ALGORITHM: Uses LLL for real/complex inputs, PARI C-library
@@ -68,16 +68,14 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
 
     INPUT:
 
+    - ``z`` -- real, complex, or `p`-adic number
 
-    -  ``z`` - real, complex, or `p`-adic number
+    - ``degree`` -- integer
 
-    -  ``degree`` - an integer
+    - ``height_bound`` -- integer (default: ``None``); specifying the maximum
+      coefficient size for the returned polynomial
 
-    -  ``height_bound`` - an integer (default: ``None``) specifying the maximum
-                          coefficient size for the returned polynomial
-
-    -  ``proof`` - a boolean (default: ``False``), requires height_bound to be set
-
+    - ``proof`` -- boolean (default: ``False``); requires height_bound to be set
 
     EXAMPLES::
 
@@ -253,7 +251,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
             if max(abs(a) for a in coeffs) > height_bound:
                 if proof:
                     # Given an LLL reduced basis $b_1, ..., b_n$, we only
-                    # know that $|b_1| <= 2^((n-1)/2) |x|$ for non-zero $x \in L$.
+                    # know that $|b_1| <= 2^((n-1)/2) |x|$ for nonzero $x \in L$.
                     if norm(LLL[0]) <= 2**((n - 1) / 2) * n.sqrt() * height_bound:
                         raise ValueError("insufficient precision for non-existence proof")
                 return None
@@ -281,11 +279,11 @@ algebraic_dependency = algdep
 
 def bernoulli(n, algorithm='default', num_threads=1):
     r"""
-    Return the n-th Bernoulli number, as a rational number.
+    Return the `n`-th Bernoulli number, as a rational number.
 
     INPUT:
 
-    - ``n`` - an integer
+    - ``n`` -- integer
     - ``algorithm``:
 
       - ``'default'`` -- use 'flint' for n <= 20000, then 'arb' for n <= 300000
@@ -301,7 +299,7 @@ def bernoulli(n, algorithm='default', num_threads=1):
       - ``'magma'`` -- use MAGMA (optional)
       - ``'bernmm'`` -- use bernmm package (a multimodular algorithm)
 
-    - ``num_threads`` - positive integer, number of
+    - ``num_threads`` -- positive integer, number of
       threads to use (only used for bernmm algorithm)
 
     EXAMPLES::
@@ -405,15 +403,15 @@ def factorial(n, algorithm='gmp'):
 
     INPUT:
 
-    -  ``n`` - an integer
+    - ``n`` -- integer
 
-    -  ``algorithm`` - string (default: 'gmp'):
+    - ``algorithm`` -- string (default: ``'gmp'``):
 
-       -  ``'gmp'`` - use the GMP C-library factorial function
+       - ``'gmp'`` -- use the GMP C-library factorial function
 
-       -  ``'pari'`` - use PARI's factorial function
+       - ``'pari'`` -- use PARI's factorial function
 
-    OUTPUT: an integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -576,15 +574,15 @@ def is_prime(n) -> bool:
 
 def is_pseudoprime(n):
     r"""
-    Test whether ``n`` is a pseudo-prime
+    Test whether ``n`` is a pseudo-prime.
 
     The result is *NOT* proven correct - *this is a pseudo-primality test!*.
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
-    .. note::
+    .. NOTE::
 
        We do not consider negatives of prime numbers as prime.
 
@@ -611,14 +609,14 @@ def is_pseudoprime(n):
 
 def is_prime_power(n, get_data=False):
     r"""
-    Test whether ``n`` is a positive power of a prime number
+    Test whether ``n`` is a positive power of a prime number.
 
     This function simply calls the method :meth:`Integer.is_prime_power()
     <sage.rings.integer.Integer.is_prime_power>` of Integers.
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     - ``get_data`` -- if set to ``True``, return a pair ``(p,k)`` such that
       this integer equals ``p^k`` instead of ``True`` or ``(self,0)`` instead of
@@ -689,10 +687,11 @@ def is_pseudoprime_power(n, get_data=False):
 
     INPUT:
 
-    -  ``n`` - an integer
+    - ``n`` -- integer
 
-    -  ``get_data`` - (boolean) instead of a boolean return a pair `(p,k)` so
-       that ``n`` equals `p^k` and `p` is a pseudoprime or `(n,0)` otherwise.
+    - ``get_data`` -- boolean (default: ``False``); instead of a boolean return
+      a pair `(p,k)` so that ``n`` equals `p^k` and `p` is a pseudoprime or
+      `(n,0)` otherwise
 
     EXAMPLES::
 
@@ -815,12 +814,12 @@ def prime_powers(start, stop=None):
 
     INPUT:
 
-    - ``start`` - an integer. If two inputs are given, a lower bound
+    - ``start`` -- integer; if two inputs are given, a lower bound
       for the returned set of prime powers. If this is the only input,
       then it is an upper bound.
 
-    - ``stop`` - an integer (default: ``None``). An upper bound for the
-      returned set of prime powers.
+    - ``stop`` -- integer (default: ``None``); an upper bound for the
+      returned set of prime powers
 
     OUTPUT:
 
@@ -935,11 +934,9 @@ def primes_first_n(n, leave_pari=False):
 
     INPUT:
 
-    - `n` - a nonnegative integer
+    - ``n`` -- nonnegative integer
 
-    OUTPUT:
-
-    - a list of the first `n` prime numbers.
+    OUTPUT: list of the first `n` prime numbers
 
     EXAMPLES::
 
@@ -971,11 +968,9 @@ def eratosthenes(n):
 
     INPUT:
 
-    -  ``n`` - a positive integer
+    - ``n`` -- positive integer
 
-    OUTPUT:
-
-    - a list of primes less than or equal to n.
+    OUTPUT: list of primes less than or equal to `n`
 
     EXAMPLES::
 
@@ -1039,21 +1034,18 @@ def primes(start=2, stop=None, proof=None):
 
     INPUT:
 
-    - ``start`` -- an integer (optional, default: 2) lower bound for the primes
+    - ``start`` -- integer (default: 2); lower bound for the primes
 
-    - ``stop`` -- an integer (or infinity) upper (open) bound for the
+    - ``stop`` -- integer (or infinity); upper (open) bound for the
       primes
 
-    - ``proof`` -- bool or ``None`` (default: ``None``) If ``True``, the
+    - ``proof`` -- boolean or ``None`` (default: ``None``); if ``True``, the
       function yields only proven primes.  If ``False``, the function uses a
       pseudo-primality test, which is much faster for really big numbers but
       does not provide a proof of primality. If ``None``, uses the global
       default (see :mod:`sage.structure.proof.proof`)
 
-    OUTPUT:
-
-    -  an iterator over primes from ``start`` to ``stop-1``, inclusive
-
+    OUTPUT: an iterator over primes from ``start`` to ``stop-1``, inclusive
 
     EXAMPLES::
 
@@ -1179,9 +1171,7 @@ def next_probable_prime(n):
 
     INPUT:
 
-
-    -  ``n`` - an integer
-
+    - ``n`` -- integer
 
     EXAMPLES::
 
@@ -1209,19 +1199,17 @@ def next_probable_prime(n):
 
 def next_prime(n, proof=None):
     """
-    The next prime greater than the integer n. If n is prime, then this
-    function does not return n, but the next prime after n. If the
-    optional argument proof is False, this function only returns a
+    The next prime greater than the integer `n`. If `n` is prime, then this
+    function does not return `n`, but the next prime after `n`. If the
+    optional argument proof is ``False``, this function only returns a
     pseudo-prime, as defined by the PARI nextprime function. If it is
-    None, uses the global default (see :mod:`sage.structure.proof.proof`)
+    ``None``, uses the global default (see :mod:`sage.structure.proof.proof`)
 
     INPUT:
 
+    - ``n`` -- integer
 
-    -  ``n`` - integer
-
-    -  ``proof`` - bool or None (default: None)
-
+    - ``proof`` -- boolean or ``None`` (default: ``None``)
 
     EXAMPLES::
 
@@ -1261,7 +1249,7 @@ def next_prime(n, proof=None):
 def previous_prime(n):
     """
     The largest prime < n. The result is provably correct. If n <= 1,
-    this function raises a ValueError.
+    this function raises a :exc:`ValueError`.
 
     EXAMPLES::
 
@@ -1396,14 +1384,14 @@ def random_prime(n, proof=None, lbound=2):
 
     INPUT:
 
-    -  ``n`` - an integer `\geq 2`.
+    - ``n`` -- integer `\geq 2`
 
-    -  ``proof`` - bool or ``None`` (default: ``None``) If ``False``, the function uses a
-       pseudo-primality test, which is much faster for really big numbers but
-       does not provide a proof of primality. If ``None``, uses the global default
-       (see :mod:`sage.structure.proof.proof`)
+    - ``proof`` -- boolean or ``None`` (default: ``None``); if ``False``, the function uses a
+      pseudo-primality test, which is much faster for really big numbers but
+      does not provide a proof of primality. If ``None``, uses the global default
+      (see :mod:`sage.structure.proof.proof`)
 
-    - ``lbound`` - an integer `\geq 2`, lower bound for the chosen primes
+    - ``lbound`` -- integer; `\geq 2`, lower bound for the chosen primes
 
     EXAMPLES::
 
@@ -1469,11 +1457,11 @@ def random_prime(n, proof=None, lbound=2):
     lbound = max(2, lbound)
     if lbound > 2:
         if lbound == 3 or n <= 2*lbound - 2:
-        # check for Betrand's postulate (proved by Chebyshev)
+            # check for Betrand's postulate (proved by Chebyshev)
             if lbound < 25 or n <= 6*lbound/5:
-            # see J. Nagura, Proc. Japan Acad. 28, (1952). 177-181.
+                # see J. Nagura, Proc. Japan Acad. 28, (1952). 177-181
                 if lbound < 2010760 or n <= 16598*lbound/16597:
-                # see L. Schoenfeld, Math. Comp. 30 (1976), no. 134, 337-360.
+                    # see L. Schoenfeld, Math. Comp. 30 (1976), no 134, 337-360
                     if proof:
                         smallest_prime = ZZ(lbound-1).next_prime()
                     else:
@@ -1508,7 +1496,7 @@ def divisors(n):
 
     INPUT:
 
-    -  ``n`` - the element
+    - ``n`` -- the element
 
     EXAMPLES:
 
@@ -1591,15 +1579,13 @@ def divisors(n):
 
 class Sigma:
     """
-    Return the sum of the k-th powers of the divisors of n.
+    Return the sum of the `k`-th powers of the divisors of `n`.
 
     INPUT:
 
+    - ``n`` -- integer
 
-    -  ``n`` - integer
-
-    -  ``k`` - integer (default: 1)
-
+    - ``k`` -- integer (default: 1)
 
     OUTPUT: integer
 
@@ -1616,7 +1602,7 @@ class Sigma:
 
         sage: P = plot(sigma, 1, 100)                                                   # needs sage.plot
 
-    This method also works with k-th powers.
+    This method also works with `k`-th powers.
 
     ::
 
@@ -1655,7 +1641,7 @@ class Sigma:
     def __repr__(self):
         """
         A description of this class, which computes the sum of the
-        k-th powers of the divisors of n.
+        `k`-th powers of the divisors of `n`.
 
         EXAMPLES::
 
@@ -1667,7 +1653,7 @@ class Sigma:
 
     def __call__(self, n, k=1):
         """
-        Computes the sum of (the k-th powers of) the divisors of n.
+        Compute the sum of (the `k`-th powers of) the divisors of `n`.
 
         EXAMPLES::
 
@@ -1694,25 +1680,23 @@ class Sigma:
     def plot(self, xmin=1, xmax=50, k=1, pointsize=30, rgbcolor=(0,0,1), join=True,
              **kwds):
         """
-        Plot the sigma (sum of k-th powers of divisors) function.
+        Plot the sigma (sum of `k`-th powers of divisors) function.
 
         INPUT:
 
+        - ``xmin`` -- (default: 1)
 
-        -  ``xmin`` - default: 1
+        - ``xmax`` -- (default: 50)
 
-        -  ``xmax`` - default: 50
+        - ``k`` -- (default: 1)
 
-        -  ``k`` - default: 1
+        - ``pointsize`` -- (default: 30)
 
-        -  ``pointsize`` - default: 30
+        - ``rgbcolor`` -- (default: (0,0,1))
 
-        -  ``rgbcolor`` - default: (0,0,1)
+        - ``join`` -- (default: ``True``) whether to join the points
 
-        -  ``join`` - default: True; whether to join the
-           points.
-
-        -  ``**kwds`` - passed on
+        - ``**kwds`` -- passed on
 
         EXAMPLES::
 
@@ -1741,9 +1725,9 @@ def gcd(a, b=None, **kwargs):
 
     INPUT:
 
-    - ``a,b`` -- two elements of a ring with gcd or
+    - ``a``, ``b`` -- two elements of a ring with gcd or
 
-    - ``a`` -- a list or tuple of elements of a ring with gcd
+    - ``a`` -- list or tuple of elements of a ring with gcd
 
     Additional keyword arguments are passed to the respectively called
     methods.
@@ -1870,15 +1854,13 @@ GCD = gcd
 
 def __GCD_sequence(v, **kwargs):
     """
-    Internal function returning the gcd of the elements of a sequence
+    Internal function returning the gcd of the elements of a sequence.
 
     INPUT:
 
+    - ``v`` -- a sequence (possibly empty)
 
-    -  ``v`` - A sequence (possibly empty)
-
-
-    OUTPUT: The gcd of the elements of the sequence as an element of
+    OUTPUT: the gcd of the elements of the sequence as an element of
     the sequence's universe, or the integer 0 if the sequence is
     empty.
 
@@ -1956,27 +1938,43 @@ def xlcm(m, n):
     return (l, m, n)
 
 
-def xgcd(a, b):
+def xgcd(a, b=None):
     r"""
-    Return a triple ``(g,s,t)`` such that `g = s\cdot a+t\cdot b = \gcd(a,b)`.
+    Return the greatest common divisor and the Bézout coefficients of the input arguments.
+
+    When both ``a`` and ``b`` are given, then return a triple ``(g,s,t)``
+    such that `g = s\cdot a+t\cdot b = \gcd(a,b)`.
+    When only ``a`` is given, then return a tuple ``r`` of length ``len(a) + 1``
+    such that `r_0 = \sum_{i = 0}^{len(a) - 1} r_{i + 1}a_i = gcd(a_0, \dots, a_{len(a) - 1})`
 
     .. NOTE::
 
-       One exception is if `a` and `b` are not in a principal ideal domain (see
+       One exception is if the elements are not in a principal ideal domain (see
        :wikipedia:`Principal_ideal_domain`), e.g., they are both polynomials
        over the integers. Then this function can't in general return ``(g,s,t)``
-       as above, since they need not exist.  Instead, over the integers, we
-       first multiply `g` by a divisor of the resultant of `a/g` and `b/g`, up
-       to sign.
+       or ``r`` as above, since they need not exist. Instead, over the integers,
+       when ``a`` and ``b`` are given, we first multiply `g` by a divisor of the
+       resultant of `a/g` and `b/g`, up to sign.
 
     INPUT:
 
-    -  ``a, b`` - integers or more generally, element of a ring for which the
+    One of the following:
+
+    -  ``a, b`` -- integers or more generally, element of a ring for which the
        xgcd make sense (e.g. a field or univariate polynomials).
+
+    -  ``a`` -- a list or tuple of at least two integers or more generally, elements
+       of a ring which the xgcd make sense.
 
     OUTPUT:
 
-    -  ``g, s, t`` - such that `g = s\cdot a + t\cdot b`
+    One of the following:
+
+    -  ``g, s, t`` -- when two inputs ``a, b`` are given. They satisfy `g = s\cdot a + t\cdot b`.
+
+    -  ``r`` -- a tuple, when only ``a`` is given (and ``b = None``). Its first entry ``r[0]`` is the gcd of the inputs,
+       and has length one longer than the length of ``a``.
+       Its entries satisfy `r_0 = \sum_{i = 0}^{len(a) - 1} r_{i + 1}a_i`.
 
     .. NOTE::
 
@@ -1989,6 +1987,16 @@ def xgcd(a, b):
         (4, 4, -5)
         sage: 4*56 + (-5)*44
         4
+        sage: xgcd([56, 44])
+        (4, 4, -5)
+        sage: r = xgcd([30, 105, 70, 42]); r
+        (1, -255, 85, -17, -2)
+        sage: (-255)*30 + 85*105 + (-17)*70 + (-2)*42
+        1
+        sage: xgcd([])
+        (0,)
+        sage: xgcd([42])
+        (42, 1)
 
         sage: g, a, b = xgcd(5/1, 7/1); g, a, b
         (1, 3, -2)
@@ -1998,6 +2006,10 @@ def xgcd(a, b):
         sage: x = polygen(QQ)
         sage: xgcd(x^3 - 1, x^2 - 1)
         (x - 1, 1, -x)
+        sage: g, a, b, c = xgcd([x^4 - x, x^6 - 1, x^4 - 1]); g, a, b, c
+        (x - 1, x^3, -x, 1)
+        sage: a*(x^4 - x) + b*(x^6 - 1) + c*(x^4 - 1) == g
+        True
 
         sage: K.<g> = NumberField(x^2 - 3)                                              # needs sage.rings.number_field
         sage: g.xgcd(g + 2)                                                             # needs sage.rings.number_field
@@ -2029,11 +2041,15 @@ def xgcd(a, b):
         (4, 1, 0)
         sage: xgcd(int8(4), int8(8))                                                    # needs numpy
         (4, 1, 0)
+        sage: xgcd([int8(4), int8(8), int(10)])                                         # needs numpy
+        (2, -2, 0, 1)
         sage: from gmpy2 import mpz
         sage: xgcd(mpz(4), mpz(8))
         (4, 1, 0)
         sage: xgcd(4, mpz(8))
         (4, 1, 0)
+        sage: xgcd([4, mpz(8), mpz(10)])
+        (2, -2, 0, 1)
 
     TESTS:
 
@@ -2044,19 +2060,48 @@ def xgcd(a, b):
         sage: h = R.base_ring().gen()
         sage: S.<y> = R.fraction_field()[]
         sage: xgcd(y^2, a*h*y + b)
-        (1, 7*a^2/b^2, (((-h)*a)/b^2)*y + 1/b)
+        (1, 7*a^2/b^2, (((-7)*a)/(h*b^2))*y + 7/(7*b))
+
+    Tests with randomly generated integers::
+
+        sage: import numpy as np
+        sage: N, M = 1000, 10000
+        sage: a = np.random.randint(M, size=N) * np.random.randint(M)
+        sage: r = xgcd(a)
+        sage: len(r) == len(a) + 1
+        True
+        sage: r[0] == gcd(a)
+        True
+        sage: sum(c * x for c, x in zip(r[1:], a)) == gcd(a)
+        True
     """
-    try:
+    if b is not None:
+        # xgcd of two elements
+        try:
+            return a.xgcd(b)
+        except AttributeError:
+            a = py_scalar_to_element(a)
+            b = py_scalar_to_element(b)
+        except TypeError:
+            b = py_scalar_to_element(b)
         return a.xgcd(b)
-    except AttributeError:
-        a = py_scalar_to_element(a)
-        b = py_scalar_to_element(b)
-    except TypeError:
-        b = py_scalar_to_element(b)
-    return a.xgcd(b)
+
+    # xgcd for several elements (possibly more than one)
+    if len(a) == 0:
+        return (ZZ(0),)
+    a = Sequence(a, use_sage_types=True)
+    res = [a.universe().zero()]
+    for b in a:
+        g, s, t = xgcd(res[0], b)
+        res[0] = g
+        for i in range(1, len(res)):
+            res[i] *= s
+        res.append(t)
+    return tuple(res)
 
 
 XGCD = xgcd
+
 
 # def XGCD_python(a, b):
 #     """
@@ -2099,7 +2144,7 @@ def xkcd(n=""):
 
     INPUT:
 
-    - ``n`` -- an integer (optional)
+    - ``n`` -- integer (optional)
 
     OUTPUT: a fragment of HTML
 
@@ -2278,7 +2323,7 @@ def power_mod(a, n, m):
 
         sage: from numpy import int32                                                   # needs numpy
         sage: power_mod(int32(2), int32(390), int32(391))                               # needs numpy
-        285
+        ...285...
         sage: from gmpy2 import mpz
         sage: power_mod(mpz(2), mpz(390), mpz(391))
         mpz(285)
@@ -2320,7 +2365,7 @@ def rational_reconstruction(a, m, algorithm='fast'):
     lowest terms such that the reduction of `x/y` modulo `m` is equal to `a` and
     the absolute values of `x` and `y` are both `\le \sqrt{m/2}`. If such `x/y`
     exists, that pair is unique and this function returns it. If no
-    such pair exists, this function raises ZeroDivisionError.
+    such pair exists, this function raises :exc:`ZeroDivisionError`.
 
     An efficient algorithm for computing rational reconstruction is
     very similar to the extended Euclidean algorithm. For more details,
@@ -2328,14 +2373,14 @@ def rational_reconstruction(a, m, algorithm='fast'):
 
     INPUT:
 
-    - ``a`` -- an integer
+    - ``a`` -- integer
 
     - ``m`` -- a modulus
 
-    - ``algorithm`` -- (default: 'fast')
+    - ``algorithm`` -- string (default: ``'fast'``)
 
-      - ``'fast'`` - a fast implementation using direct GMP library calls
-        in Cython.
+    - ``'fast'`` -- a fast implementation using direct GMP library calls
+        in Cython
 
     OUTPUT:
 
@@ -2392,7 +2437,7 @@ def rational_reconstruction(a, m, algorithm='fast'):
         Traceback (most recent call last):
         ...
         ZeroDivisionError: rational reconstruction with zero modulus
-        sage: rational_reconstruction(0, 1, algorithm="foobar")
+        sage: rational_reconstruction(0, 1, algorithm='foobar')
         Traceback (most recent call last):
         ...
         ValueError: unknown algorithm 'foobar'
@@ -2420,7 +2465,7 @@ def mqrr_rational_reconstruction(u, m, T):
 
     INPUT:
 
-    - ``u, m, T`` -  integers such that `m > u \ge 0`, `T > 0`.
+    - ``u``, ``m``, ``T`` -- integers such that `m > u \ge 0`, `T > 0`
 
     OUTPUT:
 
@@ -2473,22 +2518,19 @@ def mqrr_rational_reconstruction(u, m, T):
 
 
 def trial_division(n, bound=None):
-    """
-    Return the smallest prime divisor <= bound of the positive integer
-    n, or n if there is no such prime. If the optional argument bound
-    is omitted, then bound <= n.
+    r"""
+    Return the smallest prime divisor less than or equal to ``bound`` of the
+    positive integer `n`, or `n` if there is no such prime. If the optional
+    argument bound is omitted, then bound `\leq n`.
 
     INPUT:
 
-    -  ``n`` - a positive integer
+    - ``n`` -- positive integer
 
-    - ``bound`` - (optional) a positive integer
+    - ``bound`` -- (optional) positive integer
 
-    OUTPUT:
-
-    -  ``int`` - a prime p=bound that divides n, or n if
-       there is no such prime.
-
+    OUTPUT: a prime ``p=bound`` that divides `n`, or `n` if
+    there is no such prime
 
     EXAMPLES::
 
@@ -2547,29 +2589,27 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
     INPUT:
 
-    -  ``n`` -- a nonzero integer
+    - ``n`` -- nonzero integer
 
-    -  ``proof`` -- bool or ``None`` (default: ``None``)
+    - ``proof`` -- boolean or ``None`` (default: ``None``)
 
-    -  ``int_`` -- bool (default: ``False``) whether to return
-       answers as Python ints
+    - ``int_`` -- boolean (default: ``False``); whether to return
+      answers as Python integers
 
-    -  ``algorithm`` -- string
+    - ``algorithm`` -- string
 
-       - ``'pari'`` -- (default) use the PARI c library
+       - ``'pari'`` -- (default) use the PARI C library
 
        - ``'kash'`` -- use KASH computer algebra system (requires that
          kash be installed)
 
        - ``'magma'`` -- use Magma (requires magma be installed)
 
-    -  ``verbose`` -- integer (default: 0); PARI's debug
-       variable is set to this; e.g., set to 4 or 8 to see lots of output
-       during factorization.
+    - ``verbose`` -- integer (default: 0); PARI's debug
+      variable is set to this. E.g., set to 4 or 8 to see lots of output
+      during factorization.
 
-    OUTPUT:
-
-    -  factorization of `n`
+    OUTPUT: factorization of `n`
 
     The qsieve and ecm commands give access to highly optimized
     implementations of algorithms for doing certain integer
@@ -2846,17 +2886,17 @@ def odd_part(n):
 
 def prime_to_m_part(n, m):
     """
-    Return the prime-to-``m`` part of ``n``.
+    Return the prime-to-`m` part of `n`.
 
-    This is the largest divisor of ``n`` that is coprime to ``m``.
+    This is the largest divisor of `n` that is coprime to `m`.
 
     INPUT:
 
-    - ``n`` -- Integer (nonzero)
+    - ``n`` -- integer (nonzero)
 
-    - ``m`` -- Integer
+    - ``m`` -- integer
 
-    OUTPUT: Integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -2888,14 +2928,14 @@ def prime_to_m_part(n, m):
 
 def is_square(n, root=False):
     """
-    Return whether or not ``n`` is square.
+    Return whether or not `n` is square.
 
-    If ``n`` is a square also return the square root.
-    If ``n`` is not square, also return ``None``.
+    If `n` is a square also return the square root.
+    If `n` is not square, also return ``None``.
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     - ``root`` -- whether or not to also return a square
       root (default: ``False``)
@@ -2905,7 +2945,7 @@ def is_square(n, root=False):
     - ``bool`` -- whether or not a square
 
     - ``object`` -- (optional) an actual square if found,
-      and ``None`` otherwise.
+      and ``None`` otherwise
 
     EXAMPLES::
 
@@ -3033,16 +3073,14 @@ def is_squarefree(n):
 #################################################################
 class Euler_Phi:
     r"""
-    Return the value of the Euler phi function on the integer n. We
+    Return the value of the Euler phi function on the integer `n`. We
     defined this to be the number of positive integers <= n that are
-    relatively prime to n. Thus if n<=0 then
+    relatively prime to `n`. Thus if `n \leq 0` then
     ``euler_phi(n)`` is defined and equals 0.
 
     INPUT:
 
-
-    -  ``n`` - an integer
-
+    - ``n`` -- integer
 
     EXAMPLES::
 
@@ -3057,10 +3095,7 @@ class Euler_Phi:
         sage: euler_phi(37)                                                             # needs sage.libs.pari
         36
 
-    Notice that euler_phi is defined to be 0 on negative numbers and
-    0.
-
-    ::
+    Notice that ``euler_phi`` is defined to be 0 on negative numbers and 0::
 
         sage: euler_phi(-1)
         0
@@ -3069,26 +3104,20 @@ class Euler_Phi:
         sage: type(euler_phi(0))
         <class 'sage.rings.integer.Integer'>
 
-    We verify directly that the phi function is correct for 21.
-
-    ::
+    We verify directly that the phi function is correct for 21::
 
         sage: euler_phi(21)                                                             # needs sage.libs.pari
         12
         sage: [i for i in range(21) if gcd(21,i) == 1]
         [1, 2, 4, 5, 8, 10, 11, 13, 16, 17, 19, 20]
 
-    The length of the list of integers 'i' in range(n) such that the
-    gcd(i,n) == 1 equals euler_phi(n).
-
-    ::
+    The length of the list of integers 'i' in ``range(n)`` such that the
+    ``gcd(i,n) == 1`` equals ``euler_phi(n)``::
 
         sage: len([i for i in range(21) if gcd(21,i) == 1]) == euler_phi(21)            # needs sage.libs.pari
         True
 
-    The phi function also has a special plotting method.
-
-    ::
+    The phi function also has a special plotting method::
 
         sage: P = plot(euler_phi, -3, 71)                                               # needs sage.libs.pari sage.plot
 
@@ -3121,7 +3150,7 @@ class Euler_Phi:
 
     def __call__(self, n):
         """
-        Calls the euler_phi function.
+        Call the ``euler_phi`` function.
 
         EXAMPLES::
 
@@ -3145,19 +3174,17 @@ class Euler_Phi:
 
         INPUT:
 
+        - ``xmin`` -- (default: 1)
 
-        -  ``xmin`` - default: 1
+        - ``xmax`` -- (default: 50)
 
-        -  ``xmax`` - default: 50
+        - ``pointsize`` -- (default: 30)
 
-        -  ``pointsize`` - default: 30
+        - ``rgbcolor`` -- (default: (0,0,1))
 
-        -  ``rgbcolor`` - default: (0,0,1)
+        - ``join`` -- boolean (default: ``True``); whether to join the points
 
-        -  ``join`` - default: True; whether to join the
-           points.
-
-        -  ``**kwds`` - passed on
+        - ``**kwds`` -- passed on
 
         EXAMPLES::
 
@@ -3188,11 +3215,9 @@ def carmichael_lambda(n):
 
     INPUT:
 
-    - ``n`` -- a positive integer.
+    - ``n`` -- positive integer
 
-    OUTPUT:
-
-    - The Carmichael function of ``n``.
+    OUTPUT: the Carmichael function of ``n``
 
     ALGORITHM:
 
@@ -3333,11 +3358,11 @@ def crt(a, b, m=None, n=None):
 
     INPUT:
 
-    - ``a``, ``b`` - two residues (elements of some ring for which
+    - ``a``, ``b`` -- two residues (elements of some ring for which
       extended gcd is available), or two lists, one of residues and
-      one of moduli.
+      one of moduli
 
-    - ``m``, ``n`` - (default: ``None``) two moduli, or ``None``.
+    - ``m``, ``n`` -- (default: ``None``) two moduli, or ``None``
 
     OUTPUT:
 
@@ -3577,8 +3602,8 @@ def CRT_basis(moduli):
 
     INPUT:
 
-    - ``moduli`` - list of pairwise coprime moduli `m` which admit an
-       extended Euclidean algorithm
+    - ``moduli`` -- list of pairwise coprime moduli `m` which admit an
+      extended Euclidean algorithm
 
     OUTPUT:
 
@@ -3627,13 +3652,11 @@ def CRT_vectors(X, moduli):
 
     INPUT:
 
-    -  ``X`` - list or tuple, consisting of lists/tuples/vectors/etc of
-       integers of the same length
-    -  ``moduli`` - list of len(X) moduli
+    - ``X`` -- list or tuple, consisting of lists/tuples/vectors/etc of
+      integers of the same length
+    - ``moduli`` -- list of len(X) moduli
 
-    OUTPUT:
-
-    -  ``list`` - application of CRT componentwise.
+    OUTPUT: list; application of CRT componentwise
 
     EXAMPLES::
 
@@ -3656,7 +3679,7 @@ def CRT_vectors(X, moduli):
 
 def binomial(x, m, **kwds):
     r"""
-    Return the binomial coefficient
+    Return the binomial coefficient.
 
     .. MATH::
 
@@ -3674,8 +3697,8 @@ def binomial(x, m, **kwds):
 
     INPUT:
 
-    -  ``x``, ``m`` - numbers or symbolic expressions. Either ``m``
-       or ``x-m`` must be an integer.
+    - ``x``, ``m`` -- numbers or symbolic expressions; either ``m``
+      or ``x-m`` must be an integer
 
     OUTPUT: number or symbolic expression (if input is symbolic)
 
@@ -3749,9 +3772,9 @@ def binomial(x, m, **kwds):
     Some floating point cases -- see :issue:`7562`, :issue:`9633`, and
     :issue:`12448`::
 
-        sage: binomial(1., 3)
+        sage: binomial(1., 3)                                                           # needs sage.rings.real_mpfr
         0.000000000000000
-        sage: binomial(-2., 3)
+        sage: binomial(-2., 3)                                                          # needs sage.rings.real_mpfr
         -4.00000000000000
         sage: binomial(0.5r, 5)
         0.02734375
@@ -3800,7 +3823,7 @@ def binomial(x, m, **kwds):
         sage: binomial(n,2)                                                             # needs sage.symbolic
         1/2*(n - 1)*n
 
-    Test p-adic numbers::
+    Test `p`-adic numbers::
 
         sage: binomial(Qp(3)(-1/2),4) # p-adic number with valuation >= 0
         1 + 3 + 2*3^2 + 3^3 + 2*3^4 + 3^6 + 3^7 + 3^8 + 3^11 + 2*3^14 + 2*3^16 + 2*3^17 + 2*3^19 + O(3^20)
@@ -3934,9 +3957,7 @@ def multinomial(*ks):
     - either an arbitrary number of integer arguments `k_1,\dots,k_n`
     - or an iterable (e.g. a list) of integers `[k_1,\dots,k_n]`
 
-    OUTPUT:
-
-    Return the integer:
+    OUTPUT: the integer:
 
     .. MATH::
 
@@ -4003,11 +4024,9 @@ def binomial_coefficients(n):
 
     INPUT:
 
+    - ``n`` -- integer
 
-    -  ``n`` - an integer
-
-
-    OUTPUT: dict
+    OUTPUT: dictionary
 
     EXAMPLES::
 
@@ -4051,10 +4070,10 @@ def multinomial_coefficients(m, n):
 
     INPUT:
 
-    -  ``m`` - integer
-    -  ``n`` - integer
+    - ``m`` -- integer
+    - ``n`` -- integer
 
-    OUTPUT: dict
+    OUTPUT: dictionary
 
     EXAMPLES::
 
@@ -4152,7 +4171,7 @@ def multinomial_coefficients(m, n):
     return r
 
 
-def kronecker_symbol(x,y):
+def kronecker_symbol(x, y):
     """
     The Kronecker symbol `(x|y)`.
 
@@ -4162,9 +4181,7 @@ def kronecker_symbol(x,y):
 
     - ``y`` -- integer
 
-    OUTPUT:
-
-    - an integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -4206,18 +4223,16 @@ def legendre_symbol(x, p):
     r"""
     The Legendre symbol `(x|p)`, for `p` prime.
 
-    .. note::
+    .. NOTE::
 
        The :func:`kronecker_symbol` command extends the Legendre
        symbol to composite moduli and `p=2`.
 
     INPUT:
 
+    - ``x`` -- integer
 
-    -  ``x`` - integer
-
-    -  ``p`` - an odd prime number
-
+    - ``p`` -- odd prime number
 
     EXAMPLES::
 
@@ -4258,12 +4273,12 @@ def legendre_symbol(x, p):
 
 def jacobi_symbol(a, b):
     r"""
-    The Jacobi symbol of integers a and b, where b is odd.
+    The Jacobi symbol of integers `a` and `b`, where `b` is odd.
 
-    .. note::
+    .. NOTE::
 
        The :func:`kronecker_symbol` command extends the Jacobi
-       symbol to all integers b.
+       symbol to all integers `b`.
 
     If
 
@@ -4275,13 +4290,11 @@ def jacobi_symbol(a, b):
 
     where `(a|p_j)` are Legendre Symbols.
 
-
-
     INPUT:
 
-    -  ``a`` - an integer
+    - ``a`` -- integer
 
-    -  ``b`` - an odd integer
+    - ``b`` -- odd integer
 
     EXAMPLES::
 
@@ -4313,15 +4326,15 @@ def primitive_root(n, check=True):
     """
     Return a positive integer that generates the multiplicative group
     of integers modulo `n`, if one exists; otherwise, raise a
-    :class:`ValueError`.
+    :exc:`ValueError`.
 
     A primitive root exists if `n=4` or `n=p^k` or `n=2p^k`, where `p`
     is an odd prime and `k` is a nonnegative number.
 
     INPUT:
 
-    - ``n`` -- a non-zero integer
-    - ``check`` -- bool (default: True); if False, then `n` is assumed
+    - ``n`` -- nonzero integer
+    - ``check`` -- boolean (default: ``True``); if ``False``, then `n` is assumed
       to be a positive integer possessing a primitive root, and behavior
       is undefined otherwise.
 
@@ -4432,16 +4445,13 @@ def primitive_root(n, check=True):
 
 def nth_prime(n):
     """
-
-    Return the n-th prime number (1-indexed, so that 2 is the 1st prime.)
+    Return the `n`-th prime number (1-indexed, so that 2 is the 1st prime).
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
 
-    OUTPUT:
-
-    -  the n-th prime number
+    OUTPUT: the `n`-th prime number
 
     EXAMPLES::
 
@@ -4457,7 +4467,7 @@ def nth_prime(n):
         sage: nth_prime(0)
         Traceback (most recent call last):
         ...
-        ValueError: nth prime meaningless for non-positive n (=0)
+        ValueError: nth prime meaningless for nonpositive n (=0)
 
     TESTS::
 
@@ -4471,7 +4481,7 @@ def nth_prime(n):
         29
     """
     if n <= 0:
-        raise ValueError("nth prime meaningless for non-positive n (=%s)" % n)
+        raise ValueError("nth prime meaningless for nonpositive n (=%s)" % n)
     from sage.libs.pari.all import pari
     return ZZ(pari.prime(n))
 
@@ -4525,9 +4535,7 @@ class Moebius:
 
     INPUT:
 
-
-    -  ``n`` - anything that can be factored.
-
+    - ``n`` -- anything that can be factored
 
     OUTPUT: 0, 1, or -1
 
@@ -4615,19 +4623,18 @@ class Moebius:
 
         INPUT:
 
+        - ``xmin`` -- (default: 0)
 
-        -  ``xmin`` - default: 0
+        - ``xmax`` -- (default: 50)
 
-        -  ``xmax`` - default: 50
+        - ``pointsize`` -- (default: 30)
 
-        -  ``pointsize`` - default: 30
+        - ``rgbcolor`` -- (default: (0,0,1))
 
-        -  ``rgbcolor`` - default: (0,0,1)
+        - ``join`` -- (default: ``True``) whether to join the points
+           (very helpful in seeing their order)
 
-        -  ``join`` - default: True; whether to join the points
-           (very helpful in seeing their order).
-
-        -  ``**kwds`` - passed on
+        - ``**kwds`` -- passed on
 
         EXAMPLES::
 
@@ -4712,8 +4719,8 @@ def continuant(v, n=None):
 
     INPUT:
 
-    -  ``v`` - list or tuple of elements of a ring
-    -  ``n`` - optional integer
+    - ``v`` -- list or tuple of elements of a ring
+    - ``n`` -- (optional) integer
 
     OUTPUT: element of ring (integer, polynomial, etcetera).
 
@@ -4780,16 +4787,14 @@ def continuant(v, n=None):
 
 
 def number_of_divisors(n):
-    """
-    Return the number of divisors of the integer n.
+    r"""
+    Return the number of divisors of the integer `n`.
 
     INPUT:
 
-    - ``n`` - a nonzero integer
+    - ``n`` -- nonzero integer
 
-    OUTPUT:
-
-    - an integer, the number of divisors of n
+    OUTPUT: integer; the number of divisors of `n`
 
     EXAMPLES::
 
@@ -4814,7 +4819,7 @@ def number_of_divisors(n):
     return ZZ(pari(m).numdiv())
 
 
-def hilbert_symbol(a, b, p, algorithm="pari"):
+def hilbert_symbol(a, b, p, algorithm='pari'):
     """
     Return 1 if `ax^2 + by^2` `p`-adically represents
     a nonzero square, otherwise returns `-1`. If either a or b
@@ -4822,21 +4827,19 @@ def hilbert_symbol(a, b, p, algorithm="pari"):
 
     INPUT:
 
+    - ``a``, ``b`` -- integers
 
-    -  ``a, b`` - integers
+    - ``p`` -- integer; either prime or -1 (which
+      represents the archimedean place)
 
-    -  ``p`` - integer; either prime or -1 (which
-       represents the archimedean place)
+    - ``algorithm`` -- string
 
-    -  ``algorithm`` - string
+       - ``'pari'`` -- (default) use the PARI C library
 
-       -  ``'pari'`` - (default) use the PARI C library
+       - ``'direct'`` -- use a Python implementation
 
-       -  ``'direct'`` - use a Python implementation
-
-       -  ``'all'`` - use both PARI and direct and check that
+       - ``'all'`` -- use both PARI and direct and check that
           the results agree, then return the common answer
-
 
     OUTPUT: integer (0, -1, or 1)
 
@@ -4942,9 +4945,7 @@ def hilbert_conductor(a, b):
 
     - ``a``, ``b`` -- integers
 
-    OUTPUT:
-
-    squarefree positive integer
+    OUTPUT: squarefree positive integer
 
     EXAMPLES::
 
@@ -5089,11 +5090,11 @@ def falling_factorial(x, a):
 
     INPUT:
 
-    -  ``x`` -- element of a ring
+    - ``x`` -- element of a ring
 
-    -  ``a`` -- a non-negative integer or
+    - ``a`` -- nonnegative integer or
 
-    -  ``x and a`` -- any numbers
+    - ``x``, ``a`` -- any numbers
 
     OUTPUT: the falling factorial
 
@@ -5193,11 +5194,11 @@ def rising_factorial(x, a):
 
     INPUT:
 
-    -  ``x`` -- element of a ring
+    - ``x`` -- element of a ring
 
-    -  ``a`` -- a non-negative integer or
+    - ``a`` -- nonnegative integer or
 
-    -  ``x and a`` -- any numbers
+    - ``x``, ``a`` -- any numbers
 
     OUTPUT: the rising factorial
 
@@ -5306,10 +5307,10 @@ def integer_floor(x):
 
     INPUT:
 
-    -  ``x`` - an object that has a floor method or is
-       coercible to int
+    - ``x`` -- an object that has a floor method or is
+      coercible to integer
 
-    OUTPUT: an Integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -5348,7 +5349,7 @@ def integer_floor(x):
 
 def integer_trunc(i):
     """
-    Truncate to the integer closer to zero
+    Truncate to the integer closer to zero.
 
     EXAMPLES::
 
@@ -5367,13 +5368,13 @@ def integer_trunc(i):
 def two_squares(n):
     """
     Write the integer `n` as a sum of two integer squares if possible;
-    otherwise raise a :class:`ValueError`.
+    otherwise raise a :exc:`ValueError`.
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
-    OUTPUT: a tuple `(a,b)` of non-negative integers such that
+    OUTPUT: a tuple `(a,b)` of nonnegative integers such that
     `n = a^2 + b^2` with `a <= b`.
 
     EXAMPLES::
@@ -5489,13 +5490,13 @@ def two_squares(n):
 def three_squares(n):
     """
     Write the integer `n` as a sum of three integer squares if possible;
-    otherwise raise a :class:`ValueError`.
+    otherwise raise a :exc:`ValueError`.
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
-    OUTPUT: a tuple `(a,b,c)` of non-negative integers such that
+    OUTPUT: a tuple `(a,b,c)` of nonnegative integers such that
     `n = a^2 + b^2 + c^2` with `a <= b <= c`.
 
     EXAMPLES::
@@ -5638,9 +5639,9 @@ def four_squares(n):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
-    OUTPUT: a tuple `(a,b,c,d)` of non-negative integers such that
+    OUTPUT: a tuple `(a,b,c,d)` of nonnegative integers such that
     `n = a^2 + b^2 + c^2 + d^2` with `a <= b <= c <= d`.
 
     EXAMPLES::
@@ -5710,15 +5711,15 @@ def four_squares(n):
 def sum_of_k_squares(k, n):
     """
     Write the integer `n` as a sum of `k` integer squares if possible;
-    otherwise raise a :class:`ValueError`.
+    otherwise raise a :exc:`ValueError`.
 
     INPUT:
 
-    - ``k`` -- a non-negative integer
+    - ``k`` -- nonnegative integer
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
-    OUTPUT: a tuple `(x_1, ..., x_k)` of non-negative integers such that
+    OUTPUT: a tuple `(x_1, ..., x_k)` of nonnegative integers such that
     their squares sum to `n`.
 
     EXAMPLES::
@@ -5764,7 +5765,7 @@ def sum_of_k_squares(k, n):
         sage: sum_of_k_squares(-1, 0)
         Traceback (most recent call last):
         ...
-        ValueError: k = -1 must be non-negative
+        ValueError: k = -1 must be nonnegative
 
     Tests with numpy and gmpy2 numbers::
 
@@ -5795,7 +5796,7 @@ def sum_of_k_squares(k, n):
             if n == 0:
                 return tuple()
             raise ValueError("%s is not a sum of 0 squares" % n)
-        raise ValueError("k = %s must be non-negative" % k)
+        raise ValueError("k = %s must be nonnegative" % k)
 
     if n < 0:
         raise ValueError("%s is not a sum of %s squares" % (n,k))
@@ -5819,15 +5820,9 @@ def subfactorial(n):
 
     INPUT:
 
+    - ``n`` -- nonnegative integer
 
-    -  ``n`` - non negative integer
-
-
-    OUTPUT:
-
-
-    -  ``integer`` - function value
-
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -5856,15 +5851,13 @@ def subfactorial(n):
 
 def is_power_of_two(n):
     r"""
-    Return whether ``n`` is a power of 2.
+    Return whether `n` is a power of 2.
 
     INPUT:
 
-    -  ``n`` -- integer
+    - ``n`` -- integer
 
-    OUTPUT:
-
-    boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -6043,11 +6036,9 @@ def fundamental_discriminant(D):
 
     INPUT:
 
-    - ``D`` - an integer
+    - ``D`` -- integer
 
-    OUTPUT:
-
-    - an integer, the fundamental discriminant
+    OUTPUT: integer; the fundamental discriminant
 
     EXAMPLES::
 
@@ -6086,8 +6077,8 @@ def squarefree_divisors(x):
 
     INPUT:
 
-    - x -- an element of any ring for which the prime_divisors
-      function works.
+    - ``x`` -- an element of any ring for which the prime_divisors
+      function works
 
     EXAMPLES:
 
@@ -6157,12 +6148,12 @@ def dedekind_sum(p, q, algorithm='default'):
 
     INPUT:
 
-    -  ``p``, ``q`` -- integers
-    -  ``algorithm`` -- must be one of the following
+    - ``p``, ``q`` -- integers
+    - ``algorithm`` -- must be one of the following
 
-       -  ``'default'`` - (default) use FLINT
-       -  ``'flint'`` - use FLINT
-       -  ``'pari'`` - use PARI (gives different results if `p` and `q`
+       - ``'default'`` -- (default) use FLINT
+       - ``'flint'`` -- use FLINT
+       - ``'pari'`` -- use PARI (gives different results if `p` and `q`
           are not coprime)
 
     OUTPUT: a rational number
@@ -6236,8 +6227,8 @@ def dedekind_sum(p, q, algorithm='default'):
         return flint_dedekind_sum(p, q)
 
     if algorithm == 'pari':
-        import sage.interfaces.gp
-        x = sage.interfaces.gp.gp('sumdedekind(%s,%s)' % (p, q))
+        from sage.libs.pari import pari
+        x = pari.sumdedekind(p, q)
         return Rational(x)
 
     raise ValueError('unknown algorithm')
@@ -6363,11 +6354,9 @@ def dedekind_psi(N):
 
     INPUT:
 
-    - ``N`` -- a positive integer
+    - ``N`` -- positive integer
 
-    OUTPUT:
-
-    an integer
+    OUTPUT: integer
 
     The Dedekind psi function is the multiplicative function defined by
 
@@ -6385,3 +6374,77 @@ def dedekind_psi(N):
     """
     N = Integer(N)
     return Integer(N * prod(1 + 1 / p for p in N.prime_divisors()))
+
+
+def smooth_part(x, base):
+    r"""
+    Given an element ``x`` of a Euclidean domain and a factor base ``base``,
+    return a :class:`~sage.structure.factorization.Factorization` object
+    corresponding to the largest divisor of ``x`` that splits completely
+    over ``base``.
+
+    The factor base can be specified in the following ways:
+
+    - A sequence of elements.
+
+    - A :class:`~sage.rings.generic.ProductTree` built from such a sequence.
+      (Caching the tree in the caller will speed things up if this function
+      is called multiple times with the same factor base.)
+
+    EXAMPLES::
+
+        sage: from sage.arith.misc import smooth_part
+        sage: from sage.rings.generic import ProductTree
+        sage: smooth_part(10^77+1, primes(1000))
+        11^2 * 23 * 463
+        sage: tree = ProductTree(primes(1000))
+        sage: smooth_part(10^77+1, tree)
+        11^2 * 23 * 463
+        sage: smooth_part(10^99+1, tree)
+        7 * 11^2 * 13 * 19 * 23
+    """
+    from sage.rings.generic import ProductTree
+    if isinstance(base, ProductTree):
+        tree = base
+    else:
+        tree = ProductTree(base)
+    fs = []
+    rems = tree.remainders(x)
+    for j,(p,r) in enumerate(zip(tree, rems)):
+        if not r:
+            x //= p
+            v = 1
+            while True:
+                y,r = divmod(x, p)
+                if r:
+                    break
+                x = y
+                v += 1
+            fs.append((p,v))
+    from sage.structure.factorization import Factorization
+    return Factorization(fs)
+
+
+def coprime_part(x, base):
+    r"""
+    Given an element ``x`` of a Euclidean domain and a factor base ``base``,
+    return the largest divisor of ``x`` that is not divisible by any element
+    of ``base``.
+
+    ALGORITHM: Divide `x` by the :func:`smooth_part`.
+
+    EXAMPLES::
+
+        sage: from sage.arith.misc import coprime_part, smooth_part
+        sage: from sage.rings.generic import ProductTree
+        sage: coprime_part(10^77+1, primes(10000))
+        2159827213801295896328509719222460043196544298056155507343412527
+        sage: tree = ProductTree(primes(10000))
+        sage: coprime_part(10^55+1, tree)
+        6426667196963538873896485804232411
+        sage: coprime_part(10^55+1, tree).factor()
+        20163494891 * 318727841165674579776721
+        sage: prod(smooth_part(10^55+1, tree)) * coprime_part(10^55+1, tree)
+        10000000000000000000000000000000000000000000000000000001
+    """
+    return x // prod(smooth_part(x, base))

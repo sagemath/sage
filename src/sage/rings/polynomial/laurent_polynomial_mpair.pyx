@@ -16,7 +16,8 @@ from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polydict cimport monomial_exponent
 from sage.matrix.matrix0 cimport Matrix
-from sage.rings.infinity import Infinity
+from sage.rings.infinity import Infinity, minus_infinity
+
 
 cdef class LaurentPolynomial_mpair(LaurentPolynomial):
     """
@@ -38,7 +39,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         - ``mon`` -- (default: ``None``) a tuple specifying the shift
           in the exponents
 
-        - ``reduce`` -- (default: ``True``) a boolean
+        - ``reduce`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -107,7 +108,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             if isinstance(x, dict):
                 self._mon = ETuple({}, int(parent.ngens()))
                 D = {}
-                for k, x_k in x.iteritems():  # ETuple-ize keys, set _mon
+                for k, x_k in x.items():  # ETuple-ize keys, set _mon
                     if not isinstance(k, (tuple, ETuple)) or len(k) != parent.ngens():
                         self._mon = ETuple({}, int(parent.ngens()))
                         break
@@ -118,7 +119,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
                 else:
                     x = D
                 if not self._mon.is_constant():  # factor out _mon
-                    x = {k.esub(self._mon): x_k for k, x_k in x.iteritems()}
+                    x = {k.esub(self._mon): x_k for k, x_k in x.items()}
             elif (isinstance(x, LaurentPolynomial_mpair) and
                   parent.variable_names() == x.parent().variable_names()):
                 self._mon = ( < LaurentPolynomial_mpair > x)._mon
@@ -258,7 +259,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -280,7 +281,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         #                                <tuple> self._parent.variable_names(),
         #                                self._parent.base_ring()
         #                                )
-        cdef dict D = <dict > self._poly.dict()
+        cdef dict D = <dict > self._poly.monomial_coefficients()
 
         cdef ETuple e
         if i is None:
@@ -308,12 +309,12 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
             sage: L.<w,z> = LaurentPolynomialRing(QQ)
             sage: a = w^2*z^-1 +3
-            sage: a.dict()  # indirect doctest
+            sage: a.monomial_coefficients()  # indirect doctest
             {(0, 0): 3, (2, -1): 1}
         """
         # cdef dict D = <dict> self._poly._mpoly_dict_recursive(self._parent.variable_names(),
         #                                                      self._parent.base_ring())
-        cdef dict D = <dict > self._poly.dict()
+        cdef dict D = <dict > self._poly.monomial_coefficients()
         cdef dict DD
         if self._mon.is_constant():
             self._prod = PolyDict(D)
@@ -400,7 +401,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     cpdef long number_of_terms(self) except -1:
         """
-        Return the number of non-zero coefficients of ``self``.
+        Return the number of nonzero coefficients of ``self``.
 
         Also called weight, hamming weight or sparsity.
 
@@ -447,7 +448,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         """
         cdef ETuple e
         if self._poly.is_term():
-            (e, c), = self.dict().items()
+            (e, c), = self.monomial_coefficients().items()
             e = e.emul(-1)
             P = self._parent
             try:
@@ -459,7 +460,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             return P({e: c})
         return super().__invert__()
 
-    def __pow__(LaurentPolynomial_mpair self, n, m):
+    def __pow__(LaurentPolynomial_mpair self, n, mod):
         """
         EXAMPLES::
 
@@ -479,8 +480,20 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f = (x+y+z^-1)^2
             sage: f.substitute(z=1)
             x^2 + 2*x*y + y^2 + 2*x + 2*y + 1
+
+        Check that using third argument raises an error::
+
+            sage: L.<x,y,z> = LaurentPolynomialRing(R)
+            sage: pow(x + y + z, 2, x)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: pow() with a modulus is not implemented for this ring
         """
         cdef LaurentPolynomial_mpair ans
+        if mod is not None:
+            raise NotImplementedError(
+                "pow() with a modulus is not implemented for this ring"
+            )
         if n < 0:
             return ~(self ** -n)
         ans = self._new_c()
@@ -494,7 +507,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         `n` is a tuple of length `k` and `k` is the number of variables.
 
         If the number of inputs is not equal to the number of variables, this
-        raises a ``TypeError``.
+        raises a :exc:`TypeError`.
 
         EXAMPLES::
 
@@ -571,10 +584,9 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             -t2inv^2 + t1
             sage: _.parent()
             Multivariate Polynomial Ring in t1, t1inv, t2, t2inv over Rational Field
-
         """
         dres = {}
-        for (e, c) in self.dict().items():
+        for e, c in self.monomial_coefficients().items():
             exps = []
             for t in e:
                 if t > 0:
@@ -699,9 +711,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         - ``mon`` -- a monomial
 
-        OUTPUT:
-
-        Element of the parent of ``self``.
+        OUTPUT: element of the parent of ``self``
 
         .. NOTE::
 
@@ -744,7 +754,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             self._compute_polydict()
         if m._prod is None:
             m._compute_polydict()
-        return self._parent(self._prod.coefficient(m.dict()))
+        return self._parent(self._prod.coefficient(m.monomial_coefficients()))
 
     def coefficients(self):
         """
@@ -783,7 +793,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f.variables(sort=False) #random
             (y, z, x)
         """
-        cdef dict d = self.dict()
+        cdef dict d = self.monomial_coefficients()
         cdef tuple g = self._parent.gens()
         cdef Py_ssize_t nvars = len(g)
         cdef set vars = set()
@@ -796,7 +806,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             v.sort()
         return tuple(v)
 
-    cpdef dict dict(self):
+    cpdef dict monomial_coefficients(self):
         """
         Return ``self`` represented as a ``dict``.
 
@@ -804,12 +814,19 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
             sage: L.<x,y,z> = LaurentPolynomialRing(QQ)
             sage: f = 4*x^7*z^-1 + 3*x^3*y + 2*x^4*z^-2 + x^6*y^-7
+            sage: sorted(f.monomial_coefficients().items())
+            [((3, 1, 0), 3), ((4, 0, -2), 2), ((6, -7, 0), 1), ((7, 0, -1), 4)]
+
+        ``dict`` is an alias::
+
             sage: sorted(f.dict().items())
             [((3, 1, 0), 3), ((4, 0, -2), 2), ((6, -7, 0), 1), ((7, 0, -1), 4)]
         """
         if self._prod is None:
             self._compute_polydict()
         return < dict > self._prod.dict()
+
+    dict = monomial_coefficients
 
     def _fraction_pair(self):
         """
@@ -1058,9 +1075,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         - ``right`` -- a Laurent polynomial
 
-        OUTPUT:
-
-        A pair of Laurent polynomials.
+        OUTPUT: a pair of Laurent polynomials
 
         EXAMPLES::
 
@@ -1150,26 +1165,60 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: e = a.exponents()
             sage: e.sort(); e
             [(0, 0), (2, -1)]
-
         """
         return [a.eadd(self._mon) for a in self._poly.exponents()]
 
     def degree(self, x=None):
-        """
-        Return the degree of ``x`` in ``self``.
+        r"""
+        Return the degree of ``self``.
+
+        INPUT:
+
+        - ``x`` -- (default: ``None``) a generator of the parent ring
+
+        OUTPUT:
+
+        If ``x`` is ``None``, return the total degree of ``self``.
+        If ``x`` is a given generator of the parent ring,
+        the output is the maximum degree of ``x`` in ``self``.
 
         EXAMPLES::
 
             sage: R.<x,y,z> = LaurentPolynomialRing(QQ)
             sage: f = 4*x^7*z^-1 + 3*x^3*y + 2*x^4*z^-2 + x^6*y^-7
+            sage: f.degree()
+            6
             sage: f.degree(x)
             7
             sage: f.degree(y)
             1
             sage: f.degree(z)
             0
+
+        The zero polynomial is defined to have degree `-\infty`::
+
+            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ)
+            sage: R.zero().degree()
+            -Infinity
+            sage: R.zero().degree(x)
+            -Infinity
+            sage: R.zero().degree(x) == R.zero().degree(y) == R.zero().degree(z)
+            True
+
+        TESTS::
+
+            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ)
+            sage: f = x + y + z
+            sage: f.degree(1)
+            Traceback (most recent call last):
+            ...
+            TypeError: 1 is not a generator of parent
         """
-        if not x:
+        # The zero polynomial is defined to have degree -Infinity
+        if self.is_zero():
+            return minus_infinity
+
+        if x is None:
             return self._poly.total_degree() + sum(self._mon)
 
         # Get the index of the generator or error
@@ -1248,7 +1297,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         """
         INPUT:
 
-        - ``i`` -- The index of a generator of ``self.parent()``
+        - ``i`` -- the index of a generator of ``self.parent()``
 
         OUTPUT:
 
@@ -1277,7 +1326,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     def has_any_inverse(self):
         """
-        Return ``True`` if ``self`` contains any monomials with a negative exponent, False otherwise.
+        Return ``True`` if ``self`` contains any monomials with a negative
+        exponent, ``False`` otherwise.
 
         EXAMPLES::
 
@@ -1369,9 +1419,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         - ``**kwds`` -- keyword arguments
 
-        OUTPUT:
-
-        A Laurent polynomial.
+        OUTPUT: a Laurent polynomial
 
         EXAMPLES::
 
@@ -1529,11 +1577,11 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         except ValueError:
             # call _derivative() recursively on coefficients
             return P({m: c._derivative(var)
-                      for (m, c) in self.dict().iteritems()})
+                      for m, c in self.monomial_coefficients().items()})
 
         # compute formal derivative with respect to generator
         cdef dict d = {}
-        for m, c in self.dict().iteritems():
+        for m, c in self.monomial_coefficients().items():
             if m[index] != 0:
                 new_m = [u for u in m]
                 new_m[index] += -1
@@ -1566,10 +1614,10 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         INPUT:
 
-        - ``R`` - (default: ``None``) a univariate Laurent polynomial ring
+        - ``R`` -- (default: ``None``) a univariate Laurent polynomial ring
 
         If this polynomial is not in at most one variable, then a
-        :class:`ValueError` exception is raised.  The new polynomial is over
+        :exc:`ValueError` exception is raised.  The new polynomial is over
         the same base ring as the given :class:`LaurentPolynomial` and in the
         variable ``x`` if no ring ``R`` is provided.
 
@@ -1614,7 +1662,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if R is None:
             R = LaurentPolynomialRing(self.base_ring(), x)
 
-        return R({m[i]: c for m, c in self.dict().iteritems()})
+        return R({m[i]: c for m, c in self.monomial_coefficients().items()})
 
     def monomial_reduction(self):
         """
@@ -1684,7 +1732,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         cdef list f = []
         cdef dict d
         for t in pf:
-            d = <dict > (t[0].dict())
+            d = <dict > (t[0].monomial_coefficients())
             if len(d) == 1:  # monomials are units
                 u *= self.parent(d) ** t[1]
             else:
@@ -1698,10 +1746,10 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         INPUT:
 
-        - ``root`` - boolean (default ``False``) - if set to ``True``
+        - ``root`` -- boolean (default: ``False``); if set to ``True``
           then return a pair ``(True, sqrt)`` with ``sqrt`` a square
           root of this Laurent polynomial when it exists or
-          ``(False, None)``.
+          ``(False, None)``
 
         EXAMPLES::
 
@@ -1826,7 +1874,6 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: p.toric_coordinate_change(Matrix([[1,-3], [1,1]]),
             ....:                           new_ring=L.change_ring(F))
             x^-2*y^2 + x^-3*y
-
         """
         cdef int n, i, j, x
         cdef dict d, dr

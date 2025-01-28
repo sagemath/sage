@@ -11,17 +11,18 @@ EXAMPLES::
     sage: a = m.change_ring(GF(97))
     sage: D = a.decomposition()
     sage: D[:3]
-    [
-    (Vector space of degree 33 and dimension 1 over Finite Field of size 97
-    Basis matrix:
-    [ 0  0  0  1 96 96  1  0 95  1  1  1  1 95  2 96  0  0 96  0 96  0 96  2 96 96  0  1  0  2  1 95  0], True),
-    (Vector space of degree 33 and dimension 1 over Finite Field of size 97
-    Basis matrix:
-    [ 0  1 96 16 75 22 81  0  0 17 17 80 80  0  0 74 40  1 16 57 23 96 81  0 74 23  0 24  0  0 73  0  0], True),
-    (Vector space of degree 33 and dimension 1 over Finite Field of size 97
-    Basis matrix:
-    [ 0  1 96 90 90  7  7  0  0 91  6  6 91  0  0 91  0 13  7  0  6 84 90  0  6 91  0 90  0  0  7  0  0], True)
-    ]
+    [(Vector space of degree 33 and dimension 1 over Finite Field of size 97
+      Basis matrix:
+      [ 0  0  0  1 96 96  1  0 95  1  1  1  1 95  2 96  0  0 96  0 96  0 96  2 96 96  0  1  0  2  1 95  0],
+      True),
+     (Vector space of degree 33 and dimension 1 over Finite Field of size 97
+      Basis matrix:
+      [ 0  1 96 16 75 22 81  0  0 17 17 80 80  0  0 74 40  1 16 57 23 96 81  0 74 23  0 24  0  0 73  0  0],
+      True),
+     (Vector space of degree 33 and dimension 1 over Finite Field of size 97
+      Basis matrix:
+      [ 0  1 96 90 90  7  7  0  0 91  6  6 91  0  0 91  0 13  7  0  6 84 90  0  6 91  0 90  0  0  7  0  0],
+      True)]
     sage: len(D)
     9
 
@@ -53,7 +54,6 @@ AUTHORS:
 - David Kohel
 
 - Iftikhar Burhanuddin
-
 """
 
 # ****************************************************************************
@@ -69,6 +69,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.misc import kronecker, next_prime
+from sage.categories.fields import Fields
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.lazy_import import lazy_import
 from sage.modular.arithgroup.all import Gamma0
@@ -100,9 +101,7 @@ def Phi2_quad(J3, ssJ1, ssJ2):
 
     - ``ssJ2``, ``ssJ2`` -- supersingular j-invariants over the finite field
 
-    OUTPUT:
-
-    - polynomial -- defined over the finite field
+    OUTPUT: polynomial; defined over the finite field
 
     EXAMPLES:
 
@@ -119,7 +118,7 @@ def Phi2_quad(J3, ssJ1, ssJ2):
         sage: sage.modular.ssmod.ssmod.Phi2_quad(X, F(8), j_in)
         x^2 + 31*x + 31
 
-    .. note::
+    .. NOTE::
 
         Given a root (j1,j2) to the polynomial `Phi_2(J1,J2)`, the pairs
         (j2,j3) not equal to (j2,j1) which solve `Phi_2(j2,j3)` are roots of
@@ -164,9 +163,7 @@ def Phi_polys(L, x, j):
 
     - ``j`` -- supersingular j-invariant over the finite field
 
-    OUTPUT:
-
-    - polynomial -- defined over the finite field
+    OUTPUT: polynomial; defined over the finite field
 
     EXAMPLES:
 
@@ -204,13 +201,11 @@ def dimension_supersingular_module(prime, level=1):
 
     INPUT:
 
-    - ``prime`` -- integer, prime
+    - ``prime`` -- integer; prime
 
-    - ``level`` -- integer, positive
+    - ``level`` -- integer; positive
 
-    OUTPUT:
-
-    - dimension -- integer, nonnegative
+    OUTPUT: dimension; integer, nonnegative
 
     EXAMPLES:
 
@@ -259,11 +254,9 @@ def supersingular_D(prime):
 
     INPUT:
 
-    - prime -- integer, prime
+    - ``prime`` -- integer, prime
 
-    OUTPUT:
-
-    - D -- integer, negative
+    OUTPUT: d; integer, negative
 
     EXAMPLES:
 
@@ -304,7 +297,7 @@ def supersingular_j(FF):
 
     INPUT:
 
-    - ``FF``  -- finite field with p^2 elements, where p is a prime number
+    - ``FF`` -- finite field with p^2 elements, where p is a prime number
 
     OUTPUT:
 
@@ -333,7 +326,7 @@ def supersingular_j(FF):
 
     - Iftikhar Burhanuddin -- burhanud@usc.edu
     """
-    if not FF.is_field() or not FF.is_finite():
+    if FF not in Fields().Finite():
         raise ValueError("%s is not a finite field" % FF)
     prime = FF.characteristic()
     if not Integer(prime).is_prime():
@@ -417,9 +410,9 @@ class SupersingularModule(HeckeModule_free_module):
         HeckeModule_free_module.__init__(self, base_ring,
                                          prime * level, weight=2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -429,7 +422,7 @@ class SupersingularModule(HeckeModule_free_module):
         return "Module of supersingular points on X_0(%s)/F_%s over %s" % (
             self.__level, self.__prime, self.base_ring())
 
-    def __richcmp__(self, other, op):
+    def __richcmp__(self, other, op) -> bool:
         r"""
         Compare ``self`` to ``other``.
 
@@ -504,9 +497,7 @@ class SupersingularModule(HeckeModule_free_module):
 
         - ``self`` -- SupersingularModule object
 
-        OUTPUT:
-
-        - integer -- dimension, nonnegative
+        OUTPUT: integer; dimension, nonnegative
 
         EXAMPLES::
 
@@ -553,9 +544,7 @@ class SupersingularModule(HeckeModule_free_module):
 
         - ``self`` -- SupersingularModule object
 
-        OUTPUT:
-
-        - integer -- the level, positive
+        OUTPUT: integer; the level, positive
 
         EXAMPLES::
 
@@ -579,9 +568,7 @@ class SupersingularModule(HeckeModule_free_module):
 
         - ``self`` -- SupersingularModule object
 
-        OUTPUT:
-
-        - integer -- characteristic, positive
+        OUTPUT: integer; characteristic, positive
 
         EXAMPLES::
 
@@ -605,9 +592,7 @@ class SupersingularModule(HeckeModule_free_module):
 
         - ``self`` -- SupersingularModule object
 
-        OUTPUT:
-
-        - integer -- weight, positive
+        OUTPUT: integer; weight, positive
 
         EXAMPLES::
 
@@ -630,7 +615,7 @@ class SupersingularModule(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``self`` -- SupersingularModule object
+        - ``self`` -- SupersingularModule object
 
         OUTPUT:
 
@@ -675,7 +660,7 @@ class SupersingularModule(HeckeModule_free_module):
 
         dim = dimension_supersingular_module(prime, level)
 
-        pos = int(0)
+        pos = 0
         # using list to keep track of explored nodes using pos
         ss_points = [jinv]
 
@@ -697,7 +682,7 @@ class SupersingularModule(HeckeModule_free_module):
                 # root finding (??)
                 neighbors = Phi2_quad(X, ss_points[j_prev], ss_points[pos]).roots()
 
-            for (xj, ej) in neighbors:
+            for xj, ej in neighbors:
                 if xj not in ss_points_dic:
                     j = len(ss_points)
                     ss_points += [xj]
@@ -710,7 +695,7 @@ class SupersingularModule(HeckeModule_free_module):
             if pos != 0:
                 # also record the root from j_prev
                 T2_matrix[pos, j_prev] += 1
-            pos += int(1)
+            pos += 1
 
         self.__hecke_matrices[2] = T2_matrix
         return (ss_points, ss_points_dic)
@@ -783,11 +768,9 @@ class SupersingularModule(HeckeModule_free_module):
 
         - ``self`` -- SupersingularModule object
 
-        - ``L`` -- integer, positive
+        - ``L`` -- integer; positive
 
-        OUTPUT:
-
-        - matrix -- sparse integer matrix
+        OUTPUT: matrix; sparse integer matrix
 
         EXAMPLES:
 
@@ -814,7 +797,7 @@ class SupersingularModule(HeckeModule_free_module):
             [1 1 0 1 0 1]
             [1 1 1 0 1 0]
 
-        .. note::
+        .. NOTE::
 
             The first list --- list_j --- returned by the supersingular_points
             function are the rows *and* column indexes of the above hecke
@@ -836,7 +819,7 @@ class SupersingularModule(HeckeModule_free_module):
         Fp2 = self.__finite_field
         h = len(SS)
         R = self.base_ring()
-        T_L = MatrixSpace(R, h)(0)
+        T_L = MatrixSpace(R, h)(0)  # mutable
         S, X = Fp2['x'].objgen()
 
         for i in range(len(SS)):

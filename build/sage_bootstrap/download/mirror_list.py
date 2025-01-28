@@ -4,7 +4,9 @@ Access the List of Sage Download Mirrors
 """
 
 #*****************************************************************************
-#       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2014-2016 Volker Braun <vbraun.name@gmail.com>
+#                     2015      Jeroen Demeyer
+#                     2023      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -168,7 +170,8 @@ class MirrorList_from_url(object):
         This method is used by the YUM fastestmirror plugin
         """
         timed_mirrors = []
-        import time, socket
+        import time
+        import socket
         log.info('Searching fastest mirror')
         timeout = 1
         for mirror in self.mirrors:

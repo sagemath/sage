@@ -47,7 +47,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
     INPUT:
 
-    - ``polys`` -- a list of `n_1 + \cdots + n_r` multi-homogeneous polynomials, all
+    - ``polys`` -- list of `n_1 + \cdots + n_r` multi-homogeneous polynomials, all
       of which should have the same parent
 
     - ``domain`` -- a projective scheme embedded in
@@ -85,10 +85,10 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         - ``P`` -- a point in the domain
 
-        - ``check`` -- Boolean; whether or not to perform the input checks
-          on the image point (Default: ``True``)
+        - ``check`` -- boolean (default: ``True``); whether or not to perform
+          the input checks on the image point
 
-        OUTPUT: The image point in the codomain
+        OUTPUT: the image point in the codomain
 
         EXAMPLES::
 
@@ -125,11 +125,11 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         - ``P`` -- a point in ``self.domain()``
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
-        - ``normalize`` -- (default: ``False``) boolean
+        - ``normalize`` -- boolean (default: ``False``)
 
-        OUTPUT: A point in ``self.codomain()``
+        OUTPUT: a point in ``self.codomain()``
 
         EXAMPLES::
 
@@ -180,16 +180,15 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         - ``P`` -- a point in ``self.domain()``
 
-        - ``N`` -- a non-negative integer or list or tuple of two non-negative integers
+        - ``N`` -- nonnegative integer or list or tuple of two nonnegative integers
 
         kwds:
 
-        - ``check`` -- (default: ``True``) boolean
+        - ``check`` -- boolean (default: ``True``)
 
-        - ``normalize`` -- (default: ``False``) boolean
+        - ``normalize`` -- boolean (default: ``False``)
 
-
-        OUTPUT: a list of points in ``self.codomain()``
+        OUTPUT: list of points in ``self.codomain()``
 
         EXAMPLES::
 
@@ -220,7 +219,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
         except TypeError:
             raise TypeError("orbit bounds must be integers")
         if N[0] < 0 or N[1] < 0:
-            raise TypeError("orbit bounds must be non-negative")
+            raise TypeError("orbit bounds must be nonnegative")
         if N[0] > N[1]:
             return []
 
@@ -255,9 +254,9 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
-        OUTPUT: A dynamical system of products of projective spaces
+        OUTPUT: a dynamical system of products of projective spaces
 
         EXAMPLES::
 
@@ -327,8 +326,8 @@ class DynamicalSystem_product_projective_finite_field(DynamicalSystem_product_pr
         """
         V = []
         E = []
-        from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
-        if is_ProductProjectiveSpaces(self.domain()):
+        from sage.schemes.product_projective.space import ProductProjectiveSpaces_ring
+        if isinstance(self.domain(), ProductProjectiveSpaces_ring):
             for P in self.domain():
                 V.append(str(P))
                 Q = self(P)

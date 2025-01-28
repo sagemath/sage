@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 GenericGraph Cython functions
 
@@ -124,7 +123,7 @@ def layout_split(layout_function, G, **options):
 def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True,
                        bint height=False, by_component=False, **options):
     """
-    Spring force model layout
+    Spring force model layout.
 
     This function primarily acts as a wrapper around :func:`run_spring`,
     converting to and from raw C types.
@@ -135,7 +134,7 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
 
     INPUT:
 
-    - ``by_component`` -- a boolean
+    - ``by_component`` -- boolean
 
     EXAMPLES::
 
@@ -273,25 +272,21 @@ cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n
 
     INPUT:
 
-        iterations -- number of steps to take
-        _dim       -- number of dimensions of freedom. Provide a value of type
-                      `D_TWO` for 2 dimensions, or type `D_THREE` for three
-                      dimensions. The actual value does not matter: only its
-                      type is important.
-        pos        -- already initialized initial positions
-                      Each vertex is stored as [dim] consecutive doubles.
-                      These doubles are then placed consecutively in the array.
-                      For example, if dim=3, we would have
-                      pos = [x_1, y_1, z_1, x_2, y_2, z_2, ... , x_n, y_n, z_n]
-        edges      -- List of edges, sorted lexicographically by the first
-                      (smallest) vertex, terminated by -1, -1.
-                      The first two entries represent the first edge, and so on.
-        n          -- number of vertices in the graph
-        height     -- if True, do not update the last coordinate ever
+    - ``iterations`` -- number of steps to take
+    - ``_dim`` -- number of dimensions of freedom. Provide a value of type `D_TWO`
+      for 2 dimensions, or type `D_THREE` for three dimensions. The actual
+      value does not matter: only its type is important.
+    - ``pos`` -- already initialized initial positions. Each vertex is stored as
+      [dim] consecutive doubles. These doubles are then placed consecutively
+      in the array. For example, if dim=3, we would have
+      pos = [x_1, y_1, z_1, x_2, y_2, z_2, ... , x_n, y_n, z_n]
+    - ``edges`` -- List of edges, sorted lexicographically by the first (smallest)
+      vertex, terminated by -1, -1. The first two entries represent the first
+      edge, and so on.
+    - ``n`` -- number of vertices in the graph
+    - ``height`` -- if ``True``, do not update the last coordinate ever
 
-    OUTPUT:
-
-    Modifies contents of pos.
+    OUTPUT: modifies contents of pos
 
     AUTHOR:
 
@@ -395,12 +390,12 @@ cdef inline double sqrt_approx(double x, double y, double xx, double yy) noexcep
     Assuming that `x > y > 0`, it is a taylor expansion at `x^2`. To see how
     'bad' the approximation is::
 
-        sage: def dist(x,y):
+        sage: def dist(x, y):
         ....:    x = abs(x)
         ....:    y = abs(y)
         ....:    return max(x,y) + min(x,y)**2/(2*max(x,y))
 
-        sage: polar_plot([1,lambda x:dist(cos(x),sin(x))], (0, 2*math.pi))              # needs sage.plot
+        sage: polar_plot([1, lambda x: dist(cos(x), sin(x))], (0, 2*math.pi))           # needs sage.plot sage.symbolic
         Graphics object consisting of 2 graphics primitives
     """
     if xx < yy:
@@ -418,7 +413,7 @@ def int_to_binary_string(n):
 
     INPUT:
 
-    - ``n`` (integer)
+    - ``n`` -- integer
 
     EXAMPLES::
 
@@ -448,7 +443,7 @@ def binary_string_to_graph6(x):
 
     INPUT:
 
-    - ``x`` -- a binary string.
+    - ``x`` -- a binary string
 
     EXAMPLES::
 
@@ -475,7 +470,7 @@ def small_integer_to_graph6(n):
 
     INPUT:
 
-    - ``n`` (integer)
+    - ``n`` -- integer
 
     EXAMPLES::
 
@@ -502,7 +497,7 @@ def length_and_string_from_graph6(s):
     INPUT:
 
     - ``s`` -- a graph6 string describing a binary vector (and encoding its
-      length).
+      length)
 
     EXAMPLES::
 
@@ -537,7 +532,7 @@ def length_and_string_from_graph6(s):
 
 def binary_string_from_graph6(s, n):
     r"""
-    Decode a binary string from its graph6 representation
+    Decode a binary string from its graph6 representation.
 
     This helper function is the inverse of `R` from [McK2015]_.
 
@@ -545,7 +540,7 @@ def binary_string_from_graph6(s, n):
 
     - ``s`` -- a graph6 string
 
-    - ``n`` -- the length of the binary string encoded by ``s``.
+    - ``n`` -- the length of the binary string encoded by ``s``
 
     EXAMPLES::
 
@@ -583,7 +578,7 @@ def binary_string_from_dig6(s, n):
 
     - ``s`` -- a graph6 string
 
-    - ``n`` -- the length of the binary string encoded by ``s``.
+    - ``n`` -- the length of the binary string encoded by ``s``
 
     EXAMPLES::
 
@@ -638,11 +633,10 @@ cdef class SubgraphSearch:
     .. NOTE::
 
         This algorithm does not take vertex/edge labels into account.
-
     """
     def __init__(self, G, H, induced=False):
         r"""
-        Constructor
+        Constructor.
 
         This constructor only checks there is no inconsistency in the
         input : `G` and `H` are both graphs or both digraphs and that `H`
@@ -706,7 +700,7 @@ cdef class SubgraphSearch:
 
     def cardinality(self):
         r"""
-        Returns the number of labelled subgraphs of `G` isomorphic to
+        Return the number of labelled subgraphs of `G` isomorphic to
         `H`.
 
         .. NOTE::
@@ -808,7 +802,7 @@ cdef class SubgraphSearch:
 
     def __cinit__(self, G, H, induced=False):
         r"""
-        Cython constructor
+        Cython constructor.
 
         This method initializes all the C values.
 
@@ -896,7 +890,7 @@ cdef class SubgraphSearch:
 
     def __next__(self):
         r"""
-        Returns the next isomorphic subgraph if any, and raises a
+        Return the next isomorphic subgraph if any, and raises a
         ``StopIteration`` otherwise.
 
         EXAMPLES::
@@ -982,20 +976,18 @@ cdef class SubgraphSearch:
 
 cdef inline bint vectors_equal(int n, int *a, int *b) noexcept:
     r"""
-    Tests whether the two given vectors are equal. Two integer vectors
+    Test whether the two given vectors are equal. Two integer vectors
     `a = (a_1, a_2, \dots, a_n)` and `b = (b_1, b_2, \dots, b_n)` are equal
     iff `a_i = b_i` for all `i = 1, 2, \dots, n`. See the function
     ``_test_vectors_equal_inferior()`` for unit tests.
 
     INPUT:
 
-    - ``n`` -- positive integer; length of the vectors.
+    - ``n`` -- positive integer; length of the vectors
 
-    - ``a``, ``b`` -- two vectors of integers.
+    - ``a``, ``b`` -- two vectors of integers
 
-    OUTPUT:
-
-    - ``True`` if ``a`` and ``b`` are the same vector; ``False`` otherwise.
+    OUTPUT: ``True`` if ``a`` and ``b`` are the same vector; ``False`` otherwise
     """
     cdef int i
     for i in range(n):
@@ -1005,7 +997,7 @@ cdef inline bint vectors_equal(int n, int *a, int *b) noexcept:
 
 cdef inline bint vectors_inferior(int n, int *a, int *b) noexcept:
     r"""
-    Tests whether the second vector of integers is inferior to the first. Let
+    Test whether the second vector of integers is inferior to the first. Let
     `u = (u_1, u_2, \dots, u_k)` and `v = (v_1, v_2, \dots, v_k)` be two
     integer vectors of equal length. Then `u` is said to be less than
     (or inferior to) `v` if `u_i \leq v_i` for all `i = 1, 2, \dots, k`. See
@@ -1016,9 +1008,9 @@ cdef inline bint vectors_inferior(int n, int *a, int *b) noexcept:
 
     INPUT:
 
-    - ``n`` -- positive integer; length of the vectors.
+    - ``n`` -- positive integer; length of the vectors
 
-    - ``a``, ``b`` -- two vectors of integers.
+    - ``a``, ``b`` -- two vectors of integers
 
     OUTPUT:
 
@@ -1183,14 +1175,14 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
     - ``max_iter`` -- maximum number of iterations
 
     - ``reset_bound`` -- number of iterations before restarting the
-       procedure
+      procedure
 
     - ``backtrack_bound`` -- number of iterations to elapse before
-       discarding the last 5 vertices of the path.
+      discarding the last 5 vertices of the path
 
-    - ``find_path`` -- (default: ``False``) if set to ``True``, will
-       search a Hamiltonian path; if ``False``, will search for a
-       Hamiltonian cycle
+    - ``find_path`` -- boolean (default: ``False``); if set to ``True``, will
+      search a Hamiltonian path. If ``False``, will search for a Hamiltonian
+      cycle.
 
     OUTPUT:
 
@@ -1572,7 +1564,7 @@ def transitive_reduction_acyclic(G):
 
     INPUT:
 
-    - ``G`` -- an acyclic digraph.
+    - ``G`` -- an acyclic digraph
 
     EXAMPLES::
 

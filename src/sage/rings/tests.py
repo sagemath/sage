@@ -102,7 +102,7 @@ def integer_mod_ring():
 
 def padic_field():
     """
-    Return a random p-adic field modulo n with p at most 10000
+    Return a random `p`-adic field modulo n with p at most 10000
     and precision between 10 and 100.
 
     EXAMPLES::
@@ -239,17 +239,28 @@ def rings0():
     """
     from sage.rings.integer_ring import IntegerRing
     from sage.rings.rational_field import RationalField
+
     v = [(IntegerRing, 'ring of integers'),
          (RationalField, 'field of rational numbers'),
-         (integer_mod_ring, 'integers modulo n for n at most 50000'),
-         (prime_finite_field, 'a prime finite field with cardinality at most 10^20'),
-         (finite_field, 'finite field with degree at most 20 and prime at most 10^6'),
-         (small_finite_field, 'finite field with cardinality at most 2^16'),
-         (padic_field, 'a p-adic field'),
-         (quadratic_number_field, 'a quadratic number field'),
-         (absolute_number_field, 'an absolute number field of degree at most 10'),
-         (relative_number_field, 'a tower of at most 2 extensions each of degree at most 2')
-         ]
+         (integer_mod_ring, 'integers modulo n for n at most 50000')]
+    try:
+        v += [(prime_finite_field, 'a prime finite field with cardinality at most 10^20'),
+              (finite_field, 'finite field with degree at most 20 and prime at most 10^6'),
+              (small_finite_field, 'finite field with cardinality at most 2^16')]
+    except ImportError:
+        pass
+
+    try:
+        v += [(padic_field, 'a p-adic field')]
+    except ImportError:
+        pass
+
+    try:
+        v += [(quadratic_number_field, 'a quadratic number field'),
+              (absolute_number_field, 'an absolute number field of degree at most 10'),
+              (relative_number_field, 'a tower of at most 2 extensions each of degree at most 2')]
+    except ImportError:
+        pass
 
     return v
 
@@ -279,17 +290,25 @@ def rings1():
     X = random_rings(level=0)
     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     from sage.rings.power_series_ring import PowerSeriesRing
-    from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
     from sage.rings.integer_ring import ZZ
+
     v = [(lambda: PolynomialRing(next(X), names='x'),
           'univariate polynomial ring over level 0 ring'),
          (lambda: PowerSeriesRing(next(X), names='x'),
-          'univariate power series ring over level 0 ring'),
-         (lambda: LaurentPolynomialRing(next(X), names='x'),
-          'univariate Laurent polynomial ring over level 0 ring'),
-         (lambda: PolynomialRing(next(X), abs(ZZ.random_element(x=2, y=10)),
-                                 names='x'),
-          'multivariate polynomial ring in between 2 and 10 variables over a level 0 ring')]
+          'univariate power series ring over level 0 ring')]
+
+    try:
+        from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+    except ImportError:
+        pass
+    else:
+        v += [(lambda: LaurentPolynomialRing(next(X), names='x'),
+               'univariate Laurent polynomial ring over level 0 ring')]
+
+    v += [(lambda: PolynomialRing(next(X), abs(ZZ.random_element(x=2, y=10)),
+                                  names='x'),
+           'multivariate polynomial ring in between 2 and 10 variables over a level 0 ring')]
+
     return v
 
 
@@ -325,12 +344,10 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
 
     INPUT:
 
-    - level -- (default: MAX_LEVEL); controls the types of rings to use
-    - trials -- A positive integer (default 1); the number of trials
-      to run.
-    - seed -- the random seed to use; if not specified, uses a truly
-      random seed.
-    - print_seed -- If True (default False), prints the random seed chosen.
+    - ``level`` -- (default: ``MAX_LEVEL``) controls the types of rings to use
+    - ``trials`` -- a positive integer (default: 1); the number of trials to run
+    - ``seed`` -- the random seed to use; if not specified, uses a truly random seed
+    - ``print_seed`` -- if ``True`` (default: ``False``), prints the random seed chosen
 
     EXAMPLES::
 
@@ -376,12 +393,10 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
 
     INPUT:
 
-    - ``level`` -- (default: ``MAX_LEVEL``); controls the types of rings to use
-    - ``trials`` -- A positive integer (default: 1); the number of trials
-      to run.
-    - ``seed`` -- the random seed to use; if not specified, uses a truly
-      random seed.
-    - ``print_seed`` -- If ``True`` (default: ``False``), prints the random seed chosen.
+    - ``level`` -- (default: ``MAX_LEVEL``) controls the types of rings to use
+    - ``trials`` -- positive integer (default: 1); the number of trials to run
+    - ``seed`` -- the random seed to use; if not specified, uses a truly random seed
+    - ``print_seed`` -- if ``True`` (default: ``False``), prints the random seed chosen
 
     EXAMPLES::
 
@@ -467,7 +482,6 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
         sage: test_karatsuba_multiplication(ZZ, 10000, 10000,           # long time
         ....:                               ref_mul=lambda f,g: f*g,
         ....:                               base_ring_random_elt_args=[100000])
-
     """
     from sage.misc.prandom import randint
     from sage.misc.sage_input import sage_input
@@ -487,4 +501,3 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
             msg += "and\n"
             msg += f"{sage_input(g)}"
             raise ValueError(msg)
-    return

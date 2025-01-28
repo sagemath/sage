@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-*
 r"""
 Integer factorization functions
 
 AUTHORS:
 
 - Andre Apitzsch (2011-01-13): initial version
-
 """
 
 # ****************************************************************************
@@ -43,9 +41,7 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
     - ``F`` -- integer (default: ``None``)
     - ``check`` -- boolean (default: ``True``)
 
-    OUTPUT:
-
-    A list of factors.
+    OUTPUT: list of factors
 
     EXAMPLES::
 
@@ -129,9 +125,7 @@ cpdef factor_aurifeuillian(n, check=True):
 
     - ``n`` -- integer
 
-    OUTPUT:
-
-    List of factors of `n` found by Aurifeuillian factorization.
+    OUTPUT: list of factors of `n` found by Aurifeuillian factorization
 
     EXAMPLES::
 
@@ -209,6 +203,7 @@ cpdef factor_aurifeuillian(n, check=True):
             return F
     return [n]
 
+
 def factor_cunningham(m, proof=None):
     r"""
     Return factorization of ``self`` obtained using trial division
@@ -222,7 +217,7 @@ def factor_cunningham(m, proof=None):
 
     INPUT:
 
-    - ``proof`` -- bool (default: ``None``); whether or not to
+    - ``proof`` -- boolean (default: ``None``); whether or not to
       prove primality of each factor, this is only for factors
       not in the Cunningham table
 
@@ -233,7 +228,6 @@ def factor_cunningham(m, proof=None):
         535006138814359 * 1155685395246619182673033 * 374550598501810936581776630096313181393
         sage: factor_cunningham((3^101+1)*(2^60).next_prime(), proof=False) # optional - cunningham_tables
         2^2 * 379963 * 1152921504606847009 * 1017291527198723292208309354658785077827527
-
     """
     from sage.databases import cunningham_tables
     cunningham_prime_factors = cunningham_tables.cunningham_prime_factors()
@@ -252,6 +246,7 @@ def factor_cunningham(m, proof=None):
     else:
         return IntegerFactorization(L)*n.factor(proof=proof)
 
+
 cpdef factor_trial_division(m, long limit=LONG_MAX):
     r"""
     Return partial factorization of ``self`` obtained using trial division
@@ -259,7 +254,7 @@ cpdef factor_trial_division(m, long limit=LONG_MAX):
 
     INPUT:
 
-    - ``limit`` -- integer (default: ``LONG_MAX``) that fits in a C ``signed long``
+    - ``limit`` -- integer (default: ``LONG_MAX``); that fits in a C ``signed long``
 
     EXAMPLES::
 
@@ -277,7 +272,6 @@ cpdef factor_trial_division(m, long limit=LONG_MAX):
         sage: from sage.rings.factorint import factor_trial_division
         sage: list(factor_trial_division(8))
         [(2, 3)]
-
     """
     cdef Integer n = PY_NEW(Integer), unit = PY_NEW(Integer), p = Integer(2)
     cdef long e

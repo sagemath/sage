@@ -9,8 +9,8 @@ Auslander-Reiten Quivers
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -213,7 +213,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
     # add options to class
     class options(GlobalOptions):
         r"""
-        Sets and displays the global options for Auslander-Reiten quivers.
+        Set and display the global options for Auslander-Reiten quivers.
         If no parameters are set, then the function returns a copy of the
         options dictionary.
 
@@ -240,7 +240,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
         """
         NAME = 'AuslanderReitenQuiver'
         module = 'sage.quivers.ar_quiver'
-        latex = dict(default="node",
+        latex = dict(default='node',
                      description='Specifies how nodes of the AR quiver should be latexed',
                      values=dict(node='latex as the node description',
                                  dimension_vector='latex as the dimension vector',
@@ -356,7 +356,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
                     edge_opts["label"] = LatexExpr(r"\tau")
                 return edge_opts
 
-            G.set_latex_options(format="dot2tex", edge_options=edge_options)
+            G.set_latex_options(format='dot2tex', edge_options=edge_options)
         return G
 
     def digraph_preprojectives(self, max_depth, with_translations=False):
@@ -395,7 +395,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
             prev = cur
             cur = self._dim_vecs_level(k)
 
-        G = DiGraph([verts, edges], format="vertices_and_edges", multiedges=True, immutable=True)
+        G = DiGraph([verts, edges], format='vertices_and_edges', multiedges=True, immutable=True)
         return self._digraph_set_latex_options(G)
 
     def digraph_postinjectives(self, max_depth, with_translations=False):
@@ -434,7 +434,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
             prev = cur
             cur = self._dim_vecs_level(-k)
 
-        G = DiGraph([verts, edges], format="vertices_and_edges", multiedges=True, immutable=True)
+        G = DiGraph([verts, edges], format='vertices_and_edges', multiedges=True, immutable=True)
         return self._digraph_set_latex_options(G)
 
     @cached_method
@@ -444,8 +444,8 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``with_translations`` -- (default: ``False``) if ``True``, then
-          include the arrows corresponding to the translations.
+        - ``with_translations`` -- boolean (default: ``False``); if ``True``, then
+          include the arrows corresponding to the translations
 
         EXAMPLES::
 
@@ -491,7 +491,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
                 cur = self._dim_vecs_level(k)
 
             self._injectives = Family(injectives)
-            G = DiGraph([verts, edges], format="vertices_and_edges", immutable=True)
+            G = DiGraph([verts, edges], format='vertices_and_edges', immutable=True)
 
         return self._digraph_set_latex_options(G)
 

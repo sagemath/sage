@@ -29,7 +29,6 @@ from sage.combinat.integer_vector import IntegerVectors
 from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 from sage.groups.matrix_gps.matrix_group_gap import MatrixGroup_gap
 from sage.matrix.matrix_space import MatrixSpace
-from sage.misc.cachefunc import cached_method
 from sage.misc.functional import cyclotomic_polynomial
 from sage.modules.free_module_element import vector
 from sage.rings.fraction_field import FractionField
@@ -72,7 +71,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             )
         """
         return (MatrixGroup,
-                tuple(g.matrix() for g in self.gens()) + ({'check':False},))
+                tuple(g.matrix() for g in self.gens()) + ({'check': False},))
 
     def as_permutation_group(self, algorithm=None, seed=None):
         r"""
@@ -86,13 +85,13 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         INPUT:
 
-        - ``algorithm`` -- ``None`` or ``'smaller'``. In the latter
+        - ``algorithm`` -- ``None`` or ``'smaller'``; in the latter
           case, try harder to find a permutation representation of
-          small degree.
+          small degree
         - ``seed`` -- ``None`` or an integer specifying the seed
-          to fix results depending on pseudo-random-numbers. Here
+          to fix results depending on pseudo-random-numbers; here
           it makes sense to be used with respect to the ``'smaller'``
-          option, since GAP produces random output in that context.
+          option, since GAP produces random output in that context
 
         OUTPUT:
 
@@ -119,7 +118,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: G.cardinality()
             21499084800
             sage: P = G.as_permutation_group()
-            sage: Psmaller = G.as_permutation_group(algorithm="smaller", seed=6)
+            sage: Psmaller = G.as_permutation_group(algorithm='smaller', seed=6)
             sage: P.cardinality()
             21499084800
             sage: P.degree()
@@ -321,7 +320,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         # test if the field is admissible
         if F.gen() == 1:  # we got the rationals or GF(prime)
             FieldStr = str(F.characteristic())
-        elif hasattr(F,'polynomial'):  # we got an algebraic extension
+        elif hasattr(F, 'polynomial'):  # we got an algebraic extension
             if len(F.gens()) > 1:
                 raise NotImplementedError("can only deal with finite fields and (simple algebraic extensions of) the rationals")
             FieldStr = '(%d,%s)' % (F.characteristic(), str(F.gen()))
@@ -427,7 +426,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         INPUT:
 
         - ``chi`` -- (default: trivial character) a linear group character of this group
-        - ``return_series`` -- boolean (default: ``True``) if ``True``, then returns
+        - ``return_series`` -- boolean (default: ``True``); if ``True``, then returns
           the Molien series as a power series, ``False`` as a rational function
         - ``prec`` -- integer (default: 20); power series default precision
           (possibly infinite, in which case it is computed lazily)
@@ -794,10 +793,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             elif not C.is_absolute() or not K.is_absolute() or not R.is_absolute():
                 raise NotImplementedError("only implemented for absolute fields")
             else:
-                fields = []
-                for M in [R,K,C]:
-                    if M.absolute_degree() != 1:
-                        fields.append(M)
+                fields = [M for M in [R, K, C] if M.absolute_degree() != 1]
                 l = len(fields)
                 if l == 0:
                     # all are QQ
@@ -839,7 +835,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         INPUT:
 
-        - ``degree`` -- a positive integer
+        - ``degree`` -- positive integer
 
         - ``chi`` -- (default: trivial character) a linear group character of this group
 
@@ -927,6 +923,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
                 if len(inv) == ms[deg]:
                     break
         return list(inv)
+
 
 def _new_invariant_is_linearly_independent(F, invariants):
     """

@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 #
-# sage-logger [-p] COMMAND LOGFILE
+# sage-logger [-p] [-P PREFIX] COMMAND [LOGFILE]
 #
 # Evaluate shell command COMMAND while logging stdout and stderr to
-# LOGFILE. If either the command or the logging failed, return a
+# LOGFILE (if given). If either the command or the logging failed, return a
 # non-zero exit status.
 #
 # If the -p argument is given, each line printed to stdout is prefixed
 # with the name of the log file.
+#
+# If the -P PREFIX argument is given, each line printed to stdout is
+# prefixed with PREFIX.
 #
 # AUTHOR:
 #
@@ -24,11 +27,17 @@
 #*****************************************************************************
 
 use_prefix=false
+prefix=""
 
-if [[ "$1" = -p ]]; then
-    use_prefix=true
-    shift
-fi
+case "$1" in
+    -p) use_prefix=true
+        shift
+        ;;
+    -P) use_prefix=true
+        prefix="[$2] "
+        shift 2
+        ;;
+esac
 
 cmd="$1"
 logfile="$2"
@@ -36,10 +45,8 @@ export SAGE_LOGFILE="$logfile"
 logname="$(basename $logfile .log)"
 logdir=`dirname "$logfile"`
 
-if [[ $use_prefix = true ]]; then
+if [[ $use_prefix = true && -z "$prefix" ]]; then
     prefix="[${logname}] "
-else
-    prefix=""
 fi
 
 # Use sed option to reduce buffering, to make the output appear more
@@ -61,23 +68,37 @@ else
     SED=cat
 fi
 
+if [ -z "$logfile" ]; then
+    # Just prefix, nothing else
+    ( exec 2>&1; sh -c "$cmd" ) | \
+        ( trap '' SIGINT; if [ -n "$GITHUB_ACTIONS" -a -n "$prefix" ]; then echo "::group::${logname}"; fi; $SED; if [ -n "$GITHUB_ACTIONS" -a -n "$prefix" ]; then echo "::endgroup::"; fi )
+
+    pipestatus=(${PIPESTATUS[*]})
+
+    if [ ${pipestatus[1]} -ne 0 ]; then
+        exit ${pipestatus[1]}
+    else
+        exit ${pipestatus[0]}
+    fi
+fi
+
+# Remainder of the script is with logging to "$logfile" and timing.
+
 timefile="$logdir/$logname.time"
 rm -f "$timefile"
-if /usr/bin/time -h -o /dev/null true; then
-    TIME="/usr/bin/time -h -o $timefile"
-else
-    TIME=""
-fi
+time_cmd() {
+    local max=$(($SECONDS+10))
+    exec 3>&1 4>&2
+    local time_output
+    time_output=$((time 1>&3 2>&4 sh -c "$1") 2>&1)
+    local retstat=$?
+    [ "$SECONDS" -lt "$max" ] || echo "$time_output" > "$timefile"
+    return $retstat
+}
 
 report_time ()
 {
-    time=$(echo $(cat $timefile))
-    case "$time" in
-        *m*real*|*h*real*|*[1-9][0-9].*real*|*[1-9][0-9],*real*)
-            # at least 10 seconds wall time
-            echo "$time"
-            ;;
-    esac
+    [ -r "$timefile" ] && echo $(< $timefile)
 }
 
 mkdir -p "$logdir"
@@ -94,13 +115,17 @@ if [ -n "$SAGE_SILENT_BUILD" -a ${use_prefix} = true ]; then
     # Silent build.
     # Similar to https://www.gnu.org/software/automake/manual/html_node/Automake-Silent-Rules.html#Automake-Silent-Rules
     echo "[$logname] installing. Log file: $logfile"
-    ( exec>> $logfile 2>&1 ; $TIME sh -c "$cmd"; status=$?;
-      [ -r $timefile ] && cat $timefile; exit $status )
+    ( exec>> $logfile 2>&1; time_cmd "$cmd"; status=$?; report_time; exit $status )
     status=$?
     if [[ $status != 0 ]]; then
-        echo "  [$logname] error installing, exit status $status. End of log file:"
-        tail -n 120 "$logfile" | sed "/Please email sage-devel/,$ d;s;^;  [$logname]   ;" >&2
-        echo "  [$logname] Full log file: $logfile"
+        if [ -n "$GITHUB_ACTIONS" ]; then
+            echo "  [$logname] error installing, exit status $status. Log file:"
+            sed "s;^;  [$logname]   ;" "$logfile" >&2
+        else
+            echo "  [$logname] error installing, exit status $status. End of log file:"
+            tail -n 120 "$logfile" | sed "/Please email sage-devel/,$ d;s;^;  [$logname]   ;" >&2
+            echo "  [$logname] Full log file: $logfile"
+        fi
     else
         time=$(report_time)
         if [ -n "$time" ]; then
@@ -115,9 +140,7 @@ else
     # We trap SIGINT such that SIGINT interrupts the main process being
     # run, not the logging.
 
-    ( exec 2>&1;
-      $TIME sh -c "$cmd"; status=$?; report_time;
-      exit $status ) | \
+    ( exec 2>&1; time_cmd "$cmd"; status=$?; report_time; exit $status ) | \
         ( trap '' SIGINT; if [ -n "$GITHUB_ACTIONS" -a -n "$prefix" ]; then echo "::group::${logname}"; fi; tee -a "$logfile" | $SED; if [ -n "$GITHUB_ACTIONS" -a -n "$prefix" ]; then echo "::endgroup::"; fi )
 
     pipestatus=(${PIPESTATUS[*]})

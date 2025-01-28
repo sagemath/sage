@@ -1,5 +1,5 @@
 r"""
-Automorphism groups and canonical labels.
+Automorphism groups and canonical labels
 
 For details see section 3 of [Feu2013]_.
 
@@ -252,7 +252,6 @@ cdef tuple PS_refinement(PartitionStack * part, long *refine_vals, long *best,
 
                 j += 1
 
-
             loc_begin = i + 1
         i += 1
     return (True, newly_fixed)
@@ -283,7 +282,7 @@ cdef class _BestValStore:
 
     cdef long * get_row(self, int i) noexcept:
         r"""
-        Return the i-th row.
+        Return the `i`-th row.
 
         If this row is not yet initialized (i >= self.storage_length), then
         we extend the array and fill the new positions
@@ -455,7 +454,7 @@ cdef class LabelledBranching:
 
 cdef class PartitionRefinement_generic:
     r"""
-    Implements the partition and refinement framework for
+    Implement the partition and refinement framework for
     group actions `G \rtimes S_n` on `X^n` as described in
     :mod:`sage.groups.perm_gps.partn_ref2.refinement_generic`.
     """
@@ -495,17 +494,15 @@ cdef class PartitionRefinement_generic:
     #####################################################################
     cdef bint _inner_min_(self, int pos, bint * inner_group_changed) noexcept:
         """
-        Minimize the node by the action of the inner group on the i-th position.
+        Minimize the node by the action of the inner group on the `i`-th position.
 
         INPUT:
 
-            - `pos` - A position in  `range(self.n)`
-            - `inner_group_changed` - will be set to true if `G_y` got smaller
+        - ``pos`` -- a position in ``range(self.n)``
+        - ``inner_group_changed`` -- will be set to ``True`` if `G_y` got smaller
 
-        OUTPUT:
-
-            - `True` if and only if the actual node compares less or equal to
-              the candidate for the canonical form.
+        OUTPUT: ``True`` if and only if the actual node compares less or equal
+        to the candidate for the canonical form
         """
         raise NotImplementedError
 
@@ -517,10 +514,8 @@ cdef class PartitionRefinement_generic:
         to a smaller subgroup of `S_n`. This function also has to take
         care on ``self._is_candidate_initialized``.
 
-        OUTPUT:
-
-            - `False` only if the actual node compares larger than the candidate
-              for the canonical form.
+        OUTPUT: ``False`` only if the actual node compares larger than the
+        candidate for the canonical form
         """
         raise NotImplementedError
 
@@ -597,7 +592,7 @@ cdef class PartitionRefinement_generic:
 
     def get_autom_order_permutation(self):
         r"""
-        Return the order of the automorphism group we have computes
+        Return the order of the automorphism group we have computed.
 
         EXAMPLES::
 
@@ -698,7 +693,7 @@ cdef class PartitionRefinement_generic:
             self._fixed_not_minimized.append(pos)
             self._backtrack()  # backtracking
 
-            #restore the old state and continue backtracking
+            # restore the old state and continue backtracking
             self._part.depth = old_partition_depth
             self._fixed_minimized = self._fixed_minimized[:old_fixed_minimized_len]
             self._fixed_not_minimized = copy(old_fixed_not_minimized)
@@ -830,12 +825,12 @@ cdef class PartitionRefinement_generic:
 
         There are to possibilities depending on the flag
         ``self._is_candidate_initialized``:
-         - ``True``: There is another leaf equal to this node. This defines an automorphism
-           which we add to the group of known automorphisms stored in
-           ``self._known_automorphisms``.
-         - ``False``: We have shown, that the current leaf is smaller than all
-           other leaf nodes already visited. We set it to be the
-           candidate for the canonical form.
+        - ``True`` -- There is another leaf equal to this node. This defines an automorphism
+          which we add to the group of known automorphisms stored in
+          ``self._known_automorphisms``.
+        - ``False`` -- We have shown, that the current leaf is smaller than all
+          other leaf nodes already visited. We set it to be the
+          candidate for the canonical form.
         """
         from sage.libs.gap.libgap import libgap
         cdef int i
@@ -862,7 +857,6 @@ cdef class PartitionRefinement_generic:
         """
         return self._is_candidate_initialized and self._known_automorphisms.has_empty_intersection(self._part)
 
-
     ###########################################################################
     # These functions are used to produce some latex output:
     # it writes the actual node
@@ -871,10 +865,10 @@ cdef class PartitionRefinement_generic:
     # BACKTRACK_WITHLATEX_DEBUG = 1 in the setup.py script when
     # building this module!
     ###########################################################################
-    cdef void _latex_act_node(self, str comment="", int printlvl=0) noexcept:
+    cdef void _latex_act_node(self, str comment='', int printlvl=0) noexcept:
         r"""
         Append the actual node as a string of latex-commands to
-        ``self._latex_debug_string``
+        ``self._latex_debug_string``.
         """
         raise NotImplementedError  # must be implemented by derived classes
 

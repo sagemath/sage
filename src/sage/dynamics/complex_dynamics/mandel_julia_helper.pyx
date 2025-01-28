@@ -8,7 +8,6 @@ This is the helper file providing functionality for mandel_julia.py.
 AUTHORS:
 
 - Ben Barros
-
 """
 # ****************************************************************************
 #       Copyright (C) 2017 BEN BARROS <bbarros@slu.edu>
@@ -35,7 +34,7 @@ from sage.ext.fast_callable import fast_callable
 from sage.calculus.all import symbolic_expression
 from sage.symbolic.ring import SR
 from sage.calculus.var import var
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 from sage.categories.function_fields import FunctionFields
 from cypari2.handle_error import PariError
 from math import sqrt
@@ -59,11 +58,13 @@ def _color_to_RGB(color):
         color = [int(255.0 * k) for k in Color(color)]
     return tuple(color)
 
+
 cpdef fast_mandelbrot_plot(double x_center, double y_center,
- double image_width, long max_iteration, long pixel_count,
- long level_sep, long color_num, base_color):
+                           double image_width, long max_iteration,
+                           long pixel_count,
+                           long level_sep, long color_num, base_color):
     r"""
-    Plots the Mandelbrot set in the complex plane for the map `Q_c(z) = z^2 + c`.
+    Plot the Mandelbrot set in the complex plane for the map `Q_c(z) = z^2 + c`.
 
     ALGORITHM:
 
@@ -78,27 +79,25 @@ cpdef fast_mandelbrot_plot(double x_center, double y_center,
 
     INPUT:
 
-    - ``x_center`` -- double, real part of the center point in the complex plane.
+    - ``x_center`` -- double; real part of the center point in the complex plane
 
-    - ``y_center`` -- double, imaginary part of the center point in the complex
-      plane.
+    - ``y_center`` -- double; imaginary part of the center point in the complex
+      plane
 
-    - ``image_width`` -- double, width of the image in the complex plane.
+    - ``image_width`` -- double; width of the image in the complex plane
 
-    - ``max_iteration`` -- long, maximum number of iterations the map `Q_c(z)`
-      considered.
+    - ``max_iteration`` -- long; maximum number of iterations the map `Q_c(z)`
+      considered
 
-    - ``pixel_count`` -- long, side length of image in number of pixels.
+    - ``pixel_count`` -- long; side length of image in number of pixels
 
-    - ``level_sep`` -- long, number of iterations between each color level.
+    - ``level_sep`` -- long; number of iterations between each color level
 
-    - ``color_num`` -- long, number of colors used to plot image.
+    - ``color_num`` -- long; number of colors used to plot image
 
-    - ``base_color`` -- list, RGB color used to determine the coloring of set.
+    - ``base_color`` -- list; RGB color used to determine the coloring of set
 
-    OUTPUT:
-
-    24-bit RGB image of the Mandelbrot set in the complex plane.
+    OUTPUT: 24-bit RGB image of the Mandelbrot set in the complex plane
 
     EXAMPLES:
 
@@ -117,14 +116,14 @@ cpdef fast_mandelbrot_plot(double x_center, double y_center,
 
     cdef:
         M, pixel, color_list
-        long i, j, col, row, level, color_value, iteration
-        double k, x_corner, y_corner, step_size, x_coor, y_coor, new_x, new_y
+        long i, j, col, row, level, iteration
+        double x_corner, y_corner, step_size, x_coor, y_coor, new_x, new_y
 
     # Make sure image_width is positive
     image_width = abs(image_width)
 
     # Initialize an image to the color black and access the pixels
-    M = Image("RGB", (pixel_count,pixel_count), 'black')
+    M = Image("RGB", (pixel_count, pixel_count), 'black')
     pixel = M.pixels()
 
     # Take the given base color and create a list of evenly spaced
@@ -158,7 +157,7 @@ cpdef fast_mandelbrot_plot(double x_center, double y_center,
             while (new_x**2 + new_y**2 <= 4.0 and iteration < max_iteration):
                 sig_check()
                 new_x, new_y = new_x**2 - new_y**2 + x_coor, \
-                 2*new_x*new_y + y_coor
+                    2*new_x*new_y + y_coor
                 iteration += 1
 
             # If the point escapes to infinity, assign the point a color
@@ -179,38 +178,37 @@ cpdef fast_mandelbrot_plot(double x_center, double y_center,
 
 
 cpdef fast_external_ray(double theta, long D=30, long S=10, long R=100,
- long pixel_count=500, double image_width=4, long prec=300):
+                        long pixel_count=500, double image_width=4,
+                        long prec=300):
     r"""
     Return a list of points that approximate the external ray for a given angle.
 
     INPUT:
 
-    - ``theta`` -- double, angle between 0 and 1 inclusive.
+    - ``theta`` -- double; angle between 0 and 1 inclusive
 
-    - ``D`` -- long (optional - default: ``25``) depth of the approximation.
+    - ``D`` -- long (default: ``25``); depth of the approximation.
      As ``D`` increases, the external ray gets closer to the boundary of the
      Mandelbrot set.
 
-    - ``S`` -- long (optional - default: ``10``) sharpness of the approximation.
+    - ``S`` -- long (default: ``10``); sharpness of the approximation.
      Adjusts the number of points used to approximate the external ray (number
      of points is equal to ``S*D``).
 
-    - ``R`` -- long (optional - default: ``100``) radial parameter. If ``R`` is
+    - ``R`` -- long (default: ``100``); radial parameter. If ``R`` is
      sufficiently large, the external ray reaches enough close to infinity.
 
-    - ``pixel_count`` -- long (optional - default: ``500``) side length of image
-     in number of pixels.
+    - ``pixel_count`` -- long (default: ``500``); side length of image
+     in number of pixels
 
-    - ``image_width`` -- double (optional - default: ``4``) width of the image
-     in the complex plane.
+    - ``image_width`` -- double (default: ``4``); width of the image
+     in the complex plane
 
-    - ``prec`` -- long (optional - default: ``300``) specifies the bits of
+    - ``prec`` -- long (default: ``300``); specifies the bits of
      precision used by the Complex Field when using Newton's method to compute
-     points on the external ray.
+     points on the external ray
 
-    OUTPUT:
-
-    List of tuples of Real Interval Field Elements.
+    OUTPUT: list of tuples of Real Interval Field Elements
 
     EXAMPLES::
 
@@ -245,7 +243,7 @@ cpdef fast_external_ray(double theta, long D=30, long S=10, long R=100,
         CF = ComplexField(prec)
         PI = CF.pi()
         I = CF.gen()
-        c_0, r_m, t_m, temp_c, C_k, D_k, old_c, x, y, dist
+        r_m, t_m, temp_c, C_k, D_k, old_c, x, y, dist
         int k, j, t
         double difference, m
         double error = pixel_count * 0.0001
@@ -256,8 +254,8 @@ cpdef fast_external_ray(double theta, long D=30, long S=10, long R=100,
         c_list = [CF(R*exp(2*PI*I*theta))]
 
     # Loop through each subinterval and approximate point on external ray.
-    for k in range(1,D+1):
-        for j in range(1,S+1):
+    for k in range(1, D+1):
+        for j in range(1, S+1):
             m = (k-1)*S + j
             r_m = CF(R**(2**(-m/S)))
             t_m = CF(r_m**(2**k) * exp(2*PI*I*theta * 2**k))
@@ -284,31 +282,29 @@ cpdef fast_external_ray(double theta, long D=30, long S=10, long R=100,
 
     # Convert Complex Field elements into tuples.
     for k in range(len(c_list)):
-        x,y = c_list[k].real(), c_list[k].imag()
+        x, y = c_list[k].real(), c_list[k].imag()
         c_list[k] = (x, y)
 
     return c_list
 
 cpdef convert_to_pixels(point_list, double x_0, double y_0, double width,
- long number_of_pixels):
+                        long number_of_pixels):
     r"""
-    Converts cartesian coordinates to pixels within a specified window.
+    Convert cartesian coordinates to pixels within a specified window.
 
     INPUT:
 
-    - ``point_list`` -- list of tuples, points in cartesian coordinates.
+    - ``point_list`` -- list of tuples; points in cartesian coordinates
 
-    - ``x_0`` -- double, x-coordinate of the center of the image.
+    - ``x_0`` -- double; x-coordinate of the center of the image
 
-    - ``y_0`` -- double, y-coordinate of the center of the image.
+    - ``y_0`` -- double; y-coordinate of the center of the image
 
-    - ``width`` -- double, width of visible window in cartesian coordinates.
+    - ``width`` -- double; width of visible window in cartesian coordinates
 
-    - ``number_of_pixels`` -- long, width of image in pixels.
+    - ``number_of_pixels`` -- long; width of image in pixels
 
-    OUTPUT:
-
-    List of tuples of integers representing pixels.
+    OUTPUT: list of tuples of integers representing pixels
 
     EXAMPLES::
 
@@ -336,7 +332,7 @@ cpdef convert_to_pixels(point_list, double x_0, double y_0, double width,
 
 cpdef get_line(start, end):
     r"""
-    Produces a list of pixel coordinates approximating a line from a starting
+    Produce a list of pixel coordinates approximating a line from a starting
     point to an ending point using the Bresenham's Line Algorithm.
 
     REFERENCE:
@@ -345,13 +341,11 @@ cpdef get_line(start, end):
 
     INPUT:
 
-    - ``start`` -- tuple, starting point of line.
+    - ``start`` -- tuple; starting point of line
 
-    - ``end`` -- tuple, ending point of line.
+    - ``end`` -- tuple; ending point of line
 
-    OUTPUT:
-
-    List of tuples of integers approximating the line between two pixels.
+    OUTPUT: list of tuples of integers approximating the line between two pixels
 
     EXAMPLES::
 
@@ -413,52 +407,52 @@ cpdef get_line(start, end):
     return points
 
 # Commented out temporarily for safekeeping, but probably should be deleted
-#def fast_julia_plot(double c_real, double c_imag,
-#                    double x_center, double y_center, double image_width,
-#                    long max_iteration, long pixel_count, long level_sep,
-#                    long color_num, base_color):
+# def fast_julia_plot(double c_real, double c_imag,
+#                     double x_center, double y_center, double image_width,
+#                     long max_iteration, long pixel_count, long level_sep,
+#                     long color_num, base_color):
 
 cpdef fast_julia_plot(double c_real, double c_imag,
-  double x_center=0, double y_center=0, double image_width=4,
-  long max_iteration=500, long pixel_count=500, long level_sep=2,
-  long color_num=40, base_color=[50, 50, 50]):
+                      double x_center=0, double y_center=0,
+                      double image_width=4,
+                      long max_iteration=500, long pixel_count=500,
+                      long level_sep=2,
+                      long color_num=40, base_color=[50, 50, 50]):
     r"""
-    Plots the Julia set for a given `c` value in the complex plane for the map `Q_c(z) = z^2 + c`.
+    Plot the Julia set for a given `c` value in the complex plane for the map `Q_c(z) = z^2 + c`.
 
     INPUT:
 
-    - ``c_real`` -- double, Real part of `c` value that determines Julia set.
+    - ``c_real`` -- double; Real part of `c` value that determines Julia set
 
-    - ``c_imag`` -- double, Imaginary part of `c` value that determines Julia
-      set.
+    - ``c_imag`` -- double; Imaginary part of `c` value that determines Julia
+      set
 
-    - ``x_center`` -- double (optional - default: ``0.0``), Real part of center
-      point.
+    - ``x_center`` -- double (default: ``0.0``); real part of center
+      point
 
-    - ``y_center`` -- double (optional - default: ``0.0``), Imaginary part of
-      center point.
+    - ``y_center`` -- double (default: ``0.0``); imaginary part of
+      center point
 
-    - ``image_width`` -- double (optional - default: ``4.0``), width of image
-      in the complex plane.
+    - ``image_width`` -- double (default: ``4.0``); width of image
+      in the complex plane
 
-    - ``max_iteration`` -- long (optional - default: ``500``), maximum number of
-      iterations the map ``Q_c(z)``.
+    - ``max_iteration`` -- long (default: ``500``); maximum number of
+      iterations the map ``Q_c(z)``
 
-    - ``pixel_count`` -- long (optional - default: ``500``), side length of
-      image in number of pixels.
+    - ``pixel_count`` -- long (default: ``500``); side length of
+      image in number of pixels
 
-    - ``level_sep`` -- long (optional - default: ``2``), number of iterations
-      between each color level.
+    - ``level_sep`` -- long (default: ``2``); number of iterations
+      between each color level
 
-    - ``color_num`` -- long (optional - default: ``40``), number of colors used
-      to plot image.
+    - ``color_num`` -- long (default: ``40``); number of colors used
+      to plot image
 
-    - ``base_color`` -- RGB color (optional - default: ``[50, 50, 50]``), color
-      used to determine the coloring of set.
+    - ``base_color`` -- RGB color (default: ``[50, 50, 50]``); color
+      used to determine the coloring of set
 
-    OUTPUT:
-
-    24-bit RGB image of the Julia set in the complex plane.
+    OUTPUT: 24-bit RGB image of the Julia set in the complex plane
 
     EXAMPLES:
 
@@ -470,9 +464,9 @@ cpdef fast_julia_plot(double c_real, double c_imag,
     """
 
     cdef:
-        M, pixel, color_list
-        long i, j, col, row, level, color_value, iteration
-        double k, x_corner, y_corner, step_size, x_coor, y_coor, new_x, new_y, escape_radius_squared
+        color_list
+        long i, j, col, row, level, iteration
+        double x_corner, y_corner, step_size, x_coor, y_coor, new_x, new_y, escape_radius_squared
 
     # Make sure image_width is positive
     image_width = abs(image_width)
@@ -482,7 +476,7 @@ cpdef fast_julia_plot(double c_real, double c_imag,
     escape_radius_squared = ((1.0 + sqrt(1.0 + 4.0*sqrt(c_real**2 + c_imag**2))))**2/4.0
 
     # Initialize an image to the color black and access the pixels
-    J = Image("RGB", (pixel_count,pixel_count), 'black')
+    J = Image("RGB", (pixel_count, pixel_count), 'black')
     Jp = J.pixels()
 
     # Take the given base color and create a list of evenly spaced
@@ -517,7 +511,7 @@ cpdef fast_julia_plot(double c_real, double c_imag,
             while (new_x**2 + new_y**2 <= escape_radius_squared and iteration < max_iteration):
                 sig_check()
                 new_x, new_y = new_x**2 - new_y**2 + c_real, \
-                 2*new_x*new_y + c_imag
+                    2*new_x*new_y + c_imag
                 iteration += 1
 
             # If the point escapes to infinity, assign the point a color
@@ -531,16 +525,17 @@ cpdef fast_julia_plot(double c_real, double c_imag,
                 # Assign the pixel a color based on it's level. If we run out
                 # of colors, assign it the last color in the list.
                 if level < color_num:
-                    Jp[col,row] = color_list[level]
+                    Jp[col, row] = color_list[level]
                 else:
-                    Jp[col,row] = color_list[-1]
+                    Jp[col, row] = color_list[-1]
 
     return J
 
 cpdef julia_helper(double c_real, double c_imag, double x_center=0,
- double y_center=0, double image_width=4, long max_iteration=500,
- long pixel_count=500, long level_sep=2, long color_num=40,
- base_color=[50, 50, 50], point_color=[255, 0, 0]):
+                   double y_center=0, double image_width=4,
+                   long max_iteration=500,
+                   long pixel_count=500, long level_sep=2, long color_num=40,
+                   base_color=[50, 50, 50], point_color=[255, 0, 0]):
     r"""
     Helper function that returns the image of a Julia set for a given
     `c` value side by side with the Mandelbrot set with a point denoting
@@ -548,41 +543,39 @@ cpdef julia_helper(double c_real, double c_imag, double x_center=0,
 
     INPUT:
 
-    - ``c_real`` -- double, Real part of `c` value that determines Julia set.
+    - ``c_real`` -- double; Real part of `c` value that determines Julia set
 
-    - ``c_imag`` -- double, Imaginary part of `c` value that determines Julia
-      set.
+    - ``c_imag`` -- double; Imaginary part of `c` value that determines Julia
+      set
 
-    - ``x_center`` -- double (optional - default: ``0.0``), Real part of center
-      point.
+    - ``x_center`` -- double (default: ``0.0``); Real part of center
+      point
 
-    - ``y_center`` -- double (optional - default: ``0.0``), Imaginary part of
-      center point.
+    - ``y_center`` -- double (default: ``0.0``); Imaginary part of
+      center point
 
-    - ``image_width`` -- double (optional - default: ``4.0``), width of image in
-      the complex plane.
+    - ``image_width`` -- double (default: ``4.0``); width of image in
+      the complex plane
 
-    - ``max_iteration`` -- long (optional - default: ``500``), maximum number of
-      iterations the map ``Q_c(z)``.
+    - ``max_iteration`` -- long (default: ``500``); maximum number of
+      iterations the map ``Q_c(z)``
 
-    - ``pixel_count`` -- long (optional - default: ``500``), side length of
-      image in number of pixels.
+    - ``pixel_count`` -- long (default: ``500``); side length of
+      image in number of pixels
 
-    - ``level_sep`` -- long (optional - default: ``2``), number of iterations
-      between each color level.
+    - ``level_sep`` -- long (default: ``2``); number of iterations
+      between each color level
 
-    - ``color_num`` -- long (optional - default: ``40``), number of colors used
-      to plot image.
+    - ``color_num`` -- long (default: ``40``); number of colors used
+      to plot image
 
-    - ``base_color`` -- RGB color (optional - default: ``[50, 50, 50]``), color
-      used to determine the coloring of set.
+    - ``base_color`` -- RGB color (default: ``[50, 50, 50]``); color
+      used to determine the coloring of set
 
-    - ``point_color`` -- RGB color (optional - default: ``[255, 0, 0]``), color
-      of the point `c` in the Mandelbrot set.
+    - ``point_color`` -- RGB color (default: ``[255, 0, 0]``); color
+      of the point `c` in the Mandelbrot set
 
-    OUTPUT:
-
-    24-bit RGB image of the Julia and Mandelbrot sets in the complex plane.
+    OUTPUT: 24-bit RGB image of the Julia and Mandelbrot sets in the complex plane
 
     EXAMPLES:
 
@@ -596,74 +589,75 @@ cpdef julia_helper(double c_real, double c_imag, double x_center=0,
 
     # Initialize the Julia set
     J = fast_julia_plot(c_real, c_imag, x_center, y_center, image_width,
-     max_iteration, pixel_count, level_sep, color_num, base_color)
+                        max_iteration, pixel_count, level_sep,
+                        color_num, base_color)
     Jp = J.pixels()
 
     # Initialize the image with Julia set on left side
     # Add white border between images
-    G = Image("RGB", (2*pixel_count+1,pixel_count), 'white')
+    G = Image("RGB", (2*pixel_count+1, pixel_count), 'white')
     Gp = G.pixels()
     for i in range(pixel_count):
         for j in range(pixel_count):
-            Gp[i,j] = Jp[i,j]
+            Gp[i, j] = Jp[i, j]
 
     # Plot the Mandelbrot set on the right side
     M = fast_mandelbrot_plot(-1, 0, 4, 500, pixel_count, 1, 30, base_color)
     Mp = M.pixels()
-    for i in range(pixel_count+1,2*pixel_count):
+    for i in range(pixel_count+1, 2*pixel_count):
         for j in range(pixel_count):
-            Gp[i,j] = Mp[int(i-pixel_count),j]
+            Gp[i, j] = Mp[int(i-pixel_count), j]
 
     point_color = _color_to_RGB(point_color)
 
     # Add a cross representing c-value to the Mandelbrot set.
     CP = convert_to_pixels([(c_real, c_imag)], -1, 0, 4, pixel_count)
-    for i in range(-3,4):
+    for i in range(-3, 4):
         # Loop through x and y coordinates and check if they are in image
         if min(CP[0][0]+i, CP[0][1]) >= 0 and \
-         max(CP[0][0]+i, CP[0][1]) < pixel_count:
+           max(CP[0][0]+i, CP[0][1]) < pixel_count:
             Gp[CP[0][0]+i+pixel_count+1, CP[0][1]] = tuple(point_color)
         if min(CP[0][0], CP[0][1]+i) >= 0 and \
-         max(CP[0][0], CP[0][1]+i) < pixel_count:
+           max(CP[0][0], CP[0][1]+i) < pixel_count:
             Gp[CP[0][0]+pixel_count+1, CP[0][1]+i] = tuple(point_color)
 
     return G
 
 cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
- double y_center=0, image_width=4, int max_iteration=50, int pixel_count=500,
- int level_sep=1, int color_num=30, base_color=Color('red')):
+                            double y_center=0, image_width=4,
+                            int max_iteration=50, int pixel_count=500,
+                            int level_sep=1, int color_num=30,
+                            base_color=Color('red')):
     r"""
-    Plots the Mandelbrot set in the complex plane for a family of polynomial maps.
+    Plot the Mandelbrot set in the complex plane for a family of polynomial maps.
 
     INPUT:
 
-    - ``f`` -- a one parameter family of polynomial maps defined over the multivariate polynomial ring in
-      z, c over the Complex field.
+    - ``f`` -- a one parameter family of polynomial maps defined over the
+      multivariate polynomial ring in z, c over the Complex field
 
-    - ``parameter`` -- designates which variable is used as the parameter.
-      If no parameter is provided, ``c`` will be used as the parameter.
+    - ``parameter`` -- designates which variable is used as the parameter
+      If no parameter is provided, ``c`` will be used as the parameter
 
-    - ``x_center`` -- double, real part of the center point in the complex plane.
+    - ``x_center`` -- double, real part of the center point in the complex plane
 
     - ``y_center`` -- double, imaginary part of the center point in the complex
-      plane.
+      plane
 
-    - ``image_width`` -- double, width of the image in the complex plane.
+    - ``image_width`` -- double, width of the image in the complex plane
 
     - ``max_iteration`` -- long, maximum number of iterations the map `f(z)`
-      considered.
+      considered
 
-    - ``pixel_count`` -- long, side length of image in number of pixels.
+    - ``pixel_count`` -- long, side length of image in number of pixels
 
-    - ``level_sep`` -- long, number of iterations between each color level.
+    - ``level_sep`` -- long, number of iterations between each color level
 
-    - ``color_num`` -- long, number of colors used to plot image.
+    - ``color_num`` -- long, number of colors used to plot image
 
-    - ``base_color`` -- list, RGB color used to determine the coloring of set.
+    - ``base_color`` -- list; RGB color used to determine the coloring of set
 
-    OUTPUT:
-
-    24-bit RGB image of a Mandelbrot set in the complex plane.
+    OUTPUT: 24-bit RGB image of a Mandelbrot set in the complex plane
 
     EXAMPLES::
 
@@ -698,7 +692,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
         f_real, f_imag, f_temp, escape_time, cf_list, cf
         int i, j, d, k, col, row, iteration
         double C, L, Rad, x_corner, y_corner, x_coor, y_coor, \
-         step_size, new_x, new_y
+            step_size, new_x, new_y
         I = CDF.gen()
         constant_c = True
 
@@ -709,14 +703,14 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
     P = f.parent()
 
     if P.base_ring() is CC:
-        if is_FractionField(P):
+        if isinstance(P, FractionField_generic):
             raise NotImplementedError("coefficients must be polynomials in the parameter")
         gen_list = list(P.gens())
         parameter = gen_list.pop(gen_list.index(parameter))
         variable = gen_list.pop()
 
     elif P.base_ring().base_ring() is CC:
-        if is_FractionField(P.base_ring()):
+        if isinstance(P.base_ring(), FractionField_generic):
             raise NotImplementedError("coefficients must be polynomials in the parameter")
         phi = P.flattening_morphism()
         f = phi(f)
@@ -734,7 +728,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
     image_width = abs(image_width)
 
     # Initialize an image to the color black and access the pixels
-    M = Image("RGB", (pixel_count,pixel_count), 'black')
+    M = Image("RGB", (pixel_count, pixel_count), 'black')
     pixel = M.pixels()
 
     # Take the given base color and create a list of evenly spaced
@@ -752,21 +746,21 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
         color_list[i] = tuple(color_list[i])
 
     # Split function into real and imaginary parts
-    R = PolynomialRing(CC, [variable,parameter])
+    R = PolynomialRing(CC, [variable, parameter])
     if len(R.gens()) > 2:
         raise NotImplementedError("base ring must have only 2 variables")
     z, c = R.gens()
     f = R(str(f))
     S = PolynomialRing(f.base_ring(), 'x,y,J,cr,ci')
-    x,y,J,cr,ci = S.gens()
+    x, y, J, cr, ci = S.gens()
     S2 = S.quotient_ring(J**2+1)
     phi = R.hom([x+y*J, cr+ci*J], S2)
     t = phi(f).lift()
     im = t.coefficient(J)
     re = t - im*J
 
-    f_real = fast_callable(re, vars=[x,y,cr,ci,J], domain=RDF)
-    f_imag = fast_callable(im, vars=[x,y,cr,ci,J], domain=RDF)
+    f_real = fast_callable(re, vars=[x, y, cr, ci, J], domain=RDF)
+    f_imag = fast_callable(im, vars=[x, y, cr, ci, J], domain=RDF)
 
     # Compute critical points
     try:
@@ -779,9 +773,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
     # If c is in the constant term of the polynomial, then the critical points
     # will be independent of c.
     if constant_c:
-        c_pts = []
-        for pt in critical_pts:
-            c_pts.append([pt.real(), pt.imag()])
+        c_pts = [[pt.real(), pt.imag()] for pt in critical_pts]
 
         # Calculate escape condition
         d = f.degree(z)
@@ -825,8 +817,8 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
                     iteration = 0
                     while new_x**2 + new_y**2 <= Rad**2 and iteration < escape_time:
                         sig_check()
-                        new_x, new_y = f_real(new_x, new_y, x_coor, y_coor,1), \
-                         f_imag(new_x, new_y, x_coor, y_coor,1)
+                        new_x, new_y = f_real(new_x, new_y, x_coor, y_coor, 1), \
+                            f_imag(new_x, new_y, x_coor, y_coor, 1)
                         iteration += 1
 
                     # For each point, we take the minimum number of iterations
@@ -846,17 +838,17 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
                     # Assign the pixel a color based on it's level. If we run out
                     # of colors, assign it the last color in the list.
                     if level < color_num:
-                        pixel[col,row] = color_list[level]
+                        pixel[col, row] = color_list[level]
                     else:
-                        pixel[col,row] = color_list[-1]
+                        pixel[col, row] = color_list[-1]
 
     # If the critical points of f depend on c, we must compute the different
     # critical points for each c.
     else:
         # Solve for critical points symbollically.
         with SR.temp_var() as w:
-            df = f.derivative(z).polynomial(z).subs({z:w})
-            critical_pts = solve(symbolic_expression(df)==0, w)
+            df = f.derivative(z).polynomial(z).subs({z: w})
+            critical_pts = solve(symbolic_expression(df) == 0, w)
         c_pts = []
         for pt in critical_pts:
             c_pts.append(fast_callable(pt.rhs(), vars=[c], domain=CDF))
@@ -882,7 +874,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
                 escape_time = max_iteration
 
                 # Calculate escape condition for each c value
-                f_temp = f.subs({c:x_coor+y_coor*I})
+                f_temp = f.subs({c: x_coor+y_coor*I})
                 cf_list = f_temp.coefficients()
                 a_n = cf_list.pop(0).abs()
                 C = 0
@@ -906,8 +898,8 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
                     iteration = 0
                     while new_x**2 + new_y**2 <= Rad**2 and iteration < escape_time:
                         sig_check()
-                        new_x, new_y = f_real(new_x, new_y, x_coor, y_coor,1), \
-                         f_imag(new_x, new_y, x_coor, y_coor,1)
+                        new_x, new_y = f_real(new_x, new_y, x_coor, y_coor, 1), \
+                            f_imag(new_x, new_y, x_coor, y_coor, 1)
                         iteration += 1
 
                     # For each point, we take the minimum number of iterations
@@ -927,48 +919,48 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
                     # Assign the pixel a color based on it's level. If we run out
                     # of colors, assign it the last color in the list.
                     if level < color_num:
-                        pixel[col,row] = color_list[level]
+                        pixel[col, row] = color_list[level]
                     else:
-                        pixel[col,row] = color_list[-1]
+                        pixel[col, row] = color_list[-1]
     return M
 
 cpdef general_julia(f, double x_center=0, double y_center=0, image_width=4,
- int max_iteration=50, int pixel_count=500, int level_sep=1, int color_num=30,
- base_color=[50,50,50]):
+                    int max_iteration=50, int pixel_count=500,
+                    int level_sep=1, int color_num=30,
+                    base_color=[50, 50, 50]):
     r"""
-    Plots Julia sets for general polynomials.
+    Plot Julia sets for general polynomials.
 
     EXAMPLES::
 
-    sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import general_julia
-    sage: from sage.plot.colors import Color
-    sage: R.<z> = CC[]
-    sage: f = z^3 - z + 1
-    sage: general_julia(f)
-    500x500px 24-bit RGB image
+        sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import general_julia
+        sage: from sage.plot.colors import Color
+        sage: R.<z> = CC[]
+        sage: f = z^3 - z + 1
+        sage: general_julia(f)
+        500x500px 24-bit RGB image
 
     ::
 
-    sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import general_julia
-    sage: from sage.plot.colors import Color
-    sage: R.<z> = CC[]
-    sage: f = z^5 - 1
-    sage: general_julia(f)
-    500x500px 24-bit RGB image
+        sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import general_julia
+        sage: from sage.plot.colors import Color
+        sage: R.<z> = CC[]
+        sage: f = z^5 - 1
+        sage: general_julia(f)
+        500x500px 24-bit RGB image
     """
 
     cdef:
-        M, pixel, color_list, R, z, S, x, y, S2, phi, t, im, re, a_n, df,
-        critical_pts, f_real, f_imag, J
-        int i, j, d, k, col, row, iteration, ii
-        double C, L, Rad, x_corner, y_corner, x_coor, y_coor, step_size, new_x, new_y
+        M, pixel, color_list, z, a_n
+        int i, j, d, k, col, row, iteration
+        double C, L, Rad, x_corner, y_corner, x_coor, y_coor, step_size
         I = CDF.gen()
 
     # Make sure image_width is positive
     image_width = abs(image_width)
 
     # Initialize an image to the color black and access the pixels
-    M = Image("RGB", (pixel_count,pixel_count), 'black')
+    M = Image("RGB", (pixel_count, pixel_count), 'black')
     pixel = M.pixels()
 
     # Take the given base color and create a list of evenly spaced
@@ -1036,7 +1028,7 @@ cpdef general_julia(f, double x_center=0, double y_center=0, image_width=4,
                 # Assign the pixel a color based on it's level. If we run out
                 # of colors, assign it the last color in the list.
                 if level < color_num:
-                    pixel[col,row] = color_list[level]
+                    pixel[col, row] = color_list[level]
                 else:
-                    pixel[col,row] = color_list[-1]
+                    pixel[col, row] = color_list[-1]
     return M

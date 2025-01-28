@@ -40,9 +40,8 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
     - ``maxiter`` -- integer; if convergence is not achieved in
       ``maxiter`` iterations, an error is raised. Must be `\geq 0`.
 
-    - ``full_output`` -- bool (default: ``False``), if ``True``, also return
-      object that contains information about convergence.
-
+    - ``full_output`` -- boolean (default: ``False``); if ``True``, also return
+      object that contains information about convergence
 
     EXAMPLES:
 
@@ -100,7 +99,6 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
         Traceback (most recent call last):
         ...
         RuntimeError: f appears to have no zero on the interval
-
     """
     try:
         return f.find_root(a=a,b=b,xtol=xtol,rtol=rtol,maxiter=maxiter,full_output=full_output)
@@ -155,6 +153,10 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
         b = max(s_1, s_2)
 
     import scipy.optimize
+    import numpy
+    if int(numpy.version.short_version[0]) > 1:
+        numpy.set_printoptions(legacy="1.25")
+
     g = lambda x: float(f(x))
     brentqRes = scipy.optimize.brentq(g, a, b,
                                  full_output=full_output, xtol=xtol, rtol=rtol, maxiter=maxiter)
@@ -215,14 +217,13 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
 
     INPUT:
 
-    - ``f`` -- a function of at most one variable.
+    - ``f`` -- a function of at most one variable
 
-    - ``a``, ``b`` -- endpoints of interval on which to minimize `f`.
+    - ``a``, ``b`` -- endpoints of interval on which to minimize `f`
 
     - ``tol`` -- the convergence tolerance
 
     - ``maxfun`` -- maximum function evaluations
-
 
     OUTPUT:
 
@@ -230,7 +231,6 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
       interval `[a,b]`
 
     - ``x`` -- (float) the point at which `f` takes on the minimum value
-
 
     EXAMPLES::
 
@@ -288,11 +288,15 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
     a = float(a)
     b = float(b)
     import scipy.optimize
+    import numpy
+    if int(numpy.version.short_version[0]) > 1:
+        numpy.set_printoptions(legacy="1.25")
+
     xmin, fval, iter, funcalls = scipy.optimize.fminbound(f, a, b, full_output=1, xtol=tol, maxfun=maxfun)
     return fval, xmin
 
 
-def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
+def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
              verbose=False, **args):
     r"""
     This function is an interface to a variety of algorithms for computing
@@ -300,24 +304,24 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
 
     INPUT:
 
-    - ``func`` -- Either a symbolic function or a Python function whose
+    - ``func`` -- either a symbolic function or a Python function whose
       argument is a tuple with `n` components
 
-    - ``x0`` -- Initial point for finding minimum.
+    - ``x0`` -- initial point for finding minimum
 
-    - ``gradient`` -- Optional gradient function. This will be computed
+    - ``gradient`` -- (optional) gradient function. This will be computed
       automatically for symbolic functions.  For Python functions, it allows
       the use of algorithms requiring derivatives.  It should accept a
       tuple of arguments and return a NumPy array containing the partial
       derivatives at that point.
 
-    - ``hessian`` --  Optional hessian function. This will be computed
+    - ``hessian`` -- (optional) hessian function. This will be computed
       automatically for symbolic functions. For Python functions, it allows
       the use of algorithms requiring derivatives. It should accept a tuple
       of arguments and return a NumPy array containing the second partial
       derivatives of the function.
 
-    - ``algorithm`` -- String specifying algorithm to use. Options are
+    - ``algorithm`` -- string specifying algorithm to use. Options are
       ``'default'`` (for Python functions, the simplex method is the default)
       (for symbolic functions bfgs is the default):
 
@@ -331,7 +335,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
 
       - ``'ncg'`` -- (newton-conjugate gradient) requires gradient and hessian
 
-    - ``verbose`` -- (optional, default: False) print convergence message
+    - ``verbose`` -- boolean (default: ``False``); print convergence message
 
     .. NOTE::
 
@@ -346,18 +350,18 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
 
         sage: vars = var('x y z')                                                       # needs sage.symbolic
         sage: f = 100*(y-x^2)^2 + (1-x)^2 + 100*(z-y^2)^2 + (1-y)^2                     # needs sage.symbolic
-        sage: minimize(f, [.1,.3,.4]) # abs tol 1e-6                                    # needs sage.symbolic
+        sage: minimize(f, [.1,.3,.4])  # abs tol 1e-6                                   # needs sage.symbolic
         (1.0, 1.0, 1.0)
 
     Try the newton-conjugate gradient method; the gradient and hessian are
     computed automatically::
 
-        sage: minimize(f, [.1, .3, .4], algorithm="ncg")  # abs tol 1e-6                # needs sage.symbolic
+        sage: minimize(f, [.1, .3, .4], algorithm='ncg')  # abs tol 1e-6                # needs sage.symbolic
         (1.0, 1.0, 1.0)
 
     We get additional convergence information with the `verbose` option::
 
-        sage: minimize(f, [.1, .3, .4], algorithm="ncg", verbose=True)                  # needs sage.symbolic
+        sage: minimize(f, [.1, .3, .4], algorithm='ncg', verbose=True)                  # needs sage.symbolic
         Optimization terminated successfully.
         ...
         (0.9999999..., 0.999999..., 0.999999...)
@@ -376,6 +380,8 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
         sage: def rosen(x):  # The Rosenbrock function
         ....:    return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
         sage: import numpy
+        sage: if int(numpy.version.short_version[0]) > 1:
+        ....:     numpy.set_printoptions(legacy="1.25")
         sage: from numpy import zeros
         sage: def rosen_der(x):
         ....:    xm = x[1r:-1r]
@@ -387,12 +393,15 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
         ....:    der[-1] = 200r*(x[-1r]-x[-2r]**2r)
         ....:    return der
         sage: minimize(rosen, [.1,.3,.4], gradient=rosen_der,  # abs tol 1e-6
-        ....:          algorithm="bfgs")
+        ....:          algorithm='bfgs')
         (1.0, 1.0, 1.0)
     """
     from sage.structure.element import Expression
     from sage.ext.fast_callable import fast_callable
     import numpy
+    if int(numpy.version.short_version[0]) > 1:
+        numpy.set_printoptions(legacy="1.25")
+
     from scipy import optimize
     if isinstance(func, Expression):
         var_list = func.variables()
@@ -400,7 +409,9 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
         fast_f = fast_callable(func, vars=var_names, domain=float)
         f = lambda p: fast_f(*p)
         gradient_list = func.gradient()
-        fast_gradient_functions = [fast_callable(gradient_list[i], vars=var_names, domain=float)  for i in range(len(gradient_list))]
+        fast_gradient_functions = [fast_callable(gradient_list[i],
+                                                 vars=var_names, domain=float)
+                                   for i in range(len(gradient_list))]
         gradient = lambda p: numpy.array([ a(*p) for a in fast_gradient_functions])
     else:
         f = func
@@ -431,14 +442,13 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
     return vector(RDF, min)
 
 
-def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args):
+def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **args):
     r"""
     Minimize a function with constraints.
 
-
     INPUT:
 
-    - ``func`` -- Either a symbolic function, or a Python function whose
+    - ``func`` -- either a symbolic function, or a Python function whose
       argument is a tuple with `n` components
 
     - ``cons`` -- constraints. This should be either a function or list of
@@ -450,19 +460,18 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
       of intervals and there are no constraints for a given variable, that
       component can be (``None``, ``None``).
 
-    - ``x0`` -- Initial point for finding minimum
+    - ``x0`` -- initial point for finding minimum
 
-    - ``algorithm`` -- Optional, specify the algorithm to use:
+    - ``algorithm`` -- (optional) specify the algorithm to use:
 
-      - ``'default'``  -- default choices
+      - ``'default'`` -- default choices
 
-      - ``'l-bfgs-b'`` -- only effective if you specify bound constraints.
-        See [ZBN1997]_.
+      - ``'l-bfgs-b'`` -- only effective if you specify bound constraints;
+        see [ZBN1997]_
 
-    - ``gradient`` -- Optional gradient function. This will be computed
+    - ``gradient`` -- (optional) gradient function. This will be computed
       automatically for symbolic functions. This is only used when the
       constraints are specified as a list of intervals.
-
 
     EXAMPLES:
 
@@ -525,11 +534,12 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
         sage: c2(y,x) = 1-y
         sage: minimize_constrained(f, [c1, c2], (0,0))
         (1.0, 0.0)
-
     """
     from sage.structure.element import Expression
     from sage.ext.fast_callable import fast_callable
     import numpy
+    if int(numpy.version.short_version[0]) > 1:
+        numpy.set_printoptions(legacy="1.25")
     from scipy import optimize
     function_type = type(lambda x,y: x+y)
 
@@ -567,7 +577,7 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
                     min = optimize.fmin_tnc(f, x0, approx_grad=True, bounds=cons, messages=0, **args)[0]
         elif isinstance(cons[0], (function_type, Expression)):
             min = optimize.fmin_cobyla(f, x0, cons, **args)
-    elif isinstance(cons, function_type) or isinstance(cons, Expression):
+    elif isinstance(cons, (function_type, Expression)):
         min = optimize.fmin_cobyla(f, x0, cons, **args)
     return vector(RDF, min)
 
@@ -580,34 +590,33 @@ def find_fit(data, model, initial_guess=None, parameters=None, variables=None, s
 
     INPUT:
 
-    - ``data`` -- A two dimensional table of floating point numbers of the
+    - ``data`` -- a two dimensional table of floating point numbers of the
       form `[[x_{1,1}, x_{1,2}, \ldots, x_{1,k}, f_1],
       [x_{2,1}, x_{2,2}, \ldots, x_{2,k}, f_2],
       \ldots,
       [x_{n,1}, x_{n,2}, \ldots, x_{n,k}, f_n]]` given as either a list of
       lists, matrix, or numpy array.
 
-    - ``model`` -- Either a symbolic expression, symbolic function, or a
+    - ``model`` -- either a symbolic expression, symbolic function, or a
       Python function. ``model`` has to be a function of the variables
       `(x_1, x_2, \ldots, x_k)` and free parameters
       `(a_1, a_2, \ldots, a_l)`.
 
-    - ``initial_guess`` -- (default: ``None``) Initial estimate for the
+    - ``initial_guess`` -- (default: ``None``) initial estimate for the
       parameters `(a_1, a_2, \ldots, a_l)`, given as either a list, tuple,
       vector or numpy array. If ``None``, the default estimate for each
       parameter is `1`.
 
-    - ``parameters`` -- (default: ``None``) A list of the parameters
+    - ``parameters`` -- (default: ``None``) a list of the parameters
       `(a_1, a_2, \ldots, a_l)`. If model is a symbolic function it is
       ignored, and the free parameters of the symbolic function are used.
 
-    - ``variables`` -- (default: ``None``) A list of the variables
+    - ``variables`` -- (default: ``None``) a list of the variables
       `(x_1, x_2, \ldots, x_k)`. If model is a symbolic function it is
       ignored, and the variables of the symbolic function are used.
 
-    - ``solution_dict`` -- (default: ``False``) if ``True``, return the
-      solution as a dictionary rather than an equation.
-
+    - ``solution_dict`` -- boolean (default: ``False``); if ``True``, return the
+      solution as a dictionary rather than an equation
 
     EXAMPLES:
 
@@ -652,6 +661,8 @@ def find_fit(data, model, initial_guess=None, parameters=None, variables=None, s
     ``lmdif`` and ``lmder`` algorithms.
     """
     import numpy
+    if int(numpy.version.short_version[0]) > 1:
+        numpy.set_printoptions(legacy="1.25")
 
     if not isinstance(data, numpy.ndarray):
         try:
@@ -729,7 +740,7 @@ def find_fit(data, model, initial_guess=None, parameters=None, variables=None, s
         estimated_params = estimated_params.tolist()
 
     if solution_dict:
-        return {i0: i1 for i0, i1 in zip(parameters, estimated_params)}
+        return dict(zip(parameters, estimated_params))
 
     return [item[0] == item[1] for item in zip(parameters, estimated_params)]
 
@@ -757,11 +768,11 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
     INPUT:
 
     - ``items`` -- list or dict; either a list of real values (the items'
-      weight), or a dictionary associating to each item its weight.
+      weight), or a dictionary associating to each item its weight
 
-    - ``maximum`` -- (default: 1); the maximal size of a bin
+    - ``maximum`` -- (default: 1) the maximal size of a bin
 
-    - ``k`` -- integer (default: ``None``); Number of bins
+    - ``k`` -- integer (default: ``None``); number of bins:
 
       - When set to an integer value, the function returns a partition of the
         items into `k` bins if possible, and raises an exception otherwise.
@@ -769,7 +780,7 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
       - When set to ``None``, the function returns a partition of the items
         using the least possible number of bins.
 
-    - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear Programming
+    - ``solver`` -- (default: ``None``) specify a Mixed Integer Linear Programming
       (MILP) solver to be used. If set to ``None``, the default one is used. For
       more information on MILP solvers and which default solver is used, see
       the method
@@ -777,11 +788,11 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
       of the class
       :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set
       to 0 by default, which means quiet.
 
     - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
-      inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`.
+      inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`
 
     OUTPUT:
 
@@ -848,7 +859,7 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
         TypeError: parameter items must be a list or a dictionary.
     """
     if isinstance(items, list):
-        weight = {i:w for i,w in enumerate(items)}
+        weight = dict(enumerate(items))
     elif isinstance(items, dict):
         weight = items
     else:

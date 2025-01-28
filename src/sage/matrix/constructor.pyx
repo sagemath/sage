@@ -37,7 +37,7 @@ def matrix(*args, **kwds):
 
     INPUT:
 
-    The matrix command takes the entries of a matrix, optionally
+    The :func:`matrix` command takes the entries of a matrix, optionally
     preceded by a ring and the dimensions of the matrix, and returns a
     matrix.
 
@@ -49,11 +49,11 @@ def matrix(*args, **kwds):
     columns. You can create a matrix of zeros by passing an empty list
     or the integer zero for the entries.  To construct a multiple of
     the identity (`cI`), you can specify square dimensions and pass in
-    `c`. Calling matrix() with a Sage object may return something that
-    makes sense. Calling matrix() with a NumPy array will convert the
+    `c`. Calling :func:`matrix` with a Sage object may return something that
+    makes sense. Calling :func:`matrix` with a NumPy array will convert the
     array to a matrix.
 
-    All arguments (even the positional) are optional.
+    All arguments (even the positional ones) are optional.
 
     Positional and keyword arguments:
 
@@ -62,32 +62,39 @@ def matrix(*args, **kwds):
       determine this from the given entries, falling back to ``ZZ`` if
       no entries are given.
 
-    - ``nrows`` -- the number of rows in the matrix.
+    - ``nrows`` -- the number of rows in the matrix, or a finite or
+      enumerated family of arbitrary objects that index the rows of the matrix
 
-    - ``ncols`` -- the number of columns in the matrix.
+    - ``ncols`` -- the number of columns in the matrix, or a finite or
+      enumerated family of arbitrary objects that index the columns of the matrix
 
-    - ``entries`` -- see examples below.
+    - ``entries`` -- see examples below
 
-    If either ``nrows`` or ``ncols`` is given as keyword argument, then
-    no positional arguments ``nrows`` and ``ncols`` may be given.
+    If any of ``nrows``, ``ncols``, ``row_keys``, ``column_keys`` is
+    given as keyword argument, then none of these may be given as
+    positional arguments.
 
     Keyword-only arguments:
 
-    - ``sparse`` -- (boolean) create a sparse matrix. This defaults to
+    - ``sparse`` -- boolean; create a sparse matrix. This defaults to
       ``True`` when the entries are given as a dictionary, otherwise
       defaults to ``False``.
 
-    - ``space`` -- matrix space which will be the parent of the output
-      matrix. This determines ``base_ring``, ``nrows``, ``ncols`` and
-      ``sparse``.
+    - ``row_keys`` -- a finite or enumerated family of arbitrary objects
+      that index the rows of the matrix
 
-    - ``immutable`` -- (boolean) make the matrix immutable. By default,
+    - ``column_keys`` -- a finite or enumerated family of arbitrary objects
+      that index the columns of the matrix
+
+    - ``space`` -- matrix space which will be the parent of the output
+      matrix. This determines ``base_ring``, ``nrows``, ``row_keys``,
+      ``ncols``, ``column_keys``, and ``sparse``.
+
+    - ``immutable`` -- boolean; make the matrix immutable. By default,
       the output matrix is mutable.
 
-
-    OUTPUT:
-
-    a matrix
+    OUTPUT: a matrix or, more generally, a homomorphism between free
+    modules
 
     EXAMPLES::
 
@@ -135,8 +142,8 @@ def matrix(*args, **kwds):
 
     ::
 
-        sage: v1=vector((1,2,3))
-        sage: v2=vector((4,5,6))
+        sage: v1 = vector((1,2,3))
+        sage: v2 = vector((4,5,6))
         sage: m = matrix([v1,v2]); m; m.parent()
         [1 2 3]
         [4 5 6]
@@ -144,28 +151,28 @@ def matrix(*args, **kwds):
 
     ::
 
-        sage: m = matrix(QQ,2,[1,2,3,4,5,6]); m; m.parent()
+        sage: m = matrix(QQ, 2, [1,2,3,4,5,6]); m; m.parent()
         [1 2 3]
         [4 5 6]
         Full MatrixSpace of 2 by 3 dense matrices over Rational Field
 
     ::
 
-        sage: m = matrix(QQ,2,3,[1,2,3,4,5,6]); m; m.parent()
+        sage: m = matrix(QQ, 2, 3, [1,2,3,4,5,6]); m; m.parent()
         [1 2 3]
         [4 5 6]
         Full MatrixSpace of 2 by 3 dense matrices over Rational Field
 
     ::
 
-        sage: m = matrix({(0,1): 2, (1,1):2/5}); m; m.parent()
+        sage: m = matrix({(0,1): 2, (1,1): 2/5}); m; m.parent()
         [  0   2]
         [  0 2/5]
         Full MatrixSpace of 2 by 2 sparse matrices over Rational Field
 
     ::
 
-        sage: m = matrix(QQ,2,3,{(1,1): 2}); m; m.parent()
+        sage: m = matrix(QQ, 2, 3, {(1,1): 2}); m; m.parent()
         [0 0 0]
         [0 2 0]
         Full MatrixSpace of 2 by 3 sparse matrices over Rational Field
@@ -234,12 +241,32 @@ def matrix(*args, **kwds):
 
     ::
 
-        sage: M = Matrix([[1,2,3],[4,5,6],[7,8,9]], immutable=True)
+        sage: M = Matrix([[1,2,3], [4,5,6], [7,8,9]], immutable=True)
         sage: M[0] = [9,9,9]
         Traceback (most recent call last):
         ...
         ValueError: matrix is immutable; please change a copy instead
         (i.e., use copy(M) to change a copy of M).
+
+    Using ``row_keys`` and ``column_keys``::
+
+        sage: M = matrix([[1,2,3], [4,5,6]],
+        ....:            column_keys=['a','b','c'], row_keys=['u','v']); M
+        Generic morphism:
+          From: Free module generated by {'a', 'b', 'c'} over Integer Ring
+          To:   Free module generated by {'u', 'v'} over Integer Ring
+        sage: print(M._unicode_art_matrix())
+          a b c
+        u⎛1 2 3⎞
+        v⎝4 5 6⎠
+
+    It is allowed to specify dimensions redundantly::
+
+        sage: M = matrix(2, 3, [[1,2,3], [4,5,6]],
+        ....:            column_keys=['a','b','c'], row_keys=['u','v']); M
+        Generic morphism:
+        From: Free module generated by {'a', 'b', 'c'} over Integer Ring
+        To:   Free module generated by {'u', 'v'} over Integer Ring
 
     TESTS:
 
@@ -645,16 +672,13 @@ def matrix(*args, **kwds):
       :class:`MatrixArgs`, see :issue:`24742`
     """
     immutable = kwds.pop('immutable', False)
-    M = MatrixArgs(*args, **kwds).matrix()
-    if immutable:
-        M.set_immutable()
-    return M
-
-
-Matrix = matrix
+    return MatrixArgs(*args, **kwds).element(immutable=immutable)
 
 
 from sage.matrix.special import *
+
+
+Matrix = matrix
 
 
 @matrix_method

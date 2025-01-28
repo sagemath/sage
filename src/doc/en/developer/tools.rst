@@ -49,7 +49,7 @@ available::
   --tox [options] <files|dirs> -- general entry point for testing
                                   and linting of the Sage library
      -e <envlist>     -- run specific test environments; default:
-                         doctest,coverage,startuptime,pycodestyle-minimal,relint,codespell,rst
+                         doctest,coverage,startuptime,pycodestyle-minimal,relint,codespell,rst,ruff-minimal
         doctest                -- run the Sage doctester
                                   (same as "sage -t")
         coverage               -- give information about doctest coverage of files
@@ -60,11 +60,13 @@ available::
         relint                 -- check whether some forbidden patterns appear
         codespell              -- check for misspelled words in source code
         rst                    -- validate Python docstrings markup as reStructuredText
+        ruff-minimal           -- check against Sage's minimal style conventions
         coverage.py            -- run the Sage doctester with Coverage.py
         coverage.py-html       -- run the Sage doctester with Coverage.py, generate HTML report
         pyright                -- run the static typing checker pyright
         pycodestyle            -- check against the Python style conventions of PEP8
         cython-lint            -- check Cython files for code style
+        ruff                   -- check against Python style conventions
      -p auto          -- run test environments in parallel
      --help           -- show tox help
 
@@ -287,6 +289,20 @@ for Python code, written in Rust.
 It comes with a large choice of possible checks, and has the capacity
 to fix some of the warnings it emits.
 
+Sage defines two configurations for ruff.  The command ``./sage -tox -e ruff-minimal`` uses
+ruff in a minimal configuration. As of Sage 10.3, the entire Sage library conforms to this
+configuration. When preparing a Sage PR, developers should verify that
+``./sage -tox -e ruff-minimal`` passes.
+
+The second configuration is used with the command ``./sage -tox -e ruff`` and runs a
+more thorough check.  When preparing a PR that adds new code,
+developers should verify that ``./sage -tox -e ruff`` does not
+issue warnings for the added code.  This will avoid later cleanup
+PRs as the Sage codebase is moving toward full PEP 8 compliance.
+
+On the other hand, it is usually not advisable to mix coding-style
+fixes with productive changes on the same PR because this would
+makes it harder for reviewers to evaluate the changes.
 
 .. _section-tools-relint:
 

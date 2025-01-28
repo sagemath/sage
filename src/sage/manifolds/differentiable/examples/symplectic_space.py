@@ -4,7 +4,6 @@ Symplectic vector spaces
 AUTHORS:
 
 - Tobias Diez (2021): initial version
-
 """
 
 # *****************************************************************************
@@ -17,12 +16,14 @@ AUTHORS:
 # *****************************************************************************
 from __future__ import annotations
 
-from typing import Optional, Tuple
+from typing import Optional
 
 from sage.categories.manifolds import Manifolds
 from sage.manifolds.differentiable.examples.euclidean import EuclideanSpace
-from sage.manifolds.differentiable.symplectic_form import (SymplecticForm,
-                                                           SymplecticFormParal)
+from sage.manifolds.differentiable.symplectic_form import (
+    SymplecticForm,
+    SymplecticFormParal,
+)
 from sage.rings.real_mpfr import RR
 
 
@@ -44,18 +45,19 @@ class StandardSymplecticSpace(EuclideanSpace):
         symplectic_latex_name: Optional[str] = None,
         start_index: int = 1,
         base_manifold: Optional[StandardSymplecticSpace] = None,
-        names: Optional[Tuple[str]] = None,
+        names: Optional[tuple[str]] = None,
     ):
         r"""
         INPUT:
 
         - ``dimension`` -- dimension of the space over the real field (has to be even)
         - ``name`` -- name (symbol) given to the underlying vector space;
-            if ``None``, the name will be set to ``'Rn'``, where ``n`` is the ``dimension``
-        - ``latex_name`` -- LaTeX symbol to denote the underlying vector space; if ``None``, it is set to ``name``
+          if ``None``, the name will be set to ``'Rn'``, where ``n`` is the ``dimension``
+        - ``latex_name`` -- LaTeX symbol to denote the underlying vector space;
+          if ``None``, it is set to ``name``
         - ``coordinates`` -- (default: ``'Cartesian'``) the
-            type of coordinates to be initialized at the Euclidean space
-            creation; allowed values are
+          type of coordinates to be initialized at the Euclidean space
+          creation; allowed values are
 
             - ``'Cartesian'`` (canonical coordinates on `\RR^{2n}`)
             - ``'polar'`` for ``dimension=2`` only (see
@@ -112,7 +114,6 @@ class StandardSymplecticSpace(EuclideanSpace):
             Inner product matrix:
             [0.000000000000000 -1.00000000000000]
             [ 1.00000000000000 0.000000000000000]
-
         """
         # Check that manifold is even dimensional
         if dimension % 2 == 1:

@@ -27,6 +27,8 @@ AUTHORS:
 #*****************************************************************************
 
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
+
+
 class VirasoroLieConformalAlgebra(GradedLieConformalAlgebra):
     """
     The Virasoro Lie Conformal algebra over `R`.
@@ -34,7 +36,7 @@ class VirasoroLieConformalAlgebra(GradedLieConformalAlgebra):
     INPUT:
 
     - ``R`` -- a commutative ring; behaviour is undefined if `R` is
-      not a Field of characteristic zero.
+      not a Field of characteristic zero
 
     EXAMPLES::
 
@@ -53,7 +55,7 @@ class VirasoroLieConformalAlgebra(GradedLieConformalAlgebra):
     """
     def __init__(self, R):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 

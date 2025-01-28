@@ -47,13 +47,13 @@ AUTHORS:
 
 from sage.misc.cachefunc import cached_function, cached_method, cached_in_parent_method
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
+from sage.interfaces.gap3 import gap3
 from sage.rings.integer_ring import ZZ
 from sage.combinat.root_system.reflection_group_complex import ComplexReflectionGroup, IrreducibleComplexReflectionGroup
-from sage.misc.sage_eval import sage_eval
 from sage.combinat.root_system.reflection_group_element import RealReflectionGroupElement
 
 
-def ReflectionGroup(*args,**kwds):
+def ReflectionGroup(*args, **kwds):
     r"""
     Construct a finite (complex or real) reflection group as a Sage
     permutation group by fetching the permutation representation of the
@@ -61,7 +61,7 @@ def ReflectionGroup(*args,**kwds):
 
     INPUT:
 
-    can be one or multiple of the following:
+    Can be one or multiple of the following:
 
     - a triple `(r, p, n)` with `p` divides `r`, which denotes the group
       `G(r, p, n)`
@@ -140,24 +140,24 @@ def ReflectionGroup(*args,**kwds):
             X = arg
 
         # precheck for valid input data
-        if not (isinstance(X, (CartanType_abstract,tuple)) or (X in ZZ and 4 <= X <= 37)):
+        if not (isinstance(X, (CartanType_abstract, tuple)) or (X in ZZ and 4 <= X <= 37)):
             raise ValueError(error_msg % X)
 
         # transforming two reducible types and an irreducible type
         if isinstance(X, CartanType_abstract):
             if not X.is_finite():
                 raise ValueError(error_msg % X)
-            if hasattr(X,"cartan_type"):
+            if hasattr(X, "cartan_type"):
                 X = X.cartan_type()
             if X.is_irreducible():
                 W_types.extend([(X.letter, X.n)])
             else:
-                W_types.extend([(x.letter, x.n) for x in X.component_types()])
+                W_types.extend((x.letter, x.n) for x in X.component_types())
 
-        elif X == (2,2,2) or X == ('I',2):
-            W_types.extend([('A',1), ('A',1)])
+        elif X == (2, 2, 2) or X == ('I', 2):
+            W_types.extend([('A', 1), ('A', 1)])
 
-        elif X == (2,2,3):
+        elif X == (2, 2, 3):
             W_types.extend([('A', 3)])
 
         else:
@@ -295,22 +295,22 @@ class RealReflectionGroup(ComplexReflectionGroup):
         type_str = type_str[:-3]
         return 'Reducible real reflection group of rank %s and type %s' % (self._rank, type_str)
 
-    def iteration(self, algorithm="breadth", tracking_words=True):
+    def iteration(self, algorithm='breadth', tracking_words=True):
         r"""
         Return an iterator going through all elements in ``self``.
 
         INPUT:
 
-        - ``algorithm`` (default: ``'breadth'``) -- must be one of
+        - ``algorithm`` -- (default: ``'breadth'``) must be one of
           the following:
 
-          * ``'breadth'`` - iterate over in a linear extension of the
+          * ``'breadth'`` -- iterate over in a linear extension of the
             weak order
-          * ``'depth'`` - iterate by a depth-first-search
-          * ``'parabolic'`` - iterate by using parabolic subgroups
+          * ``'depth'`` -- iterate by a depth-first-search
+          * ``'parabolic'`` -- iterate by using parabolic subgroups
 
-        - ``tracking_words`` (default: ``True``) -- whether or not to keep
-          track of the reduced words and store them in ``_reduced_word``
+        - ``tracking_words`` -- boolean (default: ``True``); whether or not to
+          keep track of the reduced words and store them in ``_reduced_word``
 
         .. NOTE::
 
@@ -373,7 +373,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
             (1,7)(3,5)(4,8) [0, 1, 0]
             (1,5)(2,6)(3,7)(4,8) [0, 1, 0, 1]
         """
-        return self.iteration(algorithm="breadth", tracking_words=True)
+        return self.iteration(algorithm='breadth', tracking_words=True)
 
     @cached_method
     def bipartite_index_set(self):
@@ -695,7 +695,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
         from sage.combinat.root_system.reflection_group_element import _gap_return
         J_inv = [self._index_set_inverse[j] + 1 for j in J]
         S = str(gap3('ReducedRightCosetRepresentatives(%s,ReflectionSubgroup(%s,%s))' % (self._gap_group._name, self._gap_group._name, J_inv)))
-        return sage_eval(_gap_return(S), locals={'self': self})
+        return [self(w, check=False) for w in _gap_return(S)]
 
     def simple_root_index(self, i):
         r"""
@@ -725,12 +725,12 @@ class RealReflectionGroup(ComplexReflectionGroup):
 
         INPUT:
 
-        - ``x`` - an element in the group `W`
-        - ``y`` - an element in the group `W`
-        - ``side`` (default: ``'upper'``) -- must be one of the following:
+        - ``x`` -- an element in the group `W`
+        - ``y`` -- an element in the group `W`
+        - ``side`` -- (default: ``'upper'``) must be one of the following:
 
-          * ``'upper'`` - return the upper Bruhat cone of the interval [``x``, ``y``]
-          * ``'lower'`` - return the lower Bruhat cone of the interval [``x``, ``y``]
+          * ``'upper'`` -- return the upper Bruhat cone of the interval [``x``, ``y``]
+          * ``'lower'`` -- return the lower Bruhat cone of the interval [``x``, ``y``]
 
         - ``backend`` -- string (default: ``'cdd'``); the backend to use to create the polyhedron
 
@@ -820,8 +820,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
                      if self.fix_space().is_subspace(T[i].fix_space())]
             S = str(gap3('ReducedRightCosetRepresentatives(%s,ReflectionSubgroup(%s,%s))' % (W._gap_group._name, W._gap_group._name, T_fix)))
             from sage.combinat.root_system.reflection_group_element import _gap_return
-            return sage_eval(_gap_return(S, coerce_obj='W'),
-                             locals={'self': self, 'W': W})
+            return [W(w, check=False) for w in _gap_return(S)]
 
         def left_coset_representatives(self):
             r"""

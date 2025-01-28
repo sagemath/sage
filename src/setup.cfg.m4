@@ -9,9 +9,8 @@ license_files = LICENSE.txt
 include(`setup_cfg_metadata.m4')dnl'
 
 [options]
-python_requires = >=3.9, <3.13
+python_requires = >=3.9, <3.14
 install_requires =
-    SPKG_INSTALL_REQUIRES_sage_conf
     SPKG_INSTALL_REQUIRES_six
 dnl From build/pkgs/sagelib/dependencies
     SPKG_INSTALL_REQUIRES_conway_polynomials
@@ -34,7 +33,7 @@ dnl From Makefile.in: SAGERUNTIME
     SPKG_INSTALL_REQUIRES_ipython
     SPKG_INSTALL_REQUIRES_pexpect
 dnl From Makefile.in: DOC_DEPENDENCIES
-    SPKG_INSTALL_REQUIRES_sphinx
+    sphinx >=5.2, <9
     SPKG_INSTALL_REQUIRES_networkx
     SPKG_INSTALL_REQUIRES_scipy
     SPKG_INSTALL_REQUIRES_sympy
@@ -130,4 +129,10 @@ sage =
     ext_data/threejs/*
 
 [options.extras_require]
-R = SPKG_INSTALL_REQUIRES_rpy2
+R        = SPKG_INSTALL_REQUIRES_rpy2
+bliss    = SPKG_INSTALL_REQUIRES_sagemath_bliss
+coxeter3 = SPKG_INSTALL_REQUIRES_sagemath_coxeter3
+mcqd     = SPKG_INSTALL_REQUIRES_sagemath_mcqd
+meataxe  = SPKG_INSTALL_REQUIRES_sagemath_meataxe
+sirocco  = SPKG_INSTALL_REQUIRES_sagemath_sirocco
+tdlib    = SPKG_INSTALL_REQUIRES_sagemath_tdlib

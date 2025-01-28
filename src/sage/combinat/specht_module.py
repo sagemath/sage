@@ -37,7 +37,8 @@ from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModu
 from sage.modules.free_module_element import vector
 from sage.categories.modules_with_basis import ModulesWithBasis
 
-class SymmetricGroupRepresentation:
+
+class SymmetricGroupRepresentation(Representation_abstract):
     """
     Mixin class for symmetric group (algebra) representations.
     """
@@ -48,22 +49,11 @@ class SymmetricGroupRepresentation:
         EXAMPLES::
 
             sage: SM = Partition([3,1,1]).specht_module(GF(3))
-            sage: TestSuite(SM).run()
-        """
-        self._semigroup = SGA.group()
-        self._semigroup_algebra = SGA
-
-    def side(self):
-        r"""
-        Return the side of the action defining ``self``.
-
-        EXAMPLES::
-
-            sage: SM = Partition([3,1,1]).specht_module(GF(3))
             sage: SM.side()
             'left'
+            sage: TestSuite(SM).run()
         """
-        return "left"
+        Representation_abstract.__init__(self, SGA.group(), "left", SGA)
 
     @cached_method
     def frobenius_image(self):
@@ -123,145 +113,12 @@ class SymmetricGroupRepresentation:
         s = SymmetricFunctions(QQ).s()
         G = self._semigroup
         CCR = [(elt, elt.cycle_type()) for elt in G.conjugacy_classes_representatives()]
-        return s(p.sum(QQ(self.representation_matrix(elt).trace()) / la.centralizer_size() * p[la]
+        B = self.basis()
+        return s(p.sum(QQ(sum((elt * B[k])[k] for k in B.keys())) / la.centralizer_size() * p[la]
                        for elt, la in CCR))
 
-    # TODO: Move these methods up to methods of general representations
 
-    def representation_matrix(self, elt):
-        r"""
-        Return the matrix corresponding to the left action of the symmetric
-        group (algebra) element ``elt`` on ``self``.
-
-        EXAMPLES::
-
-            sage: SM = Partition([3,1,1]).specht_module(QQ)
-            sage: SM.representation_matrix(Permutation([2,1,3,5,4]))
-            [-1  0  0  0  0  0]
-            [ 0  0  0 -1  0  0]
-            [ 1  0  0 -1  1  0]
-            [ 0 -1  0  0  0  0]
-            [ 1 -1  1  0  0  0]
-            [ 0 -1  0  1  0 -1]
-
-            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
-            sage: SM = SGA.specht_module([(0,0), (0,1), (0,2), (1,0), (2,0)])
-            sage: SM.representation_matrix(Permutation([2,1,3,5,4]))
-            [-1  0  0  1 -1  0]
-            [ 0  0  1  0 -1  1]
-            [ 0  1  0 -1  0  1]
-            [ 0  0  0  0 -1  0]
-            [ 0  0  0 -1  0  0]
-            [ 0  0  0  0  0 -1]
-            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
-            sage: SM.representation_matrix(SGA([3,1,5,2,4]))
-            [ 0 -1  0  1  0 -1]
-            [ 0  0  0  0  0 -1]
-            [ 0  0  0 -1  0  0]
-            [ 0  0 -1  0  1 -1]
-            [ 1  0  0 -1  1  0]
-            [ 0  0  0  0  1  0]
-        """
-        return matrix(self.base_ring(), [(elt * b).to_vector() for b in self.basis()])
-
-    @cached_method
-    def character(self):
-        r"""
-        Return the character of ``self``.
-
-        EXAMPLES::
-
-            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
-            sage: SM = SGA.specht_module([3,2])
-            sage: SM.character()
-            (5, 1, 1, -1, 1, -1, 0)
-            sage: matrix(SGA.specht_module(la).character() for la in Partitions(5))
-            [ 1  1  1  1  1  1  1]
-            [ 4  2  0  1 -1  0 -1]
-            [ 5  1  1 -1  1 -1  0]
-            [ 6  0 -2  0  0  0  1]
-            [ 5 -1  1 -1 -1  1  0]
-            [ 4 -2  0  1  1  0 -1]
-            [ 1 -1  1  1 -1 -1  1]
-
-            sage: SGA = SymmetricGroupAlgebra(QQ, SymmetricGroup(5))
-            sage: SM = SGA.specht_module([3,2])
-            sage: SM.character()
-            Character of Symmetric group of order 5! as a permutation group
-            sage: SM.character().values()
-            [5, 1, 1, -1, 1, -1, 0]
-            sage: matrix(SGA.specht_module(la).character().values() for la in reversed(Partitions(5)))
-            [ 1 -1  1  1 -1 -1  1]
-            [ 4 -2  0  1  1  0 -1]
-            [ 5 -1  1 -1 -1  1  0]
-            [ 6  0 -2  0  0  0  1]
-            [ 5  1  1 -1  1 -1  0]
-            [ 4  2  0  1 -1  0 -1]
-            [ 1  1  1  1  1  1  1]
-            sage: SGA.group().character_table()
-            [ 1 -1  1  1 -1 -1  1]
-            [ 4 -2  0  1  1  0 -1]
-            [ 5 -1  1 -1 -1  1  0]
-            [ 6  0 -2  0  0  0  1]
-            [ 5  1  1 -1  1 -1  0]
-            [ 4  2  0  1 -1  0 -1]
-            [ 1  1  1  1  1  1  1]
-        """
-        G = self._semigroup
-        chi = [self.representation_matrix(g).trace()
-               for g in G.conjugacy_classes_representatives()]
-        try:
-            return G.character(chi)
-        except AttributeError:
-            return vector(chi, immutable=True)
-
-    @cached_method
-    def brauer_character(self):
-        r"""
-        Return the Brauer character of ``self``.
-
-        EXAMPLES::
-
-            sage: SGA = SymmetricGroupAlgebra(GF(2), 5)
-            sage: SM = SGA.specht_module([3,2])
-            sage: SM.brauer_character()
-            (5, -1, 0)
-            sage: SM.simple_module().brauer_character()
-            (4, -2, -1)
-        """
-        from sage.rings.number_field.number_field import CyclotomicField
-        from sage.arith.functions import lcm
-        G = self._semigroup
-        p = self.base_ring().characteristic()
-        # We manually compute the order since a Permutation does not implement order()
-        chi = []
-        for g in G.conjugacy_classes_representatives():
-            if p.divides(lcm(g.cycle_type())):
-                # ignore the non-p-regular elements
-                continue
-            evals = self.representation_matrix(g).eigenvalues()
-            K = evals[0].parent()
-            val = 0
-            orders = {la: la.multiplicative_order() for la in evals if la != K.one()}
-            zetas = {o: CyclotomicField(o).gen() for o in orders.values()}
-            prims = {o: K.zeta(o) for o in orders.values()}
-            for la in evals:
-                if la == K.one():
-                    val += 1
-                    continue
-                o = la.multiplicative_order()
-                zeta = zetas[o]
-                prim = prims[o]
-                for deg in range(o):
-                    if prim ** deg == la:
-                        val += zeta ** deg
-                        break
-            chi.append(val)
-
-        return vector(chi, immutable=True)
-
-
-class SpechtModule(SubmoduleWithBasis, SymmetricGroupRepresentation, Representation_abstract):
+class SpechtModule(SymmetricGroupRepresentation, SubmoduleWithBasis):
     r"""
     A Specht module.
 
@@ -541,7 +398,7 @@ class SpechtModule(SubmoduleWithBasis, SymmetricGroupRepresentation, Representat
             return None
 
 
-class TabloidModule(SymmetricGroupRepresentation, Representation_abstract):
+class TabloidModule(SymmetricGroupRepresentation, CombinatorialFreeModule):
     r"""
     The vector space of all tabloids of a fixed shape with the natural
     symmetric group action.
@@ -798,7 +655,7 @@ class TabloidModule(SymmetricGroupRepresentation, Representation_abstract):
                 return None
             P = self.parent()
             if x in P._semigroup_algebra:
-                return P.sum(c * (perm * self) for perm, c in x.monomial_coefficients().items())
+                return P.linear_combination((perm * self, c) for perm, c in x.monomial_coefficients().items())
             if x in P._semigroup_algebra.indices():
                 return P.element_class(P, {P._symmetric_group_action(T, x): c
                                            for T, c in self._monomial_coefficients.items()})
@@ -891,14 +748,15 @@ class SpechtModuleTableauxBasis(SpechtModule):
         B = self.basis()
         COB = matrix([b.lift().to_vector() for b in B]).T
         P, L, U = COB.LU()
-        # Since U is upper triangular, the nonzero entriesm must be in the
-        #   upper square portiion of the matrix
+        # Since U is upper triangular, the nonzero entries must be in the
+        # upper square portion of the matrix
         n = len(B)
 
         Uinv = U.matrix_from_rows(range(n)).inverse()
-        # This is a slight abuse as the codomain should be a module with a different
-        #    S_n action, but we only use it internally, so there isn't any problems
-        PLinv = (P*L).inverse()
+        # This is a slight abuse as the codomain should be a module
+        # with a different
+        #  S_n action, but we only use it internally, so there is no problem
+        PLinv = (P * L).inverse()
 
         def retraction(elt):
             vec = PLinv * elt.to_vector(order=self._support_order)
@@ -994,8 +852,104 @@ class SpechtModuleTableauxBasis(SpechtModule):
             return self
         return SimpleModule(self)
 
+    def intrinsic_arrangement(self, base_ring=None):
+        r"""
+        Return the intrinsic arrangement of ``self``.
 
-class MaximalSpechtSubmodule(SubmoduleWithBasis, SymmetricGroupRepresentation):
+        Consider the Specht module `S^{\lambda}` with `\lambda` a
+        (integer) partition of `n` (i.e., `S^{\lambda}` is an `S_n`-module).
+        The *intrinsic arrangement* of `S^{\lambda}` is the central hyperplane
+        arrangement in `S^{\lambda}` given by the hyperplanes `H_{\alpha}`,
+        indexed by a set partition `\alpha` of `\{1, \ldots, n\}` of size
+        `\lambda`, defined by
+
+        .. MATH::
+
+            H_{\alpha} := \bigoplus_{\tau \in T_{\alpha}} (S^{\lambda})^{\tau},
+
+        where `T_{\alpha}` is some set of generating transpositions
+        of the Young subgroup `S_{\alpha}` and `V^{\tau}` denotes the
+        `\tau`-invariant subspace of `V`. (These hyperplanes do not
+        depend on the choice of `T_{\alpha}`.)
+
+        This was introduced in [TVY2020]_ as a generalization of the
+        braid arrangement, which is the case when `\lambda = (n-1, 1)`
+        (equivalently, for the irreducible representation of `S_n`
+        given by the type `A_{n-1}` root system).
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: SM = SGA.specht_module([2, 1, 1])
+            sage: A = SM.intrinsic_arrangement()
+            sage: A.hyperplanes()
+            (Hyperplane T0 - T1 - 3*T2 + 0,
+             Hyperplane T0 - T1 + T2 + 0,
+             Hyperplane T0 + 3*T1 + T2 + 0,
+             Hyperplane 3*T0 + T1 - T2 + 0)
+            sage: A.is_free()
+            False
+
+        We reproduce Example 3 of [TVY2020]_::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: for la in Partitions(5):
+            ....:     SM = SGA.specht_module(la)
+            ....:     A = SM.intrinsic_arrangement()
+            ....:     print(la, A.characteristic_polynomial())
+            [5] 1
+            [4, 1] x^4 - 10*x^3 + 35*x^2 - 50*x + 24
+            [3, 2] x^5 - 15*x^4 + 90*x^3 - 260*x^2 + 350*x - 166
+            [3, 1, 1] x^6 - 10*x^5 + 45*x^4 - 115*x^3 + 175*x^2 - 147*x + 51
+            [2, 2, 1] x^5 - 10*x^4 + 45*x^3 - 105*x^2 + 120*x - 51
+            [2, 1, 1, 1] x^4 - 5*x^3 + 10*x^2 - 10*x + 4
+            [1, 1, 1, 1, 1] 1
+
+            sage: A = SGA.specht_module([4, 1]).intrinsic_arrangement()
+            sage: A.characteristic_polynomial().factor()
+            (x - 4) * (x - 3) * (x - 2) * (x - 1)
+        """
+        from sage.geometry.hyperplane_arrangement.arrangement import HyperplaneArrangements
+        from sage.combinat.set_partition import SetPartitions
+        if base_ring is None:
+            base_ring = self.base_ring()
+
+        if self.dimension() == 1:  # corner case
+            HA = HyperplaneArrangements(base_ring, 'T')
+            return HA()
+
+        SGA = self._semigroup_algebra
+        G = self._semigroup
+
+        def t(i, j):
+            ret = list(range(1, SGA.n + 1))
+            ret[i - 1] = j
+            ret[j - 1] = i
+            return SGA(G(ret))
+
+        # Construct the hyperplanes
+        fixed_spaces = {}
+        norms = []
+        for alpha in SetPartitions(SGA.n, self._diagram.conjugate()):
+            span = []
+            for a in alpha:
+                a = list(a)
+                for i in range(len(a)-1):
+                    elt = t(a[i], a[i+1])
+                    if elt not in fixed_spaces:
+                        fixed_spaces[elt] = self.annihilator_basis([elt - SGA.one()], side='left')
+                    span.extend(fixed_spaces[elt])
+            H = self.echelon_form(span)
+            N = matrix([v.to_vector() for v in H]).right_kernel_matrix()
+            assert N.nrows() == 1
+            norms.append(N[0])
+
+        # Convert the data to an arrangement
+        HA = HyperplaneArrangements(base_ring, tuple([f'T{i}' for i in range(self.dimension())]))
+        return HA([[0] + list(N) for N in norms])
+
+
+class MaximalSpechtSubmodule(SymmetricGroupRepresentation, SubmoduleWithBasis):
     r"""
     The maximal submodule `U^{\lambda}` of the Specht module `S^{\lambda}`.
 
@@ -1080,9 +1034,9 @@ class MaximalSpechtSubmodule(SubmoduleWithBasis, SymmetricGroupRepresentation):
     Element = SpechtModule.Element
 
 
-class SimpleModule(QuotientModuleWithBasis, SymmetricGroupRepresentation):
+class SimpleModule(SymmetricGroupRepresentation, QuotientModuleWithBasis):
     r"""
-    The simgle `S_n`-module associated with a partition `\lambda`.
+    The simple `S_n`-module associated with a partition `\lambda`.
 
     The simple module `D^{\lambda}` is the quotient of the Specht module
     `S^{\lambda}` by its :class:`maximal submodule <MaximalSpechtSubmodule>`
@@ -1193,18 +1147,12 @@ def _to_diagram(D):
     if isinstance(D, Diagram):
         return D
     if D in _Partitions:
-        D = _Partitions(D).cells()
-    elif D in SkewPartitions():
-        D = SkewPartitions()(D).cells()
-    elif D in IntegerVectors():
-        cells = []
-        for i, row in enumerate(D):
-            for j in range(row):
-                cells.append((i, j))
-        D = cells
-    else:
-        D = [tuple(cell) for cell in D]
-    return D
+        return _Partitions(D).cells()
+    if D in SkewPartitions():
+        return SkewPartitions()(D).cells()
+    if D in IntegerVectors():
+        return [(i, j) for i, row in enumerate(D) for j in range(row)]
+    return [tuple(cell) for cell in D]
 
 
 def specht_module_spanning_set(D, SGA=None):
@@ -1213,8 +1161,8 @@ def specht_module_spanning_set(D, SGA=None):
 
     INPUT:
 
-    - ``D`` -- a list of cells ``(r,c)`` for row ``r`` and column ``c``
-    - ``SGA`` -- optional; a symmetric group algebra
+    - ``D`` -- list of cells ``(r,c)`` for row ``r`` and column ``c``
+    - ``SGA`` -- (optional) a symmetric group algebra
 
     EXAMPLES::
 
@@ -1351,12 +1299,12 @@ def tabloid_gram_matrix(la, base_ring):
         [4 1 1 2 4]
     """
     from sage.combinat.tableau import StandardTableaux
-    ST = StandardTableaux(la)
+    ST = list(StandardTableaux(la))
 
     def bilinear_form(p1, p2):
         if len(p2) < len(p1):
             p1, p2 = p2, p1
-        return sum(c1 * p2.get(T1, 0) for T1, c1 in p1.items() if c1)
+        return sum(c1 * p2[T1] for T1, c1 in p1.items() if c1 and T1 in p2)
 
     PT = {T: polytabloid(T) for T in ST}
     gram_matrix = [[bilinear_form(PT[T1], PT[T2]) for T1 in ST] for T2 in ST]

@@ -91,7 +91,6 @@ elements. But some old stuff in Sage doesn't use it.  **Volunteers for
 refactoring are welcome!**
 
 
-
 The parent
 ----------
 
@@ -116,50 +115,28 @@ This base class provides a lot more methods than a general parent::
      '_coerce_impl',
      '_default_category',
      '_gens',
-     '_ideal_class_',
-     '_ideal_monoid',
      '_latex_names',
      '_list',
      '_one_element',
      '_pseudo_fraction_field',
-     '_unit_ideal',
      '_zero_element',
-     '_zero_ideal',
      'algebraic_closure',
+     'an_embedding',
      'base_extend',
-     'class_group',
-     'content',
-     'derivation',
-     'derivation_module',
      'divides',
      'epsilon',
      'extension',
      'fraction_field',
-     'frobenius_endomorphism',
-     'gcd',
      'gen',
      'gens',
-     'ideal',
-     'ideal_monoid',
      'integral_closure',
-     'is_commutative',
      'is_field',
-     'is_integral_domain',
-     'is_integrally_closed',
-     'is_noetherian',
-     'is_prime_field',
-     'is_subring',
-     'krull_dimension',
-     'localization',
      'ngens',
      'one',
      'order',
      'prime_subfield',
-     'principal_ideal',
      'random_element',
-     'unit_ideal',
      'zero',
-     'zero_ideal',
      'zeta',
      'zeta_order']
 
@@ -837,7 +814,7 @@ The four axioms requested for coercions
           sage: ZZ(P2.gen(1))
           Traceback (most recent call last):
           ...
-          TypeError: not a constant polynomial
+          TypeError: v is not a constant polynomial
 
       Hence, we only have a *partial* map. This is fine for a *conversion*,
       but a partial map does not qualify as a *coercion*.
@@ -858,7 +835,9 @@ The four axioms requested for coercions
       rational field is a homomorphism of euclidean domains::
 
           sage: QQ.coerce_map_from(ZZ).category_for()
-          Join of Category of euclidean domains and Category of infinite sets
+          Join of Category of euclidean domains
+          and Category of noetherian rings
+          and Category of infinite sets
           and Category of metric spaces
 
       .. end of output

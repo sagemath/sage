@@ -12,6 +12,8 @@ These functions can all be obtained through the ``designs.<tab>`` functions.
 
 This module implements:
 
+- {LIST_OF_CA_CONSTRUCTIONS}
+
 - {LIST_OF_OA_CONSTRUCTIONS}
 
 - {LIST_OF_MOLS_CONSTRUCTIONS}
@@ -66,17 +68,18 @@ from .orthogonal_arrays import wilson_construction
 # Cyclic shift of a list
 cyclic_shift = lambda l,i : l[-i:]+l[:-i]
 
-def _MOLS_from_string(s,k):
+
+def _MOLS_from_string(s, k):
     r"""
-    Return MOLS from a string
+    Return MOLS from a string.
 
     INPUT:
 
-    - ``s`` (string) -- represents the MOLS with entries in a-z. To understand
+    - ``s`` -- string; represents the MOLS with entries in a-z; to understand
       how the string should be formatted, read the source code of a constructor
-      that uses it.
+      that uses it
 
-    - ``k`` (integer) -- the number of MOLS encoded by the string.
+    - ``k`` -- integer; the number of MOLS encoded by the string
 
     EXAMPLES::
 
@@ -89,9 +92,10 @@ def _MOLS_from_string(s,k):
         matrices[i % k].append(l)
     return [Matrix(_) for _ in matrices]
 
+
 def MOLS_10_2():
     r"""
-    Return a pair of MOLS of order 10
+    Return a pair of MOLS of order 10.
 
     Data obtained from
     `<http://www.cecm.sfu.ca/organics/papers/lam/paper/html/POLS10/POLS10.html>`_
@@ -132,9 +136,10 @@ def MOLS_10_2():
                     [5,6,7,1,2,3,4,0,9,8],
                     [7,1,2,3,4,5,6,9,8,0]])]
 
+
 def MOLS_12_5():
     r"""
-    Return 5 MOLS of order 12
+    Return 5 MOLS of order 12.
 
     These MOLS have been found by Brendan McKay.
 
@@ -163,9 +168,10 @@ def MOLS_12_5():
 
     return _MOLS_from_string(M,5)
 
+
 def MOLS_14_4():
     r"""
-    Return four MOLS of order 14
+    Return four MOLS of order 14.
 
     These MOLS were shared by Ian Wanless. The first proof of existence was
     given in [Todorov12]_.
@@ -208,6 +214,7 @@ def MOLS_14_4():
 
     return _MOLS_from_string(M,4)
 
+
 def MOLS_15_4():
     r"""
     Return 4 MOLS of order 15.
@@ -246,6 +253,7 @@ def MOLS_15_4():
         """
 
     return _MOLS_from_string(M,4)
+
 
 def MOLS_18_3():
     r"""
@@ -308,9 +316,10 @@ MOLS_constructions = {
 LIST_OF_MOLS_CONSTRUCTIONS = ", ".join(":func:`{} MOLS of order {} <MOLS_{}_{}>`".format(k,n,n,k)
                                        for n,(k,_) in MOLS_constructions.items())
 
+
 def OA_7_18():
     r"""
-    Return an OA(7,18)
+    Return an OA(7,18).
 
     Proved in [JulianAbel13]_.
 
@@ -362,9 +371,10 @@ def OA_7_18():
     M = [M[i] for i in range(len(M)) if i % 18 < 9] # only develop w.r.t the last two coordinates
     return M
 
+
 def OA_9_40():
     r"""
-    Return an OA(9,40)
+    Return an OA(9,40).
 
     As explained in the Handbook III.3.62 [DesignHandbook]_. Uses the fact that
     `40 = 2^3 \times 5` and that `5` is prime.
@@ -402,9 +412,10 @@ def OA_9_40():
 
     return OA_n_times_2_pow_c_from_matrix(9,3,FiniteField(5),A,Y,check=False)
 
+
 def OA_7_66():
     r"""
-    Return an OA(7,66)
+    Return an OA(7,66).
 
     Construction shared by Julian R. Abel.
 
@@ -442,9 +453,10 @@ def OA_7_66():
     PBD = [[rel[x] for x in B] for B in PBD]
     return OA_from_PBD(7,66,PBD,check=False)
 
+
 def OA_7_68():
     r"""
-    Return an OA(7,68)
+    Return an OA(7,68).
 
     Construction shared by Julian R. Abel.
 
@@ -482,9 +494,10 @@ def OA_7_68():
     PBD = [[rel[x] for x in B] for B in PBD]
     return OA_from_PBD(7,68,PBD,check=False)
 
+
 def OA_8_69():
     r"""
-    Return an OA(8,69)
+    Return an OA(8,69).
 
     Construction shared by Julian R. Abel.
 
@@ -554,9 +567,10 @@ def OA_8_69():
     OA = [[relabel[x] for x in B] for B in OA]
     return OA
 
+
 def OA_7_74():
     r"""
-    Return an OA(7,74)
+    Return an OA(7,74).
 
     Construction shared by Julian R. Abel.
 
@@ -594,9 +608,10 @@ def OA_7_74():
     PBD = [[rel[x] for x in B] for B in PBD]
     return OA_from_PBD(7,74,PBD,check=False)
 
+
 def OA_8_76():
     r"""
-    Return an OA(8,76)
+    Return an OA(8,76).
 
     Construction shared by Julian R. Abel.
 
@@ -661,9 +676,10 @@ def OA_8_76():
     OA = [[relabel[x] for x in B] for B in OA]
     return OA
 
+
 def OA_11_80():
     r"""
-    Return an OA(11,80)
+    Return an OA(11,80).
 
     As explained in the Handbook III.3.76 [DesignHandbook]_. Uses the fact that
     `80 = 2^4 \times 5` and that `5` is prime.
@@ -703,9 +719,10 @@ def OA_11_80():
 
     return OA_n_times_2_pow_c_from_matrix(11,4,FiniteField(5),A,Y,check=False)
 
+
 def OA_15_112():
     r"""
-    Returns an OA(15,112)
+    Return an OA(15,112).
 
     Published by Julian R. Abel in [Ab1995]_. Uses the fact that 112 = `2^4
     \times 7` and that `7` is prime.
@@ -749,9 +766,10 @@ def OA_15_112():
 
     return OA_n_times_2_pow_c_from_matrix(15,4,FiniteField(7),list(zip(*A)),Y,check=False)
 
+
 def OA_9_120():
     r"""
-    Return an OA(9,120)
+    Return an OA(9,120).
 
     Construction shared by Julian R. Abel:
 
@@ -795,9 +813,10 @@ def OA_9_120():
 
     return OA
 
+
 def OA_9_135():
     r"""
-    Return an OA(9,135)
+    Return an OA(9,135).
 
     Construction shared by Julian R. Abel:
 
@@ -880,9 +899,10 @@ def OA_9_135():
     # And call Wilson's construction
     return wilson_construction(truncated_OA, 9, 16, 8, (1,)*7, check=False)
 
+
 def OA_11_160():
     r"""
-    Returns an OA(11,160)
+    Return an OA(11,160).
 
     Published by Julian R. Abel in [Ab1995]_. Uses the fact that `160 = 2^5
     \times 5` is a product of a power of `2` and a prime number.
@@ -923,9 +943,10 @@ def OA_11_160():
 
     return OA_n_times_2_pow_c_from_matrix(11,5,FiniteField(5),list(zip(*A)),Y,check=False)
 
+
 def OA_16_176():
     r"""
-    Returns an OA(16,176)
+    Return an OA(16,176).
 
     Published by Julian R. Abel in [Ab1995]_. Uses the fact that `176 = 2^4
     \times 11` is a product of a power of `2` and a prime number.
@@ -977,9 +998,10 @@ def OA_16_176():
     Y = [None, 0, 1, 2, 8, 6, 9, 4, 10, 3, 5, 11, 13, 14, 12]
     return OA_n_times_2_pow_c_from_matrix(16,4,FiniteField(11),list(zip(*A)),Y,check=False)
 
+
 def OA_11_185():
     r"""
-    Returns an OA(11,185)
+    Return an OA(11,185).
 
     The construction is given in [Greig99]_. In Julian R. Abel's words:
 
@@ -1005,7 +1027,6 @@ def OA_11_185():
 
         sage: designs.orthogonal_arrays.is_available(11,185)                            # needs sage.schemes
         True
-
     """
     from sage.combinat.designs.difference_family import difference_family
 
@@ -1037,9 +1058,10 @@ def OA_11_185():
     assert all(len(B) in (11,13) or set(B) == set(special_set) for B in PBD)
 
     OA = OA_from_PBD(11,185,[B for B in PBD if len(B) < 17],check=False)[:-185]
-    OA.extend([[i]*11 for i in range(185) if i not in special_set])
-    OA.extend([[special_set[x] for x in B] for B in orthogonal_array(11,17)])
+    OA.extend([i]*11 for i in range(185) if i not in special_set)
+    OA.extend([special_set[x] for x in B] for B in orthogonal_array(11,17))
     return OA
+
 
 def OA_10_205():
     r"""
@@ -1087,7 +1109,7 @@ def OA_10_205():
     baer_subplane_size = 4**2+4+1
 
     B = [0, 1, 22, 33, 83, 122, 135, 141, 145, 159, 175, 200, 226, 229, 231, 238, 246]
-    pplane = [[(xx+i) % pplane_size for xx in B]  for i in range(pplane_size)]
+    pplane = [[(xx+i) % pplane_size for xx in B] for i in range(pplane_size)]
     baer_subplane = set([i*pplane_size/baer_subplane_size for i in range(baer_subplane_size)])
 
     p = list(baer_subplane)[0]
@@ -1104,7 +1126,7 @@ def OA_10_205():
     GDD = [[relabel[xx] for xx in B if xx in relabel] for B in pplane if p not in B]
 
     # We turn the GDD into a PBD by extending the groups with a new point 204.
-    GDD.extend([[relabel[xx] for xx in G]+[204] for G in groups])
+    GDD.extend([relabel[xx] for xx in G]+[204] for G in groups)
 
     # We build the OA, knowing that the blocks of size 9 are disjoint
     blocks_of_size_9 = [B for B in GDD if len(B) == 9]
@@ -1112,19 +1134,20 @@ def OA_10_205():
 
     OA = OA_from_PBD(10,205,[B for B in GDD if len(B) != 9],check=False)[:-205]
 
-    OA.extend([[B[xx] for xx in R]
-               for R in orthogonal_array(10,9)
-               for B in blocks_of_size_9])
+    OA.extend([B[xx] for xx in R]
+              for R in orthogonal_array(10,9)
+              for B in blocks_of_size_9)
 
     # The missing [i,i,...] blocks
-    OA.extend([[i]*10
-               for i in set(range(205)).difference(blocks_of_size_9_union)])
+    OA.extend([i]*10
+              for i in set(range(205)).difference(blocks_of_size_9_union))
 
     return OA
 
+
 def OA_16_208():
     r"""
-    Returns an OA(16,208)
+    Return an OA(16,208).
 
     Published by Julian R. Abel in [Ab1995]_. Uses the fact that `208 = 2^4
     \times 13` is a product of `2` and a prime number.
@@ -1181,9 +1204,10 @@ def OA_16_208():
 
     return OA_n_times_2_pow_c_from_matrix(16,4,FiniteField(13),list(zip(*A)),Y,check=False)
 
+
 def OA_15_224():
     r"""
-    Returns an OA(15,224)
+    Return an OA(15,224).
 
     Published by Julian R. Abel in [Ab1995]_ (uses the fact that `224=2^5
     \times 7` is a product of a power of `2` and a prime number).
@@ -1228,9 +1252,10 @@ def OA_15_224():
 
     return OA_n_times_2_pow_c_from_matrix(15,5,FiniteField(7),list(zip(*A)),Y,check=False)
 
+
 def OA_11_254():
     r"""
-    Return an OA(11,254)
+    Return an OA(11,254).
 
     This constructions appears in [Greig99]_.
 
@@ -1259,7 +1284,7 @@ def OA_11_254():
 
     # Base block of a PG(2,19)
     B = (0,1,19,28,96,118,151,153,176,202,240,254,290,296,300,307,337,361,366,369)
-    BIBD = [[(x+i) % 381 for x in B]  for i in range(381)]
+    BIBD = [[(x+i) % 381 for x in B] for i in range(381)]
 
     # We only keep points congruent to 0,1 mod 3 and relabel the PBD. The result is
     # a (254,{11,13,16})-PBD
@@ -1267,9 +1292,10 @@ def OA_11_254():
 
     return OA_from_PBD(11,254,BIBD,check=False)
 
+
 def OA_20_352():
     r"""
-    Returns an OA(20,352)
+    Return an OA(20,352).
 
     Published by Julian R. Abel in [Ab1995]_ (uses the fact that `352=2^5
     \times 11` is the product of a power of `2` and a prime number).
@@ -1326,9 +1352,10 @@ def OA_20_352():
 
     return OA_n_times_2_pow_c_from_matrix(20,5,FiniteField(11),list(zip(*A)),Y,check=False)
 
+
 def OA_20_416():
     r"""
-    Returns an OA(20,416)
+    Return an OA(20,416).
 
     Published by Julian R. Abel in [Ab1995]_ (uses the fact that `416=2^5
     \times 13` is the product of a power of `2` and a prime number).
@@ -1386,9 +1413,10 @@ def OA_20_416():
 
     return OA_n_times_2_pow_c_from_matrix(20,5,FiniteField(13),list(zip(*A)),Y,check=False)
 
+
 def OA_20_544():
     r"""
-    Returns an OA(20,544)
+    Return an OA(20,544).
 
     Published by Julian R. Abel in [Ab1995]_ (uses the fact that
     `544=2^5 \times 17` is the product of a power of `2` and a prime number).
@@ -1455,9 +1483,10 @@ def OA_20_544():
 
     return OA_n_times_2_pow_c_from_matrix(20,5,FiniteField(17),list(zip(*A)),Y,check=False)
 
+
 def OA_17_560():
     r"""
-    Returns an OA(17,560)
+    Return an OA(17,560).
 
     This OA is built in Corollary 2.2 of [Thwarts]_.
 
@@ -1514,9 +1543,10 @@ def OA_17_560():
 
     return wilson_construction(OA,k,n,m,[p**beta]*3,check=False)
 
+
 def OA_11_640():
     r"""
-    Returns an OA(11,640)
+    Return an OA(11,640).
 
     Published by Julian R. Abel in [Ab1995]_ (uses the fact that `640=2^7
     \times 5` is the product of a power of `2` and a prime number).
@@ -1556,9 +1586,10 @@ def OA_11_640():
 
     return OA_n_times_2_pow_c_from_matrix(11,7,FiniteField(5),list(zip(*A)),Y,check=False)
 
+
 def OA_10_796():
     r"""
-    Returns an OA(10,796)
+    Return an OA(10,796).
 
     Construction shared by Julian R. Abel, from [AC07]_:
 
@@ -1596,7 +1627,8 @@ def OA_10_796():
     OA = OA_relabel(OA,17,47,blocks=[OA[0]]) # making sure [46]*17 is a block
     PBD = [[i*47+x for i,x in enumerate(B) if (x < 46 or i < 13)] for B in OA]
     extra_point = 10000
-    PBD.extend([list(range(i*47,(i+1)*47-int(i >= 13)))+[extra_point] for i in range(17)]) # Adding the columns
+    PBD.extend(list(range(i*47,(i+1)*47-int(i >= 13)))+[extra_point]
+               for i in range(17))  # Adding the columns
 
     rel = {v:i for i,v in enumerate(set(range(17*47)).difference([(i+1)*47-1 for i in range(13,17)]))}
     rel[extra_point] = len(rel)
@@ -1614,7 +1646,7 @@ def OA_10_796():
     for B in PBD:
         if len(B) >= 47:
             B.sort(key=lambda x:int(x == extra_point))
-            OA.extend([[B[i] for i in BB] for BB in iOA[len(B)]])
+            OA.extend([B[i] for i in BB] for BB in iOA[len(B)])
             span.update(B[:-1])
         else:
             others.append(B)
@@ -1627,9 +1659,10 @@ def OA_10_796():
 
     return OA
 
+
 def OA_10_469():
     r"""
-    Return an OA(10,469)
+    Return an OA(10,469).
 
     This construction appears in [Brouwer80]_. It is based on the same technique
     used in
@@ -1676,7 +1709,7 @@ def OA_10_469():
          731,824,837,848,932,1002,1051,1055,1089,1105,1145,1165,1196,1217,1226,
          1274,1281,1309,1405)
 
-    BIBD = [[(x+i) % 1407 for x in B]  for i in range(1407)]
+    BIBD = [[(x+i) % 1407 for x in B] for i in range(1407)]
 
     # Only keep points v congruent to 0 mod 3 and relabel
     PBD = [[x//3 for x in B if x % 3 == 0] for B in BIBD]
@@ -1700,6 +1733,7 @@ def OA_10_469():
         R.append(i//469)
 
     return OA
+
 
 def OA_520_plus_x(x):
     r"""
@@ -1740,7 +1774,6 @@ def OA_520_plus_x(x):
         sage: OA = OA_520_plus_x(0)                   # not tested (already tested in OA_10_520)
         sage: is_orthogonal_array(OA,10,520,2)  # not tested (already tested in OA_10_520)
         True
-
     """
     from .orthogonal_arrays import incomplete_orthogonal_array
     k = 9+x+1
@@ -1775,6 +1808,7 @@ def OA_520_plus_x(x):
     OA.append([relabel[new_point]]*k)
     return OA
 
+
 def OA_10_520():
     r"""
     Return an OA(10,520).
@@ -1797,9 +1831,10 @@ def OA_10_520():
     """
     return OA_520_plus_x(0)
 
+
 def OA_12_522():
     r"""
-    Return an OA(12,522)
+    Return an OA(12,522).
 
     This design is built by the slightly more general construction
     :func:`OA_520_plus_x`.
@@ -1819,9 +1854,10 @@ def OA_12_522():
     """
     return OA_520_plus_x(2)
 
+
 def OA_14_524():
     r"""
-    Return an OA(14,524)
+    Return an OA(14,524).
 
     This design is built by the slightly more general construction
     :func:`OA_520_plus_x`.
@@ -1841,9 +1877,10 @@ def OA_14_524():
     """
     return OA_520_plus_x(4)
 
+
 def OA_15_896():
     r"""
-    Returns an OA(15,896)
+    Return an OA(15,896).
 
     Uses the fact that `896 = 2^7 \times 7` is the product of a power of `2` and
     a prime number.
@@ -1888,9 +1925,10 @@ def OA_15_896():
 
     return OA_n_times_2_pow_c_from_matrix(15,7,FiniteField(7),list(zip(*A)),Y,check=False)
 
+
 def OA_9_1078():
     r"""
-    Returns an OA(9,1078)
+    Return an OA(9,1078).
 
     This is obtained through the generalized Brouwer-van Rees
     construction. Indeed, `1078 = 89.11 + (99=9.11)` and there exists an
@@ -1918,9 +1956,10 @@ def OA_9_1078():
     """
     return wilson_construction(None,9,11,89,[[(11,9)]])
 
+
 def OA_25_1262():
     r"""
-    Returns an OA(25,1262)
+    Return an OA(25,1262).
 
     The construction is given in [Greig99]_. In Julian R. Abel's words:
 
@@ -1955,9 +1994,10 @@ def OA_25_1262():
 
     return OA_from_PBD(25,1262,PBD,check=False)
 
+
 def OA_9_1612():
     r"""
-    Returns an OA(9,1612)
+    Return an OA(9,1612).
 
     This is obtained through the generalized Brouwer-van Rees
     construction. Indeed, `1612 = 89.17 + (99=9.11)` and there exists an
@@ -1985,9 +2025,10 @@ def OA_9_1612():
     """
     return wilson_construction(None,9,17,89,[[(11,9)]])
 
+
 def OA_10_1620():
     r"""
-    Returns an OA(10,1620)
+    Return an OA(10,1620).
 
     This is obtained through the generalized Brouwer-van Rees
     construction. Indeed, `1620 = 144.11+(36=4.9)` and there exists an
@@ -2060,6 +2101,7 @@ OA_constructions = {
 # Add this data to the module's doc
 LIST_OF_OA_CONSTRUCTIONS = ", ".join(":func:`OA({},{}) <OA_{}_{}>`".format(k,n,k,n)
                                       for n,(k,_) in OA_constructions.items())
+
 
 def QDM_19_6_1_1_1():
     r"""
@@ -2143,6 +2185,7 @@ def QDM_21_5_1_1_1():
 
     return G, Mb
 
+
 def QDM_21_6_1_1_5():
     r"""
     Return a `(21,6;1,1;5)`-quasi-difference matrix.
@@ -2182,6 +2225,7 @@ def QDM_21_6_1_1_5():
         Mb.append([f,a,b,c,d,e])
 
     return G, Mb
+
 
 def QDM_25_6_1_1_5():
     r"""
@@ -2228,6 +2272,7 @@ def QDM_25_6_1_1_5():
 
     return G, Mb
 
+
 def QDM_33_6_1_1_1():
     r"""
     Return a `(33,6;1,1;1)`-quasi-difference matrix.
@@ -2271,6 +2316,7 @@ def QDM_33_6_1_1_1():
 
     return G, Mb
 
+
 def QDM_37_6_1_1_1():
     r"""
     Return a `(37,6;1,1;1)`-quasi-difference matrix.
@@ -2309,6 +2355,7 @@ def QDM_37_6_1_1_1():
 
     return G, Mb
 
+
 def QDM_35_7_1_1_7():
     r"""
     Return a `(35,7;1,1;7)`-quasi-difference matrix.
@@ -2345,6 +2392,7 @@ def QDM_35_7_1_1_7():
             Mb.append(cyclic_shift(R,i))
 
     return G, Mb
+
 
 def QDM_45_7_1_1_9():
     r"""
@@ -2383,6 +2431,7 @@ def QDM_45_7_1_1_9():
 
     return G, Mb
 
+
 def QDM_54_7_1_1_8():
     r"""
     Return a `(54,7;1,1;8)`-quasi-difference matrix.
@@ -2419,6 +2468,7 @@ def QDM_54_7_1_1_8():
             Mb.append(cyclic_shift(R,c))
 
     return G, Mb
+
 
 def QDM_57_9_1_1_8():
     r"""
@@ -2712,7 +2762,7 @@ LIST_OF_VMT_VECTORS = "\n".join("    - `m={}` and `t=` ".format(m) +
                                 for m in _all_m)
 
 r"""
-Tests for the Vmt vectors
+Test for the Vmt vectors
 
 EXAMPLES::
 
@@ -3094,15 +3144,58 @@ DF = {
            [0,2,13,18,28,30,44,48,50,51,57,61],
            [0,4,21,26,29,33,35,36,47,55,56,60]]},
 
-# a 133-cyclic set from Ken Smith database
-# see https://math.ccrwest.org/diffsets/diff_sets/DS_133_33_8_133.html
+# a (133,33,8)-cyclic difference set
+# see https://dmgordon.org/diffset
 (133,33, 8):
-  {(133,): [[0,4,7,8,15,17,19,22,24,25,29,30,38,
-             47,49,50,55,58,61,62,71,73,76,77,78,
-             82,95,111,113,114,121,123,127]]},
+  {(133,): [[1,5,14,22,25,27,29,32,34,38,
+             46,64,65,66,76,78,81,82,84,89,
+             92,93,99,103,104,106,107,112,113,122,
+             126,128,129]]},
 
-# a 901-cyclic
-# see https://math.ccrwest.org/diffsets/diff_sets/DS_901_225_56_901.html
+# a (144,66,30) non-cyclic difference set in AbelianGroup([2,8,3,3])
+# given in unpublished paper by Kroeger, Miller, Mooney, Shepard and Smith
+# see https://dmgordon.org/diffset
+(144,66,30):
+  {(2,8,3,3): [[(0,1,0,0),(0,7,0,2),(0,5,0,1),(0,3,0,0),(0,6,0,1),
+                (0,1,0,2),(0,4,0,0),(0,2,0,2),(0,6,0,0),(0,1,0,1),
+                (0,4,0,2),(0,2,0,1),(1,2,2,0),(1,3,2,0),(1,4,2,0),
+                (1,5,2,0),(1,6,2,0),(1,7,2,0),(0,6,1,2),(0,1,1,0),
+                (0,4,1,1),(0,3,1,0),(0,1,1,2),(0,4,1,0),(0,7,1,1),
+                (0,2,1,2),(0,6,1,0),(0,1,1,1),(0,2,1,1),(0,5,1,2),
+                (1,0,0,0),(1,6,0,2),(1,1,0,0),(1,4,0,1),(1,7,0,2),
+                (1,2,0,0),(1,5,0,1),(1,0,0,2),(1,3,0,0),(1,1,0,2),
+                (1,0,0,1),(1,1,0,1),(0,0,2,0),(0,6,2,2),(0,4,2,1),
+                (0,0,2,2),(0,3,2,0),(0,6,2,1),(0,2,2,2),(0,5,2,0),
+                (0,0,2,1),(0,4,2,2),(0,7,2,0),(0,2,2,1),(1,0,1,0),
+                (1,1,1,0),(1,2,1,0),(1,0,1,2),(1,3,1,0),(1,6,1,1),
+                (1,1,1,2),(1,7,1,1),(1,0,1,1),(1,1,1,1),(1,4,1,2),
+                (1,5,1,2)]]},
+
+# a (320,88,24) non-cyclic difference set in AbelianGroup([4,4,4,5]),
+# given in Arasu and Chen, Designs, Codes and Cryptography 2001
+# see https://dmgordon.org/diffset
+(320,88,24):
+    {(4,4,4,5): [[(3,3,3,0),(2,3,2,0),(3,1,3,0),(2,2,3,0),(1,3,3,0),
+                  (3,2,1,0),(2,2,2,0),(2,2,1,0),(2,1,2,0),(0,3,2,0),
+                  (2,0,3,0),(1,1,3,0),(0,2,3,0),(3,0,1,0),(1,2,1,0),
+                  (2,0,2,0),(0,2,2,0),(2,0,1,0),(0,2,1,0),(0,1,2,0),
+                  (0,0,3,0),(1,0,1,0),(0,0,2,0),(0,0,1,0),(3,3,3,1),
+                  (3,3,1,1),(3,0,3,1),(0,3,3,1),(3,0,1,1),(0,3,1,1),
+                  (1,1,2,1),(1,0,2,1),(0,1,2,1),(0,0,3,1),(1,1,0,1),
+                  (0,0,2,1),(1,0,0,1),(0,1,0,1),(0,0,1,1),(0,0,0,1),
+                  (1,1,3,2),(3,1,1,2),(2,3,3,2),(2,2,3,2),(0,3,2,2),
+                  (0,3,1,2),(0,2,1,2),(3,2,2,2),(3,1,2,2),(3,0,3,2),
+                  (2,3,0,2),(2,0,2,2),(1,2,0,2),(1,1,0,2),(1,0,1,2),
+                  (0,0,0,2),(1,1,1,3),(1,3,3,3),(3,2,1,3),(2,2,3,3),
+                  (3,0,0,3),(3,0,3,3),(1,3,0,3),(2,0,1,3),(3,2,2,3),
+                  (2,3,2,3),(0,3,3,3),(1,1,2,3),(0,2,2,3),(2,1,0,3),
+                  (0,1,1,3),(0,0,0,3),(2,0,3,4),(1,1,2,4),(0,2,1,4),
+                  (0,1,3,4),(3,2,3,4),(3,2,2,4),(2,3,2,4),(3,1,3,4),
+                  (3,3,0,4),(2,3,1,4),(1,0,1,4),(2,2,2,4),(1,3,1,4),
+                  (1,0,0,4),(0,1,0,4),(0,0,0,4)]]},
+
+# a (901,225,56)-cyclic difference set
+# see https://dmgordon.org/diffset
 (901,225,56):
   {(901,): [[  0,  1,  5,  9, 12, 13, 14, 16, 22, 25, 41, 43,
               45, 47, 53, 59, 60, 65, 69, 70, 71, 79, 80, 81,
@@ -3174,6 +3267,7 @@ def DM_12_6_1():
 
     return G,M
 
+
 def DM_21_6_1():
     r"""
     Return a `(21,6,1)`-difference matrix.
@@ -3208,6 +3302,7 @@ def DM_21_6_1():
         Mb.append([e,a,b,c,d,0])
 
     return AdditiveCyclic(21), Mb
+
 
 def DM_24_8_1():
     r"""
@@ -3256,6 +3351,7 @@ def DM_24_8_1():
 
     return G, Mb
 
+
 def DM_28_6_1():
     r"""
     Return a `(28,6,1)`-difference matrix.
@@ -3299,6 +3395,7 @@ def DM_28_6_1():
 
     return G, Mb
 
+
 def DM_33_6_1():
     r"""
     Return a `(33,6,1)`-difference matrix.
@@ -3341,6 +3438,7 @@ def DM_33_6_1():
 
     return G, Mb
 
+
 def DM_35_6_1():
     r"""
     Return a `(35,6,1)`-difference matrix.
@@ -3372,6 +3470,7 @@ def DM_35_6_1():
     G = AdditiveCyclic(35)
 
     return G, list(zip(*M))
+
 
 def DM_36_9_1():
     r"""
@@ -3426,6 +3525,7 @@ def DM_36_9_1():
 
     return G, Mb
 
+
 def DM_39_6_1():
     r"""
     Return a `(39,6,1)`-difference matrix.
@@ -3469,6 +3569,7 @@ def DM_39_6_1():
             a,b,c,d,e,f = (16*x for x in [c,a,b,f,d,e])
 
     return G,Mb
+
 
 def DM_44_6_1():
     r"""
@@ -3529,6 +3630,7 @@ def DM_44_6_1():
 
     return G2211, Mb
 
+
 def DM_45_7_1():
     r"""
     Return a `(45,7,1)`-difference matrix.
@@ -3585,6 +3687,7 @@ def DM_45_7_1():
 
     return G533, Mb
 
+
 def DM_48_9_1():
     r"""
     Return a `(48,9,1)`-difference matrix.
@@ -3633,6 +3736,7 @@ def DM_48_9_1():
             Mb.append([e+F3F16((0,w**(x+u))) for (e,x) in zip(L,V)])
 
     return F3F16, Mb
+
 
 def DM_51_6_1():
     r"""
@@ -3726,13 +3830,13 @@ def DM_52_6_1():
 
     from itertools import product
 
-    def t1(i,R):
+    def t1(i, R):
         if i > 1:
             return t1(1,t1(i-1,R))
         ((x1,y1),(x2,y2),(x3,y3),(x4,y4),(x5,y5),(x6,y6)) = R
         return [(z*x3, 3*y3), (z*x1, 3*y1), (z*x2, 3*y2), (z*x6, 3*y6), (z*x4, 3*y4), (z*x5, 3*y5)]
 
-    def t2(i,R):
+    def t2(i, R):
         if i > 1:
             return t2(1,t2(i-1,R))
         ((x1,y1),(x2,y2),(x3,y3),(x4,y4),(x5,y5),(x6,y6)) = R
@@ -3747,6 +3851,7 @@ def DM_52_6_1():
             Mb.append(t2(c2,R))
 
     return G, Mb
+
 
 def DM_55_7_1():
     r"""
@@ -3786,6 +3891,7 @@ def DM_55_7_1():
             Mb.append(cyclic_shift(R,c)+[0])
 
     return G, Mb
+
 
 def DM_56_8_1():
     r"""
@@ -3834,6 +3940,7 @@ def DM_56_8_1():
 
     return G, Mb
 
+
 def DM_57_8_1():
     r"""
     Return a `(57,8,1)`-difference matrix.
@@ -3862,6 +3969,7 @@ def DM_57_8_1():
     G = AdditiveCyclic(57)
     return G, M
 
+
 def DM_60_6_1():
     r"""
     Return a `(60,6,1)`-difference matrix.
@@ -3876,7 +3984,6 @@ def DM_60_6_1():
       2013
 
     http://onlinelibrary.wiley.com/doi/10.1002/jcd.21384/abstract
-
 
     EXAMPLES::
 
@@ -3913,6 +4020,7 @@ def DM_60_6_1():
         M60b.append([-f,-d,-e,-b+onezero,-c+onezero,-a+onezero])
 
     return G, M60b
+
 
 def DM_75_8_1():
     r"""
@@ -3962,6 +4070,7 @@ def DM_75_8_1():
 
     return G, Mb
 
+
 def DM_273_17_1():
     r"""
     Return a `(273,17,1)`-difference matrix.
@@ -3989,6 +4098,7 @@ def DM_273_17_1():
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
     G = AdditiveCyclic(273)
     return G, M
+
 
 def DM_993_32_1():
     r"""
@@ -4053,7 +4163,7 @@ LIST_OF_DM = "\n".join(r"    - `\lambda={}`:\n       ".format(l) +
 
 def RBIBD_120_8_1():
     r"""
-    Return a resolvable `BIBD(120,8,1)`
+    Return a resolvable `BIBD(120,8,1)`.
 
     This function output a list ``L`` of `17\times 15` blocks such that
     ``L[i*15:(i+1)*15]`` is a partition of `120`.
@@ -4105,7 +4215,7 @@ def RBIBD_120_8_1():
 
     # A (precomputed) set that every block of the BIBD intersects on 0 or 2 points
     hyperoval = [128, 192, 194, 4, 262, 140, 175, 48, 81, 180, 245, 271, 119, 212, 249, 189, 62, 255]
-    #for B in BIBD:
+    # for B in BIBD:
     #    len_trace = sum(x in hyperoval for x in B)
     #    assert len_trace == 0 or len_trace == 2
 
@@ -4118,7 +4228,7 @@ def RBIBD_120_8_1():
             if p in B:
                 equiv.append([x for x in B if x not in hyperoval])
         else:
-            new_BIBD.append([x for x in B])
+            new_BIBD.append(list(B))
 
     BIBD = new_BIBD
 
@@ -4132,6 +4242,7 @@ def RBIBD_120_8_1():
     equiv = [[M.nonzero_positions_in_row(x) for x in S] for S in equiv]
     return [B for S in equiv for B in S]
 
+
 def BIBD_45_9_8(from_code=False):
     r"""
     Return a `(45,9,1)`-BIBD.
@@ -4143,8 +4254,8 @@ def BIBD_45_9_8(from_code=False):
 
     INPUT:
 
-    - ``from_code`` (boolean) -- whether to build the design from hardcoded data
-      (default) or from the code object (much longer).
+    - ``from_code`` -- boolean; whether to build the design from hardcoded data
+      (default) or from the code object (much longer)
 
     EXAMPLES::
 
@@ -4216,7 +4327,7 @@ def BIBD_66_6_1():
     Return a (66,6,1)-BIBD.
 
     This BIBD was obtained from La Jolla covering repository
-    (https://math.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+    (https://dmgordon.org/cover) where it is attributed to Colin Barker.
 
     EXAMPLES::
 
@@ -4240,7 +4351,7 @@ def BIBD_76_6_1():
     Return a (76,6,1)-BIBD.
 
     This BIBD was obtained from La Jolla covering repository
-    (https://math.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+    (https://dmgordon.org/cover) where it is attributed to Colin Barker.
 
     EXAMPLES::
 
@@ -4264,7 +4375,7 @@ def BIBD_96_6_1():
     Return a (96,6,1)-BIBD.
 
     This BIBD was obtained from La Jolla covering repository
-    (https://math.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+    (https://dmgordon.org/cover) where it is attributed to Colin Barker.
 
     EXAMPLES::
 
@@ -4304,6 +4415,7 @@ def BIBD_106_6_1():
             ((0,0), ( 9,0), (21,0), (12,1), (13,1), (27,1))]
 
     return [[((x+i) % 53+y*53) for x,y in B] for i in range(53) for B in bibd]
+
 
 def BIBD_111_6_1():
     r"""
@@ -4362,6 +4474,7 @@ def BIBD_126_6_1():
                  for x,y in product(range(5),repeat=2)])
     return [[x+y*5+z*25 for x,y,z in B]
             for B in bibd]
+
 
 def BIBD_136_6_1():
     r"""
@@ -4508,13 +4621,9 @@ def HigmanSimsDesign():
     from sage.combinat.designs.block_design import WittDesign
     from .incidence_structures import IncidenceStructure
     W = WittDesign(24)
-    a,b = 0,1
-    Wa = [set(B) for B in W
-          if (a     in B and
-              b not in B)]
-    Wb = [set(B) for B in W
-          if (b     in B and
-              a not in B)]
+    a, b = 0, 1
+    Wa = [set(B) for B in W if a in B and b not in B]
+    Wb = [set(B) for B in W if b in B and a not in B]
 
     H = [[i for i, A in enumerate(Wa) if len(A & B) != 2]
          for B in Wb]
@@ -4658,7 +4767,7 @@ def BIBD_79_13_2():
 
     permAction = libgap.Action(G, points, action)
 
-    baseBlocks = [libgap.Set(list(map(lambda p: libgap.Position(points, p), B))) for B in [B1, B2, B3, B4]]
+    baseBlocks = [libgap.Set([libgap.Position(points, p) for p in B]) for B in [B1, B2, B3, B4]]
 
     B3Orbit = libgap.Orbit(permAction, baseBlocks[2], libgap.OnSets)
     B4Orbit = libgap.Orbit(permAction, baseBlocks[3], libgap.OnSets)
@@ -4669,6 +4778,7 @@ def BIBD_79_13_2():
     libgap.unset_global("p23Act")
     libgap.unset_global("p4Act")
     return [[int(t)-1 for t in y] for y in blocks]
+
 
 def BIBD_56_11_2():
     r"""
@@ -5033,6 +5143,462 @@ LIST_OF_EDS = "\n".join("    - `k = {}`: {}".format(
                         k, ', '.join('`{}`'.format(q) for q in sorted(EDS[k]) if EDS[k][q] is not False))
                         for k in sorted(EDS))
 
+
+def ca_11_2_5_3():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_11_2_5_3
+        sage: C = ca_11_2_5_3()
+        sage: is_covering_array(C,2,3)
+        True
+
+    """
+    return [[0, 0, 1, 0, 1],
+            [0, 0, 2, 1, 0],
+            [0, 1, 0, 1, 2],
+            [0, 2, 1, 2, 2],
+            [1, 0, 0, 2, 1],
+            [1, 1, 1, 2, 0],
+            [1, 1, 2, 0, 2],
+            [1, 2, 2, 1, 1],
+            [2, 0, 2, 2, 2],
+            [2, 1, 1, 1, 1],
+            [2, 2, 0, 0, 0]]
+
+
+def ca_12_2_7_3():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_12_2_7_3
+        sage: C = ca_12_2_7_3()
+        sage: is_covering_array(C,2,3)
+        True
+
+    """
+    return [[0, 0, 0, 2, 2, 0, 0],
+            [0, 0, 2, 1, 1, 1, 1],
+            [0, 1, 0, 0, 0, 1, 2],
+            [0, 2, 1, 2, 0, 2, 1],
+            [1, 0, 2, 0, 0, 2, 0],
+            [1, 1, 1, 1, 2, 0, 1],
+            [1, 1, 1, 2, 1, 1, 0],
+            [1, 2, 0, 1, 1, 2, 2],
+            [2, 0, 1, 0, 1, 0, 2],
+            [2, 1, 2, 2, 2, 2, 2],
+            [2, 2, 0, 0, 2, 1, 1],
+            [2, 2, 2, 1, 0, 0, 0]]
+
+
+def ca_13_2_9_3():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_13_2_9_3
+        sage: C = ca_13_2_9_3()
+        sage: is_covering_array(C,2,3)
+        True
+
+    """
+    return [[0, 0, 0, 2, 0, 2, 2, 2, 0],
+            [0, 0, 2, 0, 1, 1, 1, 2, 1],
+            [0, 1, 1, 1, 2, 0, 1, 2, 0],
+            [0, 1, 2, 1, 0, 1, 2, 0, 2],
+            [0, 2, 2, 2, 2, 1, 0, 1, 0],
+            [1, 0, 1, 0, 2, 1, 2, 0, 0],
+            [1, 0, 2, 1, 2, 2, 0, 2, 2],
+            [1, 1, 0, 0, 0, 0, 0, 1, 1],
+            [1, 2, 0, 2, 1, 0, 1, 0, 2],
+            [2, 0, 2, 1, 1, 0, 2, 1, 0],
+            [2, 1, 1, 2, 1, 2, 0, 0, 1],
+            [2, 2, 0, 1, 2, 1, 2, 2, 1],
+            [2, 2, 1, 0, 0, 2, 1, 1, 2]]
+
+
+def ca_14_2_10_3():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_14_2_10_3
+        sage: C = ca_14_2_10_3()
+        sage: is_covering_array(C,2,3)
+        True
+
+    """
+    return [[0, 0, 0, 0, 2, 2, 2, 1, 1, 0],
+            [0, 0, 0, 2, 1, 0, 0, 2, 1, 1],
+            [0, 0, 1, 1, 1, 2, 1, 0, 2, 2],
+            [0, 1, 0, 2, 0, 1, 2, 0, 1, 2],
+            [0, 2, 2, 2, 1, 2, 2, 1, 0, 0],
+            [1, 0, 2, 1, 0, 1, 1, 1, 1, 1],
+            [1, 1, 1, 2, 1, 1, 1, 2, 2, 0],
+            [1, 1, 2, 0, 0, 2, 2, 2, 2, 1],
+            [1, 1, 2, 1, 0, 0, 0, 0, 0, 0],
+            [1, 2, 0, 1, 2, 0, 1, 2, 2, 2],
+            [2, 0, 0, 0, 1, 0, 1, 2, 0, 2],
+            [2, 1, 2, 2, 2, 2, 0, 1, 2, 2],
+            [2, 2, 1, 0, 2, 1, 0, 0, 0, 1],
+            [2, 2, 1, 1, 0, 0, 2, 1, 1, 0]]
+
+
+def ca_15_2_20_3():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from [Nur2004]_
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_15_2_20_3
+        sage: C = ca_15_2_20_3()
+        sage: is_covering_array(C,2,3)
+        True
+
+    """
+    return [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 0, 1, 1, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+            [0, 1, 1, 1, 1, 0, 1, 2, 2, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 2],
+            [0, 2, 2, 2, 2, 2, 2, 0, 1, 0, 0, 0, 0, 1, 2, 2, 0, 1, 1, 1],
+            [1, 0, 1, 1, 1, 2, 2, 0, 1, 0, 1, 1, 2, 0, 0, 1, 1, 0, 1, 2],
+            [1, 1, 2, 2, 2, 1, 0, 1, 0, 2, 1, 1, 0, 0, 2, 1, 2, 2, 1, 0],
+            [1, 2, 0, 1, 2, 0, 2, 1, 0, 2, 0, 2, 2, 1, 0, 2, 1, 0, 2, 1],
+            [1, 2, 1, 0, 2, 2, 1, 2, 0, 1, 2, 1, 1, 0, 1, 2, 0, 2, 0, 1],
+            [1, 2, 1, 2, 0, 2, 1, 1, 2, 2, 1, 0, 1, 2, 0, 0, 2, 1, 0, 0],
+            [2, 0, 2, 2, 2, 0, 1, 2, 2, 1, 2, 2, 0, 2, 2, 0, 1, 0, 1, 2],
+            [2, 1, 0, 2, 1, 2, 0, 2, 2, 2, 1, 2, 2, 0, 1, 2, 0, 1, 2, 0],
+            [2, 1, 2, 0, 1, 1, 2, 0, 2, 1, 0, 1, 1, 2, 1, 0, 2, 0, 2, 1],
+            [2, 1, 2, 1, 0, 1, 2, 2, 1, 1, 2, 0, 2, 1, 0, 0, 1, 2, 0, 0],
+            [2, 2, 1, 1, 1, 1, 0, 1, 0, 0, 2, 2, 1, 2, 2, 1, 0, 1, 0, 2]]
+
+
+def ca_19_2_6_4():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_19_2_6_4
+        sage: C = ca_19_2_6_4()
+        sage: is_covering_array(C,2,4)
+        True
+
+    """
+    return [[0, 0, 0, 2, 0, 0],
+            [0, 0, 1, 0, 1, 1],
+            [0, 1, 3, 1, 2, 1],
+            [0, 2, 2, 3, 0, 2],
+            [0, 3, 3, 2, 3, 3],
+            [1, 0, 3, 1, 1, 2],
+            [1, 1, 0, 3, 1, 3],
+            [1, 1, 2, 0, 3, 0],
+            [1, 2, 1, 2, 2, 0],
+            [1, 3, 1, 3, 0, 1],
+            [2, 0, 2, 3, 2, 3],
+            [2, 1, 1, 2, 3, 2],
+            [2, 2, 0, 1, 3, 1],
+            [2, 2, 3, 0, 0, 3],
+            [2, 3, 2, 1, 1, 0],
+            [3, 0, 3, 3, 3, 0],
+            [3, 1, 1, 1, 0, 3],
+            [3, 2, 2, 2, 1, 1],
+            [3, 3, 0, 0, 2, 2]]
+
+
+def ca_21_2_7_4():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+    This CA is also uniform.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_21_2_7_4
+        sage: C = ca_21_2_7_4()
+        sage: is_covering_array(C,2,4)
+        True
+
+    """
+    return [[0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 3, 1, 1, 1, 1],
+            [0, 1, 1, 2, 2, 2, 2],
+            [0, 1, 2, 3, 0, 1, 3],
+            [0, 2, 0, 3, 3, 0, 2],
+            [0, 3, 1, 3, 3, 3, 1],
+            [1, 0, 0, 3, 2, 3, 3],
+            [1, 1, 3, 1, 3, 3, 0],
+            [1, 2, 1, 2, 1, 0, 3],
+            [1, 2, 3, 2, 0, 2, 1],
+            [1, 3, 2, 0, 1, 1, 2],
+            [2, 0, 3, 0, 3, 2, 3],
+            [2, 1, 2, 1, 2, 0, 1],
+            [2, 2, 1, 1, 0, 3, 2],
+            [2, 2, 2, 3, 1, 2, 0],
+            [2, 3, 0, 2, 3, 1, 0],
+            [3, 0, 2, 2, 3, 3, 2],
+            [3, 1, 0, 0, 1, 3, 1],
+            [3, 2, 1, 0, 2, 1, 0],
+            [3, 3, 0, 1, 0, 2, 3],
+            [3, 3, 3, 3, 2, 0, 2]]
+
+
+def ca_29_2_7_5():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_29_2_7_5
+        sage: C = ca_29_2_7_5()
+        sage: is_covering_array(C,2,5)
+        True
+
+    """
+    return [[0, 2, 2, 3, 0, 0, 0],
+            [1, 4, 3, 4, 2, 3, 0],
+            [2, 3, 0, 0, 4, 2, 0],
+            [3, 0, 1, 2, 3, 4, 0],
+            [4, 1, 4, 1, 1, 1, 0],
+            [0, 0, 2, 4, 1, 2, 1],
+            [1, 2, 4, 0, 2, 4, 1],
+            [1, 3, 1, 2, 1, 0, 1],
+            [2, 1, 2, 2, 4, 3, 1],
+            [3, 3, 3, 1, 0, 1, 1],
+            [4, 4, 0, 3, 3, 0, 1],
+            [0, 1, 3, 0, 3, 0, 2],
+            [1, 0, 3, 3, 4, 1, 2],
+            [2, 2, 1, 4, 3, 1, 2],
+            [2, 4, 4, 2, 0, 2, 2],
+            [3, 2, 0, 1, 1, 3, 2],
+            [4, 3, 2, 4, 2, 4, 2],
+            [0, 3, 4, 3, 3, 3, 3],
+            [1, 1, 0, 4, 0, 4, 3],
+            [2, 0, 4, 1, 2, 0, 3],
+            [3, 1, 1, 3, 2, 2, 3],
+            [3, 4, 2, 0, 1, 1, 3],
+            [4, 2, 3, 2, 4, 2, 3],
+            [0, 0, 0, 2, 2, 1, 4],
+            [0, 4, 1, 1, 4, 4, 4],
+            [1, 1, 2, 1, 3, 2, 4],
+            [2, 2, 3, 3, 1, 4, 4],
+            [3, 3, 4, 4, 4, 0, 4],
+            [4, 0, 1, 0, 0, 3, 4]]
+
+
+def ca_37_2_4_6():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_37_2_4_6
+        sage: C = ca_37_2_4_6()
+        sage: is_covering_array(C,2,6)
+        True
+
+    """
+    return [[0, 0, 1, 0],
+            [0, 0, 2, 1],
+            [0, 1, 0, 2],
+            [0, 2, 0, 5],
+            [0, 3, 3, 3],
+            [0, 4, 4, 4],
+            [0, 5, 5, 5],
+            [1, 0, 0, 4],
+            [1, 1, 1, 5],
+            [1, 2, 3, 1],
+            [1, 3, 4, 0],
+            [1, 4, 5, 3],
+            [1, 5, 2, 2],
+            [2, 0, 0, 3],
+            [2, 1, 4, 1],
+            [2, 2, 5, 4],
+            [2, 3, 1, 2],
+            [2, 4, 2, 5],
+            [2, 5, 3, 0],
+            [3, 0, 5, 2],
+            [3, 1, 3, 4],
+            [3, 2, 2, 0],
+            [3, 3, 0, 5],
+            [3, 4, 1, 1],
+            [3, 5, 4, 3],
+            [4, 0, 3, 5],
+            [4, 1, 2, 3],
+            [4, 2, 4, 2],
+            [4, 3, 5, 1],
+            [4, 4, 0, 0],
+            [4, 5, 1, 4],
+            [5, 0, 4, 5],
+            [5, 1, 5, 0],
+            [5, 2, 1, 3],
+            [5, 3, 2, 4],
+            [5, 4, 3, 2],
+            [5, 5, 0, 1]]
+
+
+def ca_39_2_5_6():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_39_2_5_6
+        sage: C = ca_39_2_5_6()
+        sage: is_covering_array(C,2,6)
+        True
+
+    """
+    return [[0, 0, 1, 1, 0],
+            [1, 5, 2, 2, 0],
+            [2, 4, 5, 4, 0],
+            [3, 2, 0, 3, 0],
+            [4, 3, 4, 5, 0],
+            [5, 1, 3, 0, 0],
+            [0, 4, 4, 3, 1],
+            [1, 3, 5, 0, 1],
+            [2, 2, 1, 2, 1],
+            [3, 0, 3, 5, 1],
+            [4, 1, 2, 1, 1],
+            [5, 5, 0, 4, 1],
+            [0, 5, 5, 5, 2],
+            [1, 1, 1, 3, 2],
+            [2, 3, 0, 1, 2],
+            [3, 4, 2, 0, 2],
+            [4, 2, 3, 4, 2],
+            [5, 0, 4, 2, 2],
+            [0, 1, 0, 4, 3],
+            [0, 3, 3, 2, 3],
+            [1, 0, 2, 4, 3],
+            [2, 2, 4, 0, 3],
+            [3, 5, 4, 1, 3],
+            [4, 0, 5, 3, 3],
+            [5, 4, 1, 5, 3],
+            [0, 0, 0, 0, 4],
+            [1, 2, 0, 5, 4],
+            [1, 4, 3, 1, 4],
+            [2, 1, 4, 4, 4],
+            [3, 1, 5, 2, 4],
+            [4, 5, 1, 0, 4],
+            [5, 3, 2, 3, 4],
+            [0, 2, 2, 0, 5],
+            [1, 1, 4, 5, 5],
+            [2, 0, 2, 5, 5],
+            [2, 5, 3, 3, 5],
+            [3, 3, 1, 4, 5],
+            [4, 4, 0, 2, 5],
+            [5, 2, 5, 1, 5]]
+
+
+def ca_41_2_6_6():
+    r"""
+    Return a CA with the given parameters. This CA is proven to be optimal.
+    This CA is also uniform.
+
+    Data obtained from https://zenodo.org/records/1476059
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.database import ca_41_2_6_6
+        sage: C = ca_41_2_6_6()
+        sage: is_covering_array(C,2,6)
+        True
+
+    """
+    return [[0, 0, 0, 0, 0, 0],
+            [1, 1, 4, 5, 4, 0],
+            [2, 3, 3, 5, 2, 0],
+            [3, 0, 2, 3, 3, 0],
+            [3, 5, 5, 2, 1, 0],
+            [4, 2, 1, 4, 5, 0],
+            [5, 4, 4, 1, 1, 0],
+            [0, 0, 1, 1, 1, 1],
+            [1, 2, 5, 1, 2, 1],
+            [2, 4, 4, 3, 5, 1],
+            [2, 5, 2, 4, 0, 1],
+            [3, 1, 3, 0, 4, 1],
+            [4, 4, 0, 5, 3, 1],
+            [5, 3, 1, 2, 0, 1],
+            [0, 1, 2, 2, 2, 2],
+            [1, 3, 1, 3, 4, 2],
+            [1, 5, 4, 0, 3, 2],
+            [2, 0, 5, 5, 1, 2],
+            [3, 3, 0, 1, 5, 2],
+            [4, 4, 3, 2, 0, 2],
+            [5, 2, 3, 4, 3, 2],
+            [0, 2, 3, 3, 1, 3],
+            [0, 5, 1, 5, 5, 3],
+            [1, 4, 2, 1, 0, 3],
+            [2, 2, 0, 2, 4, 3],
+            [3, 3, 5, 4, 3, 3],
+            [4, 0, 4, 4, 2, 3],
+            [5, 1, 5, 0, 5, 3],
+            [0, 3, 4, 2, 3, 4],
+            [1, 1, 0, 4, 1, 4],
+            [2, 2, 2, 0, 5, 4],
+            [3, 4, 1, 0, 2, 4],
+            [4, 1, 5, 3, 0, 4],
+            [4, 5, 3, 1, 4, 4],
+            [5, 0, 2, 5, 4, 4],
+            [0, 4, 5, 4, 4, 5],
+            [1, 0, 3, 2, 5, 5],
+            [2, 1, 1, 1, 3, 5],
+            [3, 2, 4, 5, 0, 5],
+            [4, 3, 2, 0, 1, 5],
+            [5, 5, 0, 3, 2, 5]]
+
+
+# Make dictionary with keys (t, v) and values (N, k) which are the
+# smallest N and largest k such that a CA(N; t, k, v) can be made using
+# the database.
+CA_constructions = {
+    (2,3): ((11,5), (12,7), (13,9), (14,10), (15,20)),
+    (2,4): ((19,6), (21,7)),
+    (2,5): ((29,7),),
+    (2,6): ((37,4), (39,5), (41,6))
+}
+
+# Add this data to the module's doc.
+LIST_OF_CA_CONSTRUCTIONS = ", ".join(":func:`CA({},{},{},{}) <ca_{}_{}_{}_{}>`".format(N,t,k,v,N,t,k,v)
+                                     for (t,v) in CA_constructions for (N,k) in CA_constructions[(t,v)])
+
+
 __doc__ = __doc__.format(
     LIST_OF_OA_CONSTRUCTIONS=LIST_OF_OA_CONSTRUCTIONS,
     LIST_OF_MOLS_CONSTRUCTIONS=LIST_OF_MOLS_CONSTRUCTIONS,
@@ -5041,6 +5607,7 @@ __doc__ = __doc__.format(
     LIST_OF_DF=LIST_OF_DF,
     LIST_OF_DM=LIST_OF_DM,
     LIST_OF_QDM=LIST_OF_QDM,
-    LIST_OF_EDS=LIST_OF_EDS)
-del LIST_OF_OA_CONSTRUCTIONS, LIST_OF_MOLS_CONSTRUCTIONS, LIST_OF_VMT_VECTORS,LIST_OF_DF, LIST_OF_DM, LIST_OF_QDM, LIST_OF_EDS, LIST_OF_BIBD
+    LIST_OF_EDS=LIST_OF_EDS,
+    LIST_OF_CA_CONSTRUCTIONS=LIST_OF_CA_CONSTRUCTIONS)
+del LIST_OF_OA_CONSTRUCTIONS, LIST_OF_MOLS_CONSTRUCTIONS, LIST_OF_VMT_VECTORS,LIST_OF_DF, LIST_OF_DM, LIST_OF_QDM, LIST_OF_EDS, LIST_OF_BIBD, LIST_OF_CA_CONSTRUCTIONS
 del PolynomialRing, ZZ, a,

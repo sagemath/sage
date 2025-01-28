@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Discrete Gaussian Samplers for `\ZZ[x]`
 
@@ -21,7 +20,6 @@ EXAMPLES::
     sage: from numpy import mean                                                        # needs numpy
     sage: mean(l), sqrt(64)*sigma  # abs tol 5e-1                                       # needs numpy sage.symbolic
     (24.0, 24.0)
-
 """
 # ******************************************************************************
 #
@@ -88,9 +86,9 @@ class DiscreteGaussianDistributionPolynomialSampler(SageObject):
 
         INPUT:
 
-        - ``P`` - a univariate polynomial ring over the Integers
-        - ``n`` - number of coefficients to be sampled
-        - ``sigma`` - coefficients `x` are accepted with probability
+        - ``P`` -- a univariate polynomial ring over the Integers
+        - ``n`` -- number of coefficients to be sampled
+        - ``sigma`` -- coefficients `x` are accepted with probability
           proportional to `\exp(-x²/(2σ²))`. If an object of type
           :class:`sage.stats.distributions.discrete_gaussian_integer.DiscreteGaussianDistributionIntegerSampler`
           is passed, then this sampler is used to sample coefficients.

@@ -33,24 +33,24 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
 
     INPUT:
 
-    - ``F`` - a sequence of Boolean polynomials
+    - ``F`` -- a sequence of Boolean polynomials
 
-    - ``n`` - number of solutions to return. If ``n`` is +infinity
+    - ``n`` -- number of solutions to return. If ``n`` is +infinity
       then all solutions are returned. If ``n <infinity`` then ``n``
       solutions are returned if ``F`` has at least ``n``
       solutions. Otherwise, all solutions of ``F`` are
       returned. (default: ``1``)
 
-    - ``converter`` - an ANF to CNF converter class or object.  If
+    - ``converter`` -- an ANF to CNF converter class or object.  If
       ``converter`` is ``None`` then
       :class:`sage.sat.converters.polybori.CNFEncoder` is used to
       construct a new converter. (default: ``None``)
 
-    - ``solver`` - a SAT-solver class or object. If ``solver`` is
+    - ``solver`` -- a SAT-solver class or object. If ``solver`` is
       ``None`` then :class:`sage.sat.solvers.cryptominisat.CryptoMiniSat`
       is used to construct a new converter.  (default: ``None``)
 
-    - ``target_variables`` - a list of variables. The elements of the list are
+    - ``target_variables`` -- list of variables. The elements of the list are
       used to exclude a particular combination of variable assignments of a
       solution from any further solution. Furthermore ``target_variables``
       denotes which variable-value pairs appear in the solutions. If
@@ -58,15 +58,15 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
       polynomials of ``F`` are used to construct exclusion clauses.
       (default: ``None``)
 
-    - ``**kwds`` - parameters can be passed to the converter and the
-       solver by prefixing them with ``c_`` and ``s_`` respectively. For
-       example, to increase CryptoMiniSat's verbosity level, pass
-       ``s_verbosity=1``.
+    - ``**kwds`` -- parameters can be passed to the converter and the
+      solver by prefixing them with ``c_`` and ``s_`` respectively. For
+      example, to increase CryptoMiniSat's verbosity level, pass
+      ``s_verbosity=1``.
 
     OUTPUT:
 
-        A list of dictionaries, each of which contains a variable
-        assignment solving ``F``.
+    A list of dictionaries, each of which contains a variable assignment
+    solving ``F``.
 
     EXAMPLES:
 
@@ -303,7 +303,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
         if S[0] is None:
             return None
     elif S[-1] is False:
-            return S[0:-1]
+        return S[0:-1]
     return S
 
 
@@ -314,20 +314,20 @@ def learn(F, converter=None, solver=None, max_learnt_length=3, interreduction=Fa
 
     INPUT:
 
-    - ``F`` - a sequence of Boolean polynomials
+    - ``F`` -- a sequence of Boolean polynomials
 
-    - ``converter`` - an ANF to CNF converter class or object.  If ``converter`` is ``None`` then
+    - ``converter`` -- an ANF to CNF converter class or object.  If ``converter`` is ``None`` then
       :class:`sage.sat.converters.polybori.CNFEncoder` is used to construct a new
       converter. (default: ``None``)
 
-    - ``solver`` - a SAT-solver class or object. If ``solver`` is ``None`` then
+    - ``solver`` -- a SAT-solver class or object. If ``solver`` is ``None`` then
       :class:`sage.sat.solvers.cryptominisat.CryptoMiniSat` is used to construct a new converter.
       (default: ``None``)
 
-    - ``max_learnt_length`` - only clauses of length <= ``max_length_learnt`` are considered and
+    - ``max_learnt_length`` -- only clauses of length <= ``max_length_learnt`` are considered and
       converted to polynomials. (default: ``3``)
 
-    - ``interreduction`` - inter-reduce the resulting polynomials (default: ``False``)
+    - ``interreduction`` -- inter-reduce the resulting polynomials (default: ``False``)
 
     .. NOTE::
 
@@ -335,9 +335,7 @@ def learn(F, converter=None, solver=None, max_learnt_length=3, interreduction=Fa
        ``s_`` respectively. For example, to increase CryptoMiniSat's verbosity level, pass
        ``s_verbosity=1``.
 
-    OUTPUT:
-
-        A sequence of Boolean polynomials.
+    OUTPUT: a sequence of Boolean polynomials
 
     EXAMPLES::
 
@@ -397,7 +395,7 @@ def learn(F, converter=None, solver=None, max_learnt_length=3, interreduction=Fa
         try:
             lc = solver.learnt_clauses()
         except (AttributeError, NotImplementedError):
-        # solver does not support recovering learnt clauses
+            # solver does not support recovering learnt clauses
             lc = []
         for c in lc:
             if len(c) <= max_learnt_length:

@@ -1,7 +1,7 @@
 SAGE_SPKG_CONFIGURE([python3], [
    m4_pushdef([MIN_VERSION],               [3.9.0])
    m4_pushdef([MIN_NONDEPRECATED_VERSION], [3.9.0])
-   m4_pushdef([LT_STABLE_VERSION],         [3.12.0])
+   m4_pushdef([LT_STABLE_VERSION],         [3.13.0])
    m4_pushdef([LT_VERSION],                [3.13.0])
    AC_ARG_WITH([python],
                [AS_HELP_STRING([--with-python=PYTHON3],
@@ -70,12 +70,6 @@ SAGE_SPKG_CONFIGURE([python3], [
           sage_spkg_install_python3=yes
       ])
     ])
-    AS_CASE([$host],
-            [*-*-cygwin*], [AS_VAR_IF([sage_spkg_install_python3], [yes], [
-                                AS_VAR_APPEND([SAGE_SPKG_ERRORS], ["
-  On Cygwin, python3 must be installed as a system package. This is an error."])
-                            ])
-                           ])
 ],, [
     dnl PRE
 ], [

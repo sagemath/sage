@@ -21,13 +21,14 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.groups.free_group import FreeGroup
-from sage.groups.finitely_presented import FinitelyPresentedGroup, FinitelyPresentedGroupElement
 from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
 from sage.combinat.root_system.coxeter_group import CoxeterGroup
+from sage.groups.free_group import FreeGroup
+from sage.groups.finitely_presented import FinitelyPresentedGroup, FinitelyPresentedGroupElement
+from sage.misc.cachefunc import cached_method
 from sage.rings.infinity import Infinity
 from sage.structure.richcmp import richcmp, rich_to_bool
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class ArtinGroupElement(FinitelyPresentedGroupElement):
@@ -51,9 +52,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT:
-
-        String. A valid LaTeX math command sequence.
+        OUTPUT: string; a valid LaTeX math command sequence
 
         TESTS::
 
@@ -79,9 +78,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         """
         Return the exponent sum of ``self``.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -111,11 +108,10 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
 
         INPUT:
 
-        - ``W`` -- (default: ``self.parent().coxeter_group()``) the image Coxeter group
+        - ``W`` -- (default: ``self.parent().coxeter_group()``) the image
+          Coxeter group
 
-        OUTPUT:
-
-        An element of the Coxeter group  ``W``.
+        OUTPUT: an element of the Coxeter group  ``W``
 
         EXAMPLES::
 
@@ -263,10 +259,8 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
         Return the left normal form of the element, in the `\Delta`
         exponent and Coxeter group element form.
 
-        OUTPUT:
-
-        A tuple whose first element is the power of `\Delta`, and the rest
-        are the Coxeter elements corresponding to the simple factors.
+        OUTPUT: tuple whose first element is the power of `\Delta`, and the
+        rest are the Coxeter elements corresponding to the simple factors
 
         EXAMPLES::
 
@@ -336,7 +330,7 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
         return tuple([-delta] + form)
 
 
-class ArtinGroup(FinitelyPresentedGroup):
+class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
     r"""
     An Artin group.
 
@@ -515,9 +509,7 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         Return the number of elements of ``self``.
 
-        OUTPUT:
-
-        Infinity.
+        OUTPUT: infinity
 
         EXAMPLES::
 
@@ -539,7 +531,7 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         Return an isomorphic permutation group.
 
-        This raises a :class:`ValueError` error since Artin groups are
+        This raises a :exc:`ValueError` error since Artin groups are
         infinite and have no corresponding permutation group.
 
         EXAMPLES::
@@ -605,9 +597,7 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         Return the index set of ``self``.
 
-        OUTPUT:
-
-        A tuple.
+        OUTPUT: tuple
 
         EXAMPLES::
 
@@ -665,7 +655,7 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         INPUT:
 
-        - ``w`` -- an element of the Coxeter group of ``self``.
+        - ``w`` -- an element of the Coxeter group of ``self``
 
         EXAMPLES::
 
@@ -683,7 +673,7 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         INPUT:
 
-        - ``w`` -- an element of the Coxeter group of ``self``.
+        - ``w`` -- an element of the Coxeter group of ``self``
 
         EXAMPLES::
 

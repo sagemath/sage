@@ -25,6 +25,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
+import itertools
+
 from sage.categories.associative_algebras import AssociativeAlgebras
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.arith.power import generic_power
@@ -37,19 +39,19 @@ from sage.combinat.combinat_cython import (perfect_matchings_iterator,
                                            set_partition_composition)
 from sage.combinat.set_partition import SetPartitions, AbstractSetPartition
 from sage.combinat.set_partition_iterator import set_partition_iterator
-from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra_n
 from sage.combinat.permutation import Permutations
-from sage.graphs.graph import Graph
 from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.flatten import flatten
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.arith.misc import integer_floor as floor
 from sage.arith.misc import integer_ceil as ceil
 
-import itertools
+lazy_import('sage.graphs.graph', 'Graph')
+lazy_import('sage.combinat.symmetric_group_algebra', 'SymmetricGroupAlgebra_n')
 
 
 def partition_diagrams(k):
@@ -114,7 +116,7 @@ def brauer_diagrams(k):
 
     INPUT:
 
-     - ``k`` -- the order of the Brauer diagrams
+    - ``k`` -- the order of the Brauer diagrams
 
     EXAMPLES::
 
@@ -127,14 +129,14 @@ def brauer_diagrams(k):
          {{-3, 3}, {-2, 2}, {-1, 1}}]
     """
     if k in ZZ:
-        s = list(range(1,k+1)) + list(range(-k,0))
+        s = list(range(1, k+1)) + list(range(-k,0))
         for p in perfect_matchings_iterator(k):
             yield [(s[a],s[b]) for a,b in p]
-    elif k + ZZ(1) / ZZ(2) in ZZ: # Else k in 1/2 ZZ
-        k = ZZ(k + ZZ(1) / ZZ(2))
+    elif k + ZZ.one() / 2 in ZZ:  # Else k in 1/2 ZZ
+        k = ZZ(k + ZZ.one() / 2)
         s = list(range(1, k)) + list(range(-k+1,0))
         for p in perfect_matchings_iterator(k-1):
-            yield [(s[a],s[b]) for a,b in p] + [[k, -k]]
+            yield [(s[a], s[b]) for a, b in p] + [[k, -k]]
 
 
 def temperley_lieb_diagrams(k):
@@ -447,9 +449,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
         r"""
         Return the underlying implementation of the diagram.
 
-        OUTPUT:
-
-        - tuple of tuples of integers
+        OUTPUT: tuple of tuples of integers
 
         EXAMPLES::
 
@@ -530,7 +530,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 
@@ -934,14 +934,14 @@ class BrauerDiagram(AbstractPartitionDiagram):
         The compact representation ``[A/B;pi]`` of the Brauer algebra diagram
         (see [GL1996]_) has the following components:
 
-        - ``A`` -- is a list of pairs of positive elements (upper row) that
-          are connected,
+        - ``A`` -- list of pairs of positive elements (upper row) that
+          are connected
 
-        - ``B`` -- is a list of pairs of negative elements (lower row) that
-          are connected, and
+        - ``B`` -- list of pairs of negative elements (lower row) that
+          are connected
 
-        - ``pi`` --  is a permutation that is to be interpreted as the relative
-          order of the remaining elements in the top row and the bottom row.
+        - ``pi`` -- a permutation that is to be interpreted as the relative
+          order of the remaining elements in the top row and the bottom row
 
         EXAMPLES::
 
@@ -963,7 +963,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
         NAME = 'Brauer diagram'
         module = 'sage.combinat.diagram_algebras'
         option_class = 'BrauerDiagram'
-        display = dict(default="normal",
+        display = dict(default='normal',
                        description='Specifies how the Brauer diagrams should be printed',
                        values=dict(normal="Using the normal representation",
                                    compact="Using the compact representation"),
@@ -1019,9 +1019,9 @@ class BrauerDiagram(AbstractPartitionDiagram):
 
         INPUT:
 
-        - ``curt`` -- (default: ``True``) if ``True``, then return bijection
-          on free nodes as a one-line notation (standardized to look like a
-          permutation), else, return the honest mapping, a list of pairs
+        - ``curt`` -- boolean (default: ``True``); if ``True``, then return
+          bijection on free nodes as a one-line notation (standardized to look
+          like a permutation), else, return the honest mapping, a list of pairs
           `(i, -j)` describing the bijection on free nodes
 
         EXAMPLES::
@@ -1069,7 +1069,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
             sage: elm2.bijection_on_free_nodes(two_line=True)
             [[1, 2, 3], [-2, -3, -1]]
         """
-        terms = sorted(sorted(list(v), reverse=True) for v in self.diagram()
+        terms = sorted(sorted(v, reverse=True) for v in self.diagram()
                        if max(v) > 0 and min(v) < 0)
         if two_line:
             terms = [[t[i] for t in terms] for i in range(2)]
@@ -1145,7 +1145,7 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
     INPUT:
 
     - ``order`` -- integer or integer `+ 1/2`; the order of the diagrams
-    - ``category`` -- (default: ``FiniteEnumeratedSets()``); the category
+    - ``category`` -- (default: ``FiniteEnumeratedSets()``) the category
 
     All concrete classes should implement attributes
 
@@ -1203,7 +1203,7 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
             self.order = ZZ(order)
             base_set = frozenset(list(range(1,order+1)) + list(range(-order,0)))
         else:
-            #order is a half-integer.
+            # order is a half-integer.
             self.order = QQ(order)
             base_set = frozenset(list(range(1,ZZ(ZZ(1)/ZZ(2) + order)+1))
                                  + list(range(ZZ(-ZZ(1)/ZZ(2) - order),0)))
@@ -1499,7 +1499,6 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
             sage: bd = da.BrauerDiagrams(3/2)
             sage: bd.an_element() in bd
             True
-
         """
         if self.order in ZZ:
             r = ZZ(self.order)
@@ -1587,7 +1586,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
 
         INPUT:
 
-        - ``D1_D2_pi``-- a list or tuple where the first entry is a list of
+        - ``D1_D2_pi`` -- list or tuple where the first entry is a list of
           arcs on the top of the diagram, the second entry is a list of arcs
           on the bottom of the diagram, and the third entry is a permutation
           on the free nodes.
@@ -2284,12 +2283,10 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
     - ``q`` -- the deformation parameter `q`
 
-    OPTIONAL ARGUMENTS:
-
-    - ``base_ring`` -- (default ``None``) a ring containing ``q``; if
+    - ``base_ring`` -- (default: ``None``) a ring containing ``q``; if
       ``None``, then Sage automatically chooses the parent of ``q``
 
-    - ``prefix`` -- (default ``"P"``) a label for the basis elements
+    - ``prefix`` -- (default: ``'P'``) a label for the basis elements
 
     EXAMPLES:
 
@@ -2514,7 +2511,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
         True
     """
     @staticmethod
-    def __classcall_private__(cls, k, q, base_ring=None, prefix="P"):
+    def __classcall_private__(cls, k, q, base_ring=None, prefix='P'):
         r"""
         Standardize the input by getting the base ring from the parent of
         the parameter ``q`` if no ``base_ring`` is given.
@@ -2749,7 +2746,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``i`` -- an integer between 1 and `k-1`
+        - ``i`` -- integer between 1 and `k-1`
 
         EXAMPLES::
 
@@ -2790,7 +2787,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``i`` -- a half integer between 1/2 and `k-1/2`
+        - ``i`` -- half integer between `1/2` and `k-1/2`
 
         EXAMPLES::
 
@@ -2849,7 +2846,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``i`` -- an integer between 1 and `k-1`
+        - ``i`` -- integer between 1 and `k-1`
 
         EXAMPLES::
 
@@ -2883,7 +2880,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``i`` -- a half integer between 1/2 and `k-1/2`
+        - ``i`` -- half integer between `1/2` and `k-1/2`
 
         .. NOTE::
 
@@ -2979,7 +2976,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``i`` -- a half integer between 1/2 and `k`
+        - ``i`` -- half integer between `1/2` and `k`
 
         ALGORITHM:
 
@@ -3016,7 +3013,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
             sage: L = [P.L(i/2) for i in range(1,2*k+1)]
             sage: all(x.dual() == x for x in L)
             True
-            sage: all(x * y == y * x for x in L for y in L)  # long time
+            sage: all(x * y == y * x for x, y in Subsets(L, 2))  # long time
             True
             sage: Lsum = sum(L)
             sage: gens = [P.s(i) for i in range(1,k)]
@@ -3048,13 +3045,13 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         The same tests for a half integer partition algebra::
 
-            sage: k = 9/2
+            sage: k = 7/2
             sage: R.<n> = QQ[]
             sage: P = PartitionAlgebra(k, n)
             sage: L = [P.L(i/2) for i in range(1,2*k+1)]
             sage: all(x.dual() == x for x in L)
             True
-            sage: all(x * y == y * x for x in L for y in L)  # long time
+            sage: all(x * y == y * x for x, y in Subsets(L, 2))  # long time
             True
             sage: Lsum = sum(L)
             sage: gens = [P.s(i) for i in range(1,k-1/2)]
@@ -3117,7 +3114,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         INPUT:
 
-        - ``y`` -- (option) an integer between 1 and `d`; ignored
+        - ``y`` -- (optional) an integer between 1 and `d`; ignored
           if the order of ``self`` is an integer, otherwise the
           default is `1`
 
@@ -3201,7 +3198,7 @@ class OrbitBasis(DiagramAlgebra):
 
         O_\pi = \sum_{\tau \geq \pi} \mu_{2k}(\pi, \tau) D_\tau.
 
-    If `\tau` is a partition of `\ell` blocks and the `i^{th}` block of
+    If `\tau` is a partition of `\ell` blocks and the `i`-th block of
     `\tau` is a union of `b_i` blocks of `\pi`, then
 
     .. MATH::
@@ -3713,12 +3710,10 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
 
     - ``q`` -- the deformation parameter `q`
 
-    OPTIONAL ARGUMENTS:
-
-    - ``base_ring`` -- (default ``None``) a ring containing ``q``; if ``None``
+    - ``base_ring`` -- (default: ``None``) a ring containing ``q``; if ``None``
       then just takes the parent of ``q``
 
-    - ``prefix`` -- (default ``"B"``) a label for the basis elements
+    - ``prefix`` -- (default: ``'B'``) a label for the basis elements
 
     EXAMPLES:
 
@@ -3758,7 +3753,7 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
     """
 
     @staticmethod
-    def __classcall_private__(cls, k, q, base_ring=None, prefix="B"):
+    def __classcall_private__(cls, k, q, base_ring=None, prefix='B'):
         r"""
         Standardize the input by getting the base ring from the parent of
         the parameter ``q`` if no ``base_ring`` is given.
@@ -3898,6 +3893,245 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
         return self._from_dict(d, remove_zeros=True)
 
 
+class HalfTemperleyLiebDiagrams(UniqueRepresentation, Parent):
+    r"""
+    Half diagrams for the Temperley-Lieb algebra cell modules.
+    """
+    def __init__(self, order, defects):
+        r"""
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: import sage.combinat.diagram_algebras as da
+            sage: htld = da.HalfTemperleyLiebDiagrams(7, 3)
+            sage: TestSuite(htld).run()
+        """
+        Parent.__init__(self, category=FiniteEnumeratedSets())
+        self._order = ZZ(order)
+        self._defects = ZZ(defects)
+        if (self._order - self._defects) % 2:
+            raise ValueError("the number of non-defects must be even")
+
+    def _repr_(self):
+        r"""
+        TESTS::
+
+            sage: import sage.combinat.diagram_algebras as da
+            sage: da.HalfTemperleyLiebDiagrams(7, 5)
+            Half Temperley-Lieb diagrams of order 7 with 5 defects
+        """
+        return "Half Temperley-Lieb diagrams of order {} with {} defects".format(self._order, self._defects)
+
+    def __iter__(self):
+        r"""
+        TESTS::
+
+            sage: import sage.combinat.diagram_algebras as da
+            sage: list(da.HalfTemperleyLiebDiagrams(5, 3))
+            [{{1, 2}}, {{2, 3}}, {{3, 4}}, {{4, 5}}]
+        """
+        n = self._order
+        k = self._defects
+        b = (n - k) // 2
+        from sage.combinat.dyck_word import DyckWords
+        for dw in DyckWords(b+k, b):
+            ret = []
+            offset = 0
+            for D in dw.catalan_factorization():
+                ret.extend((offset+a+1, offset+b) for (a, b) in D.tunnels())
+                offset += len(D) + 1
+            yield self.element_class(self, ret)
+
+    def __contains__(self, obj):
+        r"""
+        Check containment.
+
+        TESTS::
+
+            sage: import sage.combinat.diagram_algebras as da
+            sage: htld = da.HalfTemperleyLiebDiagrams(7, 3)
+            sage: htld.an_element() in htld
+            True
+        """
+        return isinstance(obj, self.Element) and obj.parent() is self
+
+    def cardinality(self):
+        r"""
+        Return the cardinality of ``self``.
+
+        EXAMPLES::
+
+            sage: import sage.combinat.diagram_algebras as da
+            sage: htld = da.HalfTemperleyLiebDiagrams(7, 3)
+            sage: htld.cardinality()
+            14
+        """
+        from sage.functions.other import binomial
+        n = self._order
+        k = self._defects
+        b = (n - k) // 2
+        return (k + 1) * binomial(n, b) // (b + k + 1)
+
+    def _element_constructor_(self, d):
+        r"""
+        Construct an element of ``self``.
+
+        EXAMPLES::
+
+            sage: import sage.combinat.diagram_algebras as da
+            sage: htld = da.HalfTemperleyLiebDiagrams(7, 3)
+            sage: htld([[1, 4], [2, 3]])
+            {{1, 4}, {2, 3}}
+        """
+        return self.element_class(self, d)
+
+    class Element(AbstractPartitionDiagram):
+        def _latex_(self):
+            r"""
+            Return a latex representation of ``self``.
+
+            EXAMPLES::
+
+                sage: import sage.combinat.diagram_algebras as da
+                sage: htld = da.HalfTemperleyLiebDiagrams(7, 3)
+                sage: d = htld([[1, 2], [4, 5]])
+                sage: latex(d)
+                \begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}]
+                \tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt]
+                \node[vertex] (G--7) at (9.0, -1) [shape = circle, draw] {};
+                \node[vertex] (G--7) at (9.0, -1) [shape = circle, draw] {};
+                \node[vertex] (G--6) at (7.5, -1) [shape = circle, draw] {};
+                \node[vertex] (G--6) at (7.5, -1) [shape = circle, draw] {};
+                \node[vertex] (G--5) at (6.0, -1) [shape = circle, draw] {};
+                \node[vertex] (G--4) at (4.5, -1) [shape = circle, draw] {};
+                \node[vertex] (G--3) at (3.0, -1) [shape = circle, draw] {};
+                \node[vertex] (G--3) at (3.0, -1) [shape = circle, draw] {};
+                \node[vertex] (G--2) at (1.5, -1) [shape = circle, draw] {};
+                \node[vertex] (G--1) at (0.0, -1) [shape = circle, draw] {};
+                \draw[] (G--7) .. controls +(0.0, 0.4) and +(-0.0, 0.4) .. (G--7);
+                \draw[] (G--6) .. controls +(0.0, 0.4) and +(-0.0, 0.4) .. (G--6);
+                \draw[] (G--5) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. (G--4);
+                \draw[] (G--3) .. controls +(0.0, 0.4) and +(-0.0, 0.4) .. (G--3);
+                \draw[] (G--2) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. (G--1);
+                \end{tikzpicture}
+            """
+            defects = self.defects()
+            temp = [[-b, -a] for (a, b) in self] + [[-d, -d] for d in defects]
+            temp.sort()
+            return diagram_latex(temp)
+
+        def _ascii_art_(self):
+            r"""
+            Return an ascii art representation of ``self``.
+
+            EXAMPLES::
+
+                sage: import sage.combinat.diagram_algebras as da
+                sage: htld = da.HalfTemperleyLiebDiagrams(7, 3)
+                sage: d = htld([[1, 2], [4, 5]])
+                sage: ascii_art(d)
+                 .-. | .-. | |
+                 o o o o o o o
+                sage: htld = da.HalfTemperleyLiebDiagrams(8, 0)
+                sage: d = htld([[1, 6], [2, 3], [4, 5], [7, 8]])
+                sage: ascii_art(d)
+                 .---------.
+                 | .-. .-. | .-.
+                 o o o o o o o o
+            """
+            defects = self.defects()
+            temp = [[-b, -a] for (a, b) in self] + [[-d, d] for d in defects]
+            rank = self.parent()._order
+            temp.append([rank, rank])
+            temp.sort()
+            ret = TL_diagram_ascii_art(temp)
+            from sage.typeset.ascii_art import AsciiArt
+            return AsciiArt(ret[2:])
+
+        def _unicode_art_(self):
+            r"""
+            Return an ascii art representation of ``self``.
+
+            EXAMPLES::
+
+                sage: import sage.combinat.diagram_algebras as da
+                sage: htld = da.HalfTemperleyLiebDiagrams(7, 3)
+                sage: d = htld([[1, 2], [4, 5]])
+                sage: unicode_art(d)
+                 ╭─╮ │ ╭─╮ │ │
+                 ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬
+                sage: htld = da.HalfTemperleyLiebDiagrams(8, 0)
+                sage: d = htld([[1, 6], [2, 3], [4, 5], [7, 8]])
+                sage: unicode_art(d)
+                 ╭─────────╮
+                 │ ╭─╮ ╭─╮ │ ╭─╮
+                 ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬
+            """
+            defects = self.defects()
+            temp = [[-b, -a] for (a, b) in self] + [[-d, d] for d in defects]
+            rank = self.parent()._order
+            temp.append([rank, rank])
+            temp.sort()
+            ret = TL_diagram_ascii_art(temp, use_unicode=True)
+            from sage.typeset.unicode_art import UnicodeArt
+            return UnicodeArt(ret[2:])
+
+        def defects(self):
+            r"""
+            Return the defects of ``self``.
+
+            EXAMPLES::
+
+                sage: import sage.combinat.diagram_algebras as da
+                sage: htld = da.HalfTemperleyLiebDiagrams(7, 3)
+                sage: d = htld([[1, 2], [4, 5]])
+                sage: d.defects()
+                frozenset({3, 6, 7})
+            """
+            order = self.parent()._order
+            return frozenset(range(1, order+1)) - frozenset(e for B in self for e in B)
+
+        def check(self):
+            r"""
+            Check the validity of the input of ``self``.
+
+            EXAMPLES::
+
+                sage: import sage.combinat.diagram_algebras as da
+                sage: htld = da.HalfTemperleyLiebDiagrams(7, 3)
+                sage: htld([[1,2], [3,4]])  # indirect doctest
+                {{1, 2}, {3, 4}}
+                sage: htld([[1,2], [-1, -2]])  # indirect doctest
+                Traceback (most recent call last):
+                ...
+                ValueError: {{-2, -1}, {1, 2}} does not represent a half TL diagram of order 7
+                sage: htld([[1,2,3], [4,5]])  # indirect doctest
+                Traceback (most recent call last):
+                ...
+                ValueError: all blocks of {{1, 2, 3}, {4, 5}} must be of size 2
+                sage: htld([[1,2], [3,4], [5,6]])  # indirect doctest
+                Traceback (most recent call last):
+                ...
+                ValueError: {{1, 2}, {3, 4}, {5, 6}} does not have 3 defects
+                sage: htld([[1,3], [2,4]])  # indirect doctest
+                Traceback (most recent call last):
+                ...
+                ValueError: {{1, 3}, {2, 4}} is not planar
+            """
+            tst = frozenset(e for B in self._base_diagram for e in B)
+            P = self.parent()
+            if not (tst <= frozenset(range(1, P._order+1))):
+                raise ValueError("{} does not represent a half TL diagram of order {}".format(
+                                     self, self.parent()._order))
+            if any(len(block) != 2 for block in self):
+                raise ValueError("all blocks of {} must be of size 2".format(self))
+            if len(tst) != P._order - P._defects:
+                raise ValueError("{} does not have {} defects".format(self, P._defects))
+            if not self.is_planar():
+                raise ValueError("{} is not planar".format(self))
+
+
 class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
     r"""
     A Temperley--Lieb algebra.
@@ -3915,12 +4149,10 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
 
     - ``q`` -- the deformation parameter `q`
 
-    OPTIONAL ARGUMENTS:
-
-    - ``base_ring`` -- (default ``None``) a ring containing ``q``; if ``None``
+    - ``base_ring`` -- (default: ``None``) a ring containing ``q``; if ``None``
       then just takes the parent of ``q``
 
-    - ``prefix`` -- (default ``"T"``) a label for the basis elements
+    - ``prefix`` -- (default: ``'T'``) a label for the basis elements
 
     EXAMPLES:
 
@@ -3948,9 +4180,63 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
         True
         sage: b[0]^5 == x^4*b[0]
         True
+
+    The Temperley-Lieb algebra is a cellular algebra, and we verify that
+    the dimensions of the simple modules at `q = 0` is given by
+    :oeis:`A050166`::
+
+        sage: for k in range(1,5):
+        ....:     TL = TemperleyLiebAlgebra(2*k, 0, QQ)
+        ....:     print("".join("{:3}".format(TL.cell_module(la).simple_module().dimension())
+        ....:                   for la in reversed(TL.cell_poset()) if la != 0))
+          1
+          1  2
+          1  4  5
+          1  6 14 14
+        sage: for k in range(1,4):
+        ....:     TL = TemperleyLiebAlgebra(2*k+1, 0, QQ)
+        ....:     print("".join("{:3}".format(TL.cell_module(la).simple_module().dimension())
+        ....:                   for la in reversed(TL.cell_poset()) if la != 0))
+          1  2
+          1  4  5
+          1  6 14 14
+
+    Additional examples when the Temperley-Lieb algebra is not semisimple::
+
+        sage: TL = TemperleyLiebAlgebra(8, -1, QQ)
+        sage: for la in TL.cell_poset():
+        ....:     CM = TL.cell_module(la)
+        ....:     if not CM.nonzero_bilinear_form():
+        ....:         continue
+        ....:     print(la, CM.dimension(), CM.simple_module().dimension())
+        ....:
+        0 14 1
+        2 28 28
+        4 20 13
+        6 7 7
+        8 1 1
+        sage: for k in range(1,5):
+        ....:     TL = TemperleyLiebAlgebra(2*k, -1, QQ)
+        ....:     print("".join("{:3}".format(TL.cell_module(la).simple_module().dimension())
+        ....:                   for la in reversed(TL.cell_poset())
+        ....:                    if TL.cell_module(la).nonzero_bilinear_form()))
+          1  1
+          1  3  1
+          1  4  9  1
+          1  7 13 28  1
+        sage: C5.<z5> = CyclotomicField(5)
+        sage: for k in range(1,5):
+        ....:     TL = TemperleyLiebAlgebra(2*k, z5+~z5, C5)
+        ....:     print("".join("{:3}".format(TL.cell_module(la).simple_module().dimension())
+        ....:                   for la in reversed(TL.cell_poset())
+        ....:                    if TL.cell_module(la).nonzero_bilinear_form()))
+          1  1
+          1  3  2
+          1  5  8  5
+          1  7 20 21 13
     """
     @staticmethod
-    def __classcall_private__(cls, k, q, base_ring=None, prefix="T"):
+    def __classcall_private__(cls, k, q, base_ring=None, prefix='T'):
         r"""
         Standardize the input by getting the base ring from the parent of
         the parameter ``q`` if no ``base_ring`` is given.
@@ -3976,8 +4262,12 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
             sage: R.<q> = QQ[]
             sage: TL = TemperleyLiebAlgebra(2, q, R)
             sage: TestSuite(TL).run()
+
+            sage: TL = TemperleyLiebAlgebra(3, 0, QQ)
+            sage: TestSuite(TL).run()
         """
-        SubPartitionAlgebra.__init__(self, k, q, base_ring, prefix, TemperleyLiebDiagrams(k))
+        cat = AssociativeAlgebras(base_ring.category()).Unital().FiniteDimensional().WithBasis().Cellular()
+        SubPartitionAlgebra.__init__(self, k, q, base_ring, prefix, TemperleyLiebDiagrams(k), category=cat)
 
     def _repr_(self):
         """
@@ -4059,6 +4349,153 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
         """
         return TL_diagram_ascii_art(diagram, use_unicode=True)
 
+    @cached_method
+    def cell_poset(self):
+        """
+        Return the cell poset of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<q> = QQ[]
+            sage: TL = TemperleyLiebAlgebra(7, q, R)
+            sage: TL.cell_poset().cover_relations()
+            [[1, 3], [3, 5], [5, 7]]
+
+            sage: TL = TemperleyLiebAlgebra(8, q, R)
+            sage: TL.cell_poset().cover_relations()
+            [[0, 2], [2, 4], [4, 6], [6, 8]]
+        """
+        from sage.combinat.posets.posets import Poset
+        return Poset({k-2: [k] for k in range(self._k, 1, -2)})
+
+    def cell_module_indices(self, la):
+        r"""
+        Return the indices of the cell module of ``self``
+        indexed by ``la`` .
+
+        This is the finite set `M(\lambda)`.
+
+        EXAMPLES::
+
+            sage: R.<q> = QQ[]
+            sage: TL = TemperleyLiebAlgebra(8, q, R)
+            sage: TL.cell_module_indices(4)
+            Half Temperley-Lieb diagrams of order 8 with 4 defects
+        """
+        return HalfTemperleyLiebDiagrams(self._k, la)
+
+    def _to_cellular_element(self, d):
+        r"""
+        Return the image in the cellular basis of the basis element
+        of ``self`` indexed by ``d``.
+
+        EXAMPLES::
+
+            sage: R.<q> = QQ[]
+            sage: TL = TemperleyLiebAlgebra(3, q, R)
+            sage: for d in TL.basis().keys():
+            ....:     print(d)
+            ....:     print(TL._to_cellular_element(d))
+            {{-3, 3}, {-2, -1}, {1, 2}}
+            C(1, {{1, 2}}, {{1, 2}})
+            {{-3, 1}, {-2, -1}, {2, 3}}
+            C(1, {{2, 3}}, {{1, 2}})
+            {{-3, -2}, {-1, 1}, {2, 3}}
+            C(1, {{2, 3}}, {{2, 3}})
+            {{-3, -2}, {-1, 3}, {1, 2}}
+            C(1, {{1, 2}}, {{2, 3}})
+            {{-3, 3}, {-2, 2}, {-1, 1}}
+            C(3, {}, {})
+        """
+        C = self.cellular_basis()
+        top = []
+        bottom = []
+        defects = ZZ.zero()
+        for (a, b) in d:
+            if b < 0:
+                bottom.append((-b, -a))
+            elif a > 0:
+                top.append((a, b))
+            else:
+                defects += ZZ.one()
+        CMI = self.cell_module_indices(defects)
+        tup = (defects, CMI(top), CMI(bottom))
+        return C.monomial(C._indices(tup))
+
+    def _from_cellular_index(self, x):
+        r"""
+        Return the image in ``self`` from the index of the
+        cellular basis ``x``.
+
+        EXAMPLES::
+
+            sage: R.<q> = QQ[]
+            sage: TL = TemperleyLiebAlgebra(3, q, R)
+            sage: C = TL.cellular_basis()
+            sage: for i in C.basis().keys():
+            ....:     print(i)
+            ....:     print(TL._from_cellular_index(i))
+            (1, {{1, 2}}, {{1, 2}})
+            T{{-3, 3}, {-2, -1}, {1, 2}}
+            (1, {{1, 2}}, {{2, 3}})
+            T{{-3, -2}, {-1, 3}, {1, 2}}
+            (1, {{2, 3}}, {{1, 2}})
+            T{{-3, 1}, {-2, -1}, {2, 3}}
+            (1, {{2, 3}}, {{2, 3}})
+            T{{-3, -2}, {-1, 1}, {2, 3}}
+            (3, {}, {})
+            T{{-3, 3}, {-2, 2}, {-1, 1}}
+
+            sage: TL = TemperleyLiebAlgebra(4, QQ.zero(), QQ)
+            sage: C = TL.cellular_basis()
+            sage: [TL._from_cellular_index(i) for i in C.basis().keys()]
+            [T{{-4, -3}, {-2, -1}, {1, 2}, {3, 4}},
+             T{{-4, -1}, {-3, -2}, {1, 2}, {3, 4}},
+             T{{-4, -3}, {-2, -1}, {1, 4}, {2, 3}},
+             T{{-4, -1}, {-3, -2}, {1, 4}, {2, 3}},
+             T{{-4, 4}, {-3, 3}, {-2, -1}, {1, 2}},
+             T{{-4, 4}, {-3, -2}, {-1, 3}, {1, 2}},
+             T{{-4, -3}, {-2, 4}, {-1, 3}, {1, 2}},
+             T{{-4, 4}, {-3, 1}, {-2, -1}, {2, 3}},
+             T{{-4, 4}, {-3, -2}, {-1, 1}, {2, 3}},
+             T{{-4, -3}, {-2, 4}, {-1, 1}, {2, 3}},
+             T{{-4, 2}, {-3, 1}, {-2, -1}, {3, 4}},
+             T{{-4, 2}, {-3, -2}, {-1, 1}, {3, 4}},
+             T{{-4, -3}, {-2, 2}, {-1, 1}, {3, 4}},
+             T{{-4, 4}, {-3, 3}, {-2, 2}, {-1, 1}}]
+        """
+        _, top, bottom = x
+        bottom = [[-b, -a] for (a, b) in bottom]
+        tmiss = frozenset(range(1, self._k+1)) - frozenset(e for B in top for e in B)
+        bmiss = frozenset(range(-1, -self._k-1, -1)) - frozenset(e for B in bottom for e in B)
+        prop = list(zip(sorted(tmiss, reverse=True), sorted(bmiss)))
+        return self.monomial(self._indices(bottom + prop + list(top)))
+
+    def cellular_involution(self, x):
+        r"""
+        Return the cellular involution of ``x`` in ``self``.
+
+        EXAMPLES::
+
+            sage: TL = TemperleyLiebAlgebra(4, QQ.zero(), QQ)
+            sage: ascii_art(TL.an_element())
+                            o o o o       o o o o
+               o o o o      | `-` |       | `-` |
+            2* `-` `-` + 2* `-----`  + 3* `---. |
+               .-. .-.      .-. .-.       .-. | |
+               o o o o      o o o o       o o o o
+            sage: ascii_art(TL.cellular_involution(TL.an_element()))
+                            o o o o       o o o o
+               o o o o      `-` `-`       `-` | |
+            2* `-` `-` + 2* .-----.  + 3* .---` |
+               .-. .-.      | .-. |       | .-. |
+               o o o o      o o o o       o o o o
+        """
+        M = x.monomial_coefficients(copy=False)
+        I = self._indices
+        return self._from_dict({d.dual(): c for d, c in M.items()},
+                               remove_zeros=False)
+
 
 class PlanarAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
     r"""
@@ -4077,12 +4514,10 @@ class PlanarAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
 
     - ``q`` -- the deformation parameter `q`
 
-    OPTIONAL ARGUMENTS:
-
-    - ``base_ring`` -- (default ``None``) a ring containing ``q``; if ``None``
+    - ``base_ring`` -- (default: ``None``) a ring containing ``q``; if ``None``
       then just takes the parent of ``q``
 
-    - ``prefix`` -- (default ``"Pl"``) a label for the basis elements
+    - ``prefix`` -- (default: ``'Pl'``) a label for the basis elements
 
     EXAMPLES:
 
@@ -4118,7 +4553,7 @@ class PlanarAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
         True
     """
     @staticmethod
-    def __classcall_private__(cls, k, q, base_ring=None, prefix="Pl"):
+    def __classcall_private__(cls, k, q, base_ring=None, prefix='Pl'):
         r"""
         Standardize the input by getting the base ring from the parent of
         the parameter ``q`` if no ``base_ring`` is given.
@@ -4207,7 +4642,7 @@ class PropagatingIdeal(SubPartitionAlgebra):
         True
     """
     @staticmethod
-    def __classcall_private__(cls, k, q, base_ring=None, prefix="I"):
+    def __classcall_private__(cls, k, q, base_ring=None, prefix='I'):
         r"""
         Standardize the input by getting the base ring from the parent of
         the parameter ``q`` if no ``base_ring`` is given.
@@ -4265,7 +4700,7 @@ class PropagatingIdeal(SubPartitionAlgebra):
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
             EXAMPLES::
 
@@ -4290,9 +4725,9 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
 
     INPUT:
 
-    - ``diagram`` -- a list of pairs of matchings of the set
+    - ``diagram`` -- list of pairs of matchings of the set
       `\{-1, \ldots, -n, 1, \ldots, n\}`
-    - ``use_unicode`` -- (default: ``False``): whether or not
+    - ``use_unicode`` -- boolean (default: ``False``); whether or not
       to use unicode art instead of ascii art
     - ``blobs`` -- (optional) a list of matchings with blobs on them
 
@@ -4360,7 +4795,7 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
                 # Singleton intervals are vertical lines,
                 #   so we don't need to worry about them
                 if len(I) > 1 and I[0] < cur[0]:
-                    cur, level[j] = level[j], cur
+                    cur, level[j] = I, cur
                     level.append([cur[0]])
                     level.append([cur[1]])
                     break
@@ -4430,7 +4865,7 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
             count_left += 1
         for j in range(i):
             prop_intervals[j].append([bot])
-        for j in range(i+1,total_prop):
+        for j in range(i+1, total_prop):
             prop_intervals[j].append([top])
         if not left_moving:
             top, bot = bot, top
@@ -4529,10 +4964,10 @@ def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
     for i in list(diagram):
         l1.append(list(i))
         l2.extend(list(i))
-    output = "\\begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}] \n\\tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt] \n" #setup beginning of picture
-    for i in l2: #add nodes
+    output = "\\begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}] \n\\tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt] \n"  # setup beginning of picture
+    for i in l2:  # add nodes
         output = output + "\\node[vertex] (G-{}) at ({}, {}) [shape = circle, draw{}] {{}}; \n".format(i, (abs(i)-1)*1.5, sgn(i), filled_str)
-    for i in l1: #add edges
+    for i in l1:  # add edges
         if len(i) > 1:
             l4 = list(i)
             posList = []
@@ -4545,21 +4980,21 @@ def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
             posList.sort()
             negList.sort()
             l4 = posList + negList
-            l5 = l4[:] #deep copy
+            l5 = l4[:]  # deep copy
             for j in range(len(l5)):
-                l5[j-1] = l4[j] #create a permuted list
+                l5[j-1] = l4[j]  # create a permuted list
             if len(l4) == 2:
                 l4.pop()
-                l5.pop() #pops to prevent duplicating edges
+                l5.pop()  # pops to prevent duplicating edges
             for j in zip(l4, l5):
                 xdiff = abs(j[1])-abs(j[0])
                 y1 = sgn(j[0])
                 y2 = sgn(j[1])
-                if y2-y1 == 0 and abs(xdiff) < 5: #if nodes are close to each other on same row
-                    diffCo = (0.5+0.1*(abs(xdiff)-1)) #gets bigger as nodes are farther apart; max value of 1; min value of 0.5.
+                if y2-y1 == 0 and abs(xdiff) < 5:  # if nodes are close to each other on same row
+                    diffCo = (0.5+0.1*(abs(xdiff)-1))  # gets bigger as nodes are farther apart; max value of 1; min value of 0.5.
                     outVec = (sgn(xdiff)*diffCo, -1*diffCo*y1)
                     inVec = (-1*diffCo*sgn(xdiff), -1*diffCo*y2)
-                elif y2-y1 != 0 and abs(xdiff) == 1: #if nodes are close enough curviness looks bad.
+                elif y2-y1 != 0 and abs(xdiff) == 1:  # if nodes are close enough curviness looks bad.
                     outVec = (sgn(xdiff)*0.75, -1*y1)
                     inVec = (-1*sgn(xdiff)*0.75, -1*y2)
                 else:
@@ -4567,7 +5002,7 @@ def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
                     inVec = (-1*sgn(xdiff), -1*y2)
                 output = output + "\\draw[{}] (G-{}) .. controls +{} and +{} .. {}(G-{}); \n".format(
                             edge_options(j), j[0], outVec, inVec, edge_additions(j), j[1])
-    output = output + "\\end{tikzpicture}" #end picture
+    output = output + "\\end{tikzpicture}"  # end picture
     return output
 
 
@@ -5340,7 +5775,7 @@ def propagating_number(sp):
 
 def to_set_partition(l, k=None):
     r"""
-    Convert input to a set partition of `\{1, \ldots, k, -1, \ldots, -k\}`
+    Convert input to a set partition of `\{1, \ldots, k, -1, \ldots, -k\}`.
 
     Convert a list of a list of numbers to a set partitions. Each list
     of numbers in the outer list specifies the numbers contained in one
@@ -5352,12 +5787,10 @@ def to_set_partition(l, k=None):
 
     INPUT:
 
-    - ``l`` - a list of lists of integers
-    - ``k`` - integer (optional, default ``None``)
+    - ``l`` -- list of lists of integers
+    - ``k`` -- integer (default: ``None``)
 
-    OUTPUT:
-
-    - a list of sets
+    OUTPUT: list of sets
 
     EXAMPLES::
 
@@ -5414,11 +5847,9 @@ def to_Brauer_partition(l, k=None):
         True
     """
     L = to_set_partition(l, k=k)
-    L2 = []
     paired = []
     not_paired = []
-    for i in L:
-        L2.append(list(i))
+    L2 = (list(i) for i in L)
     for i in L2:
         if len(i) > 2:
             raise ValueError("blocks must have size at most 2, but {} has {}".format(i, len(i)))

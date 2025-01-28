@@ -1,32 +1,23 @@
-tdlib: Algorithms for computing tree decompositions
-===================================================
+tdlib: Algorithms for computing tree decompositions of graphs
+=============================================================
 
 Description
 -----------
 
-Providing algorithms concerning treedecompositions
+This library, now known as treedec,
+provides algorithms concerning tree decompositions.
 
-website: https://github.com/freetdi/tdlib
 
 License
 -------
 
-GNU General Public License v2
-
-
-SPKG Maintainers
-----------------
-
-Lukas Larisch (lukas.larisch@kaust.edu.sa)
+- GNU General Public License v2
+- GNU General Public License v3
 
 
 Upstream Contact
 ----------------
 
-- Lukas Larisch (lukas.larisch@kaust.edu.sa)
-- git-repo: https://github.com/freetdi/tdlib
-
-Dependencies
-------------
-
--  None
+- https://gitlab.com/freetdi/treedec
+- https://github.com/freetdi/tdlib
+- https://github.com/felix-salfelder

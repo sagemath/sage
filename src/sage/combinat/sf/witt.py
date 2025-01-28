@@ -23,7 +23,6 @@ from . import multiplicative
 from sage.arith.misc import divisors
 from sage.combinat.integer_lists.invlex import IntegerListsLex
 from sage.combinat.partitions import ZS1_iterator
-from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 
 
@@ -240,9 +239,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
 
         - ``lam`` -- a partition
 
-        OUTPUT:
-
-        - the expansion of ``h[lam]`` in the Witt basis ``self``
+        OUTPUT: the expansion of ``h[lam]`` in the Witt basis ``self``
 
         EXAMPLES::
 
@@ -319,9 +316,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
 
         - ``lam`` -- a partition
 
-        OUTPUT:
-
-        - the expansion of ``e[lam]`` in the Witt basis ``self``
+        OUTPUT: the expansion of ``e[lam]`` in the Witt basis ``self``
 
         EXAMPLES::
 
@@ -396,9 +391,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
 
         - ``lam`` -- a partition
 
-        OUTPUT:
-
-        - the expansion of ``p[lam]`` in the Witt basis ``self``
+        OUTPUT: the expansion of ``p[lam]`` in the Witt basis ``self``
 
         EXAMPLES::
 
@@ -562,7 +555,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         OUTPUT:
 
@@ -667,7 +660,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             True
         """
         dct = self._h(self.monomial(lam_even)).monomial_coefficients(copy=False)
-        eelt = self._e.element_class(self._e, {mu: c for mu, c in dct.items()})
+        eelt = self._e.element_class(self._e, dict(dct.items()))
         return self(eelt)
 
     class Element(multiplicative.SymmetricFunctionAlgebra_multiplicative.Element):

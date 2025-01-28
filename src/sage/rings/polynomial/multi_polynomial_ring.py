@@ -60,14 +60,12 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.ring import IntegralDomain
 import sage.rings.fraction_field_element as fraction_field_element
 
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base, is_MPolynomialRing
 from sage.rings.polynomial.polynomial_singular_interface import PolynomialRing_singular_repr
 from sage.rings.polynomial.polydict import PolyDict, ETuple
 from sage.rings.polynomial.term_order import TermOrder
-
 import sage.interfaces.abc
 
 try:
@@ -144,7 +142,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             sage: loads(R.dumps()) == R
             True
         """
-        if not is_MPolynomialRing(other):
+        if not isinstance(other, MPolynomialRing_base):
             return False
         return ((self.base_ring(), self.ngens(),
                 self.variable_names(), self.term_order()) ==
@@ -430,13 +428,16 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
             if P is self:
                 return x
-            elif P == self:
+
+            if P == self:
                 return MPolynomial_polydict(self, x.element().dict())
-            elif self.base_ring().has_coerce_map_from(P):
+
+            if self.base_ring().has_coerce_map_from(P):
                 # it might be in the base ring (i.e. a poly ring over a poly ring)
                 c = self.base_ring()(x)
                 return MPolynomial_polydict(self, {self._zero_tuple: c})
-            elif len(P.variable_names()) == len(self.variable_names()):
+
+            if len(P.variable_names()) == len(self.variable_names()):
                 # Map the variables in some crazy way (but in order,
                 # of course).  This is here since R(blah) is supposed
                 # to be "make an element of R if at all possible with
@@ -446,63 +447,76 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
                 for i, a in D.items():
                     D[i] = K(a)
                 return MPolynomial_polydict(self, D)
-            elif set(P.variable_names()).issubset(set(self.variable_names())) and self.base_ring().has_coerce_map_from(P.base_ring()):
+
+            if (set(P.variable_names()).issubset(set(self.variable_names()))
+                and self.base_ring().has_coerce_map_from(P.base_ring())):
                 # If the named variables are a superset of the input, map the variables by name
                 return MPolynomial_polydict(self, self._extract_polydict(x))
-            else:
-                return MPolynomial_polydict(self, x._mpoly_dict_recursive(self.variable_names(), self.base_ring()))
+
+            return MPolynomial_polydict(self,
+                                        x._mpoly_dict_recursive(self.variable_names(),
+                                                                self.base_ring()))
 
         elif isinstance(x, MPolynomial_libsingular):
             P = x.parent()
             if P == self:
-                return MPolynomial_polydict(self, x.dict())
-            elif self.base_ring().has_coerce_map_from(P):
+                return MPolynomial_polydict(self, x.monomial_coefficients())
+
+            if self.base_ring().has_coerce_map_from(P):
                 # it might be in the base ring (i.e. a poly ring over a poly ring)
                 c = self.base_ring()(x)
                 return MPolynomial_polydict(self, {self._zero_tuple: c})
-            elif len(P.variable_names()) == len(self.variable_names()):
+
+            if len(P.variable_names()) == len(self.variable_names()):
                 # Map the variables in some crazy way (but in order,
                 # of course).  This is here since R(blah) is supposed
                 # to be "make an element of R if at all possible with
                 # no guarantees that this is mathematically solid."
                 K = self.base_ring()
-                D = x.dict()
+                D = x.monomial_coefficients()
                 for i, a in D.items():
                     D[i] = K(a)
                 return MPolynomial_polydict(self, D)
-            elif set(P.variable_names()).issubset(set(self.variable_names())) and self.base_ring().has_coerce_map_from(P.base_ring()):
+
+            if (set(P.variable_names()).issubset(set(self.variable_names()))
+                and self.base_ring().has_coerce_map_from(P.base_ring())):
                 # If the named variables are a superset of the input, map the variables by name
                 return MPolynomial_polydict(self, self._extract_polydict(x))
-            else:
-                return MPolynomial_polydict(self, x._mpoly_dict_recursive(self.variable_names(), self.base_ring()))
 
-        elif isinstance(x, polynomial_element.Polynomial):
-            return MPolynomial_polydict(self, x._mpoly_dict_recursive(self.variable_names(), self.base_ring()))
+            return MPolynomial_polydict(self,
+                                        x._mpoly_dict_recursive(self.variable_names(),
+                                                                self.base_ring()))
 
-        elif isinstance(x, PolyDict):
+        if isinstance(x, polynomial_element.Polynomial):
+            return MPolynomial_polydict(self,
+                                        x._mpoly_dict_recursive(self.variable_names(),
+                                                                self.base_ring()))
+
+        if isinstance(x, PolyDict):
             return MPolynomial_polydict(self, x)
 
-        elif isinstance(x, dict):
+        if isinstance(x, dict):
             K = self.base_ring()
             return MPolynomial_polydict(self, {i: K(a) for i, a in x.items()})
 
-        elif isinstance(x, fraction_field_element.FractionFieldElement) and x.parent().ring() == self:
+        if (isinstance(x, fraction_field_element.FractionFieldElement)
+            and x.parent().ring() == self):
             if x.denominator() == 1:
                 return x.numerator()
-            else:
-                raise TypeError("unable to coerce since the denominator is not 1")
 
-        elif isinstance(x, sage.interfaces.abc.SingularElement) and self._has_singular:
+            raise TypeError("unable to coerce since the denominator is not 1")
+
+        if isinstance(x, sage.interfaces.abc.SingularElement) and self._has_singular:
             self._singular_().set_ring()
             try:
                 return x.sage_poly(self)
             except TypeError:
                 raise TypeError("unable to coerce singular object")
 
-        elif hasattr(x, '_polynomial_'):
+        if hasattr(x, '_polynomial_'):
             return x._polynomial_(self)
 
-        elif isinstance(x, str):
+        if isinstance(x, str):
             from sage.misc.sage_eval import sage_eval
             try:
                 x = sage_eval(x, self.gens_dict_recursive())
@@ -510,7 +524,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
                 raise TypeError("unable to evaluate {!r} in {}".format(x, self))
             return self(x)
 
-        elif isinstance(x, sage.interfaces.abc.Macaulay2Element):
+        if isinstance(x, sage.interfaces.abc.Macaulay2Element):
             try:
                 s = x.sage_polystring()
                 if len(s) == 0:
@@ -524,7 +538,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
                 raise TypeError("Unable to coerce macaulay2 object")
             return MPolynomial_polydict(self, x)
 
-        elif isinstance(x, pari_gen) and x.type() == 't_POL':
+        if isinstance(x, pari_gen) and x.type() == 't_POL':
             # This recursive approach is needed because PARI
             # represents multivariate polynomials as iterated
             # univariate polynomials.  Below, v is the variable
@@ -538,13 +552,13 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         if isinstance(x, dict):
             return MPolynomial_polydict(self, x)
-        else:
-            c = self.base_ring()(x)
-            return MPolynomial_polydict(self, {self._zero_tuple: c})
 
-# The following methods are handy for implementing Groebner
-# basis algorithms. They do only superficial type/sanity checks
-# and should be called carefully.
+        c = self.base_ring()(x)
+        return MPolynomial_polydict(self, {self._zero_tuple: c})
+
+    # The following methods are handy for implementing Groebner
+    # basis algorithms. They do only superficial type/sanity checks
+    # and should be called carefully.
 
     def monomial_quotient(self, f, g, coeff=False):
         r"""
@@ -554,14 +568,13 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         INPUT:
 
-        -  ``f`` - monomial.
+        - ``f`` -- monomial
 
-        -  ``g`` - monomial.
+        - ``g`` -- monomial
 
-        -  ``coeff`` - divide coefficients as well (default:
-           False).
+        - ``coeff`` -- divide coefficients as well (default: ``False``)
 
-        OUTPUT: monomial.
+        OUTPUT: monomial
 
         EXAMPLES::
 
@@ -628,8 +641,8 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         if not g:
             raise ZeroDivisionError
 
-        fd = f.dict()
-        gd = g.dict()
+        fd = f.monomial_coefficients()
+        gd = g.monomial_coefficients()
 
         if not coeff:
             f = next(iter(fd))
@@ -650,11 +663,11 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         INPUT:
 
-        -  ``f`` - monomial.
+        - ``f`` -- monomial
 
-        -  ``g`` - monomial.
+        - ``g`` -- monomial
 
-        OUTPUT: monomial.
+        OUTPUT: monomial
 
         EXAMPLES::
 
@@ -683,8 +696,8 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         """
         one = self.base_ring().one()
 
-        f, = f.dict()
-        g, = g.dict()
+        f, = f.monomial_coefficients()
+        g, = g.monomial_coefficients()
 
         length = len(f)
 
@@ -703,11 +716,9 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         INPUT:
 
+        - ``f`` -- monomial
 
-        -  ``f`` - monomial
-
-        -  ``G`` - list/set of mpolynomials
-
+        - ``G`` -- list/set of mpolynomials
 
         EXAMPLES::
 
@@ -765,7 +776,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         - ``b`` -- monomial
 
-        OUTPUT: Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -788,8 +799,8 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         if not a:
             raise ZeroDivisionError
 
-        a, = a.dict()
-        b, = b.dict()
+        a, = a.monomial_coefficients()
+        b, = b.monomial_coefficients()
 
         return all(b[i] >= a[i]
                    for i in b.common_nonzero_positions(a))
@@ -802,11 +813,11 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         INPUT:
 
-        -  ``h`` - monomial.
+        - ``h`` -- monomial
 
-        -  ``g`` - monomial.
+        - ``g`` -- monomial
 
-        OUTPUT: Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -853,9 +864,9 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
         INPUT:
 
-        -  ``t`` - a monomial.
+        - ``t`` -- a monomial
 
-        OUTPUT: a list of monomials.
+        OUTPUT: list of monomials
 
         EXAMPLES::
 
@@ -882,7 +893,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         one = self.base_ring().one()
         M = list()
 
-        v, = t.dict()
+        v, = t.monomial_coefficients()
         maxvector = list(v)
 
         tempvector = [0] * len(maxvector)
@@ -917,50 +928,18 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         elt = PolyDict({}, check=False)
         for t in terms:
             elt += self(t).element()
-        # NOTE: here we should be using self.element_class but polynomial rings are not complient
-        # with categories...
+        # NOTE: here we should be using self.element_class but
+        # polynomial rings are not complient with categories...
         from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
         return MPolynomial_polydict(self, elt)
 
 
-class MPolynomialRing_polydict_domain(IntegralDomain,
-                                      MPolynomialRing_polydict):
+class MPolynomialRing_polydict_domain(MPolynomialRing_polydict):
     def __init__(self, base_ring, n, names, order):
         order = TermOrder(order, n)
         MPolynomialRing_polydict.__init__(self, base_ring, n, names, order)
-
-    def is_integral_domain(self, proof=True):
-        return True
 
     def is_field(self, proof=True):
         if self.ngens() == 0:
             return self.base_ring().is_field(proof)
         return False
-
-    def ideal(self, *gens, **kwds):
-        """
-        Create an ideal in this polynomial ring.
-        """
-        do_coerce = False
-        if len(gens) == 1:
-            from sage.rings.ideal import is_Ideal
-            if is_Ideal(gens[0]):
-                if gens[0].ring() is self:
-                    return gens[0]
-                gens = gens[0].gens()
-            elif isinstance(gens[0], (list, tuple)):
-                gens = gens[0]
-        if not self._has_singular:
-            # pass through
-            MPolynomialRing_base.ideal(self, gens, **kwds)
-
-        from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
-
-        if isinstance(gens, (sage.interfaces.abc.SingularElement, sage.interfaces.abc.Macaulay2Element)):
-            gens = list(gens)
-            do_coerce = True
-        elif not isinstance(gens, (list, tuple)):
-            gens = [gens]
-        if ('coerce' in kwds and kwds['coerce']) or do_coerce:
-            gens = [self(x) for x in gens]  # this will even coerce from singular ideals correctly!
-        return MPolynomialIdeal(self, gens, **kwds)

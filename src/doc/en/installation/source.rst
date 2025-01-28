@@ -5,7 +5,7 @@
 Install from Source Code
 ========================
 
-Building Sage from the :wikipedia:`source code <Source_code>` has the major
+Building Sage from the source code has the major
 advantage that your install will be optimized for your particular computer and
 should therefore offer better performance and compatibility than a binary
 install.
@@ -370,6 +370,12 @@ does not raise an :class:`ImportError`, then it worked.
 Installation steps
 ------------------
 
+.. hint:: 
+
+  The following steps use the classical ``./configure && make`` build
+  process. The modern Meson build system is also supported, see
+  :ref:`build-source-meson`.
+
 #. Follow the procedure in the file `README.md <https://github.com/sagemath/sage/#readme>`_
    in ``SAGE_ROOT``.
 
@@ -602,8 +608,9 @@ Make targets
 ------------
 
 To build Sage from scratch, you would typically execute ``make`` in Sage's home
-directory to build Sage and its :wikipedia:`HTML <HTML>`
-documentation.
+directory to build Sage and its documentation in HTML format, suitable for
+viewing in a web browser.
+
 The ``make`` command is pretty smart, so if your build of Sage is interrupted,
 then running ``make`` again should cause it to pick up where it left off.
 The ``make`` command can also be given options, which control what is built and
@@ -1124,12 +1131,12 @@ see a list, execute ``sage.env.[TAB]`` while running Sage.
 
     Variables dealing with valgrind and friends:
 
-    - :envvar:`SAGE_TIMEOUT_VALGRIND` - used for Sage's doctesting: the
+    - :envvar:`SAGE_TIMEOUT_VALGRIND` -- used for Sage's doctesting: the
       number of seconds to allow a doctest before timing it out, if tests
       are run using ``??``.  If this isn't set, the default is 1024*1024
       seconds.
 
-    - :envvar:`SAGE_VALGRIND` - trigger black magic in Python.
+    - :envvar:`SAGE_VALGRIND` -- trigger black magic in Python.
 
     - :envvar:`SAGE_MEMCHECK_FLAGS`, :envvar:`SAGE_MASSIF_FLAGS`,
       :envvar:`SAGE_CACHEGRIND_FLAGS`, :envvar:`SAGE_OMEGA_FLAGS` - flags

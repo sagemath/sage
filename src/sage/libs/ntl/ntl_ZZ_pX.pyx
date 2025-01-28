@@ -158,7 +158,7 @@ cdef class ntl_ZZ_pX():
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -173,7 +173,7 @@ cdef class ntl_ZZ_pX():
 
     def __copy__(self):
         """
-        Return a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -193,7 +193,7 @@ cdef class ntl_ZZ_pX():
 
     def get_modulus_context(self):
         """
-        Return the modulus for self.
+        Return the modulus for ``self``.
 
         EXAMPLES::
 
@@ -224,7 +224,7 @@ cdef class ntl_ZZ_pX():
 
     cdef void setitem_from_int(ntl_ZZ_pX self, long i, int value) noexcept:
         r"""
-        Sets ith coefficient to value.
+        Set `i`-th coefficient to value.
 
         AUTHOR: David Harvey (2006-08-05)
         """
@@ -248,7 +248,7 @@ cdef class ntl_ZZ_pX():
 
     def __getitem__(self, long i):
         r"""
-        Returns the ith entry of self.
+        Return the `i`-th entry of ``self``.
 
         EXAMPLES::
 
@@ -269,7 +269,8 @@ cdef class ntl_ZZ_pX():
 
     cdef int getitem_as_int(ntl_ZZ_pX self, long i) noexcept:
         r"""
-        Returns ith coefficient as C int.
+        Return `i`-th coefficient as C int.
+
         Return value is only valid if the result fits into an int.
 
         AUTHOR: David Harvey (2006-08-05)
@@ -380,7 +381,7 @@ cdef class ntl_ZZ_pX():
 
     def __truediv__(ntl_ZZ_pX self, ntl_ZZ_pX other):
         """
-        Compute quotient self / other, if the quotient is a polynomial.
+        Compute quotient ``self / other``, if the quotient is a polynomial.
         Otherwise an Exception is raised.
 
         EXAMPLES::
@@ -417,7 +418,7 @@ cdef class ntl_ZZ_pX():
         in ZZ_p[X] such that a = b*q + r, deg(r) < deg(b).  This
         function returns r.
 
-        If p is not prime this function may raise a :class:`RuntimeError`
+        If p is not prime this function may raise a :exc:`RuntimeError`
         due to division by a noninvertible element of ZZ_p.
 
         EXAMPLES::
@@ -448,8 +449,8 @@ cdef class ntl_ZZ_pX():
 
     def quo_rem(self, ntl_ZZ_pX other):
         """
-        Returns the unique integral q and r such that self = q*other +
-        r, if they exist.  Otherwise raises an Exception.
+        Return the unique integral `q` and `r` such that ``self = q*other +
+        r``, if they exist.  Otherwise raises an Exception.
 
         EXAMPLES::
 
@@ -489,9 +490,12 @@ cdef class ntl_ZZ_pX():
         sig_off()
         return r
 
-    def __pow__(ntl_ZZ_pX self, long n, ignored):
+    def __pow__(self, n, modulus):
         """
-        Return the n-th nonnegative power of self.
+        Return the ``n``-th nonnegative power of ``self``.
+
+        If ``modulus`` is not ``None``, the exponentiation is performed
+        modulo the polynomial ``modulus``.
 
         EXAMPLES::
 
@@ -499,19 +503,71 @@ cdef class ntl_ZZ_pX():
             sage: g = ntl.ZZ_pX([-1,0,1],c)
             sage: g**10
             [1 0 10 0 5 0 0 0 10 0 8 0 10 0 0 0 5 0 10 0 1]
+
+            sage: x = ntl.ZZ_pX([0,1],c)
+            sage: x**10
+            [0 0 0 0 0 0 0 0 0 0 1]
+
+        Modular exponentiation::
+
+            sage: c = ntl.ZZ_pContext(20)
+            sage: f = ntl.ZZ_pX([1,0,1],c)
+            sage: m = ntl.ZZ_pX([1,0,0,0,0,1],c)
+            sage: pow(f, 123**45, m)
+            [1 19 3 0 3]
+
+        Modular exponentiation of ``x``::
+
+            sage: f = ntl.ZZ_pX([0,1],c)
+            sage: f.is_x()
+            True
+            sage: m = ntl.ZZ_pX([1,1,0,0,0,1],c)
+            sage: pow(f, 123**45, m)
+            [15 5 5 11]
+        """
+        if modulus is None:
+            return (<ntl_ZZ_pX>self)._pow(n)
+        else:
+            return (<ntl_ZZ_pX>self)._powmod(Integer(n), modulus)
+
+    cdef ntl_ZZ_pX _pow(ntl_ZZ_pX self, long n):
+        """
+        Compute the ``n``-th power of ``self``.
         """
         if n < 0:
             raise NotImplementedError
+        cdef long ln = n
         #self.c.restore_c() # restored in _new()
         cdef ntl_ZZ_pX r = self._new()
+        if self.is_x() and n >= 1:
+            ZZ_pX_LeftShift(r.x, self.x, n-1)
+        else:
+            sig_on()
+            ZZ_pX_power(r.x, self.x, ln)
+            sig_off()
+        return r
+
+    cdef ntl_ZZ_pX _powmod(ntl_ZZ_pX self, Integer n, ntl_ZZ_pX modulus):
+        r"""
+        Compute the ``n``-th power of ``self`` modulo a polynomial.
+        """
+        cdef ntl_ZZ_pX r = self._new()
+        cdef ZZ_c n_ZZ
+        cdef ZZ_pX_Modulus_c mod
+        is_x = self.is_x()
         sig_on()
-        ZZ_pX_power(r.x, self.x, n)
+        mpz_to_ZZ(&n_ZZ, (<Integer>n).value)
+        ZZ_pX_Modulus_build(mod, modulus.x)
+        if is_x:
+            ZZ_pX_PowerXMod_pre(r.x, n_ZZ, mod)
+        else:
+            ZZ_pX_PowerMod_pre(r.x, self.x, n_ZZ, mod)
         sig_off()
         return r
 
     def __richcmp__(ntl_ZZ_pX self, other, int op):
         """
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -541,7 +597,7 @@ cdef class ntl_ZZ_pX():
 
     def is_zero(self):
         """
-        Return True exactly if this polynomial is 0.
+        Return ``True`` exactly if this polynomial is 0.
 
         EXAMPLES::
 
@@ -560,7 +616,7 @@ cdef class ntl_ZZ_pX():
 
     def is_one(self):
         """
-        Return True exactly if this polynomial is 1.
+        Return ``True`` exactly if this polynomial is 1.
 
         EXAMPLES::
 
@@ -577,7 +633,7 @@ cdef class ntl_ZZ_pX():
 
     def is_monic(self):
         """
-        Return True exactly if this polynomial is monic.
+        Return ``True`` exactly if this polynomial is monic.
 
         EXAMPLES::
 
@@ -601,7 +657,7 @@ cdef class ntl_ZZ_pX():
 
     def __neg__(self):
         """
-        Return the negative of self.
+        Return the negative of ``self``.
 
         EXAMPLES::
 
@@ -669,7 +725,7 @@ cdef class ntl_ZZ_pX():
 
     def _left_pshift(self, ntl_ZZ n):
         """
-        Multiplies all coefficients by n and the context by n.
+        Multiply all coefficients by `n` and the context by `n`.
         """
         cdef ntl_ZZ new_c_p = ntl_ZZ.__new__(ntl_ZZ)
         ZZ_mul(new_c_p.x, (<ntl_ZZ>self.c.p).x, n.x)
@@ -682,7 +738,8 @@ cdef class ntl_ZZ_pX():
 
     def _right_pshift(self, ntl_ZZ n):
         """
-        Divides all coefficients by n and the context by n.  Only really makes sense when n divides self.c.p
+        Divide all coefficients by `n` and the context by `n`.  Only really
+        makes sense when `n` divides ``self.c.p``.
         """
         cdef ntl_ZZ new_c_p = ntl_ZZ.__new__(ntl_ZZ)
         ZZ_div(new_c_p.x, (<ntl_ZZ>self.c.p).x, n.x)
@@ -717,7 +774,7 @@ cdef class ntl_ZZ_pX():
 
     def xgcd(self, ntl_ZZ_pX other, plain=True):
         """
-        Returns r,s,t such that r = s*self + t*other.
+        Return `r`, `s`, `t` such that ``r = s*self + t*other``.
 
         Here r is the resultant of a and b; if r != 0, then this
         function computes s and t such that: a*s + b*t = r; otherwise
@@ -840,7 +897,7 @@ cdef class ntl_ZZ_pX():
 
     def is_x(self):
         """
-        True if this is the polynomial "x".
+        ``True`` if this is the polynomial "x".
 
         EXAMPLES::
 
@@ -860,11 +917,11 @@ cdef class ntl_ZZ_pX():
 
     def convert_to_modulus(self, ntl_ZZ_pContext_class c):
         """
-        Returns a new ntl_ZZ_pX which is the same as self, but considered modulo a different p.
+        Return a new ntl_ZZ_pX which is the same as self, but considered modulo a different p.
 
         In order for this to make mathematical sense, c.p should divide self.c.p
-        (in which case self is reduced modulo c.p) or self.c.p should divide c.p
-        (in which case self is lifted to something modulo c.p congruent to self modulo self.c.p)
+        (in which case ``self`` is reduced modulo c.p) or self.c.p should divide c.p
+        (in which case ``self`` is lifted to something modulo c.p congruent to ``self`` modulo self.c.p)
 
         EXAMPLES::
 
@@ -900,7 +957,7 @@ cdef class ntl_ZZ_pX():
             sage: f.derivative()
             [7 0 19]
         """
-        cdef ntl_ZZ_pX r = self._new() #restores context
+        cdef ntl_ZZ_pX r = self._new()  # restores context
         sig_on()
         ZZ_pX_diff(r.x, self.x)
         sig_off()
@@ -908,7 +965,7 @@ cdef class ntl_ZZ_pX():
 
     def factor(self, verbose=False):
         """
-        Return the factorization of self. Assumes self is
+        Return the factorization of ``self``. Assumes ``self`` is
         monic.
 
         NOTE: The roots are returned in a random order.
@@ -1103,9 +1160,9 @@ cdef class ntl_ZZ_pX():
 
     def invert_and_truncate(self, long m):
         """
-        Compute and return the inverse of self modulo `x^m`.
+        Compute and return the inverse of ``self`` modulo `x^m`.
 
-        The constant term of self must be a unit.
+        The constant term of ``self`` must be a unit.
 
         EXAMPLES::
 
@@ -1127,7 +1184,7 @@ cdef class ntl_ZZ_pX():
 
     def invmod(self, ntl_ZZ_pX modulus):
         """
-        Returns the inverse of self modulo the modulus using NTL's InvMod.
+        Return the inverse of ``self`` modulo the modulus using NTL's InvMod.
         """
         cdef ntl_ZZ_pX r = self._new()
         sig_on()
@@ -1137,7 +1194,7 @@ cdef class ntl_ZZ_pX():
 
     def invmod_newton(self, ntl_ZZ_pX modulus):
         """
-        Returns the inverse of self modulo the modulus using Newton lifting.
+        Return the inverse of ``self`` modulo the modulus using Newton lifting.
         Only works if modulo a power of a prime, and if modulus is either
         unramified or Eisenstein.
         """
@@ -1182,8 +1239,8 @@ cdef class ntl_ZZ_pX():
 
     def multiply_mod(self, ntl_ZZ_pX other, ntl_ZZ_pX modulus):
         """
-        Return self*other % modulus.  The modulus must be monic with
-        deg(modulus) > 0, and self and other must have smaller degree.
+        Return ``self*other % modulus``.  The modulus must be monic with
+        ``deg(modulus) > 0``, and ``self`` and ``other`` must have smaller degree.
 
         EXAMPLES::
 
@@ -1204,7 +1261,7 @@ cdef class ntl_ZZ_pX():
         """
         Return the trace of this polynomial modulus the modulus.
         The modulus must be monic, and of positive degree bigger
-        than the degree of self.
+        than the degree of ``self``.
 
         EXAMPLES::
 
@@ -1236,7 +1293,7 @@ cdef class ntl_ZZ_pX():
             sage: f.trace_list()
             [5, 0, 14, 0, 10]
 
-        The input polynomial must be monic or a :class:`ValueError` is raised::
+        The input polynomial must be monic or a :exc:`ValueError` is raised::
 
             sage: c = ntl.ZZ_pContext(20)
             sage: f = ntl.ZZ_pX([1,2,0,3,0,2],c)
@@ -1258,7 +1315,7 @@ cdef class ntl_ZZ_pX():
 
     def resultant(self, ntl_ZZ_pX other):
         """
-        Return the resultant of self and other.
+        Return the resultant of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -1280,7 +1337,7 @@ cdef class ntl_ZZ_pX():
         """
         Return the norm of this polynomial modulo the modulus.  The
         modulus must be monic, and of positive degree strictly greater
-        than the degree of self.
+        than the degree of ``self``.
 
         EXAMPLES::
 
@@ -1331,7 +1388,7 @@ cdef class ntl_ZZ_pX():
         """
         Return the characteristic polynomial of this polynomial modulo
         the modulus.  The modulus must be monic of degree bigger than
-        self.
+        ``self``.
 
         EXAMPLES::
 
@@ -1351,7 +1408,7 @@ cdef class ntl_ZZ_pX():
         """
         Return the minimal polynomial of this polynomial modulo the
         modulus.  The modulus must be monic of degree bigger than
-        self.
+        ``self``.
 
         EXAMPLES::
 
@@ -1414,6 +1471,46 @@ cdef class ntl_ZZ_pX():
         self.x.SetMaxLength(n)
         #ZZ_pX_preallocate_space(&self.x, n)
         sig_off()
+
+    def compose_mod(self, ntl_ZZ_pX other, ntl_ZZ_pX modulus):
+        r"""
+        Compute `f(g) \bmod h`.
+
+        To be precise about the order fo compostion, given ``self``, ``other``
+        and ``modulus`` as `f(x)`, `g(x)` and `h(x)` compute `f(g(x)) \bmod h(x)`.
+
+        INPUT:
+
+        - ``other`` -- a polynomial `g(x)`
+        - ``modulus`` -- a polynomial `h(x)`
+
+        EXAMPLES::
+
+            sage: c = ntl.ZZ_pContext(17)
+            sage: f = ntl.ZZ_pX([1,2,3],c)
+            sage: g = ntl.ZZ_pX([3,2,1],c)
+            sage: h = ntl.ZZ_pX([1,0,1],c)
+            sage: f.compose_mod(g, h)
+            [5 11]
+
+        AUTHORS:
+
+        - Giacomo Pope (2024-08) initial implementation
+        """
+        cdef ntl_ZZ_pX r = self._new()
+        cdef ZZ_pX_Modulus_c mod
+
+        sig_on()
+        # NTL requires that g is reduced
+        other = other % modulus
+
+        # Build the modulus type
+        ZZ_pX_Modulus_build(mod, modulus.x)
+
+        # Compute f(g) % h
+        ZZ_pX_CompMod(r.x, self.x, other.x, mod)
+        sig_off()
+        return r
 
 cdef class ntl_ZZ_pX_Modulus():
     """

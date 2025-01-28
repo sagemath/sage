@@ -42,14 +42,15 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.misc.lazy_import import lazy_import
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.integer import is_Integer, Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
-
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.generic.homset import SchemeHomset_points
-from sage.schemes.generic.morphism import is_SchemeMorphism
-from .jacobian_morphism import JacobianMorphism_divisor_class_field
+from sage.schemes.hyperelliptic_curves.jacobian_morphism import JacobianMorphism_divisor_class_field
+
+lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 
 
 class JacobianHomset_divisor_classes(SchemeHomset_points):
@@ -111,40 +112,51 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
             (x + 2, y)
             sage: D1 + D2
             (x^2 + 2*x + 2, y + 2*x + 1)
+
+        TESTS:
+
+        Test :issue:`38459`::
+
+            sage: K.<u> = QQ[]
+            sage: C = HyperellipticCurve(u^5 - 1)
+            sage: J = C.jacobian()
+            sage: J(u - 1, 0)
+            (x - 1, y)
         """
         if isinstance(P, (Integer, int)) and P == 0:
-            R = PolynomialRing(self.value_ring(), 'x')
-            return JacobianMorphism_divisor_class_field(self, (R.one(), R.zero()))
+            R = self.curve().hyperelliptic_polynomials()[0].parent().change_ring(self.value_ring())
+            return JacobianMorphism_divisor_class_field(self,
+                                                        (R.one(), R.zero()))
         elif isinstance(P, (list, tuple)):
             if len(P) == 1:
                 return self(P[0])
             elif len(P) == 2:
                 P1 = P[0]
                 P2 = P[1]
-                if is_Integer(P1) and is_Integer(P2):
-                    R = PolynomialRing(self.value_ring(), 'x')
+                if isinstance(P1, Integer) and isinstance(P2, Integer):
+                    R = self.curve().hyperelliptic_polynomials()[0].parent().change_ring(self.value_ring())
                     P1 = R(P1)
                     P2 = R(P2)
                     return JacobianMorphism_divisor_class_field(self, (P1, P2))
-                if is_Integer(P1) and isinstance(P2, Polynomial):
-                    R = PolynomialRing(self.value_ring(), 'x')
+                if isinstance(P1, Integer) and isinstance(P2, Polynomial):
+                    R = self.curve().hyperelliptic_polynomials()[0].parent().change_ring(self.value_ring())
                     P1 = R(P1)
                     return JacobianMorphism_divisor_class_field(self, (P1, P2))
-                if is_Integer(P2) and isinstance(P1, Polynomial):
-                    R = PolynomialRing(self.value_ring(), 'x')
+                if isinstance(P2, Integer) and isinstance(P1, Polynomial):
+                    R = self.curve().hyperelliptic_polynomials()[0].parent().change_ring(self.value_ring())
                     P2 = R(P2)
                     return JacobianMorphism_divisor_class_field(self, (P1, P2))
                 if isinstance(P1, Polynomial) and isinstance(P2, Polynomial):
                     return JacobianMorphism_divisor_class_field(self, tuple(P))
-                if is_SchemeMorphism(P1) and is_SchemeMorphism(P2):
+                if isinstance(P1, SchemeMorphism) and isinstance(P2, SchemeMorphism):
                     return self(P1) - self(P2)
             raise TypeError("argument P (= %s) must have length 2" % P)
         elif isinstance(P, JacobianMorphism_divisor_class_field) and self == P.parent():
             return P
-        elif is_SchemeMorphism(P):
+        elif isinstance(P, SchemeMorphism):
             x0 = P[0]
             y0 = P[1]
-            R, x = PolynomialRing(self.value_ring(), 'x').objgen()
+            R, x = self.curve().hyperelliptic_polynomials()[0].parent().change_ring(self.value_ring()).objgen()
             return self((x - x0, R(y0)))
         raise TypeError("argument P (= %s) does not determine a divisor class" % P)
 
@@ -174,9 +186,9 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
         """
         Return S for a homset X(T) where T = Spec(S).
         """
-        from sage.schemes.generic.scheme import is_AffineScheme
+        from sage.schemes.generic.scheme import AffineScheme
         T = self.domain()
-        if is_AffineScheme(T):
+        if isinstance(T, AffineScheme):
             return T.coordinate_ring()
         else:
             raise TypeError("domain of argument must be of the form Spec(S)")

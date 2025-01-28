@@ -9,7 +9,7 @@ cdef class SetSystem:
     cdef bitset_t _temp
 
     cdef copy(self)
-    cdef _relabel(self, l)
+    cdef _relabel(self, mapping)
     cpdef _complements(self)
 
     cdef resize(self, k=*)

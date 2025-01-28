@@ -3,7 +3,7 @@ r"""
 `p`-adic `L`-functions of elliptic curves
 
 To an elliptic curve `E` over the rational numbers and a prime `p`, one
-can associate a `p`-adic L-function; at least if `E` does not have additive
+can associate a `p`-adic `L`-function; at least if `E` does not have additive
 reduction at `p`. This function is defined by interpolation of L-values of `E`
 at twists. Through the main conjecture of Iwasawa theory it should also be
 equal to a characteristic series of a certain Selmer group.
@@ -17,15 +17,15 @@ description for `p = 2`.)
 One can decompose this algebra as the direct product of the subalgebras
 corresponding to the characters of `\Delta`, which are simply the powers
 `\tau^\eta` (`0 \le \eta \le p-2`) of the Teichmueller character `\tau: \Delta
-\to \ZZ_p^\times`. Projecting the L-function into these components gives `p-1`
+\to \ZZ_p^\times`. Projecting the `L`-function into these components gives `p-1`
 power series in `T`, each with coefficients in `\ZZ_p`.
 
 If `E` is supersingular, the series will have coefficients in a quadratic
 extension of `\QQ_p`, and the coefficients will be unbounded. In this case we
 have only implemented the series for `\eta = 0`. We have also implemented the
-`p`-adic L-series as formulated by Perrin-Riou [BP1993]_, which has coefficients in
-the Dieudonné module `D_pE = H^1_{dR}(E/\QQ_p)` of `E`. There is a different
-description by Pollack [Pol2003]_ which is not available here.
+`p`-adic `L`-series as formulated by Perrin-Riou [BP1993]_, which has
+coefficients in the Dieudonné module `D_pE = H^1_{dR}(E/\QQ_p)` of `E`. There
+is a different description by Pollack [Pol2003]_ which is not available here.
 
 According to the `p`-adic version of the Birch and Swinnerton-Dyer conjecture
 [MTT1986]_, the order of vanishing of the `L`-function at the trivial character
@@ -43,7 +43,6 @@ AUTHORS:
 - Chris Wuthrich (11/2008): added quadratic_twists
 
 - David Loeffler (01/2011): added nontrivial Teichmueller components
-
 """
 
 ######################################################################
@@ -70,10 +69,9 @@ from sage.arith.misc import (binomial,
                              prime_divisors,
                              kronecker as kronecker_symbol,
                              valuation)
-from sage.functions.log import log
-from sage.functions.other import floor
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import denominator
+from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose import get_verbose, verbose
 from sage.modules.free_module_element import vector
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as Integers
@@ -81,18 +79,21 @@ from sage.rings.infinity import infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.rings.padics.factory import Qp
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.structure.sage_object import SageObject
 
+lazy_import("sage.functions.log", "log")
+lazy_import("sage.functions.other", "floor")
+lazy_import('sage.rings.padics.factory', 'Qp')
+
 
 @richcmp_method
 class pAdicLseries(SageObject):
     r"""
-    The `p`-adic L-series of an elliptic curve.
+    The `p`-adic `L`-series of an elliptic curve.
 
     EXAMPLES:
 
@@ -155,14 +156,13 @@ class pAdicLseries(SageObject):
 
         - ``E`` -- an elliptic curve
         - ``p`` -- a prime of good reduction
-        - ``implementation`` -- string (default: 'eclib'); either 'eclib' to use
-          John Cremona's ``eclib`` for the computation of modular
-          symbols, 'num' to use numerical modular symbols
-          or 'sage' to use Sage's own implementation
+        - ``implementation`` -- string (default: ``'eclib'``); either
+          ``'eclib'`` to use John Cremona's ``eclib`` for the computation of
+          modular symbols, 'num' to use numerical modular symbols or ``'sage'``
+          to use Sage's own implementation
         - ``normalize`` -- ``'L_ratio'`` (default), ``'period'`` or ``'none'``;
-          this is describes the way the modular symbols
-          are normalized. See ``modular_symbol`` of
-          an elliptic curve over Q for more details.
+          this is describes the way the modular symbols are normalized. See
+          ``modular_symbol`` of an elliptic curve over Q for more details.
 
         EXAMPLES::
 
@@ -206,7 +206,7 @@ class pAdicLseries(SageObject):
             sage: lp.modular_symbol(1/7,sign=-1)  #indirect doctest
             -1/2
         """
-        self._negative_modular_symbol = self._E.modular_symbol(sign=-1, implementation="sage", normalize=self._normalize)
+        self._negative_modular_symbol = self._E.modular_symbol(sign=-1, implementation='sage', normalize=self._normalize)
 
     def __richcmp__(self, other, op):
         r"""
@@ -230,7 +230,7 @@ class pAdicLseries(SageObject):
 
     def elliptic_curve(self):
         r"""
-        Return the elliptic curve to which this `p`-adic L-series is associated.
+        Return the elliptic curve to which this `p`-adic `L`-series is associated.
 
         EXAMPLES::
 
@@ -242,7 +242,7 @@ class pAdicLseries(SageObject):
 
     def prime(self):
         r"""
-        Return the prime `p` as in 'p-adic L-function'.
+        Return the prime `p` as in `p`-adic `L`-function'.
 
         EXAMPLES::
 
@@ -277,7 +277,7 @@ class pAdicLseries(SageObject):
         r"""
         Return the modular symbol evaluated at `r`.
 
-        This is used to compute this `p`-adic L-series.
+        This is used to compute this `p`-adic `L`-series.
 
         Note that the normalization is not correct at this
         stage: use ``_quotient_of periods_to_twist`` to correct.
@@ -352,7 +352,7 @@ class pAdicLseries(SageObject):
             \frac{1}{\alpha^{n+1}} \left[\frac{a}{p^{n-1}}\right]^{+}`
 
         where `[\cdot]^{+}` is the modular symbol. This is used to define
-        this `p`-adic L-function (at least when the reduction is good).
+        this `p`-adic `L`-function (at least when the reduction is good).
 
         The optional argument ``sign`` allows the minus symbol `[\cdot]^{-}` to
         be substituted for the plus symbol.
@@ -374,16 +374,16 @@ class pAdicLseries(SageObject):
 
         INPUT:
 
-        - ``a`` -- an integer
+        - ``a`` -- integer
 
-        - ``n`` -- a non-negative integer
+        - ``n`` -- nonnegative integer
 
-        - ``prec`` -- an integer
+        - ``prec`` -- integer
 
-        - ``quadratic_twist`` (default = 1) -- a fundamental discriminant of a quadratic field,
-          should be coprime to the conductor of `E`
+        - ``quadratic_twist`` -- (default: 1) a fundamental discriminant of a
+          quadratic field, should be coprime to the conductor of `E`
 
-        - ``sign`` (default = 1) -- an integer, which should be `\pm 1`.
+        - ``sign`` -- integer (default: 1) which should be `\pm 1`
 
         EXAMPLES::
 
@@ -455,7 +455,7 @@ class pAdicLseries(SageObject):
 
         INPUT:
 
-        - ``prec`` -- positive integer, the `p`-adic precision of the root.
+        - ``prec`` -- positive integer; the `p`-adic precision of the root
 
         EXAMPLES:
 
@@ -512,14 +512,14 @@ class pAdicLseries(SageObject):
             raise RuntimeError("bug in p-adic L-function alpha")
         else: # supersingular case
             f = f.change_ring(K)
-            A = K.extension(f, names="alpha")
+            A = K.extension(f, names='alpha')
             a = A.gen()
             self._alpha[prec] = a
             return a
 
     def order_of_vanishing(self):
         r"""
-        Return the order of vanishing of this `p`-adic L-series.
+        Return the order of vanishing of this `p`-adic `L`-series.
 
         The output of this function is provably correct, due to a
         theorem of Kato [Kat2004]_.
@@ -587,11 +587,9 @@ class pAdicLseries(SageObject):
 
         INPUT:
 
-        - ``prec`` -- a positive integer.
+        - ``prec`` -- positive integer
 
-        OUTPUT:
-
-        - a list of `p`-adic numbers, the cached Teichmuller lifts
+        OUTPUT: list of `p`-adic numbers; the cached Teichmuller lifts
 
         EXAMPLES::
 
@@ -631,8 +629,7 @@ class pAdicLseries(SageObject):
         res = [enj]
         for j in range(1,prec):
             bino = valuation(binomial(pn,j),self._p)
-            if bino < enj:
-                enj = bino
+            enj = min(bino, enj)
             res.append(enj)
         return res
 
@@ -742,13 +739,13 @@ class pAdicLseries(SageObject):
 class pAdicLseriesOrdinary(pAdicLseries):
     def series(self, n=2, quadratic_twist=+1, prec=5, eta=0):
         r"""
-        Return the `n`-th approximation to the `p`-adic L-series, in the
+        Return the `n`-th approximation to the `p`-adic `L`-series, in the
         component corresponding to the `\eta`-th power of the Teichmueller
         character, as a power series in `T` (corresponding to `\gamma-1` with
         `\gamma=1+p` as a generator of `1+p\ZZ_p`). Each coefficient is a
         `p`-adic number whose precision is provably correct.
 
-        Here the normalization of the `p`-adic L-series is chosen
+        Here the normalization of the `p`-adic `L`-series is chosen
         such that `L_p(E,1) = (1-1/\alpha)^2 L(E,1)/\Omega_E`
         where `\alpha` is the unit root of the characteristic
         polynomial of Frobenius on `T_pE` and `\Omega_E` is the
@@ -762,7 +759,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
         - ``prec`` -- (default: 5) maximal number of terms of the series to
           compute; to compute as many as possible just give a very large
           number for ``prec``; the result will still be correct.
-        - ``eta`` (default: 0) an integer (specifying the power of the
+        - ``eta`` -- (default: 0) an integer (specifying the power of the
           Teichmueller character on the group of roots of unity in
           `\ZZ_p^\times`)
 
@@ -770,7 +767,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         EXAMPLES:
 
-        We compute some `p`-adic L-functions associated to the elliptic
+        We compute some `p`-adic `L`-functions associated to the elliptic
         curve 11a::
 
             sage: E = EllipticCurve('11a')
@@ -782,8 +779,8 @@ class pAdicLseriesOrdinary(pAdicLseries):
             2 + 3 + 3^2 + 2*3^3 + O(3^5) + (1 + 3 + O(3^2))*T + (1 + 2*3 + O(3^2))*T^2 + O(3)*T^3 + O(3)*T^4 + O(T^5)
 
         Another example at a prime of bad reduction, where the
-        `p`-adic L-function has an extra 0 (compared to the non
-        `p`-adic L-function)::
+        `p`-adic `L`-function has an extra 0 (compared to the non
+        `p`-adic `L`-function)::
 
             sage: E = EllipticCurve('11a')
             sage: p = 11
@@ -793,7 +790,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
             sage: L.series(2)
             O(11^4) + (10 + O(11))*T + (6 + O(11))*T^2 + (2 + O(11))*T^3 + (5 + O(11))*T^4 + O(T^5)
 
-        We compute a `p`-adic L-function that vanishes to order 2::
+        We compute a `p`-adic `L`-function that vanishes to order 2::
 
             sage: E = EllipticCurve('389a')
             sage: p = 3
@@ -814,7 +811,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
             sage: L.series(3,prec=6)
             O(3^5) + O(3^2)*T + (2 + 2*3 + O(3^2))*T^2 + (2 + O(3))*T^3 + (1 + O(3))*T^4 + (1 + O(3))*T^5 + O(T^6)
 
-        Rather than computing the `p`-adic L-function for the curve '15523a1', one can
+        Rather than computing the `p`-adic `L`-function for the curve '15523a1', one can
         compute it as a quadratic_twist::
 
             sage: E = EllipticCurve('43a1')
@@ -828,7 +825,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
         We calculate the `L`-series in the nontrivial Teichmueller components::
 
-            sage: L = EllipticCurve('110a1').padic_lseries(5, implementation="sage")
+            sage: L = EllipticCurve('110a1').padic_lseries(5, implementation='sage')
             sage: for j in [0..3]: print(L.series(4, eta=j))
             O(5^6) + (2 + 2*5 + 2*5^2 + O(5^3))*T + (5 + 5^2 + O(5^3))*T^2 + (4 + 4*5 + 2*5^2 + O(5^3))*T^3 + (1 + 5 + 3*5^2 + O(5^3))*T^4 + O(T^5)
             4 + 3*5 + 2*5^2 + 3*5^3 + 5^4 + O(5^6) + (1 + 3*5 + 4*5^2 + O(5^3))*T + (3 + 4*5 + 3*5^2 + O(5^3))*T^2 + (3 + 3*5^2 + O(5^3))*T^3 + (1 + 2*5 + 2*5^2 + O(5^3))*T^4 + O(T^5)
@@ -850,11 +847,11 @@ class pAdicLseriesOrdinary(pAdicLseries):
         Check that twists by odd Teichmuller characters are ok (:issue:`32258`)::
 
             sage: E = EllipticCurve("443c1")
-            sage: lp = E.padic_lseries(17, implementation="num")
+            sage: lp = E.padic_lseries(17, implementation='num')
             sage: l8 = lp.series(2,eta=8,prec=3)
             sage: l8.list()[0] - 1/lp.alpha()
             O(17^4)
-            sage: lp = E.padic_lseries(2, implementation="num")
+            sage: lp = E.padic_lseries(2, implementation='num')
             sage: l1 = lp.series(8,eta=1,prec=3)
             sage: l1.list()[0] - 4/lp.alpha()^2
             O(2^9)
@@ -985,7 +982,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
     def is_ordinary(self):
         r"""
-        Return ``True`` if the elliptic curve that this L-function is attached
+        Return ``True`` if the elliptic curve that this `L`-function is attached
         to is ordinary.
 
         EXAMPLES::
@@ -1035,11 +1032,11 @@ class pAdicLseriesOrdinary(pAdicLseries):
             0
             sage: EllipticCurve('11a3').padic_lseries(5)._c_bound()
             2
-            sage: EllipticCurve('11a3').padic_lseries(5, implementation="sage")._c_bound()
+            sage: EllipticCurve('11a3').padic_lseries(5, implementation='sage')._c_bound()
             2
             sage: EllipticCurve('50b1').padic_lseries(3)._c_bound()
             0
-            sage: EllipticCurve('50b1').padic_lseries(3, implementation="sage")._c_bound()
+            sage: EllipticCurve('50b1').padic_lseries(3, implementation='sage')._c_bound()
             1
             sage: l = EllipticCurve("11a1").padic_lseries(5)
             sage: ls = l.series(1,eta=1);
@@ -1121,7 +1118,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
         A helper function not designed for direct use.
 
         It returns the `p`-adic precisions of the approximation
-        to the `p`-adic L-function.
+        to the `p`-adic `L`-function.
 
         EXAMPLES::
 
@@ -1151,13 +1148,13 @@ class pAdicLseriesOrdinary(pAdicLseries):
 class pAdicLseriesSupersingular(pAdicLseries):
     def series(self, n=3, quadratic_twist=+1, prec=5, eta=0):
         r"""
-        Return the `n`-th approximation to the `p`-adic L-series as a
+        Return the `n`-th approximation to the `p`-adic `L`-series as a
         power series in `T` (corresponding to `\gamma-1` with
         `\gamma=1+p` as a generator of `1+p\ZZ_p`).  Each
         coefficient is an element of a quadratic extension of the `p`-adic
         number whose precision is provably correct.
 
-        Here the normalization of the `p`-adic L-series is chosen
+        Here the normalization of the `p`-adic `L`-series is chosen
         such that `L_p(E,1) = (1-1/\alpha)^2 L(E,1)/\Omega_E`
         where `\alpha` is a root of the characteristic
         polynomial of Frobenius on `T_pE` and `\Omega_E` is the
@@ -1171,7 +1168,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         - ``prec`` -- (default: 5) maximal number of terms of the series to
           compute; to compute as many as possible just give a very large
           number for ``prec``; the result will still be correct.
-        - ``eta`` (default: 0) an integer (specifying the power of the
+        - ``eta`` -- (default: 0) an integer (specifying the power of the
           Teichmueller character on the group of roots of unity in
           `\ZZ_p^\times`)
 
@@ -1325,7 +1322,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
     def is_ordinary(self):
         r"""
-        Return ``True`` if the elliptic curve that this L-function is attached
+        Return ``True`` if the elliptic curve that this `L`-function is attached
         to is ordinary.
 
         EXAMPLES::
@@ -1354,7 +1351,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         A helper function not designed for direct use.
 
         It returns the `\alpha`-adic precisions of the approximation
-        to the `p`-adic L-function.
+        to the `p`-adic `L`-function.
 
         EXAMPLES::
 
@@ -1405,7 +1402,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
     def Dp_valued_series(self, n=3, quadratic_twist=+1, prec=5):
         r"""
-        Return a vector of two components which are p-adic power series.
+        Return a vector of two components which are `p`-adic power series.
 
         The answer v is such that
 
@@ -1455,7 +1452,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         resu = lpv * eps.transpose()
         return resu
 
-    def frobenius(self, prec=20, algorithm="mw"):
+    def frobenius(self, prec=20, algorithm='mw'):
         r"""
         Return a geometric Frobenius `\varphi` on the Dieudonné module `D_p(E)`
         with respect to the basis `\omega`, the invariant differential, and `\eta=x\omega`.
@@ -1536,16 +1533,16 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
             sage: E = EllipticCurve('11a1')
             sage: lp = E.padic_lseries(19)
-            sage: lp.frobenius(prec=1,algorithm="approx")   #indirect doctest
+            sage: lp.frobenius(prec=1,algorithm='approx')   #indirect doctest
             [          O(19^0) 4*19^-1 + O(19^0)]
             [       14 + O(19)           O(19^0)]
 
             sage: E = EllipticCurve('17a1')
             sage: lp = E.padic_lseries(3)
-            sage: lp.frobenius(prec=3,algorithm="approx")
+            sage: lp.frobenius(prec=3,algorithm='approx')
             [             O(3) 2*3^-1 + 2 + O(3)]
             [       1 + O(3^2)              O(3)]
-            sage: lp.frobenius(prec=5,algorithm="approx")
+            sage: lp.frobenius(prec=5,algorithm='approx')
             [             3 + O(3^2) 2*3^-1 + 2 + 3 + O(3^2)]
             [     1 + 2*3^2 + O(3^3)            2*3 + O(3^2)]
         """
@@ -1554,7 +1551,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         if prec > 10:
             print("Warning: Very large value for the precision.")
         if prec == 0:
-            prec = floor((log(10000)/log(p)))
+            prec = floor(log(10000)/log(p))
             verbose("prec set to %s" % prec)
         eh = E.formal()
         om = eh.differential(prec=p**prec+3)
@@ -1643,7 +1640,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         return sigma_of_z
 
-    def Dp_valued_height(self,prec=20):
+    def Dp_valued_height(self, prec=20):
         r"""
         Return the canonical `p`-adic height with values in the Dieudonné module `D_p(E)`.
 
@@ -1677,7 +1674,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         n = _multiple_to_make_good_reduction(E)
         n = LCM(n, E.Np(p)) # allowed here because E has good reduction at p
 
-        def height(P,check=True):
+        def height(P, check=True):
             if P.is_finite_order():
                 return Qp(p,prec)(0)
             if check:
@@ -1758,7 +1755,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
             return M.determinant()
 
-        def Dp_pairing(vec1,vec2):
+        def Dp_pairing(vec1, vec2):
             return (vec1[0]*vec2[1]-vec1[1]*vec2[0])
 
         omega_vec = vector([K(1),K(0)])
@@ -1773,9 +1770,9 @@ class pAdicLseriesSupersingular(pAdicLseries):
         reg_oe = (reg1 * v2 - reg2 * v1 ) / Dp_pairing(v2, v1)
 
         if p < 5:
-            phi = self.frobenius(min(6, prec), algorithm="approx")
+            phi = self.frobenius(min(6, prec), algorithm='approx')
         else:
-            phi = self.frobenius(prec + 2, algorithm="mw")
+            phi = self.frobenius(prec + 2, algorithm='mw')
 
         c = phi[1, 0]  # this is the 'period' [omega,phi(omega)]
         a = phi[0, 0]

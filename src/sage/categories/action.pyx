@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Group, ring, etc. actions on objects
 
@@ -84,7 +85,7 @@ cdef class Action(Functor):
 
     - ``S`` -- a parent or Python type
 
-    - ``is_left`` -- (boolean, default: ``True``) whether elements of
+    - ``is_left`` -- boolean (default: ``True``); whether elements of
       ``G`` are on the left
 
     - ``op`` -- (default: ``None``) operation. This is not used by
@@ -148,7 +149,7 @@ cdef class Action(Functor):
             sage: A(x, 5)
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: x is not a constant polynomial
             sage: A = IntegerMulAction(ZZ, R, False)  # Right action
             sage: A(x, 5)
             5*x
@@ -157,7 +158,7 @@ cdef class Action(Functor):
             sage: A(5, x)
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: x is not a constant polynomial
         """
         if len(args) == 2:
             # Normal case, called with (g, x) or (x, g) as arguments
@@ -199,9 +200,9 @@ cdef class Action(Functor):
 
         INPUT:
 
-        - ``g`` -- an object with parent ``self.G``.
+        - ``g`` -- an object with parent ``self.G``
 
-        - ``x`` -- an object with parent ``self.US()``.
+        - ``x`` -- an object with parent ``self.US()``
 
         .. WARNING::
 
@@ -435,7 +436,7 @@ cdef class PrecomposedAction(Action):
     We demonstrate that an example discussed on :issue:`14711` did not become a
     problem::
 
-        sage: # needs sage.modular
+        sage: # needs sage.libs.flint sage.modular
         sage: E = ModularSymbols(11).2
         sage: s = E.modular_symbol_rep()
         sage: del E,s
@@ -487,7 +488,7 @@ cdef class PrecomposedAction(Action):
 
         Check that this action can be pickled (:issue:`29031`)::
 
-            sage: # needs sage.modular
+            sage: # needs sage.libs.flint sage.modular
             sage: E = ModularSymbols(11).2
             sage: v = E.manin_symbol_rep()
             sage: c,x = v[0]

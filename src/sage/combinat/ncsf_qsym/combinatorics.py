@@ -31,16 +31,14 @@ from sage.rings.integer_ring import ZZ
 
 def coeff_pi(J, I):
     r"""
-    Returns the coefficient `\pi_{J,I}` as defined in [NCSF]_.
+    Return the coefficient `\pi_{J,I}` as defined in [NCSF]_.
 
     INPUT:
 
     - ``J`` -- a composition
     - ``I`` -- a composition refining ``J``
 
-    OUTPUT:
-
-    - integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -53,18 +51,16 @@ def coeff_pi(J, I):
     return prod(prod(K.partial_sums()) for K in J.refinement_splitting(I))
 
 
-def coeff_lp(J,I):
+def coeff_lp(J, I):
     r"""
-    Returns the coefficient `lp_{J,I}` as defined in [NCSF]_.
+    Return the coefficient `lp_{J,I}` as defined in [NCSF]_.
 
     INPUT:
 
     - ``J`` -- a composition
     - ``I`` -- a composition refining ``J``
 
-    OUTPUT:
-
-    - integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -77,18 +73,16 @@ def coeff_lp(J,I):
     return prod(K[-1] for K in J.refinement_splitting(I))
 
 
-def coeff_ell(J,I):
+def coeff_ell(J, I):
     r"""
-    Returns the coefficient `\ell_{J,I}` as defined in [NCSF]_.
+    Return the coefficient `\ell_{J,I}` as defined in [NCSF]_.
 
     INPUT:
 
     - ``J`` -- a composition
     - ``I`` -- a composition refining ``J``
 
-    OUTPUT:
-
-    - integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -103,16 +97,14 @@ def coeff_ell(J,I):
 
 def coeff_sp(J, I):
     r"""
-    Returns the coefficient `sp_{J,I}` as defined in [NCSF]_.
+    Return the coefficient `sp_{J,I}` as defined in [NCSF]_.
 
     INPUT:
 
     - ``J`` -- a composition
     - ``I`` -- a composition refining ``J``
 
-    OUTPUT:
-
-    - integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -132,11 +124,9 @@ def coeff_dab(I, J):
 
     INPUT:
 
-    - ``I, J`` -- compositions
+    - ``I``, ``J`` -- compositions
 
-    OUTPUT:
-
-    - An integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -165,12 +155,10 @@ def compositions_order(n):
 
     INPUT:
 
-    - ``n`` -- a positive integer
+    - ``n`` -- positive integer
 
-    OUTPUT:
-
-    - A list of the compositions of ``n`` sorted into decreasing order
-      by `\rhd`
+    OUTPUT: list of the compositions of `n` sorted into decreasing order
+    by `\rhd`
 
     EXAMPLES::
 
@@ -195,7 +183,7 @@ def m_to_s_stat(R, I, K):
 
     INPUT:
 
-    - ``R`` -- A ring, supposed to be a `\QQ`-algebra
+    - ``R`` -- a ring; supposed to be a `\QQ`-algebra
     - ``I``, ``K`` -- compositions
 
     OUTPUT:
@@ -236,9 +224,7 @@ def number_of_fCT(content_comp, shape_comp):
 
     - ``content_comp``, ``shape_comp`` -- compositions
 
-    OUTPUT:
-
-    - An integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -284,9 +270,7 @@ def number_of_SSRCT(content_comp, shape_comp):
 
     - ``content_comp``, ``shape_comp`` -- compositions
 
-    OUTPUT:
-
-    - An integer
+    OUTPUT: integer
 
     EXAMPLES::
 
@@ -309,11 +293,11 @@ def number_of_SSRCT(content_comp, shape_comp):
         else:
             return ZZ.zero()
     s = ZZ.zero()
-    cond = lambda al,be: all(al[j] <= be_val
-                             and not any(al[i] <= k and k <= be[i]
-                                         for k in range(al[j], be_val)
-                                         for i in range(j))
-                             for j, be_val in enumerate(be))
+    cond = lambda al, be: all(al[j] <= be_val
+                              and not any(al[i] <= k <= be[i]
+                                          for k in range(al[j], be_val)
+                                          for i in range(j))
+                              for j, be_val in enumerate(be))
     C = Compositions(content_comp.size()-content_comp[0],
                      inner=[1]*len(shape_comp),
                      outer=list(shape_comp))

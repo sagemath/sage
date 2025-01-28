@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Conductor and reduction types for genus 2 curves
 
@@ -193,7 +192,7 @@ def divisors_to_string(divs):
 
     - ``divs`` -- a (possibly empty) list of numbers
 
-    OUTPUT: a string representation of these numbers
+    OUTPUT: string representation of these numbers
 
     EXAMPLES::
 
@@ -311,8 +310,6 @@ class Genus2reduction(SageObject):
     .. MATH::
 
                    y^2 + (x^3-x^2-1)y = x^2 - x.
-
-
 
     We have::
 

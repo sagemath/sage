@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Recursively Enumerated Sets
 
@@ -30,7 +29,7 @@ structure, such as not containing an oriented cycle, that does not
 help with the enumeration.
 
 In this example, the seed is 0 and the successor function is either ``+2``
-or ``+3``. This is the set of non negative linear combinations of 2 and 3::
+or ``+3``. This is the set of nonnegative linear combinations of 2 and 3::
 
     sage: succ = lambda a:[a+2,a+3]
     sage: C = RecursivelyEnumeratedSet([0], succ)
@@ -209,7 +208,7 @@ or even::
 We can then create the :class:`RecursivelyEnumeratedSet` object with either::
 
     sage: S = RecursivelyEnumeratedSet([''],
-    ....:     lambda x: [x+letter for letter in ['a', 'b', 'c']]
+    ....:     lambda x: [x + letter for letter in ['a', 'b', 'c']]
     ....:               if len(x) < 2 else [],
     ....:     structure='forest', enumeration='depth',
     ....:     category=FiniteEnumeratedSets())
@@ -248,8 +247,8 @@ convention is that the generated elements are the ``s := f(n)``, except when
     ....:     st = set(st) # make a copy
     ....:     if st:
     ....:        el = st.pop()
-    ....:        for i in range(len(lst)+1):
-    ....:            yield (lst[0:i]+[el]+lst[i:], st)
+    ....:        for i in range(len(lst) + 1):
+    ....:            yield (lst[0:i] + [el] + lst[i:], st)
     sage: list(children(([1,2], {3,7,9})))
     [([9, 1, 2], {3, 7}), ([1, 9, 2], {3, 7}), ([1, 2, 9], {3, 7})]
     sage: def post_process(node):
@@ -287,8 +286,9 @@ from collections import deque
 
 
 def RecursivelyEnumeratedSet(seeds, successors, structure=None,
-            enumeration=None, max_depth=float("inf"), post_process=None,
-            facade=None, category=None):
+                             enumeration=None, max_depth=float("inf"),
+                             post_process=None,
+                             facade=None, category=None):
     r"""
     Return a recursively enumerated set.
 
@@ -311,26 +311,26 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
     - ``seeds`` -- list (or iterable) of hashable objects
     - ``successors`` -- function (or callable) returning a list (or iterable) of
       hashable objects
-    - ``structure`` -- string (optional, default: ``None``), structure of the
+    - ``structure`` -- string (default: ``None``); structure of the
       set, possible values are:
 
-      - ``None`` -- nothing is known about the structure of the set.
+      - ``None`` -- nothing is known about the structure of the set
       - ``'forest'`` -- if the ``successors`` function generates a *forest*, that
-        is, each element can be reached uniquely from a seed.
+        is, each element can be reached uniquely from a seed
       - ``'graded'`` -- if the ``successors`` function is *graded*, that is, all
-        paths from a seed to a given element have equal length.
+        paths from a seed to a given element have equal length
       - ``'symmetric'`` -- if the relation is *symmetric*, that is,
         ``y in successors(x)`` if and only if ``x in successors(y)``
 
     - ``enumeration`` -- ``'depth'``, ``'breadth'``, ``'naive'`` or ``None``
-      (optional, default: ``None``). The default enumeration for the
-      ``__iter__`` function.
-    - ``max_depth`` -- integer (optional, default: ``float("inf")``), limit
+      (default: ``None``); the default enumeration for the
+      ``__iter__`` function
+    - ``max_depth`` -- integer (default: ``float("inf")``); limit
       the search to a certain depth, currently works only for breadth first
       search
-    - ``post_process`` -- (optional, default: ``None``), for forest only
-    - ``facade`` -- (optional, default: ``None``)
-    - ``category`` -- (optional, default: ``None``)
+    - ``post_process`` -- (default: ``None``) for forest only
+    - ``facade`` -- (default: ``None``)
+    - ``category`` -- (default: ``None``)
 
     EXAMPLES:
 
@@ -347,8 +347,7 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
     A recursive set with a forest structure::
 
         sage: f = lambda a: [2*a,2*a+1]
-        sage: C = RecursivelyEnumeratedSet([1], f, structure='forest')
-        sage: C
+        sage: C = RecursivelyEnumeratedSet([1], f, structure='forest'); C
         An enumerated set with a forest structure
         sage: it = C.depth_first_search_iterator()
         sage: [next(it) for _ in range(7)]
@@ -472,7 +471,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
             A recursively enumerated set (breadth first search)
         """
         assert enumeration in ['naive', 'depth', 'breadth'], \
-                    "unknown enumeration(={})".format(enumeration)
+            "unknown enumeration(={})".format(enumeration)
 
         self._seeds = seeds
         self.successors = successors
@@ -482,7 +481,8 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         if post_process is not None:
             self.post_process = post_process
         self._graded_component = None
-        Parent.__init__(self, facade=facade, category=EnumeratedSets().or_subcategory(category))
+        Parent.__init__(self, facade=facade,
+                        category=EnumeratedSets().or_subcategory(category))
 
     def __reduce__(self):
         r"""
@@ -676,7 +676,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         EXAMPLES::
 
-            sage: R = RecursivelyEnumeratedSet([1], lambda x: [x+1, x-1])
+            sage: R = RecursivelyEnumeratedSet([1], lambda x: [x + 1, x - 1])
             sage: R.seeds()
             [1]
         """
@@ -707,9 +707,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         It is currently implemented only for graded or symmetric structure.
 
-        OUTPUT:
-
-        An iterator of sets.
+        OUTPUT: an iterator of sets
 
         EXAMPLES::
 
@@ -735,9 +733,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         - ``depth`` -- integer
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -762,9 +758,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         - ``depth`` -- integer
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -915,12 +909,10 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         - ``max_depth`` -- (default: ``self._max_depth``) specifies the
           maximal depth for which outgoing edges of elements are computed
-        - ``loops`` -- (default: ``True``) option for the digraph
-        - ``multiedges`` -- (default: ``True``) option of the digraph
+        - ``loops`` -- boolean (default: ``True``); option for the digraph
+        - ``multiedges`` -- boolean (default: ``True``); option of the digraph
 
-        OUTPUT:
-
-        A directed graph
+        OUTPUT: a directed graph
 
         .. WARNING::
 
@@ -1081,9 +1073,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
         The enumeration remembers only the last two graded components
         generated since the structure is symmetric.
 
-        OUTPUT:
-
-        An iterator of sets.
+        OUTPUT: an iterator of sets
 
         EXAMPLES::
 
@@ -1125,7 +1115,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
             sage: # needs sage.symbolic
             sage: def f(a):
             ....:     sleep(0.05r)
-            ....:     return [a-1,a+1]
+            ....:     return [a - 1, a + 1]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='symmetric')
             sage: it = C.graded_component_iterator()
             sage: next(it)
@@ -1164,9 +1154,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
 
         - ``depth`` -- integer
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -1185,7 +1173,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
 
             sage: def f(a):
             ....:    sleep(0.1r)
-            ....:    return [a-1,a+1]
+            ....:    return [a - 1, a + 1]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='symmetric')
             sage: from cysignals.alarm import alarm
             sage: alarm(0.45); C.graded_component(10)
@@ -1225,9 +1213,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
         - ``A`` -- set, the set of elements of depth n-1
         - ``B`` -- set, the set of elements of depth n
 
-        OUTPUT:
-
-        - ``C`` -- set, the set of elements of depth n+1
+        OUTPUT: ``C``; the set of elements of depth n+1
 
         .. TODO::
 
@@ -1333,9 +1319,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
         The algorithm remembers only the current graded component generated
         since the structure is graded.
 
-        OUTPUT:
-
-        An iterator of sets.
+        OUTPUT: an iterator of sets
 
         EXAMPLES::
 
@@ -1386,9 +1370,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         - ``depth`` -- integer
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -1410,7 +1392,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
             sage: # needs sage.symbolic
             sage: def f(a):
             ....:    sleep(0.1r)
-            ....:    return [a+1, a+I]
+            ....:    return [a + 1, a + I]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
             sage: from cysignals.alarm import alarm
             sage: alarm(0.45); C.graded_component(10)
@@ -1442,9 +1424,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         - ``B`` -- set, the set of elements of depth `n`
 
-        OUTPUT:
-
-        - ``C`` -- set, the set of elements of depth `n+1`
+        OUTPUT: ``C``; the set of elements of depth `n+1`
 
         .. TODO::
 
@@ -1481,7 +1461,7 @@ def _imap_and_filter_none(function, iterable):
         sage: p = _imap_and_filter_none(lambda x: x if is_prime(x) else None, range(15))
         sage: [next(p), next(p), next(p), next(p), next(p), next(p)]
         [2, 3, 5, 7, 11, 13]
-        sage: p = _imap_and_filter_none(lambda x: x+x, ['a','b','c','d','e'])
+        sage: p = _imap_and_filter_none(lambda x: x + x, ['a','b','c','d','e'])
         sage: [next(p), next(p), next(p), next(p), next(p)]
         ['aa', 'bb', 'cc', 'dd', 'ee']
     """
@@ -1489,6 +1469,7 @@ def _imap_and_filter_none(function, iterable):
         x = function(x)
         if x is not None:
             yield x
+
 
 def search_forest_iterator(roots, children, algorithm='depth'):
     r"""
@@ -1499,7 +1480,7 @@ def search_forest_iterator(roots, children, algorithm='depth'):
 
     INPUT:
 
-    - ``roots`` -- a list (or iterable)
+    - ``roots`` -- list (or iterable)
     - ``children`` -- a function returning a list (or iterable)
     - ``algorithm`` -- ``'depth'`` or ``'breadth'`` (default: ``'depth'``)
 
@@ -1509,7 +1490,7 @@ def search_forest_iterator(roots, children, algorithm='depth'):
     three, and enumerate its nodes::
 
         sage: from sage.sets.recursively_enumerated_set import search_forest_iterator
-        sage: list(search_forest_iterator([[]], lambda l: [l+[0], l+[1]]
+        sage: list(search_forest_iterator([[]], lambda l: [l + [0], l + [1]]
         ....:                                   if len(l) < 3 else []))
         [[], [0], [0, 0], [0, 0, 0], [0, 0, 1], [0, 1], [0, 1, 0],
          [0, 1, 1], [1], [1, 0], [1, 0, 0], [1, 0, 1], [1, 1], [1, 1, 0], [1, 1, 1]]
@@ -1517,7 +1498,7 @@ def search_forest_iterator(roots, children, algorithm='depth'):
     By default, the nodes are iterated through by depth first search.
     We can instead use a breadth first search (increasing depth)::
 
-        sage: list(search_forest_iterator([[]], lambda l: [l+[0], l+[1]]
+        sage: list(search_forest_iterator([[]], lambda l: [l + [0], l + [1]]
         ....:                                   if len(l) < 3 else [],
         ....:                             algorithm='breadth'))
         [[],
@@ -1528,7 +1509,8 @@ def search_forest_iterator(roots, children, algorithm='depth'):
 
     This allows for iterating through trees of infinite depth::
 
-        sage: it = search_forest_iterator([[]], lambda l: [l+[0], l+[1]], algorithm='breadth')
+        sage: it = search_forest_iterator([[]], lambda l: [l + [0], l + [1]],
+        ....:                             algorithm='breadth')
         sage: [ next(it) for i in range(16) ]
         [[],
          [0], [1], [0, 0], [0, 1], [1, 0], [1, 1],
@@ -1552,10 +1534,7 @@ def search_forest_iterator(roots, children, algorithm='depth'):
     # (you ask the children for the last node you met). Setting
     # position on 0 results in a breadth search (enumerate all the
     # descendants of a node before going on to the next father)
-    if algorithm == 'depth':
-        position = -1
-    else:
-        position = 0
+    position = -1 if algorithm == 'depth' else 0
 
     # Invariant:
     #  - for breadth first search: stack[i] contains an iterator over the nodes
@@ -1575,7 +1554,8 @@ def search_forest_iterator(roots, children, algorithm='depth'):
             continue
 
         yield node
-        stack.append( iter(children(node)) )
+        stack.append(iter(children(node)))
+
 
 class RecursivelyEnumeratedSet_forest(Parent):
     r"""
@@ -1589,7 +1569,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
 
     INPUT:
 
-    - ``roots`` -- a list (or iterable)
+    - ``roots`` -- list (or iterable)
     - ``children`` -- a function returning a list (or iterable, or iterator)
     - ``post_process`` -- a function defined over the nodes of the
       forest (default: no post processing)
@@ -1607,7 +1587,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
 
         sage: from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
         sage: S = RecursivelyEnumeratedSet_forest( [[]],
-        ....:     lambda l: [l+[0], l+[1]] if len(l) < 3 else [],
+        ....:     lambda l: [l + [0], l + [1]] if len(l) < 3 else [],
         ....:     category=FiniteEnumeratedSets())
         sage: S.list()
         [[],
@@ -1691,9 +1671,10 @@ class RecursivelyEnumeratedSet_forest(Parent):
         sage: class A(UniqueRepresentation, RecursivelyEnumeratedSet_forest):
         ....:     def __init__(self):
         ....:         RecursivelyEnumeratedSet_forest.__init__(self, [()],
-        ....:             lambda x : [x+(0,), x+(1,)] if sum(x) < 3 else [],
-        ....:             lambda x : sum(x[i]*2^i for i in range(len(x))) if sum(x) != 0 and x[-1] != 0 else None,
-        ....:             algorithm = 'breadth',
+        ....:             lambda x: [x + (0,), x + (1,)] if sum(x) < 3 else [],
+        ....:             lambda x: sum(x[i]*2^i for i in range(len(x)))
+        ....:                           if sum(x) != 0 and x[-1] != 0 else None,
+        ....:             algorithm='breadth',
         ....:             category=InfiniteEnumeratedSets())
         sage: MyForest = A(); MyForest
         An enumerated set with a forest structure
@@ -1701,7 +1682,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
         Category of infinite enumerated sets
         sage: p = iter(MyForest)
         sage: [next(p) for i in range(30)]
-        [1, 2, 3, 4, 6, 5, 7, 8, 12, 10, 14, 9, 13, 11, 16, 24, 20, 28, 18, 26, 22, 17, 25, 21, 19, 32, 48, 40, 56, 36]
+        [1, 2, 3, 4, 6, 5, 7, 8, 12, 10, 14, 9, 13, 11, 16, 24,
+         20, 28, 18, 26, 22, 17, 25, 21, 19, 32, 48, 40, 56, 36]
 
     An alternative approach is to implement ``roots`` and ``children``
     as methods of the subclass (in fact they could also be attributes
@@ -1714,13 +1696,13 @@ class RecursivelyEnumeratedSet_forest(Parent):
         sage: from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
         sage: class A(UniqueRepresentation, RecursivelyEnumeratedSet_forest):
         ....:     def __init__(self):
-        ....:         RecursivelyEnumeratedSet_forest.__init__(self, algorithm = 'breadth',
+        ....:         RecursivelyEnumeratedSet_forest.__init__(self, algorithm='breadth',
         ....:                               category=InfiniteEnumeratedSets())
         ....:     def roots(self):
         ....:         return [()]
         ....:     def children(self, x):
         ....:         if sum(x) < 3:
-        ....:             return [x+(0,), x+(1,)]
+        ....:             return [x + (0,), x + (1,)]
         ....:         else:
         ....:             return []
         ....:     def post_process(self, x):
@@ -1734,7 +1716,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
         Category of infinite enumerated sets
         sage: p = iter(MyForest)
         sage: [next(p) for i in range(30)]
-        [1, 2, 3, 4, 6, 5, 7, 8, 12, 10, 14, 9, 13, 11, 16, 24, 20, 28, 18, 26, 22, 17, 25, 21, 19, 32, 48, 40, 56, 36]
+        [1, 2, 3, 4, 6, 5, 7, 8, 12, 10, 14, 9, 13, 11, 16, 24,
+         20, 28, 18, 26, 22, 17, 25, 21, 19, 32, 48, 40, 56, 36]
 
     .. warning::
 
@@ -1743,8 +1726,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
         anonymous or interactively defined functions::
 
             sage: def children(x):
-            ....:     return [x+1]
-            sage: S = RecursivelyEnumeratedSet_forest( [1], children, category=InfiniteEnumeratedSets())
+            ....:     return [x + 1]
+            sage: S = RecursivelyEnumeratedSet_forest([1], children, category=InfiniteEnumeratedSets())
             sage: dumps(S)
             Traceback (most recent call last):
             ...
@@ -1754,17 +1737,17 @@ class RecursivelyEnumeratedSet_forest(Parent):
 
             sage: import __main__
             sage: __main__.children = children
-            sage: S = RecursivelyEnumeratedSet_forest( [1], children, category=InfiniteEnumeratedSets())
+            sage: S = RecursivelyEnumeratedSet_forest([1], children, category=InfiniteEnumeratedSets())
             sage: loads(dumps(S))
             An enumerated set with a forest structure
     """
-    def __init__(self, roots = None, children = None, post_process = None,
-                 algorithm = 'depth', facade = None, category=None):
+    def __init__(self, roots=None, children=None, post_process=None,
+                 algorithm='depth', facade=None, category=None):
         r"""
         TESTS::
 
             sage: from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
-            sage: S = RecursivelyEnumeratedSet_forest(NN, lambda x : [], lambda x: x^2 if x.is_prime() else None)
+            sage: S = RecursivelyEnumeratedSet_forest(NN, lambda x: [], lambda x: x^2 if x.is_prime() else None)
             sage: S.category()
             Category of enumerated sets
         """
@@ -1775,7 +1758,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
         if post_process is not None:
             self.post_process = post_process
         self._algorithm = algorithm
-        Parent.__init__(self, facade = facade, category = EnumeratedSets().or_subcategory(category))
+        Parent.__init__(self, facade=facade,
+                        category=EnumeratedSets().or_subcategory(category))
 
     __len__ = None
 
@@ -1808,7 +1792,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
     @abstract_method
     def children(self, x):
         r"""
-        Return the children of the element ``x``
+        Return the children of the element ``x``.
 
         The result can be a list, an iterable, an iterator, or even a
         generator.
@@ -1837,7 +1821,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
 
             sage: from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
             sage: def children(l):
-            ....:      return [l+[0], l+[1]]
+            ....:      return [l + [0], l + [1]]
             sage: C = RecursivelyEnumeratedSet_forest(([],), children)
             sage: f = C.__iter__()
             sage: next(f)
@@ -1849,28 +1833,29 @@ class RecursivelyEnumeratedSet_forest(Parent):
         """
         iter = search_forest_iterator(self.roots(),
                                       self.children,
-                                      algorithm = self._algorithm)
+                                      algorithm=self._algorithm)
         if hasattr(self, "post_process"):
             iter = _imap_and_filter_none(self.post_process, iter)
         return iter
 
     def depth_first_search_iterator(self):
         r"""
-        Return a depth first search iterator over the elements of ``self``
+        Return a depth first search iterator over the elements of ``self``.
 
         EXAMPLES::
 
             sage: from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
             sage: f = RecursivelyEnumeratedSet_forest([[]],
-            ....:                  lambda l: [l+[0], l+[1]] if len(l) < 3 else [])
+            ....:                  lambda l: [l + [0], l + [1]] if len(l) < 3 else [])
             sage: list(f.depth_first_search_iterator())
-            [[], [0], [0, 0], [0, 0, 0], [0, 0, 1], [0, 1], [0, 1, 0], [0, 1, 1], [1], [1, 0], [1, 0, 0], [1, 0, 1], [1, 1], [1, 1, 0], [1, 1, 1]]
+            [[], [0], [0, 0], [0, 0, 0], [0, 0, 1], [0, 1], [0, 1, 0], [0, 1, 1],
+                 [1], [1, 0], [1, 0, 0], [1, 0, 1], [1, 1], [1, 1, 0], [1, 1, 1]]
         """
         return iter(self)
 
     def breadth_first_search_iterator(self):
         r"""
-        Return a breadth first search iterator over the elements of ``self``
+        Return a breadth first search iterator over the elements of ``self``.
 
         EXAMPLES::
 
@@ -1963,7 +1948,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
         EXAMPLES::
 
             sage: from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
-            sage: S = RecursivelyEnumeratedSet_forest( [[]], lambda l: [l+[0], l+[1]] if len(l) < 3 else [], category=FiniteEnumeratedSets())
+            sage: S = RecursivelyEnumeratedSet_forest([[]], lambda l: [l + [0], l + [1]] if len(l) < 3 else [],
+            ....:                                     category=FiniteEnumeratedSets())
             sage: [4] in S
             False
             sage: [1] in S
@@ -1972,12 +1958,12 @@ class RecursivelyEnumeratedSet_forest(Parent):
             False
             sage: all(S.__contains__(i) for i in iter(S))
             True
-            sage: S = RecursivelyEnumeratedSet_forest([1], lambda x: [x+1], category=InfiniteEnumeratedSets())
+            sage: S = RecursivelyEnumeratedSet_forest([1], lambda x: [x + 1], category=InfiniteEnumeratedSets())
             sage: 1 in S
             True
             sage: 732 in S
             True
-            sage: -1 in S # not tested : Will never stop
+            sage: -1 in S  # not tested : Will never stop
 
         The algorithm uses a random enumeration of the nodes of the
         forest. This choice was motivated by examples in which both
@@ -1987,8 +1973,9 @@ class RecursivelyEnumeratedSet_forest(Parent):
         root has an infinite number of children::
 
             sage: from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
-            sage: S = RecursivelyEnumeratedSet_forest(Family(NN, lambda x : (x, 0)),
-            ....: lambda x : Family(PositiveIntegers(), lambda y : (x[0], y)) if x[1] == 0 else [])
+            sage: S = RecursivelyEnumeratedSet_forest(
+            ....:         Family(NN, lambda x: (x, 0)),
+            ....:         lambda x: Family(PositiveIntegers(), lambda y: (x[0], y)) if x[1] == 0 else [])
             sage: p = S.depth_first_search_iterator()
             sage: [next(p), next(p), next(p), next(p), next(p), next(p), next(p)]
             [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6)]
@@ -2010,7 +1997,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
         child. From each root starts an infinite branch of breadth
         `1`::
 
-            sage: S = RecursivelyEnumeratedSet_forest(Family(NN, lambda x : (x, 0)) , lambda x : [(x[0], x[1]+1)])
+            sage: S = RecursivelyEnumeratedSet_forest(Family(NN, lambda x: (x, 0)),
+            ....:                                     lambda x: [(x[0], x[1] + 1)])
             sage: p = S.depth_first_search_iterator()
             sage: [next(p), next(p), next(p), next(p), next(p), next(p), next(p)]
             [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6)]
@@ -2028,7 +2016,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
         """
         stack = [iter(self.roots())]
         while stack:
-            position = randint(0,len(stack)-1)
+            position = randint(0, len(stack) - 1)
             try:
                 node = next(stack[position])
             except StopIteration:
@@ -2037,14 +2025,14 @@ class RecursivelyEnumeratedSet_forest(Parent):
 
             if node == elt:
                 return True
-            stack.append( iter(self.children(node)) )
+            stack.append(iter(self.children(node)))
         return False
 
-    def map_reduce(self, map_function = None,
-                   reduce_function = None,
-                   reduce_init = None):
+    def map_reduce(self, map_function=None,
+                   reduce_function=None,
+                   reduce_init=None):
         r"""
-        Apply a Map/Reduce algorithm on ``self``
+        Apply a Map/Reduce algorithm on ``self``.
 
         INPUT:
 
@@ -2053,24 +2041,24 @@ class RecursivelyEnumeratedSet_forest(Parent):
           the constant function ``1``.
 
         - ``reduce_function`` -- the reduce function (e.g.: the addition of a
-          monoid). The default value is ``+``.
+          monoid); the default value is ``+``
 
         - ``reduce_init`` -- the initialisation of the reduction (e.g.: the
-          neutral element of the monoid). The default value is ``0``.
+          neutral element of the monoid); the default value is ``0``
 
-        .. note::
+        .. NOTE::
 
             the effect of the default values is to compute the cardinality
             of ``self``.
 
         EXAMPLES::
 
-            sage: seeds = [([i],i, i) for i in range(1,10)]
+            sage: seeds = [([i], i, i) for i in range(1, 10)]
             sage: def succ(t):
             ....:     list, sum, last = t
             ....:     return [(list + [i], sum + i, i) for i in range(1, last)]
             sage: F = RecursivelyEnumeratedSet(seeds, succ,
-            ....:                       structure='forest', enumeration='depth')
+            ....:         structure='forest', enumeration='depth')
 
             sage: # needs sage.symbolic
             sage: y = var('y')
@@ -2096,7 +2084,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
         """
         import sage.parallel.map_reduce
         return sage.parallel.map_reduce.RESetMapReduce(
-            forest = self,
-            map_function = map_function,
-            reduce_function = reduce_function,
-            reduce_init = reduce_init).run()
+            forest=self,
+            map_function=map_function,
+            reduce_function=reduce_function,
+            reduce_init=reduce_init).run()

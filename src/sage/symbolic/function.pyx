@@ -110,7 +110,6 @@ is attempted, and after that ``sin()`` which succeeds::
     Traceback (most recent call last):
     ...
     TypeError: Symbolic function my_sin takes exactly 1 arguments (2 given)
-
 """
 
 # ****************************************************************************
@@ -268,7 +267,6 @@ cdef class Function(SageObject):
             f(x)
             sage: deepcopy(f)
             f(x)
-
         """
         self._serial = register_or_update_function(self, self._name, self._latex_name,
                                                    self._nargs, self._evalf_params_first,
@@ -290,7 +288,7 @@ cdef class Function(SageObject):
 
             sage: coth(5)  # indirect doctest                                           # needs sage.symbolic
             coth(5)
-            sage: coth(0.5)
+            sage: coth(0.5)                                                             # needs sage.rings.real_mpfr
             2.16395341373865
             sage: from sage.symbolic.function import BuiltinFunction
             sage: class Test(BuiltinFunction):
@@ -307,13 +305,13 @@ cdef class Function(SageObject):
             ....:         else:
             ....:             return
             sage: test = Test()
-            sage: test(1.3, 4)
+            sage: test(1.3, 4)                                                          # needs sage.rings.real_mpfr
             2.30000000000000
             sage: test(pi, 4)                                                           # needs sage.symbolic
             test(pi, 4)
             sage: test(2, x)                                                            # needs sage.symbolic
             3
-            sage: test(2., 4)
+            sage: test(2., 4)                                                           # needs sage.rings.real_mpfr
             3.00000000000000
             sage: test(1 + 1.0*I, 2)                                                    # needs sage.symbolic
             2.00000000000000 + 1.00000000000000*I
@@ -329,7 +327,7 @@ cdef class Function(SageObject):
             ....:         else:
             ....:             return 3
             sage: test2 = Test2()
-            sage: test2(1.3)
+            sage: test2(1.3)                                                            # needs sage.rings.real_mpfr
             0.500000000000000
             sage: test2(pi)                                                             # needs sage.symbolic
             3
@@ -398,7 +396,6 @@ cdef class Function(SageObject):
             False
             sage: foo(1, 2).operator() == foo
             True
-
         """
         try:
             return richcmp((<Function>self)._serial,
@@ -456,7 +453,7 @@ cdef class Function(SageObject):
 
         Precision of the result depends on the precision of the input::
 
-            sage: arctan(RR(1))
+            sage: arctan(RR(1))                                                         # needs sage.rings.real_mpfr
             0.785398163397448
             sage: arctan(RealField(100)(1))                                             # needs sage.rings.real_mpfr
             0.78539816339744830961566084582
@@ -611,7 +608,7 @@ cdef class Function(SageObject):
 
     def _is_numerical(self, x):
         """
-        Return True if `x` is a numerical object.
+        Return ``True`` if `x` is a numerical object.
 
         This is used to determine whether to call the :meth:`_evalf_`
         method instead of the :meth:`_eval_` method.
@@ -646,7 +643,7 @@ cdef class Function(SageObject):
 
             sage: airy_ai(iv)                                                           # needs sage.rings.real_interval_field
             airy_ai(1.0001?)
-            sage: airy_ai(CIF(iv))                                                      # needs sage.rings.complex_interval_field
+            sage: airy_ai(CIF(iv))                                                      # needs sage.rings.complex_interval_field sage.rings.real_interval_field
             airy_ai(1.0001?)
         """
         if isinstance(x, (float, complex)):
@@ -806,7 +803,6 @@ cdef class Function(SageObject):
             sage: with mpmath.workprec(64): noMpmathFn(sqrt(mpmath.mpf('2')))
             123
             sage: del mpmath.noMpmathFn
-
         """
         import mpmath
         from sage.libs.mpmath.utils import mpmath_to_sage, sage_to_mpmath
@@ -965,6 +961,9 @@ cdef class BuiltinFunction(Function):
             mpc(real='0.83373002513114902', imag='-0.98889770576286506')
 
             sage: import numpy                                                          # needs numpy
+            sage: if int(numpy.version.short_version[0]) > 1:                           # needs numpy
+            ....:     numpy.set_printoptions(legacy="1.25")                             # needs numpy
+
             sage: sin(numpy.int32(0))                                                   # needs numpy
             0.0
             sage: type(_)                                                               # needs numpy
@@ -1295,7 +1294,7 @@ cdef class SymbolicFunction(Function):
             sage: t(x, y)
             foo(x, y)
 
-            sage: def ev(self, x,y): return 2*x
+            sage: def ev(self, x, y): return 2*x
             sage: foo = function("foo", nargs=2, eval_func=ev)                          # needs sage.symbolic
             sage: foo.__getstate__()                                                    # needs sage.symbolic
             (2, 'foo', 2, None, {}, True,

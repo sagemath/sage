@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 
 from sage.structure.element cimport Element
 
@@ -9,4 +10,3 @@ cdef class ElementWrapper(Element):
 
 cdef class ElementWrapperCheckWrappedClass(ElementWrapper):
     pass
-

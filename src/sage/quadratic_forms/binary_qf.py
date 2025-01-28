@@ -80,9 +80,7 @@ class BinaryQF(SageObject):
 
     - ``a``, ``b``, ``c`` -- three integers
 
-    OUTPUT:
-
-    The binary quadratic form `a x^2 + b xy + c y^2`.
+    OUTPUT: the binary quadratic form `a x^2 + b xy + c y^2`
 
     EXAMPLES::
 
@@ -300,7 +298,7 @@ class BinaryQF(SageObject):
 
         INPUT:
 
-        - args -- x and y values, as a pair x, y or a list, tuple, or
+        - ``args`` -- x and y values, as a pair x, y or a list, tuple, or
           vector
 
         EXAMPLES::
@@ -611,9 +609,7 @@ class BinaryQF(SageObject):
         whom an integral quadratic form has coefficients `(a, 2b, c)`
         with `a`, `b`, `c` integers.
 
-        OUTPUT:
-
-        The determinant of the matrix::
+        OUTPUT: the determinant of the matrix::
 
             [  a  b/2]
             [b/2    c]
@@ -773,9 +769,9 @@ class BinaryQF(SageObject):
 
         INPUT:
 
-        - ``transformation`` -- bool (default: ``False``); if ``True``,
-          return both the reduced form and a matrix transforming
-          ``self`` into the reduced form.
+        - ``transformation`` -- boolean (default: ``False``); if ``True``,
+          return both the reduced form and a matrix transforming ``self`` into
+          the reduced form
 
         TESTS::
 
@@ -835,7 +831,7 @@ class BinaryQF(SageObject):
         return Q
 
     @cached_method
-    def reduced_form(self, transformation=False, algorithm="default"):
+    def reduced_form(self, transformation=False, algorithm='default'):
         """
         Return a reduced form equivalent to ``self``.
 
@@ -843,9 +839,9 @@ class BinaryQF(SageObject):
 
         - ``self`` -- binary quadratic form of non-square discriminant
 
-        - ``transformation`` -- boolean (default: False): if ``True``, return
+        - ``transformation`` -- boolean (default: ``False``); if ``True``, return
           both the reduced form and a matrix whose :meth:`matrix_action_right`
-          transforms ``self`` into the reduced form.
+          transforms ``self`` into the reduced form
 
         - ``algorithm`` -- string; the algorithm to use. Valid options are:
 
@@ -1283,7 +1279,7 @@ class BinaryQF(SageObject):
 
     def is_nonsingular(self):
         """
-        Return whether this form is nonsingular, i.e., has non-zero discriminant.
+        Return whether this form is nonsingular, i.e., has nonzero discriminant.
 
         EXAMPLES::
 
@@ -1302,7 +1298,7 @@ class BinaryQF(SageObject):
 
         INPUT:
 
-        - ``proper`` -- bool (default: ``True``); if ``True`` use proper
+        - ``proper`` -- boolean (default: ``True``); if ``True`` use proper
           equivalence
         - ``other`` -- a binary quadratic form
 
@@ -1608,16 +1604,20 @@ class BinaryQF(SageObject):
                 raise ValueError("Unable to find a prime value of %s" % self)
             B += 10
 
-    def solve_integer(self, n, *, algorithm="general"):
+    def solve_integer(self, n, *, algorithm='general', _flag=2):
         r"""
         Solve `Q(x, y) = n` in integers `x` and `y` where `Q` is this
         quadratic form.
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer or a
+          `:sage:`~sage.structure.factorization.Factorization` object
 
-        - ``algorithm`` -- ``"general"`` (default) or ``"cornacchia"``
+        - ``algorithm`` -- ``'general'`` (default) or ``'cornacchia'``
+
+        - ``_flag`` -- ``1``, ``2`` (default) or ``3``; passed onto the pari
+          function``qfbsolve``. For internal use only.
 
         To use the Cornacchia algorithm, the quadratic form must have
         `a=1` and `b=0` and `c>0`, and ``n`` must be a prime or four
@@ -1629,6 +1629,8 @@ class BinaryQF(SageObject):
         if no solution exists.
 
         ALGORITHM: :pari:`qfbsolve` or :pari:`qfbcornacchia`
+
+        TODO:: Replace ``_flag`` with human-readable parameters c.f. :issue:`37119`
 
         EXAMPLES::
 
@@ -1665,6 +1667,14 @@ class BinaryQF(SageObject):
             sage: [Q.solve_integer(6) for Q in Qs]
             [(1, -1), (1, -1), (-1, -1)]
 
+        ::
+
+            sage: # needs sage.libs.pari
+            sage: n = factor(126)
+            sage: Q = BinaryQF([1, 0, 5])
+            sage: Q.solve_integer(n)
+            (11, -1)
+
         TESTS:
 
         The returned solutions are correct (random inputs)::
@@ -1675,7 +1685,7 @@ class BinaryQF(SageObject):
             sage: xy is None or Q(*xy) == n                                             # needs sage.libs.pari
             True
 
-        Also when using the ``"cornacchia"`` algorithm::
+        Also when using the ``'cornacchia'`` algorithm::
 
             sage: # needs sage.libs.pari
             sage: n = random_prime(10^9)
@@ -1714,22 +1724,39 @@ class BinaryQF(SageObject):
             sage: Q = Q.matrix_action_right(U)
             sage: Q.discriminant().is_square()
             True
-            sage: xy = Q.solve_integer(n)                                               # needs sage.libs.pari
-            sage: Q(*xy) == n                                                           # needs sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: xy = Q.solve_integer(n)
+            sage: Q(*xy) == n
             True
 
         Also test the `n=0` special case separately::
 
-            sage: xy = Q.solve_integer(0)                                               # needs sage.libs.pari
-            sage: Q(*xy)                                                                # needs sage.libs.pari
+            sage: # needs sage.libs.pari
+            sage: xy = Q.solve_integer(0)
+            sage: Q(*xy)
             0
-        """
-        n = ZZ(n)
 
+        Test for different ``_flag`` values::
+
+            sage: # needs sage.libs.pari
+            sage: Q = BinaryQF([1, 0, 5])
+            sage: Q.solve_integer(126, _flag=1)
+            [(11, -1), (-1, -5), (-1, 5), (-11, -1)]
+            sage: Q.solve_integer(126, _flag=2)
+            (11, -1)
+            sage: Q.solve_integer(126, _flag=3)
+            [(11, -1), (-1, -5), (-1, 5), (-11, -1), (-9, -3), (9, -3)]
+        """
         if self.is_negative_definite():  # not supported by PARI
             return (-self).solve_integer(-n)
 
         if self.is_reducible():  # square discriminant; not supported by PARI
+            from sage.structure.factorization import Factorization
+            if isinstance(n, Factorization):
+                n = ZZ(n.value())
+            else:
+                n = ZZ(n)
+
             if self._a:
                 # https://math.stackexchange.com/a/980075
                 w = self.discriminant().sqrt()
@@ -1772,9 +1799,10 @@ class BinaryQF(SageObject):
         if algorithm != 'general':
             raise ValueError(f'algorithm {algorithm!r} is not a valid algorithm')
 
-        flag = 2  # single solution, possibly imprimitive
-        sol = self.__pari__().qfbsolve(n, flag)
-        return tuple(map(ZZ, sol)) if sol else None
+        sol = self.__pari__().qfbsolve(n, _flag)
+        if _flag == 2:
+            return tuple(map(ZZ, sol)) if sol else None
+        return [tuple(map(ZZ, tup)) for tup in sol]
 
     def form_class(self):
         r"""
@@ -1801,12 +1829,12 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
 
     INPUT:
 
-    - ``D`` -- (integer) a discriminant
+    - ``D`` -- integer; a discriminant
 
-    - ``primitive_only`` -- (boolean; default: ``True``): if ``True``, only
-      return primitive forms.
+    - ``primitive_only`` -- boolean (default: ``True``); if ``True``, only
+      return primitive forms
 
-    - ``proper`` -- (boolean; default: ``True``)
+    - ``proper`` -- boolean (default: ``True``)
 
     OUTPUT:
 

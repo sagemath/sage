@@ -23,6 +23,7 @@ import builtins
 import math
 
 from sage.misc.lazy_import import lazy_import
+from sage.misc.superseded import deprecation
 
 lazy_import('sage.rings.complex_double', 'CDF')
 lazy_import('sage.rings.real_double', ['RDF', 'RealDoubleElement'])
@@ -105,10 +106,7 @@ def basis(x):
         sage: V = VectorSpace(QQ, 3)                                                    # needs sage.modules
         sage: S = V.subspace([[1,2,0], [2,2,-1]])                                       # needs sage.modules
         sage: basis(S)                                                                  # needs sage.modules
-        [
-        (1, 0, -1),
-        (0, 1, 1/2)
-        ]
+        [(1, 0, -1), (0, 1, 1/2)]
     """
     return x.basis()
 
@@ -193,7 +191,7 @@ def coerce(P, x):
 
 def cyclotomic_polynomial(n, var='x'):
     """
-    Return the `n^{th}` cyclotomic polynomial.
+    Return the `n`-th cyclotomic polynomial.
 
     EXAMPLES::
 
@@ -220,9 +218,8 @@ def decomposition(x):
 
         sage: M = matrix([[2, 3], [3, 4]])                                              # needs sage.libs.pari sage.modules
         sage: M.decomposition()                                                         # needs sage.libs.pari sage.modules
-        [
-        (Ambient free module of rank 2 over the principal ideal domain Integer Ring, True)
-        ]
+        [(Ambient free module of rank 2 over the principal ideal domain Integer Ring,
+          True)]
 
         sage: # needs sage.groups
         sage: G.<a,b> = DirichletGroup(20)
@@ -420,25 +417,25 @@ def symbolic_sum(expression, *args, **kwds):
 
     INPUT:
 
-    - ``expression`` - a symbolic expression
+    - ``expression`` -- a symbolic expression
 
-    - ``v`` - a variable or variable name
+    - ``v`` -- a variable or variable name
 
-    - ``a`` - lower endpoint of the sum
+    - ``a`` -- lower endpoint of the sum
 
-    - ``b`` - upper endpoint of the sum
+    - ``b`` -- upper endpoint of the sum
 
-    - ``algorithm`` - (default: ``'maxima'``)  one of
+    - ``algorithm`` -- (default: ``'maxima'``)  one of
 
-      - ``'maxima'`` - use Maxima (the default)
+      - ``'maxima'`` -- use Maxima (the default)
 
-      - ``'maple'`` - (optional) use Maple
+      - ``'maple'`` -- (optional) use Maple
 
-      - ``'mathematica'`` - (optional) use Mathematica
+      - ``'mathematica'`` -- (optional) use Mathematica
 
-      - ``'giac'`` - (optional) use Giac
+      - ``'giac'`` -- (optional) use Giac
 
-      - ``'sympy'`` - use SymPy
+      - ``'sympy'`` -- use SymPy
 
     EXAMPLES::
 
@@ -570,7 +567,7 @@ def symbolic_sum(expression, *args, **kwds):
         sage: sum(x, x, 1r, 5r)                                                         # needs sage.symbolic
         15
 
-    .. note::
+    .. NOTE::
 
        #. Sage can currently only understand a subset of the output of Maxima, Maple and
           Mathematica, so even if the chosen backend can perform the summation the
@@ -584,7 +581,6 @@ def symbolic_sum(expression, *args, **kwds):
         4
         sage: sum([[1], [2]], start=[])
         [1, 2]
-
     """
     if hasattr(expression, 'sum'):
         return expression.sum(*args, **kwds)
@@ -601,23 +597,23 @@ def symbolic_prod(expression, *args, **kwds):
 
     INPUT:
 
-    - ``expression`` - a symbolic expression
+    - ``expression`` -- a symbolic expression
 
-    - ``v`` - a variable or variable name
+    - ``v`` -- a variable or variable name
 
-    - ``a`` - lower endpoint of the product
+    - ``a`` -- lower endpoint of the product
 
-    - ``b`` - upper endpoint of the prduct
+    - ``b`` -- upper endpoint of the prduct
 
-    - ``algorithm`` - (default: ``'maxima'``)  one of
+    - ``algorithm`` -- (default: ``'maxima'``)  one of
 
-      - ``'maxima'`` - use Maxima (the default)
+      - ``'maxima'`` -- use Maxima (the default)
 
-      - ``'giac'`` - (optional) use Giac
+      - ``'giac'`` -- (optional) use Giac
 
-      - ``'sympy'`` - use SymPy
+      - ``'sympy'`` -- use SymPy
 
-    - ``hold`` - (default: ``False``) if ``True`` don't evaluate
+    - ``hold`` -- boolean (default: ``False``); if ``True`` don't evaluate
 
     EXAMPLES::
 
@@ -639,7 +635,6 @@ def symbolic_prod(expression, *args, **kwds):
         1/factorial(n + 1)
         sage: product(f(i), i, 1, n).log().log_expand()
         sum(log(f(i)), i, 1, n)
-
     """
     from .misc_c import prod as c_prod
     if hasattr(expression, 'prod'):
@@ -782,7 +777,6 @@ def integral(x, *args, **kwds):
         ...
         sage: result                                                                    # needs sage.symbolic
         -1/4
-
     """
     if hasattr(x, 'integral'):
         return x.integral(*args, **kwds)
@@ -913,11 +907,7 @@ def kernel(x):
         Basis matrix:
         []
         sage: kernel(A.transpose()).basis()
-        [
-        (1, 0, 0),
-        (0, 1, 0),
-        (0, 0, 1)
-        ]
+        [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
     """
     return x.kernel()
 
@@ -929,16 +919,20 @@ def krull_dimension(x):
     EXAMPLES::
 
         sage: krull_dimension(QQ)
+        doctest:warning...:
+        DeprecationWarning: please use the krull_dimension method
+        See https://github.com/sagemath/sage/issues/39311 for details.
         0
-        sage: krull_dimension(ZZ)
+        sage: ZZ.krull_dimension()
         1
-        sage: krull_dimension(ZZ[sqrt(5)])                                              # needs sage.rings.number_field sage.symbolic
+        sage: ZZ[sqrt(5)].krull_dimension()                                              # needs sage.rings.number_field sage.symbolic
         1
-        sage: U.<x,y,z> = PolynomialRing(ZZ,3); U
+        sage: U.<x,y,z> = PolynomialRing(ZZ, 3); U
         Multivariate Polynomial Ring in x, y, z over Integer Ring
         sage: U.krull_dimension()
         4
     """
+    deprecation(39311, "please use the krull_dimension method")
     return x.krull_dimension()
 
 
@@ -1092,8 +1086,8 @@ def log(*args, **kwds):
         sage: log(F(9), 3)
         2
 
-    The log function also works for p-adics (see documentation for
-    p-adics for more information)::
+    The log function also works for `p`-adics (see documentation for
+    `p`-adics for more information)::
 
         sage: R = Zp(5); R                                                              # needs sage.rings.padics
         5-adic Ring with capped relative precision 20
@@ -1140,6 +1134,13 @@ def log(*args, **kwds):
 
         sage: log(0, 2)
         -Infinity
+
+    Check if :issue:`37794` is fixed::
+
+        sage: log(int(0), 2)
+        -Infinity
+        sage: log(int(0), 1/2)
+        +Infinity
     """
     base = kwds.pop('base', None)
     if base:
@@ -1191,7 +1192,7 @@ minpoly = minimal_polynomial
 def multiplicative_order(x):
     r"""
     Return the multiplicative order of ``x``, if ``x`` is a unit, or
-    raise :class:`ArithmeticError` otherwise.
+    raise :exc:`ArithmeticError` otherwise.
 
     EXAMPLES::
 
@@ -1732,9 +1733,9 @@ def quotient(x, y, *args, **kwds):
 
     EXAMPLES::
 
-        sage: quotient(5,6)
+        sage: quotient(5, 6)
         5/6
-        sage: quotient(5.,6.)
+        sage: quotient(5., 6.)
         0.833333333333333
         sage: R.<x> = ZZ[]; R
         Univariate Polynomial Ring in x over Integer Ring
@@ -1824,22 +1825,21 @@ def _do_sqrt(x, prec=None, extend=True, all=False):
 
     INPUT:
 
-    -  ``x`` -- a number
+    - ``x`` -- a number
 
-    -  ``prec`` -- a positive integer (default: ``None``); when specified,
-       compute the square root with ``prec`` bits of precision
+    - ``prec`` -- positive integer (default: ``None``); when specified,
+      compute the square root with ``prec`` bits of precision
 
-    -  ``extend`` -- bool (default: ``True``); this is a placeholder, and is
-       always ignored since in the symbolic ring everything
-       has a square root.
+    - ``extend`` -- boolean (default: ``True``); this is a placeholder, and is
+      always ignored since in the symbolic ring everything
+      has a square root
 
-    -  ``extend`` -- bool (default: ``True``); whether to extend
-       the base ring to find roots. The extend parameter is ignored if
-       ``prec`` is a positive integer.
+    - ``extend`` -- boolean (default: ``True``); whether to extend
+      the base ring to find roots. The extend parameter is ignored if
+      ``prec`` is a positive integer.
 
-    -  ``all`` -- bool (default: ``False``); whether to return
-       a list of all the square roots of ``x``.
-
+    - ``all`` -- boolean (default: ``False``); whether to return
+      a list of all the square roots of ``x``
 
     EXAMPLES::
 
@@ -1883,18 +1883,18 @@ def sqrt(x, *args, **kwds):
     r"""
     INPUT:
 
-    -  ``x`` -- a number
+    - ``x`` -- a number
 
-    -  ``prec`` -- integer (default: ``None``): if ``None``, returns
-       an exact square root; otherwise returns a numerical square root if
-       necessary, to the given bits of precision.
+    - ``prec`` -- integer (default: ``None``); if ``None``, returns
+      an exact square root. Otherwise returns a numerical square root if
+      necessary, to the given bits of precision.
 
-    -  ``extend`` -- bool (default: ``True``); this is a placeholder, and
-       is always ignored or passed to the ``sqrt`` method of ``x``,
-       since in the symbolic ring everything has a square root.
+    - ``extend`` -- boolean (default: ``True``); this is a placeholder, and
+      is always ignored or passed to the ``sqrt`` method of ``x``,
+      since in the symbolic ring everything has a square root
 
-    -  ``all`` -- bool (default: ``False``); if ``True``, return all
-       square roots of ``self``, instead of just one.
+    - ``all`` -- boolean (default: ``False``); if ``True``, return all
+      square roots of ``self``, instead of just one
 
     EXAMPLES::
 

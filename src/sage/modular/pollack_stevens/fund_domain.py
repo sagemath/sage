@@ -10,7 +10,6 @@ relevant Manin relations off of that picture. The algorithm follows [PS2011]_.
 AUTHORS:
 
 - Robert Pollack, Jonathan Hanke (2012): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
@@ -39,7 +38,9 @@ def M2Z(x):
     r"""
     Create an immutable `2 \times 2` integer matrix from ``x``.
 
-    INPUT: anything that can be converted into a `2 \times 2` matrix.
+    INPUT:
+
+    - ``x`` -- anything that can be converted into a `2 \times 2` matrix
 
     EXAMPLES::
 
@@ -74,21 +75,21 @@ class PollackStevensModularDomain(SageObject):
 
     INPUT:
 
-    - ``N`` -- a positive integer, the level of the congruence subgroup
+    - ``N`` -- positive integer, the level of the congruence subgroup
       `\Gamma_0(N)`
 
-    - ``reps`` -- a list of `2 \times 2` matrices, the coset
+    - ``reps`` -- list of `2 \times 2` matrices, the coset
       representatives of `Div^0(P^1(\QQ))`
 
-    - ``indices`` -- a list of integers; indices of elements in
+    - ``indices`` -- list of integers; indices of elements in
       ``reps`` which are generators
 
-    - ``rels`` -- a list of list of triples ``(d, A, i)``, one for each
+    - ``rels`` -- list of list of triples ``(d, A, i)``, one for each
       coset representative of ``reps`` which describes how to express the
       elements of ``reps`` in terms of generators specified by ``indices``.
       See :meth:`relations` for a detailed explanations of these triples.
 
-    - ``equiv_ind`` -- a dictionary which maps normalized coordinates on
+    - ``equiv_ind`` -- dictionary which maps normalized coordinates on
       `P^1(\ZZ/N\ZZ)` to an integer such that a matrix whose bottom row is
       equivalent to `[a:b]` in `P^1(\ZZ/N\ZZ)` is in the coset of
       ``reps[equiv_ind[(a,b)]]``
@@ -111,13 +112,12 @@ class PollackStevensModularDomain(SageObject):
         Traceback (most recent call last):
         ...
         TypeError: unable to coerce <class 'sage.modular.arithgroup.congroup_gamma0.Gamma0_class_with_category'> to an integer
-
     """
     def __init__(self, N, reps, indices, rels, equiv_ind):
         r"""
         INPUT:
 
-            See :class:`PollackStevensModularDomain`.
+        See :class:`PollackStevensModularDomain`.
 
         EXAMPLES::
 
@@ -221,11 +221,11 @@ class PollackStevensModularDomain(SageObject):
 
     def gen(self, n=0):
         r"""
-        Return the ``n``-th generator.
+        Return the `n`-th generator.
 
         INPUT:
 
-        - ``n`` -- integer (default: 0), which generator is desired
+        - ``n`` -- integer (default: 0); which generator is desired
 
         EXAMPLES::
 
@@ -284,7 +284,7 @@ class PollackStevensModularDomain(SageObject):
 
         INPUT:
 
-        - ``n`` -- integer (default: None)
+        - ``n`` -- integer (default: ``None``)
 
         OUTPUT:
 
@@ -321,7 +321,7 @@ class PollackStevensModularDomain(SageObject):
 
         INPUT:
 
-        - ``n`` -- integer (default: None)
+        - ``n`` -- integer (default: ``None``)
 
         OUTPUT:
 
@@ -369,7 +369,7 @@ class PollackStevensModularDomain(SageObject):
 
         A `\ZZ[\Gamma_0(N)]`-relation expressing the divisor attached to ``A``
         in terms of the generating set. The relation is given as a list of
-        triples ``(d, B, i)`` such that the divisor attached to `A`` is the sum
+        triples ``(d, B, i)`` such that the divisor attached to ``A`` is the sum
         of ``d`` times the divisor attached to ``B^{-1} * self.reps(i)``.
 
         If ``A`` is an integer, then return this data for the ``A``-th
@@ -536,7 +536,6 @@ class PollackStevensModularDomain(SageObject):
             sage: A = ManinRelations(11)
             sage: A.P1()
             The projective line over the integers modulo 11
-
         """
         return self._P
 
@@ -548,7 +547,7 @@ class ManinRelations(PollackStevensModularDomain):
 
     INPUT:
 
-    - ``N`` -- a positive integer, the level of `\Gamma_0(N)` to work with
+    - ``N`` -- positive integer, the level of `\Gamma_0(N)` to work with
 
     EXAMPLES::
 
@@ -577,7 +576,6 @@ class ManinRelations(PollackStevensModularDomain):
         Traceback (most recent call last):
         ...
         ValueError: N must be a positive integer
-
     """
     def __init__(self, N):
         r"""
@@ -585,7 +583,7 @@ class ManinRelations(PollackStevensModularDomain):
 
         INPUT:
 
-        - ``N`` -- a positive integer, the level of `\Gamma_0(N)` to work with
+        - ``N`` -- positive integer; the level of `\Gamma_0(N)` to work with
 
         EXAMPLES::
 
@@ -814,7 +812,7 @@ class ManinRelations(PollackStevensModularDomain):
             # interior path on either of the last two cusps
 
             for s in range(r + 2, len(cusps)):
-            # s is in the index of the cusp on the right of the path
+                # s is in the index of the cusp on the right of the path
                 cusp1 = cusps[r]
                 cusp2 = cusps[s]
                 if self.is_unimodular_path(cusp1, cusp2):
@@ -896,9 +894,7 @@ class ManinRelations(PollackStevensModularDomain):
         contains a point fixed by a `\Gamma_0(N)` element of order 2 (where the
         order is computed in `PSL_2(\ZZ)`).
 
-        OUTPUT:
-
-        A list of integers.
+        OUTPUT: list of integers
 
         EXAMPLES::
 
@@ -941,9 +937,7 @@ class ManinRelations(PollackStevensModularDomain):
         point fixed by a `\Gamma_0(N)` element of order 2 (where the order is
         computed in `PSL_2(\ZZ)`).
 
-        OUTPUT:
-
-        A list of matrices.
+        OUTPUT: list of matrices
 
         EXAMPLES::
 
@@ -1219,10 +1213,10 @@ class ManinRelations(PollackStevensModularDomain):
 
                         if (b1 ** 2 + b2 ** 2 + b1 * b2) % N != 0:
 
-                        # this congruence is exactly equivalent to
-                        # gam * [0 -1; 1 -1] * gam^(-1) is in Gamma_0(N)
-                        # where gam is the matrix corresponding to the
-                        # unimodular path connecting cusp1 to cusp2
+                            # this congruence is exactly equivalent to
+                            # gam * [0 -1; 1 -1] * gam^(-1) is in Gamma_0(N)
+                            # where gam is the matrix corresponding to the
+                            # unimodular path connecting cusp1 to cusp2
 
                             C[s] = "i"  # The '?' is changed to an 'i'
                              # indicating that a new cusp needs to
@@ -1275,7 +1269,7 @@ class ManinRelations(PollackStevensModularDomain):
 
         INPUT:
 
-        - ``r1, r2`` -- rational numbers
+        - ``r1``, ``r2`` -- rational numbers
 
         OUTPUT:
 
@@ -1308,12 +1302,10 @@ class ManinRelations(PollackStevensModularDomain):
 
         INPUT:
 
-        - ``r1, r2`` -- rational numbers (that are assumed to be connected by a
-          unimodular path)
+        - ``r1``, ``r2`` -- rational numbers (that are assumed to be connected
+          by a unimodular path)
 
-        OUTPUT:
-
-        A pair of `2 \times 2` matrices of determinant 1
+        OUTPUT: a pair of `2 \times 2` matrices of determinant 1
 
         EXAMPLES::
 
@@ -1347,7 +1339,7 @@ class ManinRelations(PollackStevensModularDomain):
 
         INPUT:
 
-        - ``C`` -- a list of rational numbers coming from
+        - ``C`` -- list of rational numbers coming from
           ``self.form_list_of_cusps()``
 
         OUTPUT:
@@ -1550,12 +1542,10 @@ def basic_hecke_matrix(a, l):
 
     INPUT:
 
-    - `a` -- an integer or Infinity
+    - ``a`` -- integer or Infinity
     - ``l`` -- a prime
 
-    OUTPUT:
-
-    A `2 \times 2` matrix of determinant l
+    OUTPUT: a `2 \times 2` matrix of determinant l
 
     EXAMPLES::
 

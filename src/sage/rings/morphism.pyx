@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Homomorphisms of rings
 
@@ -649,7 +648,6 @@ cdef class RingHomomorphism(RingMap):
 
             sage: isinstance(f, sage.rings.morphism.RingHomomorphism)                   # needs sage.rings.padics
             True
-
         """
         from sage.rings.homset import RingHomset_generic
         if not isinstance(parent, RingHomset_generic):
@@ -664,7 +662,6 @@ cdef class RingHomomorphism(RingMap):
 
             sage: ZZ.hom(Zp(3))._repr_type()                                            # needs sage.rings.padics
             'Ring'
-
         """
         return "Ring"
 
@@ -679,9 +676,7 @@ cdef class RingHomomorphism(RingMap):
 
         - ``lift`` -- a ring map
 
-        OUTPUT:
-
-        Changes the state of ``self``.
+        OUTPUT: changes the state of ``self``
 
         EXAMPLES::
 
@@ -692,7 +687,6 @@ cdef class RingHomomorphism(RingMap):
               From: Ring of integers modulo 3
               To:   Integer Ring
               Defn: Choice of lifting map
-
         """
         if lift.domain() != self.codomain():
             raise TypeError("lift must have correct domain")
@@ -889,7 +883,7 @@ cdef class RingHomomorphism(RingMap):
 
     def pushforward(self, I):
         """
-        Returns the pushforward of the ideal `I` under this ring
+        Return the pushforward of the ideal `I` under this ring
         homomorphism.
 
         EXAMPLES::
@@ -899,7 +893,7 @@ cdef class RingHomomorphism(RingMap):
             Ideal (xx, xx*yy + 3*xx) of Quotient of Multivariate Polynomial Ring
              in x, y over Rational Field by the ideal (x^2, y^2)
         """
-        if not ideal.is_Ideal(I):
+        if not isinstance(I, ideal.Ideal_generic):
             raise TypeError("I must be an ideal")
         R = self.codomain()
         return R.ideal([self(y) for y in I.gens()])
@@ -1039,10 +1033,10 @@ cdef class RingHomomorphism(RingMap):
             sage: f.kernel()                                                            # needs sage.libs.singular
             Ideal (0) of Multivariate Polynomial Ring in t, u over Rational Field
         """
-        from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
-        from sage.rings.quotient_ring import is_QuotientRing
-        from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+        from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
+        from sage.rings.quotient_ring import QuotientRing_nc
+        from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         B = self.codomain()
         graph, from_B, to_A = self._graph_ideal()
         Q = graph.ring()
@@ -1051,14 +1045,16 @@ cdef class RingHomomorphism(RingMap):
             # avoid adding the 0-ideal to the graph ideal in order to benefit
             # from a cached Gröbner basis
             graph_I = graph
-        elif (is_MPolynomialRing(B) or is_PolynomialRing(B)
-              or is_QuotientRing(B) or is_PolynomialQuotientRing(B)):
+        elif isinstance(B, (MPolynomialRing_base,
+                            PolynomialRing_generic,
+                            QuotientRing_nc,
+                            PolynomialQuotientRing_generic)):
             graph_I = graph + from_B(I)
         else:
-            # non-zero fractional ideals of number fields not yet supported
+            # nonzero fractional ideals of number fields not yet supported
             raise NotImplementedError("inverse image not implemented "
                                       "for ideals in %s" % B)
-        if is_QuotientRing(Q):
+        if isinstance(Q, QuotientRing_nc):
             # elimination_ideal does not work with quotient rings, so
             # switch to the cover ring
             gens_B_lifted = Q.cover_ring().gens()[:B.ngens()]
@@ -1288,7 +1284,7 @@ cdef class RingHomomorphism(RingMap):
             ...
             NotImplementedError: rings are not commutative
         """
-        from sage.rings.quotient_ring import is_QuotientRing
+        from sage.rings.quotient_ring import QuotientRing_nc
         from sage.rings.ideal import Ideal_generic
         A = self.domain()
         B = self.codomain()
@@ -1307,7 +1303,7 @@ cdef class RingHomomorphism(RingMap):
         A_to_Q = A.hom(Q.gens()[B.ngens():], Q, check=False)
         B_to_Q = B.hom(Q.gens()[:B.ngens()], Q, check=False)
         graph = Q.ideal([B_to_Q(self(x)) - A_to_Q(x) for x in A.gens()])
-        R = Q.cover_ring() if is_QuotientRing(Q) else Q
+        R = Q.cover_ring() if isinstance(Q, QuotientRing_nc) else Q
         R_to_A = R.hom(tuple([0] * B.ngens()) + A.gens(), A, check=False)
         Q_to_A = R_to_A if R is Q else R_to_A * Q.lifting_map()
 
@@ -1329,7 +1325,7 @@ cdef class RingHomomorphism(RingMap):
         """
         Return the inverse of this ring homomorphism if it exists.
 
-        Raises a ``ZeroDivisionError`` if the inverse does not exist.
+        Raises a :exc:`ZeroDivisionError` if the inverse does not exist.
 
         ALGORITHM:
 
@@ -2283,7 +2279,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         """
         P = self.codomain()
         try:
-            return P(dict([(a, self._underlying(b)) for a,b in x.dict().items()]))
+            return P({a: self._underlying(b) for a, b in x.monomial_coefficients().items()})
         except Exception:
             pass
         try:
@@ -2496,7 +2492,7 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
 
         We verify that calling directly raises the expected error
         (just coercing into the codomain), but calling with __call__
-        (the second call below) gives a :class:`TypeError` since 1/2 cannot be
+        (the second call below) gives a :exc:`TypeError` since 1/2 cannot be
         coerced into the domain. ::
 
             sage: f._call_(1/2)
@@ -2622,10 +2618,10 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
     INPUT:
 
-    -  ``parent`` -- a ring homset ``Hom(R,S)``
+    - ``parent`` -- a ring homset ``Hom(R,S)``
 
-    -  ``phi`` -- a ring homomorphism ``C --> S``, where ``C`` is the
-       domain of ``R.cover()``
+    - ``phi`` -- a ring homomorphism ``C --> S``, where ``C`` is the
+      domain of ``R.cover()``
 
     OUTPUT: a ring homomorphism
 
@@ -2653,7 +2649,7 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
         True
 
     Validity of the homomorphism is determined, when possible, and a
-    ``TypeError`` is raised if there is no homomorphism sending the
+    :exc:`TypeError` is raised if there is no homomorphism sending the
     generators to the given images::
 
         sage: S.hom([b^2, c^2, a^2])                                                    # needs sage.libs.singular
@@ -2713,7 +2709,6 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
             False
             sage: psi(a) == phi(a)
             True
-
         """
         self.phi = _slots['phi']
         RingHomomorphism._update_slots(self, _slots)
@@ -2865,9 +2860,9 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
         """
         INPUT:
 
-        -  ``domain`` -- a ring
+        - ``domain`` -- a ring
 
-        -  ``n`` -- a nonnegative integer (default: 1)
+        - ``n`` -- nonnegative integer (default: 1)
 
         OUTPUT:
 
@@ -2886,8 +2881,10 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
              over Finite Field of size 5
         """
         from sage.rings.ring import CommutativeRing
+        from sage.categories.commutative_rings import CommutativeRings
         from sage.categories.homset import Hom
-        if not isinstance(domain, CommutativeRing):
+        if not (domain in CommutativeRings() or
+                isinstance(domain, CommutativeRing)):  # TODO: remove this line
             raise TypeError("The base ring must be a commutative ring")
         self._p = domain.characteristic()
         if not self._p.is_prime():
@@ -3062,7 +3059,7 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
     def _composition(self, right):
         """
-        Return self o right.
+        Return ``self`` o ``right``.
 
         EXAMPLES::
 
@@ -3140,12 +3137,12 @@ def _tensor_product_ring(B, A):
     """
     from sage.rings.finite_rings.finite_field_base import FiniteField
     from sage.rings.number_field.number_field_base import NumberField
-    from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
-    from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
-    from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+    from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+    from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
+    from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     from sage.rings.polynomial.term_order import TermOrder
-    from sage.rings.quotient_ring import is_QuotientRing
+    from sage.rings.quotient_ring import QuotientRing_nc
 
     if set(B.variable_names()).isdisjoint(A.variable_names()):
         names = B.variable_names() + A.variable_names()
@@ -3155,7 +3152,7 @@ def _tensor_product_ring(B, A):
 
     def term_order(A):
         # univariate rings do not have a term order
-        if (is_PolynomialRing(A) or is_PolynomialQuotientRing(A)
+        if (isinstance(A, (PolynomialRing_generic, PolynomialQuotientRing_generic))
             or (isinstance(A, (NumberField, FiniteField))
                 and not A.is_prime_field())):
             return TermOrder('lex', 1)
@@ -3171,12 +3168,12 @@ def _tensor_product_ring(B, A):
                        order=term_order(B) + term_order(A))
 
     def relations(A, R_gens_A):
-        if is_MPolynomialRing(A) or is_PolynomialRing(A):
+        if isinstance(A, (MPolynomialRing_base, PolynomialRing_generic)):
             return []
-        elif is_PolynomialQuotientRing(A):
+        elif isinstance(A, PolynomialQuotientRing_generic):
             to_R = A.ambient().hom(R_gens_A, R, check=False)
             return [to_R(A.modulus())]
-        elif is_QuotientRing(A):
+        elif isinstance(A, QuotientRing_nc):
             to_R = A.ambient().hom(R_gens_A, R, check=False)
             return list(to_R(A.defining_ideal()).gens())
         elif (isinstance(A, (NumberField, FiniteField))

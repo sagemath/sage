@@ -28,6 +28,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
     cpdef is_field_isomorphism(self, other, morphism)
     # cpdef is_field_isomorphic(self, other)  # TODO: currently only works as ``def``
     cpdef _fast_isom_test(self, other)
+    cpdef relabel(self, mapping)
 
     cpdef _minor(self, contractions, deletions)
     cpdef dual(self)
@@ -61,7 +62,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
     cpdef _is_3connected_shifting(self, certificate=*)
     cpdef _is_4connected_shifting(self, certificate=*)
 
-    cpdef is_valid(self)
+    cpdef is_valid(self, certificate=*)
 
 cdef class BinaryMatroid(LinearMatroid):
     cdef tuple _b_invariant, _b_partition
@@ -88,9 +89,10 @@ cdef class BinaryMatroid(LinearMatroid):
     cpdef BinaryMatrix _projection(self)
     cpdef BinaryMatrix _projection_partition(self)
     cpdef _fast_isom_test(self, other)
+    cpdef relabel(self, mapping)
 
-    cpdef is_graphic(self)
-    cpdef is_valid(self)
+    cpdef bint is_graphic(self) noexcept
+    cpdef is_valid(self, certificate=*)
 
 
 cdef class TernaryMatroid(LinearMatroid):
@@ -118,8 +120,9 @@ cdef class TernaryMatroid(LinearMatroid):
     cpdef _principal_quadripartition(self)
     cpdef TernaryMatrix _projection(self)
     cpdef _fast_isom_test(self, other)
+    cpdef relabel(self, mapping)
 
-    cpdef is_valid(self)
+    cpdef is_valid(self, certificate=*)
 
 cdef class QuaternaryMatroid(LinearMatroid):
     cdef object _x_zero, _x_one
@@ -144,8 +147,9 @@ cdef class QuaternaryMatroid(LinearMatroid):
     cpdef bicycle_dimension(self)
     cpdef _principal_tripartition(self)
     cpdef _fast_isom_test(self, other)
+    cpdef relabel(self, mapping)
 
-    cpdef is_valid(self)
+    cpdef is_valid(self, certificate=*)
 
 cdef class RegularMatroid(LinearMatroid):
     cdef _bases_count, _r_invariant
@@ -159,6 +163,7 @@ cdef class RegularMatroid(LinearMatroid):
 
     cpdef _invariant(self)
     cpdef _fast_isom_test(self, other)
+    cpdef relabel(self, mapping)
 
     cpdef bases_count(self)
     cpdef _projection(self)
@@ -167,5 +172,6 @@ cdef class RegularMatroid(LinearMatroid):
     cpdef has_line_minor(self, k, hyperlines=*, certificate=*)
     cpdef _linear_extension_chains(self, F, fundamentals=*)
 
-    cpdef is_graphic(self)
-    cpdef is_valid(self)
+    cpdef bint is_regular(self) noexcept
+    cpdef bint is_graphic(self) noexcept
+    cpdef is_valid(self, certificate=*)

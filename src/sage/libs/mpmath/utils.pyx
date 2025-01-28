@@ -35,7 +35,6 @@ cpdef int bitcount(n) noexcept:
         2
         sage: bitcount(2L)
         2
-
     """
     cdef Integer m
     if isinstance(n, Integer):
@@ -64,7 +63,6 @@ cpdef isqrt(n):
         3
         sage: isqrt(10L)
         3
-
     """
     cdef Integer m, y
     if isinstance(n, Integer):
@@ -77,7 +75,7 @@ cpdef isqrt(n):
     mpz_sqrt(y.value, m.value)
     return y
 
-cpdef from_man_exp(man, exp, long prec = 0, str rnd = 'd'):
+cpdef from_man_exp(man, exp, long prec=0, str rnd='d'):
     """
     Create normalized mpf value tuple from mantissa and exponent.
 
@@ -317,7 +315,6 @@ def sage_to_mpmath(x, prec):
         (mpf('0.5'), mpf('1.5'))
         sage: a.sage_to_mpmath({'n':0.5}, 53)
         {'n': mpf('0.5')}
-
     """
     cdef RealNumber y
     if isinstance(x, Element):
@@ -421,7 +418,6 @@ def call(func, *args, **kwargs):
 
         sage: a.call(a.log, -1.0r, parent=float)
         3.141592653589793j
-
     """
     from mpmath import mp
     orig = mp.prec

@@ -49,15 +49,16 @@ cdef class ntl_mat_GF2E():
     r"""
     The \class{mat_GF2E} class implements arithmetic with matrices over `GF(2**x)`.
     """
-    def __init__(self, modulus = None, nrows=0, ncols=0, v=None):
+    def __init__(self, modulus=None, nrows=0, ncols=0, v=None):
         """
-        Constructs a matrix over ntl.GF2E.
+        Construct a matrix over ntl.GF2E.
 
         INPUT:
-            modulus -- GF2E context
-            nrows -- number of rows
-            ncols -- number of columns
-            v     -- either a list or a matrix over GF(2^x)
+
+        - ``modulus`` -- GF2E context
+        - ``nrows`` -- number of rows
+        - ``ncols`` -- number of columns
+        - ``v`` -- either a list or a matrix over GF(2^x)
 
         EXAMPLES::
 
@@ -93,8 +94,8 @@ cdef class ntl_mat_GF2E():
         cdef unsigned long _nrows, _ncols
         cdef unsigned long i, j
 
-        from sage.structure.element import is_Matrix
-        if is_Matrix(nrows):
+        from sage.structure.element import Matrix
+        if isinstance(nrows, Matrix):
             _nrows = nrows.nrows()
             _ncols = nrows.ncols()
             v     = nrows.list()
@@ -153,7 +154,7 @@ cdef class ntl_mat_GF2E():
 
     def modulus_context(self):
         """
-        Returns the structure that holds the underlying NTL GF2E modulus.
+        Return the structure that holds the underlying NTL GF2E modulus.
 
         EXAMPLES::
 
@@ -182,7 +183,7 @@ cdef class ntl_mat_GF2E():
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -306,7 +307,7 @@ cdef class ntl_mat_GF2E():
 
     def __richcmp__(ntl_mat_GF2E self, other, int op):
         """
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -335,7 +336,7 @@ cdef class ntl_mat_GF2E():
 
     def NumRows(self):
         """
-        Return the number of rows in self.
+        Return the number of rows in ``self``.
 
         EXAMPLES::
 
@@ -347,7 +348,7 @@ cdef class ntl_mat_GF2E():
 
     def NumCols(self):
         """
-        Return the number of columns in self.
+        Return the number of columns in ``self``.
 
         EXAMPLES::
 
@@ -376,10 +377,10 @@ cdef class ntl_mat_GF2E():
 
         if isinstance(ij, tuple) and len(ij) == 2:
             i, j = ij
-        elif self.x.NumCols()==1 and (isinstance(ij, Integer) or isinstance(ij, int)):
+        elif self.x.NumCols() == 1 and isinstance(ij, (Integer, int)):
             i = ij
             j = 0
-        elif self.x.NumRows()==1 and (isinstance(ij, Integer) or isinstance(ij, int)):
+        elif self.x.NumRows() == 1 and isinstance(ij, (Integer, int)):
             i = 0
             j = ij
         else:
@@ -410,10 +411,10 @@ cdef class ntl_mat_GF2E():
         cdef int i, j
         if isinstance(ij, tuple) and len(ij) == 2:
             i, j = ij
-        elif self.x.NumCols() == 1 and (isinstance(ij, Integer) or isinstance(ij, int)):
+        elif self.x.NumCols() == 1 and isinstance(ij, (Integer, int)):
             i = ij
             j = 0
-        elif self.x.NumRows() == 1 and (isinstance(ij, Integer) or isinstance(ij, int)):
+        elif self.x.NumRows() == 1 and isinstance(ij, (Integer, int)):
             i = 0
             j = ij
         else:
@@ -428,7 +429,7 @@ cdef class ntl_mat_GF2E():
 
     def determinant(self):
         """
-        Returns the determinant.
+        Return the determinant.
 
         EXAMPLES::
 
@@ -474,7 +475,7 @@ cdef class ntl_mat_GF2E():
 
     def list(self):
         """
-        Returns a list of the entries in this matrix
+        Return a list of the entries in this matrix.
 
         EXAMPLES::
 
@@ -487,13 +488,12 @@ cdef class ntl_mat_GF2E():
             True
             sage: all(a.modulus_context() is ctx for a in l)
             True
-
         """
         return [self[i,j] for i in range(self.NumRows()) for j in range(self.x.NumCols())]
 
     def IsZero(self):
         """
-        Return True if self is zero, and false otherwise.
+        Return ``True`` if ``self`` is zero, and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -513,15 +513,14 @@ cdef class ntl_mat_GF2E():
 
     def _sage_(ntl_mat_GF2E self, k=None):
         """
-        Returns a ``Matrix`` over a ``FiniteField`` representation
+        Return a ``Matrix`` over a ``FiniteField`` representation
         of this element.
 
         INPUT:
 
-        - ``k`` - optional GF(2**deg)
+        - ``k`` -- (optional) GF(2**deg)
 
-        OUTPUT:
-            Matrix over k
+        OUTPUT: Matrix over k
 
         EXAMPLES::
 
@@ -544,15 +543,12 @@ cdef class ntl_mat_GF2E():
 
         l = [e._sage_(k) for e in self.list()] # we actually can do faster than this
 
-        from sage.matrix.constructor import Matrix
-        return Matrix(k,self.x.NumRows(),self.x.NumCols(),l)
+        from sage.matrix.constructor import matrix
+        return matrix(k, self.x.NumRows(), self.x.NumCols(), l)
 
     def transpose(ntl_mat_GF2E self):
         """
-        Returns the transposed matrix of self.
-
-        OUTPUT:
-            transposed Matrix
+        Return the transposed matrix of ``self``.
 
         EXAMPLES::
 
@@ -589,9 +585,9 @@ cdef class ntl_mat_GF2E():
         sig_off()
         return r
 
-    def IsIdent(self, n = -1):
-        """
-        test if A is the n x n identity matrix
+    def IsIdent(self, n=-1):
+        r"""
+        Test if `A` is the `n \times n` identity matrix.
 
         EXAMPLES::
 
@@ -645,7 +641,7 @@ cdef class ntl_mat_GF2E():
 
     def kernel(self):
         """
-        Computes a basis for the kernel of the map ``x -> x*A``, where
+        Compute a basis for the kernel of the map ``x -> x*A``, where
         ``x`` is a row vector.
 
         EXAMPLES::
@@ -669,10 +665,10 @@ cdef class ntl_mat_GF2E():
 
         INPUT:
 
-        -  ``density`` - float; proportion (roughly) to be considered for
-           changes
-        -  ``nonzero`` - Bool (default: ``False``); whether the new entries
-           are forced to be non-zero
+        - ``density`` -- float; proportion (roughly) to be considered for
+          changes
+        - ``nonzero`` -- boolean (default: ``False``); whether the new entries
+          are forced to be nonzero
 
         EXAMPLES::
 

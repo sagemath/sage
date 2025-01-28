@@ -12,7 +12,7 @@ from sage.misc.temporary_file import tmp_dir
 
 
 def _import_module_from_path(name, path=None):
-    """
+    r"""
     Import the module named ``name`` by searching the given path entries (or
     `sys.path` by default).
 
@@ -77,14 +77,13 @@ class InlineFortran:
 
     def eval(self, x, globals=None, locals=None):
         """
-        Compile fortran code ``x`` and adds the functions in it to
-        ``globals``.
+        Compile fortran code ``x`` and adds the functions in it to ``globals``.
 
         INPUT:
 
-        - ``x`` -- Fortran code
+        - ``x`` -- fortran code
 
-        - ``globals`` -- a dict to which to add the functions from the
+        - ``globals`` -- dictionary to which to add the functions from the
           fortran module
 
         - ``locals`` -- ignored
@@ -163,9 +162,7 @@ class InlineFortran:
 
             # What follows are the arguments to f2py itself (appended later
             # just for logical separation)
-            cmd += ['-c', '-m', name, fortran_file, '--quiet',
-                    '--f77exec=sage-inline-fortran',
-                    '--f90exec=sage-inline-fortran'] + s_lib_path + s_lib
+            cmd += ['-c', '-m', name, fortran_file, '--quiet', '--backend', 'meson'] + s_lib_path + s_lib
 
             try:
                 out = subprocess.check_output(cmd, stderr=subprocess.STDOUT)

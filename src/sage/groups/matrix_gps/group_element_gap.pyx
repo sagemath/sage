@@ -20,7 +20,7 @@ Matrix group elements implemented in GAP
 from sage.groups.matrix_gps.group_element cimport is_MatrixGroupElement
 from sage.libs.gap.element cimport GapElement
 from sage.misc.cachefunc import cached_method
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.structure.factorization import Factorization
 from sage.structure.richcmp cimport richcmp
 
@@ -37,10 +37,10 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
 
     - ``parent`` -- the parent
 
-    - ``check`` -- bool (default: ``True``); if ``True``, do some
+    - ``check`` -- boolean (default: ``True``); if ``True``, do some
       type checking
 
-    - ``convert`` -- bool (default: ``True``); if ``True``, convert
+    - ``convert`` -- boolean (default: ``True``); if ``True``, convert
       ``M`` to the right matrix space
     """
     def __init__(self, parent, M, check=True, convert=True):
@@ -65,7 +65,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
         from sage.libs.gap.libgap import libgap
         M_gap = libgap(M)
         if check:
-            if not is_Matrix(M):
+            if not isinstance(M, Matrix):
                 raise TypeError('M must be a matrix')
             if M.parent() is not parent.matrix_space():
                 raise TypeError('M must be a in the matrix space of the group')
@@ -210,7 +210,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
         entries = self.gap().Flat()
         MS = self.parent().matrix_space()
         ring = MS.base_ring()
-        m = MS([x.sage(ring=ring) for x in entries])
+        m = MS([ring(x) for x in entries])
         m.set_immutable()
         return m
 
@@ -306,19 +306,19 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
 
         This method writes the group element as a product of the
         elements of the list ``gens``, or the standard generators of
-        the parent of self if ``gens`` is None.
+        the parent of ``self`` if ``gens`` is ``None``.
 
         INPUT:
 
-        - ``gens`` -- a list/tuple/iterable of elements (or objects
+        - ``gens`` -- list/tuple/iterable of elements (or objects
           that can be converted to group elements), or ``None``
-          (default). By default, the generators of the parent group
-          are used.
+          (default); by default, the generators of the parent group
+          are used
 
         OUTPUT:
 
         A factorization object that contains information about the
-        order of factors and the exponents. A :class:`ValueError` is raised
+        order of factors and the exponents. A :exc:`ValueError` is raised
         if the group element cannot be written as a word in ``gens``.
 
         ALGORITHM:

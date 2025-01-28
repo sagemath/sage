@@ -77,8 +77,6 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.rings.integer_ring import ZZ
-from sage.structure.element cimport MultiplicativeGroupElement, Matrix
-from sage.structure.element import is_Matrix
 from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport richcmp
 
@@ -91,13 +89,13 @@ except ImportError:
 
 cpdef is_MatrixGroupElement(x):
     """
-    Test whether ``x`` is a matrix group element
+    Test whether ``x`` is a matrix group element.
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT: Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -129,10 +127,10 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
 
     - ``parent`` -- the parent
 
-    - ``check`` -- bool (default: ``True``); if ``True``, then
+    - ``check`` -- boolean (default: ``True``); if ``True``, then
       do some type checking
 
-    - ``convert`` -- bool (default: ``True``); if ``True``, then
+    - ``convert`` -- boolean (default: ``True``); if ``True``, then
       convert ``M`` to the right matrix space
 
     EXAMPLES::
@@ -156,7 +154,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         if convert:
             M = parent.matrix_space()(M)
         if check:
-            if not is_Matrix(M):
+            if not isinstance(M, Matrix):
                 raise TypeError('M must be a matrix')
             if M.parent() is not parent.matrix_space():
                 raise TypeError('M must be a in the matrix space of the group')
@@ -370,9 +368,9 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
 
     def __invert__(self):
         """
-        Return the inverse group element
+        Return the inverse group element.
 
-        OUTPUT: A matrix group element.
+        OUTPUT: a matrix group element
 
         EXAMPLES::
 

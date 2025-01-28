@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Cython-like rich comparisons in Python
 
@@ -77,15 +78,13 @@ cpdef richcmp_item(x, y, int op):
 
     INPUT:
 
-    - ``x``, ``y`` -- arbitrary Python objects. Typically, these are
-      ``X[i]`` and ``Y[i]`` for sequences ``X`` and ``Y``.
+    - ``x``, ``y`` -- arbitrary Python objects; typically, these are
+      ``X[i]`` and ``Y[i]`` for sequences ``X`` and ``Y``
 
-    - ``op`` -- comparison operator (one of ``op_LT`, ``op_LE``,
+    - ``op`` -- comparison operator (one of ``op_LT``, ``op_LE``,
       ``op_EQ``, ``op_NE``, ``op_GT``, ``op_GE``)
 
-    OUTPUT:
-
-    Assuming that ``x = X[i]`` and ``y = Y[i]``:
+    OUTPUT: assuming that ``x = X[i]`` and ``y = Y[i]``:
 
     - if the comparison ``X {op} Y`` (where ``op`` is the given
       operation) could not be decided yet (i.e. we should compare the
