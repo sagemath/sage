@@ -1561,10 +1561,10 @@ cdef class Polynomial(CommutativePolynomial):
                     if e > 1:
                         f = self.change_ring(IntegerModRing(n))
                         assert f.is_unit()  # because self.is_unit()
-                        g = f.inverse_of_unit().change_ring(R)
-                        # then self * g = 1 (mod n)
-                        # (self * g)^n^(e-1) = 1 (mod n^e)
-                        return (self * g)**(n**(e-1) - 1) * g
+                        s = f.inverse_of_unit().change_ring(R)
+                        # then self * s = 1 (mod n)
+                        # (self * s)^n^(e-1) = 1 (mod n^e)
+                        return (self * s)**(n**(e-1) - 1) * s
                 raise NotImplementedError("polynomial inversion over non-integral domains not implemented")
         elif d == -1:
             cst = self._parent._base.zero()
@@ -1674,6 +1674,45 @@ cdef class Polynomial(CommutativePolynomial):
             1
             sage: a*x^2%b  # shows the result exists, thus we cannot raise ValueError, only NotImplementedError
             1
+
+        Test for prime power modulus::
+
+            sage: R.<x> = Zmod(16)[]
+            sage: a = x
+            sage: m = x^5-1
+            sage: b = a.inverse_mod(m); b
+            x^4
+            sage: a*b%m
+            1
+            sage: b.parent() is R
+            True
+            sage: a = 4*x^2+3*x+2
+            sage: b = a.inverse_mod(m); b
+            11*x^4 + 14*x^3 + 12*x^2 + 8*x + 12
+            sage: a*b%m
+            1
+            sage: b.parent() is R
+            True
+            sage: a = x^2+4*x
+            sage: m = 2*x^5+x^4+1
+            sage: b = a.inverse_mod(m); b
+            3*x^14 + 4*x^13 + 4*x^10 + 6*x^6 + 8*x^5 + 4*x^2
+            sage: a*b - m * (8*x^15 + 12*x^14 + 10*x^13 + 3*x^12 + 12*x^10 + 4*x^9 + x^8 + 2*x^5 + 5*x^4 - 1)
+            1
+            sage: a = R(2)
+            sage: m = R(4)
+            sage: b = a.inverse_mod(m); b
+            Traceback (most recent call last):
+            ...
+            ValueError: Impossible inverse modulo
+            sage: a = 2*x+3
+            sage: m = R(4)
+            sage: b = a.inverse_mod(m); b
+            8*x^3 + 12*x^2 + 14*x + 11
+            sage: a*b
+            1
+            sage: b.parent() is R
+            True
         """
         from sage.rings.ideal import Ideal_generic
         if isinstance(m, Ideal_generic):
@@ -1690,6 +1729,34 @@ cdef class Polynomial(CommutativePolynomial):
             if u.is_unit():
                 return a.parent()(~u)
         if a.parent().is_exact():
+            R = a.base_ring()
+            if isinstance(R, sage.rings.abc.IntegerModRing):
+                n, e = R.cardinality().perfect_power()
+                if e > 1:
+                    R2 = IntegerModRing(n)
+                    s = a.change_ring(R2).inverse_mod(m.change_ring(R2))
+                    # if the recursive inverse_mod() above has no solution
+                    # then neither does this one
+                    s = s.change_ring(R)
+                    # a*s + m*t = 1 (mod n) for some t
+                    # (a*s + m*t)^n^(e-1) = 1 (mod n^e)
+                    try:
+                        return power_mod(a*s, n**(e-1) - 1, m) * s % m
+                    except ValueError:
+                        assert not m.leading_coefficient().is_unit()
+                        m1 = m.change_ring(R2)
+                        if not m1.leading_coefficient().is_unit():
+                            # e.g. R = Zmod(9), m = 3
+                            return (a*s)**(n**(e-1) - 1) * s
+                        else:
+                            # for efficiency, we don't compute the raw power **(n**(e-1) - 1)
+                            # but compute it modulo a monic multiple of m
+                            m1 = m1.change_ring(R)
+                            #    m1 - m == 0 (mod n)
+                            # => (m1 - m)^e == 0 (mod n^e)
+                            # => m | m1^e (mod n^e)
+                            m2 = m1**e
+                            return power_mod(a*s, n**(e-1) - 1, m2) * s % m2
             # use xgcd
             try:
                 g, s, _ = a.xgcd(m)
