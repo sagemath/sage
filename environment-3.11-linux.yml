@@ -47,7 +47,7 @@ dependencies:
   - cycler=0.12.1=pyhd8ed1ab_1
   - cypari2=2.2.1=py311h8699650_0
   - cyrus-sasl=2.1.27=h54b06d7_7
-  - cysignals=1.12.2=py311hfdbb021_1
+  - cysignals=1.12.3=py311hfdbb021_0
   - cython=3.0.11=py311h55d416d_3
   - dbus=1.13.6=h5008d03_3
   - debugpy=1.8.12=py311hfdbb021_0
