@@ -1419,12 +1419,12 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
         # subclasses).  These methods should be consistent with those on
         # polynomials.
 
-#         def _neg_(self):
-#             """
-#             Default implementation of negation by trying to multiply by -1.
-#             TODO: doctest
-#             """
-#             return self._lmul_(-self.parent().base_ring().one(), self)
+        # def _neg_(self):
+        #     """
+        #     Default implementation of negation by trying to multiply by -1.
+        #     TODO: doctest
+        #     """
+        #     return self._lmul_(-self.parent().base_ring().one(), self)
 
         @abstract_method
         def monomial_coefficients(self, copy=True):

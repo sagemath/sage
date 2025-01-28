@@ -1485,7 +1485,7 @@ class PartitionTuple(CombinatorialElement):
         m = 0
         for comp in self:
             for row in comp:
-                gens.extend([(c, c+1) for c in range(m+1, m+row)])
+                gens.extend((c, c + 1) for c in range(m + 1, m + row))
                 m += row
         gens.append(list(range(1, self.size()+1)))  # to ensure we get a subgroup of Sym_n
         return PermutationGroup(gens)
@@ -1504,7 +1504,7 @@ class PartitionTuple(CombinatorialElement):
         m = 0
         for comp in self:
             for row in comp:
-                gens.extend(list(range(m + 1, m + row)))
+                gens.extend(range(m + 1, m + row))
                 m += row
         return gens
 
