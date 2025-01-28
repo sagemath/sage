@@ -594,13 +594,10 @@ cdef inline int celement_gcd(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
         nmod_poly_set(res, a)
         return 0
 
-    # FLINT provides no interface for detecting errors here
     try:
         sig_on()
-        try:
-            nmod_poly_gcd(res, a, b)
-        finally:
-            sig_off()
+        nmod_poly_gcd(res, a, b)
+        sig_off()
     except RuntimeError:
         raise RuntimeError("FLINT gcd calculation failed")
 

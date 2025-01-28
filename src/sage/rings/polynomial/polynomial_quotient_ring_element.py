@@ -350,15 +350,24 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         TESTS:
 
-        Raise an exception if the base ring is not a field
-        (see :issue:`13303`)::
+        When the base ring is not a field (unfortunately sometimes the
+        error message is printed out, but the result remains correct)::
 
             sage: Z16x.<x> = Integers(16)[]
             sage: S.<y> =  Z16x.quotient(x^2 + x + 1)
             sage: (2*y).is_unit()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: The base ring (=Ring of integers modulo 16) is not a field
+            Flint exception (Impossible inverse):
+                Cannot invert modulo 2*8
+            False
+            sage: y.is_unit()
+            True
+            sage: S.<y> =  Z16x.quotient(x)
+            sage: S(2).is_unit()  # must be False despite the line below
+            Flint exception (Impossible inverse):
+                Cannot invert modulo 2*8
+            False
+            sage: x.gcd(Z16x(2))
+            1
 
         Check that :issue:`29469` is fixed::
 
@@ -378,17 +387,20 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         parent = self.parent()
         base = parent.base_ring()
         if not base.is_field():
-            raise NotImplementedError("The base ring (=%s) is not a field" % base)
+            # at the time of writing, gcd() is made monic because of
+            # https://flintlib.org/doc/nmod_poly.html#c.nmod_poly_gcd
+            # we fallback to xgcd()
+            try:
+                ~self
+                return True
+            except ZeroDivisionError:
+                return False
         g = parent.modulus().gcd(self._polynomial)
         return g.degree() == 0
 
     def __invert__(self):
         """
         Return the inverse of this element.
-
-        .. WARNING::
-
-            Only implemented when the base ring is a field.
 
         EXAMPLES::
 
@@ -406,23 +418,27 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         TESTS:
 
-        An element is not invertible if the base ring is not a field
-        (see :issue:`13303`)::
+        When the base ring is not a field::
 
             sage: Z16x.<x> = Integers(16)[]
             sage: S.<y> =  Z16x.quotient(x^2 + x + 1)
             sage: (2*y)^(-1)
             Traceback (most recent call last):
             ...
-            NotImplementedError: The base ring (=Ring of integers modulo 16) is not a field
+            ZeroDivisionError: element 2*y of quotient polynomial ring not invertible
+            sage: y^(-1)
+            15*y + 15
 
         Check that :issue:`29469` is fixed::
 
             sage: ~S(3)
             11
         """
-        if self._polynomial.is_zero():
+        def raise_not_invertible():
             raise ZeroDivisionError("element %s of quotient polynomial ring not invertible" % self)
+
+        if self._polynomial.is_zero():
+            raise_not_invertible()
         if self._polynomial.is_one():
             return self
 
@@ -435,12 +451,12 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         except (TypeError, NotImplementedError):
             pass
 
-        base = parent.base_ring()
-        if not base.is_field():
-            raise NotImplementedError("The base ring (=%s) is not a field" % base)
-        g, _, a = parent.modulus().xgcd(self._polynomial)
+        try:
+            g, _, a = parent.modulus().xgcd(self._polynomial)
+        except ValueError:
+            raise_not_invertible()
         if g.degree() != 0:
-            raise ZeroDivisionError("element %s of quotient polynomial ring not invertible" % self)
+            raise_not_invertible()
         c = g[0]
         return self.__class__(self.parent(), (~c)*a, check=False)
 
