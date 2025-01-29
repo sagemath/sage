@@ -1629,6 +1629,22 @@ cdef class Polynomial(CommutativePolynomial):
             Traceback (most recent call last):
             ...
             NotImplementedError: Multivariate Polynomial Ring in u, v over Integer Ring localized at (u,) does not provide...
+
+        The behavior of ``xgcd`` over rings like ``ZZ`` are nonstandard, we check the behavior::
+
+            sage: R.<x> = ZZ[]
+            sage: a = 2*x^2+1
+            sage: b = -2*x^2+1
+            sage: a.inverse_mod(b)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: The base ring (=Integer Ring) is not a field
+            sage: a.xgcd(b)
+            (16, 8, 8)
+            sage: a*x^2+b*(x^2+1)
+            1
+            sage: a*x^2%b  # shows the result exists, thus we cannot raise ValueError, only NotImplementedError
+            1
         """
         from sage.rings.ideal import Ideal_generic
         if isinstance(m, Ideal_generic):
@@ -1653,12 +1669,16 @@ cdef class Polynomial(CommutativePolynomial):
                 elif g.is_unit():
                     return g.inverse_of_unit() * s
                 else:
-                    raise ValueError("Impossible inverse modulo")
+                    R = m.base_ring()
+                    if R.is_field():
+                        raise ValueError("Impossible inverse modulo")
+                    else:
+                        raise NotImplementedError(f"The base ring (={R}) is not a field")
             except NotImplementedError:
                 # attempt fallback, return inverse_of_unit() if this is already an unit
                 try:
                     return a.inverse_of_unit()
-                except (ArithmeticError, ValueError, NotImplementedError, ZeroDivisionError):
+                except (ArithmeticError, ValueError, NotImplementedError):
                     pass
                 raise
         else:
