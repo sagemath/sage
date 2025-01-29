@@ -89,36 +89,36 @@ every element will eventually be seen exactly once.
 
     sage: list(islice(QQ^3, 0, 31))
     [(0, 0, 0),
-     (0, 0, 1),
-     (0, 1, 0),
-     (0, 1, 1),
      (1, 0, 0),
-     (1, 0, 1),
-     (1, 1, 0),
-     (1, 1, 1),
-     (0, 0, -1),
-     (1, 0, -1),
-     (0, 1, -1),
-     (1, 1, -1),
-     (0, -1, 0),
-     (1, -1, 0),
-     (0, -1, 1),
-     (1, -1, 1),
-     (0, -1, -1),
-     (1, -1, -1),
+     (0, 1, 0),
+     (0, 0, 1),
      (-1, 0, 0),
+     (1, 1, 0),
+     (1, 0, 1),
+     (0, -1, 0),
+     (0, 1, 1),
+     (0, 0, -1),
+     (1/2, 0, 0),
      (-1, 1, 0),
      (-1, 0, 1),
+     (1, -1, 0),
+     (1, 1, 1),
+     (1, 0, -1),
+     (0, 1/2, 0),
+     (0, -1, 1),
+     (0, 1, -1),
+     (0, 0, 1/2),
+     (-1/2, 0, 0),
+     (1/2, 1, 0),
+     (1/2, 0, 1),
+     (-1, -1, 0),
      (-1, 1, 1),
      (-1, 0, -1),
-     (-1, 1, -1),
-     (-1, -1, 0),
-     (-1, -1, 1),
-     (-1, -1, -1),
-     (0, 0, 1/2),
+     (1, 1/2, 0),
+     (1, -1, 1),
+     (1, 1, -1),
      (1, 0, 1/2),
-     (-1, 0, 1/2),
-     (0, 1, 1/2)]
+     (0, -1/2, 0)]
 
 TESTS:
 
@@ -223,6 +223,7 @@ from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
+from sage.categories.cartesian_product import cartesian_product
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import LazyImport
@@ -2526,35 +2527,35 @@ class FreeModule_generic(Module_free_ambient):
              (5/2)]
             sage: list(islice(QQ^3, 30))
             [(0, 0, 0),
-             (0, 0, 1),
-             (0, 1, 0),
-             (0, 1, 1),
              (1, 0, 0),
-             (1, 0, 1),
-             (1, 1, 0),
-             (1, 1, 1),
-             (0, 0, -1),
-             (1, 0, -1),
-             (0, 1, -1),
-             (1, 1, -1),
-             (0, -1, 0),
-             (1, -1, 0),
-             (0, -1, 1),
-             (1, -1, 1),
-             (0, -1, -1),
-             (1, -1, -1),
+             (0, 1, 0),
+             (0, 0, 1),
              (-1, 0, 0),
+             (1, 1, 0),
+             (1, 0, 1),
+             (0, -1, 0),
+             (0, 1, 1),
+             (0, 0, -1),
+             (1/2, 0, 0),
              (-1, 1, 0),
              (-1, 0, 1),
+             (1, -1, 0),
+             (1, 1, 1),
+             (1, 0, -1),
+             (0, 1/2, 0),
+             (0, -1, 1),
+             (0, 1, -1),
+             (0, 0, 1/2),
+             (-1/2, 0, 0),
+             (1/2, 1, 0),
+             (1/2, 0, 1),
+             (-1, -1, 0),
              (-1, 1, 1),
              (-1, 0, -1),
-             (-1, 1, -1),
-             (-1, -1, 0),
-             (-1, -1, 1),
-             (-1, -1, -1),
-             (0, 0, 1/2),
-             (1, 0, 1/2),
-             (-1, 0, 1/2)]
+             (1, 1/2, 0),
+             (1, -1, 1),
+             (1, 1, -1),
+             (1, 0, 1/2)]
             sage: list(islice(QQ[I]^1, 30))
             [(0),
              (1),
@@ -2588,35 +2589,35 @@ class FreeModule_generic(Module_free_ambient):
              (I - 2)]
             sage: list(islice(QQ[I]^3, 30))
             [(0, 0, 0),
-             (0, 0, 1),
-             (0, 1, 0),
-             (0, 1, 1),
              (1, 0, 0),
-             (1, 0, 1),
-             (1, 1, 0),
-             (1, 1, 1),
-             (0, 0, I),
-             (1, 0, I),
-             (0, 1, I),
-             (1, 1, I),
-             (0, I, 0),
-             (1, I, 0),
-             (0, I, 1),
-             (1, I, 1),
-             (0, I, I),
-             (1, I, I),
+             (0, 1, 0),
+             (0, 0, 1),
              (I, 0, 0),
+             (1, 1, 0),
+             (1, 0, 1),
+             (0, I, 0),
+             (0, 1, 1),
+             (0, 0, I),
+             (-1, 0, 0),
              (I, 1, 0),
              (I, 0, 1),
+             (1, I, 0),
+             (1, 1, 1),
+             (1, 0, I),
+             (0, -1, 0),
+             (0, I, 1),
+             (0, 1, I),
+             (0, 0, -1),
+             (I + 1, 0, 0),
+             (-1, 1, 0),
+             (-1, 0, 1),
+             (I, I, 0),
              (I, 1, 1),
              (I, 0, I),
-             (I, 1, I),
-             (I, I, 0),
-             (I, I, 1),
-             (I, I, I),
-             (0, 0, -1),
-             (1, 0, -1),
-             (I, 0, -1)]
+             (1, -1, 0),
+             (1, I, 1),
+             (1, 1, I),
+             (1, 0, -1)]
         """
         G = self.gens()
         if not G:
@@ -2654,29 +2655,9 @@ class FreeModule_generic(Module_free_ambient):
                         yield self.linear_combination_of_basis(vec)
             assert False  # should loop forever
 
-        def tuples_of_first_n(first_count, length):
-            """
-            Iterates over all tuples of length ``length`` with elements
-            being the first ``first_count`` elements of ``R``.
-            """
-            nonlocal R
-            if length == 0:
-                yield ()
-                return
-            for first in itertools.islice(R, 0, first_count):
-                for rest in tuples_of_first_n(first_count, length - 1):
-                    yield (first,) + rest
-
         if R.cardinality() == sage.rings.infinity.Infinity:
-            for i, furthest_element in enumerate(R):
-                for furthest_element_mask in itertools.product((0, 1), repeat=len(G)):
-                    if not any(furthest_element_mask):
-                        continue
-                    for rest in tuples_of_first_n(i, len(G) - sum(furthest_element_mask)):
-                        rest = list(rest)
-                        vec = [furthest_element if mask else rest.pop() for mask in furthest_element_mask]
-                        assert not rest
-                        yield self.linear_combination_of_basis(vec)
+            for vec in cartesian_product([R]*len(G)):
+                yield self.linear_combination_of_basis([*vec])
             assert False, "should loop forever"
 
         iters = [iter(R) for _ in range(len(G))]
