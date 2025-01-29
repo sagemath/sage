@@ -239,7 +239,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             R = PolynomialRing(self.parent().prime_subfield(), var)
             return R(self.__pari__().minpoly('x').lift())
-        
+
         if algorithm == 'matrix':
             return self.matrix().minpoly(var)
 
