@@ -3,6 +3,7 @@ py.install_sources(
   'all.py',
   'convert_flint.pxd',
   'convert_gmp.pxd',
+  'convert_ntl.pxd',
   'convert_sage.pxd',
   'convert_sage_complex_double.pxd',
   'convert_sage_real_double.pxd',
@@ -21,6 +22,7 @@ extension_data = {
   'convert_sage_real_double' : files('convert_sage_real_double.pyx'),
   'convert_sage_real_mpfr' : files('convert_sage_real_mpfr.pyx'),
   'misc' : files('misc.pyx'),
+  'convert_ntl' : files('convert_ntl.pyx'),
 }
 
 foreach name, pyx : extension_data
