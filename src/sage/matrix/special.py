@@ -242,10 +242,10 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
       - ``'unimodular'`` -- creates a matrix of determinant 1
 
       - ``'diagonalizable'`` -- creates a diagonalizable matrix. if the
-      base ring is ``QQ`` creates a diagonalizable matrix whose eigenvectors,
-      if computed by hand, will have only integer entries. See the
-      documentation of :meth:`~sage.matrix.special.random_diagonalizable_matrix`
-      for more information
+        base ring is ``QQ`` creates a diagonalizable matrix whose eigenvectors,
+        if computed by hand, will have only integer entries. See the
+        documentation of :meth:`~sage.matrix.special.random_diagonalizable_matrix`
+        for more information
 
     - ``implementation`` -- (``None`` or string or a matrix class) a possible
       implementation. See the documentation of the constructor of
@@ -3126,8 +3126,15 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
     Matrices over finite fields are also supported::
 
         sage: K = GF(3)
-        sage: random_matrix(K, 3, 3, algorithm="diagonalizable").parent()
+        sage: M = random_matrix(K, 3, 3, algorithm="diagonalizable")
+        sage: M.parent()
         Full MatrixSpace of 3 by 3 dense matrices over Finite Field of size 3
+        sage: M.is_diagonalizable()
+        True
+        sage: M  # random
+        [0 0 1]
+        [2 1 1]
+        [1 0 0]
 
     TESTS:
 
