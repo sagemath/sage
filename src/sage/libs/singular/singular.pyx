@@ -104,7 +104,7 @@ cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring):
     nom = nlGetNumerator(n, _ring.cf)
     mpz_init(nom_z)
 
-    if (SR_HDL(nom) & SR_INT):
+    if SR_HDL(nom) & SR_INT:
         mpz_set_si(nom_z, SR_TO_INT(nom))
     else:
         mpz_set(nom_z,nom.z)
@@ -116,7 +116,7 @@ cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring):
     denom = nlGetDenom(n, _ring.cf)
     mpz_init(denom_z)
 
-    if (SR_HDL(denom) & SR_INT):
+    if SR_HDL(denom) & SR_INT:
         mpz_set_si(denom_z, SR_TO_INT(denom))
     else:
         mpz_set(denom_z,denom.z)

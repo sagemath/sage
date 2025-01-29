@@ -1507,19 +1507,16 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             if self == 1:
                 if all:
                     return [K(a) for a in range(1, K.order())]
-                else:
-                    return self
+                return self
             else:
                 if all:
                     return []
-                else:
-                    raise ValueError
+                raise ValueError
         F = K.factored_order()
         if len(F) == 0:
             if all:
                 return [self]
-            else:
-                return self
+            return self
         if len(F) != 1:
             if all:
                 # we should probably do a first pass to see if there are any solutions so that we don't get giant intermediate lists and waste time...
@@ -1539,24 +1536,20 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             if n < 0:
                 if all:
                     return []
-                else:
-                    raise ValueError
+                raise ValueError
             if all:
                 if k == 1:
                     return [self]
-                else:
-                    minval = max(1, (k/n).ceil())
-                    return [K(a*p**minval) for a in range(p**(k-minval))]
-            else:
-                return self
+                minval = max(1, (k/n).ceil())
+                return [K(a*p**minval) for a in range(p**(k-minval))]
+            return self
         if n < 0:
             try:
                 self = ~self
             except ZeroDivisionError:
                 if all:
                     return []
-                else:
-                    raise ValueError
+                raise ValueError
             n = -n
         if p == 2 and k == 1:
             return [self] if all else self
@@ -1565,8 +1558,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             if not n.divides(pval):
                 if all:
                     return []
-                else:
-                    raise ValueError("no nth root")
+                raise ValueError("no nth root")
             if pval > 0:
                 if all:
                     return [K(a.lift()*p**(pval // n) + p**(k - (pval - pval//n)) * b) for a in mod(upart, p**(k-pval)).nth_root(n, all=True, algorithm=algorithm) for b in range(p**(pval - pval//n))]
@@ -1580,8 +1572,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     if n % 2 == 0:
                         if all:
                             return []
-                        else:
-                            raise ValueError("no nth root")
+                        raise ValueError("no nth root")
                     else:
                         sign = [-1]
                         self = -self
@@ -1589,18 +1580,15 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                     if k > 2 and self % 8 == 5:
                         if all:
                             return []
-                        else:
-                            raise ValueError("no nth root")
+                        raise ValueError("no nth root")
                     sign = [1, -1]
                 if k == 2:
                     if all:
                         return [K(s) for s in sign[:2]]
-                    else:
-                        return K(sign[0])
+                    return K(sign[0])
                 if all:
-                    modp = [mod(self,8)]
-                else:
-                    modp = mod(self,8)
+                    modp = [mod(self, 8)]
+                modp = mod(self, 8)
             else:
                 sign = [1]
                 modp = self % p
@@ -1614,13 +1602,11 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                 if self == 1:
                     if all:
                         return [s*K(p*a+m.lift()) for a in range(p**(k-(2 if p==2 else 1))) for m in modp for s in sign]
-                    else:
-                        return K(modp.lift())
+                    return K(modp.lift())
                 else:
                     if all:
                         return []
-                    else:
-                        raise ValueError("no nth root")
+                    raise ValueError("no nth root")
             if all:
                 ans = [plog // n + p**(k - nval) * i for i in range(p**nval)]
                 ans = [s*K(R.teichmuller(m) * a.exp()) for a in ans for m in modp for s in sign]

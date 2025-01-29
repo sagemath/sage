@@ -3373,14 +3373,16 @@ cdef class BinaryCodeClassifier:
                 e[k] = 0 # see state 12 and 17
                 state = 2 # continue down the tree
 
-            elif state == 5:  # same as state 3, but in the case where we haven't yet defined zeta
-                             # i.e. this is our first time down the tree. Once we get to the bottom,
-                             # we will have zeta = nu = rho, so we do:
+            elif state == 5:
+                # same as state 3, but in the case where we haven't yet defined zeta
+                # i.e. this is our first time down the tree. Once we get to the bottom,
+                # we will have zeta = nu = rho, so we do:
                 zf__Lambda_zeta[k] = Lambda[k]
                 zb__Lambda_rho[k] = Lambda[k]
                 state = 4
 
-            elif state == 6: # at this stage, there is no reason to continue downward, so backtrack
+            elif state == 6:
+                # at this stage, there is no reason to continue downward, so backtrack
                 j = k
 
                 # return to the longest ancestor nu[i] of nu that could have a
@@ -3401,9 +3403,10 @@ cdef class BinaryCodeClassifier:
                     else:
                         k = hh-1
                 # TODO: is the following line necessary?
-                if k == -1: k = 0
+                if k == -1:
+                    k = 0
 
-                if hb > k:# update hb since we are backtracking
+                if hb > k:  # update hb since we are backtracking
                     hb = k
                 # if j == hh, then all nodes lower than our current position are equivalent, so bail out
                 if j == hh:
