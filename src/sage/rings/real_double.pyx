@@ -54,6 +54,7 @@ import sage.arith.misc
 import sage.rings.integer
 import sage.rings.rational
 
+from sage.features import FeatureNotPresentError
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
 
@@ -2080,10 +2081,9 @@ cdef RealDoubleElement global_dummy_element
 
 try:
     from sage.rings.real_double_element_gsl import RealDoubleElement_gsl
-except ImportError:
-    global_dummy_element = RealDoubleElement(0)
-else:
     global_dummy_element = RealDoubleElement_gsl(0)
+except FeatureNotPresentError:
+    global_dummy_element = RealDoubleElement(0)
 
 # A global pool for performance when elements are rapidly created and destroyed.
 # It operates on the following principles:

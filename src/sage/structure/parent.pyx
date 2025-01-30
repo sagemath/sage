@@ -127,6 +127,7 @@ from sage.structure.coerce_exceptions import CoercionException
 from sage.structure.coerce_maps cimport (NamedConvertMap, DefaultConvertMap,
                            DefaultConvertMap_unique, CallableConvertMap)
 from sage.structure.element cimport parent
+from sage.features.mock import MockInstance
 
 
 cdef _record_exception():
@@ -569,7 +570,10 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         inheritance from categories.
         """
         if not isinstance(cls, type):
-            raise TypeError(f"element class {cls!r} should be a type")
+            if isinstance(cls, MockInstance):
+                cls.raise_error()
+            else:
+                raise TypeError(f"element class {cls!r} should be a type")
         if inherit is None:
             inherit = (cls.__dictoffset__ != 0)
         if inherit:

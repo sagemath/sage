@@ -44,6 +44,7 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.partition import Partitions, _Partitions
 from sage.combinat.sf.sf import SymmetricFunctions
+from sage.features import FeatureNotPresentError
 from sage.groups.perm_gps.constructor import PermutationGroupElement
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -66,8 +67,10 @@ from sage.structure.richcmp import op_LT, op_LE, op_EQ, op_NE, op_GT, op_GE
 from sage.structure.unique_representation import (UniqueRepresentation,
                                                   WithPicklingByInitArgs)
 
-GAP_FAIL = libgap.eval('fail')
-
+try:
+    GAP_FAIL = libgap.eval('fail')
+except FeatureNotPresentError:
+    GAP_FAIL = None
 
 class AtomicSpeciesElement(WithEqualityById,
                            Element,
