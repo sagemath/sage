@@ -142,6 +142,20 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  deps = [py_dep, cysignals, gmp]
+  if name == 'polynomial_rational_flint'
+    deps += [
+      flint,
+      mpfi,
+      ntl,  # indirect dependency
+    ]
+  elif name == 'polynomial_zmod_flint'
+    deps += [flint]
+  elif name == 'polynomial_integer_dense_flint'
+    deps += [flint, ntl]
+  else
+    deps += [cypari2, givaro, mpfi, mpfr, ntl, pari, singular]
+  endif
   py.extension_module(
     name,
     sources: pyx,
@@ -157,19 +171,8 @@ foreach name, pyx : extension_data_cpp
       inc_rings,
       inc_rings_finite,
     ],
-    dependencies: [
-      py_dep,
-      cypari2,
-      cysignals,
-      flint,
-      givaro,
-      gmp,
-      mpfi,
-      mpfr,
-      ntl,
-      pari,
-      singular,
-    ],
+    dependencies: deps,
+  )
   )
 endforeach
 

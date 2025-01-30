@@ -156,6 +156,10 @@ foreach name, pyx : extension_data
     deps += [mpfi]
   elif name == 'real_mpfr'
     deps += [gmpy2, mpfr]
+  elif name == 'tate_algebra_element'
+    deps += [
+      ntl,  # Indirect dependency
+    ]
   endif
   py.extension_module(
     name,
@@ -199,10 +203,6 @@ foreach name, pyx : extension_data_cpp
     deps += [gmpy2, gsl]
   elif name == 'fraction_field_FpT'
     deps += [flint]
-    if is_windows
-      # Has some compilation errors: https://github.com/flintlib/flint/issues/2101
-      continue
-    endif
   elif name == 'rational'
     deps += [gmpy2]
   endif
