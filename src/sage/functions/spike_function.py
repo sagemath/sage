@@ -125,7 +125,7 @@ class SpikeFunction:
         x = float(x)
         for i in range(len(self.support)):
             z = self.support[i]
-            if z - eps <= x and x <= z + eps:
+            if z - eps <= x <= z + eps:
                 return self.height[i], i
         return float(0), -1
 
