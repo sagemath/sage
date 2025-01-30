@@ -79,8 +79,7 @@ AUTHORS:
 - David Joyner (2007-11): changed permutations, added hadamard_matrix
 - Blair Sutton (2009-01-26): added ``bell_polynomial``
 - Florent Hivert (2009-02): combinatorial class cleanup
-- Bobby Moretti (20009-02): added ``fibonacci_sequence``
-- Bobby Moretti (2009-02): added ``fibonacci_xrange``
+- Bobby Moretti (2009-02): added ``fibonacci_sequence`` and ``fibonacci_xrange``
 - Fredrik Johansson (2010-07): fast implementation of ``stirling_number2``
 - Robert Gerbicz (2010-10): added Bell numbers
 - Punarbasu Purkayastha (2012-12): deprecate arrangements, combinations,
