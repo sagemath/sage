@@ -67,14 +67,17 @@ pari = cc.find_library('pari', required: not is_windows, disabler: true)
 mpfr = dependency('mpfr')
 
 if is_windows
-  # In its currently released version, flint is not working on Windows; thus always use subproject
-  #flint = dependency('flint', version: '>=3.1.3')
-  cmake = import('cmake')
-  cmake_opts = cmake.subproject_options()
-  cmake_opts.add_cmake_defines({'BUILD_SHARED_LIBS': 'OFF'})
-  flint_proj = cmake.subproject('flint', options: cmake_opts)
-  flint = flint_proj.dependency('flint')
-  meson.override_dependency('flint', flint)
+  # TODO: Reenable the following once conda's python is fixed
+  # https://github.com/conda-forge/python-feedstock/pull/770
+  # # In its currently released version, flint is not working on Windows; thus always use subproject
+  # #flint = dependency('flint', version: '>=3.1.3')
+  # cmake = import('cmake')
+  # cmake_opts = cmake.subproject_options()
+  # cmake_opts.add_cmake_defines({'BUILD_SHARED_LIBS': 'OFF'})
+  # flint_proj = cmake.subproject('flint', options: cmake_opts)
+  # flint = flint_proj.dependency('flint')
+  # meson.override_dependency('flint', flint)
+  flint = disabler()
 else
   flint = dependency('flint', version: '>=3.0.0')
   if flint.version().version_compare('<3.1')
