@@ -1,6 +1,7 @@
 name: Static type check
 
 on:
+  merge_group:
   push:
     branches:
       - master
