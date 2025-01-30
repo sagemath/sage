@@ -108,7 +108,7 @@ foreach name, pyx : extension_data
     ],
     dependencies: deps,
   )
-  )
+
 endforeach
 
 extension_data_cpp = {
