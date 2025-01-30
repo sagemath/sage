@@ -145,6 +145,6 @@ foreach name, pyx : extension_data_cpp
     ],
     dependencies: deps,
   )
-  )
+
 endforeach
 
