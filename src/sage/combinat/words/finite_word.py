@@ -3139,6 +3139,93 @@ class FiniteWord_class(Word_class):
 
         a tree -- tree graph, which contains data about `G`-palindromic
         classes of equivalence of factors of ``self``.
+
+        EXAMPLES:
+
+            sage: Word('abbaba')._g_defect_build_g_palindromes_tree(
+            ....: [WordMorphism('a->a,b->b'), WordMorphism('a->b,b->a')],
+            ....: [WordMorphism('a->a,b->b'), WordMorphism('a->b,b->a')],
+            ....: [([[{0: 5, 'a': 1, 'b': 9}, None, 0, False],
+            ....:   [{0: 2}, 0, 1, False],
+            ....:   [{'b': 3}, 6, 1, True],
+            ....:   [{0: 4}, 6, 3, False],
+            ....:   [{}, 6, 3, True],
+            ....:   [{'b': 6}, 1, 0, True],
+            ....:   [{0: 7}, 3, 2, False],
+            ....:   [{'a': 8}, 3, 2, True],
+            ....:   [{}, 3, 4, False],
+            ....:   [{0: 10}, 2, 1, False],
+            ....:   [{'a': 11}, 2, 1, True],
+            ....:   [{}, 8, 3, False]], WordMorphism('a->a,b->b')),
+            ....:  ([[{0: 1}, None, 0, False],
+            ....:   [{'a': 2, 'b': 5}, 1, 0, True],
+            ....:   [{0: 3}, 1, 2, False],
+            ....:   [{'b': 4}, 7, 2, True],
+            ....:   [{}, 7, 4, False],
+            ....:   [{0: 6}, 5, 2, False],
+            ....:   [{}, 5, 2, True]], WordMorphism('a->b,b->a'))])
+            [[{('b', 'b'): 1, (0, 0): 5},
+              [{('a', 'a'): (1, 1), ('b', 'b'): (1, 0), (0, 0): (5, 1)},
+               {('a', 'a'): (1, 1), ('b', 'b'): (1, 0), (0, 0): (5, 1)}],
+              [0, 0],
+              False],
+             [{(0, 0): 2}, [{(0, 0): (2, 0)}, {(0, 0): (2, 1)}], [0, 1], False],
+             [{('a', 'a'): 3}, [{('a', 'a'): (3, 0)}, {('b', 'b'): (3, 1)}], [0, 1], True],
+             [{(0, 0): 4}, [{(0, 0): (4, 0)}, {(0, 0): (4, 1)}], [0, 1], False],
+             [{}, [{}, {}], [0, 1], True],
+             [{('a', 'a'): 6, ('a', 'b'): 9},
+              [{('a', 'a'): (6, 0),
+                ('a', 'b'): (9, 0),
+                ('b', 'a'): (9, 1),
+                ('b', 'b'): (6, 1)},
+               {('a', 'a'): (6, 0),
+                ('a', 'b'): (9, 0),
+                ('b', 'a'): (9, 1),
+                ('b', 'b'): (6, 1)}],
+              [0, 0],
+              True],
+             [{(0, 0): 7}, [{(0, 0): (7, 0)}, {(0, 0): (7, 1)}], [0, 1], False],
+             [{('b', 'b'): 8}, [{('b', 'b'): (8, 0)}, {('a', 'a'): (8, 1)}], [0, 1], True],
+             [{}, [{}, {}], [0, 1], False],
+             [{(0, 0): 10}, [{(0, 0): (10, 0)}, {(0, 0): (10, 1)}], [0, 1], False],
+             [{('b', 'a'): 11},
+              [{('b', 'a'): (11, 0)}, {('a', 'b'): (11, 1)}],
+              [0, 1],
+              True],
+             [{}, [{}, {}], [0, 1], False]]
+            sage: Word('abcacbaab')._g_defect_build_g_palindromes_tree(
+            ....: [WordMorphism('a->a,b->b,c->c')], [WordMorphism('a->a,b->b,c->c')],
+            ....: [([[{0: 1, 'c': 5}, None, 0, False],
+            ....:   [{'a': 2, 'b': 3}, 1, 0, True],
+            ....:   [{}, 1, 2, False],
+            ....:   [{0: 4}, 11, 2, False],
+            ....:   [{}, 11, 2, True],
+            ....:   [{0: 6}, 4, 1, False],
+            ....:   [{'a': 9, 'b': 7}, 4, 1, True],
+            ....:   [{0: 8}, 4, 3, False],
+            ....:   [{}, 4, 3, True],
+            ....:   [{0: 10}, 8, 3, False],
+            ....:   [{}, 8, 3, True]], WordMorphism('a->b,b->a,c->c'))])
+            [[{('c', 'c'): 1, (0, 0): 7},
+              [{('c', 'c'): (1, 0), (0, 0): (7, 0)}],
+              [0],
+              False],
+             [{(0, 0): 2}, [{(0, 0): (2, 0)}], [0], False],
+             [{('a', 'b'): 5, ('b', 'a'): 3},
+              [{('a', 'b'): (5, 0), ('b', 'a'): (3, 0)}],
+              [0],
+              True],
+             [{(0, 0): 4}, [{(0, 0): (4, 0)}], [0], False],
+             [{}, [{}], [0], True],
+             [{(0, 0): 6}, [{(0, 0): (6, 0)}], [0], False],
+             [{}, [{}], [0], True],
+             [{('a', 'b'): 10, ('b', 'a'): 8},
+              [{('a', 'b'): (10, 0), ('b', 'a'): (8, 0)}],
+              [0],
+              True],
+             [{(0, 0): 9}, [{(0, 0): (9, 0)}], [0], False],
+             [{}, [{}], [0], True],
+             [{}, [{}], [0], False]]
         """
         domain = set(morphismsG[0].domain().alphabet())
         specialLetter = self._not_used_letter(prohibitedLetters=domain)
@@ -3228,6 +3315,25 @@ class FiniteWord_class(Word_class):
         OUTPUT:
 
         an integer -- `g_G(self)`
+
+        EXAMPLES:
+
+            sage: Word('abc')._g_defect_secondary_subtrahend(
+            ....: [WordMorphism('a->a,b->b,c->c'), WordMorphism('a->b,b->a,c->c')],
+            ....: [WordMorphism('a->a,b->b,c->c'), WordMorphism('a->b,b->a,c->c')])
+            0
+            sage: Word('abc')._g_defect_secondary_subtrahend(
+            ....: [WordMorphism('a->a,b->b,c->c')], [WordMorphism('a->b,b->a,c->c')])
+            1
+            sage: Word('abcd')._g_defect_secondary_subtrahend(
+            ....: [WordMorphism('a->a,b->b,c->c,d->d')], [WordMorphism('a->b,b->a,c->d,d->c')])
+            2
+            sage: Word('c')._g_defect_secondary_subtrahend(
+            ....: [WordMorphism('a->a,b->b,c->c')], [WordMorphism('a->b,b->a,c->c')])
+            0
+            sage: Word('')._g_defect_secondary_subtrahend(
+            ....: [WordMorphism('a->a,b->b,c->c')], [WordMorphism('a->a,b->b,c->c')])
+            0
         """
         g_G = 0
         alreadyFoundLetters = set()
@@ -3287,6 +3393,50 @@ class FiniteWord_class(Word_class):
         `p(s_1) = s_1` and `p(s_2) = s_2`, become morphisms in `G`.
         Permutations `p`, such that `p(s_1) = s_2` and `p(s_2) = s_1`,
         become antimorphisms in `G`.
+
+        EXAMPLES:
+
+            sage: f = WordMorphism('a->b,b->a,c->c')
+            sage: g = WordMorphism('a->c,b->b,c->a')
+            sage: m, am, im = Word()._g_defect_generate_morphisms_and_antimorpisms_group([f], [])
+            sage: (sorted([str(x) for x in m]), sorted([str(x) for x in am]), sorted([str(x) for x in im]))
+            (['a->a, b->b, c->c', 'a->b, b->a, c->c'],
+             ['a->a, b->b, c->c', 'a->b, b->a, c->c'],
+             ['a->a, b->b, c->c', 'a->b, b->a, c->c'])
+            sage: m, am, im = Word()._g_defect_generate_morphisms_and_antimorpisms_group([], [f])
+            sage: (sorted([str(x) for x in m]), sorted([str(x) for x in am]), sorted([str(x) for x in im]))
+            (['a->a, b->b, c->c'], ['a->b, b->a, c->c'], ['a->a, b->b, c->c'])
+            sage: m, am, im = Word()._g_defect_generate_morphisms_and_antimorpisms_group([], [f, g])
+            sage: (sorted([str(x) for x in m]), sorted([str(x) for x in am]), sorted([str(x) for x in im]))
+            (['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'],
+             ['a->a, b->c, c->b', 'a->b, b->a, c->c', 'a->c, b->b, c->a'],
+             ['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'])
+            sage: m, am, im = Word()._g_defect_generate_morphisms_and_antimorpisms_group([f, g], [])
+            sage: (sorted([str(x) for x in m]), sorted([str(x) for x in am]), sorted([str(x) for x in im]))
+            (['a->a, b->b, c->c',
+              'a->a, b->c, c->b',
+              'a->b, b->a, c->c',
+              'a->b, b->c, c->a',
+              'a->c, b->a, c->b',
+              'a->c, b->b, c->a'],
+             ['a->a, b->b, c->c',
+              'a->a, b->c, c->b',
+              'a->b, b->a, c->c',
+              'a->b, b->c, c->a',
+              'a->c, b->a, c->b',
+              'a->c, b->b, c->a'],
+             ['a->a, b->b, c->c',
+              'a->a, b->c, c->b',
+              'a->b, b->a, c->c',
+              'a->b, b->c, c->a',
+              'a->c, b->a, c->b',
+              'a->c, b->b, c->a'])
+            sage: h = WordMorphism('a->b,b->c,c->a')
+            sage: m, am, im = Word()._g_defect_generate_morphisms_and_antimorpisms_group([], [h])
+            sage: (sorted([str(x) for x in m]), sorted([str(x) for x in am]), sorted([str(x) for x in im]))
+            (['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'],
+             ['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'],
+             ['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'])
         """
         from sage.combinat.words.morphism import WordMorphism
         updatedMorphisms, updatedAntimorphisms, specialLetterOne, specialLetterTwo, updatedDomain = \
@@ -3351,6 +3501,41 @@ class FiniteWord_class(Word_class):
         - ``letter`` -- generated letter `s_1`.
         - ``letter`` -- generated letter `s_2`.
         - ``list`` -- list of letters of updated domain.
+
+        EXAMPLES:
+
+            sage: f = WordMorphism('a->b,b->a,c->c')
+            sage: m, am, s1, s2, al = Word()._g_defect_update_morphisms_and_antimorpisms([f], [])
+            sage: (m, am, s1, s2, sorted([str(x) for x in al]))
+            ([WordMorphism: 0->0, 1->1, a->b, b->a, c->c,
+              WordMorphism: 0->0, 1->1, a->a, b->b, c->c],
+             [WordMorphism: 0->1, 1->0, a->a, b->b, c->c],
+             0,
+             1,
+             ['0', '1', 'a', 'b', 'c'])
+            sage: m, am, s1, s2, al = Word()._g_defect_update_morphisms_and_antimorpisms([], [f])
+            sage: (m, am, s1, s2, sorted([str(x) for x in al]))
+            ([WordMorphism: 0->0, 1->1, a->a, b->b, c->c],
+             [WordMorphism: 0->1, 1->0, a->b, b->a, c->c],
+             0,
+             1,
+             ['0', '1', 'a', 'b', 'c'])
+            sage: g = WordMorphism('a->c,b->b,c->a')
+            sage: m, am, s1, s2, al = Word()._g_defect_update_morphisms_and_antimorpisms([], [f, g])
+            sage: (m, am, s1, s2, sorted([str(x) for x in al]))
+            ([WordMorphism: 0->0, 1->1, a->a, b->b, c->c],
+             [WordMorphism: 0->1, 1->0, a->b, b->a, c->c,
+              WordMorphism: 0->1, 1->0, a->c, b->b, c->a],
+             0,
+             1,
+             ['0', '1', 'a', 'b', 'c'])
+            sage: m, am, s1, s2, al = Word('abcd')._g_defect_update_morphisms_and_antimorpisms([], [])
+            sage: (m, am, s1, s2, sorted([str(x) for x in al]))
+            ([WordMorphism: 0->0, 1->1, a->a, b->b, c->c, d->d],
+             [WordMorphism: 0->1, 1->0, a->a, b->b, c->c, d->d],
+             0,
+             1,
+             ['0', '1', 'a', 'b', 'c', 'd'])
         """
         from sage.combinat.words.morphism import WordMorphism
         domains = set()
@@ -3768,7 +3953,7 @@ class FiniteWord_class(Word_class):
 
         a list -- list of all the lacunas of ``self`` in ascending order.
 
-        EXAMPLES:
+        EXAMPLES::
 
         sage: word = Word('aabab')
         sage: palindromesTree = [[{'a': 1, 0: 4, 'b': 6}, None, 0, False],
@@ -3822,6 +4007,65 @@ class FiniteWord_class(Word_class):
         Algorithm is described in [Rom2024]_.
 
         Time complexity is linear from length of ``self``.
+
+        EXAMPLES::
+
+            sage: Word('abcacba')._get_palindromic_factors_data()
+            ([1, 0, 1, 0, 1, 0, 7, 0, 1, 0, 1, 0, 1],
+             [[{0: 2, 'a': 1, 'b': 3, 'c': 5}, None, 0, False],
+              [{0: 7}, 0, 1, False],
+              [{}, 1, 0, True],
+              [{0: 4}, 2, 1, False],
+              [{}, 2, 1, True],
+              [{0: 6}, 4, 1, False],
+              [{}, 4, 1, True],
+              [{'c': 8}, 6, 1, True],
+              [{0: 9}, 6, 3, False],
+              [{'b': 10}, 6, 3, True],
+              [{0: 11}, 6, 5, False],
+              [{'a': 12}, 6, 5, True],
+              [{}, 6, 7, False]])
+
+        ::
+
+            sage: f = WordMorphism('a->b,b->a')
+            sage: Word('a')._get_palindromic_factors_data(f)
+            ([0], [[{}, None, 0, False]])
+            sage: Word('ab')._get_palindromic_factors_data(f)
+            ([0, 2, 0],
+             [[{0: 1}, None, 0, False], [{'a': 2}, 1, 0, True], [{}, 1, 2, False]])
+            sage: Word('aa')._get_palindromic_factors_data(f)
+            ([0, 0, 0], [[{0: 1}, None, 0, False], [{}, 1, 0, True]])
+            sage: Word('abbaba')._get_palindromic_factors_data(f)
+            ([0, 2, 0, 0, 0, 2, 0, 4, 0, 2, 0],
+             [[{0: 1}, None, 0, False],
+              [{'a': 2, 'b': 5}, 1, 0, True],
+              [{0: 3}, 1, 2, False],
+              [{'b': 4}, 7, 2, True],
+              [{}, 7, 4, False],
+              [{0: 6}, 5, 2, False],
+              [{}, 5, 2, True]])
+
+        ::
+
+            sage: f = WordMorphism('a->b,b->a,c->c')
+            sage: Word('cabc')._get_palindromic_factors_data(f)
+            ([1, 0, 0, 4, 0, 0, 1],
+             [[{0: 2, 'c': 1}, None, 0, False],
+              [{}, 0, 1, False],
+              [{'a': 3}, 1, 0, True],
+              [{0: 4}, 3, 2, False],
+              [{'c': 5}, 3, 2, True],
+              [{}, 3, 4, False]])
+            sage: Word('abcaab')._get_palindromic_factors_data(f)
+            ([0, 2, 0, 0, 3, 0, 0, 0, 0, 2, 0],
+             [[{0: 1, 'c': 3}, None, 0, False],
+              [{'a': 2}, 1, 0, True],
+              [{}, 1, 2, False],
+              [{0: 4}, 4, 1, False],
+              [{'b': 5}, 4, 1, True],
+              [{0: 6}, 4, 3, False],
+              [{}, 4, 3, True]])
         """
         wordWithSpecialLetter, updatedMorphism, specialLetter = \
             self._insert_not_used_letter_between_consecutive_letters(f=f)
@@ -3853,6 +4097,63 @@ class FiniteWord_class(Word_class):
 
         a tree -- tree graph, which contains data about
         palindromic factors of ``wordWithSpecialLetter``.
+        
+        EXAMPLES::
+
+            sage: Word()._build_palindromes_tree([[[0, 0, 1, []]], [[1, 0, 1, []]],
+            ....: [[2, 0, 2, []]], [[4, 0, 2, []]], [[6, 0, 7, []]]],
+            ....: Word('a0b0c0a0c0b0a'), '0')
+            [[{'0': 2, 'a': 1, 'b': 3, 'c': 5}, None, 0, False],
+             [{'0': 7}, 0, 1, False],
+             [{}, 1, 0, True],
+             [{'0': 4}, 2, 1, False],
+             [{}, 2, 1, True],
+             [{'0': 6}, 4, 1, False],
+             [{}, 4, 1, True],
+             [{'c': 8}, 6, 1, True],
+             [{'0': 9}, 6, 3, False],
+             [{'b': 10}, 6, 3, True],
+             [{'0': 11}, 6, 5, False],
+             [{'a': 12}, 6, 5, True],
+             [{}, 6, 7, False]]
+
+        ::
+
+            sage: Word()._build_palindromes_tree([], 'a', '0')
+            [[{}, None, 0, False]]
+            sage: Word()._build_palindromes_tree([[[1, 0, 2, []]]], 'a0b', '0')
+            [[{'0': 1}, None, 0, False], [{'a': 2}, 1, 0, True], [{}, 1, 2, False]]
+            sage: Word()._build_palindromes_tree([[[1, 0, 1, []]]], 'a0a', '0')
+            [[{'0': 1}, None, 0, False], [{}, 1, 0, True]]
+            sage: Word()._build_palindromes_tree([[[1, 0, 2, []]], 
+            ....: [[3, 0, 1, [1]], [7, 1, 4, []]], [[5, 0, 3, []]]], 'a0b0b0a0b0a', '0')
+            [[{'0': 1}, None, 0, False],
+             [{'a': 2, 'b': 5}, 1, 0, True],
+             [{'0': 3}, 1, 2, False],
+             [{'b': 4}, 7, 2, True],
+             [{}, 7, 4, False],
+             [{'0': 6}, 5, 2, False],
+             [{}, 5, 2, True]]
+
+        ::
+
+            sage: Word()._build_palindromes_tree([[[0, 0, 1, []]],
+            ....: [[1, 0, 1, []]], [[3, 0, 4, []]]], 'c0a0b0c', '0')
+            [[{'0': 2, 'c': 1}, None, 0, False],
+             [{}, 0, 1, False],
+             [{'a': 3}, 1, 0, True],
+             [{'0': 4}, 3, 2, False],
+             [{'c': 5}, 3, 2, True],
+             [{}, 3, 4, False]]
+            sage: Word()._build_palindromes_tree([[[1, 0, 2, []]],
+            ....: [[3, 0, 1, []]], [[4, 0, 4, []]], [[9, 0, 2, []]]], 'a0b0c0a0a0b', '0')
+            [[{'0': 1, 'c': 3}, None, 0, False],
+             [{'a': 2}, 1, 0, True],
+             [{}, 1, 2, False],
+             [{'0': 4}, 4, 1, False],
+             [{'b': 5}, 4, 1, True],
+             [{'0': 6}, 4, 3, False],
+             [{}, 4, 3, True]]
         """
         palindromesTree = [[dict(), None, 0, False]]
         for tree in diffForest:
@@ -3924,6 +4225,48 @@ class FiniteWord_class(Word_class):
 
         a forest -- forest graph, which contains accumulated data
         about applied Manacher's algorithm
+
+        EXAMPLES::
+
+            sage: Word()._get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            ....: [1, 1, 2, 1, 2, 1, 7, 1, 2, 1, 2, 1, 1],
+            ....: [0, 0, 0, 1, 0, 1, 0, 1, 2, 1, 2, 1, 1],
+            ....: [None, None, None, 1, None, 1, None, 1, 4, 1, 2, 1, 0])
+            [[[0, 0, 1, []]],
+             [[1, 0, 1, []]],
+             [[2, 0, 2, []]],
+             [[4, 0, 2, []]],
+             [[6, 0, 7, []]]]
+
+        ::
+
+            sage: Word()._get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            ....: [0], [0], [None])
+            []
+            sage: Word()._get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            ....: [0, 2, 0], [0, 0, 0], [None, None, None])
+            [[[1, 0, 2, []]]]
+            sage: Word()._get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            ....: [0, 1, 0], [0, 0, 0], [None, None, None])
+            [[[1, 0, 1, []]]]
+            sage: Word()._get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            ....: [0, 2, 0, 1, 0, 3, 0, 4, 0, 2, 0],
+            ....: [0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0],
+            ....: [None, None, None, None, None, None, None, 3, None, 5, None])
+            [[[1, 0, 2, []]], [[3, 0, 1, [1]], [7, 1, 4, []]], [[5, 0, 3, []]]]
+
+        ::
+
+            sage: Word()._get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            ....: [1, 1, 0, 4, 0, 1, 1],
+            ....: [0, 0, 0, 0, 0, 1, 1],
+            ....: [None, None, None, None, None, 1, 0])
+            [[[0, 0, 1, []]], [[1, 0, 1, []]], [[3, 0, 4, []]]]
+            sage: Word()._get_accumulated_data_about_manachers_algorithm_in_forest_format(
+            ....: [0, 2, 0, 1, 4, 1, 0, 1, 0, 2, 0],
+            ....: [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
+            ....: [None, None, None, None, None, 3, None, 1, None, None, None])
+            [[[1, 0, 2, []]], [[3, 0, 1, []]], [[4, 0, 4, []]], [[9, 0, 2, []]]]
         """
         diffForest = []
         treeAndNodeIndexes = [None] * len(previousPositions)
@@ -3977,6 +4320,44 @@ class FiniteWord_class(Word_class):
         ALGORITHM:
 
         Manacher's algorithm from [Man1975]_
+
+        EXAMPLES::
+
+            sage: f = WordMorphism('a->a,b->b,c->c,0->0')
+            sage: Word()._get_data_from_manachers_algorithm(Word('a0b0c0a0c0b0a'), f)
+            ([1, 1, 2, 1, 2, 1, 7, 1, 2, 1, 2, 1, 1],
+             [1, 0, 1, 0, 1, 0, 7, 0, 1, 0, 1, 0, 1],
+             [0, 0, 0, 1, 0, 1, 0, 1, 2, 1, 2, 1, 1],
+             [None, None, None, 1, None, 1, None, 1, 4, 1, 2, 1, 0])
+
+        ::
+
+            sage: f = WordMorphism('a->b,b->a,0->0')
+            sage: Word()._get_data_from_manachers_algorithm(Word('a'), f)
+            ([0], [0], [0], [None])
+            sage: Word()._get_data_from_manachers_algorithm(Word('a0b'), f)
+            ([0, 2, 0], [0, 2, 0], [0, 0, 0], [None, None, None])
+            sage: Word()._get_data_from_manachers_algorithm(Word('a0a'), f)
+            ([0, 1, 0], [0, 0, 0], [0, 0, 0], [None, None, None])
+            sage: Word()._get_data_from_manachers_algorithm(Word('a0b0b0a0b0a'), f)
+            ([0, 2, 0, 1, 0, 3, 0, 4, 0, 2, 0],
+             [0, 2, 0, 0, 0, 2, 0, 4, 0, 2, 0],
+             [0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0],
+             [None, None, None, None, None, None, None, 3, None, 5, None])
+
+        ::
+
+            sage: f = WordMorphism('a->b,b->a,c->c,0->0')
+            sage: Word()._get_data_from_manachers_algorithm(Word('c0a0b0c'), f)
+            ([1, 1, 0, 4, 0, 1, 1],
+             [1, 0, 0, 4, 0, 0, 1],
+             [0, 0, 0, 0, 0, 1, 1],
+             [None, None, None, None, None, 1, 0])
+            sage: Word()._get_data_from_manachers_algorithm(Word('a0b0c0a0a0b'), f)
+            ([0, 2, 0, 1, 4, 1, 0, 1, 0, 2, 0],
+             [0, 2, 0, 0, 3, 0, 0, 0, 0, 2, 0],
+             [0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
+             [None, None, None, None, None, 3, None, 1, None, None, None])
         """
         maximalPalindromeRadiuses = [0] * word.length()
         maximalPalindromeLengths = [0] * word.length()
