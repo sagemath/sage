@@ -118,21 +118,41 @@ if not m4rie.found()
   m4rie = cc.find_library('m4rie', required: not is_windows, disabler: true)
 endif
 # Cannot be found via pkg-config
-mtx = cc.find_library('mtx', required: false, disabler: true, has_headers: ['meataxe.h'])
+mtx = cc.find_library(
+  'mtx',
+  required: false,
+  disabler: true,
+  has_headers: ['meataxe.h'],
+)
 png = dependency(['libpng', 'png', 'png16'], version: '>=1.2')
 zlib = dependency('zlib', version: '>=1.2.11')
 # We actually want >= 20231212, but the version number is not updated in the pkgconfig
 # https://github.com/conda-forge/eclib-feedstock/issues/48
-ec = dependency('eclib', required: not is_windows, disabler: true, version: '>=20231211')
+ec = dependency(
+  'eclib',
+  required: not is_windows,
+  disabler: true,
+  version: '>=20231211',
+)
 # Cannot be found via pkg-config
 ec = cc.find_library('ec', required: not is_windows, disabler: true)
 ecm = cc.find_library('ecm', required: not is_windows, disabler: true)
 # Cannot be found via pkg-config
 ppl = cc.find_library('ppl', required: not is_windows, disabler: true)
 gmpxx = dependency('gmpxx', required: not is_windows, disabler: true)
-fflas = dependency('fflas-ffpack', required: not is_windows, disabler: true, version: '>=2.5.0')
+fflas = dependency(
+  'fflas-ffpack',
+  required: not is_windows,
+  disabler: true,
+  version: '>=2.5.0',
+)
 fplll = dependency('fplll', required: not is_windows, disabler: true)
-givaro = dependency('givaro', required: not is_windows, disabler: true, version: '>=4.2.0')
+givaro = dependency(
+  'givaro',
+  required: not is_windows,
+  disabler: true,
+  version: '>=4.2.0',
+)
 linbox = dependency('linbox', required: false, version: '>=1.7.0')
 if not linbox.found()
   linbox = cc.find_library('linbox', required: not is_windows, disabler: true)
@@ -149,11 +169,11 @@ if not gap.found()
   # Fallback in case pkg-config info is not available
   # Test for common.h header that was added in 4.12 as a indirect version check
   gap = cc.find_library(
-  'gap',
-  has_headers: ['gap/common.h'],
-  required: not is_windows,
-  disabler: true,
-)
+    'gap',
+    has_headers: ['gap/common.h'],
+    required: not is_windows,
+    disabler: true,
+  )
 endif
 singular = dependency('Singular', required: not is_windows, disabler: true)
 singular_factory = disabler()
