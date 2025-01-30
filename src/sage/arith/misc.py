@@ -5259,12 +5259,25 @@ def rising_factorial(x, a):
     - Jaap Spies (2006-03-05)
     """
     from sage.structure.element import Expression
+    from sage.rings.integer import Integer
     x = py_scalar_to_element(x)
     a = py_scalar_to_element(a)
+
+    # Handle negative integer x and non-negative integer a
+    if isinstance(x, Integer) and x < 0 and isinstance(a, Integer) and a >= 0:
+        if a > -x:  # If a > |x|, the product includes zero
+            return x.parent().zero()
+        else:
+            # Compute the product for a <= |x|
+            return prod((x + i for i in range(a)), z=x.parent().one())
+
+    # General case for non-negative integer a
     if (isinstance(a, Integer) or
         (isinstance(a, Expression) and
          a.is_integer())) and a >= 0:
         return prod(((x + i) for i in range(a)), z=x.parent().one())
+
+    # Fallback to gamma function for other cases
     from sage.functions.all import gamma
     return gamma(x + a) / gamma(x)
 
