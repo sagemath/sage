@@ -3950,19 +3950,19 @@ class FiniteWord_class(Word_class):
 
         EXAMPLES::
 
-        sage: word = Word('aabab')
-        sage: palindromesTree = [[{'a': 1, 0: 4, 'b': 6}, None, 0, False],
-        ....: [{0: 2}, 0, 1, False], [{'b': 3}, 2, 1, True], [{}, 6, 3, False],
-        ....: [{'a': 5}, 1, 0, True], [{}, 1, 2, False], [{0: 7}, 4, 1, False],
-        ....: [{'a': 8}, 4, 1, True], [{0: 9}, 4, 3, False], [{}, 4, 3, True]]
-        sage: word._find_lacunas_from_palindromes_tree(palindromesTree)
-        []
-        sage: palindromesTree = [[{'s': 1}, None, 0, False],
-        ....: [{'b': 2, 'a': 5}, 1, 0, True], [{'s': 3}, 5, 2, False],
-        ....: [{'a': 4}, 5, 2, True], [{}, 5, 4, False],
-        ....: [{'s': 6}, 3, 2, False], [{}, 3, 2, True]]
-        sage: word._find_lacunas_from_palindromes_tree(palindromesTree)
-        [0, 1]
+            sage: word = Word('aabab')
+            sage: palindromesTree = [[{'a': 1, 0: 4, 'b': 6}, None, 0, False],
+            ....: [{0: 2}, 0, 1, False], [{'b': 3}, 2, 1, True], [{}, 6, 3, False],
+            ....: [{'a': 5}, 1, 0, True], [{}, 1, 2, False], [{0: 7}, 4, 1, False],
+            ....: [{'a': 8}, 4, 1, True], [{0: 9}, 4, 3, False], [{}, 4, 3, True]]
+            sage: word._find_lacunas_from_palindromes_tree(palindromesTree)
+            []
+            sage: palindromesTree = [[{'s': 1}, None, 0, False],
+            ....: [{'b': 2, 'a': 5}, 1, 0, True], [{'s': 3}, 5, 2, False],
+            ....: [{'a': 4}, 5, 2, True], [{}, 5, 4, False],
+            ....: [{'s': 6}, 3, 2, False], [{}, 3, 2, True]]
+            sage: word._find_lacunas_from_palindromes_tree(palindromesTree)
+            [0, 1]
         """
         lacunas = [True] * self.length()
         for palindrome in palindromesTree:
