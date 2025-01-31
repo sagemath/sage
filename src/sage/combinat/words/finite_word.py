@@ -3165,34 +3165,25 @@ class FiniteWord_class(Word_class):
             ....:   [{0: 6}, 5, 2, False],
             ....:   [{}, 5, 2, True]], WordMorphism('a->b,b->a'))])
             [[{('b', 'b'): 1, (0, 0): 5},
-              [{('a', 'a'): (1, 1), ('b', 'b'): (1, 0), (0, 0): (5, 1)},
-               {('a', 'a'): (1, 1), ('b', 'b'): (1, 0), (0, 0): (5, 1)}],
-              [0, 0],
-              False],
-             [{(0, 0): 2}, [{(0, 0): (2, 0)}, {(0, 0): (2, 1)}], [0, 1], False],
-             [{('a', 'a'): 3}, [{('a', 'a'): (3, 0)}, {('b', 'b'): (3, 1)}], [0, 1], True],
-             [{(0, 0): 4}, [{(0, 0): (4, 0)}, {(0, 0): (4, 1)}], [0, 1], False],
-             [{}, [{}, {}], [0, 1], True],
-             [{('a', 'a'): 6, ('a', 'b'): 9},
-              [{('a', 'a'): (6, 0),
-                ('a', 'b'): (9, 0),
-                ('b', 'a'): (9, 1),
-                ('b', 'b'): (6, 1)},
-               {('a', 'a'): (6, 0),
-                ('a', 'b'): (9, 0),
-                ('b', 'a'): (9, 1),
-                ('b', 'b'): (6, 1)}],
-              [0, 0],
-              True],
-             [{(0, 0): 7}, [{(0, 0): (7, 0)}, {(0, 0): (7, 1)}], [0, 1], False],
-             [{('b', 'b'): 8}, [{('b', 'b'): (8, 0)}, {('a', 'a'): (8, 1)}], [0, 1], True],
-             [{}, [{}, {}], [0, 1], False],
-             [{(0, 0): 10}, [{(0, 0): (10, 0)}, {(0, 0): (10, 1)}], [0, 1], False],
-             [{('b', 'a'): 11},
-              [{('b', 'a'): (11, 0)}, {('a', 'b'): (11, 1)}],
-              [0, 1],
-              True],
-             [{}, [{}, {}], [0, 1], False]]
+            [{('a', 'a'): (1, 1), ('b', 'b'): (1, 0), (0, 0): (5, 1)},
+            {('a', 'a'): (1, 1), ('b', 'b'): (1, 0), (0, 0): (5, 1)}],
+            [0, 0],
+            False],
+            [{(0, 0): 2}, [{(0, 0): (2, 0)}, {(0, 0): (2, 1)}], [0, 1], False],
+            [{('a', 'a'): 3}, [{('a', 'a'): (3, 0)}, {('b', 'b'): (3, 1)}], [0, 1], True],
+            [{(0, 0): 4}, [{(0, 0): (4, 0)}, {(0, 0): (4, 1)}], [0, 1], False],
+            [{}, [{}, {}], [0, 1], True],
+            [{('a', 'a'): 6, ('a', 'b'): 9},
+            [{('a', 'a'): (6, 0), ('a', 'b'): (9, 0), ('b', 'a'): (9, 1), ('b', 'b'): (6, 1)},
+            {('a', 'a'): (6, 0), ('a', 'b'): (9, 0), ('b', 'a'): (9, 1), ('b', 'b'): (6, 1)}],
+            [0, 0],
+            True],
+            [{(0, 0): 7}, [{(0, 0): (7, 0)}, {(0, 0): (7, 1)}], [0, 1], False],
+            [{('b', 'b'): 8}, [{('b', 'b'): (8, 0)}, {('a', 'a'): (8, 1)}], [0, 1], True],
+            [{}, [{}, {}], [0, 1], False],
+            [{(0, 0): 10}, [{(0, 0): (10, 0)}, {(0, 0): (10, 1)}], [0, 1], False],
+            [{('b', 'a'): 11}, [{('b', 'a'): (11, 0)}, {('a', 'b'): (11, 1)}], [0, 1], True],
+            [{}, [{}, {}], [0, 1], False]]
             sage: Word('abcacbaab')._g_defect_build_g_palindromes_tree(
             ....: [WordMorphism('a->a,b->b,c->c')], [WordMorphism('a->a,b->b,c->c')],
             ....: [([[{0: 1, 'c': 5}, None, 0, False],
@@ -3206,26 +3197,17 @@ class FiniteWord_class(Word_class):
             ....:   [{}, 4, 3, True],
             ....:   [{0: 10}, 8, 3, False],
             ....:   [{}, 8, 3, True]], WordMorphism('a->b,b->a,c->c'))])
-            [[{('c', 'c'): 1, (0, 0): 7},
-              [{('c', 'c'): (1, 0), (0, 0): (7, 0)}],
-              [0],
-              False],
-             [{(0, 0): 2}, [{(0, 0): (2, 0)}], [0], False],
-             [{('a', 'b'): 5, ('b', 'a'): 3},
-              [{('a', 'b'): (5, 0), ('b', 'a'): (3, 0)}],
-              [0],
-              True],
-             [{(0, 0): 4}, [{(0, 0): (4, 0)}], [0], False],
-             [{}, [{}], [0], True],
-             [{(0, 0): 6}, [{(0, 0): (6, 0)}], [0], False],
-             [{}, [{}], [0], True],
-             [{('a', 'b'): 10, ('b', 'a'): 8},
-              [{('a', 'b'): (10, 0), ('b', 'a'): (8, 0)}],
-              [0],
-              True],
-             [{(0, 0): 9}, [{(0, 0): (9, 0)}], [0], False],
-             [{}, [{}], [0], True],
-             [{}, [{}], [0], False]]
+            [[{('c', 'c'): 1, (0, 0): 7}, [{('c', 'c'): (1, 0), (0, 0): (7, 0)}], [0], False],
+            [{(0, 0): 2}, [{(0, 0): (2, 0)}], [0], False],
+            [{('a', 'b'): 5, ('b', 'a'): 3}, [{('a', 'b'): (5, 0), ('b', 'a'): (3, 0)}], [0], True],
+            [{(0, 0): 4}, [{(0, 0): (4, 0)}], [0], False],
+            [{}, [{}], [0], True],
+            [{(0, 0): 6}, [{(0, 0): (6, 0)}], [0], False],
+            [{}, [{}], [0], True],
+            [{('a', 'b'): 10, ('b', 'a'): 8}, [{('a', 'b'): (10, 0), ('b', 'a'): (8, 0)}], [0], True],
+            [{(0, 0): 9}, [{(0, 0): (9, 0)}], [0], False],
+            [{}, [{}], [0], True],
+            [{}, [{}], [0], False]]
         """
         domain = set(morphismsG[0].domain().alphabet())
         specialLetter = self._not_used_letter(prohibitedLetters=domain)
@@ -3401,42 +3383,42 @@ class FiniteWord_class(Word_class):
             sage: m, am, im = Word()._g_defect_generate_morphisms_and_antimorpisms_group([f], [])
             sage: (sorted([str(x) for x in m]), sorted([str(x) for x in am]), sorted([str(x) for x in im]))
             (['a->a, b->b, c->c', 'a->b, b->a, c->c'],
-             ['a->a, b->b, c->c', 'a->b, b->a, c->c'],
-             ['a->a, b->b, c->c', 'a->b, b->a, c->c'])
+            ['a->a, b->b, c->c', 'a->b, b->a, c->c'],
+            ['a->a, b->b, c->c', 'a->b, b->a, c->c'])
             sage: m, am, im = Word()._g_defect_generate_morphisms_and_antimorpisms_group([], [f])
             sage: (sorted([str(x) for x in m]), sorted([str(x) for x in am]), sorted([str(x) for x in im]))
             (['a->a, b->b, c->c'], ['a->b, b->a, c->c'], ['a->a, b->b, c->c'])
             sage: m, am, im = Word()._g_defect_generate_morphisms_and_antimorpisms_group([], [f, g])
             sage: (sorted([str(x) for x in m]), sorted([str(x) for x in am]), sorted([str(x) for x in im]))
             (['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'],
-             ['a->a, b->c, c->b', 'a->b, b->a, c->c', 'a->c, b->b, c->a'],
-             ['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'])
+            ['a->a, b->c, c->b', 'a->b, b->a, c->c', 'a->c, b->b, c->a'],
+            ['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'])
             sage: m, am, im = Word()._g_defect_generate_morphisms_and_antimorpisms_group([f, g], [])
             sage: (sorted([str(x) for x in m]), sorted([str(x) for x in am]), sorted([str(x) for x in im]))
             (['a->a, b->b, c->c',
-              'a->a, b->c, c->b',
-              'a->b, b->a, c->c',
-              'a->b, b->c, c->a',
-              'a->c, b->a, c->b',
-              'a->c, b->b, c->a'],
-             ['a->a, b->b, c->c',
-              'a->a, b->c, c->b',
-              'a->b, b->a, c->c',
-              'a->b, b->c, c->a',
-              'a->c, b->a, c->b',
-              'a->c, b->b, c->a'],
-             ['a->a, b->b, c->c',
-              'a->a, b->c, c->b',
-              'a->b, b->a, c->c',
-              'a->b, b->c, c->a',
-              'a->c, b->a, c->b',
-              'a->c, b->b, c->a'])
+            'a->a, b->c, c->b',
+            'a->b, b->a, c->c',
+            'a->b, b->c, c->a',
+            'a->c, b->a, c->b',
+            'a->c, b->b, c->a'],
+            ['a->a, b->b, c->c',
+            'a->a, b->c, c->b',
+            'a->b, b->a, c->c',
+            'a->b, b->c, c->a',
+            'a->c, b->a, c->b',
+            'a->c, b->b, c->a'],
+            ['a->a, b->b, c->c',
+            'a->a, b->c, c->b',
+            'a->b, b->a, c->c',
+            'a->b, b->c, c->a',
+            'a->c, b->a, c->b',
+            'a->c, b->b, c->a'])
             sage: h = WordMorphism('a->b,b->c,c->a')
             sage: m, am, im = Word()._g_defect_generate_morphisms_and_antimorpisms_group([], [h])
             sage: (sorted([str(x) for x in m]), sorted([str(x) for x in am]), sorted([str(x) for x in im]))
             (['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'],
-             ['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'],
-             ['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'])
+            ['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'],
+            ['a->a, b->b, c->c', 'a->b, b->c, c->a', 'a->c, b->a, c->b'])
         """
         from sage.combinat.words.morphism import WordMorphism
         updatedMorphisms, updatedAntimorphisms, specialLetterOne, specialLetterTwo, updatedDomain = \
@@ -3508,34 +3490,26 @@ class FiniteWord_class(Word_class):
             sage: m, am, s1, s2, al = Word()._g_defect_update_morphisms_and_antimorpisms([f], [])
             sage: (m, am, s1, s2, sorted([str(x) for x in al]))
             ([WordMorphism: 0->0, 1->1, a->b, b->a, c->c,
-              WordMorphism: 0->0, 1->1, a->a, b->b, c->c],
-             [WordMorphism: 0->1, 1->0, a->a, b->b, c->c],
-             0,
-             1,
-             ['0', '1', 'a', 'b', 'c'])
+            WordMorphism: 0->0, 1->1, a->a, b->b, c->c],
+            [WordMorphism: 0->1, 1->0, a->a, b->b, c->c],
+            0, 1, ['0', '1', 'a', 'b', 'c'])
             sage: m, am, s1, s2, al = Word()._g_defect_update_morphisms_and_antimorpisms([], [f])
             sage: (m, am, s1, s2, sorted([str(x) for x in al]))
             ([WordMorphism: 0->0, 1->1, a->a, b->b, c->c],
-             [WordMorphism: 0->1, 1->0, a->b, b->a, c->c],
-             0,
-             1,
-             ['0', '1', 'a', 'b', 'c'])
+            [WordMorphism: 0->1, 1->0, a->b, b->a, c->c],
+            0, 1, ['0', '1', 'a', 'b', 'c'])
             sage: g = WordMorphism('a->c,b->b,c->a')
             sage: m, am, s1, s2, al = Word()._g_defect_update_morphisms_and_antimorpisms([], [f, g])
             sage: (m, am, s1, s2, sorted([str(x) for x in al]))
             ([WordMorphism: 0->0, 1->1, a->a, b->b, c->c],
-             [WordMorphism: 0->1, 1->0, a->b, b->a, c->c,
-              WordMorphism: 0->1, 1->0, a->c, b->b, c->a],
-             0,
-             1,
-             ['0', '1', 'a', 'b', 'c'])
+            [WordMorphism: 0->1, 1->0, a->b, b->a, c->c,
+            WordMorphism: 0->1, 1->0, a->c, b->b, c->a],
+            0, 1, ['0', '1', 'a', 'b', 'c'])
             sage: m, am, s1, s2, al = Word('abcd')._g_defect_update_morphisms_and_antimorpisms([], [])
             sage: (m, am, s1, s2, sorted([str(x) for x in al]))
             ([WordMorphism: 0->0, 1->1, a->a, b->b, c->c, d->d],
-             [WordMorphism: 0->1, 1->0, a->a, b->b, c->c, d->d],
-             0,
-             1,
-             ['0', '1', 'a', 'b', 'c', 'd'])
+            [WordMorphism: 0->1, 1->0, a->a, b->b, c->c, d->d],
+            0, 1, ['0', '1', 'a', 'b', 'c', 'd'])
         """
         from sage.combinat.words.morphism import WordMorphism
         domains = set()
