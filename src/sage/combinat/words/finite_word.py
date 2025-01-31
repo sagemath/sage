@@ -3541,20 +3541,22 @@ class FiniteWord_class(Word_class):
         domains = set()
         properMorphisms = []
         for morphism in morphisms:
+            fixedMorphism = morphism
             if not isinstance(morphism, WordMorphism):
-                morphism = WordMorphism(morphism)
-            if not morphism.is_letter_permutation():
+                fixedMorphism = WordMorphism(morphism)
+            if not fixedMorphism.is_letter_permutation():
                 raise ValueError("All morphisms must be letter permutations")
-            domains.add(morphism.domain())
-            properMorphisms.append(morphism)
+            domains.add(fixedMorphism.domain())
+            properMorphisms.append(fixedMorphism)
         properAntimorphisms = []
         for antimorphism in antimorphisms:
+            fixedAntimorphism = antimorphism
             if not isinstance(antimorphism, WordMorphism):
-                antimorphism = WordMorphism(antimorphism)
-            if not antimorphism.is_letter_permutation():
+                fixedAntimorphism = WordMorphism(antimorphism)
+            if not fixedAntimorphism.is_letter_permutation():
                 raise ValueError("All antimorphisms must be letter permutations")
-            domains.add(antimorphism.domain())
-            properAntimorphisms.append(antimorphism)
+            domains.add(fixedAntimorphism.domain())
+            properAntimorphisms.append(fixedAntimorphism)
         if len(domains) >= 2:
             raise ValueError("All morphisms and antimorphisms must have the same domain")
         domain = set(self.letters())
