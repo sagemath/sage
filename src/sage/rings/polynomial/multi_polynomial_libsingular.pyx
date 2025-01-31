@@ -499,8 +499,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             if self is other:
                 return True
             n = other.ngens()
-            if(other.base_ring is base_ring and self.ngens() >= n and
-               self.variable_names()[:n] == other.variable_names()):
+            if (other.base_ring is base_ring and self.ngens() >= n and
+                    self.variable_names()[:n] == other.variable_names()):
                 return True
             elif base_ring.has_coerce_map_from(other._mpoly_base_ring(self.variable_names())):
                 return True

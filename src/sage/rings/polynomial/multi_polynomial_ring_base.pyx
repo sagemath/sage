@@ -557,16 +557,14 @@ cdef class MPolynomialRing_base(CommutativeRing):
         else:
             return self._generic_coerce_map(self.base_ring())
 
-    cdef _coerce_c_impl(self, x):
+    cpdef _coerce_map_from_(self, other):
         """
-        Return the canonical coercion of x to this multivariate
-        polynomial ring, if one is defined, or raise a :exc:`TypeError`.
+        Return whether there is canonical coercion map
+        from the ring ``other`` to this multivariate polynomial ring.
 
         The rings that canonically coerce to this polynomial ring are:
 
         - this ring itself
-        - polynomial rings in the same variables over any base ring that
-          canonically coerces to the base ring of this ring
         - polynomial rings in a subset of the variables over any base ring that
           canonically coerces to the base ring of this ring
         - any ring that canonically coerces to the base ring of this polynomial
@@ -574,8 +572,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
 
         TESTS:
 
-        This fairly complicated code (from Michel Vandenbergh) ends up
-        implicitly calling ``_coerce_c_impl``::
+        Fairly complicated code (from Michel Vandenbergh)::
 
             sage: # needs sage.rings.number_field
             sage: z = polygen(QQ, 'z')
@@ -588,27 +585,39 @@ cdef class MPolynomialRing_base(CommutativeRing):
             sage: x + 1/u
             x + 1/u
         """
-        try:
-            P = x.parent()
-            # polynomial rings in the same variable over the any base
-            # that coerces in:
-            if isinstance(P, MPolynomialRing_base):
-                if P.variable_names() == self.variable_names():
-                    if self.has_coerce_map_from(P.base_ring()):
-                        return self(x)
-                elif self.base_ring().has_coerce_map_from(P._mpoly_base_ring(self.variable_names())):
-                    return self(x)
+        base_ring = self.base_ring()
+        if other is base_ring:
+            # Because this parent class is a Cython class, the method
+            # UnitalAlgebras.ParentMethods.__init_extra__(), which normally
+            # registers the coercion map from the base ring, is called only
+            # when inheriting from this class in Python (cf. Issue #26958).
+            return self._coerce_map_from_base_ring()
+        f = self._coerce_map_via([base_ring], other)
+        if f is not None:
+            return f
 
-            elif isinstance(P, polynomial_ring.PolynomialRing_generic):
-                if P.variable_name() in self.variable_names():
-                    if self.has_coerce_map_from(P.base_ring()):
-                        return self(x)
+        # polynomial rings in a subset of variables
+        # over the any base that coerces in
+        if isinstance(other, MPolynomialRing_base):
+            if self is other:
+                return True
+            n = other.ngens()
+            check =  (self.ngens() >= n and
+                      self.variable_names()[:n] == other.variable_names())
+            if other.base_ring is base_ring and check:
+                return True
+            elif base_ring.has_coerce_map_from(other._mpoly_base_ring(self.variable_names())):
+                return True
 
-        except AttributeError:
-            pass
+        # polynomial rings in one of the variables
+        # over the any base that coerces in
+        elif isinstance(other, polynomial_ring.PolynomialRing_generic):
+            if other.variable_name() in self.variable_names():
+                if self.has_coerce_map_from(other.base_ring()):
+                    return True
 
-        # any ring that coerces to the base ring of this polynomial ring.
-        return self(self.base_ring().coerce(x))
+        # any ring that coerces to the base ring of this polynomial ring
+        return self.base_ring().has_coerce_map_from(other)
 
     def _extract_polydict(self, x):
         """
