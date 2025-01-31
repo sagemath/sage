@@ -1384,6 +1384,93 @@ cdef class PowerSeries(AlgebraElement):
             serie = (u - 1 - A * t) / (B * t ** 2)
         return tuple(resu)
 
+    def super_fraction(self, delta):
+        """
+        Return the super delta continued fraction of ``self``.
+
+        This is a fraction of the following shape::
+
+                                    v0 x^k0
+             --------------------------------------------------------
+                                        v1 x^(k0 + k1 + delta)
+              U1(x)   -   -------------------------------------------
+                                               v2 x^(k1 +k2 + delta)
+                                U2(x)    -  -------------------------
+                                                     U3(x) - ...
+
+        where each `U_j(x) = 1 + u_j(x)x`.
+
+        INPUT:
+
+        - ``delta`` -- positive integer
+
+        OUTPUT:
+
+        The list of  ( vj, kj, U(j+1) ), j \geq 0.
+
+        REFERENCES:
+
+        - [Han2016]_
+
+        EXAMPLES::
+
+            sage: deg = 30
+            sage: PS = PowerSeriesRing(QQ, 'q', default_prec=deg+1)
+            sage: q = PS.gen()
+            sage: F = prod([(1+q**k).add_bigoh(deg+1) for k in range(1,deg)])
+            sage: F.super_fraction(2)
+            [(1, 0, -q + 1),
+             (1, 1, q + 1),
+             (-1, 2, -q^3 + q^2 - q + 1),
+             (1, 1, q^2 + q + 1),
+             (-1, 0, -q + 1),
+             (-1, 1, q^2 + q + 1),
+             (-1, 0, -q + 1),
+             (1, 1, 3*q^2 + 2*q + 1),
+             (-4, 0, -q + 1)]
+
+            sage: t = PowerSeriesRing(QQ, 't').gen()
+            sage: s = sum(factorial(k) * t**k for k in range(12)).O(12)
+            sage: s.super_fraction(2)
+            [(1, 0, -t + 1),
+            (1, 0, -3*t + 1),
+            (4, 0, -5*t + 1),
+            (9, 0, -7*t + 1),
+            (16, 0, -9*t + 1),
+            (25, 0, -11*t + 1)]
+        """
+        ring = self.parent()
+        q = ring.gen()
+        Gi, Gj = ring.one(), self
+
+        deg = self.prec()
+
+        vkU = []
+
+        di = Gi.valuation()
+        ci = Gi[di]
+
+        while True:
+            dj = Gj.valuation()
+            cj = Gj[dj]
+            k, v = dj - di, cj / ci
+            c = v * q**k
+            gi = Gi.add_bigoh(dj + delta)
+            gj = Gj.add_bigoh(k + dj + delta)
+            U = (c * gi / gj).truncate()
+            Gk = (U * Gj - Gi * c) >> (k + delta)
+            deg = deg - 2 * k - delta
+            if deg < 0:
+                break
+            vkU.append((v, k, U))
+            if deg == 0:
+                break
+            if Gk.degree() == -1:
+                break
+            di, ci, Gi, Gj = dj, cj, Gj, Gk
+
+        return vkU
+
     def stieltjes_continued_fraction(self):
         r"""
         Return the Stieltjes continued fraction of ``self``.

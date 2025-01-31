@@ -3257,6 +3257,9 @@ REFERENCES:
 .. [Haj2000] \M. Hajiaghayi, *Consecutive Ones Property*, 2000.
              http://www-math.mit.edu/~hajiagha/pp11.ps
 
+.. [Han2016] \G.-N. Han, *Hankel continued fraction and its applications*,
+             Adv. in Math., 303, 2016, pp. 295-321.
+
 .. [Han1960] Haim Hanani,
              *On quadruple systems*,
              pages 145--157, vol. 12,
