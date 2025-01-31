@@ -157,7 +157,11 @@ Helper functions
 
    sage/geometry/fan_isomorphism
    sage/geometry/hasse_diagram
-   sage/geometry/integral_points
+   sage/geometry/integral_points_generic_dense
    sage/geometry/hyperplane_arrangement/check_freeness
+
+..
+   The integral_points_generic_dense entry above should be sage/geometry/integral_points
+   but Sphinx does not handle the Python file containing only import very well
 
 .. include:: ../footer.txt
