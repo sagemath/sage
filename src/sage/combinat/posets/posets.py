@@ -5305,7 +5305,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         prod_dg = dg.relabel(dic, inplace=False)
         v0 = next(iter(dic.values()))
         n = len(v0)
-        factors_range = list(range(n))
+        factors_range = range(n)
         fusion = Graph(n)
 
         def edge_color(va, vb):
