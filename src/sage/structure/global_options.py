@@ -130,7 +130,7 @@ illustrated by an example::
     ....:                                  cake='waist begins again',
     ....:                                  cream='fluffy, white stuff'))
     ....:         tip = dict(default=10, description='Reward for good service',
-    ....:                    checker = lambda tip: tip in range(0,20))
+    ....:                    checker = lambda tip: tip in range(20))
     sage: Menu.options
     Current options for menu
       - dessert: espresso
@@ -409,7 +409,7 @@ Check that the old call syntax still works::
     ....:                                  cake='waist begins again',
     ....:                                  cream='fluffy, white stuff')),
     ....:         tip=dict(default=10, description='Reward for good service',
-    ....:         checker=lambda tip: tip in range(0,20))
+    ....:         checker=lambda tip: tip in range(20))
     ....:     )
     sage: Menu.options
     Current options for menu
@@ -908,7 +908,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
         ....:                                  cake='waist begins again',
         ....:                                  cream='fluffy white stuff'))
         ....:         tip = dict(default=10, description='Reward for good service',
-        ....:                  checker=lambda tip: tip in range(0,20))
+        ....:                  checker=lambda tip: tip in range(20))
         sage: Menu.options
         Current options for menu
           - dessert: espresso
@@ -1013,7 +1013,7 @@ class GlobalOptions(metaclass=GlobalOptionsMeta):
             ....:                              cake='waist begins again',
             ....:                              cream='fluffy white stuff'))
             ....:     tip = dict(default=10, description='Reward for good service',
-            ....:              checker=lambda tip: tip in range(0,20))
+            ....:              checker=lambda tip: tip in range(20))
             sage: menu._name  # Default name is class name
             'menu'
             sage: class specials(GlobalOptions):
